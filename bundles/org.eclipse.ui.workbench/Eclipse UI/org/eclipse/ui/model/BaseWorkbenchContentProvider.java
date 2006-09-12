@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Tree content provider for objects that can be adapted to the interface
@@ -52,11 +52,7 @@ public class BaseWorkbenchContentProvider implements ITreeContentProvider {
      * @return the corresponding workbench adapter object
      */
     protected IWorkbenchAdapter getAdapter(Object element) {
-        if (!(element instanceof IAdaptable)) {
-            return null;
-        }
-        return (IWorkbenchAdapter) ((IAdaptable) element)
-                .getAdapter(IWorkbenchAdapter.class);
+        return (IWorkbenchAdapter)Util.getAdapter(element, IWorkbenchAdapter.class);
     }
 
     /* (non-Javadoc)

@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -58,17 +58,10 @@ public class SelectionConversionService implements ISelectionConversionService {
 
 		while (elements.hasNext()) {
 			Object currentElement = elements.next();
-			if (resourceClass.isInstance(currentElement)) { // already a
-				// resource
-				result.add(currentElement);
-			} else if (currentElement instanceof IAdaptable) {
-				Object adapter = ((IAdaptable) currentElement)
-						.getAdapter(resourceClass);
-				if (resourceClass.isInstance(adapter)) {
-					result.add(adapter); // add the converted resource
-				}
-
-			}
+            Object resource = Util.getAdapter(currentElement, resourceClass);
+            if (resource != null) {
+            	result.add(resource);   
+            }
 		}
 
 		// all that can be converted are done, answer new selection

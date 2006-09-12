@@ -42,7 +42,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.keys.IBindingService;
@@ -441,16 +440,13 @@ public class CyclePartAction extends PageEventAction {
 		 * will not change while the dialog is open, but the context will. Bug
 		 * 55581.
 		 */
-		final IBindingService bindingService = (IBindingService) PlatformUI
-				.getWorkbench().getAdapter(IBindingService.class);
+		final IBindingService bindingService = (IBindingService) getWorkbenchWindow().getWorkbench().getService(IBindingService.class);
 		forwardTriggerSequences = bindingService
 				.getActiveBindingsFor(commandForward);
 		backwardTriggerSequences = bindingService
 				.getActiveBindingsFor(commandBackward);
 
-		final IContextService contextService = (IContextService) page
-				.getWorkbenchWindow().getWorkbench().getAdapter(
-						IContextService.class);
+		final IContextService contextService = (IContextService) getWorkbenchWindow().getWorkbench().getService(IContextService.class);
 		try {
 			dialog.open();
 			addMouseListener(table, dialog);
@@ -526,8 +522,7 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setBackwardActionDefinitionId(String actionDefinitionId) {
-		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
-				.getWorkbench().getAdapter(ICommandService.class);
+		final ICommandService commandService = (ICommandService) getWorkbenchWindow().getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(actionDefinitionId);
 		commandBackward = new ParameterizedCommand(command, null);
 	}
@@ -539,8 +534,7 @@ public class CyclePartAction extends PageEventAction {
 	 *            the action
 	 */
 	public void setForwardActionDefinitionId(String actionDefinitionId) {
-		final ICommandService commandService = (ICommandService) getWorkbenchWindow()
-				.getWorkbench().getAdapter(ICommandService.class);
+		final ICommandService commandService = (ICommandService) getWorkbenchWindow().getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(actionDefinitionId);
 		commandForward = new ParameterizedCommand(command, null);
 	}

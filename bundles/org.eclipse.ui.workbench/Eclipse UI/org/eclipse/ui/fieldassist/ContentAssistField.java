@@ -126,7 +126,7 @@ public class ContentAssistField extends DecoratedField {
 		// Always update the decoration text since the key binding may
 		// have changed since it was last retrieved.
 		IBindingService bindingService = (IBindingService) PlatformUI
-				.getWorkbench().getAdapter(IBindingService.class);
+				.getWorkbench().getService(IBindingService.class);
 		dec.setDescription(NLS.bind(
 				WorkbenchMessages.ContentAssist_Cue_Description_Key,
 				bindingService.getBestActiveBindingFormattedFor(adapter

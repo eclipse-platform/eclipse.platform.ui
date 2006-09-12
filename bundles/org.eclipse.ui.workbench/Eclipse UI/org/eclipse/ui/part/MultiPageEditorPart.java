@@ -42,6 +42,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.INestable;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -813,7 +814,7 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			IEditorPart innerEditor = getActiveEditor();
 			// see bug 138823 - this is a hack
 			if (innerEditor != null && innerEditor != this) {
-				result = innerEditor.getAdapter(adapter);
+				result = Util.getAdapter(innerEditor, adapter);
 			}
 		}
 		return result;

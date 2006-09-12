@@ -242,9 +242,7 @@ public class DetachedWindow implements IDragOverListener {
             bounds = windowShell.getBounds();
 
             // Unregister this detached view as a window (for key bindings).
-			final IContextService contextService = (IContextService) getWorkbenchPage()
-					.getWorkbenchWindow().getWorkbench().getAdapter(
-							IContextService.class);
+			final IContextService contextService = (IContextService) getWorkbenchPage().getWorkbenchWindow().getWorkbench().getService(IContextService.class);
 			contextService.unregisterShell(windowShell);
 
             windowShell.setData(null);
@@ -309,8 +307,7 @@ public class DetachedWindow implements IDragOverListener {
 
         // Register this detached view as a window (for key bindings).
 		final IContextService contextService = (IContextService) getWorkbenchPage()
-				.getWorkbenchWindow().getWorkbench().getAdapter(
-						IContextService.class);
+				.getWorkbenchWindow().getWorkbench().getService(IContextService.class);
         contextService.registerShell(shell,
                 IContextService.TYPE_WINDOW);
 

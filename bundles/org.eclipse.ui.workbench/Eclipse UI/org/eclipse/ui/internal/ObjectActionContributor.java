@@ -28,6 +28,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -273,14 +274,10 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 			return true;
 		}
         String objectName = null;
-        if (object instanceof IAdaptable) {
-            IAdaptable element = (IAdaptable) object;
-            IWorkbenchAdapter de = (IWorkbenchAdapter) element
-                    .getAdapter(IWorkbenchAdapter.class);
-            if (de != null) {
-				objectName = de.getLabel(element);
-			}
-        }
+        IWorkbenchAdapter de = (IWorkbenchAdapter)Util.getAdapter(object, IWorkbenchAdapter.class);
+        if (de != null) {
+			objectName = de.getLabel(object);
+		}
         if (objectName == null) {
             objectName = object.toString();
         }

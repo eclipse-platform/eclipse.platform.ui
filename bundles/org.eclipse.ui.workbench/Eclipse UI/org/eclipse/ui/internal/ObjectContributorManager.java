@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -312,14 +313,12 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
         }
         contributorList.add(contributor);
         flushLookup();
+
+        IConfigurationElement element = (IConfigurationElement) Util.getAdapter(contributor,
+        	IConfigurationElement.class);
         
         //hook the object listener
-        if (contributor instanceof IAdaptable) {
-        	IConfigurationElement element = (IConfigurationElement) ((IAdaptable) contributor)
-					.getAdapter(IConfigurationElement.class);
-			if (element == null) {
-				return;
-			}
+        if (element != null) {
 			ContributorRecord contributorRecord = new ContributorRecord(
 					contributor, targetType);
 			contributorRecordSet.add(contributorRecord);

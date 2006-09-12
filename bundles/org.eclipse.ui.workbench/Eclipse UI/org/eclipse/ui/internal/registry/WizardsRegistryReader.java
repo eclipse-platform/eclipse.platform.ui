@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +27,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.util.Util;
+
+import com.ibm.icu.text.Collator;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -268,8 +270,8 @@ public class WizardsRegistryReader extends RegistryReader {
 		}
 
         if (parent != null) {
-			createCollectionElement(parent, (IConfigurationElement) category
-					.getAdapter(IConfigurationElement.class));
+			createCollectionElement(parent, (IConfigurationElement) Util.getAdapter(category,
+					IConfigurationElement.class));
 		}
     }
 

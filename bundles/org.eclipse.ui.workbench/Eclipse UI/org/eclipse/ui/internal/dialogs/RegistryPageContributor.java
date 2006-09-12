@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -212,14 +213,12 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 				.getAttribute(PropertyPagesRegistryReader.ATT_NAME_FILTER);
 		if (nameFilter != null) {
 			String objectName = object.toString();
-			if (object instanceof IAdaptable) {
-				IWorkbenchAdapter adapter = (IWorkbenchAdapter) ((IAdaptable) object)
-						.getAdapter(IWorkbenchAdapter.class);
-				if (adapter != null) {
-					String elementName = adapter.getLabel(object);
-					if (elementName != null) {
-						objectName = elementName;
-					}
+			IWorkbenchAdapter adapter = (IWorkbenchAdapter) Util.getAdapter(object, 
+                    IWorkbenchAdapter.class);
+			if (adapter != null) {
+				String elementName = adapter.getLabel(object);
+				if (elementName != null) {
+					objectName = elementName;
 				}
 			}
 			if (!SelectionEnabler.verifyNameMatch(objectName, nameFilter))
@@ -237,12 +236,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			object = adaptedObject;
 		}
 
-		if (object instanceof IActionFilter) {
-			filter = (IActionFilter) object;
-		} else if (object instanceof IAdaptable) {
-			filter = (IActionFilter) ((IAdaptable) object)
-					.getAdapter(IActionFilter.class);
-		}
+        filter = (IActionFilter)Util.getAdapter(object, IActionFilter.class);
 
 		if (filter != null)
 			return testCustom(object, filter);

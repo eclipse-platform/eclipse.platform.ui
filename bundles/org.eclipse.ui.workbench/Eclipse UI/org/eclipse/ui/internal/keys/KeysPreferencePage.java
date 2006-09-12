@@ -1215,12 +1215,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 
 	public final void init(final IWorkbench workbench) {
 		activityManager = workbench.getActivitySupport().getActivityManager();
-		bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
-		commandService = (ICommandService) workbench
-				.getAdapter(ICommandService.class);
-		contextService = (IContextService) workbench
-				.getAdapter(IContextService.class);
+		bindingService = (IBindingService) workbench.getService(IBindingService.class);
+		commandService = (ICommandService) workbench.getService(ICommandService.class);
+		contextService = (IContextService) workbench.getService(IContextService.class);
 	}
 
 	/**

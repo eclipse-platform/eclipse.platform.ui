@@ -22,6 +22,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * The abstract superclass for save actions that depend on the active editor.
@@ -214,10 +215,8 @@ public abstract class BaseSaveAction extends ActiveEditorAction {
         if (activeView == null) {
             return null;
         }
-        if (activeView instanceof ISaveablePart) {
-            return (ISaveablePart) activeView;
-        }
-        return (ISaveablePart) activeView.getAdapter(ISaveablePart.class);
+
+        return (ISaveablePart) Util.getAdapter(activeView, ISaveablePart.class);
     }
 
     /* (non-Javadoc)

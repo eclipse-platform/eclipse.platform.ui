@@ -33,8 +33,7 @@ public class ShowKeyAssistHandler extends WorkbenchWindowHandlerDelegate {
 	 */
 	public Object execute(final ExecutionEvent event) {
 		final IWorkbench workbench = PlatformUI.getWorkbench();
-		final IBindingService bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
+		final IBindingService bindingService = (IBindingService) workbench.getService(IBindingService.class);
 		bindingService.openKeyAssistDialog();
 		return null;
 	}

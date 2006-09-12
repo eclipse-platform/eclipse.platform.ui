@@ -115,8 +115,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		addListeners(control);
 
 		// Cache the handler service so we don't have to retrieve it each time
-		this.handlerService = (IHandlerService) PlatformUI.getWorkbench()
-				.getAdapter(IHandlerService.class);
+		this.handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 	}
 
 	/*

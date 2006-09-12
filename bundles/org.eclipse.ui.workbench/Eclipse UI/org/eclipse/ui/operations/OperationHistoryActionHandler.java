@@ -39,6 +39,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.MultiPageEditorSite;
 
 /**
@@ -330,7 +331,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=108144
 			IWorkbenchPart part = site.getPart();
 			if (part != null) {
-				return part.getAdapter(adapter);
+				return Util.getAdapter(part, adapter);
 			}
 		}
 		return null;

@@ -461,8 +461,7 @@ public final class WorkbenchKeyboard {
 		}
 
 		try {
-			final IHandlerService handlerService = (IHandlerService) workbench
-					.getAdapter(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) workbench.getService(IHandlerService.class);
 			handlerService.executeCommand(parameterizedCommand, trigger);
 		} catch (final NotDefinedException e) {
 			// The command is not defined. Forwarded to the IExecutionListener.
@@ -589,8 +588,7 @@ public final class WorkbenchKeyboard {
 	 */
 	private Binding getPerfectMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench
-					.getAdapter(IBindingService.class);
+			bindingService = (IBindingService) workbench.getService(IBindingService.class);
 		}
 		return bindingService.getPerfectMatch(keySequence);
 	}
@@ -643,8 +641,7 @@ public final class WorkbenchKeyboard {
 	 */
 	private boolean isPartialMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench
-					.getAdapter(IBindingService.class);
+			bindingService = (IBindingService) workbench.getService(IBindingService.class);
 		}
 		return bindingService.isPartialMatch(keySequence);
 	}
@@ -661,8 +658,7 @@ public final class WorkbenchKeyboard {
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
 		if (bindingService == null) {
-			bindingService = (IBindingService) workbench
-					.getAdapter(IBindingService.class);
+			bindingService = (IBindingService) workbench.getService(IBindingService.class);
 		}
 		return bindingService.isPerfectMatch(keySequence);
 	}
@@ -764,8 +760,7 @@ public final class WorkbenchKeyboard {
 			final Widget widget = event.widget;
 
 			// Update the contexts.
-			final ContextService contextService = (ContextService) workbench
-					.getAdapter(IContextService.class);
+			final ContextService contextService = (ContextService) workbench.getService(IContextService.class);
 			if ((widget instanceof Control) && (!widget.isDisposed())) {
 				final Shell shell = ((Control) widget).getShell();
 				contextService.updateShellKludge(shell);
@@ -774,8 +769,7 @@ public final class WorkbenchKeyboard {
 			}
 
 			// Update the handlers.
-			final HandlerService handlerService = (HandlerService) workbench
-					.getAdapter(IHandlerService.class);
+			final HandlerService handlerService = (HandlerService) workbench.getService(IHandlerService.class);
 			if ((widget instanceof Control) && (!widget.isDisposed())) {
 				final Shell shell = ((Control) widget).getShell();
 				handlerService.updateShellKludge(shell);

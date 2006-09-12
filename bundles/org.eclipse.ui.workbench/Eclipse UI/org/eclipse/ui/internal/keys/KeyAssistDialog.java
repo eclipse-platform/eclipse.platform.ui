@@ -166,10 +166,8 @@ final class KeyAssistDialog extends PopupDialog {
 
 		this.activityManager = workbench.getActivitySupport()
 				.getActivityManager();
-		this.bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
-		this.commandService = (ICommandService) workbench
-				.getAdapter(ICommandService.class);
+		this.bindingService = (IBindingService) workbench.getService(IBindingService.class);
+		this.commandService = (ICommandService) workbench.getService(ICommandService.class);
 		this.keyBindingState = associatedState;
 		this.workbenchKeyboard = associatedKeyboard;
 		
@@ -650,8 +648,7 @@ final class KeyAssistDialog extends PopupDialog {
 	private final void registerShellType() {
 		final Shell shell = getShell();
 		final IContextService contextService = (IContextService) keyBindingState
-				.getAssociatedWindow().getWorkbench().getAdapter(
-						IContextService.class);
+				.getAssociatedWindow().getWorkbench().getService(IContextService.class);
 		contextService.registerShell(shell, contextService
 				.getShellType((Shell) shell.getParent()));
 	}

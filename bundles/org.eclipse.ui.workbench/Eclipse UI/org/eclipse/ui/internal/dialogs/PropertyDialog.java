@@ -12,8 +12,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,6 +21,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -98,14 +97,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 	 * @return the name of the element
 	 */
 	private static String getName(Object element) {
-		IWorkbenchAdapter adapter = null;
-		if (element instanceof IAdaptable) {
-			adapter = (IWorkbenchAdapter) ((IAdaptable) element)
-					.getAdapter(IWorkbenchAdapter.class);
-		} else {
-			adapter = (IWorkbenchAdapter) Platform.getAdapterManager()
-					.getAdapter(element, IWorkbenchAdapter.class);
-		}
+		IWorkbenchAdapter adapter = (IWorkbenchAdapter)Util.getAdapter(element, IWorkbenchAdapter.class);
 		if (adapter != null) {
 			return adapter.getLabel(element);
 		}

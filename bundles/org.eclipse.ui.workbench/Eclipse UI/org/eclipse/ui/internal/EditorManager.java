@@ -169,8 +169,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			}
 			if (pinEditorHandlerActivation != null) {
 				// remove pin editor keyboard shortcut handler
-				final IHandlerService handlerService = (IHandlerService) window
-						.getWorkbench().getAdapter(IHandlerService.class);
+				final IHandlerService handlerService = (IHandlerService) window.getWorkbench().getService(IHandlerService.class);
 				handlerService.deactivateHandler(pinEditorHandlerActivation);
 				pinEditorHandlerActivation = null;
 			}
@@ -230,8 +229,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			};
 
 			// Assign the handler for the pin editor keyboard shortcut.
-			final IHandlerService handlerService = (IHandlerService) window
-					.getWorkbench().getAdapter(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) window.getWorkbench().getService(IHandlerService.class);
 			pinEditorHandlerActivation = handlerService.activateHandler(
 					"org.eclipse.ui.window.pinEditor", pinEditorHandler, //$NON-NLS-1$
 					new ActiveShellExpression(shell));
@@ -1451,7 +1449,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			return (IPathEditorInput) input;
 		}
 
-		return (IPathEditorInput) input.getAdapter(IPathEditorInput.class);
+		return (IPathEditorInput) Util.getAdapter(input, IPathEditorInput.class);
 	}
 
 	private class InnerEditor extends EditorReference {

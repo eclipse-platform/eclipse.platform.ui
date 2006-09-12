@@ -1279,14 +1279,10 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
 	public final void init(final IWorkbench workbench) {
-		bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
-		commandImageService = (ICommandImageService) workbench
-				.getAdapter(ICommandImageService.class);
-		commandService = (ICommandService) workbench
-				.getAdapter(ICommandService.class);
-		contextService = (IContextService) workbench
-				.getAdapter(IContextService.class);
+		bindingService = (IBindingService) workbench.getService(IBindingService.class);
+		commandImageService = (ICommandImageService) workbench.getService(ICommandImageService.class);
+		commandService = (ICommandService) workbench.getService(ICommandService.class);
+		contextService = (IContextService) workbench.getService(IContextService.class);
 	}
 
 	/**

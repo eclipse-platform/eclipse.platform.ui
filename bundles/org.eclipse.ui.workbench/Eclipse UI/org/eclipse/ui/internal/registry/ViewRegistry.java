@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -30,10 +29,13 @@ import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The central manager for view descriptors.
@@ -175,7 +177,7 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 			dirtyViewCategoryMappings = true;
 			// Mark categories list as dirty
 			categories.add(desc);
-			IConfigurationElement element = (IConfigurationElement) desc.getAdapter(IConfigurationElement.class);
+			IConfigurationElement element = (IConfigurationElement) Util.getAdapter(desc, IConfigurationElement.class);
 			if (element == null) {
 				return;
 			}

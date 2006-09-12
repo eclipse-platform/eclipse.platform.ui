@@ -373,8 +373,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 			result = view;
 
-			IConfigurationElement element = (IConfigurationElement) desc
-					.getAdapter(IConfigurationElement.class);
+			IConfigurationElement element = (IConfigurationElement) Util.getAdapter(desc,
+					IConfigurationElement.class);
 			if (element != null) {
 				factory.page.getExtensionTracker().registerObject(
 						element.getDeclaringExtension(), view,

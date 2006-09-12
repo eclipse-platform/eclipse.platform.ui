@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -37,8 +38,7 @@ public class ViewSite extends PartSite implements IViewSite {
     public ViewSite(IViewReference ref, IViewPart view, WorkbenchPage page,
             IViewDescriptor desc) {
         super(ref, view, page);
-        setConfigurationElement((IConfigurationElement) desc
-				.getAdapter(IConfigurationElement.class));
+        setConfigurationElement((IConfigurationElement) Util.getAdapter(desc, IConfigurationElement.class));
     }
 
     /**

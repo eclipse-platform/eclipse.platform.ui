@@ -1938,13 +1938,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     public String getLabel() {
         String label = WorkbenchMessages.WorkbenchPage_UnknownLabel;
-        if (input != null) {
-            IWorkbenchAdapter adapter = (IWorkbenchAdapter) input
-                    .getAdapter(IWorkbenchAdapter.class);
-            if (adapter != null) {
-				label = adapter.getLabel(input);
-			}
-        }
+        IWorkbenchAdapter adapter = (IWorkbenchAdapter) Util.getAdapter(input, 
+                IWorkbenchAdapter.class);
+        if (adapter != null) {
+			label = adapter.getLabel(input);
+		}
         Perspective persp = getActivePerspective();
         if (persp != null) {
 			label = NLS.bind(WorkbenchMessages.WorkbenchPage_PerspectiveFormat,  label, persp.getDesc().getLabel());

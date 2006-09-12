@@ -11,7 +11,6 @@
 package org.eclipse.ui.progress;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -26,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
@@ -86,8 +86,8 @@ public class DeferredTreeContentManager {
     public DeferredTreeContentManager(ITreeContentProvider provider,
             AbstractTreeViewer viewer, IWorkbenchPartSite site) {
         this(provider, viewer);
-        Object siteService = site
-                .getAdapter(IWorkbenchSiteProgressService.class);
+        Object siteService = Util.getAdapter(site, 
+                IWorkbenchSiteProgressService.class);
         if (siteService != null) {
 			progressService = (IWorkbenchSiteProgressService) siteService;
 		}
@@ -163,18 +163,7 @@ public class DeferredTreeContentManager {
      * @return IDeferredWorkbenchAdapter or <code>null</code>
      */
     protected IDeferredWorkbenchAdapter getAdapter(Object element) {
-        if (element instanceof IDeferredWorkbenchAdapter) {
-			return (IDeferredWorkbenchAdapter) element;
-		}
-        if (!(element instanceof IAdaptable)) {
-			return null;
-		}
-        Object adapter = ((IAdaptable) element)
-                .getAdapter(IDeferredWorkbenchAdapter.class);
-        if (adapter == null) {
-			return null;
-		}
-        return (IDeferredWorkbenchAdapter) adapter;
+        return (IDeferredWorkbenchAdapter)Util.getAdapter(element, IDeferredWorkbenchAdapter.class);
     }
 
     /**
@@ -260,18 +249,7 @@ public class DeferredTreeContentManager {
              *            The object we are adapting to.
              */
             private IWorkbenchAdapter getWorkbenchAdapter(Object element) {
-                if (element instanceof IWorkbenchAdapter) {
-					return (IWorkbenchAdapter) element;
-				}
-                if (!(element instanceof IAdaptable)) {
-					return null;
-				}
-                Object workbenchAdapter = ((IAdaptable) element)
-                        .getAdapter(IWorkbenchAdapter.class);
-                if (workbenchAdapter == null) {
-					return null;
-				}
-                return (IWorkbenchAdapter) workbenchAdapter;
+                return (IWorkbenchAdapter) Util.getAdapter(element, IWorkbenchAdapter.class);
             }
         };
         job.addJobChangeListener(new JobChangeAdapter() {

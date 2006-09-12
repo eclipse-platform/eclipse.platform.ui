@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.model;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -28,6 +27,7 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.util.SWTResourceUtil;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Provides basic labels for adaptable objects that have the
@@ -121,11 +121,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable. 
      */
     protected final IWorkbenchAdapter getAdapter(Object o) {
-        if (!(o instanceof IAdaptable)) {
-            return null;
-        }
-        return (IWorkbenchAdapter) ((IAdaptable) o)
-                .getAdapter(IWorkbenchAdapter.class);
+        return (IWorkbenchAdapter)Util.getAdapter(o, IWorkbenchAdapter.class);
     }
 
     /**
@@ -136,11 +132,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * object is not adaptable. 
      */
     protected final IWorkbenchAdapter2 getAdapter2(Object o) {
-        if (!(o instanceof IAdaptable)) {
-            return null;
-        }
-        return (IWorkbenchAdapter2) ((IAdaptable) o)
-                .getAdapter(IWorkbenchAdapter2.class);
+        return (IWorkbenchAdapter2)Util.getAdapter(o, IWorkbenchAdapter2.class);
     }
 
     /* (non-Javadoc)

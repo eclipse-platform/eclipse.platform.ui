@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
@@ -90,14 +91,7 @@ public class ShowInAction extends Action {
      * @return an <code>IShowInSource</code> or <code>null</code>
      */
     private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
-        if (sourcePart instanceof IShowInSource) {
-            return (IShowInSource) sourcePart;
-        }
-        Object o = sourcePart.getAdapter(IShowInSource.class);
-        if (o instanceof IShowInSource) {
-            return (IShowInSource) o;
-        }
-        return null;
+        return (IShowInSource)Util.getAdapter(sourcePart, IShowInSource.class);
     }
 
     /**
@@ -108,14 +102,7 @@ public class ShowInAction extends Action {
      * @return the <code>IShowInTarget</code> or <code>null</code>
      */
     private IShowInTarget getShowInTarget(IWorkbenchPart targetPart) {
-        if (targetPart instanceof IShowInTarget) {
-            return (IShowInTarget) targetPart;
-        }
-        Object o = targetPart.getAdapter(IShowInTarget.class);
-        if (o instanceof IShowInTarget) {
-            return (IShowInTarget) o;
-        }
-        return null;
+        return (IShowInTarget)Util.getAdapter(targetPart, IShowInTarget.class);
     }
 
     /**

@@ -29,6 +29,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -95,7 +96,7 @@ public class NewWizardShortcutAction extends Action implements
                 IEditorInput input = ((IEditorPart) part).getEditorInput();
                 Class fileClass = LegacyResourceSupport.getFileClass();
                 if (input != null && fileClass != null) {
-                    Object file = input.getAdapter(fileClass);
+                    Object file = Util.getAdapter(input, fileClass);
                     if (file != null) {
                         selectionToPass = new StructuredSelection(file);
                     }
@@ -155,7 +156,7 @@ public class NewWizardShortcutAction extends Action implements
      * @since 3.1
      */
     private IPluginContribution getPluginContribution() {
-		return (IPluginContribution) wizardElement
-				.getAdapter(IPluginContribution.class);
+		return (IPluginContribution) Util.getAdapter(wizardElement,
+				IPluginContribution.class);
 	}
 }

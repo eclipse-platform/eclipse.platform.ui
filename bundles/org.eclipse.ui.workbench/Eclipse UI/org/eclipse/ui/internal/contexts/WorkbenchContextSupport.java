@@ -80,10 +80,8 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	public WorkbenchContextSupport(final Workbench workbenchToSupport,
 			final ContextManager contextManager) {
 		workbench = workbenchToSupport;
-		contextService = (IContextService) workbench
-				.getAdapter(IContextService.class);
-		bindingService = (IBindingService) workbench
-				.getAdapter(IBindingService.class);
+		contextService = (IContextService) workbench.getService(IContextService.class);
+		bindingService = (IBindingService) workbench.getService(IBindingService.class);
 		contextManagerWrapper = ContextManagerFactory
 				.getContextManagerWrapper(contextManager);
 	}

@@ -13,9 +13,9 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.IActionFilter;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * An ObjectFilterTest is used to read an object filter from XML,
@@ -85,13 +85,7 @@ public class ObjectFilterTest {
      */
     private boolean preciselyMatches(Object object) {
         // Get the action filter.
-        IActionFilter filter = null;
-        if (object instanceof IActionFilter) {
-			filter = (IActionFilter) object;
-		} else if (object instanceof IAdaptable) {
-			filter = (IActionFilter) ((IAdaptable) object)
-                    .getAdapter(IActionFilter.class);
-		}
+        IActionFilter filter = (IActionFilter)Util.getAdapter(object, IActionFilter.class);
         if (filter == null) {
 			return false;
 		}

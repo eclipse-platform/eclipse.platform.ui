@@ -133,6 +133,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
@@ -524,8 +525,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * </p>
 	 */
 	void submitGlobalActions() {
-		final IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getAdapter(IHandlerService.class);
+		final IHandlerService handlerService = (IHandlerService) getWorkbench().getService(IHandlerService.class);
 
 		/*
 		 * Mash the action sets and global actions together, with global actions
@@ -850,8 +850,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				IWorkbenchHelpContextIds.WORKBENCH_WINDOW);
 
 //		initializeDefaultServices();
-		final IContextService contextService = (IContextService) workbench
-				.getAdapter(IContextService.class);
+		final IContextService contextService = (IContextService) getWorkbench().getService(IContextService.class);
 		contextService.registerShell(shell, IContextService.TYPE_WINDOW);
 
 		trackShellActivation(shell);
@@ -1466,8 +1465,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
-			final IHandlerService handlerService = (IHandlerService) workbench
-					.getAdapter(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) workbench.getService(IHandlerService.class);
 			handlerService.deactivateHandlers(handlerActivations);
 			final Iterator activationItr = handlerActivations.iterator();
 			while (activationItr.hasNext()) {
@@ -1479,8 +1477,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			globalActionHandlersByCommandId.clear();
 
 			// Remove the enabled submissions. Bug 64024.
-			final IContextService contextService = (IContextService) workbench
-					.getAdapter(IContextService.class);
+			final IContextService contextService = (IContextService) workbench.getService(IContextService.class);
 			contextService.unregisterShell(getShell());
 
 			closeAllPages();
@@ -2446,8 +2443,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// Get the input.
 			IAdaptable input = page.getInput();
 			if (input != null) {
-				IPersistableElement persistable = (IPersistableElement) input
-						.getAdapter(IPersistableElement.class);
+				IPersistableElement persistable = (IPersistableElement) Util.getAdapter(input,
+						IPersistableElement.class);
 				if (persistable == null) {
 					WorkbenchPlugin
 							.log("Unable to save page input: " //$NON-NLS-1$

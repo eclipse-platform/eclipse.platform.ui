@@ -31,6 +31,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
@@ -208,14 +209,7 @@ public class ShowInMenu extends ContributionItem {
      * @return an <code>IShowInSource</code> or <code>null</code>
      */
     private IShowInSource getShowInSource(IWorkbenchPart sourcePart) {
-        if (sourcePart instanceof IShowInSource) {
-            return (IShowInSource) sourcePart;
-        }
-        Object o = sourcePart.getAdapter(IShowInSource.class);
-        if (o instanceof IShowInSource) {
-            return (IShowInSource) o;
-        }
-        return null;
+        return (IShowInSource)Util.getAdapter(sourcePart, IShowInSource.class);
     }
 
     /**
@@ -226,14 +220,7 @@ public class ShowInMenu extends ContributionItem {
      * @return the <code>IShowInTargetList</code> or <code>null</code>
      */
     private IShowInTargetList getShowInTargetList(IWorkbenchPart sourcePart) {
-        if (sourcePart instanceof IShowInTargetList) {
-            return (IShowInTargetList) sourcePart;
-        }
-        Object o = sourcePart.getAdapter(IShowInTargetList.class);
-        if (o instanceof IShowInTargetList) {
-            return (IShowInTargetList) o;
-        }
-        return null;
+        return (IShowInTargetList)Util.getAdapter(sourcePart, IShowInTargetList.class);
     }
 
     /**

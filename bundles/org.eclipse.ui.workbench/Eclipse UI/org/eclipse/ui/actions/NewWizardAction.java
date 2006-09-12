@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.PerspectiveTracker;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -151,7 +152,7 @@ public class NewWizardAction extends Action implements
                         .getActivePart();
                 if (part instanceof IEditorPart) {
                     IEditorInput input = ((IEditorPart) part).getEditorInput();
-                    Object resource = input.getAdapter(resourceClass);
+                    Object resource = Util.getAdapter(input, resourceClass);
                     if (resource != null) {
                         selectionToPass = new StructuredSelection(resource);
                     }

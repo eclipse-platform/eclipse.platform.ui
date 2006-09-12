@@ -26,6 +26,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -184,10 +185,10 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 					// one last try - try to adapt the modified element if a
 					// preferred
 					// comparison class has been provided.
-					if (affectedObjectsClass != null
-							&& modifiedElement instanceof IAdaptable) {
-						if (elementsContains(((IAdaptable) modifiedElement)
-								.getAdapter(affectedObjectsClass))) {
+					if (affectedObjectsClass != null) {
+						Object adapter = Util.getAdapter(modifiedElement, 
+								affectedObjectsClass);
+						if (adapter != null && elementsContains(adapter)) {
 							local = true;
 						}
 					}
@@ -248,8 +249,8 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 		// not originate
 		// in our context.
 		if (uiInfo != null) {
-			IUndoContext originatingContext = (IUndoContext) uiInfo
-					.getAdapter(IUndoContext.class);
+			IUndoContext originatingContext = (IUndoContext) Util.getAdapter(uiInfo, 
+					IUndoContext.class);
 			if (originatingContext != null
 					&& !(originatingContext.matches(context))) {
 				return false;
@@ -276,10 +277,8 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 				Object element = elements[i];
 				elementsAndAdapters.add(element);
 				if (affectedObjectsClass != null
-						&& !affectedObjectsClass.isInstance(element)
-						&& element instanceof IAdaptable) {
-					Object adapter = ((IAdaptable) element)
-							.getAdapter(affectedObjectsClass);
+						&& !affectedObjectsClass.isInstance(element)) {
+					Object adapter = Util.getAdapter(element, affectedObjectsClass);
 					if (adapter != null) {
 						elementsAndAdapters.add(adapter);
 					}

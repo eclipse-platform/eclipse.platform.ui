@@ -296,8 +296,7 @@ class PreferencePageHistory {
 	 */
 	private void registerKeybindings(IAction action) {
 		final IHandler handler = new ActionHandler(action);
-		final IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getAdapter(IHandlerService.class);
+		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		final IHandlerActivation activation = handlerService.activateHandler(
 				action.getActionDefinitionId(), handler,
 				new ActiveShellExpression(dialog.getShell()));
@@ -309,8 +308,7 @@ class PreferencePageHistory {
 	 *
 	 */
 	public void dispose() {
-		final IHandlerService handlerService = (IHandlerService) PlatformUI
-				.getWorkbench().getAdapter(IHandlerService.class);
+		final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 		final Iterator iterator = activations.iterator();
 		while (iterator.hasNext()) {
 			handlerService.deactivateHandler((IHandlerActivation) iterator

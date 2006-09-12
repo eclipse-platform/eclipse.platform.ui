@@ -251,8 +251,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
     public final void activateHandler() {
 		if (handlerActivation == null) {
 			final IHandler handler = new ShowViewHandler(getId());
-			final IHandlerService handlerService = (IHandlerService) PlatformUI
-					.getWorkbench().getAdapter(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 			handlerActivation = handlerService
 					.activateHandler(getId(), handler);
 		}
@@ -267,8 +266,7 @@ public class ViewDescriptor implements IViewDescriptor, IPluginContribution {
 	 */
 	public final void deactivateHandler() {
 		if (handlerActivation != null) {
-			final IHandlerService handlerService = (IHandlerService) PlatformUI
-					.getWorkbench().getAdapter(IHandlerService.class);
+			final IHandlerService handlerService = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
 			handlerService.deactivateHandler(handlerActivation);
 			handlerActivation = null;
 		}

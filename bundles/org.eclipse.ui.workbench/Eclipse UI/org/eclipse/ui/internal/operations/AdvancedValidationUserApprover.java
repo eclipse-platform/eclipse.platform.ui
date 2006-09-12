@@ -37,6 +37,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -387,7 +388,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 	 */
 	Shell getShell(IAdaptable uiInfo) {
 		if (uiInfo != null) {
-			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
+			Shell shell = (Shell) Util.getAdapter(uiInfo, Shell.class);
 			if (shell != null) {
 				return shell;
 			}

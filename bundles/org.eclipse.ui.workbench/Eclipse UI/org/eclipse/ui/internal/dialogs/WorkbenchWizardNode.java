@@ -26,6 +26,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -95,8 +96,8 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      * @see org.eclipse.ui.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
-    	IPluginContribution contribution = (IPluginContribution) wizardElement
-				.getAdapter(IPluginContribution.class);
+    	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
+				IPluginContribution.class);
 		if (contribution != null) {
 			return contribution.getLocalId();
 		}
@@ -107,8 +108,8 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
      * @see org.eclipse.ui.IPluginContribution#getPluginId()
      */
     public String getPluginId() {
-       	IPluginContribution contribution = (IPluginContribution) wizardElement
-				.getAdapter(IPluginContribution.class);
+       	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement,
+				IPluginContribution.class);
 		if (contribution != null) {
 			return contribution.getLocalId();
 		}
@@ -134,7 +135,7 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
                              * Add the exception details to status is one happens.
                              */
                             public void handleException(Throwable e) {
-                               	IPluginContribution contribution = (IPluginContribution) wizardElement.getAdapter(IPluginContribution.class);
+                               	IPluginContribution contribution = (IPluginContribution) Util.getAdapter(wizardElement, IPluginContribution.class);
                                 statuses[0] = new Status(
                                         IStatus.ERROR,
                                         contribution != null ? contribution.getPluginId() : WorkbenchPlugin.PI_WORKBENCH,
