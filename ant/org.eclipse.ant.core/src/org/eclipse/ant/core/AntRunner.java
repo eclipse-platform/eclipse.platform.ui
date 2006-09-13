@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Michael Giroux (michael.giroux@objectweb.org) - bug 149739
  *******************************************************************************/
 package org.eclipse.ant.core;
 
@@ -34,8 +35,22 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Entry point for running Ant builds inside Eclipse.
+ * Entry point for running Ant builds inside Eclipse (within the same JRE).
  * Clients may instantiate this class; it is not intended to be subclassed.
+ * <p/>
+ * <div class="TableSubHeadingColor">
+ * <b>Usage note:</b><br/>
+ * Clients may use the <code>addBuildListener</code>,
+ * <code>addBuildLogger</code> and <code>setInputHandler</code>
+ * methods to configure classes that will be invoked during the
+ * build.  When using these methods, it is necessary to package
+ * the classes in a jar that is not on the client plugin's classpath.
+ * The jar must be added to the Ant classpath. One way to add 
+ * the jar to the Ant classpath is to use the
+ * <code>org.eclipse.ant.core.extraClasspathEntries</code> extension.
+ * <p>Refer to the "Platform Ant Support" chapter of the Programmer's Guide
+ * section in the Platform Plug-in Developer Guide for complete details.</p>
+ * </div>
  */
 public class AntRunner implements IPlatformRunnable {
 
@@ -152,11 +167,13 @@ public class AntRunner implements IPlatformRunnable {
 
 	/**
 	 * Adds a build listener. The parameter <code>className</code>
-	 * is the class name of a <code>org.apache.tools.ant.BuildListener</code>
+	 * is the class name of an <code>org.apache.tools.ant.BuildListener</code>
 	 * implementation. The class will be instantiated at runtime and the
 	 * listener will be called on build events
 	 * (<code>org.apache.tools.ant.BuildEvent</code>).
-	 *
+     * 
+     * <p>Refer to {@link AntRunner Usage Note} for implementation details.
+     * 
 	 * @param className a build listener class name
 	 */
 	public void addBuildListener(String className) {
@@ -171,13 +188,14 @@ public class AntRunner implements IPlatformRunnable {
 
 	/**
 	 * Sets the build logger. The parameter <code>className</code>
-	 * is the class name of a <code>org.apache.tools.ant.BuildLogger</code>
+	 * is the class name of an <code>org.apache.tools.ant.BuildLogger</code>
 	 * implementation. The class will be instantiated at runtime and the
 	 * logger will be called on build events
 	 * (<code>org.apache.tools.ant.BuildEvent</code>).  
 	 * Only one build logger is permitted for any build.
-	 * 
-	 *
+     * 
+     * <p>Refer to {@link AntRunner Usage Note} for implementation details.
+     * 
 	 * @param className a build logger class name
 	 */
 	public void addBuildLogger(String className) {
@@ -512,11 +530,13 @@ public class AntRunner implements IPlatformRunnable {
 	
 	/**
 	 * Sets the input handler. The parameter <code>className</code>
-	 * is the class name of a <code>org.apache.tools.ant.input.InputHandler</code>
+	 * is the class name of an <code>org.apache.tools.ant.input.InputHandler</code>
 	 * implementation. The class will be instantiated at runtime and the
 	 * input handler will be used to respond to &lt;input&gt; requests
 	 * Only one input handler is permitted for any build.
-	 * 
+     * 
+     * <p>Refer to {@link AntRunner Usage Note} for implementation details.
+     * 
 	 * @param className an input handler class name
 	 * @since 2.1
 	 */
