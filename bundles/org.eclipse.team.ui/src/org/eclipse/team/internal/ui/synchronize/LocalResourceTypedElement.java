@@ -167,7 +167,9 @@ public class LocalResourceTypedElement extends ResourceNode implements ISharedDo
 	public IEditorInput getDocumentKey(Object element) {
 		if (element == this && getResource() instanceof IFile) {
 			IFile file = (IFile) getResource();
-			return new FileEditorInput(file);
+			// Only return the input if the file exists since file buffers doesn't seem to handle the create case
+			if (file.exists())
+				return new FileEditorInput(file);
 		}
 		return null;
 	}
