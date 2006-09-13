@@ -389,10 +389,12 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	}
 
 	/**
-	 * Disposes this column.
+	 * Disposes this ruler column.
 	 * <p>
-	 * Creators are responsible to call this method.
-	 * </p>
+	 * Subclasses may extend this method.</p>
+	 * <p>
+	 * Clients who created this column are responsible to call this method
+	 * once the column is no longer used.</p>
 	 */
 	public void dispose() {
 		if (fTextViewer != null) {
