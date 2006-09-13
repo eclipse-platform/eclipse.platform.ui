@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
-import java.util.Vector;
-
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.events.PaintEvent;
@@ -38,7 +37,7 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
 public abstract class AbstractHyperlink extends Canvas {
 	private boolean hasFocus;
 
-	private Vector listeners;
+	private ListenerList listeners;
 
 	/**
 	 * Amount of the margin width around the hyperlink (default is 1).
@@ -128,9 +127,8 @@ public abstract class AbstractHyperlink extends Canvas {
 	 */
 	public void addHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
-			listeners = new Vector();
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+			listeners = new ListenerList();
+		listeners.add(listener);
 	}
 
 	/**
@@ -168,8 +166,9 @@ public abstract class AbstractHyperlink extends Canvas {
 		int size = listeners.size();
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
+		Object[] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkEntered(he);
 		}
 	}
@@ -185,8 +184,9 @@ public abstract class AbstractHyperlink extends Canvas {
 		int size = listeners.size();
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
+		Object[] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkExited(he);
 		}
 	}
@@ -203,8 +203,9 @@ public abstract class AbstractHyperlink extends Canvas {
 		setCursor(FormsResources.getBusyCursor());
 		HyperlinkEvent he = new HyperlinkEvent(this, getHref(), getText(),
 				e.stateMask);
+		Object[] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkActivated(he);
 		}
 		if (!isDisposed())

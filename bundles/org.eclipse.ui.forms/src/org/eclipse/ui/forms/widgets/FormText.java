@@ -14,9 +14,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.Accessible;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -193,7 +194,7 @@ public class FormText extends Canvas {
 
 	private FormTextModel model;
 
-	private Vector listeners;
+	private ListenerList listeners;
 
 	private Hashtable resourceTable = new Hashtable();
 
@@ -950,9 +951,8 @@ public class FormText extends Canvas {
 	 */
 	public void addHyperlinkListener(IHyperlinkListener listener) {
 		if (listeners == null)
-			listeners = new Vector();
-		if (!listeners.contains(listener))
-			listeners.add(listener);
+			listeners = new ListenerList();
+		listeners.add(listener);
 	}
 
 	/**
@@ -1464,8 +1464,9 @@ public class FormText extends Canvas {
 		int size = listeners.size();
 		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
 				.getText(), stateMask);
+		Object [] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkEntered(he);
 		}
 	}
@@ -1476,8 +1477,9 @@ public class FormText extends Canvas {
 		int size = listeners.size();
 		HyperlinkEvent he = new HyperlinkEvent(this, link.getHref(), link
 				.getText(), stateMask);
+		Object [] listenerList = listeners.getListeners();
 		for (int i = 0; i < size; i++) {
-			IHyperlinkListener listener = (IHyperlinkListener) listeners.get(i);
+			IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 			listener.linkExited(he);
 		}
 	}
@@ -1509,9 +1511,9 @@ public class FormText extends Canvas {
 			int size = listeners.size();
 			HyperlinkEvent e = new HyperlinkEvent(this, link.getHref(), link
 					.getText(), stateMask);
+			Object [] listenerList = listeners.getListeners();
 			for (int i = 0; i < size; i++) {
-				IHyperlinkListener listener = (IHyperlinkListener) listeners
-						.get(i);
+				IHyperlinkListener listener = (IHyperlinkListener) listenerList[i];
 				listener.linkActivated(e);
 			}
 		}
