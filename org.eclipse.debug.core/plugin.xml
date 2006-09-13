@@ -18,6 +18,7 @@
    <extension-point id="sourceContainerTypes" name="%sourceContainerTypesName" schema="schema/sourceContainerTypes.exsd"/>
    <extension-point id="sourcePathComputers" name="%sourcePathComputersName" schema="schema/sourcePathComputers.exsd"/>
    <extension-point id="logicalStructureProviders" name="%logicalStructureProvidersExtensionPointName" schema="schema/logicalStructureProviders.exsd"/>
+   <extension-point id="launchOptions" name="%launchOptionsExtensionpointName" schema="schema/launchOptions.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -159,6 +160,14 @@
             class="org.eclipse.debug.internal.core.sourcelookup.SourceLocatorMementoComparator"
             id="org.eclipse.debug.core.sourceLocatorMementoComparator">
       </launchConfigurationComparator>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchOptions">
+      <launchOption
+            id="org.eclipse.debug.core.debug"
+            label="Debug"
+            option="debug">
+      </launchOption>
    </extension>   
 
 </plugin>

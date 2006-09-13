@@ -57,8 +57,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -81,6 +79,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.debug.core.ILaunchOption;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.IStatusHandler;
@@ -558,6 +557,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private Map fLaunchModes = null;
 	
 	/**
+	 * Registered launch options, or <code>null</code> if not initialized
+	 * Map is of the form <code>Map<id, option></code>
+	 * @since 3.3
+	 */
+	private HashMap fLaunchOptions = null;
+	
+	/**
 	 * List of contributed launch delegates (delegates contributed for existing
 	 * launch configuration types).
 	 */
@@ -863,7 +869,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * added/changed/removed..
 	 */
 	public void fireUpdate(ILaunch launch, int update) {
-		getLaunchNotifier().notify(launch, update);
+		new LaunchNotifier().notify(launch, update);
 	}
 
 	/**
@@ -871,7 +877,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * added/changed/removed.
 	 */
 	public void fireUpdate(ILaunch[] launches, int update) {
-		getLaunchesNotifier().notify(launches, update);
+		new LaunchesNotifier().notify(launches, update);
 	}
 							
 	/**
@@ -918,7 +924,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				fLaunchConfigurationIndex = new ArrayList(20);
 				List configs = findLocalLaunchConfigurations();
 				verifyConfigurations(configs, fLaunchConfigurationIndex);
-				configs = findLaunchConfigurations(getWorkspaceRoot());
+				configs = findLaunchConfigurations(ResourcesPlugin.getWorkspace().getRoot());
 				verifyConfigurations(configs, fLaunchConfigurationIndex);
 			} finally {
 				hookResourceChangeListener();				
@@ -1244,27 +1250,21 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @see ILaunchManager#getLaunchConfigurationType(String)
 	 */
 	public ILaunchConfigurationType getLaunchConfigurationType(String id) {
-		Iterator iter = getLaunchConfigurationTypeList().iterator();
-		while (iter.hasNext()) {
-			ILaunchConfigurationType type = (ILaunchConfigurationType)iter.next();
-			if (type.getIdentifier().equals(id)) {
-				return type;
+		ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
+		for(int i = 0; i < types.length; i++) {
+			if (types[i].getIdentifier().equals(id)) {
+				return types[i];
 			}
 		}
 		return null;
 	}
-	
-	private List getLaunchConfigurationTypeList() {
-		initializeLaunchConfigurationTypes();
-		return fLaunchConfigurationTypes;
-	}
-	
+
 	/**
 	 * @see ILaunchManager#getLaunchConfigurationTypes()
 	 */
 	public ILaunchConfigurationType[] getLaunchConfigurationTypes() {
-		List types= getLaunchConfigurationTypeList();
-		return (ILaunchConfigurationType[])types.toArray(new ILaunchConfigurationType[types.size()]);
+		initializeLaunchConfigurationTypes();
+		return (ILaunchConfigurationType[])fLaunchConfigurationTypes.toArray(new ILaunchConfigurationType[fLaunchConfigurationTypes.size()]);
 	}
 	
 	/**
@@ -1274,10 +1274,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		synchronized (fLaunches) {
 			return (ILaunch[])fLaunches.toArray(new ILaunch[fLaunches.size()]);
 		}
-	}
-	
-	private LaunchesNotifier getLaunchesNotifier() {
-		return new LaunchesNotifier();
 	}
 	
 	/* (non-Javadoc)
@@ -1297,8 +1293,21 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
 	}
 	
-	private LaunchNotifier getLaunchNotifier() {
-		return new LaunchNotifier();
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchOption(java.lang.String)
+	 */
+	public ILaunchOption getLaunchOption(String optionId) {
+		initializeLaunchOptions();
+		return (ILaunchOption)fLaunchOptions.get(optionId);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchOptions()
+	 */
+	public ILaunchOption[] getLaunchOptions() {
+		initializeLaunchOptions();
+		Collection col = fLaunchOptions.values();
+		return (ILaunchOption[])col.toArray(new ILaunchOption[col.size()]);
 	}
 		
 	/**
@@ -1309,8 +1318,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	protected List getLocalLaunchConfigurations() {
 		Iterator iter = getAllLaunchConfigurations().iterator();
 		List configs = new ArrayList();
+		ILaunchConfiguration config = null;
 		while (iter.hasNext()) {
-			ILaunchConfiguration config = (ILaunchConfiguration)iter.next();
+			config = (ILaunchConfiguration)iter.next();
 			if (config.isLocal()) {
 				configs.add(config);
 			}
@@ -1465,22 +1475,13 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		initializeSourceContainerTypes();
 		return (ISourcePathComputer) sourcePathComputers.get(id);
 	}
-	
-	
-	private IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-		
-	private IWorkspaceRoot getWorkspaceRoot() {
-		return getWorkspace().getRoot();
-	}
 
 	/**
      * Starts listening for resource change events
      */
     private synchronized void hookResourceChangeListener() {
         if (!fListening) {
-            getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
+        	ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE | IResourceChangeEvent.PRE_DELETE);
             fListening = true;
         }
     }
@@ -1516,11 +1517,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		if (fContributedDelegates == null) {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_DELEGATES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-			fContributedDelegates= new ArrayList(infos.length);
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				ContributedDelegate delegate = new ContributedDelegate(configurationElement); 			
-				fContributedDelegates.add(delegate);
+			fContributedDelegates = new ArrayList(infos.length);
+			for (int i= 0; i < infos.length; i++) {		
+				fContributedDelegates.add(new ContributedDelegate(infos[i]));
 			}
 		}
 	}
@@ -1547,22 +1546,40 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private synchronized void initializeLaunchModes() {
 		if (fLaunchModes == null) {
-			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
-			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-			fLaunchModes = new HashMap();
-			for (int i= 0; i < infos.length; i++) {
-				IConfigurationElement configurationElement = infos[i];
-				try {
-					ILaunchMode mode = new LaunchMode(configurationElement);
+			try {
+				IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_MODES);
+				IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+				fLaunchModes = new HashMap();
+				ILaunchMode mode = null;
+				for (int i= 0; i < infos.length; i++) {
+					mode = new LaunchMode(infos[i]);
 					fLaunchModes.put(mode.getIdentifier(), mode);
-				} catch (CoreException e) {
-					DebugPlugin.log(e);
 				}
-				
-			}
+			} 
+			catch (CoreException e) {DebugPlugin.log(e);}
 		}
 	}
 
+	/**
+	 * Initializes the listing of registered launch options. Does no work if the mapping is already populated.
+	 * @since 3.3  
+	 */
+	private synchronized void initializeLaunchOptions() {
+		if(fLaunchOptions == null) {
+			try {
+				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_OPTIONS);
+				IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
+				fLaunchOptions = new HashMap();
+				ILaunchOption option = null;
+				for(int i =  0; i < infos.length; i++) {
+					option = new LaunchOption(infos[i]);
+					fLaunchOptions.put(option.getIdentifier(), option);
+				}
+			}
+			catch(CoreException ce) {DebugPlugin.log(ce);}
+		}
+	}
+	
 	/**
 	 * Initializes source container type and source path computer extensions.
 	 */
@@ -1738,7 +1755,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param config the launch configuration that was changed
 	 */
 	protected void launchConfigurationChanged(ILaunchConfiguration config) {
-		removeInfo(config);
+		fLaunchConfigurations.remove(config);
 		clearConfigNameCache();
 		if (isValid(config)) {
 			// in case the config has been refreshed and it was removed from the
@@ -1760,7 +1777,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param config the launch configuration that was deleted
 	 */
 	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
-		removeInfo(config);
+		fLaunchConfigurations.remove(config);
 		getAllLaunchConfigurations().remove(config);
 		getConfigurationNotifier().notify(config, REMOVED);
 		clearConfigNameCache();			
@@ -1819,17 +1836,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				launchConfigurationAdded(config);
 			}			
 		}
-	}
-	
-	/**
-	 * Removes the given launch configuration from the cache of configurations.
-	 * When a local configuration is deleted, this method is called, as there will
-	 * be no resource delta generated to auto-update the cache.
-	 * 
-	 * @param configuration the configuration to remove
-	 */
-	private void removeInfo(ILaunchConfiguration configuration) {
-		fLaunchConfigurations.remove(configuration);
 	}
 	
 	/**
@@ -1966,7 +1972,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 		clearAllLaunchConfigurations();
 
-		getWorkspace().removeResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
 	/**

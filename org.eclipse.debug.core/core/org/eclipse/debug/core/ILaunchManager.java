@@ -225,6 +225,21 @@ public interface ILaunchManager {
 	public ILaunchMode[] getLaunchModes();
 	
 	/**
+	 * Returns the launch option registered with the given id
+	 * @param optionId the unique id of the launch option
+	 * @return the lauch option associated with ther specified id or <code>null</code> if not found
+	 * @since 3.3
+	 */
+	public ILaunchOption getLaunchOption(String optionId);
+	
+	/**
+	 * Returns all registered launch options
+	 * @return all registered launch options
+	 * @since 3.3
+	 */
+	public ILaunchOption[] getLaunchOptions();
+	
+	/**
 	 * Returns a collection of launch configurations that required migration to be
 	 * compatible with current tooling.
 	 * 

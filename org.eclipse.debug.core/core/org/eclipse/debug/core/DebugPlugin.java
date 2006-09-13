@@ -182,6 +182,13 @@ public class DebugPlugin extends Plugin {
 	public static final String EXTENSION_POINT_SOURCE_PATH_COMPUTERS = "sourcePathComputers"; //$NON-NLS-1$
 	
 	/**
+	 * Simple identifier constant for the launch options extension point
+	 * 
+	 * @since 3.3
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_OPTIONS = "launchOptions"; //$NON-NLS-1$
+	
+	/**
 	 * Status code indicating an unexpected internal error.
 	 */
 	public static final int INTERNAL_ERROR = 120;		

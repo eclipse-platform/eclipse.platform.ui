@@ -147,11 +147,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			ILaunchMode[] modes = launchManager.getLaunchModes();
 			fLoadedModes = new HashSet(3);
 			for (int i = 0; i < types.length; i++) {
-				ILaunchConfigurationType type = types[i];
 				for (int j = 0; j < modes.length; j++) {
-					ILaunchMode launchMode = modes[j];
-					if (type.supportsMode(launchMode.getIdentifier())) {
-						fLoadedModes.add(launchMode.getIdentifier());
+					if (types[i].supportsMode(modes[j].getIdentifier())) {
+						fLoadedModes.add(modes[j].getIdentifier());
 					}
 				}
 			}
