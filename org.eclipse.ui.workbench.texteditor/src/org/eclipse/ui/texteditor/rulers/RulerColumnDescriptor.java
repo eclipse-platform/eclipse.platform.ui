@@ -246,16 +246,16 @@ public final class RulerColumnDescriptor {
 	}
 
 	/**
-	 * Creates a {@link RulerColumn} instance as described by the receiver. This may load the contributing plug-in.
+	 * Creates a {@link IContributedRulerColumn} instance as described by the receiver. This may load the contributing plug-in.
 	 * 
 	 * @param editor the editor that loads the contributed column
 	 * @return the instantiated column
 	 * @throws CoreException as thrown by {@link IConfigurationElement#createExecutableExtension(String)}
 	 * @throws InvalidRegistryObjectException as thrown by {@link IConfigurationElement#createExecutableExtension(String)}
 	 */
-	public RulerColumn createColumn(ITextEditor editor) throws CoreException, InvalidRegistryObjectException {
+	public IContributedRulerColumn createColumn(ITextEditor editor) throws CoreException, InvalidRegistryObjectException {
 		Assert.isLegal(editor != null);
-		RulerColumn column= (RulerColumn) fElement.createExecutableExtension(CLASS);
+		IContributedRulerColumn column= (IContributedRulerColumn)fElement.createExecutableExtension(CLASS);
 		column.setDescriptor(this);
 		column.setEditor(editor);
 		column.columnCreated();
@@ -264,11 +264,11 @@ public final class RulerColumnDescriptor {
 
 	/**
 	 * Notifies the descriptor of the fact that a column is no longer needed. Calls the
-	 * {@link RulerColumn#columnRemoved()} hook.
+	 * {@link IContributedRulerColumn#columnRemoved()} hook.
 	 * 
 	 * @param column the column that is no longer used
 	 */
-	public void disposeColumn(RulerColumn column) {
+	public void disposeColumn(IContributedRulerColumn column) {
 		Assert.isLegal(column != null);
 		column.columnRemoved();
 	}
