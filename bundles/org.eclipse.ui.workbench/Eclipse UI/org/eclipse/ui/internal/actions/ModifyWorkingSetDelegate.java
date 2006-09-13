@@ -29,7 +29,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
@@ -184,46 +184,48 @@ public class ModifyWorkingSetDelegate extends
 	 */
 	public void selectionChanged(IAction actionProxy, ISelection selection) {
 		super.selectionChanged(actionProxy, selection);
-
 		menuItems.clear();
-		IWorkingSet[][] typedSets = splitSets();
+		if (selection instanceof IStructuredSelection) {
+			Collection selectedElements = ((IStructuredSelection) getSelection())
+			.toList();
+			
+			IWorkingSet[][] typedSets = splitSets();
 
-		for (int i = 0; i < typedSets.length; i++) {
-			// add a seperator only if the last item is not a seperator
-			if (menuItems.size() > 0
-					&& menuItems.get(menuItems.size() - 1) != SEPERATORMARKER)
-				menuItems.add(SEPERATORMARKER);
-			IWorkingSet[] sets = typedSets[i];
-			for (int j = 0; j < sets.length; j++) {
-				IWorkingSet set = sets[j];
-				Collection selectedElements = ((StructuredSelection) getSelection())
-						.toList();
-				Set existingElements = new HashSet();
-				existingElements.addAll(Arrays.asList(set.getElements()));
+			for (int i = 0; i < typedSets.length; i++) {
+				// add a seperator only if the last item is not a seperator
+				if (menuItems.size() > 0
+						&& menuItems.get(menuItems.size() - 1) != SEPERATORMARKER)
+					menuItems.add(SEPERATORMARKER);
+				IWorkingSet[] sets = typedSets[i];
+				for (int j = 0; j < sets.length; j++) {
+					IWorkingSet set = sets[j];
+					
+					Set existingElements = new HashSet();
+					existingElements.addAll(Arrays.asList(set.getElements()));
 
-				boolean visible = false;
-				for (Iterator k = selectedElements.iterator(); k.hasNext();) {
-					IAdaptable object = (IAdaptable) k.next();
-					if (add) {
-						if (!existingElements.contains(object)) {
-							visible = true; // show if any element is not
-							// present in addition
-							break;
-						}
-					} else {
-						if (existingElements.contains(object)) {
-							visible = true; // show if any element is present in
-							// removal
-							break;
+					boolean visible = false;
+					for (Iterator k = selectedElements.iterator(); k.hasNext();) {
+						IAdaptable object = (IAdaptable) k.next();
+						if (add) {
+							if (!existingElements.contains(object)) {
+								visible = true; // show if any element is not
+								// present in addition
+								break;
+							}
+						} else {
+							if (existingElements.contains(object)) {
+								visible = true; // show if any element is present in
+								// removal
+								break;
+							}
 						}
 					}
+					if (visible) {
+						ModifyAction action = new ModifyAction(set,
+								selectedElements);
+						menuItems.add(action);
+					}
 				}
-				if (visible) {
-					ModifyAction action = new ModifyAction(set,
-							selectedElements);
-					menuItems.add(action);
-				}
-
 			}
 		}
 		actionProxy.setEnabled(!menuItems.isEmpty()); // enable the item if
