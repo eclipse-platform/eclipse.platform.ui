@@ -668,7 +668,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 
 				e.gc.setForeground(fSeparatorColor);
-				e.gc.setLineWidth(1);
+				e.gc.setLineWidth(0 /* 1 */);
 				e.gc.drawLine(0+1, s.y-1, s.x-1-1, s.y-1);
 			}
 		}
@@ -1697,7 +1697,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 							r.width--;
 							r.height--;
 						} else {
-							gc.setLineWidth(1);
+							gc.setLineWidth(0 /* 1 */);
 						}
 						gc.drawRectangle(r);
 					}
@@ -3686,7 +3686,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					g.fillRectangle(0, ly, w2, lh);		// left
 					g.fillRectangle(w-w2, ry, w2, rh);	// right
 
-					g.setLineWidth(LW);
+					g.setLineWidth(0 /* LW */);
 					g.setForeground(strokeColor);
 					g.drawRectangle(0-1, ly, w2, lh);	// left
 					g.drawRectangle(w-w2, ry, w2, rh);	// right
@@ -3703,7 +3703,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					if (fUseSplines) {
 						g.setBackground(fillColor);
 
-						g.setLineWidth(LW);
+						g.setLineWidth(0 /* LW */);
 						g.setForeground(strokeColor);
 
 						int[] topPoints= getCenterCurvePoints(fPts[0], fPts[1], fPts[2], fPts[3]);
@@ -3721,7 +3721,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						g.setBackground(fillColor);
 						g.fillPolygon(fPts);
 
-						g.setLineWidth(LW);
+						g.setLineWidth(0 /* LW */);
 						g.setForeground(strokeColor);
 						g.drawLine(fPts[0], fPts[1], fPts[2], fPts[3]);
 						g.drawLine(fPts[6], fPts[7], fPts[4], fPts[5]);
@@ -3820,7 +3820,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				else
 					g.fillRectangle(x+w2, y, w2, h);
 	
-				g.setLineWidth(LW);
+				g.setLineWidth(0 /* LW */);
 				g.setForeground(getColor(display, getStrokeColor(diff)));
 				if (right)
 					g.drawRectangle(x-1, y-1, w2, h);
