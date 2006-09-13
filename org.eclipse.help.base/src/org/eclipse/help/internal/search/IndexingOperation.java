@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +37,6 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
 import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
-import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.search.LuceneSearchParticipant;
 
@@ -266,22 +264,6 @@ class IndexingOperation {
 		MultiStatus multiStatus = null;
 		for (Iterator it = addedDocs.iterator(); it.hasNext();) {
 			URL doc = (URL) it.next();
-			
-			/*
-			 * Index unfiltered documents (but with extensions and includes
-			 * resolved). We perform a second search pass on filtered content to
-			 * weed out false positives at search time.
-			 */
-			String file = doc.getFile();
-			file += (file.indexOf('?') == -1) ? '?' : '&';
-			file += "filter=false"; //$NON-NLS-1$
-			try {
-				doc = new URL("help", null, -1, file, HelpURLStreamHandler.getDefault()); //$NON-NLS-1$
-			}
-			catch (MalformedURLException e) {
-				HelpBasePlugin.logError("Error occured while adding filter parameter to URL of document to be indexed", e); //$NON-NLS-1$
-			}
-
 			IStatus status = index.addDocument(getName(doc), doc);
 			if (status.getCode() != IStatus.OK) {
 				if (multiStatus == null) {

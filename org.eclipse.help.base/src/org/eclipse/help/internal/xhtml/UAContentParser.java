@@ -1,12 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import java.io.IOException;
@@ -26,17 +27,12 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-
-/**
- * 
- */
 public class UAContentParser {
 
 	private static String TAG_HTML = "html"; //$NON-NLS-1$
 	protected static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
 	protected static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
 	protected static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-
 
 	protected static Hashtable dtdMap = new Hashtable();
 
@@ -55,8 +51,6 @@ public class UAContentParser {
 		URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
 		dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
 	}
-
-
 
 	private Document document;
 	private boolean hasXHTMLContent;
@@ -85,7 +79,6 @@ public class UAContentParser {
 	}
 
 	private DocumentBuilder createParser() {
-
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			docFactory.setValidating(false);
@@ -115,8 +108,6 @@ public class UAContentParser {
 		}
 		return null;
 	}
-
-
 
 	private Document doParse(Object fileObject) {
 		try {
@@ -149,8 +140,4 @@ public class UAContentParser {
 	public boolean hasXHTMLContent() {
 		return hasXHTMLContent;
 	}
-
-
-
-
 }

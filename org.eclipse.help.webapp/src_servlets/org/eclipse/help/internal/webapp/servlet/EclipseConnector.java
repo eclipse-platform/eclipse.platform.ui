@@ -10,40 +10,23 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.Locale;
+import java.net.*;
+import java.util.*;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.*;
+import javax.servlet.http.*;
 
-import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.remote.RemoteHelp;
-import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
-import org.eclipse.help.internal.util.URLCoder;
-import org.eclipse.help.internal.webapp.data.ServletResources;
-import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.protocols.*;
+import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.data.*;
 
 /**
  * Performs transfer of data from eclipse to a jsp/servlet
  */
 public class EclipseConnector {
-	
-	private static final String PATH_TOPIC = "/ntopic/"; //$NON-NLS-1$
-
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
 			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
@@ -51,21 +34,15 @@ public class EclipseConnector {
 			+ "<body><p>\n"; //$NON-NLS-1$
 	private static final String errorPageEnd = "</p></body></html>"; //$NON-NLS-1$
 	private static final IFilter filters[] = new IFilter[]{
-			new HighlightFilter(), new FramesetFilter(), new InjectionFilter()};
+			new HighlightFilter(), new FramesetFilter(), new InjectionFilter(), new DynamicXHTMLFilter() };
 
-	/**
-	 * Constructor.
-	 */
 	public EclipseConnector(ServletContext context) {
-		//this.context = context;
 	}
 
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-
 		try {
-
-			String url = getURL(req, false);
+			String url = getURL(req);
 			if (url == null)
 				return;
 			if (url.toLowerCase(Locale.ENGLISH).startsWith("file:/") //$NON-NLS-1$
@@ -100,26 +77,18 @@ public class EclipseConnector {
 			}
 			resp.setHeader("Cache-Control", "max-age=" + maxAge); //$NON-NLS-1$ //$NON-NLS-2$
 
-			InputStream is = null;
+			InputStream is;
 			try {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
-				// if we're not in an infocenter, check if there's remote content
-				if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
-					is = openRemoteInputStream(req, resp);
-				}
-				if (is == null) {
-					// couldn't find any content, remote or local
-					resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-					if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
-							|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
-						String error = errorPageBegin
-								+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
-								+ errorPageEnd;
-						is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
-					} else {
-						return;
-					}
+				if (url.toLowerCase(Locale.ENGLISH).endsWith("htm") //$NON-NLS-1$
+						|| url.toLowerCase(Locale.ENGLISH).endsWith("html")) { //$NON-NLS-1$
+					String error = errorPageBegin
+							+ ServletResources.getString("noTopic", req) //$NON-NLS-1$
+							+ errorPageEnd;
+					is = new ByteArrayInputStream(error.getBytes("UTF8")); //$NON-NLS-1$
+				} else {
+					return;
 				}
 			}
 			catch (Exception e) {
@@ -152,11 +121,12 @@ public class EclipseConnector {
 			}
 
 			transferContent(is, out);
-			out.flush();
+			out.close();
 			is.close();
 
 		} catch (Exception e) {
-			//e.printStackTrace();
+			String msg = "Error processing help request " + getURL(req); //$NON-NLS-1$
+			HelpWebappPlugin.logError(msg, e);
 		}
 	}
 
@@ -181,7 +151,6 @@ public class EclipseConnector {
 				out.write(buffer, 0, len);
 			}
 		} catch (Exception e) {
-			// e.printStackTrace();
 		}
 	}
 
@@ -191,8 +160,6 @@ public class EclipseConnector {
 	private URLConnection openConnection(String url,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		//System.out.println("help content for: " + url);
-
 		URLConnection con = null;
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
@@ -203,7 +170,6 @@ public class EclipseConnector {
 				url = url + "?lang=" + locale; //$NON-NLS-1$
 			}
 		}
-		// URL helpURL = new URL(url);
 		URL helpURL;
 		if (url.startsWith("help:")) { //$NON-NLS-1$
 			helpURL = new URL("help", //$NON-NLS-1$
@@ -235,32 +201,10 @@ public class EclipseConnector {
 		return con;
 	}
 
-	/*
-	 * Opens a connection to the document on the remote help server, if one
-	 * was specified. If the document doesn't exist on the remote server,
-	 * returns null;
-	 */
-	private InputStream openRemoteInputStream(HttpServletRequest req, HttpServletResponse resp) {
-		if (RemoteHelp.isEnabled()) {
-			try {
-				URL url = RemoteHelp.getURL(PATH_TOPIC + getURL(req, true));
-				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-				if (connection.getResponseCode() != HttpServletResponse.SC_NOT_FOUND) {
-					return connection.getInputStream();
-				}
-			}
-			catch (IOException e) {
-				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-				HelpBasePlugin.logError(msg, e);
-			}
-		}
-		return null;
-	}
-	
 	/**
 	 * Extracts the url from a request
 	 */
-	private String getURL(HttpServletRequest req, boolean encode) {
+	private String getURL(HttpServletRequest req) {
 		String query = ""; //$NON-NLS-1$
 		boolean firstParam = true;
 		for (Enumeration params = req.getParameterNames(); params
@@ -270,12 +214,11 @@ public class EclipseConnector {
 			if (values == null)
 				continue;
 			for (int i = 0; i < values.length; i++) {
-				String value = encode ? URLCoder.encode(values[i]) : values[i];
 				if (firstParam) {
-					query += "?" + param + "=" + value; //$NON-NLS-1$ //$NON-NLS-2$
+					query += "?" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
 					firstParam = false;
 				} else
-					query += "&" + param + "=" + value; //$NON-NLS-1$ //$NON-NLS-2$
+					query += "&" + param + "=" + values[i]; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 
@@ -285,5 +228,4 @@ public class EclipseConnector {
 			url = url.substring(1);
 		return url;
 	}
-
 }

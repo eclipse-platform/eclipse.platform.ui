@@ -25,7 +25,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.browser.IBrowser;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.util.IErrorUtil;
 import org.eclipse.help.internal.browser.BrowserManager;
@@ -236,6 +238,17 @@ public final class BaseHelpSystem {
 		if (HelpBasePlugin.DEBUG) {
 			System.out.println("Base Help System started."); //$NON-NLS-1$
 		}
+		
+		/*
+         * Assigns the provider responsible for providing help
+         * document content.
+         */
+		HelpPlugin.getDefault().setHelpProvider(new HelpProvider());
+		
+		/*
+         * Assigns the platform's content filter.
+         */
+		UAContentFilter.setContentFilterInternal(new HelpContentFilter());
 	}
 
 	public static boolean ensureWebappRunning() {
@@ -319,7 +332,8 @@ public final class BaseHelpSystem {
 	public static String unresolve(String href) {
 		String[] baseVariants = { getBase("/help/topic"), //$NON-NLS-1$
 				getBase("/help/nftopic"),  //$NON-NLS-1$
-				getBase("/help/ntopic") }; //$NON-NLS-1$
+				getBase("/help/ntopic"),  //$NON-NLS-1$
+				getBase("/help/rtopic") }; //$NON-NLS-1$
 		for (int i = 0; i < baseVariants.length; i++) {
 			if (href.startsWith(baseVariants[i]))
 				return href.substring(baseVariants[i].length());

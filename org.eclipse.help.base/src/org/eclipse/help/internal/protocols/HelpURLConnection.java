@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.help.internal.protocols;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteHelp;
+import org.eclipse.help.internal.util.ResourceLocator;
+import org.eclipse.help.internal.util.URLCoder;
+import org.osgi.framework.Bundle;
 
 /**
  * URLConnection to help documents in plug-ins
@@ -31,6 +42,7 @@ public class HelpURLConnection extends URLConnection {
 	private final static String LANG = "lang"; //$NON-NLS-1$
 	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
 	private final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
+	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
 	// document caching - disabled if running in dev mode
 	protected static boolean cachingEnabled = true;
 	static {
@@ -95,11 +107,7 @@ public class HelpURLConnection extends URLConnection {
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
 		Bundle plugin = getPlugin();
-		if (plugin == null) {
-			throw new IOException("Resource not found."); //$NON-NLS-1$
-		}
-
-		if (plugin.getSymbolicName().equals(getAppserverImplPluginId())) {
+		if (plugin != null && plugin.getSymbolicName().equals(getAppserverImplPluginId())) {
 			// Do not return documents from app server implementation plug-in
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
@@ -108,23 +116,29 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
-		// first try using content provider, then try to find the file
-		// inside doc.zip, and finally try the file system
-		InputStream inputStream = ResourceLocator.openFromProducer(plugin, query == null ? getFile()
-				: getFile() + "?" + query, //$NON-NLS-1$
-				getLocale());
-
-		if (inputStream == null) {
-			inputStream = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
-					getFile(), getLocale());
+		InputStream in = null;
+		if (plugin != null) {
+			// first try using content provider, then try to find the file
+			// inside doc.zip, and finally try the file system
+			in = ResourceLocator.openFromProducer(plugin, query == null ? getFile()
+					: getFile() + "?" + query, //$NON-NLS-1$
+					getLocale());
+	
+			if (in == null) {
+				in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
+						getFile(), getLocale());
+			}
+			if (in == null) {
+				in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
+			}
 		}
-		if (inputStream == null) {
-			inputStream = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
+		else {
+			in = openFromRemoteServer(getHref(), getLocale());
 		}
-		if (inputStream == null) {
+		if (in == null) {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
-		return inputStream;
+		return in;
 	}
 
 	public long getExpiration() {
@@ -271,6 +285,10 @@ public class HelpURLConnection extends URLConnection {
 		return plugin;
 	}
 
+	private String getHref() {
+		return '/' + pluginAndFile;
+	}
+	
 	public boolean isCacheable() {
 		if (getValue("resultof") != null) //$NON-NLS-1$
 			return false;
@@ -321,6 +339,28 @@ public class HelpURLConnection extends URLConnection {
 			}
 		}
 		return appserverImplPluginId;
+	}
+
+	/*
+	 * Opens a connection to the document on the remote help server, if one
+	 * was specified. If the document doesn't exist on the remote server,
+	 * returns null.
+	 */
+	private InputStream openFromRemoteServer(String href, String locale) {
+		if (RemoteHelp.isEnabled()) {
+			try {
+				URL url = RemoteHelp.getURL(PATH_RTOPIC + href);
+				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+				if (connection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
+					return connection.getInputStream();
+				}
+			}
+			catch (IOException e) {
+				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
+				HelpBasePlugin.logError(msg, e);
+			}
+		}
+		return null;
 	}
 
 }

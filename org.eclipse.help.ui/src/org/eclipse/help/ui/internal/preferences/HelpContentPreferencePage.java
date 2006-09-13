@@ -13,8 +13,7 @@ package org.eclipse.help.ui.internal.preferences;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
-import org.eclipse.help.internal.base.remote.RemoteIndexProvider;
-import org.eclipse.help.internal.base.remote.RemoteTocProvider;
+import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.PreferencePage;
@@ -117,20 +116,7 @@ public class HelpContentPreferencePage extends PreferencePage
 		prefs.setValue(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, portText.getText().trim());
 		
 		HelpBasePlugin.getDefault().savePluginPreferences();
-		
-		/*
-		 * Let the providers know that preferences changed and that the
-		 * content may be outdated.
-		 */
-		RemoteIndexProvider indexProvider = RemoteIndexProvider.getInstance();
-		if (indexProvider != null) {
-			indexProvider.notifyPreferencesChanged();
-		}
-		RemoteTocProvider tocProvider = RemoteTocProvider.getInstance();
-		if (tocProvider != null) {
-			tocProvider.notifyPreferencesChanged();
-		}
-		
+		RemoteHelp.notifyPreferenceChange();
 		return true;
 	}
 	

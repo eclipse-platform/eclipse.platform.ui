@@ -1,18 +1,18 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import org.eclipse.help.internal.util.StringUtil;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
-
 
 public abstract class AbstractUAElement {
 
@@ -20,7 +20,6 @@ public abstract class AbstractUAElement {
 
 	AbstractUAElement() {
 	}
-
 
 	/**
 	 * Constructor used when model elements are being loaded from an xml content file. Bundle is
@@ -32,8 +31,6 @@ public abstract class AbstractUAElement {
 	AbstractUAElement(Element element, Bundle bundle) {
 		this.bundle = bundle;
 	}
-
-
 
 	/**
 	 * DOM getAttribute retruns an empty string (not null) if attribute is not defined. Override
@@ -62,7 +59,6 @@ public abstract class AbstractUAElement {
 		return null;
 	}
 
-
 	/**
 	 * Returns the plugin descriptor of the plugin from which this element was loaded. In the case
 	 * of extension, returns the plugin descriptor of the plugin defining the extension.
@@ -72,8 +68,4 @@ public abstract class AbstractUAElement {
 	public Bundle getBundle() {
 		return bundle;
 	}
-
-
-
-
 }

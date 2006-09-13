@@ -1,12 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import java.io.ByteArrayInputStream;
@@ -26,12 +27,10 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentType;
 
-
 /**
  * Handles all XSL transforms applied to XHTML UA content.
  */
 public class UATransformManager {
-
 
 	private static Transformer createTransformer(Document document) {
 		try {
@@ -49,14 +48,11 @@ public class UATransformManager {
 				transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes"); //$NON-NLS-1$
 
-			} else
-				;
-
+			}
 			return transformer;
 
 		} catch (TransformerConfigurationException tce) {
 			HelpPlugin.logError("Transformer Config error: " + tce.getMessage(), null); //$NON-NLS-1$
-
 			Throwable x = tce;
 			if (tce.getException() != null)
 				x = tce.getException();
@@ -74,8 +70,8 @@ public class UATransformManager {
 
 			transformer.transform(source, result);
 			return stringBuffer.toString();
-
-		} catch (TransformerException te) {
+		}
+		catch (TransformerException te) {
 			HelpPlugin.logError("Transformer error: " + te.getMessage(), te); //$NON-NLS-1$
 			Throwable x = te;
 			if (te.getException() != null)
@@ -92,11 +88,8 @@ public class UATransformManager {
 		try {
 			ba = xhtml.getBytes("UTF-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException ue) {
-			;
 		}
 		ByteArrayInputStream is = new ByteArrayInputStream(ba);
 		return is;
 	}
-
-
 }

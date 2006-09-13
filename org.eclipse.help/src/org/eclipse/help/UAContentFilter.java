@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help;
 
-import org.eclipse.help.internal.FilterableUAElement;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
 
 /**
  * <p>
@@ -23,7 +21,9 @@ import org.eclipse.help.internal.xhtml.XHTMLSupport;
  * 
  * @since 3.2
  */
-public class UAContentFilter {
+public abstract class UAContentFilter {
+	
+	private static UAContentFilter filterInternal;
 	
 	/**
 	 * <p>
@@ -37,9 +37,21 @@ public class UAContentFilter {
 	 * @return whether or not the element should be filtered out
 	 */
 	public static boolean isFiltered(Object element) {
-		if (element instanceof FilterableUAElement) {
-			return !XHTMLSupport.getFilterProcessor().isFilteredIn((FilterableUAElement)element);
+		if (filterInternal != null) {
+			return filterInternal.isFilteredInternal(element);
 		}
 		return false;
+	}
+	
+	/*
+	 * Internal; do not use.
+	 */
+	public abstract boolean isFilteredInternal(Object element);
+	
+	/*
+	 * Internal; do not use.
+	 */
+	public static void setContentFilterInternal(UAContentFilter filterInternal) {
+		UAContentFilter.filterInternal = filterInternal;
 	}
 }

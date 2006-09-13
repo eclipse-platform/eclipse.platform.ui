@@ -1,12 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import java.util.Iterator;
@@ -24,7 +25,6 @@ import org.w3c.dom.NodeList;
 
 /**
  * Handles content manipulation. Filters filter content in as opposed to filtering out.
- * 
  */
 public class UAContentFilterProcessor {
 
@@ -103,7 +103,6 @@ public class UAContentFilterProcessor {
 		return false;
 	}
 
-
 	/**
 	 * Returns true is filter passes and Element is to be included.
 	 * 
@@ -119,7 +118,6 @@ public class UAContentFilterProcessor {
 		}
 		return filtered_in;
 	}
-
 
 	private boolean processFilterChildren(Element parent, Element[] filters) {
 		boolean filtered_in = false;
@@ -284,7 +282,6 @@ public class UAContentFilterProcessor {
 		return false;
 	}
 
-
 	public static boolean checkBundleState(Bundle bundle) {
 		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED
 				|| bundle.getState() == Bundle.INSTALLED)
@@ -292,7 +289,6 @@ public class UAContentFilterProcessor {
 
 		return true;
 	}
-
 
 	/**
 	 * evaluates system property filter.
@@ -303,5 +299,4 @@ public class UAContentFilterProcessor {
 			return true;
 		return false;
 	}
-
 }

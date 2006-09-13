@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.xhtml.BundleUtil;
+import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
@@ -222,7 +223,7 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 			stack.clear();
 			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
-			stream = url.openStream();
+			stream = DynamicXHTMLProcessor.process(pluginId, name, url.openStream(), index.getLocale(), false);
 			parser.parse(stream, handler);
 			doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
 			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal;
 
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -24,8 +25,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
 import org.eclipse.help.internal.index.IndexFileProvider;
 import org.eclipse.help.internal.index.IndexManager;
-import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.toc.TocFileProvider;
+import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -41,20 +42,19 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_CONTEXT = false;
 	public static boolean DEBUG_PROTOCOLS = false;
-	protected static HelpPlugin plugin;
-	// private static BundleContext bundleContext;
+	private static HelpPlugin plugin;
 	private List tocsChangedListeners = new Vector();
 
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_TOCS_KEY = "ignoredTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_INDEXES_KEY = "ignoredIndexes"; //$NON-NLS-1$
 
-	protected TocManager tocManager;
-	protected static Object tocManagerCreateLock = new Object();
-	protected ContextManager contextManager;
-
-	protected IndexManager indexManager;
-
+	private TocManager tocManager;
+	private static Object tocManagerCreateLock = new Object();
+	private ContextManager contextManager;
+	private IndexManager indexManager;
+	private IHelpProvider helpProvider;
+	
 	/**
 	 * Logs an Error message with an exception.
 	 */
@@ -193,4 +193,25 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		return getDefault().indexManager;
 	}
 
+	/*
+	 * Returns the provider responsible for serving help documents.
+	 */
+	public IHelpProvider getHelpProvider() {
+		return helpProvider;
+	}
+	
+	/*
+	 * Sets the provider responsible for serving help documents. Called
+	 * on startup.
+	 */
+	public void setHelpProvider(IHelpProvider helpProvider) {
+		this.helpProvider = helpProvider;
+	}
+	
+	/*
+	 * An interface by which higher plug-ins can serve help content.
+	 */
+	public static interface IHelpProvider {
+		public InputStream getHelpContent(String href);
+	}
 }

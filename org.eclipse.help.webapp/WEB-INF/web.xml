@@ -41,6 +41,11 @@
         <servlet-name>context</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.ContextServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>extension</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.ExtensionServlet</servlet-class>
+    </servlet>
           
 <!-- placeholder for JSPs web.xml -->
 
@@ -68,6 +73,11 @@
         <servlet-name>content</servlet-name>
         <url-pattern>/ntopic/*</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>content</servlet-name>
+        <url-pattern>/rtopic/*</url-pattern>
+    </servlet-mapping>
     
     <servlet-mapping>
         <servlet-name>livehelp</servlet-name>
@@ -92,6 +102,11 @@
     <servlet-mapping>
         <servlet-name>context</servlet-name>
         <url-pattern>/context/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>extension</servlet-name>
+        <url-pattern>/extension/*</url-pattern>
     </servlet-mapping>
     
 	<welcome-file-list>

@@ -9,12 +9,6 @@
    <extension-point id="contentExtension" name="%content_extension_point_name" schema="schema/contentExtension.exsd"/>
 
    <extension
-         id="dynamic"
-         point="org.eclipse.help.contentProducer">
-      <contentProducer producer="org.eclipse.help.internal.DynamicContentProducer"/>
-   </extension>
-
-   <extension
          point="org.eclipse.help.toc">
       <tocProvider class="org.eclipse.help.internal.toc.TocFileProvider"/>
    </extension>
@@ -23,6 +17,7 @@
          point="org.eclipse.help.index">
       <indexProvider class="org.eclipse.help.internal.index.IndexFileProvider"/>
    </extension>
+   
    <extension
          point="org.eclipse.help.contexts">
       <contextProvider

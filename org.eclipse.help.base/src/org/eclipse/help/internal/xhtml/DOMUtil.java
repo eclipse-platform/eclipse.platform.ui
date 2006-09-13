@@ -1,12 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import java.util.Enumeration;
@@ -17,7 +18,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 
 /**
  * Util class for model. Has methods for resolving model attributes, and methods for manipulating
@@ -35,10 +35,7 @@ public class DOMUtil {
 	public static String ATT_REL = "rel"; //$NON-NLS-1$
 	public static String ATT_TYPE = "type"; //$NON-NLS-1$
 	public static String ATT_FILTER = "filter"; //$NON-NLS-1$
-
-
-
-
+	
 	public static void insertBase(Document dom, String baseURL) {
 		// there should only be one head and one base element dom.
 		NodeList headList = dom.getElementsByTagName(TAG_HEAD);
@@ -51,7 +48,6 @@ public class DOMUtil {
 			head.insertBefore(base, head.getFirstChild());
 		}
 	}
-
 
 	public static Element getBase(Document dom) {
 		// there should only be one head and one base element dom.
@@ -109,8 +105,6 @@ public class DOMUtil {
 		return body;
 	}
 
-
-
 	public static Element createElement(Document dom, String elementName, Properties attributes) {
 
 		// make sure to create element with any namespace uri to enable finding
@@ -133,8 +127,6 @@ public class DOMUtil {
 		parentElement.appendChild(element);
 		return element;
 	}
-
-
 
 	/**
 	 * Returns an Element array of all first level descendant Elements with a given tag name, in the
@@ -179,7 +171,6 @@ public class DOMUtil {
 		return filteredElements;
 	}
 
-
 	/*
 	 * Util method similar to DOM getElementById() method, but it works without an id attribute
 	 * being specified. Deep searches all children in this container's DOM for the first child with
@@ -201,9 +192,6 @@ public class DOMUtil {
 
 	}
 
-
-
-
 	/**
 	 * Returns an array version of the passed NodeList. Used to work around DOM design issues.
 	 */
@@ -214,10 +202,8 @@ public class DOMUtil {
 		return nodes;
 	}
 
-
 	/**
 	 * Remove all instances of the element from the DOM.
-	 * 
 	 */
 	public static void removeAllElements(Document dom, String elementLocalName) {
 		// get all elements in DOM and remove them.
@@ -231,7 +217,4 @@ public class DOMUtil {
 		}
 
 	}
-
-
-
 }

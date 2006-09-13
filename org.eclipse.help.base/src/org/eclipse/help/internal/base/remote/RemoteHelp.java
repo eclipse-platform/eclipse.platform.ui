@@ -13,7 +13,9 @@ package org.eclipse.help.internal.base.remote;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
@@ -24,41 +26,42 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 public class RemoteHelp {
 
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
+	private static ListenerList listeners;
 
 	/*
-	 * Returns the hostname of the remote help server to use, or empty string
-	 * if not configured.
+	 * Adds a listener that will be notified whenever the user changes the
+	 * remote help server preferences.
 	 */
-	public static String getHost() {
-		return HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
+	public static void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+		if (listeners == null) {
+			listeners = new ListenerList();
+		}
+		listeners.add(listener);
 	}
-
+	
 	/*
-	 * Returns the path of the remote help server to use. Ensures that there
-	 * is a leading slash and no trailing slash, e.g. "/myPath"
+	 * Removes a listener.
 	 */
-	public static String getPath() {
-		String path = HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
-		if (!path.startsWith("/")) { //$NON-NLS-1$
-			path = '/' + path;
+	public static void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+		if (listeners != null) {
+			listeners.remove(listener);
 		}
-		if (path.endsWith("/")) { //$NON-NLS-1$
-			path = path.substring(0, path.length() - 1);
-		}
-		return path;
 	}
-
+	
 	/*
-	 * Returns the port to use for connecting to the remote help server.
+	 * Signals all registered listeners that remote help preferences have
+	 * changed.
 	 */
-	public static int getPort() {
-		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
-		if (prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT) == true) {
-			prefs.getDefaultInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
+	public static void notifyPreferenceChange() {
+		if (listeners != null) {
+			Object[] array = listeners.getListeners();
+			for (int i=0;i<array.length;++i) {
+				IPreferenceChangeListener listener = (IPreferenceChangeListener)array[i];
+				listener.preferenceChange(null);
+			}
 		}
-		return prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
 	}
-
+	
 	public static URL getURL(String pathSuffix) throws MalformedURLException {
 		String host = RemoteHelp.getHost();
 		String path = RemoteHelp.getPath() + pathSuffix;
@@ -85,4 +88,39 @@ public class RemoteHelp {
 		}
 		return false;
 	}
+	
+	/*
+	 * Returns the hostname of the remote help server to use, or empty string
+	 * if not configured.
+	 */
+	private static String getHost() {
+		return HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST);
+	}
+
+	/*
+	 * Returns the path of the remote help server to use. Ensures that there
+	 * is a leading slash and no trailing slash, e.g. "/myPath"
+	 */
+	private static String getPath() {
+		String path = HelpBasePlugin.getDefault().getPluginPreferences().getString(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH);
+		if (!path.startsWith("/")) { //$NON-NLS-1$
+			path = '/' + path;
+		}
+		if (path.endsWith("/")) { //$NON-NLS-1$
+			path = path.substring(0, path.length() - 1);
+		}
+		return path;
+	}
+
+	/*
+	 * Returns the port to use for connecting to the remote help server.
+	 */
+	private static int getPort() {
+		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
+		if (prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT) == true) {
+			prefs.getDefaultInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
+		}
+		return prefs.getInt(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT);
+	}
+
 }

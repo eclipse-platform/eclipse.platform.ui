@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -25,21 +27,17 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class RemoteTocProvider extends AbstractTocProvider {
 
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
-	private static RemoteTocProvider instance;
 	
 	/*
-	 * Returns the class's singleton instance.
-	 */
-	public static RemoteTocProvider getInstance() {
-		return instance;
-	}
-	
-	/*
-	 * Called by the platform, but we need a way to get the singleton
-	 * instance.
+	 * Constructs a new remote toc provider, which listens for remote
+	 * help preference changes.
 	 */
 	public RemoteTocProvider() {
-		instance = this;
+		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				contentChanged();
+			}
+		});
 	}
 	
 	/* (non-Javadoc)
@@ -74,13 +72,5 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			}
 		}
 		return new ITocContribution[0];
-	}
-
-	/*
-	 * Called by the preference page whenever the user changed preferences.
-	 */
-	public void notifyPreferencesChanged() {
-		// forward the notification on to the platform
-		contentChanged();
 	}
 }

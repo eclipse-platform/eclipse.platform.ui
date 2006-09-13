@@ -27,13 +27,12 @@ import org.eclipse.core.runtime.content.XMLRootElementContentDescriber;
 public class XHTMLContentDescriber implements IContentDescriber {
 
 	private static final String PROPERTY_DTD = "dtd"; //$NON-NLS-1$
+	public static final int BUFFER_SIZE = 8192;
 
 	// XHTML has 3 DTDs, so we have to try each one.
 	private static final String DTD_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
 	private static final String DTD_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
 	private static final String DTD_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-	
-	private static final int BUFFER_SIZE = 8192;
 
 	private XMLRootElementContentDescriber describerStrict = new XMLRootElementContentDescriber();
 	private XMLRootElementContentDescriber describerTransitional = new XMLRootElementContentDescriber();
@@ -77,7 +76,6 @@ public class XHTMLContentDescriber implements IContentDescriber {
 		try {
 			byte[] buffer = new byte[BUFFER_SIZE];
 			contents.read(buffer);
-			contents.close();
 		
 			ByteArrayInputStream in = new ByteArrayInputStream(buffer);
 			if (describerTransitional.describe(in, description) == VALID) {

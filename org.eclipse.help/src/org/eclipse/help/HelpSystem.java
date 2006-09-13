@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help;
 
-import java.io.*;
-import java.net.*;
+import java.io.InputStream;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.protocols.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.HelpPlugin.IHelpProvider;
 
 /**
  * This class provides general access to help content contributed to the
@@ -85,15 +84,11 @@ public final class HelpSystem {
 	 *         opened
 	 */
 	public static InputStream getHelpContent(String href) {
-		try {
-			// URL helpURL = new URL("help:" + href);
-			URL helpURL = new URL("help", //$NON-NLS-1$
-					null, -1, href, HelpURLStreamHandler.getDefault());
-
-			return helpURL.openStream();
-		} catch (IOException ioe) {
-			return null;
+		IHelpProvider provider = HelpPlugin.getDefault().getHelpProvider();
+		if (provider != null) {
+			return provider.getHelpContent(href);
 		}
+		return null;
 	}
 
 	/**

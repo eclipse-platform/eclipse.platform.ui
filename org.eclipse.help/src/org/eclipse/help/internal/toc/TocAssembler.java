@@ -19,12 +19,12 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.help.ITocContribution;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.Anchor;
 import org.eclipse.help.internal.Filter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Include;
 import org.eclipse.help.internal.Node;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
 
 /*
  * Assembles toc contributions (toc fragments) into complete, linked, and
@@ -186,7 +186,7 @@ public class TocAssembler {
 		Iterator iter = filters.iterator();
 		while (iter.hasNext()) {
 			Filter filter = (Filter)iter.next();
-			if (XHTMLSupport.getFilterProcessor().isFilteredIn(filter.getExpression())) {
+			if (UAContentFilter.isFiltered(filter.getExpression())) {
 				removeIntermediateNode(filter);
 			}
 			else {

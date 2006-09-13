@@ -1,12 +1,13 @@
-/***************************************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0
+/*******************************************************************************
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors: IBM Corporation - initial API and implementation
- **************************************************************************************************/
-
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
 import java.net.URL;
@@ -25,7 +26,6 @@ import org.osgi.framework.Constants;
  */
 public class BundleUtil {
 
-
 	private static String NL_TAG = "$nl$/"; //$NON-NLS-1$
 
 	/*
@@ -37,11 +37,9 @@ public class BundleUtil {
 		return localLocation;
 	}
 
-
 	public static Bundle getBundleFromConfigurationElement(IConfigurationElement cfg) {
 		return Platform.getBundle(cfg.getContributor().getName());
 	}
-
 
 	/**
 	 * Get the resource location, but do not force an $nl$ on it.
@@ -54,8 +52,6 @@ public class BundleUtil {
 		Bundle bundle = getBundleFromConfigurationElement(element);
 		return getResolvedResourceLocation(resource, bundle, false);
 	}
-
-
 
 	public static String getResolvedResourceLocation(String resource, Bundle bundle, boolean forceNLResolve) {
 		// quick exits.
