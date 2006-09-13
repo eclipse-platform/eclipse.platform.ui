@@ -38,7 +38,7 @@ public class BookmarkPropertiesDialog extends DialogMarkerProperties {
      * @param parentShell the parent shell
      */
     public BookmarkPropertiesDialog(Shell parentShell) {
-        super(parentShell, BookmarkMessages.PropertiesDialogTitle_text);
+        this(parentShell, BookmarkMessages.PropertiesDialogTitle_text);
     }
 
     /**
@@ -52,6 +52,7 @@ public class BookmarkPropertiesDialog extends DialogMarkerProperties {
      */
     public BookmarkPropertiesDialog(Shell parentShell, String title) {
         super(parentShell, title);
+    	setType(IMarker.BOOKMARK);
     }
     
     /**

@@ -27,6 +27,7 @@ class DialogProblemProperties extends DialogMarkerProperties {
 
 	DialogProblemProperties(Shell parentShell) {
 		super(parentShell);
+		setType(IMarker.PROBLEM);
 	}
 
 	/*

@@ -586,8 +586,10 @@ public class DialogMarkerProperties extends TrayDialog {
 	 * 
 	 * @param type
 	 *            the marker type
+	 *            
+	 * @since 3.3 this method is protected.
 	 */
-	void setType(String type) {
+	protected void setType(String type) {
 		this.type = type;
 	}
     
