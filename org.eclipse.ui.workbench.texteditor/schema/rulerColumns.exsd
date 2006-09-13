@@ -11,10 +11,6 @@
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="column"/>
@@ -94,10 +90,10 @@
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  The class implementing the column; must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;.
+                  The class implementing the column; must implement &lt;code&gt;org.eclipse.ui.texteditor.rulers.IContributedRulerColumn&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.RulerColumn"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.texteditor.rulers.IContributedRulerColumn"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -286,7 +282,7 @@ The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rule
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         All ruler column contributions must extend &lt;code&gt;org.eclipse.ui.texteditor.rulers.RulerColumn&lt;/code&gt;. Many contributors will find the supplied &lt;code&gt;org.eclipse.ui.texteditor.rulers.AbstractRulerColumn&lt;/code&gt; useful; it takes care of most painting and scrolling aspects of a line based column and can be extended at various granularity levels.
+         All ruler column contributions must implement &lt;code&gt;org.eclipse.ui.texteditor.rulers.IContributedRulerColumn&lt;/code&gt;. Many contributors will find the supplied &lt;code&gt;org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn&lt;/code&gt; useful which serves as super class for contributed ruler columns. Others might start off &lt;code&gt;org.eclipse.jface.text.source.AbstractRulerColumn&lt;/code&gt; which takes over most painting and scrolling aspects of a line based column and can be extended at various granularity levels. Those subclassing the latter class will have to implement &lt;code&gt;org.eclipse.ui.texteditor.rulers.IContributedRulerColumn&lt;/code&gt; on their own by using &lt;code&gt;org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn&lt;/code&gt; as template.
       </documentation>
    </annotation>
 

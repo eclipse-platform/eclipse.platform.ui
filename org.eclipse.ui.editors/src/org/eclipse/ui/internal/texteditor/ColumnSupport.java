@@ -17,15 +17,16 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.SafeRunner;
 
+import org.eclipse.jface.util.SafeRunnable;
+
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
-import org.eclipse.ui.texteditor.rulers.RulerColumn;
+import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 
@@ -83,7 +84,7 @@ public class ColumnSupport implements IColumnSupport {
 		
 		SafeRunnable runnable= new SafeRunnable() {
 			public void run() throws Exception {
-				RulerColumn column= descriptor.createColumn(fEditor);
+				IContributedRulerColumn column= descriptor.createColumn(fEditor);
 				initializeColumn(column);
 				ruler.addDecorator(idx, column);
 			}
@@ -96,11 +97,11 @@ public class ColumnSupport implements IColumnSupport {
 	 * 
 	 * @param column the created column
 	 */
-	protected void initializeColumn(RulerColumn column) {
+	protected void initializeColumn(IContributedRulerColumn column) {
 	}
 
 	private void removeColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
-		final RulerColumn target= getVisibleColumn(ruler, descriptor);
+		final IContributedRulerColumn target= getVisibleColumn(ruler, descriptor);
 		if (target != null) {
 			SafeRunnable runnable= new SafeRunnable() {
 				public void run() throws Exception {
@@ -120,11 +121,11 @@ public class ColumnSupport implements IColumnSupport {
 	 * @param descriptor the descriptor of the column of interest
 	 * @return the matching column or <code>null</code>
 	 */
-	private RulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
+	private IContributedRulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
 		for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
-			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
-			if (column instanceof RulerColumn) {
-				RulerColumn rulerColumn= (RulerColumn) column;
+			IVerticalRulerColumn column= (IVerticalRulerColumn)it.next();
+			if (column instanceof IContributedRulerColumn) {
+				IContributedRulerColumn rulerColumn= (IContributedRulerColumn)column;
 				RulerColumnDescriptor rcd= rulerColumn.getDescriptor();
 				if (descriptor.equals(rcd))
 					return rulerColumn;
@@ -146,8 +147,8 @@ public class ColumnSupport implements IColumnSupport {
 		int newPos= all.indexOf(descriptor);
 		for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
-			if (column instanceof RulerColumn) {
-				RulerColumnDescriptor rcd= ((RulerColumn) column).getDescriptor();
+			if (column instanceof IContributedRulerColumn) {
+				RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
 				if (rcd != null && all.indexOf(rcd) > newPos)
 					break;
 			} else if ("org.eclipse.jface.text.source.projection.ProjectionRulerColumn".equals(column.getClass().getName())) { //$NON-NLS-1$
@@ -206,8 +207,8 @@ public class ColumnSupport implements IColumnSupport {
 		List toRemove= new ArrayList(10);
 		for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
 			IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
-			if (column instanceof RulerColumn) {
-				RulerColumnDescriptor rcd= ((RulerColumn) column).getDescriptor();
+			if (column instanceof IContributedRulerColumn) {
+				RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
 				if (rcd != null)
 					toRemove.add(rcd);
 			}

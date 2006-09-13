@@ -29,7 +29,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
-import org.eclipse.ui.texteditor.rulers.RulerColumn;
+import org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn;
 
 /**
  * The annotation ruler contribution. Encapsulates an {@link AnnotationRulerColumn} as a
@@ -40,7 +40,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumn;
  * 
  * @since 3.3
  */
-public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
+public class AnnotationColumn extends AbstractContributedRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	/** The contribution id of the annotation ruler. */
 	public static final String ID= "org.eclipse.ui.editors.columns.annotations"; //$NON-NLS-1$
 	/** The width of the vertical ruler. */
@@ -96,9 +96,9 @@ public class AnnotationColumn extends RulerColumn implements IVerticalRulerInfo,
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.rulers.RulerColumn#columnRemoved()
+	 * @see org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn#columnRemoved()
 	 */
-	protected void columnRemoved() {
+	public void columnRemoved() {
 		if (fPropertyListener != null) {
 			IPreferenceStore store= getPreferenceStore();
 			if (store != null)

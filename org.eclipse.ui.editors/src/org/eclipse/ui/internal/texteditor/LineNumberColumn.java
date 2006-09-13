@@ -63,7 +63,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
 import org.eclipse.ui.texteditor.ITextEditorExtension2;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
-import org.eclipse.ui.texteditor.rulers.RulerColumn;
+import org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn;
 
 /**
  * The line number ruler contribution. Encapsulates a {@link LineNumberChangeRulerColumn} as a
@@ -74,7 +74,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumn;
  * 
  * @since 3.3
  */
-public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
+public class LineNumberColumn extends AbstractContributedRulerColumn implements IVerticalRulerInfo, IVerticalRulerInfoExtension {
 	/**
 	 * Forwarder for preference checks and ruler creation. Needed to maintain the forwarded APIs in
 	 * {@link AbstractDecoratedTextEditor}.
@@ -213,9 +213,9 @@ public class LineNumberColumn extends RulerColumn implements IVerticalRulerInfo,
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.rulers.RulerColumn#columnRemoved()
+	 * @see org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn#columnRemoved()
 	 */
-	protected void columnRemoved() {
+	public void columnRemoved() {
 		if (fDispatcher != null) {
 			fDispatcher.dispose();
 			fDispatcher= null;

@@ -131,7 +131,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.rulers.IColumnSupport;
-import org.eclipse.ui.texteditor.rulers.RulerColumn;
+import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
 import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
@@ -265,9 +265,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	private final ColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
 		/*
-		 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.RulerColumn)
+		 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn)
 		 */
-		protected void initializeColumn(RulerColumn column) {
+		protected void initializeColumn(IContributedRulerColumn column) {
 			RulerColumnDescriptor descriptor= column.getDescriptor();
 			IVerticalRuler ruler= internalGetVerticalRuler();
 			if (ruler instanceof CompositeRuler) {
