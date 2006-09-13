@@ -43,6 +43,9 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 
 	/**
 	 * Sets the extension point descriptor of this ruler.
+	 * <p>
+	 * <em>This method will be called by the framework and must not
+	 * be called by clients.</em></p>
 	 * 
 	 * @param descriptor the extension point descriptor
 	 */
@@ -50,6 +53,9 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 
 	/**
 	 * Sets the editor (called right after the extension was instantiated).
+	 * <p>
+	 * <em>This method will be called by the framework and must not
+	 * be called by clients.</em></p>
 	 * 
 	 * @param editor the editor targeted by this ruler instance
 	 */
