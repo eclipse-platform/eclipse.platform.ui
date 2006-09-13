@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -76,20 +77,17 @@ public class DeleteMarkersOperation extends AbstractMarkersOperation {
 	
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canUndo()
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
-	public boolean canUndo() {
-		return canCreateMarkers();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canRedo()
-	 */
-	public boolean canRedo() {
-		return canDeleteMarkers();
+	protected IStatus getBasicUndoStatus() {
+		 return getMarkerCreationStatus();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
+	 */
+	protected IStatus getBasicRedoStatus() {
+		return getMarkerDeletionStatus();
+	}
 }

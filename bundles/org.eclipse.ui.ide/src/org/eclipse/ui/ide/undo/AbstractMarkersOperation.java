@@ -19,6 +19,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * An AbstractMarkersOperation represents an undoable operation that affects
@@ -54,32 +57,31 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            or <code>null</code> if the markers already exist
 	 * @param attributes
 	 *            The map of attributes that should be assigned to any existing
-	 *            markers when the markers are updated.  Ignored if the markers
+	 *            markers when the markers are updated. Ignored if the markers
 	 *            parameter is <code>null</code>.
 	 * @param name
 	 *            the name used to describe the operation
 	 */
 	AbstractMarkersOperation(IMarker[] markers,
-			MarkerDescription[] markerDescriptions, Map attributes,
-			String name) {
+			MarkerDescription[] markerDescriptions, Map attributes, String name) {
 		super(name);
 		this.markers = markers;
 		this.attributes = null;
 		// If there is more than one marker, create an array with a copy
-		// of the attributes map for each marker.  Keeping a unique map
+		// of the attributes map for each marker. Keeping a unique map
 		// per marker allows us to support the scenario where attributes
-		// are merged when updated.  In this case, each marker's attributes
+		// are merged when updated. In this case, each marker's attributes
 		// may differ since their original attributes may have differed.
 		if (attributes != null && markers != null) {
 			if (markers.length > 1) {
 				this.attributes = new Map[markers.length];
-				for (int i=0; i<markers.length; i++) {
+				for (int i = 0; i < markers.length; i++) {
 					Map copiedAttributes = new HashMap();
 					copiedAttributes.putAll(attributes);
 					this.attributes[i] = copiedAttributes;
 				}
 			} else {
-				this.attributes = new Map [] {attributes};
+				this.attributes = new Map[] { attributes };
 			}
 		}
 		setMarkerDescriptions(markerDescriptions);
@@ -268,28 +270,105 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return true;
 
 	}
+	
+	/**
+	 * Return a status indicating the projected outcome of undoing the marker
+	 * operation. The receiver is not responsible for remembering the result of
+	 * this computation.
+	 * 
+	 * @return the status indicating whether the operation can be undone
+	 */
+	protected abstract IStatus getBasicUndoStatus();
+
+	/**
+	 * Return a status indicating the projected outcome of redoing the marker
+	 * operation. The receiver is not responsible for remembering the result of
+	 * this computation.
+	 * 
+	 * @return the status indicating whether the operation can be undone
+	 */
+	protected abstract IStatus getBasicRedoStatus();
 
 	/*
-	 * Return whether there is enough information specified in this operation to
-	 * delete markers.
+	 * Return a status indicating the projected outcome of executing the
+	 * receiver. 
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean canDeleteMarkers() {
-		return markersExist();
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = getBasicRedoStatus();
+		if (status.isOK()) {
+			return super.computeExecutionStatus(monitor);
+		}
+		if (status.getSeverity() == IStatus.ERROR) {
+			markInvalid();
+		}
+		return status;
 	}
 
 	/*
-	 * Return whether there is enough information specified in this operation to
-	 * create markers.
+	 * Return a status indicating the projected outcome of undoing the receiver.
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean canCreateMarkers() {
-		return markerDescriptions != null && resourcesExist();
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
+		IStatus status = getBasicUndoStatus();
+		if (status.isOK()) {
+			return super.computeUndoableStatus(monitor);
+		}
+		if (status.getSeverity() == IStatus.ERROR) {
+			markInvalid();
+		}
+		return status;
 	}
 
 	/*
-	 * Return whether there is enough information specified in this operation to
-	 * update markers.
+	 * Return a status indicating the projected outcome of redoing the receiver.
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean canUpdateMarkers() {
-		return attributes != null && markersExist();
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
+		IStatus status = getBasicRedoStatus();
+		if (status.isOK()) {
+			return super.computeRedoableStatus(monitor);
+		}
+		if (status.getSeverity() == IStatus.ERROR) {
+			markInvalid();
+		}
+		return status;
+	}
+
+	/*
+	 * Return a status that indicates whether markers can be deleted.
+	 */
+	protected IStatus getMarkerDeletionStatus() {
+		if (markersExist()) {
+			return Status.OK_STATUS;
+		}
+		return getErrorStatus(UndoMessages.MarkerOperation_MarkerDoesNotExist);
+	}
+
+	/*
+	 * Return a status that indicates whether markers can be created.
+	 */
+	protected IStatus getMarkerCreationStatus() {
+		if (!resourcesExist()) {
+			return getErrorStatus(UndoMessages.MarkerOperation_ResourceDoesNotExist);
+		} else if (markerDescriptions == null) {
+			return getErrorStatus(UndoMessages.MarkerOperation_NotEnoughInfo);
+		}
+		return Status.OK_STATUS;
+	}
+
+	/*
+	 * Return a status that indicates whether markers can be updated.
+	 */
+	protected IStatus getMarkerUpdateStatus() {
+		if (!markersExist()) {
+			return getErrorStatus(UndoMessages.MarkerOperation_MarkerDoesNotExist);
+		} else if (attributes == null) {
+			return getErrorStatus(UndoMessages.MarkerOperation_NotEnoughInfo);
+		}
+		return Status.OK_STATUS;
 	}
 }

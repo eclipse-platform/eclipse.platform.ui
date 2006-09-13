@@ -14,14 +14,11 @@ package org.eclipse.ui.ide.undo;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -58,13 +55,17 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * 
  */
 abstract class AbstractWorkspaceOperation extends AbstractOperation implements
-		IAdvancedUndoableOperation {
+		IAdvancedUndoableOperation, IAdvancedUndoableOperation2 {
 
 	private static String ELLIPSIS = "..."; //$NON-NLS-1$
 
-	protected IResource[] resources;
+	private static int EXECUTE = 1;
 
-	private IResourceChangeListener listener;
+	private static int UNDO = 2;
+
+	private static int REDO = 3;
+
+	protected IResource[] resources;
 
 	private boolean isValid = true;
 
@@ -108,9 +109,6 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 */
 	protected void setTargetResources(IResource[] resources) {
 		this.resources = resources;
-		if (listener == null && resources != null) {
-			addWorkspaceListener();
-		}
 	}
 
 	/**
@@ -122,37 +120,6 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/*
-	 * Add a workspace listener that listens to changes in the workspace, so
-	 * that operations can be invalidated if their associated resources change.
-	 */
-	private void addWorkspaceListener() {
-		listener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				try {
-					event.getDelta().accept(getDeltaVisitor());
-				} catch (CoreException e) {
-					markInvalid();
-				}
-			}
-
-		};
-		getWorkspace().addResourceChangeListener(listener,
-				IResourceChangeEvent.POST_CHANGE);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#dispose()
-	 */
-	public void dispose() {
-		if (listener != null) {
-			getWorkspace().removeResourceChangeListener(listener);
-		}
-		super.dispose();
-	}
-
 	/**
 	 * Mark this operation invalid due to some external change. May be used by
 	 * subclasses.
@@ -162,6 +129,15 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 		isValid = false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.commands.operations.AbstractOperation#canExecute()
+	 */
+	public boolean canExecute() {
+		return isValid();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -314,42 +290,6 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 			throws CoreException;
 
 	/*
-	 * Visit each resource change reported in the delta visitor and check
-	 * whether the resource change invalidates this operation. Subclasses may
-	 * override this method, but more typically will override the called method,
-	 * isResourceChangeInvalidating.
-	 */
-	protected IResourceDeltaVisitor getDeltaVisitor() {
-		return new IResourceDeltaVisitor() {
-			public boolean visit(IResourceDelta delta) {
-				if (resources == null) {
-					return false;
-				}
-				for (int i = 0; i < resources.length; i++) {
-					if (isResourceChangeInvalidating(delta, resources[i])) {
-						markInvalid();
-						return false;
-					}
-				}
-				return true;
-			}
-		};
-	}
-
-	/*
-	 * A resource change has occurred. Check whether the resource change affects
-	 * and invalidates this operation due to its affect on the specified
-	 * resource. The default implementation is that if the resource is changed
-	 * at all by the delta, then the operation is invalid. Subclasses may have a
-	 * more strict interpretation of how a resource delta by invalidate a
-	 * resource involved in an operation.
-	 */
-	protected boolean isResourceChangeInvalidating(IResourceDelta delta,
-			IResource resource) {
-		return resource.equals(delta.getResource());
-	}
-
-	/*
 	 * Return the shell described by the specified adaptable, or the active
 	 * shell if no shell has been specified in the adaptable.
 	 */
@@ -366,16 +306,9 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	/**
 	 * Return whether the proposed operation is valid. The default
 	 * implementation simply checks to see if the flag has been marked as
-	 * invalid, relying on the workspace listener to mark the flag invalid when
-	 * this operation's resources change.
+	 * invalid, relying on subclasses to mark the flag invalid when
+	 * appropriate.
 	 * 
-	 * Subclasses may use the implemented resource listener strategy as is to
-	 * validate operations. Subclasses may also override
-	 * {@link #isResourceChangeInvalidating(IResourceDelta, IResource)} or
-	 * {@link #getDeltaVisitor()} to refine the resource listener strategy.
-	 * Subclasses may also override this method to completely ignore the
-	 * resource listener strategy and instead use their own strategy for
-	 * validating resources.
 	 */
 	protected boolean isValid() {
 		return isValid;
@@ -398,6 +331,43 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	public Object[] getAffectedObjects() {
 		return resources;
 	}
+	
+	/*
+	 * Return a status indicating the projected outcome of executing the receiver.
+	 * 
+	 * This method computes the validity of execution by computing the resource
+	 * delta that would be generated on execution, and checking whether any
+	 * registered model providers are affected by the operation. This method is
+	 * not called by the operation history, but instead is used by clients (such
+	 * as implementers of {@link IOperationApprover2}) who wish to perform
+	 * advanced validation of an operation before attempting to execute it. If the
+	 * execute is not valid, then the validity flag on the operation should be
+	 * marked invalid.
+	 * 
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = Status.OK_STATUS;
+		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
+				.getValidator().createDeltaFactory();
+		if (updateResourceChangeDescriptionFactory(factory, EXECUTE)) {
+			boolean proceed = IDE
+					.promptToConfirm(
+							getShell(null),
+							UndoMessages.AbstractWorkspaceOperation_SideEffectsWarningTitle,
+							NLS
+									.bind(
+											UndoMessages.AbstractWorkspaceOperation_ExecuteSideEffectsWarningMessage,
+											getLabel()), factory.getDelta(),
+							modelProviderIds, true /* syncExec */);
+			if (!proceed) {
+				status = IOperationHistory.OPERATION_INVALID_STATUS;
+				markInvalid();
+			}
+		}
+		return status;
+
+	}
 
 	/*
 	 * Return a status indicating the projected outcome of undoing the receiver.
@@ -417,7 +387,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 		IStatus status = Status.OK_STATUS;
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
-		if (updateResourceChangeDescriptionFactory(factory, true)) {
+		if (updateResourceChangeDescriptionFactory(factory, UNDO)) {
 			boolean proceed = IDE
 					.promptToConfirm(
 							getShell(null),
@@ -454,7 +424,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 		IStatus status = Status.OK_STATUS;
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
-		if (updateResourceChangeDescriptionFactory(factory, false)) {
+		if (updateResourceChangeDescriptionFactory(factory, REDO)) {
 			boolean proceed = IDE
 					.promptToConfirm(
 							getShell(null),
@@ -482,12 +452,13 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param factory
 	 *            the factory to update
-	 * @param undo
-	 *            true if the proposed change is undo, false if redo.
+	 * @param operation
+	 *            an integer indicating whether the change is part of an
+	 *            execute, undo, or redo
 	 * @return a boolean indicating whether the factory was updated.
 	 */
 	protected boolean updateResourceChangeDescriptionFactory(
-			IResourceChangeDescriptionFactory factory, boolean undo) {
+			IResourceChangeDescriptionFactory factory, int operation) {
 		return false;
 	}
 

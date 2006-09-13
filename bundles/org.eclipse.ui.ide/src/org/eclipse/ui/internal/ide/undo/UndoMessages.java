@@ -37,6 +37,10 @@ public class UndoMessages extends NLS {
 	public static String AbstractWorkspaceOperation_ErrorInvalidMessage;
 	public static String AbstractWorkspaceOperation_GenericWarningMessage;
 
+	public static String MarkerOperation_ResourceDoesNotExist;
+	public static String MarkerOperation_MarkerDoesNotExist;
+	public static String MarkerOperation_NotEnoughInfo;
+	
 	public static String RenameResourceOperation_SameName;
 	public static String RenameResourceOperation_NameAlreadyExists;
 	public static String RenameResourceOperation_ResourceDoesNotExist;

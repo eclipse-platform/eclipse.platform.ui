@@ -394,6 +394,10 @@ public class WorkspaceOperationsTests extends TestCase {
 		execute(op);
 		IMarker[] markers = op.getMarkers();
 		markers[1].delete();
+		// Must compute status first because we don't perform expensive
+		// validations in canUndo().  However we should remember the validity
+		// once we've computed the status.
+		op.computeUndoableStatus(null);
 		assertFalse("Undo should be invalid, marker no longer exists", op
 				.canUndo());
 	}
@@ -412,6 +416,10 @@ public class WorkspaceOperationsTests extends TestCase {
 				"Create Multiple Markers Same Type Test");
 		execute(op);
 		testFile1.delete(true, getMonitor());
+		// Must compute status first because we don't perform expensive
+		// validations in canUndo().  However we should remember the validity
+		// once we've computed the status.
+		op.computeUndoableStatus(null);
 		assertFalse("Undo should be invalid, resource no longer exists", op
 				.canUndo());
 	}
@@ -432,6 +440,11 @@ public class WorkspaceOperationsTests extends TestCase {
 		execute(updateOp);
 		IMarker[] markers = updateOp.getMarkers();
 		markers[0].delete();
+		// Must compute status first because we don't perform expensive
+		// validations in canUndo().  However we should remember the validity
+		// once we've computed the status.
+		updateOp.computeUndoableStatus(null);
+
 		assertFalse("Undo should be invalid, marker no longer exists", updateOp
 				.canUndo());
 	}
@@ -451,6 +464,11 @@ public class WorkspaceOperationsTests extends TestCase {
 				"Update and Merge Multiple Markers", true);
 		execute(updateOp);
 		testFile3.delete(true, getMonitor());
+		// Must compute status first because we don't perform expensive
+		// validations in canUndo().  However we should remember the validity
+		// once we've computed the status.
+		updateOp.computeUndoableStatus(null);
+
 		assertFalse("Undo should be invalid, marker no longer exists", updateOp
 				.canUndo());
 	}

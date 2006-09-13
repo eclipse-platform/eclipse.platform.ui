@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -113,7 +114,9 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 
 	/*
 	 * Execute the operation by creating the markers.
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
@@ -127,7 +130,9 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 
 	/*
 	 * Undo the operation by deleting the markers.
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	protected void doUndo(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
@@ -138,22 +143,20 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 		deleteMarkers(100, monitor);
 		monitor.done();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canUndo()
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
-	public boolean canUndo() {
-		return canDeleteMarkers();
+	protected IStatus getBasicUndoStatus() {
+		 return getMarkerDeletionStatus();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canRedo()
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
-	public boolean canRedo() {
-		return canCreateMarkers();
+	protected IStatus getBasicRedoStatus() {
+		return getMarkerCreationStatus();
 	}
 }

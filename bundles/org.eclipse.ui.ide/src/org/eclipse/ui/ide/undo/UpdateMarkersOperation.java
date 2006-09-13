@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
@@ -117,20 +118,17 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canUndo()
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
-	public boolean canUndo() {
-		return canUpdateMarkers();
+	protected IStatus getBasicUndoStatus() {
+		 return getMarkerUpdateStatus();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#canRedo()
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
-	public boolean canRedo() {
-		return canUpdateMarkers();
+	protected IStatus getBasicRedoStatus() {
+		return getMarkerUpdateStatus();
 	}
-
 }
