@@ -188,42 +188,58 @@ public class ModifyWorkingSetDelegate extends
 		if (selection instanceof IStructuredSelection) {
 			Collection selectedElements = ((IStructuredSelection) getSelection())
 			.toList();
-			
-			IWorkingSet[][] typedSets = splitSets();
+			// ensure every item is of type IAdaptable
+			boolean allAdaptable = true;
+			for (Iterator i = selectedElements.iterator(); i
+					.hasNext();) {
+				Object object = i.next();
+				if (!(object instanceof IAdaptable)) {
+					allAdaptable = false;
+					break;
+				}
+			}
+			// only do this work if the selection is adaptable
+			if (allAdaptable) {
+				IWorkingSet[][] typedSets = splitSets();
 
-			for (int i = 0; i < typedSets.length; i++) {
-				// add a seperator only if the last item is not a seperator
-				if (menuItems.size() > 0
-						&& menuItems.get(menuItems.size() - 1) != SEPERATORMARKER)
-					menuItems.add(SEPERATORMARKER);
-				IWorkingSet[] sets = typedSets[i];
-				for (int j = 0; j < sets.length; j++) {
-					IWorkingSet set = sets[j];
-					
-					Set existingElements = new HashSet();
-					existingElements.addAll(Arrays.asList(set.getElements()));
+				for (int i = 0; i < typedSets.length; i++) {
+					// add a seperator only if the last item is not a seperator
+					if (menuItems.size() > 0
+							&& menuItems.get(menuItems.size() - 1) != SEPERATORMARKER)
+						menuItems.add(SEPERATORMARKER);
+					IWorkingSet[] sets = typedSets[i];
+					for (int j = 0; j < sets.length; j++) {
+						IWorkingSet set = sets[j];
 
-					boolean visible = false;
-					for (Iterator k = selectedElements.iterator(); k.hasNext();) {
-						IAdaptable object = (IAdaptable) k.next();
-						if (add) {
-							if (!existingElements.contains(object)) {
-								visible = true; // show if any element is not
-								// present in addition
-								break;
-							}
-						} else {
-							if (existingElements.contains(object)) {
-								visible = true; // show if any element is present in
-								// removal
-								break;
+						Set existingElements = new HashSet();
+						existingElements.addAll(Arrays
+								.asList(set.getElements()));
+
+						boolean visible = false;
+						for (Iterator k = selectedElements.iterator(); k
+								.hasNext();) {
+							IAdaptable object = (IAdaptable) k.next();
+							if (add) {
+								if (!existingElements.contains(object)) {
+									visible = true; // show if any element is
+									// not
+									// present in addition
+									break;
+								}
+							} else {
+								if (existingElements.contains(object)) {
+									visible = true; // show if any element is
+									// present in
+									// removal
+									break;
+								}
 							}
 						}
-					}
-					if (visible) {
-						ModifyAction action = new ModifyAction(set,
-								selectedElements);
-						menuItems.add(action);
+						if (visible) {
+							ModifyAction action = new ModifyAction(set,
+									selectedElements);
+							menuItems.add(action);
+						}
 					}
 				}
 			}
