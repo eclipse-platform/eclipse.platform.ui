@@ -40,7 +40,7 @@ public interface IDocumentExtension {
 		 * @param owner the owner of this replace operation
 		 */
 		void perform(IDocument document, IDocumentListener owner);
-	};
+	}
 
 	/**
 	 * Callback for document listeners to be used inside <code>documentChanged</code>
