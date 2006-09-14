@@ -1552,6 +1552,15 @@ public class EditorManager {
 				if (persistable == null)
 					return;
 				
+				// Workaround for bug 155866.  Don't try to save the editor state if the path is null.
+				// The workaround is safe because not checking here would generate a NPE later on.
+				if (input instanceof IPathEditorInput) {
+					IPath path = ((IPathEditorInput)input).getPath();
+					if (path == null) {
+						return;
+					}
+				}
+				
 				// Save editor.
 				IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
 				editorMem.putString(IWorkbenchConstants.TAG_TITLE, editorRef.getTitle());
