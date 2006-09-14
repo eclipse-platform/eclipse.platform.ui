@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
@@ -25,8 +26,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -165,6 +166,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		});
 		job.schedule();
 		waitForCollectionToFinish(subscriber);
+		assertViewMatchesModel(subscriber);
 	}
 	
 	private void waitForCollectionToFinish(Subscriber subscriber) {
@@ -468,11 +470,11 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 	}
 	
 	private ISynchronizePageConfiguration getConfiguration(Subscriber subscriber) {
-		ISynchronizePage page = getPage(subscriber);
-		return ((ModelSynchronizePage)page).getConfiguration();
+		ModelSynchronizePage page = getPage(subscriber);
+		return page.getConfiguration();
 	}
 
-	private ISynchronizePage getPage(Subscriber subscriber) {
+	private ModelSynchronizePage getPage(Subscriber subscriber) {
         try {
             ModelSynchronizeParticipant participant = getParticipant(subscriber);
             if (participant == null)
@@ -489,5 +491,62 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
         }
         throw new AssertionFailedError("The page for " + subscriber.getName() + " could not be retrieved");
 	}
+	
+	public void assertViewMatchesModel(Subscriber subscriber) {
+		waitForCollectionToFinish(subscriber);
+		TreeItem[] rootItems = getTreeItems(subscriber);
+		ModelSynchronizeParticipant p = getParticipant(subscriber);
+		ResourceDiffTree tree = (ResourceDiffTree)p.getContext().getDiffTree();
+		ResourceDiffTree copy = new ResourceDiffTree();
+		IDiff[] diffs = tree.getDiffs();
+		for (int i = 0; i < diffs.length; i++) {
+			IDiff diff = diffs[i];
+			copy.add(diff);
+		}
+		assertTreeMatchesDiffs(rootItems, copy);
+	}
+	
+    private void assertTreeMatchesDiffs(TreeItem[] rootItems, ResourceDiffTree copy) {
+		assertItemsInDiffTree(rootItems, copy);
+		if (!copy.isEmpty()) {
+			new AssertionFailedError("Viewer is not showing all diffs");
+		}
+	}
+
+	private void assertItemsInDiffTree(TreeItem[] items, ResourceDiffTree copy) {
+        if (items == null || items.length == 0) {
+            return;
+        }
+        for (int i = 0; i < items.length; i++) {
+			TreeItem item = items[i];
+			assertItemInTree(item, copy);
+		}
+		
+	}
+
+	private void assertItemInTree(TreeItem item, ResourceDiffTree copy) {
+		Object element = item.getData();
+		if (element instanceof IResource) {
+			IResource resource = (IResource) element;
+			if (copy.getDiff(resource) != null) {
+				copy.remove(resource);
+			} else if (copy.getChildren(resource.getFullPath()).length == 0) {
+				throw new AssertionFailedError("Resource" + resource.getFullPath() + " is in the view but not in the diff tree");
+			}
+			assertItemsInDiffTree(item.getItems(), copy);
+		}
+	}
+
+	private TreeItem[] getTreeItems(Subscriber subscriber) {
+    	ModelSynchronizePage page = getPage(subscriber);
+        Viewer v = page.getViewer();
+        if (v instanceof TreeViewer) {
+            TreeViewer treeViewer = (TreeViewer)v;
+            treeViewer.expandAll();
+            Tree t = (treeViewer).getTree();
+            return t.getItems();
+        }
+        throw new AssertionFailedError("The tree for " + subscriber.getName() + " could not be retrieved");
+    }
 	
 }

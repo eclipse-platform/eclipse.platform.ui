@@ -249,7 +249,7 @@ public class SubscriberParticipantSyncInfoSource extends ParticipantSyncInfoSour
     
     private void assertMatchingTrees(IDiffElement parent, TreeItem[] items, IDiffElement[] children) {
         if ((items == null || items.length == 0) && (children == null || children.length == 0)) {
-            // No childen in either case so just return
+            // No children in either case so just return
             return;
         }
         if (items == null || children == null || items.length != children.length) {
