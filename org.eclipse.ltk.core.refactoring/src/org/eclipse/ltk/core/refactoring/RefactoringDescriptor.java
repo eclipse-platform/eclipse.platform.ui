@@ -40,9 +40,9 @@ import org.eclipse.ltk.core.refactoring.history.IRefactoringHistoryService;
  * <li> a timestamp, measured as the milliseconds since January 1, 1970,
  * 00:00:00 GMT, which denotes the original execution time of the refactoring.
  * </li>
- * <li> a unique ID, which denotes a certain kind of refactoring (ie. Rename
+ * <li> a unique ID, which denotes a certain kind of refactoring (e.g. Rename
  * File). This ID is usually composed of the plugin identifier of the
- * contributing plugin and a plugin-wide unique identifier (ie.
+ * contributing plugin and a plugin-wide unique identifier (e.g.
  * <code>org.eclipse.ltk.core.refactoring.renameFile</code>). </li>
  * <li> the optional name of the project this refactoring is associated with.
  * Note that the project name is not available if the refactoring cannot be
