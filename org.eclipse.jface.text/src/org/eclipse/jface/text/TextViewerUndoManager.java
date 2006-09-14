@@ -142,6 +142,14 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 			
 			int eventType= event.getEventType();
 			if (((eventType & DocumentUndoEvent.ABOUT_TO_UNDO) != 0) || ((eventType & DocumentUndoEvent.ABOUT_TO_REDO) != 0))  {
+				if (event.isCompound()) {
+					ITextViewerExtension extension= null;
+					if (fTextViewer instanceof ITextViewerExtension)
+						extension= (ITextViewerExtension) fTextViewer;
+
+					if (extension != null)
+						extension.setRedraw(false);
+				}
 				fTextViewer.getTextWidget().getDisplay().syncExec(new Runnable() {
 					public void run() {
 						if (fTextViewer instanceof TextViewer)
@@ -156,6 +164,14 @@ public class TextViewerUndoManager implements IUndoManager, IUndoManagerExtensio
 							((TextViewer)fTextViewer).ignoreAutoEditStrategies(false);
 					}
 			    });
+				if (event.isCompound()) {
+					ITextViewerExtension extension= null;
+					if (fTextViewer instanceof ITextViewerExtension)
+						extension= (ITextViewerExtension) fTextViewer;
+
+					if (extension != null)
+						extension.setRedraw(true);
+				}
 				
 				// Reveal the change if this manager's viewer has the focus.
 				if (fTextViewer != null) {
