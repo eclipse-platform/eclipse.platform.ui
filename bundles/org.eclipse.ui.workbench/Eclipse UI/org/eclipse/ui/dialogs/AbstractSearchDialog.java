@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -105,9 +106,13 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 	private TableViewer details;
 
-	private SearchListContentProvider listContentProvider;
+	private SearchListContentProvider searchListContentProvider;
+
+	private SearchListLabelProvider searchListLabelProvider;
 
 	private DetailsContentProvider detailsContentProvider;
+
+	private ILabelProvider detailsLabelProvider;
 
 	private MenuManager menuManager;
 
@@ -125,7 +130,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 	private ToggleStatusLineAction toggleStatusLineAction;
 
-	int currentIndex;
+	private int currentIndex;
 
 	private IStatus status;
 
@@ -155,11 +160,67 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		this(shell, false);
 	}
 
-	protected abstract ILabelProvider getListLabelProvider();
+	/**
+	 * @return the label provider for items in the search list
+	 */
+	public ILabelProvider getListLabelProvider() {
+		return getSearchListLabelProvider().getProvider();
+	}
 
-	protected abstract ILabelDecorator getListSelectionLabelDecorator();
+	/**
+	 * @param listLabelProvider
+	 *            the label provider for items in the search list
+	 */
+	public void setListLabelProvider(ILabelProvider listLabelProvider) {
+		getSearchListLabelProvider().setProvider(listLabelProvider);
+	}
 
-	protected abstract ILabelProvider getDetailsLabelProvider();
+	/**
+	 * @return the label decorator for selected items in the search list
+	 */
+	public ILabelDecorator getListSelectionLabelDecorator() {
+		return getSearchListLabelProvider().getSelectionDecorator();
+	}
+
+	/**
+	 * @param listSelectionLabelDecorator
+	 *            the label decorator for selected items in the search list
+	 */
+	public void setListSelectionLabelDecorator(
+			ILabelDecorator listSelectionLabelDecorator) {
+		getSearchListLabelProvider().setSelectionDecorator(
+				listSelectionLabelDecorator);
+	}
+
+	private SearchListLabelProvider getSearchListLabelProvider() {
+		if (searchListLabelProvider == null) {
+			searchListLabelProvider = new SearchListLabelProvider(
+					new LabelProvider(), null);
+		}
+		return searchListLabelProvider;
+	}
+
+	/**
+	 * @return the label provider for the details field
+	 */
+	public ILabelProvider getDetailsLabelProvider() {
+		if (detailsLabelProvider == null) {
+			detailsLabelProvider = new LabelProvider();
+		}
+		return detailsLabelProvider;
+	}
+
+	/**
+	 * @param detailsLabelProvider
+	 *            the label provider for the details field
+	 */
+	public void setDetailsLabelProvider(ILabelProvider detailsLabelProvider) {
+		this.detailsLabelProvider = detailsLabelProvider;
+
+		if (details != null) {
+			details.setLabelProvider(detailsLabelProvider);
+		}
+	}
 
 	/**
 	 * Sets searcher for the dialog
@@ -349,11 +410,10 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
 				| SWT.BORDER | SWT.V_SCROLL);
-		listContentProvider = new SearchListContentProvider();
-		list.setContentProvider(listContentProvider);
-		listContentProvider.setElements(new Object[0]);
-		list.setLabelProvider(new ListLabelProvider(getListLabelProvider(),
-				getListSelectionLabelDecorator()));
+		searchListContentProvider = new SearchListContentProvider();
+		list.setContentProvider(searchListContentProvider);
+		searchListContentProvider.setElements(new Object[0]);
+		list.setLabelProvider(getSearchListLabelProvider());
 		list.setInput(new Object[0]);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
@@ -390,27 +450,6 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					if (pattern.getCaretPosition() == pattern.getCharCount()
 							&& list.getTable().getItemCount() > 0) {
-
-						// if (lastSelection != null) {
-						// list.setSelection(new StructuredSelection(
-						// lastSelection));
-						// currentIndex = list.getTable().getSelectionIndex();
-						// } else {
-						// if (list.getTable().getItemCount() > 0) {
-						// list.setSelection(new StructuredSelection(list
-						// .getElementAt(list.getTable()
-						// .getTopIndex())));
-						//
-						// if (e.stateMask == SWT.CONTROL) {
-						// list.setSelection(null);
-						// }
-						//
-						// currentIndex = list.getTable().getTopIndex();
-						// } else {
-						// currentIndex = -1;
-						// }
-						// }
-
 						list.getTable().setFocus();
 						refreshDetails();
 					}
@@ -495,8 +534,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		detailsContentProvider = new DetailsContentProvider();
 		details.setContentProvider(detailsContentProvider);
 		detailsContentProvider.setElements(new Object[0]);
-		details.setLabelProvider(new ListLabelProvider(
-				getDetailsLabelProvider(), null));
+		details.setLabelProvider(getDetailsLabelProvider());
 		details.setInput(new Object[0]);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
@@ -623,7 +661,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 			list.getTable().setRedraw(false);
-			listContentProvider.setElements(searcher.getElements());
+			searchListContentProvider.setElements(searcher.getElements());
 			list.refresh();
 			list.getTable().setRedraw(true);
 
@@ -706,7 +744,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		}
 	}
 
-	private class ListLabelProvider extends LabelProvider implements
+	private class SearchListLabelProvider extends LabelProvider implements
 			IColorProvider, ILabelProviderListener {
 		private ILabelProvider provider;
 
@@ -719,12 +757,13 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		 * Creates a new instance of the class
 		 * 
 		 * @param provider
-		 *            the label provider for all items
+		 *            the label provider for all items, not null
 		 * @param selectionDecorator
 		 *            the decorator for selected items
 		 */
-		public ListLabelProvider(ILabelProvider provider,
+		public SearchListLabelProvider(ILabelProvider provider,
 				ILabelDecorator selectionDecorator) {
+			Assert.isNotNull(provider);
 			this.provider = provider;
 			this.selectionDecorator = selectionDecorator;
 
@@ -733,6 +772,53 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			if (selectionDecorator != null) {
 				selectionDecorator.addListener(this);
 			}
+		}
+
+		/**
+		 * @param newSelectionDecorator
+		 *            new label decorator for selected items in the search list
+		 */
+		public void setSelectionDecorator(ILabelDecorator newSelectionDecorator) {
+			if (selectionDecorator != null) {
+				selectionDecorator.removeListener(this);
+				selectionDecorator.dispose();
+			}
+
+			selectionDecorator = newSelectionDecorator;
+
+			if (selectionDecorator != null) {
+				selectionDecorator.addListener(this);
+			}
+		}
+
+		/**
+		 * @return the label decorator for selected items in the search list
+		 */
+		public ILabelDecorator getSelectionDecorator() {
+			return selectionDecorator;
+		}
+
+		/**
+		 * @param newProvider
+		 *            new label provider for items in the search list, not null
+		 */
+		public void setProvider(ILabelProvider newProvider) {
+			Assert.isNotNull(newProvider);
+			provider.removeListener(this);
+			provider.dispose();
+
+			provider = newProvider;
+
+			if (provider != null) {
+				provider.addListener(this);
+			}
+		}
+
+		/**
+		 * @return the label provider for items in the search list
+		 */
+		public ILabelProvider getProvider() {
+			return provider;
 		}
 
 		/*
@@ -824,6 +910,8 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 				selectionDecorator.removeListener(this);
 				selectionDecorator.dispose();
 			}
+
+			super.dispose();
 		}
 
 		/*

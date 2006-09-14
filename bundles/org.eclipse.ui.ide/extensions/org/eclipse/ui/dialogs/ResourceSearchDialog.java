@@ -22,7 +22,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
@@ -55,6 +54,10 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 
 	private ShowDerivedResourcesAction showDerivedResourcesAction;
 
+	private ResourceSearchItemLabelProvider resourceSearchItemLabelProvider;
+
+	private DecoratingLabelProvider detailsLabelProvider;
+
 	/**
 	 * Creates a new instance of the class
 	 * 
@@ -77,6 +80,15 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 
 		resourceSearcher = new ResourceSearcher(container, typesMask);
 		setSearcher(resourceSearcher);
+
+		resourceSearchItemLabelProvider = new ResourceSearchItemLabelProvider();
+
+		detailsLabelProvider = new DecoratingLabelProvider(
+				new CustomWorkbenchLabelProvider(), PlatformUI.getWorkbench()
+						.getDecoratorManager().getLabelDecorator());
+
+		setListLabelProvider(resourceSearchItemLabelProvider);
+		setDetailsLabelProvider(detailsLabelProvider);
 	}
 
 	/**
@@ -99,6 +111,15 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 
 		this.resourceSearcher = resourceSearcher;
 		setSearcher(resourceSearcher);
+
+		resourceSearchItemLabelProvider = new ResourceSearchItemLabelProvider();
+
+		detailsLabelProvider = new DecoratingLabelProvider(
+				new CustomWorkbenchLabelProvider(), PlatformUI.getWorkbench()
+						.getDecoratorManager().getLabelDecorator());
+
+		setListLabelProvider(resourceSearchItemLabelProvider);
+		setDetailsLabelProvider(detailsLabelProvider);
 	}
 
 	/*
@@ -155,35 +176,6 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 		menuManager.add(showDerivedResourcesAction);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.AbstractSearchDialog#getDetailsLabelProvider()
-	 */
-	protected ILabelProvider getDetailsLabelProvider() {
-		return new DecoratingLabelProvider(new CustomWorkbenchLabelProvider(),
-				PlatformUI.getWorkbench().getDecoratorManager()
-						.getLabelDecorator());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.AbstractSearchDialog#getListLabelProvider()
-	 */
-	protected ILabelProvider getListLabelProvider() {
-		return new ResourceDecoratorLabelDecorator();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.AbstractSearchDialog#getListSelectionLabelDecorator()
-	 */
-	protected ILabelDecorator getListSelectionLabelDecorator() {
-		return null;
-	}
-
 	/**
 	 * Sets the derived flag on the SimpleSearchEngine instance
 	 */
@@ -214,7 +206,7 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 	 * 
 	 * @since 3.3
 	 */
-	private class ResourceDecoratorLabelDecorator extends LabelProvider
+	private class ResourceSearchItemLabelProvider extends LabelProvider
 			implements ILabelProviderListener {
 
 		// Need to keep our own list of listeners
@@ -233,7 +225,7 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 		/**
 		 * Creates a new instance of the class
 		 */
-		public ResourceDecoratorLabelDecorator() {
+		public ResourceSearchItemLabelProvider() {
 			super();
 			provider.addListener(this);
 			decorator.addListener(this);
@@ -287,8 +279,12 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 		 * @see org.eclipse.jface.viewers.LabelProvider#dispose()
 		 */
 		public void dispose() {
+			provider.removeListener(this);
 			provider.dispose();
+
+			decorator.removeListener(this);
 			decorator.dispose();
+
 			super.dispose();
 		}
 
@@ -337,6 +333,13 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 				((ILabelProviderListener) l[i]).labelProviderChanged(newEvent);
 			}
 		}
+
+		/**
+		 * Clears relations map
+		 */
+		public void reset() {
+			map.clear();
+		}
 	}
 
 	/**
@@ -364,5 +367,15 @@ public class ResourceSearchDialog extends AbstractSearchDialog {
 
 			return resource.getFullPath().makeRelative().toString();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.AbstractSearchDialog#refresh()
+	 */
+	public void refresh() {
+		resourceSearchItemLabelProvider.reset();
+		super.refresh();
 	}
 }

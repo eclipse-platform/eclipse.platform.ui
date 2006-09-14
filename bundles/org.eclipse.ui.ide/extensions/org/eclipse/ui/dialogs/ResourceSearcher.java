@@ -38,7 +38,7 @@ import com.ibm.icu.text.Collator;
 
 /**
  * ResourceSearcher is an implementation of AbstractSearcher to searching
- * resources.
+ * resources in workspace.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -295,7 +295,7 @@ public class ResourceSearcher extends AbstractSearcher {
 	 * container and in resource history. It decorate results and mark
 	 * duplicates. During searching this refresh progres Monitor
 	 * 
-	 * @since 3.2
+	 * @since 3.3
 	 * 
 	 */
 	private class ResourceSearchEngineJob extends AbstractSearchJob {
@@ -372,8 +372,8 @@ public class ResourceSearcher extends AbstractSearcher {
 			String s2 = resource2.getName();
 			int comparability = collator.compare(s1, s2);
 			if (comparability == 0) {
-				resourceDecorator1.setDuplicate();
-				resourceDecorator2.setDuplicate();
+				resourceDecorator1.markAsDuplicate();
+				resourceDecorator2.markAsDuplicate();
 				s1 = resource1.getFullPath().toString();
 				s2 = resource2.getFullPath().toString();
 				comparability = collator.compare(s1, s2);

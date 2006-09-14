@@ -12,11 +12,17 @@
 package org.eclipse.ui.dialogs;
 
 /**
+ * AbstractSearchItem represents one searched item. It's opaque serched element
+ * and mark it as history or as duplicate. History flag helps comparator during sort. 
+ * Elements which are mark as history are at first places od the list. 
+ * The duplicate flag help dialog recognize which elements are a duplicated .  
+ * 
+ * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
  * use this API without consulting with the Platform/UI team.
  * 
- * @since 3.2
+ * @since 3.3
  */
 public abstract class AbstractSearchItem {
 
@@ -37,7 +43,7 @@ public abstract class AbstractSearchItem {
 	 * 
 	 * Mark it as a duplicate
 	 */
-	public void setDuplicate() {
+	public void markAsDuplicate() {
 		this.duplicate = true;
 	}
 

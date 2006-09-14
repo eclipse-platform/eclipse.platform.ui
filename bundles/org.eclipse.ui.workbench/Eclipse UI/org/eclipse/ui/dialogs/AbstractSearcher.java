@@ -41,7 +41,8 @@ import org.eclipse.ui.progress.UIJob;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * AbstractSearcher 
+ * AbstractSearcher represents set of solutions to searching different elements fg. resources or classes. 
+ * This elements are presents in AbstractSearchDialog.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -148,7 +149,8 @@ public abstract class AbstractSearcher {
 	
 	/**
 	 * SearcherModel is a data model for searcher.
-	 * It's collects data about matched elements and about history(selected elements). 
+	 * It collects data about matched elements and about history(selected elements). 
+	 * It conatains one synchronized sorted set for collecting and sorting data elements.
 	 */
 	protected class SearcherModel {
 		
@@ -158,7 +160,6 @@ public abstract class AbstractSearcher {
 		
 		public SearcherModel(){
 			this.elements = Collections.synchronizedSortedSet(new TreeSet(getComparator()));
-	//		this.historyElements = Collections.synchronizedSortedSet(new TreeSet(getComparator()));
 		}
 		
 		protected void addElements(Object[] items) {
@@ -206,7 +207,6 @@ public abstract class AbstractSearcher {
 		 */
 		public void reset(){
 			this.elements.clear();
-	//		this.historyElements.clear();
 			refresh();
 		}
 		
@@ -237,13 +237,13 @@ public abstract class AbstractSearcher {
 	}
 	
 	/**
-	 * Get comparator to sort elements
+	 * It returns comparator to sort elements
 	 */
 	protected abstract Comparator getComparator();
 	
 	/**
 	 * SearcherProgressMonitor to monitoring progress of searching process.
-	 * It's update progress message and refresh dialog after concrete part of work.
+	 * It updates progress message and refresh dialog after concrete part of work.
 	 * @since 3.3
 	 *
 	 */
@@ -342,9 +342,7 @@ public abstract class AbstractSearcher {
 	}
 	
 	/**
-	 * AbstractSearchJob for searching elements.
-	 * @since 3.2
-	 *
+	 * AbstractSearchJob is a job for searching elements.
 	 */
 	protected abstract class AbstractSearchJob extends AbstractJob {
 		
