@@ -672,7 +672,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * @throws BadLocationException in case the master event is not valid
 	 */
 	protected final boolean adaptProjectionToMasterChange(DocumentEvent masterEvent) throws BadLocationException {
-		if (!isUpdating() && fFragmentsUpdater.affectsPositions(masterEvent) || fIsAutoExpanding) {
+		if (!isUpdating() && fFragmentsUpdater.affectsPositions(masterEvent) || fIsAutoExpanding && masterEvent.getLength() > 0) {
 
 			addMasterDocumentRange(masterEvent.getOffset(), masterEvent.getLength(), masterEvent);
 			return true;

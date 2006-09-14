@@ -3380,17 +3380,7 @@ public class TextViewer extends Viewer implements
 				if (compoundChange && fUndoManager != null)
 					fUndoManager.beginCompoundChange();
 
-				if (fSlaveDocumentManager != null) {
-					IDocument visible= getVisibleDocument();
-					try {
-						fSlaveDocumentManager.setAutoExpandMode(visible, true);
-						fDocumentCommand.execute(getDocument());
-					} finally {
-						fSlaveDocumentManager.setAutoExpandMode(visible, false);
-					}
-				} else {
-					fDocumentCommand.execute(getDocument());
-				}
+				fDocumentCommand.execute(getDocument());
 
 				if (fTextWidget != null) {
 					int documentCaret= fDocumentCommand.caretOffset;
