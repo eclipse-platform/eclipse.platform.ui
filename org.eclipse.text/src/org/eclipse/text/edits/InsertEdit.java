@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
@@ -34,6 +36,7 @@ public final class InsertEdit extends TextEdit {
 	 */
 	public InsertEdit(int offset, String text) {
 		super(offset, 0);
+		Assert.isNotNull(text);
 		fText= text;
 	}
 
