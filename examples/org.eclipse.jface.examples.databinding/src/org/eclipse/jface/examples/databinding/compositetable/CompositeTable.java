@@ -758,6 +758,13 @@ public class CompositeTable extends Canvas {
 	 *            structure.
 	 */
 	public void setNumRowsInCollection(int numRowsInCollection) {
+		if (rowControl == null) {
+			resizeAndRecordPrototypeRows();
+			if (contentPane != null) {
+				setRunTime(false);
+				setRunTime(true);
+			}
+		}
 		this.numRowsInCollection = numRowsInCollection;
 		if (contentPane != null) {
 			contentPane.setNumRowsInCollection(numRowsInCollection);
