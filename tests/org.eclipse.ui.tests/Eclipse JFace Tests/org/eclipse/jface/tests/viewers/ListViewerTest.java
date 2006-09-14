@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl - test case for bug 157309
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.List;
@@ -42,6 +45,29 @@ public class ListViewerTest extends StructuredViewerTest {
 
     public static void main(String args[]) {
         junit.textui.TestRunner.run(ListViewerTest.class);
+    }
+    
+    public void testInsert() {
+    	ListViewer v = ((ListViewer)fViewer);
+    	TestElement element = new TestElement(fModel, fRootElement);
+    	v.insert(element, 1);
+    	assertSame("test insert", element, v.getElementAt(1));
+    	assertEquals("test insert", element.toString(), v.getList().getItem(1));
+    	
+    	v.addFilter(new ViewerFilter() {
+
+			public boolean select(Viewer viewer, Object parentElement, Object element) {
+				return true;
+			}
+    	});
+    	
+    	TestElement element1 = new TestElement(fModel, fRootElement);
+    	v.insert(element1, 1);
+    	assertNotSame("test insert", element1, v.getElementAt(1));
+    	
+    	v.setFilters(new ViewerFilter[0]);
+    	v.remove(element);
+    	v.remove(element1);
     }
     
     public void testRevealBug69076() {

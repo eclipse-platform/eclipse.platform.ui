@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Chris Longfield <clongfield@internap.com> - Fix for Bug 70856
+ *     Tom Schindl - fix for bug 157309
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -134,11 +135,41 @@ public abstract class AbstractListViewer extends StructuredViewer {
         for (int i = 0; i < filtered.length; i++) {
             Object element = filtered[i];
             int ix = indexForElement(element);
-            listAdd(getLabelProviderText(labelProvider,element), ix);
-            listMap.add(ix, element);
-            mapElement(element, getControl()); // must map it, since findItem only looks in map, if enabled
+            insertItem(labelProvider, element, ix);
         }
     }
+    
+    private void insertItem(ILabelProvider labelProvider, Object element, int index) {
+        listAdd(getLabelProviderText(labelProvider, element), index);
+		listMap.add(index, element);
+		mapElement(element, getControl()); // must map it, since findItem only looks in map, if enabled
+    }
+    
+    /**
+	 * Inserts the given element into this list viewer at the given position.
+	 * If this viewer has a sorter, the position is ignored and the element is
+	 * inserted at the correct position in the sort order.
+	 * <p>
+	 * This method should be called (by the content provider) when elements have
+	 * been added to the model, in order to cause the viewer to accurately
+	 * reflect the model. This method only affects the viewer, not the model.
+	 * </p>
+	 * 
+	 * @param element
+	 *            the element
+	 * @param position
+	 *            a 0-based position relative to the model, or -1 to indicate
+	 *            the last position
+	 */
+    public void insert(Object element, int position) {
+    	if (getComparator() != null || hasFilters()) {
+    		add(element);
+    		return;
+    	}
+    	
+    	insertItem((ILabelProvider) getLabelProvider(), element, position);
+    }
+    
     
     /**
      * Return the text for the element from the labelProvider.
