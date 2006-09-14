@@ -7,23 +7,30 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 145736
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.antsupport.inputhandler;
 
+import java.util.Iterator;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
+import org.apache.tools.ant.input.MultipleChoiceInputRequest;
 import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -36,6 +43,7 @@ import org.eclipse.swt.widgets.Text;
 public class SWTInputHandler extends DefaultInputHandler {
 	
 	private Text fText;
+	private Combo fCombo;
 	private Text fErrorMessageText;
 	private Button fOkButton;
 	private Shell fDialog;
@@ -63,7 +71,12 @@ public class SWTInputHandler extends DefaultInputHandler {
 	protected Runnable getHandleInputRunnable(final BuildException[] problem) {
 		return new Runnable() {
 			public void run() {
-				String prompt = getPrompt(fRequest);
+				String prompt;
+				if (fRequest instanceof MultipleChoiceInputRequest) {
+					prompt = fRequest.getPrompt();
+				} else {
+					prompt = getPrompt(fRequest);
+				}
 		       	String title= RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
 		       	boolean[] result = new boolean[1];
 				open(title, prompt, result);
@@ -104,13 +117,27 @@ public class SWTInputHandler extends DefaultInputHandler {
         label.setLayoutData(data);
         label.setFont(fDialog.getFont());
         
-        fText = new Text(fDialog, SWT.SINGLE | SWT.BORDER);
-        fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL| GridData.HORIZONTAL_ALIGN_FILL));
-        fText.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent e) {
-                validateInput();
-            }
-        });
+        if (fRequest instanceof MultipleChoiceInputRequest) {
+        	fCombo = new Combo(fDialog, SWT.BORDER | SWT.READ_ONLY);
+        	fCombo.add(""); //$NON-NLS-1$
+        	for (Iterator i = ((MultipleChoiceInputRequest)fRequest).getChoices().iterator();i.hasNext();) {
+        		fCombo.add((String)i.next());
+        		fCombo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL| GridData.HORIZONTAL_ALIGN_FILL));
+        		fCombo.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						validateInput();
+					}
+				});
+        	}
+        } else {
+	        fText = new Text(fDialog, SWT.SINGLE | SWT.BORDER);
+	        fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL| GridData.HORIZONTAL_ALIGN_FILL));
+	        fText.addModifyListener(new ModifyListener() {
+	            public void modifyText(ModifyEvent e) {
+	                validateInput();
+	            }
+	        });
+        }
 		
 		fErrorMessageText = new Text(fDialog, SWT.READ_ONLY);
         fErrorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
@@ -128,7 +155,11 @@ public class SWTInputHandler extends DefaultInputHandler {
     
     protected void validateInput() {
         String errorMessage = null;
-        fRequest.setInput(fText.getText());
+        if (fRequest instanceof MultipleChoiceInputRequest) {
+        	fRequest.setInput(fCombo.getText());
+        } else {
+        	fRequest.setInput(fText.getText());
+        }
         if (!fRequest.isInputValid()) {
             if (fFirstValidation) {
                 errorMessage= ""; //$NON-NLS-1$
@@ -174,10 +205,15 @@ public class SWTInputHandler extends DefaultInputHandler {
 		cancel.addListener(SWT.Selection, listener);
         //do this here because setting the text will set enablement on the ok
         // button
-        fText.setFocus();
+		if (fRequest instanceof MultipleChoiceInputRequest) {
+			fCombo.setFocus();
+		} else {
+			fText.setFocus();
+		}
         //TODO default value from the input request which appears to not be currently possible 
         //with the Ant implementation
-        //http://issues.apache.org/bugzilla/show_bug.cgi?id=28621
+        //http://issues.apache.org/bugzilla/show_bug.cgi?id=28621 
+		//to be addressed via https://bugs.eclipse.org/bugs/show_bug.cgi?id=152067 with Ant1.7
         //if (value != null) {
           //  text.setText(value);
            // text.selectAll();
