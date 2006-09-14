@@ -17,6 +17,7 @@ package org.eclipse.jface.text;
  * Allowed values are:
  * <ul>
  * 	<li>{@link DocumentRewriteSessionType#UNRESTRICTED}</li>
+ * 	<li>{@link DocumentRewriteSessionType#UNRESTRICTED_SMALL} (since 3.3)</li>
  * 	<li>{@link DocumentRewriteSessionType#SEQUENTIAL}</li>
  * 	<li>{@link DocumentRewriteSessionType#STRICTLY_SEQUENTIAL}</li>
  * </ul>
@@ -30,10 +31,18 @@ package org.eclipse.jface.text;
 public class DocumentRewriteSessionType {
 
 	/**
-	 * A unrestricted rewrite session is a sequence of unrestricted replace
-	 * operations.
+	 * An unrestricted rewrite session is a sequence of unrestricted replace operations. This
+	 * session type should only be used for <em>large</em> operations that touch more than about
+	 * fifty lines. Use {@link #UNRESTRICTED_SMALL} for small operations.
 	 */
 	public final static DocumentRewriteSessionType UNRESTRICTED= new DocumentRewriteSessionType();
+	/**
+	 * An small unrestricted rewrite session is a short sequence of unrestricted replace operations.
+	 * This should be used for changes that touch less than about fifty lines.
+	 * 
+	 * @since 3.3
+	 */
+	public final static DocumentRewriteSessionType UNRESTRICTED_SMALL= new DocumentRewriteSessionType();
 	/**
 	 * A sequential rewrite session is a sequence of non-overlapping replace
 	 * operations starting at an arbitrary document offset.

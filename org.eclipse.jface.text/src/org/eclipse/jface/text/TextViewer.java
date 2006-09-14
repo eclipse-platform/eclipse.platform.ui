@@ -1188,12 +1188,15 @@ public class TextViewer extends Viewer implements
 		 */
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			IRewriteTarget target= TextViewer.this.getRewriteTarget();
+			boolean toggleRedraw= event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
 			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
-				target.setRedraw(false);
+				if (toggleRedraw)
+					target.setRedraw(false);
 				target.beginCompoundChange();
 			} else if (DocumentRewriteSessionEvent.SESSION_STOP == event.getChangeType()) {
 				target.endCompoundChange();
-				target.setRedraw(true);
+				if (toggleRedraw)
+					target.setRedraw(true);
 			}
 		}
 	}

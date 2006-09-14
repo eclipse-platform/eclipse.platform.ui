@@ -30,6 +30,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.DocumentRewriteSessionEvent;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
@@ -205,6 +206,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private final IDocumentRewriteSessionListener fSessionListener= new IDocumentRewriteSessionListener() {
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
+			if (event.getSession().getSessionType() == DocumentRewriteSessionType.UNRESTRICTED_SMALL)
+				return;
 			if (DocumentRewriteSessionEvent.SESSION_START.equals(event.getChangeType()))
 				suspend();
 			else if (DocumentRewriteSessionEvent.SESSION_STOP.equals(event.getChangeType()))
