@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -219,7 +219,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         listViewer.setLabelProvider(FileEditorMappingLabelProvider.INSTANCE);
         listViewer
                 .setContentProvider(FileEditorMappingContentProvider.INSTANCE);
-        listViewer.setSorter(new ViewerSorter());
+        listViewer.setComparator(new ViewerComparator());
         addSelectionButtons(composite);
         createUserEntryGroup(composite);
         initializeViewer();

@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
@@ -115,7 +115,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         }
     }
 
-    private class FileSpecSorter extends ViewerSorter {
+    private class FileSpecComparator extends ViewerComparator {
 		public int category(Object element) {
 			// only Spec objects in here - unchecked cast
 			return ((Spec)element).sortValue;
@@ -403,7 +403,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         }
         {
             fileAssociationViewer = new ListViewer(composite);
-            fileAssociationViewer.setSorter(new FileSpecSorter());
+            fileAssociationViewer.setComparator(new FileSpecComparator());
             fileAssociationViewer.getControl().setFont(composite.getFont());
             fileAssociationViewer
                     .setContentProvider(new FileSpecContentProvider());
@@ -556,7 +556,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                     .setContentProvider(new ContentTypesContentProvider());
             contentTypesViewer
                     .setLabelProvider(new ContentTypesLabelProvider());
-            contentTypesViewer.setSorter(new ViewerSorter());
+            contentTypesViewer.setComparator(new ViewerComparator());
             contentTypesViewer.setInput(Platform.getContentTypeManager());
             GridData data = new GridData(GridData.FILL_BOTH);
             data.horizontalSpan = 2;

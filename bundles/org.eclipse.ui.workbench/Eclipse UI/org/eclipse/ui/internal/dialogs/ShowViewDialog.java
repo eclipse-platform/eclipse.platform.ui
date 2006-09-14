@@ -210,7 +210,7 @@ public class ShowViewDialog extends Dialog implements
 		
 		treeViewer.setLabelProvider(new ViewLabelProvider(window, dimmedForeground));
 		treeViewer.setContentProvider(new ViewContentProvider());
-		treeViewer.setSorter(new ViewSorter((ViewRegistry) viewReg));
+		treeViewer.setComparator(new ViewSorter((ViewRegistry) viewReg));
 		treeViewer.setInput(viewReg);
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.addDoubleClickListener(this);

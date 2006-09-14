@@ -17,9 +17,9 @@ import java.util.Comparator;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-public class TableSorter extends ViewerSorter implements Comparator {
+public class TableSorter extends ViewerComparator implements Comparator {
 
 	public static final int MAX_DEPTH = 4;
 

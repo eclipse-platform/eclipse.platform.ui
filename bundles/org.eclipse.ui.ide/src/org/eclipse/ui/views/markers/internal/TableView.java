@@ -35,7 +35,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyAdapter;
@@ -138,7 +138,7 @@ public abstract class TableView extends ViewPart {
 			}
 		});
 
-		viewer.setSorter(buildSorter());
+		viewer.setComparator(buildComparator());
 		setSortIndicators();
 
 		// create the actions before the input is set on the viewer but after
@@ -191,22 +191,22 @@ public abstract class TableView extends ViewPart {
 	abstract Object createViewerInput();
 
 	/**
-	 * Set the sorter to be the new sorter.
+	 * Set the comparator to be the new comparator.
 	 * 
-	 * @param sorter2
+	 * @param comparator
 	 */
-	void setSorter(TableSorter sorter2) {
-		viewer.setSorter(sorter2);
-		updateForNewSorter(sorter2);
+	void setComparator(TableSorter comparator) {
+		viewer.setComparator(comparator);
+		updateForNewComparator(comparator);
 	}
 
 	/**
-	 * Update the viewer for sorter updates
+	 * Update the viewer for comparator updates
 	 * 
-	 * @param sorter2
+	 * @param comparator
 	 */
-	void updateForNewSorter(TableSorter sorter2) {
-		sorter2.saveState(getDialogSettings());
+	void updateForNewComparator(TableSorter comparator) {
+		comparator.saveState(getDialogSettings());
 		viewer.refresh();
 		setSortIndicators();
 	}
@@ -396,11 +396,11 @@ public abstract class TableView extends ViewPart {
 	}
 
 	/**
-	 * Build a sorter from the default settings.
+	 * Build a comparator from the default settings.
 	 * 
 	 * @return TableSorter
 	 */
-	protected ViewerSorter buildSorter() {
+	protected ViewerComparator buildComparator() {
 
 		IField[] sortingFields = getSortingFields();
 		int[] priorities = new int[sortingFields.length];
@@ -574,7 +574,7 @@ public abstract class TableView extends ViewPart {
 	 * @return TableSorter
 	 */
 	TableSorter getTableSorter() {
-		return (TableSorter) viewer.getSorter();
+		return (TableSorter) viewer.getComparator();
 	}
 
 	protected abstract void handleKeyPressed(KeyEvent event);

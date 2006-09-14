@@ -66,7 +66,7 @@ import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeNodeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -425,7 +425,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	/**
 	 * Sorts the bindings in the filtered tree based on the current grouping.
 	 */
-	private final class BindingSorter extends ViewerSorter {
+	private final class BindingComparator extends ViewerComparator {
 
 		public final int category(final Object element) {
 			switch (grouping) {
@@ -1134,7 +1134,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 		final TreeViewer viewer = filteredTree.getViewer();
 		viewer.setLabelProvider(new BindingLabelProvider());
 		viewer.setContentProvider(new TreeNodeContentProvider());
-		viewer.setSorter(new BindingSorter());
+		viewer.setComparator(new BindingComparator());
 
 		/*
 		 * Listen for selection changes so that the data controls can be

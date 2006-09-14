@@ -42,7 +42,7 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
@@ -862,9 +862,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
         tree.getViewer().setLabelProvider(labelProvider);
         tree.getViewer().setContentProvider(new ThemeContentProvider());
-        tree.getViewer().setSorter(new ViewerSorter() {
+        tree.getViewer().setComparator(new ViewerComparator() {
             /* (non-Javadoc)
-             * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+             * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
              */
             public int category(Object element) {
                 if (element instanceof ThemeElementCategory) {

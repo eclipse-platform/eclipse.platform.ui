@@ -18,7 +18,7 @@ import java.util.Comparator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -197,7 +197,7 @@ public class MarkerAdapter {
 	 * @return CategorySorter
 	 */
 	public CategorySorter getCategorySorter() {
-		return (CategorySorter) view.getViewer().getSorter();
+		return (CategorySorter) view.getViewer().getComparator();
 	}
 
 	/**
@@ -245,7 +245,7 @@ public class MarkerAdapter {
 			if (monitor.isCanceled())
 				return;
 
-			ViewerSorter sorter = view.getViewer().getSorter();
+			ViewerComparator sorter = view.getViewer().getComparator();
 
 			if (markerLimit == -1 || isShowingHierarchy()) {
 				sorter.sort(view.getViewer(), newMarkers.toArray());
@@ -297,7 +297,7 @@ public class MarkerAdapter {
 	 */
 	private boolean isShowingHierarchy() {
 
-		ViewerSorter sorter = view.getViewer().getSorter();
+		ViewerComparator sorter = view.getViewer().getComparator();
 		if (sorter instanceof CategorySorter) {
 			return ((CategorySorter) sorter).getCategoryField() != null;
 		}

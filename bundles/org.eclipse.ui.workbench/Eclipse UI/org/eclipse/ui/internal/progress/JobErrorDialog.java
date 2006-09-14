@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -243,7 +243,7 @@ public class JobErrorDialog extends ErrorDialog {
 		// Display a list of jobs that have reported errors
 		jobListViewer = new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
-		jobListViewer.setSorter(getViewerSorter());
+		jobListViewer.setComparator(getViewerComparator());
 		Control control = jobListViewer.getControl();
 		GridData data = new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
@@ -288,12 +288,12 @@ public class JobErrorDialog extends ErrorDialog {
 	 * 
 	 * @return ViewerSorter
 	 */
-	private ViewerSorter getViewerSorter() {
-		return new ViewerSorter() {
+	private ViewerComparator getViewerComparator() {
+		return new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {

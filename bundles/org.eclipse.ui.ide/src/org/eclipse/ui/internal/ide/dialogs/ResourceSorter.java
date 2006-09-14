@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Sorter for viewers that display items of type <code>IResource</code>.
@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class ResourceSorter extends ViewerSorter {
+public class ResourceSorter extends ViewerComparator {
 
     /**
      * Constructor argument value that indicates to sort items by name.
@@ -133,7 +133,7 @@ public class ResourceSorter extends ViewerSorter {
      *  element is greater than the second element
      */
     protected int compareNames(IResource resource1, IResource resource2) {
-        return collator.compare(resource1.getName(), resource2.getName());
+        return getComparator().compare(resource1.getName(), resource2.getName());
     }
 
     /**
@@ -155,7 +155,7 @@ public class ResourceSorter extends ViewerSorter {
         // Compare extensions.  If they're different then return a value that
         // indicates correct extension ordering.  If they're the same then
         // return a value that indicates the correct NAME ordering.
-        int result = collator.compare(ext1, ext2);
+        int result = getComparator().compare(ext1, ext2);
 
         if (result != 0) {
 			return result;

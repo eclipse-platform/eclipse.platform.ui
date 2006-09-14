@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -869,11 +869,12 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
-     * Set the sorter that is to be applied to self's list viewer
-     * @param sorter
+     * Set the comparator that is to be applied to self's list viewer
+     * 
+     * @param comparator the sorter for the list
      */
-    public void setListSorter(ViewerSorter sorter) {
-        listViewer.setSorter(sorter);
+    public void setListComparator(ViewerComparator comparator) {
+        listViewer.setComparator(comparator);
     }
 
     /**
@@ -928,11 +929,12 @@ public class ResourceTreeAndListGroup extends EventManager implements
     }
 
     /**
-     * Set the sorter that is to be applied to self's tree viewer
-     * @param sorter
+     * Set the comparator that is to be applied to self's tree viewer
+     * 
+     * @param comparator the comparator for the tree
      */
-    public void setTreeSorter(ViewerSorter sorter) {
-        treeViewer.setSorter(sorter);
+    public void setTreeComparator(ViewerComparator comparator) {
+        treeViewer.setComparator(comparator);
     }
 
     /**

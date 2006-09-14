@@ -53,7 +53,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI);
-		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
+		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 		viewer.getControl().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, true, true));

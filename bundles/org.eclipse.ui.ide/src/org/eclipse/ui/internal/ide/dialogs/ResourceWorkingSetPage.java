@@ -177,7 +177,7 @@ public class ResourceWorkingSetPage extends WizardPage implements
                         .getWorkbench().getDecoratorManager()
                         .getLabelDecorator()));
         tree.setInput(IDEWorkbenchPlugin.getPluginWorkspace().getRoot());
-        tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
+        tree.setComparator(new ResourceSorter(ResourceSorter.NAME));
 
         data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
         data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;

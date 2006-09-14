@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -294,7 +294,7 @@ public class ActivityEnabler {
 		new Label(composite, SWT.NONE).setText(strings.getProperty(ActivitiesPreferencePage.ACTIVITY_NAME, ActivityMessages.ActivityEnabler_activities) + ':');
 
 		dualViewer = new CheckboxTreeViewer(composite);
-		dualViewer.setSorter(new ViewerSorter());
+		dualViewer.setComparator(new ViewerComparator());
 		dualViewer.setLabelProvider(new ActivityCategoryLabelProvider());
 		dualViewer.setContentProvider(provider);
 		dualViewer.setInput(activitySupport);

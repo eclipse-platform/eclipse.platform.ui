@@ -29,7 +29,7 @@ public class TableSortAction extends Action {
 
     public void run() {
         if (dialog.open() == Window.OK && dialog.isDirty()) {
-            view.setSorter(dialog.getSorter());
+            view.setComparator(dialog.getSorter());
         }
     }
 }

@@ -188,8 +188,8 @@ public class FileSelectionDialog extends SelectionDialog {
         };
 
         WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
-        selectionGroup.setTreeSorter(sorter);
-        selectionGroup.setListSorter(sorter);
+        selectionGroup.setTreeComparator(sorter);
+        selectionGroup.setListComparator(sorter);
         selectionGroup.addCheckStateListener(listener);
 
         addSelectionButtons(composite);

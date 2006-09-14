@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -1000,7 +1000,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		typesViewer.getControl().setLayoutData(gridData);
 		typesViewer.setContentProvider(typesContentProvider);
 		typesViewer.setLabelProvider(getLabelProvider());
-		typesViewer.setSorter(getSorter());
+		typesViewer.setComparator(getComparator());
 		typesViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				markDirty();
@@ -1140,16 +1140,16 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 * 
 	 * @return ViewerSorter
 	 */
-	protected ViewerSorter getSorter() {
-		return new ViewerSorter() {
+	protected ViewerComparator getComparator() {
+		return new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer viewer, Object e1, Object e2) {
-				return collator.compare(((AbstractNode) e1).getName(),
+				return getComparator().compare(((AbstractNode) e1).getName(),
 						((AbstractNode) e2).getName());
 			}
 		};

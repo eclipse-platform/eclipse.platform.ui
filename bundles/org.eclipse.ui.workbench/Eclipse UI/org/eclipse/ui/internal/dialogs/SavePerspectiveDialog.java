@@ -17,7 +17,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -165,7 +165,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
         list.setLabelProvider(new PerspectiveLabelProvider());
         list.setContentProvider(new PerspContentProvider());
         list.addFilter(new ActivityViewerFilter());
-        list.setSorter(new ViewerSorter());
+        list.setComparator(new ViewerComparator());
         list.setInput(perspReg);
         list.addSelectionChangedListener(this);
         list.getTable().setFont(font);

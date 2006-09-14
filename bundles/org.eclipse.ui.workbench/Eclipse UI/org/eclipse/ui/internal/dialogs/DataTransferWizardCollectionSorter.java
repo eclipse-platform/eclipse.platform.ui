@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  *  
  *  @since 3.2
  */
-class DataTransferWizardCollectionSorter extends ViewerSorter {
+class DataTransferWizardCollectionSorter extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */	

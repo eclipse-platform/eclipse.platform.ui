@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  *	name for base Wizards will always be sorted such that it will
  *	ultimately be placed at the beginning of the sorted result.
  */
-class NewWizardCollectionSorter extends ViewerSorter {
+class NewWizardCollectionSorter extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */

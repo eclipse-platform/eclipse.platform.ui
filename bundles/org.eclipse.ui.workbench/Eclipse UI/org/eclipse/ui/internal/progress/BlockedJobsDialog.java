@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
@@ -301,11 +301,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	void showJobDetails(Composite parent) {
 		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL
 				| SWT.V_SCROLL | SWT.BORDER);
-		viewer.setSorter(new ViewerSorter() {
+		viewer.setComparator(new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {

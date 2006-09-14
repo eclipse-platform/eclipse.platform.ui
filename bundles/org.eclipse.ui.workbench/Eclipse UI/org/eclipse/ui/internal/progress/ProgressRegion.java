@@ -170,7 +170,7 @@ public class ProgressRegion implements IWindowTrim {
         viewer.setContentProvider(provider);
         viewer.setInput(provider);
         viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
-        viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
+        viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
         return region;
     }
 

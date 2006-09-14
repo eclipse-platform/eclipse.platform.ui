@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -183,7 +183,7 @@ public class SelectPerspectiveDialog extends Dialog implements
         list.setLabelProvider(new PerspectiveLabelProvider());
         list.setContentProvider(new PerspContentProvider());
         list.addFilter(activityViewerFilter);
-        list.setSorter(new ViewerSorter());
+        list.setComparator(new ViewerComparator());
         list.setInput(perspReg);
         list.addSelectionChangedListener(this);
         list.addDoubleClickListener(new IDoubleClickListener() {

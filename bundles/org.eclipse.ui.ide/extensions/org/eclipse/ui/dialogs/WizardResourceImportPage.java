@@ -82,6 +82,10 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
 
     private Button containerBrowseButton;
 
+    /**
+	 * The <code>selectionGroup</code> field should have been created with a
+	 * private modifier. Subclasses should not access this field directly.
+	 */
     protected ResourceTreeAndListGroup selectionGroup;
 
     //messages
@@ -225,8 +229,8 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
         };
 
         WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
-        this.selectionGroup.setTreeSorter(sorter);
-        this.selectionGroup.setListSorter(sorter);
+        this.selectionGroup.setTreeComparator(sorter);
+        this.selectionGroup.setListComparator(sorter);
         this.selectionGroup.addCheckStateListener(listener);
 
     }

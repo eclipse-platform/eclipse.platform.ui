@@ -33,7 +33,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IMemento;
@@ -433,10 +433,10 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
 	 */
-	void setSorter(TableSorter sorter2) {
+	void setComparator(TableSorter sorter2) {
 		getMarkerAdapter().getCategorySorter().setTableSorter(sorter2);
 		getMarkerAdapter().getCategorySorter().saveState(getDialogSettings());
-		updateForNewSorter(sorter2);
+		updateForNewComparator(sorter2);
 		
 	}
 
@@ -446,7 +446,7 @@ public class ProblemView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
 	 */
 	public TableSorter getTableSorter() {
-		return ((CategorySorter) getViewer().getSorter()).innerSorter;
+		return ((CategorySorter) getViewer().getComparator()).innerSorter;
 	}
 
 	/*
@@ -501,7 +501,7 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
 	 */
-	protected ViewerSorter buildSorter() {
+	protected ViewerComparator buildComparator() {
 
 		TableSorter sorter = TableSorter.createTableSorter(getSortingFields());
 		sorter.restoreState(getDialogSettings());

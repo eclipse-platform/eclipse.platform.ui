@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
@@ -102,16 +102,16 @@ public class ProgressManagerUtil {
 	// viewer.setLabelProvider(new ProgressLabelProvider());
 	// }
 	/**
-	 * Return a viewer sorter for looking at the jobs.
+	 * Return a viewer comparator for looking at the jobs.
 	 * 
-	 * @return ViewerSorter
+	 * @return ViewerComparator
 	 */
-	static ViewerSorter getProgressViewerSorter() {
-		return new ViewerSorter() {
+	static ViewerComparator getProgressViewerComparator() {
+		return new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer testViewer, Object e1, Object e2) {

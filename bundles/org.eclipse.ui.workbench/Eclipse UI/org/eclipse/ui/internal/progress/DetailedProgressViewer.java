@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
@@ -105,7 +105,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @see org.eclipse.ui.internal.progress.AbstractProgressViewer#add(java.lang.Object[])
 	 */
 	public void add(Object[] elements) {
-		ViewerSorter sorter = getSorter();
+		ViewerComparator sorter = getComparator();
 		ArrayList newItems = new ArrayList(control.getChildren().length
 				+ elements.length);
 

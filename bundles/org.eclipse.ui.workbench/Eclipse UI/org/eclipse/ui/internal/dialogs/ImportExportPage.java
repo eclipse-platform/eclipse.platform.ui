@@ -116,7 +116,7 @@ public abstract class ImportExportPage extends WorkbenchWizardSelectionPage{
 
 	        viewer.setContentProvider(new WizardContentProvider());
 	        viewer.setLabelProvider(new WorkbenchLabelProvider());
-	        viewer.setSorter(DataTransferWizardCollectionSorter.INSTANCE);
+	        viewer.setComparator(DataTransferWizardCollectionSorter.INSTANCE);
 	        
 	        ArrayList inputArray = new ArrayList();
 	        boolean expandTop = false;

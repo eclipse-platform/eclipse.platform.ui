@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
@@ -21,7 +21,7 @@ import org.eclipse.ui.views.IViewDescriptor;
 /**
  * This is used to sort views in a ShowViewDialog.
  */
-public class ViewSorter extends ViewerSorter {
+public class ViewSorter extends ViewerComparator {
     private ViewRegistry viewReg;
 
     /**
@@ -45,7 +45,7 @@ public class ViewSorter extends ViewerSorter {
                     .getLabel());
             String str2 = DialogUtil.removeAccel(((IViewDescriptor) e2)
                     .getLabel());
-            return collator.compare(str1, str2);
+            return getComparator().compare(str1, str2);
         } else if (e1 instanceof IViewCategory) {
         	IViewCategory generalCategory = viewReg.findCategory(ViewRegistryReader.GENERAL_VIEW_ID);
         	if (generalCategory != null){
@@ -67,7 +67,7 @@ public class ViewSorter extends ViewerSorter {
 			}
             String str1 = DialogUtil.removeAccel(((IViewCategory) e1).getLabel());
             String str2 = DialogUtil.removeAccel(((IViewCategory) e2).getLabel());
-            return collator.compare(str1, str2);
+            return getComparator().compare(str1, str2);
         }
         return 0;
     }

@@ -191,7 +191,7 @@ public class CleanDialog extends MessageDialog {
     	projectNames = CheckboxTableViewer.newCheckList(radioGroup, SWT.BORDER);
     	projectNames.setContentProvider(new WorkbenchContentProvider());
     	projectNames.setLabelProvider(new WorkbenchLabelProvider());
-    	projectNames.setSorter(new ResourceSorter(ResourceSorter.NAME));
+    	projectNames.setComparator(new ResourceSorter(ResourceSorter.NAME));
     	projectNames.addFilter(new ViewerFilter() {
     		private final IProject[] projectHolder = new IProject[1];
 			public boolean select(Viewer viewer, Object parentElement, Object element) {

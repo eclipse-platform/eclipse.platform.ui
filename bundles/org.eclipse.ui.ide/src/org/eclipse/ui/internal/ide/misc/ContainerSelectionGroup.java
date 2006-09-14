@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -266,7 +266,7 @@ public class ContainerSelectionGroup extends Composite {
 		treeViewer.setContentProvider(cp);
 		treeViewer.setLabelProvider(WorkbenchLabelProvider
 				.getDecoratingWorkbenchLabelProvider());
-		treeViewer.setSorter(new ViewerSorter());
+		treeViewer.setComparator(new ViewerComparator());
 		treeViewer.setUseHashlookup(true);
 		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {

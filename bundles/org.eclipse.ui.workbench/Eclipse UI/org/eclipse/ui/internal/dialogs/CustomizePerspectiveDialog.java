@@ -1092,7 +1092,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         actionSetsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         actionSetsViewer.setLabelProvider(new WorkbenchLabelProvider());
         actionSetsViewer.setContentProvider(new ArrayContentProvider());
-        actionSetsViewer.setSorter(new ActionSetSorter());
+        actionSetsViewer.setComparator(new ActionSetSorter());
 
         // Menu and toolbar composite
         Composite actionGroup = new Composite(sashComposite, SWT.NONE);

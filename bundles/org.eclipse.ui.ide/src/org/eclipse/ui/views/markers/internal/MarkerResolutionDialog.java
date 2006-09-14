@@ -36,7 +36,7 @@ import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -79,7 +79,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 	private MarkerView markerView;
 
-	private ViewerSorter resolutionsSorter;
+	private ViewerComparator resolutionsComparator;
 
 	private boolean calculatingResolutions;
 
@@ -104,7 +104,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		initializeResolutionsSorter();
-		resolutionsSorter.sort(view.getViewer(), newResolutions);
+		resolutionsComparator.sort(view.getViewer(), newResolutions);
 		resolutions = newResolutions;
 		originalMarker = marker;
 		markerView = view;
@@ -210,7 +210,7 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 
 		resolutionsList.setInput(this);
 
-		resolutionsList.setSorter(resolutionsSorter);
+		resolutionsList.setComparator(resolutionsComparator);
 
 		FormData listData = new FormData();
 		listData.top = new FormAttachment(resolutionsLabel, 0);
@@ -264,11 +264,11 @@ public class MarkerResolutionDialog extends TitleAreaDialog {
 	 * Create the resolutions sorter.
 	 */
 	private void initializeResolutionsSorter() {
-		resolutionsSorter = new ViewerSorter() {
+		resolutionsComparator = new ViewerComparator() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
 			 *      java.lang.Object, java.lang.Object)
 			 */
 			public int compare(Viewer viewer, Object e1, Object e2) {

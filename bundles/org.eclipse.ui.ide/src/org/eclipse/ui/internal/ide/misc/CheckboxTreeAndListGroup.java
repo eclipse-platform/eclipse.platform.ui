@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -33,7 +33,7 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
@@ -432,6 +432,8 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
     /**
      *	Set the initial checked state of the passed list element to true.
+     *	
+     *	@param element the element in the list to select 
      */
     public void initialCheckListItem(Object element) {
         Object parent = treeContentProvider.getParent(element);
@@ -444,6 +446,8 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     /**
      *	Set the initial checked state of the passed element to true,
      *	as well as to all of its children and associated list elements
+     *	
+     *	@param element the element in the tree to select
      */
     public void initialCheckTreeItem(Object element) {
         treeItemChecked(element, true);
@@ -498,7 +502,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
         Object[] array = getListeners();
         for (int i = 0; i < array.length; i++) {
             final ICheckStateListener l = (ICheckStateListener) array[i];
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
                     l.checkStateChanged(event);
                 }
@@ -560,6 +564,8 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     /**
      * Select or deselect all of the elements in the tree depending on the value of the selection
      * boolean. Be sure to update the displayed files as well.
+     * 
+     * @param selection boolean indicating whether or not to select all elements
      */
     public void setAllSelections(final boolean selection) {
 
@@ -586,10 +592,12 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     }
 
     /**
-     *	Set the sorter that is to be applied to self's list viewer
+     *	Set the comparator that is to be applied to self's list viewer
+     *
+     *	@param comparator the comparator for the list viewer
      */
-    public void setListSorter(ViewerSorter sorter) {
-        listViewer.setSorter(sorter);
+    public void setListComparator(ViewerComparator comparator) {
+        listViewer.setComparator(comparator);
     }
 
     /**
@@ -648,10 +656,12 @@ public class CheckboxTreeAndListGroup extends EventManager implements
     }
 
     /**
-     *	Set the sorter that is to be applied to self's tree viewer
+     *	Set the comparator that is to be applied to self's tree viewer
+     *
+     *	@param comparator the comparator for the tree
      */
-    public void setTreeSorter(ViewerSorter sorter) {
-        treeViewer.setSorter(sorter);
+    public void setTreeComparator(ViewerComparator comparator) {
+        treeViewer.setComparator(comparator);
     }
 
     /**

@@ -14,14 +14,14 @@ import java.util.Comparator;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * CategorySorter is the sorter that takes categories and the viewer into
  * account.
  * 
  */
-public class CategorySorter extends ViewerSorter implements Comparator {
+public class CategorySorter extends ViewerComparator implements Comparator {
 	TableSorter innerSorter;
 
 	IField categoryField;

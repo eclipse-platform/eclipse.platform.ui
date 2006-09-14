@@ -11,13 +11,13 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 
 /**
  * This is used to sort action sets in the perspective customization dialog.
  */
-public class ActionSetSorter extends ViewerSorter {
+public class ActionSetSorter extends ViewerComparator {
 
     /**
      * Creates a new sorter.
@@ -36,7 +36,7 @@ public class ActionSetSorter extends ViewerSorter {
                     .getLabel());
             String str2 = DialogUtil.removeAccel(((IActionSetDescriptor) e2)
                     .getLabel());
-            return collator.compare(str1, str2);
+            return getComparator().compare(str1, str2);
         }
         return 0;
     }

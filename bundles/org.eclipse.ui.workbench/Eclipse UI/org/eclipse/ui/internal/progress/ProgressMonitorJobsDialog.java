@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -114,11 +114,11 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
             viewer = new DetailedProgressViewer(viewerComposite, SWT.MULTI
                     | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-            viewer.setSorter(new ViewerSorter() {
+            viewer.setComparator(new ViewerComparator() {
                 /*
                  * (non-Javadoc)
                  * 
-                 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,
+                 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer,
                  *      java.lang.Object, java.lang.Object)
                  */
                 public int compare(Viewer testViewer, Object e1, Object e2) {

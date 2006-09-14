@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -47,7 +47,11 @@ public class BasicPartList extends AbstractTableInformationControl {
     
     private class BasicStackListContentProvider implements
             IStructuredContentProvider {
-
+    	
+    	/**
+    	 * Constructor for stack list content provider.
+    	 *
+    	 */
         public BasicStackListContentProvider() {
             //no-op
         }
@@ -74,6 +78,10 @@ public class BasicPartList extends AbstractTableInformationControl {
 
         private Font boldFont = null;
 
+        /**
+         * Constructor for stack list label provider.
+         *
+         */
         public BasicStackListLabelProvider() {
             //no-op
         }
@@ -123,14 +131,17 @@ public class BasicPartList extends AbstractTableInformationControl {
         }
     }
 
-    private class BasicStackListViewerSorter extends ViewerSorter {
-
-        public BasicStackListViewerSorter() {
+    private class BasicStackListViewerComparator extends ViewerComparator {
+    	/**
+    	 * Constructor for stack list viewer's comparator.
+    	 *
+    	 */
+        public BasicStackListViewerComparator() {
             //no-op
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+         * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
          */
         public int compare(Viewer viewer, Object e1, Object e2) {
             int cat1 = category(e1);
@@ -139,8 +150,6 @@ public class BasicPartList extends AbstractTableInformationControl {
             if (cat1 != cat2) {
 				return cat1 - cat2;
 			}
-
-            // cat1 == cat2
 
             String name1;
             String name2;
@@ -176,11 +185,11 @@ public class BasicPartList extends AbstractTableInformationControl {
             if (name2 == null) {
 				name2 = "";//$NON-NLS-1$
 			}
-            return collator.compare(name1, name2);
+            return getComparator().compare(name1, name2);
         }
 
         /* (non-Javadoc)
-         * @see org.eclipse.jface.viewers.ViewerSorter#category(java.lang.Object)
+         * @see org.eclipse.jface.viewers.ViewerComparator#category(java.lang.Object)
          */
         public int category(Object element) {
 
@@ -194,6 +203,15 @@ public class BasicPartList extends AbstractTableInformationControl {
         }
     }
 
+    /**
+     * Constructor for BasicPartList.
+     * 
+     * @param parent the parent shell
+     * @param shellStyle the SWT style bits used to create the shell
+     * @param treeStyle	the SWT style bits used to create the tree
+     * @param site 
+     * @param folder 
+     */
     public BasicPartList(Shell parent, int shellStyle, int treeStyle, 
             IStackPresentationSite site, PresentablePartFolder folder) {
         super(parent, shellStyle, treeStyle);
@@ -229,7 +247,7 @@ public class BasicPartList extends AbstractTableInformationControl {
         };
         tableViewer.addFilter(new NamePatternFilter());
         tableViewer.setContentProvider(new BasicStackListContentProvider());
-        tableViewer.setSorter(new BasicStackListViewerSorter());
+        tableViewer.setComparator(new BasicStackListViewerComparator());
         tableViewer.setLabelProvider(new BasicStackListLabelProvider());
         return tableViewer;
     }

@@ -38,8 +38,8 @@ import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -549,7 +549,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 true);
         workingCopy.addActivityManagerListener(categoryLabelProvider);
         categoryViewer.setLabelProvider(categoryLabelProvider);
-        categoryViewer.setSorter(new ViewerSorter());
+        categoryViewer.setComparator(new ViewerComparator());
         categoryViewer.addFilter(new EmptyCategoryFilter());
 
         categoryViewer

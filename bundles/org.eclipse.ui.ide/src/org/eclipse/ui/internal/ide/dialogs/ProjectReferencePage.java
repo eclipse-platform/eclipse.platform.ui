@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
@@ -106,7 +106,7 @@ public class ProjectReferencePage extends PropertyPage {
         listViewer.setLabelProvider(WorkbenchLabelProvider
                 .getDecoratingWorkbenchLabelProvider());
         listViewer.setContentProvider(getContentProvider(project));
-        listViewer.setSorter(new ViewerSorter());
+        listViewer.setComparator(new ViewerComparator());
         listViewer.setInput(project.getWorkspace());
         try {
             listViewer.setCheckedElements(project.getDescription()
