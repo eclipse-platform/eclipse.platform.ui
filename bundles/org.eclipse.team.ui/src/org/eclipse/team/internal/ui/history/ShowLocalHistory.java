@@ -24,14 +24,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
 public class ShowLocalHistory extends ActionDelegate implements IObjectActionDelegate {
 
 	private IStructuredSelection fSelection;
-	private IWorkbenchPart targetPart;
 	
 	public void run(IAction action) {
 		final Shell shell= Display.getDefault().getActiveShell();
@@ -40,14 +40,14 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
-						public void run() {try {
-							IViewPart view = targetPart.getSite().getPage().showView(IHistoryView.VIEW_ID); //$NON-NLS-1$
-							if (view instanceof GenericHistoryView){
-								GenericHistoryView historyView =(GenericHistoryView) view;
-								historyView.itemDropped(resource,true);
+						public void run() {
+							IHistoryPage page = TeamUI.getHistoryView().showHistoryFor(resource);
+							if (page instanceof LocalHistoryPage){
+								LocalHistoryPage historyPage = (LocalHistoryPage) page;
+								historyPage.setClickAction(isCompare());
 							}
-						} catch (PartInitException e) {}}};
-						
+						}
+					};
 					TeamUIPlugin.getStandardDisplay().asyncExec(r);				
 				}
 			});
@@ -63,7 +63,11 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 		}
 	}
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		this.targetPart = targetPart;
+		// do nothing
+	}
+
+	protected boolean isCompare() {
+		return false;
 	}
 
 }

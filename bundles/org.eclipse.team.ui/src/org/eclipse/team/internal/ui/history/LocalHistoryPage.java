@@ -677,6 +677,13 @@ public class LocalHistoryPage extends HistoryPage {
 		}
 		return true;
 	}
+	
+	public void setClickAction(boolean compare) {
+		//toggleCompareAction is going to switch the mode
+		//so make sure that we're in the appropriate mode before
+		compareMode = !compare;
+		compareModeAction.run();
+	}
 
 	
 	

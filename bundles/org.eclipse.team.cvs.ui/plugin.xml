@@ -283,6 +283,7 @@
                tooltip="%ShowHistoryAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction"
                menubarPath="team.main/group2"
+               overrideActionId="org.eclipse.team.ui.showLocalHistory"
                id="org.eclipse.team.cvs.ui.showHistory">
          </action>
          <action
@@ -302,7 +303,7 @@
                id="org.eclipse.team.cvs.ui.compareWithRevision"
                label="%CompareWithRevisionAction.label"
                menubarPath="compareWithMenu/compareWithGroup"
-               overrideActionId="compareWithHistory"
+               overrideActionId="org.eclipse.team.ui.compareLocalHistory"
                tooltip="%CompareWithRevisionAction.tooltip">
          </action>
          <action
@@ -312,7 +313,7 @@
                id="org.eclipse.team.cvs.ui.replaceWithRevision"
                label="%ReplaceWithRevisionAction.label"
                menubarPath="replaceWithMenu/replaceWithGroup"
-               overrideActionId="replaceFromHistory"
+               overrideActionId="org.eclipse.team.ui.replaceLocalHistory"
                tooltip="%ReplaceWithRevisionAction.tooltip">
          </action>
          <action
