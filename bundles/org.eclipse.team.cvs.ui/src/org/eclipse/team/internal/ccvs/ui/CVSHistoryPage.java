@@ -563,6 +563,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		cvsHistoryFilter.setText(CVSUIMessages.CVSHistoryPage_FilterOn);
 		cvsHistoryFilter.init(treeViewer);
 		cvsHistoryFilter.setToolTipText(CVSUIMessages.CVSHistoryPage_FilterHistoryTooltip);
+		cvsHistoryFilter.setImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_FILTER_HISTORY));
 		
 		//Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
