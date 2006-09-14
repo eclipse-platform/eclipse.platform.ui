@@ -31,8 +31,12 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class RectangleAnimation extends Job {
 	private static class AnimationFeedbackFactory {
 		public static DefaultAnimationFeedback createAnimationRenderer() {
-			if (System.getProperty("MultiFVB") != null) //$NON-NLS-1$
+	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+	        
+			if (useNewMinMax)
 				return new ImageAnimationFeedback();
+			
 			return new DefaultAnimationFeedback();
 		}
 		
@@ -117,6 +121,7 @@ public class RectangleAnimation extends Job {
         // if animations aren't on this is a NO-OP
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         enableAnimations = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+        
         if (!enableAnimations) {
         	return;
         }

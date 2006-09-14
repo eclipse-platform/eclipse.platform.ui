@@ -425,4 +425,15 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.2
 	 */
 	public static final String LOCK_TRIM = "LOCK_TRIM"; //$NON-NLS-1$
+    
+    /**
+     * A named preference for providing the 3.3 presentation's min/max behaviour
+     * <p>
+     * The default value for this preference is: <code>false</code>; use the 3.2
+     * behaviour.
+     * </p>
+     * 
+     * @since 3.3
+     */
+    public static final String ENABLE_NEW_MIN_MAX = "ENABLE_MIN_MAX"; //$NON-NLS-1$
 }

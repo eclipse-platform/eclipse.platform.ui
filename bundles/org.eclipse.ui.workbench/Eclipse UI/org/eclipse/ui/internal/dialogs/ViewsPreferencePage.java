@@ -120,8 +120,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 	// its dependant preference defaults on startup. I've filed bug 63346 to do
 	// something about this area.
 	private static final String R21PRESENTATION_ID = "org.eclipse.ui.internal.r21presentationFactory"; //$NON-NLS-1$
-
 	private static final String R30PRESENTATION_ID = "org.eclipse.ui.presentations.default"; //$NON-NLS-1$
+	private static final String R33PRESENTATION_ID = "org.eclipse.ui.presentations.33"; //$NON-NLS-1$
 
 	private static final String INITIAL_VAL = new String();
 
@@ -662,7 +662,13 @@ public class ViewsPreferencePage extends PreferencePage implements
 			setR21Preferences();
 		} else if (isR30(id)) {
 			setR30Preferences();
+		} else if (isR33(id)) {
+			setR33Preferences();
 		}
+	}
+
+	private boolean isR33(String id) {
+		return R33PRESENTATION_ID.equals(id);
 	}
 
 	private boolean isR30(String id) {
@@ -680,9 +686,20 @@ public class ViewsPreferencePage extends PreferencePage implements
 		return id;
 	}
 
+	private void setR33Preferences() {
+		setR30Preferences();
+		
+		// Turn -on- the new Min/Max behaviour
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+        apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
+	}
+
 	private void setR30Preferences() {
 		IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
+		// Turn -off- the new min/max behaviour
+		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
 		setEditorAlignDefault(internalStore);
 		setViewAlignDefault(internalStore);

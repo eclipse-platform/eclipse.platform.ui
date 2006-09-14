@@ -145,6 +145,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Default for prompting for save when saveables are still held on to by other parts
 		node.putBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN,
 				true);
+
+		// Default the min/max behaviour to the old (3.2) style
+		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 		
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()

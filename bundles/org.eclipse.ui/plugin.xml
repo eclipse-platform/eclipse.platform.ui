@@ -1232,6 +1232,11 @@
             class="org.eclipse.ui.presentations.WorkbenchPresentationFactory"
             id="org.eclipse.ui.presentations.default">
       </factory>
+      <factory
+            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory_33"
+            id="org.eclipse.ui.presentations.33"
+            name="%Presentation.experimental.name">
+      </factory>
    </extension>
    <extension
          point="org.eclipse.ui.encodings">

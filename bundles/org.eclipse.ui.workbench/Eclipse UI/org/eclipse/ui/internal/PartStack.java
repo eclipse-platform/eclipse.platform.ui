@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Cursor;
@@ -33,6 +34,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -42,6 +44,7 @@ import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
@@ -1162,8 +1165,9 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void setMinimized(boolean minimized) {
     	// 'Smart' minimize; move the stack to the trim
     	Perspective persp = getPage().getActivePerspective();
-    	boolean useMultiFVB = (System.getProperty("MultiFVB")!= null && persp != null); //$NON-NLS-1$
-    	if (minimized && useMultiFVB && this instanceof ViewStack) {
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (minimized && useNewMinMax && this instanceof ViewStack) {
     		// Make a one element list to pass on
     		List stacks = new ArrayList();
     		stacks.add(this);

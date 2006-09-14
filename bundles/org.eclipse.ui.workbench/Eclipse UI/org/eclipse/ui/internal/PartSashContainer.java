@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
@@ -27,11 +28,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Abstract container that groups various layout
@@ -912,8 +915,9 @@ public abstract class PartSashContainer extends LayoutPart implements
     private void zoomIn(LayoutPart part) {
         // 'Smart'? maximize
 		Perspective persp = this.getPage().getActivePerspective();
-    	boolean useMultiFVB = (persp != null) && (System.getProperty("MultiFVB") != null); //$NON-NLS-1$
-    	if (useMultiFVB) {
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
     		smartZoomIn(part, persp);
     		return;
     	}
