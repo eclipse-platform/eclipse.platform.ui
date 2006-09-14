@@ -19,7 +19,7 @@ package org.eclipse.text.edits;
  *   perform some arbitrary operation. If <code>true </code> is returned, the given edit's
  *   child edits will be visited next; however, if <code>false</code> is returned, the
  *   given edit's child edits will not be visited. The default implementation provided by
- *   this class calls a generic method <code>visitNode(<it>Testedit</it> node)</code>.
+ *   this class calls a generic method <code>visitNode(<it>TextEdit</it> node)</code>.
  *   Subclasses may reimplement these method as needed.</li>
  * </ul>
  * </p>
