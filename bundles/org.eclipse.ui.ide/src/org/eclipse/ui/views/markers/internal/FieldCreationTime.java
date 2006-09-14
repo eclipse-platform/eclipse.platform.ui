@@ -108,7 +108,7 @@ public class FieldCreationTime extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	public int getDefaultDirection() {
-		return TableSorter.ASCENDING;
+		return TableComparator.ASCENDING;
 	}
 	
 	/* (non-Javadoc)

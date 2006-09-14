@@ -32,7 +32,7 @@ import org.eclipse.jface.viewers.ViewerComparator;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class ResourceSorter extends ViewerComparator {
+public class ResourceComparator extends ViewerComparator {
 
     /**
      * Constructor argument value that indicates to sort items by name.
@@ -52,7 +52,7 @@ public class ResourceSorter extends ViewerComparator {
      * @param criteria the sort criterion to use: one of <code>NAME</code> or 
      *   <code>TYPE</code>
      */
-    public ResourceSorter(int criteria) {
+    public ResourceComparator(int criteria) {
         super();
         this.criteria = criteria;
     }

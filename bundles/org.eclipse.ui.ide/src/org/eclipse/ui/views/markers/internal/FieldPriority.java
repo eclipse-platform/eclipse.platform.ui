@@ -130,7 +130,7 @@ public class FieldPriority extends AbstractField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	public int getDefaultDirection() {
-		return TableSorter.DESCENDING;
+		return TableComparator.DESCENDING;
 	}
 	
 	/* (non-Javadoc)

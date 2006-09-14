@@ -196,8 +196,8 @@ public class MarkerAdapter {
 	 * 
 	 * @return CategorySorter
 	 */
-	public CategorySorter getCategorySorter() {
-		return (CategorySorter) view.getViewer().getComparator();
+	public CategoryComparator getCategorySorter() {
+		return (CategoryComparator) view.getViewer().getComparator();
 	}
 
 	/**
@@ -298,8 +298,8 @@ public class MarkerAdapter {
 	private boolean isShowingHierarchy() {
 
 		ViewerComparator sorter = view.getViewer().getComparator();
-		if (sorter instanceof CategorySorter) {
-			return ((CategorySorter) sorter).getCategoryField() != null;
+		if (sorter instanceof CategoryComparator) {
+			return ((CategoryComparator) sorter).getCategoryField() != null;
 		}
 		return false;
 	}
@@ -320,7 +320,7 @@ public class MarkerAdapter {
 	 */
 	MarkerCategory[] buildHierarchy(MarkerList markers, int start, int end,
 			int sortIndex) {
-		CategorySorter sorter = getCategorySorter();
+		CategoryComparator sorter = getCategorySorter();
 
 		if (sortIndex > 0) {
 			return null;// Are we out of categories?

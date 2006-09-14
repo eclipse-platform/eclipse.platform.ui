@@ -17,12 +17,12 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 /**
  * This is used to sort action sets in the perspective customization dialog.
  */
-public class ActionSetSorter extends ViewerComparator {
+public class ActionSetComparator extends ViewerComparator {
 
     /**
      * Creates a new sorter.
      */
-    public ActionSetSorter() {
+    public ActionSetComparator() {
     }
 
     /**

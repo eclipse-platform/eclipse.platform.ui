@@ -21,7 +21,7 @@ import org.eclipse.ui.views.IViewDescriptor;
 /**
  * This is used to sort views in a ShowViewDialog.
  */
-public class ViewSorter extends ViewerComparator {
+public class ViewComparator extends ViewerComparator {
     private ViewRegistry viewReg;
 
     /**
@@ -29,7 +29,7 @@ public class ViewSorter extends ViewerComparator {
      * 
      * @param reg an IViewRegistry
      */
-    public ViewSorter(ViewRegistry reg) {
+    public ViewComparator(ViewRegistry reg) {
         super();
         viewReg = reg;
     }

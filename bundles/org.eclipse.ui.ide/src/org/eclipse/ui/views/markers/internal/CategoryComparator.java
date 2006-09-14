@@ -21,8 +21,8 @@ import org.eclipse.jface.viewers.ViewerComparator;
  * account.
  * 
  */
-public class CategorySorter extends ViewerComparator implements Comparator {
-	TableSorter innerSorter;
+public class CategoryComparator extends ViewerComparator implements Comparator {
+	TableComparator innerSorter;
 
 	IField categoryField;
 
@@ -33,7 +33,7 @@ public class CategorySorter extends ViewerComparator implements Comparator {
 	 * 
 	 * @param sorter
 	 */
-	CategorySorter(TableSorter sorter) {
+	CategoryComparator(TableComparator sorter) {
 		innerSorter = sorter;
 	}
 
@@ -114,7 +114,7 @@ public class CategorySorter extends ViewerComparator implements Comparator {
 	 * 
 	 * @param sorter2
 	 */
-	public void setTableSorter(TableSorter sorter2) {
+	public void setTableSorter(TableComparator sorter2) {
 		innerSorter = sorter2;
 
 	}
@@ -130,10 +130,10 @@ public class CategorySorter extends ViewerComparator implements Comparator {
 		}
 
 		IDialogSettings settings = dialogSettings
-				.getSection(TableSorter.TAG_DIALOG_SECTION);
+				.getSection(TableComparator.TAG_DIALOG_SECTION);
 		if (settings == null) {
 			settings = dialogSettings
-					.addNewSection(TableSorter.TAG_DIALOG_SECTION);
+					.addNewSection(TableComparator.TAG_DIALOG_SECTION);
 		}
 
 		String description = Util.EMPTY_STRING;
@@ -158,7 +158,7 @@ public class CategorySorter extends ViewerComparator implements Comparator {
 		}
 
 		IDialogSettings settings = dialogSettings
-				.getSection(TableSorter.TAG_DIALOG_SECTION);
+				.getSection(TableComparator.TAG_DIALOG_SECTION);
 		if (settings == null) {
 			selectDefaultGrouping(view);
 			return;

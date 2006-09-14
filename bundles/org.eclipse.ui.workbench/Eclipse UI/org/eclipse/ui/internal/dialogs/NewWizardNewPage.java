@@ -299,7 +299,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 		final TreeViewer treeViewer = filterTree.getViewer();
 		treeViewer.setContentProvider(new WizardContentProvider());
 		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
-		treeViewer.setComparator(NewWizardCollectionSorter.INSTANCE);
+		treeViewer.setComparator(NewWizardCollectionComparator.INSTANCE);
 		treeViewer.addSelectionChangedListener(this);
 
         ArrayList inputArray = new ArrayList();

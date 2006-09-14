@@ -643,14 +643,14 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param type
 	 * @return TableSorter
 	 */
-	public TableSorter getSorterFor(String type) {
+	public TableComparator getSorterFor(String type) {
 		if (hierarchyOrders.containsKey(type)) {
-			return (TableSorter) hierarchyOrders.get(type);
+			return (TableComparator) hierarchyOrders.get(type);
 		}
 
-		TableSorter sorter = findSorterInChildren(type, getRootType());
+		TableComparator sorter = findSorterInChildren(type, getRootType());
 		if (sorter == null) {
-			return new TableSorter(new IField[0], new int[0], new int[0]);
+			return new TableComparator(new IField[0], new int[0], new int[0]);
 		}
 		return sorter;
 	}
@@ -676,18 +676,18 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param type
 	 * @return TableSorter or <code>null</code>.
 	 */
-	private TableSorter findSorterInChildren(String typeName, MarkerType type) {
+	private TableComparator findSorterInChildren(String typeName, MarkerType type) {
 
 		MarkerType[] types = type.getAllSubTypes();
-		TableSorter defaultSorter = null;
+		TableComparator defaultSorter = null;
 		if (hierarchyOrders.containsKey(type.getId())) {
-			defaultSorter = (TableSorter) hierarchyOrders.get(type.getId());
+			defaultSorter = (TableComparator) hierarchyOrders.get(type.getId());
 		}
 
 		for (int i = 0; i < types.length; i++) {
 			MarkerType[] subtypes = types[i].getAllSubTypes();
 			for (int j = 0; j < subtypes.length; j++) {
-				TableSorter sorter = findSorterInChildren(typeName, subtypes[j]);
+				TableComparator sorter = findSorterInChildren(typeName, subtypes[j]);
 				if (sorter != null) {
 					return sorter;
 				}

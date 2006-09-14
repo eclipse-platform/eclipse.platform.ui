@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
-public class TableSorter extends ViewerComparator implements Comparator {
+public class TableComparator extends ViewerComparator implements Comparator {
 
 	public static final int MAX_DEPTH = 4;
 
@@ -47,14 +47,14 @@ public class TableSorter extends ViewerComparator implements Comparator {
 
 	private static final String TAG_DEFAULT_DIRECTION = "defaultDirection"; //$NON-NLS-1$
 
-	public TableSorter(TableSorter other) {
+	public TableComparator(TableComparator other) {
 		this(other.getFields(), other.getDefaultPriorities(), other
 				.getDefaultDirections());
 		priorities = other.getPriorities();
 		directions = other.getDirections();
 	}
 
-	public TableSorter(IField[] properties, final int[] defaultPriorities,
+	public TableComparator(IField[] properties, final int[] defaultPriorities,
 			final int[] defaultDirections) {
 		super();
 		this.fields = properties;
@@ -89,7 +89,7 @@ public class TableSorter extends ViewerComparator implements Comparator {
 	 * 
 	 * @param sortingFields
 	 */
-	static TableSorter createTableSorter(IField[] sortingFields) {
+	static TableComparator createTableSorter(IField[] sortingFields) {
 		int[] defaultPriorities = new int[sortingFields.length];
 		for (int i = 0; i < defaultPriorities.length; i++) {
 			defaultPriorities[i] = i;
@@ -101,7 +101,7 @@ public class TableSorter extends ViewerComparator implements Comparator {
 
 		}
 
-		return new TableSorter(sortingFields, defaultPriorities, directions);
+		return new TableComparator(sortingFields, defaultPriorities, directions);
 	}
 
 	protected void resetState() {
@@ -364,7 +364,7 @@ public class TableSorter extends ViewerComparator implements Comparator {
 	public void sort(final Viewer viewer, Object[] elements, int start, int end) {
 		Arrays.sort(elements, start, end, new Comparator() {
 			public int compare(Object a, Object b) {
-				return TableSorter.this.compare(viewer, a, b);
+				return TableComparator.this.compare(viewer, a, b);
 			}
 		});
 	}

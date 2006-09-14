@@ -267,7 +267,7 @@ public class FieldMarkerGroup implements IField {
 	 * @see org.eclipse.ui.views.markers.internal.IField#getDefaultDirection()
 	 */
 	public int getDefaultDirection() {
-		return TableSorter.ASCENDING;
+		return TableComparator.ASCENDING;
 	}
 
 	/*

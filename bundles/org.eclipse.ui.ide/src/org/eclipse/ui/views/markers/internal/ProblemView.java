@@ -433,7 +433,7 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.TableView#setSorter(org.eclipse.ui.views.markers.internal.TableSorter)
 	 */
-	void setComparator(TableSorter sorter2) {
+	void setComparator(TableComparator sorter2) {
 		getMarkerAdapter().getCategorySorter().setTableSorter(sorter2);
 		getMarkerAdapter().getCategorySorter().saveState(getDialogSettings());
 		updateForNewComparator(sorter2);
@@ -445,8 +445,8 @@ public class ProblemView extends MarkerView {
 	 * 
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getTableSorter()
 	 */
-	public TableSorter getTableSorter() {
-		return ((CategorySorter) getViewer().getComparator()).innerSorter;
+	public TableComparator getTableSorter() {
+		return ((CategoryComparator) getViewer().getComparator()).innerSorter;
 	}
 
 	/*
@@ -503,9 +503,9 @@ public class ProblemView extends MarkerView {
 	 */
 	protected ViewerComparator buildComparator() {
 
-		TableSorter sorter = TableSorter.createTableSorter(getSortingFields());
+		TableComparator sorter = TableComparator.createTableSorter(getSortingFields());
 		sorter.restoreState(getDialogSettings());
-		CategorySorter category = new CategorySorter(sorter);
+		CategoryComparator category = new CategoryComparator(sorter);
 		category.restoreState(getDialogSettings(), this);
 		return category;
 	}
@@ -536,7 +536,7 @@ public class ProblemView extends MarkerView {
 	 * @param sorter -
 	 *            the sorter to select for
 	 */
-	public void selectCategory(String description, CategorySorter sorter) {
+	public void selectCategory(String description, CategoryComparator sorter) {
 
 		if (description == null)
 			selectCategoryField(null, sorter);
@@ -560,7 +560,7 @@ public class ProblemView extends MarkerView {
 	 * @param groupingField
 	 * @param sorter
 	 */
-	void selectCategoryField(IField groupingField, CategorySorter sorter) {
+	void selectCategoryField(IField groupingField, CategoryComparator sorter) {
 		getMarkerAdapter().getCurrentMarkers().clearGroups();
 		sorter.setCategoryField(groupingField);
 		refreshViewer();

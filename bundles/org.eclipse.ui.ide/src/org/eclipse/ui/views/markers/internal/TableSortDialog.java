@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class TableSortDialog extends TrayDialog {
 
-    private TableSorter sorter;
+    private TableComparator sorter;
 
     private Combo[] priorityCombos;
 
@@ -75,7 +75,7 @@ public class TableSortDialog extends TrayDialog {
      * @param parentShell
      * @param sorter
      */
-    public TableSortDialog(IShellProvider parentShell, TableSorter sorter) {
+    public TableSortDialog(IShellProvider parentShell, TableComparator sorter) {
         super(parentShell);
         this.sorter = sorter;
         dirty = false;
@@ -122,7 +122,7 @@ public class TableSortDialog extends TrayDialog {
         ascendingButtons = new Button[priorities.length];
         descendingButtons = new Button[priorities.length];
         priorityCombos = new Combo[Math.min(priorities.length,
-                TableSorter.MAX_DEPTH)];
+                TableComparator.MAX_DEPTH)];
         initPriotityText();
 
         Label sortByLabel = new Label(prioritiesArea, SWT.NULL);
@@ -163,9 +163,9 @@ public class TableSortDialog extends TrayDialog {
             if (i < priorityCombos.length - 1) {
                 priorityCombos[i].addSelectionListener(new SelectionAdapter() {
                     public void widgetSelected(SelectionEvent e) {
-                        int oldSelectionDirection = TableSorter.ASCENDING;
+                        int oldSelectionDirection = TableComparator.ASCENDING;
                         if (descendingButtons[index].getSelection()) {
-							oldSelectionDirection = TableSorter.DESCENDING;
+							oldSelectionDirection = TableComparator.DESCENDING;
 						}
                         ArrayList oldSelectionList = new ArrayList(Arrays
                                 .asList(priorityCombos[index].getItems()));
@@ -208,9 +208,9 @@ public class TableSortDialog extends TrayDialog {
                                         .setSelection(descendingButtons[j]
                                                 .getSelection());
                                 ascendingButtons[j]
-                                        .setSelection(oldSelectionDirection == TableSorter.ASCENDING);
+                                        .setSelection(oldSelectionDirection == TableComparator.ASCENDING);
                                 descendingButtons[j]
-                                        .setSelection(oldSelectionDirection == TableSorter.DESCENDING);
+                                        .setSelection(oldSelectionDirection == TableComparator.DESCENDING);
                             }
                             //this combo contains newSelection
                             else if (newSelectionIndex >= 0) {
@@ -330,9 +330,9 @@ public class TableSortDialog extends TrayDialog {
             availablePriorities.remove(propertyText[priorities[i]]);
 
             ascendingButtons[i]
-                    .setSelection(directions[priorities[i]] == TableSorter.ASCENDING);
+                    .setSelection(directions[priorities[i]] == TableComparator.ASCENDING);
             descendingButtons[i]
-                    .setSelection(directions[priorities[i]] == TableSorter.DESCENDING);
+                    .setSelection(directions[priorities[i]] == TableComparator.DESCENDING);
         }
     }
 
@@ -352,9 +352,9 @@ public class TableSortDialog extends TrayDialog {
                     return;
                 }
                 sorter.setTopPriority(properties[index]);
-                int direction = TableSorter.ASCENDING;
+                int direction = TableComparator.ASCENDING;
                 if (descendingButtons[i].getSelection()) {
-					direction = TableSorter.DESCENDING;
+					direction = TableComparator.DESCENDING;
 				}
                 sorter.setTopPriorityDirection(direction);
             }
@@ -404,7 +404,7 @@ public class TableSortDialog extends TrayDialog {
      * Return the sorter for the receiver.
      * @return TableSorter
      */
-    public TableSorter getSorter() {
+    public TableComparator getSorter() {
         return sorter;
     }
 }

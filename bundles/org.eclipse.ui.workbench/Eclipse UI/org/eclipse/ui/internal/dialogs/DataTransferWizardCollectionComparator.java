@@ -28,18 +28,18 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  *  
  *  @since 3.2
  */
-class DataTransferWizardCollectionSorter extends ViewerComparator {
+class DataTransferWizardCollectionComparator extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */	
-    public final static DataTransferWizardCollectionSorter INSTANCE = new DataTransferWizardCollectionSorter();
+    public final static DataTransferWizardCollectionComparator INSTANCE = new DataTransferWizardCollectionComparator();
 
     /**
      * Creates an instance of <code>DataTransferWizardCollectionSorter</code>.  Since this
      * is a stateless sorter, it is only accessible as a singleton; the private
      * visibility of this constructor ensures this.
      */
-    private DataTransferWizardCollectionSorter() {
+    private DataTransferWizardCollectionComparator() {
         super();
     }
 

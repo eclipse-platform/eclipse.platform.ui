@@ -64,7 +64,7 @@ public interface IField {
     
     /**
      * Get the default direction for the receiver. Return either 
-     * {@link TableSorter#ASCENDING } or {@link TableSorter#DESCENDING }
+     * {@link TableComparator#ASCENDING } or {@link TableComparator#DESCENDING }
      * @return int
      */
    int getDefaultDirection();

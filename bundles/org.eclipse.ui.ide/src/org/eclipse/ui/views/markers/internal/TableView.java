@@ -195,7 +195,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @param comparator
 	 */
-	void setComparator(TableSorter comparator) {
+	void setComparator(TableComparator comparator) {
 		viewer.setComparator(comparator);
 		updateForNewComparator(comparator);
 	}
@@ -205,7 +205,7 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @param comparator
 	 */
-	void updateForNewComparator(TableSorter comparator) {
+	void updateForNewComparator(TableComparator comparator) {
 		comparator.saveState(getDialogSettings());
 		viewer.refresh();
 		setSortIndicators();
@@ -408,8 +408,8 @@ public abstract class TableView extends ViewPart {
 		for (int i = 0; i < sortingFields.length; i++) {
 			priorities[i] = i;
 		}
-		Arrays.fill(directions, TableSorter.ASCENDING);
-		TableSorter sorter = new TableSorter(sortingFields, priorities,
+		Arrays.fill(directions, TableComparator.ASCENDING);
+		TableComparator sorter = new TableComparator(sortingFields, priorities,
 				directions);
 		sorter.restoreState(getDialogSettings());
 
@@ -499,7 +499,7 @@ public abstract class TableView extends ViewPart {
 			 */
 			private void resortTable(final TreeColumn column,
 					final IField field, IProgressMonitor monitor) {
-				TableSorter sorter = getTableSorter();
+				TableComparator sorter = getTableSorter();
 
 				monitor.beginTask(MarkerMessages.sortDialog_title, 100);
 				monitor.worked(10);
@@ -573,8 +573,8 @@ public abstract class TableView extends ViewPart {
 	 * 
 	 * @return TableSorter
 	 */
-	TableSorter getTableSorter() {
-		return (TableSorter) viewer.getComparator();
+	TableComparator getTableSorter() {
+		return (TableComparator) viewer.getComparator();
 	}
 
 	protected abstract void handleKeyPressed(KeyEvent event);
@@ -745,7 +745,7 @@ public abstract class TableView extends ViewPart {
 	 */
 	void updateDirectionIndicator(TreeColumn column) {
 		getViewer().getTree().setSortColumn(column);
-		if (getTableSorter().getTopPriorityDirection() == TableSorter.ASCENDING)
+		if (getTableSorter().getTopPriorityDirection() == TableComparator.ASCENDING)
 			getViewer().getTree().setSortDirection(SWT.UP);
 		else
 			getViewer().getTree().setSortDirection(SWT.DOWN);

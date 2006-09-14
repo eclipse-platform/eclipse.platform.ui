@@ -24,11 +24,11 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
  *	name for base Wizards will always be sorted such that it will
  *	ultimately be placed at the beginning of the sorted result.
  */
-class NewWizardCollectionSorter extends ViewerComparator {
+class NewWizardCollectionComparator extends ViewerComparator {
 	/**
 	 * Static instance of this class.
 	 */
-    public final static NewWizardCollectionSorter INSTANCE = new NewWizardCollectionSorter();
+    public final static NewWizardCollectionComparator INSTANCE = new NewWizardCollectionComparator();
 
 
     /**
@@ -36,7 +36,7 @@ class NewWizardCollectionSorter extends ViewerComparator {
      * is a stateless sorter, it is only accessible as a singleton; the private
      * visibility of this constructor ensures this.
      */
-    private NewWizardCollectionSorter() {
+    private NewWizardCollectionComparator() {
         super();
     }
 
