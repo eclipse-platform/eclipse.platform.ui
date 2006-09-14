@@ -59,18 +59,15 @@ public class DynamicXHTMLFilter implements IFilter {
 				String locale = UrlUtil.getLocale(req, null);
 				String contextPath = req.getContextPath();
 				String servletPath = req.getServletPath();
-				String path = uri;
-				if (path.startsWith(contextPath)) {
-					path = path.substring(contextPath.length());
+				String href = uri;
+				if (href.startsWith(contextPath)) {
+					href = href.substring(contextPath.length());
 				}
-				if (path.startsWith(servletPath)) {
-					path = path.substring(servletPath.length());
+				if (href.startsWith(servletPath)) {
+					href = href.substring(servletPath.length());
 				}
-				int index = path.indexOf('/', 1);
-				String pluginId = path.substring(1, index);
-				String file = path.substring(index + 1);
 				
-				InputStream in2 = DynamicXHTMLProcessor.process(pluginId, file, in, locale, RemoteHelp.isAllowed());
+				InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, RemoteHelp.isAllowed());
 				transferContent(in2, out);
 			}
 		};

@@ -242,7 +242,7 @@ public class UAExtensionProcessor {
 
 	private List parseExtensions(String pluginId, String file) {
 		Bundle bundle = Platform.getBundle(pluginId);
-		URL url = bundle.getResource(file);
+		URL url = bundle.getEntry(file);
 		if (url != null) {
 			try {
 				InputStream in = url.openStream();

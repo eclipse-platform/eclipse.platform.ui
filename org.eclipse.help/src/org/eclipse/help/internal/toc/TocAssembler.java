@@ -186,7 +186,7 @@ public class TocAssembler {
 		Iterator iter = filters.iterator();
 		while (iter.hasNext()) {
 			Filter filter = (Filter)iter.next();
-			if (UAContentFilter.isFiltered(filter.getExpression())) {
+			if (!UAContentFilter.isFiltered(filter.getExpression())) {
 				removeIntermediateNode(filter);
 			}
 			else {

@@ -29,14 +29,14 @@ public class DynamicXHTMLProcessor {
 	/*
 	 * Performs any needed processing. Does nothing if not XHTML.
 	 */
-	public static InputStream process(String pluginID, String file, InputStream in, String locale, boolean filter) {
+	public static InputStream process(String href, InputStream in, String locale, boolean filter) {
 		BufferedInputStream buf = new BufferedInputStream(in, XHTMLContentDescriber.BUFFER_SIZE);
 		buf.mark(XHTMLContentDescriber.BUFFER_SIZE);
 		boolean isXHTML = isXHTML(buf);
 		try {
 			buf.reset();
 			if (isXHTML) {
-				return processXHTML(pluginID, file, buf, locale, filter);
+				return processXHTML(href, buf, locale, filter);
 			}
 		}
 		catch (IOException e) {
@@ -49,10 +49,9 @@ public class DynamicXHTMLProcessor {
 	/*
 	 * Processes the given XHTML input stream.
 	 */
-	private static InputStream processXHTML(String pluginID, String file, InputStream in, String locale, boolean filter) {
+	private static InputStream processXHTML(String href, InputStream in, String locale, boolean filter) {
 		UAContentParser parser = new UAContentParser(in);
 		Document dom = parser.getDocument();
-		String href = '/' + pluginID + '/' + file;
 		XHTMLSupport support = new XHTMLSupport(dom, href);
 		dom = support.processDOM(filter);
 		try {

@@ -11,15 +11,18 @@
 package org.eclipse.ua.tests.help.producer;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.XHTMLUtil;
@@ -51,7 +54,9 @@ public class DynamicContentTest extends TestCase {
 					
 					try {
 						String expected = FileUtil.getContents(bundle, FileUtil.getResultFile(relativePath));
-						String actual = FileUtil.readString(HelpSystem.getHelpContent(href));
+						InputStream in = HelpSystem.getHelpContent(href);
+						in = DynamicXHTMLProcessor.process(href, in, Platform.getNL(), true);
+						String actual = FileUtil.readString(in);
 						actual = XHTMLUtil.removeEnvironmentSpecificContent(actual);
 						Assert.assertEquals("Processed file " + relativePath + " did not match the expected result", expected, actual);
 					}

@@ -223,7 +223,7 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 			stack.clear();
 			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
-			stream = DynamicXHTMLProcessor.process(pluginId, name, url.openStream(), index.getLocale(), false);
+			stream = DynamicXHTMLProcessor.process(name, url.openStream(), index.getLocale(), index instanceof SearchIndexCache);
 			parser.parse(stream, handler);
 			doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
 			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
