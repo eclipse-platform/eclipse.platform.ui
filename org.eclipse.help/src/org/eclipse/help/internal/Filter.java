@@ -18,6 +18,7 @@ public class Filter extends Node implements IFilter {
 	
 	public Filter(String expression) {
 		this.expression = expression;
+		addFilter(expression);
 	}
 	
 	public String getExpression() {

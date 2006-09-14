@@ -11,13 +11,17 @@
 package org.eclipse.help.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.help.INode;
 
-public class Node implements INode {
+public class Node extends FilterableUAElement implements INode {
 
 	private Node parent;
 	private List children;
@@ -43,11 +47,59 @@ public class Node implements INode {
 		return (INode[])children.toArray(new INode[children.size()]);
 	}
 	
+	/*
+	 * Gets the children of a specific type.
+	 */
+	public List getChildren(Class clazz) {
+		if (children != null) {
+			List list = new ArrayList();
+			getChildren(clazz, list);
+			return list;
+		}
+		return Collections.EMPTY_LIST;
+	}
+
+	public void getChildren(Class clazz, Collection collection) {
+		if (children != null) {
+			Iterator iter = children.iterator();
+			while (iter.hasNext()) {
+				Object o = iter.next();
+				if (clazz.isAssignableFrom(o.getClass())) {
+					collection.add(o);
+				}
+				else if (o instanceof Filter) {
+					((Filter)o).getChildren(clazz, collection);
+				}
+			}
+		}
+	}
+
 	public Node[] getChildrenInternal() {
 		if (children == null) {
 			return new Node[0];
 		}
 		return (Node[])children.toArray(new Node[children.size()]);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.internal.FilterableUAElement#getFilters()
+	 */
+	public Map getFilters() {
+		Map filters = super.getFilters();
+		Node parent = getParentInternal();
+		if (parent != null) {
+			Map parentFilters = parent.getFilters();
+			if (parentFilters != null) {
+				if (filters != null) {
+					Map allFilters = new HashMap();
+					allFilters.putAll(filters);
+					allFilters.putAll(parentFilters);
+					return allFilters;
+				}
+				return parentFilters;
+			}
+		}
+		return filters;
 	}
 	
 	public INode getParent() {

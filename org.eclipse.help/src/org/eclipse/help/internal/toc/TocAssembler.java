@@ -19,27 +19,24 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.Anchor;
-import org.eclipse.help.internal.Filter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Include;
 import org.eclipse.help.internal.Node;
 
 /*
  * Assembles toc contributions (toc fragments) into complete, linked, and
- * filtered books.
+ * assembled books.
  */
 public class TocAssembler {
 
 	private List workingCopy;
 	private List includes;
-	private List filters;
 	private Map id2AnchorMap;
 	private Map id2ContributionMap;
 	
 	/*
-	 * Assembles the given toc contributions into complete, linked, and filtered
+	 * Assembles the given toc contributions into complete linked
 	 * books. The originals are not modified.
 	 */
 	public List assemble(List contributions) {
@@ -47,7 +44,6 @@ public class TocAssembler {
 		discoverNodes();
 		processLinkTos();
 		processIncludes();
-		processFilters();
 		processOrphans();
 		return workingCopy;
 	}
@@ -68,12 +64,10 @@ public class TocAssembler {
 	
 	/*
 	 * Traverse through all toc contributions to find and make note of any
-	 * nodes that require processing, specifically anchors, includes, and
-	 * filters.
+	 * nodes that require processing, specifically anchors and includes.
 	 */
 	private void discoverNodes() {
 		includes = new ArrayList();
-		filters = new ArrayList();
 		id2AnchorMap = new HashMap();
 		id2ContributionMap = new HashMap();
 		Iterator iter = workingCopy.iterator();
@@ -96,9 +90,6 @@ public class TocAssembler {
 		}
 		else if (node instanceof Include) {
 			includes.add(node);
-		}
-		else if (node instanceof Filter) {
-			filters.add(node);
 		}
 		
 		// recursively discover all descendants
@@ -173,24 +164,6 @@ public class TocAssembler {
 			else {
 				String msg = "TOC contribution include target could not be found: " + include.getTarget(); //$NON-NLS-1$
 				HelpPlugin.logError(msg, null);
-			}
-		}
-	}
-	
-	/*
-	 * Processes all filters. If the filter passes (i.e. it should be kept in),
-	 * only the filter node itself is removed. Otherwise, the filter node and
-	 * all its children are removed.
-	 */
-	private void processFilters() {
-		Iterator iter = filters.iterator();
-		while (iter.hasNext()) {
-			Filter filter = (Filter)iter.next();
-			if (!UAContentFilter.isFiltered(filter.getExpression())) {
-				removeIntermediateNode(filter);
-			}
-			else {
-				filter.getParentInternal().removeChild(filter);
 			}
 		}
 	}

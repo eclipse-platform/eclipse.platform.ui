@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.help.INode;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Node;
 
@@ -30,19 +28,8 @@ public class Topic extends Node implements ITopic {
 	
 	public ITopic[] getSubtopics() {
 		if (subtopics == null) {
-			INode[] children = getChildren();
-			if (children.length > 0) {
-				List list = new ArrayList();
-				for (int i=0;i<children.length;++i) {
-					if (children[i] instanceof ITopic) {
-						list.add(children[i]);
-					}
-				}
-				subtopics = (ITopic[])list.toArray(new ITopic[list.size()]);
-			}
-			else {
-				subtopics = new ITopic[0];
-			}
+			List list = getChildren(ITopic.class);
+			subtopics = (ITopic[])list.toArray(new ITopic[list.size()]);
 		}
 		return subtopics;
 	}

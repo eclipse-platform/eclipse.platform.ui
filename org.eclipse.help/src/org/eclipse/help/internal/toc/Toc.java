@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.help.INode;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
@@ -68,19 +66,8 @@ public class Toc extends Node implements IToc {
 	
 	public ITopic[] getTopics() {
 		if (topics == null) {
-			INode[] children = getChildren();
-			if (children.length > 0) {
-				List list = new ArrayList();
-				for (int i=0;i<children.length;++i) {
-					if (children[i] instanceof ITopic) {
-						list.add(children[i]);
-					}
-				}
-				topics = (ITopic[])list.toArray(new ITopic[list.size()]);
-			}
-			else {
-				topics = new ITopic[0];
-			}
+			List list = getChildren(ITopic.class);
+			topics = (ITopic[])list.toArray(new ITopic[list.size()]);
 		}
 		return topics;
 	}

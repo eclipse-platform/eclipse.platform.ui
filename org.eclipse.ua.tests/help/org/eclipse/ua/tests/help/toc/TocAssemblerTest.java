@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.toc.TocAssembler;
 import org.eclipse.help.internal.toc.TocFile;
 import org.eclipse.help.internal.toc.TocFileParser;
@@ -80,7 +81,9 @@ public class TocAssemblerTest extends TestCase {
 		ITopic[] topics = toc.getTopics();
 		String indent = "   ";
 		for (int i=0;i<topics.length;++i) {
-			buf.append(serialize(topics[i], indent));
+			if (!UAContentFilter.isFiltered(topics[i])) {
+				buf.append(serialize(topics[i], indent));
+			}
 		}
 		
 		buf.append("</toc>\n");
@@ -105,7 +108,9 @@ public class TocAssemblerTest extends TestCase {
 		else {
 			buf.append(">\n");
 			for (int i=0;i<subtopics.length;++i) {
-				buf.append(serialize(subtopics[i], indent + "   "));
+				if (!UAContentFilter.isFiltered(subtopics[i])) {
+					buf.append(serialize(subtopics[i], indent + "   "));
+				}
 			}
 			buf.append(indent + "</topic>\n");
 		}
