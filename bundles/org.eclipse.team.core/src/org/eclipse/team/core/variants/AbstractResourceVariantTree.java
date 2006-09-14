@@ -17,8 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.core.Messages;
-import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.internal.core.*;
 
 /**
  * An implementation of <code>IResourceVariantTree</code> that provides the logic for
@@ -243,7 +242,12 @@ public abstract class AbstractResourceVariantTree implements IResourceVariantTre
 						boolean isContainer = remoteChild.isContainer();				
 						localChild = getResourceChild(local /* parent */, keyChildName, isContainer);
 					}
-					mergedResources.put(localChild, remoteChild);				
+					if (localChild == null) {
+						TeamPlugin.log(IStatus.ERROR, NLS.bind("File {0} cannot be the parent of remote resource {1}", //$NON-NLS-1$
+								new Object[] { local.getFullPath(), keyChildName }), null);
+					} else {
+						mergedResources.put(localChild, remoteChild);
+					}
 			}
 		}
 		return mergedResources;
