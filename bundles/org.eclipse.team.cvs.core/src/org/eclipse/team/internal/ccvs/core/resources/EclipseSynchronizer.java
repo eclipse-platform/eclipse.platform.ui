@@ -113,7 +113,7 @@ public class EclipseSynchronizer implements IFlushOperation {
 		if (!isValid(folder)) {
 			// This means that the folder doesn't exist and is not a phantom
 			// Allow the set if the parent is a CVS folder since
-			// this can occur when creating phatom folders
+			// this can occur when creating phantom folders
 			if (getFolderSync(folder.getParent()) == null) {
 				throw new CVSException(IStatus.ERROR, TeamException.UNABLE,
 					NLS.bind(CVSMessages.EclipseSynchronizer_ErrorSettingFolderSync, new String[] { folder.getFullPath().toString() })); 

@@ -72,7 +72,7 @@ public interface ICVSFolder extends ICVSResource {
 	 *   b) IGNORED_MEMBERS, MANAGED_RESOURCES and UNMANAGED_RESOURCES
 	 *     will return files and folders of the given type
 	 *   c) EXISTING_MEMBERS and PHANTOM_MEMBERS will return existing 
-	 *     and phatom resource of the corresponding type
+	 *     and phantom resource of the corresponding type
 	 * 
 	 * Note: Unmanaged resources are those that are neither managed or ignored.
 	 * 

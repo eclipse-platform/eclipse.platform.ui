@@ -125,7 +125,7 @@ public abstract class ResponseHandler {
 				if (container != null) {
 					try {
                         // Create all the parents as need
-                        recreatePhatomFolders(mParent);
+                        recreatePhantomFolders(mParent);
                     } catch (CVSException e) {
                         if (!handleInvalidResourceName(session, mParent, e)) {
                             throw e;
@@ -137,13 +137,13 @@ public abstract class ResponseHandler {
 		}
 
 	/**
-	 * Method recreatePhatomFolders.
+	 * Method recreatePhantomFolders.
 	 * @param mParent
 	 */
-	private void recreatePhatomFolders(ICVSFolder folder) throws CVSException {
+	private void recreatePhantomFolders(ICVSFolder folder) throws CVSException {
 		ICVSFolder parent = folder.getParent();
 		if (!parent.exists()) {
-			recreatePhatomFolders(parent);
+			recreatePhantomFolders(parent);
 		}
 		folder.mkdir();
 	}
