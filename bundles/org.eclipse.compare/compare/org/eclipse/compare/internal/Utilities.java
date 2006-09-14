@@ -489,7 +489,7 @@ public class Utilities {
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(files, shell);
 		if (! status.isOK()) {
 			String message= getString("ValidateEdit.error.unable_to_perform"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, message, status);
+			displayError(shell, title, status, message);
 			return false;
 		}
 			
@@ -515,10 +515,22 @@ public class Utilities {
 		}
 		if (modified != null) {
 			String message= getString("ValidateEdit.error.unable_to_perform"); //$NON-NLS-1$
-			ErrorDialog.openError(shell, title, message, modified);
+			displayError(shell, title, modified, message);
 			return false;
 		}
 		return true;
+	}
+
+	private static void displayError(final Shell shell, final String title, final IStatus status, final String message) {
+		if (Display.getCurrent() != null)
+			ErrorDialog.openError(shell, title, message, status);
+		else {
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					ErrorDialog.openError(shell, title, message, status);
+				}
+			});
+		}
 	}
 	
 	private static List getReadonlyFiles(IResource[] resources) {
