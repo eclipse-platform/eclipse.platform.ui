@@ -738,6 +738,17 @@
                label="%ShowAnnotationAction.label"
                tooltip="%ShowAnnotationAction.tooltip"/>
       </objectContribution>
+      <viewerContribution
+            id="org.eclipse.team.ccvs.ui.RepositoriesViewContributions"
+            targetID="org.eclipse.team.ccvs.ui.RepositoriesView">
+         <action
+               class="org.eclipse.team.internal.ccvs.ui.repo.PasteConnectionStringAction"
+               definitionId="org.eclipse.ui.edit.paste"
+               enablesFor="*"
+               id="org.eclipse.team.cvs.ui.patch.pasteConnection"
+               label="&amp;Paste Connection"
+               menubarPath="miscGroup"/>
+      </viewerContribution>
    </extension>
    
 <!-- ************** Model Element Contributions ********************** -->   
