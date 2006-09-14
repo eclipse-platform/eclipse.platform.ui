@@ -2869,14 +2869,7 @@ public class TextViewer extends Viewer implements
 				// if the widget is not scrollable as it is displaying the entire content
 				// setTopIndex won't have any effect.
 
-				// two lines at the top and the bottom should always be left
-				// if window is smaller than 5 lines, always center position is chosen
-				int bufferZone= 2;
-
-				if (startLine >= top + bufferZone
-						&& startLine <= bottom - bufferZone
-						&& endLine >= top + bufferZone
-						&& endLine <= bottom - bufferZone) {
+				if (startLine >= top && startLine <= bottom	&& endLine >= top && endLine <= bottom ) {
 
 					// do not scroll at all as it is already visible
 
@@ -2917,7 +2910,7 @@ public class TextViewer extends Viewer implements
 				if (startPixel < visibleStart || visibleEnd < endPixel) {
 
 					// set buffer zone to 10 pixels
-					bufferZone= 10;
+					int bufferZone= 10;
 
 					int newOffset= visibleStart;
 
