@@ -53,8 +53,11 @@ public class RefactoringWizardDialog extends WizardDialog {
 	public RefactoringWizardDialog(Shell parent, RefactoringWizard wizard) {
 		super(parent, wizard);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
-		wizard.setDialogSettings(settings);
+		IDialogSettings settings= wizard.getDialogSettings();
+		if (settings == null) {
+			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+			wizard.setDialogSettings(settings);
+		}
 		String settingsSectionId= DIALOG_SETTINGS + '.'+ wizard.getRefactoring().getName();
 		fSettings= settings.getSection(settingsSectionId);
 		if (fSettings == null) {

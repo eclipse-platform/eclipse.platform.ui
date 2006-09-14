@@ -163,16 +163,19 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		super(shell);
 		Assert.isNotNull(wizard);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		wizard.setDialogSettings(RefactoringUIPlugin.getDefault().getDialogSettings());
+		IDialogSettings settings= wizard.getDialogSettings();
+		if (settings == null) {
+			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+			wizard.setDialogSettings(settings);
+		}
 		fWizard= wizard; 
 		fWizard.setContainer(this);
 		fWizard.addPages();
-		initSize();
+		initSize(settings);
 		fHasAdditionalPages= wizard.getPageCount() > 3;
 	}
 	
-	private void initSize() {
-		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
+	private void initSize(IDialogSettings settings) {
 		fSettings= settings.getSection(DIALOG_SETTINGS);
 		if (fSettings == null) {
 			fSettings= new DialogSettings(DIALOG_SETTINGS);
