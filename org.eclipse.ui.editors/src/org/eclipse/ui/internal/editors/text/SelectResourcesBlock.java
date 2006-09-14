@@ -43,7 +43,7 @@ import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /* 
  * XXX: This is an copy of the internal ResourceTreeAndListGroup class, see:
@@ -684,12 +684,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Set the <code>sorter</code> that is to be applied to self's list viewer
+	 * Set the <code>comparator</code> that is to be applied to self's list viewer
 	 *
-	 * @param sorter the sorter to be set
+	 * @param comparator the comparator to be set
 	 */
-	public void setListSorter(ViewerSorter sorter) {
-		listViewer.setSorter(sorter);
+	public void setListComparator(ViewerComparator comparator) {
+		listViewer.setComparator(comparator);
 	}
 
 	/**
@@ -726,12 +726,12 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 	}
 
 	/**
-	 * Set the sorter that is to be applied to self's tree viewer.
+	 * Set the comparator that is to be applied to self's tree viewer.
 	 *
-	 * @param sorter the sorter to be set
+	 * @param comparator the comparator to be set
 	 */
-	public void setTreeSorter(ViewerSorter sorter) {
-		treeViewer.setSorter(sorter);
+	public void setTreeComparator(ViewerComparator comparator) {
+		treeViewer.setComparator(comparator);
 	}
 
 	/**

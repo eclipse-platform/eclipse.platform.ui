@@ -61,7 +61,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 
 import org.eclipse.jface.text.Document;
@@ -272,7 +272,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		fTableViewer.setLabelProvider(new TemplateLabelProvider());
 		fTableViewer.setContentProvider(new TemplateContentProvider());
 
-		fTableViewer.setSorter(new ViewerSorter() {
+		fTableViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object object1, Object object2) {
 				if ((object1 instanceof TemplatePersistenceData) && (object2 instanceof TemplatePersistenceData)) {
 					Template left= ((TemplatePersistenceData) object1).getTemplate();
@@ -289,6 +289,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 				return true;
 			}
 		});
+		fTableViewer.setComparator(null);
 
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
