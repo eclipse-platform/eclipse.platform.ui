@@ -1058,20 +1058,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         currentPage = page;
         // Disable state of oldPage in case setVisible code has a runnable
         // which causes a delay in showing the currentPage
-        Map state = new HashMap(10);
-        if (currentPage != null) {
-			state.put("oldPage", ControlEnableState.disable(oldPage.getControl())); //$NON-NLS-1$
-		}
+        ControlEnableState state = ControlEnableState.disable(oldPage.getControl());
         // make the new page visible
         currentPage.setVisible(true);
         if (oldPage != null) {
 			oldPage.setVisible(false);
 		}
         // Now that it is not visible, restore the original state of oldPage 
-        Object pageValue = state.get("oldPage"); //$NON-NLS-1$
-        if (pageValue != null) {
-			((ControlEnableState) pageValue).restore();
-		}
+        state.restore();
         // update the dialog controls
         update();
     }
