@@ -14,6 +14,8 @@ import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -25,6 +27,9 @@ import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.reconciler.IReconciler;
+import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
+import org.eclipse.jface.text.reconciler.MonoReconciler;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.DefaultAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationHover;
@@ -34,6 +39,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.URLHyperlinkDetector;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 
 
 /**
@@ -293,5 +299,33 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		int undoHistorySize= fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE);
 		return new TextViewerUndoManager(undoHistorySize);
 	}
-	
+
+	/**
+	 * Returns the reconciler ready to be used with the given source viewer.
+	 * <p>
+	 * This implementation currently returns a {@link MonoReconciler} which
+	 * is responsible for spell checking. In the future a different reconciler
+	 * taking over more responsibilities might be returned.</p>
+	 * <p>
+	 * <b>NOTE:</b> In order to enable this new API you need to set <code>RUN_PROVISIONAL_CODE</code>
+	 * to <code>true</code></p>
+	 * <p> 
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 3.3
+	 */
+	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		boolean RUN_PROVISIONAL_CODE= false;
+		if (!RUN_PROVISIONAL_CODE)
+			return super.getReconciler(sourceViewer);
+		
+		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService(), "org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$
+		MonoReconciler reconciler= new MonoReconciler(strategy, false);
+		reconciler.setIsIncrementalReconciler(false);
+		reconciler.setProgressMonitor(new NullProgressMonitor());
+		reconciler.setDelay(500);
+		return reconciler;
+	}	
+
 }
