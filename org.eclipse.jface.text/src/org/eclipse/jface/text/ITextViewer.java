@@ -469,7 +469,7 @@ public interface ITextViewer {
 	/**
 	 * Returns the range of the current selection in coordinates of this viewer's document.
 	 *
-	 * @return the current selection
+	 * @return a <code>Point</code> with x as the offset and y as the length of the current selection
 	 */
 	Point getSelectedRange();
 
