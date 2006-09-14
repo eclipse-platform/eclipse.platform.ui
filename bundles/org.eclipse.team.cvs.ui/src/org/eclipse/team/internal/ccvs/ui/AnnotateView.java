@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.*;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -342,7 +342,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		        // We asked for a text editor but didn't get one
 		        // so open a vanilla text editor
 		        page.closeEditor(part, false);
-		        part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+		        part = page.openEditor(new RemoteAnnotationEditorInput(file, contents), EditorsUI.DEFAULT_TEXT_EDITOR_ID);
 		        if (part instanceof ITextEditor) {
 		            return (ITextEditor)part;
 		        } else {
@@ -357,22 +357,30 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
         String id;
 		IEditorRegistry registry = CVSUIPlugin.getPlugin().getWorkbench().getEditorRegistry();
 		IEditorDescriptor descriptor = registry.getDefaultEditor(file.getName());
-		if (descriptor == null || !(descriptor instanceof EditorDescriptor) || !(((EditorDescriptor)descriptor).isInternal())) {
-			id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID; 
+		if (descriptor == null || !descriptor.isInternal()) {
+			id = EditorsUI.DEFAULT_TEXT_EDITOR_ID; 
 		} else {
 			try {
-				Object obj = IDEWorkbenchPlugin.createExtension(((EditorDescriptor) descriptor).getConfigurationElement(), "class"); //$NON-NLS-1$
-				if (obj instanceof ITextEditor) {
+				if (isTextEditor(descriptor)) {
 					id = descriptor.getId();
 				} else {
-					id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID;
+					id = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 				}
 			} catch (CoreException e) {
-				id = IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID;
+				id = EditorsUI.DEFAULT_TEXT_EDITOR_ID;
 			}
 		}
         return id;
     }
+
+	private boolean isTextEditor(IEditorDescriptor descriptor)
+			throws CoreException {
+		if (descriptor instanceof EditorDescriptor) {
+			EditorDescriptor desc = (EditorDescriptor) descriptor;
+			return desc.createEditor() instanceof ITextEditor;
+		}
+		return false;
+	}
 
     // This method implemented to be an ISelectionChangeListener but we
 	// don't really care when the List or Editor get focus.
