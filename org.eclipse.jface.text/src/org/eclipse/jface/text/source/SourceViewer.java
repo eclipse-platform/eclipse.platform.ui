@@ -800,7 +800,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 						rewriteSession= extension.startRewriteSession(DocumentRewriteSessionType.SEQUENTIAL);
 					} else {
 						setRedraw(false);
-						startSequentialRewriteMode(false);
 						target.beginCompoundChange();
 					}
 
@@ -848,7 +847,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 							extension.stopRewriteSession(rewriteSession);
 						} else {
 							target.endCompoundChange();
-							stopSequentialRewriteMode();
 							setRedraw(true);
 						}
 
