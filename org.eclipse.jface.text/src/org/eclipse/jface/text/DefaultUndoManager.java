@@ -467,33 +467,20 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		public IStatus undo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			resetProcessChangeSate();
 			
-			ITextViewerExtension extension= null;
-			if (fTextViewer instanceof ITextViewerExtension)
-				extension= (ITextViewerExtension) fTextViewer;
+			int size= fCommands.size();
+			if (size > 0) {
 
-			if (extension != null)
-				extension.setRedraw(false);
+				TextCommand c;
 
-			try {
-
-				int size= fCommands.size();
-				if (size > 0) {
-
-					TextCommand c;
-
-					for (int i= size -1; i > 0;  --i) {
-						c= (TextCommand) fCommands.get(i);
-						c.undoTextChange();
-					}
-
-					c= (TextCommand) fCommands.get(0);
-					c.undo(monitor, uiInfo);
+				for (int i= size -1; i > 0;  --i) {
+					c= (TextCommand) fCommands.get(i);
+					c.undoTextChange();
 				}
 
-			} finally {
-				if (extension != null)
-					extension.setRedraw(true);
+				c= (TextCommand) fCommands.get(0);
+				c.undo(monitor, uiInfo);
 			}
+
 			return Status.OK_STATUS;
 		}
 
@@ -502,33 +489,19 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 		 */
 		public IStatus redo(IProgressMonitor monitor, IAdaptable uiInfo) {
 			resetProcessChangeSate();
-			
-			ITextViewerExtension extension= null;
-			if (fTextViewer instanceof ITextViewerExtension)
-				extension= (ITextViewerExtension) fTextViewer;
 
-			if (extension != null)
-				extension.setRedraw(false);
-			
-			try {
+			int size= fCommands.size();
+			if (size > 0) {
 
-				int size= fCommands.size();
-				if (size > 0) {
+				TextCommand c;
 
-					TextCommand c;
-
-					for (int i= 0; i < size -1;  ++i) {
-						c= (TextCommand) fCommands.get(i);
-						c.redoTextChange();
-					}
-
-					c= (TextCommand) fCommands.get(size -1);
-					c.redo(monitor, uiInfo);
+				for (int i= 0; i < size -1;  ++i) {
+					c= (TextCommand) fCommands.get(i);
+					c.redoTextChange();
 				}
 
-			} finally {
-				if (extension != null)
-					extension.setRedraw(true);
+				c= (TextCommand) fCommands.get(size -1);
+				c.redo(monitor, uiInfo);
 			}
 			return Status.OK_STATUS;
 		}

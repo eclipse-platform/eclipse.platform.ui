@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.TextUtilities;
@@ -144,11 +143,10 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			final int lineCount= document.getNumberOfLines();
 			monitor.beginTask(EditorMessages.Editor_ConvertLineDelimiter_title, lineCount);
 
-			fRewriteTarget.setRedraw(false);
+			final boolean isLargeUpdate= lineCount > 50;
+			if (isLargeUpdate)
+				fRewriteTarget.setRedraw(false);
 			fRewriteTarget.beginCompoundChange();
-
-			if (document instanceof IDocumentExtension)
-				((IDocumentExtension) document).startSequentialRewrite(true);
 
 			Map partitioners= TextUtilities.removeDocumentPartitioners(document);
 
@@ -174,11 +172,9 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				if (partitioners != null)
 					TextUtilities.addDocumentPartitioners(document, partitioners);
 
-				if (document instanceof IDocumentExtension)
-					((IDocumentExtension) document).stopSequentialRewrite();
-
 				fRewriteTarget.endCompoundChange();
-				fRewriteTarget.setRedraw(true);
+				if (isLargeUpdate)
+					fRewriteTarget.setRedraw(true);
 
 				monitor.done();
 			}

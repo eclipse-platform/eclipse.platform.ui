@@ -994,24 +994,14 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				} finally {
 					setRedraw(true, topIndex);
 				}
-				
 			} else {
-				
-				StyledText textWidget= getTextWidget();
-				
 				try {
-					if (isRedrawing && textWidget != null && !textWidget.isDisposed())
-						textWidget.setRedraw(false);
-					
 					boolean fireRedraw= !commandQueue.passedInvalidationCostsThreshold();
 					executeProjectionCommands(commandQueue, fireRedraw);
 					if (!fireRedraw)
 						invalidateTextPresentation();
 				} catch (IllegalArgumentException x) {
 					reinitializeProjection();
-				} finally {
-					if (isRedrawing && textWidget != null && !textWidget.isDisposed())
-						textWidget.setRedraw(true);
 				}
 			}
 		}
