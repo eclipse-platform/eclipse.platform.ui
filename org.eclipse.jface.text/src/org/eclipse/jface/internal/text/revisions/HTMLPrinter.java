@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
@@ -159,8 +160,6 @@ public class HTMLPrinter {
 			buffer.insert(index+6, styleBuf);
 			return;
 		}
-		
-
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB) {
@@ -266,4 +265,36 @@ public class HTMLPrinter {
 		if (paragraphReader != null)
 			addParagraph(buffer, read(paragraphReader));
 	}
+	
+	/**
+	 * Replaces the following style attributes of the font definition of the <code>html</code>
+	 * element:
+	 * <ul>
+	 * <li>font-size</li>
+	 * <li>font-weight</li>
+	 * <li>font-style</li>
+	 * <li>font-family</li>
+	 * </ul>
+	 * The font's name is used as font family, a <code>sans-serif</code> default font family is
+	 * appened for the case that the given font name is not available.
+	 * <p>
+	 * If the listed font attributes are not contained in the passed style list, nothing happens.
+	 * </p>
+	 * 
+	 * @param styles CSS style definitions
+	 * @param fontData the font information to use
+	 * @return the modified style definitions
+	 * @since 3.3
+	 */
+	public static String convertTopLevelFont(String styles, FontData fontData) {
+		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
+		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
+		int height= fontData.getHeight();
+		String family= "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
+		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+(pt\\;?.*\\})", "$1" + height + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-style:\\s*)\\w+(\\;?.*\\})", "$1" + (italic ? "italic" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-family:\\s*).+?(;.*\\})", "$1" + family + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return styles;
+}
 }
