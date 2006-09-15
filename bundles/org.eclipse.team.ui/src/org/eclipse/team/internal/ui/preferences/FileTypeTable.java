@@ -33,9 +33,9 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
     private final static int COMBO_INDEX_DONT_SAVE= 1;
     private static final String [] SAVE_TEXT= { TeamUIMessages.FileTypeTable_2, TeamUIMessages.FileTypeTable_3 }; // 
 
-    private static final class FileTypeSorter extends ViewerSorter {
+    private static final class FileTypeComparator extends ViewerComparator {
     	
-    	public FileTypeSorter() {
+    	public FileTypeComparator() {
     	}
     	
 		private int getCategory(Object element) {
@@ -143,7 +143,7 @@ public class FileTypeTable implements ICellModifier, IStructuredContentProvider,
 		fTableViewer = new TableViewer(table);
 		fTableViewer.setContentProvider(this);
 		fTableViewer.setLabelProvider(this);
-		fTableViewer.setSorter(new FileTypeSorter());
+		fTableViewer.setComparator(new FileTypeComparator());
 
 		/**
 		 * Add a cell editor in the Keyword Substitution Mode column

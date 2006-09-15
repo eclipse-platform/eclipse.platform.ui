@@ -17,15 +17,7 @@ import java.util.Date;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -131,7 +123,7 @@ public class GenericHistoryTableProvider {
 	/**
 	 * The history sorter
 	 */
-	class HistorySorter extends ViewerSorter {
+	class HistoryComparator extends ViewerComparator {
 		private boolean reversed = false;
 		private int columnNumber;
 		
@@ -147,7 +139,7 @@ public class GenericHistoryTableProvider {
 		/**
 		 * The constructor.
 		 */
-		public HistorySorter(int columnNumber) {
+		public HistoryComparator(int columnNumber) {
 			this.columnNumber = columnNumber;
 		}
 		/**
@@ -188,9 +180,9 @@ public class GenericHistoryTableProvider {
 					return date1>date2 ? -1 : 1;
 		
 				case 2: /* author */
-					return getCollator().compare(e1.getAuthor(), e2.getAuthor());
+					return getComparator().compare(e1.getAuthor(), e2.getAuthor());
 				case 3: /* comment */
-					return getCollator().compare(e1.getComment(), e2.getComment());
+					return getComparator().compare(e1.getComment(), e2.getComment());
 				default:
 					return 0;
 			}
@@ -250,9 +242,9 @@ public class GenericHistoryTableProvider {
 		viewer.setLabelProvider(new HistoryLabelProvider());
 		
 		// By default, reverse sort by revision.
-		HistorySorter sorter = new HistorySorter(COL_REVISIONID);
+		HistoryComparator sorter = new HistoryComparator(COL_REVISIONID);
 		sorter.setReversed(true);
-		viewer.setSorter(sorter);
+		viewer.setComparator(sorter);
 		
 		table.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -325,12 +317,12 @@ public class GenericHistoryTableProvider {
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column = tableViewer.getTable().indexOf((TableColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter)tableViewer.getSorter();
+				HistoryComparator oldSorter = (HistoryComparator)tableViewer.getComparator();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
 					tableViewer.refresh();
 				} else {
-					tableViewer.setSorter(new HistorySorter(column));
+					tableViewer.setComparator(new HistoryComparator(column));
 				}
 			}
 		};

@@ -108,7 +108,7 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 				super.dispose();
 			}
 		});
-		tableViewer.setSorter(new ViewerSorter() {
+		tableViewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof ITeamContentProviderDescriptor && e2 instanceof ITeamContentProviderDescriptor) {
 					ITeamContentProviderDescriptor d1 = (ITeamContentProviderDescriptor) e1;

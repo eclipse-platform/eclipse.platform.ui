@@ -152,7 +152,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 				getWizard().getContainer().showPage(getNextPage());
 			}
 		});
-		viewer.setSorter(new ViewerSorter() {
+		viewer.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof ConfigurationWizardElement && e2 instanceof ConfigurationWizardElement) {
 					ConfigurationWizardElement wizard1 = (ConfigurationWizardElement) e1;

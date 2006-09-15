@@ -165,7 +165,7 @@ public class LocalHistoryTableProvider {
 	/**
 	 * The history sorter
 	 */
-	class HistorySorter extends ViewerSorter {
+	class HistoryComparator extends ViewerComparator {
 		private boolean reversed = false;
 		private int columnNumber;
 		
@@ -178,7 +178,7 @@ public class LocalHistoryTableProvider {
 		 * The constructor.
 		 * @param columnNumber 
 		 */
-		public HistorySorter(int columnNumber) {
+		public HistoryComparator(int columnNumber) {
 			this.columnNumber = columnNumber;
 		}
 
@@ -326,12 +326,12 @@ public class LocalHistoryTableProvider {
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter) treeViewer.getSorter();
+				HistoryComparator oldSorter = (HistoryComparator) treeViewer.getComparator();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
 					treeViewer.refresh();
 				} else {
-					treeViewer.setSorter(new HistorySorter(column));
+					treeViewer.setComparator(new HistoryComparator(column));
 				}
 			}
 		};
@@ -363,9 +363,9 @@ public class LocalHistoryTableProvider {
 
 		// By default, reverse sort by revision. 
 		// If local filter is on sort by date
-		HistorySorter sorter = new HistorySorter(COL_DATE);
+		HistoryComparator sorter = new HistoryComparator(COL_DATE);
 		sorter.setReversed(false);
-		viewer.setSorter(sorter);
+		viewer.setComparator(sorter);
 
 		tree.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
