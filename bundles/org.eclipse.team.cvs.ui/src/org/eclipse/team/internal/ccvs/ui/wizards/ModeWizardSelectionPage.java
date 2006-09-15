@@ -22,22 +22,7 @@ import java.util.Observer;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.viewers.CellEditor;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
-import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -63,9 +48,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.util.StringMatcher;
 import org.eclipse.team.internal.ccvs.ui.*;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.CommitCommentArea;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.wizards.ModeWizard.ModeChange;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
@@ -154,7 +136,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		}
 	}
 	
-	private final static class TableSorter extends ViewerSorter implements SelectionListener {
+	private final static class TableComparator extends ViewerComparator implements SelectionListener {
 		
 		private final Collator fCollator;
 		private final TableViewer fViewer;
@@ -164,7 +146,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 		private boolean fAscending;
 		
 		
-		public TableSorter(TableViewer viewer, TableColumn fileColumn, TableColumn modeColumn, TableColumn pathColumn) {
+		public TableComparator(TableViewer viewer, TableColumn fileColumn, TableColumn modeColumn, TableColumn pathColumn) {
 //			TODO: possible issue, TableSorter's Collator not shared with base class.  Might cause problem switching to ICU collation.
 			fCollator= Collator.getInstance();
 			fViewer= viewer;
@@ -312,7 +294,7 @@ public class ModeWizardSelectionPage extends WizardPage {
 			
 			fViewer.addFilter(fFilter= new Filter());
 			
-			fViewer.setSorter(new TableSorter(fViewer, fileColumn, newModeColumn, pathColumn));
+			fViewer.setComparator(new TableComparator(fViewer, fileColumn, newModeColumn, pathColumn));
 			
 			fViewer.setInput(fChanges);
 			

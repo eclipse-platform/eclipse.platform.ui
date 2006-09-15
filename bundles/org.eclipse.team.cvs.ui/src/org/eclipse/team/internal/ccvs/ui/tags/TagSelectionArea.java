@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementComparator;
 import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
@@ -380,7 +380,7 @@ public class TagSelectionArea extends DialogArea {
     private void initialize(StructuredViewer viewer) {
         viewer.setContentProvider(new WorkbenchContentProvider());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
-		viewer.setSorter(new ProjectElementSorter());
+		viewer.setComparator(new ProjectElementComparator());
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {				
 				handleSelectionChange();

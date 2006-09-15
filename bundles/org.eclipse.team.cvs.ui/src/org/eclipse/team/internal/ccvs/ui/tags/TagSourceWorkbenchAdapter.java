@@ -14,8 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -42,7 +41,7 @@ public class TagSourceWorkbenchAdapter implements IAdaptable, IWorkbenchAdapter 
 	TagRootElement dates;
 	int includeFlags;
 	
-	public static class ProjectElementSorter extends ViewerSorter {
+	public static class ProjectElementComparator extends ViewerComparator {
 	
 		/*
 		 * The order in the diaog should be HEAD, Branches, Versions, Dates, BASE

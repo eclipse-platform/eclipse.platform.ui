@@ -261,7 +261,7 @@ public class CVSHistoryTableProvider {
 	/**
 	 * The history sorter
 	 */
-	class HistorySorter extends ViewerSorter {
+	class HistoryComparator extends ViewerComparator {
 		private boolean reversed = false;
 		private int columnNumber;
 		
@@ -278,7 +278,7 @@ public class CVSHistoryTableProvider {
 		/**
 		 * The constructor.
 		 */
-		public HistorySorter(int columnNumber) {
+		public HistoryComparator(int columnNumber) {
 			this.columnNumber = columnNumber;
 		}
 
@@ -334,7 +334,7 @@ public class CVSHistoryTableProvider {
 					if (tags1.length == 0) {
 						return 1;
 					}
-					return getCollator().compare(tags1[0].getName(), tags2[0].getName());
+					return getComparator().compare(tags1[0].getName(), tags2[0].getName());
 				case 2 : /* date */
 					long date1 = e1.getTimestamp();
 					long date2 = e2.getTimestamp();
@@ -352,7 +352,7 @@ public class CVSHistoryTableProvider {
 					if (author1 == null)
 						return 1;
 					
-					return getCollator().compare(author1, author2);
+					return getComparator().compare(author1, author2);
 				case 4 : /* comment */
 					String comment1 = e1.getComment();
 					String comment2 = e2.getComment();
@@ -362,7 +362,7 @@ public class CVSHistoryTableProvider {
 					if (comment1 == null)
 						return 1;
 					
-					return getCollator().compare(comment1, comment2);
+					return getComparator().compare(comment1, comment2);
 				default :
 					return 0;
 			}
@@ -430,10 +430,10 @@ public class CVSHistoryTableProvider {
 
 		// By default, reverse sort by revision. 
 		// If local filter is on sort by date
-		HistorySorter sorter = new HistorySorter(COL_DATE);
+		HistoryComparator sorter = new HistoryComparator(COL_DATE);
 		/*HistorySorter sorter = new HistorySorter(COL_REVISIONID);
 		sorter.setReversed(true);*/
-		viewer.setSorter(sorter);
+		viewer.setComparator(sorter);
 
 		tree.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -510,12 +510,12 @@ public class CVSHistoryTableProvider {
 			public void widgetSelected(SelectionEvent e) {
 				// column selected - need to sort
 				int column = treeViewer.getTree().indexOf((TreeColumn) e.widget);
-				HistorySorter oldSorter = (HistorySorter) treeViewer.getSorter();
+				HistoryComparator oldSorter = (HistoryComparator) treeViewer.getComparator();
 				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 					oldSorter.setReversed(!oldSorter.isReversed());
 					treeViewer.refresh();
 				} else {
-					treeViewer.setSorter(new HistorySorter(column));
+					treeViewer.setComparator(new HistoryComparator(column));
 				}
 			}
 		};
@@ -562,14 +562,14 @@ public class CVSHistoryTableProvider {
 			column = COL_DATE;	
 		}
 		
-		HistorySorter oldSorter = (HistorySorter) viewer.getSorter();
+		HistoryComparator oldSorter = (HistoryComparator) viewer.getComparator();
 		if (oldSorter != null && column == oldSorter.getColumnNumber()) {
 			oldSorter.setReversed(column == COL_REVISIONID);
 			viewer.refresh();
 		} else {
-			HistorySorter newSorter = new HistorySorter(column);
+			HistoryComparator newSorter = new HistoryComparator(column);
 			newSorter.setReversed(column == COL_REVISIONID);
-			viewer.setSorter(newSorter);
+			viewer.setComparator(newSorter);
 			
 		}
 	}

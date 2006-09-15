@@ -233,7 +233,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				return ((ITag) element).getName();
 			}
 		});
-		result.setSorter(new ViewerSorter() {
+		result.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (!(e1 instanceof ITag) || !(e2 instanceof ITag))
 					return super.compare(viewer, e1, e2);

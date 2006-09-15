@@ -32,7 +32,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
-import org.eclipse.team.internal.ccvs.ui.repo.RepositorySorter;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryComparator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -298,7 +298,7 @@ public class ModuleSelectionPage extends CVSWizardPage {
 				}
 			}
 		});
-		result.setSorter(new RepositorySorter());
+		result.setComparator(new RepositoryComparator());
 		return result;
 	}
 	

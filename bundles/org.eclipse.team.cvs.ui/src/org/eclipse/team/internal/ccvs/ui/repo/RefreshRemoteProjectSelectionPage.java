@@ -110,7 +110,7 @@ public class RefreshRemoteProjectSelectionPage extends CVSWizardPage {
 				updateEnablement();
 			}
 		});
-		listArea.getViewer().setSorter(new RepositorySorter());
+		listArea.getViewer().setComparator(new RepositoryComparator());
 		
 		workingSetArea = new WorkingSetSelectionArea(getShell(), CVSUIMessages.RefreshRemoteProjectSelectionPage_noWorkingSet, CVSUIMessages.RefreshRemoteProjectSelectionPage_workingSet, settings); // 
 		setWorkingSet(workingSet);

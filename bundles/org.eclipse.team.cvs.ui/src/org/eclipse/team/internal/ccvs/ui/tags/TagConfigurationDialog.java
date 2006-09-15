@@ -11,12 +11,8 @@
 package org.eclipse.team.internal.ccvs.ui.tags;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -40,7 +36,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementComparator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -87,7 +83,7 @@ public class TagConfigurationDialog extends TrayDialog {
 
     private final TagSourceWrapper wrappedTagSource;
 	
-	class FileSorter extends ViewerSorter {
+	class FileComparator extends ViewerComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			boolean oneIsFile = e1 instanceof CVSFileElement;
 			boolean twoIsFile = e2 instanceof CVSFileElement;
@@ -269,7 +265,7 @@ public class TagConfigurationDialog extends TrayDialog {
 		data.heightHint = 150;
 		data.horizontalSpan = 1;
 		cvsResourceTree.getTree().setLayoutData(data);
-		cvsResourceTree.setSorter(new FileSorter());
+		cvsResourceTree.setComparator(new FileComparator());
 		cvsResourceTree.setInput(TagSourceResourceAdapter.getViewerInput(tagSource));
 		cvsResourceTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -332,7 +328,7 @@ public class TagConfigurationDialog extends TrayDialog {
 			}
 		});
 		
-		cvsTagTree.setSorter(new ViewerSorter() {
+		cvsTagTree.setComparator(new ViewerComparator() {
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (!(e1 instanceof TagElement) || !(e2 instanceof TagElement)) return super.compare(viewer, e1, e2);
 				CVSTag tag1 = ((TagElement)e1).getTag();
@@ -379,7 +375,7 @@ public class TagConfigurationDialog extends TrayDialog {
 				updateEnablements();
 			}
 		});
-		cvsDefinedTagsTree.setSorter(new ProjectElementSorter());
+		cvsDefinedTagsTree.setComparator(new ProjectElementComparator());
 	
 		Composite buttonComposite = new Composite(rememberedTags, SWT.NONE);
 		data = new GridData ();

@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.repo;
 
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
@@ -24,7 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.model.DateTagCategory;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
 import org.eclipse.team.internal.ccvs.ui.model.VersionCategory;
 
-public class RepositorySorter extends ViewerSorter {
+public class RepositoryComparator extends ViewerComparator {
 	public int category(Object element) {
 		if (element instanceof ICVSRemoteFolder) {
 			if (((ICVSRemoteFolder)element).isDefinedModule()) {

@@ -97,7 +97,7 @@ public abstract class RemoteViewPart extends ViewPart implements ISelectionListe
 		viewer.setLabelProvider(new DecoratingRepoLabelProvider()/*WorkbenchLabelProvider()*/);
 		getSite().setSelectionProvider(viewer);
 		viewer.setInput(getTreeInput());
-		viewer.setSorter(new RepositorySorter());
+		viewer.setComparator(new RepositoryComparator());
 		viewer.getControl().addKeyListener(getKeyListener());
 		drillPart = new DrillDownAdapter(viewer);
 		
