@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -74,7 +73,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
 	public static final String PATH_FILTER= PREFIX + "PathFilter"; //$NON-NLS-1$
-	public static final String EDITOR_LINE_NUMBER_RULER= PREFIX + "lineNumberRuler"; //$NON-NLS-1$
 	
 	
 	private TextMergeViewer fPreviewViewer;
@@ -102,7 +100,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PATH_FILTER),
-		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, EDITOR_LINE_NUMBER_RULER)
 	};
 	
 	
@@ -118,7 +115,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(USE_SINGLE_LINE, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
 		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
-		store.setDefault(EDITOR_LINE_NUMBER_RULER, false);
 		
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 	}
@@ -235,7 +231,6 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.structureCompare.label", OPEN_STRUCTURE_COMPARE, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
-		addCheckBox(composite, "ComparePreferencePage.showLineRuler.label", EDITOR_LINE_NUMBER_RULER, 0);	//$NON-NLS-1$
 		
 		// a spacer
 		new Label(composite, SWT.NONE);

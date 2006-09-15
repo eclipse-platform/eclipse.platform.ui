@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *     channingwalton@mac.com - curved line code
  *     gilles.querret@free.fr - fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id=72995
- *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *     Max Weninger (max.weninger@windriver.com) - Bug 131895 [Edit] Undo in compare
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
@@ -33,7 +32,7 @@ import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.source.*;
+import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -268,8 +267,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ContributorInfo fLeftContributor;
 	private ContributorInfo fRightContributor;
 	private ContributorInfo fAncestorContributor;
-
-	private boolean fShowLineNumber=false;
 
 	class ContributorInfo implements IElementStateListener {
 		private final TextMergeViewer fViewer;
@@ -1035,7 +1032,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
 			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
-			fShowLineNumber= fPreferenceStore.getBoolean(ComparePreferencePage.EDITOR_LINE_NUMBER_RULER);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -1847,7 +1843,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
 		
-		final MergeSourceViewer part= new MergeSourceViewer(parent, createVerticalRuler(), getDirection(), getResourceBundle());
+		final MergeSourceViewer part= new MergeSourceViewer(parent, getDirection(), getResourceBundle());
 		final StyledText te= part.getTextWidget();
 		
 		if (!fConfirmSave)
@@ -2451,12 +2447,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				x+= fMarginWidth;
 				width-= fMarginWidth;
 			}
-	 		// for line ruler support
-			if(fAncestor.getControl() instanceof Composite){
-				((Composite)fAncestor.getControl()).setBounds(x, y, width, height);
-			} else {
-				fAncestor.getTextWidget().setBounds(x, y, width, height);			
-			}
+			fAncestor.getTextWidget().setBounds(x, y, width, height);
 		} else {
 			if (Utilities.okToUse(fAncestorCanvas))
 				fAncestorCanvas.setVisible(false);
@@ -2492,12 +2483,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			leftTextWidth-= fMarginWidth;
 		}
 		
- 		// for line ruler support
-		if(fLeft.getControl() instanceof Composite){
-			((Composite)fLeft.getControl()).setBounds(x, y, leftTextWidth, height);
-		} else {
-			fLeft.getTextWidget().setBounds(x, y, leftTextWidth, height);			
-		}
+		fLeft.getTextWidget().setBounds(x, y, leftTextWidth, height);
 		x+= leftTextWidth;
 		
 		if (fCenter == null || fCenter.isDisposed())
@@ -2523,14 +2509,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		int rightTextWidth= width2-scrollbarWidth;
 		if (fRightCanvas != null)
 			rightTextWidth-= fMarginWidth;
- 		
-		// for line ruler support
-		if(fRight.getControl() instanceof Composite){
-			((Composite)fRight.getControl()).setBounds(x, y, rightTextWidth, height);
-		} else {
-			fRight.getTextWidget().setBounds(x, y, rightTextWidth, height);			
-		}
-
+		fRight.getTextWidget().setBounds(x, y, rightTextWidth, height);
 		x+= rightTextWidth;
 			
 		if (fSynchronizedScrolling) {
@@ -3458,11 +3437,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					clearStatus();
 			}
 		
-		} else if(key.equals(ComparePreferencePage.EDITOR_LINE_NUMBER_RULER)){
-			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.EDITOR_LINE_NUMBER_RULER);
-			if (b != fShowLineNumber){
-				toogleLineNumberRuler();	
-			}
 		} else
 			super.propertyChange(event);
 	}
@@ -4695,48 +4669,4 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return null;
 	}
 	
-	/**
-	 * initial creation of line number column
-	 * bugzilla 126702, 72936
-	 * 
-	 * @return the vertical ruler
-	 */
-	protected IVerticalRuler createVerticalRuler() {
-		CompositeRuler ruler = new CompositeRuler();
-		// check pref setting
-		if(fShowLineNumber){
-			LineNumberRulerColumn column= new LineNumberRulerColumn();
-			ruler.addDecorator(0, column);
-		}
-		return ruler;
-	}
-	
-	/**
-	 * Hides or shows line number ruler column.
-	 * @param tw the MergeSourceViewer
-	 */
-	private void updateLineNumberRuler(MergeSourceViewer tw) {
-		IVerticalRuler v= tw.getMergeVerticalRuler();
-		if (v!=null && v instanceof CompositeRuler) {
-			CompositeRuler c= (CompositeRuler) v;
-			
-			if(!fShowLineNumber){
-				c.removeDecorator(0);
-			} else {
-				LineNumberRulerColumn column= new LineNumberRulerColumn();
-				c.addDecorator(0, column);
-			}
-		}
-	}
-	
-	/**
-	 * Hides or shows line number ruler column.
-	 */
-	private void toogleLineNumberRuler() {	
-		fShowLineNumber=!fShowLineNumber;
-		updateLineNumberRuler(fAncestor);
-		updateLineNumberRuler(fLeft);
-		updateLineNumberRuler(fRight);
-	}
-
 }
