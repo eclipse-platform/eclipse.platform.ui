@@ -27,13 +27,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -75,7 +73,6 @@ public class FastViewBar implements IWindowTrim {
 	static final int BUTTON_SIZE = 18;
 	static final int BUTTON_BORDER = SWT.COLOR_WIDGET_DARK_SHADOW;
 	static final int BUTTON_FILL = SWT.COLOR_WIDGET_BACKGROUND;
-    private static Image restoreImage = null;
 
     private ToolBarManager fastViewBar;
     private MenuManager fastViewBarMenuManager;
@@ -151,8 +148,8 @@ public class FastViewBar implements IWindowTrim {
     };
 	private int fCurrentSide = SWT.DEFAULT;
 	
-	private static final String GLOBAL_FVB_ID ="org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$ 
-	private String id = GLOBAL_FVB_ID;
+	private static final String TRUE_FVB_ID ="org.eclise.ui.internal.FastViewBar"; //$NON-NLS-1$ 
+	private String id = TRUE_FVB_ID;
 	private IPerspectiveListener2 perspectiveListener;
 
     class ViewDropTarget extends AbstractDropTarget {
@@ -228,12 +225,21 @@ public class FastViewBar implements IWindowTrim {
      * @param theWindow
      */
     public FastViewBar(WorkbenchWindow theWindow) {
-        window = theWindow;
+    	this(theWindow, LEGACY_FVB, TRUE_FVB_ID);
+    }
 
-        // Initialize the 'restore' image
-        if (restoreImage == null) {
-        	defineRestoreImage(window.getShell().getDisplay());
-        }
+	/**
+     * Special constructor that sets the ID
+     * 
+	 * @param wbw The Workbench window
+     * @param style The style of FVB desired
+	 * @param id The trim id 
+	 */
+	public FastViewBar(WorkbenchWindow wbw, int style, String id) {
+		this.style = style;
+		this.id = id;
+		
+        window = wbw;
         
         perspectiveListener = new IPerspectiveListener2() {
             public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
@@ -250,7 +256,7 @@ public class FastViewBar implements IWindowTrim {
 
                     // If a view becomes 'unfast' we might want to remove it
                     if (changeId.equals(IWorkbenchPage.CHANGE_FAST_VIEW_REMOVE)) {
-                 	   if ((style & REMOVE_UNFAST_REFS) != 0)
+                 	   if ((FastViewBar.this.style & REMOVE_UNFAST_REFS) != 0)
                  		   removeViewRef((IViewReference) partRef);
                         return;
                     }
@@ -264,60 +270,21 @@ public class FastViewBar implements IWindowTrim {
         window.addPerspectiveListener(perspectiveListener);
 
         // Construct the context menu for the fast view bar area
-        fastViewBarMenuManager = new MenuManager();
-        contextContributionItem = new FastViewBarContextMenuContribution(this);
-        showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
-        IContributionItem showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
-        showViewMenuMgr.add(showViewMenu);
-        
-        fastViewBarMenuManager.add(contextContributionItem);
-        fastViewBarMenuManager.add(showViewMenuMgr);
-
-        // Construct the context menu for the "New Fast View" 'button'
-        newFastViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
-        showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
-        newFastViewMenuMgr.add(showViewMenu);
-    }
-
-    /**
-     * Create the restore image
-	 * @param window
-	 */
-	private void defineRestoreImage(Display display) {
-		restoreImage = new Image(display, 18, 18);
-		restoreImage.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-		
-		GC gc = new GC(restoreImage);
-
-		int x = 4;
-		int y = 3;
-		
-		gc.setForeground(display.getSystemColor(BUTTON_BORDER));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-		// Fill the background
-		gc.fillRectangle(restoreImage.getBounds());
-
-		gc.fillRectangle(x, y+3, 5, 4);
-		gc.fillRectangle(x+2, y, 5, 4);
-		gc.drawRectangle(x, y+3, 5, 4);
-		gc.drawRectangle(x+2, y, 5, 4);
-		gc.drawLine(x+3, y+1, x+6, y+1);
-		gc.drawLine(x+1, y+4, x+4, y+4);
-		
-		gc.dispose();
-	}
-
-	/**
-     * Special constructor that sets the ID
-     * 
-	 * @param wbw The Workbench window
-     * @param style The style of FVB desired
-	 * @param id The trim id 
-	 */
-	public FastViewBar(WorkbenchWindow wbw, int style, String id) {
-		this(wbw);
-		this.style = style;
-		this.id = id;
+        if (isTrueFastView()) {
+	        fastViewBarMenuManager = new MenuManager();
+	        contextContributionItem = new FastViewBarContextMenuContribution(this);
+	        showViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+	        IContributionItem showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+	        showViewMenuMgr.add(showViewMenu);
+	        
+	        fastViewBarMenuManager.add(contextContributionItem);
+	        fastViewBarMenuManager.add(showViewMenuMgr);
+	
+	        // Construct the context menu for the "New Fast View" 'button'
+	        newFastViewMenuMgr = new MenuManager(WorkbenchMessages.FastViewBar_show_view, "showView"); //$NON-NLS-1$
+	        showViewMenu = new ShowViewMenu(window, ShowViewMenu.class.getName(), true);
+	        newFastViewMenuMgr.add(showViewMenu);
+		}
 	}
 
 	/**
@@ -426,9 +393,9 @@ public class FastViewBar implements IWindowTrim {
         String tip = WorkbenchMessages.FastViewBar_0; 
         fvbComposite.setToolTipText(tip);
 
-        fvbComposite.addListener(SWT.MenuDetect, menuListener);
-        
-        if (style == LEGACY_FVB) {
+        // Only drag or use a menu for the 'true' fast views
+        if (isTrueFastView()) {
+            fvbComposite.addListener(SWT.MenuDetect, menuListener);
         	PresentationUtil.addDragListener(fvbComposite, dragListener);
         }
 
@@ -468,7 +435,7 @@ public class FastViewBar implements IWindowTrim {
         // Create a toolbar to show an 'Add FastView' menu 'button'
         menuTB = new ToolBar(fvbComposite, SWT.FLAT | orientation);
 
-        if (testStyleBit(SHOW_ADD_BUTTON)) {
+        if (isTrueFastView()) {
 	        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
 	        showItem = new  ToolItem(menuTB, SWT.PUSH, 0);
 	        
@@ -493,6 +460,11 @@ public class FastViewBar implements IWindowTrim {
 				}
 	        	
 	        });
+	        
+	        // Bring up the 'Add Fast View' menu on a left -or- right button click
+	        // Right click (context menu)
+	        // NOTE: 
+	        menuTB.addListener(SWT.MenuDetect, addMenuListener);
         }
         
         if (testStyleBit(SHOW_RESTORE_BUTTON)) {
@@ -521,10 +493,6 @@ public class FastViewBar implements IWindowTrim {
         Point size = menuTB.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
         menuTB.setBounds(0, 0, size.x, size.y);
         
-        // Bring up the 'Add Fast View' menu on a left -or- right button click
-        // Right click (context menu)
-        menuTB.addListener(SWT.MenuDetect, addMenuListener);
-        
         // try to get the layout correct...
         toolBarData = new CellData();
         toolBarData.align(SWT.FILL, SWT.FILL);
@@ -536,7 +504,9 @@ public class FastViewBar implements IWindowTrim {
 
         fastViewBar.createControl(fvbComposite);
 
-        getToolBar().addListener(SWT.MenuDetect, menuListener);
+        // Only show context menus for the 'true' fast view
+        if (isTrueFastView())
+        	getToolBar().addListener(SWT.MenuDetect, menuListener);
 
         IDragOverListener fastViewDragTarget = new IDragOverListener() {
 
@@ -586,7 +556,7 @@ public class FastViewBar implements IWindowTrim {
 
         getToolBar().setLayoutData(toolBarData);
         
-        if (style == LEGACY_FVB) {
+        if (isTrueFastView()) {
 	        PresentationUtil.addDragListener(getToolBar(), dragListener);
 	        DragUtil.addDragTarget(getControl(), fastViewDragTarget);
         }
@@ -750,7 +720,9 @@ public class FastViewBar implements IWindowTrim {
 
     public void dispose() {
     	window.removePerspectiveListener(perspectiveListener);
-        fastViewBarMenuManager.dispose();
+    	
+    	if (fastViewBarMenuManager != null)
+    		fastViewBarMenuManager.dispose();
 
         disposeChildControls();
     }
@@ -769,7 +741,10 @@ public class FastViewBar implements IWindowTrim {
         	restoreItem = null;
         }
         
-        menuTB.dispose();
+        if (menuTB != null) {
+        	menuTB.dispose();
+        	menuTB = null;
+        }
         
         oldLength = 0;
     }
@@ -949,6 +924,8 @@ public class FastViewBar implements IWindowTrim {
             orientation.putInteger(IWorkbenchConstants.TAG_POSITION,
                     ((Integer) viewOrientation.get(next)).intValue());
         }
+        
+        memento.putInteger(IWorkbenchConstants.TAG_FAST_VIEW_STYLE, style);
     }
 
     /**
@@ -977,10 +954,16 @@ public class FastViewBar implements IWindowTrim {
     }
 
     public void restoreState(IMemento memento) {
-        Integer bigInt;
-        bigInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
-        if (bigInt != null) {
-            dock(bigInt.intValue());
+        Integer sideInt;
+        sideInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_SIDE);
+        if (sideInt != null) {
+            dock(sideInt.intValue());
+        }
+
+        Integer styleInt;
+        styleInt = memento.getInteger(IWorkbenchConstants.TAG_FAST_VIEW_STYLE);
+        if (styleInt != null) {
+            style = styleInt.intValue();
         }
 
         IMemento[] orientations = memento
