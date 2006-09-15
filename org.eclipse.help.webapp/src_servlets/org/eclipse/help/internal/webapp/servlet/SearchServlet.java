@@ -26,6 +26,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.ISearchHitCollector;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchQuery;
+import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
@@ -52,7 +53,7 @@ public class SearchServlet extends HttpServlet {
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
-		String phrase = req.getParameter(PARAMETER_PHRASE);
+		String phrase = URLCoder.decode(req.getParameter(PARAMETER_PHRASE));
 		if (phrase != null) {
 			ISearchQuery query = new SearchQuery(phrase, false, Collections.EMPTY_LIST, locale);
 			results.clear();

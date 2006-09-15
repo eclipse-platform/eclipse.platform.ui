@@ -45,7 +45,7 @@ public class ContextServlet extends HttpServlet {
 			String localeAndId = locale + id;
 			String response = (String)localeAndId2Response.get(localeAndId);
 			if (response == null) {
-				IContext context = HelpSystem.getContext(id);
+				IContext context = HelpSystem.getContext(id, locale);
 				if (context != null) {
 					response = ContextSerializer.serialize(context, id);
 					localeAndId2Response.put(localeAndId, response);

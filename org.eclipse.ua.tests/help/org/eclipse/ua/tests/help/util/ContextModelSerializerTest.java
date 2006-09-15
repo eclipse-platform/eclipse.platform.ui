@@ -71,7 +71,7 @@ public class ContextModelSerializerTest extends TestCase {
 			ContextsFile file = (ContextsFile)iter.next();
 			PluginContexts contexts = new PluginContexts();
 			ContextsBuilder builder = new ContextsBuilder(contexts);
-			builder.build(file);
+			builder.build(file, Platform.getNL());
 			
 			String pluginRoot = UserAssistanceTestPlugin.getDefault().getBundle().getLocation().substring("update@".length());
 			String relativePath = file.getHref();

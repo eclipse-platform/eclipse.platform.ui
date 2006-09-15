@@ -48,17 +48,17 @@ public class ContextsBuilder {
 			contexts.put(context.getShortId(), context);
 		}
 	}
-	public void build(ContextsFile contextsFile) {
+	public void build(ContextsFile contextsFile, String locale) {
 		this.pluginID = contextsFile.getPluginID();
 		this.definingPluginID = contextsFile.getDefiningPluginID();
 		ContextsFileParser parser = new ContextsFileParser(this);
-		parser.parse(contextsFile);
+		parser.parse(contextsFile, locale);
 	}
-	public void build(List pluginContextsFiles) {
+	public void build(List pluginContextsFiles, String locale) {
 		for (Iterator contextFilesIt = pluginContextsFiles.iterator(); contextFilesIt
 				.hasNext();) {
 			ContextsFile contextsFile = (ContextsFile) contextFilesIt.next();
-			contextsFile.build(this);
+			contextsFile.build(this, locale);
 		}
 	}
 	/**

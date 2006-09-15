@@ -15,29 +15,26 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.IContext;
-import org.eclipse.help.IContextProvider;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.util.URLCoder;
 
 /*
  * Provides the context-sensitive help data that is located on the remote
  * infocenter for a particular id, if the system is configured for remote help.
  * If not, returns null.
  */
-public class RemoteContextProvider implements IContextProvider {
+public class RemoteContextProvider extends AbstractContextProvider {
 
-	private static final String PATH_CONTEXT = "/context?id="; //$NON-NLS-1$
+	private static final String PATH_CONTEXT = "/context"; //$NON-NLS-1$
+	private static final String PARAM_ID = "id"; //$NON-NLS-1$
+	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getContext(java.lang.Object)
-	 */
-	public IContext getContext(Object target) {
-		if (RemoteHelp.isEnabled() && target instanceof String) {
-			String id = (String)target;
+	public IContext getContext(String id, String locale) {
+		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
-				URL url = RemoteHelp.getURL(PATH_CONTEXT + URLCoder.encode(id));
+				URL url = RemoteHelp.getURL(PATH_CONTEXT + '?' + PARAM_ID + '=' + id + '&' + PARAM_LANG + '=' + locale);
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 				if (connection.getResponseCode() == 200) {
 					in = connection.getInputStream();
@@ -64,20 +61,6 @@ public class RemoteContextProvider implements IContextProvider {
 				}
 			}
 		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getContextChangeMask()
-	 */
-	public int getContextChangeMask() {
-		return NONE;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContextProvider#getSearchExpression(java.lang.Object)
-	 */
-	public String getSearchExpression(Object target) {
 		return null;
 	}
 }

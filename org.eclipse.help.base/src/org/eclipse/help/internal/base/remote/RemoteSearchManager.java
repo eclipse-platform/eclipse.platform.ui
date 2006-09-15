@@ -28,7 +28,9 @@ import org.eclipse.help.internal.util.URLCoder;
  */
 public class RemoteSearchManager {
 
-	private static final String PATH_SEARCH = "/search?phrase="; //$NON-NLS-1$
+	private static final String PATH_SEARCH = "/search"; //$NON-NLS-1$
+	private static final String PARAM_PHRASE = "phrase"; //$NON-NLS-1$
+	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 	private RemoteSearchParser parser;
 
 	/*
@@ -36,14 +38,13 @@ public class RemoteSearchManager {
 	 */
 	public void search(ISearchQuery searchQuery, ISearchHitCollector collector, IProgressMonitor pm)
 			throws QueryTooComplexException {
-		
 		pm.beginTask("", 100); //$NON-NLS-1$
 		try {
 			// infocenters ignore remote content
 			if (RemoteHelp.isEnabled()) {
 				InputStream in = null;
 				try {
-					URL url = RemoteHelp.getURL(PATH_SEARCH + URLCoder.encode(searchQuery.getSearchWord()));
+					URL url = RemoteHelp.getURL(PATH_SEARCH + '?' + PARAM_PHRASE + '=' + URLCoder.encode(searchQuery.getSearchWord()) + '&' + PARAM_LANG + '=' + searchQuery.getLocale());
 					in = url.openStream();
 					if (parser == null) {
 						parser = new RemoteSearchParser();

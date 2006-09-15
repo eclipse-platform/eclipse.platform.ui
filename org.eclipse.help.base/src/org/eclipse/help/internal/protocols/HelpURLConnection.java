@@ -39,7 +39,7 @@ import org.osgi.framework.Bundle;
  */
 public class HelpURLConnection extends URLConnection {
 
-	private final static String LANG = "lang"; //$NON-NLS-1$
+	private final static String PARAM_LANG = "lang"; //$NON-NLS-1$
 	private final static String PRODUCT_PLUGIN = "PRODUCT_PLUGIN"; //$NON-NLS-1$
 	private final static String PLUGINS_ROOT = "PLUGINS_ROOT/"; //$NON-NLS-1$
 	private final static String PATH_RTOPIC = "/rtopic"; //$NON-NLS-1$
@@ -243,7 +243,7 @@ public class HelpURLConnection extends URLConnection {
 	 */
 	protected String getLocale() {
 		if (locale == null) {
-			locale = getValue(LANG);
+			locale = getValue(PARAM_LANG);
 			if (locale == null) {
 				locale = Platform.getNL();
 			}
@@ -349,7 +349,7 @@ public class HelpURLConnection extends URLConnection {
 	private InputStream openFromRemoteServer(String href, String locale) {
 		if (RemoteHelp.isEnabled()) {
 			try {
-				URL url = RemoteHelp.getURL(PATH_RTOPIC + href);
+				URL url = RemoteHelp.getURL(PATH_RTOPIC + href + '?' + PARAM_LANG + '=' + locale);
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 				if (connection.getResponseCode() != HttpURLConnection.HTTP_NOT_FOUND) {
 					return connection.getInputStream();

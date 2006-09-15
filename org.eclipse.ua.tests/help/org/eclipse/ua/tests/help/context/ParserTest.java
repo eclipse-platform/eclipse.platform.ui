@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.context.ContextsBuilder;
 import org.eclipse.help.internal.context.ContextsFile;
 import org.eclipse.help.internal.context.PluginContexts;
@@ -51,7 +52,7 @@ public class ParserTest extends TestCase {
 			ContextsFile file = (ContextsFile)iter.next();
 			PluginContexts contexts = new PluginContexts();
 			ContextsBuilder builder = new ContextsBuilder(contexts);
-			builder.build(file);
+			builder.build(file, Platform.getNL());
 			
 			Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();
 			String relativePath = file.getHref();

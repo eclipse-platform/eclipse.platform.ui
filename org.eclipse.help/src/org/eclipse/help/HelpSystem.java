@@ -39,14 +39,26 @@ public final class HelpSystem {
 	}
 
 	/**
-	 * Computes and returns context information for the given context id.
+	 * Computes and returns context information for the given context id
+	 * for the platform's current locale.
 	 * 
-	 * @param contextId
-	 *            the context id
+	 * @param contextId the context id, e.g. "org.my.plugin.my_id"
 	 * @return the context, or <code>null</code> if none
 	 */
 	public static IContext getContext(String contextId) {
-		return HelpPlugin.getContextManager().getContext(contextId);
+		return HelpPlugin.getContextManager().getContext(contextId, Platform.getNL());
+	}
+
+	/**
+	 * Computes and returns context information for the given context id
+	 * and locale.
+	 * 
+	 * @param contextId the context id, e.g. "org.my.plugin.my_id"
+	 * @param locale the locale being requested, e.g. "en_US"
+	 * @return the context, or <code>null</code> if none
+	 */
+	public static IContext getContext(String contextId, String locale) {
+		return HelpPlugin.getContextManager().getContext(contextId, locale);
 	}
 
 	/**

@@ -27,6 +27,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class RemoteTocProvider extends AbstractTocProvider {
 
 	private static final String PATH_TOC = "/toc"; //$NON-NLS-1$
+	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 	
 	/*
 	 * Constructs a new remote toc provider, which listens for remote
@@ -47,7 +48,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
-				URL url = RemoteHelp.getURL(PATH_TOC);
+				URL url = RemoteHelp.getURL(PATH_TOC+ '?' + PARAM_LANG + '=' + locale);
 				in = url.openStream();
 				RemoteTocParser parser = new RemoteTocParser();
 				return parser.parse(in);

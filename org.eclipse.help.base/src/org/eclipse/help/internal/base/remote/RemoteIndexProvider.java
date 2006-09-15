@@ -27,6 +27,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 public class RemoteIndexProvider extends AbstractIndexProvider {
 
 	private static final String PATH_INDEX = "/index"; //$NON-NLS-1$
+	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 	
 	/*
 	 * Constructs a new remote index provider, which listens for remote
@@ -47,7 +48,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
-				URL url = RemoteHelp.getURL(PATH_INDEX);
+				URL url = RemoteHelp.getURL(PATH_INDEX + '?' + PARAM_LANG + '=' + locale);
 				in = url.openStream();
 				RemoteIndexParser parser = new RemoteIndexParser();
 				return parser.parse(in);

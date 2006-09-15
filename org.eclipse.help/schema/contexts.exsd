@@ -6,16 +6,11 @@
          <meta.schema plugin="org.eclipse.help" id="contexts" name="Contexts"/>
       </appInfo>
       <documentation>
-         For defining context-sensitive help for an 
-individual plug-in.
+         For defining context-sensitive help for an individual plug-in.
       </documentation>
    </annotation>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="contexts"/>
@@ -103,10 +98,10 @@ with topics that are part of on line help.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the implementation class for the context help provider.  This class must implement the &lt;samp&gt;org.eclipse.help.IContextProvider&lt;/samp&gt; interface.
+                  the implementation class for the context-sensitive help provider. This class must implement the &lt;samp&gt;org.eclipse.help.AbstractContextProvider&lt;/samp&gt; interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IContextProvider"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractContextProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -168,7 +163,7 @@ to plugin directory.
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         An implementation of &lt;samp&gt;org.eclipse.help.IContextProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;contextProvider&lt;/samp&gt; is used.
+         An implementation of &lt;samp&gt;org.eclipse.help.AbstractContextProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;contextProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 

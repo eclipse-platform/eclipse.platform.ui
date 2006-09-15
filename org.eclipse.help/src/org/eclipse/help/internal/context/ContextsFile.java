@@ -9,10 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.util.ResourceLocator;
 
 public class ContextsFile {
 	protected String href;
@@ -34,12 +35,11 @@ public class ContextsFile {
 	public String getHref() {
 		return href;
 	}
-	protected InputStream getInputStream() {
+	protected InputStream getInputStream(String locale) {
 		InputStream stream = null;
 		try {
 			if (definingPluginID != null)
-				stream = ResourceLocator.openFromPlugin(definingPluginID, href,
-						Platform.getNL());
+				stream = ResourceLocator.openFromPlugin(definingPluginID, href,	locale);
 			else
 				stream = new FileInputStream(href);
 		} catch (IOException e) {
@@ -62,7 +62,7 @@ public class ContextsFile {
 	public String getPluginID() {
 		return pluginID;
 	}
-	public void build(ContextsBuilder builder) {
-		builder.build(this);
+	public void build(ContextsBuilder builder, String locale) {
+		builder.build(this, locale);
 	}
 }

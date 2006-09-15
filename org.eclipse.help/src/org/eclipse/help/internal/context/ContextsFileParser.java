@@ -157,9 +157,9 @@ public class ContextsFileParser extends DefaultHandler {
 		HelpPlugin.logWarning("Warning parsing " + getErrorDetails(ex)); //$NON-NLS-1$
 	}
 
-	public void parse(ContextsFile contextsFile) {
+	public void parse(ContextsFile contextsFile, String locale) {
 		this.contextsFile = contextsFile;
-		InputStream is = contextsFile.getInputStream();
+		InputStream is = contextsFile.getInputStream(locale);
 		if (is == null)
 			return;
 		InputSource inputSource = new InputSource(is);
