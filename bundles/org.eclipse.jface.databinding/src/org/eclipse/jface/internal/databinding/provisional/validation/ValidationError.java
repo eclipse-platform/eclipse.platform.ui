@@ -38,13 +38,33 @@ public class ValidationError {
 	public final String message;
 	
 	/**
+	 * The exception that caused the error (if any).  Note that this
+	 * field should not be used for user errors, but only when the program
+	 * has detected a failure and needs to capture and retain the 
+	 * call stack for the programmer to evaluate later.
+	 */
+	public final Throwable exception;
+	
+	/**
 	 * A convenience factory for {@link #ERROR} ValidationErrors.
 	 * 
 	 * @param message The error message
 	 * @return A new ValidationError representing the error
 	 */
 	public static ValidationError error(String message) {
-		return new ValidationError(ERROR, message);
+		return new ValidationError(ERROR, message, null);
+	}
+	
+	/**
+	 * A convenience factory for {@link #ERROR} ValidationErrors caused
+	 * by a program malfunction.
+	 * 
+	 * @param message The error message
+	 * @param exception The exception representing the malfunction
+	 * @return A new ValidationError representing the error
+	 */
+	public static ValidationError error(String message, Throwable exception) {
+		return new ValidationError(ERROR, message, exception);
 	}
 	
 	/**
@@ -54,7 +74,7 @@ public class ValidationError {
 	 * @return A new ValidationError representing the warning
 	 */
 	public static ValidationError warning(String message) {
-		return new ValidationError(WARNING, message);
+		return new ValidationError(WARNING, message, null);
 	}
 	
 	/**
@@ -62,10 +82,12 @@ public class ValidationError {
 	 * 
 	 * @param status either {@link #WARNING} or {@link #ERROR}
 	 * @param message An error message string or warning.
+	 * @param exception The exception representing the program's malfunction or null if none
 	 */
-	public ValidationError(int status, String message) {
+	public ValidationError(int status, String message, Throwable exception) {
 		this.status = status;
 		this.message = message;
+		this.exception = exception;
 	}
 	
 	public String toString() {
