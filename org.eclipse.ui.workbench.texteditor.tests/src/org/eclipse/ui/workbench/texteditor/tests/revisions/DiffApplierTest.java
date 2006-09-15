@@ -263,10 +263,6 @@ public class DiffApplierTest extends TestCase {
 		differ.setReferenceProvider(fReferenceProvider);
 	}
 	
-	static boolean equals(ILineRange one, ILineRange two) {
-		return one.getStartLine() == two.getStartLine() && one.getNumberOfLines() == two.getNumberOfLines();
-	}
-
 	private static class MyRevision extends Revision {
 		public String getId() {
 			return null;
@@ -314,7 +310,7 @@ public class DiffApplierTest extends TestCase {
 	}
 	
 	/**
-	 * Returns true if the differ becomes synchronized before MAX_WAITelapses, false otherwise.
+	 * Returns true if the differ becomes synchronized before MAX_WAIT elapses, false otherwise.
 	 * 
 	 * @return the true if the differ synchronized
 	 * @throws InterruptedException

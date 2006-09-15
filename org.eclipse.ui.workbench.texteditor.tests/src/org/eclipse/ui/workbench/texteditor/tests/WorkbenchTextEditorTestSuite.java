@@ -15,6 +15,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ui.workbench.texteditor.quickdiff.tests.DiffTestSuite;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.ChangeRegionTest;
+import org.eclipse.ui.workbench.texteditor.tests.revisions.DiffApplierTest;
 import org.eclipse.ui.workbench.texteditor.tests.revisions.RangeTest;
 import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 
@@ -36,7 +37,7 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
         suite.addTest(RulerTestSuite.suite());
         
         // XXX: see https://bugs.eclipse.org/bugs/show_bug.cgi?id=128171
-//        suite.addTest(DiffApplierTest.suite());
+        suite.addTest(DiffApplierTest.suite());
         
 		//$JUnit-END$
 		return suite;
