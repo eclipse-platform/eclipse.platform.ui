@@ -27,7 +27,12 @@ package org.eclipse.debug.core;
  * </pre>
  * 
  * Clients are NOT intended to implement this interface
- * 
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * remain unchanged during the 3.3 release cycle. Please do not use this API
+ * without consulting with the Platform/Debug team.
+ * </p>
  * @since 3.3
  *
  */

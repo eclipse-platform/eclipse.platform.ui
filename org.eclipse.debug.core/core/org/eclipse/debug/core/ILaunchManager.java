@@ -228,6 +228,12 @@ public interface ILaunchManager {
 	 * Returns the launch option registered with the given id
 	 * @param optionId the unique id of the launch option
 	 * @return the lauch option associated with ther specified id or <code>null</code> if not found
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This ,method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
 	 * @since 3.3
 	 */
 	public ILaunchOption getLaunchOption(String optionId);
@@ -235,6 +241,12 @@ public interface ILaunchManager {
 	/**
 	 * Returns all registered launch options
 	 * @return all registered launch options
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This ,method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
 	 * @since 3.3
 	 */
 	public ILaunchOption[] getLaunchOptions();
