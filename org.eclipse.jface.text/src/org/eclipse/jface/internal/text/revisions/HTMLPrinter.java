@@ -145,11 +145,22 @@ public class HTMLPrinter {
 		}
 
 		// Find insertion index
+		// a) within existing body tag with trailing space 
 		int index= buffer.indexOf("<body "); //$NON-NLS-1$
-		if (index == -1)
+		if (index != -1) {
+			buffer.insert(index+5, styleBuf);
 			return;
+		}
 
-		buffer.insert(index+5, styleBuf);
+		// b) within existing body tag without attributes
+		index= buffer.indexOf("<body>"); //$NON-NLS-1$
+		if (index != -1) {
+			buffer.insert(index+5, ' ');
+			buffer.insert(index+6, styleBuf);
+			return;
+		}
+		
+
 	}
 
 	public static void insertPageProlog(StringBuffer buffer, int position, RGB bgRGB) {
