@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Karsten Stöckmann - bug 156982
  *******************************************************************************/
 package org.eclipse.jface.layout;
 import org.eclipse.swt.graphics.Point;
@@ -192,6 +193,27 @@ public final class GridLayoutFactory {
     public GridLayoutFactory margins(int x, int y) {
         l.marginWidth = x;
         l.marginHeight = y;
+        return this;
+    }
+
+    /**
+     * Sets the margins for layouts created with this factory. The margins
+     * are the distance between the outer cells and the edge of the layout.
+     * 
+     * @param left left margin size (pixels)
+     * @param right right margin size (pixels)
+     * @param top top margin size (pixels)
+     * @param bottom bottom margin size (pixels)
+     * @return this
+     * @see #spacing
+     * 
+     * @since 3.3
+     */
+    public GridLayoutFactory margins(int left, int right, int top, int bottom) {
+        l.marginLeft = left;
+        l.marginRight = right;
+        l.marginTop = top;
+        l.marginBottom = bottom;
         return this;
     }
 
