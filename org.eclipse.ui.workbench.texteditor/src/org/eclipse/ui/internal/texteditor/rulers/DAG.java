@@ -174,7 +174,7 @@ public final class DAG {
 	private Set computeZeroEdgeVertices(MultiMap map) {
 		Set candidates= map.keySet();
 		Set roots= new LinkedHashSet(candidates.size());
-		for (Iterator it= map.keySet().iterator(); it.hasNext();) {
+		for (Iterator it= candidates.iterator(); it.hasNext();) {
 			Object candidate= it.next();
 			if (map.get(candidate).isEmpty())
 				roots.add(candidate);
