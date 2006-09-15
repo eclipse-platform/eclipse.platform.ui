@@ -17,19 +17,20 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.reconciler.*;
 import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
@@ -40,6 +41,7 @@ import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 import org.eclipse.ui.texteditor.spelling.*;
 
@@ -57,11 +59,14 @@ public class CommitCommentArea extends DialogArea {
         private final String fMessage;
         
         private String fText;
+		private LocalResourceManager fResources;
         
         public TextBox(Composite composite, String message, String initialText) {
             
             fMessage= message;
             fText= initialText;
+            // Create a resource manager for the composite so it gets automatically disposed
+            fResources= new LocalResourceManager(JFaceResources.getResources(), composite);
             
             AnnotationModel annotationModel = new AnnotationModel();
             IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
@@ -82,13 +87,15 @@ public class CommitCommentArea extends DialogArea {
             sourceViewer.showAnnotations(false);
             sourceViewer.showAnnotationsOverview(false);
 
-            // to paint the annotations
-            AnnotationPainter ap = new AnnotationPainter(sourceViewer, annotationAccess);
-            ap.addAnnotationType(SPELLING_ERROR);
-            ap.setAnnotationTypeColor(SPELLING_ERROR, JFaceColors.getErrorText(composite.getDisplay()));
-
-            // this will draw the squigglies under the text
-            sourceViewer.addPainter(ap);
+            if (isSpellingAnnotationEnabled()) {
+	            // to paint the annotations
+	            AnnotationPainter ap = new AnnotationPainter(sourceViewer, annotationAccess);
+	            ap.addAnnotationType(SPELLING_ERROR);
+	            ap.setAnnotationTypeColor(SPELLING_ERROR, getSpellingErrorColor(composite));
+	
+	            // this will draw the squiggles under the text
+	            sourceViewer.addPainter(ap);
+            }
 
             Document document = new Document(initialText);
 
@@ -104,6 +111,24 @@ public class CommitCommentArea extends DialogArea {
             fTextField.addModifyListener(this);
             fTextField.addFocusListener(this);
         }
+
+		private boolean isSpellingAnnotationEnabled() {
+			// Need to determine how to ask the proper question to the AnnotationPreferences
+			return true;
+		}
+
+		private Color getSpellingErrorColor(Composite composite) {
+			AnnotationPreference pref = EditorsUI
+					.getAnnotationPreferenceLookup().getAnnotationPreference(
+							"org.eclipse.ui.workbench.texteditor.spelling"); // $NON-NLS-1$
+			String preferenceKey = pref.getColorPreferenceKey();
+			try {
+				return fResources.createColor(PreferenceConverter.getColor(EditorsUI.getPreferenceStore(), preferenceKey));
+			} catch (DeviceResourceException e) {
+				CVSUIPlugin.log(IStatus.ERROR, CVSUIMessages.internal, e);
+				return JFaceColors.getErrorText(composite.getDisplay());
+			}
+		}
         
         public void modifyText(ModifyEvent e) {
             final String old = fText;
