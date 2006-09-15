@@ -318,7 +318,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			public void run() {
 				groupingOn = !groupingOn;
 				store.setValue(ICVSUIConstants.PREF_GROUPBYDATE_MODE, groupingOn);
-				refreshHistory(false, false);
+				refreshHistory(false, false, CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
 			}
 		};
 		groupingOn = store.getBoolean(ICVSUIConstants.PREF_GROUPBYDATE_MODE);
@@ -882,11 +882,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 * Refresh the view by refetching the log entries for the remote file
 	 */
 	public void refresh() {	
+		refresh(CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
+	}
+	
+	public void refresh(int refreshFlags) {	
 		//refetch revisions, not a select only job
-		refreshHistory(true, false);
+		// TODO
+		refreshHistory(true, false, refreshFlags);
 	}
 
-	private void refreshHistory(boolean refetch, boolean selectOnly) {
+	private void refreshHistory(boolean refetch, boolean selectOnly, int refreshFlags) {
 		if (refreshCVSFileHistoryJob.getState() != Job.NONE){
 			refreshCVSFileHistoryJob.cancel();
 		}
@@ -902,6 +907,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		refreshCVSFileHistoryJob.setIncludeLocals(!isLocalHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setIncludeRemote(!isRemoteHistoryFilteredOut());
 		refreshCVSFileHistoryJob.setGrouping(groupingOn);
+		refreshCVSFileHistoryJob.setRefreshFlags(refreshFlags);
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		Utils.schedule(refreshCVSFileHistoryJob, getWorkbenchSite(parentSite));
 	}
@@ -1153,6 +1159,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		private boolean useLocalSelect;
 		
 		private CVSLocalFileRevision localFileRevision;
+
+		private int refreshFlags = CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE;
 		
 		public RefreshCVSFileHistory(CVSHistoryPage page) {
 			super(CVSUIMessages.HistoryView_fetchHistoryJob);
@@ -1207,20 +1215,28 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				//revisions only
 				boolean localFetched = false;
 				boolean needsUpdate = true;
-				if (!fileHistory.isInitialized() && fileHistory.isIncludeLocal()) {
+				if (!fileHistory.isInitialized() && fileHistory.isIncludeLocal() && (refreshFlags & CVSFileHistory.REFRESH_REMOTE) > 0) {
 					// If this is the first refresh, show the local history before hitting the server
-					fileHistory.fetchLocalOnly(monitor);
-					updateTable();
-					localFetched = true;
-					needsUpdate = false;
+					try {
+						fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
+						updateTable();
+						localFetched = true;
+						needsUpdate = false;
+					} catch (TeamException e) {
+						// Ignore and try the full refresh
+					}
 				}
 				try {
-					fileHistory.refresh(monitor);
+					fileHistory.refresh(refreshFlags , monitor);
 					needsUpdate = true;
 				} catch (TeamException ex) {
 					if (!localFetched) {
-						fileHistory.fetchLocalOnly(monitor);
-						needsUpdate = true;
+						try {
+							fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
+							needsUpdate = true;
+						} catch (TeamException e) {
+							// Ignore and allow the original exception to go through
+						}
 					}
 					status = new CVSStatus(ex.getStatus().getSeverity(), ex.getStatus().getCode(), ex.getMessage(), ex);
 				}
@@ -1380,6 +1396,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			return messageCategory;
 		}
 
+		public int getRefreshFlags() {
+			return refreshFlags;
+		}
+
+		public void setRefreshFlags(int refreshFlags) {
+			this.refreshFlags = refreshFlags;
+		}
+
 	
 		
 	}
@@ -1431,12 +1455,29 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			
 			IResourceDelta resourceDelta = root.findMember(((IFile)file.getIResource()).getFullPath());
 			if (resourceDelta != null){
+				String revision = getRevision();
+				final boolean hasRevision = cvsFileHistory.getFileRevision(revision) != null;
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						refresh();
+						if (hasRevision)
+							refresh(CVSFileHistory.REFRESH_LOCAL);
+						else
+							refresh();
 					}
 				});
 			}
+		}
+
+		private String getRevision() {
+			try {
+				byte[] syncBytes = file.getSyncBytes();
+				if (syncBytes != null && !ResourceSyncInfo.isAddition(syncBytes)) {
+					return ResourceSyncInfo.getRevision(syncBytes);
+				}
+			} catch (CVSException e) {
+				// Ignore the errors
+			}
+			return null;
 		}
 	}
 		
@@ -1618,7 +1659,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		//always refresh the history if the input gets set - in which
 		//case set the selectOnly to false
-		refreshHistory(needRefresh, !needRefresh);
+		refreshHistory(needRefresh, !needRefresh, CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
 		
 		if (toggleSearchAction!= null && toggleSearchAction.isChecked()){
 			searchField.selectAll();
@@ -1704,7 +1745,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (refreshCVSFileHistoryJob != null){
 			//don't refetch, but not a select only job (ie. have to get the
 			//existing revisions corresponding to the mode change)
-			refreshHistory(false, false);
+			refreshHistory(false, false, CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
 		}
 	}
 
@@ -1753,6 +1794,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 		
 		//refetch revisions, not a select only job
-		refreshHistory(true, false);
+		refreshHistory(true, false, CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
 	}
 }
