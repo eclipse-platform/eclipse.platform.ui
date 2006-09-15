@@ -38,7 +38,7 @@ import org.eclipse.compare.*;
  */
 public class DiffTreeViewer extends TreeViewer {
 	
-	static class DiffViewerSorter extends ViewerSorter {
+	static class DiffViewerComparator extends ViewerComparator {
 	
 		public boolean isSorterProperty(Object element, Object property) {
 			return false;
@@ -220,7 +220,7 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 		);
 										
-		setSorter(new DiffViewerSorter());
+		setComparator(new DiffViewerComparator());
 		
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
