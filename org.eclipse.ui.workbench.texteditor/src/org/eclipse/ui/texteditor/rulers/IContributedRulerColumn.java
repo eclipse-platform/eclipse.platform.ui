@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.rulers;
 
-import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
-import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -70,8 +68,8 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 
 	/**
 	 * Hook method called after a column has been instantiated, but before it is
-	 * added to a {@link CompositeRuler} and before
-	 * {@linkplain IVerticalRulerColumn#createControl(CompositeRuler, Composite) createControl}
+	 * added to a {@link org.eclipse.jface.text.source.CompositeRuler} and before
+	 * {@linkplain IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite) createControl}
 	 * is called.
 	 * <p>
 	 * This happens when
@@ -84,7 +82,7 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 	void columnCreated();
 
 	/**
-	 * Hook method called after a column has been removed from the {@link CompositeRuler}.
+	 * Hook method called after a column has been removed from the {@link org.eclipse.jface.text.source.CompositeRuler}.
 	 * <p>
 	 * This happens when  
 	 * <ul>
