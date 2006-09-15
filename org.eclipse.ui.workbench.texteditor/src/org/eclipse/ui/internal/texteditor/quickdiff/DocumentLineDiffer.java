@@ -796,6 +796,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public synchronized void documentChanged(DocumentEvent event) {
+		final Thread lastCurrentThread= fThread;
+		fThread= null;
+		
 		if (fIgnoreDocumentEvents)
 			return;
 
@@ -817,6 +820,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			return;
 		
 		try {
+			fThread= lastCurrentThread;
 			handleChanged(event);
 		} catch (BadLocationException e) {
 			reinitOnError(e);
