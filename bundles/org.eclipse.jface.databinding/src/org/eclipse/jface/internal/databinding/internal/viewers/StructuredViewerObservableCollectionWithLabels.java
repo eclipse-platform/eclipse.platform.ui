@@ -311,11 +311,13 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 
 	public Object remove(int index) {
 		if (index < 0 || index >= wrappedList.size()) {
-			throw new IllegalArgumentException("Request to remove a nonexistant list element"); //$NON-NLS-1$
+			throw new IllegalArgumentException("Request to remove an item that does not exist"); //$NON-NLS-1$
 		}
 		Object oldObject = null;
 		oldObject = wrappedList.remove(index);
-		elementsAsSet.remove(oldObject);
+		if (!elementsAsSet.remove(oldObject)) {
+			throw new IllegalArgumentException("Could not remove " + oldObject.getClass().getName() + "  (Did you implement equals() and hashCode() correctly?)"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		removeFromViewer(oldObject);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(
 				index, false, oldObject)));
@@ -332,6 +334,9 @@ public abstract class StructuredViewerObservableCollectionWithLabels extends
 			fireSetChange(Diffs.createSetDiff(Collections.singleton(element),
 					Collections.EMPTY_SET));
 			addToViewer(index, element);
+		}
+		if (wrappedList.size() != elementsAsSet.size()) {
+			throw new IllegalArgumentException("wrappedList.size() != elementsAsSet.size() : (Did you implement equals() and hashCode() correctly?)"); //$NON-NLS-1$
 		}
 	}
 
