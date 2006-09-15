@@ -30,6 +30,11 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class CVSFileHistory extends FileHistory {
 
+	public static final int REFRESH_LOCAL = 1;
+	public static final int REFRESH_REMOTE = 2;
+	
+	public static final int REFRESH_ALL = REFRESH_LOCAL | REFRESH_REMOTE;
+	
 	protected ICVSFile cvsFile;
 	//used to hold all revisions (changes based on filtering)
 	protected IFileRevision[] revisions;
@@ -79,7 +84,12 @@ public class CVSFileHistory extends FileHistory {
 	 * 
 	 * @param monitor	a progress monitor
 	 */
-	public void refresh(IProgressMonitor monitor) throws TeamException {
+	public void refresh(int flags, IProgressMonitor monitor) throws TeamException {
+		if (flags == CVSFileHistory.REFRESH_LOCAL) {
+			fetchLocalOnly(monitor);
+			return;
+		}
+			
 		if (refetchRevisions) {
 			monitor.beginTask(NLS.bind(CVSMessages.CVSFileHistory_0, cvsFile.getRepositoryRelativePath()), 300);
 			try {
@@ -313,7 +323,8 @@ public class CVSFileHistory extends FileHistory {
 			includesExists = (localRevisions.length > 0);
 		}
 
-		remoteRevisions = new IFileRevision[0];
+		if (remoteRevisions == null)
+			remoteRevisions = new IFileRevision[0];
 		revisions = new IFileRevision[0];
 		arrangeRevisions();
 		} catch (CoreException ex){

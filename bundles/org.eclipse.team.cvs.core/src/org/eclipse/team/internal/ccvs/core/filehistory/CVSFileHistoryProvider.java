@@ -48,7 +48,7 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 				CVSFileHistory remoteFile = null;
 				if (remoteResource instanceof ICVSFile) {
 					remoteFile = new CVSFileHistory((ICVSFile) remoteResource);
-					remoteFile.refresh(monitor);
+					remoteFile.refresh(CVSFileHistory.REFRESH_ALL, monitor);
 				}
 				return remoteFile;
 			}
@@ -87,11 +87,11 @@ public class CVSFileHistoryProvider extends FileHistoryProvider {
 				try{
 				if ((flags == IFileHistoryProvider.SINGLE_REVISION) || ((flags == IFileHistoryProvider.SINGLE_LINE_OF_DESCENT))) {
 					CVSFileHistory history = new CVSFileHistory(file, flags);
-					history.refresh(monitor);
+					history.refresh(CVSFileHistory.REFRESH_ALL, monitor);
 					return history;
 				} else{
 					CVSFileHistory history = new CVSFileHistory(file);
-					history.refresh(monitor);
+					history.refresh(CVSFileHistory.REFRESH_ALL, monitor);
 					return history;
 				} } catch (TeamException ex){}
 			}
