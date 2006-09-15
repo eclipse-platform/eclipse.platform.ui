@@ -716,21 +716,21 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			try {
 				try {
 					reader= new FileReader(patchTarget.getRawLocation().toFile());
+					if (isPatchFile(reader)) {
+						// set choice to workspace
+						setInputButtonState(WORKSPACE);
+						if (fTreeViewer != null && patchTarget.exists()) {
+							fTreeViewer.expandToLevel(patchTarget, 0);
+							fTreeViewer.setSelection(new StructuredSelection(patchTarget));
+						}
+						return true;
+					}
 				} catch (FileNotFoundException ex) {
 					// silently ignored
 				} catch (NullPointerException nex) {
 					// silently ignored
 				}
 
-				if (isPatchFile(reader)) {
-					// set choice to workspace
-					setInputButtonState(WORKSPACE);
-					if (fTreeViewer != null && patchTarget.exists()) {
-						fTreeViewer.expandToLevel(patchTarget, 0);
-						fTreeViewer.setSelection(new StructuredSelection(patchTarget));
-					}
-					return true;
-				}
 			} finally {
 				if (reader != null) {
 					try {
