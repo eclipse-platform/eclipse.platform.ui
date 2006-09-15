@@ -53,7 +53,7 @@ public class AddTaskAction extends AddMarkerAction {
 			return;
 		Map attributes= getInitialAttributes();
 
-		TaskPropertiesDialog dialog = new TaskPropertiesDialog(getTextEditor().getSite().getShell());
+		TaskPropertiesDialog dialog= new TaskPropertiesDialog(getTextEditor().getSite().getShell());
 		dialog.setResource(resource);
 		dialog.setInitialAttributes(attributes);
 		dialog.open();

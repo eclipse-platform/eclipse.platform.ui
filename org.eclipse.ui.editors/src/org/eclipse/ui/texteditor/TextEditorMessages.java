@@ -44,6 +44,7 @@ final class TextEditorMessages extends NLS {
 	public static String AbstractDecoratedTextEditor_revision_colors_option_by_date;
 	public static String AbstractDecoratedTextEditor_show_ruler_label;
 	public static String SelectMarkerRulerAction_getMarker;
+	public static String AddMarkerAction_addMarker;
 	public static String MarkerRulerAction_addMarker;
 	public static String MarkerRulerAction_getMarker;
 	public static String MarkerRulerAction_removeMarkers;

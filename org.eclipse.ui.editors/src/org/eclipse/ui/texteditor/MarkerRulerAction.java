@@ -20,19 +20,23 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -49,7 +53,8 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-
+import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
 
 /**
  * A ruler action which can add and remove markers which have a visual
@@ -99,6 +104,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 */
 	public MarkerRulerAction(ResourceBundle bundle, String prefix,  ITextEditor editor, IVerticalRulerInfo ruler, String markerType, boolean askForLabel) {
 		super(bundle, prefix);
+		Assert.isLegal(editor != null);
+		
 		fRuler= ruler;
 		fTextEditor= editor;
 		fMarkerType= markerType;
@@ -305,7 +312,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param message the message to be logged with the given exception
 	 */
 	protected void handleCoreException(CoreException exception, String message) {
-		Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+		Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
 		ILog log= Platform.getLog(bundle);
 
 		if (message != null)
@@ -365,12 +372,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 			if (!askForLabel(attributes))
 				return;
 		}
-
-		try {
-			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
-		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.MarkerRulerAction_addMarker);
-		}
+		execute(new CreateMarkersOperation(fMarkerType, attributes, resource, getOperationName()));
 	}
 
 	/**
@@ -379,18 +381,8 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 	 * @param markers the markers to be deleted
 	 */
 	protected void removeMarkers(final List markers) {
-		try {
-			getResource().getWorkspace().run(new IWorkspaceRunnable() {
-				public void run(IProgressMonitor monitor) throws CoreException {
-					for (int i= 0; i < markers.size(); ++i) {
-						IMarker marker= (IMarker) markers.get(i);
-						marker.delete();
-					}
-				}
-			}, null, IWorkspace.AVOID_UPDATE, null);
-		} catch (CoreException x) {
-			handleCoreException(x, TextEditorMessages.MarkerRulerAction_removeMarkers);
-		}
+		IMarker[] markersArray= (IMarker[])markers.toArray(new IMarker[markers.size()]);
+		execute(new DeleteMarkersOperation(markersArray, getOperationName()));
 	}
 
 	/**
@@ -411,7 +403,7 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 
 		String title= getString(fBundle, fPrefix + "add.dialog.title", fPrefix + "add.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "add.dialog.message", fPrefix + "add.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		IInputValidator inputValidator = new IInputValidator() {
+		IInputValidator inputValidator= new IInputValidator() {
 			public String isValid(String newText) {
 				return (newText == null || newText.trim().length() == 0) ? " " : null; //$NON-NLS-1$
 			}
@@ -489,6 +481,44 @@ public class MarkerRulerAction extends ResourceAction implements IUpdate {
 		} catch (BadLocationException x) {
 			// don't propose label then
 			return null;
+		}
+	}
+
+	/**
+	 * Returns the name to be used for the operation.
+	 * 
+	 * @return the operation name 
+	 * @since 3.3
+	 */
+	private String getOperationName() {
+		String name= getText();
+		return name == null ? TextEditorMessages.AddMarkerAction_addMarker : name;
+	}
+
+	/**
+	 * Execute the specified undoable operation.
+	 * 
+	 * @param operation the operation to execute
+	 * @since 3.3
+	 */
+	private void execute(IUndoableOperation operation) {
+		final Shell shell= getTextEditor().getSite().getShell();
+		IAdaptable context= new IAdaptable() {
+			public Object getAdapter(Class adapter) {
+				if (adapter == Shell.class)
+					return shell;
+				return null;
+			}
+		};
+
+		IOperationHistory operationHistory= PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
+		try {
+			operationHistory.execute(operation, null, context);
+		} catch (ExecutionException e) {
+			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
+			ILog log= Platform.getLog(bundle);
+			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, e));
 		}
 	}
 }

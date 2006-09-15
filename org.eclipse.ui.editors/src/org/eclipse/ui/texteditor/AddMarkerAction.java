@@ -16,15 +16,20 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoableOperation;
+
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
@@ -35,6 +40,7 @@ import org.eclipse.jface.text.ITextSelection;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.undo.CreateMarkersOperation;
 
 
 /**
@@ -122,20 +128,28 @@ public class AddMarkerAction extends TextEditorAction {
 			if (!askForLabel(attributes))
 				return;
 		}
+		
+		String name= getToolTipText();
+		name= name == null ? TextEditorMessages.AddMarkerAction_addMarker : name;
+		
+		final Shell shell= getTextEditor().getSite().getShell();
+		IAdaptable context= new IAdaptable() {
+			public Object getAdapter(Class adapter) {
+				if (adapter == Shell.class)
+					return shell;
+				return null;
+			}
+		};
 
+		IUndoableOperation operation= new CreateMarkersOperation(fMarkerType, attributes, resource, name);
+		IOperationHistory operationHistory= PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
 		try {
-			MarkerUtilities.createMarker(resource, attributes, fMarkerType);
-		} catch (CoreException x) {
-
-			Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+			operationHistory.execute(operation, null, context);
+		} catch (ExecutionException x) {
+			Bundle bundle= Platform.getBundle(PlatformUI.PLUGIN_ID);
 			ILog log= Platform.getLog(bundle);
-			log.log(x.getStatus());
-
-			Shell shell= getTextEditor().getSite().getShell();
-			String title= getString(fBundle, fPrefix + "error.dialog.title", fPrefix + "error.dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 			String msg= getString(fBundle, fPrefix + "error.dialog.message", fPrefix + "error.dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-
-			ErrorDialog.openError(shell, title, msg, x.getStatus());
+			log.log(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, msg, x));
 		}
 	}
 
@@ -164,7 +178,7 @@ public class AddMarkerAction extends TextEditorAction {
 
 		String title= getString(fBundle, fPrefix + "dialog.title", fPrefix + "dialog.title"); //$NON-NLS-2$ //$NON-NLS-1$
 		String message= getString(fBundle, fPrefix + "dialog.message", fPrefix + "dialog.message"); //$NON-NLS-2$ //$NON-NLS-1$
-		IInputValidator inputValidator = new IInputValidator() {
+		IInputValidator inputValidator= new IInputValidator() {
 			public String isValid(String newText) {
 				return  (newText == null || newText.trim().length() == 0) ? " " : null;  //$NON-NLS-1$
 			}
