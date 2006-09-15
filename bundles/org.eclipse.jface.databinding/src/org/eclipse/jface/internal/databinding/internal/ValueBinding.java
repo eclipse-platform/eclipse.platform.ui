@@ -207,8 +207,9 @@ public class ValueBinding extends org.eclipse.jface.internal.databinding.provisi
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			ValidationError error = ValidationError.error(BindingMessages
-					.getString("ValueBinding_ErrorWhileSettingValue")); //$NON-NLS-1$
+			ValidationError error = ValidationError.error(
+				BindingMessages.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+				ex);
 			validationErrorObservable.setValue(error);
 		} finally {
 			updating = false;
@@ -285,6 +286,11 @@ public class ValueBinding extends org.eclipse.jface.internal.databinding.provisi
 			doValidate(target.getValue());
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
 			fireBindingEvent(e);
+		} catch (Exception ex) {
+			ValidationError error = ValidationError.error(
+				BindingMessages.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+				ex);
+			validationErrorObservable.setValue(error);
 		} finally {
 			updating = false;
 		}
