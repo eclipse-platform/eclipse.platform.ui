@@ -16,6 +16,7 @@ import com.ibm.icu.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -250,7 +251,8 @@ public class ResourcePropertySource implements IPropertySource {
             return getDateStringValue(element);
         }
         if (name.equals(IResourcePropertyConstants.P_EDITABLE_RES)) {
-            if (element.getResourceAttributes().isReadOnly()) {
+            ResourceAttributes resourceAttributes = element.getResourceAttributes();
+			if (resourceAttributes == null || resourceAttributes.isReadOnly()) {
 				return IDEPropertiesMessages.ResourceProperty_false;
 			} 
 			return IDEPropertiesMessages.ResourceProperty_true;
