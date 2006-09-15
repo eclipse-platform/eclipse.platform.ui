@@ -190,9 +190,7 @@ public class IniFileReader {
 	public String getFeaturePluginLabel() {
 		if (bundle == null)
 			return null;
-		else {
-			return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
-		}
+		return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 	
 	/**
@@ -203,9 +201,7 @@ public class IniFileReader {
 	public String getProviderName() {
 		if (bundle == null)
 			return null;
-		else {
-			return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
-		}
+		return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
 	}
 	
 	/*

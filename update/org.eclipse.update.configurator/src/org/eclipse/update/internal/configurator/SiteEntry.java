@@ -623,8 +623,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		if (featureEntries == null)
 			return new FeatureEntry[0];
-		else
-			return (FeatureEntry[])featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);
+		return (FeatureEntry[])featureEntries.values().toArray(new FeatureEntry[featureEntries.size()]);
 	}
 	
 	public void addPluginEntry(PluginEntry plugin) {

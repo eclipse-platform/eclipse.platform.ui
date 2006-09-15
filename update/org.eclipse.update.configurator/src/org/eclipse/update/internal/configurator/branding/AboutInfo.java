@@ -124,9 +124,8 @@ public final class AboutInfo {
 		if (featureImageURL != null) {
 			IPath path = new Path(featureImageURL.getPath());
 			return path.lastSegment();
-		} else {
-			return null;
-		}
+		} 
+		return null;
 	}
 
 		

@@ -13,9 +13,8 @@ package org.eclipse.update.internal.configurator;
 import java.io.IOException;
 import java.net.URL;
 
-import org.eclipse.update.configurator.*;
-
-
+import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfigurationFactory;
 
 public class PlatformConfigurationFactory implements IPlatformConfigurationFactory {
 	public IPlatformConfiguration getCurrentPlatformConfiguration() {
@@ -25,10 +24,9 @@ public class PlatformConfigurationFactory implements IPlatformConfigurationFacto
 		try {
 			return new PlatformConfiguration(url);
 		} catch (Exception e) {
-			if(e instanceof IOException)
+			if (e instanceof IOException)
 				throw (IOException)e;
-			else
-				throw new IOException(e.getMessage());
+			throw new IOException(e.getMessage());
 		}
 	}
 }

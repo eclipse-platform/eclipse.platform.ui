@@ -95,11 +95,9 @@ public class Configuration implements IConfigurationConstants {
 	public SiteEntry[] getSites() {
 		if (linkedConfig == null)
 			return (SiteEntry[]) sites.values().toArray(new SiteEntry[sites.size()]);
-		else {
-			ArrayList combinedSites = new ArrayList(sites.values());
-			combinedSites.addAll(linkedConfig.sites.values());
-			return (SiteEntry[]) combinedSites.toArray(new SiteEntry[combinedSites.size()]);
-		}
+		ArrayList combinedSites = new ArrayList(sites.values());
+		combinedSites.addAll(linkedConfig.sites.values());
+		return (SiteEntry[]) combinedSites.toArray(new SiteEntry[combinedSites.size()]);
 	}
 	
 	public Element toXML(Document doc) throws CoreException {	
@@ -161,9 +159,6 @@ public class Configuration implements IConfigurationConstants {
 	}
 	
 	public long lastModified() {
-		if (lastModified != 0)
-			return lastModified;
-		else
-			return date.getTime();
+		return (lastModified != 0) ? lastModified : date.getTime();
 	}
 }

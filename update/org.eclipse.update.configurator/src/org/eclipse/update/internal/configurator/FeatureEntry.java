@@ -335,12 +335,10 @@ public class FeatureEntry
 		String resolvedURL = Utils.getResourceString(getResourceBundle(), licenseURL);
 		if (resolvedURL.startsWith("http://")) //$NON-NLS-1$
 			return resolvedURL;
-		else {
-			try {
-				return new URL(getSite().getResolvedURL(), getURL() + resolvedURL).toExternalForm();
-			} catch (MalformedURLException e) {
-				return resolvedURL;
-			}
+		try {
+			return new URL(getSite().getResolvedURL(), getURL() + resolvedURL).toExternalForm();
+		} catch (MalformedURLException e) {
+			return resolvedURL;
 		}
 	}
 	

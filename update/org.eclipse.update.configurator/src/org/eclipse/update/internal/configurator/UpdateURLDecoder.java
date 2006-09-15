@@ -29,10 +29,8 @@ public class UpdateURLDecoder {
 		
 		if (useEnc) {
 			return URLDecoder.decode(s, enc);
-		} else {
-			return URLDecoder.decode(s);
-		}
-
+		} 			
+		return URLDecoder.decode(s);
 	}
 
 }

@@ -121,8 +121,7 @@ public class BundleManifest implements IConfigurationConstants {
 	public PluginEntry getPluginEntry() throws IOException {
 		if (exception != null) {
 			throw exception;
-		} else {
-			return pluginEntry;
-		}
+		} 
+		return pluginEntry;		
 	}
 }

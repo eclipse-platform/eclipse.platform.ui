@@ -85,9 +85,7 @@ public class FeatureParser extends DefaultHandler {
 			processFeature(attributes);
 			// stop parsing now
 			throw new SAXException(""); //$NON-NLS-1$
-		} else {
-		}
-		
+		} 
 	}
 
 	/*

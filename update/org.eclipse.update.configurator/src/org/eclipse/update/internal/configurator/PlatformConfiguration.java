@@ -356,8 +356,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	public long getChangeStamp() {
 		if (config.getLinkedConfig() == null)
 			return config.getDate().getTime();
-		else
-			return Math.max(config.getDate().getTime(), config.getLinkedConfig().getDate().getTime());
+		return Math.max(config.getDate().getTime(), config.getLinkedConfig().getDate().getTime());
 	}
 
 	/*
@@ -502,10 +501,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	 * @see IPlatformConfiguration#isTransient()
 	 */
 	public boolean isTransient() {
-		if (config != null)
-			return config.isTransient();
-		else
-			return false;
+		return (config != null) ? config.isTransient() : false;
 	}
 
 	/*
@@ -833,8 +829,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		}
 		if (useNio)
 			return new Locker_JavaNio(lock);
-		else
-			return new Locker_JavaIo(lock);
+		
+		return new Locker_JavaIo(lock);
 	}
 	
 	private long computeChangeStamp() {
@@ -1056,8 +1052,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				config = parser.parse(tempURL); 
 				if (config == null)
 					throw new Exception();
-				else
-					config.setDirty(true); // force saving to platform.xml
+				config.setDirty(true); // force saving to platform.xml
 			} catch (Exception e2) {
 				try {
 					// check the backup
@@ -1077,8 +1072,7 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 					}
 					if (config == null)
 						throw originalException; // we tried, but no config here ...
-					else
-						config.setDirty(true); // force saving to platform.xml
+					config.setDirty(true); // force saving to platform.xml
 				} catch (IOException e3) {
 					throw originalException; // we tried, but no config here ...
 				}
