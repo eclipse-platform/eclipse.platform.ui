@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.history;
 
+import com.ibm.icu.text.DateFormat;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +37,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
@@ -276,7 +280,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		 */
 		private void push(final RefactoringDescriptor descriptor) throws CoreException {
 			Assert.isNotNull(descriptor);
-			checkDescriptor(descriptor);
+			try {
+	            checkDescriptor(descriptor);
+            } catch (CoreException exception) {
+	            final IStatus status= exception.getStatus();
+	            if (status.getCode() == IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR) {
+	            	final String time= DateFormat.getDateTimeInstance().format(new Date(descriptor.getTimeStamp()));
+					final String message= "The refactoring executed at " + time + " contributed a refactoring descriptor with invalid format:";  //$NON-NLS-1$//$NON-NLS-2$
+	            	final IStatus comment= new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), descriptor.getComment());
+					RefactoringCorePlugin.log(new MultiStatus(RefactoringCorePlugin.getPluginId(), 0, new IStatus[] {comment}, message, null));
+	            }
+	            throw exception;
+            }
 			fImplementation.addFirst(descriptor);
 			final int size= fImplementation.size();
 			if (size > MAX_UNDO_STACK)
