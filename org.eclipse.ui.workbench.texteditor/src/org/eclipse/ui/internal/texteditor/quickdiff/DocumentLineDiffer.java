@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.text.BadLocationException;
@@ -121,6 +122,27 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			return ORIGINAL_TEXT;
 		}
 	}
+	
+	/**
+	 * Simple scheduling rule that prevents multiple initialization jobs for a single document.
+	 * 
+	 * @since 3.3
+	 */
+	private static final class SingleRule implements ISchedulingRule {
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		/*
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			return rule == this;
+		}
+	}
 
 	/** Tells whether this class is in debug mode. */
 	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.ui.workbench.texteditor/debug/DocumentLineDiffer"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -214,6 +236,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				resume();
 		}
 	};
+	/**
+	 * The scheduling rule for the initialization jobs.
+	 * @since 3.3
+	 */
+	private final ISchedulingRule fSchedulingRule= new SingleRule();
 
 	private Thread fThread;
 	private DocumentEvent fLastUIEvent;
@@ -461,11 +488,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		// return if it has not started yet, cancel it if already running
 		final Job oldJob= fInitializationJob;
 		if (oldJob != null) {
-			// don't chain up jobs if there is one waiting already.
-			if (oldJob.getState() == Job.WAITING) {
-				oldJob.wakeUp(INITIALIZE_DELAY);
+			int state= oldJob.getState();
+			// don't create a new job if one is in the queue already, but has not yet started
+			if (state == Job.WAITING || state == Job.SLEEPING)
 				return;
-			}
+			// else: cancel and schedule a new job
 			oldJob.cancel();
 		}
 
@@ -477,17 +504,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
 			 */
 			public IStatus run(IProgressMonitor monitor) {
-
-				// 1:	wait for any previous job that was canceled to avoid job flooding
-				// It will return relatively quickly as RangeDifferencer supports canceling
-				if (oldJob != null)
-					try {
-						oldJob.join();
-					} catch (InterruptedException e) {
-						// will not happen as no one interrupts our thread
-						Assert.isTrue(false);
-					}
-
 
 				// 2:	get the reference document
 				IQuickDiffReferenceProvider provider= fReferenceProvider;
@@ -720,6 +736,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		fInitializationJob.setSystem(true);
 		fInitializationJob.setPriority(Job.DECORATE);
 		fInitializationJob.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+		fInitializationJob.setRule(fSchedulingRule);
 		fInitializationJob.schedule(INITIALIZE_DELAY);
 	}
 
