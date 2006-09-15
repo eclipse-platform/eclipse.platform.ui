@@ -127,7 +127,7 @@ public class BookmarkNavigator extends ViewPart {
 
     private IMemento memento;
 
-    private BookmarkSorter sorter;
+    private BookmarkSorter comparator;
 
     private Clipboard clipboard;
 
@@ -168,7 +168,7 @@ public class BookmarkNavigator extends ViewPart {
         }
 
         public void run() {
-            sorter.setTopPriority(column);
+        	comparator.setTopPriority(column);
             updateSortState();
             viewer.refresh();
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -177,7 +177,7 @@ public class BookmarkNavigator extends ViewPart {
             if (settings == null) {
 				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
 			}
-            sorter.saveState(settings);
+            comparator.saveState(settings);
         }
     }
 
@@ -193,7 +193,7 @@ public class BookmarkNavigator extends ViewPart {
         }
 
         public void run() {
-            sorter.setTopPriorityDirection(direction);
+        	comparator.setTopPriorityDirection(direction);
             updateSortState();
             viewer.refresh();
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -202,7 +202,7 @@ public class BookmarkNavigator extends ViewPart {
             if (settings == null) {
 				settings = workbenchSettings.addNewSection("BookmarkSortState");//$NON-NLS-1$
 			}
-            sorter.saveState(settings);
+            comparator.saveState(settings);
         }
     }
 
@@ -306,16 +306,16 @@ public class BookmarkNavigator extends ViewPart {
         viewer = new TableViewer(table);
         createColumns();
 
-        sorter = new BookmarkSorter();
+        comparator = new BookmarkSorter();
         viewer.setContentProvider(new BookmarkContentProvider(this));
         viewer.setLabelProvider(new BookmarkLabelProvider(this));
         viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
-        viewer.setSorter(sorter);
+        viewer.setComparator(comparator);
 
         IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
         IDialogSettings settings = workbenchSettings
                 .getSection("BookmarkSortState");//$NON-NLS-1$
-        sorter.restoreState(settings);
+        comparator.restoreState(settings);
 
         addContributions();
         initDragAndDrop();
@@ -602,10 +602,10 @@ public class BookmarkNavigator extends ViewPart {
             public void widgetSelected(SelectionEvent e) {
                 // column selected - first column doesn't count
                 int column = table.indexOf((TableColumn) e.widget) - 1;
-                if (column == sorter.getTopPriority()) {
-					sorter.reverseTopPriority();
+                if (column == comparator.getTopPriority()) {
+                	comparator.reverseTopPriority();
 				} else {
-                    sorter.setTopPriority(column);
+					comparator.setTopPriority(column);
                 }
                 updateSortState();
                 viewer.refresh();
@@ -617,7 +617,7 @@ public class BookmarkNavigator extends ViewPart {
 					settings = workbenchSettings
                             .addNewSection("BookmarkSortState");//$NON-NLS-1$
 				}
-                sorter.saveState(settings);
+                comparator.saveState(settings);
             }
         };
 
@@ -704,7 +704,7 @@ public class BookmarkNavigator extends ViewPart {
     }
 
     void updateSortState() {
-        int column = sorter.getTopPriority();
+        int column = comparator.getTopPriority();
         sortByDescriptionAction
                 .setChecked(column == BookmarkSorter.DESCRIPTION);
         sortByResourceAction.setChecked(column == BookmarkSorter.RESOURCE);
@@ -712,7 +712,7 @@ public class BookmarkNavigator extends ViewPart {
         sortByLineAction.setChecked(column == BookmarkSorter.LOCATION);
         sortByCreationTime.setChecked(column == BookmarkSorter.CREATION_TIME);
 
-        int direction = sorter.getTopPriorityDirection();
+        int direction = comparator.getTopPriorityDirection();
         sortAscendingAction.setChecked(direction == BookmarkSorter.ASCENDING);
         sortDescendingAction.setChecked(direction == BookmarkSorter.DESCENDING);
     }

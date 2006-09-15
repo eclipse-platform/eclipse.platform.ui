@@ -16,12 +16,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * This is the task list's sorter.
  */
-class TaskSorter extends ViewerSorter {
+class TaskSorter extends ViewerComparator {
     private int[] priorities;
 
     private int[] directions;
@@ -179,7 +179,7 @@ class TaskSorter extends ViewerSorter {
         }
         case DESCRIPTION: {
             /* description */
-            int result = collator.compare(MarkerUtil.getMessage(m1), MarkerUtil
+            int result = getComparator().compare(MarkerUtil.getMessage(m1), MarkerUtil
                     .getMessage(m2));
             if (result == 0) {
 				return compareColumnValue(m1, m2, depth + 1);
@@ -192,7 +192,7 @@ class TaskSorter extends ViewerSorter {
             IResource r2 = m2.getResource();
             String n1 = r1.getName();
             String n2 = r2.getName();
-            int result = collator.compare(n1, n2);
+            int result = getComparator().compare(n1, n2);
             if (result == 0) {
 				return compareColumnValue(m1, m2, depth + 1);
 			}
@@ -202,7 +202,7 @@ class TaskSorter extends ViewerSorter {
             /* container name */
             String c1 = MarkerUtil.getContainerName(m1);
             String c2 = MarkerUtil.getContainerName(m2);
-            int result = c1.equals(c2) ? 0 : collator.compare(c1, c2);
+            int result = c1.equals(c2) ? 0 : getComparator().compare(c1, c2);
             if (result == 0) {
 				return compareColumnValue(m1, m2, depth + 1);
 			}
@@ -270,16 +270,16 @@ class TaskSorter extends ViewerSorter {
             }
             String loc1 = MarkerUtil.getLocation(m1);
             String loc2 = MarkerUtil.getLocation(m2);
-            return collator.compare(loc1, loc2);
+            return getComparator().compare(loc1, loc2);
         }
         if (line1 == -1 && line2 == -1) {
             String loc1 = MarkerUtil.getLocation(m1);
             String loc2 = MarkerUtil.getLocation(m2);
-            return collator.compare(loc1, loc2);
+            return getComparator().compare(loc1, loc2);
         }
         String loc1 = MarkerUtil.getLineAndLocation(m1);
         String loc2 = MarkerUtil.getLineAndLocation(m2);
-        return collator.compare(loc1, loc2);
+        return getComparator().compare(loc1, loc2);
     }
 
     /**

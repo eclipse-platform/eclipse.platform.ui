@@ -127,7 +127,7 @@ public class TaskList extends ViewPart {
 
     private Table table;
 
-    private TaskSorter sorter;
+    private TaskSorter comparator;
 
     private CellEditor descriptionEditor;
 
@@ -258,7 +258,7 @@ public class TaskList extends ViewPart {
         }
 
         public void run() {
-            sorter.setTopPriority(column);
+            comparator.setTopPriority(column);
             updateSortingState();
             viewer.refresh();
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -267,7 +267,7 @@ public class TaskList extends ViewPart {
             if (settings == null) {
 				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
 			}
-            sorter.saveState(settings);
+            comparator.saveState(settings);
         }
     }
 
@@ -283,7 +283,7 @@ public class TaskList extends ViewPart {
         }
 
         public void run() {
-            sorter.setTopPriorityDirection(direction);
+            comparator.setTopPriorityDirection(direction);
             updateSortingState();
             viewer.refresh();
             IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
@@ -292,7 +292,7 @@ public class TaskList extends ViewPart {
             if (settings == null) {
 				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
 			}
-            sorter.saveState(settings);
+            comparator.saveState(settings);
         }
     }
 
@@ -413,10 +413,10 @@ public class TaskList extends ViewPart {
             public void widgetSelected(SelectionEvent e) {
                 // column selected - need to sort
                 int column = table.indexOf((TableColumn) e.widget);
-                if (column == sorter.getTopPriority()) {
-					sorter.reverseTopPriority();
+                if (column == comparator.getTopPriority()) {
+					comparator.reverseTopPriority();
 				} else {
-                    sorter.setTopPriority(column);
+                    comparator.setTopPriority(column);
                 }
                 updateSortingState();
                 viewer.refresh();
@@ -428,7 +428,7 @@ public class TaskList extends ViewPart {
 					settings = workbenchSettings
                             .addNewSection(TAG_SORT_SECTION);
 				}
-                sorter.saveState(settings);
+                comparator.saveState(settings);
             }
         };
 
@@ -584,12 +584,12 @@ public class TaskList extends ViewPart {
 			}
         }
 
-        sorter = new TaskSorter();
+        comparator = new TaskSorter();
         IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
         IDialogSettings settings = workbenchSettings
                 .getSection(TAG_SORT_SECTION);
-        sorter.restoreState(settings);
-        viewer.setSorter(sorter);
+        comparator.restoreState(settings);
+        viewer.setComparator(comparator);
 
         //update the menu to indicate how task are currently sorted
         updateSortingState();
@@ -1719,7 +1719,7 @@ public class TaskList extends ViewPart {
      * Method updateSortingState.
      */
     void updateSortingState() {
-        int curColumn = sorter.getTopPriority();
+        int curColumn = comparator.getTopPriority();
         sortByCategoryAction.setChecked(curColumn == TaskSorter.TYPE);
         sortByCompletedAction.setChecked(curColumn == TaskSorter.COMPLETION);
         sortByPriorityAction.setChecked(curColumn == TaskSorter.PRIORITY);
@@ -1730,7 +1730,7 @@ public class TaskList extends ViewPart {
         sortByCreationTimeAction
                 .setChecked(curColumn == TaskSorter.CREATION_TIME);
 
-        int curDirection = sorter.getTopPriorityDirection();
+        int curDirection = comparator.getTopPriorityDirection();
         sortAscendingAction.setChecked(curDirection == TaskSorter.ASCENDING);
         sortDescendingAction.setChecked(curDirection == TaskSorter.DESCENDING);
     }

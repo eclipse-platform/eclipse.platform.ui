@@ -45,7 +45,7 @@ public class CategoryComparator extends ViewerComparator implements Comparator {
 	 * @param depth
 	 * @param continueSearching
 	 * @return int
-	 * @see ViewerSorter#compare(Viewer, Object, Object)
+	 * @see ViewerComparator#compare(Viewer, Object, Object)
 	 */
 	int compare(Object obj1, Object obj2, int depth, boolean continueSearching) {
 

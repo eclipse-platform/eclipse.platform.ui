@@ -48,7 +48,6 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * 
  * @see ViewerFilter
- * @see ViewerSorter
  * @see ViewerComparator
  */
 public abstract class StructuredViewer extends ContentViewer implements IPostSelectionProvider {

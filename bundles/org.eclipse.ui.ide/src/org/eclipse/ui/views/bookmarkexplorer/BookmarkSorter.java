@@ -15,9 +15,9 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-class BookmarkSorter extends ViewerSorter {
+class BookmarkSorter extends ViewerComparator {
 
     private int[] directions;
 
@@ -116,7 +116,7 @@ class BookmarkSorter extends ViewerSorter {
         case DESCRIPTION: {
             String desc1 = marker1.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
             String desc2 = marker2.getAttribute(IMarker.MESSAGE, "");//$NON-NLS-1$
-            int result = collator.compare(desc1, desc2);
+            int result = getComparator().compare(desc1, desc2);
             if (result == 0) {
 				return compare(marker1, marker2, depth + 1);
 			}
@@ -125,7 +125,7 @@ class BookmarkSorter extends ViewerSorter {
         case RESOURCE: {
             String res1 = marker1.getResource().getName();
             String res2 = marker2.getResource().getName();
-            int result = collator.compare(res1, res2);
+            int result = getComparator().compare(res1, res2);
             if (result == 0) {
 				return compare(marker1, marker2, depth + 1);
 			}
@@ -134,7 +134,7 @@ class BookmarkSorter extends ViewerSorter {
         case FOLDER: {
             String folder1 = BookmarkLabelProvider.getContainerName(marker1);
             String folder2 = BookmarkLabelProvider.getContainerName(marker2);
-            int result = collator.compare(folder1, folder2);
+            int result = getComparator().compare(folder1, folder2);
             if (result == 0) {
 				return compare(marker1, marker2, depth + 1);
 			}

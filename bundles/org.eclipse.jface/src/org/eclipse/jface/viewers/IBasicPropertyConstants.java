@@ -16,7 +16,7 @@ package org.eclipse.jface.viewers;
  * @see StructuredViewer#update(Object, String[])
  * @see StructuredViewer#update(Object[], String[])
  * @see IBaseLabelProvider#isLabelProperty
- * @see ViewerSorter#isSorterProperty
+ * @see ViewerComparator#isSorterProperty
  * @see ViewerFilter#isFilterProperty
  */
 public interface IBasicPropertyConstants {
