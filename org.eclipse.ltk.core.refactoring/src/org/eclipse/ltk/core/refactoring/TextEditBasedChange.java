@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Ed Swartz <ed.swartz@nokia.com> - 
+ *         (bug 157203: [ltk] [patch] TextEditBasedChange/TextChange provides incorrect diff when one side is empty)
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
@@ -206,8 +208,15 @@ public abstract class TextEditBasedChange extends Change {
 				int startLine= Math.max(document.getLineOfOffset(region.getOffset()) - surroundingLines, 0);
 				int endLine;
 				if (region.getLength() == 0) {
+					// no lines are in the region, so remove one from the context,
+					// or else spurious changes show up that look like deletes from the source
+					if (surroundingLines == 0) {
+						// empty: show nothing
+						return ""; //$NON-NLS-1$
+					}
+					
 					endLine= Math.min(
-						document.getLineOfOffset(region.getOffset()) + surroundingLines,
+						document.getLineOfOffset(region.getOffset()) + surroundingLines - 1,
 						document.getNumberOfLines() - 1);
 				} else {
 					endLine= Math.min(
