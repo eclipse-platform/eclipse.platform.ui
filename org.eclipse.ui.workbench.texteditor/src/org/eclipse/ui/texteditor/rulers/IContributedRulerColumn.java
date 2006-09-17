@@ -69,7 +69,7 @@ public interface IContributedRulerColumn extends IVerticalRulerColumn {
 	/**
 	 * Hook method called after a column has been instantiated, but before it is
 	 * added to a {@link org.eclipse.jface.text.source.CompositeRuler} and before
-	 * {@linkplain IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite) createControl}
+	 * {@linkplain org.eclipse.jface.text.source.IVerticalRulerColumn#createControl(org.eclipse.jface.text.source.CompositeRuler, org.eclipse.swt.widgets.Composite) createControl}
 	 * is called.
 	 * <p>
 	 * This happens when
