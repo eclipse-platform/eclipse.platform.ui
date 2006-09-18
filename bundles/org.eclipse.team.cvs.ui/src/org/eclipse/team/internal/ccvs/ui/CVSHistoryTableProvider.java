@@ -12,6 +12,7 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.net.URI;
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -39,8 +40,6 @@ import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 import org.eclipse.team.internal.ui.history.DateHistoryCategory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
-
-import com.ibm.icu.text.DateFormat;
 
 public class CVSHistoryTableProvider {
 
