@@ -24,21 +24,6 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IOperationHistory;
-import org.eclipse.core.commands.operations.IUndoContext;
-import org.eclipse.core.commands.operations.OperationHistoryFactory;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
@@ -68,8 +53,50 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.commands.operations.IOperationApprover;
+import org.eclipse.core.commands.operations.IOperationHistory;
+import org.eclipse.core.commands.operations.IUndoContext;
+import org.eclipse.core.commands.operations.OperationHistoryFactory;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.text.undo.DocumentUndoManagerRegistry;
 import org.eclipse.text.undo.IDocumentUndoManager;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.IPostSelectionProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -96,39 +123,17 @@ import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.IVerticalRulerExtension;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
@@ -152,12 +157,18 @@ import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.internal.texteditor.rulers.StringSetSerializer;
 import org.eclipse.ui.operations.LinearUndoViolationUserApprover;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.texteditor.rulers.IColumnSupport;
+import org.eclipse.ui.texteditor.rulers.IContributedRulerColumn;
+import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
+import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
+import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 
 
 /**
@@ -1465,6 +1476,198 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			super.uninstall(selectionProvider);
 		}
 	}
+	
+	
+	/**
+	 * Captures the vertical and overview ruler support of an {@link ITextEditor}.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	protected static class ColumnSupport implements IColumnSupport {
+		private final AbstractTextEditor fEditor;
+		private final RulerColumnRegistry fRegistry;
+
+		/**
+		 * Creates a new column support for the given editor. Only the editor itself should normally
+		 * create such an instance.
+		 * 
+		 * @param editor the editor
+		 * @param registry the contribution registry to refer to
+		 */
+		public ColumnSupport(AbstractTextEditor editor, RulerColumnRegistry registry) {
+			Assert.isLegal(editor != null);
+			Assert.isLegal(registry != null);
+			fEditor= editor;
+			fRegistry= registry;
+		}
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.IColumnSupport#setColumnVisible(java.lang.String, boolean)
+		 */
+		public final void setColumnVisible(RulerColumnDescriptor descriptor, boolean visible) {
+			Assert.isLegal(descriptor != null);
+
+			final CompositeRuler ruler= getRuler();
+			if (ruler == null)
+				return;
+
+			if (!isColumnSupported(descriptor))
+				visible= false;
+
+			if (isColumnVisible(descriptor)) {
+				if (!visible)
+					removeColumn(ruler, descriptor);
+			} else {
+				if (visible)
+					addColumn(ruler, descriptor);
+			}
+		}
+		
+		private void addColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
+			
+			final int idx= computeIndex(ruler, descriptor);
+			
+			SafeRunnable runnable= new SafeRunnable() {
+				public void run() throws Exception {
+					IContributedRulerColumn column= descriptor.createColumn(fEditor);
+					initializeColumn(column);
+					ruler.addDecorator(idx, column);
+				}
+			};
+			SafeRunner.run(runnable);
+		}
+
+		/**
+		 * Hook to let subclasses initialize a newly created column.
+		 * 
+		 * @param column the created column
+		 */
+		protected void initializeColumn(IContributedRulerColumn column) {
+		}
+
+		private void removeColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
+			final IContributedRulerColumn target= getVisibleColumn(ruler, descriptor);
+			if (target != null) {
+				SafeRunnable runnable= new SafeRunnable() {
+					public void run() throws Exception {
+						ruler.removeDecorator(target);
+						descriptor.disposeColumn(target);
+					}
+				};
+				SafeRunner.run(runnable);
+			}
+		}
+
+		/**
+		 * Returns the currently visible column matching <code>id</code>, <code>null</code> if
+		 * none.
+		 * 
+		 * @param ruler the composite ruler to scan
+		 * @param descriptor the descriptor of the column of interest
+		 * @return the matching column or <code>null</code>
+		 */
+		private IContributedRulerColumn getVisibleColumn(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
+			for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
+				IVerticalRulerColumn column= (IVerticalRulerColumn)it.next();
+				if (column instanceof IContributedRulerColumn) {
+					IContributedRulerColumn rulerColumn= (IContributedRulerColumn)column;
+					RulerColumnDescriptor rcd= rulerColumn.getDescriptor();
+					if (descriptor.equals(rcd))
+						return rulerColumn;
+				}
+			}
+			return null;
+		}
+
+		/**
+		 * Computes the insertion index for a column contribution into the currently visible columns.
+		 * 
+		 * @param ruler the composite ruler into which to insert the column
+		 * @param descriptor the descriptor to compute the index for
+		 * @return the insertion index for a new column
+		 */
+		private int computeIndex(CompositeRuler ruler, RulerColumnDescriptor descriptor) {
+			int index= 0;
+			List all= fRegistry.getColumnDescriptors();
+			int newPos= all.indexOf(descriptor);
+			for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
+				IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
+				if (column instanceof IContributedRulerColumn) {
+					RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
+					if (rcd != null && all.indexOf(rcd) > newPos)
+						break;
+				} else if ("org.eclipse.jface.text.source.projection.ProjectionRulerColumn".equals(column.getClass().getName())) { //$NON-NLS-1$
+					// projection column is always the rightmost column
+					break;
+				}
+				index++;
+			}
+			return index;
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.IColumnSupport#isColumnVisible(java.lang.String)
+		 */
+		public final boolean isColumnVisible(RulerColumnDescriptor descriptor) {
+			Assert.isLegal(descriptor != null);
+			CompositeRuler ruler= getRuler();
+			return ruler != null && getVisibleColumn(ruler, descriptor) != null;
+		}
+		
+		/*
+		 * @see org.eclipse.ui.texteditor.IColumnSupport#isColumnSupported(java.lang.String)
+		 */
+		public final boolean isColumnSupported(RulerColumnDescriptor descriptor) {
+			Assert.isLegal(descriptor != null);
+			if (getRuler() == null)
+				return false;
+			
+			if (descriptor == null)
+				return false;
+			
+			return descriptor.matchesEditor(fEditor);
+		}
+		
+		/**
+		 * Returns the editor's vertical ruler, if it is a {@link CompositeRuler}, <code>null</code>
+		 * otherwise.
+		 * 
+		 * @return the editor's {@link CompositeRuler} or <code>null</code>
+		 */
+		private CompositeRuler getRuler() {
+			Object ruler= fEditor.getAdapter(IVerticalRulerInfo.class);
+			if (ruler instanceof CompositeRuler)
+				return (CompositeRuler) ruler;
+			return null;
+		}
+
+		/*
+		 * @see org.eclipse.ui.texteditor.rulers.IColumnSupport#dispose()
+		 */
+		public void dispose() {
+			CompositeRuler ruler= getRuler();
+			if (ruler == null)
+				return;
+
+			List toRemove= new ArrayList(10);
+			for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
+				IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
+				if (column instanceof IContributedRulerColumn) {
+					RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
+					if (rcd != null)
+						toRemove.add(rcd);
+				}
+			}
+			for (Iterator it= toRemove.iterator(); it.hasNext();) {
+				RulerColumnDescriptor rcd= (RulerColumnDescriptor) it.next();
+				removeColumn(ruler, rcd);
+			}
+		}
+	}
+
 
 
 	/**
@@ -1577,6 +1780,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	public static final String PREFERENCE_HYPERLINK_KEY_MODIFIER_MASK= "hyperlinkKeyModifierMask"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls the visible ruler column contributions.
+	 * <p>
+	 * Value is of type <code>String</code> and should be read using a {@link RulerColumnPreferenceAdapter}.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String PREFERENCE_RULER_CONTRIBUTIONS= "rulerContributions"; //$NON-NLS-1$
 
 
 	/** Menu id for the editor context menu. */
@@ -1663,10 +1878,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
 	/** The arguments for the position label pattern. */
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
-
-
-
-
+	/**
+	 * The column support of this editor.
+	 * @since 3.3
+	 */
+	private IColumnSupport fColumnSupport;
 
 	/** The editor's explicit document provider. */
 	private IDocumentProvider fExplicitDocumentProvider;
@@ -2447,6 +2663,49 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected IVerticalRuler createVerticalRuler() {
 		return new VerticalRuler(VERTICAL_RULER_WIDTH);
 	}
+	
+	/**
+	 * Adds enabled ruler contributions to the vertical ruler. Clients may extend or replace.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @param ruler the composite ruler to add contributions to
+	 * @since 3.3
+	 */
+	protected void updateContributedRulerContributions(CompositeRuler ruler) {
+		IColumnSupport support= (IColumnSupport)getAdapter(IColumnSupport.class);
+		if (support == null)
+			return;
+		
+		RulerColumnPreferenceAdapter adapter= null;
+		if (fPreferenceStore != null)
+			adapter= new RulerColumnPreferenceAdapter(getPreferenceStore(), PREFERENCE_RULER_CONTRIBUTIONS);
+		
+		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
+		List descriptors= registry.getColumnDescriptors();
+		for (Iterator it= descriptors.iterator(); it.hasNext();) {
+			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) it.next();
+			support.setColumnVisible(descriptor, adapter == null || adapter.isEnabled(descriptor));
+		}
+	}
+
+	/**
+	 * Creates the column support to be used by this editor to manage the
+	 * contributed ruler columns.
+	 * Subclasses may re-implement this method using the {@link ColumnSupport},
+	 * e.g. by returning <code>new ColumnSupport(this, RulerColumnRegistry.getDefault());</code>.
+	 * <p>
+	 * Out of the box this class does not install this support and hence this
+	 * implementation always returns <code>null</code>.</p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 *
+	 * @return the column support or <code>null</code> if none
+	 */
+	protected IColumnSupport createColumnSupport() {
+		return null;
+	}
 
 	/**
 	 * Creates the source viewer to be used by this editor.
@@ -2686,6 +2945,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		createUndoRedoActions();
 
 		JFaceResources.getFontRegistry().addListener(fFontPropertyChangeListener);
+		
+		IVerticalRuler ruler= getVerticalRuler();
+		if (ruler instanceof CompositeRuler)
+			updateContributedRulerContributions((CompositeRuler) ruler);
+		
 	}
 
 	/**
@@ -3085,6 +3349,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			if (fSelectionListener != null)
 				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
+			
+			IVerticalRuler ruler= getVerticalRuler();
+			if (ruler instanceof CompositeRuler)
+				updateContributedRulerContributions((CompositeRuler) ruler);
+			
 		}
 	}
 	
@@ -3301,6 +3570,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		fNonLocalOperationApprover= null;
 		fLinearUndoViolationApprover= null;
+		
+		if (fColumnSupport != null)
+			fColumnSupport.dispose();
 
 		super.dispose();
 	}
@@ -3424,6 +3696,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			return;
 		}
+		
+		if (PREFERENCE_RULER_CONTRIBUTIONS.equals(property)) {
+			String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
+			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
+			for (int i= 0; i < difference.length; i++) {
+				RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
+				if (desc != null &&  support.isColumnSupported(desc)) {
+					boolean newState= !support.isColumnVisible(desc);
+					support.setColumnVisible(desc, newState);
+				}
+			}
+		}
+		
 	}
 
 	/**
@@ -4820,6 +5105,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		if (Control.class.equals(required))
 			return fSourceViewer != null ? fSourceViewer.getTextWidget() : null;
+
+		if (IColumnSupport.class.equals(required)) {
+			if (fColumnSupport == null)
+				fColumnSupport= createColumnSupport();
+			return fColumnSupport;
+		}
 
 		return super.getAdapter(required);
 	}

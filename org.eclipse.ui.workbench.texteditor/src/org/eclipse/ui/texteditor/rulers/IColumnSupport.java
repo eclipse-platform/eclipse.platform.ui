@@ -54,4 +54,9 @@ public interface IColumnSupport {
 	 * @return <code>true</code> if the specified column is supported
 	 */
 	boolean isColumnSupported(RulerColumnDescriptor descriptor);
+
+	/**
+	 * Removes and disposes all currently visible ruler columns.
+	 */
+	void dispose();
 }

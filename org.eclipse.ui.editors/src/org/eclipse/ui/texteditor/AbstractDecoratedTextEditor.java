@@ -121,9 +121,7 @@ import org.eclipse.ui.internal.editors.text.JavaFileEditorInput;
 import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
 import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
-import org.eclipse.ui.internal.texteditor.ColumnSupport;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
-import org.eclipse.ui.internal.texteditor.StringSetSerializer;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
@@ -259,38 +257,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.3
 	 */
 	private AnnotationColumn fAnnotationColumn;
-	/**
-	 * The column support of this editor.
-	 * @since 3.3
-	 */
-	private final ColumnSupport fColumnSupport= new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
-		/*
-		 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn)
-		 */
-		protected void initializeColumn(IContributedRulerColumn column) {
-			RulerColumnDescriptor descriptor= column.getDescriptor();
-			IVerticalRuler ruler= internalGetVerticalRuler();
-			if (ruler instanceof CompositeRuler) {
-				if (AnnotationColumn.ID.equals(descriptor.getId())) {
-					fAnnotationColumn= (AnnotationColumn) column;
-					fAnnotationColumn.setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
-				} else if (LineNumberColumn.ID.equals(descriptor.getId())) {
-					fLineColumn= ((LineNumberColumn) column);
-					fLineColumn.setForwarder(new LineNumberColumn.ICompatibilityForwarder() {
-						public IVerticalRulerColumn createLineNumberRulerColumn() {
-							return AbstractDecoratedTextEditor.this.createLineNumberRulerColumn();
-						}
-						public boolean isQuickDiffEnabled() {
-							return AbstractDecoratedTextEditor.this.isPrefQuickDiffAlwaysOn();
-						}
-						public boolean isLineNumberRulerVisible() {
-							return AbstractDecoratedTextEditor.this.isLineNumberRulerVisible();
-						}
-					});
-				}
-			}
-		}
-	};
 
 	private IVerticalRuler internalGetVerticalRuler() {
 		/*
@@ -341,9 +307,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
 		
-		if (fColumnSupport != null)
-			fColumnSupport.dispose();
-
 		super.dispose();
 	}
 
@@ -412,12 +375,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (fSourceViewerDecorationSupport != null)
 			fSourceViewerDecorationSupport.install(getPreferenceStore());
 
-		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler)
-			updateRulerContributions((CompositeRuler) ruler);
-
-		if (isLineNumberRulerVisible())
-			fColumnSupport.setColumnVisible(RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID), true);
+		IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+		
+		if (isLineNumberRulerVisible()) {
+			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
+			if (lineNumberColumnDescriptor != null)
+				columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
+		}
 
 		if (isPrefQuickDiffAlwaysOn())
 			showChangeInformation(true);
@@ -505,11 +469,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (show == isChangeInformationShowing())
 			return;
 
+		IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+		
 		// only handle visibility of the combined column, but not the number/change only state
 		if (show && fLineColumn == null) {
-			fColumnSupport.setColumnVisible(RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID), true);
+			RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
+			if (lineNumberColumnDescriptor != null)
+				columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
 		} else if (!show && fLineColumn != null && !isLineNumberRulerVisible()) {
-			fColumnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
+			columnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
 			fLineColumn= null;
 		}
 	}
@@ -647,6 +615,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	protected IVerticalRuler createVerticalRuler() {
 		return createCompositeRuler();
 	}
+	
 
 	/**
 	 * Creates a composite ruler to be used as the vertical ruler by this editor.
@@ -658,6 +627,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return new CompositeRuler();
 	}
 
+	
 	/**
 	 * Creates the annotation ruler column. Subclasses may re-implement or extend.
 	 * 
@@ -667,6 +637,41 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 */
 	protected IVerticalRulerColumn createAnnotationRulerColumn(CompositeRuler ruler) {
 		return new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
+	}
+
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#createColumnSupport()
+	 * @since 3.3
+	 */
+	protected final IColumnSupport createColumnSupport() {
+		return new ColumnSupport(this, RulerColumnRegistry.getDefault()) {
+			/*
+			 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn)
+			 */
+			protected void initializeColumn(IContributedRulerColumn column) {
+				RulerColumnDescriptor descriptor= column.getDescriptor();
+				IVerticalRuler ruler= internalGetVerticalRuler();
+				if (ruler instanceof CompositeRuler) {
+					if (AnnotationColumn.ID.equals(descriptor.getId())) {
+						fAnnotationColumn= (AnnotationColumn) column;
+						fAnnotationColumn.setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
+					} else if (LineNumberColumn.ID.equals(descriptor.getId())) {
+						fLineColumn= ((LineNumberColumn) column);
+						fLineColumn.setForwarder(new LineNumberColumn.ICompatibilityForwarder() {
+							public IVerticalRulerColumn createLineNumberRulerColumn() {
+								return AbstractDecoratedTextEditor.this.createLineNumberRulerColumn();
+							}
+							public boolean isQuickDiffEnabled() {
+								return AbstractDecoratedTextEditor.this.isPrefQuickDiffAlwaysOn();
+							}
+							public boolean isLineNumberRulerVisible() {
+								return AbstractDecoratedTextEditor.this.isLineNumberRulerVisible();
+							}
+						});
+					}
+				}
+			}
+		};
 	}
 
 	/*
@@ -697,10 +702,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			if (LINE_NUMBER_RULER.equals(property)) {
 				// only handle visibility of the combined column, but not the number/change only state
+				IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
 				if (isLineNumberRulerVisible() && fLineColumn == null) {
-					fColumnSupport.setColumnVisible(RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID), true);
+					RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
+					if (lineNumberColumnDescriptor != null)
+						columnSupport.setColumnVisible(lineNumberColumnDescriptor, true);
 				} else if (!isLineNumberRulerVisible() && fLineColumn != null && !fLineColumn.isShowingChangeInformation()) {
-					fColumnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
+					columnSupport.setColumnVisible(fLineColumn.getDescriptor(), false);
 					fLineColumn= null;
 				}
 				return;
@@ -722,18 +730,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				if (store != null)
 					((ITextViewerExtension6)sourceViewer).getUndoManager().setMaximalUndoLevel(store.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE));
 				return;
-			}
-
-			if (AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS.equals(property)) {
-				String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
-				IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
-				for (int i= 0; i < difference.length; i++) {
-					RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
-					if (desc != null &&  support.isColumnSupported(desc)) {
-						boolean newState= !support.isColumnVisible(desc);
-						support.setColumnVisible(desc, newState);
-					}
-				}
 			}
 
 			if (AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR.equals(property)) {
@@ -1107,10 +1103,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	public Object getAdapter(Class adapter) {
 		if (IGotoMarker.class.equals(adapter))
 			return fGotoMarkerAdapter;
-	
+
 		if (IAnnotationAccess.class.equals(adapter))
 			return getAnnotationAccess();
-	
+
 		if (adapter == IShowInSource.class) {
 			return new IShowInSource() {
 				public ShowInContext getShowInContext() {
@@ -1122,15 +1118,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				}
 			};
 		}
-		
+
 		if (IRevisionRulerColumn.class.equals(adapter)) {
 			if (fLineNumberRulerColumn instanceof IRevisionRulerColumn)
 				return fLineNumberRulerColumn;
 		}
-		
-		if (IColumnSupport.class.equals(adapter))
-			return fColumnSupport;
-	
+
 		return super.getAdapter(adapter);
 	
 	}
@@ -1183,12 +1176,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		super.doSetInput(input);
 		
-		IVerticalRuler ruler= getVerticalRuler();
-		if (ruler instanceof CompositeRuler) {
-			updateRulerContributions((CompositeRuler) ruler);
-			RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
-			IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
-			support.setColumnVisible(registry.getColumnDescriptor(LineNumberColumn.ID), isLineNumberRulerVisible() || isPrefQuickDiffAlwaysOn());
+		RulerColumnDescriptor lineNumberColumnDescriptor= RulerColumnRegistry.getDefault().getColumnDescriptor(LineNumberColumn.ID);
+		if (lineNumberColumnDescriptor != null) {
+			IColumnSupport columnSupport= (IColumnSupport)getAdapter(IColumnSupport.class);
+			columnSupport.setColumnVisible(lineNumberColumnDescriptor, isLineNumberRulerVisible() || isPrefQuickDiffAlwaysOn());
 		}
 	}
 	
@@ -1425,7 +1416,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// store directly in generic editor preferences
 		final IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
-		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS);
+		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS);
 		List descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
 		for (Iterator t= descriptors.iterator(); t.hasNext();) {
 			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) t.next();
@@ -1623,22 +1614,4 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 	}
 
-	/**
-	 * Adds enabled ruler contributions to the vertical ruler. Clients may extend or replace.
-	 * <p>
-	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
-	 * </p>
-	 * @param ruler the composite ruler to add contributions to
-	 * @since 3.3
-	 */
-	private void updateRulerContributions(CompositeRuler ruler) {
-		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
-		RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(EditorsUI.getPreferenceStore(), AbstractDecoratedTextEditorPreferenceConstants.EDITOR_RULER_COLUMNS);
-		IColumnSupport support= (IColumnSupport) getAdapter(IColumnSupport.class);
-		List descriptors= registry.getColumnDescriptors();
-		for (Iterator it= descriptors.iterator(); it.hasNext();) {
-			final RulerColumnDescriptor descriptor= (RulerColumnDescriptor) it.next();
-			support.setColumnVisible(descriptor, adapter.isEnabled(descriptor));
-		}
-	}
 }
