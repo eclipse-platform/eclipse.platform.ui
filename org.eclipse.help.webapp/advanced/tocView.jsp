@@ -81,6 +81,12 @@ var tocId = "";
 function onloadHandler()
 {
 <%
+	if (data.isRemoteHelpError()) {
+%>
+		alert('<%=ServletResources.getString("remoteHelpErrorMessage", request)%>');
+<%
+	}
+	
 	if (data.getSelectedToc() != -1)
 	{
 %>
@@ -195,40 +201,50 @@ if (data.isIE()){
 
 
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
-	<ul dir="<%=direction%>" class='expanded' id='root'>
 <%
-	for (int toc=0; toc<data.getTocCount(); toc++) {
-		boolean isSelected =data.getSelectedToc() != -1 &&
-					   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
-		if(!data.isEnabled(toc)){
-			// do not show
-			continue;
-		}
-		if(isSelected) {
+	if(data.getTocCount() == 0) {
+		out.write(ServletResources.getString("noTocs", request));
+	}
+	else {
 %>
-		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" class="expanded" alt="<%=ServletResources.getString("bookOpen", request)%>" ><a id="b<%=toc%>" name="opened" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
-		<ul class="expanded">
+		<ul dir="<%=direction%>" class='expanded' id='root'>
 <%
-			// Only generate the selected toc
-			data.generateToc(toc, out);
-			// keep track of the selected toc id
+		for (int toc=0; toc<data.getTocCount(); toc++) {
+			boolean isSelected =data.getSelectedToc() != -1 &&
+						   data.getTocHref(data.getSelectedToc()).equals(data.getTocHref(toc));
+			if(!data.isEnabled(toc)){
+				// do not show
+				continue;
+			}
+			if(isSelected) {
 %>
-		</ul>
+			<li>
+			<img src="<%=prefs.getImagesDirectory()%>/toc_open.gif" class="expanded" alt="<%=ServletResources.getString("bookOpen", request)%>" ><a id="b<%=toc%>" name="opened" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+			<ul class="expanded">
+<%
+				// Only generate the selected toc
+				data.generateToc(toc, out);
+				// keep track of the selected toc id
+%>
+			</ul>
 			<script language="JavaScript">tocId="b"+<%=toc%></script>
 <%
-		} else {
+			} else {
 %>
-		<li>
-		<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" onclick='loadTOC("<%=data.getTocHref(toc)%>")' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" name="<%=data.getTocHref(toc)%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+			<li>
+			<img src="<%=prefs.getImagesDirectory()%>/toc_closed.gif" onclick='loadTOC("<%=data.getTocHref(toc)%>")' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>"><a id="b<%=toc%>" name="<%=data.getTocHref(toc)%>" style="font-weight: bold;" href="<%=data.getTocDescriptionTopic(toc)%>" onclick='loadTOC("<%=data.getTocHref(toc)%>")'><%=data.getTocLabel(toc)%></a>
+<%
+			}
+%>
+			</li>	
 <%
 		}
-%>
-		</li>	
+%>		
+		</ul>
 <%
 	}
-%>		
-	</ul>
+%>	
+
    <iframe name="dynLoadFrame" title="<%=ServletResources.getString("ignore", "dynLoadFrame", request)%>" style="visibility:hidden" tabindex="-1" frameborder="no" width="0" height="0" scrolling="no">
     </iframe>
 </body>

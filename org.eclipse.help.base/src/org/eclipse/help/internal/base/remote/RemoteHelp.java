@@ -27,6 +27,7 @@ public class RemoteHelp {
 
 	private static final String PROTOCOL_HTTP = "http"; //$NON-NLS-1$
 	private static ListenerList listeners;
+	private static Throwable error;
 
 	/*
 	 * Adds a listener that will be notified whenever the user changes the
@@ -87,6 +88,29 @@ public class RemoteHelp {
 			return prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON);
 		}
 		return false;
+	}
+	
+	/*
+	 * Clears the error status for remote help.
+	 */
+	public static void clearError() {
+		error = null;
+	}
+	
+	/*
+	 * Returns the error produced during a previous remote help
+	 * query, or null if there was none.
+	 */
+	public static Throwable getError() {
+		return error;
+	}
+	
+	/*
+	 * Sets the latest exception to have occured while communicating
+	 * with the remote help server.
+	 */
+	public static void setError(Throwable t) {
+		error = t;
 	}
 	
 	/*

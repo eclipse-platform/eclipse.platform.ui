@@ -56,10 +56,12 @@ public class RemoteTocProvider extends AbstractTocProvider {
 			catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, e);
+				RemoteHelp.setError(e);
 			}
 			catch (Throwable t) {
 				String msg = "Internal error while reading TOC contents from remote server"; //$NON-NLS-1$
 				HelpBasePlugin.logError(msg, t);
+				RemoteHelp.setError(t);
 			}
 			finally {
 				if (in != null) {

@@ -12,7 +12,8 @@
 BODY {
 	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
-	margin:0;
+	margin-top:5px;
+	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;
 	border:0;
 }
@@ -23,8 +24,8 @@ UL {
 }
 
 #root {
-	margin-top:5px;
-	margin-<%=isRTL?"right":"left"%>:5px;
+	margin-top:0px;
+	margin-<%=isRTL?"right":"left"%>:0px;
 }
   
 UL.expanded {

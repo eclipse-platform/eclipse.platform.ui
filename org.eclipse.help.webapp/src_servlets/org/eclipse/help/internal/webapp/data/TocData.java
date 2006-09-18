@@ -27,6 +27,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteHelp;
 
 /**
  * Helper class for tocView.jsp initialization
@@ -142,6 +143,14 @@ public class TocData extends ActivitiesData {
 	// Note: this seems ok for now, but maybe we need to reconsider this
 	//       and allow help classes in JSP's.
 
+	public boolean isRemoteHelpError() {
+		boolean isError = (RemoteHelp.getError() != null);
+		if (isError) {
+			RemoteHelp.clearError();
+		}
+		return isError;
+	}
+	
 	public int getTocCount() {
 		return tocs.length;
 	}

@@ -29,7 +29,6 @@ public final class HelpBaseResources extends NLS {
 	public static String CustomBrowser_errorLaunching;
 	public static String MozillaFactory_dataMissing;
 	public static String MozillaBrowserAdapter_executeFailed;
-	public static String HelpDisplay_docsNotInstalled;
 	public static String HelpApplication_couldNotStart;
 	public static String IndexToolApplication_propertyNotSet;
 	public static String IndexToolApplication_cannotDelete;

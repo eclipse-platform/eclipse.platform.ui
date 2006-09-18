@@ -37,20 +37,6 @@ public class HelpDisplay {
 	 * Displays help.
 	 */
 	public void displayHelp(boolean forceExternal) {
-		// Do not start help view if documentaton is not available, display
-		// error
-		if (HelpSystem.getTocs().length == 0) {
-			HelpBasePlugin.logError(
-					"Failed launching help.  Documentation is not installed.", //$NON-NLS-1$
-					null);
-			// There is no documentation
-			BaseHelpSystem.getDefaultErrorUtil()
-					.displayError(
-							HelpBaseResources.HelpDisplay_docsNotInstalled);
-			//Documentation is not installed.
-			return;
-		}
-
 		displayHelpURL(null, forceExternal);
 	}
 
