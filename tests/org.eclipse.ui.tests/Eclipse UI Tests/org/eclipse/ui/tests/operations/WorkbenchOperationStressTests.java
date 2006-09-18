@@ -28,9 +28,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class WorkbenchOperationStressTests extends UITestCase {
 
-	static int STRESS_TEST_REPETITIONS = 3000;
+	static int STRESS_TEST_REPETITIONS = 2000;
 
-	static int OPEN_WINDOW_REPETITIONS = 5;
+	static int OPEN_WINDOW_REPETITIONS = 2;
 
 	/**
 	 * @param testName
@@ -78,6 +78,5 @@ public class WorkbenchOperationStressTests extends UITestCase {
 				
 			}
 		}
-
 	}
 }
