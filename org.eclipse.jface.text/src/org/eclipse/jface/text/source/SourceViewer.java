@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+import java.util.Iterator;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
@@ -501,33 +502,23 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @see ISourceViewer#setDocument(IDocument, IAnnotationModel, int, int)
 	 */
 	public void setDocument(IDocument document, IAnnotationModel annotationModel, int modelRangeOffset, int modelRangeLength) {
-		if (fVerticalRuler == null && fOverviewRuler == null) {
+		disposeVisualAnnotationModel();
 
-			if (modelRangeOffset == -1 && modelRangeLength == -1)
-				super.setDocument(document);
-			else
-				super.setDocument(document, modelRangeOffset, modelRangeLength);
-
-		} else {
-
-			disposeVisualAnnotationModel();
-
-			if (annotationModel != null && document != null) {
-				fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
-				fVisualAnnotationModel.connect(document);
-			}
-
-			if (modelRangeOffset == -1 && modelRangeLength == -1)
-				super.setDocument(document);
-			else
-				super.setDocument(document, modelRangeOffset, modelRangeLength);
-
-			if (fVerticalRuler != null)
-				fVerticalRuler.setModel(fVisualAnnotationModel);
-
-			if (fOverviewRuler != null)
-				fOverviewRuler.setModel(fVisualAnnotationModel);
+		if (annotationModel != null && document != null) {
+			fVisualAnnotationModel= createVisualAnnotationModel(annotationModel);
+			fVisualAnnotationModel.connect(document);
 		}
+
+		if (modelRangeOffset == -1 && modelRangeLength == -1)
+			super.setDocument(document);
+		else
+			super.setDocument(document, modelRangeOffset, modelRangeLength);
+
+		if (fVerticalRuler != null)
+			fVerticalRuler.setModel(fVisualAnnotationModel);
+
+		if (fOverviewRuler != null)
+			fOverviewRuler.setModel(fVisualAnnotationModel);
 	}
 
 	/*
@@ -983,16 +974,23 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	public void showAnnotations(boolean show) {
 		boolean old= fIsVerticalRulerVisible;
-		fIsVerticalRulerVisible= (show && fVerticalRuler != null);
-		if (old != fIsVerticalRulerVisible) {
-			if (fComposite != null && !fComposite.isDisposed())
-				fComposite.layout();
-			if (fIsVerticalRulerVisible) {
-				ensureAnnotationHoverManagerInstalled();
-			} else if (fVerticalRulerHoveringController != null) {
-				fVerticalRulerHoveringController.dispose();
-				fVerticalRulerHoveringController= null;
-			}
+
+		boolean isAnnotationRuler= false;
+		if (fVerticalRuler instanceof CompositeRuler) {
+			Iterator iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
+			isAnnotationRuler= iter.hasNext() && iter.next() instanceof AnnotationRulerColumn && !iter.hasNext();
+		} else if (fVerticalRuler instanceof VerticalRuler)
+			isAnnotationRuler= true;
+
+		fIsVerticalRulerVisible= (fVerticalRuler != null && (show || !isAnnotationRuler));
+		if (old != fIsVerticalRulerVisible && fComposite != null && !fComposite.isDisposed())
+			fComposite.layout();
+
+		if (fIsVerticalRulerVisible && show)
+			ensureAnnotationHoverManagerInstalled();
+		else if (fVerticalRulerHoveringController != null) {
+			fVerticalRulerHoveringController.dispose();
+			fVerticalRulerHoveringController= null;
 		}
 	}
 
