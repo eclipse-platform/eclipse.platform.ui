@@ -419,8 +419,8 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
 					}
 					else{ 
-						tempNode = new PatchedFileNode(new byte[]{0}, filePath.getFileExtension(), "File not found");
-						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), "Yeah!");
+						tempNode = new PatchedFileNode(new byte[0], filePath.getFileExtension(), PatchMessages.PatcherCompareEditorInput_FileNotFound);
+						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), ""); //$NON-NLS-1$
 					}
 					
 					MyDiffNode allFile = new MyDiffNode(root, differencer, tempNode, tempNode, patchedNode, diff);

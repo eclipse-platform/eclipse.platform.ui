@@ -27,6 +27,7 @@ public final class PatchMessages extends NLS {
 	public static String PatchAction_SaveAllQuestion;
 	public static String PatchAction_SaveAllDescription;
 	public static String PatcherCompareEditorInput_AfterPatch;
+	public static String PatcherCompareEditorInput_FileNotFound;
 	public static String PatcherCompareEditorInput_LocalCopy;
 	public static String PatcherCompareEditorInput_PatchContents;
 	public static String PatchWizard_title;
