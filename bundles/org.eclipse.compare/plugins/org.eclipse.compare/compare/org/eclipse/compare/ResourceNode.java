@@ -13,16 +13,11 @@ package org.eclipse.compare;
 import java.io.*;
 import java.util.ArrayList;
 
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.util.Assert;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A <code>ResourceNode</code> wrappers an <code>IResources</code> so that it can be used
@@ -114,11 +109,10 @@ public class ResourceNode extends BufferedContent
 	 * and their names are identical. The content is not considered.
 	 */
 	public boolean equals(Object other) {
-		if (other instanceof ITypedElement) {
-			String otherName= ((ITypedElement)other).getName();
-			return getName().equals(otherName);
+		if (other instanceof ResourceNode) {
+			return ((ResourceNode)other).getResource().equals(getResource());
 		}
-		return super.equals(other);
+		return false;
 	}
 	
 	/**
@@ -126,7 +120,7 @@ public class ResourceNode extends BufferedContent
      * @return a hash code value for this object.
 	 */
 	public int hashCode() {
-		return getName().hashCode();
+		return getResource().hashCode();
 	}
 	
 	/* (non Javadoc)
