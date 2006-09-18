@@ -7,8 +7,6 @@
  <plugin id="org.eclipse.jface.text"/>
 
  <package name="org.eclipse.jface.contentassist">
-   <type name="AbstractControlContentAssistSubjectAdapter" instantiate="false"/>
-   <type name="SubjectControlContextInformationValidator" subclass="false"/>
  </package>
 
  <package name="org.eclipse.jface.text">
@@ -53,7 +51,6 @@
  </package>
 
  <package name="org.eclipse.jface.text.source">
-   <type name="AnnotationRulerColumn" subclass="false" />
    <type name="ImageUtilities" subclass="false" instantiate="false"/>
  </package>
 
