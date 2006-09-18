@@ -28,6 +28,7 @@ import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
@@ -279,9 +280,25 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 				
 			} else {
 				if (projects[j] instanceof MyDiffNode) {
-					Diff diff= ((MyDiffNode) projects[j]).getDiff();
-					hunksToCheck.addAll(diff.reset(patcher, strip, previewPatchPage.getFuzzFactor()));
-					viewer.update(diff, null);
+					MyDiffNode diffNode = (MyDiffNode) projects[j];
+					hunksToCheck.addAll(diffNode.getDiff().reset(patcher, strip, previewPatchPage.getFuzzFactor()));
+					IDiffElement[] diffNodes = diffNode.getChildren();
+					
+					Iterator iter = hunksToCheck.iterator();
+					while (iter.hasNext()){
+						Hunk hunkToMatch = (Hunk) iter.next();
+						Object matchingHunkNode = nodesToDiffs.get(hunkToMatch);
+						if (matchingHunkNode != null)
+							nodesToCheck.add(matchingHunkNode);
+						
+					}
+					for (int i = 0; i < diffNodes.length; i++) {
+						viewer.update(diffNodes[i], null);
+						IDiffElement[] hunkNodes =((MyDiffNode) diffNodes[i]).getChildren();
+						for (int k = 0; k < hunkNodes.length; k++) {
+							viewer.update(hunkNodes[k],null);
+						}
+					}
 				}
 			}
 		}
@@ -385,15 +402,27 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 			try {
 				for (int i = 0; i < diffs.length; i++) {
 					Diff diff = diffs[i];
-					IFile tempFile = patcher.existsInTarget(new Path(diff.getLabel(diff)));
-					
+					IPath filePath = new Path(diff.getLabel(diff));
+					IFile tempFile = patcher.existsInTarget(filePath);
+			
 					byte[] bytes = quickPatch(tempFile, patcher, diff);
 					int differencer = Differencer.CHANGE;
 					if (failedHunks.size() != 0) {
 						differencer += Differencer.CONFLICTING;
 					}
-					ResourceNode tempNode = new ResourceNode(tempFile);
-					PatchedFileNode patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
+					
+					ITypedElement tempNode;
+					PatchedFileNode patchedNode;
+					
+					if (tempFile != null){
+						tempNode = new ResourceNode(tempFile);
+						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
+					}
+					else{ 
+						tempNode = new PatchedFileNode(new byte[]{0}, filePath.getFileExtension(), "File not found");
+						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), "Yeah!");
+					}
+					
 					MyDiffNode allFile = new MyDiffNode(root, differencer, tempNode, tempNode, patchedNode, diff);
 					//Add individual hunks to each Diff node
 					Hunk[] hunks = diff.getHunks();
