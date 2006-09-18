@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.DocumentManager;
+import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.content.IContentType;
@@ -57,33 +58,33 @@ public final class CompareUI {
 	 * Image descriptor for the disabled icon of the 'Next' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_DTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_NEXT);
+	public static final ImageDescriptor DESC_DTOOL_NEXT= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.DTOOL_NEXT);
 	/**
 	 * Image descriptor for the normal icon of the 'Next' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_CTOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_NEXT);
+	public static final ImageDescriptor DESC_CTOOL_NEXT= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.CTOOL_NEXT);
 	/**
 	 * Image descriptor for the roll-over icon of the 'Next' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_ETOOL_NEXT= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_NEXT);
+	public static final ImageDescriptor DESC_ETOOL_NEXT= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.ETOOL_NEXT);
 	
 	/**
 	 * Image descriptor for the disabled icon of the 'Previous' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_DTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.DTOOL_PREV);
+	public static final ImageDescriptor DESC_DTOOL_PREV= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.DTOOL_PREV);
 	/**
 	 * Image descriptor for the normal icon of the 'Previous' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_CTOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.CTOOL_PREV);
+	public static final ImageDescriptor DESC_CTOOL_PREV= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.CTOOL_PREV);
 	/**
 	 * Image descriptor for the roll-over icon of the 'Previous' tool bar button.
 	 * @since 2.0
 	 */
-	public static final ImageDescriptor DESC_ETOOL_PREV= CompareUIPlugin.getImageDescriptor(CompareUIPlugin.ETOOL_PREV);
+	public static final ImageDescriptor DESC_ETOOL_PREV= CompareUIPlugin.getImageDescriptor(ICompareUIConstants.ETOOL_PREV);
 
 	/**
 	 * Name of the title property of a compare viewer.

@@ -14,14 +14,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class DiffProject implements IWorkbenchAdapter, IAdaptable {
+public class DiffProject implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 
 	List fDiffs= new ArrayList();
 	IProject fProject;
@@ -48,7 +51,7 @@ public class DiffProject implements IWorkbenchAdapter, IAdaptable {
 		return this.fProject;
 	}
 
-	String getName() {
+	public String getName() {
 		return fProject.getName();
 	}
 
@@ -124,5 +127,13 @@ public class DiffProject implements IWorkbenchAdapter, IAdaptable {
 
 	public String getOriginalProjectName() {
 		return fOriginalProjectName;
+	}
+
+	public Image getImage() {
+		return CompareUI.getImage(fProject);
+	}
+
+	public String getType() {
+		return ITypedElement.FOLDER_TYPE;
 	}
 }

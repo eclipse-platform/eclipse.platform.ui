@@ -79,7 +79,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		
 		addPage(fPatchWizardPage= new InputPatchPage(this));
 		addPage(new PatchTargetPage(this));
-		addPage(new PreviewPatchPage(this));
+		addPage(new PreviewPatchPage2(this));
 	}
 	
 	/* (non-Javadoc)

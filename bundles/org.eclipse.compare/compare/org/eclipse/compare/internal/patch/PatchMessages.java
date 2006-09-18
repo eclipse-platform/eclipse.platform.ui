@@ -26,6 +26,9 @@ public final class PatchMessages extends NLS {
 	public static String PatchAction_AlwaysSaveQuestion;
 	public static String PatchAction_SaveAllQuestion;
 	public static String PatchAction_SaveAllDescription;
+	public static String PatcherCompareEditorInput_AfterPatch;
+	public static String PatcherCompareEditorInput_LocalCopy;
+	public static String PatcherCompareEditorInput_PatchContents;
 	public static String PatchWizard_title;
 	public static String PatchWizard_unexpectedException_message;
 	public static String InputPatchPage_title;
@@ -87,4 +90,8 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage_SelectProject;
 	public static String PreviewPatchPage_Target;
 	public static String PreviewPatchLabelDecorator_ProjectDoesNotExist;
+	public static String PreviewPatchPage2_IgnoreWSAction;
+	public static String PreviewPatchPage2_IgnoreWSTooltip;
+	public static String PreviewPatchPage2_RetargetAction;
+	public static String PreviewPatchPage2_RetargetTooltip;
 }
