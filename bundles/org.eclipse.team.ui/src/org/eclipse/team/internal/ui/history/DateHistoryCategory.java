@@ -11,7 +11,7 @@
 package org.eclipse.team.internal.ui.history;
 
 import java.util.ArrayList;
-import com.ibm.icu.util.Calendar;
+import java.util.Calendar;
 
 import org.eclipse.team.core.history.IFileRevision;
 

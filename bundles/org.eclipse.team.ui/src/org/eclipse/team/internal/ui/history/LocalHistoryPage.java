@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.history;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -45,8 +44,6 @@ import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
-
-import com.ibm.icu.util.Calendar;
 
 public class LocalHistoryPage extends HistoryPage {
 	
