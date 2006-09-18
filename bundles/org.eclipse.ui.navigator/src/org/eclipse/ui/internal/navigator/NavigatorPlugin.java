@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -26,6 +30,56 @@ import org.osgi.framework.BundleListener;
 public class NavigatorPlugin extends AbstractUIPlugin {
 	// The shared instance.
 	private static NavigatorPlugin plugin;
+	
+	private static final int LOG_DELAY = 100;
+	
+	private static class LogJob extends Job { 		
+		
+		
+		private ListenerList messages = new ListenerList() {
+			
+			public synchronized Object[] getListeners() {
+				Object[] mesgs = super.getListeners();
+				clear();
+				return mesgs;
+			}
+		};
+
+		
+		/**
+		 * Creates a Job which offloads the logging work into a non-UI thread.
+		 *
+		 */
+		public LogJob() {
+			super("");  //$NON-NLS-1$
+			setSystem(true); 
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			
+			Object[] mesgs = messages.getListeners();
+			ILog pluginLog = getDefault().getLog();
+			for (int i = 0; i < mesgs.length; i++) {
+				pluginLog.log((IStatus)mesgs[i]);
+			}
+			return Status.OK_STATUS;
+						
+		}
+		
+		/**
+		 * @param mesg The message to add to the Plugin's log.
+		 */
+		public void log(IStatus mesg) {
+			messages.add(mesg);
+
+		}
+		
+	}
+	
+	private static final LogJob logJob = new LogJob(); 
 
 	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
@@ -97,7 +151,9 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	 * @param aStatus
 	 */
 	public static void log(IStatus aStatus) {
-		getDefault().getLog().log(aStatus);
+		//getDefault().getLog().log(aStatus);
+		logJob.log(aStatus);
+		logJob.schedule(LOG_DELAY);
 	}
 
 	/**

@@ -22,6 +22,14 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * extension point for more information on building a content extension.
  * </p>
  * <p>
+ * Clients should not dispose of any Image Resources that might be shared by
+ * other extensions when their Label Provider is disposed. When a content extension
+ * is deactivated, both its content and label providers are disposed, but the
+ * viewer remains visible to the user. If clients dispose of Image Resources used
+ * by other extensions, then it will cause problems for those extensions and the 
+ * viewer in general. 
+ * </p>
+ * <p>
  * Clients need not implement this interface if there is no cause to do so.
  * {@link org.eclipse.jface.viewers.ILabelProvider} is respected by the Common
  * Navigator.

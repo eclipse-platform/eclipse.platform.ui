@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
 import org.eclipse.ui.navigator.INavigatorContentService;
@@ -117,7 +118,7 @@ public class CommonWizardDescriptorManager {
 					.next();
 
 			if (isVisible(aContentService, descriptor)
-						&& descriptor.isEnabledFor(anElement)) {
+					&& descriptor.isEnabledFor(anElement)) {
 				descriptorIds.add(descriptor.getWizardId());
 			}
 		}
@@ -154,7 +155,7 @@ public class CommonWizardDescriptorManager {
 					.next();
 
 			if (isVisible(aContentService, descriptor)
-						&& descriptor.isEnabledFor(anElement)) {
+					&& descriptor.isEnabledFor(anElement)) {
 				descriptors.add(descriptor);
 			}
 		}
@@ -168,13 +169,14 @@ public class CommonWizardDescriptorManager {
 	 * @return True if the descriptor is visible to the given content service.
 	 */
 	private boolean isVisible(INavigatorContentService aContentService, CommonWizardDescriptor descriptor) {
-		return (aContentService == null || 
-					(descriptor.getId() == null || 
-						(aContentService.isVisible(descriptor.getId()) && 
-							aContentService.isActive(descriptor.getId())
-						)
-					)
-				);
+		return !WorkbenchActivityHelper.filterItem(descriptor) && 
+					(aContentService == null || 
+							(descriptor.getId() == null || 
+									( aContentService.isVisible(descriptor.getId()) && 
+											aContentService.isActive(descriptor.getId())
+									)
+							)
+					);
 	}
   
 	private class CommonWizardRegistry extends NavigatorContentRegistryReader {

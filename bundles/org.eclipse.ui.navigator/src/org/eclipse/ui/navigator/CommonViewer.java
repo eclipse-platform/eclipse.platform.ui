@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.navigator;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,8 +54,34 @@ import org.eclipse.ui.internal.navigator.NavigatorPipelineService;
 public class CommonViewer extends TreeViewer {
 
 	private final NavigatorContentService contentService;
-	
+
 	private ISelection cachedSelection;
+	
+	/**
+	 * <p>
+	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
+	 * NavigatorContentService. The NavigatorContentService will provide the
+	 * Content Provider and Label Provider -- these need not be supplied by
+	 * clients.
+	 * <p>
+	 * For the valid bits to supply in the style mask (aStyle), see
+	 * documentation provided by {@link TreeViewer}.
+	 * </p>
+	 * 
+	 * @param aViewerId
+	 *            An id tied to the extensions that is used to focus specific
+	 *            content to a particular instance of the Common Navigator
+	 * @param aParent
+	 *            A Composite parent to contain the actual SWT widget
+	 * @param aStyle
+	 *            A style mask that will be used to create the TreeViewer
+	 *            Composite.
+	 */
+	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
+		super(aParent, aStyle);
+		contentService = new NavigatorContentService(aViewerId, this);
+		init();
+	}
 
 	/**
 	 * <p>
@@ -137,11 +163,11 @@ public class CommonViewer extends TreeViewer {
 
 		Object[] changed = event.getElements();
 		if (changed != null) {
-			ArrayList others = new ArrayList();
-			for (int i = 0; i < changed.length; i++) {
-				Object curr = changed[i];
-				others.add(curr);
-			}
+			List others = Arrays.asList(changed);
+			for (Iterator iter = others.iterator(); iter.hasNext();) {
+				if(iter.next() == null)
+					iter.remove(); 
+			} 
 			if (others.isEmpty()) {
 				return;
 			}
@@ -155,60 +181,7 @@ public class CommonViewer extends TreeViewer {
 		dispose();
 		super.handleDispose(event);
 	}
-
-//	/* (non-Javadoc) Method declared on StructuredViewer. */
-//	protected void setSelectionToWidget(List v, boolean reveal) {
-//		if (v == null) {
-//			setSelection(new ArrayList(0));
-//			return;
-//		}
-//		int size = v.size();
-//		List newSelection = new ArrayList(size);
-//		for (int i = 0; i < size; ++i) {
-//			// Use internalExpand since item may not yet be created. See
-//			// 1G6B1AR.
-//			Widget w = internalExpand(v.get(i), reveal);
-//			if (w instanceof Item) {
-//				newSelection.add(w);
-//			}
-//		}
-//		setSelection(newSelection);
-//
-//		// // Although setting the selection in the control should reveal it,
-//		// // setSelection may be a no-op if the selection is unchanged,
-//		// // so explicitly reveal the first item in the selection here.
-//		// // See bug 100565 for more details.
-//		// if (reveal && newSelection.size() > 0) {
-//		// showItem((Item) newSelection.get(0));
-//		// }
-//	}
-
-	/**
-	 * <p>
-	 * Constructs the Tree Viewer for the Common Navigator and the corresponding
-	 * NavigatorContentService. The NavigatorContentService will provide the
-	 * Content Provider and Label Provider -- these need not be supplied by
-	 * clients.
-	 * <p>
-	 * For the valid bits to supply in the style mask (aStyle), see
-	 * documentation provided by {@link TreeViewer}.
-	 * </p>
-	 * 
-	 * @param aViewerId
-	 *            An id tied to the extensions that is used to focus specific
-	 *            content to a particular instance of the Common Navigator
-	 * @param aParent
-	 *            A Composite parent to contain the actual SWT widget
-	 * @param aStyle
-	 *            A style mask that will be used to create the TreeViewer
-	 *            Composite.
-	 */
-	public CommonViewer(String aViewerId, Composite aParent, int aStyle) {
-		super(aParent, aStyle);
-		contentService = new NavigatorContentService(aViewerId, this);
-		init();
-	}
-
+ 
 	/**
 	 * <p>
 	 * Disposes of the NavigatorContentService, which will dispose the Content
@@ -446,11 +419,10 @@ public class CommonViewer extends TreeViewer {
 			update.setUpdateLabels(true);
 			/* if the update is modified */
 			if (pipeDream.interceptUpdate(update)) {
-				/* intercept and apply the update */
-				boolean toUpdateLabels = update.isUpdateLabels();
+				/* intercept and apply the update */ 
 				for (Iterator iter = update.getRefreshTargets().iterator(); iter
 						.hasNext();) {
-					super.refresh(iter.next(), toUpdateLabels);
+					super.refresh(iter.next(), true);
 				}
 			} else {
 				super.update(element, properties);

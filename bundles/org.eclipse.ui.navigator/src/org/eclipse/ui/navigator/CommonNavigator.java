@@ -36,6 +36,8 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorManager;
 import org.eclipse.ui.part.ISetSelectionTarget;
+import org.eclipse.ui.part.IShowInTarget;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
 /**
@@ -99,7 +101,15 @@ import org.eclipse.ui.part.ViewPart;
  *  
  * @since 3.2
  */
-public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource {
+public class CommonNavigator extends ViewPart implements ISetSelectionTarget, ISaveablePart, ISaveablesSource, IShowInTarget {
+
+ 
+	/**
+	 * 
+	 */
+	private static final Class INAVIGATOR_CONTENT_SERVICE = INavigatorContentService.class;
+	private static final Class COMMON_VIEWER_CLASS = CommonViewer.class;
+	private static final Class ISHOW_IN_TARGET_CLASS = IShowInTarget.class;
 
 	/**
 	 * <p>
@@ -140,24 +150,30 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 		commonViewer = createCommonViewer(aParent);	
 
-		INavigatorFilterService filterService = commonViewer
-				.getNavigatorContentService().getFilterService();
-		ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
-		for (int i = 0; i < visibleFilters.length; i++) {
-			commonViewer.addFilter(visibleFilters[i]);
+		try {
+			commonViewer.getControl().setRedraw(false);
+			
+			INavigatorFilterService filterService = commonViewer
+					.getNavigatorContentService().getFilterService();
+			ViewerFilter[] visibleFilters = filterService.getVisibleFilters(true);
+			for (int i = 0; i < visibleFilters.length; i++) {
+				commonViewer.addFilter(visibleFilters[i]);
+			}
+	
+			commonViewer.setSorter(new CommonViewerSorter());
+	
+			/*
+			 * make sure input is set after sorters and filters to avoid unnecessary
+			 * refreshes
+			 */
+			commonViewer.setInput(getInitialInput()); 
+	
+			getSite().setSelectionProvider(commonViewer);
+	
+			updateTitle();
+		} finally { 
+			commonViewer.getControl().setRedraw(true);
 		}
-
-		commonViewer.setSorter(new CommonViewerSorter());
-
-		/*
-		 * make sure input is set after sorters and filters to avoid unnecessary
-		 * refreshes
-		 */
-		commonViewer.setInput(getInitialInput()); 
-
-		getSite().setSelectionProvider(commonViewer);
-
-		updateTitle();
 
 		/*
 		 * Create the CommonNavigatorManager last because information about the
@@ -348,10 +364,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 *    have an adapter for the given class
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == CommonViewer.class) {
+		if (adapter == COMMON_VIEWER_CLASS) {
 			return getCommonViewer();
-		} else if (adapter == INavigatorContentService.class) {
+		} else if (adapter == INAVIGATOR_CONTENT_SERVICE) {
 			return getCommonViewer().getNavigatorContentService();
+		} else if ( adapter == ISHOW_IN_TARGET_CLASS) {
+			return this;
 		}
 		return super.getAdapter(adapter);
 	}
@@ -584,6 +602,17 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	public boolean isSaveOnCloseNeeded() {
 		return isDirty();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	 */
+	public boolean show(ShowInContext context) {
+		if(context != null && context.getSelection() != null && !context.getSelection().isEmpty()) {
+			selectReveal(context.getSelection());
+			return true;
+		} 
+		return false;
 	}
 
 }

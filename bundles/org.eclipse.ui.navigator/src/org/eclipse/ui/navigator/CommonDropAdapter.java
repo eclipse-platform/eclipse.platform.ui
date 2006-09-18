@@ -18,6 +18,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -97,7 +98,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (LocalSelectionTransfer.getTransfer().isSupportedType(
 					event.dataTypes[i])) {
-				event.currentDataType = event.dataTypes[i];
+				event.currentDataType = event.dataTypes[i]; 
 				return;
 			}
 		}
@@ -105,7 +106,7 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (FileTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
 				event.currentDataType = event.dataTypes[i];
-				event.detail = DND.DROP_COPY;
+				event.detail = DND.DROP_COPY; 
 				return;
 			}
 		}
@@ -113,12 +114,12 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 		for (int i = 0; i < event.dataTypes.length; i++) {
 			if (PluginTransfer.getInstance()
 					.isSupportedType(event.dataTypes[i])) {
-				event.currentDataType = event.dataTypes[i];
+				event.currentDataType = event.dataTypes[i]; 
 				return;
 			}
 		}
 
-		event.detail = DND.DROP_NONE;
+		event.detail = DND.DROP_NONE; 
 
 	}
 
@@ -225,6 +226,8 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 					.println("CommonDropAdapter.validateDrop (returning " + (valid != null ? valid.getSeverity() + ": " + valid.getMessage() : "" + result) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}
 
+
+		setScrollExpandEnabled(result);
 		return result;
 
 	}
@@ -278,5 +281,35 @@ public final class CommonDropAdapter extends PluginDropAdapter {
 	public TransferData getCurrentTransfer() {
 		return super.getCurrentTransfer();
 	}
+	
+    /**
+     * Returns the position of the given event's coordinates relative to its target.
+     * The position is determined to be before, after, or on the item, based on
+     * some threshold value.
+     *
+     * @param event the event
+     * @return one of the <code>LOCATION_* </code>constants defined in this class
+     */
+    protected int determineLocation(DropTargetEvent event) {
+        if (!(event.item instanceof Item)) {
+            return LOCATION_NONE;
+        }
+//        Item item = (Item) event.item;
+        Point coordinates = new Point(event.x, event.y);
+        coordinates = getViewer().getControl().toControl(coordinates);
+//        if (item != null) {
+//            Rectangle bounds = getBounds(item);
+//            if (bounds == null) {
+//                return LOCATION_NONE;
+//            }
+//            if ((coordinates.y - bounds.y) < 5) {
+//                return LOCATION_BEFORE;
+//            }
+//            if ((bounds.y + bounds.height - coordinates.y) < 5) {
+//                return LOCATION_AFTER;
+//            }
+//        }
+        return LOCATION_ON;
+    }
 
 }

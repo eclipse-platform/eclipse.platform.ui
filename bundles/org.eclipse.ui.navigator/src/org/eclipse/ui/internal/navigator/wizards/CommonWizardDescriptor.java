@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConstants;
@@ -37,7 +38,7 @@ import org.eclipse.ui.internal.navigator.extensions.INavigatorContentExtPtConsta
  * 
  * @since 3.2
  */
-public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
+public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, IPluginContribution {
 	
 	/** The default menu group id for commonWizards without a menuGroupId attribute. */
 	public static final String DEFAULT_MENU_GROUP_ID = "all-uncategorized"; //$NON-NLS-1$
@@ -243,4 +244,17 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants {
 		return "CommonWizardDescriptor["+getId()+", wizardId="+getWizardId()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getId();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+        return (configElement != null) ? configElement.getNamespaceIdentifier() : null;
+	}
 }

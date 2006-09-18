@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Anton Leherbauer, Wind River - bug 146788
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
@@ -23,9 +24,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
+import org.eclipse.ui.navigator.IDescriptionProvider;
 
 /**
- * 
  * @since 3.2
  */
 public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IColorProvider, IFontProvider, ITreePathLabelProvider {
@@ -54,13 +55,22 @@ public class SafeDelegateCommonLabelProvider implements ICommonLabelProvider, IC
 
 	/**
 	 * <p>
-	 * Returns <b>null </b>, forcing the CommonNavigator to provide the default
+	 * If the delegate label provider implements <code>IDescriptionProvider</code>,
+	 * it is used to retrieve the status bar message. 
+	 * </p>
+	 * <p>
+	 * Returns <b>null </b> otherwise, forcing the CommonNavigator to provide the default
 	 * message.
 	 * </p>
 	 * 
 	 * @see org.eclipse.ui.navigator.ICommonLabelProvider#getDescription(java.lang.Object)
 	 */
 	public String getDescription(Object element) {
+		/* The following few lines were contributed as part of a patch. */
+		if (delegateLabelProvider instanceof IDescriptionProvider) {
+			IDescriptionProvider provider = (IDescriptionProvider) delegateLabelProvider;
+			return provider.getDescription(element);
+		}
 		return null;
 	}
 

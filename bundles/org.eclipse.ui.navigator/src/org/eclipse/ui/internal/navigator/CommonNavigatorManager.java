@@ -113,12 +113,8 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 				actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());							
 				openAction.run();
 			}
-		});
-		
-		if(commonViewer.getInput() != null) {
-			actionService.setContext(new ActionContext(new StructuredSelection(commonViewer.getInput())));		
-			actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
-		}
+		}); 
+
 	}
 
 	/**
@@ -157,6 +153,11 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 	 */
 	public void restoreState(IMemento aMemento) {
 		actionService.restoreState(aMemento);
+		
+		if(commonNavigator.getCommonViewer().getInput() != null) {
+			actionService.setContext(new ActionContext(new StructuredSelection(commonNavigator.getCommonViewer().getInput())));		
+			actionService.fillActionBars(commonNavigator.getViewSite().getActionBars());
+		}
 	}
 
 	/**

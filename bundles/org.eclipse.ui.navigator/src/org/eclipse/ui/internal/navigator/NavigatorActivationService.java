@@ -12,9 +12,11 @@ package org.eclipse.ui.internal.navigator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.ListenerList;
@@ -50,10 +52,17 @@ public final class NavigatorActivationService implements
 
 	private static final String DELIM = ";"; //$NON-NLS-1$
 
+	private static final char EQUALS = '=';  
+
 	/*
 	 * Set of ids of activated extensions.
 	 */
-	private final Set activatedExtensions = new HashSet();
+	//private final Set activatedExtensions = new HashSet();
+
+	/*
+	 * Set of ids of activated extensions.
+	 */
+	private final Map/*<String, Boolean>*/ activatedExtensionsMap = new HashMap();
 
 	/*
 	 * IExtensionActivationListeners
@@ -84,7 +93,18 @@ public final class NavigatorActivationService implements
 	 * @return True if the extension is active in the context of the viewer id.
 	 */
 	public boolean isNavigatorExtensionActive(String aNavigatorExtensionId) {
-		return activatedExtensions.contains(aNavigatorExtensionId);
+		Boolean b = (Boolean) activatedExtensionsMap.get(aNavigatorExtensionId);
+		if(b != null)
+			return b.booleanValue();
+		synchronized (activatedExtensionsMap) {
+			NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(aNavigatorExtensionId);
+			if(descriptor.isActiveByDefault())
+				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.TRUE);
+			else
+				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.FALSE);
+			return descriptor.isActiveByDefault();
+		}
+		//return activatedExtensions.contains(aNavigatorExtensionId);
 	}
 
 	/**
@@ -121,9 +141,11 @@ public final class NavigatorActivationService implements
 		}
 
 		if (toEnable) {
-			activatedExtensions.add(aNavigatorExtensionId);
+			//activatedExtensions.add(aNavigatorExtensionId);
+			activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.TRUE);
 		} else {
-			activatedExtensions.remove(aNavigatorExtensionId);
+			//activatedExtensions.remove(aNavigatorExtensionId);
+			activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.FALSE);
 		}
 		notifyListeners(new String[] { aNavigatorExtensionId }, toEnable);
 
@@ -154,11 +176,13 @@ public final class NavigatorActivationService implements
 
 		if (toEnable) {
 			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
-				activatedExtensions.add(aNavigatorExtensionIds[i]);
+				//activatedExtensions.add(aNavigatorExtensionIds[i]);
+				activatedExtensionsMap.put(aNavigatorExtensionIds[i], Boolean.TRUE);
 			}
 		} else {
 			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
-				activatedExtensions.remove(aNavigatorExtensionIds[i]);
+				//activatedExtensions.remove(aNavigatorExtensionIds[i]);
+				activatedExtensionsMap.put(aNavigatorExtensionIds[i], Boolean.FALSE);
 			}
 		}
 		notifyListeners(aNavigatorExtensionIds, toEnable);
@@ -174,17 +198,24 @@ public final class NavigatorActivationService implements
 		Preferences preferences = NavigatorPlugin.getDefault()
 				.getPluginPreferences();
 
-		synchronized (activatedExtensions) {
-			Iterator activatedExtensionsIterator = activatedExtensions
-					.iterator();
+		//synchronized (activatedExtensions) {
+		synchronized (activatedExtensionsMap) {
+			//Iterator activatedExtensionsIterator = activatedExtensions.iterator();
+			Iterator activatedExtensionsIterator = activatedExtensionsMap.keySet().iterator();
+			
 			/* ensure that the preference will be non-empty */
 			StringBuffer preferenceValue = new StringBuffer();
+			String navigatorExtensionId = null;
+			boolean isActive = false;
 			while (activatedExtensionsIterator.hasNext()) {
-				preferenceValue.append(activatedExtensionsIterator.next())
-						.append(DELIM);
+				navigatorExtensionId = (String) activatedExtensionsIterator.next();
+				isActive = isNavigatorExtensionActive(navigatorExtensionId);
+				preferenceValue.append(navigatorExtensionId)
+									.append(EQUALS)
+										.append( isActive ? Boolean.TRUE : Boolean.FALSE )				
+											.append(DELIM);
 			}
-			preferences
-					.setValue(getPreferenceKey(), preferenceValue.toString());
+			preferences.setValue(getPreferenceKey(), preferenceValue.toString());
 		}
 		NavigatorPlugin.getDefault().savePluginPreferences();
 	}
@@ -223,7 +254,7 @@ public final class NavigatorActivationService implements
 
 	}
 
-	private Set revertExtensionActivations() {
+	private void revertExtensionActivations() {
 
 		Preferences preferences = NavigatorPlugin.getDefault()
 				.getPluginPreferences();
@@ -235,9 +266,23 @@ public final class NavigatorActivationService implements
 				&& activatedExtensionsString.length() > 0) {
 			String[] contentExtensionIds = activatedExtensionsString
 					.split(DELIM);
-
+			
+			String id = null;
+			String booleanString = null;
+			int indx=0;
 			for (int i = 0; i < contentExtensionIds.length; i++) {
-				activatedExtensions.add(contentExtensionIds[i]);
+				//activatedExtensions.add(contentExtensionIds[i]);
+				if( (indx = contentExtensionIds[i].indexOf(EQUALS)) > -1) {
+					// up to but not including the equals
+					id = contentExtensionIds[i].substring(0, indx);
+					booleanString = contentExtensionIds[i].substring(indx+1, contentExtensionIds[i].length());
+					activatedExtensionsMap.put(id, Boolean.valueOf(booleanString));
+				} else {
+					// IS THIS THE RIGHT WAY TO HANDLE THIS CASE?
+					NavigatorContentDescriptor descriptor = CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(contentExtensionIds[i]);
+					if(descriptor != null)
+						activatedExtensionsMap.put(id, Boolean.valueOf(descriptor.isActiveByDefault()));
+				}
 			}
 
 		} else {
@@ -250,12 +295,12 @@ public final class NavigatorActivationService implements
 			INavigatorContentDescriptor[] contentDescriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
 			for (int i = 0; i < contentDescriptors.length; i++) {
-				if (contentDescriptors[i].isActiveByDefault()) {
-					activatedExtensions.add(contentDescriptors[i].getId());
+				if (contentDescriptors[i].isActiveByDefault()) {					
+					//activatedExtensions.add(contentDescriptors[i].getId());
+					activatedExtensionsMap.put(contentDescriptors[i].getId(), Boolean.TRUE);
 				}
 			}
-		}
-		return activatedExtensions;
+		} 
 	}
 
 	private String getPreferenceKey() {

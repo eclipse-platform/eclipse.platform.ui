@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.navigator.actions;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,6 +30,7 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentRegistryReader;
 import org.eclipse.ui.navigator.INavigatorContentService;
+import org.eclipse.ui.navigator.Priority;
 
 /**
  * Manages descriptors consumed from the 'actionProvider' elements of the
@@ -176,6 +178,7 @@ public class CommonActionDescriptorManager {
 			structuredSelection = StructuredSelection.EMPTY;
 		}
 
+		Set blockedProviders = new HashSet();
 		CommonActionProviderDescriptor actionDescriptor = null;
 		Set providers = new LinkedHashSet();
 		for (Iterator providerItr = rootDescriptors.values().iterator(); providerItr
@@ -183,9 +186,10 @@ public class CommonActionDescriptorManager {
 			actionDescriptor = (CommonActionProviderDescriptor) providerItr
 					.next();
 			addProviderIfRelevant(aContentService, structuredSelection,
-					actionDescriptor, providers);
+					actionDescriptor, providers, blockedProviders);
 		}
 		if (providers.size() > 0) {
+			providers.removeAll(blockedProviders);
 			return (CommonActionProviderDescriptor[]) providers
 					.toArray(new CommonActionProviderDescriptor[providers
 							.size()]);
@@ -202,15 +206,18 @@ public class CommonActionDescriptorManager {
 	private boolean addProviderIfRelevant(
 			INavigatorContentService aContentService,
 			IStructuredSelection structuredSelection,
-			CommonActionProviderDescriptor actionDescriptor, Set providers) {
+			CommonActionProviderDescriptor actionDescriptor, Set providers, Set blockedProviders) {
 		if (isVisible(aContentService, actionDescriptor)
 				&& actionDescriptor.isEnabledFor(structuredSelection)) {
 			
 			if(actionDescriptor.hasOverridingDescriptors()) {
 				for (Iterator iter = actionDescriptor.overridingDescriptors(); iter.hasNext();) {
 					CommonActionProviderDescriptor descriptor = (CommonActionProviderDescriptor) iter.next();
-					if(addProviderIfRelevant(aContentService, structuredSelection, descriptor, providers))
+					if(addProviderIfRelevant(aContentService, structuredSelection, descriptor, providers, blockedProviders)) {
+						while(iter.hasNext())
+							blockedProviders.add(iter.next());
 						return true;
+					}
 					
 				}
 			}			
@@ -220,7 +227,7 @@ public class CommonActionDescriptorManager {
 						.hasNext();) {
 					addProviderIfRelevant(aContentService, structuredSelection,
 							(CommonActionProviderDescriptor) iter.next(),
-							providers);
+							providers, blockedProviders);
 				}
 			}
 			return true;
@@ -251,32 +258,36 @@ public class CommonActionDescriptorManager {
 						anElement));
 				return true;
 			} else if (TAG_NAVIGATOR_CONTENT.equals(anElement.getName())) {
-				IConfigurationElement[] actionProviders = anElement
-						.getChildren(TAG_ACTION_PROVIDER);
-				if (actionProviders.length == 0) {
-					return true;
-				}
-				IConfigurationElement defaultEnablement = null;
-				IConfigurationElement[] enablement = anElement
-						.getChildren(TAG_ENABLEMENT);
-				if (enablement.length == 0) {
-					enablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
-				}
-				if (enablement.length == 1) {
-					defaultEnablement = enablement[0];
-				}
-				if(defaultEnablement == null) {
-					NavigatorPlugin.logError(0, 
-						"An actionProvider has been defined as the child " + //$NON-NLS-1$
-						"of a navigatorContent extension that does not specify " + //$NON-NLS-1$
-						"an <enablement/> or <possibleChildren /> expression. Please " + //$NON-NLS-1$
-						"review the documenation and correct this error.", null); //$NON-NLS-1$
-				}
-				for (int i = 0; i < actionProviders.length; i++) { 
-					if(defaultEnablement == null) { 
-						NavigatorPlugin.logError(0, "Disabling actionProvider: " + actionProviders[i].getAttribute(ATT_ID), null); //$NON-NLS-1$
-					} else {
-						SafeRunner.run(new AddProviderSafeRunner(actionProviders[i], defaultEnablement, anElement));
+				
+				IConfigurationElement[] actionProviders = anElement.getChildren(TAG_ACTION_PROVIDER);
+				
+				if (actionProviders.length > 0) {
+					
+					IConfigurationElement defaultEnablement = null;
+					IConfigurationElement[] inheritedEnablement = anElement.getChildren(TAG_ENABLEMENT);
+					if (inheritedEnablement.length == 0) {
+						inheritedEnablement = anElement.getChildren(TAG_POSSIBLE_CHILDREN);
+					}
+					
+					defaultEnablement = inheritedEnablement.length == 1 ? inheritedEnablement[0] : null;
+  
+					Priority defaultPriority = Priority.get(anElement.getAttribute(ATT_PRIORITY));
+					
+					
+					if(defaultEnablement == null) {
+						NavigatorPlugin.logError(0, 
+							"An actionProvider has been defined as the child " + //$NON-NLS-1$
+							"of a navigatorContent extension that does not specify " + //$NON-NLS-1$
+							"an <enablement/> or <possibleChildren /> expression. Please " + //$NON-NLS-1$
+							"review the documenation and correct this error.", null); //$NON-NLS-1$
+					}
+					for (int i = 0; i < actionProviders.length; i++) { 
+						if(defaultEnablement == null) { 
+							NavigatorPlugin.logError(0, 
+											"Disabling actionProvider: " + actionProviders[i].getAttribute(ATT_ID), null); //$NON-NLS-1$
+						} else {
+							SafeRunner.run(new AddProviderSafeRunner(actionProviders[i], defaultEnablement, defaultPriority, anElement));
+						}
 					}
 				}
 				return true;
@@ -289,10 +300,15 @@ public class CommonActionDescriptorManager {
 			private IConfigurationElement parentElement;
 			private IConfigurationElement defaultEnablement;
 			private IConfigurationElement actionProvider;
+			private Priority defaultPriority;
 
-			protected AddProviderSafeRunner(IConfigurationElement actionProvider, IConfigurationElement defaultEnablement, IConfigurationElement parentElement) {
+			protected AddProviderSafeRunner(IConfigurationElement actionProvider, 
+											 IConfigurationElement defaultEnablement, 
+											 Priority defaultPriority,
+											 IConfigurationElement parentElement) {
 				this.actionProvider = actionProvider;
 				this.defaultEnablement = defaultEnablement;
+				this.defaultPriority = defaultPriority;
 				this.parentElement = parentElement;
 			}
 			
@@ -301,7 +317,7 @@ public class CommonActionDescriptorManager {
 			 */
 			public void run() throws Exception { 
 				addActionDescriptor(new CommonActionProviderDescriptor(
-							actionProvider, defaultEnablement, parentElement
+							actionProvider, defaultEnablement, defaultPriority, parentElement
 									.getAttribute(ATT_ID), true));
 			}
 			

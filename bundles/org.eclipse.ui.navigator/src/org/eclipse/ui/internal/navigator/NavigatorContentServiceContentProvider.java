@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.navigator;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -520,7 +520,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @param theOverridingExtensions
 	 *            The set of overriding extensions that should participate in
 	 *            the pipeline chain
-	 * @param aSuggestedParent
+	 * @param theCurrentParent
 	 *            The current elements to return to the viewer (should be
 	 *            modifiable)
 	 * @return The set of elements to return to the viewer
@@ -694,48 +694,65 @@ public class NavigatorContentServiceContentProvider implements
 			return viewer.getInput();
 		}
 		return parentElementOrPath;
-	} 
-	 
+	}
 	
-	class TreePathCompiler  {
-		
+
+	class CyclicPathException extends Exception {
+
+		private static final long serialVersionUID = 2111962579612444989L;
+
+		protected CyclicPathException(TreePathCompiler compiler, Object invalidSegment, boolean asChild) {
+			super("Cannot add " + invalidSegment + //$NON-NLS-1$ 
+					" to the list of segments in " + compiler +  //$NON-NLS-1$ 
+					(asChild ? " as a child." : " as a parent.") ); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	class TreePathCompiler {
+
+
 		private final LinkedList segments = new LinkedList();
-		
-		
-		public TreePathCompiler(Object segment) {
+
+		protected TreePathCompiler(Object segment) {
 			segments.add(segment);
 		}
-		
-		
-		public TreePathCompiler(TreePathCompiler aCompiler) {
+
+		protected TreePathCompiler(TreePathCompiler aCompiler) {
 			segments.addAll(aCompiler.segments);
 		}
-		
-		public TreePathCompiler(TreePath aPath) {
-			for(int i=0; i<aPath.getSegmentCount(); i++) {
+
+		protected TreePathCompiler(TreePath aPath) {
+			for (int i = 0; i < aPath.getSegmentCount(); i++) {
 				segments.addLast(aPath.getSegment(i));
 			}
 		}
-		
-		public void addParent(Object segment) {
+
+		protected void addParent(Object segment) throws CyclicPathException {
+			if(segments.contains(segment)) {
+				throw new CyclicPathException(this, segment, false);
+			}
 			segments.addFirst(segment);
 		}
-		
 
-		public void addChild(Object segment) {
+		protected void addChild(Object segment) throws CyclicPathException {
+			if(segments.contains(segment)) {
+				throw new CyclicPathException(this, segment, false);
+			}
 			segments.addLast(segment);
 		}
-		
+
 		/**
-		 * Create the full tree path. 
+		 * Create the full tree path.
+		 * 
 		 * @return A TreePath with all segments from the compiler.
 		 */
 		public TreePath createPath() {
 			return new TreePath(segments.toArray());
 		}
-		
+
 		/**
-		 * Create parent tree path. 
+		 * Create parent tree path.
+		 * 
 		 * @return A TreePath with all segments but the last from the compiler
 		 */
 		public TreePath createParentPath() {
@@ -764,67 +781,79 @@ public class NavigatorContentServiceContentProvider implements
 			}
 			return buffer.toString();
 		}
-			
-	
-	}
-	
- 
-	private Set findPaths(TreePathCompiler aPathCompiler) {				
 
-		Set/*<Object>*/ parents = findParents(aPathCompiler.getFirstSegment());
-		Set/*<TreePathCompiler>*/ parentPaths = new HashSet();
-		Set/*<TreePathCompiler>*/ foundPaths = Collections.EMPTY_SET;
-		if(parents.size() > 0) {
+	}
+
+	private Set findPaths(TreePathCompiler aPathCompiler) {
+
+		Set/* <Object> */ parents = findParents(aPathCompiler.getFirstSegment());
+		Set/* <TreePathCompiler> */ parentPaths = new LinkedHashSet();
+		Set/* <TreePathCompiler> */ foundPaths = Collections.EMPTY_SET;
+		if (parents.size() > 0) {
 			for (Iterator parentIter = parents.iterator(); parentIter.hasNext();) {
-				Object parent = (Object) parentIter.next();				
+				Object parent = (Object) parentIter.next();
 				TreePathCompiler c = new TreePathCompiler(aPathCompiler);
-				c.addParent(parent);
-				foundPaths = findPaths(c);
-				if(foundPaths.isEmpty())
+				try {
+					c.addParent(parent); 
+					foundPaths = findPaths(c);
+				} catch(CyclicPathException cpe) {
+					String msg = cpe.getMessage() != null ? cpe.getMessage() : cpe.toString();
+					NavigatorPlugin.logError(0, msg, cpe);
+				}
+				if (foundPaths.isEmpty())
 					parentPaths.add(c);
-				else 
-					parentPaths.addAll(foundPaths);				
-			}			
+				else
+					parentPaths.addAll(foundPaths);
+			}
 		}
 		return parentPaths;
-		
-	}
-	
-	private Set findParents(Object anElement) {
-		
 
-		Set descriptors = contentService.findDescriptorsWithPossibleChild(anElement, false); 
-		Set parents = new HashSet();
+	}
+
+	private Set findParents(Object anElement) {
+
+		Set descriptors = contentService.findDescriptorsWithPossibleChild(
+				anElement, false);
+		Set parents = new LinkedHashSet();
 		NavigatorContentDescriptor foundDescriptor;
-		NavigatorContentExtension foundExtension; 
+		NavigatorContentExtension foundExtension;
 		Object parent = null;
 		for (Iterator itr = descriptors.iterator(); itr.hasNext();) {
-			foundDescriptor = (NavigatorContentDescriptor) itr.next();  
- 			foundExtension = contentService.getExtension(foundDescriptor);
+			foundDescriptor = (NavigatorContentDescriptor) itr.next();
+			foundExtension = contentService.getExtension(foundDescriptor);
 			try {
 
-				if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
-					
+				if (!isOverridingDescriptorInSet(
+						foundExtension.getDescriptor(), descriptors)) {
+
 					/* internalGetContentProvider returns the real delegate */
-					if(foundExtension.getContentProvider() instanceof ITreePathContentProvider) {
-						/* but we use the safe version to automatically handle errors */
-						TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension.internalGetContentProvider()).getParents(anElement);
-					
+					if (foundExtension.getContentProvider() instanceof ITreePathContentProvider) {
+						/*
+						 * but we use the safe version to automatically handle
+						 * errors
+						 */
+						TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension
+								.internalGetContentProvider())
+								.getParents(anElement);
+
 						for (int i = 0; i < parentTreePaths.length; i++) {
-	
+
 							parent = parentTreePaths[i].getLastSegment();
-							if( (parent = findParent(foundExtension, anElement, parent)) != null)
-								parents.add(parent);  
-						} 
-						
+							if ((parent = findParent(foundExtension, anElement,
+									parent)) != null)
+								parents.add(parent);
+						}
+
 					} else {
-						
-						parent = foundExtension.internalGetContentProvider().getParent(anElement);
-						if( (parent = findParent(foundExtension, anElement, parent)) != null)
-							parents.add(parent);   
+
+						parent = foundExtension.internalGetContentProvider()
+								.getParent(anElement);
+						if ((parent = findParent(foundExtension, anElement,
+								parent)) != null)
+							parents.add(parent);
 					}
 				}
-				 
+
 			} catch (RuntimeException re) {
 				NavigatorPlugin
 						.logError(

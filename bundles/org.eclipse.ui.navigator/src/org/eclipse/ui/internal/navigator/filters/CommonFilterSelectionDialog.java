@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -39,17 +38,15 @@ import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
- * part of a work in progress. There is a guarantee neither that this API will
- * work nor that it will remain the same. Please do not use this API without
- * consulting with the Platform/UI team.
- * </p>
  * 
  * @since 3.2
  * 
  */
 public class CommonFilterSelectionDialog extends Dialog {
+  
+	private static final int TAB_WIDTH_IN_DLUS = 200;
+
+	private static final int TAB_HEIGHT_IN_DLUS = 150;
 
 	private final CommonViewer commonViewer;
 
@@ -82,10 +79,12 @@ public class CommonFilterSelectionDialog extends Dialog {
 		getShell()
 				.setText(
 						CommonNavigatorMessages.CommonFilterSelectionDialog_Available_customization_);
+		 
+		
 		Composite superComposite = (Composite) super.createDialogArea(parent);
-
-		createCustomizationsTabFolder(superComposite);
-
+		 
+		createCustomizationsTabFolder(superComposite); 
+		
 		commonFiltersTab = new CommonFiltersTab(customizationsTabFolder,
 				contentService);
 		createTabItem(
@@ -97,7 +96,7 @@ public class CommonFilterSelectionDialog extends Dialog {
 				.getBooleanConfigProperty(
 						INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_EXT_TAB);
 
-		if (!hideExtensionsTab) {
+		if (!hideExtensionsTab) { 
 			contentExtensionsTab = new ContentExtensionsTab(
 					customizationsTabFolder, contentService);
 
@@ -108,9 +107,10 @@ public class CommonFilterSelectionDialog extends Dialog {
 		}
 
 		createDescriptionText(superComposite);
-		descriptionText.setBackground(superComposite.getBackground());
 
-		commonFiltersTab.addSelectionChangedListener(getSelectionListener());
+		if (commonFiltersTab != null) {
+			commonFiltersTab.addSelectionChangedListener(getSelectionListener());
+		}
 
 		if (contentExtensionsTab != null) {
 			contentExtensionsTab
@@ -122,14 +122,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 	private void createCustomizationsTabFolder(Composite superComposite) {
 		customizationsTabFolder = new TabFolder(superComposite, SWT.RESIZE);
+ 
+		GridData gd = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
+		gd.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
+		
+		customizationsTabFolder.setLayout(new GridLayout());
+		customizationsTabFolder.setLayoutData(gd);
 
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		customizationsTabFolder.setLayout(layout);
-		customizationsTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		customizationsTabFolder.setFont(superComposite.getFont());
 
 		customizationsTabFolder.addSelectionListener(new SelectionListener() {
 
@@ -150,13 +151,15 @@ public class CommonFilterSelectionDialog extends Dialog {
 			Composite composite) {
 		TabItem extensionsTabItem = new TabItem(aTabFolder, SWT.NONE);
 		extensionsTabItem.setText(label);
-		extensionsTabItem.setControl(composite);
+ 		extensionsTabItem.setControl(composite);
 	}
 
 	private void createDescriptionText(Composite composite) {
 
 		descriptionText = new Text(composite, SWT.WRAP | SWT.V_SCROLL
 				| SWT.BORDER);
+		descriptionText.setFont(composite.getFont());
+		descriptionText.setBackground(composite.getBackground());
 		GridData descriptionTextGridData = new GridData(
 				GridData.FILL_HORIZONTAL);
 		descriptionTextGridData.heightHint = convertHeightInCharsToPixels(3);
@@ -178,9 +181,9 @@ public class CommonFilterSelectionDialog extends Dialog {
 	 */
 	protected void okPressed() {
 
-		String[] contentExtensionIdsToActivate = new String[0]; 
+		String[] contentExtensionIdsToActivate = new String[0];
 		if (contentExtensionsTab != null) {
-			List checkedExtensions = new ArrayList(); 
+			List checkedExtensions = new ArrayList();
 			TableItem[] tableItems = contentExtensionsTab.getTable().getItems();
 			INavigatorContentDescriptor descriptor;
 			for (int i = 0; i < tableItems.length; i++) {
@@ -189,18 +192,18 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 				if (tableItems[i].getChecked()) {
 					checkedExtensions.add(descriptor.getId());
-				} 
+				}
 			}
 			if (checkedExtensions.size() != 0) {
 				contentExtensionIdsToActivate = (String[]) checkedExtensions
 						.toArray(new String[checkedExtensions.size()]);
 			}
- 
+
 		}
 
-		String[] filterIdsToActivate = new String[0]; 
+		String[] filterIdsToActivate = new String[0];
 		if (commonFiltersTab != null) {
-			List checkedFilters = new ArrayList(); 
+			List checkedFilters = new ArrayList();
 			TableItem[] tableItems = commonFiltersTab.getTable().getItems();
 			ICommonFilterDescriptor descriptor;
 			for (int i = 0; i < tableItems.length; i++) {
@@ -208,14 +211,14 @@ public class CommonFilterSelectionDialog extends Dialog {
 
 				if (tableItems[i].getChecked()) {
 					checkedFilters.add(descriptor.getId());
-				} 
+				}
 			}
 
 			if (checkedFilters.size() != 0) {
 				filterIdsToActivate = (String[]) checkedFilters
 						.toArray(new String[checkedFilters.size()]);
 			}
- 
+
 		}
 
 		UpdateActiveExtensionsOperation updateExtensions = new UpdateActiveExtensionsOperation(

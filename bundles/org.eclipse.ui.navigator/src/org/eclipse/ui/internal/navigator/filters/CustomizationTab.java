@@ -11,14 +11,9 @@
 
 package org.eclipse.ui.internal.navigator.filters;
 
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.FontMetrics;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -30,22 +25,9 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @since 3.2
  * 
  */
-public class CustomizationTab extends Composite {
-
-	protected static final int MARGIN = 3;
-
-	protected static final int TABLE_HEIGHT = 20;
-
-	protected static final int TABLE_WIDTH = 140;
-
-	protected static final int LABEL_HEIGHT = 15;
-
-	protected static final int LABEL_WIDTH = 150;
-
-	private FontMetrics fontMetrics;
-
-	private Table table;
-
+public class CustomizationTab extends Composite { 
+ 
+ 
 	private final INavigatorContentService contentService;
 
 	private CheckboxTableViewer tableViewer;
@@ -53,14 +35,17 @@ public class CustomizationTab extends Composite {
 	protected CustomizationTab(Composite parent,
 			INavigatorContentService aContentService) {
 		super(parent, SWT.RESIZE);
-
-		initializeDialogUnits();
+ 
 		contentService = aContentService;
+		setFont(getParent().getFont()); 
+		setLayout(new GridLayout()); 
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true); 
+		setData(data);
  
 	}
 
 	protected Table getTable() {
-		return table;
+		return tableViewer.getTable();
 	}
 
 	protected void addSelectionChangedListener(
@@ -71,25 +56,11 @@ public class CustomizationTab extends Composite {
 		}
 	}
 
-	protected void createControl() {
-
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = Dialog.convertVerticalDLUsToPixels(
-				getFontMetrics(), MARGIN);
-		layout.marginWidth = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), MARGIN);
-		layout.verticalSpacing = Dialog.convertVerticalDLUsToPixels(
-				getFontMetrics(), IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), IDialogConstants.HORIZONTAL_SPACING);
-		// layout.numColumns = 1;
-		setLayout(layout);
-		setLayoutData(new GridData(GridData.FILL_BOTH));
-
-		table = new Table(this, SWT.CHECK | SWT.BORDER | SWT.RESIZE | SWT.FULL_SELECTION);
-		layoutTable(table);  
-
-		tableViewer = new CheckboxTableViewer(getTable());
+	protected void createTable() {
+  
+		tableViewer = CheckboxTableViewer.newCheckList(this,SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);		
+		tableViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));		
+		tableViewer.getControl().setFont(getFont());
 
 	} 
 
@@ -98,46 +69,13 @@ public class CustomizationTab extends Composite {
 
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL
-				| GridData.VERTICAL_ALIGN_FILL);
-		gridData.horizontalIndent = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), 2);
-
-		gridData.widthHint = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), LABEL_WIDTH);
+				| GridData.VERTICAL_ALIGN_FILL); 
 
 		extensionsInstructionLabel.setLayoutData(gridData);
-		extensionsInstructionLabel
-				.setText(labelText);
+		extensionsInstructionLabel.setFont(getFont());
+		extensionsInstructionLabel.setText(labelText);
 	}
-	
-
-	private void layoutTable(Table aTable) {
-		GridLayout tableLayout = new GridLayout();
-		tableLayout.marginHeight = 0; // convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		tableLayout.marginWidth = 0; // convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		tableLayout.verticalSpacing = 0; // convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		tableLayout.horizontalSpacing = 0; // convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		tableLayout.numColumns = 2;
-		GridData tableGridData = new GridData(GridData.FILL_BOTH);
-		tableGridData.widthHint = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), TABLE_WIDTH);
-		tableGridData.heightHint = Dialog.convertVerticalDLUsToPixels(
-				getFontMetrics(), TABLE_HEIGHT);
-		aTable.setLayout(tableLayout);
-		aTable.setLayoutData(tableGridData);
-	}
-
-	private void initializeDialogUnits() {
-		// Compute and store a font metric
-		GC gc = new GC(this);
-		gc.setFont(JFaceResources.getDialogFont());
-		fontMetrics = gc.getFontMetrics();
-		gc.dispose();
-	}
-
-	protected final FontMetrics getFontMetrics() {
-		return fontMetrics;
-	}
+	 
 
 	protected final INavigatorContentService getContentService() {
 		return contentService;

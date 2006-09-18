@@ -68,6 +68,8 @@ expand to the right node.
             A navigator content extension defines a content provider and label provider that can be used to provide children whenever an element matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression and also to provide a parent whenever an element matches the &lt;b&gt;possibleChildren&lt;/b&gt; expression. 
 &lt;br&gt;&lt;br&gt;
 Optionally, clients may also provide an action provider which can provide menu contributions and action bar contributions when an element is selected that the extension contributed, or that matches the &lt;b&gt;triggerPoints&lt;/b&gt; expression. Clients may also choose to contribute a sorter to sort elements that are contributed by the extension.
+&lt;br&gt;&lt;br&gt;
+When an extension is deactivated by the user, the content and label providers are disposed. However, because many of the Image resources might be in use by other extensions in the Common Navigator Viewer, clients should not dispose of Image Resources until the viewer itself is disposed.
          </documentation>
       </annotation>
       <complexType>
@@ -146,6 +148,9 @@ Elements contributed from the content provider are not guaranteed to appear in t
                <documentation>
                   A plugin-relative path to an icon for use when displaying the metadata about the content extension to the user.
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="activeByDefault" type="boolean">
@@ -265,6 +270,8 @@ be picked up by matching &lt;b&gt;viewerContentBinding&lt;/b&gt;s. See &lt;b&gt;
 Clients may provide &lt;b&gt;actionProvider&lt;/b&gt;(s) under the root &lt;b&gt;extention&lt;/b&gt; element (peer to other &lt;b&gt;navigatorContent&lt;/b&gt;) in order to better control their enablement and viewer binding (see &lt;b&gt;veiwerActionBinding&lt;/b&gt;).
 &lt;br&gt;&lt;br&gt;
 For root &lt;b&gt;actionProviders&lt;/b&gt; with no id, the id defaults to &quot;org.eclipse.ui.navigator.actionProvider.X&quot;. For these &lt;b&gt;actionProvider&lt;/b&gt;s to be given the opportunity to contribute the menus or action bars of a viewer, a &lt;b&gt;viewerActionBinding&lt;/b&gt; must be defined (as part of the &lt;b&gt;org.eclipse.ui.navigator.viewer extension point&lt;/b&gt;) which declares a binding between the specific viewer and the default id (&quot;org.eclipse.ui.navigator.actionProvider.*&quot;). See the documentation for &lt;b&gt;viewerActionBinding&lt;/b&gt; under the schema documentation of &lt;b&gt;org.eclipse.ui.navigator.viewer&lt;/b&gt; for more information.
+&lt;br&gt;&lt;br&gt;
+Any items contributed to the toolbar or the view menu should be removed with the &lt;b&gt;actionProviders&lt;/b&gt; is disposed.
          </documentation>
       </annotation>
       <complexType>
@@ -312,7 +319,9 @@ If the required action provider is disabled or unbound to the current viewer, th
    <element name="commonWizard">
       <annotation>
          <documentation>
-            The extension point provides the ability to contribute to the menu defined by type.
+            Defines a binding between an existing Eclipse New/Import/Export Wizard and a given set of items. Each valid binding determines which menu items will appear in the submenus for New/Import/Export in the context menu of a Common Navigator Viewer. Since Eclipse 3.2.1, the wizard menu items respect Eclipse Capabilities (see &lt;b&gt;org.eclipse.ui.activites&lt;/b&gt; for more information). 
+&lt;br&gt;&lt;br&gt;
+All of the following conditions must be met for a &lt;b&gt;commonWizard&lt;/b&gt; item to appear in the menu: (1) The &lt;b&gt;commonWizard&lt;/b&gt; is NOT filtered by an Eclipse Capability, (2) The identifier of the &lt;b&gt;commonWizard&lt;/b&gt; is NOT null, (3) The associated &lt;b&gt;navigatorContent&lt;/b&gt; extension is &lt;i&gt;visible&lt;/i&gt; for the current content service (the content service used to initialize the &lt;code&gt;NavigatorActionService&lt;/code&gt; or supplied to &lt;code&gt;WizardActionGroup&lt;/code&gt;), (4) The associated &lt;b&gt;navigatorContent&lt;/b&gt; extension is &lt;i&gt;active&lt;/i&gt; for the current content service, and (5) The &lt;b&gt;enablement&lt;/b&gt; of the &lt;b&gt;commonWizard&lt;/b&gt; returns true for the current selection that was supplied to the context menu.
          </documentation>
       </annotation>
       <complexType>
@@ -346,14 +355,14 @@ If the required action provider is disabled or unbound to the current viewer, th
          <attribute name="menuGroupId" type="string">
             <annotation>
                <documentation>
-                  Indicates a user-defined logical grouping id. &lt;b&gt;commonWizard&lt;/b&gt; extensions with matching &lt;i&gt;menuGroupId&lt;/i&gt;s will be indicated as related items when rendered as menu options to endusers. How the grouping will be done is not guaranteed. In particular, clients should never anticipate a menu separator or group marker of the given name to be present in the menu. 
+                  Indicates a user-defined logical grouping id. &lt;b&gt;commonWizard&lt;/b&gt; extensions with matching &lt;i&gt;menuGroupId&lt;/i&gt;s will be indicated as related items when rendered as menu options to endusers. How the grouping will be done is not guaranteed. In particular, clients should never anticipate a menu separator or group marker of the given name to be present in the menu.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="associatedExtensionId" type="string">
             <annotation>
                <documentation>
-                  A &lt;b&gt;commonWizard&lt;/b&gt; may be defined as the nested child of a &lt;b&gt;navigatorContent&lt;/b&gt; extension point, in which case the &lt;i&gt;associatedExtensionId&lt;/i&gt; is automatically set to the id of its enclosing &lt;b&gt;naviagatorContent&lt;/b&gt; element. However, when specified as a top-level extension, a &lt;b&gt;commonWizard&lt;/b&gt; may indicate an content extension that it should be associated with explicitly. When a &lt;b&gt;commonWizard&lt;/b&gt; is associated with a content extension, it will inherit the &lt;i&gt;visibility&lt;/i&gt; and the &lt;i&gt;activation&lt;/i&gt; of that content extension. 
+                  A &lt;b&gt;commonWizard&lt;/b&gt; may be defined as the nested child of a &lt;b&gt;navigatorContent&lt;/b&gt; extension point, in which case the &lt;i&gt;associatedExtensionId&lt;/i&gt; is automatically set to the id of its enclosing &lt;b&gt;naviagatorContent&lt;/b&gt; element. However, when specified as a top-level extension, a &lt;b&gt;commonWizard&lt;/b&gt; may indicate an content extension that it should be associated with explicitly. When a &lt;b&gt;commonWizard&lt;/b&gt; is associated with a content extension, it will inherit the &lt;i&gt;visibility&lt;/i&gt; and the &lt;i&gt;activation&lt;/i&gt; of that content extension. It will not inherit the &lt;i&gt;enablement&lt;/i&gt;; so you must specify an &lt;b&gt;enablement&lt;/b&gt; for the wizard menu item to appear.
 &lt;br&gt;&lt;br&gt;
 That is, if the content extension is bound to a Common Navigator (see &lt;b&gt;org.eclipse.ui.navigator.viewer/viewerContentBinding&lt;/b&gt;) and the user has the content extension &lt;i&gt;activated&lt;/i&gt; either by default or through the &quot;Available Extensions&quot; dialog, then the &lt;b&gt;commonWizard&lt;/b&gt; menu option would appear. However, when the user &lt;i&gt;deactivates&lt;/i&gt; that content extension, the &lt;b&gt;commonWizard&lt;/b&gt; menu option would no longer be shown in the menu.
 &lt;br&gt;&lt;br&gt;

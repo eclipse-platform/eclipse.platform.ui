@@ -217,4 +217,11 @@ public final class Priority {
 	public int getValue() {
 		return value;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return "Priority ["+getLiteral()+"]";  //$NON-NLS-1$//$NON-NLS-2$
+	}
 }

@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.navigator.filters;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.Viewer;
@@ -68,20 +67,21 @@ public class CommonFiltersTab extends CustomizationTab {
 		createControl();
 	}
 
-	protected void createControl() {
+	private  void createControl() {  
 
 		createPatternFilterText(this);
+		
+		createTable(); 
 
-		super.createControl();
+		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_filters_to_apply);
 
 		getTableViewer().setContentProvider(filterContentProvider);
 		getTableViewer().setLabelProvider(filterLabelProvider);
 		getTableViewer().setSorter(new CommonFilterSorter());
-		getTableViewer().setInput(getContentService());
+		getTableViewer().setInput(getContentService());  
 
-		getTableViewer().addFilter(patternFilter);
-
-		createInstructionsLabel(CommonNavigatorMessages.CommonFilterSelectionDialog_Select_the_filters_to_apply);
+		
+		getTableViewer().addFilter(patternFilter); 
 
 		updateFiltersCheckState();
 
@@ -89,13 +89,10 @@ public class CommonFiltersTab extends CustomizationTab {
 
 	private void createPatternFilterText(Composite composite) {
 		filterText = new Text(composite, SWT.SINGLE | SWT.BORDER);
-		GridData filterTextGridData = new GridData(GridData.FILL_HORIZONTAL);
-		filterTextGridData.heightHint = Dialog.convertHeightInCharsToPixels(
-				getFontMetrics(), 1);
-		filterTextGridData.widthHint = Dialog.convertHorizontalDLUsToPixels(
-				getFontMetrics(), LABEL_WIDTH);
+		GridData filterTextGridData = new GridData(GridData.FILL_HORIZONTAL); 
 		filterText.setLayoutData(filterTextGridData);
 		filterText.setText(initialFilterTextValue);
+		filterText.setFont(composite.getFont());
 
 		filterText.getAccessible().addAccessibleListener(
 				new AccessibleAdapter() {
@@ -213,9 +210,7 @@ public class CommonFiltersTab extends CustomizationTab {
 		patternFilter.setPattern(filterText.getText());
 		getTableViewer().refresh();
 
-	}
-	
-
+	} 
 
 	private void updateFiltersCheckState() {
 		Object[] children = filterContentProvider

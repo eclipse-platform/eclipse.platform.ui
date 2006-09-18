@@ -64,6 +64,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
  
 	private final NavigatorContentService contentService;
 	private final boolean isContentServiceSelfManaged;
+	private final ReusableViewerLabel reusableLabel = new ReusableViewerLabel();
 
   
 	/**
@@ -300,22 +301,21 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.ITreePathLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel, org.eclipse.jface.viewers.TreePath)
 	 */
 	public void updateLabel(ViewerLabel label, TreePath elementPath) { 
-		
-
+		 
 		Set contentExtensions = contentService.findContentExtensionsWithPossibleChild(elementPath.getLastSegment());
-		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && (!label.hasNewText() && label.getText() != null); ) {			 
-			findUpdateLabel((NavigatorContentExtension)itr.next(), label, elementPath);			 
+		reusableLabel.reset(label);
+		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && !(reusableLabel.isValid() && reusableLabel.hasChanged()); ) {			 
+			findUpdateLabel((NavigatorContentExtension)itr.next(), reusableLabel, elementPath);			 
 		}
-		if(label.getText() == null)
-			label.setText(""); //$NON-NLS-1$
+		reusableLabel.fill(label);
 	}
-	
+
+
 	/**
 	 * Search for text label and take overrides into account. 
 	 * Uses only simple ITreeContentProvider.getParent() style semantics. 
 	 */
-	private String findUpdateLabel(NavigatorContentExtension foundExtension, ViewerLabel label, TreePath elementPath) {
-		String text = null;  
+	private void findUpdateLabel(NavigatorContentExtension foundExtension, ReusableViewerLabel label, TreePath elementPath) {
 		
 		ILabelProvider labelProvider = foundExtension.getLabelProvider();
 		if (labelProvider instanceof ITreePathLabelProvider) {
@@ -327,18 +327,14 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		}		
 		 
 		if(shouldContinue(label, foundExtension)) {
-			return findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor().getOverriddenDescriptor()), label, elementPath);
-		}  
-		return text;
+			findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor()), label, elementPath);
+		}   
 	}
  
-	private boolean shouldContinue(ViewerLabel label, NavigatorContentExtension foundExtension) {
+	private boolean shouldContinue(ReusableViewerLabel label, NavigatorContentExtension foundExtension) {
 
-		if(foundExtension.getDescriptor().getOverriddenDescriptor() != null) {
-			if(label.getText() == null || label.getText().length() == 0)
-				return true;
-			else if(label.hasNewText())
-				return false;
+		if(foundExtension.getDescriptor().getOverriddenDescriptor() != null) {			
+			return !(label.isValid() && label.hasChanged()); 
 		}
 		return false;
 	}
