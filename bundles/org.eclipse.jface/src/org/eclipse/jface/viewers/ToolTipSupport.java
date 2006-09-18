@@ -70,7 +70,7 @@ class ToolTipSupport {
 	private class MouseListener implements Listener {
 		private Shell tip;
 		private TooltipHideListener hideListener = new TooltipHideListener();
-		private Timer timer = new Timer();
+		private Timer timer = new Timer(true);
 		
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
