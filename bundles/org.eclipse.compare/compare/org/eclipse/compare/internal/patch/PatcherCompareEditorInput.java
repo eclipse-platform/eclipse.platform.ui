@@ -330,17 +330,26 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 						Object obj = iter.next();
 						if (obj instanceof Diff) {
 							Diff diff = (Diff) obj;
-							IFile tempFile = projects[i].getFile(new Path(diff.getLabel(diff)));
+							IPath filePath = new Path(diff.getLabel(diff));
+							IFile tempFile = projects[i].getFile(filePath);
 							byte[] bytes = quickPatch(tempFile, patcher, diff);
 							int differencer = Differencer.CHANGE;
 							if (failedHunks.size() != 0) {
 								differencer += Differencer.CONFLICTING;
 							}
-							if (!tempFile.exists())
-								tempFile = null;
 							
-							ResourceNode tempNode = new ResourceNode(tempFile);
-							PatchedFileNode patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
+							ITypedElement tempNode;
+							PatchedFileNode patchedNode;
+							
+							if (tempFile != null && tempFile.exists()){
+								tempNode = new ResourceNode(tempFile);
+								patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
+							}
+							else{ 
+								tempNode = new PatchedFileNode(new byte[0], filePath.getFileExtension(), PatchMessages.PatcherCompareEditorInput_FileNotFound);
+								patchedNode = new PatchedFileNode(bytes, tempNode.getType(), ""); //$NON-NLS-1$
+							}
+						
 							MyDiffNode allFile = new MyDiffNode(projectNode, differencer, tempNode, tempNode, patchedNode, diff);
 							//Add individual hunks to each Diff node
 							Hunk[] hunks = diff.getHunks();
@@ -414,7 +423,7 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 					ITypedElement tempNode;
 					PatchedFileNode patchedNode;
 					
-					if (tempFile != null){
+					if (tempFile != null && tempFile.exists()){
 						tempNode = new ResourceNode(tempFile);
 						patchedNode = new PatchedFileNode(bytes, tempNode.getType(), tempFile.getProjectRelativePath().toString());
 					}
