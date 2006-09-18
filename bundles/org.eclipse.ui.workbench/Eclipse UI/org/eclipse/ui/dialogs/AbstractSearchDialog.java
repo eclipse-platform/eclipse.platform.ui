@@ -46,8 +46,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -65,7 +63,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -130,8 +127,6 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 	private ToggleStatusLineAction toggleStatusLineAction;
 
-	private int currentIndex;
-
 	private IStatus status;
 
 	/**
@@ -146,8 +141,6 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
-		updateStatus(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-				IStatus.ERROR, "", null)); //$NON-NLS-1$
 	}
 
 	/**
@@ -433,25 +426,12 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			}
 		});
 
-		list.getTable().addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				TableItem tableItem = list.getTable().getItem(
-						new Point(e.x, e.y));
-
-				if (tableItem != null) {
-					currentIndex = list.getTable().indexOf(tableItem);
-					refreshDetails();
-				}
-			}
-		});
-
 		pattern.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
 					if (pattern.getCaretPosition() == pattern.getCharCount()
 							&& list.getTable().getItemCount() > 0) {
 						list.getTable().setFocus();
-						refreshDetails();
 					}
 				}
 			}
@@ -459,64 +439,15 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 
 		list.getTable().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e) {
-				if (e.keyCode == SWT.PAGE_DOWN || e.keyCode == SWT.END) {
-					if (list.getTable().getItemCount() > 0) {
-						if (currentIndex < list.getTable().getItemCount() - 1) {
-							int height = list.getTable().getClientArea().height;
-							int rows = height / list.getTable().getItemHeight();
+				if (e.keyCode == SWT.ARROW_UP) {
+					StructuredSelection selection = (StructuredSelection) list
+							.getSelection();
 
-							int bottomIndex = list.getTable().getTopIndex()
-									+ rows - 1;
-
-							if (bottomIndex > list.getTable().getItemCount() - 1) {
-								bottomIndex = list.getTable().getItemCount() - 1;
-							}
-
-							if (currentIndex == bottomIndex) {
-								currentIndex = currentIndex + rows - 1;
-								if (currentIndex > list.getTable()
-										.getItemCount() - 1) {
-									currentIndex = list.getTable()
-											.getItemCount() - 1;
-								}
-							} else {
-								currentIndex = bottomIndex;
-							}
+					if (selection.size() == 1) {
+						Object element = selection.getFirstElement();
+						if (element.equals(list.getElementAt(0))) {
+							pattern.setFocus();
 						}
-						refreshDetails();
-					}
-				}
-
-				if (e.keyCode == SWT.PAGE_UP || e.keyCode == SWT.HOME) {
-					if (list.getTable().getItemCount() > 0) {
-						int topIndex = list.getTable().getTopIndex();
-
-						if (currentIndex == topIndex) {
-							int height = list.getTable().getClientArea().height;
-							int rows = height / list.getTable().getItemHeight();
-
-							currentIndex = currentIndex - rows + 1;
-							if (currentIndex < 0) {
-								currentIndex = 0;
-							}
-						} else {
-							currentIndex = topIndex;
-						}
-						refreshDetails();
-					}
-				}
-
-				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (currentIndex < list.getTable().getItemCount() - 1) {
-						currentIndex = currentIndex + 1;
-						refreshDetails();
-					}
-				} else if (e.keyCode == SWT.ARROW_UP) {
-					if (currentIndex > 0) {
-						currentIndex = currentIndex - 1;
-						refreshDetails();
-					} else {
-						pattern.setFocus();
 					}
 				}
 			}
@@ -549,21 +480,24 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void refreshDetails() {
-		if (currentIndex != -1) {
-			Object element = list.getElementAt(currentIndex);
+		StructuredSelection selection = (StructuredSelection) list
+				.getSelection();
 
-			if (element instanceof SearchListSeparator)
+		if (selection.size() == 1) {
+			Object element = selection.getFirstElement();
+
+			if (element instanceof SearchListSeparator) {
 				detailsContentProvider.setElements(new Object[0]);
-			else {
-				AbstractSearchItem item = (AbstractSearchItem) (list
-						.getElementAt(currentIndex));
-
-				Object o = searcher.getDetails(item);
-
+				details.getTable().setEnabled(false);
+			} else {
+				Object o = searcher.getDetails(element);
 				detailsContentProvider.setElements(new Object[] { o });
+				details.getTable().setEnabled(true);
 			}
-		} else
+		} else {
 			detailsContentProvider.setElements(new Object[0]);
+			details.getTable().setEnabled(false);
+		}
 
 		details.refresh();
 	}
@@ -631,6 +565,7 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			lastSelection = items.toArray();
 		}
 
+		refreshDetails();
 		updateStatus(status);
 	}
 
@@ -668,13 +603,9 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			if (list.getTable().getItemCount() > 0) {
 				list.setSelection(new StructuredSelection(list
 						.getElementAt(list.getTable().getTopIndex())));
-
-				currentIndex = list.getTable().getTopIndex();
 			} else {
-				currentIndex = -1;
+				list.setSelection(StructuredSelection.EMPTY);
 			}
-
-			refreshDetails();
 		}
 
 		if (!progressLabel.isDisposed()) {
