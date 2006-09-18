@@ -3558,6 +3558,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fConfiguration != null)
 			fConfiguration= null;
 
+		if (fColumnSupport != null)
+			fColumnSupport.dispose();
+		
 		if (fVerticalRuler != null)
 			fVerticalRuler= null;
 
@@ -3570,9 +3573,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		fNonLocalOperationApprover= null;
 		fLinearUndoViolationApprover= null;
-		
-		if (fColumnSupport != null)
-			fColumnSupport.dispose();
 
 		super.dispose();
 	}
