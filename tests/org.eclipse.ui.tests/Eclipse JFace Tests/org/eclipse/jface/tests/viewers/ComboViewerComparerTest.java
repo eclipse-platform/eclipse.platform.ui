@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Rüdiger Herrmann <rherrmann@innoopract.com> - initial API and implementation
+ *     Ruediger Herrmann <rherrmann@innoopract.com> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
