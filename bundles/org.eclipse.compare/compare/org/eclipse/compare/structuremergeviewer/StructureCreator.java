@@ -169,7 +169,8 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		if (sda != null) {
 			return sda.getDocumentKey(element);
 		}
-		if (element instanceof ITypedElement) {
+		// TODO: ResourceNode is not shared document friendly
+		if (element instanceof ITypedElement && ! (element instanceof ResourceNode)) {
 			ITypedElement te = (ITypedElement) element;
 			return new TypedElementEditorInput(te);
 		}

@@ -738,7 +738,11 @@ public class Utilities {
 		}
 		if (compareInput instanceof ICompareInput) {
 			ICompareInput ci = (ICompareInput) compareInput;
-			return new ThreeWayTypedElementEditorInput(ci, leg);
+			ThreeWayTypedElementEditorInput editorInput = new ThreeWayTypedElementEditorInput(ci, leg);
+			// ResourceNode is not shared document friendly
+			if (editorInput.getTypedElement() instanceof ResourceNode)
+				return null;
+			return editorInput;
 		}
 		return null;
 	}
