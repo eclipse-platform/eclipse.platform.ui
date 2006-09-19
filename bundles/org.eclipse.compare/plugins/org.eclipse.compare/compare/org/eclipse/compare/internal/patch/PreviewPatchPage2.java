@@ -231,6 +231,7 @@ public class PreviewPatchPage2 extends WizardPage {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				Object obj= sel.getFirstElement();
 				
+				patcherCompareEditorInput.setContributedActionEnablement(retargetID, false);
 				if (fPatchWizard.getPatcher().isWorkspacePatch() && obj instanceof DiffNode) {
 					//check to see that the selected element is a Diff Project
 					ITypedElement element = ((DiffNode) obj).getLeft();
