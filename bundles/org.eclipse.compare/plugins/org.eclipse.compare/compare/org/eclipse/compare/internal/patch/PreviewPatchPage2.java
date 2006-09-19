@@ -225,6 +225,23 @@ public class PreviewPatchPage2 extends WizardPage {
 		Control c = patcherCompareEditorInput.createContents(composite);
 		patcherCompareEditorInput.contributeDiffViewerToolbarItems(getContributedActions(), fPatchWizard.getPatcher().isWorkspacePatch());
 		patcherCompareEditorInput.setPreviewPatchPage(this);
+		patcherCompareEditorInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
+				Object obj= sel.getFirstElement();
+				
+				if (fPatchWizard.getPatcher().isWorkspacePatch() && obj instanceof DiffNode) {
+					//check to see that the selected element is a Diff Project
+					ITypedElement element = ((DiffNode) obj).getLeft();
+					if (element != null && element instanceof DiffProject){
+						patcherCompareEditorInput.setContributedActionEnablement(retargetID, true);
+					}
+				}
+
+			}
+
+		});
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(composite);
 		
@@ -293,12 +310,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			}
 		}
 		
-		patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
-		
-		if (fPatchWizard.getPatcher().isWorkspacePatch()){
-			patcherCompareEditorInput.setContributedActionEnablement(retargetID, true);
-		}
-		
+		patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());	
 	}
 	/*
 	 *	Create the group for setting various patch options
