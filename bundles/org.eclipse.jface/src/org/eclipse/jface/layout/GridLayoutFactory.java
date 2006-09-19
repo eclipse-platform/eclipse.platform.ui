@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Karsten Stöckmann - bug 156982
+ *     Karsten Stoeckmann - bug 156982
  *******************************************************************************/
 package org.eclipse.jface.layout;
 import org.eclipse.swt.graphics.Point;
