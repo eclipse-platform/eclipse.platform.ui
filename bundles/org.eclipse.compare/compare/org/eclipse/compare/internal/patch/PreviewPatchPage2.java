@@ -64,8 +64,13 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Text fFuzzField;
 	
 	private Action fRetargetSelection;
+	private static final String retargetID = "PreviewPatchPage_retargetSelection"; //$NON-NLS-1$
+	
 	private Action fIgnoreWhiteSpace;
+	private static final String ignoreWSID = "PreviewPatchPage_ignoreWhiteSpace"; //$NON-NLS-1$
+	
 	private Action fReversePatch;
+	private static final String reversePatchID = "PreviewPatchPage_reversePatch"; //$NON-NLS-1$
 	
 	protected boolean pageRecalculate= true;
 	
@@ -237,6 +242,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		};
 		fRetargetSelection.setToolTipText(PatchMessages.PreviewPatchPage2_RetargetTooltip);
 		fRetargetSelection.setEnabled(false);
+		fRetargetSelection.setId(retargetID);
 		
 		fIgnoreWhiteSpace = new Action(PatchMessages.PreviewPatchPage2_IgnoreWSAction, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_ENABLED)){
 			public void run(){
@@ -249,6 +255,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		fIgnoreWhiteSpace.setChecked(false);
 		fIgnoreWhiteSpace.setToolTipText(PatchMessages.PreviewPatchPage2_IgnoreWSTooltip);
 		fIgnoreWhiteSpace.setDisabledImageDescriptor(CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_DISABLED));
+		fIgnoreWhiteSpace.setId(ignoreWSID);
 		
 		fReversePatch = new Action(PatchMessages.PreviewPatchPage_ReversePatch_text, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REVERSE_PATCH_ENABLED)){
 			public void run(){
@@ -260,6 +267,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		};
 		fReversePatch.setChecked(false);
 		fReversePatch.setToolTipText(PatchMessages.PreviewPatchPage_ReversePatch_text);
+		fReversePatch.setId(reversePatchID);
 		
 		return new Action[]{fIgnoreWhiteSpace, fRetargetSelection, fReversePatch};
 	}
@@ -286,6 +294,10 @@ public class PreviewPatchPage2 extends WizardPage {
 		}
 		
 		patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
+		
+		if (fPatchWizard.getPatcher().isWorkspacePatch()){
+			patcherCompareEditorInput.setContributedActionEnablement(retargetID, true);
+		}
 		
 	}
 	/*

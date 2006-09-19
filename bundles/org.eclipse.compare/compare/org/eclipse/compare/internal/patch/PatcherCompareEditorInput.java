@@ -212,6 +212,7 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 	private PreviewPatchPage2 previewPatchPage;
 	
 	private HashMap nodesToDiffs;
+	private HashMap contributedActions;
 	
 	public PatcherCompareEditorInput() {
 		super(new CompareConfiguration());
@@ -538,16 +539,14 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 	
 	public void contributeDiffViewerToolbarItems(Action[] actions, boolean workspacePatch){
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(viewer.getControl().getParent());
+		contributedActions = new HashMap();
 		if (tbm != null) {
 			tbm.removeAll();
 			
 			tbm.add(new Separator("contributed")); //$NON-NLS-1$
 			
 			for (int i = 0; i < actions.length; i++) {
-				//If this is a workspace patch, make sure all actions are enabled
-				if (workspacePatch)
-					actions[i].setEnabled(true);
-				
+				contributedActions.put(actions[i].getId(), actions[i]);
 				tbm.appendToGroup("contributed", actions[i]); //$NON-NLS-1$
 			}
 			
@@ -627,5 +626,12 @@ public class PatcherCompareEditorInput extends CompareEditorInput {
 	 */
 	public void setPreviewPatchPage(PreviewPatchPage2 page) {
 		previewPatchPage = page;
+	}
+	
+	public void setContributedActionEnablement(String actionID, boolean enabled){
+		Object obj = contributedActions.get(actionID);
+		if (obj != null && obj instanceof Action){
+			((Action) obj).setEnabled(enabled);
+		}
 	}
 }
