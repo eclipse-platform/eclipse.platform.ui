@@ -262,17 +262,6 @@ public final class RulerColumnDescriptor {
 		return column;
 	}
 
-	/**
-	 * Notifies the descriptor of the fact that a column is no longer needed. Calls the
-	 * {@link IContributedRulerColumn#columnRemoved()} hook.
-	 * 
-	 * @param column the column that is no longer used
-	 */
-	public void disposeColumn(IContributedRulerColumn column) {
-		Assert.isLegal(column != null);
-		column.columnRemoved();
-	}
-
 	/*
 	 * @see java.lang.Object#toString()
 	 * @since 3.3

@@ -252,17 +252,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.3
 	 */
 	private boolean fIsDerivedStateValidated= false;
-	/**
-	 * The delegating annotation ruler contribution.
-	 * @since 3.3
-	 */
-	private AnnotationColumn fAnnotationColumn;
 
+	
+	/*
+	 * Workaround for IllegalAccessError thrown because we are accessing
+	 * a protected method in a different bundle from an inner class.
+	 */
 	private IVerticalRuler internalGetVerticalRuler() {
-		/*
-		 * Workaround for IllegalAccessError thrown because we are accessing a protected method in a
-		 * different bundle from an inner class.
-		 */
 		return getVerticalRuler();
 	}
 	
@@ -649,12 +645,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			 * @see org.eclipse.ui.texteditor.rulers.ColumnSupport#initializeColumn(org.eclipse.ui.texteditor.rulers.AbstractContributedRulerColumn)
 			 */
 			protected void initializeColumn(IContributedRulerColumn column) {
+				super.initializeColumn(column);
 				RulerColumnDescriptor descriptor= column.getDescriptor();
 				IVerticalRuler ruler= internalGetVerticalRuler();
 				if (ruler instanceof CompositeRuler) {
 					if (AnnotationColumn.ID.equals(descriptor.getId())) {
-						fAnnotationColumn= (AnnotationColumn) column;
-						fAnnotationColumn.setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
+						((AnnotationColumn)column).setDelegate(createAnnotationRulerColumn((CompositeRuler) ruler));
 					} else if (LineNumberColumn.ID.equals(descriptor.getId())) {
 						fLineColumn= ((LineNumberColumn) column);
 						fLineColumn.setForwarder(new LineNumberColumn.ICompatibilityForwarder() {
@@ -670,6 +666,14 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 						});
 					}
 				}
+			}
+
+			/*
+			 * @see org.eclipse.ui.texteditor.AbstractTextEditor.ColumnSupport#dispose()
+			 */
+			public void dispose() {
+				fLineColumn= null;
+				super.dispose();
 			}
 		};
 	}

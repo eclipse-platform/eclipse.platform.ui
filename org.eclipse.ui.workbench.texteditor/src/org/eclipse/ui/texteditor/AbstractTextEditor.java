@@ -1489,6 +1489,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected static class ColumnSupport implements IColumnSupport {
 		private final AbstractTextEditor fEditor;
 		private final RulerColumnRegistry fRegistry;
+		private final List fColumns;
 
 		/**
 		 * Creates a new column support for the given editor. Only the editor itself should normally
@@ -1502,8 +1503,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			Assert.isLegal(registry != null);
 			fEditor= editor;
 			fRegistry= registry;
+			fColumns= new ArrayList();
 		}
-		
+
 		/*
 		 * @see org.eclipse.ui.texteditor.IColumnSupport#setColumnVisible(java.lang.String, boolean)
 		 */
@@ -1533,6 +1535,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			SafeRunnable runnable= new SafeRunnable() {
 				public void run() throws Exception {
 					IContributedRulerColumn column= descriptor.createColumn(fEditor);
+					fColumns.add(column);
 					initializeColumn(column);
 					ruler.addDecorator(idx, column);
 				}
@@ -1542,6 +1545,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		/**
 		 * Hook to let subclasses initialize a newly created column.
+		 * <p>
+		 * Subclasses may extend this method.</p>
 		 * 
 		 * @param column the created column
 		 */
@@ -1549,12 +1554,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		private void removeColumn(final CompositeRuler ruler, final RulerColumnDescriptor descriptor) {
-			final IContributedRulerColumn target= getVisibleColumn(ruler, descriptor);
-			if (target != null) {
+			removeColumn(ruler, getVisibleColumn(ruler, descriptor));
+		}
+		
+		private void removeColumn(final CompositeRuler ruler, final IContributedRulerColumn rulerColumn) {
+			if (rulerColumn != null) {
 				SafeRunnable runnable= new SafeRunnable() {
 					public void run() throws Exception {
-						ruler.removeDecorator(target);
-						descriptor.disposeColumn(target);
+						if (ruler != null)
+							ruler.removeDecorator(rulerColumn);
+						rulerColumn.columnRemoved();
 					}
 				};
 				SafeRunner.run(runnable);
@@ -1644,30 +1653,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return null;
 		}
 
-		/*
-		 * @see org.eclipse.ui.texteditor.rulers.IColumnSupport#dispose()
+		/**
+		 * {@inheritDoc}
+		 * <p>
+		 * Subclasses may extend this method.</p>
+		 * 
 		 */
 		public void dispose() {
-			CompositeRuler ruler= getRuler();
-			if (ruler == null)
-				return;
-
-			List toRemove= new ArrayList(10);
-			for (Iterator it= ruler.getDecoratorIterator(); it.hasNext();) {
-				IVerticalRulerColumn column= (IVerticalRulerColumn) it.next();
-				if (column instanceof IContributedRulerColumn) {
-					RulerColumnDescriptor rcd= ((IContributedRulerColumn)column).getDescriptor();
-					if (rcd != null)
-						toRemove.add(rcd);
-				}
-			}
-			for (Iterator it= toRemove.iterator(); it.hasNext();) {
-				RulerColumnDescriptor rcd= (RulerColumnDescriptor) it.next();
-				removeColumn(ruler, rcd);
-			}
+			for (Iterator iter= new ArrayList(fColumns).iterator(); iter.hasNext();)
+				removeColumn(getRuler(), (IContributedRulerColumn)iter.next());
 		}
 	}
-
 
 
 	/**
@@ -2672,7 +2668,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @param ruler the composite ruler to add contributions to
 	 * @since 3.3
 	 */
-	protected void updateContributedRulerContributions(CompositeRuler ruler) {
+	protected void updateContributedRulerColumns(CompositeRuler ruler) {
 		IColumnSupport support= (IColumnSupport)getAdapter(IColumnSupport.class);
 		if (support == null)
 			return;
@@ -2948,7 +2944,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		IVerticalRuler ruler= getVerticalRuler();
 		if (ruler instanceof CompositeRuler)
-			updateContributedRulerContributions((CompositeRuler) ruler);
+			updateContributedRulerColumns((CompositeRuler) ruler);
 		
 	}
 
@@ -3352,7 +3348,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			IVerticalRuler ruler= getVerticalRuler();
 			if (ruler instanceof CompositeRuler)
-				updateContributedRulerContributions((CompositeRuler) ruler);
+				updateContributedRulerColumns((CompositeRuler) ruler);
 			
 		}
 	}
@@ -3558,9 +3554,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fConfiguration != null)
 			fConfiguration= null;
 
-		if (fColumnSupport != null)
+		if (fColumnSupport != null) {
 			fColumnSupport.dispose();
-		
+			fColumnSupport= null;
+		}
+
 		if (fVerticalRuler != null)
 			fVerticalRuler= null;
 
