@@ -49,6 +49,12 @@
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.simple">
          </action>
+         <action
+               class="org.eclipse.ui.forms.examples.internal.dialogs.OpenFormDialog"
+               id="org.eclipse.ui.forms.examples.openDialog"
+               label="Open Form Dialog..."
+               menubarPath="org.eclipse.ui.forms.examples.menu/group">
+         </action>
       </actionSet>
    </extension>
    <extension

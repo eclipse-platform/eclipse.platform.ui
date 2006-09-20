@@ -37,7 +37,7 @@ public class FreeFormPage extends FormPage {
 	public FreeFormPage(FormEditor editor) {
 		super(editor, "first", "First Page");
 	}
-	protected void createFormContent(IManagedForm managedForm) {
+	public static final void createSharedFormContent(IManagedForm managedForm) {
 		ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
@@ -64,7 +64,11 @@ public class FreeFormPage extends FormPage {
 		createExpandable(form, toolkit);
 		createFormTextSection(form, toolkit);
 	}
-	private void createExpandable(final ScrolledForm form, final FormToolkit toolkit) {
+	
+	protected void createFormContent(IManagedForm managedForm) {
+		createSharedFormContent(managedForm);
+	}
+	private static void createExpandable(final ScrolledForm form, final FormToolkit toolkit) {
 		final ExpandableComposite exp = toolkit.createExpandableComposite(form
 				.getBody(), ExpandableComposite.TREE_NODE
 		//	ExpandableComposite.NONE
@@ -96,7 +100,7 @@ public class FreeFormPage extends FormPage {
 		exp.setLayoutData(td);
 	}
 	
-	private void createFormTextSection(final ScrolledForm form, FormToolkit toolkit) {
+	private static void createFormTextSection(final ScrolledForm form, FormToolkit toolkit) {
 		Section section =
 			toolkit.createSection(
 				form.getBody(),
@@ -125,7 +129,7 @@ public class FreeFormPage extends FormPage {
 		section.setLayoutData(td);
 	}
 
-	private void loadFormText(final FormText rtext, FormToolkit toolkit) {
+	private static void loadFormText(final FormText rtext, FormToolkit toolkit) {
 		rtext.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				MessageDialog.openInformation(rtext.getShell(), "Eclipse Forms", 
@@ -161,12 +165,12 @@ public class FreeFormPage extends FormPage {
 			}
 		}
 	}
-	private void createControl(FormText ftext, FormToolkit toolkit) {
+	private static void createControl(FormText ftext, FormToolkit toolkit) {
 		TreeNode node = new TreeNode(ftext, SWT.NULL);
 		toolkit.adapt(node, true, true);
 		ftext.setControl("node", node);
 	}
-	private void createCompositeControl(FormText ftext, FormToolkit toolkit) {
+	private static void createCompositeControl(FormText ftext, FormToolkit toolkit) {
 		Composite comp = toolkit.createComposite(ftext);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
