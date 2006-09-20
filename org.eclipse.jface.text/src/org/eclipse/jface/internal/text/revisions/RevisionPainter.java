@@ -613,6 +613,7 @@ public final class RevisionPainter {
 			fRevisionInfo= info;
 			fChangeRegions= null;
 			updateFocusRegion(null);
+			handleRevisionSelected(null);
 			fColorTool.setInfo(info);
 			postRedraw();
 		}
