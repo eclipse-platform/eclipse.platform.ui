@@ -188,18 +188,18 @@ public class ModifyWorkingSetDelegate extends
 		if (selection instanceof IStructuredSelection) {
 			Collection selectedElements = ((IStructuredSelection) getSelection())
 			.toList();
-			// ensure every item is of type IAdaptable
-			boolean allAdaptable = true;
+			// ensure every item is of type IAdaptable and is NOT an IWorkingSet (minimal fix for 157799)
+			boolean minimallyOkay = true;
 			for (Iterator i = selectedElements.iterator(); i
 					.hasNext();) {
 				Object object = i.next();
-				if (!(object instanceof IAdaptable)) {
-					allAdaptable = false;
+				if (!(object instanceof IAdaptable) || object instanceof IWorkingSet) {
+					minimallyOkay = false;
 					break;
 				}
 			}
 			// only do this work if the selection is adaptable
-			if (allAdaptable) {
+			if (minimallyOkay) {
 				IWorkingSet[][] typedSets = splitSets();
 
 				for (int i = 0; i < typedSets.length; i++) {
