@@ -121,7 +121,7 @@ public final class RevisionPainter {
 		/**
 		 * The shade for the focus boxes.
 		 */
-		private static final float FOCUS_COLOR_SHADING= 0.9f;
+		private static final float FOCUS_COLOR_SHADING= 1f;
 
 		/**
 		 * A list of {@link Long}, storing the age of each revision in a sorted list.
@@ -203,16 +203,7 @@ public final class RevisionPainter {
 			Assert.isLegal(scale >= 0.0);
 			Assert.isLegal(scale <= 1.0);
 			RGB background= getBackground().getRGB();
-			
-			// focus coloring
-			if (focus) {
-				scale+= FOCUS_COLOR_SHADING;
-				if (scale > 1) {
-					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
-					scale= 2 - scale;
-				}
-			}
-			
+
 			// normalize to lie within [MIN_SHADING, MAX_SHADING]
 			// use more intense colors if the ruler is narrow (i.e. not showing line numbers)
 			boolean makeIntense= getWidth() <= 15;
@@ -220,6 +211,15 @@ public final class RevisionPainter {
 			float max= MAX_SHADING + intensityShift;
 			float min= MIN_SHADING + intensityShift;
 			scale= (max - min) * scale + min;
+
+			// focus coloring
+			if (focus) {
+				scale += FOCUS_COLOR_SHADING;
+				if (scale > 1) {
+					background= new RGB(255 - background.red, 255 - background.green, 255 - background.blue);
+					scale= 2 - scale;
+				}
+			}
 
 			return Colors.blend(background, color, scale);
 		}
