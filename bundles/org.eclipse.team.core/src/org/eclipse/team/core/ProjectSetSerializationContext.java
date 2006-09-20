@@ -12,6 +12,9 @@
 
 package org.eclipse.team.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -23,6 +26,7 @@ import org.eclipse.core.resources.IProject;
 public class ProjectSetSerializationContext {
 	
 	private final String filename;
+	private final Map properties = new HashMap();
 
 	/**
 	 * Create a serialization context with no filename
@@ -78,5 +82,26 @@ public class ProjectSetSerializationContext {
 	 */
 	public String getFilename() {
 		return filename;
+	}
+	
+	/**
+	 * Set a property of this context.
+	 * @since 3.3
+	 * @param key the property key
+	 * @param value the property value
+	 */
+	public void setProperty(String key, Object value) {
+		properties.put(key, value);
+	}
+	
+	/**
+	 * Return the property for the given key or <code>null</code>
+	 * if the property is not set.
+	 * @param key the property key
+	 * @return the property value
+	 * @since 3.3
+	 */
+	public Object getProperty(String key) {
+		return properties.get(key);
 	}
 }
