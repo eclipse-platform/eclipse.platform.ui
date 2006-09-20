@@ -104,10 +104,14 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 						}
 					}
 					
+						
 					UIProjectSetSerializationContext context = new UIProjectSetSerializationContext(getShell(), filename);
 					
 					BufferedWriter writer = null;
 					try {
+						// if file was written to the workspace, perform the validateEdit
+						if (!locationPage.isSaveToFileSystem())
+							locationPage.validateEditWorkspaceFile(getShell());
 						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")); //$NON-NLS-1$
 						
 						//

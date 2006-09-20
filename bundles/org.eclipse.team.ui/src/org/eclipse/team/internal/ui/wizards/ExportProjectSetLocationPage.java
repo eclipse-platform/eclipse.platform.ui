@@ -15,9 +15,8 @@ import java.util.ArrayList;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -27,6 +26,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -404,6 +404,16 @@ public class ExportProjectSetLocationPage extends TeamWizardPage {
 			}
 
 			return super.getChildren(element);
+		}
+	}
+
+
+	public void validateEditWorkspaceFile(Shell shell) throws TeamException {
+		if (workspaceFile == null || ! workspaceFile.exists() || !workspaceFile.isReadOnly())
+			return;
+		IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {workspaceFile}, shell);
+		if (!status.isOK()) {
+			throw new TeamException(status);
 		}
 	}
 }
