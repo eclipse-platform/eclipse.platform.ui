@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
-import com.ibm.icu.text.Collator;
-
 import java.util.HashMap;
 
 import org.eclipse.core.runtime.CoreException;
@@ -36,7 +34,7 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -68,14 +66,11 @@ import org.eclipse.search2.internal.ui.OpenSearchPreferencesAction;
 
 public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
 	
-	public static class DecoratorIgnoringViewerSorter extends ViewerSorter {
+	public static class DecoratorIgnoringViewerSorter extends ViewerComparator {
 		private final ILabelProvider fLabelProvider;
-		private Collator fNewCollator;
 		
 		public DecoratorIgnoringViewerSorter(ILabelProvider labelProvider) {
-			super(null); // lazy initialization
 			fLabelProvider= labelProvider;
-			fNewCollator= null;
 		}
 		
 		/* (non-Javadoc)
@@ -102,26 +97,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	            name1 = "";//$NON-NLS-1$
 	        if (name2 == null)
 	            name2 = "";//$NON-NLS-1$
-	        return getNewCollator().compare(name1, name2);
+	        return getComparator().compare(name1, name2);
 	    }
-	    
-		/* (non-Javadoc)
-		 * @see org.eclipse.jface.viewers.ViewerSorter#getCollator()
-		 */
-		public final java.text.Collator getCollator() {
-			// kept in for API compatibility
-			if (collator == null) {
-				collator= java.text.Collator.getInstance();
-			}
-			return collator;
-		}
-		
-		private final Collator getNewCollator() {
-			if (fNewCollator == null) {
-				fNewCollator= Collator.getInstance();
-			}
-			return fNewCollator;
-		}
 	}
 	
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
@@ -175,7 +152,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, fCurrentSortOrder);
 		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(this));
-		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
+		viewer.setComparator(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
 		addDragAdapters(viewer);
 	}
@@ -185,7 +162,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL);
 		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
-		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
+		viewer.setComparator(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
 		addDragAdapters(viewer);
 	}
