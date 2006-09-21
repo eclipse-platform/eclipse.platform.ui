@@ -422,7 +422,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * After this method has been executed the caller knows that any installed annotation hover has been installed.
 	 */
 	protected void ensureAnnotationHoverManagerInstalled() {
-		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null && fHoverControlCreator != null) {
+		if (fVerticalRuler != null && (fAnnotationHover != null || !isVerticalRulerOnlyShowingAnnotations()) && fVerticalRulerHoveringController == null && fHoverControlCreator != null) {
 			fVerticalRulerHoveringController= new AnnotationBarHoverManager(fVerticalRuler, this, fAnnotationHover, fHoverControlCreator);
 			fVerticalRulerHoveringController.install(fVerticalRuler.getControl());
 		}
@@ -975,14 +975,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	public void showAnnotations(boolean show) {
 		boolean old= fIsVerticalRulerVisible;
 
-		boolean isAnnotationRuler= false;
-		if (fVerticalRuler instanceof CompositeRuler) {
-			Iterator iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
-			isAnnotationRuler= iter.hasNext() && iter.next() instanceof AnnotationRulerColumn && !iter.hasNext();
-		} else if (fVerticalRuler instanceof VerticalRuler)
-			isAnnotationRuler= true;
-
-		fIsVerticalRulerVisible= (fVerticalRuler != null && (show || !isAnnotationRuler));
+		fIsVerticalRulerVisible= (fVerticalRuler != null && (show || !isVerticalRulerOnlyShowingAnnotations()));
 		if (old != fIsVerticalRulerVisible && fComposite != null && !fComposite.isDisposed())
 			fComposite.layout();
 
@@ -992,6 +985,22 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fVerticalRulerHoveringController.dispose();
 			fVerticalRulerHoveringController= null;
 		}
+	}
+
+	/**
+	 * Tells whether the vertical ruler only acts as annotation ruler.
+	 * 
+	 * @return <code>true</code> if the vertical ruler only show annotations
+	 */
+	private boolean isVerticalRulerOnlyShowingAnnotations() {
+		if (fVerticalRuler instanceof VerticalRuler)
+			return true;
+		
+		if (fVerticalRuler instanceof CompositeRuler) {
+			Iterator iter= ((CompositeRuler)fVerticalRuler).getDecoratorIterator();
+			return iter.hasNext() && iter.next() instanceof AnnotationRulerColumn && !iter.hasNext();
+		}
+		return false;
 	}
 
 	/**
