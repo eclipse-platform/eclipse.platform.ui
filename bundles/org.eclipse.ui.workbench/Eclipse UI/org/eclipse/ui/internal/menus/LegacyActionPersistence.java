@@ -527,7 +527,16 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// Add a mapping from this action id to the command id.
 			final IActionCommandMappingService mappingService = (IActionCommandMappingService) window
 					.getService(IActionCommandMappingService.class);
-			mappingService.map(actionId, command.getId());
+			if (mappingService != null) {
+				mappingService.map(actionId, command.getId());
+			} else {
+				// this is probably the shutdown case where the service has
+				// already disposed.
+				addWarning(
+						warningsToLog,
+						"Retarget service unavailable", //$NON-NLS-1$
+						element, actionId);
+			}
 			return; // This is nothing more to be done.
 
 		} else if (classString == null) {
