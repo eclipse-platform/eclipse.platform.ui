@@ -263,14 +263,14 @@ public interface ITextViewer {
 	 * presentation accordingly. An appropriate <code>TextEvent</code> is
 	 * issued. This text event does not carry a related document event.
 	 *
-	 * @param document the viewer's new input document
+	 * @param document the viewer's new input document <code>null</code> if none
 	 */
 	void setDocument(IDocument document);
 
 	/**
 	 * Returns the text viewer's input document.
 	 *
-	 * @return the viewer's input document
+	 * @return the viewer's input document or <code>null</code> if none
 	 */
 	IDocument getDocument();
 
@@ -311,7 +311,7 @@ public interface ITextViewer {
 	 * related document event. This method is a convenience method for
 	 * <code>setDocument(document);setVisibleRegion(offset, length)</code>.
 	 *
-	 * @param document the new input document
+	 * @param document the new input document or <code>null</code> if none
 	 * @param modelRangeOffset the offset of the model range
 	 * @param modelRangeLength the length of the model range
 	 */
