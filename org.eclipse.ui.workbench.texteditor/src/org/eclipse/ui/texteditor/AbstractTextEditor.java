@@ -2698,6 +2698,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * </p>
 	 *
 	 * @return the column support or <code>null</code> if none
+	 * @since 3.3
 	 */
 	protected IColumnSupport createColumnSupport() {
 		return null;
