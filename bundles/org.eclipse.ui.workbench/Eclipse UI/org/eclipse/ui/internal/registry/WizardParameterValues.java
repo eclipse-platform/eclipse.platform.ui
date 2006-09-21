@@ -66,9 +66,16 @@ public abstract class WizardParameterValues implements IParameterValues {
 
 			// Note: using description instead of label for the name
 			// to reduce possibilities of key collision in the map
-			final String name = wizardDescriptor.getDescription();
-			final String value = wizardDescriptor.getId();
-			values.put(name, value);
+			// final String name = wizardDescriptor.getDescription();
+			
+			// by request
+			String name = wizardDescriptor.getLabel();
+			final String id = wizardDescriptor.getId();
+			final String value = (String) values.get(name);
+			if (value!=null && !value.equals(id)) {
+				name = name + " (" + id + ")"; //$NON-NLS-1$//$NON-NLS-2$
+			}
+			values.put(name, id);
 		}
 
 		final IWizardCategory[] childCategories = wizardCategory
