@@ -278,8 +278,10 @@ public final class RevisionPainter {
 		public void mouseDown(MouseEvent e) {
 			if (e.button == 3)
 				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
-			if (e.button == 1)
+			if (e.button == 1) {
 				fMouseDownRegion= fFocusRegion;
+		    	postRedraw();
+			}
 		}
 
 		/*
@@ -613,7 +615,7 @@ public final class RevisionPainter {
 			fRevisionInfo= info;
 			fChangeRegions= null;
 			updateFocusRegion(null);
-			handleRevisionSelected(null);
+			handleRevisionSelected((Revision) null);
 			fColorTool.setInfo(info);
 			postRedraw();
 		}
@@ -805,11 +807,19 @@ public final class RevisionPainter {
 	 */
 	private void paintChangeRegion(ChangeRegion region, GC gc) {
 		Revision revision= region.getRevision();
-		gc.setBackground(lookupColor(revision, false));
+		Color bgColor= lookupColor(revision, false);
+		gc.setBackground(bgColor);
 		Color foreground= gc.getForeground();
-		boolean drawFocus= fFocusRevision != null ? revision == fFocusRevision : revision == fSelectedRevision;
-		if (drawFocus)
-			gc.setForeground(lookupColor(revision, true));
+		boolean drawText= fShowAuthor || fShowRevision;
+		boolean drawArmedFocus= region == fMouseHandler.fMouseDownRegion;
+		boolean drawSelection= !drawArmedFocus && revision == fSelectedRevision;
+		boolean drawFocus= !drawSelection && !drawArmedFocus && revision == fFocusRevision;
+		boolean resetColor= false;
+		Color focusColor;
+		if (drawArmedFocus || drawFocus || drawSelection)
+			focusColor= lookupColor(revision, true);
+		else
+			focusColor= null;
 
 		List ranges= region.getAdjustedRanges();
 		for (Iterator it= ranges.iterator(); it.hasNext();) {
@@ -819,15 +829,26 @@ public final class RevisionPainter {
 				continue;
 			
 			Rectangle box= computeBoxBounds(widgetRange);
-
-			if (drawFocus)
-				paintHighlight(gc, box);
-			else
+			if (drawArmedFocus) {
+				gc.setForeground(focusColor);
+				resetColor= true;
 				gc.fillRectangle(box);
+				gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
+				gc.drawRectangle(box.x + 1, box.y + 1, box.width - 3, box.height - 3); // inner highlight box
+			} else if (drawFocus || drawSelection) {
+				gc.setForeground(focusColor);
+				resetColor= true;
+				gc.fillRectangle(box);
+				gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
+			} else {
+				gc.fillRectangle(box);
+			}
 			
-			boolean drawText= fShowAuthor || fShowRevision;
 			if (drawText) {
-				gc.setForeground(foreground);
+				if (resetColor) {
+					gc.setForeground(foreground);
+					resetColor= false;
+				}
 				
 				int indentation= 1;
 				int baselineBias= getBaselineBias(gc, widgetRange.getStartLine());
@@ -842,7 +863,7 @@ public final class RevisionPainter {
 			}
 		}
 		
-		if (drawFocus || fShowAuthor || fShowRevision)
+		if (resetColor)
 			gc.setForeground(foreground);
 	}
 
@@ -874,17 +895,6 @@ public final class RevisionPainter {
 		return Math.max(0, baselineBias);
 	}
 	
-	/**
-	 * Paints the box for highlighted regions.
-	 * 
-	 * @param gc the {@link GC} to draw on
-	 * @param box the box to draw
-	 */
-	private void paintHighlight(GC gc, Rectangle box) {
-		gc.fillRectangle(box); // background
-		gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
-	}
-
 	/**
 	 * Looks up the color for a certain revision.
 	 * 
@@ -1174,6 +1184,25 @@ public final class RevisionPainter {
 		showOverviewAnnotations(fFocusRevision != null ? fFocusRevision : fSelectedRevision);
     	postRedraw();
     }
+    
+	/**
+	 * Handles the selection of a revision id and informs listeners
+	 * 
+     * @param id the selected revision id
+     */
+	void handleRevisionSelected(String id) {
+		Assert.isLegal(id != null);
+		if (fRevisionInfo == null)
+			return;
+
+		for (Iterator it= fRevisionInfo.getRevisions().iterator(); it.hasNext();) {
+			Revision revision= (Revision) it.next();
+			if (id.equals(revision.getId())) {
+				handleRevisionSelected(revision);
+				return;
+			}
+		}
+	}
     
     /**
      * Returns the selection provider.

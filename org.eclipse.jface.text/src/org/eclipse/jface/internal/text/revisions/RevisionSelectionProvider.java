@@ -128,12 +128,12 @@ public final class RevisionSelectionProvider implements ISelectionProvider {
     		return;
     	if (selection instanceof IStructuredSelection) {
     		Object first= ((IStructuredSelection) selection).getFirstElement();
-    		if (first instanceof Revision) {
-    			Revision revision= (Revision) first;
-    			fPainter.handleRevisionSelected(revision);
-    		} else if (selection.isEmpty()) {
-    			fPainter.handleRevisionSelected(null);
-    		}
+    		if (first instanceof Revision)
+				fPainter.handleRevisionSelected((Revision) first);
+			else if (first instanceof String)
+				fPainter.handleRevisionSelected((String) first);
+			else if (selection.isEmpty())
+				fPainter.handleRevisionSelected((Revision) null);
     	}
     }
 
