@@ -10,6 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring;
 
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+
+import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
+import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
@@ -21,20 +30,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
-import org.eclipse.ltk.internal.ui.refactoring.util.ViewerPane;
-
-import org.eclipse.compare.CompareUI;
-
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.PageBook;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.JFaceResources;
@@ -45,7 +40,13 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.PageBook;
+
+import org.eclipse.compare.CompareUI;
+
 import org.eclipse.ltk.ui.refactoring.IStatusContextViewer;
 
 public class RefactoringStatusViewer extends SashForm {
@@ -109,7 +110,7 @@ public class RefactoringStatusViewer extends SashForm {
 		}
 	}
 	
-	private static class RefactoringStatusSorter extends ViewerSorter {
+	private static class RefactoringStatusSorter extends ViewerComparator {
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			int r1= ((RefactoringStatusEntry)e1).getSeverity();
 			int r2= ((RefactoringStatusEntry)e2).getSeverity();
@@ -223,7 +224,7 @@ public class RefactoringStatusViewer extends SashForm {
 				fPreviousProblem.update();
 			}
 		});
-		fTableViewer.setSorter(new RefactoringStatusSorter());	
+		fTableViewer.setComparator(new RefactoringStatusSorter());	
 		Table tableControl= fTableViewer.getTable();
 		// must set the dialog font here since we pack the table and this
 		// might otherwise happen with the wrong font resulting in clipped

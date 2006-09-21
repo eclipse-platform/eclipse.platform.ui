@@ -70,7 +70,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		public final void run() {
 			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			provider.setSortProjects(true);
-			fHistoryViewer.setSorter(fViewerSorter);
+			fHistoryViewer.setComparator(fViewerComperator);
 			fHistoryViewer.refresh(false);
 			reconcileCheckState();
 			reconcileSelectionState();
@@ -85,7 +85,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 		public final void run() {
 			final BrowseRefactoringHistoryContentProvider provider= (BrowseRefactoringHistoryContentProvider) fHistoryViewer.getContentProvider();
 			provider.setSortProjects(false);
-			fHistoryViewer.setSorter(null);
+			fHistoryViewer.setComparator(null);
 			fHistoryViewer.refresh(false);
 			reconcileCheckState();
 			reconcileSelectionState();
@@ -98,7 +98,7 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	private ToolBarManager fToolBarManager= null;
 
 	/** The viewer sorter */
-	private final BrowseRefactoringHistoryViewerSorter fViewerSorter= new BrowseRefactoringHistoryViewerSorter();
+	private final BrowseRefactoringHistoryViewerSorter fViewerComperator= new BrowseRefactoringHistoryViewerSorter();
 
 	/**
 	 * Creates a new browse refactoring history control.

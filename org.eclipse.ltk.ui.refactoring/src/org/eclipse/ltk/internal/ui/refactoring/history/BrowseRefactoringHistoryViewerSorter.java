@@ -11,14 +11,14 @@
 package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Viewer sorter for the browse refactoring history control.
  * 
  * @since 3.2
  */
-public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
+public final class BrowseRefactoringHistoryViewerSorter extends ViewerComparator {
 
 	/**
 	 * {@inheritDoc}
@@ -36,7 +36,7 @@ public final class BrowseRefactoringHistoryViewerSorter extends ViewerSorter {
 		if (first instanceof RefactoringHistoryProject && second instanceof RefactoringHistoryProject) {
 			final RefactoringHistoryProject predecessor= (RefactoringHistoryProject) first;
 			final RefactoringHistoryProject successor= (RefactoringHistoryProject) second;
-			return getCollator().compare(predecessor.getProject(), successor.getProject());
+			return getComparator().compare(predecessor.getProject(), successor.getProject());
 		} else if (first instanceof RefactoringHistoryDate && second instanceof RefactoringHistoryDate) {
 			final RefactoringHistoryDate predecessor= (RefactoringHistoryDate) first;
 			final RefactoringHistoryDate successor= (RefactoringHistoryDate) second;
