@@ -810,7 +810,11 @@ public class CellLayout extends Layout {
      */
     protected void layout(Composite composite, boolean flushCache) {
         Control[] children = composite.getChildren();
-
+        
+        // If there are no children then this is a NO-OP
+        if (children.length == 0)
+        	return;
+        	
         initGrid(children);
 
         if (flushCache) {
