@@ -227,13 +227,20 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		}
 		if (types != null) {
 			for (int i = 0; i < types.length; i++) {
-				if (types[i].equals(IMarker.BOOKMARK)) {
-					addContext(WorkspaceUndoSupport.getBookmarksUndoContext());
-				} else if (types[i].equals(IMarker.TASK)) {
-					addContext(WorkspaceUndoSupport.getTasksUndoContext());
-				} else if (types[i] != null) {
-					// type is not known, use the workspace undo context
-					addContext(WorkspaceUndoSupport.getWorkspaceUndoContext());
+				// Marker type could be null if marker did not exist.
+				// This shouldn't happen, but can.
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=158129
+				if (types[i] != null) {
+					if (types[i].equals(IMarker.BOOKMARK)) {
+						addContext(WorkspaceUndoSupport
+								.getBookmarksUndoContext());
+					} else if (types[i].equals(IMarker.TASK)) {
+						addContext(WorkspaceUndoSupport.getTasksUndoContext());
+					} else if (types[i] != null) {
+						// type is not known, use the workspace undo context
+						addContext(WorkspaceUndoSupport
+								.getWorkspaceUndoContext());
+					}
 				}
 			}
 		}
@@ -270,7 +277,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return true;
 
 	}
-	
+
 	/**
 	 * Return a status indicating the projected outcome of undoing the marker
 	 * operation. The receiver is not responsible for remembering the result of
@@ -291,7 +298,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 
 	/*
 	 * Return a status indicating the projected outcome of executing the
-	 * receiver. 
+	 * receiver.
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
