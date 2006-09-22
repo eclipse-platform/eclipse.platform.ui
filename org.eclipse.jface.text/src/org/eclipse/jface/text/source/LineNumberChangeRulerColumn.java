@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Control;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.text.revisions.IRevisionListener;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
@@ -358,5 +359,21 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 		computeIndentations();
 		layout(true);
 		postRedraw();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#addRevisionListener(org.eclipse.jface.text.revisions.IRevisionListener)
+	 * @since 3.3
+	 */
+	public void addRevisionListener(IRevisionListener listener) {
+		fRevisionPainter.addRevisionListener(listener);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension#removeRevisionListener(org.eclipse.jface.text.revisions.IRevisionListener)
+	 * @since 3.3
+	 */
+	public void removeRevisionListener(IRevisionListener listener) {
+		fRevisionPainter.removeRevisionListener(listener);
 	}
 }

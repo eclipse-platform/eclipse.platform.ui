@@ -55,6 +55,7 @@
  </package>
 
  <package name="org.eclipse.jface.text.revisions">
+   <type name="RevisionEvent" instantiate="false"/>
  </package>
 
  <package name="org.eclipse.jface.text.source.projection">

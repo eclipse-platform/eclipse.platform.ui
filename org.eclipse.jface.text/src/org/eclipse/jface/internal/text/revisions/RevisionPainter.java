@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
@@ -55,8 +56,10 @@ import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
+import org.eclipse.jface.text.revisions.IRevisionListener;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.Revision;
+import org.eclipse.jface.text.revisions.RevisionEvent;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.RevisionRange;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
@@ -497,6 +500,11 @@ public final class RevisionPainter {
 	private final AnnotationListener fAnnotationListener= new AnnotationListener();
 	/** The selection provider. */
 	private final RevisionSelectionProvider fRevisionSelectionProvider= new RevisionSelectionProvider(this);
+	/**
+	 * The list of revision listeners.
+	 * @since 3.3.
+	 */
+	private final ListenerList fRevisionListeners= new ListenerList();
 
 	/* The context - column and viewer we are connected to. */
 
@@ -617,6 +625,7 @@ public final class RevisionPainter {
 			handleRevisionSelected((Revision) null);
 			fColorTool.setInfo(info);
 			postRedraw();
+			informListeners();
 		}
 	}
 
@@ -958,6 +967,7 @@ public final class RevisionPainter {
 				Hunk[] hunks= HunkComputer.computeHunks(fLineDiffer, fViewer.getDocument().getNumberOfLines());
 				fRevisionInfo.applyDiff(hunks);
 				fRevisionRanges= fRevisionInfo.getRanges();
+				informListeners();
 			}
 		}
 
@@ -1154,6 +1164,9 @@ public final class RevisionPainter {
 				return;
 			}
 		}
+		
+		// clear selection if it does not exist
+		handleRevisionSelected((Revision) null);
 	}
     
     /**
@@ -1498,6 +1511,43 @@ public final class RevisionPainter {
 			fRevisionIdChars= 0;
 			fShowAuthor= show;
 			postRedraw();
+		}
+	}
+
+	/**
+	 * Adds a revision listener.
+	 * 
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void addRevisionListener(IRevisionListener listener) {
+		fRevisionListeners.add(listener);
+	}
+
+	/**
+	 * Removes a revision listener.
+	 * 
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void removeRevisionListener(IRevisionListener listener) {
+		fRevisionListeners.remove(listener);
+	}
+
+	/**
+	 * Informs the revision listeners about a change.
+	 * 
+	 * @since 3.3
+	 */
+	private void informListeners() {
+		if (fRevisionInfo == null || fRevisionListeners.isEmpty())
+			return;
+
+		RevisionEvent event= new RevisionEvent(fRevisionInfo);
+		Object[] listeners= fRevisionListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++) {
+			IRevisionListener listener= (IRevisionListener) listeners[i];
+			listener.revisionInformationChanged(event);
 		}
 	}
 }

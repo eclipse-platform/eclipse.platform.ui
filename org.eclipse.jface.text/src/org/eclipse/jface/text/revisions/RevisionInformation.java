@@ -69,10 +69,12 @@ public final class RevisionInformation {
 
 	/**
 	 * Returns the line ranges of this revision information. The returned information is only valid
-	 * at the moment it is returned, and may change as the annotated document is modified. The
+	 * at the moment it is returned, and may change as the annotated document is modified. See
+	 * {@link IRevisionListener} for a way to be informed when the revision information changes. The
 	 * returned list is sorted by document offset.
 	 * 
 	 * @return an unmodifiable view of the line ranges (element type: {@link RevisionRange})
+	 * @see IRevisionListener
 	 * @since 3.3
 	 */
 	public List getRanges() {

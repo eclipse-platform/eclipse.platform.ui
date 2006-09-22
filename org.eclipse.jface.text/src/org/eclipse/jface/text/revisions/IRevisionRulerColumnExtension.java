@@ -80,4 +80,18 @@ public interface IRevisionRulerColumnExtension {
 	 * @return the revision selection provider
 	 */
 	ISelectionProvider getRevisionSelectionProvider();
+	/**
+	 * Adds a revision listener that will be notified when the displayed revision information
+	 * changes.
+	 * 
+	 * @param listener the listener to add
+	 */
+	void addRevisionListener(IRevisionListener listener);
+	/**
+	 * Removes a previously registered revision listener; nothing happens if <code>listener</code>
+	 * was not registered with the receiver.
+	 * 
+	 * @param listener the listener to remove
+	 */
+	void removeRevisionListener(IRevisionListener listener);
 }
