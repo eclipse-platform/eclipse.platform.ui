@@ -13,7 +13,6 @@ package org.eclipse.jface.internal.text.revisions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +58,7 @@ import org.eclipse.jface.text.information.IInformationProviderExtension2;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.text.revisions.RevisionInformation;
+import org.eclipse.jface.text.revisions.RevisionRange;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.CompositeRuler;
@@ -252,15 +252,15 @@ public final class RevisionPainter {
 	 */
 	private class MouseHandler implements MouseListener, MouseMoveListener, MouseTrackListener, Listener {
 
-		private ChangeRegion fMouseDownRegion;
+		private RevisionRange fMouseDownRegion;
 		
 		/*
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseUp(MouseEvent e) {
 			if (e.button == 1) {
-				ChangeRegion upRegion= fFocusRegion;
-				ChangeRegion downRegion= fMouseDownRegion;
+				RevisionRange upRegion= fFocusRange;
+				RevisionRange downRegion= fMouseDownRegion;
 				fMouseDownRegion= null;
 
 				if (upRegion == downRegion) {
@@ -279,7 +279,7 @@ public final class RevisionPainter {
 			if (e.button == 3)
 				updateFocusRevision(null); // kill any focus as the ctx menu is going to show
 			if (e.button == 1) {
-				fMouseDownRegion= fFocusRegion;
+				fMouseDownRegion= fFocusRange;
 		    	postRedraw();
 			}
 		}
@@ -337,7 +337,7 @@ public final class RevisionPainter {
 		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
 		 */
 		public void modelChanged(IAnnotationModel model) {
-			fChangeRegions= null;
+			clearRangeCache();
 			postRedraw();
 		}
 
@@ -439,11 +439,10 @@ public final class RevisionPainter {
 		 *      org.eclipse.jface.text.source.ILineRange, int)
 		 */
 		public Object getHoverInfo(ISourceViewer sourceViewer, ILineRange lineRange, int visibleNumberOfLines) {
-			ChangeRegion region= getChangeRegion(lineRange.getStartLine());
-			Object info= region == null ? null : region.getRevision().getHoverInfo();
-			if (info instanceof String) {
+			RevisionRange range= getRange(lineRange.getStartLine());
+			Object info= range == null ? null : range.getRevision().getHoverInfo();
+			if (info instanceof String)
 				info= addCSSToHTMLFragment((String) info);
-			}
 			return info;
 		}
 
@@ -472,8 +471,8 @@ public final class RevisionPainter {
 		 *      int)
 		 */
 		public ILineRange getHoverLineRange(ISourceViewer viewer, int lineNumber) {
-			ChangeRegion region= getChangeRegion(lineNumber);
-			return region == null ? null : new LineRange(lineNumber, 1);
+			RevisionRange range= getRange(lineNumber);
+			return range == null ? null : new LineRange(lineNumber, 1);
 		}
 
 		/*
@@ -525,8 +524,8 @@ public final class RevisionPainter {
 
 	/* Cache. */
 
-	/** The cached list of change regions adapted to quick diff. */
-	private ArrayList fChangeRegions= null;
+	/** The cached list of ranges adapted to quick diff. */
+	private List fRevisionRanges= null;
 	/** The annotations created for the overview ruler temporary display. */
 	private List fAnnotations= new ArrayList();
 
@@ -535,7 +534,7 @@ public final class RevisionPainter {
 	/** The current focus line, -1 for none. */
 	private int fFocusLine= -1;
 	/** The current focus region, <code>null</code> if none. */
-	private ChangeRegion fFocusRegion= null;
+	private RevisionRange fFocusRange= null;
 	/** The current focus revision, <code>null</code> if none. */
 	private Revision fFocusRevision= null;
 	/**
@@ -613,14 +612,14 @@ public final class RevisionPainter {
 			fRequiredWidth= -1;
 			fRevisionIdChars= 0;
 			fRevisionInfo= info;
-			fChangeRegions= null;
-			updateFocusRegion(null);
+			clearRangeCache();
+			updateFocusRange(null);
 			handleRevisionSelected((Revision) null);
 			fColorTool.setInfo(info);
 			postRedraw();
 		}
 	}
-	
+
 	/**
 	 * Changes the rendering mode and triggers redrawing if needed.
 	 *  
@@ -690,10 +689,10 @@ public final class RevisionPainter {
 		}
 		
 		// draw change regions
-		List/* <ChangeRegion> */changes= getChangeRegions(visibleLines);
-		for (Iterator it= changes.iterator(); it.hasNext();) {
-			ChangeRegion region= (ChangeRegion) it.next();
-			paintChangeRegion(region, gc);
+		List/* <RevisionRange> */ranges= getRanges(visibleLines);
+		for (Iterator it= ranges.iterator(); it.hasNext();) {
+			RevisionRange region= (RevisionRange) it.next();
+			paintRange(region, gc);
 		}
 	}
 
@@ -802,69 +801,52 @@ public final class RevisionPainter {
 	/**
 	 * Paints a single change region onto <code>gc</code>.
 	 * 
-	 * @param region the change region to paint
+	 * @param range the range to paint
 	 * @param gc the {@link GC} to paint on
 	 */
-	private void paintChangeRegion(ChangeRegion region, GC gc) {
-		Revision revision= region.getRevision();
-		Color bgColor= lookupColor(revision, false);
-		gc.setBackground(bgColor);
-		Color foreground= gc.getForeground();
-		boolean drawText= fShowAuthor || fShowRevision;
-		boolean drawArmedFocus= region == fMouseHandler.fMouseDownRegion;
+	private void paintRange(RevisionRange range, GC gc) {
+		ILineRange widgetRange= modelLinesToWidgetLines(range);
+		if (widgetRange == null)
+			return;
+
+		Revision revision= range.getRevision();
+		boolean drawArmedFocus= range == fMouseHandler.fMouseDownRegion;
 		boolean drawSelection= !drawArmedFocus && revision == fSelectedRevision;
 		boolean drawFocus= !drawSelection && !drawArmedFocus && revision == fFocusRevision;
-		boolean resetColor= false;
-		Color focusColor;
-		if (drawArmedFocus || drawFocus || drawSelection)
-			focusColor= lookupColor(revision, true);
-		else
-			focusColor= null;
+		Rectangle box= computeBoxBounds(widgetRange);
 
-		List ranges= region.getAdjustedRanges();
-		for (Iterator it= ranges.iterator(); it.hasNext();) {
-			ILineRange range= (ILineRange) it.next();
-			ILineRange widgetRange= modelLinesToWidgetLines(range);
-			if (widgetRange == null)
-				continue;
-			
-			Rectangle box= computeBoxBounds(widgetRange);
-			if (drawArmedFocus) {
-				gc.setForeground(focusColor);
-				resetColor= true;
-				gc.fillRectangle(box);
-				gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
-				gc.drawRectangle(box.x + 1, box.y + 1, box.width - 3, box.height - 3); // inner highlight box
-			} else if (drawFocus || drawSelection) {
-				gc.setForeground(focusColor);
-				resetColor= true;
-				gc.fillRectangle(box);
-				gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
-			} else {
-				gc.fillRectangle(box);
-			}
-			
-			if (drawText) {
-				if (resetColor) {
-					gc.setForeground(foreground);
-					resetColor= false;
-				}
-				
-				int indentation= 1;
-				int baselineBias= getBaselineBias(gc, widgetRange.getStartLine());
-				if (fShowAuthor && fShowRevision) {
-					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
-					gc.drawString(revision.getAuthor(), fAuthorInset, box.y + baselineBias, true);
-				} else if (fShowAuthor) {
-					gc.drawString(revision.getAuthor(), indentation, box.y + baselineBias, true);
-				} else if (fShowRevision) {
-					gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
-				}
+		gc.setBackground(lookupColor(revision, false));
+		if (drawArmedFocus) {
+			Color foreground= gc.getForeground();
+			Color focusColor= lookupColor(revision, true);
+			gc.setForeground(focusColor);
+			gc.fillRectangle(box);
+			gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
+			gc.drawRectangle(box.x + 1, box.y + 1, box.width - 3, box.height - 3); // inner highlight box
+			gc.setForeground(foreground);
+		} else if (drawFocus || drawSelection) {
+			Color foreground= gc.getForeground();
+			Color focusColor= lookupColor(revision, true);
+			gc.setForeground(focusColor);
+			gc.fillRectangle(box);
+			gc.drawRectangle(box.x, box.y, box.width - 1, box.height - 1); // highlight box
+			gc.setForeground(foreground);
+		} else {
+			gc.fillRectangle(box);
+		}
+
+		if ((fShowAuthor || fShowRevision)) {
+			int indentation= 1;
+			int baselineBias= getBaselineBias(gc, widgetRange.getStartLine());
+			if (fShowAuthor && fShowRevision) {
+				gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
+				gc.drawString(revision.getAuthor(), fAuthorInset, box.y + baselineBias, true);
+			} else if (fShowAuthor) {
+				gc.drawString(revision.getAuthor(), indentation, box.y + baselineBias, true);
+			} else if (fShowRevision) {
+				gc.drawString(revision.getId(), indentation, box.y + baselineBias, true);
 			}
 		}
-		
-		if (resetColor)
-			gc.setForeground(foreground);
 	}
 
 	/**
@@ -907,49 +889,49 @@ public final class RevisionPainter {
 	}
 
 	/**
-	 * Returns the change region that contains the given line in one of its adjusted line ranges, or
+	 * Returns the revision range that contains the given line, or
 	 * <code>null</code> if there is none.
 	 * 
 	 * @param line the line of interest
-	 * @return the corresponding <code>ChangeRegion</code> or <code>null</code>
+	 * @return the corresponding <code>RevisionRange</code> or <code>null</code>
 	 */
-	private ChangeRegion getChangeRegion(int line) {
-		List regions= getRegionCache();
+	private RevisionRange getRange(int line) {
+		List ranges= getRangeCache();
 
-		if (regions.isEmpty() || line == -1)
+		if (ranges.isEmpty() || line == -1)
 			return null;
 
-		for (Iterator it= regions.iterator(); it.hasNext();) {
-			ChangeRegion region= (ChangeRegion) it.next();
-			if (contains(region.getAdjustedRanges(), line))
-				return region;
+		for (Iterator it= ranges.iterator(); it.hasNext();) {
+			RevisionRange range= (RevisionRange) it.next();
+			if (contains(range, line))
+				return range;
 		}
 
 		// line may be right after the last region
-		ChangeRegion lastRegion= (ChangeRegion) regions.get(regions.size() - 1);
-		if (line == end(lastRegion.getAdjustedCoverage()))
+		RevisionRange lastRegion= (RevisionRange) ranges.get(ranges.size() - 1);
+		if (line == end(lastRegion))
 			return lastRegion;
 		return null;
 	}
 
 	/**
-	 * Returns the sublist of all <code>ChangeRegion</code>s that intersect with the given lines.
+	 * Returns the sublist of all <code>RevisionRange</code>s that intersect with the given lines.
 	 * 
 	 * @param lines the model based lines of interest
-	 * @return elementType: ChangeRegion
+	 * @return elementType: RevisionRange
 	 */
-	private List getChangeRegions(ILineRange lines) {
-		List regions= getRegionCache();
+	private List getRanges(ILineRange lines) {
+		List ranges= getRangeCache();
 
 		// return the interesting subset
 		int end= end(lines);
 		int first= -1, last= -1;
-		for (int i= 0; i < regions.size(); i++) {
-			ChangeRegion region= (ChangeRegion) regions.get(i);
-			int coverageEnd= end(region.getAdjustedCoverage());
-			if (first == -1 && coverageEnd > lines.getStartLine())
+		for (int i= 0; i < ranges.size(); i++) {
+			RevisionRange range= (RevisionRange) ranges.get(i);
+			int rangeEnd= end(range);
+			if (first == -1 && rangeEnd > lines.getStartLine())
 				first= i;
-			if (first != -1 && coverageEnd > end) {
+			if (first != -1 && rangeEnd > end) {
 				last= i;
 				break;
 			}
@@ -957,49 +939,40 @@ public final class RevisionPainter {
 		if (first == -1)
 			return Collections.EMPTY_LIST;
 		if (last == -1)
-			last= regions.size() - 1; // bottom index may be one too much
+			last= ranges.size() - 1; // bottom index may be one too much
 
-		return regions.subList(first, last + 1);
+		return ranges.subList(first, last + 1);
 	}
 
 	/**
-	 * Gets all change regions of the revisions in the revision model and adapts them to the current
+	 * Gets all change ranges of the revisions in the revision model and adapts them to the current
 	 * quick diff information. The list is cached.
 	 * 
 	 * @return the list of all change regions, with diff information applied
 	 */
-	private List getRegionCache() {
-		if (fChangeRegions == null && fRevisionInfo != null) {
-			ArrayList regions= new ArrayList();
-			// flatten
-			for (Iterator revisions= fRevisionInfo.getRevisions().iterator(); revisions.hasNext();) {
-				Revision revision= (Revision) revisions.next();
-				regions.addAll(revision.getRegions());
+	private List getRangeCache() {
+		if (fRevisionRanges == null) {
+			if (fRevisionInfo == null) {
+				fRevisionRanges= Collections.EMPTY_LIST;
+			} else {
+				Hunk[] hunks= HunkComputer.computeHunks(fLineDiffer, fViewer.getDocument().getNumberOfLines());
+				fRevisionInfo.applyDiff(hunks);
+				fRevisionRanges= fRevisionInfo.getRanges();
 			}
-
-			// sort
-			Collections.sort(regions, new Comparator() {
-				public int compare(Object o1, Object o2) {
-					ChangeRegion r1= (ChangeRegion) o1;
-					ChangeRegion r2= (ChangeRegion) o2;
-
-					// sort order is unaffected by diff information
-					return r1.getOriginalRange().getStartLine() - r2.getOriginalRange().getStartLine();
-				}
-			});
-
-			if (fLineDiffer != null)
-				new DiffApplier().applyDiff(regions, fLineDiffer, fViewer.getDocument().getNumberOfLines());
-
-			fChangeRegions= regions;
 		}
 
-		if (fChangeRegions == null)
-			return Collections.EMPTY_LIST;
-
-		return fChangeRegions;
+		return fRevisionRanges;
 	}
 
+	/**
+	 * Clears the range cache.
+	 *
+	 * @since 3.3
+	 */
+	private void clearRangeCache() {
+		fRevisionRanges= null;
+	}
+	
 	/**
 	 * Returns <code>true</code> if <code>range</code> contains <code>line</code>. A line is
 	 * not contained in a range if it is the range's exclusive end line.
@@ -1011,24 +984,6 @@ public final class RevisionPainter {
 	 */
 	private static boolean contains(ILineRange range, int line) {
 		return range.getStartLine() <= line && end(range) > line;
-	}
-
-	/**
-	 * Returns <code>true</code> if any of the line ranges
-	 * {@link #contains(ILineRange, int) contains} <code>line</code>.
-	 * 
-	 * @param ranges a list of {@link ILineRange}s
-	 * @param line a line
-	 * @return <code>true</code> if <code>line</code> is contained in any of the passed
-	 *         <code>ranges</code>
-	 */
-	private static boolean contains(List ranges, int line) {
-		for (Iterator it= ranges.iterator(); it.hasNext();) {
-			ILineRange range= (ILineRange) it.next();
-			if (contains(range, line))
-				return true;
-		}
-		return false;
 	}
 
 	/**
@@ -1117,17 +1072,14 @@ public final class RevisionPainter {
 		if (revision != null && fIsOverviewShowing) {
 			added= new HashMap();
 			for (Iterator it= revision.getRegions().iterator(); it.hasNext();) {
-				ChangeRegion region= (ChangeRegion) it.next();
-				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
-					ILineRange range= (ILineRange) regions.next();
-					try {
-						IRegion charRegion= toCharRegion(range);
-						Position position= new Position(charRegion.getOffset(), charRegion.getLength());
-						Annotation annotation= new RevisionAnnotation(revision.getId());
-						added.put(annotation, position);
-					} catch (BadLocationException x) {
-						// ignore - document was changed, show no annotations
-					}
+				RevisionRange range= (RevisionRange) it.next();
+				try {
+					IRegion charRegion= toCharRegion(range);
+					Position position= new Position(charRegion.getOffset(), charRegion.getLength());
+					Annotation annotation= new RevisionAnnotation(revision.getId());
+					added.put(annotation, position);
+				} catch (BadLocationException x) {
+					// ignore - document was changed, show no annotations
 				}
 			}
 		}
@@ -1233,31 +1185,31 @@ public final class RevisionPainter {
 		if (DEBUG)
 			System.out.println("line: " + previousLine + " > " + nextLine); //$NON-NLS-1$ //$NON-NLS-2$
 		fFocusLine= nextLine;
-		ChangeRegion region= getChangeRegion(nextLine);
-		updateFocusRegion(region);
+		RevisionRange region= getRange(nextLine);
+		updateFocusRange(region);
 	}
 
 	/**
-	 * Updates the focus region.
+	 * Updates the focus range.
 	 * 
-	 * @param region the new focus region, <code>null</code> for no focus
+	 * @param range the new focus range, <code>null</code> for no focus
 	 */
-	private void updateFocusRegion(ChangeRegion region) {
-		if (region != fFocusRegion)
-			onFocusRegionChanged(fFocusRegion, region);
+	private void updateFocusRange(RevisionRange range) {
+		if (range != fFocusRange)
+			onFocusRangeChanged(fFocusRange, range);
 	}
 
 	/**
-	 * Handles a changing focus region.
+	 * Handles a changing focus range.
 	 * 
-	 * @param previousRegion the old focus region (<code>null</code> for no focus)
-	 * @param nextRegion the new focus region (<code>null</code> for no focus)
+	 * @param previousRange the old focus range (<code>null</code> for no focus)
+	 * @param nextRange the new focus range (<code>null</code> for no focus)
 	 */
-	private void onFocusRegionChanged(ChangeRegion previousRegion, ChangeRegion nextRegion) {
+	private void onFocusRangeChanged(RevisionRange previousRange, RevisionRange nextRange) {
 		if (DEBUG)
-			System.out.println("region: " + previousRegion + " > " + nextRegion); //$NON-NLS-1$ //$NON-NLS-2$
-		fFocusRegion= nextRegion;
-		Revision revision= nextRegion == null ? null : nextRegion.getRevision();
+			System.out.println("range: " + previousRange + " > " + nextRange); //$NON-NLS-1$ //$NON-NLS-2$
+		fFocusRange= nextRange;
+		Revision revision= nextRange == null ? null : nextRange.getRevision();
 		updateFocusRevision(revision);
 	}
 
@@ -1331,35 +1283,28 @@ public final class RevisionPainter {
 
 		ILineRange nextWidgetRange= null;
 		ILineRange last= null;
+		List ranges= fFocusRevision.getRegions();
 		if (up) {
-			outer: for (Iterator it= fFocusRevision.getRegions().iterator(); it.hasNext();) {
-				ChangeRegion region= (ChangeRegion) it.next();
-				for (Iterator regions= region.getAdjustedRanges().iterator(); regions.hasNext();) {
-					ILineRange range= (ILineRange) regions.next();
-
-					ILineRange widgetRange= modelLinesToWidgetLines(range);
-					if (contains(range, documentHoverLine)) {
-						nextWidgetRange= last;
-						break outer;
-					}
-					if (widgetRange != null)
-						last= widgetRange;
+			for (Iterator it= ranges.iterator(); it.hasNext();) {
+				RevisionRange range= (RevisionRange) it.next();
+				ILineRange widgetRange= modelLinesToWidgetLines(range);
+				if (contains(range, documentHoverLine)) {
+					nextWidgetRange= last;
+					break;
 				}
+				if (widgetRange != null)
+					last= widgetRange;
 			}
 		} else {
-			outer: for (ListIterator it= fFocusRevision.getRegions().listIterator(fFocusRevision.getRegions().size()); it.hasPrevious();) {
-				ChangeRegion region= (ChangeRegion) it.previous();
-				for (ListIterator regions= region.getAdjustedRanges().listIterator(region.getAdjustedRanges().size()); regions.hasPrevious();) {
-					ILineRange range= (ILineRange) regions.previous();
-
-					ILineRange widgetRange= modelLinesToWidgetLines(range);
-					if (contains(range, documentHoverLine)) {
-						nextWidgetRange= last;
-						break outer;
-					}
-					if (widgetRange != null)
-						last= widgetRange;
+			for (ListIterator it= ranges.listIterator(ranges.size()); it.hasPrevious();) {
+				RevisionRange range= (RevisionRange) it.previous();
+				ILineRange widgetRange= modelLinesToWidgetLines(range);
+				if (contains(range, documentHoverLine)) {
+					nextWidgetRange= last;
+					break;
 				}
+				if (widgetRange != null)
+					last= widgetRange;
 			}
 		}
 
@@ -1482,9 +1427,9 @@ public final class RevisionPainter {
         	return null;
         }
     	if (line != -1) {
-    		ChangeRegion region= getChangeRegion(line);
-    		if (region != null)
-    			return region.getRevision();
+    		RevisionRange range= getRange(line);
+    		if (range != null)
+    			return range.getRevision();
     	}
     	return null;
     }

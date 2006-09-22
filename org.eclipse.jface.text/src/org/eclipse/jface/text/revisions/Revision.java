@@ -13,6 +13,7 @@ package org.eclipse.jface.text.revisions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.graphics.RGB;
@@ -20,7 +21,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.jface.text.source.ILineRange;
 
 import org.eclipse.jface.internal.text.revisions.ChangeRegion;
-
+import org.eclipse.jface.internal.text.revisions.Hunk;
 
 /**
  * Describes a revision of a document. A revision consists of one ore more {@link ILineRange}s.
@@ -31,15 +32,22 @@ import org.eclipse.jface.internal.text.revisions.ChangeRegion;
  * @since 3.2
  */
 public abstract class Revision {
+	/** The original list of change regions, element type: {@link ChangeRegion}. */
 	private final List fChangeRegions= new ArrayList();
-	private final List fROChangeRegions= Collections.unmodifiableList(fChangeRegions);
-	
+	/**
+	 * The cached list of adjusted ranges, element type: {@link RevisionRange}. <code>null</code>
+	 * if the list must be re-computed. Unmodifiable.
+	 * 
+	 * @since 3.3
+	 */
+	private List fRanges= null;
+
 	/**
 	 * Creates a new revision.
 	 */
 	protected Revision() {
 	}
-	
+
 	/**
 	 * Adds a line range to this revision. The range must be non-empty and have a legal start line
 	 * (not -1).
@@ -52,12 +60,44 @@ public abstract class Revision {
 	}
 
 	/**
-	 * Returns the contained change regions.
+	 * Returns the contained {@link RevisionRange}s adapted to the current diff state. The returned
+	 * information is only valid at the moment it is returned, and may change as the annotated
+	 * document is modified.
 	 * 
-	 * @return an unmodifiable view of the contained change regions (element type: {@link Object})
+	 * @return an unmodifiable view of the contained ranges (element type: {@link RevisionRange})
 	 */
 	public final List getRegions() {
-		return fROChangeRegions;
+		if (fRanges == null) {
+			List ranges= new ArrayList(fChangeRegions.size());
+			for (Iterator it= fChangeRegions.iterator(); it.hasNext();) {
+				ChangeRegion region= (ChangeRegion) it.next();
+				for (Iterator inner= region.getAdjustedRanges().iterator(); inner.hasNext();) {
+					ILineRange range= (ILineRange) inner.next();
+					ranges.add(new RevisionRange(this, range));
+				}
+			}
+			fRanges= Collections.unmodifiableList(ranges);
+		}
+		return fRanges;
+	}
+
+	/**
+	 * Adjusts the revision information to the given diff information. Any previous diff information
+	 * is discarded.
+	 * 
+	 * @param hunks the diff hunks to adjust the revision information to
+	 * @since 3.3
+	 */
+	final void applyDiff(Hunk[] hunks) {
+		fRanges= null; // mark for recomputation
+		for (Iterator regions= fChangeRegions.iterator(); regions.hasNext();) {
+			ChangeRegion region= (ChangeRegion) regions.next();
+			region.clearDiff();
+			for (int i= 0; i < hunks.length; i++) {
+				Hunk hunk= hunks[i];
+				region.adjustTo(hunk);
+			}
+		}
 	}
 
 	/**
@@ -84,14 +124,14 @@ public abstract class Revision {
 	 * @return the id of this revision
 	 */
 	public abstract String getId();
-	
+
 	/**
 	 * Returns the modification date of this revision.
 	 * 
 	 * @return the modification date of this revision
 	 */
 	public abstract Date getDate();
-	
+
 	/*
 	 * @see java.lang.Object#toString()
 	 */

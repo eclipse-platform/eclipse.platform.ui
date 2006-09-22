@@ -12,10 +12,13 @@ package org.eclipse.jface.text.revisions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.revisions.Hunk;
 
 /**
  * Encapsulates revision information for one line-based document.
@@ -27,15 +30,24 @@ import org.eclipse.core.runtime.Assert;
  * @see Revision
  */
 public final class RevisionInformation {
+	/** The revisions, element type: {@link Revision}. */
 	private final List fRevisions= new ArrayList();
+	/** A unmodifiable view of <code>fRevisions</code>. */
 	private final List fRORevisions= Collections.unmodifiableList(fRevisions);
-	
+	/**
+	 * The flattened list of {@link RevisionRange}s, unmodifiable. <code>null</code> if the list
+	 * must be re-computed.
+	 * 
+	 * @since 3.3
+	 */
+	private List fRanges= null;
+
 	/**
 	 * Creates a new revision information model.
 	 */
 	public RevisionInformation() {
 	}
-	
+
 	/**
 	 * Adds a revision.
 	 * 
@@ -54,5 +66,49 @@ public final class RevisionInformation {
 	public List getRevisions() {
 		return fRORevisions;
 	}
-	
+
+	/**
+	 * Returns the line ranges of this revision information. The returned information is only valid
+	 * at the moment it is returned, and may change as the annotated document is modified. The
+	 * returned list is sorted by document offset.
+	 * 
+	 * @return an unmodifiable view of the line ranges (element type: {@link RevisionRange})
+	 * @since 3.3
+	 */
+	public List getRanges() {
+		if (fRanges == null) {
+			List ranges= new ArrayList(fRevisions.size() * 2); // wild size guess
+			for (Iterator it= fRevisions.iterator(); it.hasNext();) {
+				Revision revision= (Revision) it.next();
+				ranges.addAll(revision.getRegions());
+			}
+
+			// sort by start line
+			Collections.sort(ranges, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					RevisionRange r1= (RevisionRange) o1;
+					RevisionRange r2= (RevisionRange) o2;
+
+					return r1.getStartLine() - r2.getStartLine();
+				}
+			});
+
+			fRanges= Collections.unmodifiableList(ranges);
+		}
+		return fRanges;
+	}
+
+	/**
+	 * Adjusts the revision information to the given diff information. Any previous diff information
+	 * is discarded. <strong>Note</strong>: This is an internal framework method and must not be
+	 * called by clients.
+	 * 
+	 * @param hunks the diff hunks to adjust the revision information to
+	 * @since 3.3
+	 */
+	public void applyDiff(Hunk[] hunks) {
+		fRanges= null; // mark for recomputation
+		for (Iterator revisions= getRevisions().iterator(); revisions.hasNext();)
+			((Revision) revisions.next()).applyDiff(hunks);
+	}
 }
