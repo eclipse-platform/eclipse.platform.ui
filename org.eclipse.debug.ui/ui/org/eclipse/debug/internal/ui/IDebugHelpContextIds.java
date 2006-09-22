@@ -95,6 +95,7 @@ public interface IDebugHelpContextIds {
 	public static final String GROUP_BREAKPOINTS_DIALOG = PREFIX + "group_breakpoints_dialog_context"; //$NON-NLS-1$
 	public static final String ORGANIZE_FAVORITES_DIALOG = PREFIX + "organize_favorites_dialog_context"; //$NON-NLS-1$
 	public static final String MAX_DETAILS_LENGTH_DIALOG = PREFIX + "max_details_length_dialog_context"; //$NON-NLS-1$
+	public static final String SELECT_DEFAULT_WORKINGSET_DIALOG = PREFIX + "select_breakpoint_workingset_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$

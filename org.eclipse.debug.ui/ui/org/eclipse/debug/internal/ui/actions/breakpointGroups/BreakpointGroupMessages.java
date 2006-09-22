@@ -42,6 +42,10 @@ public class BreakpointGroupMessages extends NLS {
 	public static String PasteBreakpointsAction_1;
 	public static String RemoveFromWorkingSetAction_0;
 
+	public static String SelectBreakpointWorkingsetDialog_0;
+
+	public static String SetDefaultBreakpointGroupAction_0;
+
 	static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, BreakpointGroupMessages.class);
