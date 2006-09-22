@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
-import com.ibm.icu.text.MessageFormat;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -29,6 +27,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Manages contributed launch configuration tabs
@@ -81,17 +81,15 @@ public class LaunchConfigurationPresentationManager {
 			LaunchConfigurationTabGroupExtension group = new LaunchConfigurationTabGroupExtension(groups[i]);
 			String typeId = group.getTypeIdentifier();
 			if (typeId == null) {
-				IExtension ext = groups[i].getDeclaringExtension();
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Launch configuration tab group extension {0} does not specify launch configuration type.", (new String[] {ext.getUniqueIdentifier()})), null);  //$NON-NLS-1$
+					 MessageFormat.format("Launch configuration tab group extension {0} does not specify launch configuration type.", (new String[] {groups[i].getAttribute("id")})), null);  //$NON-NLS-1$ //$NON-NLS-2$
 					DebugUIPlugin.log(status);
 			} else {
 				// verify it references a valid launch configuration type
 				ILaunchConfigurationType lct = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(typeId);
 				if (lct == null) {
-					IExtension ext = groups[i].getDeclaringExtension();
 					IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.STATUS_INVALID_EXTENSION_DEFINITION,
-					 MessageFormat.format("Launch configuration tab group extension {0} refers to non-existent launch configuration type {1}.", (new String[] {ext.getUniqueIdentifier(), typeId})), null);  //$NON-NLS-1$
+					 MessageFormat.format("Launch configuration tab group extension {0} refers to non-existent launch configuration type {1}.", (new String[] {groups[i].getAttribute("id"), typeId})), null);  //$NON-NLS-1$ //$NON-NLS-2$
 					DebugUIPlugin.log(status);
 				}
 			}
