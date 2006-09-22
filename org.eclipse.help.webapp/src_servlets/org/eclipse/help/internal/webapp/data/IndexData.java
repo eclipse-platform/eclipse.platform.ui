@@ -96,7 +96,7 @@ public class IndexData extends ActivitiesData {
 		IIndexEntry[] entries = index.getEntries();
 		for (int i=0;i<entries.length;++i) {
 			IIndexEntry entry = entries[i];
-			if (entry != null) {
+			if (entry != null && entry.getKeyword() != null && entry.getKeyword().length() > 0) {
 				if (first) {
 					first = false;
 				} else {
@@ -146,25 +146,27 @@ public class IndexData extends ActivitiesData {
 	 *   </li>
 	 */
 	private void generateEntry(IIndexEntry entry, int level) throws IOException {
-		ITopic[] topics = entry.getTopics();
-		IIndexEntry[] subentries = entry.getSubentries();
-		boolean multipleTopics = topics.length > 1;
-		boolean singleTopic = topics.length == 1;
-
-		out.write("<li>"); //$NON-NLS-1$
-		if (usePlusMinus && advancedUI) generatePlusImage(multipleTopics);
-		generateAnchor(singleTopic, entry, level);
-		if (multipleTopics || subentries.length > 0) {
-			if (!advancedUI) {
-				out.write("<ul>\n"); //$NON-NLS-1$
+		if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
+			ITopic[] topics = entry.getTopics();
+			IIndexEntry[] subentries = entry.getSubentries();
+			boolean multipleTopics = topics.length > 1;
+			boolean singleTopic = topics.length == 1;
+	
+			out.write("<li>"); //$NON-NLS-1$
+			if (usePlusMinus && advancedUI) generatePlusImage(multipleTopics);
+			generateAnchor(singleTopic, entry, level);
+			if (multipleTopics || subentries.length > 0) {
+				if (!advancedUI) {
+					out.write("<ul>\n"); //$NON-NLS-1$
+				}
+				if (multipleTopics) generateTopicList(entry);
+				generateSubentries(entry, level + 1);
+				if (!advancedUI) {
+					out.write("</ul>\n"); //$NON-NLS-1$
+				}
 			}
-			if (multipleTopics) generateTopicList(entry);
-			generateSubentries(entry, level + 1);
-			if (!advancedUI) {
-				out.write("</ul>\n"); //$NON-NLS-1$
-			}
+			out.write("</li>\n"); //$NON-NLS-1$
 		}
-		out.write("</li>\n"); //$NON-NLS-1$
 	}
 
 	/**
