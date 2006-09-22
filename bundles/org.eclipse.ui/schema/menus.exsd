@@ -274,8 +274,8 @@ A group can contain menus, items and other groups.
 &lt;p&gt;
 Within the trim, the workbench defines five general groups which correspond to various positions around the window:
 &lt;ul&gt;
-&lt;li&gt;&lt;b&gt;cmd1&lt;/b&gt; - This represents the (horizontal) trim area that the main toolbars are placed into.&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;cmd2&lt;/b&gt; - This represents the (horizontal) trim area that the Perspective Switcher is in by default.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;command1&lt;/b&gt; - This represents the (horizontal) trim area that the main toolbars are placed into.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;command2&lt;/b&gt; - This represents the (horizontal) trim area that the Perspective Switcher is in by default.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;vertical1&lt;/b&gt; - This represents the (vertical) trim area that is on the left side when the text direction is Left-&gt;Right and on the right side for Right-&gt;Left text.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;vertical2&lt;/b&gt; - This represents the (vertical) trim area that is on the opposite side of the workbench from &lt;code&gt;vertical1&lt;/code&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;status&lt;/b&gt; - This represents the (horizontal) trim area along the bottom edge of the workbench.&lt;/li&gt;
