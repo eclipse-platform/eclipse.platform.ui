@@ -16,9 +16,11 @@ import java.util.HashMap;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -30,6 +32,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,6 +41,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 
@@ -167,7 +171,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 	    }
 	}
 	
-	private static final String SETTINGS_ID = ".DELETE_ASSOCIATED_CONFIGS_DIALOG"; //$NON-NLS-1$
+	private static final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".DELETE_ASSOCIATED_CONFIGS_DIALOG"; //$NON-NLS-1$
 	private HashMap fMap = null;
 	private Object fInput = null;
 	private Button fPrefButton = null;
@@ -199,6 +203,26 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 			section = settings.addNewSection(SETTINGS_ID);
 		} 
 		return section;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		IDialogSettings settings = getDialogBoundsSettings();
+		if(settings != null) {
+			try {
+				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
+				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
+				if(width > 0 & height > 0) {
+					return new Point(width, height);
+				}
+			}
+			catch (NumberFormatException nfe) {
+				return new Point(350, 400);
+			}
+		}
+		return new Point(350, 400);
 	}
 
 	/* (non-Javadoc)
@@ -244,6 +268,7 @@ public class DeleteAssociatedLaunchConfigurationsDialog extends SelectionDialog 
 		fPrefButton = new Button(comp, SWT.CHECK);
 		fPrefButton.setText(LaunchConfigurationsMessages.DeleteAssociatedLaunchConfigurationsDialog_3);
 		Dialog.applyDialogFont(comp);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.DELETE_ASSOCIATED_LAUNCH_CONFIGS_DIALOG);
 		return comp;
 	}
 	
