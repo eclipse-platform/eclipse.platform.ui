@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.text.revisions;
-
+package org.eclipse.jface.internal.text.html;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -24,6 +23,8 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Provides a set of convenience methods for creating HTML pages.
+ * <p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
 public class HTMLPrinter {
 

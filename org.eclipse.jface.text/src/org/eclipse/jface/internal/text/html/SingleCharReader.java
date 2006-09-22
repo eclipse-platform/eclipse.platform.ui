@@ -8,13 +8,17 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.text.link.contentassist;
-
+package org.eclipse.jface.internal.text.html;
 
 import java.io.IOException;
 import java.io.Reader;
 
-abstract class SingleCharReader extends Reader {
+
+/**
+ * <p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
+ */
+public abstract class SingleCharReader extends Reader {
 
 	/**
 	 * @see Reader#read()

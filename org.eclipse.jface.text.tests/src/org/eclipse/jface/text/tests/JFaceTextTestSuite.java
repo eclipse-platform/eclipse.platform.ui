@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.jface.text.tests.reconciler.ReconcilerTestSuite;
 import org.eclipse.jface.text.tests.rules.RulesTestSuite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test Suite for org.eclipse.jface.text.
@@ -25,13 +26,12 @@ public class JFaceTextTestSuite extends TestSuite {
 
 	public static Test suite() {
 		TestSuite suite= new TestSuite("Test Suite for org.eclipse.jface.text"); //$NON-NLS-1$
-		
+		suite.addTest(HTML2TextReaderTester.suite());
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
 		suite.addTest(TextUtilitiesTest.suite());
 		suite.addTest(DefaultUndoManagerTest.suite());
 		suite.addTest(TextViewerUndoManagerTest.suite());
-		
 		suite.addTest(RulesTestSuite.suite());
 		suite.addTest(ReconcilerTestSuite.suite());
 		suite.addTest(DefaultPairMatcherTest.suite());

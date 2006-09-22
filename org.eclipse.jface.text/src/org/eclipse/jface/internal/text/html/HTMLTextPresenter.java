@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.text.link.contentassist;
-
-
+package org.eclipse.jface.internal.text.html;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,12 +20,17 @@ import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.internal.text.link.contentassist.LineBreakingReader;
+
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 
 
-
+/**
+ * <p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
+ */
 public class HTMLTextPresenter implements DefaultInformationControl.IInformationPresenter, DefaultInformationControl.IInformationPresenterExtension {
 
 	private static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -99,7 +102,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 	public String updatePresentation(Display display, String hoverInfo, TextPresentation presentation, int maxWidth, int maxHeight) {
 		return updatePresentation((Drawable)display, hoverInfo, presentation, maxWidth, maxHeight);
 	}
-	
+
 	/*
 	 * @see IHoverInformationPresenterExtension#updatePresentation(Drawable drawable, String, TextPresentation, int, int)
 	 * @since 3.2
@@ -157,7 +160,7 @@ public class HTMLTextPresenter implements DefaultInformationControl.IInformation
 
 			if (line != null) {
 				append(buffer, LINE_DELIM, lineFormatted ? presentation : null);
-				append(buffer, ContentAssistMessages.getString("HTMLTextPresenter.ellipse"), presentation); //$NON-NLS-1$
+				append(buffer, HTMLMessages.getString("HTMLTextPresenter.ellipse"), presentation); //$NON-NLS-1$
 			}
 
 			return trim(buffer, presentation);

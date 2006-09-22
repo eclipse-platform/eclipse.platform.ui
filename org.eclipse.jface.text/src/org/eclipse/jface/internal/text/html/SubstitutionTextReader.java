@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.jface.internal.text.link.contentassist;
-
+package org.eclipse.jface.internal.text.html;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,13 +18,15 @@ import java.io.Reader;
  * Reads the text contents from a reader and computes for each character
  * a potential substitution. The substitution may eat more characters than
  * only the one passed into the computation routine.
+ * <p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  */
-abstract class SubstitutionTextReader extends SingleCharReader {
+public abstract class SubstitutionTextReader extends SingleCharReader {
 
 	protected static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private Reader fReader;
-	private boolean fWasWhiteSpace;
+	protected boolean fWasWhiteSpace;
 	private int fCharAfterWhiteSpace;
 
 	/**

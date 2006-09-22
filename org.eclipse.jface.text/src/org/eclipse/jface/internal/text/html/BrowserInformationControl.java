@@ -8,8 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
-package org.eclipse.jface.internal.text.revisions;
+package org.eclipse.jface.internal.text.html;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -46,30 +45,30 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.ListenerList;
 
-import org.eclipse.jface.internal.text.link.contentassist.HTML2TextReader;
-
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
 import org.eclipse.jface.text.IInformationControlExtension3;
 import org.eclipse.jface.text.TextPresentation;
 
+
 /**
  * Displays textual information in a {@link org.eclipse.swt.browser.Browser} widget.
- * </p>
  * <p>
- * XXX copy of org.eclipse.jdt.internal.ui.text.java.hover.BrowserInformationControl.
- * </p>
+ * Moved into this package from <code>org.eclipse.jface.internal.text.revisions</code>.</p>
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
- * </p>
+ * This class may be instantiated; it is not intended to be subclassed.</p>
  * <p>
- * Current problems: - the size computation is too small - focusLost event is not sent (see
- * https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532)
+ * Current problems:
+ * <ul>
+ * 	<li>the size computation is too small</li>
+ * 	<li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
+ *  <li>we need to call <code>content.replaceAll("overflow: auto;", "")<code> which is a problem if <code>"overflow: auto;"</code> appears in the content</li>
+ * </ul>
  * </p>
  * 
  * @since 3.2
  */
-class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, DisposeListener {
+public class BrowserInformationControl implements IInformationControl, IInformationControlExtension, IInformationControlExtension3, DisposeListener {
 
 
 	/**
@@ -307,6 +306,7 @@ class BrowserInformationControl implements IInformationControl, IInformationCont
 		else if (fHideScrollBars && true)
 			styles= new String[] { "overflow:hidden;", "word-wrap: break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
 		
+		// XXX: this is a hack but needed to ensure our overflow directive is honored
 		content= content.replaceAll("overflow: auto;", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (styles != null) {
