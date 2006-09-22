@@ -11,6 +11,7 @@
 package org.eclipse.jface.util;
 
 import java.util.EventObject;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * An event object describing a change to a named property.
