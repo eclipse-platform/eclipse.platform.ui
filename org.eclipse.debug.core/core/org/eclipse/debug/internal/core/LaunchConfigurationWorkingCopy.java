@@ -552,6 +552,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public void setAttributes(Map attributes) {
 		getInfo().setAttributes(attributes);
+		setDirty();
 	}
 
 	/* (non-Javadoc)
