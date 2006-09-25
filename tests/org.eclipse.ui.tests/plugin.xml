@@ -2849,4 +2849,10 @@
          </enabledWhen>
       </page>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.ui.tests.preferences.TestPreferenceInitializer">
+      </initializer>
+   </extension>
 </plugin>            

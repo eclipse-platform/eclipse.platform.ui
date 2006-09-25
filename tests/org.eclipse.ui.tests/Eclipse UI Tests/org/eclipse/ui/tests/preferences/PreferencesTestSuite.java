@@ -20,22 +20,22 @@ import junit.framework.TestSuite;
  */
 public class PreferencesTestSuite extends TestSuite {
 
-    /**
-     * Returns the suite.  This is required to
-     * use the JUnit Launcher.
-     */
-    public static Test suite() {
-        return new PreferencesTestSuite();
-    }
+	/**
+	 * Returns the suite. This is required to use the JUnit Launcher.
+	 */
+	public static Test suite() {
+		return new PreferencesTestSuite();
+	}
 
-    /**
-     * Construct the test suite.
-     */
-    public PreferencesTestSuite() {
-        addTest(new TestSuite(FontPreferenceTestCase.class));
-        addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
-        addTest(new TestSuite(ScopedPreferenceStoreTestCase.class));
-        addTest(new TestSuite(WorkingCopyPreferencesTestCase.class));
-        addTest(new TestSuite(PropertyPageEnablementTest.class));
-    }
+	/**
+	 * Construct the test suite.
+	 */
+	public PreferencesTestSuite() {
+		addTest(new TestSuite(FontPreferenceTestCase.class));
+		addTest(new TestSuite(DeprecatedFontPreferenceTestCase.class));
+		addTest(new TestSuite(ScopedPreferenceStoreTestCase.class));
+		addTest(new TestSuite(WorkingCopyPreferencesTestCase.class));
+		addTest(new TestSuite(PropertyPageEnablementTest.class));
+		addTest(new TestSuite(ListenerRemovalTestCase.class));
+	}
 }
