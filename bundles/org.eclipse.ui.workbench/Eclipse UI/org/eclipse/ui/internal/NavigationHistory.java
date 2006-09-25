@@ -51,7 +51,7 @@ public class NavigationHistory implements INavigationHistory {
      * Creates a new NavigationHistory to keep the NavigationLocation
      * entries of the specified page.
      */
-    public NavigationHistory(WorkbenchPage page) {
+    public NavigationHistory(final WorkbenchPage page) {
         this.page = page;
         page.addPartListener(new IPartListener2() {
             public void partActivated(IWorkbenchPartReference partRef) {
@@ -74,6 +74,15 @@ public class NavigationHistory implements INavigationHistory {
 
             public void partClosed(IWorkbenchPartReference partRef) {
 				updateNavigationHistory(partRef, true);
+				
+				// if there are now no more editors to activate push the active
+				// entry one slot down so that the recently closed editor
+				// appears. Normally this would be handled by the part activated
+				// call but since there wont be such a call (no part to
+				// activate) we'll nudge it here. Covers bug 154431
+				if (page.getActiveEditor() == null) {
+					activeEntry++; 
+				}
             }
 			
 			public void partInputChanged(IWorkbenchPartReference partRef) {
