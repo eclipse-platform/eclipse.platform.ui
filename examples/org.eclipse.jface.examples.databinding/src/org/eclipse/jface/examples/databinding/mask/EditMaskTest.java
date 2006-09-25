@@ -13,7 +13,7 @@ public class EditMaskTest {
       Shell shell = new Shell(display);
 
       Text text = new Text(shell, SWT.BORDER);
-//      text.setText("XXXXXXXXXXXXX");// Put some X's in there to pad out the field's default size
+      text.setText("XXXXXXXXXXXXX");// Put some X's in there to pad out the field's default size
       
       Text text2 = new Text(shell, SWT.BORDER);
       text2.setText("630XXXXXXXXXX");
