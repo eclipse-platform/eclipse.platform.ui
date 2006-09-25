@@ -201,9 +201,9 @@ public class InternalCompositeTable extends Composite implements Listener {
 		public void controlResized(ControlEvent e) {
 			Point size = hScroller.getSize();
 			
-			if (fittingHorizontally) {
+			if (fittingHorizontally || parent.isWidthWiderThanAllColumns()) {
 				controlHolder.setBounds(0, 0, size.x, size.y);
-				return;
+            return;
 			}
 			
 			int preferredWidth = computePreferredWidth(size);

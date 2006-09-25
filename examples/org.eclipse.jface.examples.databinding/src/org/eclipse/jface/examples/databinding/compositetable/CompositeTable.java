@@ -375,13 +375,23 @@ public class CompositeTable extends Canvas {
 	 * @return the height of the header or row
 	 */
 	int layoutHeaderOrRow(Composite child, boolean isHeader) {
-		if (isFittingHorizontally()) {
+		if (isFittingHorizontally() || isWidthWiderThanAllColumns()) {
 			return layoutWeightedHeaderOrRow(child, isHeader);
 		}
 		return layoutAbsoluteWidthHeaderOrRow(child, isHeader);
 	}
 	
-	private int layoutWeightedHeaderOrRow(Composite child, boolean isHeader) {
+   boolean isWidthWiderThanAllColumns() {
+      // isFittingHorizontally must be false because this is only called
+      // as the second part of a short-circuit boolean evaluation
+      int allColumnsTotalWidth = 0;
+      for (int i = 0; i < weights.length; i++) {
+         allColumnsTotalWidth += weights[i]+2;
+      }
+      return getSize().x > allColumnsTotalWidth;
+   }
+
+   private int layoutWeightedHeaderOrRow(Composite child, boolean isHeader) {
 		Control[] children = child.getChildren();
 		if (children.length == 0) {
 			return 50;
@@ -389,7 +399,11 @@ public class CompositeTable extends Canvas {
 		int maxHeight = computeMaxHeight(isHeader, children);
 
 		int[] weights = this.weights;
-		weights = checkWeights(weights, children.length);
+      if (isFittingHorizontally()) {
+         weights = checkWeights(weights, children.length);
+      } else {
+         weights = computeWeights(weights, children.length);
+      }
 		
 		int widthRemaining = child.getParent().getSize().x;
 		int totalSize = widthRemaining;
@@ -411,7 +425,7 @@ public class CompositeTable extends Canvas {
 		return maxHeight;
 	}
 	
-	private int layoutAbsoluteWidthHeaderOrRow(Composite child, boolean isHeader) {
+   private int layoutAbsoluteWidthHeaderOrRow(Composite child, boolean isHeader) {
 		Control[] children = child.getChildren();
 		if (children.length == 0) {
 			return 50;
@@ -462,6 +476,32 @@ public class CompositeTable extends Canvas {
 		}
 		return controlHeight;
 	}
+
+   private int[] computeWeights(int[] weights, int numChildren) {
+      if (weights.length != numChildren) {
+         return checkWeights(weights, numChildren);
+      }
+      int allColumnsTotalWidth = 0;
+      for (int i = 0; i < weights.length; i++) {
+         allColumnsTotalWidth += weights[i];
+      }
+      int[] realWeights = new int[numChildren];
+      int total=100;
+      for (int i = 0; i < realWeights.length; i++) {
+         realWeights[i] = (int) (((double)weights[i])/allColumnsTotalWidth * 100);
+         total -= realWeights[i];
+      }
+      int i=0;
+      while (total > 0) {
+         ++realWeights[i];
+         --total;
+         ++i;
+         if (i >= realWeights.length) {
+            i = 0;
+         }
+      }
+      return realWeights;
+   }
 
 	/**
 	 * Compute and return a weights array where each weight is the percentage
