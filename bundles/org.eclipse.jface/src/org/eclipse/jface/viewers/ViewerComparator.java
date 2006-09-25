@@ -49,7 +49,7 @@ public class ViewerComparator {
 	 *
 	 */
 	public ViewerComparator(){
-		this(Policy.getComparator());
+		this(null);
 	}
 	
 	/**
@@ -68,6 +68,9 @@ public class ViewerComparator {
 	 * @return the comparator used to sort strings
 	 */
 	protected Comparator getComparator() {
+		if (comparator == null){
+			comparator = Policy.getComparator();
+		}
 		return comparator;
 	}
 
