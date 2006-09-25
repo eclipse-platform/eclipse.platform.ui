@@ -41,6 +41,8 @@ import org.eclipse.ui.progress.WorkbenchJob;
  */
 public class DecorationScheduler {
 
+	static final ILabelProviderListener[] EMPTY_LISTENER_LIST = new ILabelProviderListener[0];
+
 	// When decorations are computed they are added to this cache via
 	// decorated() method
 	Map resultCache = new HashMap();
@@ -60,11 +62,13 @@ public class DecorationScheduler {
 	Job decorationJob;
 
 	UIJob updateJob;
-	
-	private Collection removedListeners = Collections.synchronizedSet(new HashSet());	
+
+	private Collection removedListeners = Collections
+			.synchronizedSet(new HashSet());
+
 	private Job clearJob;
-	
-	//Static used for the updates to indicate an update is required
+
+	// Static used for the updates to indicate an update is required
 	static int NEEDS_INIT = -1;
 
 	/**
@@ -87,13 +91,15 @@ public class DecorationScheduler {
 	 * @param element
 	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
-	 * @param context the decoration context
+	 * @param context
+	 *            the decoration context
 	 */
 
 	public String decorateWithText(String text, Object element,
 			Object adaptedElement, IDecorationContext context) {
 
-		DecorationResult decoration = getResult(element, adaptedElement, context);
+		DecorationResult decoration = getResult(element, adaptedElement,
+				context);
 
 		if (decoration == null) {
 			return text;
@@ -114,22 +120,24 @@ public class DecorationScheduler {
 	 *            decoration occurred or not.
 	 * @param undecoratedText
 	 *            The original text for the element if it is known.
-	 * @param context The decoration context
+	 * @param context
+	 *            The decoration context
 	 */
 
 	synchronized void queueForDecoration(Object element, Object adaptedElement,
-			boolean forceUpdate, String undecoratedText, IDecorationContext context) {
+			boolean forceUpdate, String undecoratedText,
+			IDecorationContext context) {
 
 		DecorationReference reference = (DecorationReference) awaitingDecorationValues
-			.get(element);
+				.get(element);
 		if (reference != null) {
 			if (forceUpdate) {// Make sure we don't loose a force
 				reference.setForceUpdate(forceUpdate);
 			}
 			reference.addContext(context);
 		} else {
-			reference = new DecorationReference(element,
-					adaptedElement, context);
+			reference = new DecorationReference(element, adaptedElement,
+					context);
 			reference.setForceUpdate(forceUpdate);
 			reference.setUndecoratedText(undecoratedText);
 			awaitingDecorationValues.put(element, reference);
@@ -153,13 +161,15 @@ public class DecorationScheduler {
 	 * @param element
 	 * @param adaptedElement
 	 *            The adapted value of element. May be null.
-	 * @param context the decoration context
+	 * @param context
+	 *            the decoration context
 	 * 
 	 */
 	public Image decorateWithOverlays(Image image, Object element,
 			Object adaptedElement, IDecorationContext context) {
 
-		DecorationResult decoration = getResult(element, adaptedElement, context);
+		DecorationResult decoration = getResult(element, adaptedElement,
+				context);
 
 		if (decoration == null) {
 			return image;
@@ -177,10 +187,12 @@ public class DecorationScheduler {
 	 *            return <code>null</code>.
 	 * @param adaptedElement
 	 *            It's adapted value.
-	 * @param context The deocration context
+	 * @param context
+	 *            The deocration context
 	 * @return DecorationResult or <code>null</code>
 	 */
-	private DecorationResult getResult(Object element, Object adaptedElement, IDecorationContext context) {
+	private DecorationResult getResult(Object element, Object adaptedElement,
+			IDecorationContext context) {
 
 		// We do not support decoration of null
 		if (element == null) {
@@ -196,24 +208,26 @@ public class DecorationScheduler {
 		return decoration;
 
 	}
-	
-	private DecorationResult internalGetResult(Object element, IDecorationContext context) {
-		Map results = (Map)resultCache.get(context);
+
+	private DecorationResult internalGetResult(Object element,
+			IDecorationContext context) {
+		Map results = (Map) resultCache.get(context);
 		if (results != null) {
-			return (DecorationResult)results.get(element);
+			return (DecorationResult) results.get(element);
 		}
 		return null;
 	}
-	
-	protected void internalPutResult(Object element, IDecorationContext context, DecorationResult result) {
-		Map results = (Map)resultCache.get(context);
+
+	protected void internalPutResult(Object element,
+			IDecorationContext context, DecorationResult result) {
+		Map results = (Map) resultCache.get(context);
 		if (results == null) {
 			results = new HashMap();
 			resultCache.put(context, results);
 		}
 		results.put(element, result);
 	}
-	
+
 	/**
 	 * Execute a label update using the pending decorations.
 	 */
@@ -272,13 +286,13 @@ public class DecorationScheduler {
 				if (shutdown) {
 					return Status.CANCEL_STATUS;
 				}
-				
-				while(updatesPending()){
-					
+
+				while (updatesPending()) {
+
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						//Cancel and try again if there was an error
+						// Cancel and try again if there was an error
 						schedule();
 						return Status.CANCEL_STATUS;
 					}
@@ -321,26 +335,31 @@ public class DecorationScheduler {
 
 			/**
 			 * Ensure that a result is cached for the given element and context
-			 * @param element the elements
-			 * @param force whether an update should be forced
-			 * @param context the decoration context
+			 * 
+			 * @param element
+			 *            the elements
+			 * @param force
+			 *            whether an update should be forced
+			 * @param context
+			 *            the decoration context
 			 */
-			private void ensureResultCached(Object element, boolean force, IDecorationContext context) {
+			private void ensureResultCached(Object element, boolean force,
+					IDecorationContext context) {
 				boolean elementIsCached = internalGetResult(element, context) != null;
 				if (elementIsCached) {
 					pendingUpdate.add(element);
 				}
 
 				if (!elementIsCached) {
-					DecorationBuilder cacheResult = new DecorationBuilder(context);
-				    // Calculate the decoration
-					decoratorManager.getLightweightManager()
-							.getDecorations(element, cacheResult);
+					DecorationBuilder cacheResult = new DecorationBuilder(
+							context);
+					// Calculate the decoration
+					decoratorManager.getLightweightManager().getDecorations(
+							element, cacheResult);
 
 					// If we should update regardless then put a result
 					// anyways
-					if (cacheResult.hasValue()
-							|| force) {
+					if (cacheResult.hasValue() || force) {
 
 						// Synchronize on the result lock as we want to
 						// be sure that we do not try and decorate during
@@ -351,7 +370,8 @@ public class DecorationScheduler {
 						// Add the decoration even if it's empty in
 						// order to indicate that the decoration is
 						// ready
-						internalPutResult(element, context, cacheResult.createResult());
+						internalPutResult(element, context, cacheResult
+								.createResult());
 
 						// Add an update for only the original element
 						// to
@@ -388,14 +408,14 @@ public class DecorationScheduler {
 
 	/**
 	 * Return whether or not we are waiting on updated
-	 * @return <code>true</code> if there are updates waiting
-	 * to be served
+	 * 
+	 * @return <code>true</code> if there are updates waiting to be served
 	 */
 	protected boolean updatesPending() {
-		if(updateJob != null && updateJob.getState() != Job.NONE) {
+		if (updateJob != null && updateJob.getState() != Job.NONE) {
 			return true;
 		}
-		if(clearJob != null && clearJob.getState() != Job.NONE) {
+		if (clearJob != null && clearJob.getState() != Job.NONE) {
 			return true;
 		}
 		return false;
@@ -406,38 +426,38 @@ public class DecorationScheduler {
 	 * likely obsolete now.
 	 */
 	void clearResults() {
-		if(clearJob == null) {
+		if (clearJob == null) {
 			clearJob = getClearJob();
 		}
 		clearJob.schedule();
 	}
 
 	private Job getClearJob() {
-		Job clear = 
-			new Job(WorkbenchMessages.DecorationScheduler_ClearResultsJob) {
+		Job clear = new Job(
+				WorkbenchMessages.DecorationScheduler_ClearResultsJob) {
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-				 */
-				protected IStatus run(IProgressMonitor monitor) {
-					resultCache.clear();
-					return Status.OK_STATUS;
-				}
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				resultCache.clear();
+				return Status.OK_STATUS;
+			}
 
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
-				 */
-				public boolean shouldRun() {
-					return PlatformUI.isWorkbenchRunning();
-				}
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+			 */
+			public boolean shouldRun() {
+				return PlatformUI.isWorkbenchRunning();
+			}
 
-			};
+		};
 		clear.setSystem(true);
-		
+
 		return clear;
 	}
 
@@ -449,66 +469,68 @@ public class DecorationScheduler {
 	private WorkbenchJob getUpdateJob() {
 		WorkbenchJob job = new WorkbenchJob(
 				WorkbenchMessages.DecorationScheduler_UpdateJobName) {
-			
+
 			int currentIndex = NEEDS_INIT;
+
 			LabelProviderChangedEvent labelProviderChangedEvent;
+
 			ILabelProviderListener[] listeners;
-			
+
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 
 				if (shutdown) {
 					return Status.CANCEL_STATUS;
 				}
 
-				// If this is the first one check again in case 
+				// If this is the first one check again in case
 				// someone has already cleared it out.
-				if (currentIndex == NEEDS_INIT){
-					if(pendingUpdate.isEmpty()){
-						//If the removal came in while we were waiting clear it anyways 
+				if (currentIndex == NEEDS_INIT) {
+					if (pendingUpdate.isEmpty()) {
+						// If the removal came in while we were waiting clear it
+						// anyways
 						removedListeners.clear();
 						return Status.OK_STATUS;
 					}
 					setUpUpdates();
 				}
-				
+
 				monitor.beginTask(
-						WorkbenchMessages.DecorationScheduler_UpdatingTask,
-						10);
-				
+						WorkbenchMessages.DecorationScheduler_UpdatingTask, 10);
+
 				monitor.worked(5);
-				
-				if(listeners.length == 0) {
+
+				if (listeners.length == 0) {
 					return Status.OK_STATUS;
 				}
-				
-				//If it was removed in the meantime then leave.
+
+				// If it was removed in the meantime then leave.
 				ILabelProviderListener listener = listeners[currentIndex];
-				currentIndex ++;
-				
-				if(!removedListeners.contains(listener)) {
-					decoratorManager.
-						fireListener(labelProviderChangedEvent,listener);
+				currentIndex++;
+
+				if (!removedListeners.contains(listener)) {
+					decoratorManager.fireListener(labelProviderChangedEvent,
+							listener);
 				}
-				
+
 				monitor.done();
-				
-				if(currentIndex >= listeners.length){
+
+				if (currentIndex >= listeners.length) {
 					// Other decoration requests may have occured due to
 					// updates. Only clear the results if there are none
 					// pending.
 					if (awaitingDecoration.isEmpty()) {
 						resultCache.clear();
 					}
-				
 
 					if (!pendingUpdate.isEmpty()) {
 						decorated();
 					}
-					currentIndex = NEEDS_INIT;//Reset
+					currentIndex = NEEDS_INIT;// Reset
 					labelProviderChangedEvent = null;
 					removedListeners.clear();
+					listeners = EMPTY_LISTENER_LIST;
 				} else {
-					schedule();//Reschedule if we are not done
+					schedule();// Reschedule if we are not done
 				}
 				return Status.OK_STATUS;
 			}
@@ -534,11 +556,13 @@ public class DecorationScheduler {
 			public boolean belongsTo(Object family) {
 				return DecoratorManager.FAMILY_DECORATE == family;
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 			 */
-			public boolean shouldRun(){
+			public boolean shouldRun() {
 				return PlatformUI.isWorkbenchRunning();
 			}
 		};
@@ -551,7 +575,8 @@ public class DecorationScheduler {
 	 * Return whether or not there is a decoration for this element ready.
 	 * 
 	 * @param element
-	 * @param context The decoration context
+	 * @param context
+	 *            The decoration context
 	 * @return boolean true if the element is ready.
 	 */
 	public boolean isDecorationReady(Object element, IDecorationContext context) {
@@ -569,7 +594,8 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getBackgroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
+		DecorationResult decoration = getResult(element, adaptedElement,
+				DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null) {
 			return null;
@@ -588,7 +614,8 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Font getFont(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
+		DecorationResult decoration = getResult(element, adaptedElement,
+				DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null) {
 			return null;
@@ -607,7 +634,8 @@ public class DecorationScheduler {
 	 *         not been decorated yet.
 	 */
 	public Color getForegroundColor(Object element, Object adaptedElement) {
-		DecorationResult decoration = getResult(element, adaptedElement, DecorationContext.DEFAULT_CONTEXT);
+		DecorationResult decoration = getResult(element, adaptedElement,
+				DecorationContext.DEFAULT_CONTEXT);
 
 		if (decoration == null) {
 			return null;
@@ -625,17 +653,18 @@ public class DecorationScheduler {
 	}
 
 	/**
-	 * A listener has been removed. If we are updating then
-	 * skip it.
+	 * A listener has been removed. If we are updating then skip it.
+	 * 
 	 * @param listener
 	 */
 	void listenerRemoved(ILabelProviderListener listener) {
-		if(updatesPending()){//Only keep track of them if there are updates pending
+		if (updatesPending()) {// Only keep track of them if there are updates
+								// pending
 			removedListeners.add(listener);
 		}
-		if(!updatesPending()) {
+		if (!updatesPending()) {
 			removedListeners.remove(listener);
 		}
-		
+
 	}
 }
