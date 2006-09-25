@@ -3,6 +3,7 @@ package org.eclipse.jface.snippets.viewers;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -16,10 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
 public class MultiLineExample {
 
@@ -36,11 +35,11 @@ public class MultiLineExample {
 		shell.open();
 
 		while (!shell.isDisposed()) {
-			display.readAndDispatch();
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
 		display.dispose();
 	}
-
 
 	class LineEntry {
 
@@ -82,7 +81,6 @@ public class MultiLineExample {
 
 			return columnWidth;
 		}
-
 
 		/**
 		 * Get the font we are using.
@@ -182,53 +180,14 @@ public class MultiLineExample {
 		});
 		createColumns();
 
-		viewer.setLabelProvider(new OwnerDrawLabelProvider());
-		viewer.setInput(this);
-
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-
-		viewer.getControl().setLayoutData(data);
-
-		viewer.getTable().addListener(SWT.MeasureItem, new Listener() {
+		viewer.setLabelProvider(new OwnerDrawLabelProvider() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#erase(org.eclipse.swt.widgets.Event,
+			 *      java.lang.Object)
 			 */
-			public void handleEvent(Event event) {
-				
-				LineEntry line = (LineEntry) event.item.getData();
-				Point size = event.gc.textExtent(line.line);
-				event.width = 150;
-				int lines = size.x / event.width + 1;
-				event.height = size.y * lines;
-				
-			}
-		});
-
-		viewer.getTable().addListener(SWT.PaintItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				TableItem item = (TableItem) event.item;
-				LineEntry entry = (LineEntry) item.getData();
-				event.gc.drawText(entry.line, event.x, event.y, true);
-				
-
-			}
-		});
-
-		viewer.getTable().addListener(SWT.EraseItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
+			protected void erase(Event event, Object element) {
 
 				Rectangle bounds = event.getBounds();
 				if ((event.detail & SWT.SELECTED) > 0) {
@@ -250,21 +209,40 @@ public class MultiLineExample {
 				}
 
 			}
+
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#measure(org.eclipse.swt.widgets.Event, java.lang.Object)
+			 */
+			protected void measure(Event event, Object element) {
+				LineEntry line = (LineEntry) element;
+				Point size = event.gc.textExtent(line.line);
+				event.width = viewer.getTable().getColumn(event.index).getWidth();
+				int lines = size.x / event.width + 1;
+				event.height = size.y * lines;
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#paint(org.eclipse.swt.widgets.Event,
+			 *      java.lang.Object)
+			 */
+			protected void paint(Event event, Object element) {
+
+				LineEntry entry = (LineEntry) element;
+				event.gc.drawText(entry.line, event.x, event.y, true);
+			}
 		});
+		viewer.setInput(this);
+
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+
+		viewer.getControl().setLayoutData(data);
+		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
 
 		viewer.setSelection(new StructuredSelection(entries[1]));
-	}
-
-	/**
-	 * Return the size of the entry at CountryEntry.
-	 * 
-	 * @param entry
-	 * @param index
-	 * @return Rectangle
-	 */
-	protected Rectangle measure(LineEntry entry, Event event) {
-		return new Rectangle(0, 0, entry.getWidth(event), entry
-				.getHeight(event));
 	}
 
 	/**
@@ -282,7 +260,6 @@ public class MultiLineExample {
 
 	}
 
-	
 	public void setFocus() {
 
 	}

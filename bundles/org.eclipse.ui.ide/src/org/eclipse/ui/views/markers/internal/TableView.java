@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -128,7 +129,7 @@ public abstract class TableView extends ViewPart {
 
 		viewer.setContentProvider(contentProvider);
 
-		viewer.setLabelProvider(new TableViewLabelProvider(getAllFields()));
+		setLabelProviders();
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -181,6 +182,20 @@ public abstract class TableView extends ViewPart {
 				handleKeyPressed(e);
 			}
 		});
+	}
+
+	/**
+	 * Set the label providers for the columns.
+	 */
+	private void setLabelProviders() {
+		
+		IField[] fields = getAllFields();
+		for (int i = 0; i < fields.length; i++) {
+			IField field = fields[i];
+			viewer.getViewerColumn(i).setLabelProvider(new MarkerViewLabelProvider(field));
+		}	
+		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
+		
 	}
 
 	/**

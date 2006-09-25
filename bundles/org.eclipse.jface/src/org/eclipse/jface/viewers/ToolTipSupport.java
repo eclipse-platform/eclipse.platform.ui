@@ -114,7 +114,7 @@ class ToolTipSupport {
 				return;
 			}
 			
-			ViewerLabelProvider labelProvider = viewPart.getLabelProvider();
+			CellLabelProvider labelProvider = viewPart.getLabelProvider();
 			
 			String text = labelProvider.getToolTipText(element);
 			

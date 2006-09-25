@@ -3,6 +3,7 @@ package org.eclipse.jface.snippets.viewers;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.OwnerDrawLabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
@@ -16,10 +17,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 
 public class OwnerDrawExample {
 
@@ -291,7 +290,7 @@ public class OwnerDrawExample {
 
 		}
 	}
-	
+
 	private TableViewer viewer;
 
 	private CountryEntry[] entries;
@@ -342,49 +341,14 @@ public class OwnerDrawExample {
 		});
 		createColumns();
 
-		viewer.setLabelProvider(new OwnerDrawLabelProvider());
-		viewer.setInput(this);
-
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL
-				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-
-		viewer.getControl().setLayoutData(data);
-
-		viewer.getTable().addListener(SWT.MeasureItem, new Listener() {
+		viewer.setLabelProvider(new OwnerDrawLabelProvider() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
+			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#erase(org.eclipse.swt.widgets.Event,
+			 *      java.lang.Object)
 			 */
-			public void handleEvent(Event event) {
-				TableItem item = (TableItem) event.item;
-				CountryEntry country = (CountryEntry) item.getData();
-
-				event.setBounds(measure(country, event));
-			}
-		});
-
-		viewer.getTable().addListener(SWT.PaintItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				TableItem item = (TableItem) event.item;
-				CountryEntry entry = (CountryEntry) item.getData();
-				entry.draw(event);
-
-			}
-		});
-
-		viewer.getTable().addListener(SWT.EraseItem, new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
+			protected void erase(Event event, Object element) {
 
 				Rectangle bounds = event.getBounds();
 				if ((event.detail & SWT.SELECTED) > 0) {
@@ -402,25 +366,38 @@ public class OwnerDrawExample {
 					event.gc.setBackground(oldBackground);
 					/* ensure that default selection is not drawn */
 					event.detail &= ~SWT.SELECTED;
-
 				}
+			}
+
+			protected void measure(Event event, Object element) {
+				CountryEntry country = (CountryEntry) element;
+
+				event.setBounds(new Rectangle(0, 0, country.getWidth(event),
+						country.getHeight(event)));
+
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.viewers.OwnerDrawLabelProvider#paint(org.eclipse.swt.widgets.Event,
+			 *      java.lang.Object)
+			 */
+			protected void paint(Event event, Object element) {
+				CountryEntry entry = (CountryEntry) element;
+				entry.draw(event);
 
 			}
 		});
+		
+		OwnerDrawLabelProvider.setUpOwnerDraw(viewer);
+		viewer.setInput(this);
+		GridData data = new GridData(GridData.GRAB_HORIZONTAL
+				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
+
+		viewer.getControl().setLayoutData(data);
 
 		viewer.setSelection(new StructuredSelection(entries[1]));
-	}
-
-	/**
-	 * Return the size of the entry at CountryEntry.
-	 * 
-	 * @param entry
-	 * @param index
-	 * @return Rectangle
-	 */
-	protected Rectangle measure(CountryEntry entry, Event event) {
-		return new Rectangle(0, 0, entry.getWidth(event), entry
-				.getHeight(event));
 	}
 
 	/**

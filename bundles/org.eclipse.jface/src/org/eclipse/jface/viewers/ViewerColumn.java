@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public final class ViewerColumn {
 
-	private ViewerLabelProvider labelProvider;
+	private CellLabelProvider labelProvider;
 
 	static String COLUMN_VIEWER_KEY = Policy.JFACE + ".columnViewer";//$NON-NLS-1$
 
@@ -38,7 +38,7 @@ public final class ViewerColumn {
 	 * @param columnOwner
 	 * @param provider
 	 */
-	public ViewerColumn(Widget columnOwner, ViewerLabelProvider provider) {
+	public ViewerColumn(Widget columnOwner, CellLabelProvider provider) {
 		labelProvider = provider;
 		columnOwner.setData(ViewerColumn.COLUMN_VIEWER_KEY, this);
 	}
@@ -48,16 +48,16 @@ public final class ViewerColumn {
 	 * 
 	 * @return ViewerLabelProvider
 	 */
-	public ViewerLabelProvider getLabelProvider() {
+	public CellLabelProvider getLabelProvider() {
 		return labelProvider;
 	}
 
 	/**
 	 * Set the label provider for the column.
 	 * @param labelProvider
-	 *            the new {@link ViewerLabelProvider}
+	 *            the new {@link CellLabelProvider}
 	 */
-	public void setLabelProvider(ViewerLabelProvider labelProvider) {
+	public void setLabelProvider(CellLabelProvider labelProvider) {
 		this.labelProvider = labelProvider;
 	}
 

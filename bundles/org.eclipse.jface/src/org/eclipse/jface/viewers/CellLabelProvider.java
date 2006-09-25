@@ -20,7 +20,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * The ViewerLabelProvider is an abstract implementation of a label provider for
+ * The CellLabelProvider is an abstract implementation of a label provider for
  * structured viewers.
  * 
  * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
@@ -28,32 +28,14 @@ import org.eclipse.swt.graphics.Point;
  *        time. Please do not use this API without consulting with the
  *        Platform/UI team.
  */
-public class ViewerLabelProvider extends LabelProvider implements
-		ILabelProvider, IColorProvider, IFontProvider {
+public abstract class CellLabelProvider extends BaseLabelProvider  {
 
-	private static ILabelProvider defaultLabelProvider = new LabelProvider();
-
-	private ILabelProvider labelProvider = defaultLabelProvider;
-
-	private IColorProvider colorProvider;
-
-	private IFontProvider fontProvider;
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public ViewerLabelProvider() {
+	public CellLabelProvider() {
 		super();
-	}
-
-	/**
-	 * Create a new instance of the receiver based on labelProvider.
-	 * 
-	 * @param labelProvider
-	 */
-	public ViewerLabelProvider(IBaseLabelProvider labelProvider) {
-		super();
-		setProviders(labelProvider);
 	}
 
 	/**
@@ -64,162 +46,20 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 *            The labelProvider to convert
 	 * @return ViewerLabelProvider
 	 */
-	static ViewerLabelProvider createViewerLabelProvider(
+	static CellLabelProvider createViewerLabelProvider(
 			IBaseLabelProvider labelProvider) {
 
 		if (labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ITableColorProvider
 				|| labelProvider instanceof ITableFontProvider)
 			return new TableColumnViewerLabelProvider(labelProvider);
-		if (labelProvider instanceof ViewerLabelProvider)
-			return (ViewerLabelProvider) labelProvider;
-		return new ViewerLabelProvider(labelProvider);
+		if (labelProvider instanceof CellLabelProvider)
+			return (CellLabelProvider) labelProvider;
+		return new WrappedViewerLabelProvider(labelProvider);
 
 	}
 
-	/**
-	 * Updates the label for the given cell.
-	 * 
-	 * @param label
-	 *            the {@link ViewerLabel} to update
-	 * @param cell
-	 *            the {@link ViewerCell} to update
-	 */
-	public void updateLabel(ViewerLabel label, ViewerCell cell) {
-
-		Object element = cell.getElement();
-
-		label.setText(labelProvider.getText(element));
-		label.setImage(labelProvider.getImage(element));
-
-		if (colorProvider != null) {
-			label.setBackground(colorProvider.getBackground(element));
-			label.setForeground(colorProvider.getForeground(element));
-		}
-
-		if (fontProvider != null) {
-			label.setFont(fontProvider.getFont(element));
-		}
-	}
-
-	/**
-	 * Set the colorProvider to use for the receiver.
-	 * 
-	 * @param colorProvider
-	 *            {@link IColorProvider} The colorProvider to set. This value
-	 *            may be <code>null</code>.
-	 */
-	public void setColorProvider(IColorProvider colorProvider) {
-		this.colorProvider = colorProvider;
-	}
-
-	/**
-	 * Set the font provider.
-	 * 
-	 * @param fontProvider
-	 *            {@link IFontProvider} The fontProvider to set. This value may
-	 *            be <code>null</code>.
-	 */
-	public void setFontProvider(IFontProvider fontProvider) {
-		this.fontProvider = fontProvider;
-	}
-
-	/**
-	 * Set the labelProvider to be provider.
-	 * 
-	 * @param provider
-	 *            {@link ILabelProvider} provider to set. This value may be
-	 *            <code>null</code>.
-	 */
-	public void setLabelProvider(ILabelProvider provider) {
-		this.labelProvider = provider;
-	}
-
-	/**
-	 * Set the any providers for the receiver that can be adapted from provider.
-	 * 
-	 * @param provider
-	 *            {@link Object}
-	 */
-	public void setProviders(Object provider) {
-		if (provider instanceof ILabelProvider)
-			setLabelProvider((ILabelProvider) provider);
-
-		if (provider instanceof IColorProvider)
-			colorProvider = (IColorProvider) provider;
-
-		if (provider instanceof IFontProvider)
-			fontProvider = (IFontProvider) provider;
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
-	public Font getFont(Object element) {
-		if (fontProvider == null) {
-			return null;
-		}
-
-		return fontProvider.getFont(element);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
-	 */
-	public Color getBackground(Object element) {
-		if (colorProvider == null) {
-			return null;
-		}
-
-		return colorProvider.getBackground(element);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
-	public Color getForeground(Object element) {
-		if (colorProvider == null) {
-			return null;
-		}
-
-		return colorProvider.getForeground(element);
-	}
-
-	/**
-	 * Get the IColorProvider for the receiver.
-	 * 
-	 * @return {@link IColorProvider} or <code>null</code>
-	 */
-	public IColorProvider getColorProvider() {
-		return colorProvider;
-	}
-
-	/**
-	 * Get the IFontProvider for the receiver.
-	 * 
-	 * @return {@link IFontProvider} or <code>null</code>
-	 */
-	public IFontProvider getFontProvider() {
-		return fontProvider;
-	}
-
-	/**
-	 * Return the label provider for the receiver.
-	 * 
-	 * @return {@link ILabelProvider}
-	 */
-	public ILabelProvider getLabelProvider() {
-		return labelProvider;
-	}
-
+	
 	/**
 	 * Get the image displayed in the tool tip for object.
 	 * 
@@ -352,20 +192,6 @@ public class ViewerLabelProvider extends LabelProvider implements
 	 * 
 	 * @param cell {@link ViewerCell}
 	 */
-	public void update(ViewerCell cell) {
-		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
-		updateLabel(label, cell);
-
-		cell.setBackground(label.getBackground());
-		cell.setForeground(label.getForeground());
-		cell.setFont(label.getFont());
-
-		if (label.hasNewText())
-			cell.setText(label.getText());
-
-		if (label.hasNewImage())
-			cell.setImage(label.getImage());
-
-	}
+	public abstract void update(ViewerCell cell);
 
 }

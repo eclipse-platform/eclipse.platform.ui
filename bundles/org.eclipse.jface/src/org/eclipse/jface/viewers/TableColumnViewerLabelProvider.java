@@ -27,7 +27,7 @@ package org.eclipse.jface.viewers;
  * @see ITableFontProvider
  * 
  */
-class TableColumnViewerLabelProvider extends ViewerLabelProvider {
+class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 
 	private ITableLabelProvider tableLabelProvider;
 
@@ -59,44 +59,43 @@ class TableColumnViewerLabelProvider extends ViewerLabelProvider {
 			tableFontProvider = (ITableFontProvider) labelProvider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerLabelProvider#updateLabel(org.eclipse.jface.viewers.ViewerLabel,
-	 *      org.eclipse.jface.viewers.ViewerCell)
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.WrappedViewerLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
 	 */
-	public void updateLabel(ViewerLabel label, ViewerCell cell) {
+	public void update(ViewerCell cell) {
 
 		Object element = cell.getElement();
 		int index = cell.getColumnIndex();
 
 		if (tableLabelProvider == null) {
-			label.setText(getLabelProvider().getText(element));
-			label.setImage(getLabelProvider().getImage(element));
+			cell.setText(getLabelProvider().getText(element));
+			cell.setImage(getLabelProvider().getImage(element));
 		} else {
-			label.setText(tableLabelProvider.getColumnText(element, index));
-			label.setImage(tableLabelProvider.getColumnImage(element, index));
+			cell.setText(tableLabelProvider.getColumnText(element, index));
+			cell.setImage(tableLabelProvider.getColumnImage(element, index));
 		}
 
 		if (tableColorProvider == null) {
 			if (getColorProvider() != null) {
-				label.setBackground(getColorProvider().getBackground(element));
-				label.setForeground(getColorProvider().getForeground(element));
+				cell.setBackground(getColorProvider().getBackground(element));
+				cell.setForeground(getColorProvider().getForeground(element));
 			}
 
 		} else {
-			label.setBackground(tableColorProvider
+			cell.setBackground(tableColorProvider
 					.getBackground(element, index));
-			label.setForeground(tableColorProvider
+			cell.setForeground(tableColorProvider
 					.getForeground(element, index));
 
 		}
 
 		if (tableFontProvider == null) {
 			if (getFontProvider() != null)
-				label.setFont(getFontProvider().getFont(element));
+				cell.setFont(getFontProvider().getFont(element));
 		} else
-			label.setFont(tableFontProvider.getFont(element, index));
+			cell.setFont(tableFontProvider.getFont(element, index));
 
 	}
 

@@ -74,7 +74,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	private boolean treeIsDisposed = false;
 
-
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
 	 * parent. The tree control is created using the SWT style bits
@@ -140,7 +139,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
 	protected void doUpdateItem(final Item item, Object element) {
- 		if (!(item instanceof TreeItem)) {
+		if (!(item instanceof TreeItem)) {
 			return;
 		}
 		TreeItem treeItem = (TreeItem) item;
@@ -150,12 +149,13 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 
 		int columnCount = getTree().getColumnCount();
-		if(columnCount == 0)//If no columns are created then fake one
+		if (columnCount == 0)// If no columns are created then fake one
 			columnCount = 1;
 
 		for (int column = 0; column < columnCount; column++) {
 			ViewerColumn columnViewer = getViewerColumn(column);
-			columnViewer.refresh(updateCell(getRowPartFromItem(treeItem),column));
+			columnViewer.refresh(updateCell(getRowPartFromItem(treeItem),
+					column));
 
 			// As it is possible for user code to run the event
 			// loop check here.
@@ -168,17 +168,19 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
-		if( columnIndex < 0 || columnIndex > getTree().getColumnCount() ) {
+		if (columnIndex < 0 || columnIndex > getTree().getColumnCount()) {
 			return null;
 		}
-		
+
 		if (getTree().getColumnCount() == 0)// Hang it off the table if it
 			return getTree();
-		
+
 		return getTree().getColumn(columnIndex);
 	}
 
@@ -218,15 +220,18 @@ public class TreeViewer extends AbstractTreeViewer {
 		treeViewerImpl.editElement(element, column);
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
 	 */
 	public CellEditor[] getCellEditors() {
 		return treeViewerImpl.getCellEditors();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
 	 */
 	public ICellModifier getCellModifier() {
@@ -246,7 +251,9 @@ public class TreeViewer extends AbstractTreeViewer {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
 	 */
 	public Object[] getColumnProperties() {
@@ -445,13 +452,14 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected Item newItem(Widget parent, int flags, int ix) {
 		TreeItem item;
-		
+
 		if (parent instanceof TreeItem) {
-			item = (TreeItem)createNewRowPart(getRowPartFromItem(parent),flags, ix).getItem();
+			item = (TreeItem) createNewRowPart(getRowPartFromItem(parent),
+					flags, ix).getItem();
 		} else {
-			item = (TreeItem)createNewRowPart(null,flags, ix).getItem();
+			item = (TreeItem) createNewRowPart(null, flags, ix).getItem();
 		}
-		
+
 		return item;
 	}
 
@@ -530,10 +538,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
-				|| labelProvider instanceof ILabelProvider);
-		clearColumnParts();//Clear before refresh
+				|| labelProvider instanceof ILabelProvider
+				|| labelProvider instanceof CellLabelProvider);
+		clearColumnParts();// Clear before refresh
 		super.setLabelProvider(labelProvider);
-		
+
 	}
 
 	/**
@@ -541,15 +550,15 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	private void clearColumnParts() {
 		TreeColumn[] columns = getTree().getColumns();
-		if(columns.length == 0)
-			getTree().setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
-		else{
+		if (columns.length == 0)
+			getTree().setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
+		else {
 			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY,null);
-				
+				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
+
 			}
 		}
-		
+
 	}
 
 	/*
@@ -896,43 +905,50 @@ public class TreeViewer extends AbstractTreeViewer {
 			});
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
 	protected ViewerRow getRowPartFromItem(Widget item) {
-		ViewerRow part = (ViewerRow)item.getData(ViewerRow.ROWPART_KEY);
-		
-		if( part == null ) {
-			part = new TreeViewerRow(((TreeItem)item));
+		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
+
+		if (part == null) {
+			part = new TreeViewerRow(((TreeItem) item));
 		}
-		
+
 		return part;
 	}
-		
+
 	/**
 	 * Create a new ViewerRow at rowIndex
+	 * 
 	 * @param parent
 	 * @param style
 	 * @param rowIndex
 	 * @return ViewerRow
 	 */
 	private ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
-		if( parent == null ) {
-			if( rowIndex >= 0 ) {
-				return getRowPartFromItem(new TreeItem(tree,style,rowIndex));
+		if (parent == null) {
+			if (rowIndex >= 0) {
+				return getRowPartFromItem(new TreeItem(tree, style, rowIndex));
 			}
-			return getRowPartFromItem(new TreeItem(tree,style));
+			return getRowPartFromItem(new TreeItem(tree, style));
 		}
-		
-		if( rowIndex >= 0 ) {
-			return getRowPartFromItem(new TreeItem((TreeItem)parent.getItem(),SWT.NONE,rowIndex));
+
+		if (rowIndex >= 0) {
+			return getRowPartFromItem(new TreeItem((TreeItem) parent.getItem(),
+					SWT.NONE, rowIndex));
 		}
-		
-		return getRowPartFromItem(new TreeItem((TreeItem)parent.getItem(),SWT.NONE));
+
+		return getRowPartFromItem(new TreeItem((TreeItem) parent.getItem(),
+				SWT.NONE));
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalInitializeTree(org.eclipse.swt.widgets.Control)
 	 */
 	protected void internalInitializeTree(Control widget) {
@@ -945,9 +961,12 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		super.internalInitializeTree(tree);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#updatePlus(org.eclipse.swt.widgets.Item, java.lang.Object)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#updatePlus(org.eclipse.swt.widgets.Item,
+	 *      java.lang.Object)
 	 */
 	protected void updatePlus(Item item, Object element) {
 		if (getContentProvider() instanceof ILazyTreeContentProvider) {

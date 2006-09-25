@@ -139,7 +139,7 @@ abstract class ColumnViewer extends StructuredViewer {
 				.getData(ViewerColumn.COLUMN_VIEWER_KEY);
 
 		if (viewer == null) {
-			viewer = createColumnViewer(columnOwner, ViewerLabelProvider
+			viewer = createColumnViewer(columnOwner, CellLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
 			setViewerColumn(columnIndex, viewer);
 		} 
@@ -207,7 +207,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @return ViewerColumn
 	 */
 	protected ViewerColumn createColumnViewer(Widget columnOwner,
-			ViewerLabelProvider labelProvider) {
+			CellLabelProvider labelProvider) {
 		return new ViewerColumn(columnOwner, labelProvider);
 	}
 

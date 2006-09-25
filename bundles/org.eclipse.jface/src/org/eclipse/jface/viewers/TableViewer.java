@@ -149,7 +149,8 @@ public class TableViewer extends ColumnViewer {
 			Object[] newCache = new Object[requiredCount];
 			System.arraycopy(cachedElements, 0, newCache, 0, index);
 			if (index < cachedElements.length) {
-				System.arraycopy(cachedElements, index, newCache, index + 1, cachedElements.length - index);
+				System.arraycopy(cachedElements, index, newCache, index + 1,
+						cachedElements.length - index);
 			}
 			newCache[index] = element;
 			cachedElements = newCache;
@@ -158,11 +159,13 @@ public class TableViewer extends ColumnViewer {
 		}
 
 		/**
-		 * The elements with the given indices need to be removed from the cache.
+		 * The elements with the given indices need to be removed from the
+		 * cache.
+		 * 
 		 * @param indices
 		 */
 		public void removeIndices(int[] indices) {
-			if (indices.length==1) {
+			if (indices.length == 1) {
 				removeIndicesFromTo(indices[0], indices[0]);
 			}
 			int requiredCount = getTable().getItemCount() - indices.length;
@@ -170,8 +173,8 @@ public class TableViewer extends ColumnViewer {
 			Arrays.sort(indices);
 			Object[] newCache = new Object[requiredCount];
 			int indexInNewCache = 0;
-			int nextToSkip = 0; 
-			for (int i=0; i<cachedElements.length; i++) {
+			int nextToSkip = 0;
+			for (int i = 0; i < cachedElements.length; i++) {
 				if (nextToSkip < indices.length && i == indices[nextToSkip]) {
 					nextToSkip++;
 				} else {
@@ -182,16 +185,20 @@ public class TableViewer extends ColumnViewer {
 		}
 
 		/**
-		 * The elements between the given indices (inclusive) need to be removed from the cache.
+		 * The elements between the given indices (inclusive) need to be removed
+		 * from the cache.
+		 * 
 		 * @param from
 		 * @param to
 		 */
 		public void removeIndicesFromTo(int from, int to) {
 			int indexAfterTo = to + 1;
-			Object[] newCache = new Object[cachedElements.length - (indexAfterTo - from)];
+			Object[] newCache = new Object[cachedElements.length
+					- (indexAfterTo - from)];
 			System.arraycopy(cachedElements, 0, newCache, 0, from);
 			if (indexAfterTo < cachedElements.length) {
-				System.arraycopy(cachedElements, indexAfterTo, newCache, from, cachedElements.length - indexAfterTo);
+				System.arraycopy(cachedElements, indexAfterTo, newCache, from,
+						cachedElements.length - indexAfterTo);
 			}
 		}
 
@@ -215,7 +222,8 @@ public class TableViewer extends ColumnViewer {
 				cachedElements = newCache;
 			} else {
 				Object[] newCache = new Object[count];
-				System.arraycopy(cachedElements, 0, newCache, 0, cachedElements.length);
+				System.arraycopy(cachedElements, 0, newCache, 0,
+						cachedElements.length);
 				cachedElements = newCache;
 			}
 		}
@@ -332,8 +340,7 @@ public class TableViewer extends ColumnViewer {
 	 */
 	private void createItem(Object element, int index) {
 		if (virtualManager == null) {
-			updateItem(createNewRowPart(null, SWT.NONE, index).getItem(),
-					element);
+			updateItem(createNewRowPart(SWT.NONE, index).getItem(), element);
 		} else {
 			virtualManager.notVisibleAdded(element, index);
 
@@ -428,7 +435,8 @@ public class TableViewer extends ColumnViewer {
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
 				ViewerColumn columnViewer = getViewerColumn(column);
-				columnViewer.refresh(updateCell(getRowPartFromItem(item),column));
+				columnViewer.refresh(updateCell(getRowPartFromItem(item),
+						column));
 
 				// As it is possible for user code to run the event
 				// loop check here.
@@ -1071,7 +1079,8 @@ public class TableViewer extends ColumnViewer {
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
-				|| labelProvider instanceof ILabelProvider);
+				|| labelProvider instanceof ILabelProvider
+				|| labelProvider instanceof CellLabelProvider);
 		clearColumnParts();// Clear before refresh
 		super.setLabelProvider(labelProvider);
 	}
@@ -1322,14 +1331,14 @@ public class TableViewer extends ColumnViewer {
 		return part;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Create a new row with style at index
 	 * 
-	 * @see org.eclipse.jface.viewers.StructuredViewer#createNewRowPart(org.eclipse.jface.internal.viewers.RowPart,
-	 *      int, int)
+	 * @param style
+	 * @param rowIndex
+	 * @return ViewerRow
 	 */
-	protected ViewerRow createNewRowPart(ViewerRow parent, int style,
-			int rowIndex) {
+	private ViewerRow createNewRowPart(int style, int rowIndex) {
 		TableItem item;
 
 		if (rowIndex >= 0) {

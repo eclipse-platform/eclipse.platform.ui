@@ -15,8 +15,9 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerColumn;
-import org.eclipse.jface.viewers.ViewerLabelProvider;
+import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -61,7 +62,7 @@ public class CustomTooltipsSnippet {
 	    v.activateCustomTooltips();
 	    v.setContentProvider(new MyContentProvider());
 	    
-	    ViewerLabelProvider labelProvider = new ViewerLabelProvider(null) {
+	    CellLabelProvider labelProvider = new CellLabelProvider() {
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipText(java.lang.Object)
@@ -90,15 +91,13 @@ public class CustomTooltipsSnippet {
 			public int getTooltipTimeDisplayed(Object object) {
 				return 5000;
 			}
+			
+			public void update(ViewerCell cell) {
+				cell.setText(cell.getElement().toString());
+				
+			}
 	    };
 	    
-	    labelProvider.setLabelProvider(new LabelProvider() {
-
-			public String getText(Object element) {
-				return element.toString();
-			}
-	    	
-	    });
 	    
 	    TableColumn column = new TableColumn(v.getTable(),SWT.NONE);
 	    new ViewerColumn(column,labelProvider);
