@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.utils.ResourceSearchItem;
 
@@ -59,18 +58,17 @@ public class ResourceSearcher extends AbstractSearcher {
 	private List lastCompletedResult;
 
 	private static Collator collator = Collator.getInstance();
-
-	private String patternString = ""; //$NON-NLS-1$
+	
+	private ResourceFilter filter;
+	
+	private ResourceFilter lastComplitedFilter = null;
 
 	private IContainer container;
 
 	private int typeMask;
 
-	private StringMatcher stringMatcher;
-
-	private StringMatcher lastComplitedMacher;
-
 	private boolean showDerived = false;
+	
 
 	/**
 	 * Creates a ResourceSearcher
@@ -92,7 +90,7 @@ public class ResourceSearcher extends AbstractSearcher {
 	 * 
 	 * @see org.eclipse.ui.dialogs.AbstractSearcher#getComparator()
 	 */
-	protected Comparator getComparator() {
+	protected Comparator getElementsComparator() {
 		return new ResourceComparator();
 	}
 
@@ -127,12 +125,9 @@ public class ResourceSearcher extends AbstractSearcher {
 		if (param == PATTERN) {
 			setSearchPattern((String) value);
 		}
+		
 		if (param == DERIVED) {
-			boolean isDerived = ((Boolean) value).booleanValue();
-			showDerived = isDerived;
-			if (isDerived)
-				lastComplitedMacher = null;
-			setSearchPattern(patternString);
+			setSearchDerived(((Boolean) value).booleanValue());
 		}
 	}
 
@@ -158,13 +153,21 @@ public class ResourceSearcher extends AbstractSearcher {
 
 	private void setSearchPattern(String text) {
 		stop(false, false);
-		patternString = adjustPattern(text);
-		if (patternString.length() == 0) {
-			model.reset();
+		if (text.length() == 0) { //|| "*".equals(text)) { 
+				filter = null;
+				model.reset();
 		} else {
-			stringMatcher = new StringMatcher(patternString, true, false);
+			filter = new ResourceFilter(text);
 			scheduleSearchJob();
 		}
+	}
+	
+	private void setSearchDerived(boolean isDerived) {
+		showDerived = isDerived;
+		if (isDerived)
+			lastComplitedFilter = null;
+		if (filter!=null)
+			scheduleSearchJob();
 	}
 
 	/**
@@ -184,12 +187,12 @@ public class ResourceSearcher extends AbstractSearcher {
 
 	private void scheduleSearchJob() {
 		searchJobTicket++;
-		if (lastComplitedMacher != null
-				&& lastComplitedMacher.match(patternString)) {
+		if (lastComplitedFilter != null
+				&& lastComplitedFilter.isSubFilter(filter.getNamePattern())) {
 			searchJob = new ResourceCachedResultJob(searchJobTicket,
 					lastCompletedResult, model, (ResourceHistory) history);
 		} else {
-			lastComplitedMacher = null;
+			lastComplitedFilter = null;
 			lastCompletedResult = null;
 			searchJob = new ResourceSearchEngineJob(searchJobTicket, model,
 					(ResourceHistory) history, this);
@@ -200,7 +203,7 @@ public class ResourceSearcher extends AbstractSearcher {
 	private void rememberResult(int ticket, final List result) {
 		if (ticket == searchJobTicket) {
 			if (lastCompletedResult == null) {
-				lastComplitedMacher = stringMatcher;
+				lastComplitedFilter = filter;
 				lastCompletedResult = result;
 			}
 		}
@@ -216,21 +219,6 @@ public class ResourceSearcher extends AbstractSearcher {
 	 */
 	protected boolean getShowDerived() {
 		return showDerived;
-	}
-
-	/**
-	 * Returns true if the label matches the chosen pattern.
-	 * 
-	 * @param label
-	 *            label to match with the current pattern
-	 * @return true if the label matches the chosen pattern. false otherwise.
-	 */
-	private boolean match(String label) {
-		if ((patternString == null)
-				|| (patternString.equals("")) || (patternString.equals("*"))) { //$NON-NLS-1$ //$NON-NLS-2$
-			return true;
-		}
-		return stringMatcher.match(label);
 	}
 
 	/**
@@ -264,7 +252,7 @@ public class ResourceSearcher extends AbstractSearcher {
 					continue;
 				if (filteredHistory.contains(resource.getResource()))
 					continue;
-				if (match(resource.getResource().getName()))
+				if (filter.matchesElement(resource.getResource()))
 					model.addElement(resource);
 			}
 			model.refresh();
@@ -274,7 +262,7 @@ public class ResourceSearcher extends AbstractSearcher {
 		protected List getFilteredHistory() {
 			List elements = new ArrayList();
 			IResource[] matchingResources = ((ResourceHistory) history)
-					.getMatchedElements(stringMatcher, container);
+					.getMatchedElements(filter, container);
 
 			if (matchingResources.length > 0) {
 				for (int i = 0; i < matchingResources.length; i++) {
@@ -315,7 +303,7 @@ public class ResourceSearcher extends AbstractSearcher {
 		protected List getFilteredHistory() {
 			List elements = new ArrayList();
 			IResource[] matchingResources = ((ResourceHistory) history)
-					.getMatchedElements(stringMatcher, container);
+					.getMatchedElements(filter, container);
 
 			if (matchingResources.length > 0) {
 				for (int i = 0; i < matchingResources.length; i++) {
@@ -339,7 +327,7 @@ public class ResourceSearcher extends AbstractSearcher {
 				progress.beginTask("", container.members().length); //$NON-NLS-1$
 
 			container.accept(new ResourceProxyVisitor(model, progress,
-					(ResourceHistory) this.history, container), IResource.NONE);
+					(ResourceHistory) this.history, container, filter), IResource.NONE);
 
 			if (progress != null)
 				progress.done();
@@ -364,10 +352,10 @@ public class ResourceSearcher extends AbstractSearcher {
 		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Object o1, Object o2) {
-			final ResourceSearchItem resourceDecorator1 = ((ResourceSearchItem) o1);
-			final ResourceSearchItem resourceDecorator2 = ((ResourceSearchItem) o2);
-			final IResource resource1 = resourceDecorator1.getResource();
-			final IResource resource2 = resourceDecorator2.getResource();
+			ResourceSearchItem resourceDecorator1 = ((ResourceSearchItem) o1);
+			ResourceSearchItem resourceDecorator2 = ((ResourceSearchItem) o2);
+			IResource resource1 = resourceDecorator1.getResource();
+			IResource resource2 = resourceDecorator2.getResource();
 			String s1 = resource1.getName();
 			String s2 = resource2.getName();
 			int comparability = collator.compare(s1, s2);
@@ -379,17 +367,7 @@ public class ResourceSearcher extends AbstractSearcher {
 				comparability = collator.compare(s1, s2);
 			}
 
-			if ((resourceDecorator1.isHistory() && resourceDecorator2
-					.isHistory())
-					|| (!resourceDecorator1.isHistory() && !resourceDecorator2
-							.isHistory()))
-				return comparability;
-			if (resourceDecorator1.isHistory())
-				return -1;
-			if (resourceDecorator2.isHistory())
-				return +1;
-
-			return 0;
+			return comparability;
 		}
 	}
 
@@ -410,6 +388,10 @@ public class ResourceSearcher extends AbstractSearcher {
 		IContainer container;
 
 		List projects;
+		
+		ResourceFilter resourceFilter;
+		
+		boolean isDone = false;
 
 		/**
 		 * @param model
@@ -417,13 +399,14 @@ public class ResourceSearcher extends AbstractSearcher {
 		 */
 		public ResourceProxyVisitor(SearcherModel model,
 				IProgressMonitor progressMonitor,
-				ResourceHistory resourceHistory, IContainer container)
+				ResourceHistory resourceHistory, IContainer container, ResourceFilter filter)
 				throws CoreException {
 			super();
 			this.model = model;
 			this.progressMonitor = progressMonitor;
 			this.resourceHistory = resourceHistory;
 			this.container = container;
+			this.resourceFilter = filter;
 			this.projects = new ArrayList(Arrays.asList(container.members()));
 
 		}
@@ -434,18 +417,27 @@ public class ResourceSearcher extends AbstractSearcher {
 		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
 		 */
 		public boolean visit(IResourceProxy proxy) throws CoreException {
+			
+			if (isDone) return false;
+			
+			if (filter != this.resourceFilter) { 
+				progressMonitor.done();
+				isDone = true;
+			}
+			
 			if (!getShowDerived() && proxy.isDerived()) {
 				return false;
 			}
-
+			
 			IResource res = proxy.requestResource();
-			if (this.projects.remove((res.getProject()))) {
+			
+			if (this.projects.remove((res.getProject())) || this.projects.remove((res))) {
 				progressMonitor.worked(1);
 			}
-
+			
 			int type = proxy.getType();
 			if ((typeMask & type) != 0) {
-				if (match(proxy.getName())) {
+				if (filter == this.resourceFilter && resourceFilter.matchesElement(res)) {
 					if (validateSearchedResource(res)) {
 						if (!resourceHistory.contains(res))
 							model.addElement(new ResourceSearchItem(res));
@@ -498,12 +490,12 @@ public class ResourceSearcher extends AbstractSearcher {
 		}
 
 		public synchronized IResource[] getMatchedElements(
-				StringMatcher matcher, IContainer container) {
+				ResourceFilter filter, IContainer container) {
 			Collection values = getValues();
 			List result = new ArrayList();
 			for (Iterator iter = values.iterator(); iter.hasNext();) {
 				IResource resource = (IResource) iter.next();
-				if (matcher == null || matcher.match(resource.getName()))
+				if (filter == null || filter.matchesElement(resource))
 					if (container.findMember(resource.getFullPath()) != null)
 						result.add(resource);
 					else
@@ -531,6 +523,92 @@ public class ResourceSearcher extends AbstractSearcher {
 			resourceFactory.saveState(resourceElement);
 		}
 
+	}
+	
+	/**
+	 * 
+	 * Filters resources using searchPatter for comparation name of resources with pattern. 
+	 * 
+	 * @since 3.3
+	 *
+	 */
+	public class ResourceFilter {
+
+		private String text;
+
+		private SearchPattern nameMatcher;
+		
+		public ResourceFilter(String text) {
+			this.text = text;
+			nameMatcher = new SearchPattern(text, true);
+		}
+
+		public String getText() {
+			return text;
+		}
+
+		public boolean isSubFilter(String text) {
+			if (text != null && text.startsWith(this.text)) {
+				return true;
+			} 
+			return false;
+		}
+
+		public boolean isCamcelCasePattern() {
+			return nameMatcher.getMatchKind() == SearchPattern.R_CAMELCASE_MATCH;
+		}
+
+		public String getNamePattern() {
+			return nameMatcher.getPattern();
+		}
+
+		public int getSearchFlags() {
+			return nameMatcher.getMatchKind();
+		}
+
+		public boolean matchesElement(IResource resource) {
+			return matchesName(resource);
+		}
+
+		private boolean matchesName(IResource resource) {
+			return nameMatcher.matches(resource.getName());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.AbstractSearcher#getDuplicatesComparator()
+	 */
+	protected Comparator getEndComparator() {
+		return new Comparator() {
+		
+			public int compare(Object o1, Object o2) {
+				ResourceSearchItem resourceDecorator1 = ((ResourceSearchItem) o1);
+				ResourceSearchItem resourceDecorator2 = ((ResourceSearchItem) o2);
+				IResource resource1 = resourceDecorator1.getResource();
+				IResource resource2 = resourceDecorator2.getResource();
+				String s1 = resource1.getName();
+				String s2 = resource2.getName();
+				int comparability = collator.compare(s1, s2);
+				if (comparability == 0) {
+					s1 = resource1.getFullPath().toString();
+					s2 = resource2.getFullPath().toString();
+					comparability = collator.compare(s1, s2);
+				}
+
+				if ((resourceDecorator1.isHistory() && resourceDecorator2
+						.isHistory())
+						|| (!resourceDecorator1.isHistory() && !resourceDecorator2
+								.isHistory()))
+					return comparability;
+				if (resourceDecorator1.isHistory())
+					return -1;
+				if (resourceDecorator2.isHistory())
+					return +1;
+
+				return 0;
+			}
+		
+		};
 	}
 
 }

@@ -159,7 +159,7 @@ public abstract class AbstractSearcher {
 		private String progressMessage = ""; //$NON-NLS-1$
 		
 		public SearcherModel(){
-			this.elements = Collections.synchronizedSortedSet(new TreeSet(getComparator()));
+			this.elements = Collections.synchronizedSortedSet(new TreeSet(getElementsComparator()));
 		}
 		
 		protected void addElements(Object[] items) {
@@ -172,7 +172,9 @@ public abstract class AbstractSearcher {
 		 * @return searched elements
 		 */
 		public Object[] getElements(){
-			return elements.toArray();
+			SortedSet sortedElements = new TreeSet(getEndComparator());
+			sortedElements.addAll(Arrays.asList(elements.toArray()));
+			return sortedElements.toArray();
 		}
 
 		/**
@@ -215,7 +217,7 @@ public abstract class AbstractSearcher {
 		 * @param item
 		 */
 		public void addElement(Object item){
-			this.elements.add(item);
+				this.elements.add(item);
 		}
 		
 		/**
@@ -239,7 +241,9 @@ public abstract class AbstractSearcher {
 	/**
 	 * It returns comparator to sort elements
 	 */
-	protected abstract Comparator getComparator();
+	protected abstract Comparator getElementsComparator();
+	
+	protected abstract Comparator getEndComparator();
 	
 	/**
 	 * SearcherProgressMonitor to monitoring progress of searching process.
@@ -343,6 +347,8 @@ public abstract class AbstractSearcher {
 	
 	/**
 	 * AbstractSearchJob is a job for searching elements.
+	 * @since 3.3
+	 *
 	 */
 	protected abstract class AbstractSearchJob extends AbstractJob {
 		
@@ -440,18 +446,18 @@ public abstract class AbstractSearcher {
 		private static final String DEFAULT_INFO_NODE_NAME= "infoNode"; //$NON-NLS-1$
 		private static final int MAX_HISTORY_SIZE= 60;
 
-		private final Map fHistory;
+		private final Map history;
 		private final Hashtable fPositions;
 		private final String fRootNodeName;
 		private final String fInfoNodeName;
 			
 		public SearcherHistory(String rootNodeName, String infoNodeName) {
-			fHistory= new LinkedHashMap(80, 0.75f, true) {
+			history= Collections.synchronizedMap(new LinkedHashMap(80, 0.75f, true) {
 				private static final long serialVersionUID= 1L;
 				protected boolean removeEldestEntry(Map.Entry eldest) {
 					return size() > MAX_HISTORY_SIZE;
 				}
-			};
+			});
 			fRootNodeName= rootNodeName;
 			fInfoNodeName= infoNodeName;
 			fPositions= new Hashtable(MAX_HISTORY_SIZE);
@@ -462,30 +468,30 @@ public abstract class AbstractSearcher {
 		}
 		
 		public synchronized void accessed(Object object) {
-			fHistory.put(getKey(object), object);
+			history.put(getKey(object), object);
 			rebuildPositions();
 		}
 		
 		public synchronized boolean contains(Object object) {
-			return fHistory.containsKey(getKey(object));
+			return history.containsKey(getKey(object));
 		}
 		
 		public synchronized boolean containsKey(Object key) {
-			return fHistory.containsKey(key);
+			return history.containsKey(key);
 		}
 		
 		public synchronized boolean isEmpty() {
-			return fHistory.isEmpty();
+			return history.isEmpty();
 		}
 		
 		public synchronized Object remove(Object object) {
-			Object removed= fHistory.remove(getKey(object));
+			Object removed= history.remove(getKey(object));
 			rebuildPositions();
 			return removed;
 		}
 		
 		public synchronized Object removeKey(Object key) {
-			Object removed= fHistory.remove(key);
+			Object removed= history.remove(key);
 			rebuildPositions();
 			return removed;
 		}
@@ -505,7 +511,7 @@ public abstract class AbstractSearcher {
 
 			int pos= ((Integer)fPositions.get(key)).intValue() + 1;
 			
-			return (float)pos / (float)fHistory.size();
+			return (float)pos / (float)history.size();
 		}
 		
 		/**
@@ -534,7 +540,7 @@ public abstract class AbstractSearcher {
 				IMemento mementoElement = mementoElements[i];
 				Object object= createFromElement(mementoElement);
 				if (object != null)
-					fHistory.put(getKey(object), object);
+					history.put(getKey(object), object);
 			}
 			rebuildPositions();
 		}
@@ -553,11 +559,11 @@ public abstract class AbstractSearcher {
 		}
 		
 		protected Set getKeys() {
-			return fHistory.keySet();
+			return history.keySet();
 		}
 		
 		protected Collection getValues() {
-			return fHistory.values();
+			return history.values();
 		}
 		
 		/**
@@ -585,7 +591,7 @@ public abstract class AbstractSearcher {
 		
 		private void rebuildPositions() {
 			fPositions.clear();
-			Collection values= fHistory.values();
+			Collection values= history.values();
 			int pos=0;
 			for (Iterator iter= values.iterator(); iter.hasNext();) {
 				Object element= iter.next();
