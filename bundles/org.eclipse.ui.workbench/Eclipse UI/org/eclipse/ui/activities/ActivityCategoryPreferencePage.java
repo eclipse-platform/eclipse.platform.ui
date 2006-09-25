@@ -228,14 +228,11 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
             }  
             return null;
         }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object,
-         *      int)
+      
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
          */
-        public String getColumnText(Object element, int columnIndex) {
+        public String getText(Object element) {
             String name = null;
             ICategory category = (ICategory) element;
             try {
@@ -247,6 +244,13 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                 name = NLS.bind(ActivityMessages.ActivitiesPreferencePage_lockedMessage, name);
             }
             return name;
+        }   
+       
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+         */
+        public String getColumnText(Object element, int columnIndex) {
+        	return getText(element);
         }
 
         /*
