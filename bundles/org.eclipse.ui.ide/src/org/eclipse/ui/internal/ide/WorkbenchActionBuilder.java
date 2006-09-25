@@ -367,6 +367,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             IMenuManager popUpMenu = new MenuManager();
             popUpMenu.add(new ActionContributionItem(lockToolBarAction));
             popUpMenu.add(new ActionContributionItem(editActionSetAction));
+            popUpMenu.add(new ActionContributionItem(toggleCoolbarAction));
             coolBar.setContextMenuManager(popUpMenu);
         }
         coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
