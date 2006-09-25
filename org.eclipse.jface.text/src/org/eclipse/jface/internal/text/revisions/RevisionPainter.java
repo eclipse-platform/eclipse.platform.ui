@@ -308,7 +308,6 @@ public final class RevisionPainter {
 		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseEnter(MouseEvent e) {
-			onEnter();
 			updateFocusLine(toDocumentLineNumber(e.y));
 		}
 
@@ -317,14 +316,12 @@ public final class RevisionPainter {
 		 */
 		public void mouseExit(MouseEvent e) {
 			updateFocusLine(-1);
-			onExit();
 		}
 
 		/*
 		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 		 */
 		public void mouseHover(MouseEvent e) {
-			onHover();
 		}
 
 		/*
@@ -559,11 +556,6 @@ public final class RevisionPainter {
 	private Revision fSelectedRevision= null;
 	/** <code>true</code> if the mouse wheel handler is installed, <code>false</code> otherwise. */
 	private boolean fWheelHandlerInstalled= false;
-	/**
-	 * <code>true</code> if the overview annotations are displayed, <code>false</code>
-	 * otherwise.
-	 */
-	private boolean fIsOverviewShowing= false;
 	/**
 	 * The revision rendering mode.
 	 */
@@ -970,6 +962,7 @@ public final class RevisionPainter {
 				Hunk[] hunks= HunkComputer.computeHunks(fLineDiffer, fViewer.getDocument().getNumberOfLines());
 				fRevisionInfo.applyDiff(hunks);
 				fRevisionRanges= fRevisionInfo.getRanges();
+				updateOverviewAnnotations();
 				informListeners();
 			}
 		}
@@ -1072,17 +1065,16 @@ public final class RevisionPainter {
 	}
 
 	/**
-	 * Shows (or hides) the overview annotations. Pass <code>null</code> to remove any displayed
-	 * annotations.
-	 * 
-	 * @param revision the revision to show in the overview ruler
+	 * Shows (or hides) the overview annotations.
 	 */
-	private void showOverviewAnnotations(Revision revision) {
+	private void updateOverviewAnnotations() {
 		if (fAnnotationModel == null)
 			return;
+		
+		Revision revision= fFocusRevision != null ? fFocusRevision : fSelectedRevision;
 
 		Map added= null;
-		if (revision != null && fIsOverviewShowing) {
+		if (revision != null) {
 			added= new HashMap();
 			for (Iterator it= revision.getRegions().iterator(); it.hasNext();) {
 				RevisionRange range= (RevisionRange) it.next();
@@ -1136,7 +1128,7 @@ public final class RevisionPainter {
 			endOffset= document.getLineOffset(nextLine);
 		return new Region(offset, endOffset - offset);
 	}
-	
+
 	/**
 	 * Handles the selection of a revision and informs listeners.
 	 * 
@@ -1145,11 +1137,10 @@ public final class RevisionPainter {
     void handleRevisionSelected(Revision revision) {
    		fSelectedRevision= revision;
     	fRevisionSelectionProvider.revisionSelected(revision);
-    	fIsOverviewShowing= revision != null;
-		showOverviewAnnotations(fFocusRevision != null ? fFocusRevision : fSelectedRevision);
+		updateOverviewAnnotations();
     	postRedraw();
     }
-    
+
 	/**
 	 * Handles the selection of a revision id and informs listeners
 	 * 
@@ -1167,11 +1158,11 @@ public final class RevisionPainter {
 				return;
 			}
 		}
-		
+
 		// clear selection if it does not exist
 		handleRevisionSelected((Revision) null);
 	}
-    
+
     /**
      * Returns the selection provider.
      * 
@@ -1246,7 +1237,7 @@ public final class RevisionPainter {
 		fFocusRevision= nextRevision;
 		uninstallWheelHandler();
 		installWheelHandler();
-		showOverviewAnnotations(fFocusRevision != null ? fFocusRevision : fSelectedRevision);
+		updateOverviewAnnotations();
 		redraw(); // pick up new highlights
 	}
 
@@ -1266,26 +1257,6 @@ public final class RevisionPainter {
 			fControl.addListener(SWT.MouseWheel, fMouseHandler);
 			fWheelHandlerInstalled= true;
 		}
-	}
-
-	/**
-	 * Handles a hover event on the focus revision.
-	 */
-	private void onHover() {
-	}
-
-	/**
-	 * Handles a mouse enter event on the focus revision
-	 */
-	private void onEnter() {
-		fIsOverviewShowing= true;
-	}
-
-	/**
-	 * Handles a mouse exit event on the focus revision
-	 */
-	private void onExit() {
-		fIsOverviewShowing= fSelectedRevision != null;
 	}
 
 	/**
