@@ -33,6 +33,9 @@
       <attribute
             name="transient">
       </attribute>
+      <attribute
+            name="generatedBy">
+      </attribute>
    </extension>
    <extension
          id="problemmarker"
