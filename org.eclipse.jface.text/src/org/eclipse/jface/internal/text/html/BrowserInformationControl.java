@@ -62,7 +62,6 @@ import org.eclipse.jface.text.TextPresentation;
  * <ul>
  * 	<li>the size computation is too small</li>
  * 	<li>focusLost event is not sent - see https://bugs.eclipse.org/bugs/show_bug.cgi?id=84532</li>
- *  <li>we need to call <code>content.replaceAll("overflow: auto;", "")<code> which is a problem if <code>"overflow: auto;"</code> appears in the content</li>
  * </ul>
  * </p>
  * 
@@ -305,9 +304,6 @@ public class BrowserInformationControl implements IInformationControl, IInformat
 			styles= new String[] { "direction:rtl;", "overflow:hidden;", "word-wrap:break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		else if (fHideScrollBars && true)
 			styles= new String[] { "overflow:hidden;", "word-wrap: break-word;" }; //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// XXX: this is a hack but needed to ensure our overflow directive is honored
-		content= content.replaceAll("overflow: auto;", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (styles != null) {
 			StringBuffer buffer= new StringBuffer(content);
