@@ -12,9 +12,11 @@ package org.eclipse.jface.resource;
 
 
 /**
+ * Thrown when allocation of an SWT device resource fails
+ * 
  * @since 3.1
  */
-public class DeviceResourceException extends Exception {
+public class DeviceResourceException extends RuntimeException {
     
 	private Throwable cause;
 

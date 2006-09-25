@@ -32,7 +32,7 @@ public abstract class DeviceResourceDescriptor {
      * @return the newly allocated resource (not null)
      * @throws DeviceResourceException if unable to allocate the resource
      */
-    public abstract Object createResource(Device device) throws DeviceResourceException;
+    public abstract Object createResource(Device device);
     
     /**
      * Undoes everything that was done by a previous call to create(...), given
