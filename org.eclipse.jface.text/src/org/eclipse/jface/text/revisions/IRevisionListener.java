@@ -13,6 +13,9 @@ package org.eclipse.jface.text.revisions;
 
 /** 
  * A listener which is notified when revision information changes.
+ * <p>
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+ * </p>
  *
  * @see RevisionInformation
  * @see IRevisionRulerColumnExtension

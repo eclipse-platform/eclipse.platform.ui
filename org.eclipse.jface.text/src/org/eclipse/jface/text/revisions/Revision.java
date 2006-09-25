@@ -144,6 +144,9 @@ public abstract class Revision {
 	 * <p>
 	 * Subclasses should replace - the default implementation returns the empty string.
 	 * </p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
 	 * 
 	 * @return the author name
 	 * @since 3.3

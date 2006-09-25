@@ -19,6 +19,10 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * <p>
  * Introduces the ability to register a selection listener on revisions and configurable rendering
  * modes.
+ * </p>
+ * <p>
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+ * </p>
  * 
  * @see IRevisionRulerColumn
  * @since 3.3
