@@ -249,7 +249,7 @@ public class LocalMetaArea implements ICoreConstants {
 		IPath tempPath = getBackupLocationFor(path);
 		ProjectDescription description = null;
 		try {
-			description = new ProjectDescriptionReader().read(path, tempPath);
+			description = new ProjectDescriptionReader(project).read(path, tempPath);
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_readMeta, project.getName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);

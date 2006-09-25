@@ -350,7 +350,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @return The file store for this resource
 	 */
 	public IFileStore getStore(IResource target) {
-		return getStoreRoot(target).createStore(target.getFullPath());
+		try {
+			return getStoreRoot(target).createStore(target.getFullPath());
+		} catch (CoreException e) {
+			//callers aren't expecting failure here, so return null file system
+			return EFS.getNullFileSystem().getStore(target.getFullPath());
+		}
 	}
 
 	/**
@@ -415,7 +420,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * @param location the File system location of this resource on disk
 	 * @return The file store for the provided resource
 	 */
-	private IFileStore initializeStore(IResource target, URI location) {
+	private IFileStore initializeStore(IResource target, URI location) throws CoreException {
 		ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
 		setLocation(target, info, location);
 		FileStoreRoot root = getStoreRoot(target);
@@ -536,7 +541,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return true;
 	}
 
-	public void link(Resource target, URI location) {
+	public void link(Resource target, URI location) throws CoreException {
 		IFileStore store = initializeStore(target, location);
 		ResourceInfo info = target.getResourceInfo(false, true);
 		long lastModified = store.fetchInfo().getLastModified();
@@ -645,7 +650,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(descriptionStore.openInputStream(EFS.NONE, null));
-			description = new ProjectDescriptionReader().read(new InputSource(in));
+			description = new ProjectDescriptionReader(target).read(new InputSource(in));
 		} catch (CoreException e) {
 			//try the legacy location in the meta area
 			description = getWorkspace().getMetaArea().readOldDescription(target);

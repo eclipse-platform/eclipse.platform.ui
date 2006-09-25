@@ -746,7 +746,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			try {
 				restoreMetaInfo((Project) roots[i], monitor);
 			} catch (CoreException e) {
-				problems.merge(e.getStatus());
+				String message = NLS.bind(Messages.resources_readMeta, roots[i].getName());
+				problems.merge(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, roots[i].getFullPath(), message, e));
 			}
 		}
 		if (Policy.DEBUG_RESTORE_METAINFO)

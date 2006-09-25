@@ -74,16 +74,20 @@ public class FileStoreRoot {
 		}
 	}
 
-	IFileStore createStore(IPath workspacePath) {
+	/**
+	 * Creates an IFileStore for a given workspace path.
+	 * @exception CoreException If the file system for that resource is undefined
+	 */
+	IFileStore createStore(IPath workspacePath) throws CoreException {
 		IPath childPath = workspacePath.removeFirstSegments(chop);
 		IFileStore rootStore;
-		try {
-			rootStore = EFS.getStore(variableManager.resolveURI(root));
-		} catch (CoreException e) {
+		final URI uri = variableManager.resolveURI(root);
+		if (!uri.isAbsolute()) {
 			//handles case where resource location cannot be resolved
 			//such as unresolved path variable or invalid file system scheme
 			return EFS.getNullFileSystem().getStore(workspacePath);
 		}
+		rootStore = EFS.getStore(uri);
 		if (childPath.segmentCount() == 0)
 			return rootStore;
 		return rootStore.getChild(childPath);

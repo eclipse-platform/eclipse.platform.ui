@@ -51,15 +51,28 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECT_NAME = 19;
 	protected static final int S_PROJECTS = 20;
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
-	
+
 	protected final StringBuffer charBuffer = new StringBuffer();
 
 	protected Stack objectStack;
 	protected MultiStatus problems;
 
+	/**
+	 * The project we are reading the description for, or null if unknown.
+	 */
+	private final IProject project;
 	// The project description we are creating.
 	ProjectDescription projectDescription = null;
+
 	protected int state = S_INITIAL;
+
+	public ProjectDescriptionReader() {
+		this.project = null;
+	}
+
+	public ProjectDescriptionReader(IProject project) {
+		this.project = project;
+	}
 
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
@@ -96,6 +109,39 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				return;
 			ICommand[] commandArray = ((ICommand[]) commands.toArray(new ICommand[commands.size()]));
 			projectDescription.setBuildSpec(commandArray);
+		}
+	}
+
+	/**
+	 * End a build triggers element and set the triggers for the current
+	 * build command element.
+	 */
+	private void endBuildTriggersElement(String elementName) {
+		if (elementName.equals(BUILD_TRIGGERS)) {
+			state = S_BUILD_COMMAND;
+			BuildCommand command = (BuildCommand) objectStack.peek();
+			//presence of this element indicates the builder is configurable
+			command.setConfigurable(true);
+			//clear all existing values
+			command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
+			command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
+
+			//set new values according to value in the triggers element
+			StringTokenizer tokens = new StringTokenizer(charBuffer.toString(), ","); //$NON-NLS-1$
+			while (tokens.hasMoreTokens()) {
+				String next = tokens.nextToken();
+				if (next.toLowerCase().equals(TRIGGER_AUTO)) {
+					command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_CLEAN)) {
+					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_FULL)) {
+					command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
+				} else if (next.toLowerCase().equals(TRIGGER_INCREMENTAL)) {
+					command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
+				}
+			}
 		}
 	}
 
@@ -261,39 +307,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	}
 
 	/**
-	 * End a build triggers element and set the triggers for the current
-	 * build command element.
-	 */
-	private void endBuildTriggersElement(String elementName) {
-		if (elementName.equals(BUILD_TRIGGERS)) {
-			state = S_BUILD_COMMAND;
-			BuildCommand command = (BuildCommand)objectStack.peek();
-			//presence of this element indicates the builder is configurable
-			command.setConfigurable(true);
-			//clear all existing values
-			command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
-			command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
-			command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
-			command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
-
-			//set new values according to value in the triggers element
-			StringTokenizer tokens = new StringTokenizer(charBuffer.toString(), ","); //$NON-NLS-1$
-			while (tokens.hasMoreTokens()) {
-				String next = tokens.nextToken();
-				if (next.toLowerCase().equals(TRIGGER_AUTO)) {
-					command.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, true);
-				} else if (next.toLowerCase().equals(TRIGGER_CLEAN)) {
-					command.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, true);
-				} else if (next.toLowerCase().equals(TRIGGER_FULL)) {
-					command.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
-				} else if (next.toLowerCase().equals(TRIGGER_INCREMENTAL)) {
-					command.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, true);
-				}
-			}
-		}
-	}
-
-	/**
 	 * End this group of linked resources and add them to the project description.
 	 */
 	private void endLinkedResourcesElement(String elementName) {
@@ -383,10 +396,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endLinkPath(String elementName) {
 		if (elementName.equals(NAME)) {
-			IPath newPath= new Path(charBuffer.toString());
+			IPath newPath = new Path(charBuffer.toString());
 			// objectStack has a LinkDescription on it. Set the name
 			// on this LinkDescription.
-			IPath oldPath= ((LinkDescription) objectStack.peek()).getProjectRelativePath();
+			IPath oldPath = ((LinkDescription) objectStack.peek()).getProjectRelativePath();
 			if (oldPath.segmentCount() != 0) {
 				parseProblem(NLS.bind(Messages.projRead_badLinkName, oldPath, newPath));
 			} else {
@@ -467,13 +480,16 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	public void fatalError(SAXParseException error) throws SAXException {
 		// ensure a null value is not passed as message to Status constructor (bug 42782)
 		String message = error.getMessage();
+		if (project != null)
+			message = NLS.bind(Messages.resources_readMeta, project.getName());
 		problems.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, error)); //$NON-NLS-1$
 		throw error;
 	}
 
 	protected void log(Exception ex) {
-		// ensure a null value is not passed as message to Status constructor (bug 42782)		
 		String message = ex.getMessage();
+		if (project != null)
+			message = NLS.bind(Messages.resources_readMeta, project.getName());
 		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message == null ? "" : message, ex)); //$NON-NLS-1$
 	}
 
