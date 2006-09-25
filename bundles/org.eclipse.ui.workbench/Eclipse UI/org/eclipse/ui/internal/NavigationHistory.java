@@ -80,8 +80,11 @@ public class NavigationHistory implements INavigationHistory {
 				// appears. Normally this would be handled by the part activated
 				// call but since there wont be such a call (no part to
 				// activate) we'll nudge it here. Covers bug 154431
-				if (page.getActiveEditor() == null) {
-					activeEntry++; 
+				if (partRef != null
+						&& partRef.getPart(false) instanceof IEditorPart
+						&& page.getActiveEditor() == null) {
+					activeEntry++;
+					updateActions();
 				}
             }
 			
