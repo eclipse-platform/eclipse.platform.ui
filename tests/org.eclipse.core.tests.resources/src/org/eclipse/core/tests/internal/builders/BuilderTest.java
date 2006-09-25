@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
+import java.util.HashMap;
 import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -26,10 +27,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class BuilderTest extends AbstractBuilderTest {
 	public static Test suite() {
-		return new TestSuite(BuilderTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new BuilderTest("testChangeDynamicBuildOrder"));
-		//		return suite;
+		//		return new TestSuite(BuilderTest.class);
+		TestSuite suite = new TestSuite();
+		suite.addTest(new BuilderTest("testPreBuildEvent"));
+		return suite;
 	}
 
 	public BuilderTest() {
@@ -375,6 +376,40 @@ public class BuilderTest extends AbstractBuilderTest {
 			verifier.assertLifecycleEvents("11.3 ");
 		} catch (CoreException e) {
 			fail("11.99", e);
+		}
+	}
+
+	public void testPreBuildEvent() {
+		IWorkspace workspace = getWorkspace();
+		// Create some resource handles
+		final boolean[] notified = new boolean[] {false};
+		IProject proj1 = workspace.getRoot().getProject("PROJECT" + 1);
+		final IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				notified[0] = true;
+			}
+		};
+		workspace.addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
+		try {
+			// Turn auto-building off
+			setAutoBuilding(false);
+			// Create some resources
+			proj1.create(getMonitor());
+			proj1.open(getMonitor());
+			// Create and set a build spec for project one
+			IProjectDescription desc = proj1.getDescription();
+			desc.setBuildSpec(new ICommand[] {createCommand(desc, "Build0")});
+			proj1.setDescription(desc, getMonitor());
+			proj1.build(IncrementalProjectBuilder.FULL_BUILD, SortBuilder.BUILDER_NAME, new HashMap(), null);
+			notified[0] = false;
+			//now turn on autobuild and see if the listener is notified again
+			setAutoBuilding(true);
+			waitForBuild();
+			assertTrue("1.0", !notified[0]);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		} finally {
+			workspace.removeResourceChangeListener(listener);
 		}
 	}
 
