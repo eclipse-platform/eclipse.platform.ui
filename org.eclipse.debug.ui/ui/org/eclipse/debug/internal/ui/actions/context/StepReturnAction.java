@@ -21,6 +21,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 public class StepReturnAction extends StepIntoAction {
     
+	
+	public StepReturnAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.StepReturn"); //$NON-NLS-1$	
+	}
+	
     public ImageDescriptor getDisabledImageDescriptor() {
         return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_STEP_RETURN);
     }

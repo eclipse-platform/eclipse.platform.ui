@@ -21,6 +21,10 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class StepOverAction extends StepIntoAction {
+	
+	public StepOverAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.StepOver"); //$NON-NLS-1$
+	}
     /*
      * (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.actions.context.StepIntoAction#getText()

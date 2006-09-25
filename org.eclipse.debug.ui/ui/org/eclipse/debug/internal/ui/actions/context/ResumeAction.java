@@ -22,6 +22,10 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class ResumeAction extends AbstractDebugContextAction {
+	
+	public ResumeAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.Resume"); //$NON-NLS-1$
+	}
 
     /*
      * (non-Javadoc)

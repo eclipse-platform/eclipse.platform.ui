@@ -19,6 +19,10 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class TerminateAction extends AbstractDebugContextAction {
+	
+	public TerminateAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.Terminate"); //$NON-NLS-1$
+	}
 
     protected void doAction(final Object element) {
         if (element instanceof IAdaptable) {

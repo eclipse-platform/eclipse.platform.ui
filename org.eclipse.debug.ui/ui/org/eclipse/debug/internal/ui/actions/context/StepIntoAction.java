@@ -20,6 +20,10 @@ import org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 public class StepIntoAction extends StepAction {
+	
+	public StepIntoAction() {
+		setActionDefinitionId("org.eclipse.debug.ui.commands.StepInto"); //$NON-NLS-1$
+	}
 
     /*
      * (non-Javadoc)

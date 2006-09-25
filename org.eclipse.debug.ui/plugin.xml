@@ -1631,6 +1631,11 @@ M4 = Platform-specific fourth key
             commandId="org.eclipse.debug.ui.commands.Resume"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
        <key
+            sequence="M1+F2"
+            contextId="org.eclipse.debug.ui.debugging"
+            commandId="org.eclipse.debug.ui.commands.Terminate"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>            
+       <key
             sequence="F11"
             contextId="org.eclipse.ui.globalScope"
             commandId="org.eclipse.debug.ui.commands.DebugLast"
