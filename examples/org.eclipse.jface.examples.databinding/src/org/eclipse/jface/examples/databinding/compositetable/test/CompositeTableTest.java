@@ -69,7 +69,10 @@ public class CompositeTableTest {
 	private void createCompositeTable() {
 		table = new CompositeTable(sShell, SWT.NONE);
 		table.setRunTime(true);
-		table.setWeights(new int[] {35, 35, 20, 10});
+      table.setWeights(new int[] {100, 100, 80, 40});
+		table.setFittingHorizontally(false);
+//      table.setWeights(new int[] {30, 30, 30, 10});
+//      table.setFittingHorizontally(true);
 		table.addRowContentProvider(rowContentProvider);
 		table.addDeleteHandler(deleteHandler);
 		table.addInsertHandler(insertHandler);
