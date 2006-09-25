@@ -140,26 +140,56 @@ public class FilteredTree extends Composite {
     }
 
     /**
-     * Create a new instance of the receiver.
-     * 
-     * @param parent
-     *            parent <code>Composite</code>
-     * @param treeStyle
-     *            the style bits for the <code>Tree</code>
-     * @param filter
-     *            the filter to be used
-     */
-    public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-        super(parent, SWT.NONE);
-        patternFilter = filter;
-        showFilterControls = PlatformUI.getPreferenceStore()
-			.getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
-        createControl(parent, treeStyle);
-        createRefreshJob();
-        setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
+	 * Create a new instance of the receiver.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>
+	 * @param treeStyle
+	 *            the style bits for the <code>Tree</code>
+	 * @param filter
+	 *            the filter to be used
+	 */
+	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
+		super(parent, SWT.NONE);
+		init(parent, treeStyle, filter);
+	}
+
+	/**
+	 * Create a new instance of the receiver. Subclasses that wish to override
+	 * the default creation behavior may use this constructor, but must ensure
+	 * that the <code>init(composite, int, PatternFilter)</code> method is
+	 * called in the overriding constructor.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>
+	 * @see #init(Composite, int, PatternFilter)
+	 * 
+	 * @since 3.3
+	 */
+	protected FilteredTree(Composite parent) {
+		super(parent, SWT.NONE);
+	}
+
+	/**
+	 * Create the filtered tree.
+	 * 
+	 * @param parent
+	 *            the parent <code>Composite</code>
+	 * @param treeStyle
+	 *            the style bits for the <code>Tree</code>
+	 * @param filter
+	 *            the filter to be used
+	 */
+	protected void init(Composite parent, int treeStyle, PatternFilter filter) {
+		patternFilter = filter;
+		showFilterControls = PlatformUI.getPreferenceStore().getBoolean(
+				IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
+		createControl(parent, treeStyle);
+		createRefreshJob();
+		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
 		setFont(parent.getFont());
-    }
-    
+	}
+
     /**
      * Create the filtered tree's controls.  
      * Subclasses should override.
