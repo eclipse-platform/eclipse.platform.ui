@@ -68,7 +68,7 @@ public abstract class DebugPopup extends PopupDialog {
      *  the dialog, or <code>null</code>
      */
     public DebugPopup(Shell parent, Point anchor, String commandId) {
-        super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, false, true, null, null);
+        super(parent, PopupDialog.INFOPOPUPRESIZE_SHELLSTYLE, true, true, true, false, null, null);
         fAnchor = anchor;
         fCommandId = commandId;
     }
