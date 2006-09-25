@@ -346,6 +346,16 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String EDITOR_WARN_IF_INPUT_DERIVED= "warn_if_input_derived"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls if smart home/end navigation is on or off
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String EDITOR_SMART_HOME_END= AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END;
 
 	/**
 	 * A named preference that controls the display of the range indicator.
@@ -476,6 +486,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(REVISION_RULER_SHOW_REVISION, false);
 
 		store.setDefault(EDITOR_WARN_IF_INPUT_DERIVED, true);
+		store.setDefault(EDITOR_SMART_HOME_END, true);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

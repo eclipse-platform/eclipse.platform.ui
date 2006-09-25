@@ -1043,9 +1043,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * - if smart home/end is enabled and the caret is before the line's last non-whitespace and then the caret is moved directly after it
 	 * - if the caret is after last non-whitespace the caret is moved at the end of the line
 	 * - if the caret is at the end of the line the caret is moved directly after the line's last non-whitespace character
-	 * @since 2.1
+	 * @since 2.1 (in 3.3 the access modifier changed from package visibility to protected)
 	 */
-	class LineEndAction extends TextNavigationAction {
+	protected class LineEndAction extends TextNavigationAction {
 
 		/** boolean flag which tells if the text up to the line end should be selected. */
 		private boolean fDoSelect;
