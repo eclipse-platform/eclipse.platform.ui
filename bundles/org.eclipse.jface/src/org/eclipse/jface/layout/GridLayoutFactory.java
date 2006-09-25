@@ -86,6 +86,7 @@ public final class GridLayoutFactory {
      * <ul>
      * <li>numColumns(1)</li>
      * <li>margins(5,5)</li>
+     * <li>margins(0,0,0,0)</li>
      * <li>spacing(5,5)</li>
      * <li>equalWidth(false)</li>
      * </ul>
@@ -109,6 +110,7 @@ public final class GridLayoutFactory {
      * <ul>
      * <li>numColumns(1)</li>
      * <li>margins(0,0)</li>
+     * <li>margins(0,0,0,0)</li>
      * <li>spacing(LayoutConstants.getSpacing())</li>
      * <li>equalWidth(false)</li>
      * </ul>
@@ -182,33 +184,45 @@ public final class GridLayoutFactory {
     }
 
     /**
-     * Sets the margins for layouts created with this factory. The margins
-     * are the distance between the outer cells and the edge of the layout.
-     * 
-     * @param x horizontal margin size (pixels)
-     * @param y vertical margin size (pixels)
-     * @return this
-     * @see #spacing
-     */
-    public GridLayoutFactory margins(int x, int y) {
-        l.marginWidth = x;
-        l.marginHeight = y;
+	 * Sets the margins for layouts created with this factory. The margins
+	 * specify the number of pixels of horizontal and vertical margin that will
+	 * be placed along the left/right and top/bottom edges of the layout. Note
+	 * that thes margins will be added to the ones specified by
+	 * {@link #margins(int, int, int, int)}.
+	 * 
+	 * @param width
+	 *            margin width (pixels)
+	 * @param height
+	 *            margin height (pixels)
+	 * @return this
+	 * @see #spacing
+	 */
+    public GridLayoutFactory margins(int width, int height) {
+        l.marginWidth = width;
+        l.marginHeight = height;
         return this;
     }
 
     /**
-     * Sets the margins for layouts created with this factory. The margins
-     * are the distance between the outer cells and the edge of the layout.
-     * 
-     * @param left left margin size (pixels)
-     * @param right right margin size (pixels)
-     * @param top top margin size (pixels)
-     * @param bottom bottom margin size (pixels)
-     * @return this
-     * @see #spacing
-     * 
-     * @since 3.3
-     */
+	 * Sets the margins for layouts created with this factory. The margins
+	 * specify the number of pixels of horizontal and vertical margin that will
+	 * be placed along the left, right, top, and bottom edges of the layout.
+	 * Note that thes margins will be added to the ones specified by
+	 * {@link #margins(int, int)}.
+	 * 
+	 * @param left
+	 *            left margin size (pixels)
+	 * @param right
+	 *            right margin size (pixels)
+	 * @param top
+	 *            top margin size (pixels)
+	 * @param bottom
+	 *            bottom margin size (pixels)
+	 * @return this
+	 * @see #spacing
+	 * 
+	 * @since 3.3
+	 */
     public GridLayoutFactory margins(int left, int right, int top, int bottom) {
         l.marginLeft = left;
         l.marginRight = right;
