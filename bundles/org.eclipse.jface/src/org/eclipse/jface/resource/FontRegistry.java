@@ -499,6 +499,23 @@ public class FontRegistry extends ResourceRegistry {
     }
 
     /**
+     * Returns the font descriptor for the font with the given symbolic
+     * font name. Returns the default font if there is no special value
+     * associated with that name
+     * 
+     * @param symbolicName symbolic font name
+     * @return the font descriptor (never null)
+     * 
+     * @since 3.3
+     */
+    public FontDescriptor getDescriptor(String symbolicName) {
+        Assert.isNotNull(symbolicName);
+        return FontDescriptor.createFrom(getFontData(symbolicName));
+    }
+    
+    
+    
+    /**
      * Returns the default font record.
      */
     private FontRecord defaultFontRecord() {
@@ -781,4 +798,14 @@ public class FontRegistry extends ResourceRegistry {
             }
         }
     }
+
+	/**
+	 * Returns the font descriptor for the JFace default font.
+	 * 
+	 * @return the font descriptor for the JFace default font
+     * @since 3.3
+	 */
+	public FontDescriptor defaultFontDescriptor() {
+		return FontDescriptor.createFrom(defaultFontData());
+	}
 }

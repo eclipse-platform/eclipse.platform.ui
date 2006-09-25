@@ -52,6 +52,15 @@ final class ArrayFontDescriptor extends FontDescriptor {
     }
     
     /* (non-Javadoc)
+     * @see org.eclipse.jface.resource.FontDescriptor#getFontData()
+     */
+    public FontData[] getFontData() {
+    	// Copy the original array to ensure that callers will not modify it
+    	return copy(data);
+    }
+    
+    
+    /* (non-Javadoc)
      * @see org.eclipse.jface.resource.FontDescriptor#createFont(org.eclipse.swt.graphics.Device)
      */
     public Font createFont(Device device) {

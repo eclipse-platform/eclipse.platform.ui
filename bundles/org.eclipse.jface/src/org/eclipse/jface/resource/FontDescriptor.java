@@ -13,6 +13,7 @@ package org.eclipse.jface.resource;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Lightweight descriptor for a font. Creates the described font on demand.
@@ -78,7 +79,7 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
      * @return a newly created FontDescriptor
      */
     public static FontDescriptor createFrom(FontData data) {
-        return new NamedFontDescriptor(data);
+        return new ArrayFontDescriptor(new FontData[]{data});
     }
     
     /**
@@ -93,6 +94,174 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
      */
     public static FontDescriptor createFrom(String name, int height, int style) {
         return createFrom(new FontData(name, height, style));
+    }
+    
+    /**
+     * Returns the set of FontData associated with this font. Modifying the elements
+     * in the returned array has no effect on the original FontDescriptor.
+     * 
+     * @return the set of FontData associated with this font
+     * @since 3.3
+     */
+    public FontData[] getFontData() {
+    	try {
+	    	Font tempFont = createFont(Display.getCurrent());
+	    	FontData[] result = tempFont.getFontData();
+	    	destroyFont(tempFont);
+	    	return result;
+    	} catch (DeviceResourceException e) {
+    		// This won't actually happen. The JFace implementation of FontDescriptor
+    		// won't throw this exception... and DRE is going to become a RuntimeException
+    		// soon anyway.
+    		throw new RuntimeException(e);
+    	}
+    }
+    
+    /**
+     * Returns an array of FontData containing copies of the FontData
+     * from the original. 
+     * 
+     * @param original array to copy
+     * @return a deep copy of the original array
+     * @since 3.3
+     */
+    public static FontData[] copy(FontData[] original) {
+    	FontData[] result = new FontData[original.length];
+    	for (int i = 0; i < original.length; i++) {
+			FontData next = original[i];
+			
+			result[i] = copy(next);
+		}
+    	
+    	return result;
+    }
+    
+    /**
+     * Returns a copy of the original FontData
+     * 
+	 * @param next FontData to copy
+	 * @return a copy of the given FontData
+     * @since 3.3
+	 */
+	public static FontData copy(FontData next) {
+		FontData result = new FontData(next.getName(), next.getHeight(), next.getStyle());
+		result.setLocale(next.getLocale());
+		return result;
+	}
+
+	/**
+     * Returns a FontDescriptor that is equivalent to the reciever, but uses
+     * the given style bits. 
+     * 
+     * <p>Does not modify the reciever.</p>
+     * 
+     * @param style a bitwise combination of SWT.NORMAL, SWT.ITALIC and SWT.BOLD
+     * @return a new FontDescriptor with the given style
+     * 
+     * @since 3.3
+     */
+    public final FontDescriptor setStyle(int style) {
+    	FontData[] data = getFontData();
+    	
+    	for (int i = 0; i < data.length; i++) {
+			FontData next = data[i];
+			
+			next.setStyle(style);
+		}
+
+    	// Optimization: avoid holding onto extra instances by returning the reciever if
+    	// if it is exactly the same as the result
+    	FontDescriptor result = new ArrayFontDescriptor(data);
+    	if (result.equals(this)) {
+    		return this;
+    	}
+    	
+    	return result;
+    }
+    
+    /**
+     * <p>Returns a FontDescriptor that is equivalent to the reciever, but
+     * has the given style bits, in addition to any styles the reciever already has.</p>
+     * 
+     * <p>Does not modify the reciever.</p>
+     * 
+     * @param style a bitwise combination of SWT.NORMAL, SWT.ITALIC and SWT.BOLD
+     * @return a new FontDescriptor with the given additional style bits
+     * @since 3.3
+     */
+    public final FontDescriptor withStyle(int style) {
+    	FontData[] data = getFontData();
+    	
+    	for (int i = 0; i < data.length; i++) {
+			FontData next = data[i];
+			
+			next.setStyle(next.getStyle() | style);
+		}
+    	
+    	// Optimization: avoid allocating extra instances by returning the reciever if
+    	// if it is exactly the same as the result
+    	FontDescriptor result = new ArrayFontDescriptor(data);
+    	if (result.equals(this)) {
+    		return this;
+    	}
+    	
+    	return result;    	
+    }
+    
+    /**
+     * <p>Returns a new FontDescriptor that is equivalent to the reciever, but
+     * has the given height.</p>
+     * 
+     * <p>Does not modify the reciever.</p>
+     * 
+     * @param height a height, in points
+     * @return a new FontDescriptor with the height, in points
+     * @since 3.3
+     */
+    public final FontDescriptor setHeight(int height) {
+    	FontData[] data = getFontData();
+    	
+    	for (int i = 0; i < data.length; i++) {
+			FontData next = data[i];
+			
+			next.setHeight(height);
+		}
+    	
+    	// Optimization: avoid holding onto extra instances by returning the reciever if
+    	// if it is exactly the same as the result
+    	FontDescriptor result = new ArrayFontDescriptor(data);
+    	if (result.equals(this)) {
+    		return this;
+    	}
+    	
+    	return result;    	
+    }
+
+    /**
+     * <p>Returns a FontDescriptor that is equivalent to the reciever, but whose height
+     * is larger by the given number of points.</p>
+     * 
+     * <p>Does not modify the reciever.</p>
+     * 
+     * @param heightDelta a change in height, in points. Negative values will return smaller
+     * fonts. 
+     * @return a FontDescriptor whose height differs from the reciever by the given number
+     * of points. 
+     * @since 3.3
+     */
+    public final FontDescriptor increaseHeight(int heightDelta) {
+    	if (heightDelta == 0) {
+    		return this;
+    	}
+    	FontData[] data = getFontData();
+    	
+    	for (int i = 0; i < data.length; i++) {
+			FontData next = data[i];
+			
+			next.setHeight(next.getHeight() + heightDelta);
+		}
+    	
+    	return new ArrayFontDescriptor(data);    	
     }
     
     /**

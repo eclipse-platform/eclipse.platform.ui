@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
-import java.text.MessageFormat;	// Not using ICU to support standalone JFace scenario
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -210,7 +210,7 @@ public class JFaceResources {
     }
     
     /**
-     * Returns the JFace's standard font.
+     * Returns JFace's standard font.
      * Convenience method equivalent to
      * <pre>
      * JFaceResources.getFontRegistry().get(JFaceResources.DEFAULT_FONT)
@@ -220,6 +220,20 @@ public class JFaceResources {
      */
     public static Font getDefaultFont() {
         return getFontRegistry().defaultFont();
+    }
+    
+    /**
+     * Returns the descriptor for JFace's standard font.
+     * Convenience method equivalent to
+     * <pre>
+     * JFaceResources.getFontRegistry().getDescriptor(JFaceResources.DEFAULT_FONT)
+     * </pre>
+     *
+     * @return the font
+     * @since 3.3
+     */
+    public static FontDescriptor getDefaultFontDescriptor() {
+    	return getFontRegistry().defaultFontDescriptor();
     }
 
     /**
@@ -235,6 +249,20 @@ public class JFaceResources {
         return getFontRegistry().get(DIALOG_FONT);
     }
 
+    /**
+     * Returns the descriptor for JFace's dialog font.
+     * Convenience method equivalent to
+     * <pre>
+     * JFaceResources.getFontRegistry().getDescriptor(JFaceResources.DIALOG_FONT)
+     * </pre>
+     *
+     * @return the font
+     * @since 3.3
+     */
+    public static FontDescriptor getDialogFontDescriptor() {
+        return getFontRegistry().getDescriptor(DIALOG_FONT);
+    }
+    
     /**
      * Returns the font in JFace's font registry with the given
      * symbolic font name.
@@ -252,6 +280,24 @@ public class JFaceResources {
         return getFontRegistry().get(symbolicName);
     }
 
+    /**
+     * Returns the font descriptor for in JFace's font registry with the given
+     * symbolic name.
+     * Convenience method equivalent to
+     * <pre>
+     * JFaceResources.getFontRegistry().getDescriptor(symbolicName)
+     * </pre>
+     *
+     * If an error occurs, return the default font.
+     *
+     * @param symbolicName the symbolic font name
+     * @return the font descriptor (never null)
+     * @since 3.3
+     */
+    public static FontDescriptor getFontDescriptor(String symbolicName) {
+        return getFontRegistry().getDescriptor(symbolicName);
+    }
+    
     /**
      * Returns the font registry for JFace itself.
      * If the value has not been established by an earlier
@@ -286,6 +332,20 @@ public class JFaceResources {
         return getFontRegistry().get(HEADER_FONT);
     }
 
+    /**
+     * Returns the descriptor for JFace's header font.
+     * Convenience method equivalent to
+     * <pre>
+     * JFaceResources.getFontRegistry().get(JFaceResources.HEADER_FONT)
+     * </pre>
+     *
+     * @return the font descriptor (never null)
+     * @since 3.3
+     */
+    public static FontDescriptor getHeaderFontDescriptor() {
+        return getFontRegistry().getDescriptor(HEADER_FONT);
+    }
+    
     /**
      * Returns the image in JFace's image registry with the given key, 
      * or <code>null</code> if none.
@@ -372,7 +432,7 @@ public class JFaceResources {
     }
 
     /**
-     * Returns the JFace's text font.
+     * Returns JFace's text font.
      * Convenience method equivalent to
      * <pre>
      * JFaceResources.getFontRegistry().get(JFaceResources.TEXT_FONT)
@@ -385,7 +445,21 @@ public class JFaceResources {
     }
 
     /**
-     * Returns the JFace's viewer font.
+     * Returns the descriptor for JFace's text font.
+     * Convenience method equivalent to
+     * <pre>
+     * JFaceResources.getFontRegistry().getDescriptor(JFaceResources.TEXT_FONT)
+     * </pre>
+     *
+     * @return the font descriptor (never null)
+     * @since 3.3
+     */
+    public static FontDescriptor getTextFontDescriptor() {
+        return getFontRegistry().getDescriptor(TEXT_FONT);
+    }
+    
+    /**
+     * Returns JFace's viewer font.
      * Convenience method equivalent to
      * <pre>
      * JFaceResources.getFontRegistry().get(JFaceResources.VIEWER_FONT)
@@ -397,7 +471,7 @@ public class JFaceResources {
     public static Font getViewerFont() {
         return getFontRegistry().get(VIEWER_FONT);
     }
-
+    
     /**
      * Sets JFace's font registry to the given value.
      * This method may only be called once; the call must occur
