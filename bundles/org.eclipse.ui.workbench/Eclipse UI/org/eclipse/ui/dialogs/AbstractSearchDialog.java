@@ -311,9 +311,11 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 			public void keyTraversed(TraverseEvent e) {
 				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
 					e.detail = SWT.TRAVERSE_NONE;
+					pattern.setFocus();
 				}
 			}
 		});
+
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		label.setLayoutData(gd);
 
@@ -397,6 +399,15 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		Label listLabel = new Label(content, SWT.NONE);
 		listLabel.setText(WorkbenchMessages.AbstractSearchDialog_listLabel);
 
+		listLabel.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
+					e.detail = SWT.TRAVERSE_NONE;
+					list.getTable().setFocus();
+				}
+			}
+		});
+
 		progressLabel = new Label(content, SWT.RIGHT);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
@@ -412,17 +423,10 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 		gd.horizontalSpan = 2;
 		list.getTable().setLayoutData(gd);
 
-		list.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				StructuredSelection selection = (StructuredSelection) event
-						.getSelection();
-				handleSelected(selection);
-			}
-		});
-
-		list.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
+		pattern.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				searcher.setFilterParam(AbstractSearcher.PATTERN, pattern
+						.getText().trim());
 			}
 		});
 
@@ -434,6 +438,20 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 						list.getTable().setFocus();
 					}
 				}
+			}
+		});
+
+		list.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				StructuredSelection selection = (StructuredSelection) event
+						.getSelection();
+				handleSelected(selection);
+			}
+		});
+
+		list.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				okPressed();
 			}
 		});
 
@@ -450,13 +468,6 @@ public abstract class AbstractSearchDialog extends SelectionStatusDialog {
 						}
 					}
 				}
-			}
-		});
-
-		pattern.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				searcher.setFilterParam(AbstractSearcher.PATTERN, pattern
-						.getText().trim());
 			}
 		});
 
