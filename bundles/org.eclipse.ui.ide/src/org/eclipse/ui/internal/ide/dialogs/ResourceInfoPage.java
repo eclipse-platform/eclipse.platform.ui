@@ -16,6 +16,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
@@ -284,10 +285,17 @@ public class ResourceInfoPage extends PropertyPage {
 			}
 		});
 
+		
 		if (resource.getType() == IResource.PROJECT) {
 			lineDelimiterEditor = new LineDelimiterEditor(composite, resource
 					.getProject());
 			lineDelimiterEditor.doLoad();
+		}
+		
+		//We can't save the preferences for close
+		if (resource.getType() == IResource.PROJECT && !((IProject)resource).isOpen()){
+			encodingEditor.setEnabled(false, composite);
+			lineDelimiterEditor.setEnabled(false);
 		}
 
 		return composite;

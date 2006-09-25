@@ -94,6 +94,9 @@ public class ProjectReferencePage extends PropertyPage {
         listViewer.getTable().setFont(font);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.grabExcessHorizontalSpace = true;
+        
+        if(!project.isOpen())
+        	listViewer.getControl().setEnabled(false);
 
         //Only set a height hint if it will not result in a cut off dialog
         if (DialogUtil.inRegularFontMode(parent)) {

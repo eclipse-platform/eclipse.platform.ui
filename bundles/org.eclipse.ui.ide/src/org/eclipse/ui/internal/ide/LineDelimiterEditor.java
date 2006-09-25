@@ -29,6 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -50,6 +51,8 @@ public class LineDelimiterEditor {
 	 * will be used to edit project preferences.
 	 */
 	private IProject project;
+
+	private Group group;
 
 	/**
 	 * Creates a new encoding field editor with the given preference name, label
@@ -86,7 +89,7 @@ public class LineDelimiterEditor {
 	 */
 	protected void createControl(Composite parent) {
 		Font font = parent.getFont();
-		Group group = new Group(parent, SWT.NONE);
+		group = new Group(parent, SWT.NONE);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		group.setLayoutData(data);
 		GridLayout layout = new GridLayout();
@@ -273,5 +276,19 @@ public class LineDelimiterEditor {
 		}
 
 	}
+
+	 /**
+     * Set whether or not the controls in the field editor
+     * are enabled.
+     * @param enabled The enabled state.
+     */
+    public void setEnabled(boolean enabled) {
+        group.setEnabled(enabled);
+        Control [] children = group.getChildren();
+        for (int i = 0; i < children.length; i++) {
+			children[i].setEnabled(enabled);
+			
+		}
+    }
 
 }

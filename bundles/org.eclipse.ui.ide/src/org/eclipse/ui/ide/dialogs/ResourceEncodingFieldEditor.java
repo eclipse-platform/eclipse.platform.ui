@@ -28,6 +28,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.WorkbenchEncoding;
@@ -51,6 +52,8 @@ public final class ResourceEncodingFieldEditor extends
 	 * The resource being edited.
 	 */
 	private IResource resource;
+
+	private Composite group;
 
 	/**
 	 * Creates a new encoding field editor for setting the encoding on the given
@@ -136,7 +139,7 @@ public final class ResourceEncodingFieldEditor extends
 					MessageDialog.WARNING, new String[] {
 							IDialogConstants.YES_LABEL,
 							IDialogConstants.NO_LABEL }, 0); // yes is the
-																// default
+			// default
 			if (dialog.open() > 0) {
 				return;
 			}
@@ -162,7 +165,7 @@ public final class ResourceEncodingFieldEditor extends
 					}
 					return Status.OK_STATUS;
 				} catch (CoreException e) {// If there is an error return the
-											// default
+					// default
 					IDEWorkbenchPlugin
 							.log(
 									IDEWorkbenchMessages.ResourceEncodingFieldEditor_ErrorStoringMessage,
@@ -182,7 +185,7 @@ public final class ResourceEncodingFieldEditor extends
 	 * @see org.eclipse.jface.preference.FieldEditor#store()
 	 */
 	public void store() {// Override the store method as we are not using a
-							// preference store
+		// preference store
 		doStore();
 	}
 
@@ -192,7 +195,7 @@ public final class ResourceEncodingFieldEditor extends
 	 * @see org.eclipse.jface.preference.FieldEditor#load()
 	 */
 	public void load() {// Override the load method as we are not using a
-						// preference store
+		// preference store
 		setPresentsDefaultValue(false);
 		doLoad();
 	}
@@ -300,7 +303,7 @@ public final class ResourceEncodingFieldEditor extends
 	 *      int)
 	 */
 	protected Composite createEncodingGroup(Composite parent, int numColumns) {
-		Composite group = super.createEncodingGroup(parent, numColumns);
+		group = super.createEncodingGroup(parent, numColumns);
 		String byteOrderLabel = IDEEncoding
 				.getByteOrderMarkLabel(getContentDescription());
 		if (byteOrderLabel != null) {
@@ -334,6 +337,19 @@ public final class ResourceEncodingFieldEditor extends
 			// If we cannot find it return null
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
+	 */
+	public void setEnabled(boolean enabled, Composite parent) {
+		super.setEnabled(enabled, parent);
+		group.setEnabled(enabled);
+		Control[] children = group.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			children[i].setEnabled(enabled);
+
+		}
 	}
 
 }
