@@ -18,9 +18,9 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.ColorManager;
-import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlDocumentFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.formatter.XmlElementFormattingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -31,6 +31,7 @@ import org.eclipse.ant.internal.ui.editor.text.XMLAnnotationHover;
 import org.eclipse.ant.internal.ui.editor.text.XMLReconcilingStrategy;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
