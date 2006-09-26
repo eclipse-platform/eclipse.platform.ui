@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Kruegler - bug 137435
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal;

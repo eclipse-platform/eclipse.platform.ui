@@ -17,6 +17,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.jface.internal.databinding.internal.IdentityWrapper;
+
 
 /**
  * This is a helper that will hook up and listen for <code>PropertyChangeEvent</code> events
@@ -26,25 +28,6 @@ import java.util.Set;
  */
 public class ListenerSupport {
 
-	/**
-	 * @since 1.0
-	 */
-	 static class IdentityWrapper {
-		final Object o;
-		IdentityWrapper(Object o) {
-			this.o = o;
-		}
-		public boolean equals(Object obj) {
-			if(obj == null || obj.getClass()!=IdentityWrapper.class) {
-				return false;
-			}
-			return o==((IdentityWrapper)obj).o;
-		}
-		public int hashCode() {
-			return System.identityHashCode(o);
-		}
-	}
-	
 	private Set elementsListenedTo = new HashSet();
 	
 	private PropertyChangeListener listener;
@@ -128,7 +111,7 @@ public class ListenerSupport {
 	 */
 	public void unhookListener(Object target) {
 		if (target.getClass()==IdentityWrapper.class)
-			target = ((IdentityWrapper)target).o;
+			target = ((IdentityWrapper)target).unwrap();
 		
 		Method removePropertyChangeListenerMethod = null;
 		try {
@@ -180,7 +163,7 @@ public class ListenerSupport {
 			Object[] identityList = elementsListenedTo.toArray();
 			targets = new Object[identityList.length];
 			for (int i = 0; i < identityList.length; i++) 
-				targets[i]=((IdentityWrapper)identityList[i]).o;							
+				targets[i]=((IdentityWrapper)identityList[i]).unwrap();							
 		}
 		return targets;
 	}
