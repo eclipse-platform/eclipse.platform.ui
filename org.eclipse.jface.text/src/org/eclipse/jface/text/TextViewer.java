@@ -62,6 +62,12 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ScrollBar;
 
+import org.eclipse.jface.text.hyperlink.HyperlinkManager;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.projection.ChildDocument;
+import org.eclipse.jface.text.projection.ChildDocumentManager;
+
 import org.eclipse.jface.internal.text.JFaceTextUtil;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
@@ -70,12 +76,6 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.jface.text.hyperlink.HyperlinkManager;
-import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
-import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
-import org.eclipse.jface.text.projection.ChildDocument;
-import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 /**
  * SWT based implementation of {@link ITextViewer} and its extension interfaces.
@@ -1066,58 +1066,229 @@ public class TextViewer extends Viewer implements
 			fStateMask= stateMask;
 		}
 	}
-
+	
 	/**
-	 * A position reflecting a viewer selection and the selection anchor.
-	 * The anchor is represented by the caret.
-	 *
-	 * @since 2.1
+	 * Captures and remembers the viewer state (selection and visual position). {@link ViewerState}
+	 * instances are normally used once and then discared, similar to the following snippet:
+	 * <pre>
+	 * ViewerState state= new ViewerState(); // remember the state
+	 * doStuff(); // operation that may call setRedraw() and perform complex document modifications
+	 * state.restore(true); // restore the remembered state
+	 * </pre>
+	 * 
+	 * @since 3.3
 	 */
-	static class SelectionPosition extends Position {
+	private final class ViewerState {
+		/** The position tracking the selection. */
+		private Position fSelection;
+		/** <code>true</code> if {@link #fSelection} was originally backwards. */
+		private boolean fReverseSelection;
+		/** <code>true</code> if the selection has been updated while in redraw(off) mode. */
+		private boolean fSelectionSet;
+		/** The position tracking the visually stable line. */
+		private Position fStableLine;
+		/** The pixel offset of the stable line measured from the client area. */
+		private int fStablePixel;
 
-		/** The flag indicating the anchor of this selection */
-		private boolean reverse;
+		/** The position updater for {@link #fSelection} and {@link #fStableLine}. */
+		private IPositionUpdater fUpdater;
+		/** The document that the position updater and the positions are registered with. */
+		private IDocument fUpdaterDocument;
+		/** The position category used by {@link #fUpdater}. */
+		private String fUpdaterCategory;
 
 		/**
-		 * Creates a new selection position for the specified selection.
-		 *
-		 * @param point the specified selection
+		 * Creates a new viewer state instance and connects it to the current document.
 		 */
-		public SelectionPosition(Point point) {
-			super();
-			reverse= point.y < 0;
-			if (reverse) {
-				offset= point.x + point.y;
-				length= -point.y;
-			} else {
-				offset= point.x;
-				length= point.y;
+		public ViewerState() {
+			IDocument document= getDocument();
+			if (document != null)
+				connect(document);
+		}
+
+		/**
+		 * Returns the normalized selection, i.e. the the selection length is always non-negative.
+		 * 
+		 * @return the normalized selection
+		 */
+		public Point getSelection() {
+			if (fSelection == null)
+				return new Point(-1, -1);
+			return new Point(fSelection.getOffset(), fSelection.getLength());
+		}
+
+		/**
+		 * Updates the selection.
+		 * 
+		 * @param offset the new selection offset
+		 * @param length the new selection length
+		 */
+		public void updateSelection(int offset, int length) {
+			fSelectionSet= true;
+			if (fSelection == null)
+				fSelection= new Position(offset, length);
+			else
+				updatePosition(fSelection, offset, length);
+		}
+
+		/**
+		 * Restores the state and disconnects it from the document. The selection is no longer
+		 * tracked after this call.
+		 * 
+		 * @param restoreViewport <code>true</code> to restore both selection and viewport,
+		 *        <code>false</code> to only restore the selection
+		 */
+		public void restore(boolean restoreViewport) {
+			if (isConnected())
+				disconnect();
+			if (fSelection != null) {
+				int offset= fSelection.getOffset();
+				int length= fSelection.getLength();
+				if (fReverseSelection) {
+					offset-= length;
+					length= -length;
+				}
+				setSelectedRange(offset, length);
+				if (restoreViewport)
+					updateViewport();
 			}
 		}
 
 		/**
-		 * Returns the selection in a format where the selection length
-		 * is always non-negative.
-		 *
-		 * @return the normalized selection
+		 * Updates the viewport, trying to keep the
+		 * {@linkplain StyledText#getLinePixel(int) line pixel} of the caret line stable. If the
+		 * selection has been updated while in redraw(false) mode, the new selection is revealed.
 		 */
-		public Point getNormalizedSelection() {
-			return new Point(offset, length);
+		private void updateViewport() {
+			if (fSelectionSet) {
+				revealRange(fSelection.getOffset(), fSelection.getLength());
+			} else if (fStableLine != null) {
+				int stableLine;
+				try {
+					stableLine= fUpdaterDocument.getLineOfOffset(fStableLine.getOffset());
+				} catch (BadLocationException x) {
+					// ignore and return silently
+					return;
+				}
+				int stableWidgetLine= getClosestWidgetLineForModelLine(stableLine);
+				if (stableWidgetLine == -1)
+					return;
+				int linePixel= fTextWidget.getLinePixel(stableWidgetLine);
+				int delta= fStablePixel - linePixel;
+				int topPixel= fTextWidget.getTopPixel();
+				fTextWidget.setTopPixel(topPixel - delta);
+			}
 		}
 
 		/**
-		 * Returns the selection reflecting its anchor.
-		 *
-		 * @return the selection reflecting the selection anchor.
+		 * Remembers the viewer state.
+		 * 
+		 * @param document the document to remember the state of
 		 */
-		public Point getSelection() {
-			return reverse ? new Point(offset - length, -length) : new Point(offset, length);
+		private void connect(IDocument document) {
+			Assert.isLegal(document != null);
+			Assert.isLegal(!isConnected());
+			fUpdaterDocument= document;
+			try {
+				fUpdaterCategory= SELECTION_POSITION_CATEGORY + hashCode();
+				fUpdater= new NonDeletingPositionUpdater(fUpdaterCategory);
+				fUpdaterDocument.addPositionCategory(fUpdaterCategory);
+				fUpdaterDocument.addPositionUpdater(fUpdater);
+
+				Point selectionRange= getSelectedRange();
+				fReverseSelection= selectionRange.y < 0;
+				int offset, length;
+				if (fReverseSelection) {
+					offset= selectionRange.x + selectionRange.y;
+					length= -selectionRange.y;
+				} else {
+					offset= selectionRange.x;
+					length= selectionRange.y;
+				}
+
+				fSelection= new Position(offset, length);
+				fSelectionSet= false;
+				fUpdaterDocument.addPosition(fUpdaterCategory, fSelection);
+
+				int stableLine= getStableLine();
+				int stableWidgetLine= modelLine2WidgetLine(stableLine);
+				fStablePixel= fTextWidget.getLinePixel(stableWidgetLine);
+				IRegion stableLineInfo= fUpdaterDocument.getLineInformation(stableLine);
+				fStableLine= new Position(stableLineInfo.getOffset(), stableLineInfo.getLength());
+				fUpdaterDocument.addPosition(fUpdaterCategory, fStableLine);
+			} catch (BadPositionCategoryException e) {
+				// cannot happen
+				Assert.isTrue(false);
+			} catch (BadLocationException e) {
+				// should not happen except on concurrent modification
+				// ignore and disconnect
+				disconnect();
+			}
+		}
+
+		/**
+		 * Updates a position with the given information and clears its deletion state.
+		 * 
+		 * @param position the position to update
+		 * @param offset the new selection offset
+		 * @param length the new selection length
+		 */
+		private void updatePosition(Position position, int offset, int length) {
+			position.setOffset(offset);
+			position.setLength(length);
+			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=32795
+			position.isDeleted= false;
+		}
+
+		/**
+		 * Returns the document line to keep visually stable. If the caret line is (partially)
+		 * visible, it is returned, otherwise the topmost (partially) visible line is returned.
+		 * 
+		 * @return the visually stable line of this viewer state
+		 */
+		private int getStableLine() {
+			int stableLine; // the model line that we try to keep stable
+			int caretLine= fTextWidget.getLineAtOffset(fTextWidget.getCaretOffset());
+			if (caretLine < JFaceTextUtil.getPartialTopIndex(fTextWidget) || caretLine > JFaceTextUtil.getPartialBottomIndex(fTextWidget)) {
+				stableLine= JFaceTextUtil.getPartialTopIndex(TextViewer.this);
+			} else {
+				stableLine= widgetLine2ModelLine(caretLine);
+			}
+			return stableLine;
+		}
+
+		/**
+		 * Returns <code>true</code> if the viewer state is being tracked, <code>false</code>
+		 * otherwise.
+		 * 
+		 * @return the tracking state
+		 */
+		private boolean isConnected() {
+			return fUpdater != null;
+		}
+
+		/**
+		 * Disconnects from the document.
+		 */
+		private void disconnect() {
+			Assert.isTrue(isConnected());
+			try {
+				fUpdaterDocument.removePosition(fUpdaterCategory, fSelection);
+				fUpdaterDocument.removePosition(fUpdaterCategory, fStableLine);
+				fUpdaterDocument.removePositionUpdater(fUpdater);
+				fUpdater= null;
+				fUpdaterDocument.removePositionCategory(fUpdaterCategory);
+				fUpdaterCategory= null;
+			} catch (BadPositionCategoryException x) {
+				// cannot happen
+				Assert.isTrue(false);
+			}
 		}
 	}
 
 	/**
 	 * Internal cursor listener i.e. aggregation of mouse and key listener.
-	 *
+	 * 
 	 * @since 3.0
 	 */
 	private class CursorListener implements KeyListener, MouseListener {
@@ -1188,12 +1359,21 @@ public class TextViewer extends Viewer implements
 		 */
 		public void documentRewriteSessionChanged(DocumentRewriteSessionEvent event) {
 			IRewriteTarget target= TextViewer.this.getRewriteTarget();
-			boolean toggleRedraw= event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+			// FIXME always use setRedraw to avoid flickering due to scrolling
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158746
+			boolean toggleRedraw= /*true || */event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+			final boolean viewportStabilize= !toggleRedraw;
 			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
 				if (toggleRedraw)
 					target.setRedraw(false);
 				target.beginCompoundChange();
+				if (viewportStabilize && fViewerState == null)
+					fViewerState= new ViewerState();
 			} else if (DocumentRewriteSessionEvent.SESSION_STOP == event.getChangeType()) {
+				if (viewportStabilize && fViewerState != null) {
+					fViewerState.restore(true);
+					fViewerState= null;
+				}
 				target.endCompoundChange();
 				if (toggleRedraw)
 					target.setRedraw(true);
@@ -1297,11 +1477,6 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	private int fRedrawCounter= 0;
-	/**
-	 * The selection when working in non-redraw state
-	 * @since 2.0
-	 */
-	private SelectionPosition fDocumentSelection;
 	/**
 	 * The viewer's rewrite target
 	 * @since 2.0
@@ -1422,15 +1597,10 @@ public class TextViewer extends Viewer implements
 	 */
 	protected int fHyperlinkStateMask;
 	/**
-	 * Position category used by the selection updater
-	 * @since 3.1
+	 * The viewer state when in non-redraw state, <code>null</code> otherwise.
+	 * @since 3.3
 	 */
-	private String fRememberedSelectionCategory;
-	/**
-	 * Position updater for saved selections
-	 * @since 3.1
-	 */
-	private IPositionUpdater fSelectionUpdater;
+	private ViewerState fViewerState;
 
 
 	//---- Construction and disposal ------------------
@@ -2051,8 +2221,8 @@ public class TextViewer extends Viewer implements
 	 */
 	public Point getSelectedRange() {
 
-		if (!redraws() && fDocumentSelection != null)
-			return fDocumentSelection.getNormalizedSelection();
+		if (!redraws() && fViewerState != null)
+			return fViewerState.getSelection();
 
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
@@ -2070,12 +2240,8 @@ public class TextViewer extends Viewer implements
 	public void setSelectedRange(int selectionOffset, int selectionLength) {
 
 		if (!redraws()) {
-			if (fDocumentSelection != null) {
-				fDocumentSelection.offset= selectionOffset;
-				fDocumentSelection.length= selectionLength;
-				// http://bugs.eclipse.org/bugs/show_bug.cgi?id=32795
-				fDocumentSelection.isDeleted= false;
-			}
+			if (fViewerState != null)
+				fViewerState.updateSelection(selectionOffset, selectionLength);
 			return;
 		}
 
@@ -4465,37 +4631,6 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Forgets the previously remembered  selection position.  After that
-	 * call the selection position can no longer be queried and is longer updated
-	 * in responds to content changes of the viewer.
-	 *
-	 * @return the remembered and updated  selection position or <code>null</code> if no selection position has been remembered
-	 * @since 2.1
-	 */
-	private Point forgetDocumentSelection() {
-		if (fDocumentSelection == null)
-			return null;
-
-		Point selection= fDocumentSelection.isDeleted() ? null : fDocumentSelection.getSelection();
-		IDocument document= getDocument();
-		if (document != null) {
-			try {
-				document.removePosition(fRememberedSelectionCategory, fDocumentSelection);
-				document.removePositionUpdater(fSelectionUpdater);
-				fSelectionUpdater= null;
-				document.removePositionCategory(fRememberedSelectionCategory);
-				fRememberedSelectionCategory= null;
-			} catch (BadPositionCategoryException exception) {
-				// Should not happen
-			}
-		}
-
-		fDocumentSelection= null;
-
-		return selection;
-	}
-
-	/**
 	 * Enables the redrawing of this text viewer.
 	 * @since 2.0
 	 */
@@ -4513,7 +4648,6 @@ public class TextViewer extends Viewer implements
 			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
 			StyledText textWidget= getTextWidget();
 			if (textWidget != null && !textWidget.isDisposed()) {
-				int topPixel= textWidget.getTopPixel();
 				extension.resumeForwardingDocumentChanges();
 				if (topIndex > -1) {
 					try {
@@ -4521,21 +4655,13 @@ public class TextViewer extends Viewer implements
 					} catch (IllegalArgumentException x) {
 						// changes don't allow for the previous top pixel
 					}
-				} else if (topPixel > -1) {
-					try {
-						textWidget.setTopPixel(topPixel);
-					} catch (IllegalArgumentException x) {
-						// changes don't allow for the previous top pixel
-					}
 				}
 			}
 		}
 
-		Point selection= forgetDocumentSelection();
-		if (selection != null) {
-			setSelectedRange(selection.x, selection.y);
-			if (topIndex == -1)
-				revealRange(selection.x, selection.y);
+		if (fViewerState != null) {
+			fViewerState.restore(topIndex == -1);
+			fViewerState= null;
 		}
 
 		if (fTextWidget != null && !fTextWidget.isDisposed())
@@ -4545,39 +4671,12 @@ public class TextViewer extends Viewer implements
 	}
 
 	/**
-	 * Remembers the current selection in a <code>SelectionPosition</code>	. The selection
-	 * position can be queried and is updated to changes made to the viewer's contents.
-	 * @since 2.1
-	 */
-	private void rememberDocumentSelection() {
-		Point selection= getSelectedRange();
-		if (selection != null) {
-			SelectionPosition p= new SelectionPosition(selection);
-			IDocument document= getDocument();
-			if (document != null) {
-				try {
-					fRememberedSelectionCategory= SELECTION_POSITION_CATEGORY + hashCode();
-					fSelectionUpdater= new NonDeletingPositionUpdater(fRememberedSelectionCategory);
-					document.addPositionCategory(fRememberedSelectionCategory);
-					document.addPositionUpdater(fSelectionUpdater);
-					document.addPosition(fRememberedSelectionCategory, p);
-					fDocumentSelection= p;
-				} catch (BadLocationException exception) {
-					// Should not happen
-				} catch (BadPositionCategoryException exception) {
-					// Should not happen
-				}
-			}
-		}
-	}
-
-	/**
 	 * Disables the redrawing of this text viewer. Subclasses may extend.
 	 * @since 2.0
 	 */
 	protected void disableRedrawing() {
-
-		rememberDocumentSelection();
+		if (fViewerState == null)
+			fViewerState= new ViewerState();
 
 		if (fDocumentAdapter instanceof IDocumentAdapterExtension) {
 			IDocumentAdapterExtension extension= (IDocumentAdapterExtension) fDocumentAdapter;
