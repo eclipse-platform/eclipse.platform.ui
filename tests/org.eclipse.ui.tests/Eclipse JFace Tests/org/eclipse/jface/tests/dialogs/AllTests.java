@@ -27,5 +27,6 @@ public class AllTests extends TestSuite {
     	addTestSuite(DialogSettingsTest.class);
     	addTestSuite(InputDialogTest.class);
         addTestSuite(TitleAreaDialogTest.class);
+        addTestSuite(WizardDialogTest.class);
     }
 }
