@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris Longfield <clongfield@internap.com> - Fix for Bug 70856
  *     Tom Schindl - fix for bug 157309
+ *     Brad Reynolds - bug 141435
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -349,7 +350,6 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * Method declared on StructuredViewer.
      */
     protected void internalRefresh(Object element) {
-
         Control list = getControl();
         if (element == null || equals(element, getRoot())) {
             // the parent
@@ -358,7 +358,12 @@ public abstract class AbstractListViewer extends StructuredViewer {
 			}
             unmapAllElements();
             List selection = getSelectionFromWidget();
-
+            
+            int topIndex = -1;
+            if (selection == null || selection.isEmpty()) {
+            	topIndex = listGetTopIndex();
+            }
+            
             list.setRedraw(false);
 			listRemoveAll();
             
@@ -376,12 +381,38 @@ public abstract class AbstractListViewer extends StructuredViewer {
 			
 			listSetItems(items);
             list.setRedraw(true);
-            setSelectionToWidget(selection, false);
+            
+            if (topIndex == -1) {
+            	setSelectionToWidget(selection, false);
+            } else {
+				listSetTopIndex(Math.min(topIndex, children.length));
+            }
         } else {
             doUpdateItem(list, element, true);
         }
     }
+    
+    /**
+     * Returns the index of the item currently at the top of the viewable area.
+     * <p>
+     * Default implementation returns -1.
+     * </p>
+     * @return index, -1 for none
+     */
+    protected int listGetTopIndex(){
+    	return -1;
+    }
 
+    /**
+     * Sets the index of the item to be at the top of the viewable area.
+     * <p>
+     * Default implementation does nothing.
+     * </p>
+     * @param index, -1 for none.  index will always refer to a valid index.
+     */
+    protected void listSetTopIndex(int index) {
+    }
+    
     /**
      * Removes the given elements from this list viewer.
      *

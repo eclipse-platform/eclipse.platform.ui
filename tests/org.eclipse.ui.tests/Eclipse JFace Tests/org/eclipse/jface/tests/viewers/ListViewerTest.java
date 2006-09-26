@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl - test case for bug 157309
+ *     Brad Reynolds - test case for bug 141435
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
@@ -102,5 +103,42 @@ public class ListViewerTest extends StructuredViewerTest {
 						.getTopIndex());
 			}
 		}
+	}
+    
+    /**
+     * Asserts the ability to refresh a List that contains no selection without losing vertically scrolled state.
+     * 
+     * @throws Exception
+     */
+    public void testRefreshBug141435() throws Exception {
+    	fViewer = null;
+		if (fShell != null) {
+			fShell.dispose();
+			fShell = null;
+		}
+		openBrowser();
+		TestElement model = TestElement.createModel(1, 50);
+		fViewer.setInput(model);
+		
+		int lastIndex = model.getChildCount() - 1;
+		
+		//Scroll...
+		fViewer.reveal(model.getChildAt(lastIndex));
+		List list = (List) fViewer.getControl();
+		int topIndex = list.getTopIndex();
+		
+		assertTrue("Top item should not be the first item.", topIndex != 0);
+		fViewer.refresh();
+		assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
+		
+		//Assert that when the previous top index after refresh is invalid no exceptions are thrown.
+		model.deleteChildren();
+		
+		try {
+			fViewer.refresh();
+			assertEquals(0, list.getTopIndex());
+		} catch (Exception e) {
+			fail("Refresh failure when refreshing with an empty model.");
+		}		
 	}
 }

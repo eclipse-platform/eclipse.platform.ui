@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 141435
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -188,5 +189,19 @@ public class ListViewer extends AbstractListViewer {
     protected void listShowSelection() {
         list.showSelection();
     }
-
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.AbstractListViewer#listGetTopIndex()
+     */
+    protected int listGetTopIndex() {
+    	return list.getTopIndex();
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.jface.viewers.AbstractListViewer#listSetTopIndex(int)
+     */
+    protected void listSetTopIndex(int index) {
+    	list.setTopIndex(index);
+    }
 }
