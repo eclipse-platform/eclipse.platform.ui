@@ -4,7 +4,7 @@
    <item
          title="Introduction"
          description="<form><p>Welcome to the <b>hello world</b> cheat sheet.<br/>This cheat sheet will help you to build the famous &quot;hello world&quot; application and try it out. You will create a java project, and a java class that will print &quot;hello world&quot; in the console when run.<br/>Let&apos;s get started!
-		</p></form>"
+  </p></form>"
          Href="/org.eclipse.platform.doc.user/reference/ref-cheatsheets.htm"
          contextId="null">
       <nullAction/>

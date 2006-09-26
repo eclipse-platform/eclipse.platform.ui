@@ -154,6 +154,10 @@ public class CheatSheetParser implements IStatusContainer {
 					// We have a quote so emit the XML escaped counterpart
 					result.append(IParserTags.QUOTE);
 					break;
+				case '\t':
+					// We have a tab, replace with a space
+					result.append(' ');
+					break;
 				default:
 					// We have a character that does not require escaping
 					result.append(c);
@@ -397,10 +401,22 @@ public class CheatSheetParser implements IStatusContainer {
 			text = escapeXMLCharacters(text);
 			text.insert(0, IParserTags.FORM_START_TAG);
 			text.append(IParserTags.FORM_END_TAG);
+		} else {
+			deTab(text);
 		}
 
 		// Remove the new line, form feed and tab chars
 		return text.toString().trim();
+	}
+
+	// Replace any tabs with spaces
+	
+	private void deTab(StringBuffer text) {
+		for (int i = 0; i < text.length(); i++) {
+			if (text.charAt(i) == '\t') {
+				text.setCharAt(i, ' ');
+			}
+		}
 	}
 
 	private String trimLeadingWhitespace(String nodeValue) {

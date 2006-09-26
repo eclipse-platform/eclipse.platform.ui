@@ -50,9 +50,7 @@ public class MarkupParser {
 	private static void appendEscapedChar(StringBuffer buffer, char c) {
 		String replacement = getReplacement(c);
 		if (replacement != null) {
-			buffer.append('&');
 			buffer.append(replacement);
-			buffer.append(';');
 		} else {
 			buffer.append(c);
 		}
@@ -60,13 +58,16 @@ public class MarkupParser {
 
 	private static String getReplacement(char c) {
 		// Encode characters which need to be escaped for use in form text
+		// Replace tabs with spaces
 		switch (c) {
 			case '<' :
-				return "lt"; //$NON-NLS-1$
+				return "&lt;"; //$NON-NLS-1$
 			case '>' :
-				return "gt"; //$NON-NLS-1$
+				return "&gt;"; //$NON-NLS-1$
 			case '&' :
-				return "amp"; //$NON-NLS-1$
+				return "&amp;"; //$NON-NLS-1$
+			case '\t' :
+				return " "; //$NON-NLS-1$
 		}
 		return null;
 	}
