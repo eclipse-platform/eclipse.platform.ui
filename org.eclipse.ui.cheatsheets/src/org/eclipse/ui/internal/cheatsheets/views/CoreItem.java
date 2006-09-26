@@ -146,7 +146,7 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Label label = page.getToolkit().createLabel(buttonComposite, labelText, SWT.WRAP);
+		Label label = page.getToolkit().createLabel(buttonComposite, ViewUtilities.escapeForLabel(labelText), SWT.WRAP);
 		TableWrapData labelData = new TableWrapData();
 		labelData.indent = LABEL_MARGIN;
 		label.setLayoutData(labelData);

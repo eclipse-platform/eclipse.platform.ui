@@ -112,7 +112,7 @@ public abstract class ViewItem {
 		mainItemComposite.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		String title = item.getTitle();
 		if (title != null) {
-			mainItemComposite.setText(title);
+			mainItemComposite.setText(ViewUtilities.escapeForLabel(title));
 		}
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create mainItemComposite: "); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -240,7 +240,6 @@ public abstract class ViewItem {
 		setBold(false);
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setBold: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
 
 	protected ImageHyperlink createButtonWithText(Composite parent, Image image, ViewItem item, Color color, String linkText) {
 		ImageHyperlink button = page.getToolkit().createImageHyperlink(parent, SWT.NULL);
@@ -614,6 +613,6 @@ public abstract class ViewItem {
 			bodyText.copy();
 	}
 	
-	abstract boolean hasCompletionMessage();
+   abstract boolean hasCompletionMessage();
 
 }

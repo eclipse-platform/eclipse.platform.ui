@@ -49,7 +49,7 @@ public abstract class Page {
 						"Page.createInfoArea()", "Time in Page.createInfoArea() after new FormToolkit(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		form = toolkit.createScrolledForm(parent);
 		form.setData("novarrows", Boolean.TRUE); //$NON-NLS-1$
-		form.setText(getTitle());
+		form.setText(ViewUtilities.escapeForLabel(getTitle()));
 		form.setDelayedReflow(true);
 		CheatSheetStopWatch
 				.printLapTime(

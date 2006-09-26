@@ -55,6 +55,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheet
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader.TaskExplorerNode;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
+import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskExplorer;
@@ -176,7 +177,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 
 	private void setInputModel(CompositeCheatSheetModel model, Map layout) {
 		this.model = model;
-		mform.getForm().setText(model.getName());
+		mform.getForm().setText(ViewUtilities.escapeForLabel(model.getName()));
 		String explorerId = model.getTaskExplorerId();
 		setCurrentExplorerFromId(explorerId);
 		String selectedTaskId = (String) layout.get(ICompositeCheatsheetTags.SELECTED_TASK);
