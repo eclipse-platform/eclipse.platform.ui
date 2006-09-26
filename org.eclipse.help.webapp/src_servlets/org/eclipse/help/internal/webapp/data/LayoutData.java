@@ -59,16 +59,15 @@ public class LayoutData extends RequestData {
 	}
 
 	public String getContentURL() {
-		TocData tocData = new TocData(context, request, response);
-		String topic = tocData.getSelectedTopic();
-		String help_home = preferences.getHelpHome();
-
-		if (topic != null)
-			help_home = topic;
-		else
-			help_home = UrlUtil.getHelpURL(help_home);
-
-		return help_home;
+		String topicHref = request.getParameter("topic"); //$NON-NLS-1$
+		if (topicHref == null || topicHref.length() == 0) {
+			return UrlUtil.getHelpURL(preferences.getHelpHome());
+		}
+		else {
+			TocData tocData = new TocData(context, request, response);
+			String topic = tocData.getSelectedTopic();
+			return topic != null ? topic : UrlUtil.getHelpURL(preferences.getHelpHome());
+		}
 	}
 
 	/**
@@ -80,26 +79,26 @@ public class LayoutData extends RequestData {
 
 		View tocview = new View("toc", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/contents_view.gif", 'C'); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/contents_view.gif", 'C', !HelpPlugin.getTocManager().isTocLoaded(getLocale())); //$NON-NLS-1$
 		View indexview = null;
 		View searchview = new View("search", //$NON-NLS-1$
 				"", //$NON-NLS-1$
-				preferences.getImagesDirectory() + "/search_results_view.gif", 'R'); //$NON-NLS-1$
+				preferences.getImagesDirectory() + "/search_results_view.gif", 'R', false); //$NON-NLS-1$
 		View linksview = null;
 		View bookmarksview = null;
 
-		if (preferences.isIndexView() && HelpPlugin.getIndexManager().isIndexContributed())
+		if (preferences.isIndexView())
 			indexview = new View("index", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/index_view.gif", 'I'); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/index_view.gif", 'I', !HelpPlugin.getIndexManager().isIndexLoaded(getLocale())); //$NON-NLS-1$
 		if (preferences.isLinksView())
 			linksview = new View("links", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/links_view.gif", (char)0); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/links_view.gif", (char)0, false); //$NON-NLS-1$
 		if (preferences.isBookmarksView())
 			bookmarksview = new View("bookmarks", //$NON-NLS-1$
 					"", //$NON-NLS-1$
-					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0); //$NON-NLS-1$
+					preferences.getImagesDirectory() + "/bookmarks_view.gif", (char)0, false); //$NON-NLS-1$
 
 		ArrayList viewList = new ArrayList();
 		viewList.add(tocview);

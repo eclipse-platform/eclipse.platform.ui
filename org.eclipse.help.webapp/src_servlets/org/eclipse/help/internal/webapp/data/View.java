@@ -16,12 +16,14 @@ public class View {
 	private String url;
 	private String imageURL;
 	private char shortcut;
+	private boolean isDeferred;
 
-	public View(String name, String url, String imageURL, char shortcut) {
+	public View(String name, String url, String imageURL, char shortcut, boolean isDeferred) {
 		this.name = name;
 		this.url = url;
 		this.imageURL = imageURL;
 		this.shortcut = shortcut;
+		this.isDeferred = isDeferred;
 	}
 
 	public String getName() {
@@ -57,5 +59,13 @@ public class View {
 	 */
 	public char getKey() {
 		return shortcut;
+	}
+	
+	/**
+	 * Returns whether or not this view should do a deferred load; i.e. it will
+	 * take some time to load and should show a progress message while loading.
+	 */
+	public boolean isDeferred() {
+		return isDeferred;
 	}
 }

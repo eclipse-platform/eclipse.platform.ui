@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2006 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -165,7 +165,7 @@ function restoreNavigation(errorMessage)
 </script>
 </head>
 
-<frameset onload="showView('<%=data.getVisibleView()%>')" id="navFrameset" rows="*,21"  framespacing="0" border="0"  frameborder="0" scrolling="no">
+<frameset id="navFrameset" rows="*,21"  framespacing="0" border="0"  frameborder="0" scrolling="no">
    <frame name="ViewsFrame" title="<%=ServletResources.getString("ignore", "ViewsFrame", request)%>" src='<%="views.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
    <frame name="TabsFrame" title="<%=ServletResources.getString("TabsFrame", request)%>" src='<%="tabs.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>

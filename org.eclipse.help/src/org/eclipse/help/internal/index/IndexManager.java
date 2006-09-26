@@ -159,9 +159,12 @@ public class IndexManager {
 		return indexProviders;
 	}
 	
-	public boolean isIndexContributed() {
-		IIndex index = getIndex(Platform.getNL());
-		return index.getEntries().length > 0;
+	/*
+	 * Returns whether or not the index has been completely loaded for the
+	 * given locale yet or not.
+	 */
+	public boolean isIndexLoaded(String locale) {
+		return indexesByLocale.get(locale) != null;
 	}
 	
 	/*

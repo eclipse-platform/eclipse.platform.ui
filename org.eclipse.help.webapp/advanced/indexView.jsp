@@ -7,11 +7,12 @@
  
  Contributors:
      Intel Corporation - initial API and implementation
+     IBM Corporation - 122967 [Help] Remote help system (improve responsiveness)
 --%>
 <%@ include file="fheader.jsp"%>
 
 <%
-	RequestData data = new RequestData(application, request, response);
+	IndexData data = new IndexData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 

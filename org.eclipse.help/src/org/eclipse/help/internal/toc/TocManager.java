@@ -364,6 +364,14 @@ public class TocManager {
 	}
 	
 	/*
+	 * Returns whether or not the toc for the given locale has been completely
+	 * loaded yet or not.
+	 */
+	public boolean isTocLoaded(String locale) {
+		return tocsByLocale.get(locale) != null;
+	}
+	
+	/*
 	 * For testing purposes only. Reloads everything.
 	 */
 	public void reset() {
