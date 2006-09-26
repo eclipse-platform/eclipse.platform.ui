@@ -32,7 +32,6 @@ public final class Messages extends NLS {
 	public static String SKIP_TASK_TOOLTIP;
 	public static String COMPLETE_TASK_TOOLTIP;
 	public static String RESTART_TASK_TOOLTIP;
-	public static String LESS_THAN_2_SUBITEMS;
 	public static String ERROR_FINDING_PLUGIN_FOR_ACTION;
 	public static String ERROR_DATA_MISSING;
 	public static String ERROR_DATA_MISSING_LOG;

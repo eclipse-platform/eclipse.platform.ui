@@ -551,11 +551,6 @@ public class CheatSheetParser implements IStatusContainer {
 			addStatus(IStatus.ERROR, message, null);
 		}
 		
-	    ArrayList subItems = item.getSubItems();
-		if( subItems != null && subItems.size() ==  1 && !item.isDynamic()) {
-			addStatus(IStatus.ERROR, Messages.LESS_THAN_2_SUBITEMS, null);
-		}
-
 		return item;
 	}
 
