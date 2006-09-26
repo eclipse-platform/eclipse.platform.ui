@@ -572,7 +572,7 @@ public class CoreItem extends ViewItem {
 			completionComposite.setBackground(backgroundColor);
 
 			FormText completionText = page.getToolkit().createFormText(completionComposite, false);
-			completionText.setText(item.getCompletionMessage(), item.getCompletionMessage().startsWith(IParserTags.FORM_START_TAG), false);
+			completionText.setText(completionMessage, completionMessage.startsWith(IParserTags.FORM_START_TAG), false);
 			completionText.setBackground(backgroundColor);
 			final ImageHyperlink completeButton = createButtonWithText(
 					completionComposite,
