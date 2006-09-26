@@ -527,8 +527,8 @@ public class BrowserIntroPartImplementation extends
                     // a url will not trigger regen since current page would be
                     // the same.
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
-                    success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(page.getId(), false);
+                    success = generateDynamicContentForPage(page);
                 }
             } else
                 success = false;
@@ -559,8 +559,8 @@ public class BrowserIntroPartImplementation extends
                     success = browser.setUrl(history.getCurrentLocationAsUrl());
                 } else {
                     AbstractIntroPage page = history.getCurrentLocationAsPage();
-                    success = generateDynamicContentForPage(page);
                     getModel().setCurrentPageId(page.getId(), false);
+                    success = generateDynamicContentForPage(page);
                 }
             } else
                 success = false;
