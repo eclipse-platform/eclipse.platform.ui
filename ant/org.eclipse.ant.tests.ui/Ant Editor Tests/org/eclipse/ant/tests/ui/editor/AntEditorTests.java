@@ -36,7 +36,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 9, 20);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Path Elements:</h5><ul><li>";
+		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Path Elements:</h5><ul><li>";
 		assertTrue("Expected the following hover text to start with: " + correctResult, hoverText.startsWith(correctResult));
     }
     
@@ -47,7 +47,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 42, 13);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><p>value with spaces</font></body></html>";
+		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><p>value with spaces</font></body></html>";
 		assertTrue("Expected the following hover text to start with: " + correctResult, correctResult.equals(hoverText));
     }
     
@@ -69,7 +69,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 45, 25);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes:</h5><li>*.xml</li><p><p><h5>Excludes:</h5><li>**/*Test*</li></font></body></html>";
+		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Includes:</h5><li>*.xml</li><p><p><h5>Excludes:</h5><li>**/*Test*</li></font></body></html>";
 		assertTrue("Expected the following hover text to start with: " + correctResult + "was: " + hoverText, hoverText.startsWith(correctResult));
     }
     
@@ -92,7 +92,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
 		
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#FFFF88\"><font size=-1><h5>Includes:</h5><li>include</li><p><p><h5>Excludes:</h5><li>exclude</li><li>**" + 
+		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Includes:</h5><li>include</li><p><p><h5>Excludes:</h5><li>exclude</li><li>**" + 
 			File.separatorChar + "*~</li><li>**" 
 			+ File.separatorChar
 			+ "#*#</li><li>**" + 
