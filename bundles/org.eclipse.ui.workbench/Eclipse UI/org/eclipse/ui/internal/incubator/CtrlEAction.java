@@ -24,6 +24,7 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -41,9 +42,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -103,26 +102,6 @@ public class CtrlEAction extends AbstractHandler {
 		}
 		FilteringInfoPopup popup = new MyInfoPopup(window.getShell(), commands);
 		popup.setInput(new Object());
-		Event event = null;
-		if (executionEvent.getTrigger() instanceof Event) {
-			event = (Event) executionEvent.getTrigger();
-		}
-		if (event != null && event.widget instanceof ToolItem) {
-			ToolItem toolItem = (ToolItem) event.widget;
-			Rectangle bounds = toolItem.getBounds();
-			Point popupLocation = new Point(bounds.x, bounds.y
-					+ bounds.height);
-			popup
-					.setLocation(toolItem.getParent().toDisplay(
-							popupLocation));
-		} else {
-			Point size = new Point(300, 400);
-			Rectangle parentBounds = window.getShell().getBounds();
-			int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
-			int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
-			popup.setLocation(new Point(x,y));
-			popup.setSize(size.x, size.y);
-		}
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
 				.getItems();
 		if (rootItems.length > 0)
@@ -157,6 +136,33 @@ public class CtrlEAction extends AbstractHandler {
 			TreeViewer viewer = new TreeViewer(parent, style);
 			viewer.setLabelProvider(new MyLabelProvider());
 			return viewer;
+		}		
+
+		protected Point getInitialSize() {
+			if(!MyInfoPopup.this.getPersistBounds()) {
+				return new Point(300, 400);
+			}
+			return super.getInitialSize();
+		}
+		
+		protected Point getInitialLocation(Point initialSize) {
+			if(!MyInfoPopup.this.getPersistBounds()) {
+				Point size = new Point(300, 400);
+				Rectangle parentBounds = MyInfoPopup.this.getParentShell().getBounds();
+				int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
+				int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
+				return new Point(x,y);
+			}
+			return super.getInitialLocation(initialSize);
+		}
+
+		protected IDialogSettings getDialogSettings() {
+			String sectionName = getId();
+			IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
+			if(settings == null) {
+				settings = WorkbenchPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+			}
+			return settings;		
 		}
 
 		protected String getId() {
