@@ -7,8 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 137877
- *     Brad Reynolds - bug 152543
+ *     Brad Reynolds - bugs 137877, 152543, 152540
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -32,9 +31,11 @@ import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.util.MocksTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
+import org.eclipse.jface.tests.internal.databinding.internal.observable.UnmodifiableObservableListTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SVOCWLTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
+import org.eclipse.jface.tests.internal.databinding.provisional.observable.ObservablesTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.viewers.ViewersObservableFactoryTest;
 
 public class BindingTestSuite extends TestSuite {
@@ -77,6 +78,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(PersonTests.class);
 		addTestSuite(WritableValueTest.class);
 		addTestSuite(ValueBindingTest.class);
+		addTestSuite(UnmodifiableObservableListTest.class);
+		addTestSuite(ObservablesTest.class);
 	}
 
 	/**
