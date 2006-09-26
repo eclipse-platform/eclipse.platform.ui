@@ -657,7 +657,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return false;
 		}
 
-		boolean closeEditors = PrefUtil.getAPIPreferenceStore().getBoolean(
+		boolean closeEditors = !force && PrefUtil.getAPIPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			SafeRunner.run(new SafeRunnable() {
@@ -821,9 +821,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            {@link PlatformUI#RETURN_RESTART RETURN_RESTART}if the
 	 *            workbench was terminated with a call to
 	 *            {@link IWorkbench#restart IWorkbench.restart};
+	 *            {@link PlatformUI#RETURN_EMERGENCY_CLOSE} for an emergency shutdown
 	 *            {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE}if
 	 *            the workbench could not be started; other values reserved for
 	 *            future use
+	 *            
 	 * @param force
 	 *            true to force the workbench close, and false for a "soft"
 	 *            close that can be canceled
