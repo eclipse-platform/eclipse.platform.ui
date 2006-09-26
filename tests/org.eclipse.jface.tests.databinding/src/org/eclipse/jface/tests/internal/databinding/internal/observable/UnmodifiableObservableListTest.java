@@ -20,12 +20,12 @@ import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.IStaleListener;
+import org.eclipse.jface.databinding.observable.Observables;
 import org.eclipse.jface.databinding.observable.list.IListChangeListener;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.Observables;
 
 public class UnmodifiableObservableListTest extends TestCase {
 	ObservableList unmodifiable;

@@ -9,9 +9,8 @@
  *     Brad Reynolds - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional.observable;
+package org.eclipse.jface.databinding.observable;
 
-import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableObservableList;
 

@@ -16,10 +16,10 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.observable.Observables;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableObservableList;
-import org.eclipse.jface.internal.databinding.provisional.observable.Observables;
 
 public class ObservablesTest extends TestCase {
 	public void testUnmodifableObservableListExceptions() throws Exception {
