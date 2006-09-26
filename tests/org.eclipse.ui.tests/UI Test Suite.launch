@@ -17,12 +17,13 @@
 <booleanAttribute key="clearws" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.eclipse.ui.tests.UiTestSuite"/>
 <stringAttribute key="pde.version" value="3.2a"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms40m -Xmx96m"/>
 <stringAttribute key="templateConfig" value=""/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="clearConfig" value="true"/>
 <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <booleanAttribute key="useDefaultConfigArea" value="false"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
 <booleanAttribute key="useDefaultConfig" value="true"/>
 <stringAttribute key="org.eclipse.jdt.junit.TESTNAME" value=""/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.eclipse.ui.tests"/>
