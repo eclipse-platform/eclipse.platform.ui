@@ -130,7 +130,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
     private IWorkbenchAction switchToEditorAction;
 
-    private IWorkbenchAction openEditorDropDownAction;
+    private IWorkbenchAction quickAccessAction;
 
     private IWorkbenchAction backwardHistoryAction;
 
@@ -715,6 +715,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         menu.add(subMenu);
         subMenu.add(showPartPaneMenuAction);
         subMenu.add(showViewMenuAction);
+        subMenu.add(quickAccessAction);
         subMenu.add(new Separator());
         subMenu.add(maximizePartAction);
         subMenu.add(minimizePartAction);
@@ -723,7 +724,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         subMenu.add(nextEditorAction);
         subMenu.add(prevEditorAction);
         subMenu.add(switchToEditorAction);
-        subMenu.add(openEditorDropDownAction);
         subMenu.add(new Separator());
         subMenu.add(nextPartAction);
         subMenu.add(prevPartAction);
@@ -1102,7 +1102,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         maximizePartAction = null;
         minimizePartAction = null;
         switchToEditorAction = null;
-        openEditorDropDownAction = null;
+        quickAccessAction = null;
         backwardHistoryAction = null;
         forwardHistoryAction = null;
         undoAction = null;
@@ -1352,9 +1352,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
                 .create(window);
         register(switchToEditorAction);
 
-        openEditorDropDownAction = ActionFactory.SHOW_WORKBOOK_EDITORS
-                .create(window);
-        register(openEditorDropDownAction);
+        quickAccessAction = ActionFactory.SHOW_QUICK_ACCESS
+        	.create(window);
 
         hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(window);
         register(hideShowEditorAction);

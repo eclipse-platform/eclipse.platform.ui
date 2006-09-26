@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.MaximizePartAction;
 import org.eclipse.ui.internal.MinimizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
+import org.eclipse.ui.internal.QuickAccessMenu;
 import org.eclipse.ui.internal.QuitAction;
 import org.eclipse.ui.internal.ResetPerspectiveAction;
 import org.eclipse.ui.internal.SaveAction;
@@ -1280,6 +1281,24 @@ public abstract class ActionFactory {
             action.setId(getId());
             return action;
         }
+    };
+    
+    /**
+     * Workbench action (id "showQuickAccess"): Shows a list of UI elements like editors, views, perspectives etc.
+     * @since 3.3
+     */
+    public static final ActionFactory SHOW_QUICK_ACCESS = new ActionFactory(
+    		"showQuickAccess") { //$NON-NLS-1$
+
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+				 */
+				public IWorkbenchAction create(IWorkbenchWindow window) {
+					IWorkbenchAction action = new QuickAccessMenu(window);
+					action.setId(getId());
+					return action;
+				} 
+    	
     };
 
     /**
