@@ -23,7 +23,6 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -38,7 +37,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 
 /**
- * Dialog to allow the selection of workingsets without all of the overhead of the
+ * Dialog to allow the selection of working sets without all of the overhead of the
  * platform UI working set dialog
  * 
  * @since 3.3
@@ -46,7 +45,7 @@ import org.eclipse.ui.model.AdaptableList;
 public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 	
 	/**
-	 * Provides the content to the workingset viewer
+	 * Provides the content to the working set viewer
 	 */
 	class WorkingsetContent implements IStructuredContentProvider {
 
