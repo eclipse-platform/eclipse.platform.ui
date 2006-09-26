@@ -32,5 +32,6 @@ public class AllParserTests extends TestSuite {
 		addTest(ValidTest.suite());
 		addTest(TolerateTest.suite());
 		addTestSuite(InvalidCheatsheet.class);
+		addTestSuite(ParseFromString.class);
 	}
 }

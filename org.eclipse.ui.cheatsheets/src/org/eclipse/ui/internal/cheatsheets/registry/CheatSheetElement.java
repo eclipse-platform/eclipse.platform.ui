@@ -31,6 +31,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	private String listenerClass;
 	private boolean composite;
 	private boolean registered = false;
+	private String contentXml;
 
 	/**
 	 *	Create a new instance of this class
@@ -213,6 +214,14 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 
 	public boolean isRegistered() {
 		return registered;
+	}
+
+	public void setContentXml(String xml) {
+		this.contentXml = xml;	
+	}
+	
+	public String getContentXml() {
+		return contentXml;
 	}
 
 }

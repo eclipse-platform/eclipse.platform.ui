@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public final class OpenCheatSheetAction extends Action {
 	private String id;
 	private String name;
 	private URL url;
+	private String xml;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -73,6 +74,26 @@ public final class OpenCheatSheetAction extends Action {
 		this.name = name;
 		this.url = url;
 	}
+	
+	/**
+	 * Creates an action that opens a cheat sheet using
+	 * XML passed in as a string.
+	 * 
+	 * @param id the id to give this cheat sheet
+	 * @param name the name to give this cheat sheet
+	 * @param xml the cheatsheet content in xml format
+	 * @exception IllegalArgumentException if the parameters
+	 * are <code>null</code>
+	 * @since 3.3
+	 */
+	public OpenCheatSheetAction(String id, String name, String xml) {
+		if (id == null || name == null || xml == null) {
+			throw new IllegalArgumentException();
+		}
+		this.id = id;
+		this.name = name;
+		this.xml = xml;
+	}
 
 	/* (non-javadoc)
 	 * This action will try to launch the cheat sheet view and populate
@@ -87,22 +108,10 @@ public final class OpenCheatSheetAction extends Action {
 		IWorkbenchPage page = window.getActivePage();
 
 		CheatSheetView view = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-		if (view != null) {
-			if(url == null) {
-				view.setInput(id);
-			} else {
-				view.setInput(id, name, url);
-			}
-			page.bringToTop(view);
-		} else {
+		if (view == null) {
 			try {
 				view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 				page.activate(view);
-				if(url == null) {
-					view.setInput(id);
-				} else {
-					view.setInput(id, name, url);
-				}
 			} catch (PartInitException pie) {
 				String message = Messages.LAUNCH_SHEET_ERROR;
 				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, pie);
@@ -111,5 +120,15 @@ public final class OpenCheatSheetAction extends Action {
 				return;
 			}
 		}
+		// Depending on which constructor was used open the cheat sheet view from a
+		// URL, an XML string or based on the id
+		if(url != null) {
+			view.setInput(id, name, url);
+		} else if (xml != null) {
+			view.setInputFromXml(id, name, xml);
+		} else {
+			view.setInput(id);
+		}
+		page.bringToTop(view);
 	}
 }

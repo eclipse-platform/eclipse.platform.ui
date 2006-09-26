@@ -225,4 +225,10 @@ public class CheatSheetView extends ViewPart {
 			viewer.setInput(id, name, url);
 		}
 	}
+
+	public void setInputFromXml(String id, String name, String xml) {
+		if(viewer != null) {
+			viewer.setInputFromXml(id, name, xml);
+		}	
+	}
 }

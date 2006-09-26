@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import javax.xml.parsers.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.*;
@@ -813,24 +812,37 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	public ICheatSheet parse(URL url, int cheatSheetKind) {
+		return parse(new ParserInput(url), cheatSheetKind);
+	}
+	
+	public ICheatSheet parse(ParserInput input, int cheatSheetKind) {
 		status = Status.OK_STATUS;
-		if(url == null) {
+		if(input == null) {
 			return null;
 		}
 
 		InputStream is = null;
 		InputSource inputSource = null;
+        String filename = ""; //$NON-NLS-1$
 
-
-		try {
-			is = url.openStream();
-
-			if (is != null) {
-				inputSource = new InputSource(is);
+		if (input.getXml() != null) {
+			StringReader reader = new StringReader(input.getXml()); 
+			inputSource = new InputSource(reader);
+		} else if (input.getUrl() != null){
+			URL url = input.getUrl();
+			filename = url.getFile();
+			try {
+				is = url.openStream();
+	
+				if (is != null) {
+					inputSource = new InputSource(is);
+				}
+			} catch (Exception e) {
+				String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {url.getFile()}));
+				addStatus(IStatus.ERROR, message, e);
+				return null;
 			}
-		} catch (Exception e) {
-			String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {url.getFile()}));
-			addStatus(IStatus.ERROR, message, e);
+		} else {
 			return null;
 		}
 
@@ -842,15 +854,15 @@ public class CheatSheetParser implements IStatusContainer {
 			}
 			document = documentBuilder.parse(inputSource);
 		} catch (IOException e) {
-			String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {url.getFile()}));
+			String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {filename}));
 			addStatus(IStatus.ERROR, message, e);
 			return null;
 		} catch (SAXParseException spe) {
-			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {url.getFile(), new Integer(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
+			String message = NLS.bind(Messages.ERROR_SAX_PARSING_WITH_LOCATION, (new Object[] {filename, new Integer(spe.getLineNumber()), new Integer(spe.getColumnNumber())}));
 			addStatus(IStatus.ERROR, message, spe);
 			return null;
 		} catch (SAXException se) {
-			String message = NLS.bind(Messages.ERROR_SAX_PARSING, (new Object[] {url.getFile()}));
+			String message = NLS.bind(Messages.ERROR_SAX_PARSING, (new Object[] {filename}));
 			addStatus(IStatus.ERROR, message, se);
 			return null;
 		} finally {
@@ -862,7 +874,7 @@ public class CheatSheetParser implements IStatusContainer {
 		
 		if ( cheatSheetKind == COMPOSITE_ONLY  ||  (cheatSheetKind == ANY && isComposite(document))) {
 			CompositeCheatSheetParser compositeParser = new CompositeCheatSheetParser();
-			CompositeCheatSheetModel result = compositeParser.parseCompositeCheatSheet(document, url);
+			CompositeCheatSheetModel result = compositeParser.parseCompositeCheatSheet(document, input.getUrl());
 			status = compositeParser.getStatus();
 			return result;
 		}

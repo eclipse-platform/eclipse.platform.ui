@@ -68,10 +68,12 @@ import org.eclipse.ui.internal.cheatsheets.data.CheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.ICheatSheet;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
+import org.eclipse.ui.internal.cheatsheets.data.ParserInput;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.state.DefaultStateManager;
 import org.eclipse.ui.internal.cheatsheets.state.ICheatSheetStateManager;
+import org.eclipse.ui.internal.cheatsheets.state.NoSaveStateManager;
 import org.eclipse.ui.internal.cheatsheets.state.TrayStateManager;
 import org.osgi.framework.Bundle;
 
@@ -79,7 +81,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 	//CS Elements
 	private CheatSheetElement contentElement;
-	private URL contentURL;
+	private ParserInput parserInput;
 	private String currentID;
 	private int currentItemNum;
 	// Used to indicate if an invalid cheat sheet id was specified via setInput.
@@ -517,7 +519,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			internalDispose();
 
 			// Reinitialize a few variables because there is no currentItem or currentPage now
-			contentURL = null;
+			parserInput = null;
 			currentItem = null;
 			currentItemNum = -1;
 			currentPage = null;
@@ -981,7 +983,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				cheatSheetKind = CheatSheetParser.SIMPLE_ONLY;
 			}
 		}
-		model = parser.parse(contentURL, cheatSheetKind);
+	
+		model = parser.parse(parserInput, cheatSheetKind);
 		return parser.getStatus();
 	}
 
@@ -1089,29 +1092,9 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		stateManager.setElement(element);
 
 		currentID = null;
-		contentURL = null;
+		parserInput = null;
 		if (element != null) {
-			currentID = element.getID();
-			restorePath = element.getRestorePath();
-	
-			Bundle bundle = null;
-			if(element != null && element.getConfigurationElement() != null)
-				try{
-					String pluginId = element.getConfigurationElement().getContributor().getName();
-					bundle = Platform.getBundle(pluginId);
-				} catch (Exception e) {
-					// do nothing
-				}
-			if (bundle != null) {
-				contentURL = FileLocator.find(bundle, new Path(element.getContentFile()), null);
-			}
-	
-			if (contentURL == null) {
-				try {
-					contentURL = new URL(element.getContentFile());
-				} catch (MalformedURLException mue) {
-				}
-			}
+			initInputFields(element);
 		}
 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() before initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1127,6 +1110,40 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		// If the cheat sheet failed to open clear the content element so we don't see an 
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.setContent(CheatSheetElement element)", "Time in CheatSheetViewer.setContent() after initCheatSheetView() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+
+	private void initInputFields(CheatSheetElement element) {
+		currentID = element.getID();
+		String contentXml = element.getContentXml();
+		URL contentURL = null;
+		restorePath = element.getRestorePath();
+		
+		if (contentXml != null) {
+			parserInput = new ParserInput(contentXml);
+			return;		
+		}
+
+		// The input was not an XML string, find the content URL
+		Bundle bundle = null;
+		if(element != null && element.getConfigurationElement() != null)
+			try{
+				String pluginId = element.getConfigurationElement().getContributor().getName();
+				bundle = Platform.getBundle(pluginId);
+			} catch (Exception e) {
+				// do nothing
+			}
+		if (bundle != null) {
+			contentURL = FileLocator.find(bundle, new Path(element.getContentFile()), null);
+		}
+
+		if (contentURL == null) {
+			try {
+				contentURL = new URL(element.getContentFile());
+			} catch (MalformedURLException mue) {
+			}
+		}
+		parserInput = new ParserInput(contentURL);
+	}
+	
 	
 	/*package*/ void setExpandRestoreAction(CheatSheetExpandRestoreAction action) {
 		expandRestoreAction = action;
@@ -1189,6 +1206,19 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		setInput(id, name, url, new DefaultStateManager());
 	}
 	
+	public void setInputFromXml(String id, String name, String xml) {
+		if (id == null || name == null || xml == null) {
+			throw new IllegalArgumentException();
+		}
+		CheatSheetElement element = new CheatSheetElement(name);
+		element.setID(id);
+		element.setContentXml(xml);
+
+		nullCheatSheetId = false;
+		invalidCheatSheetId = false;
+		setContent(element, new NoSaveStateManager());
+	}
+
 	public void setInput(String id, String name, URL url, ICheatSheetStateManager inputStateManager) {
 		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
