@@ -19,7 +19,6 @@ import org.eclipse.jface.databinding.observable.IDiff;
  * 
  */
 public abstract class ValueDiff implements IDiff {
-
 	/**
 	 * Creates a value diff.
 	 */
@@ -46,7 +45,17 @@ public abstract class ValueDiff implements IDiff {
 		}
 		return false;
 	}
-	
+		
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		Object nv = getNewValue();
+		Object ov = getOldValue();
+		result = prime * result + ((nv == null) ? 0 : nv.hashCode());
+		result = prime * result + ((ov == null) ? 0 : ov.hashCode());
+		return result;
+	}
+
 	/**
 	 * @see java.lang.Object#toString()
 	 */
