@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 152543
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal;
 
@@ -109,7 +110,9 @@ public class ValueBinding extends org.eclipse.jface.internal.databinding.provisi
 						.addValueChangingListener(targetChangingListener);
 			}
 		}
-		updateTargetFromModel();
+		if (bindSpec.isUpdateTarget()) {
+			updateTargetFromModel();
+		}
 	}
 	
 	/* (non-Javadoc)
