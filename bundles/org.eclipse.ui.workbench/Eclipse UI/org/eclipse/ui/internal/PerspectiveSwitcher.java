@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Grindstaff <chris@gstaff.org> - Fix for bug 158016     
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -446,6 +447,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 			propertyChangeListener = null;
 		}
 		unhookDragSupport();
+		disposeChildControls();
 		toolBarListener = null;
 	}
 
