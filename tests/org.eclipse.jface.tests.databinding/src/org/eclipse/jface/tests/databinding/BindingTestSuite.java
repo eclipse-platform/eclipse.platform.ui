@@ -26,6 +26,7 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryTest;
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
+import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.util.MocksTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
@@ -72,6 +73,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableTest.class);
 		addTestSuite(MocksTest.class);
 		addTestSuite(PersonTests.class);
+		addTestSuite(WritableValueTest.class);
 	}
 
 	/**

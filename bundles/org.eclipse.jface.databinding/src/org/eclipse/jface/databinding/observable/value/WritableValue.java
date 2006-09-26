@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 158687
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.observable.value;
@@ -55,7 +56,17 @@ public class WritableValue extends AbstractObservableValue {
 	 *            The value to set.
 	 */
 	public void setValue(Object value) {
-		fireValueChange(Diffs.createValueDiff(this.value, this.value = value));
+        boolean changed = false;
+
+        if (this.value == null && value != null) {
+            changed = true;
+        } else if (this.value != null && !this.value.equals(value)) {
+            changed = true;
+        }
+
+        if (changed) {
+            fireValueChange(Diffs.createValueDiff(this.value, this.value = value));
+        }
 	}
 
 	public Object getValueType() {
