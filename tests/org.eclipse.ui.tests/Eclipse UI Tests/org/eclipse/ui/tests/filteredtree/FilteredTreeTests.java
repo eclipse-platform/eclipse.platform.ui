@@ -37,7 +37,7 @@ public class FilteredTreeTests extends UITestCase {
 		public MyFilteredTree(Composite comp, int style) {
 			super(comp);
 			doSomeStuffBeforeWidgetCreation();
-			init(comp, style, new PatternFilter());
+			init(style, new PatternFilter());
 		}
 		
 		private void doSomeStuffBeforeWidgetCreation(){

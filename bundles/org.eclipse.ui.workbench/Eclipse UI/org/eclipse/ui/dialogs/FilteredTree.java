@@ -101,6 +101,11 @@ public class FilteredTree extends Composite {
      * The job used to refresh the tree.
      */
     private Job refreshJob;
+    
+    /**
+     * The parent composite of the filtered tree.
+     */
+    protected Composite parent;
 
     /**
      * Whether or not to show the filter controls (text and clear button).
@@ -151,7 +156,8 @@ public class FilteredTree extends Composite {
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
 		super(parent, SWT.NONE);
-		init(parent, treeStyle, filter);
+		this.parent = parent;
+		init(treeStyle, filter);
 	}
 
 	/**
@@ -168,6 +174,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected FilteredTree(Composite parent) {
 		super(parent, SWT.NONE);
+		this.parent = parent;
 	}
 
 	/**
@@ -179,8 +186,10 @@ public class FilteredTree extends Composite {
 	 *            the style bits for the <code>Tree</code>
 	 * @param filter
 	 *            the filter to be used
+	 * 
+	 * @since 3.3
 	 */
-	protected void init(Composite parent, int treeStyle, PatternFilter filter) {
+	protected void init(int treeStyle, PatternFilter filter) {
 		patternFilter = filter;
 		showFilterControls = PlatformUI.getPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
