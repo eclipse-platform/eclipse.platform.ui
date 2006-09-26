@@ -1361,7 +1361,7 @@ public class TextViewer extends Viewer implements
 			IRewriteTarget target= TextViewer.this.getRewriteTarget();
 			// FIXME always use setRedraw to avoid flickering due to scrolling
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=158746
-			boolean toggleRedraw= /*true || */event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+			boolean toggleRedraw= true || event.getSession().getSessionType() != DocumentRewriteSessionType.UNRESTRICTED_SMALL;
 			final boolean viewportStabilize= !toggleRedraw;
 			if (DocumentRewriteSessionEvent.SESSION_START == event.getChangeType()) {
 				if (toggleRedraw)
