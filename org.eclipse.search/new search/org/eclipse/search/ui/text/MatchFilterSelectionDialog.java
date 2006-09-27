@@ -43,6 +43,8 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 
+import org.eclipse.search2.internal.ui.SearchMessages;
+
 /**
  * A dialog that lets users configure the active {@link MatchFilter match filters} and (optionally) the
  * maximal number of top level elements.
@@ -128,7 +130,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		// Create list viewer
 		Label l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
-		l.setText("Select the &matches to exclude from the search results:"); 
+		l.setText(SearchMessages.MatchFilterSelectionDialog_filter_description); 
 		
 		Table table = new Table(parent, SWT.CHECK | SWT.BORDER);
 		table.setFont(parent.getFont());
@@ -162,7 +164,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 
 		l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
-		l.setText("Filter description:"); 
+		l.setText(SearchMessages.MatchFilterSelectionDialog_description_label); 
 		fDescription = new Text(parent, SWT.LEFT | SWT.WRAP | SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.V_SCROLL);
 		fDescription.setFont(parent.getFont());
 		data = new GridData(GridData.FILL_HORIZONTAL);
@@ -185,7 +187,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		parent.setLayoutData(gd);
 
 		fLimitElementsCheckbox = new Button(parent, SWT.CHECK);
-		fLimitElementsCheckbox.setText("&Limit number of top level elements to:");  
+		fLimitElementsCheckbox.setText(SearchMessages.MatchFilterSelectionDialog_limit_description);  
 		fLimitElementsCheckbox.setLayoutData(new GridData());
 		fLimitElementsCheckbox.setFont(parent.getFont());
 		
@@ -239,7 +241,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		} catch (NumberFormatException e) {
 		}
 		if (fLimitElementsCheckbox.getSelection() && value <= 0)
-			updateStatus(createStatus(IStatus.ERROR, "Element limit must be a positive number.")); 
+			updateStatus(createStatus(IStatus.ERROR, SearchMessages.MatchFilterSelectionDialog_error_invalid_limit)); 
 		else
 			updateStatus(createStatus(IStatus.OK, "")); //$NON-NLS-1$
 	}

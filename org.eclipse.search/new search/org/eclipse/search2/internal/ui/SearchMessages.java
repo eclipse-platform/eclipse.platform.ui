@@ -25,6 +25,10 @@ public final class SearchMessages extends NLS {
     }
 
 	public static String AbstractTextSearchViewPage_update_job_name;
+	public static String MatchFilterSelectionDialog_description_label;
+	public static String MatchFilterSelectionDialog_error_invalid_limit;
+	public static String MatchFilterSelectionDialog_filter_description;
+	public static String MatchFilterSelectionDialog_limit_description;
 	public static String OpenSearchPreferencesAction_label;
 	public static String OpenSearchPreferencesAction_tooltip;
 	public static String RemoveSelectedMatchesAction_label;
