@@ -41,7 +41,7 @@ public class ComboViewerTest extends StructuredViewerTest {
     }
 
     public static void main(String args[]) {
-        junit.textui.TestRunner.run(ListViewerTest.class);
+        junit.textui.TestRunner.run(ComboViewerTest.class);
     }
 
     /**
