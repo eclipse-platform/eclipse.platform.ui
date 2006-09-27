@@ -1068,8 +1068,8 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Captures and remembers the viewer state (selection and visual position). {@link ViewerState}
-	 * instances are normally used once and then discared, similar to the following snippet:
+	 * Captures and remembers the viewer state (selection and visual position). {@link TextViewer.ViewerState}
+	 * instances are normally used once and then discarded, similar to the following snippet:
 	 * <pre>
 	 * ViewerState state= new ViewerState(); // remember the state
 	 * doStuff(); // operation that may call setRedraw() and perform complex document modifications
@@ -1173,10 +1173,10 @@ public class TextViewer extends Viewer implements
 				int stableWidgetLine= getClosestWidgetLineForModelLine(stableLine);
 				if (stableWidgetLine == -1)
 					return;
-				int linePixel= fTextWidget.getLinePixel(stableWidgetLine);
+				int linePixel= getTextWidget().getLinePixel(stableWidgetLine);
 				int delta= fStablePixel - linePixel;
-				int topPixel= fTextWidget.getTopPixel();
-				fTextWidget.setTopPixel(topPixel - delta);
+				int topPixel= getTextWidget().getTopPixel();
+				getTextWidget().setTopPixel(topPixel - delta);
 			}
 		}
 
@@ -1212,7 +1212,7 @@ public class TextViewer extends Viewer implements
 
 				int stableLine= getStableLine();
 				int stableWidgetLine= modelLine2WidgetLine(stableLine);
-				fStablePixel= fTextWidget.getLinePixel(stableWidgetLine);
+				fStablePixel= getTextWidget().getLinePixel(stableWidgetLine);
 				IRegion stableLineInfo= fUpdaterDocument.getLineInformation(stableLine);
 				fStableLine= new Position(stableLineInfo.getOffset(), stableLineInfo.getLength());
 				fUpdaterDocument.addPosition(fUpdaterCategory, fStableLine);
@@ -1248,8 +1248,8 @@ public class TextViewer extends Viewer implements
 		 */
 		private int getStableLine() {
 			int stableLine; // the model line that we try to keep stable
-			int caretLine= fTextWidget.getLineAtOffset(fTextWidget.getCaretOffset());
-			if (caretLine < JFaceTextUtil.getPartialTopIndex(fTextWidget) || caretLine > JFaceTextUtil.getPartialBottomIndex(fTextWidget)) {
+			int caretLine= getTextWidget().getLineAtOffset(getTextWidget().getCaretOffset());
+			if (caretLine < JFaceTextUtil.getPartialTopIndex(getTextWidget()) || caretLine > JFaceTextUtil.getPartialBottomIndex(getTextWidget())) {
 				stableLine= JFaceTextUtil.getPartialTopIndex(TextViewer.this);
 			} else {
 				stableLine= widgetLine2ModelLine(caretLine);
@@ -3752,7 +3752,7 @@ public class TextViewer extends Viewer implements
 	 */
 	public void enableOperation(int operation, boolean enable) {
 		/*
-		 * No-op by default.
+		 * NO-OP by default.
 		 * Will be changed to regularly disable the known operations.
 		 */
 	}
