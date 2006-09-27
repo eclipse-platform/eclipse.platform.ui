@@ -62,7 +62,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 	private Composite hScroller;
 	private Composite hSliderHolder = null;
 	private Slider hSlider = null;
-	private EmptyTablePlaceholder emptyTablePlaceholder = null;
+	EmptyTablePlaceholder emptyTablePlaceholder = null;
 
 	// My parent CompositeTable
 	private CompositeTable parent;

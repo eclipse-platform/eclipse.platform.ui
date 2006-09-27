@@ -117,7 +117,7 @@ public class EmptyTablePlaceholder extends Canvas {
 
 	
 	// The message property
-	private String message = "Press [INS] to create a new row."; //$NON-NLS-1$
+	private String message = ""; //$NON-NLS-1$
 	
 	/**
 	 * Return the prompt message that will be displayed to the user inside this control.
