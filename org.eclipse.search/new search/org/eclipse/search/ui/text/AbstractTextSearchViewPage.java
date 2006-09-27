@@ -264,9 +264,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				handleSearchResultChanged(e);
 			}
 		};
-
 	}
-
+	
 	private void initLayout() {
 		if (supportsTreeLayout())
 			fCurrentLayout = FLAG_LAYOUT_TREE;
@@ -872,9 +871,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Returns the matches that are currently displayed for the given element.
-	 * While the default implementation just forwards to the current input
-	 * search result of the page, subclasses may override this method to do
-	 * filtering, etc. Any action operating on the visible matches in the search
+	 * If {@link AbstractTextSearchResult#getMatchFilters()} is not null, only matches are returned
+	 * that are not filtered by the match filters. If {@link AbstractTextSearchResult#getMatchFilters()} is
+	 * null all matches of the given element are returned.
+	 * Any action operating on the visible matches in the search
 	 * result page should use this method to get the matches for a search
 	 * result (instead of asking the search result directly).
 	 * 
@@ -888,7 +888,26 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		AbstractTextSearchResult result= getInput();
 		if (result == null)
 			return EMPTY_MATCH_ARRAY;
-		return result.getMatches(element);		
+		Match[] matches= result.getMatches(element);
+		if (result.getMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+			return matches;
+
+		int count= 0;
+		for (int i= 0; i < matches.length; i++) {
+			if (matches[i].isFiltered())
+				matches[i]= null;
+			else 
+				count++;
+		}
+		if (count == matches.length)
+			return matches;
+		
+		Match[] filteredMatches= new Match[count];
+		for (int i= 0, k= 0; i < matches.length; i++) {
+			if (matches[i] != null)
+				filteredMatches[k++]= matches[i];
+		}
+		return filteredMatches;
 	}
 	
 	/** 
@@ -918,9 +937,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Returns the number of matches that are currently displayed for the given
-	 * element. While the default implementation just forwards to the current
-	 * input search result of the page, subclasses may override this method to
-	 * do filtering, etc. Any action operating on the visible matches in the
+	 * element. If {@link AbstractTextSearchResult#getMatchFilters()} is not null, only matches
+	 * are returned that are not filtered by the match filters.
+	 * Any action operating on the visible matches in the
 	 * search result page should use this method to get the match count for a
 	 * search result (instead of asking the search result directly).
 	 * 
@@ -935,9 +954,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		AbstractTextSearchResult result= getInput();
 		if (result == null)
 			return 0;
-		return result.getMatchCount(element);		
+		if (result.getMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+			return result.getMatchCount(element);
+
+		int count= 0;
+		Match[] matches= result.getMatches(element);
+		for (int i= 0; i < matches.length; i++) {
+			if (!matches[i].isFiltered())
+				count++;
+		}
+		return count;
 	}
-	
+
 	private Object getFirstSelectedElement() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		if (selection.size() > 0)
@@ -1040,10 +1068,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected void handleSearchResultChanged(final SearchResultEvent e) {
 		if (e instanceof MatchEvent) {
-			MatchEvent me = (MatchEvent) e;
-			postUpdate(me.getMatches());
+			postUpdate(((MatchEvent) e).getMatches());
 		} else if (e instanceof RemoveAllEvent) {
 			postClear();
+		} else if (e instanceof FilterUpdateEvent) {
+			postUpdate(((FilterUpdateEvent) e).getUpdatedMatches());
 		}
 	}
 

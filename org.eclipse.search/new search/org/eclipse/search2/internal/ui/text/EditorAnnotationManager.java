@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.core.resources.IFile;
 
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
@@ -33,6 +32,7 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
+import org.eclipse.search.ui.text.FilterUpdateEvent;
 import org.eclipse.search.ui.text.IEditorMatchAdapter;
 import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
@@ -120,25 +120,33 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (searchResult instanceof AbstractTextSearchResult) {
 			AbstractTextSearchResult result= (AbstractTextSearchResult) searchResult;
 			if (e instanceof MatchEvent) {
-				IEditorMatchAdapter adapter= result.getEditorMatchAdapter();
-				if (adapter != null) { 
-					MatchEvent me= (MatchEvent) e;
-					Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), adapter);
-					if (matchesInEditor != null && matchesInEditor.length > 0) {
-						if (me.getKind() == MatchEvent.ADDED) {
-							addAnnotations(matchesInEditor);
-						} else {
-							removeAnnotations(matchesInEditor);
-						}
+				MatchEvent me= (MatchEvent) e;
+				Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), result);
+				if (matchesInEditor != null) {
+					if (me.getKind() == MatchEvent.ADDED) {
+						addAnnotations(matchesInEditor);
+					} else {
+						removeAnnotations(matchesInEditor);
 					}
 				}
 			} else if (e instanceof RemoveAllEvent) {
 				removeAnnotations(result);
+			} else if (e instanceof FilterUpdateEvent) {
+				Match[] matchesInEditor= getMatchesInEditor(((FilterUpdateEvent) e).getUpdatedMatches(), result);
+				if (matchesInEditor != null) {
+					removeAnnotations(matchesInEditor);
+					addAnnotations(matchesInEditor);
+				}
 			}
 		}
 	}
 
-	private Match[] getMatchesInEditor(Match[] matches, IEditorMatchAdapter adapter) {
+	private Match[] getMatchesInEditor(Match[] matches, AbstractTextSearchResult result) {
+		IEditorMatchAdapter adapter= result.getEditorMatchAdapter();
+		if (adapter == null) {
+			return null;
+		}
+		
 		// optimize the array-length == 1 case (most common)
 		if (matches.length == 1) {
 			return adapter.isShownInEditor(matches[0], fEditor) ? matches : null;
