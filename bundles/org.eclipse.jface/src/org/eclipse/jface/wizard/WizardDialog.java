@@ -7,13 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 155164
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -308,7 +306,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             arrowCursor = new Cursor(d, SWT.CURSOR_ARROW);
             cancelButton.setCursor(arrowCursor);
             // Deactivate shell
-            savedState = saveUIState(needsProgressMonitor && enableCancelButton, focusControl);
+            savedState = saveUIState(needsProgressMonitor && enableCancelButton);
             if (focusControl != null) {
 				savedState.put(FOCUS_CONTROL, focusControl);
 			}
@@ -809,10 +807,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      *
      * @param state a map containing the saved state as returned by 
      *   <code>saveUIState</code>
-     * @param focusControl Control that will have focus restored to it
      * @see #saveUIState
      */
-    private void restoreUIState(Map state, Control focusControl) {
+    private void restoreUIState(Map state) {
         restoreEnableState(backButton, state, "back"); //$NON-NLS-1$
         restoreEnableState(nextButton, state, "next"); //$NON-NLS-1$
         restoreEnableState(finishButton, state, "finish"); //$NON-NLS-1$
@@ -822,10 +819,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         if (pageValue != null) {
 			((ControlEnableState) pageValue).restore();
 		}
-        
-        if (focusControl != null) {
-            restoreEnableState(focusControl, state, "focus"); //$NON-NLS-1$
-        }
     }
 
     /**
@@ -898,12 +891,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
      *
      * @param keepCancelEnabled <code>true</code> if the Cancel button should
      *   remain enabled, and <code>false</code> if it should be disabled
-     * @param focusControl Control that has focus
      * @return a map containing the saved state suitable for restoring later
      *   with <code>restoreUIState</code>
      * @see #restoreUIState
      */
-    private Map saveUIState(boolean keepCancelEnabled, Control focusControl) {
+    private Map saveUIState(boolean keepCancelEnabled) {
         Map savedState = new HashMap(10);
         saveEnableStateAndSet(backButton, savedState, "back", false); //$NON-NLS-1$
         saveEnableStateAndSet(nextButton, savedState, "next", false); //$NON-NLS-1$
@@ -914,18 +906,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
         if (currentPage != null) {
 			savedState
                     .put(
-                            "page", ControlEnableState.disable(currentPage.getControl(), (focusControl != null) ? Collections.singletonList(focusControl) : null)); //$NON-NLS-1$
+                            "page", ControlEnableState.disable(currentPage.getControl())); //$NON-NLS-1$
 		}
-        
-        /*
-         * The focus control must be disabled last as the disabling could search
-         * for a new control to set focus to.  This can throw superfluous FocusOut events
-         * during the disabling process.
-         */
-        if (focusControl != null) {
-            saveEnableStateAndSet(focusControl, savedState, "focus", false); //$NON-NLS-1$
-        }
-        
         return savedState;
     }
 
@@ -1123,8 +1105,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
                 progressMonitorPart.removeFromCancelComponent(cancelButton);
             }
             Map state = (Map) savedState;
-            Control focusControl = (Control) state.get(FOCUS_CONTROL);
-            restoreUIState(state, focusControl);
+            restoreUIState(state);
             cancelButton.addSelectionListener(cancelListener);
             setDisplayCursor(null);
             cancelButton.setCursor(null);
@@ -1132,6 +1113,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             waitCursor = null;
             arrowCursor.dispose();
             arrowCursor = null;
+            Control focusControl = (Control) state.get(FOCUS_CONTROL);
             if (focusControl != null) {
 				focusControl.setFocus();
 			}
