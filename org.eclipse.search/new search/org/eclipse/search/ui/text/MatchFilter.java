@@ -40,4 +40,18 @@ public abstract class MatchFilter {
      */
 	public abstract String getDescription();
 	
+	/**
+     * Returns the label of the filter as shown by the filter action.
+     *
+     * @return the label of the filter as shown by the filter action.
+     */
+	public abstract String getActionLabel();
+
+	/**
+     * Returns an ID of this filter. 
+     *
+     * @return the id of the filter to be used when persisting this filter.
+     */
+	public abstract String getID();
+	
 }

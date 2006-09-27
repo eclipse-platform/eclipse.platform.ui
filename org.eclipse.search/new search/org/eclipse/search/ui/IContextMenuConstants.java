@@ -100,6 +100,12 @@ public interface IContextMenuConstants {
 	 * Pop-up menu: name of group for viewer setup actions (value <code>"group.viewerSetup"</code>).
 	 */	
 	public static final String GROUP_VIEWER_SETUP= "group.viewerSetup"; //$NON-NLS-1$
+	
+	/**
+	 * Pop-up menu: name of group for filtering (value <code>"group.filtering"</code>).
+	 * @since 3.3
+	 */	
+	public static final String GROUP_FILTERING= "group.filtering"; //$NON-NLS-1$
 
 	/**
 	 * Pop-up menu: name of group for properties actions (value <code>"group.properties"</code>).

@@ -42,11 +42,17 @@ Non-breaking API changes from R3.2 to R3.3</b></font> <br>
       </ul> </td>
     </tr>
     <tr>
-      <td>Support for match filters added
+      <td>Added support for match filters:
       <ul>
-      <li>MatchFilter (org.eclipse.search.ui.text) are managed by the AbstractSearchResult and used to update the filter state of a match (see Match.isFiltered). Filtered matches are sttill part of the search model but are not shown in the AbstractSearchViewPart and rendered as 'filtered search result' in editors</li>
-      <li>FilterUpdateEvent (org.eclipse.search.ui.text) are sent out when filters are updated by AbstractSearchResult.setMatchFilters(..). The AbstractSearchViewPart listen to these changes and takes care of adding or removing filtered elements</li>
-      <li>MatchFilterSelectionDialog (org.eclipse.search.ui.text) can be used to configure the active filters</li>
+      <li>Added class MatchFilter (org.eclipse.search.ui.text): MatchFilters are managed by the AbstractTextSearchResult and used to update the filter state of a match (see Match.isFiltered()). Filtered matches are still part of the search result but are not shown in the AbstractSearchViewPart and rendered as 'filtered search result' in editors</li>
+      <li>New API in AbstractTextSearchResult (org.eclipse.search.ui.text):
+        <ul>
+      		<li>getAllMatchFilters(): All match filters applicable on this search result. If non-nuill is returned, the AbstractSearchViewPart will add corresponding filter actions to the view menu</li>
+      		<li>getActiveMatchFilters(): All match filters currently applied to this search result</li>
+     		<li>setActiveMatchFilters(): Update filters</li>
+        </ul>
+      </li>
+      <li>Added class FilterUpdateEvent (org.eclipse.search.ui.text): FilterUpdateEvents are sent out when filters are updated by AbstractSearchResult.setActiveMatchFilters(..). The AbstractSearchViewPart listens to these changes and takes care of adding or removing filtered elements</li>
       </ul>
       </td>      
     </tr>

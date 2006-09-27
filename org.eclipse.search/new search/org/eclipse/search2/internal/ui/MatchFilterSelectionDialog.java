@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.search.ui.text;
+package org.eclipse.search2.internal.ui;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -40,10 +40,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.search.ui.NewSearchUI;
+import org.eclipse.search.ui.text.MatchFilter;
 
 import org.eclipse.search.internal.ui.SearchPlugin;
 
-import org.eclipse.search2.internal.ui.SearchMessages;
 
 /**
  * A dialog that lets users configure the active {@link MatchFilter match filters} and (optionally) the
@@ -79,6 +79,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	 */
 	public MatchFilterSelectionDialog(Shell shell, MatchFilter[] allFilters, MatchFilter[] selectedFilters, boolean enableLimitConfiguration, int limit) {
 		super(shell);
+		setTitle(SearchMessages.MatchFilterSelectionDialog_label);
 		setStatusLineAboveButtons(true);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		

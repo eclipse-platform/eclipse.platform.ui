@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -69,6 +70,7 @@ import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -86,7 +88,9 @@ import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.internal.ui.SelectAllAction;
 
+import org.eclipse.search2.internal.ui.MatchFilterSelectionAction;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.MatchFilterAction;
 import org.eclipse.search2.internal.ui.SearchMessages;
 import org.eclipse.search2.internal.ui.SearchView;
 import org.eclipse.search2.internal.ui.basic.views.CollapseAllAction;
@@ -226,6 +230,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private SelectionProviderAdapter fViewerAdapter;
 	private SelectAllAction fSelectAllAction;
 	
+	private IAction[] fFilterActions;
+	
 	/**
 	 * Flag (<code>value 1</code>) denoting flat list layout.
 	 */
@@ -264,6 +270,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				handleSearchResultChanged(e);
 			}
 		};
+		fFilterActions= null;
 	}
 	
 	private void initLayout() {
@@ -281,6 +288,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	protected AbstractTextSearchViewPage() {
 		this(FLAG_LAYOUT_FLAT | FLAG_LAYOUT_TREE);
 	}
+	
 
 	private void createLayoutActions() {
 		if (countBits(fSupportedLayouts) > 1) {
@@ -723,6 +731,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		AbstractTextSearchResult oldSearch= fInput;
 		if (oldSearch != null) {
 			disconnectViewer();
+			removeFilterActionsFromViewMenu(fFilterActions);
 			oldSearch.removeListener(fListener);
 			AnnotationManagers.removeSearchResult(getSite().getWorkbenchWindow(), oldSearch);
 		}
@@ -741,8 +750,57 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			updateBusyLabel();
 			turnOffDecoration();
 			scheduleUIUpdate();
+			
+			fFilterActions= addFilterActionsToViewMenu();
 		}
 	}	
+
+	private void removeFilterActionsFromViewMenu(IAction[] filterActions) {
+		if (filterActions != null) {
+			IActionBars bars= getSite().getActionBars();
+			IMenuManager menu= bars.getMenuManager();
+			for (int i= 0; i < filterActions.length; i++) {
+				menu.remove(filterActions[i].getId());
+			}
+			menu.remove(MatchFilterSelectionAction.ACTION_ID);
+		}
+	}
+	
+	private IAction[] addFilterActionsToViewMenu() {
+		AbstractTextSearchResult input= getInput();
+		if (input == null) {
+			return null;
+		}
+		
+		MatchFilter[] allMatchFilters= input.getAllMatchFilters();
+		if (allMatchFilters == null) {
+			return null;
+		}
+		
+		IActionBars bars= getSite().getActionBars();
+		IMenuManager menu= bars.getMenuManager();
+		
+		menu.prependToGroup(IContextMenuConstants.GROUP_FILTERING, new MatchFilterSelectionAction(this));
+		
+		MatchFilterAction[] actions= new MatchFilterAction[allMatchFilters.length];
+		for (int i= allMatchFilters.length - 1; i >= 0; i--) {
+			MatchFilterAction filterAction= new MatchFilterAction(this, allMatchFilters[i]);
+			actions[i]= filterAction;
+			menu.prependToGroup(IContextMenuConstants.GROUP_FILTERING, filterAction);
+		}
+		return actions;
+	}
+	
+	private void updateFilterActions(IAction[] filterActions) {
+		if (filterActions != null) {
+			for (int i= 0; i < filterActions.length; i++) {
+				IAction curr=  filterActions[i];
+				if (curr instanceof IUpdate) {
+					((IUpdate) curr).update();
+				}
+			}
+		}
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -871,8 +929,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Returns the matches that are currently displayed for the given element.
-	 * If {@link AbstractTextSearchResult#getMatchFilters()} is not null, only matches are returned
-	 * that are not filtered by the match filters. If {@link AbstractTextSearchResult#getMatchFilters()} is
+	 * If {@link AbstractTextSearchResult#getActiveMatchFilters()} is not null, only matches are returned
+	 * that are not filtered by the match filters. If {@link AbstractTextSearchResult#getActiveMatchFilters()} is
 	 * null all matches of the given element are returned.
 	 * Any action operating on the visible matches in the search
 	 * result page should use this method to get the matches for a search
@@ -889,7 +947,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (result == null)
 			return EMPTY_MATCH_ARRAY;
 		Match[] matches= result.getMatches(element);
-		if (result.getMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+		if (result.getActiveMatchFilters() == null) // default behaviour: filter state not used, all matches shown
 			return matches;
 
 		int count= 0;
@@ -937,7 +995,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	
 	/**
 	 * Returns the number of matches that are currently displayed for the given
-	 * element. If {@link AbstractTextSearchResult#getMatchFilters()} is not null, only matches
+	 * element. If {@link AbstractTextSearchResult#getActiveMatchFilters()} is not null, only matches
 	 * are returned that are not filtered by the match filters.
 	 * Any action operating on the visible matches in the
 	 * search result page should use this method to get the match count for a
@@ -954,7 +1012,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		AbstractTextSearchResult result= getInput();
 		if (result == null)
 			return 0;
-		if (result.getMatchFilters() == null) // default behaviour: filter state not used, all matches shown
+		if (result.getActiveMatchFilters() == null) // default behaviour: filter state not used, all matches shown
 			return result.getMatchCount(element);
 
 		int count= 0;
@@ -989,9 +1047,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void init(IPageSite pageSite) {
 		super.init(pageSite);
-		addLayoutActions(pageSite.getActionBars().getMenuManager());
+		IMenuManager menuManager= pageSite.getActionBars().getMenuManager();
+		addLayoutActions(menuManager);
 		initActionDefinitionIDs(pageSite.getWorkbenchWindow());
-		pageSite.getActionBars().getMenuManager().updateAll(true);
+		menuManager.updateAll(true);
 		pageSite.getActionBars().updateActionBars();
 	}
 
@@ -1073,6 +1132,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			postClear();
 		} else if (e instanceof FilterUpdateEvent) {
 			postUpdate(((FilterUpdateEvent) e).getUpdatedMatches());
+			updateFilterActions(fFilterActions);
 		}
 	}
 
@@ -1274,5 +1334,4 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			gotoNextMatch(OpenStrategy.activateOnOpen());
 		}
 	}
-
 }

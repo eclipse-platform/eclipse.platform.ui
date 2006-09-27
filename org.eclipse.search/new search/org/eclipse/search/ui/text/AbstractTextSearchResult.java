@@ -267,7 +267,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 		
 	private void updateFilterStateForAllMatches() {
-		boolean disableFiltering= getMatchFilters() == null;
+		boolean disableFiltering= getActiveMatchFilters() == null;
 		ArrayList changed= new ArrayList();
 		Object[] elements= getElements();
 		for (int i= 0; i < elements.length; i++) {
@@ -279,14 +279,14 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			}
 		}
 		Match[] allChanges= (Match[]) changed.toArray(new Match[changed.size()]);
-		fireChange(new FilterUpdateEvent(this, allChanges, getMatchFilters()));
+		fireChange(new FilterUpdateEvent(this, allChanges, getActiveMatchFilters()));
 	}
 	
 	/*
 	 * Evaluates the filter for the match and updates it. Return true if the filter changed.
 	 */
 	private boolean updateFilterState(Match match) {
-		MatchFilter[] matchFilters= getMatchFilters();
+		MatchFilter[] matchFilters= getActiveMatchFilters();
 		if (matchFilters == null) {
 			return false; // do nothing, no change
 		}
@@ -349,7 +349,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 	
 	/**
-	 * Sets the match filters for this result. If set to not null, the match filters will be used to update the filter
+	 * Sets the active match filters for this result. If set to non-null, the match filters will be used to update the filter
 	 * state ({@link Match#isFiltered()} of matches and the {@link AbstractTextSearchViewPage} will only
 	 * show non-filtered matches. If <code>null</code> is set
 	 * the filter state of the match is ignored by the {@link AbstractTextSearchViewPage} and all matches
@@ -361,13 +361,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * 
 	 * @since 3.3
 	 */
-	public void setMatchFilters(MatchFilter[] filters) {
+	public void setActiveMatchFilters(MatchFilter[] filters) {
 		fMatchFilters= filters;
 		updateFilterStateForAllMatches();
 	}
 	
 	/**
-	 * Returns the match filters configured for this result. If not null is returned, the match filters will be used to update the filter
+	 * Returns the active match filters for this result. If not null is returned, the match filters will be used to update the filter
 	 * state ({@link Match#isFiltered()} of matches and the {@link AbstractTextSearchViewPage} will only
 	 * show non-filtered matches. If <code>null</code> is set
 	 * the filter state of the match is ignored by the {@link AbstractTextSearchViewPage} and all matches
@@ -378,8 +378,20 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * 
 	 * @since 3.3
 	 */
-	public MatchFilter[] getMatchFilters() {
+	public MatchFilter[] getActiveMatchFilters() {
 		return fMatchFilters;
+	}
+	
+	/**
+	 * Returns all applicable filters for this result or null if match filters are not supported. If match filters are returned,
+	 * the {@link AbstractTextSearchViewPage} will contain menu entries in the view menu.
+	 * 
+	 * @return all applicable filters for this result. 
+	 * 
+	 * @since 3.3
+	 */
+	public MatchFilter[] getAllMatchFilters() {
+		return null;
 	}
 	
 

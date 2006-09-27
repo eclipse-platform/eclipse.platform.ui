@@ -125,6 +125,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		menu.add(new Separator(IContextMenuConstants.GROUP_SEARCH));
 		menu.add(new Separator(IContextMenuConstants.GROUP_BUILD));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(IContextMenuConstants.GROUP_FILTERING));
 		menu.add(new Separator(IContextMenuConstants.GROUP_PROPERTIES));
 	}
 
