@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
-import org.eclipse.jface.fieldassist.IControlCreator;
+import org.eclipse.jface.fieldassist.ComboControlCreator;
 import org.eclipse.jface.resource.JFaceColors;
 
 import org.eclipse.jface.text.IFindReplaceTarget;
@@ -577,13 +577,12 @@ class FindReplaceDialog extends Dialog {
 		// Create the find content assist field 
 		ComboContentAdapter contentAdapter= new ComboContentAdapter();
 		RegExContentProposalProvider findProposer= new RegExContentProposalProvider(true);
-		fContentAssistFindField= new ContentAssistField(panel, SWT.DROP_DOWN | SWT.BORDER, 
-				new IControlCreator() {
-					public Control createControl(Composite controlParent, int style) {
-						return new Combo(controlParent, SWT.DROP_DOWN | SWT.BORDER);
-					}
-				}, 
-				contentAdapter, findProposer, 
+		fContentAssistFindField= new ContentAssistField(
+				panel,
+				SWT.DROP_DOWN | SWT.BORDER, 
+				new  ComboControlCreator(), 
+				contentAdapter,
+				findProposer, 
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'\\', '[', '('});
 		fFindField= (Combo)fContentAssistFindField.getControl();
@@ -596,12 +595,10 @@ class FindReplaceDialog extends Dialog {
 
 		// Create the replace content assist field
 		RegExContentProposalProvider replaceProposer= new RegExContentProposalProvider(false);
-		fContentAssistReplaceField= new ContentAssistField(panel, SWT.DROP_DOWN | SWT.BORDER, 
-				new IControlCreator() {
-					public Control createControl(Composite controlParent, int style) {
-						return new Combo(controlParent, SWT.DROP_DOWN | SWT.BORDER);
-					}
-				}, 
+		fContentAssistReplaceField= new ContentAssistField(
+				panel,
+				SWT.DROP_DOWN | SWT.BORDER, 
+				new  ComboControlCreator(), 
 				contentAdapter, replaceProposer, 
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
 				new char[] {'$'});
