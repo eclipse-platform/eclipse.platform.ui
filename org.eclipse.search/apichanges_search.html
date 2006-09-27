@@ -14,7 +14,7 @@
 R3.2 and R3.3 and
 how to migrate from the R3.2 API to the R3.3 API.
 </p>
-<table border="0" cellpadding="2" cellspacing="5" width="100%">
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Breaking API changes from R3.2 to R3.3">
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>search -
@@ -28,7 +28,7 @@ Breaking API changes from R3.2 to R3.3</b></font> <br>
   </tbody>
 </table>
 <p> </p>
-<table border="0" cellpadding="2" cellspacing="5" width="100%">
+<table border="0" cellpadding="2" cellspacing="5" width="100%" summary="Non-breaking API changes from R3.2 to R3.3">
   <tbody>
     <tr>
       <td align="left" width="72%"> <font size="+3"><b>search -
@@ -36,10 +36,19 @@ Non-breaking API changes from R3.2 to R3.3</b></font> <br>
       </td>
     </tr>
     <tr>
-      <td>new constant added to org.eclipse.search.ui.IContextMenuConstants
+      <td>New constant added to org.eclipse.search.ui.IContextMenuConstants
       <ul>
       <li>GROUP_EDIT</li>
       </ul> </td>
+    </tr>
+    <tr>
+      <td>Support for match filters added
+      <ul>
+      <li>MatchFilter (org.eclipse.search.ui.text) are managed by the AbstractSearchResult and used to update the filter state of a match (see Match.isFiltered). Filtered matches are sttill part of the search model but are not shown in the AbstractSearchViewPart and rendered as 'filtered search result' in editors</li>
+      <li>FilterUpdateEvent (org.eclipse.search.ui.text) are sent out when filters are updated by AbstractSearchResult.setMatchFilters(..). The AbstractSearchViewPart listen to these changes and takes care of adding or removing filtered elements</li>
+      <li>MatchFilterSelectionDialog (org.eclipse.search.ui.text) can be used to configure the active filters</li>
+      </ul>
+      </td>      
     </tr>
    </tbody>
 </table>
