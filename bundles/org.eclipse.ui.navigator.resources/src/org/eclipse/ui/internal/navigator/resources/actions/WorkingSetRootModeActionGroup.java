@@ -149,9 +149,7 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 					if ((actions[j].getStyle() & IAction.AS_RADIO_BUTTON) != 0)
 						style = SWT.RADIO;
 					
-					final MenuItem mi = new MenuItem(menu, style, index);
-					ImageDescriptor d = actions[j].getImageDescriptor();
-					//mi.setImage(WorkbenchNavigatorPlugin.getDefault().getImageRegistry().get(d.toString()));
+					final MenuItem mi = new MenuItem(menu, style, index);  
 					items[j] = mi;
 					mi.setText(actions[j].getText());
 					mi.setSelection(currentSelection == j);
