@@ -9,23 +9,51 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Vector;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.help.ui.internal.*;
-import org.eclipse.jface.resource.*;
+
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProduct;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.*;
-import org.eclipse.swt.browser.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.osgi.framework.*;
-import org.eclipse.core.runtime.Path; 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.CloseWindowListener;
+import org.eclipse.swt.browser.LocationEvent;
+import org.eclipse.swt.browser.LocationListener;
+import org.eclipse.swt.browser.OpenWindowListener;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.browser.StatusTextEvent;
+import org.eclipse.swt.browser.StatusTextListener;
+import org.eclipse.swt.browser.TitleEvent;
+import org.eclipse.swt.browser.TitleListener;
+import org.eclipse.swt.browser.VisibilityWindowListener;
+import org.eclipse.swt.browser.WindowEvent;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ProgressBar;
+import org.eclipse.swt.widgets.Shell;
+import org.osgi.framework.Bundle;
 /**
  * Help browser employing SWT Browser widget
  */
@@ -39,6 +67,11 @@ public class EmbeddedBrowser {
 	private static String initialTitle = getWindowTitle();
 	private Shell shell;
 	private Browser browser;
+	private Composite statusBar;
+	private Label statusBarText;
+	private Label statusBarSeparator;
+	private ProgressBar statusBarProgress;
+	private String statusText;
 	private int x, y, w, h;
 	private long modalRequestTime = 0;
 	private Vector closeListeners = new Vector(1);
@@ -83,7 +116,11 @@ public class EmbeddedBrowser {
 			}
 		});
 		browser = new Browser(shell, SWT.NONE);
+		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		initialize(browser);
+		
+		createStatusBar(shell);
+		
 		// use saved location and size
 		x = store.getInt(BROWSER_X);
 		y = store.getInt(BROWSER_Y);
@@ -183,7 +220,12 @@ public class EmbeddedBrowser {
 		Image[] shellImages = createImages();
 		if (shellImages != null)
 			s.setImages(shellImages);
-		s.setLayout(new FillLayout());
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		s.setLayout(layout);
 	}
 	private void initialize(Browser browser) {
 		browser.addOpenWindowListener(new OpenWindowListener() {
@@ -249,7 +291,61 @@ public class EmbeddedBrowser {
 			public void changed(LocationEvent e) {
 			}
 		});
+		browser.addStatusTextListener(new StatusTextListener() {
+			public void changed(StatusTextEvent event) {
+				if (!event.text.equals(statusText)) {
+					statusText = event.text;
+					statusBarText.setText(statusText);
+				}
+			}
+		});
+		browser.addProgressListener(new ProgressListener() {
+			public void changed(ProgressEvent event) {
+				if (event.total > 0) {
+					statusBarProgress.setMaximum(event.total);
+					statusBarProgress.setSelection(Math.min(event.current, event.total));
+					statusBarSeparator.setVisible(true);
+					statusBarProgress.setVisible(true);
+				}
+			}
+			public void completed(ProgressEvent event) {
+				statusBarSeparator.setVisible(false);
+				statusBarProgress.setVisible(false);
+			}
+		});
 	}
+	
+	private void createStatusBar(Composite parent) {
+		statusBar = new Composite(parent, SWT.NONE);
+		statusBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		GridLayout layout =  new GridLayout(3, false);
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.marginTop = 0;
+		layout.marginLeft = 5;
+		layout.marginRight = 5;
+		layout.marginBottom = 5;
+		statusBar.setLayout(layout);
+		statusBarText = new Label(statusBar, SWT.NONE);
+		statusBarText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		statusBarSeparator = new Label(statusBar, SWT.SEPARATOR | SWT.VERTICAL);
+		statusBarSeparator.setVisible(false);
+		statusBarProgress = new ProgressBar(statusBar, SWT.HORIZONTAL);
+		GridData data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		data.widthHint = 100;
+		statusBarProgress.setLayoutData(data);
+		statusBarProgress.setVisible(false);
+		statusBarProgress.setMinimum(0);
+
+		/*
+		 * Vertical separator labels are naturally too tall for the status bar.
+		 * Size it to match the tallest of the text and progress bar.
+		 */
+		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
+		data.heightHint = Math.max(statusBarText.computeSize(SWT.DEFAULT, SWT.DEFAULT).y, statusBarProgress.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
+		statusBarSeparator.setLayoutData(data);
+	}
+	
 	public void displayUrl(String url) {
 		browser.setUrl(url);
 		shell.setMinimized(false);
