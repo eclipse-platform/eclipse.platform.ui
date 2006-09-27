@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -64,6 +65,25 @@ public class ContextsFileProvider extends AbstractContextProvider {
 			return contexts.get(id);
 		}
 		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
+	 */
+	public String[] getPlugins() {
+		Set plugins = new HashSet();
+		IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor(CONTEXTS_XP_FULLNAME);
+		for (int i=0;i<elements.length;++i) {
+			IConfigurationElement element = (IConfigurationElement)elements[i];
+			if ("contexts".equals(element.getName())) { //$NON-NLS-1$
+				plugins.add(element.getContributor().getName());
+			}
+			String plugin = element.getAttribute("plugin"); //$NON-NLS-1$
+			if (plugin != null) {
+				plugins.add(plugin);
+			}
+		}
+		return (String[])plugins.toArray(new String[plugins.size()]);
 	}
 	
 	/**

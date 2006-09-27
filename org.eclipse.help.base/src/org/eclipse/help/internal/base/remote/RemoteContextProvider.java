@@ -30,6 +30,9 @@ public class RemoteContextProvider extends AbstractContextProvider {
 	private static final String PARAM_ID = "id"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractContextProvider#getContext(java.lang.String, java.lang.String)
+	 */
 	public IContext getContext(String id, String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
@@ -61,6 +64,14 @@ public class RemoteContextProvider extends AbstractContextProvider {
 				}
 			}
 		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractContextProvider#getPlugins()
+	 */
+	public String[] getPlugins() {
+		// this is a global provider
 		return null;
 	}
 }

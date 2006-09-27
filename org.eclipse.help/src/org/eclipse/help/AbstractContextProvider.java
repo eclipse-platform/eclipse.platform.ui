@@ -28,4 +28,15 @@ public abstract class AbstractContextProvider {
 	 * @return the context help, or <code>null</code> if not available
 	 */
 	public abstract IContext getContext(String id, String locale);
+
+	/**
+	 * Returns an array of <code>String</code>s containing the ids of the
+	 * UI plug-ins for which this provider should be used. This is equivalent to
+	 * the <code>plugin</code> attribute of the <code>contexts</code> element
+	 * of the <code>org.eclipse.help.contexts</code> extension point, except you
+	 * can specify any number of plug-ins.
+	 *  
+	 * @return the UI plug-ins for which this provider should be used
+	 */
+	public abstract String[] getPlugins();
 }
