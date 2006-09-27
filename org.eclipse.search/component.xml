@@ -35,6 +35,9 @@
    <type name= "IFileMatchAdapter"/>
    <type name= "ISearchEditorAccess"/>
    <type name= "Match"/>
+   <type name= "MatchFilter"/>
+   <type name= "MatchFilterSelectionDialog"/>
+   <type name= "FilterUpdateEvent"/>
    <type name= "MatchEvent"/>
    <type name= "RemoveAllEvent"/>
  </package>
