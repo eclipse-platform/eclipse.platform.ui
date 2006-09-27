@@ -127,7 +127,7 @@ public class ListViewerRefreshTest extends TestCase {
 	 */
 	private void readAndDispatch() {
 		Display display = Display.getCurrent();
-		display.readAndDispatch();
+		while(display.readAndDispatch());
 
 		try {
 			Thread.sleep(DELAY);

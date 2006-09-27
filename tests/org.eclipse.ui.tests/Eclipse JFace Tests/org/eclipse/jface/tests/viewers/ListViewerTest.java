@@ -129,6 +129,7 @@ public class ListViewerTest extends StructuredViewerTest {
 		
 		assertTrue("Top item should not be the first item.", topIndex != 0);
 		fViewer.refresh();
+		processEvents();
 		assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
 		
 		//Assert that when the previous top index after refresh is invalid no exceptions are thrown.
