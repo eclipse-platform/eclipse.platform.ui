@@ -2405,7 +2405,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (document != null) {
 				int end= offset + length;
 				int documentLength= document.getLength();
-				return 0 <= offset  && offset <= documentLength && 0 <= end && end <= documentLength;
+				return 0 <= offset  && offset <= documentLength && 0 <= end && end <= documentLength && length >= 0;
 			}
 		}
 		return false;
