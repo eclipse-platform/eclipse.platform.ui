@@ -328,8 +328,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 				break;
 			}
 
-			String message = NLS.bind(warning, new Object[] { title,
-					status.getMessage(), operation.getLabel() });
+			String message = NLS.bind(warning, new Object[] { status.getMessage(), operation.getLabel() });
 			String[] buttons = new String[] { IDialogConstants.YES_LABEL,
 					IDialogConstants.NO_LABEL };
 			MessageDialog dialog = new MessageDialog(shell, title, null,
