@@ -62,6 +62,7 @@ public class Spreadsheet {
 		}
 
 		private Object evaluate(Object value) {
+			System.out.println("evaluating...");
 			if (value == null) {
 				return "";
 			}
