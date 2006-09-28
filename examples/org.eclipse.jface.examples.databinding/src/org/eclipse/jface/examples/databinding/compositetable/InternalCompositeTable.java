@@ -201,7 +201,7 @@ public class InternalCompositeTable extends Composite implements Listener {
 		public void controlResized(ControlEvent e) {
 			Point size = hScroller.getSize();
 			
-			if (fittingHorizontally || parent.isWidthWiderThanAllColumns()) {
+			if (fittingHorizontally) {
 				controlHolder.setBounds(0, 0, size.x, size.y);
             return;
 			}
@@ -215,6 +215,11 @@ public class InternalCompositeTable extends Composite implements Listener {
 				setHSliderVisible(false);
 			}
 			
+         if (parent.isWidthWiderThanAllColumns()) {
+            controlHolder.setBounds(0, 0, size.x, size.y);
+            return;
+         }
+         
 			if (isHSliderVisible()) {
 				hSlider.setMaximum(preferredWidth);
 				hSlider.setPageIncrement(size.x);
