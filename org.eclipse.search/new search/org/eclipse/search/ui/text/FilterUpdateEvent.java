@@ -14,8 +14,8 @@ import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.SearchResultEvent;
 
 /**
- * An event object describing that the filter state of the given {@Match} elements has been updated or
- * match filters have been reconfigured.
+ * An event object describing that the filter state of the given {@link Match matches} has been updated or
+ * {@link MatchFilter match filters} have been reconfigured.
  * <p>
  * Clients may instantiate or subclass this class.
  * </p>
