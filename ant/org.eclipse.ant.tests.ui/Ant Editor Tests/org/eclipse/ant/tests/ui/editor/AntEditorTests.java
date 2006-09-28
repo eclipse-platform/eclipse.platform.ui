@@ -47,8 +47,8 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 42, 13);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><p>value with spaces</font></body></html>";
-		assertTrue("Expected the following hover text to start with: " + correctResult, correctResult.equals(hoverText));
+		String correctResult= "<p>value with spaces</font></body></html>";
+		assertTrue("Expected the following hover text to end with: " + correctResult, hoverText.endsWith(correctResult));
     }
     
     public void testPropertyOpenDeclaration() throws PartInitException, BadLocationException {
@@ -69,8 +69,8 @@ public class AntEditorTests extends AbstractAntUITest {
 		int offset= getOffsetWithinLine(editor, 45, 25);
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Includes:</h5><li>*.xml</li><p><p><h5>Excludes:</h5><li>**/*Test*</li></font></body></html>";
-		assertTrue("Expected the following hover text to start with: " + correctResult + "was: " + hoverText, hoverText.startsWith(correctResult));
+		String correctResult= "<h5>Includes:</h5><li>*.xml</li><p><p><h5>Excludes:</h5><li>**/*Test*</li></font></body></html>";
+		assertTrue("Expected the following hover text to end with: " + correctResult + "was: " + hoverText, hoverText.endsWith(correctResult));
     }
     
     public void testBadPatternSetHover() throws PartInitException, BadLocationException {
@@ -92,7 +92,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		IRegion region= hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText= hover.getHoverInfo(editor.getViewer(), region);
 		
-		String correctResult= "<html><body text=\"#000000\" bgcolor=\"#ffffe1\"><h5>Includes:</h5><li>include</li><p><p><h5>Excludes:</h5><li>exclude</li><li>**" + 
+		String correctResult= "<h5>Includes:</h5><li>include</li><p><p><h5>Excludes:</h5><li>exclude</li><li>**" + 
 			File.separatorChar + "*~</li><li>**" 
 			+ File.separatorChar
 			+ "#*#</li><li>**" + 
@@ -112,7 +112,7 @@ public class AntEditorTests extends AbstractAntUITest {
 			"vssver.scc</li><li>**" + File.separatorChar + 
 			".svn</li><li>**" + File.separatorChar + ".svn" + File.separatorChar + 
 			"**</li><li>**" + File.separatorChar + ".DS_Store</li></font></body></html>";
-		assertTrue("Expected the following hover text to be: " + correctResult + " Was " + hoverText, correctResult.equals(hoverText));
+		assertTrue("Expected the following hover text to be: " + correctResult + " Was " + hoverText, hoverText.endsWith(correctResult));
     }
     
     
