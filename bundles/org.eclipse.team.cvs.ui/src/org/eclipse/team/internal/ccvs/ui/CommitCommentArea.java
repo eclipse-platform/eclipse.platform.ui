@@ -70,23 +70,13 @@ public class CommitCommentArea extends DialogArea {
             
             AnnotationModel annotationModel = new AnnotationModel();
             IAnnotationAccess annotationAccess = new DefaultMarkerAnnotationAccess();
-            
-            AnnotationRulerColumn annotationRuler = new AnnotationRulerColumn(annotationModel, 16, annotationAccess);
-
-            CompositeRuler compositeRuler = new CompositeRuler();
-            compositeRuler.setModel(annotationModel);
-            compositeRuler.addDecorator(0, annotationRuler);
 
             Composite cc = new Composite(composite, SWT.BORDER);
             cc.setLayout(new FillLayout());
             cc.setLayoutData(new GridData(GridData.FILL_BOTH));
             
-            SourceViewer sourceViewer = new SourceViewer(cc, compositeRuler, null, true,
-                SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+            SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
             
-            sourceViewer.showAnnotations(false);
-            sourceViewer.showAnnotationsOverview(false);
-
             if (isSpellingAnnotationEnabled()) {
 	            // to paint the annotations
 	            AnnotationPainter ap = new AnnotationPainter(sourceViewer, annotationAccess);
@@ -120,7 +110,7 @@ public class CommitCommentArea extends DialogArea {
 		private Color getSpellingErrorColor(Composite composite) {
 			AnnotationPreference pref = EditorsUI
 					.getAnnotationPreferenceLookup().getAnnotationPreference(
-							"org.eclipse.ui.workbench.texteditor.spelling"); // $NON-NLS-1$
+							"org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$ 
 			String preferenceKey = pref.getColorPreferenceKey();
 			try {
 				return fResources.createColor(PreferenceConverter.getColor(EditorsUI.getPreferenceStore(), preferenceKey));
