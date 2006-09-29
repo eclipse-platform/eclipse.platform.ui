@@ -216,11 +216,12 @@ public class StringMatcher {
 			return false;
 		int i=0;
 		String current= fSegments[i];
+		HashMap/*<Integer, CharacterClass>*/ curCharClassMap= fCharacterClassMaps[i];
 		int segLength= current.length();
 
 		/* process first segment */
 		if (!fHasLeadingStar){
-			if(!regExpRegionMatches(text, start, current, 0, segLength, fCharacterClassMaps[i])) {
+			if(!regExpRegionMatches(text, start, current, 0, segLength, curCharClassMap)) {
 				return false;
 			} else {
 				++i;
@@ -234,6 +235,7 @@ public class StringMatcher {
 		/* process middle segments */
 		while (i < segCount) {
 			current= fSegments[i];
+			curCharClassMap= fCharacterClassMaps[i];
 			int currentMatch;
 			int k= current.indexOf(fSingleWildCard);
 			if (k < 0) {
@@ -241,7 +243,7 @@ public class StringMatcher {
 				if (currentMatch < 0)
 					return false;
 			} else {
-				currentMatch= regExpPosIn(text, tCurPos, end, current, fCharacterClassMaps[i]);
+				currentMatch= regExpPosIn(text, tCurPos, end, current, curCharClassMap);
 				if (currentMatch < 0)
 					return false;
 			}
@@ -252,7 +254,7 @@ public class StringMatcher {
 		/* process final segment */
 		if (!fHasTrailingStar && tCurPos != end) {
 			int clen= current.length();
-			return regExpRegionMatches(text, end - clen, current, 0, clen, fCharacterClassMaps[i]);
+			return regExpRegionMatches(text, end - clen, current, 0, clen, curCharClassMap);
 		}
 		return i == segCount ;
 	}
