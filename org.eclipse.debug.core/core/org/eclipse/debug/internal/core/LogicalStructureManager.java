@@ -245,7 +245,7 @@ public class LogicalStructureManager {
         return comboKey.toString();
     }
 	
-	private void initialize() {
+	private synchronized void initialize() {
 		if (fTypes == null) {
 			//get the logical structure types from the extension points
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
