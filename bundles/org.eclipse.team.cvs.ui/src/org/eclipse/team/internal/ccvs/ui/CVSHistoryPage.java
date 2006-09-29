@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.revisions.Revision;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
@@ -143,6 +144,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private boolean groupingOn;
 	private CVSHistoryFilter historyFilter; 
 	private CVSHistorySearchFilter searchFilter;
+	private RevisionAnnotationController rulerSelectionListener;
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -922,16 +924,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	 */
 	public void selectRevision(String revision) {
 		IFileRevision entry = null;
-		if (entries != null) {
-			for (int i = 0; i < entries.length; i++) {
-				if (entries[i].getContentIdentifier().equals(revision)) {
-					entry = entries[i];
-					break;
-				}
-			}
-		} else if (cvsFileHistory != null) {
-			entry = cvsFileHistory.getFileRevision(revision);
-		}
+		entry = getFileRevision(revision);
 	
 		if (entry != null) {
 			IStructuredSelection selection = new StructuredSelection(entry);
@@ -942,6 +935,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			//nothing to select so clear selection
 			treeViewer.getTree().deselectAll();
 		}
+	}
+	
+	private IFileRevision getFileRevision(String revision) {
+		if (entries != null) {
+			for (int i = 0; i < entries.length; i++) {
+				if (entries[i].getContentIdentifier().equals(revision)) {
+					return entries[i];
+				}
+			}
+		} else if (cvsFileHistory != null) {
+			return cvsFileHistory.getFileRevision(revision);
+		}
+		return null;
 	}
 	
 	/**
@@ -979,8 +985,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	private ICVSFile getCVSFile(Object object) {
-		if (object instanceof IFile)
+		if (object instanceof IFile) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
+			if (provider instanceof CVSTeamProvider)
+				return null;
 			return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
+		}
 		
 		//Adapt object to ICVSFile
 		Object cvsFileAdapter = Utils.getAdapter(object, ICVSFile.class);
@@ -1075,6 +1085,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			versionImage.dispose();
 			versionImage = null;
 		}
+		if (rulerSelectionListener != null) {
+			rulerSelectionListener.dispose();
+			rulerSelectionListener= null;
+		}
 		
 		//Cancel any incoming 
 		if (refreshCVSFileHistoryJob != null) {
@@ -1119,6 +1133,22 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		return null;
 	}
 	
+	private final class CVSRevisionAnnotationController extends
+			RevisionAnnotationController {
+		public CVSRevisionAnnotationController(IFile file) {
+			super(file, treeViewer);
+		}
+
+		public CVSRevisionAnnotationController(IStorageEditorInput editorInput) {
+			super(editorInput, treeViewer);
+		}
+
+		protected Object getHistoryEntry(Revision selected) {
+			return CVSHistoryPage.this.getFileRevision(selected.getId());
+		}
+	}
+
+
 	private final class SearchHistoryTable implements Runnable {
 		public void run() {
 			String searchString = searchField.getText();
@@ -1484,19 +1514,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public boolean isValidInput(Object object) {
-		if (object instanceof IResource){
-		RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
-		if (provider instanceof CVSTeamProvider)
-			return true;
-		} else if (object instanceof ICVSRemoteResource){
-			return true;
-		} else if (object instanceof CVSFileRevision) {
-			return true;
-		} else if (object instanceof CVSLocalFileRevision) {
-			return true;
-		}
-		
-		return false;
+		ICVSFile file = getCVSFile(object);
+		return file != null;
 	}
 
 	public String getName() {
@@ -1653,6 +1672,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			//blank current input only after we're sure that we have a file
 			//to fetch history for
 			this.treeViewer.setInput(null);
+			
+			linkWithEditor();
 		} 
 		
 		//always refresh the history if the input gets set - in which
@@ -1665,6 +1686,32 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 		
 		return true;
+	}
+	
+
+	
+	/**
+	 * @param page the workbench page that view and editor are contained in
+	 * @param editor the editor to link to the history view
+	 * @param historyView the history view to link to the editor
+	 */
+	public void linkWithEditor() {
+		if (rulerSelectionListener != null) {
+			rulerSelectionListener.dispose();
+			rulerSelectionListener= null;
+		}
+
+		IResource resource = file.getIResource();
+		if (resource instanceof IFile) {
+			IFile file = (IFile) resource;
+			rulerSelectionListener= new CVSRevisionAnnotationController(file);
+		} else {
+			Object input = getInput();
+			if (input instanceof IStorageEditorInput) {
+				IStorageEditorInput editorInput = (IStorageEditorInput) input;
+				rulerSelectionListener= new CVSRevisionAnnotationController(editorInput);
+			}
+		}
 	}
 	
 	/*

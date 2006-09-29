@@ -19,14 +19,13 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.revisions.*;
+import org.eclipse.jface.text.revisions.Revision;
+import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.LineRange;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -40,13 +39,8 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.history.GenericHistoryView;
-import org.eclipse.team.ui.history.IHistoryPage;
-import org.eclipse.team.ui.history.IHistoryView;
+import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
 import com.ibm.icu.text.DateFormat;
@@ -57,17 +51,15 @@ import com.ibm.icu.text.DateFormat;
  */
 public class ShowAnnotationOperation extends CVSOperation {
     
-    final private ICVSResource fCVSResource;
-    final private String fRevision;
-    private final boolean binary;
-	private Map fUIRevisionsById;
+    private final ICVSResource fCVSResource;
+    private final String fRevision;
+    private final boolean fBinary;
 
     public ShowAnnotationOperation(IWorkbenchPart part, ICVSResource cvsResource, String revision, boolean binary) {
         super(part);
         fCVSResource= cvsResource;
         fRevision= revision;
-        this.binary = binary;
-
+        fBinary = binary;
     }
 
     /* (non-Javadoc)
@@ -75,141 +67,74 @@ public class ShowAnnotationOperation extends CVSOperation {
      */
     protected void execute(IProgressMonitor monitor) throws CVSException, InterruptedException {
 
-		monitor.beginTask(null, 120);
+    	final boolean useLiveAnnotate= !fBinary && isKnownUseLiveAnnotate();
+    	final boolean useView= fBinary || isKnownUseView();
+    	
+		monitor.beginTask(null, 80 + (useView ? 0 : 20) + (useLiveAnnotate ? 0 : 20));
 
 		// Get the annotations from the repository.
 		final AnnotateListener listener= new AnnotateListener();
 		fetchAnnotation(listener, fCVSResource, fRevision, Policy.subMonitorFor(monitor, 80));
 
 		// this is not needed if there is a live editor - but we don't know, and the user might have closed the live editor since...
-		fetchContents(listener, Policy.subMonitorFor(monitor, 20));
+		if (!useLiveAnnotate)
+			fetchContents(listener, Policy.subMonitorFor(monitor, 20));
 
 		// this is not needed if there is no live annotate
-		final RevisionInformation information= createRevisionInformation(listener, Policy.subMonitorFor(monitor, 20));
+		final RevisionInformation information;
+		if (!useView)
+			information= createRevisionInformation(listener, Policy.subMonitorFor(monitor, 20));
+		else
+			information= null;
 
 		// Open the view and display it from the UI thread.
 		final Display display= getPart().getSite().getShell().getDisplay();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				boolean useQuickDiffAnnotate = false;
-				
-				//If the file being annotated is not binary AND is not a RemoteFile, check to see if we can use the quick
+				//If the file being annotated is not binary, check to see if we can use the quick
 				//annotate. Until we are able to show quick diff annotate on read only text editors
 				//we can't make use of it for binary files/remote files.
-				if (!binary && !(fCVSResource instanceof ICVSRemoteFile))
-					useQuickDiffAnnotate = promptForQuickDiffAnnotate();
-				
+				boolean useQuickDiffAnnotate = !fBinary && promptForQuickDiffAnnotate();
 				if (useQuickDiffAnnotate){
-					//is there an open editor for the given input? If yes, use live annotate
-					final AbstractDecoratedTextEditor editor= getEditor();
-					if (editor != null){
-						editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
-						final IWorkbenchPage page= getPart().getSite().getPage();
-						final GenericHistoryView historyView;
-						try {
-							historyView= (GenericHistoryView) page.showView(IHistoryView.VIEW_ID);
-							historyView.showHistoryFor(fCVSResource.getIResource());
-							IHistoryPage historyPage = historyView.getHistoryPage();
-							if (historyPage instanceof CVSHistoryPage){
-								CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
-								cvsHistoryPage.setMode(CVSHistoryPage.REMOTE_MODE);
-							}
-							IRevisionRulerColumn column= (IRevisionRulerColumn) editor.getAdapter(IRevisionRulerColumn.class);
-							final ISelectionProvider provider;
-							if (column instanceof IRevisionRulerColumnExtension) {
-								IRevisionRulerColumnExtension ext= (IRevisionRulerColumnExtension) column;
-								provider= ext.getRevisionSelectionProvider();
-							} else {
-								provider= null;
-							}
-							if (provider != null) {
-								final ISelectionChangedListener selectionListener= new ISelectionChangedListener() {
-									public void selectionChanged(SelectionChangedEvent event) {
-										GenericHistoryView historyView= (GenericHistoryView) page.findView(IHistoryView.VIEW_ID);
-										if (historyView == null)
-											return; // user has manually closed the view after it being originally open -> don't reopen
-
-										ISelection selection= event.getSelection();
-										Revision selected= null;
-										if (selection instanceof IStructuredSelection)
-											selected= (Revision) ((IStructuredSelection) selection).getFirstElement();
-
-										if (selected == null)
-											return;
-
-										IHistoryPage historyPage = historyView.getHistoryPage();
-										if (historyPage instanceof CVSHistoryPage){
-											CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
-											IPath fileInHistoryViewPath = cvsHistoryPage.getFilePath();
-											IPath annotateFilePath = fCVSResource.getIResource().getFullPath();
-											if (fileInHistoryViewPath != null && annotateFilePath != null &&
-												fileInHistoryViewPath.equals(annotateFilePath))
-												cvsHistoryPage.selectRevision(selected.getId());
-										}
-									}
-								};
-								provider.addSelectionChangedListener(selectionListener);
-								final ISelectionChangedListener viewSelectionListener= new ISelectionChangedListener() {
-									public void selectionChanged(SelectionChangedEvent event) {
-										ISelection selection= event.getSelection();
-										ISelection uiSelection= StructuredSelection.EMPTY;
-										if (selection instanceof IStructuredSelection) {
-											Object first= ((IStructuredSelection) selection).getFirstElement();
-											if (first instanceof IFileRevision) {
-												IFileRevision revision= (IFileRevision) first;
-												if (fUIRevisionsById != null) {
-													Revision rev= (Revision) fUIRevisionsById.get(revision.getContentIdentifier());
-													if (rev != null) {
-														uiSelection= new StructuredSelection(rev);
-													}
-												}
-											}
-										}
-										provider.setSelection(uiSelection);
-									}
-								};
-								final TreeViewer viewer;
-								if (historyPage instanceof CVSHistoryPage) {
-									viewer= ((CVSHistoryPage) historyPage).getTreeViewer();
-									viewer.addSelectionChangedListener(viewSelectionListener);
-								} else {
-									viewer= null;
-								}
-								page.addPartListener(new IPartListener() {
-
-									public void partOpened(IWorkbenchPart part) {
-									}
-
-									public void partDeactivated(IWorkbenchPart part) {
-									}
-
-									public void partClosed(IWorkbenchPart part) {
-										if (part == historyView || part == editor) {
-											page.removePartListener(this);
-											provider.removeSelectionChangedListener(selectionListener);
-											if (viewer != null)
-												viewer.removeSelectionChangedListener(viewSelectionListener);
-										}
-									}
-
-									public void partBroughtToTop(IWorkbenchPart part) {
-									}
-
-									public void partActivated(IWorkbenchPart part) {
-									}
-
-								});
-							}
-						} catch (PartInitException e) {
-							CVSException.wrapException(e);
+					try {
+						//is there an open editor for the given input? If yes, use live annotate
+						final AbstractDecoratedTextEditor editor= getEditor(listener);
+						if (editor != null) {
+							editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
+							final IWorkbenchPage page= getPart().getSite().getPage();
+							showHistoryView(page);
 						}
+					} catch (PartInitException e) {
+						CVSException.wrapException(e);
 					}
 				} else
 					showView(listener);	
 			}
 		});
+		
 		monitor.done();
 	}
+    
+    /**
+     * Shows the history view, creating it if necessary, but does not give it focus.
+     * 
+     * @param page the workbench page to operate in
+     * @return the history view
+     * @throws PartInitException
+     */
+    private IHistoryView showHistoryView(IWorkbenchPage page) throws PartInitException {
+    	final IHistoryView historyView= (IHistoryView)page.showView(IHistoryView.VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+    	historyView.showHistoryFor(fCVSResource.getIResource());
+    	IHistoryPage historyPage = historyView.getHistoryPage();
+    	if (historyPage instanceof CVSHistoryPage){
+    		CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;
+    		cvsHistoryPage.setMode(CVSHistoryPage.REMOTE_MODE);
+    		// We need to call link to ensure that the history page gets linked
+			// even if the page input did not change
+    		cvsHistoryPage.linkWithEditor();
+    	}
+    	return historyView;
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
@@ -257,59 +182,18 @@ public class ShowAnnotationOperation extends CVSOperation {
         }
     }
 
-	private AbstractDecoratedTextEditor getEditor() {
-        final IWorkbench workbench= PlatformUI.getWorkbench();
-        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-        IEditorReference[] references= window.getActivePage().getEditorReferences();
-        IResource resource= fCVSResource.getIResource();
-		if (resource == null)
-			return null;
-
-		for (int i= 0; i < references.length; i++) {
-			IEditorReference reference= references[i];
-			try {
-				if (resource != null && resource.equals(reference.getEditorInput().getAdapter(IFile.class))) {
-					IEditorPart editor= reference.getEditor(false);
-					if (editor instanceof AbstractDecoratedTextEditor)
-						return (AbstractDecoratedTextEditor) editor;
-					else {
-						//editor opened is not a text editor - reopen file using the default text editor
-						IEditorPart part = getPart().getSite().getPage().openEditor(new FileEditorInput((IFile) resource), IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_NONE);
-						if (part != null && part instanceof AbstractDecoratedTextEditor)
-							return (AbstractDecoratedTextEditor)part;
-					}
-				}
-			} catch (PartInitException e) {
-				// ignore
-			}
-		}
-		
-		//no existing editor references found, try to open a new editor for the file	
+	private AbstractDecoratedTextEditor getEditor(AnnotateListener listener) throws PartInitException {
+		IResource resource= fCVSResource.getIResource();	
 		if (resource instanceof IFile){
-			try {
-				IEditorDescriptor descrptr = IDE.getEditorDescriptor((IFile) resource);
-				//try to open the associated editor only if its an internal editor
-				if (descrptr.isInternal()){
-					IEditorPart part = IDE.openEditor(getPart().getSite().getPage(), (IFile) resource);
-					if (part instanceof AbstractDecoratedTextEditor)
-						return (AbstractDecoratedTextEditor)part;
-					
-					//editor opened is not a text editor - close it
-					getPart().getSite().getPage().closeEditor(part, false);
-				}
-				//open file in default text editor	
-				IEditorPart part = IDE.openEditor(getPart().getSite().getPage(), (IFile) resource, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
-				if (part != null && part instanceof AbstractDecoratedTextEditor)
-					return (AbstractDecoratedTextEditor)part;
-				
-			} catch (PartInitException e) {
-			}
+			return RevisionAnnotationController.openEditor(getPart().getSite().getPage(), (IFile)resource);
 		}
-	
+		if (fCVSResource instanceof ICVSRemoteResource) {
+			return RevisionAnnotationController.openEditor(getPart().getSite().getPage(), fCVSResource, new RemoteAnnotationStorage((ICVSRemoteFile)fCVSResource, listener.getContents()));
+		}
         return null;
 	}
-	
-    private void fetchAnnotation(AnnotateListener listener, ICVSResource cvsResource, String revision, IProgressMonitor monitor) throws CVSException {
+
+	private void fetchAnnotation(AnnotateListener listener, ICVSResource cvsResource, String revision, IProgressMonitor monitor) throws CVSException {
     
         monitor = Policy.monitorFor(monitor);
         monitor.beginTask(null, 100);
@@ -328,7 +212,7 @@ public class ShowAnnotationOperation extends CVSOperation {
                 if (revision != null) {
                     localOptions.add(Annotate.makeRevisionOption(revision));
                 }
-                if (binary) {
+                if (fBinary) {
                     localOptions.add(Annotate.FORCE_BINARY_ANNOTATE);
                 }
                 final IStatus status = Command.ANNOTATE.execute(session, Command.NO_GLOBAL_OPTIONS, (LocalOption[]) localOptions.toArray(new LocalOption[localOptions.size()]), new ICVSResource[]{cvsResource}, listener, Policy.subMonitorFor(monitor, 90));
@@ -348,7 +232,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 	    Map logEntriesByRevision= new HashMap();
 		if (fCVSResource instanceof ICVSFile) {
 			try {
-				ILogEntry[] logEntries= ((ICVSFile) fCVSResource).getLogEntries(Policy.subMonitorFor(monitor, 20));
+				ILogEntry[] logEntries= ((ICVSFile) fCVSResource).getLogEntries(monitor);
 				for (int i= 0; i < logEntries.length; i++) {
 					ILogEntry entry= logEntries[i];
 					logEntriesByRevision.put(entry.getRevision(), entry);
@@ -412,7 +296,6 @@ public class ShowAnnotationOperation extends CVSOperation {
 			revision.addRange(new LineRange(block.getStartLine(), block.getEndLine() - block.getStartLine() + 1));
 		}
 		
-		fUIRevisionsById= sets;
 		return info;
 	}
     
@@ -499,6 +382,22 @@ public class ShowAnnotationOperation extends CVSOperation {
 			}
 		}
 		return null;
+	}
+	
+	private boolean isKnownUseView() {
+		//check whether we should ask the user.
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String option = store.getString(ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE);
+		
+		return option.equals(MessageDialogWithToggle.NEVER);
+	}
+	
+	private boolean isKnownUseLiveAnnotate() {
+		//check whether we should ask the user.
+		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		final String option = store.getString(ICVSUIConstants.PREF_USE_QUICKDIFFANNOTATE);
+		
+		return option.equals(MessageDialogWithToggle.ALWAYS);
 	}
 	
 	/**

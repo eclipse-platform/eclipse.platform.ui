@@ -50,7 +50,14 @@ public class ResourceVariantFileRevision extends FileRevision implements IAdapta
 	public Object getAdapter(Class adapter) {
 		if (adapter == IResourceVariant.class)
 			return variant;
-		return Platform.getAdapterManager().getAdapter(this, adapter);
+		Object object = Platform.getAdapterManager().getAdapter(this, adapter);
+		if (object != null)
+			return object;
+		if (variant instanceof IAdaptable ) {
+			IAdaptable  adaptable = (IAdaptable ) variant;
+			return adaptable.getAdapter(adapter);
+		}
+		return null;
 	}
 	
 	public boolean equals(Object obj) {

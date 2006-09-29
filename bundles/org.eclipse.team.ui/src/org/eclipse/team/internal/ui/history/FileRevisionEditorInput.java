@@ -19,15 +19,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 import com.ibm.icu.text.DateFormat;
 
-public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter,IStorageEditorInput {
+public class FileRevisionEditorInput extends PlatformObject implements IWorkbenchAdapter, IStorageEditorInput {
 
-	private final IFileRevision fileRevision;
+	private final Object fileRevision;
 	private final IStorage storage;
 	
 	/**
@@ -47,18 +48,15 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	 * @param revision the file revision
 	 * @param storage the contents of the file revision
 	 */
-	public FileRevisionEditorInput(IFileRevision revision, IStorage storage) {
+	public FileRevisionEditorInput(Object revision, IStorage storage) {
+		Assert.isNotNull(revision);
+		Assert.isNotNull(storage);
 		this.fileRevision = revision;
 		this.storage = storage;
 	}
 	
 	public FileRevisionEditorInput(IFileState state) {
-		this.storage = state;
-		this.fileRevision = null;
-	}
-
-	public IFileRevision getFileRevision() {
-		return fileRevision;
+		this(state, state);
 	}
 	
 	public IStorage getStorage() throws CoreException {
@@ -74,13 +72,13 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public String getName() {
-		if (fileRevision != null)
-			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { fileRevision.getName(), fileRevision.getContentIdentifier()});
-		
-		if (storage != null){
-			return storage.getName() +  " " + DateFormat.getInstance().format(new Date(((IFileState) storage).getModificationTime())) ; //$NON-NLS-1$
-		}
-		return ""; //$NON-NLS-1$
+		IFileRevision rev = (IFileRevision)getAdapter(IFileRevision.class);
+		if (rev != null)
+			return NLS.bind(TeamUIMessages.nameAndRevision, new String[] { rev.getName(), rev.getContentIdentifier()});
+		IFileState state = (IFileState)getAdapter(IFileState.class);
+		if (state != null)
+			return state.getName() +  " " + DateFormat.getInstance().format(new Date(state.getModificationTime())) ; //$NON-NLS-1$
+		return storage.getName();
 		
 	}
 
@@ -90,25 +88,18 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public String getToolTipText() {
-		if (fileRevision != null)
-			try {
-				return getStorage().getFullPath().toString();
-			} catch (CoreException e) {
-			}
-		
-		if (storage != null)
-			return storage.getFullPath().toString();
-		
-		return ""; //$NON-NLS-1$
+		return storage.getFullPath().toString();
 	}
 
 	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) {
+		if (adapter == IWorkbenchAdapter.class)
 			return this;
-		}
-		if (adapter == IFileRevision.class)
-			return fileRevision;
-		return super.getAdapter(adapter);
+		if (adapter == IStorage.class)
+			return storage;
+		Object object = super.getAdapter(adapter);
+		if (object != null)
+			return object;
+		return Utils.getAdapter(fileRevision, adapter);
 	}
 
 	public Object[] getChildren(Object o) {
@@ -120,13 +111,10 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	}
 
 	public String getLabel(Object o) {
-		if (fileRevision != null)
-			return fileRevision.getName();
-		
-		if (storage != null){
-			return storage.getName();
-		}
-		return ""; //$NON-NLS-1$
+		IFileRevision rev = (IFileRevision)getAdapter(IFileRevision.class);
+		if (rev != null)
+			return rev.getName();
+		return storage.getName();
 	}
 
 	public Object getParent(Object o) {
@@ -136,13 +124,13 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 	public boolean equals(Object obj) {
 		if (obj instanceof FileRevisionEditorInput) {
 			FileRevisionEditorInput other = (FileRevisionEditorInput) obj;
-			return (other.getFileRevision().equals(getFileRevision()));
+			return (other.fileRevision.equals(this.fileRevision));
 		}
 		return false;
 	}
 	
 	public int hashCode() {
-		return getFileRevision().hashCode();
+		return fileRevision.hashCode();
 	}
 
 }

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.CachedResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
@@ -26,6 +27,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ILogEntryListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.filehistory.CVSResourceVariantFileRevision;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /**
@@ -652,5 +654,11 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	public CachedResourceVariant getCachedHandle() {
 		return super.getCachedHandle();
+	}
+	
+	public Object getAdapter(Class adapter) {
+		if (adapter == IFileRevision.class)
+			return new CVSResourceVariantFileRevision(this);
+		return super.getAdapter(adapter);
 	}
 }

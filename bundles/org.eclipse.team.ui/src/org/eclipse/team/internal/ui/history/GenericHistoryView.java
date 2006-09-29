@@ -11,9 +11,7 @@
 
 package org.eclipse.team.internal.ui.history;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -26,7 +24,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
-import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
@@ -629,24 +626,15 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		}
 		IEditorInput input = editor.getEditorInput();
 
-		if (input instanceof FileRevisionEditorInput) {
-			//See if the input adapts to a file revision
-			Object fileRev =((FileRevisionEditorInput) input).getAdapter(IFileRevision.class);
-			if (fileRev != null){
-				itemDropped(fileRev, false);
-			}
-		} // Handle regular file editors
-		else {
-			IFile file = ResourceUtil.getFile(input);
-			if (file != null) {
-				itemDropped(file, false); /* don't fetch if already cached */
-			}
-			
-			//see if it adapts to an IHistoryPageSource
-			Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
-			if (pageSource != null)
-				itemDropped(input, false);
+		IFile file = ResourceUtil.getFile(input);
+		if (file != null) {
+			itemDropped(file, false); /* don't fetch if already cached */
 		}
+		
+		//see if it adapts to an IHistoryPageSource
+		Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
+		if (pageSource != null)
+			itemDropped(input, false);
 	}
 
 	private boolean checkIfPageIsVisible() {
