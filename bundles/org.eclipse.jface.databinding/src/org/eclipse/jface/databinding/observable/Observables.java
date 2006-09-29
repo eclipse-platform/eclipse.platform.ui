@@ -11,11 +11,17 @@
 
 package org.eclipse.jface.databinding.observable;
 
+import java.util.Set;
+
 import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ObservableSet;
+import org.eclipse.jface.internal.databinding.internal.observable.ProxyObservableSet;
 import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableObservableList;
 
 /**
- * Contains static methods to operate on or return {@link IObservable Observables}.
+ * Contains static methods to operate on or return
+ * {@link IObservable Observables}.
  * 
  * @since 3.2
  */
@@ -31,5 +37,31 @@ public class Observables {
 		}
 		
 		return new UnmodifiableObservableList(list);
+	}
+
+	/**
+	 * @param set
+	 * @return Returns an observableSet backed by the given set
+	 */
+	public static IObservableSet staticObservableSet(Set set) {
+		return new ObservableSet(set, Object.class) {
+			public void addChangeListener(IChangeListener listener) {
+			}
+
+			public void addStaleListener(IStaleListener listener) {
+			}
+		};
+	}
+
+	/**
+	 * Returns an observable set that contains the same elements as the given
+	 * set, and fires the same events as the given set, but can be disposed of
+	 * without disposing of the wrapped set.
+	 * 
+	 * @param target the set to wrap
+	 * @return a proxy observable set
+	 */
+	public static IObservableSet proxyObservableSet(IObservableSet target) {
+		return new ProxyObservableSet(target);
 	}
 }
