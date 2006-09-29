@@ -13,7 +13,7 @@ package org.eclipse.help.internal.xhtml;
 import org.w3c.dom.Element;
 
 
-public class UAInclude extends AbstractUAElement {
+public class UAInclude {
 
 	protected static final String TAG_INCLUDE = "include"; //$NON-NLS-1$
 	protected static final String ATT_PATH = "path"; //$NON-NLS-1$
@@ -26,8 +26,8 @@ public class UAInclude extends AbstractUAElement {
 	private boolean mergeStyle = false;
 
 	public UAInclude(Element element) {
-		path = getAttribute(element, ATT_PATH);
-		String mergeStyleString = getAttribute(element, ATT_MERGE_STYLE);
+		path = element.getAttribute(ATT_PATH);
+		String mergeStyleString = element.getAttribute(ATT_MERGE_STYLE);
 		mergeStyle = (mergeStyleString != null && mergeStyleString.equalsIgnoreCase("true")) ? true : false; //$NON-NLS-1$
 	}
 
