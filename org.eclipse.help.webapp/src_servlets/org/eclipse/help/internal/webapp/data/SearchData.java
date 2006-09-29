@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.QueryTooComplexException;
 import org.eclipse.help.internal.search.SearchHit;
@@ -54,8 +53,6 @@ public class SearchData extends ActivitiesData {
 
 	// QueryException if any
 	private QueryTooComplexException queryException = null;
-	
-	private boolean showPotentialHits;
 
 	/**
 	 * Constructs the xml data for the search resuls page.
@@ -89,9 +86,6 @@ public class SearchData extends ActivitiesData {
 				}
 			}
 		}
-
-		showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
-			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
 	}
 
 	/**
@@ -167,7 +161,7 @@ public class SearchData extends ActivitiesData {
 	 * @return whether or not the hit is a potential hit
 	 */
 	public boolean isPotentialHit(int i) {
-		return (showPotentialHits && (getMode() != MODE_INFOCENTER) && hits[i].getFilters() != null);
+		return ((getMode() != MODE_INFOCENTER) && hits[i].isPotentialHit());
 	}
 
 	/**

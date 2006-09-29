@@ -10,13 +10,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.*;
-import java.net.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
-import org.apache.lucene.demo.html.*;
-import org.eclipse.help.internal.base.*;
+import org.apache.lucene.demo.html.HTMLParser;
 
 /**
  * Parser HTML documents. Extracts document encoding from header, and delegates
@@ -71,25 +75,12 @@ public class HTMLDocParser {
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream,
 						encoding));
 
-			} catch (UnsupportedEncodingException uee) {
-				if (HelpBasePlugin.DEBUG_SEARCH) {
-					System.out
-							.println(this.getClass().getName()
-									+ " JVM does not support encoding " //$NON-NLS-1$
-									+ encoding
-									+ " specified in document " //$NON-NLS-1$
-									+ url.getPath()
-									+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
-				}
+			}
+			catch (UnsupportedEncodingException uee) {
 				htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 			}
-		} else {
-			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println(this.getClass().getName()
-						+ " Encoding not found in document " //$NON-NLS-1$
-						+ url.getPath()
-						+ ". Default encoding will be used during indexing."); //$NON-NLS-1$
-			}
+		}
+		else {
 			htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 		}
 	}

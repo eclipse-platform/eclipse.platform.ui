@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.search.ISearchEngineResult;
 import org.eclipse.help.search.ISearchEngineResult2;
@@ -335,10 +334,6 @@ public class EngineResultSection {
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
-		// boolean earlyExit = false;
-
-		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
-			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
 
 		for (int i = resultOffset; i < results.length; i++) {
 			if (i - resultOffset == HITS_PER_PAGE) {
@@ -368,7 +363,7 @@ public class EngineResultSection {
 			int bindent = part.getShowCategories() && cat != null ? 5 : 0;
 			buff.append("<li indent=\"" + indent + "\" bindent=\"" + bindent + "\" style=\"image\" value=\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String imageId = desc.getId();
-			boolean isPotentialHit = (showPotentialHits && hit instanceof SearchHit && ((SearchHit)hit).getFilters() != null);
+			boolean isPotentialHit = (hit instanceof SearchHit && ((SearchHit)hit).isPotentialHit());
 			if (hit instanceof ISearchEngineResult2) {
 				URL iconURL = ((ISearchEngineResult2) hit).getIconURL();
 				if (iconURL != null) {

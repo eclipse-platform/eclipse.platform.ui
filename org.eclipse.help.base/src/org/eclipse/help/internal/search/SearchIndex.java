@@ -182,10 +182,6 @@ public class SearchIndex implements ISearchIndex {
 	 * @return IStatus
 	 */
 	public IStatus addDocument(String name, URL url) {
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println("SearchIndex.addDocument(" + name + ", " + url //$NON-NLS-1$ //$NON-NLS-2$
-					+ ")"); //$NON-NLS-1$
-		}
 		try {
 			Document doc = new Document();
 			doc.add(Field.Keyword(FIELD_NAME, name));
@@ -319,9 +315,6 @@ public class SearchIndex implements ISearchIndex {
 	 * @return IStatus
 	 */
 	public IStatus removeDocument(String name) {
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.println("SearchIndex.removeDocument(" + name + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		Term term = new Term(FIELD_NAME, name);
 		try {
 			ir.delete(term);
@@ -460,10 +453,6 @@ public class SearchIndex implements ISearchIndex {
 									"Help search indexing directory could not be created for directory " + indexPath, ioe); //$NON-NLS-1$
 					continue;
 				}
-				if (HelpBasePlugin.DEBUG_SEARCH) {
-					System.out
-							.println("SearchIndex.merge merging indexId=" + indexId + ", indexPath=" + indexPath); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 
 				HelpProperties prebuiltDocs = new HelpProperties(INDEXED_DOCS_FILE, new File(indexPath));
 				prebuiltDocs.restore();
@@ -512,13 +501,6 @@ public class SearchIndex implements ISearchIndex {
 	}
 
 	public IStatus removeDuplicates(String name, String[] index_paths) {
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out.print("SearchIndex.removeDuplicates(" + name); //$NON-NLS-1$
-			for (int i = 0; i < index_paths.length; i++) {
-				System.out.print(", " + index_paths[i]); //$NON-NLS-1$
-			}
-			System.out.println(")"); //$NON-NLS-1$
-		}
 		TermDocs hrefDocs = null;
 		TermDocs indexDocs = null;
 		Term hrefTerm = new Term(FIELD_NAME, name);
@@ -856,10 +838,6 @@ public class SearchIndex implements ISearchIndex {
 					fos.write(buf, 0, n);
 				}
 				fos.close();
-			}
-			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println("SearchIndex: Prebuilt index restored to " //$NON-NLS-1$
-						+ destDir + "."); //$NON-NLS-1$
 			}
 			setInconsistent(false);
 		} catch (IOException ioe) {

@@ -58,10 +58,6 @@ public class HelpPreferencePage extends PreferencePage implements
 
 	private Button openInEditorButton;
 
-	private Button showPotentialHitsButton;
-
-	private Button showActualHitsButton;
-
 	/**
 	 * Creates preference page controls on demand.
 	 * 
@@ -95,7 +91,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		createSpacer(mainComposite);
 		createDynamicHelpArea(mainComposite);
 		createSpacer(mainComposite);
-		createSearchArea(mainComposite);
 		Dialog.applyDialogFont(mainComposite);
 		return mainComposite;
 	}
@@ -196,25 +191,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		return data;
 	}
 	
-	private void createSearchArea(Composite parent) {
-		Group searchGroup = new Group(parent, SWT.NONE);
-		searchGroup.setText(Messages.HelpPreferencePage_search);
-		searchGroup.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		searchGroup.setLayout(new GridLayout());
-		
-		showPotentialHitsButton = new Button(searchGroup, SWT.RADIO);
-		showPotentialHitsButton.setText(Messages.HelpPreferencePage_searchPotentialHits);
-
-		showActualHitsButton = new Button(searchGroup, SWT.RADIO);
-		showActualHitsButton.setText(Messages.HelpPreferencePage_searchActualHits);
-
-		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
-			.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
-		
-		showPotentialHitsButton.setSelection(showPotentialHits);
-		showActualHitsButton.setSelection(!showPotentialHits);
-	}
-
 	private IPreferenceNode getPreferenceNode(String pageId) {
 		Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager()
 				.getElements(PreferenceManager.PRE_ORDER).iterator();
@@ -266,11 +242,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		openInEditorButton.setSelection(openInEditor);
 		}
 
-		boolean showPotentialHits = HelpBasePlugin.getDefault().getPluginPreferences()
-		.getDefaultBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
-		showPotentialHitsButton.setSelection(showPotentialHits);
-		showActualHitsButton.setSelection(!showPotentialHits);
-
 		super.performDefaults();
 	}
 
@@ -292,8 +263,6 @@ public class HelpPreferencePage extends PreferencePage implements
 		if (openInEditorButton!=null)
 			pref.setValue(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR,
 				openInEditorButton.getSelection());
-		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS,
-				showPotentialHitsButton.getSelection());
 		HelpBasePlugin.getDefault().savePluginPreferences();
 		return true;
 	}

@@ -23,21 +23,13 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.search.SearchHit;
 import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 public class BasicTest extends TestCase {
-	
-	private boolean oldPreference;
 	
 	/*
 	 * The test data for testXHTMLSearch(). The first string in each array
@@ -56,14 +48,14 @@ public class BasicTest extends TestCase {
 		// try OR'ing with a string from another doc.. should find both
 		{ "vkrhjewiwh OR rugnwjfyqj", "/org.eclipse.ua.tests/data/help/search/test1.xhtml", "/org.eclipse.ua.tests/data/help/search/test2.xhtml" },
 		
-		// these two words only appear next to each other in a paragraph that's always filtered out
-		{ "\"vkrhjewiwh riehguanil\"", /* no hits */ },
+		// these two words only appear next to each other in a paragraph that's filtered out - search should still find it
+		{ "\"vkrhjewiwh riehguanil\"", "/org.eclipse.ua.tests/data/help/search/test1.xhtml" },
 		
-		// first one should be found, but second one only exists in a paragraph that's always filtered out
-		{ "vkrhjewiwh AND riehguanil", /* no hits */ },
+		// first one should be found, but second one only exists in a paragraph that's filtered out - search should still find
+		{ "vkrhjewiwh AND riehguanil", "/org.eclipse.ua.tests/data/help/search/test1.xhtml" },
 		
-		// only exists in paragraph that's always filtered out
-		{ "gsdduvfqnh", /* no hits */ },
+		// only exists in paragraph that's filtered out - search should find
+		{ "gsdduvfqnh", "/org.eclipse.ua.tests/data/help/search/test1.xhtml" },
 		
 		// word is in test3.xhtml and also included by test4.xhtml, contributed
 		// into test5.xhtml as an extension, and replaces a paragraph in test6.xhtml.
@@ -80,7 +72,7 @@ public class BasicTest extends TestCase {
 
 		// only exists in a paragraph in test7.html that should be filtered out
 		// make sure this works for XHTML content inside .html file
-		{ "hugftnhdtg", /* no hits */ },
+		{ "hugftnhdtg", "/org.eclipse.ua.tests/data/help/search/test7.html" },
 		
 		// this doc is listed in TOC several times, using slightly different paths
 		{ "rqfedajhtg", "/org.eclipse.ua.tests/data/help/search/test9.htm" },
@@ -91,30 +83,6 @@ public class BasicTest extends TestCase {
 	 */
 	public static Test suite() {
 		return new TestSuite(BasicTest.class);
-	}
-
-	/*
-	 * Ensure that org.eclipse.help.ui is started. It contributes extra content
-	 * filtering that is used by this test. See UIContentFilterProcessor.
-	 * 
-	 * Also, turn off potential hits searching for this test.
-	 */
-	protected void setUp() throws Exception {
-		HelpUIPlugin.getDefault();
-		
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		oldPreference = pref.getBoolean(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS);
-		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS, false);
-		HelpBasePlugin.getDefault().savePluginPreferences();
-	}
-	
-	/*
-	 * Set the preference value back to whatever it was before.
-	 */
-	protected void tearDown() throws Exception {
-		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		pref.setValue(IHelpBaseConstants.P_KEY_SHOW_POTENTIAL_HITS, oldPreference);
-		HelpBasePlugin.getDefault().savePluginPreferences();
 	}
 
 	public void testSearch() throws Exception {
@@ -171,54 +139,5 @@ public class BasicTest extends TestCase {
 				Assert.fail(buf.toString());
 			}
 		}
-	}
-	
-	/**
-	 * Tests searching with changing filtering conditions. Activities, for
-	 * example, can change during a session, and the search should only
-	 * find content that is *currently* not filtered out.
-	 */
-	public void testXHTMLActivityFilteringSearch() throws Exception {
-		String searchWord = "qjfuhemaok";
-		String href = "/org.eclipse.ua.tests/data/help/search/test2.xhtml";
-		String testActivity = "org.eclipse.ua.tests.activity";
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), Platform.getNL());
-		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport(); 
-		Set withoutTestActivity = activitySupport.getActivityManager().getEnabledActivityIds();
-		Set withTestActivity = new HashSet(withoutTestActivity);
-		withTestActivity.add(testActivity);
-
-		// first try with activity turned off - should not find it
-		activitySupport.setEnabledActivityIds(withoutTestActivity);
-		SearchResults collector = new SearchResults(null, 500, Platform.getNL());
-		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
-		Assert.assertTrue("Found an unexpected search result. Was searching for string in a paragraph filtered by activity, and the activity was turned off, but the search came back positive", !containsHref(href, collector.getSearchHits()));
-
-		// now try with it turned on - should find it
-		activitySupport.setEnabledActivityIds(withTestActivity);
-		collector = new SearchResults(null, 500, Platform.getNL());
-		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
-		Assert.assertTrue("Did not find an expected search result. Was searching for string in a paragraph filtered by activity, and the activity was turned on, but the search came back negative", containsHref(href, collector.getSearchHits()));
-
-		// finally try again with it turned off - should not find it
-		activitySupport.setEnabledActivityIds(withoutTestActivity);
-		collector = new SearchResults(null, 500, Platform.getNL());
-		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
-		Assert.assertTrue("Found an unexpected search result. Was searching for string in a paragraph filtered by activity, and the activity was turned off, but the search came back positive (second attempt)", !containsHref(href, collector.getSearchHits()));
-	}
-	
-	private static boolean containsHref(String href, SearchHit[] hits) {
-		for (int i=0;i<hits.length;++i) {
-			String hitHref = hits[i].getHref();
-			// ignore query params
-			int index = hitHref.indexOf('?');
-			if (index != -1) {
-				hitHref = hitHref.substring(0, index);
-			}
-			if (href.equals(hitHref)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

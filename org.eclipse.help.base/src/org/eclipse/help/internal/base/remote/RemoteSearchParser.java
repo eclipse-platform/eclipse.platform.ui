@@ -111,7 +111,7 @@ public class RemoteSearchParser extends DefaultHandler {
 	private void handleHit(Attributes attr) {
 		String href = attr.getValue("href"); //$NON-NLS-1$
 		String label = attr.getValue("label"); //$NON-NLS-1$
-		String filters = attr.getValue("filters"); //$NON-NLS-1$
+		boolean isPotentialHit = (String.valueOf(true).equalsIgnoreCase(attr.getValue("isPotentialHit"))); //$NON-NLS-1$
 		float score;
 		try {
 			score = Float.parseFloat(attr.getValue("score")); //$NON-NLS-1$
@@ -120,7 +120,7 @@ public class RemoteSearchParser extends DefaultHandler {
 			// score was probably missing; default to 0
 			score = 0;
 		}
-		SearchHit hit = new SearchHit(href, label, null, score, null, null, null, filters);
+		SearchHit hit = new SearchHit(href, label, null, score, null, null, null, isPotentialHit);
 		hits.add(hit);
 		stack.push(hit);
 	}

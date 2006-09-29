@@ -86,10 +86,6 @@ class IndexingOperation {
 		numRemoved = staleDocs.size();
 		Collection newDocs = getAddedDocuments(index);
 		numAdded = newDocs.size();
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out
-					.println("IndexingOperation.execute: " + numRemoved + " documents in deleted plug-ins, " + numAdded + " documents in added plug-ins."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
 
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
@@ -149,31 +145,14 @@ class IndexingOperation {
 
 	/**
 	 * Returns documents that must be deleted
-	 * 
-	 * @param pm
-	 * @param newDocs
-	 * @return
-	 * @throws IndexingException
 	 */
 	private Map addNewDocuments(IProgressMonitor pm, Collection newDocs,
 			boolean opened) throws IndexingException {
 		Map prebuiltDocs = mergeIndexes(pm, opened);
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out
-					.println("IndexOperation.addNewDocuments: " + prebuiltDocs.size() + " different documents merged."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		checkCancelled(pm);
 		Collection docsToIndex = calculateDocsToAdd(newDocs, prebuiltDocs);
 		checkCancelled(pm);
 		Map docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
-		// IProgressMonitor addMonitor = new SubProgressMonitor(pm,
-		// docsToDelete.size()*10 + docsToIndex.size()*100;
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out
-					.println("IndexOperation.addNewDocuments: " + docsToIndex.size() + " documents not yet indexed."); //$NON-NLS-1$ //$NON-NLS-2$
-			System.out
-					.println("IndexOperation.addNewDocuments: " + docsToDelete.size() + " documents have more than one copy indexed."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		pm.beginTask("", 10 * docsToIndex.size() + docsToDelete.size()); //$NON-NLS-1$
 		checkCancelled(pm);
 		addDocuments(new SubProgressMonitor(pm, 10 * docsToIndex.size()),
@@ -295,12 +274,9 @@ class IndexingOperation {
 		checkCancelled(pm);
 
 		if (numRemoved > 0) {
-			if (HelpBasePlugin.DEBUG_SEARCH) {
-				System.out.println("SearchIndex.removeStaleDocuments"); //$NON-NLS-1$
-			}
-
-			if (!index.beginDeleteBatch())
+			if (!index.beginDeleteBatch()) {
 				throw new IndexingException();
+			}
 			checkCancelled(pm);
 			pm.subTask(HelpBaseResources.UpdatingIndex);
 			MultiStatus multiStatus = null;
@@ -539,24 +515,11 @@ class IndexingOperation {
 		return indexes;
 	}
 
-	/**
-	 * 
-	 * @param monitor
-	 * @param addedDocs
-	 * @param indices
-	 * @return Map. Keys are /pluginid/href of all merged Docs. Values are null
-	 *         for added document, or String[] of indexIds with duplicates of
-	 *         the document
-	 */
 	private Map mergeIndexes(IProgressMonitor monitor, boolean opened)
 			throws IndexingException {
 		Collection addedPluginIds = getAddedPlugins(index);
 		PrebuiltIndexes indexes = getIndexesToAdd(addedPluginIds);
 		PluginIndex[] pluginIndexes = indexes.getIndexes();
-		if (HelpBasePlugin.DEBUG_SEARCH) {
-			System.out
-					.println("IndexingOperation.mergeIndexes: " + pluginIndexes.length + " plugins with prebuilt index."); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		Map mergedDocs = null;
 		// Always perform add batch to ensure that index is created and saved
 		// even if no new documents

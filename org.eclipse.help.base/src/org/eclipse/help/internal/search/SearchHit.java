@@ -27,7 +27,7 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	private String summary;
 	private String id;
 	private String participantId;
-	private String filters;
+	private boolean isPotentialHit;
 
 	/**
 	 * Constructs a new SearchHit.
@@ -39,10 +39,10 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	 * @param toc the matching element in the TOC
 	 * @param id the unique id of the document
 	 * @param participantId the participant the hit came from
-	 * @param filters all the filters this doc is sensitive to
+	 * @param isPotentialHit this may be a false positive hit
 	 */
 	public SearchHit(String href, String label, String summary, float score, IToc toc, String id,
-			String participantId, String filters) {
+			String participantId, boolean isPotentialHit) {
 		this.href = href;
 		this.label = label;
 		this.score = score;
@@ -50,12 +50,9 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		this.summary = summary;
 		this.id = id;
 		this.participantId = participantId;
-		this.filters = filters;
+		this.isPotentialHit = isPotentialHit;
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	public int compareTo(Object o) {
 		if (o == this) {
 			return 0;
@@ -65,9 +62,6 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		return (s1 < s2 ? 1 : s1 > s2 ? -1 : 0);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (obj instanceof SearchHit) {
 			if (obj == this) {
@@ -78,53 +72,22 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		return false;
 	}
 	
-	/**
-	 * Gets the href.
-	 * 
-	 * @return Returns a String
-	 */
 	public String getHref() {
 		return href;
 	}
 
-	/**
-	 * Gets the label.
-	 * 
-	 * @return Returns a String
-	 */
 	public String getLabel() {
 		return label;
 	}
 
-	/**
-	 * Gets the score.
-	 * 
-	 * @return Returns a float
-	 */
 	public float getScore() {
 		return score;
 	}
 
-	/**
-	 * Gets the toc.
-	 * 
-	 * @return Returns IToc or null
-	 */
 	public IToc getToc() {
 		return toc;
 	}
-
-	/**
-	 * Returns the filters for which this hit's document is sensitive to.
-	 * e.g. "os=linux,ws=gtk,plugin=org.eclipse.help"
-	 */
-	public String getFilters() {
-		return filters;
-	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 		return href.hashCode();
 	}
@@ -136,15 +99,11 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 	public void setHref(String href) {
 		this.href = href;
 	}
-
-	/**
-	 * Sets the filters for which this hit's document is sensitive to.
-	 * e.g. "os=linux,ws=gtk,plugin=org.eclipse.help"
-	 */
-	public void setFilters(String filters) {
-		this.filters = filters;
-	}
 	
+	public void setPotentialHit(boolean isPotentialHit) {
+		this.isPotentialHit = isPotentialHit;
+	}
+
 	public void setScore(float score) {
 		this.score = score;
 	}
@@ -153,11 +112,6 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		this.toc = toc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.help.internal.search.federated.ISearchEngineResult#getDescription()
-	 */
 	public String getDescription() {
 		return getSummary();
 	}
@@ -172,10 +126,6 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 		return summary;
 	}
 
-	/**
-	 * @param summary
-	 *            The summary to set.
-	 */
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
@@ -208,5 +158,9 @@ public class SearchHit implements ISearchEngineResult2, Comparable {
 
 	public boolean canOpen() {
 		return participantId != null;
+	}
+	
+	public boolean isPotentialHit() {
+		return isPotentialHit;
 	}
 }

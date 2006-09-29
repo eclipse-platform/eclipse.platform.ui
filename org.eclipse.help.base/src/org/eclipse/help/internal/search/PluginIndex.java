@@ -151,12 +151,6 @@ public class PluginIndex {
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_ANALYZER);
 			if (!targetIndex.isLuceneCompatible(lucene)
 					|| !targetIndex.isAnalyzerCompatible(analyzer)) {
-				if (HelpBasePlugin.DEBUG_SEARCH) {
-					System.out
-							.println("Ignoring prebuilt help search index for plugin " //$NON-NLS-1$
-									+ getPluginId()
-									+ ".  Index is not compatible with index in use."); //$NON-NLS-1$
-				}
 				return false;
 			}
 		} catch (MalformedURLException mue) {

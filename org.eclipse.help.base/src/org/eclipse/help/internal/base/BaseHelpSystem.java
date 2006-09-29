@@ -40,50 +40,34 @@ import org.osgi.framework.Bundle;
  * Base Help System.
  */
 public final class BaseHelpSystem {
-	protected static final BaseHelpSystem instance = new BaseHelpSystem();
-
-	private final static String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID
-			+ ".webapp"; //$NON-NLS-1$
-
+	
+	private static final BaseHelpSystem instance = new BaseHelpSystem();
+	
+	private static final String WEBAPP_EXTENSION_ID = HelpBasePlugin.PLUGIN_ID + ".webapp"; //$NON-NLS-1$
 	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
-
-	public final static String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
-
-	public final static String WORKING_SETS = "workingSets"; //$NON-NLS-1$
-
-	public final static String WORKING_SET = "workingSet"; //$NON-NLS-1$
-
-	public final static int MODE_WORKBENCH = 0;
-
-	public final static int MODE_INFOCENTER = 1;
-
-	public final static int MODE_STANDALONE = 2;
-
-	protected SearchManager searchManager;
-
-	protected WorkingSetManager workingSetManager;
-
-	protected BookmarkManager bookmarkManager;
+	
+	public static final String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
+	public static final String WORKING_SETS = "workingSets"; //$NON-NLS-1$
+	public static final String WORKING_SET = "workingSet"; //$NON-NLS-1$
+	
+	public static final int MODE_WORKBENCH = 0;
+	public static final int MODE_INFOCENTER = 1;
+	public static final int MODE_STANDALONE = 2;
 
 	private int mode = MODE_WORKBENCH;
+	
+	private SearchManager searchManager;
+	private WorkingSetManager workingSetManager;
+	private BookmarkManager bookmarkManager;
 
 	private boolean webappStarted = false;
-
-	private IErrorUtil defaultErrorMessenger;
-
-	private IBrowser browser;
-
-	private IBrowser internalBrowser;
-
-	private HelpDisplay helpDisplay = null;
-
 	private boolean webappRunning = false;
-
+	private IErrorUtil defaultErrorMessenger;
+	private IBrowser browser;
+	private IBrowser internalBrowser;
+	private HelpDisplay helpDisplay = null;
 	private boolean rtl = false;
 
-	/**
-	 * Constructor.
-	 */
 	private BaseHelpSystem() {
 		super();
 		rtl = initializeRTL();
@@ -116,11 +100,6 @@ public final class BaseHelpSystem {
 		return getSearchManager().getLocalSearchManager();
 	}
 
-	/**
-	 * Used to obtain Working Set Manager
-	 * 
-	 * @return instance of WorkingSetManager
-	 */
 	public static synchronized WorkingSetManager getWorkingSetManager() {
 		if (getInstance().workingSetManager == null) {
 			getInstance().workingSetManager = new WorkingSetManager();
@@ -128,11 +107,6 @@ public final class BaseHelpSystem {
 		return getInstance().workingSetManager;
 	}
 
-	/**
-	 * Used to obtain Bookmark Manager
-	 * 
-	 * @return instance of BookmarkManager
-	 */
 	public static synchronized BookmarkManager getBookmarkManager() {
 		if (getInstance().bookmarkManager == null) {
 			getInstance().bookmarkManager = new BookmarkManager();
@@ -140,30 +114,24 @@ public final class BaseHelpSystem {
 		return getInstance().bookmarkManager;
 	}
 
-	/**
+	/*
 	 * Allows Help UI to plug-in a soft adapter that delegates all the work to
 	 * the workbench browser support.
-	 * 
-	 * @since 3.1
-	 * @param browser
-	 *            the instance to use when external browser is needed
 	 */
-
 	public synchronized void setBrowserInstance(IBrowser browser) {
 		this.browser = browser;
 	}
 
 	public static synchronized IBrowser getHelpBrowser(boolean forceExternal) {
-		if (!forceExternal
-				&& !BrowserManager.getInstance().isAlwaysUseExternal()) {
-			if (getInstance().internalBrowser == null)
-				getInstance().internalBrowser = BrowserManager.getInstance()
-						.createBrowser(false);
+		if (!forceExternal && !BrowserManager.getInstance().isAlwaysUseExternal()) {
+			if (getInstance().internalBrowser == null) {
+				getInstance().internalBrowser = BrowserManager.getInstance().createBrowser(false);
+			}
 			return getInstance().internalBrowser;
 		}
-		if (getInstance().browser == null)
-			getInstance().browser = BrowserManager.getInstance()
-					.createBrowser(true);
+		if (getInstance().browser == null) {
+			getInstance().browser = BrowserManager.getInstance().createBrowser(true);
+		}
 		return getInstance().browser;
 	}
 
@@ -173,30 +141,14 @@ public final class BaseHelpSystem {
 		return getInstance().helpDisplay;
 	}
 
-	/**
-	 */
-	public BaseHelpSystem newInstance() {
-		return null;
-	}
-
-	/**
+	/*
 	 * Shuts down the BaseHelpSystem.
-	 * 
-	 * @exception CoreException
-	 *                if this method fails to shut down this plug-in
 	 */
 	public static void shutdown() throws CoreException {
-		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Base Help System is shutting down."); //$NON-NLS-1$
-		}
-		// close any browsers created
-		// BrowserManager.getInstance().closeAll();
-
 		if (getInstance().bookmarkManager != null) {
 			getInstance().bookmarkManager.close();
 			getInstance().bookmarkManager = null;
 		}
-
 		if (getInstance().searchManager != null) {
 			getInstance().searchManager.close();
 			getInstance().searchManager = null;
@@ -204,12 +156,9 @@ public final class BaseHelpSystem {
 		if (getInstance().webappStarted) {
 			// stop the web apps
 			WebappManager.stop("help"); //$NON-NLS-1$
-			if (getMode() != MODE_WORKBENCH)
+			if (getMode() != MODE_WORKBENCH) {
 				WebappManager.stop("helpControl"); //$NON-NLS-1$
-		}
-
-		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Help System is shut down."); //$NON-NLS-1$
+			}
 		}
 	}
 
@@ -222,21 +171,16 @@ public final class BaseHelpSystem {
 				public void displayError(String msg) {
 					System.out.println(msg);
 				}
-
 				public void displayError(String msg, Thread uiThread) {
 					System.out.println(msg);
 				}
-
 			});
 			HelpBasePlugin.getDefault().getPluginPreferences();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			HelpBasePlugin.getDefault().getLog().log(
 					new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 0,
-							"Error in launching help.", //$NON-NLS-1$
-							e));
-		}
-		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Base Help System started."); //$NON-NLS-1$
+							"Error launching help.", e)); //$NON-NLS-1$
 		}
 		
 		/*
@@ -254,19 +198,14 @@ public final class BaseHelpSystem {
 	public static boolean ensureWebappRunning() {
 		if (!getInstance().webappStarted) {
 			getInstance().webappStarted = true;
-
 			String webappPlugin = getWebappPlugin();
-
+			
 			if (getMode() != MODE_WORKBENCH) {
 				// start the help control web app
 				try {
-					WebappManager.start("helpControl", //$NON-NLS-1$
-							webappPlugin, Path.EMPTY);
+					WebappManager.start("helpControl", webappPlugin, Path.EMPTY); //$NON-NLS-1$
 				} catch (CoreException e) {
-					HelpBasePlugin
-							.logError(
-									"Stand-alone help control web application failed to run.", //$NON-NLS-1$
-									e);
+					HelpBasePlugin.logError("Stand-alone help control web application failed to run.", e); //$NON-NLS-1$
 					return false;
 				}
 			}
@@ -274,15 +213,11 @@ public final class BaseHelpSystem {
 			try {
 				WebappManager.start("help", webappPlugin, Path.EMPTY); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpBasePlugin
-						.logError(
-								"The embedded application server could not run help web application.", e); //$NON-NLS-1$
-				BaseHelpSystem.getDefaultErrorUtil().displayError(
-						HelpBaseResources.HelpWebappNotStarted);
+				HelpBasePlugin.logError("The embedded application server could not run help web application.", e); //$NON-NLS-1$
+				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.HelpWebappNotStarted);
 				return false;
 			}
 			getInstance().webappRunning = true;
-
 		}
 		return getInstance().webappRunning;
 	}
@@ -308,19 +243,23 @@ public final class BaseHelpSystem {
 
 	public static URL resolve(String href, String servlet) {
 		String url = null;
-		if (href == null || href.indexOf("://") != -1) //$NON-NLS-1$
+		if (href == null || href.indexOf("://") != -1) { //$NON-NLS-1$
 			url = href;
+		}
 		else {
 			BaseHelpSystem.ensureWebappRunning();
 			String base = getBase(servlet);
-			if (href.startsWith("/")) //$NON-NLS-1$
+			if (href.startsWith("/")) { //$NON-NLS-1$
 				url = base + href;
-			else
+			}
+			else {
 				url = base + "/" + href; //$NON-NLS-1$
+			}
 		}
 		try {
 			return new URL(url);
-		} catch (MalformedURLException e) {
+		}
+		catch (MalformedURLException e) {
 			return null;
 		}
 	}
@@ -335,8 +274,9 @@ public final class BaseHelpSystem {
 				getBase("/help/ntopic"),  //$NON-NLS-1$
 				getBase("/help/rtopic") }; //$NON-NLS-1$
 		for (int i = 0; i < baseVariants.length; i++) {
-			if (href.startsWith(baseVariants[i]))
+			if (href.startsWith(baseVariants[i])) {
 				return href.substring(baseVariants[i].length());
+			}
 		}
 		return href;
 	}
@@ -352,48 +292,40 @@ public final class BaseHelpSystem {
 				+ WebappManager.getPort() + servlet;
 	}
 
-	/**
-	 * Returns the mode.
-	 * 
-	 * @return int
+	/*
+	 * Returns the mode of operation.
 	 */
 	public static int getMode() {
 		return getInstance().mode;
 	}
 
-	/**
-	 * Sets the mode.
-	 * 
-	 * @param mode
-	 *            The mode to set
+	/*
+	 * Sets the mode of operation.
 	 */
 	public static void setMode(int mode) {
 		getInstance().mode = mode;
 		HelpSystem.setShared(mode == MODE_INFOCENTER);
 	}
 
-	/**
+	/*
 	 * Sets the error messenger
 	 */
 	public static void setDefaultErrorUtil(IErrorUtil em) {
 		getInstance().defaultErrorMessenger = em;
 	}
 
-	/**
+	/*
 	 * Returns the default error messenger. When no UI is present, all errors
 	 * are sent to System.out.
-	 * 
-	 * @return IErrorMessenger
 	 */
 	public static IErrorUtil getDefaultErrorUtil() {
 		return getInstance().defaultErrorMessenger;
 	}
 
-	/**
+	/*
 	 * Returns the plugin id that defines the help webapp
 	 */
 	private static String getWebappPlugin() {
-
 		// get the webapp extension from the system plugin registry
 		IExtensionPoint point = Platform.getExtensionRegistry()
 				.getExtensionPoint(WEBAPP_EXTENSION_ID);

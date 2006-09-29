@@ -15,10 +15,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -33,7 +30,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.xhtml.BundleUtil;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
 import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
 import org.xml.sax.Attributes;
@@ -52,7 +48,7 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 
 	private Stack stack = new Stack();
 	private SAXParser parser;
-	private Set filters;
+	private boolean hasFilters;
 
     /*
      * Load XHTML dtds from help base plugin location.
@@ -145,21 +141,8 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 		public void startElement(String uri, String localName, String qName, Attributes attributes)
 				throws SAXException {
 			stack.push(qName);
-			
-			/*
-			 * Keep track of all the filters this document. e.g.,
-			 * "os=macosx", "ws=carbon", ...
-			 */
-			String filterAttribute = attributes.getValue("filter"); //$NON-NLS-1$
-			if (filterAttribute != null) {
-				filters.add(filterAttribute);
-			}
-			if (qName.equalsIgnoreCase("filter")) { //$NON-NLS-1$
-				String name = attributes.getValue("name"); //$NON-NLS-1$
-				String value = attributes.getValue("value"); //$NON-NLS-1$
-				if (name != null && value != null) {
-					filters.add(name + '=' + value);
-				}
+			if (attributes.getValue("filter") != null || qName.equalsIgnoreCase("filter")) { //$NON-NLS-1$ //$NON-NLS-2$
+				hasFilters = true;
 			}
 		}
 
@@ -215,29 +198,28 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 	 */
 	public IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
 			Document doc) {
-		filters = new HashSet();
 		InputStream stream = null;
 		try {
-			if (parser == null)
+			if (parser == null) {
 				parser = SAXParserFactory.newInstance().newSAXParser();
+			}
 			stack.clear();
 			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
-			stream = DynamicXHTMLProcessor.process(name, url.openStream(), index.getLocale(), index instanceof SearchIndexCache);
+			stream = DynamicXHTMLProcessor.process(name, url.openStream(), index.getLocale(), false);
 			parser.parse(stream, handler);
 			doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
-			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
-					.newContentReader()));
+			doc.add(Field.Text("exact_contents", parsed.newContentReader())); //$NON-NLS-1$
 			String title = parsed.getTitle();
-			if (title != null)
+			if (title != null) {
 				addTitle(title, doc);
+			}
 			String summary = parsed.getSummary();
-			if (summary != null)
+			if (summary != null) {
 				doc.add(Field.UnIndexed("summary", summary)); //$NON-NLS-1$
-			// store the filters this document is sensitive to
-			if (doc.getField("filters") == null && filters.size() > 0) { //$NON-NLS-1$
-				filters = generalizeFilters(filters);
-				doc.add(Field.UnIndexed("filters", serializeFilters(filters))); //$NON-NLS-1$
+			}
+			if (hasFilters) {
+				doc.add(Field.UnIndexed("filters", "true")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return Status.OK_STATUS;
 		} catch (Exception e) {
@@ -288,66 +270,6 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 			if (i > 0)
 				buf.append("/"); //$NON-NLS-1$
 			buf.append((String) stack.get(i));
-		}
-		return buf.toString();
-	}
-	
-	/**
-	 * Given the set of all filters in a document, generalize the filters to
-	 * denote which filters this document is sensitive to. This strips off
-	 * all the environment-specific information. For single value filters like
-	 * os, simply keep the name of the filter. For multi value filters like plugin,
-	 * keep each name and value pair.
-	 * 
-	 * e.g.,
-	 * before: "os=linux,ws!=gtk,plugin!=org.eclipse.help,product=org.eclipse.sdk"
-	 * after:  "os,ws,plugin=org.eclipse.help,product"
-	 * 
-	 * @param filters the filters contained in the document
-	 * @return the filters this document is sensitive to in general
-	 */
-	private Set generalizeFilters(Set filters) {
-		Set processed = new HashSet();
-		Iterator iter = filters.iterator();
-		while (iter.hasNext()) {
-			String filter = (String)iter.next();
-			int index = filter.indexOf('=');
-			if (index > 0) {
-				String[] tokens = filter.split("!?="); //$NON-NLS-1$
-				String name = tokens[0]; 
-				String value = tokens[1];
-				// strip any leading NOT symbols ('!')
-				if (value != null && value.length() > 0 && value.charAt(0) == '!') {
-					value = value.substring(1);
-				}
-				if (XHTMLSupport.getFilterProcessor().isMultiValue(name)) {
-					processed.add(name + '=' + value);
-				}
-				else {
-					processed.add(name);
-				}
-			}
-		}
-		return processed;
-	}
-	
-	/**
-	 * Converts the given set of filters to string form. e.g.,
-	 * "os,arch,plugin=org.eclipse.help"
-	 * 
-	 * @param set the set of filters to serialize
-	 * @return the serialized string
-	 */
-	private String serializeFilters(Set set) {
-		StringBuffer buf = new StringBuffer();
-		Iterator iter = set.iterator();
-		boolean firstIter = true;
-		while (iter.hasNext()) {
-			if (!firstIter) {
-				buf.append(',');
-			}
-			firstIter = false;
-			buf.append(iter.next());
 		}
 		return buf.toString();
 	}

@@ -107,7 +107,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (urlEncodedWords.length() > 0) {
 				href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			}
-			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.getFilters()));
+			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.isPotentialHit()));
 		}
 		searchHits = (SearchHit[]) searchHitList
 				.toArray(new SearchHit[searchHitList.size()]);

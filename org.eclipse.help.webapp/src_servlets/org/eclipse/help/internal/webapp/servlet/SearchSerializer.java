@@ -42,8 +42,8 @@ public class SearchSerializer {
 		if (hit.getLabel() != null) {
 			buf.append('\n' + indent	+ "      label=\"" + XMLGenerator.xmlEscape(hit.getLabel()) + '"'); //$NON-NLS-1$
 		}
-		if (hit.getFilters() != null) {
-			buf.append('\n' + indent	+ "      filters=\"" + XMLGenerator.xmlEscape(hit.getFilters()) + '"'); //$NON-NLS-1$
+		if (hit.isPotentialHit()) {
+			buf.append('\n' + indent	+ "      isPotentialHit=\"true\""); //$NON-NLS-1$
 		}
 		buf.append('\n' + indent + "      score=\"" + hit.getScore() + '"'); //$NON-NLS-1$
 		buf.append(">\n"); //$NON-NLS-1$
