@@ -3,7 +3,7 @@ package org.eclipse.compare.internal.patch;
 import java.util.ResourceBundle;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.INavigatable;
 import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
@@ -100,9 +100,23 @@ public class CheckboxDiffTreeViewer extends ContainerCheckedTreeViewer {
 		Control tree= getControl();
 		
 		INavigatable nav= new INavigatable() {
-			public boolean gotoDifference(boolean next) {
+			public boolean selectChange(int flag) {
+				if (flag == INavigatable.FIRST_CHANGE) {
+					setSelection(StructuredSelection.EMPTY);
+					flag = INavigatable.NEXT_CHANGE;
+				} else if (flag == INavigatable.LAST_CHANGE) {
+					setSelection(StructuredSelection.EMPTY);
+					flag = INavigatable.PREVIOUS_CHANGE;
+				}
 				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-				return internalNavigate(next, true);
+				return internalNavigate(flag == INavigatable.NEXT_CHANGE, true);
+			}
+			public Object getInput() {
+				return CheckboxDiffTreeViewer.this.getInput();
+			}
+			public boolean openSelectedChange() {
+				internalOpen();
+				return true;
 			}
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);

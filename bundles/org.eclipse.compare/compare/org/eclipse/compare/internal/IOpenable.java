@@ -10,8 +10,11 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-/*
- * Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
+import org.eclipse.compare.INavigatable;
+
+/**
+ * This interface is being kept as it was required by clients in some situations.
+ * @deprecated use {@link INavigatable}
  */ 
 public interface IOpenable {
 	

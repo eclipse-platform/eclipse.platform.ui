@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.INavigatable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -1048,8 +1049,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		buildControl(parent);
 		
 		INavigatable nav= new INavigatable() {
-			public boolean gotoDifference(boolean next) {
-				return navigate(next, false, false);
+			public boolean selectChange(int flag) {
+				if (flag == INavigatable.FIRST_CHANGE || flag == INavigatable.LAST_CHANGE) {
+					selectFirstDiff(flag == INavigatable.FIRST_CHANGE);
+					return false;
+				}
+				return navigate(flag == INavigatable.NEXT_CHANGE, false, false);
+			}
+			public Object getInput() {
+				return TextMergeViewer.this.getInput();
+			}
+			public boolean openSelectedChange() {
+				return false;
 			}
 		};
 		fComposite.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
@@ -2143,7 +2154,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (selectDiff != null)
 				setCurrentDiff(selectDiff, true);
 			else
-				selectFirstDiff();
+				selectFirstDiff(true);
 		}
 	}
 
@@ -3394,7 +3405,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			updateVScrollBar();
 			refreshBirdsEyeView();
 			
-			selectFirstDiff();
+			selectFirstDiff(true);
 			
 //		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
 //			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
@@ -3457,11 +3468,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			updateVScrollBar();
 			refreshBirdsEyeView();
 			
-			selectFirstDiff();
+			selectFirstDiff(true);
 		}
 	}
 	
-	private void selectFirstDiff() {
+	private void selectFirstDiff(boolean first) {
 		
 		if (fLeft == null || fRight == null) {
 			return;
@@ -3471,12 +3482,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		
 		Diff firstDiff= null;
-		if (CompareNavigator.getDirection(fComposite))
+		if (first)
 			firstDiff= findNext(fRight, fChangeDiffs, -1, -1, false);
 		else
 			firstDiff= findPrev(fRight, fChangeDiffs, 9999999, 9999999, false);
 		setCurrentDiff(firstDiff, true);
 	}
+	
+	
 	
 	private void toggleSynchMode() {
 		fSynchronizedScrolling= ! fSynchronizedScrolling;
@@ -4304,7 +4317,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		doDiff();
 		invalidateLines();
 		updateVScrollBar();
-		selectFirstDiff();
+		selectFirstDiff(true);
 		refreshBirdsEyeView();
 	}
 

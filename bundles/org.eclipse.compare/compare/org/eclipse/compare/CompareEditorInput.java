@@ -175,7 +175,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Object getAdapter(Class adapter) {
 		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
 			if (fNavigator == null)
-				fNavigator= new CompareNavigator(
+				fNavigator= new org.eclipse.compare.internal.CompareNavigator(
 					new CompareViewerSwitchingPane[] {
 						fStructureInputPane,
 						fStructurePane1,

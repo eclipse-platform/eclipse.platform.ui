@@ -14,7 +14,6 @@ package org.eclipse.compare;
  * A <code>ICompareNavigator</code> is used to navigate through the individual
  * differences of a <code>CompareEditorInput</code>.
  * <p>
- * Please note: the following might change before the final release of Eclipse 3.0.
  * You can retrieve an object implementing the <code>ICompareNavigator</code> from a
  * <code>CompareEditorInput</code> by calling <code>getAdapter(ICompareNavigator)</code>
  * on the <code>CompareEditorInput</code>.

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.ICompareNavigator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Tree;
@@ -22,7 +22,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
  */
 public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implements IAdaptable {
 
-	private INavigatable nav;
+	private ICompareNavigator nav;
 	
 	/**
 	 * Interface used to implement navigation for tree viewers. This interface is used by
@@ -167,9 +167,9 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 
 	public AbstractTreeViewerAdvisor(ISynchronizePageConfiguration configuration) {
 		super(configuration);
-		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+		ICompareNavigator nav = (ICompareNavigator)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 		if (nav == null) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, getAdapter(INavigatable.class));
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, getAdapter(ICompareNavigator.class));
 		}
 		configuration.addActionContribution(new NavigationActionGroup());
 	}
@@ -191,10 +191,10 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if(adapter == INavigatable.class) {
+		if(adapter == ICompareNavigator.class) {
 			if(nav == null) {
-				nav = new INavigatable() {
-					public boolean gotoDifference(boolean next) {
+				nav = new ICompareNavigator() {
+					public boolean selectChange(boolean next) {
 						return AbstractTreeViewerAdvisor.this.navigate(next);
 					}
 				};

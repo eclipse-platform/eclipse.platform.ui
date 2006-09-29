@@ -16,7 +16,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.*;
 
 import org.eclipse.compare.internal.*;
@@ -37,7 +37,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * @since 2.0
  */
 public abstract class CompareViewerSwitchingPane extends CompareViewerPane
-				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener {
+				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener, IAdaptable {
 	
 	private Viewer fViewer;
 	private Object fInput;
@@ -351,6 +351,41 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	 */
 	public Object getInput() {
 		return fInput;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @since 3.3
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == INavigatable.class) {
+			if (isEmpty())
+				return null;
+			Viewer viewer= getViewer();
+			if (viewer == null)
+				return null;
+			Control control= viewer.getControl();
+			if (control == null)
+				return null;
+			Object data= control.getData(INavigatable.NAVIGATOR_PROPERTY);
+			if (data instanceof INavigatable)
+				return data;
+		}
+		if (adapter == IOpenable.class) { 
+			if (isEmpty())
+				return null;
+			Viewer viewer= getViewer();
+			if (viewer == null)
+				return null;
+			Control control= viewer.getControl();
+			if (control == null)
+				return null;
+			Object data= control.getData(IOpenable.OPENABLE_PROPERTY);
+			if (data instanceof IOpenable)
+				return data;
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 	/**

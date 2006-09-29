@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.CompareNavigator;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -30,8 +31,8 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.PartNavigator;
+import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -305,7 +306,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	 * outside of the framework.
 	 */
 	protected void setNavigator(ISynchronizePageConfiguration configuration) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new PartNavigator(
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new CompareNavigator(
 				new Object[] {
 					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
 					fStructuredComparePane,

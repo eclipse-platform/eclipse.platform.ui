@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
+/**
+ * The precursor to {@link org.eclipse.compare.INavigatable}. his interface is being kept as
+ * it was required by clients in some situations.
+ * @deprecated use {@link org.eclipse.compare.INavigatable}
+ */
 public interface INavigatable {
 	
 	static final String NAVIGATOR_PROPERTY= "org.eclipse.compare.internal.Navigator"; //$NON-NLS-1$

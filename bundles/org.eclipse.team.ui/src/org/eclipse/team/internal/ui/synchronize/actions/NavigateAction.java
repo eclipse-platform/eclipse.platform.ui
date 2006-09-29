@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ICompareNavigator;
-import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -60,21 +59,21 @@ public class NavigateAction extends Action {
  	 */
 	public void run() {
 		IWorkbenchSite ws = site.getWorkbenchSite();
-		INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+		ICompareNavigator nav = (ICompareNavigator)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 		if (nav != null && ws != null && ws instanceof IViewSite) {
 			navigateInView(nav);
 		} else {
-			nav.gotoDifference(next);
+			nav.selectChange(next);
 		}
 	}
 	
 	/*
 	 * Method that is invoked when the sync page is shown in a view.
 	 */
-	private void navigateInView(INavigatable nav) {
+	private void navigateInView(ICompareNavigator nav) {
 		Object selectedObject = getSelectedObject();
 		if(selectedObject == null) {
-			if(nav.gotoDifference(next)) {
+			if(nav.selectChange(next)) {
 				return;
 			} else {
 				selectedObject = getSelectedObject();
@@ -86,7 +85,7 @@ public class NavigateAction extends Action {
 		// sync info if the resource is a folder
 		SyncInfo syncInfo = getSyncInfoFromSelection();
 		if(syncInfo != null && syncInfo.getLocal().getType() != IResource.FILE) {
-			if(! nav.gotoDifference(next)) {
+			if(! nav.selectChange(next)) {
 				selectedObject = getSelectedObject();
 				OpenInCompareAction.openCompareEditor(participant, syncInfo, true /* keep focus */, site);
 			}
@@ -102,7 +101,7 @@ public class NavigateAction extends Action {
 				ICompareNavigator navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
 				if(navigator != null) {
 					if(navigator.selectChange(next)) {
-						if(! nav.gotoDifference(next)) {
+						if(! nav.selectChange(next)) {
 							selectedObject = getSelectedObject();
 							OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
 						}
@@ -113,7 +112,7 @@ public class NavigateAction extends Action {
 				IEditorInput input = OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
 				if (input == null) {
 					// We couldn't open a compare editor on the object so try the next change
-					if(! nav.gotoDifference(next)) {
+					if(! nav.selectChange(next)) {
 						selectedObject = getSelectedObject();
 						OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
 					}

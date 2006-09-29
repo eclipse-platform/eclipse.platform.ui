@@ -13,17 +13,17 @@ package org.eclipse.compare.structuremergeviewer;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import org.eclipse.compare.*;
+import org.eclipse.compare.internal.IOpenable;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.*;
-
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.*;
 
 /**
  * A tree viewer that works on objects implementing
@@ -175,9 +175,23 @@ public class DiffTreeViewer extends TreeViewer {
 		Control tree= getControl();
 		
 		INavigatable nav= new INavigatable() {
-			public boolean gotoDifference(boolean next) {
+			public boolean selectChange(int flag) {
+				if (flag == INavigatable.FIRST_CHANGE) {
+					setSelection(StructuredSelection.EMPTY);
+					flag = INavigatable.NEXT_CHANGE;
+				} else if (flag == INavigatable.LAST_CHANGE) {
+					setSelection(StructuredSelection.EMPTY);
+					flag = INavigatable.PREVIOUS_CHANGE;
+				}
 				// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-				return internalNavigate(next, true);
+				return internalNavigate(flag == INavigatable.NEXT_CHANGE, true);
+			}
+			public Object getInput() {
+				return DiffTreeViewer.this.getInput();
+			}
+			public boolean openSelectedChange() {
+				internalOpen();
+				return true;
 			}
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);

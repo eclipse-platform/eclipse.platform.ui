@@ -19,6 +19,9 @@ import org.eclipse.jface.text.IDocument;
  * model (for example, an {@link IDocument} for text based content) into the
  * underlying compare model ( most likely an instance of {@link IEditableContent}).
  * <p>
+ * This interface may ne implemented by clients.
+ * </p>
+ * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is a guarantee neither that this API will
  * work nor that it will remain the same. Please do not use this API without

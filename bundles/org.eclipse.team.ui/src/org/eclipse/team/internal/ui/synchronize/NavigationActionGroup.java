@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.internal.INavigatable;
+import org.eclipse.compare.ICompareNavigator;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -48,7 +48,7 @@ public class NavigationActionGroup extends SynchronizePageActionGroup {
 			};
 			Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
 			
-			INavigatable nav = (INavigatable)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+			ICompareNavigator nav = (ICompareNavigator)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
 			if (nav != null) {
 				ISynchronizeParticipant participant = configuration.getParticipant();
 				ISynchronizePageSite site = configuration.getSite();
