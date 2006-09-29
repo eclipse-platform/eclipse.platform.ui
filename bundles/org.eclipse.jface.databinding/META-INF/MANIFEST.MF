@@ -26,7 +26,6 @@ Export-Package: org.eclipse.jface.databinding,
  org.eclipse.jface.internal.databinding.provisional.factories;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.observable;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.observable.mapping;x-internal:=false,
- org.eclipse.jface.internal.databinding.provisional.observable.tree;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.swt;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.validation;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.viewers;x-internal:=false
