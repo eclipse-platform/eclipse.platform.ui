@@ -923,13 +923,13 @@ public class CVSSSH2PreferencePage extends PreferencePage
       if(attr==null){
         try{ c.mkdir(".ssh"); } //$NON-NLS-1$
 	catch(SftpException ee){
-	  setErrorMessage(ee.message);
+	  setErrorMessage(ee.getMessage());
 	  return;
 	}
       }
       try{ c.cd(".ssh"); } //$NON-NLS-1$
       catch(SftpException ee){
-	setErrorMessage(ee.message);
+	setErrorMessage(ee.getMessage());
 	return;
       }
 
