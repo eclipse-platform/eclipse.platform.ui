@@ -76,8 +76,10 @@ public class ShowAnnotationOperation extends CVSOperation {
 		final AnnotateListener listener= new AnnotateListener();
 		fetchAnnotation(listener, fCVSResource, fRevision, Policy.subMonitorFor(monitor, 80));
 
-		// this is not needed if there is a live editor - but we don't know, and the user might have closed the live editor since...
-		if (!useLiveAnnotate)
+		// If we're not using live annotate or the file is a remote file,
+		// we need to fetch the contents to ensure the encoding is correct
+		// (i.e. the contents from the annotate command will only work if the file is ASCII).
+		if (!useLiveAnnotate || fCVSResource.getIResource() == null)
 			fetchContents(listener, Policy.subMonitorFor(monitor, 20));
 
 		// this is not needed if there is no live annotate
