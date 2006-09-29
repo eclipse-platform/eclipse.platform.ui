@@ -70,7 +70,7 @@ public class MappedSet extends ObservableSet {
 				Object oldFunctionValue = diff.getOldMappingValues(element,
 						new int[] { 0 })[0];
 				Object newFunctionValue = diff.getNewMappingValues(element,
-						new int[] { 0 });
+						new int[] { 0 })[0];
 				if (handleRemoval(oldFunctionValue)) {
 					removals.add(oldFunctionValue);
 				}
