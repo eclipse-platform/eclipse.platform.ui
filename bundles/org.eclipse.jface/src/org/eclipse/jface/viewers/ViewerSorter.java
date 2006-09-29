@@ -11,7 +11,6 @@
 package org.eclipse.jface.viewers;
 
 import java.text.Collator; // can't use ICU - Collator used in public API
-import java.util.Comparator;
 
 /**
  * A viewer sorter is used by a {@link StructuredViewer} to reorder the elements 
@@ -38,6 +37,9 @@ import java.util.Comparator;
 public class ViewerSorter extends ViewerComparator {
     /**
      * The collator used to sort strings.
+     * 
+     * @deprecated as of 3.3 
+     * @see {@link ViewerComparator#getComparator()}
      */
     protected Collator collator;
 
@@ -56,6 +58,7 @@ public class ViewerSorter extends ViewerComparator {
      * @param collator the collator to use to sort strings
      */
     public ViewerSorter(Collator collator) {
+    	super(collator);
         this.collator = collator;
     }
 
@@ -63,16 +66,11 @@ public class ViewerSorter extends ViewerComparator {
      * Returns the collator used to sort strings.
      *
      * @return the collator used to sort strings
+     * @deprecated as of 3.3
+     * @see {@link ViewerComparator#getComparator()}
      */
     public Collator getCollator() {
         return collator;
     }
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ViewerComparator#getComparator()
-	 */
-	protected Comparator getComparator() {
-		return getCollator();
-	}
 }
