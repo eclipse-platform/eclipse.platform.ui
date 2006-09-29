@@ -19,25 +19,18 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * TableViewer: Highlight cell and support editing which requires SWT.FULL_SELECTION
+ * Edit cell values in a table
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class FullSelectionSnippet {
+public class Snippet009CellEditors {
 	private class MyContentProvider implements IStructuredContentProvider {
 
 		/* (non-Javadoc)
@@ -75,20 +68,29 @@ public class FullSelectionSnippet {
 		}
 	}
 	
-	public FullSelectionSnippet(Shell shell) {
+	public Snippet009CellEditors(Shell shell) {
 		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
 		v.setCellModifier(new ICellModifier() {
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
+			 */
 			public boolean canModify(Object element, String property) {
 				return ((MyModel)element).counter % 2 == 0;
 			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
+			 */
 			public Object getValue(Object element, String property) {
 				return ((MyModel)element).counter + "";
 			}
 
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.ICellModifier#modify(java.lang.Object, java.lang.String, java.lang.Object)
+			 */
 			public void modify(Object element, String property, Object value) {
 				TableItem item = (TableItem)element;
 				((MyModel)item.getData()).counter = Integer.parseInt(value.toString());
@@ -96,71 +98,13 @@ public class FullSelectionSnippet {
 			}
 			
 		});
-		v.setColumnProperties(new String[] { "column1", "column2" });
-		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()),null });
+		v.setColumnProperties(new String[] { "column1" });
+		v.setCellEditors(new CellEditor[] { new TextCellEditor(v.getTable()) });
 		
-		TableColumn column = new TableColumn(v.getTable(),SWT.NONE);
-		column.setWidth(100);
-		column.setText("Column 1");
-		
-		column = new TableColumn(v.getTable(),SWT.NONE);
-		column.setWidth(100);
-		column.setText("Column 2");
 		
 		MyModel[] model = createModel();
 		v.setInput(model);
 		v.getTable().setLinesVisible(true);
-		v.getTable().setHeaderVisible(true);
-		
-		final Rectangle[] selectionBounds = new Rectangle[1];
-		
-		v.getTable().addListener(SWT.MouseDown, new Listener() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				TableItem item = v.getTable().getItem(new Point(event.x,event.y));
-				if( item != null ) {
-					int count = v.getTable().getColumnCount();
-					
-					if( count == 0 ) {
-						selectionBounds[0] = item.getBounds();
-					}
-					
-					for( int i = 0; i < count; i++ ) {
-						if( item.getBounds(i).contains(event.x,event.y) ) {
-							selectionBounds[0] = item.getBounds(i);
-							return;
-						}
-					}
-				}
-			}
-			
-		});
-		
-		v.getTable().addListener(SWT.EraseItem, new Listener() {
-
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
-			public void handleEvent(Event event) {
-				if((event.detail & SWT.SELECTED) != 0) {
-					if( selectionBounds[0] != null ) {
-						GC gc = event.gc;
-
-						Color background = gc.getBackground();
-						gc.setBackground(v.getTable().getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-						gc.fillRectangle(selectionBounds[0].x,selectionBounds[0].y,selectionBounds[0].width,selectionBounds[0].height);
-						gc.setBackground(background);
-						
-					}
-					
-					event.detail &= ~SWT.SELECTED;
-				}
-			}
-		});
-		
 	}
 	
 	private MyModel[] createModel() {
@@ -180,7 +124,7 @@ public class FullSelectionSnippet {
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new FullSelectionSnippet(shell);
+		new Snippet009CellEditors(shell);
 		shell.open ();
 		
 		while (!shell.isDisposed ()) {

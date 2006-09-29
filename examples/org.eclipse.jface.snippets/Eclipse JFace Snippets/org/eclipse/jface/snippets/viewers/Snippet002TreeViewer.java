@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class SimpleTreeViewerSnippet {
+public class Snippet002TreeViewer {
 	private class MyContentProvider implements ITreeContentProvider {
 		
 		/* (non-Javadoc)
@@ -100,7 +100,7 @@ public class SimpleTreeViewerSnippet {
 		}
 	}
 	
-	public SimpleTreeViewerSnippet(Shell shell) {
+	public Snippet002TreeViewer(Shell shell) {
 		final TreeViewer v = new TreeViewer(shell);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -128,7 +128,7 @@ public class SimpleTreeViewerSnippet {
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new SimpleTreeViewerSnippet(shell);
+		new Snippet002TreeViewer(shell);
 		shell.open ();
 		
 		while (!shell.isDisposed ()) {

@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class HideSelectionSnippet {
+public class Snippet004HideSelection {
 	private class MyContentProvider implements IStructuredContentProvider {
 
 		/* (non-Javadoc)
@@ -67,7 +67,7 @@ public class HideSelectionSnippet {
 		}
 	}
 	
-	public HideSelectionSnippet(Shell shell) {
+	public Snippet004HideSelection(Shell shell) {
 		final TableViewer v = new TableViewer(shell,SWT.BORDER|SWT.FULL_SELECTION);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -105,7 +105,7 @@ public class HideSelectionSnippet {
 		Display display = new Display ();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new HideSelectionSnippet(shell);
+		new Snippet004HideSelection(shell);
 		shell.open ();
 		
 		while (!shell.isDisposed ()) {

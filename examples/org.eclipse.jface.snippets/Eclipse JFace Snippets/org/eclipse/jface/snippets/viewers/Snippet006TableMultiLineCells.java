@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
-public class MultiLineExample {
+public class Snippet006TableMultiLineCells {
 
 	public static void main(String[] args) {
 
@@ -29,7 +29,7 @@ public class MultiLineExample {
 		shell.setSize(400, 400);
 		shell.setLayout(new GridLayout());
 
-		MultiLineExample example = new MultiLineExample();
+		Snippet006TableMultiLineCells example = new Snippet006TableMultiLineCells();
 		example.createPartControl(shell);
 
 		shell.open();
@@ -104,7 +104,7 @@ public class MultiLineExample {
 
 	private LineEntry[] entries;
 
-	public MultiLineExample() {
+	public Snippet006TableMultiLineCells() {
 		String[] lines = new String[] {
 				"This day is called the feast of Crispian:",
 				"He that outlives this day, \n and comes safe home,",

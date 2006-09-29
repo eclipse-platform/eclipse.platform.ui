@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  *
  */
-public class IMenuListenerSnippet {
+public class Snippet005TreeCustomMenu {
 	private class MyContentProvider implements ITreeContentProvider {
 
 		public Object[] getElements(Object inputElement) {
@@ -104,7 +104,7 @@ public class IMenuListenerSnippet {
 		}
 	}
 
-	public IMenuListenerSnippet(Shell shell) {
+	public Snippet005TreeCustomMenu(Shell shell) {
 		final TreeViewer v = new TreeViewer(shell);
 		v.setLabelProvider(new LabelProvider());
 		v.setContentProvider(new MyContentProvider());
@@ -155,7 +155,7 @@ public class IMenuListenerSnippet {
 		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
-		new IMenuListenerSnippet(shell);
+		new Snippet005TreeCustomMenu(shell);
 		shell.open();
 
 		while (!shell.isDisposed()) {

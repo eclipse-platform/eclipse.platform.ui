@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
 
-public class OwnerDrawExample {
+public class Snippet010OwnerDraw {
 
 	public static void main(String[] args) {
 
@@ -29,7 +29,7 @@ public class OwnerDrawExample {
 		shell.setSize(400, 400);
 		shell.setLayout(new GridLayout());
 
-		OwnerDrawExample example = new OwnerDrawExample();
+		Snippet010OwnerDraw example = new Snippet010OwnerDraw();
 		example.createPartControl(shell);
 
 		shell.open();
@@ -295,7 +295,7 @@ public class OwnerDrawExample {
 
 	private CountryEntry[] entries;
 
-	public OwnerDrawExample() {
+	public Snippet010OwnerDraw() {
 		entries = new CountryEntry[3];
 		entries[0] = new AustriaEntry();
 		entries[1] = new GermanyEntry();

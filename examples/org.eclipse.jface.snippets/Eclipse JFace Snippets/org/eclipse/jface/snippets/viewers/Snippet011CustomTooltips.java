@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * @author Tom Schindl <tom.schindl@bestsolution.at>
  * @since 3.3M2
  */
-public class CustomTooltipsSnippet {
+public class Snippet011CustomTooltips {
 	private static class MyContentProvider implements IStructuredContentProvider {
 
 		public Object[] getElements(Object inputElement) {
