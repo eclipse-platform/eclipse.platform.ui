@@ -408,13 +408,16 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	
 	/**
 	 * The given watch expression has changed. Update the persisted
-	 * expressions to store this change.
+	 * expressions to store this change as indicated
 	 * 
 	 * @param expression the changed expression
+	 * @param persist whether to persist the expressions
 	 */
-	protected void watchExpressionChanged(IWatchExpression expression) {
+	protected void watchExpressionChanged(IWatchExpression expression, boolean persist) {
 		if (fExpressions != null && fExpressions.contains(expression)) {
-			storeWatchExpressions();
+			if (persist) {
+				storeWatchExpressions();
+			}
 			fireUpdate(new IExpression[]{expression}, CHANGED);
 		}
 	}

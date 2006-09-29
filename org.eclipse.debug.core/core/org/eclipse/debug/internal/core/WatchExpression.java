@@ -134,9 +134,11 @@ public class WatchExpression implements IWatchExpression {
 	 * Notifies the expression manager that this watch expression's
 	 * values have changed so the manager can update the
 	 * persisted expression.
+	 * 
+	 * @param persist whether to persist the expression
 	 */
-	private void watchExpressionChanged() {
-		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this);
+	private void watchExpressionChanged(boolean persist) {
+		((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).watchExpressionChanged(this, persist);
 	}
 
 	/**
@@ -202,7 +204,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setEnabled(boolean enabled) {
 		fEnabled= enabled;
-		watchExpressionChanged();
+		watchExpressionChanged(true);
 		evaluate();
 	}
 
@@ -211,7 +213,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setExpressionText(String expression) {
 		fExpressionText= expression;
-		watchExpressionChanged();
+		watchExpressionChanged(true);
 		evaluate();
 	}
 
@@ -239,7 +241,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setPending(boolean pending) {
 		fPending= pending;
-		watchExpressionChanged();
+		watchExpressionChanged(false);
 	}
 
 	/* (non-Javadoc)
