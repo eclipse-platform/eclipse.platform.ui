@@ -47,10 +47,6 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	private DiffFilter filter;
 	private int state = STATE_NEW;
 	private int exceptionState = EXCEPTION_NONE;
-	
-	public interface IDiffFilterProvider {
-		public DiffFilter getFilter();
-	}
 
 	/*
 	 * An event used to represent a change in a diff
@@ -104,15 +100,12 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	 * @param manager the scope of the handler
 	 * @param tree the tree to be populated by this handler
 	 */
-	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScopeManager manager, ResourceDiffTree tree) {
+	public SubscriberDiffTreeEventHandler(Subscriber subscriber, ISynchronizationScopeManager manager, ResourceDiffTree tree, DiffFilter filter) {
 		super(subscriber, manager.getScope());
 		this.manager = manager;
 		this.tree = tree;
 		this.collector = new SubscriberDiffCollector(subscriber);
-		if (subscriber instanceof IDiffFilterProvider) {
-			IDiffFilterProvider dfp = (IDiffFilterProvider) subscriber;
-			filter = dfp.getFilter();
-		}
+		this.filter = filter;
 	}
 
 	protected void reset(ResourceTraversal[] traversals, int type) {
@@ -241,15 +234,10 @@ public class SubscriberDiffTreeEventHandler extends SubscriberEventHandler {
 	}
 
 	private void addDiff(IDiff diff, IProgressMonitor monitor) {
-		if (filter == null) {
+		if (filter == null || filter.select(diff, monitor)) {
 			tree.add(diff);
 		} else {
-			boolean contentsEqual = filter.select(diff, monitor);
-			if (contentsEqual) {
-				tree.remove(diff.getPath());
-			} else {
-				tree.add(diff);
-			}
+			tree.remove(diff.getPath());
 		}
 	}
 

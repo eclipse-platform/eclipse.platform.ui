@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
+import org.eclipse.team.core.diff.DiffFilter;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.MergeContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -58,11 +59,20 @@ public abstract class SubscriberMergeContext extends MergeContext {
 	 * be called before the context is given to clients.
 	 */
 	protected void initialize() {
-		handler = new SubscriberDiffTreeEventHandler(subscriber, manager, (ResourceDiffTree)getDiffTree());
+		handler = new SubscriberDiffTreeEventHandler(subscriber, manager, (ResourceDiffTree)getDiffTree(), getDiffFilter());
 		handler.setJobFamily(this);
 		handler.start();
 	}
 	
+	/**
+	 * Return the diff filter used to filter the differences that the merge context will present to clients.
+	 * @return the diff filter used to filter the differences that the merge context will present to clients
+	 * @since 3.3
+	 */
+	protected DiffFilter getDiffFilter() {
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.core.mapping.ISynchronizationContext#refresh(org.eclipse.core.resources.mapping.ResourceTraversal[], int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
