@@ -11,6 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.spreadsheet;
 
+import java.text.NumberFormat;
+
 import org.eclipse.jface.databinding.observable.value.ComputedValue;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
@@ -39,12 +41,14 @@ public class Spreadsheet {
 	/**
 	 * 
 	 */
-	private static final int NUM_COLUMNS = 10;
+	private static final int NUM_COLUMNS = 26;
 
 	/**
 	 * 
 	 */
-	private static final int NUM_ROWS = 30;
+	private static final int NUM_ROWS = 200;
+
+	private static boolean DEBUG = false;
 
 	static WritableValue[][] cellFormulas = new WritableValue[NUM_ROWS][NUM_COLUMNS];
 
@@ -53,22 +57,70 @@ public class Spreadsheet {
 	static class ComputedCellValue extends ComputedValue {
 		private final IObservableValue cellFormula;
 
+		private boolean calculating;
+
 		ComputedCellValue(IObservableValue cellFormula) {
 			this.cellFormula = cellFormula;
 		}
 
 		protected Object calculate() {
-			return evaluate(cellFormula.getValue());
+			if (calculating) {
+				return "#cycle";
+			}
+			try {
+				calculating = true;
+				return evaluate(cellFormula.getValue());
+			} finally {
+				calculating = false;
+			}
 		}
 
 		private Object evaluate(Object value) {
-			System.out.println("evaluating...");
+			if (DEBUG) {
+				System.out.println("evaluating...");
+			}
 			if (value == null) {
 				return "";
 			}
-			return value;
+			try {
+				String s = (String) value;
+				if (!s.startsWith("=")) {
+					return s;
+				}
+				String addition = s.substring(1);
+				int indexOfPlus = addition.indexOf('+');
+				String operand1 = addition.substring(0, indexOfPlus);
+				double value1 = eval(operand1);
+				String operand2 = addition.substring(indexOfPlus + 1);
+				double value2 = eval(operand2);
+				return NumberFormat.getNumberInstance().format(value1 + value2);
+			} catch (Exception ex) {
+				return ex.getMessage();
+			}
 		}
-	};
+
+		/**
+		 * @param s
+		 * @return
+		 */
+		private double eval(String s) {
+			if (s.length() == 0) {
+				return 0;
+			}
+			char character = s.charAt(0);
+			if (Character.isLetter(character)) {
+				character = Character.toLowerCase(character);
+				// reference to other cell
+				int columnIndex = character - 'a';
+				int rowIndex = Integer
+						.parseInt(Character.toString(s.charAt(1))) - 1;
+				String value = (String) cellValues[rowIndex][columnIndex]
+						.getValue();
+				return value.length() == 0 ? 0 : Double.parseDouble(value);
+			}
+			return Double.parseDouble(s);
+		}
+	}
 
 	public static void main(String[] args) {
 
@@ -78,23 +130,28 @@ public class Spreadsheet {
 		final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
 				| SWT.FULL_SELECTION);
 		table.setLinesVisible(true);
+		table.setHeaderVisible(true);
 
 		for (int i = 0; i < NUM_COLUMNS; i++) {
-			new TableColumn(table, SWT.NONE).setWidth(40);
+			TableColumn tableColumn = new TableColumn(table, SWT.NONE);
+			tableColumn.setText(Character.toString((char) ('A' + i)));
+			tableColumn.setWidth(40);
 		}
 		for (int i = 0; i < NUM_ROWS; i++) {
 			new TableItem(table, SWT.NONE);
 			for (int j = 0; j < NUM_COLUMNS; j++) {
 				cellFormulas[i][j] = new WritableValue(null);
 				cellValues[i][j] = new ComputedCellValue(cellFormulas[i][j]);
-				cellFormulas[i][j].setValue(i + ":" + j);
+				cellFormulas[i][j].setValue("");
 			}
 		}
 
 		new TableUpdater(table) {
 			protected void updateItem(TableItem item) {
 				int rowIndex = item.getParent().indexOf(item);
-				System.out.println("updating row " + rowIndex);
+				if (DEBUG) {
+					System.out.println("updating row " + rowIndex);
+				}
 				for (int j = 0; j < NUM_COLUMNS; j++) {
 					item
 							.setText(j, (String) cellValues[rowIndex][j]
@@ -125,8 +182,10 @@ public class Spreadsheet {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				final Text text = new Text(cursor, SWT.NONE);
 				TableItem row = cursor.getRow();
-				int column = cursor.getColumn();
-				text.setText(row.getText(column));
+				int rowIndex = table.indexOf(row);
+				int columnIndex = cursor.getColumn();
+				text.setText((String) cellFormulas[rowIndex][columnIndex]
+						.getValue());
 				text.addKeyListener(new KeyAdapter() {
 					public void keyPressed(KeyEvent e) {
 						// close the text editor and copy the data over
