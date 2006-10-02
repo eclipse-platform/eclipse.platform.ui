@@ -266,7 +266,8 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 			public void doubleClick(DoubleClickEvent event) {
 				IStructuredSelection sel = ((IStructuredSelection) tableViewer
 						.getSelection());
-				if (sel.getFirstElement() != null) {
+				Object firstElem = sel.getFirstElement();
+				if (firstElem != null && !(firstElem instanceof SystemBrowserDescriptor)) {
 					IBrowserDescriptor browser2 = (IBrowserDescriptor) sel
 							.getFirstElement();
 					IBrowserDescriptorWorkingCopy wc = browser2
