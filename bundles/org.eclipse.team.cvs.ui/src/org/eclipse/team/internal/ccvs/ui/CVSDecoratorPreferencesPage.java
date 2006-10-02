@@ -375,13 +375,18 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			preferences.setValue(ICVSUIConstants.PREF_CALCULATE_DIRTY, fShowDirty.getSelection());
 			preferences.setValue(ICVSUIConstants.PREF_USE_FONT_DECORATORS, fUseFontDecorations.getSelection());
 		}
+		
+		public boolean isFontDecorationEnabled() {
+			return this.fUseFontDecorations.getEnabled();
+		}
+		
 	}
 	
 	public class Preview extends LabelProvider implements Observer, ITreeContentProvider {
 		
 		private final ResourceManager fImageCache;
 		private final TreeViewer fViewer; 
-
+		
 		public Preview(Composite composite) {
             SWTUtils.createLabel(composite, CVSUIMessages.CVSDecoratorPreferencesPage_39);
 			fImageCache= new LocalResourceManager(JFaceResources.getResources());
@@ -395,6 +400,30 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		
 		public void refresh() {
 			fViewer.refresh(true);
+			setColorsAndFonts();
+		}
+		
+		private void setColorsAndFonts() {
+			TreeItem[] items = fViewer.getTree().getItems();
+			setColorsAndFonts(items);
+		}
+		
+		private void setColorsAndFonts(TreeItem[] items) {
+			for (int i = 0; i < items.length; i++) {
+				if (fGeneralTab.isFontDecorationEnabled()) {
+					Color backGroundColor = getBackground(items[i].getData());
+					items[i].setBackground(backGroundColor);
+					Color foreGroundColor = getForeground(items[i].getData());
+					items[i].setForeground(foreGroundColor);
+					Font font = getFont(items[i].getData());
+					items[i].setFont(font);
+				} else {
+					items[i].setBackground(null);
+					items[i].setForeground(null);
+					items[i].setFont(null);
+				}
+				setColorsAndFonts(items[i].getItems());
+			}
 		}
 		
 		public void update(Observable o, Object arg) {
