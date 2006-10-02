@@ -48,7 +48,7 @@ class CommentHistoryContentHandler extends DefaultHandler {
 			return;
 		} 
 		if (elementName.equals(RepositoryManager.ELEMENT_COMMIT_HISTORY)) {
-			comments = new Vector(RepositoryManager.MAX_COMMENTS);
+			comments = new Vector(RepositoryManager.DEFAULT_MAX_COMMENTS);
 			return;
 		}
 	}

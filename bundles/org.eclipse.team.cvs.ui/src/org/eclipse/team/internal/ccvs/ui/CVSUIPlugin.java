@@ -539,6 +539,7 @@ public class CVSUIPlugin extends AbstractUIPlugin {
         store.setDefault(ICVSUIConstants.PREF_ENABLE_WATCH_ON_EDIT, false);
         store.setDefault(ICVSUIConstants.PREF_USE_PROJECT_NAME_ON_CHECKOUT, false);
         store.setDefault(ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD, 1000);
+        store.setDefault(ICVSUIConstants.PREF_COMMIT_COMMENTS_MAX_HISTORY, RepositoryManager.DEFAULT_MAX_COMMENTS);
 		
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_COMMAND_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(store, ICVSUIConstants.PREF_CONSOLE_MESSAGE_COLOR, new RGB(0, 0, 255));

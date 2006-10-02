@@ -414,6 +414,27 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
                 }
             }
         };
+        new TextField(
+        		textComposite, 
+        		ICVSUIConstants.PREF_COMMIT_COMMENTS_MAX_HISTORY, 
+        		"Maximum number of comments on &history:", 
+        		null) {
+        	protected void modifyText(Text text) {
+        		try {
+        			final int x = Integer.parseInt(text.getText());
+        			if (x > 0) {
+        				setErrorMessage(null);
+        				setValid(true);
+        			} else {
+        				setErrorMessage("Maximum number of comments must be positive"); 
+        				setValid(false);
+        			}
+        		} catch (NumberFormatException ex) {
+        			setErrorMessage("Maximum number of comments must be a number"); 
+        			setValid(false);
+        		}
+        	}
+        };
         
 		return composite;
 	}

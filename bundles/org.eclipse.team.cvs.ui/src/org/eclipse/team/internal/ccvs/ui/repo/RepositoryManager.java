@@ -15,15 +15,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.xml.parsers.*;
 
@@ -32,6 +24,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
@@ -77,7 +72,20 @@ public class RepositoryManager {
 	private int notificationLevel = 0;
 	private Map changedRepositories = new HashMap();
 	
-	static final int MAX_COMMENTS = 10;
+	public static final int DEFAULT_MAX_COMMENTS = 10;
+	
+	private int maxComments = DEFAULT_MAX_COMMENTS;
+	
+	public void setMaxComments(int maxComments) {
+		if (maxComments > 0) {
+			this.maxComments = maxComments;
+			if (maxComments < previousComments.length) {
+				String[] newComments = new String[maxComments];
+				System.arraycopy(previousComments, 0, newComments, 0, maxComments);
+				previousComments = newComments;
+			}
+		}
+	}
 	
 	/**
 	 * Answer an array of all known remote roots.
@@ -326,6 +334,25 @@ public class RepositoryManager {
 				rootRemoved(root);
 			}
 		});
+		
+		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+		store.addPropertyChangeListener(new IPropertyChangeListener() {
+
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(ICVSUIConstants.PREF_COMMIT_COMMENTS_MAX_HISTORY)) {
+					Object newValue = event.getNewValue();
+					if (newValue instanceof String) {
+						try {
+							setMaxComments(Integer.parseInt((String) newValue));
+						} catch (NumberFormatException e) {
+							// fail silently
+						}
+					}
+				}
+			}
+			
+		});
+		setMaxComments(store.getInt(ICVSUIConstants.PREF_COMMIT_COMMENTS_MAX_HISTORY));
 	}
 	
 	public void shutdown() throws TeamException {
@@ -548,7 +575,7 @@ public class RepositoryManager {
 	}
 	private void writeCommentHistory(XMLWriter writer) {
 		writer.startTag(ELEMENT_COMMIT_HISTORY, null, false);
-		for (int i=0; i<previousComments.length && i<MAX_COMMENTS; i++)
+		for (int i = 0; i < previousComments.length && i < maxComments; i++)
 			writer.printSimpleTag(ELEMENT_COMMIT_COMMENT, previousComments[i]);
 		writer.endTag(ELEMENT_COMMIT_HISTORY);
 	}
@@ -827,7 +854,7 @@ public class RepositoryManager {
 			return;
 		
 		// Insert the comment as the first element
-		String[] newComments = new String[Math.min(previousComments.length + 1, MAX_COMMENTS)];
+		String[] newComments = new String[Math.min(previousComments.length + 1, maxComments)];
 		newComments[0] = comment;
 		for (int i = 1; i < newComments.length; i++) {
 			newComments[i] = previousComments[i-1];

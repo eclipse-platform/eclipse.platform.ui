@@ -111,6 +111,7 @@ public interface ICVSUIConstants {
 	public final String PREF_COMMIT_SET_DEFAULT_ENABLEMENT = "pref_enable_commit_sets"; //$NON-NLS-1$
 	public final String PREF_AUTO_REFRESH_TAGS_IN_TAG_SELECTION_DIALOG = "pref_auto_refresh_tags_in_tag_selection_dialog"; //$NON-NLS-1$
     public final String PREF_COMMIT_FILES_DISPLAY_THRESHOLD = "pref_commit_files_display_threshold"; //$NON-NLS-1$
+    public final String PREF_COMMIT_COMMENTS_MAX_HISTORY = "pref_commit_comments_max_history"; //$NON-NLS-1$
     public final String PREF_AUTO_SHARE_ON_IMPORT = "pref_auto_share_on_import"; //$NON-NLS-1$
 	public final String PREF_ENABLE_WATCH_ON_EDIT = "pref_enable_watch_on_edit"; //$NON-NLS-1$ 
     public final String PREF_USE_PROJECT_NAME_ON_CHECKOUT = "pref_use_project_name_on_checkout"; //$NON-NLS-1$
