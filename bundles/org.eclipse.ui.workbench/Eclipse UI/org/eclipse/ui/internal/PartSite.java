@@ -137,7 +137,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 	private WorkbenchSiteProgressService progressService;
 
-	private final ServiceLocator serviceLocator;
+	protected final ServiceLocator serviceLocator;
 
 	/**
 	 * Build the part site.

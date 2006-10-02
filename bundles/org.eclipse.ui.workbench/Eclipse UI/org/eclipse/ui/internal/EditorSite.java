@@ -22,6 +22,7 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.SubActionBars2;
+import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
@@ -52,8 +53,21 @@ public class EditorSite extends PartSite implements IEditorSite {
             setId(desc.getId());
             setRegisteredName(desc.getLabel());
         }
+
+		// Initialize the services specific to this editor site.
+        initializeDefaultServices();
     }
 
+	/**
+	 * Initialize the local services.
+	 */
+	private void initializeDefaultServices() {
+		// Register an implementation of the service appropriate for the 
+		// EditorSite.
+		final IDragAndDropService editorDTService = new EditorSiteDragAndDropServiceImpl();
+		serviceLocator.registerService(IDragAndDropService.class, editorDTService);
+	}
+	
     public void setActionBars(SubActionBars bars) {
         super.setActionBars(bars);
         

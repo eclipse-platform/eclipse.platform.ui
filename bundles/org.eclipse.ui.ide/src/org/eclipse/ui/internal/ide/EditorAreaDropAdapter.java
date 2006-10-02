@@ -53,11 +53,13 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
     public void dragEnter(DropTargetEvent event) {
         // always indicate a copy
         event.detail = DND.DROP_COPY;
+        event.feedback = DND.FEEDBACK_NONE;
     }
 
     public void dragOperationChanged(DropTargetEvent event) {
         // always indicate a copy
         event.detail = DND.DROP_COPY;
+        event.feedback = DND.FEEDBACK_NONE;
     }
 
     public void drop(final DropTargetEvent event) {

@@ -15,8 +15,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -36,6 +44,50 @@ public class ReadmeEditor extends TextEditor {
         super();
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.StatusTextEditor#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+		super.createPartControl(parent);
+		
+		StyledText tw = getSourceViewer().getTextWidget();
+		
+		// Add a 'TextTransfer' drop target to the editor
+		int ops = DND.DROP_DEFAULT | DND.DROP_COPY;
+		Transfer[] transfers = { TextTransfer.getInstance() };
+		DropTargetListener editorListener = new DropTargetListener() {
+
+			public void dragEnter(DropTargetEvent event) {
+				event.detail = DND.DROP_COPY;
+			}
+
+			public void dragLeave(DropTargetEvent event) {
+			}
+
+			public void dragOperationChanged(DropTargetEvent event) {
+				event.detail = DND.DROP_COPY;
+			}
+
+			public void dragOver(DropTargetEvent event) {
+				event.feedback = DND.FEEDBACK_SCROLL | DND.FEEDBACK_SELECT;
+			}
+
+			public void drop(DropTargetEvent event) {
+		        if (TextTransfer.getInstance().isSupportedType(event.currentDataType)) {
+					String text = (String) event.data;
+					getSourceViewer().getTextWidget().insert(text);
+				} 
+			}
+
+			public void dropAccept(DropTargetEvent event) {
+			}
+			
+		};
+		
+		IDragAndDropService dtSvc = (IDragAndDropService) getSite().getService(IDragAndDropService.class);
+		dtSvc.addMergedDropTarget(tw, ops, transfers, editorListener);
+	}
+	
     /** (non-Javadoc)
      * Method declared on IEditorPart
      */
