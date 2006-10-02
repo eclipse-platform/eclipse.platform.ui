@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
-import java.util.Hashtable;
 import java.util.Stack;
 
 import javax.xml.parsers.SAXParser;
@@ -28,7 +27,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.xhtml.BundleUtil;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 import org.eclipse.help.search.ISearchIndex;
 import org.eclipse.help.search.LuceneSearchParticipant;
@@ -42,38 +40,10 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 	
-    private static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
-    private static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
-    private static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-
 	private Stack stack = new Stack();
 	private SAXParser parser;
 	private boolean hasFilters;
 
-    /*
-     * Load XHTML dtds from help base plugin location.
-     */
-    protected static Hashtable dtdMap = new Hashtable();
-
-    static {
-        String dtdBaseLocation = "dtds/xhtml1-20020801/"; //$NON-NLS-1$
-
-        String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
-        URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation,
-            HelpBasePlugin.PLUGIN_ID);
-        dtdMap.put(XHTML1_TRANSITIONAL, dtdURL_T);
-
-        dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
-        URL dtdURL_S = BundleUtil.getResourceAsURL(dtdLocation,
-        		HelpBasePlugin.PLUGIN_ID);
-        dtdMap.put(XHTML1_STRICT, dtdURL_S);
-
-        dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
-        URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation,
-        		HelpBasePlugin.PLUGIN_ID);
-        dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
-    }
-    
 	private static class ParsedXMLContent {
 		private StringBuffer buffer = new StringBuffer();
 		private StringBuffer summary = new StringBuffer();
@@ -176,20 +146,7 @@ public class XHTMLSearchParticipant extends LuceneSearchParticipant {
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
-			if (systemId.equals(XHTML1_TRANSITIONAL)
-                    || systemId.equals(XHTML1_STRICT)
-                    || systemId.equals(XHTML1_FRAMESET)) {
-				try {
-	                URL dtdURL = (URL) dtdMap.get(systemId);
-	                InputSource in = new InputSource(dtdURL.openStream());
-	                in.setSystemId(dtdURL.toExternalForm());
-	                return in;
-				}
-				catch (IOException e) {
-					throw new SAXException(e);
-				}
-            }
-            return null;
+			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}
 	}
 

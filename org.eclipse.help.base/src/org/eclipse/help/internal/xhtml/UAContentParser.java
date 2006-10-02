@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URL;
-import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,27 +28,6 @@ import org.xml.sax.SAXException;
 public class UAContentParser {
 
 	private static String TAG_HTML = "html"; //$NON-NLS-1$
-	protected static String XHTML1_TRANSITIONAL = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"; //$NON-NLS-1$
-	protected static String XHTML1_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"; //$NON-NLS-1$
-	protected static String XHTML1_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"; //$NON-NLS-1$
-
-	protected static Hashtable dtdMap = new Hashtable();
-
-	static {
-		String dtdBaseLocation = "dtds/xhtml1-20020801/"; //$NON-NLS-1$
-
-		String dtdLocation = dtdBaseLocation + "xhtml1-transitional.dtd"; //$NON-NLS-1$
-		URL dtdURL_T = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
-		dtdMap.put(XHTML1_TRANSITIONAL, dtdURL_T);
-
-		dtdLocation = dtdBaseLocation + "xhtml1-strict.dtd"; //$NON-NLS-1$
-		URL dtdURL_S = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
-		dtdMap.put(XHTML1_STRICT, dtdURL_S);
-
-		dtdLocation = dtdBaseLocation + "xhtml1-frameset.dtd"; //$NON-NLS-1$
-		URL dtdURL_F = BundleUtil.getResourceAsURL(dtdLocation, "org.eclipse.ui.intro"); //$NON-NLS-1$
-		dtdMap.put(XHTML1_FRAMESET, dtdURL_F);
-	}
 
 	private Document document;
 	private boolean hasXHTMLContent;
@@ -85,21 +62,9 @@ public class UAContentParser {
 			docFactory.setNamespaceAware(true);
 			docFactory.setExpandEntityReferences(false);
 			DocumentBuilder parser = docFactory.newDocumentBuilder();
-
 			parser.setEntityResolver(new EntityResolver() {
-
-				public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-						IOException {
-
-					if (systemId.equals(XHTML1_TRANSITIONAL) || systemId.equals(XHTML1_STRICT)
-							|| systemId.equals(XHTML1_FRAMESET)) {
-
-						URL dtdURL = (URL) dtdMap.get(systemId);
-						InputSource in = new InputSource(dtdURL.openStream());
-						in.setSystemId(dtdURL.toExternalForm());
-						return in;
-					}
-					return null;
+				public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+					return new InputSource(new StringReader("")); //$NON-NLS-1$
 				}
 			});
 			return parser;
