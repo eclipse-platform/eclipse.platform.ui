@@ -141,10 +141,28 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
             if (ok[0]) {
                 setWritable(readOnlyFiles);
             };
+        } else if (readOnlyFiles.length > 0 && context == null) {
+        	if (isMakeWrittableWhenContextNotProvided()) {
+        		setWritable(readOnlyFiles);
+        	}
         }
         return getStatus(readOnlyFiles);
     }
     
+    public IStatus validateSave(IFile file) {
+    	if (file.isReadOnly() && isMakeWrittableWhenContextNotProvided()) {
+    		IFile[] readOnlyFiles = new IFile[] { file };
+    		setWritable(readOnlyFiles);
+    		return getStatus(readOnlyFiles);
+    	} else {
+    		return getDefaultStatus(file);
+    	}
+    }
+    
+	private boolean isMakeWrittableWhenContextNotProvided() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.MAKE_FILE_WRITTABLE_IF_CONTEXT_MISSING);
+	}
+
 	private IFile[] getReadOnlyFiles(IFile[] files) {
 		List result = new ArrayList();
 		for (int i = 0; i < files.length; i++) {

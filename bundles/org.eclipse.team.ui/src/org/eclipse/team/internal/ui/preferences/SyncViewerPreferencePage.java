@@ -78,6 +78,12 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
 		
+		addField(new BooleanFieldEditor(
+				MAKE_FILE_WRITTABLE_IF_CONTEXT_MISSING, 
+		        TeamUIMessages.SyncViewerPreferencePage_44, 
+				BooleanFieldEditor.DEFAULT, 
+				getFieldEditorParent()));
+		
 		if (isIncludeDefaultLayout()) {
 		    defaultLayout = new RadioGroupFieldEditor(SYNCVIEW_DEFAULT_LAYOUT, 
 		            TeamUIMessages.SyncViewerPreferencePage_0, 3,  

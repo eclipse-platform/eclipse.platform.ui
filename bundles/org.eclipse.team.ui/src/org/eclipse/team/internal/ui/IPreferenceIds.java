@@ -44,6 +44,11 @@ public interface IPreferenceIds {
 	public static final String SHOW_AUTHOR_IN_COMPARE_EDITOR = PREFIX + "show_author_in_compare_editor"; //$NON-NLS-1$
 	
 	/*
+	 * Preference to enable the presence of the author field in a compare editor
+	 */
+	public static final String MAKE_FILE_WRITTABLE_IF_CONTEXT_MISSING = PREFIX + "validate_edit_with_no_context"; //$NON-NLS-1$
+	
+	/*
 	 * Preference to manage the perspective used to synchronize.
 	 */
 	public static final String SYNCVIEW_DEFAULT_PERSPECTIVE = PREFIX + "syncview_default_perspective"; //$NON-NLS-1$

@@ -28,7 +28,7 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 	 */
 	private IFileModificationValidator uiValidator;
 
-	private IStatus getDefaultStatus(IFile file) {
+	protected IStatus getDefaultStatus(IFile file) {
 		return 
 			file.isReadOnly()
 			? new TeamStatus(IStatus.ERROR, TeamPlugin.ID, ITeamStatus.READ_ONLY_LOCAL, NLS.bind(Messages.FileModificationValidator_fileIsReadOnly, new String[] { file.getFullPath().toString() }), null, file) 
@@ -90,6 +90,15 @@ public class DefaultFileModificationValidator implements IFileModificationValida
 	 * @see IFileModificationValidator#validateSave(IFile)
 	 */
 	public IStatus validateSave(IFile file) {
+	    if (!file.isReadOnly())
+	        return Status.OK_STATUS;
+	    synchronized (this) {
+	        if (uiValidator == null) 
+	            uiValidator = loadUIValidator();
+	    }
+	    if (uiValidator != null) {
+	        return uiValidator.validateSave(file);
+	    }
 		return getDefaultStatus(file);
 	}
 	
