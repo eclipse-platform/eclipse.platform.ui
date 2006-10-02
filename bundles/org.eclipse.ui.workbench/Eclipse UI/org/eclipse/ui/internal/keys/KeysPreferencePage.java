@@ -1384,7 +1384,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 					for (int i = 0; i < items.length; i++) {
 						final TableItem item = items[i];
 						for (int j = 0; j < numColumns; j++) {
-							fileWriter.write(item.getText(j));
+							fileWriter.write('"' + item.getText(j).replaceAll(
+									"\"", "\"\"") + '"');  //$NON-NLS-1$//$NON-NLS-2$
 							if (j < numColumns - 1) {
 								fileWriter.write(',');
 							}
