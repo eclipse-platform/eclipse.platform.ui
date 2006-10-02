@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Maik Schreiber - initial API and implementation
+ *    IBM - Bug 158656 Unlabeled list when empty
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
@@ -72,6 +73,12 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 		layout.numColumns = 2;
 		listAndButtons.setLayout(layout);
 		listAndButtons.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label viewerLabel = new Label(listAndButtons, SWT.NONE);
+		viewerLabel.setText(CVSUIMessages.CommentTemplatesPreferencePage_Description);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		viewerLabel.setLayoutData(data);
 		
 		viewer = new ListViewer(listAndButtons);
 		viewer.setLabelProvider(new LabelProvider() {
@@ -160,10 +167,6 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 			}
 		});
 	}
-	
-	public void init(IWorkbench workbench) {
-		setDescription(CVSUIMessages.CommentTemplatesPreferencePage_Description);
-	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
@@ -234,5 +237,9 @@ public class CommentTemplatesPreferencePage extends PreferencePage implements
 		}
 		
 		return super.performOk();
+	}
+
+	public void init(IWorkbench workbench) {
+		// Nothing to do
 	}
 }
