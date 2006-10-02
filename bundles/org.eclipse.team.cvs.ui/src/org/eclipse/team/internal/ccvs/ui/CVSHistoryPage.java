@@ -146,6 +146,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private CVSHistorySearchFilter searchFilter;
 	private RevisionAnnotationController rulerSelectionListener;
 	
+	private int refreshRequest = 0;
+	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
 	}
@@ -252,6 +254,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 
 	public void setFocus() {
 		sashForm.setFocus();
+		if (refreshRequest != 0) {
+			refresh(refreshRequest);
+			refreshRequest = 0;
+		}
 	}
 
 	protected void contributeActions() {
@@ -1487,10 +1493,14 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				final boolean hasRevision = cvsFileHistory.getFileRevision(revision) != null;
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
-						if (hasRevision)
-							refresh(CVSFileHistory.REFRESH_LOCAL);
-						else
-							refresh();
+						if (treeViewer.getControl().isVisible()) {
+							if (hasRevision)
+								refresh(CVSFileHistory.REFRESH_LOCAL);
+							else
+								refresh();
+						} else {
+							refreshRequest = hasRevision ? CVSFileHistory.REFRESH_LOCAL : CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE;
+						}
 					}
 				});
 			}
