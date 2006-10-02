@@ -71,7 +71,7 @@ public abstract class ResourceManager {
      * <p>The resources returned from this method are reference counted and may be shared 
      * internally with other resource managers. They should never be disposed outside of the 
      * ResourceManager framework, or it will cause exceptions in other code that shares
-     * them. For example, never call {@link org.eclipse.swt.Resource#dispose()} 
+     * them. For example, never call {@link org.eclipse.swt.graphics.Resource#dispose()} 
      * on anything returned from this method.</p>
      * 
      * <p>Callers may safely downcast the result to the resource type associated with 
@@ -107,7 +107,7 @@ public abstract class ResourceManager {
      * <p>The resources returned from this method are reference counted and may be shared 
      * internally with other resource managers. They should never be disposed outside of the 
      * ResourceManager framework, or it will cause exceptions in other code that shares
-     * them. For example, never call {@link org.eclipse.swt.Resource#dispose()} 
+     * them. For example, never call {@link org.eclipse.swt.graphics.Resource#dispose()} 
      * on anything returned from this method.</p>
      * 
      * <p>

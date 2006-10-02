@@ -64,7 +64,6 @@ public class BaseLabelProvider extends EventManager implements IBaseLabelProvide
 	 *            a label provider changed event
 	 * 
 	 * @see ILabelProviderListener#labelProviderChanged
-	 * @see ILabelProvider#fireLabelProviderChanged(LabelProviderChangedEvent)
 	 */
 	protected void fireLabelProviderChanged(final LabelProviderChangedEvent event) {
 		Object[] listeners = getListeners();

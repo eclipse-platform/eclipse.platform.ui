@@ -408,7 +408,7 @@ public abstract class AbstractListViewer extends StructuredViewer {
      * <p>
      * Default implementation does nothing.
      * </p>
-     * @param index, -1 for none.  index will always refer to a valid index.
+     * @param index the given index. -1 for none.  index will always refer to a valid index.
      */
     protected void listSetTopIndex(int index) {
     }

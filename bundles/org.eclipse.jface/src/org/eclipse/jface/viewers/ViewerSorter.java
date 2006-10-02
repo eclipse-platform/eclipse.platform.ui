@@ -38,8 +38,7 @@ public class ViewerSorter extends ViewerComparator {
     /**
      * The collator used to sort strings.
      * 
-     * @deprecated as of 3.3 
-     * @see {@link ViewerComparator#getComparator()}
+     * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
      */
     protected Collator collator;
 
@@ -66,8 +65,7 @@ public class ViewerSorter extends ViewerComparator {
      * Returns the collator used to sort strings.
      *
      * @return the collator used to sort strings
-     * @deprecated as of 3.3
-     * @see {@link ViewerComparator#getComparator()}
+     * @deprecated as of 3.3 Use {@link ViewerComparator#getComparator()}
      */
     public Collator getCollator() {
         return collator;
