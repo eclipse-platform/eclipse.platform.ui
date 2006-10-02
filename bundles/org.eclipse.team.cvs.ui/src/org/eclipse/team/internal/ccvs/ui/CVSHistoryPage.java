@@ -988,8 +988,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (object instanceof IFile) {
 			RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
 			if (provider instanceof CVSTeamProvider)
-				return null;
-			return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
+				return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
+			return null;
 		}
 		
 		//Adapt object to ICVSFile
