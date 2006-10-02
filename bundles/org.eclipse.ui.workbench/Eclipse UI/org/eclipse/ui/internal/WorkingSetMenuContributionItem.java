@@ -16,12 +16,14 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Menu contribution item which shows a working set.
@@ -29,6 +31,8 @@ import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
  * @since 2.1
  */
 public class WorkingSetMenuContributionItem extends ContributionItem {
+    private Image image;
+    
     private int id;
 
     private IWorkingSet workingSet;
@@ -79,6 +83,12 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
                 manager.addRecentWorkingSet(workingSet);
             }
         });
+        if (image == null) {
+			ImageDescriptor imageDescriptor = workingSet.getImageDescriptor();
+			if (imageDescriptor != null)
+				image = imageDescriptor.createImage();
+		}
+		mi.setImage(image);
     }
 
     /**
@@ -88,4 +98,15 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
         return true;
     }
 
+	/*
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
+	 * @since 3.3
+	 */
+	public void dispose() {
+		if (image != null && !image.isDisposed())
+			image.dispose();
+		image = null;
+
+		super.dispose();
+	}
 }
