@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj@tpg.com.au) - Bug 158456 Preview fonts and colours in the CVS decorator preference page
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 

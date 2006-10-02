@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - bug 74959
  *     Maik Schreiber - bug 102461
+ *     William Mitsuda (wmitsuda@gmail.com) - Bug 153879 [Wizards] configurable size of cvs commit comment history
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.repo;
 
