@@ -1020,7 +1020,7 @@
                id="org.eclipse.team.cvs.ui.actions.CheckoutAction">
          </action>
          <menu
-               label="%CVS"
+               label="%CVSGroupMenu.label"
                path="additions"
                id="cvs.main">
             <separator
