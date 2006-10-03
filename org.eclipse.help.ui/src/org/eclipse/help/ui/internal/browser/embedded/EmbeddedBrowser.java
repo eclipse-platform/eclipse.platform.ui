@@ -120,6 +120,7 @@ public class EmbeddedBrowser {
 		initialize(browser);
 		
 		createStatusBar(shell);
+		initializeStatusBar(browser);
 		
 		// use saved location and size
 		x = store.getInt(BROWSER_X);
@@ -198,6 +199,7 @@ public class EmbeddedBrowser {
 			shell = new Shell(parent, SWT.PRIMARY_MODAL | SWT.DIALOG_TRIM);
 		initializeShell(shell);
 		Browser browser = new Browser(shell, SWT.NONE);
+		browser.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		initialize(browser);
 		event.browser = browser;
@@ -291,6 +293,9 @@ public class EmbeddedBrowser {
 			public void changed(LocationEvent e) {
 			}
 		});
+	}
+	
+	private void initializeStatusBar(Browser browser) {
 		browser.addStatusTextListener(new StatusTextListener() {
 			public void changed(StatusTextEvent event) {
 				if (!event.text.equals(statusText)) {
