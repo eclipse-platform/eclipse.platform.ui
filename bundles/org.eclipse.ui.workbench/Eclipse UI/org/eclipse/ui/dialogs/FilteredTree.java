@@ -168,7 +168,7 @@ public class FilteredTree extends Composite {
 	 * 
 	 * @param parent
 	 *            the parent <code>Composite</code>
-	 * @see #init(Composite, int, PatternFilter)
+	 * @see #init(int, PatternFilter)
 	 * 
 	 * @since 3.3
 	 */
@@ -180,8 +180,6 @@ public class FilteredTree extends Composite {
 	/**
 	 * Create the filtered tree.
 	 * 
-	 * @param parent
-	 *            the parent <code>Composite</code>
 	 * @param treeStyle
 	 *            the style bits for the <code>Tree</code>
 	 * @param filter
