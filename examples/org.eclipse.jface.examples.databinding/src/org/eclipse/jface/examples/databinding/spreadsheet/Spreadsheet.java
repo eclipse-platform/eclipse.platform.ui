@@ -12,6 +12,7 @@
 package org.eclipse.jface.examples.databinding.spreadsheet;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import org.eclipse.jface.databinding.observable.value.ComputedValue;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
@@ -38,17 +39,27 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Spreadsheet {
 
-	/**
-	 * 
-	 */
+	private static final int COUNTER_UPDATE_DELAY = 1000;
+
 	private static final int NUM_COLUMNS = 26;
 
-	/**
-	 * 
-	 */
 	private static final int NUM_ROWS = 200;
 
-	private static boolean DEBUG = false;
+	/**
+	 * 0 for no output, 1 for some, 2 for more
+	 */
+	private static int DEBUG_LEVEL = 0;
+
+	/**
+	 * If true, there will be a automatic counter at B1.
+	 */
+	private static boolean FUNKY_COUNTER = true;
+
+	/**
+	 * // * If true, all formulas (except for row 1 and column A) will be the
+	 * sum of the values of their left and top neighbouring cells.
+	 */
+	private static boolean FUNKY_FORMULAS = true;
 
 	static WritableValue[][] cellFormulas = new WritableValue[NUM_ROWS][NUM_COLUMNS];
 
@@ -76,8 +87,8 @@ public class Spreadsheet {
 		}
 
 		private Object evaluate(Object value) {
-			if (DEBUG) {
-				System.out.println("evaluating...");
+			if (DEBUG_LEVEL >= 2) {
+				System.out.println("evaluating " + this + " ...");
 			}
 			if (value == null) {
 				return "";
@@ -102,8 +113,9 @@ public class Spreadsheet {
 		/**
 		 * @param s
 		 * @return
+		 * @throws ParseException
 		 */
-		private double eval(String s) {
+		private double eval(String s) throws ParseException {
 			if (s.length() == 0) {
 				return 0;
 			}
@@ -112,19 +124,23 @@ public class Spreadsheet {
 				character = Character.toLowerCase(character);
 				// reference to other cell
 				int columnIndex = character - 'a';
-				int rowIndex = Integer
-						.parseInt(Character.toString(s.charAt(1))) - 1;
+				int rowIndex = 0;
+				rowIndex = NumberFormat.getNumberInstance().parse(
+						s.substring(1)).intValue() - 1;
 				String value = (String) cellValues[rowIndex][columnIndex]
 						.getValue();
-				return value.length() == 0 ? 0 : Double.parseDouble(value);
+				return value.length() == 0 ? 0 : NumberFormat
+						.getNumberInstance().parse(value).doubleValue();
 			}
-			return Double.parseDouble(s);
+			return NumberFormat.getNumberInstance().parse(s).doubleValue();
 		}
 	}
 
+	protected static int counter;
+
 	public static void main(String[] args) {
 
-		Display display = new Display();
+		final Display display = new Display();
 		Shell shell = new Shell(display);
 
 		final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
@@ -142,14 +158,19 @@ public class Spreadsheet {
 			for (int j = 0; j < NUM_COLUMNS; j++) {
 				cellFormulas[i][j] = new WritableValue(null);
 				cellValues[i][j] = new ComputedCellValue(cellFormulas[i][j]);
-				cellFormulas[i][j].setValue("");
+				if (!FUNKY_FORMULAS || i == 0 || j == 0) {
+					cellFormulas[i][j].setValue("");
+				} else {
+					cellFormulas[i][j].setValue("=" + cellReference(i - 1, j)
+							+ "+" + cellReference(i, j - 1));
+				}
 			}
 		}
 
 		new TableUpdater(table) {
 			protected void updateItem(TableItem item) {
 				int rowIndex = item.getParent().indexOf(item);
-				if (DEBUG) {
+				if (DEBUG_LEVEL >= 1) {
 					System.out.println("updating row " + rowIndex);
 				}
 				for (int j = 0; j < NUM_COLUMNS; j++) {
@@ -159,6 +180,16 @@ public class Spreadsheet {
 				}
 			}
 		};
+
+		if (FUNKY_COUNTER) {
+			// counter in A1
+			display.asyncExec(new Runnable() {
+				public void run() {
+					cellFormulas[0][1].setValue("" + counter++);
+					display.timerExec(COUNTER_UPDATE_DELAY, this);
+				}
+			});
+		}
 
 		// create a TableCursor to navigate around the table
 		final TableCursor cursor = new TableCursor(table, SWT.NONE);
@@ -243,6 +274,7 @@ public class Spreadsheet {
 		});
 
 		GridLayoutFactory.fillDefaults().generateLayout(shell);
+		shell.setSize(400, 300);
 		shell.open();
 
 		// The SWT event loop
@@ -252,6 +284,12 @@ public class Spreadsheet {
 			}
 		}
 
+	}
+
+	private static String cellReference(int rowIndex, int columnIndex) {
+		String cellReference = "" + ((char) ('A' + columnIndex))
+				+ (rowIndex + 1);
+		return cellReference;
 	}
 
 }
