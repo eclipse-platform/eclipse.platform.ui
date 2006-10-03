@@ -13,9 +13,6 @@ package org.eclipse.ui.dialogs;
 
 
 /**
- * ResourceSearcher is an implementation of AbstractSearcher to searching
- * resources in workspace.
- * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
  * use this API without consulting with the Platform/UI team.
@@ -26,7 +23,7 @@ package org.eclipse.ui.dialogs;
  * This class is not intended to be instantiated or subclassed by clients.
  * </p>
  * 
- * @since 2.1
+ * @since 3.3
  */
 public final class CharOperation {
 
@@ -42,7 +39,6 @@ public final class CharOperation {
 	
 	/**
 	 * Constant for an empty String array.
-	 * @since 3.1
 	 */
 	public static final String[] NO_STRINGS = new String[0];
 	
@@ -189,7 +185,7 @@ public static final char[][] arrayConcat(char[][] first, char[][] second) {
  * 
  * @param charArrays the char array to convert
  * @return the char arrays as an array of Strings or null if the given char arrays is null.
- * @since 3.0
+ * 
  */
 public static String[] charArrayToStringArray(char[][] charArrays) {
 	if (charArrays == null)
@@ -208,7 +204,7 @@ public static String[] charArrayToStringArray(char[][] charArrays) {
 
  * @param charArray the char array to convert
  * @return the char array as a String or null if the given char array is null.
- * @since 3.0
+ * 
  */
 public static String charToString(char[] charArray) {
 	if (charArray == null) return null;
@@ -916,7 +912,7 @@ public static final boolean contains(char character, char[] array) {
  * @param array the array in which the search is done
  * @return true if the array contains an occurrence of one of the characters, false otherwise.
  * @throws NullPointerException if array is null.
- * @since 3.1
+ * 
  */
 public static final boolean contains(char[] characters, char[] array) {
 	for (int i = array.length; --i >= 0;)
@@ -1197,7 +1193,7 @@ public static final boolean equals(char[] first, char[] second) {
  * @param secondStart inclusive start position in the second array to compare
  * @param secondEnd exclusive end position in the second array to compare
  * @return true if the first array is identical character by character to fragment of second array ranging from secondStart to secondEnd-1, otherwise false
- * @since 3.0
+ * 
  */
 public static final boolean equals(char[] first, char[] second, int secondStart, int secondEnd) {
 	return equals(first, second, secondStart, secondEnd, true);
@@ -1261,7 +1257,7 @@ public static final boolean equals(char[] first, char[] second, int secondStart,
  * @param secondEnd exclusive end position in the second array to compare
  * @param isCaseSensitive check whether or not the equality should be case sensitive
  * @return true if the first array is identical character by character to fragment of second array ranging from secondStart to secondEnd-1, otherwise false
- * @since 3.2
+ * 
  */
 public static final boolean equals(char[] first, char[] second, int secondStart, int secondEnd, boolean isCaseSensitive) {
 	if (first == second)
@@ -1529,7 +1525,7 @@ public static final int indexOf(char toBeFound, char[] array) {
  * @return the first index in the array for which the toBeFound array is a matching
  * subarray following the case rule, -1 otherwise
  * @throws NullPointerException if array is null or toBeFound is null
- * @since 3.2
+ * 
  */
 public static final int indexOf(char[] toBeFound, char[] array, boolean isCaseSensitive) {
 	return indexOf(toBeFound, array, isCaseSensitive, 0);
@@ -1563,7 +1559,7 @@ public static final int indexOf(char[] toBeFound, char[] array, boolean isCaseSe
  * @return the first index in the array for which the toBeFound array is a matching
  * subarray following the case rule starting at the index start, -1 otherwise
  * @throws NullPointerException if array is null or toBeFound is null
- * @since 3.2
+ * 
  */
 public static final int indexOf(final char[] toBeFound, final char[] array, final boolean isCaseSensitive, final int start) {
 	return indexOf(toBeFound, array, isCaseSensitive, start, array.length);
@@ -1598,7 +1594,7 @@ public static final int indexOf(final char[] toBeFound, final char[] array, fina
  * @return the first index in the array for which the toBeFound array is a matching
  * subarray following the case rule starting at the index start, -1 otherwise
  * @throws NullPointerException if array is null or toBeFound is null
- * @since 3.2
+ * 
  */
 public static final int indexOf(final char[] toBeFound, final char[] array, final boolean isCaseSensitive, final int start, final int end) {
 	final int arrayLength = end;
@@ -1725,7 +1721,7 @@ public static final int indexOf(char toBeFound, char[] array, int start) {
  * equal to toBeFound, -1 otherwise
  * @throws NullPointerException if array is null
  * @throws ArrayIndexOutOfBoundsException if  start is lower than 0 or ending greater than array length
- * @since 3.2
+ * 
  */
 public static final int indexOf(char toBeFound, char[] array, int start, int end) {
 	for (int i = start; i < end; i++)
@@ -2469,7 +2465,7 @@ public static final boolean prefixEquals(
  * @param array the given array
  * @param toBeRemoved the character to be removed
  * @return a new array removing given character
- * @since 3.2
+ * 
  */
 public static final char[] remove(char[] array, char toBeRemoved) {
 
@@ -2555,7 +2551,7 @@ public static final void replace(
  * @param toBeReplaced characters to be replaced
  * @param replacementChar the replacement character
  * @throws NullPointerException if arrays are null.
- * @since 3.1
+ * 
  */
 public static final void replace(char[] array, char[] toBeReplaced, char replacementChar) {
 	replace(array, toBeReplaced, replacementChar, 0, array.length);
@@ -2585,7 +2581,7 @@ public static final void replace(char[] array, char[] toBeReplaced, char replace
  * @param start the given start position (inclusive)
  * @param end  the given end position (exclusive)
  * @throws NullPointerException if arrays are null.
- * @since 3.2
+ * 
  */
 public static final void replace(char[] array, char[] toBeReplaced, char replacementChar, int start, int end) {
 	for (int i = end; --i >= start;)
@@ -2708,7 +2704,7 @@ public static final char[] replace(
  * @param toBeReplaced the character to be replaced
  * @param replacementChar the replacement character
  * @throws NullPointerException if the given array is null
- * @since 3.1
+ * 
  */
 public static final char[] replaceOnCopy(
 	char[] array,
@@ -3138,7 +3134,7 @@ final static public String toString(char[][] array) {
  * 
  * @param array the given array
  * @return an array of strings
- * @since 3.0
+ * 
  */
 final static public String[] toStrings(char[][] array) {
 	if (array == null) return NO_STRINGS;

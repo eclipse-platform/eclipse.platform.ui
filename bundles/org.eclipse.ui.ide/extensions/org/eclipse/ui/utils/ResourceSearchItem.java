@@ -50,16 +50,15 @@ public class ResourceSearchItem extends AbstractSearchItem {
 	}
 
 	public boolean equals(Object obj) {
-	/*	boolean isEquals = super.equals(obj);
-		if ((!isEquals) && (obj instanceof ResourceSearchItem))
-			if (resource.getName().equals(((ResourceSearchItem)obj).getResource().getName())) {
-				if (resource.getName().equals("AdaptableList.java")) //$NON-NLS-1$
-					System.out.println("DUPA"); //$NON-NLS-1$
-				markAsDuplicate();
-				((ResourceSearchItem)obj).markAsDuplicate();
-			}
-		return isEquals;*/
+		if (obj instanceof ResourceSearchItem) {
+			ResourceSearchItem resourceSearchItem = (ResourceSearchItem) obj;
+			return getResource().equals(resourceSearchItem.getResource());
+		}
 		return super.equals(obj);
+	}
+
+	public int hashCode() {
+		return getResource().hashCode();
 	}
 	
 	

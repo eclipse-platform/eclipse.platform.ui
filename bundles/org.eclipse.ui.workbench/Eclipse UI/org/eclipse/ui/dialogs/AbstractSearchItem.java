@@ -48,7 +48,7 @@ public abstract class AbstractSearchItem {
 	}
 
 	/**
-	 * Check if it is duplicate
+	 * Check if it is part of the selected history
 	 * 
 	 * @return true if it's duplicate, else false
 	 */
@@ -58,10 +58,18 @@ public abstract class AbstractSearchItem {
 
 	/**
 	 * 
-	 * Mark it as a duplicate
+	 * Mark it as a history
 	 */
 	public void markAsHistory() {
 		this.isHistory = true;
+	}
+	
+	/**
+	 * 
+	 * Unmark item as a history
+	 */
+	public void unmarkHistory() {
+		this.isHistory = false;
 	}
 
 }
