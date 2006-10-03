@@ -108,7 +108,7 @@ public class UAExtensionProcessor {
 	}
 
 	private void resolveTopicReplace(Document doc, UATopicReplace replace) {
-		Element targetElement = doc.getElementById(replace.getTargetElementId());
+		Element targetElement = DOMUtil.getElementById(doc, replace.getTargetElementId());
 		if (targetElement != null) {
 			Node parent = targetElement.getParentNode();
 			Element[] contentElements = getContentElements(replace.getContentHref(), replace.getContentElementId());
@@ -132,7 +132,7 @@ public class UAExtensionProcessor {
 			if (doc != null) {
 				if (elementId != null) {
 					// id specified, only get that element
-					return new Element[] { doc.getElementById(elementId) };
+					return new Element[] { DOMUtil.getElementById(doc, elementId) };
 				}
 				else {
 					// no id specified, use the whole body

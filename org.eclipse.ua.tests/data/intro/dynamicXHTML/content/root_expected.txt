@@ -13,10 +13,10 @@
 <div class="page-style">
 
 <ul>
-<li><a href="http://org.eclipse.ui.intro/showPage?id=static" shape="rect">static.xhtml</a></li>
-<li><a href="http://org.eclipse.ui.intro/showPage?id=filter" shape="rect">filter.xhtml</a></li>
-<li><a href="http://org.eclipse.ui.intro/showPage?id=include" shape="rect">include.xhtml</a></li>
-<li><a href="http://org.eclipse.ui.intro/showPage?id=anchor" shape="rect">anchor.xhtml</a></li>
+<li><a href="http://org.eclipse.ui.intro/showPage?id=static">static.xhtml</a></li>
+<li><a href="http://org.eclipse.ui.intro/showPage?id=filter">filter.xhtml</a></li>
+<li><a href="http://org.eclipse.ui.intro/showPage?id=include">include.xhtml</a></li>
+<li><a href="http://org.eclipse.ui.intro/showPage?id=anchor">anchor.xhtml</a></li>
 </ul>
 
 </div>

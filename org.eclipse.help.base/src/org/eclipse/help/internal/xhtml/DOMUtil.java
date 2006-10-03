@@ -192,6 +192,10 @@ public class DOMUtil {
 
 	}
 
+	public static Element getElementById(Document dom, String id) {
+		return getElementById(dom, id, "*"); //$NON-NLS-1$
+	}
+
 	/**
 	 * Returns an array version of the passed NodeList. Used to work around DOM design issues.
 	 */

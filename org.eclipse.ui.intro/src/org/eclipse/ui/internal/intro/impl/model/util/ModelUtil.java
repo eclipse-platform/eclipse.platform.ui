@@ -361,6 +361,10 @@ public class ModelUtil {
 
     }
 
+    public static Element getElementById(Document dom, String id) {
+    	return getElementById(dom, id, "*"); //$NON-NLS-1$
+    }
+    
     public static void updateResourceAttributes(Element element,
             AbstractIntroPage page) {
         updateResourceAttributes(element, page.getBase(), page.getBundle());

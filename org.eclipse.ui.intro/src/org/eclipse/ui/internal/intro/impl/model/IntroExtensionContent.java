@@ -201,7 +201,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
 	            if (parser.hasXHTMLContent()) {
 	    			if (contentId != null) {
 	    				// id specified, only get that element
-	    				return new Element[] { dom.getElementById(contentId) };
+	    				return new Element[] { ModelUtil.getElementById(dom, contentId) };
 	    			}
 	    			else {
 	    				// no id specified, use the whole body
