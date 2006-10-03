@@ -11,6 +11,8 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.WorkingSet;
+import org.eclipse.help.search.ISearchEngineResult2;
 
 /**
  * Helper class for searchView.jsp initialization
@@ -139,7 +142,11 @@ public class SearchData extends ActivitiesData {
 	}
 	
 	public String getTopicDescription(int i) {
-		return UrlUtil.htmlEncode(hits[i].getDescription());
+		String description = hits[i].getDescription();
+		if (description != null) {
+			return UrlUtil.htmlEncode(description);
+		}
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -321,7 +328,7 @@ public class SearchData extends ActivitiesData {
 			} catch (NumberFormatException nfe) {
 			}
 		}
-		return new SearchResults(workingSets, maxHits, getLocale());
+		return new SearchResultFilter(workingSets, maxHits, getLocale());
 	}
 
 	/**
@@ -383,4 +390,24 @@ public class SearchData extends ActivitiesData {
 		return ServletResources.getString("searchTooComplex", request); //$NON-NLS-1$
 	}
 
+	/*
+	 * Filters out results that help doesn't know how to open (i.e. those hits
+	 * that implement ISearchEngineResult2 and canOpen() returns true.
+	 */
+	private static class SearchResultFilter extends SearchResults {
+		public SearchResultFilter(WorkingSet[] workingSets, int maxHits, String locale) {
+			super(workingSets, maxHits, locale);
+		}
+		public void addHits(List hits, String highlightTerms) {
+			List filtered = new ArrayList();
+			Iterator iter = hits.iterator();
+			while (iter.hasNext()) {
+				Object obj = iter.next();
+				if (!(obj instanceof ISearchEngineResult2 && ((ISearchEngineResult2)obj).canOpen())) {
+					filtered.add(obj);
+				}
+			}
+			super.addHits(filtered, highlightTerms);
+		}
+	}
 }
