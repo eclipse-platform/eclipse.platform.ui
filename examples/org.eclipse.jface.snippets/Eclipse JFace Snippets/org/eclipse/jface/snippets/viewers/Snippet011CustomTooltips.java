@@ -7,12 +7,12 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     IBM - Improvement for Bug 159625 [Snippets] Update Snippet011CustomTooltips to reflect new API
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -29,19 +29,28 @@ import org.eclipse.swt.widgets.TableColumn;
  * Explore New API: JFace custom tooltips drawing.
  * 
  * @author Tom Schindl <tom.schindl@bestsolution.at>
- * @since 3.3M2
+ * @since 3.3
  */
 public class Snippet011CustomTooltips {
 	private static class MyContentProvider implements IStructuredContentProvider {
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
 		public Object[] getElements(Object inputElement) {
 			return new String[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
 		public void dispose() {
 			
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 			
 			
@@ -64,34 +73,41 @@ public class Snippet011CustomTooltips {
 	    
 	    CellLabelProvider labelProvider = new CellLabelProvider() {
 
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipText(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipText(java.lang.Object)
 			 */
-			public String getTooltipText(Object element) {
+			public String getToolTipText(Object element) {
 				return "Tooltip (" + element + ")";
 			}
 
+		
 			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipShift(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipShift(java.lang.Object)
 			 */
-			public Point getTooltipShift(Object object) {
+			public Point getToolTipShift(Object object) {
 				return new Point(5,5);
 			}
 
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipDisplayDelayTime(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipDisplayDelayTime(java.lang.Object)
 			 */
-			public int getTooltipDisplayDelayTime(Object object) {
+			public int getToolTipDisplayDelayTime(Object object) {
 				return 2000;
 			}
 
+			
 			/* (non-Javadoc)
-			 * @see org.eclipse.jface.viewers.ViewerLabelProvider#getTooltipTimeDisplayed(java.lang.Object)
+			 * @see org.eclipse.jface.viewers.CellLabelProvider#getToolTipTimeDisplayed(java.lang.Object)
 			 */
-			public int getTooltipTimeDisplayed(Object object) {
+			public int getToolTipTimeDisplayed(Object object) {
 				return 5000;
 			}
 			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.viewers.CellLabelProvider#update(org.eclipse.jface.viewers.ViewerCell)
+			 */
 			public void update(ViewerCell cell) {
 				cell.setText(cell.getElement().toString());
 				
