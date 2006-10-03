@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159539
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -24,6 +25,7 @@ import org.eclipse.jface.internal.databinding.internal.ValidationErrorList;
 import org.eclipse.jface.internal.databinding.internal.ValueBinding;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
+import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
@@ -458,5 +460,15 @@ public class DataBindingContext {
 			binding.updateTargetFromModel();
 		}
 	}
+    
+    /**
+     * @return DataBindingContext with {@link IConverter converters} and
+     *         {@link IValidator validators} for java's primitive types.
+     */
+    public static DataBindingContext withDefaults() {
+        DataBindingContext dbc = new DataBindingContext();
+        dbc.addBindSupportFactory(new DefaultBindSupportFactory());
 
+        return dbc;
+    }
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159539
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding;
@@ -16,7 +17,6 @@ import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
-import org.eclipse.jface.examples.databinding.nestedselection.BindingFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Combo;
@@ -33,7 +33,8 @@ public class HelloWorld {
 	public static void main(String[] args) {
 		Display display = new Display();
 		Shell shell = new Shell(display);
-		DataBindingContext dbc = BindingFactory.createContext(shell);
+        
+		DataBindingContext dbc = DataBindingContext.withDefaults();
 		Combo combo = new Combo(shell, SWT.READ_ONLY);
 		WritableList list = new WritableList();
 		list.add("Hello");

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159539
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -396,7 +397,16 @@ public class DatabindingContextTest extends TestCase {
 		assertConverterType(bs, 2, IdentityConverter.class, bs.getTargetToModelConverters());
 	}
 
-	private void assertConverterType(BindSpec bs, int element, Class clazz, IConverter[] converters) {
+	public void testWithDefaults() throws Exception {
+	    org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
+        assertNull("converter should not exist by default", dbc.createConverter(String.class, String.class));
+        
+        dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        assertNotNull(dbc);
+        assertNotNull("converter was not initialized with defaults", dbc.createConverter(String.class, String.class));
+	}
+
+    private void assertConverterType(BindSpec bs, int element, Class clazz, IConverter[] converters) {
 		assertEquals("model2target[" + element + "] = identity", clazz, converters[element].getClass());
 	}
 	
