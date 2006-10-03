@@ -31,11 +31,12 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class RectangleAnimation extends Job {
 	private static class AnimationFeedbackFactory {
 		public static DefaultAnimationFeedback createAnimationRenderer() {
-	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-	        
-			if (useNewMinMax)
-				return new ImageAnimationFeedback();
+//			 Revert to the old style until performance issues can be addressed
+//	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+//	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+
+//			if (useNewMinMax)
+//				return new ImageAnimationFeedback();
 			
 			return new DefaultAnimationFeedback();
 		}
