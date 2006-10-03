@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.Widget;
  * or the <code>ILabelProvider</code> interface (see <code>TableTreeViewer.setLabelProvider</code> 
  * for more details).
  * </p>
+ * @deprecated As of 3.1 use {@link TreeViewer} instead
  */
 public class TableTreeViewer extends AbstractTreeViewer {
     /**
