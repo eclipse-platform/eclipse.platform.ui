@@ -65,25 +65,29 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	
 	private int fLimitElementCount;
 	private int fLastLimit;
+	private final boolean fEnableMatchFilterConfiguration;
 
 
 	/**
 	 * Creates a {@link MatchFilterSelectionDialog}.
 	 * 
 	 * @param shell the parent shell
+	 * @param enableMatchFilterConfiguration 
 	 * @param allFilters all filters available for selection
 	 * @param selectedFilters the initially selected filters
 	 * @param enableLimitConfiguration if set, the dialog will also contain controls to limit
 	 * the number of top level elements
 	 * @param limit the initial limit or -1 if no limit should be used.
 	 */
-	public MatchFilterSelectionDialog(Shell shell, MatchFilter[] allFilters, MatchFilter[] selectedFilters, boolean enableLimitConfiguration, int limit) {
+	public MatchFilterSelectionDialog(Shell shell, boolean enableMatchFilterConfiguration, MatchFilter[] allFilters, MatchFilter[] selectedFilters, boolean enableLimitConfiguration, int limit) {
 		super(shell);
+
 		setTitle(SearchMessages.MatchFilterSelectionDialog_label);
 		setStatusLineAboveButtons(true);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		
-		fShowLimitConfigurationControls= true;
+		fShowLimitConfigurationControls= enableLimitConfiguration;
+		fEnableMatchFilterConfiguration= enableMatchFilterConfiguration;
 
 		fAllFilters= allFilters;
 		fEnabledFilters= selectedFilters;
@@ -96,7 +100,8 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 */
 	protected IDialogSettings getDialogBoundsSettings() {
-		return SearchPlugin.getDefault().getDialogSettingsSection("MatchFilterSelectionDialog"); //$NON-NLS-1$
+		String name= "MatchFilterSelectionDialog_" + String.valueOf(fShowLimitConfigurationControls) + '.' + String.valueOf(fEnableMatchFilterConfiguration); //$NON-NLS-1$
+		return SearchPlugin.getDefault().getDialogSettingsSection(name);
 	}
 		
 	/**
@@ -128,6 +133,13 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		if (fShowLimitConfigurationControls) {
 			createTableLimit(parent);
 		}
+		if (fEnableMatchFilterConfiguration) {
+			createMatchFilterControls(parent);
+		}
+		return parent;
+	}
+
+	private void createMatchFilterControls(Composite parent) {
 		// Create list viewer
 		Label l= new Label(parent, SWT.NONE);
 		l.setFont(parent.getFont());
@@ -171,8 +183,6 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.heightHint = convertHeightInCharsToPixels(3);
 		fDescription.setLayoutData(data);
-		
-		return parent;
 	}
 
 	private void createTableLimit(Composite ancestor) {
@@ -241,6 +251,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 			value = Integer.valueOf(text).intValue();
 		} catch (NumberFormatException e) {
 		}
+		fLimitElementCount= value;
 		if (fLimitElementsCheckbox.getSelection() && value <= 0)
 			updateStatus(createStatus(IStatus.ERROR, SearchMessages.MatchFilterSelectionDialog_error_invalid_limit)); 
 		else

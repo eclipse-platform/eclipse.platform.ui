@@ -16,8 +16,6 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 
-import org.eclipse.search.internal.ui.SearchPreferencePage;
-
 public class FileTableContentProvider implements IStructuredContentProvider, IFileSearchContentProvider {
 	
 	private final Object[] EMPTY_ARR= new Object[0];
@@ -35,11 +33,11 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 	
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof FileSearchResult) {
+			int elementLimit= getElementLimit();
 			Object[] elements= ((FileSearchResult)inputElement).getElements();
-			int tableLimit= SearchPreferencePage.getTableLimit();
-			if (SearchPreferencePage.isTableLimited() && elements.length > tableLimit) {
-				Object[] shownElements= new Object[tableLimit];
-				System.arraycopy(elements, 0, shownElements, 0, tableLimit);
+			if (elementLimit != -1 && elements.length > elementLimit) {
+				Object[] shownElements= new Object[elementLimit];
+				System.arraycopy(elements, 0, shownElements, 0, elementLimit);
 				return shownElements;
 			}
 			return elements;
@@ -55,18 +53,23 @@ public class FileTableContentProvider implements IStructuredContentProvider, IFi
 	
 	public void elementsChanged(Object[] updatedElements) {
 		TableViewer viewer= getViewer();
-		boolean tableLimited= SearchPreferencePage.isTableLimited();
+		int elementLimit= getElementLimit();
+		boolean tableLimited= elementLimit != -1;
 		for (int i= 0; i < updatedElements.length; i++) {
 			if (fResult.getMatchCount(updatedElements[i]) > 0) {
 				if (viewer.testFindItem(updatedElements[i]) != null)
 					viewer.update(updatedElements[i], null);
 				else {
-					if (!tableLimited || viewer.getTable().getItemCount() < SearchPreferencePage.getTableLimit())
+					if (!tableLimited || viewer.getTable().getItemCount() < elementLimit)
 						viewer.add(updatedElements[i]);
 				}
 			} else
 				viewer.remove(updatedElements[i]);
 		}
+	}
+
+	private int getElementLimit() {
+		return fPage.getElementLimit().intValue();
 	}
 
 	private TableViewer getViewer() {

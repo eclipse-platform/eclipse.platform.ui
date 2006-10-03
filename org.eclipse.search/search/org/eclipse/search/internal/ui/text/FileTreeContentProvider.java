@@ -29,15 +29,28 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 	private final Object[] EMPTY_ARR= new Object[0];
 
 	private AbstractTextSearchResult fResult;
+	private FileSearchPage fPage;
 	private AbstractTreeViewer fTreeViewer;
 	private Map fChildrenMap;
 	
-	FileTreeContentProvider(AbstractTreeViewer viewer) {
+	FileTreeContentProvider(FileSearchPage page, AbstractTreeViewer viewer) {
+		fPage= page;
 		fTreeViewer= viewer;
 	}
 	
 	public Object[] getElements(Object inputElement) {
-		return getChildren(inputElement);
+		Object[] children= getChildren(inputElement);
+		int elementLimit= getElementLimit();
+		if (elementLimit != -1 && elementLimit < children.length) {
+			Object[] limitedChildren= new Object[elementLimit];
+			System.arraycopy(children, 0, limitedChildren, 0, elementLimit);
+			return limitedChildren;
+		}
+		return children;
+	}
+	
+	private int getElementLimit() {
+		return fPage.getElementLimit().intValue();
 	}
 	
 	public void dispose() {
@@ -57,12 +70,13 @@ public class FileTreeContentProvider implements ITreeContentProvider, IFileSearc
 		if (result != null) {
 			Object[] elements= result.getElements();
 			for (int i= 0; i < elements.length; i++) {
-				insert(elements[i], false);
+				insert(elements[i],  false);
 			}
 		}
 	}
 
 	protected void insert(Object child, boolean refreshViewer) {
+
 		Object parent= getParent(child);
 		while (parent != null) {
 			if (insertChild(parent, child)) {

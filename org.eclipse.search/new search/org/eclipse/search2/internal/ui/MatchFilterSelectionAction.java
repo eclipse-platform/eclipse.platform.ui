@@ -45,11 +45,20 @@ public class MatchFilterSelectionAction extends Action {
 		
 		MatchFilter[] allFilters= input.getAllMatchFilters();
 		MatchFilter[] checkedFilters= input.getActiveMatchFilters();
-		//int limit= fPage.getElementLimit();
+		Integer limit= fPage.getElementLimit();
 		
-		MatchFilterSelectionDialog dialog = new MatchFilterSelectionDialog(shell, allFilters, checkedFilters, true, -1);	
+		boolean enableMatchFilterConfiguration= checkedFilters != null;
+		boolean enableLimitConfiguration= limit != null;
+		int elementLimit= limit != null ? limit.intValue() : -1;
+		
+		MatchFilterSelectionDialog dialog = new MatchFilterSelectionDialog(shell, enableMatchFilterConfiguration, allFilters, checkedFilters, enableLimitConfiguration, elementLimit);	
 		if (dialog.open() == Window.OK) {
-			input.setActiveMatchFilters(dialog.getMatchFilters());
+			if (enableMatchFilterConfiguration) {
+				input.setActiveMatchFilters(dialog.getMatchFilters());
+			}
+			if (enableLimitConfiguration) {
+				fPage.setElementLimit(new Integer(dialog.getLimit()));
+			}
 		}
 	}
 

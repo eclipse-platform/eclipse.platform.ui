@@ -24,8 +24,6 @@ import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -58,8 +56,6 @@ import org.eclipse.search.ui.text.Match;
 
 import org.eclipse.search.internal.ui.Messages;
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.SearchPreferencePage;
 
 import org.eclipse.search2.internal.ui.OpenSearchPreferencesAction;
 
@@ -102,6 +98,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	}
 	
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
+	private static final String KEY_LIMIT= "org.eclipse.search.resultpage.limit"; //$NON-NLS-1$
+	
+	private static final int DEFAULT_ELEMENT_LIMIT = 1000;
 
 	private ActionGroup fActionGroup;
 	private IFileSearchContentProvider fContentProvider;
@@ -119,23 +118,18 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		}
 	};
 
-	private IPropertyChangeListener fPropertyChangeListener;
 	public FileSearchPage() {
 		fSortByNameAction= new SortAction(SearchMessages.FileSearchPage_sort_name_label, this, FileLabelProvider.SHOW_LABEL_PATH); 
 		fSortByPathAction= new SortAction(SearchMessages.FileSearchPage_sort_path_label, this, FileLabelProvider.SHOW_PATH_LABEL); 
 
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (SearchPreferencePage.LIMIT_TABLE.equals(event.getProperty()) || SearchPreferencePage.LIMIT_TABLE_TO.equals(event.getProperty()))
-					if (getViewer() instanceof TableViewer) {
-						getViewPart().updateLabel();
-						getViewer().refresh();
-					}
-			}
-		};
-		SearchPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(fPropertyChangeListener);
-		
-}
+		setElementLimit(new Integer(DEFAULT_ELEMENT_LIMIT));
+	}
+	
+	public void setElementLimit(Integer elementLimit) {
+		super.setElementLimit(elementLimit);
+		int limit= elementLimit.intValue();
+		getSettings().put(KEY_LIMIT, limit);
+	}	
 	
 	public StructuredViewer getViewer() {
 		return super.getViewer();
@@ -161,7 +155,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		viewer.setUseHashlookup(true);
 		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL);
 		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
-		viewer.setContentProvider(new FileTreeContentProvider(viewer));
+		viewer.setContentProvider(new FileTreeContentProvider(this, viewer));
 		viewer.setComparator(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (IFileSearchContentProvider) viewer.getContentProvider();
 		addDragAdapters(viewer);
@@ -244,7 +238,6 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 	
 	public void dispose() {
 		fActionGroup.dispose();
-		SearchPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(fPropertyChangeListener);
 		super.dispose();
 	}
 
@@ -273,15 +266,26 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 		} catch (NumberFormatException e) {
 			fCurrentSortOrder= fSortByNameAction.getSortOrder();
 		}
+		int elementLimit= DEFAULT_ELEMENT_LIMIT;
+		try {
+			elementLimit= getSettings().getInt(KEY_LIMIT);
+		} catch (NumberFormatException e) {
+		}
 		if (memento != null) {
 			Integer value= memento.getInteger(KEY_SORTING);
 			if (value != null)
 				fCurrentSortOrder= value.intValue();
+			
+			value= memento.getInteger(KEY_LIMIT);
+			if (value != null)
+				elementLimit= value.intValue();
 		}
+		setElementLimit(new Integer(elementLimit));
 	}
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		memento.putInteger(KEY_SORTING, fCurrentSortOrder);
+		memento.putInteger(KEY_LIMIT, getElementLimit().intValue());
 	}
 	
 	public Object getAdapter(Class adapter) {
