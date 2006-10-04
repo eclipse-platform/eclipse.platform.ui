@@ -14,12 +14,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.ltk.core.refactoring.Change;
+
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
-class ChangeElementLabelProvider extends LabelProvider {
+class ChangeElementLabelProvider extends LabelProvider implements IFontProvider {
 
 	private Map fDescriptorImageMap= new HashMap();
 
@@ -31,7 +40,39 @@ class ChangeElementLabelProvider extends LabelProvider {
 	}
 	
 	public String getText(Object object) {
-		return ((PreviewNode)object).getText();
+		String text= ((PreviewNode)object).getText();
+		if (isDerivedFile(object)) {
+			return Messages.format("{0} (derived)", text);
+		} else {
+			return text;
+		}
+	}
+	
+	public Font getFont(Object element) {
+		if (isDerivedFile(element)) {
+			return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
+		} else {
+			return null;
+		}
+	}
+
+	private boolean isDerivedFile(Object element) {
+		PreviewNode node= (PreviewNode)element;
+		if (! (node instanceof AbstractChangeNode))
+			return false;
+		
+		Change change= ((AbstractChangeNode) node).getChange();
+		Object modifiedElement= change.getModifiedElement();
+		if (modifiedElement instanceof IResource) {
+			return ((IResource) modifiedElement).isDerived();
+		} else if (modifiedElement instanceof IAdaptable) {
+			IAdaptable adaptable= (IAdaptable) modifiedElement;
+			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+			if (resource != null) {
+				return resource.isDerived();
+			}
+		}
+		return false;
 	}
 	
 	public void dispose() {
