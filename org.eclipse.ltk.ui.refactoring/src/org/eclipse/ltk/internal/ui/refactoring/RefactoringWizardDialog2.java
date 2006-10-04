@@ -279,7 +279,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	 * Method declared on IWizardContainer.
 	 */
 	public void updateWindowTitle() {
-		getShell().setText(fWizard.getWindowTitle());
+		String title= fWizard.getWindowTitle();
+		if (title == null)
+			title= ""; //$NON-NLS-1$
+		getShell().setText(title);
 	}
 
 	/* (non-Javadoc)
@@ -567,7 +570,10 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 	
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(fWizard.getDefaultPageTitle());
+		String title= fWizard.getDefaultPageTitle();
+		if (title == null)
+			title= ""; //$NON-NLS-1$
+		newShell.setText(title);
 		fWizard.getRefactoring().setValidationContext(newShell);
 	}
 	
