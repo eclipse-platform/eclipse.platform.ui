@@ -13,10 +13,13 @@ package org.eclipse.jface.wizard;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IPageTransitionListener;
+import org.eclipse.jface.dialogs.IPageTransitionProvider;
+import org.eclipse.jface.dialogs.PageTransitionEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
@@ -54,7 +57,7 @@ import org.eclipse.swt.widgets.Shell;
  * <code>IWizardPage</code>.
  * </p>
  */
-public abstract class Wizard implements IWizard {
+public abstract class Wizard implements IWizard, IPageTransitionListener {
     /**
      * Image registry key of the default image for wizard pages (value
      * <code>"org.eclipse.jface.wizard.Wizard.pageImage"</code>).
@@ -133,7 +136,93 @@ public abstract class Wizard implements IWizard {
         page.setWizard(this);
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageTransitionListener#pageTransition(org.eclipse.jface.dialogs.PageTransitionEvent)
+	 */
+	public void pageTransition(PageTransitionEvent event) {
+		int eventType = event.getType();
+		if (eventType == PageTransitionEvent.EVENT_NEXT) {
+			event.doit = doNextPressed();
+		}
+		else if (eventType == PageTransitionEvent.EVENT_BACK){
+			event.doit = doBackPressed();
+		}
+	}
+
+	/**
+	 * Add the listener that gets notified when a page is transitioning.
+	 */
+    private void hookPageTransitionProvider(){
+		IPageTransitionProvider provider = getPageTransitionProvider();
+		if (provider != null)
+			provider.addPageTransitionListener(this);
+    }
+    
     /**
+     * Remove the listener that gets notified when a page is transitioning.
+     */
+    private void unhookPageTransitionListener(){
+		IPageTransitionProvider provider = getPageTransitionProvider();
+		if (provider != null)
+			provider.removePageTransitionListener(this); 	
+    }
+
+    /**
+     * Return the wizard container that facilitates the page transition events.
+     * 
+     * @return IPageTransitionProvider the page transition provider
+     */
+    private IPageTransitionProvider getPageTransitionProvider(){
+    	IWizardContainer container = getContainer();
+   		if (container instanceof IPageTransitionProvider){
+    		return (IPageTransitionProvider)container;
+    	}
+    	return null;
+    }
+	
+	/**
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+	 * 
+	 * This method is called when the next button of the wizard container is
+	 * pressed. This method should be overridden when validation of a wizard
+	 * page should be done upon page completion, rather than at the widget
+	 * level.
+	 * 
+	 * @return <code>true</code> if the next page should be shown,
+	 *         <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	protected boolean doNextPressed(){
+		return true;
+	}
+
+	/**
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+	 * 
+	 * This method is called when the back button of the wizard container is
+	 * pressed. This method should be overridden when validation of a wizard
+	 * page should be done upon page completion, rather than at the widget
+	 * level.
+	 * 
+	 * @return <code>true</code> if the previous page should be shown,
+	 *         <code>false</code> otherwise
+	 * @since 3.3
+	 */
+	protected boolean doBackPressed(){
+		return true;
+	}
+	
+	/**
      * The <code>Wizard</code> implementation of this <code>IWizard</code>
      * method does nothing. Subclasses should extend if extra pages need to be
      * added before the wizard opens. New pages should be added by calling
@@ -183,6 +272,7 @@ public abstract class Wizard implements IWizard {
      * disposed.
      */
     public void dispose() {
+    	unhookPageTransitionListener();
         // notify pages
         for (int i = 0; i < pages.size(); i++) {
             ((IWizardPage) pages.get(i)).dispose();
@@ -352,6 +442,7 @@ public abstract class Wizard implements IWizard {
      */
     public void setContainer(IWizardContainer wizardContainer) {
         container = wizardContainer;
+        hookPageTransitionProvider();
     }
 
     /**

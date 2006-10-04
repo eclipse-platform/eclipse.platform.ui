@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross (schtoo@schtoo.com) - patch for bug 16179
  *******************************************************************************/
 package org.eclipse.jface.wizard;
 
@@ -23,8 +24,11 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.IPageTransitionListener;
+import org.eclipse.jface.dialogs.IPageTransitionProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.PageTransitionEvent;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -70,7 +74,8 @@ import org.eclipse.swt.widgets.Shell;
  * is rarely required.
  * </p>
  */
-public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, IPageChangeProvider {
+public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
+		IPageChangeProvider, IPageTransitionProvider {
     /**
      * Image registry key for error message image (value <code>"dialog_title_error_image"</code>).
      */
@@ -136,6 +141,8 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
     private boolean lockedUI = false;
 	
     private ListenerList pageChangedListeners = new ListenerList();
+    
+    private ListenerList pageTransitionListeners = new ListenerList();
 
     /**
      * A layout for a container which includes several pages, like
@@ -328,6 +335,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 			// should never happen since we have already visited the page
             return;
 		}
+
+        // If page transition unsuccessful, do not change the page
+        if (!doPageTransition(PageTransitionEvent.EVENT_BACK))
+        	return;
+        
         // set flag to indicate that we are moving back
         isMovingToPreviousPage = true;
         // show the page
@@ -756,8 +768,32 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             // something must have happend getting the next page
             return;
         }
+
+        // If page transition unsuccessful, do not advance the page
+        if (!doPageTransition(PageTransitionEvent.EVENT_NEXT))
+        	return;
+        
         // show the next page
         showPage(page);
+    }
+    
+    /**
+	 * Notifies page transition listeners and returns result of page transition
+	 * processing to the sender.
+	 * 
+	 * @param eventType
+	 * @return <code>true</code> if page transition listener completes
+	 *         successfully, <code>false</code> otherwise
+	 */
+    private boolean doPageTransition(int eventType){
+    	PageTransitionEvent e = new PageTransitionEvent(this, getCurrentPage(),
+				eventType);
+		firePageTransitioning(e);
+		// Prevent navigation if necessary
+		if (e.doit == false){
+			return false;
+		}
+		return true;
     }
 
     /**
@@ -1359,6 +1395,64 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
             SafeRunnable.run(new SafeRunnable() {
                 public void run() {
                     l.pageChanged(event);
+                }
+            });
+        }
+    }
+
+	/* 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+	 * 
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangingProvider#addPageChangingListener(org.eclipse.jface.dialogs.IPageTransitionListener)
+	 */
+	public void addPageTransitionListener(IPageTransitionListener listener) {
+		pageTransitionListeners.add(listener);		
+	}
+
+	/* 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+	 * 
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IPageChangingProvider#removePageChangingdListener(org.eclipse.jface.dialogs.IPageTransitionListener)
+	 */
+	public void removePageTransitionListener(IPageTransitionListener listener) {
+		pageTransitionListeners.remove(listener);		
+	}
+	
+	/**
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+	 * part of a work in progress. There is a guarantee neither that this API will
+	 * work nor that it will remain the same. Please do not use this API without
+	 * consulting with the Platform/UI team.
+	 * </p>
+     * 
+     * Notifies any selection changing listeners that the selected page
+     * is changing.
+     * Only listeners registered at the time this method is called are notified.
+     *
+     * @param event a selection changing event
+     *
+     * @see IPageTransitionListener#pageTransition(PageTransitionEvent)
+     */
+    protected void firePageTransitioning(final PageTransitionEvent event) {
+        Object[] listeners = pageTransitionListeners.getListeners();
+        for (int i = 0; i < listeners.length; ++i) {
+            final IPageTransitionListener l = (IPageTransitionListener) listeners[i];
+            SafeRunnable.run(new SafeRunnable() {
+                public void run() {
+                    l.pageTransition(event);
                 }
             });
         }
