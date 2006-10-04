@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.internal.observable;
+package org.eclipse.jface.databinding.observable.masterdetail;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.observable.Diffs;
@@ -16,14 +16,12 @@ import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
 
 /**
  * @since 1.0
  * 
  */
-public class NestedObservableValue extends AbstractObservableValue {
+/* package */class DetailObservableValue extends AbstractObservableValue {
 
 	private boolean updating = false;
 
@@ -37,28 +35,23 @@ public class NestedObservableValue extends AbstractObservableValue {
 
 	private Object currentOuterValue;
 
-	private Object feature;
-
 	private IObservableValue innerObservableValue;
 
-	private DataBindingContext databindingContext;
-
-	private Object featureType;
+	private Object detailType;
 
 	private IObservableValue outerObservableValue;
 
+	private IObservableFactory factory;
+
 	/**
-	 * @param databindingContext
+	 * @param factory
 	 * @param outerObservableValue
-	 * @param feature
-	 * @param featureType
+	 * @param detailType
 	 */
-	public NestedObservableValue(DataBindingContext databindingContext,
-			IObservableValue outerObservableValue, Object feature,
-			Class featureType) {
-		this.databindingContext = databindingContext;
-		this.feature = feature;
-		this.featureType = featureType;
+	public DetailObservableValue(IObservableFactory factory,
+			IObservableValue outerObservableValue, Object detailType) {
+		this.factory = factory;
+		this.detailType = detailType;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);
 
@@ -83,14 +76,14 @@ public class NestedObservableValue extends AbstractObservableValue {
 		if (currentOuterValue == null) {
 			innerObservableValue = null;
 		} else {
-			this.innerObservableValue = (IObservableValue) databindingContext
-					.createObservable(new Property(currentOuterValue, feature));
+			this.innerObservableValue = (IObservableValue) factory
+					.createObservable(currentOuterValue);
 			Object innerValueType = innerObservableValue.getValueType();
-			if (featureType == null) {
-				featureType = innerValueType;
+			if (detailType == null) {
+				detailType = innerValueType;
 			} else {
 				Assert
-						.isTrue(featureType.equals(innerValueType),
+						.isTrue(detailType.equals(innerValueType),
 								"Cannot change value type in a nested observable value"); //$NON-NLS-1$
 			}
 			innerObservableValue.addValueChangeListener(innerChangeListener);
@@ -108,7 +101,7 @@ public class NestedObservableValue extends AbstractObservableValue {
 	}
 
 	public Object getValueType() {
-		return featureType;
+		return detailType;
 	}
 
 	public void dispose() {
@@ -123,8 +116,7 @@ public class NestedObservableValue extends AbstractObservableValue {
 			innerObservableValue.dispose();
 		}
 		currentOuterValue = null;
-		databindingContext = null;
-		feature = null;
+		factory = null;
 		innerObservableValue = null;
 		innerChangeListener = null;
 	}

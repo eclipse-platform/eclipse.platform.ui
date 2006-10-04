@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.internal.observable;
+package org.eclipse.jface.databinding.observable.masterdetail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +22,13 @@ import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 
 /**
  * @since 3.2
  * 
  */
-public class NestedObservableList extends ObservableList implements ILazyListElementProvider {
+
+/* package */class DetailObservableList extends ObservableList {
 
 	private boolean updating = false;
 
@@ -44,26 +42,22 @@ public class NestedObservableList extends ObservableList implements ILazyListEle
 
 	private Object currentOuterValue;
 
-	private Object feature;
-
 	private IObservableList innerObservableList;
 
-	private DataBindingContext databindingContext;
+	private IObservableFactory factory;
 
 	private IObservableValue outerObservableValue;
 
 	/**
-	 * @param databindingContext
+	 * @param factory
 	 * @param outerObservableValue
 	 * @param feature
-	 * @param featureType
+	 * @param detailType
 	 */
-	public NestedObservableList(DataBindingContext databindingContext,
-			IObservableValue outerObservableValue, Object feature,
-			Class featureType) {
-		super(new ArrayList(), featureType);
-		this.databindingContext = databindingContext;
-		this.feature = feature;
+	public DetailObservableList(IObservableFactory factory,
+			IObservableValue outerObservableValue, Object detailType) {
+		super(new ArrayList(), detailType);
+		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);
 
@@ -89,9 +83,8 @@ public class NestedObservableList extends ObservableList implements ILazyListEle
 			innerObservableList = null;
 			wrappedList = new ArrayList();
 		} else {
-			this.innerObservableList = (IObservableList) databindingContext
-					.createObservable(new Property(currentOuterValue, feature,
-							(Class) getElementType(), Boolean.TRUE));
+			this.innerObservableList = (IObservableList) factory
+					.createObservable(currentOuterValue);
 			wrappedList = innerObservableList;
 			Object innerValueType = innerObservableList.getElementType();
 			Assert.isTrue(getElementType().equals(innerValueType),
@@ -112,8 +105,7 @@ public class NestedObservableList extends ObservableList implements ILazyListEle
 			innerObservableList.dispose();
 		}
 		currentOuterValue = null;
-		databindingContext = null;
-		feature = null;
+		factory = null;
 		innerObservableList = null;
 		innerChangeListener = null;
 	}

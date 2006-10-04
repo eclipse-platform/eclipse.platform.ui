@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.internal.databinding.internal.observable;
+package org.eclipse.jface.databinding.observable.masterdetail;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -22,14 +22,12 @@ import org.eclipse.jface.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
 
 /**
  * @since 3.2
  * 
  */
-public class NestedObservableSet extends ObservableSet {
+/* package */class DetailObservableSet extends ObservableSet {
 
 	private boolean updating = false;
 
@@ -43,26 +41,21 @@ public class NestedObservableSet extends ObservableSet {
 
 	private Object currentOuterValue;
 
-	private Object feature;
-
 	private IObservableSet innerObservableSet;
-
-	private DataBindingContext databindingContext;
 
 	private IObservableValue outerObservableValue;
 
+	private IObservableFactory factory;
+
 	/**
-	 * @param databindingContext
+	 * @param factory
 	 * @param outerObservableValue
-	 * @param feature
-	 * @param featureType
+	 * @param detailType
 	 */
-	public NestedObservableSet(DataBindingContext databindingContext,
-			IObservableValue outerObservableValue, Object feature,
-			Object featureType) {
-		super(new HashSet(), featureType);
-		this.databindingContext = databindingContext;
-		this.feature = feature;
+	public DetailObservableSet(IObservableFactory factory,
+			IObservableValue outerObservableValue, Object detailType) {
+		super(new HashSet(), detailType);
+		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);
 
@@ -88,8 +81,8 @@ public class NestedObservableSet extends ObservableSet {
 			innerObservableSet = null;
 			wrappedSet = new HashSet();
 		} else {
-			this.innerObservableSet = (IObservableSet) databindingContext
-					.createObservable(new Property(currentOuterValue, feature));
+			this.innerObservableSet = (IObservableSet) factory
+					.createObservable(currentOuterValue);
 			wrappedSet = innerObservableSet;
 			Object innerValueType = innerObservableSet.getElementType();
 			if (elementType == null) {
@@ -114,8 +107,7 @@ public class NestedObservableSet extends ObservableSet {
 			innerObservableSet.dispose();
 		}
 		currentOuterValue = null;
-		databindingContext = null;
-		feature = null;
+		factory = null;
 		innerObservableSet = null;
 		innerChangeListener = null;
 	}

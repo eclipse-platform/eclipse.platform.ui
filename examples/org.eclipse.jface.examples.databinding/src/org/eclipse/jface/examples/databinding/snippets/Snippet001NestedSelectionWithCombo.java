@@ -16,8 +16,8 @@ import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.examples.databinding.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;

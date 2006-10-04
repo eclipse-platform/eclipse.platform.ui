@@ -11,10 +11,14 @@
 
 package org.eclipse.jface.databinding.observable;
 
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.databinding.observable.list.IListChangeListener;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
 import org.eclipse.jface.databinding.observable.set.ObservableSet;
 import org.eclipse.jface.internal.databinding.internal.observable.ProxyObservableSet;
 import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableObservableList;
@@ -28,14 +32,16 @@ import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableOb
 public class Observables {
 	/**
 	 * @param list
-	 * @return list Returns an unmodifiable view of the provided <code>list</code>.
+	 * @return list Returns an unmodifiable view of the provided
+	 *         <code>list</code>.
 	 */
-	public static IObservableList unmodifiableObservableList(IObservableList list) {
+	public static IObservableList unmodifiableObservableList(
+			IObservableList list) {
 		if (list == null) {
 			throw new IllegalArgumentException(
 					"Parameter " + list + " was null."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
+
 		return new UnmodifiableObservableList(list);
 	}
 
@@ -50,6 +56,9 @@ public class Observables {
 
 			public void addStaleListener(IStaleListener listener) {
 			}
+
+			public void addSetChangeListener(ISetChangeListener listener) {
+			}
 		};
 	}
 
@@ -58,10 +67,28 @@ public class Observables {
 	 * set, and fires the same events as the given set, but can be disposed of
 	 * without disposing of the wrapped set.
 	 * 
-	 * @param target the set to wrap
+	 * @param target
+	 *            the set to wrap
 	 * @return a proxy observable set
 	 */
 	public static IObservableSet proxyObservableSet(IObservableSet target) {
 		return new ProxyObservableSet(target);
+	}
+
+	/**
+	 * @param list
+	 * @return
+	 */
+	public static IObservableList staticObservableList(List list) {
+		return new ObservableList(list, Object.class) {
+			public void addChangeListener(IChangeListener listener) {
+			}
+
+			public void addStaleListener(IStaleListener listener) {
+			}
+
+			public void addListChangeListener(IListChangeListener listener) {
+			}
+		};
 	}
 }

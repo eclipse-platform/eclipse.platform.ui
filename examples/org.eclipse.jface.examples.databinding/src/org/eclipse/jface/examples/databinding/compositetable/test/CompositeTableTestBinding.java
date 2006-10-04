@@ -15,12 +15,12 @@ import java.util.List;
 
 import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.examples.databinding.DataBindingFactory1;
 import org.eclipse.jface.examples.databinding.compositetable.CompositeTable;
 import org.eclipse.jface.examples.databinding.compositetable.binding.CompositeTableObservableLazyDataRequestor;
 import org.eclipse.jface.examples.databinding.compositetable.binding.IRowBinder;
 import org.eclipse.jface.internal.databinding.provisional.BindSpec;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyDeleteEvent;
 import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;

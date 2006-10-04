@@ -13,10 +13,10 @@ package org.eclipse.jface.internal.databinding.internal.observable;
 
 import java.util.Set;
 
+import org.eclipse.jface.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
 import org.eclipse.jface.databinding.observable.set.SetDiff;
-import org.eclipse.jface.internal.databinding.provisional.viewers.AbstractObservableSet;
 
 /**
  * Wraps an observable set. This object acts like an exact copy of the original

@@ -9,14 +9,21 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.databinding.swt;
+package org.eclipse.jface.databinding.observable.masterdetail;
 
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.observable.IObservable;
 
 /**
  * @since 3.2
  *
  */
-public interface ISWTObservableValue extends ISWTObservable, IObservableValue {
+public interface IObservableFactory {
+	
+	/**
+	 * Creates an observable for the given target object.
+	 * @param target
+	 * @return the new observable
+	 */
+	public IObservable createObservable(Object target);
 
 }

@@ -9,8 +9,10 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional;
+package org.eclipse.jface.examples.databinding;
 
+import org.eclipse.jface.internal.databinding.provisional.AbstractDataBindingContextFactory;
+import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;

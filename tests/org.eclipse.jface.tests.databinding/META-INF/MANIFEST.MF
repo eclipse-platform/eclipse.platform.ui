@@ -12,5 +12,7 @@ Require-Bundle: org.eclipse.jface.databinding,
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.core.runtime,
- org.eclipse.jface.examples.databinding
+ org.eclipse.jface.examples.databinding,
+ org.eclipse.jface.databinding.beans,
+ org.eclipse.jface.databinding.ui
 Export-Package: org.eclipse.jface.tests.databinding.util;x-internal:=false

@@ -11,8 +11,8 @@
 
 package org.eclipse.jface.examples.databinding.compositetable.test;
 
+import org.eclipse.jface.examples.databinding.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;

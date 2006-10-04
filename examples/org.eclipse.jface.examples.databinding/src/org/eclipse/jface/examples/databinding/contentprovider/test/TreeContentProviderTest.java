@@ -14,8 +14,8 @@ import org.eclipse.jface.databinding.observable.Observables;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.observable.set.UnionSet;
 import org.eclipse.jface.databinding.observable.set.WritableSet;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ITreeProvider;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ObservableTreeContentProvider;
+import org.eclipse.jface.databinding.viewers.IUnorderedTreeProvider;
+import org.eclipse.jface.databinding.viewers.UnorderedTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -110,7 +110,7 @@ public class TreeContentProviderTest {
 		// have an instance of RootNode as the root (which is really a placeholder), several
 		// SimpleNodes as top-level nodes, and sets of randomly generated Doubles below each
 		// SimpleNode.
-		ITreeProvider treeProvider = new ITreeProvider() {
+		IUnorderedTreeProvider treeProvider = new IUnorderedTreeProvider() {
 			public IObservableSet createChildSet(Object element) {
 				// If the parent is the root node, return the union of some randomly-generated
 				// nodes and some hardcoded nodes
@@ -158,7 +158,7 @@ public class TreeContentProviderTest {
 		tree = new TreeViewer(shell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		
 		// UpdatableTreeContentProvider converts an ITreeProvider into a standard JFace content provider
-		ObservableTreeContentProvider contentProvider = new ObservableTreeContentProvider(treeProvider,
+		UnorderedTreeContentProvider contentProvider = new UnorderedTreeContentProvider(treeProvider,
 				"pending...");
 		
 		tree.setContentProvider(contentProvider);

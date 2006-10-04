@@ -8,7 +8,9 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface,
  org.eclipse.jface.databinding,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.eclipse.jface.databinding.beans,
+ org.eclipse.jface.databinding.ui
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.examples.databinding;x-internal:=false,
  org.eclipse.jface.examples.databinding.compositetable;x-internal:=false,
