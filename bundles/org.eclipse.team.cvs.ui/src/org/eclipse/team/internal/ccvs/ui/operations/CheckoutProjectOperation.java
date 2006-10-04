@@ -156,7 +156,12 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 				// Just return the workspace root rule
 				try {
 					Platform.getJobManager().beginRule(schedulingRule, pm);
-					result[0] = performCheckout(session, resource, targetProjects, sendModuleName, Policy.subMonitorFor(pm, 90));
+					// Still use the projects as the inner rule so we get the proper batching of sync info write
+					EclipseSynchronizer.getInstance().run(MultiRule.combine(targetProjects), new ICVSRunnable() {
+						public void run(IProgressMonitor monitor) throws CVSException {
+							result[0] = performCheckout(session, resource, targetProjects, sendModuleName, monitor);
+						}
+					}, Policy.subMonitorFor(pm, 90));
 				} finally {
 					Platform.getJobManager().endRule(schedulingRule);
 				}
