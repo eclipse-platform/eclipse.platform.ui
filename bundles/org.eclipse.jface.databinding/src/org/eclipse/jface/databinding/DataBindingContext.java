@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159539
+ *     Brad Reynolds - bug 140644
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -165,6 +166,7 @@ public class DataBindingContext {
 				.getValueType(), modelObservableValue.getValueType());
 		Binding result = new ValueBinding(this, targetObservableValue,
 				modelObservableValue, bindSpec);
+        bindings.add(result);
 		return result;
 	}
 
@@ -187,6 +189,7 @@ public class DataBindingContext {
 		fillBindSpecDefaults(this, bindSpec, targetObservableList.getElementType(), modelObservableList.getElementType());
 		Binding result = new ListBinding(this, targetObservableList,
 				modelObservableList, bindSpec);
+        bindings.add(result);
 		return result;
 	}
 
