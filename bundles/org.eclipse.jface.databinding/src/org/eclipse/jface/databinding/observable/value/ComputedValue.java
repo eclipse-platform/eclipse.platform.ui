@@ -167,4 +167,19 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	public Object getValueType() {
 		return valueType;
 	}
+
+	public void addChangeListener(IChangeListener listener) {
+		super.addChangeListener(listener);
+		// If somebody is listening, we need to make sure we attach our own
+		// listeners
+		getValue();
+	}
+
+	public void addValueChangeListener(IValueChangeListener listener) {
+		super.addValueChangeListener(listener);
+		// If somebody is listening, we need to make sure we attach our own
+		// listeners
+		getValue();
+	}
+
 }
