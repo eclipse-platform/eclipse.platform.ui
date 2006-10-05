@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
@@ -35,29 +36,6 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class TrimLayoutTest extends UITestCase {
 
 	private static final String BUTTON_B_ID = "my.button.b";
-
-	public static final String[] DEFAULT_BOTTOM = {
-			"org.eclise.ui.internal.FastViewBar",
-			"org.eclipse.jface.action.StatusLineManager",
-			"org.eclipse.ui.internal.HeapStatus",
-			"org.eclipse.ui.internal.progress.ProgressRegion" };
-
-	public static final String[] SWAPPED_STATUS_LINE = {
-			"org.eclise.ui.internal.FastViewBar",
-			"org.eclipse.ui.internal.progress.ProgressRegion",
-			"org.eclipse.ui.internal.HeapStatus",
-			"org.eclipse.jface.action.StatusLineManager" };
-
-	public static final String[] SWAPPED_FASTVIEW = {
-			"org.eclipse.ui.internal.progress.ProgressRegion",
-			"org.eclipse.jface.action.StatusLineManager",
-			"org.eclipse.ui.internal.HeapStatus",
-			"org.eclise.ui.internal.FastViewBar", };
-
-	public static final String[] REMOVED_HEAP_STATUS = {
-			"org.eclise.ui.internal.FastViewBar",
-			"org.eclipse.jface.action.StatusLineManager",
-			"org.eclipse.ui.internal.progress.ProgressRegion" };
 
 	public static final String[] TOP_TRIM_LIST = {
 			"org.eclipse.ui.internal.WorkbenchWindow.topBar",
@@ -96,9 +74,8 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testTrimInformation() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();
-		List descs = trimManager.getAreaTrim(SWT.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, descs);
+		ITrimManager trimManager = window.getTrimManager();		
+		validateDefaultBottomLayout(trimManager);
 	}
 
 	/**
@@ -109,17 +86,23 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveStatusLine() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();
-		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
+		ITrimManager trimManager = window.getTrimManager();		
+		validateDefaultBottomLayout(trimManager);
+		
+		// Capture the ids of the 1st and 3rd elements
+		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
+		String id1 = ((IWindowTrim) trim.get(1)).getId();
+		String id3 = ((IWindowTrim) trim.get(3)).getId();
 
+		// Swap the first and third trim elements
 		swapPostition(trim, 1, 3);
 		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
-
 		window.getShell().layout(true, true);
 
+		// Check the swap
 		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(SWAPPED_STATUS_LINE, trim);
+		assertTrue("element failed to swap", getIndexOf(trim, id1) == 3);
+		assertTrue("element failed to swap", getIndexOf(trim, id3) == 1);
 	}
 
 	/**
@@ -130,17 +113,23 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testMoveFastViewBar() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();
-		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
+		ITrimManager trimManager = window.getTrimManager();				
+		validateDefaultBottomLayout(trimManager);
+		
+		// Capture the ids of the 1st and 3rd elements
+		List trim = trimManager.getAreaTrim(SWT.BOTTOM);		
+		String id0 = ((IWindowTrim) trim.get(0)).getId();
+		String id3 = ((IWindowTrim) trim.get(3)).getId();
 
+		// Swap the zero'th and third trim elements
 		swapPostition(trim, 0, 3);
 		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, false);
-
 		window.getShell().layout(true, true);
 
+		// Check the swap
 		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(SWAPPED_FASTVIEW, trim);
+		assertTrue("element failed to swap", getIndexOf(trim, id0) == 3);
+		assertTrue("element failed to swap", getIndexOf(trim, id3) == 0);
 	}
 
 	/**
@@ -153,17 +142,20 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	public void testRemoveHeapStatus() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
-		ITrimManager trimManager = window.getTrimManager();
+		ITrimManager trimManager = window.getTrimManager();		
+		validateDefaultBottomLayout(trimManager);
+
+		// Remove the Heap Status
 		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(DEFAULT_BOTTOM, trim);
-
-		trim.remove(2);
+		int hsIndex = getIndexOf(trim, "org.eclipse.ui.internal.HeapStatus");
+		trim.remove(hsIndex);
 		trimManager.updateAreaTrim(ITrimManager.BOTTOM, trim, true);
-
 		window.getShell().layout(true, true);
 
+		// Make sure that its gone
 		trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(REMOVED_HEAP_STATUS, trim);
+		hsIndex = getIndexOf(trim, "org.eclipse.ui.internal.HeapStatus");
+		assertTrue("HeapStatus failed to remove", hsIndex == -1);
 	}
 
 	/**
@@ -249,18 +241,30 @@ public class TrimLayoutTest extends UITestCase {
 	public void testRestoreStateWithChange() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
 		ITrimManager trimManager = window.getTrimManager();
+		validateDefaultBottomLayout(trimManager);
+		
+		int bottomTrimCount = trimManager.getAreaTrim(SWT.BOTTOM).size();
+		
+		// Create a memento and write the state to it...
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 		IStatus rc = window.saveState(state);
+		
+		// Did the save work?
 		assertEquals(IStatus.OK, rc.getSeverity());
-		IMemento trim = state.getChild(IWorkbenchConstants.TAG_TRIM);
-		assertNotNull(trim);
-		IMemento[] children = trim
+		
+		// Does it have the right info?
+		IMemento trimMemento = state.getChild(IWorkbenchConstants.TAG_TRIM);
+		assertNotNull(trimMemento);
+
+		// Is the child content the same
+		IMemento[] children = trimMemento
 				.getChildren(IWorkbenchConstants.TAG_TRIM_AREA);
 		int childIdx = 0;
 		IMemento bottomTrim = null;
 		String bottomId = new Integer(SWT.BOTTOM).toString();
 
+		// Find the 'bottom' trim
 		for (; childIdx < children.length; childIdx++) {
 			if (children[childIdx].getID().equals(bottomId)) {
 				bottomTrim = children[childIdx];
@@ -269,18 +273,23 @@ public class TrimLayoutTest extends UITestCase {
 		}
 		assertNotNull(bottomTrim);
 
+		// Make sure we have the right number of entries
 		children = bottomTrim.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
-		assertEquals(4, children.length);
+		assertEquals(bottomTrimCount, children.length);
 
-		String id = children[0].getID();
-		children[0].putString(IMemento.TAG_ID, children[3].getID());
-		children[3].putString(IMemento.TAG_ID, id);
+		// 'swap' the 0 and 3 trim using only the stored ids
+		String id0 = children[0].getID();
+		String id3 = children[3].getID();
+		children[0].putString(IMemento.TAG_ID, id3);
+		children[3].putString(IMemento.TAG_ID, id0);
 
+		// Restore the trim from the modified state
 		window.restoreState(state, window.getActivePage().getPerspective());
 		window.getShell().layout(true, true);
 
-		List windowTrim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		validatePositions(SWAPPED_FASTVIEW, windowTrim);
+		List trim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
+		assertTrue("Restore has wrong layout", getIndexOf(trim, id0) == 3);
+		assertTrue("Restore has wrong layout", getIndexOf(trim, id3) == 0);
 	}
 
 	/**
@@ -292,6 +301,10 @@ public class TrimLayoutTest extends UITestCase {
 	public void testRestoreStateWithLocationChange() throws Throwable {
 		WorkbenchWindow window = openWorkbenchWindow();
 		ITrimManager trimManager = window.getTrimManager();
+		validateDefaultBottomLayout(trimManager);
+		
+		int bottomTrimCount = trimManager.getAreaTrim(SWT.BOTTOM).size();
+
 		XMLMemento state = XMLMemento
 				.createWriteRoot(IWorkbenchConstants.TAG_WINDOW);
 		IStatus rc = window.saveState(state);
@@ -313,7 +326,8 @@ public class TrimLayoutTest extends UITestCase {
 		assertNotNull(bottomTrim);
 
 		children = bottomTrim.getChildren(IWorkbenchConstants.TAG_TRIM_ITEM);
-		assertEquals(4, children.length);
+		assertEquals(bottomTrimCount, children.length);
+		
 		// kinda fake to remove the fast view bar from the bottom
 		String id = children[0].getID();
 		children[0].putString(IMemento.TAG_ID, children[3].getID());
@@ -325,7 +339,7 @@ public class TrimLayoutTest extends UITestCase {
 		window.getShell().layout(true, true);
 
 		List windowTrim = trimManager.getAreaTrim(ITrimManager.BOTTOM);
-		assertEquals(3, windowTrim.size());
+		assertEquals(bottomTrimCount-1, windowTrim.size());
 
 		windowTrim = trimManager.getAreaTrim(ITrimManager.LEFT);
 		assertEquals(1, windowTrim.size());
@@ -362,6 +376,54 @@ public class TrimLayoutTest extends UITestCase {
 	}
 
 	/**
+	 * Get the position of the given trim element from the trim
+	 * 
+	 * @param trimIds The list of ids returned by the TrimManager
+	 * @param id The id of the trim to get the index of
+	 * @return The zero-based index or -1 if not found
+	 */
+	private int getIndexOf(List trimIds, String id) {
+		int index = 0;
+		for (Iterator iterator = trimIds.iterator(); iterator.hasNext();) {
+			IWindowTrim trim = (IWindowTrim) iterator.next();
+			if (id.equals(trim.getId()))
+				return index;
+			index++;
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Ensure that all the base trim is there and has
+	 * the correct -relative- positions
+	 * 
+	 * @param descs The ordered list of trim descriptors
+	 * for the bottom trim area
+	 */
+	private void validateDefaultBottomLayout(ITrimManager trimManager) {
+		List descs = trimManager.getAreaTrim(SWT.BOTTOM);
+
+		// Must have at least 4 elements
+		assertTrue("Too few trim elements", descs.size() >= 4);
+
+		// Ensure that all the base trim is there and has
+		// the correct -relative- positions
+		int fvbIndex = getIndexOf(descs, "org.eclise.ui.internal.FastViewBar");
+		assertTrue("Fast View Bar not found", fvbIndex != -1);
+		int slIndex = getIndexOf(descs, "org.eclipse.jface.action.StatusLineManager");
+		assertTrue("StatusLine not found", slIndex != -1);
+		int hsIndex = getIndexOf(descs, "org.eclipse.ui.internal.HeapStatus");
+		assertTrue("Heap Status not found", hsIndex != -1);
+		int prIndex = getIndexOf(descs, "org.eclipse.ui.internal.progress.ProgressRegion");
+		assertTrue("Progress Region not found", prIndex != -1);
+		
+		assertTrue("Fast View out of position", fvbIndex < slIndex);
+		assertTrue("Status Line out of position", slIndex < hsIndex);
+		assertTrue("Heap Status out of position", hsIndex < prIndex);
+	}
+	
+	/**
 	 * Match the returned set of IDs exactly with expected IDs.
 	 * 
 	 * @param expectedIDs
@@ -386,6 +448,8 @@ public class TrimLayoutTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		
+		// Ensure that the HeapStatus is showing
 		fHeapStatusPref = PrefUtil.getAPIPreferenceStore().getBoolean(
 				IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR);
 		PrefUtil.getAPIPreferenceStore().setValue(
