@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * An UpdateMarkersOperation represents an undoable operation for updating one
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  */
 public class UpdateMarkersOperation extends AbstractMarkersOperation {
 
+	// Whether attributes should be merged with existing attributes when
+	// updated, or considered to be complete replacements.
 	private boolean mergeAttributes;
 
 	/**
@@ -88,7 +91,9 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * Execute this operation by updating the markers.
+	 * (non-Javadoc)
+	 * 
+	 * Map execution to updating the markers.
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -99,12 +104,15 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.MarkerOperation_UpdateProgress);
 		updateMarkers(100, monitor, mergeAttributes);
 		monitor.done();
 	}
 
 	/*
-	 * Undo this operation by updating the markers again.
+	 * (non-Javadoc)
+	 * 
+	 * Map undo to execute (since both operations update the markers).
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -118,14 +126,20 @@ public class UpdateMarkersOperation extends AbstractMarkersOperation {
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * Map undo status to marker update status.
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
 	protected IStatus getBasicUndoStatus() {
-		 return getMarkerUpdateStatus();
+		return getMarkerUpdateStatus();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * Map redo status to marker update status.
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
 	protected IStatus getBasicRedoStatus() {

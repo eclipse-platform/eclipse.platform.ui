@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.internal.ide.undo.MarkerDescription;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A CreateMarkersOperation represents an undoable operation for creating one or
@@ -113,7 +115,9 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * Execute the operation by creating the markers.
+	 * (non-Javadoc)
+	 * 
+	 * This implementation creates markers
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -124,12 +128,15 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.MarkerOperation_CreateProgress);
 		createMarkers(100, monitor);
 		monitor.done();
 	}
 
 	/*
-	 * Undo the operation by deleting the markers.
+	 * (non-Javadoc)
+	 * 
+	 * This implementation deletes markers
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -140,20 +147,27 @@ public class CreateMarkersOperation extends AbstractMarkersOperation {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.MarkerOperation_DeleteProgress);
 		deleteMarkers(100, monitor);
 		monitor.done();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * This implementation maps the undo status to the deletion status.
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
 	 */
 	protected IStatus getBasicUndoStatus() {
-		 return getMarkerDeletionStatus();
+		return getMarkerDeletionStatus();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * This implementation maps the redo status to the creation status.
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
 	protected IStatus getBasicRedoStatus() {

@@ -13,7 +13,9 @@ package org.eclipse.ui.ide.undo;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -52,6 +54,25 @@ public class WorkspaceUndoSupport {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
+	
+	/**
+	 * Return the workspace root.
+	 * 
+	 * @return the current workspace root.
+	 */
+	public static IWorkspaceRoot getWorkspaceRoot() {
+		return getWorkspace().getRoot();
+	}
+	
+	/**
+	 * Return the workspace rule factory.
+	 * 
+	 * @return the current workspace root.
+	 */
+	public static IResourceRuleFactory getWorkspaceRuleFactory() {
+		return getWorkspace().getRuleFactory();
+	}
+
 
 	/**
 	 * Return the undo context that should be used for operations involving

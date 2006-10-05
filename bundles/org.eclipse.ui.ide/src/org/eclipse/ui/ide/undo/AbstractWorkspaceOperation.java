@@ -21,7 +21,6 @@ import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
@@ -29,6 +28,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
@@ -59,17 +59,42 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 
 	private static String ELLIPSIS = "..."; //$NON-NLS-1$
 
-	private static int EXECUTE = 1;
+	protected static int EXECUTE = 1;
 
-	private static int UNDO = 2;
+	protected static int UNDO = 2;
 
-	private static int REDO = 3;
+	protected static int REDO = 3;
 
 	protected IResource[] resources;
 
 	private boolean isValid = true;
 
 	String[] modelProviderIds;
+
+	/**
+	 * Return the shell described by the specified adaptable, or the active
+	 * shell if no shell has been specified in the adaptable.
+	 * 
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * 
+	 * @return the shell specified in the adapatable, or the active shell if no
+	 *         shell has been specified
+	 * 
+	 */
+	protected static Shell getShell(IAdaptable uiInfo) {
+		if (uiInfo != null) {
+			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
+			if (shell != null) {
+				return shell;
+			}
+		}
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	}
 
 	/**
 	 * Create an AbstractWorkspaceOperation with the specified name.
@@ -117,7 +142,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * @return the IWorkspace used by this operation.
 	 */
 	protected IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
+		return WorkspaceUndoSupport.getWorkspace();
 	}
 
 	/**
@@ -132,14 +157,18 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * This implementation checks a validity flag.
+	 * 
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#canExecute()
 	 */
 	public boolean canExecute() {
 		return isValid();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * This implementation checks a validity flag.
 	 * 
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#canUndo()
 	 */
@@ -150,18 +179,33 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * This implementation checks a validity flag.
+	 * 
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#canRedo()
 	 */
 	public boolean canRedo() {
 		return isValid();
 	}
 
-	/*
+	/**
 	 * Execute the specified operation. This implementation executes the
 	 * operation in a workspace runnable and catches any CoreExceptions
 	 * resulting from the operation. An error dialog is shown to the user if a
 	 * CoreException occurs and the exception is propagated as an
-	 * ExecutionException.
+	 * ExecutionException if specified by the core exception handler
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @return the IStatus of the execution. The status severity should be set
+	 *         to <code>OK</code> if the operation was successful, and
+	 *         <code>ERROR</code> if it was not. Any other status is assumed
+	 *         to represent an incompletion of the execution.
 	 * 
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
@@ -173,36 +217,53 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, info);
 				}
-			}, null);
+			}, getExecuteSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
+			final boolean[] propagateException = new boolean[1];
 			getShell(info).getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog
-							.openError(
-									getShell(info),
-									NLS
-											.bind(
-													UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
-													getLabel()), null, e
-											.getStatus());
+					propagateException[0] = handleCoreException(
+							e,
+							getShell(info),
+							NLS
+									.bind(
+											UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
+											getLabel()));
 
 				}
 
 			});
-			throw new ExecutionException(NLS.bind(
-					UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
-					getLabel()), e);
+			if (propagateException[0]) {
+				throw new ExecutionException(
+						NLS
+								.bind(
+										UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
+										getLabel()), e);
+			}
 		}
 		isValid = true;
 		return Status.OK_STATUS;
 	}
 
-	/*
+	/**
 	 * Redo the specified operation. This implementation redoes the operation in
 	 * a workspace runnable and catches any CoreExceptions resulting from the
 	 * operation. An error dialog is shown to the user if a CoreException occurs
-	 * and the exception is propagated as an ExecutionException.
+	 * and the exception is propagated as an ExecutionException if specified by
+	 * the core exception handler.
 	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @return the IStatus of the redo. The status severity should be set to
+	 *         <code>OK</code> if the operation was successful, and
+	 *         <code>ERROR</code> if it was not. Any other status is assumed
+	 *         to represent an incompletion of the redo.
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -213,36 +274,50 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, info);
 				}
-			}, null);
+			}, getRedoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
+			final boolean[] propagateException = new boolean[1];
 			getShell(info).getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog
-							.openError(
-									getShell(info),
-									NLS
-											.bind(
-													UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
-													getLabel()), null, e
-											.getStatus());
-
+					propagateException[0] = handleCoreException(
+							e,
+							getShell(info),
+							NLS
+									.bind(
+											UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
+											getLabel()));
 				}
 
 			});
-			throw new ExecutionException(NLS.bind(
-					UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
-					getLabel()), e);
+			if (propagateException[0]) {
+				throw new ExecutionException(NLS.bind(
+						UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
+						getLabel()), e);
+			}
 		}
 		isValid = true;
 		return Status.OK_STATUS;
 	}
 
-	/*
+	/**
 	 * Undo the specified operation. This implementation undoes the operation in
 	 * a workspace runnable and catches any CoreExceptions resulting from the
 	 * operation. An error dialog is shown to the user if a CoreException occurs
-	 * and the exception is propagated as an ExecutionException.
+	 * and the exception is propagated as an ExecutionException if specified by
+	 * the core exception handler.
 	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @return the IStatus of the undo. The status severity should be set to
+	 *         <code>OK</code> if the operation was successful, and
+	 *         <code>ERROR</code> if it was not. Any other status is assumed
+	 *         to represent an incompletion of the undo.
 	 * @see org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
@@ -253,62 +328,69 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doUndo(monitor, info);
 				}
-			}, null);
+			}, getUndoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
+			final boolean[] propagateException = new boolean[1];
 			getShell(info).getDisplay().syncExec(new Runnable() {
 				public void run() {
-					ErrorDialog
-							.openError(
-									getShell(info),
-									NLS
-											.bind(
-													UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
-													getLabel()), null, e
-											.getStatus());
+					propagateException[0] = handleCoreException(
+							e,
+							getShell(info),
+							NLS
+									.bind(
+											UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
+											getLabel()));
 
 				}
 
 			});
-			throw new ExecutionException(NLS.bind(
-					UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
-					getLabel()), e);
+			if (propagateException[0]) {
+				throw new ExecutionException(NLS.bind(
+						UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
+						getLabel()), e);
+			}
 		}
 		isValid = true;
 		return Status.OK_STATUS;
 	}
 
-	/*
+	/**
 	 * Perform the specific work involved in undoing this operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * 
 	 */
 	protected abstract void doUndo(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException;
 
-	/*
+	/**
 	 * Perform the specific work involved in executing this operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
 	 */
 	protected abstract void doExecute(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException;
 
-	/*
-	 * Return the shell described by the specified adaptable, or the active
-	 * shell if no shell has been specified in the adaptable.
-	 */
-	protected Shell getShell(IAdaptable info) {
-		if (info != null) {
-			Shell shell = (Shell) info.getAdapter(Shell.class);
-			if (shell != null) {
-				return shell;
-			}
-		}
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	}
-
 	/**
 	 * Return whether the proposed operation is valid. The default
 	 * implementation simply checks to see if the flag has been marked as
-	 * invalid, relying on subclasses to mark the flag invalid when
-	 * appropriate.
+	 * invalid, relying on subclasses to mark the flag invalid when appropriate.
 	 * 
+	 * @return the validity flag
 	 */
 	protected boolean isValid() {
 		return isValid;
@@ -331,18 +413,35 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	public Object[] getAffectedObjects() {
 		return resources;
 	}
-	
-	/*
-	 * Return a status indicating the projected outcome of executing the receiver.
+
+	/**
+	 * Return a status indicating the projected outcome of executing the
+	 * receiver. This method is not called by the operation history, but instead
+	 * is used by clients (such as implementers of {@link IOperationApprover2})
+	 * who wish to perform advanced validation of an operation before attempting
+	 * to execute it.
 	 * 
-	 * This method computes the validity of execution by computing the resource
-	 * delta that would be generated on execution, and checking whether any
-	 * registered model providers are affected by the operation. This method is
-	 * not called by the operation history, but instead is used by clients (such
-	 * as implementers of {@link IOperationApprover2}) who wish to perform
-	 * advanced validation of an operation before attempting to execute it. If the
-	 * execute is not valid, then the validity flag on the operation should be
-	 * marked invalid.
+	 * If an ERROR status is returned, the operation will not proceed and the
+	 * user notified if deemed necessary by the caller. The validity flag on the
+	 * operation should be marked as invalid. If an OK status is returned, the
+	 * operation will proceed. The caller must interpret any other returned
+	 * status severity, and may choose to prompt the user as to how to proceed.
+	 * 
+	 * If there are multiple conditions that result in an ambiguous status
+	 * severity, it is best for the implementor of this method to consult the
+	 * user as to how to proceed for each one, and return an OK or ERROR status
+	 * that accurately reflects the user's wishes, or to return a multi-status
+	 * that accurately describes all of the issues at hand, so that the caller
+	 * may potentially consult the user.
+	 * 
+	 * This implementation computes the validity of execution by computing the
+	 * resource delta that would be generated on execution, and checking whether
+	 * any registered model providers are affected by the operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to be used for computing the status
+	 * @return the status indicating the projected outcome of executing the
+	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -369,17 +468,34 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 
 	}
 
-	/*
+	/**
 	 * Return a status indicating the projected outcome of undoing the receiver.
+	 * This method is not called by the operation history, but instead is used
+	 * by clients (such as implementers of {@link IOperationApprover2}) who
+	 * wish to perform advanced validation of an operation before attempting to
+	 * undo it.
 	 * 
-	 * This method computes the validity of an undo by computing the resource
-	 * delta that would be generated on undo, and checking whether any
-	 * registered model providers are affected by the operation. This method is
-	 * not called by the operation history, but instead is used by clients (such
-	 * as implementers of {@link IOperationApprover}) who wish to perform
-	 * advanced validation of an operation before attempting to undo it. If the
-	 * undo is not valid, then the validity flag on the operation should be
-	 * marked invalid.
+	 * If an ERROR status is returned, the undo will not proceed and the user
+	 * notified if deemed necessary by the caller. The validity flag on the
+	 * operation should be marked as invalid. If an OK status is returned, the
+	 * undo will proceed. The caller must interpret any other returned status
+	 * severity, and may choose to prompt the user as to how to proceed.
+	 * 
+	 * If there are multiple conditions that result in an ambiguous status
+	 * severity, it is best for the implementor of this method to consult the
+	 * user as to how to proceed for each one, and return an OK or ERROR status
+	 * that accurately reflects the user's wishes, or to return a multi-status
+	 * that accurately describes all of the issues at hand, so that the caller
+	 * may potentially consult the user.
+	 * 
+	 * This implementation computes the validity of undo by computing the
+	 * resource delta that would be generated on undo, and checking whether any
+	 * registered model providers are affected by the operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to be used for computing the status
+	 * @return the status indicating the projected outcome of undoing the
+	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -406,17 +522,34 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 
 	}
 
-	/*
+	/**
 	 * Return a status indicating the projected outcome of redoing the receiver.
+	 * This method is not called by the operation history, but instead is used
+	 * by clients (such as implementers of {@link IOperationApprover2}) who
+	 * wish to perform advanced validation of an operation before attempting to
+	 * redo it.
 	 * 
-	 * This method computes the validity of a redo by computing the resource
-	 * delta that would be generated on redo, and checking whether any
-	 * registered model providers are affected by the operation. This method is
-	 * not called by the operation history, but instead is used by clients (such
-	 * as implementers of {@link IOperationApprover}) who wish to perform
-	 * advanced validation of an operation before attempting to redo it. If the
-	 * redo is not valid, then the validity flag on the operation should be
-	 * marked invalid.
+	 * If an ERROR status is returned, the redo will not proceed and the user
+	 * notified if deemed necessary by the caller. The validity flag on the
+	 * operation should be marked as invalid. If an OK status is returned, the
+	 * redo will proceed. The caller must interpret any other returned status
+	 * severity, and may choose to prompt the user as to how to proceed.
+	 * 
+	 * If there are multiple conditions that result in an ambiguous status
+	 * severity, it is best for the implementor of this method to consult the
+	 * user as to how to proceed for each one, and return an OK or ERROR status
+	 * that accurately reflects the user's wishes, or to return a multi-status
+	 * that accurately describes all of the issues at hand, so that the caller
+	 * may potentially consult the user.
+	 * 
+	 * This implementation computes the validity of redo by computing the
+	 * resource delta that would be generated on redo, and checking whether any
+	 * registered model providers are affected by the operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to be used for computing the status
+	 * @return the status indicating the projected outcome of redoing the
+	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -462,9 +595,14 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 		return false;
 	}
 
-	/*
-	 * Get an error status describing an invalid operation using the provided
+	/**
+	 * Return an error status describing an invalid operation using the provided
 	 * message.
+	 * 
+	 * @param message
+	 *            the message to be used in the status, or <code>null</code>
+	 *            if a generic message should be used
+	 * @return the error status
 	 */
 	protected IStatus getErrorStatus(String message) {
 		String statusMessage = message;
@@ -478,9 +616,16 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 				OperationStatus.OPERATION_INVALID, statusMessage, null);
 	}
 
-	/*
-	 * Get a warning status describing the warning state for an operation using
-	 * the provided message and code.
+	/**
+	 * Return a warning status describing the warning state of an operation
+	 * using the provided message and code.
+	 * 
+	 * @param message
+	 *            the message to be used in the status, or <code>null</code>
+	 *            if a generic message should be used
+	 * @param code
+	 *            the integer code to be assigned to the status
+	 * @return the warning status
 	 */
 	protected IStatus getWarningStatus(String message, int code) {
 		String statusMessage = message;
@@ -511,5 +656,118 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Return whether the resources known by this operation contain any
+	 * projects.
+	 * 
+	 * @return <code>true</code> if there is one or more projects known by
+	 *         this operation and false if there are no projects.
+	 */
+	protected boolean resourcesIncludesProjects() {
+		if (resources == null || resources.length == 0) {
+			return false;
+		}
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() == IResource.PROJECT) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Handle the core exception that occurred while trying to execute, undo, or
+	 * redo the operation, returning a boolean to indicate whether this
+	 * exception should cuase a {@link ExecutionException} to be thrown.
+	 * 
+	 * It is safe to access UI in this method. The default implementation is to
+	 * show an error dialog, but subclasses may override this method to swallow
+	 * certain exceptions or handle them differently.
+	 * 
+	 * If the only difference in handling the exception is to show a different
+	 * error message, subclasses should override
+	 * {@link #getErrorMessage(CoreException)} instead.
+	 * 
+	 * @param e
+	 *            the CoreException
+	 * @param shell
+	 *            the shell to be used for showing any UI information
+	 * @param errorTitle
+	 *            the title to be used in the error dialog.
+	 */
+	protected boolean handleCoreException(CoreException e, Shell shell,
+			String errorTitle) {
+		ErrorDialog.openError(shell, errorTitle, getErrorMessage(e), e
+				.getStatus());
+		return true;
+	}
+
+	/**
+	 * Return the specific error message to use when the specified core
+	 * exception occurs, or <code>null</code> to indicate that the the
+	 * exception's message should be used.
+	 * 
+	 * @param e
+	 *            the CoreException
+	 * @return the string to be used in any shown error message, or
+	 *         <code>null</code> if the exception's message should be shown.
+	 */
+	protected String getErrorMessage(CoreException e) {
+		return null;
+	}
+
+	/**
+	 * Return a scheduling rule appropriate for executing this operation.
+	 * 
+	 * The default implementation is to return a rule that locks out the entire
+	 * workspace. Subclasses are encouraged to provide more specific rules that
+	 * affect only their resources.
+	 * 
+	 * @return the scheduling rule to use when executing this operation, or
+	 *         <code>null</code> if there are no scheduling restrictions for
+	 *         this operation.
+	 * 
+	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 *      IProgressMonitor)
+	 */
+	protected ISchedulingRule getExecuteSchedulingRule() {
+		return WorkspaceUndoSupport.getWorkspaceRoot();
+	}
+
+	/**
+	 * Return a scheduling rule appropriate for undoing this operation.
+	 * 
+	 * The default implementation is to return a rule that locks out the entire
+	 * workspace. Subclasses are encouraged to provide more specific rules that
+	 * affect only their resources.
+	 * 
+	 * @return the scheduling rule to use when undoing this operation, or
+	 *         <code>null</code> if there are no scheduling restrictions for
+	 *         this operation.
+	 * 
+	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 *      IProgressMonitor)
+	 */
+	protected ISchedulingRule getUndoSchedulingRule() {
+		return WorkspaceUndoSupport.getWorkspaceRoot();
+	}
+
+	/**
+	 * Return a scheduling rule appropriate for redoing this operation.
+	 * 
+	 * The default implementation considers the redo scheduling rule the
+	 * same as the original execution scheduling rule.
+	 * 
+	 * @return the scheduling rule to use when redoing this operation, or
+	 *         <code>null</code> if there are no scheduling restrictions for
+	 *         this operation.
+	 * 
+	 * @see IWorkspace#run(IWorkspaceRunnable, ISchedulingRule, int,
+	 *      IProgressMonitor)
+	 */
+	protected ISchedulingRule getRedoSchedulingRule() {
+		return getExecuteSchedulingRule();
 	}
 }

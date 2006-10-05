@@ -21,6 +21,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.ui.internal.ide.undo.MarkerDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -87,9 +90,15 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		setMarkerDescriptions(markerDescriptions);
 	}
 
-	/*
+	/**
 	 * Delete any currently known markers and save their information in marker
 	 * descriptions so that they can be restored.
+	 * 
+	 * @param work
+	 *            the number of work ticks to be used by the delete
+	 * @param monitor
+	 *            the progress monitor to use for the delete
+	 * @throws CoreException
 	 */
 	protected void deleteMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -107,8 +116,14 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		markers = new IMarker[0];
 	}
 
-	/*
-	 * Create markers from the currently known marker descriptions.
+	/**
+	 * Create markers from any currently known marker descriptions.
+	 * 
+	 * @param work
+	 *            the number of work ticks to be used by the create
+	 * @param monitor
+	 *            the progress monitor to use for the create
+	 * @throws CoreException
 	 */
 	protected void createMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -126,10 +141,19 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		}
 	}
 
-	/*
+	/**
 	 * Update the currently known markers with the corresponding array of marker
-	 * descriptions. The boolean specifies whether the attributes are merged or
-	 * considered to be a replacement of the previous attributes.
+	 * descriptions.
+	 * 
+	 * @param work
+	 *            the number of work ticks to be used by the update
+	 * @param monitor
+	 *            the progress monitor to use for the update
+	 * @param mergeAttributes
+	 *            a boolean specifying whether the attributes are merged or
+	 *            considered to be a replacement of the previous attributes.
+	 * @throws CoreException
+	 * 
 	 */
 	protected void updateMarkers(int work, IProgressMonitor monitor,
 			boolean mergeAttributes) throws CoreException {
@@ -163,8 +187,11 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		}
 	}
 
-	/*
+	/**
 	 * Set the marker descriptions that describe markers that can be created.
+	 * 
+	 * @param descriptions
+	 *            the descriptions of markers that can be created.
 	 */
 	protected void setMarkerDescriptions(MarkerDescription[] descriptions) {
 		markerDescriptions = descriptions;
@@ -183,7 +210,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			if (markerDescriptions != null) {
 				resources = new IResource[markerDescriptions.length];
 				for (int i = 0; i < markerDescriptions.length; i++) {
-					resources[i] = markerDescriptions[i].resource;
+					resources[i] = markerDescriptions[i].getResource();
 				}
 			}
 		} else {
@@ -212,7 +239,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			if (markerDescriptions != null) {
 				types = new String[markerDescriptions.length];
 				for (int i = 0; i < markerDescriptions.length; i++) {
-					types[i] = markerDescriptions[i].type;
+					types[i] = markerDescriptions[i].getType();
 				}
 			}
 		} else {
@@ -251,8 +278,6 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * 
 	 * @return the array of markers that have been updated or created, or
 	 *         <code>null</code> if no markers have been created or updated.
-	 * 
-	 * @since 3.3
 	 */
 	public IMarker[] getMarkers() {
 		return markers;
@@ -297,10 +322,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	protected abstract IStatus getBasicRedoStatus();
 
 	/*
-	 * Return a status indicating the projected outcome of executing the
-	 * receiver.
+	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicRedoStatus();
@@ -314,9 +338,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	}
 
 	/*
-	 * Return a status indicating the projected outcome of undoing the receiver.
+	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicUndoStatus();
@@ -330,9 +354,9 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	}
 
 	/*
-	 * Return a status indicating the projected outcome of redoing the receiver.
+	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
 		IStatus status = getBasicRedoStatus();
@@ -345,8 +369,16 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return status;
 	}
 
-	/*
-	 * Return a status that indicates whether markers can be deleted.
+	/**
+	 * Compute the status for deleting any known markers. A status severity of
+	 * <code>OK</code> indicates that the delete is likely to be successful. A
+	 * status severity of <code>ERROR</code> indicates that the operation is
+	 * no longer valid. Other status severities are open to interpretation by
+	 * the caller.
+	 * 
+	 * @return the status indicating the projected outcome of deleting the
+	 *         markers.
+	 * 
 	 */
 	protected IStatus getMarkerDeletionStatus() {
 		if (markersExist()) {
@@ -355,8 +387,16 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return getErrorStatus(UndoMessages.MarkerOperation_MarkerDoesNotExist);
 	}
 
-	/*
-	 * Return a status that indicates whether markers can be created.
+	/**
+	 * Compute the status for creating any known markers. A status severity of
+	 * <code>OK</code> indicates that the create is likely to be successful. A
+	 * status severity of <code>ERROR</code> indicates that the operation is
+	 * no longer valid. Other status severities are open to interpretation by
+	 * the caller.
+	 * 
+	 * @return the status indicating the projected outcome of creating the
+	 *         markers.
+	 * 
 	 */
 	protected IStatus getMarkerCreationStatus() {
 		if (!resourcesExist()) {
@@ -367,8 +407,16 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		return Status.OK_STATUS;
 	}
 
-	/*
-	 * Return a status that indicates whether markers can be updated.
+	/**
+	 * Compute the status for updating any known markers. A status severity of
+	 * <code>OK</code> indicates that the update is likely to be successful. A
+	 * status severity of <code>ERROR</code> indicates that the operation is
+	 * no longer valid. Other status severities are open to interpretation by
+	 * the caller.
+	 * 
+	 * @return the status indicating the projected outcome of updating the
+	 *         markers.
+	 * 
 	 */
 	protected IStatus getMarkerUpdateStatus() {
 		if (!markersExist()) {
@@ -377,5 +425,28 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 			return getErrorStatus(UndoMessages.MarkerOperation_NotEnoughInfo);
 		}
 		return Status.OK_STATUS;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getExecuteSchedulingRule()
+	 */
+	protected ISchedulingRule getExecuteSchedulingRule() {
+		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			ruleArray[i] = WorkspaceUndoSupport.getWorkspaceRuleFactory()
+					.markerRule(resources[i]);
+		}
+		return MultiRule.combine(ruleArray);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getUndoSchedulingRule()
+	 */
+	protected ISchedulingRule getUndoSchedulingRule() {
+		return getExecuteSchedulingRule();
 	}
 }

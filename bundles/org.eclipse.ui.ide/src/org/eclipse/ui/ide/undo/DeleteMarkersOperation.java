@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A DeleteMarkersOperation represents an undoable operation for deleting one or
@@ -48,8 +49,12 @@ public class DeleteMarkersOperation extends AbstractMarkersOperation {
 	}
 
 	/*
-	 * Execute the operation by deleting the markers.
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * (non-Javadoc)
+	 * 
+	 * Map execution to marker deletion.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
@@ -57,13 +62,18 @@ public class DeleteMarkersOperation extends AbstractMarkersOperation {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.MarkerOperation_DeleteProgress);
 		deleteMarkers(100, monitor);
 		monitor.done();
 	}
 
 	/*
-	 * Undo the operation by recreating the markers.
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor, org.eclipse.core.runtime.IAdaptable)
+	 * (non-Javadoc)
+	 * 
+	 * Map undo to marker creation.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doUndo(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	protected void doUndo(IProgressMonitor monitor, IAdaptable info)
 			throws CoreException {
@@ -71,20 +81,27 @@ public class DeleteMarkersOperation extends AbstractMarkersOperation {
 			monitor = new NullProgressMonitor();
 		}
 		monitor.beginTask("", 100); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.MarkerOperation_CreateProgress);
 		createMarkers(100, monitor);
 		monitor.done();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
-	 */
-	protected IStatus getBasicUndoStatus() {
-		 return getMarkerCreationStatus();
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * Map the undo status to marker creation status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicUndoStatus()
+	 */
+	protected IStatus getBasicUndoStatus() {
+		return getMarkerCreationStatus();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map the redo status to marker deletion status.
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractMarkersOperation#getBasicRedoStatus()
 	 */
 	protected IStatus getBasicRedoStatus() {

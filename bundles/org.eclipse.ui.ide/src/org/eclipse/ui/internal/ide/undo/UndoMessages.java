@@ -36,14 +36,41 @@ public class UndoMessages extends NLS {
 	public static String AbstractWorkspaceOperation_RedoSideEffectsWarningMessage;
 	public static String AbstractWorkspaceOperation_ErrorInvalidMessage;
 	public static String AbstractWorkspaceOperation_GenericWarningMessage;
+	
+	public static String AbstractResourcesOperation_ResourcesDoNotExist;
+	public static String AbstractResourcesOperation_NotEnoughInfo;
+	public static String AbstractResourcesOperation_InvalidRestoreInfo;
+	public static String AbstractResourcesOperation_DeleteResourcesProgress;
+	public static String AbstractResourcesOperation_CreateResourcesProgress;
+	public static String AbstractResourcesOperation_CopyingResourcesProgress;
+	public static String AbstractResourcesOperation_MovingResources;
+	public static String AbstractResourcesOperation_outOfSyncError;
+	public static String AbstractResourcesOperation_outOfSyncQuestion;
+	public static String AbstractResourcesOperation_deletionMessageTitle;
+	public static String AbstractResourcesOperation_deletionExceptionMessage;
+	public static String AbstractResourcesOperation_overwriteTitle;
+	public static String AbstractResourcesOperation_overwriteError;
+	public static String AbstractResourcesOperation_overwriteQuestion;
+	
+	public static String MoveOrCopyResourceOperation_SameNameOrLocation;
+	public static String MoveOrCopyResourceOperation_ResourceDoesNotExist;
+	public static String MoveOrCopyResourceOperation_ReadOnly;
+
+	public static String DeleteResourcesOperation_DeletingProjectContentWarning;
+	public static String CreateProjectOperation_caseVariantExistsError;
+	
+	public static String ProjectDescription_NewProjectProgress;
+	public static String FileDescription_NewFileProgress;
+	public static String FileDescription_SavingUndoInfoProgress;
+	public static String FileDescription_ContentsCouldNotBeRestored;
+	public static String FolderDescription_NewFolderProgress;
+	public static String FolderDescription_SavingUndoInfoProgress;
+	
 
 	public static String MarkerOperation_ResourceDoesNotExist;
 	public static String MarkerOperation_MarkerDoesNotExist;
-	public static String MarkerOperation_NotEnoughInfo;
-	
-	public static String RenameResourceOperation_SameName;
-	public static String RenameResourceOperation_NameAlreadyExists;
-	public static String RenameResourceOperation_ResourceDoesNotExist;
-	public static String RenameResourceOperation_ReadOnly;
-	public static String RenameResourceOperation_ResourceAlreadyExists;
+	public static String MarkerOperation_NotEnoughInfo;	
+	public static String MarkerOperation_CreateProgress;
+	public static String MarkerOperation_DeleteProgress;
+	public static String MarkerOperation_UpdateProgress;
 }
