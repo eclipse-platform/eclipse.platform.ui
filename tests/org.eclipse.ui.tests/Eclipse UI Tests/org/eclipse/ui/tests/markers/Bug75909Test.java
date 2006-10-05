@@ -44,7 +44,7 @@ public class Bug75909Test extends TestCase {
 
 	private static final int OLD_SETTINGS_SELECTED = 4;
 
-	private static final String REMOVED_MARKER_ID = "org.eclipse.pde.validation-marker";
+	private static final String REMOVED_MARKER_ID = "org.eclipse.pde.core.problem";
 
 	private static final String INCLUDED_MARKER_ID = "org.eclipse.core.resources.problemmarker";
 
@@ -152,7 +152,7 @@ public class Bug75909Test extends TestCase {
 		memento.putInteger("severity",0);
 		memento.putString("description","");
 		memento.putString("filterOnMarkerLimit","true");
-		memento.putString("selectionStatus" ,"org.eclipse.core.resources.problemmarker:true:org.eclipse.pde.validation-marker:false:org.eclipse.jdt.core.buildpath_problem:true:org.eclipse.ant.ui.buildFileProblem:true:");
+		memento.putString("selectionStatus" ,"org.eclipse.core.resources.problemmarker:true:org.eclipse.pde.core.problem:false:org.eclipse.jdt.core.buildpath_problem:true:org.eclipse.ant.ui.buildFileProblem:true:");
 		memento.putInteger("onResource",0);
 		return memento;
 	}
