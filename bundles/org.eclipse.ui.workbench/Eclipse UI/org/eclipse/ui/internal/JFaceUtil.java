@@ -58,9 +58,6 @@ final class JFaceUtil {
 			Policy.TRACE_ACTIONS = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/actions")); //$NON-NLS-1$ //$NON-NLS-2$
 			Policy.TRACE_TOOLBAR = "true".equalsIgnoreCase(Platform.getDebugOption(Policy.JFACE + "/trace/toolbarDisposal")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		
-		// Enables the use of the animation functionality provided in WorkbenchControlAnimator
-		Policy.setAnimatorFactory(new WorkbenchAnimatorFactory());
 	}
 
 	/**

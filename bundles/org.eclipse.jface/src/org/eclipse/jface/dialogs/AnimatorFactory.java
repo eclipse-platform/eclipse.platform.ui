@@ -11,7 +11,6 @@
 
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.widgets.Control;
 
 
@@ -21,7 +20,6 @@ import org.eclipse.swt.widgets.Control;
  * {@link org.eclipse.jface.util.Policy#setAnimatorFactory(AnimatorFactory)} 
  * a new type of animator factory can be plugged into JFace.
  * 
- * @see Policy#setAnimatorFactory(AnimatorFactory)
  * @since 3.2
  * 
  */

@@ -148,6 +148,7 @@ public class Policy {
 	 * 
 	 * @param factory the AnimatorFactory to use.
 	 * @since 3.2
+	 * @deprecated this is no long in use as of 3.3
 	 */
 	public static void setAnimatorFactory(AnimatorFactory factory){
 		animatorFactory = factory;
@@ -159,6 +160,7 @@ public class Policy {
 	 * 
 	 * @return the animator factory used to create control animator instances.
 	 * @since 3.2
+	 * @deprecated this is no long in use as of 3.3
 	 */
 	public static AnimatorFactory getAnimatorFactory() {
 		if (animatorFactory == null)

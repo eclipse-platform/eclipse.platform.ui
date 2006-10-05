@@ -546,7 +546,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		titleArea.setLayoutData(layoutData);
 
 		// Message label
-		messageArea = new PreferenceMessageArea(this);
+		messageArea = new DialogMessageArea();
 		messageArea.createContents(titleArea);
 
 		titleArea.addControlListener(new ControlAdapter() {
