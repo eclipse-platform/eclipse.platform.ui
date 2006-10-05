@@ -42,7 +42,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 	public String getText(Object object) {
 		String text= ((PreviewNode)object).getText();
 		if (isDerivedFile(object)) {
-			return Messages.format("{0} (derived)", text);
+			return Messages.format(RefactoringUIMessages.ChangeElementLabelProvider_derived, text);
 		} else {
 			return text;
 		}

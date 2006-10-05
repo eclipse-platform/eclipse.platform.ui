@@ -28,6 +28,8 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String BrowseRefactoringHistoryControl_sort_project_description;
 
+	public static String ChangeElementLabelProvider_derived;
+
 	private static final String BUNDLE_NAME= "org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages";//$NON-NLS-1$
 
 	public static String ChangeExceptionHandler_abort;
