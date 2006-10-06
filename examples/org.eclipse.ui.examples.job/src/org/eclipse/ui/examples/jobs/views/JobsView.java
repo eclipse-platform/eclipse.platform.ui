@@ -38,7 +38,7 @@ public class JobsView extends ViewPart {
 			final long duration = getDuration();
 			final boolean shouldLock = lockField.getSelection();
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InterruptedException {
+				public void run(IProgressMonitor monitor) {
 					if (shouldLock)
 						doRunInWorkspace(duration, monitor);
 					else
@@ -49,7 +49,7 @@ public class JobsView extends ViewPart {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			//ignore - interrupt means cancel in this context
 		}
 	}
 

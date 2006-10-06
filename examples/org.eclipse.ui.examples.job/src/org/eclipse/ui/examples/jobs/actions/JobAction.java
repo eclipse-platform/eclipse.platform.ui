@@ -31,7 +31,7 @@ public class JobAction implements IWorkbenchWindowActionDelegate {
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {
-						//ignore
+						return Status.CANCEL_STATUS;
 					}
 					monitor.worked(1);
 				}

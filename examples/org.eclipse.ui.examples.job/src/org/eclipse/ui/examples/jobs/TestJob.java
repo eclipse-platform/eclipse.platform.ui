@@ -85,7 +85,7 @@ public class TestJob extends Job {
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
-					Thread.interrupted();
+					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
 			}

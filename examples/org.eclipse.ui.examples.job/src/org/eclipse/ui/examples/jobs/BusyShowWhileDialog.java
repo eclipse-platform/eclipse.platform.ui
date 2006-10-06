@@ -69,7 +69,7 @@ public class BusyShowWhileDialog extends IconAndMessageDialog {
 				} catch (InvocationTargetException error) {
 					error.printStackTrace();
 				} catch (InterruptedException error) {
-					error.printStackTrace();
+					//ignore - in this context it means cancelation
 				}
 			}
 			/* (non-Javadoc)

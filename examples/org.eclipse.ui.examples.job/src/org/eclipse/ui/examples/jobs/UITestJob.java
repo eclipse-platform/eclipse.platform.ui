@@ -45,7 +45,7 @@ public class UITestJob extends UIJob {
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
-					Thread.interrupted();
+					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
 			}
