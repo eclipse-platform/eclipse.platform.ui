@@ -72,63 +72,15 @@ public class Project extends Container implements IProject {
 	 * @see IProject#build(int, IProgressMonitor)
 	 */
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
-		try {
-			monitor.beginTask(null, Policy.opWork);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				if (!exists(flags, true) || !isOpen(flags))
-					return;
-
-				workspace.beginOperation(true);
-				workspace.aboutToBuild(this, trigger);
-				IStatus result = workspace.getBuildManager().build(this, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
-				if (!result.isOK())
-					throw new ResourceException(result);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			}
-		} finally {
-			monitor.done();
-		}
+		internalBuild(trigger, null, null, monitor);
 	}
 
 	/* (non-Javadoc)
 	 * @see IProject#build(int, String, Map, IProgressMonitor)
 	 */
 	public void build(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
-		try {
-			monitor.beginTask(null, Policy.opWork);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				int flags = getFlags(info);
-				if (!exists(flags, true) || !isOpen(flags))
-					return;
-				workspace.beginOperation(true);
-				workspace.aboutToBuild(this, trigger);
-				IStatus result = workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
-				if (!result.isOK())
-					throw new ResourceException(result);
-			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (workspace.getElementTree().isImmutable())
-					workspace.newWorkingTree();
-				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			}
-		} finally {
-			monitor.done();
-		}
+		Assert.isNotNull(builderName);
+		internalBuild(trigger, builderName, args, monitor);
 	}
 
 	/**
@@ -344,7 +296,7 @@ public class Project extends Container implements IProject {
 		int updateFlags = force ? IResource.FORCE : IResource.NONE;
 		delete(updateFlags, monitor);
 	}
-	
+
 	public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
 		super.deleteResource(convertToPhantom, status);
 		// Delete the project metadata.
@@ -519,6 +471,42 @@ public class Project extends Container implements IProject {
 		if (desc == null)
 			checkAccessible(NULL_FLAG);
 		return desc.hasNature(natureID);
+	}
+
+	/**
+	 * Implements all build methods on IProject.
+	 */
+	protected void internalBuild(int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
+		try {
+			monitor.beginTask(null, Policy.opWork);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				int flags = getFlags(info);
+				if (!exists(flags, true) || !isOpen(flags))
+					return;
+				workspace.beginOperation(true);
+				workspace.aboutToBuild(this, trigger);
+				IStatus result;
+				try {
+					result = workspace.getBuildManager().build(this, trigger, builderName, args, Policy.subMonitorFor(monitor, Policy.opWork));
+				} finally {
+					//must fire POST_BUILD if PRE_BUILD has occurred
+					workspace.broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				}
+				if (!result.isOK())
+					throw new ResourceException(result);
+			} finally {
+				//building may close the tree, but we are still inside an operation so open it
+				if (workspace.getElementTree().isImmutable())
+					workspace.newWorkingTree();
+				workspace.endOperation(rule, false, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**
@@ -939,7 +927,7 @@ public class Project extends Container implements IProject {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
 				IContainer parent = toLink.getParent();
 				if (parent != null && !parent.exists() && parent.getType() == FOLDER)
-					((Folder)parent).ensureExists(Policy.monitorFor(null));
+					((Folder) parent).ensureExists(Policy.monitorFor(null));
 				toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
 			} catch (CoreException e) {
 				status.merge(e.getStatus());

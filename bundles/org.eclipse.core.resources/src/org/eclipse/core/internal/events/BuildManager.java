@@ -93,12 +93,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	final AutoBuildJob autoBuildJob;
 	private boolean building = false;
 	private final ArrayList builtProjects = new ArrayList();
+
+	//the following four fields only apply for the lifetime of a single builder invocation.
 	protected InternalBuilder currentBuilder;
 	private DeltaDataTree currentDelta;
-
-	//the following four fields only apply for the lifetime of 
-	//a single builder invocation.
+	private ElementTree currentLastBuiltTree;
 	private ElementTree currentTree;
+	
 	/**
 	 * Caches the IResourceDelta for a pair of trees
 	 */
@@ -108,7 +109,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 */
 	final private DeltaCache deltaTreeCache = new DeltaCache();
 
-	private ElementTree lastBuiltTree;
 	private ILock lock;
 
 	//used for the build cycle looping mechanism
@@ -133,9 +133,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			currentBuilder.clearForgetLastBuiltState();
 			// Figure out want kind of build is needed
 			boolean clean = trigger == IncrementalProjectBuilder.CLEAN_BUILD;
-			lastBuiltTree = currentBuilder.getLastBuiltTree();
+			currentLastBuiltTree = currentBuilder.getLastBuiltTree();
 			// If no tree is available we have to do a full build
-			if (!clean && lastBuiltTree == null)
+			if (!clean && currentLastBuiltTree == null)
 				trigger = IncrementalProjectBuilder.FULL_BUILD;
 			// Grab a pointer to the current state before computing the delta
 			currentTree = trigger == IncrementalProjectBuilder.FULL_BUILD ? null : workspace.getElementTree();
@@ -177,7 +177,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		} finally {
 			currentBuilder = null;
 			currentTree = null;
-			lastBuiltTree = null;
+			currentLastBuiltTree = null;
 			currentDelta = null;
 		}
 	}
@@ -199,6 +199,23 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			status.add(e.getStatus());
 		} finally {
 			monitor.done();
+		}
+	}
+
+	/**
+	 * Runs all builders on the given project. 
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	private IStatus basicBuild(IProject project, int trigger, IProgressMonitor monitor) {
+		if (!canRun(trigger))
+			return Status.OK_STATUS;
+		try {
+			hookStartBuild(trigger);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
+			basicBuild(project, trigger, status, monitor);
+			return status;
+		} finally {
+			hookEndBuild(trigger);
 		}
 	}
 
@@ -226,6 +243,37 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		};
 		SafeRunner.run(code);
+	}
+
+	/**
+	 * Runs the builder with the given name on the given project. 
+	 * @return A status indicating if the build succeeded or failed
+	 */
+	private IStatus basicBuild(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
+			monitor.beginTask(message, 1);
+			if (!canRun(trigger))
+				return Status.OK_STATUS;
+			try {
+				hookStartBuild(trigger);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
+				ICommand command = getCommand(project, builderName, args);
+				try {
+					IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
+					if (builder != null)
+						basicBuild(trigger, builder, args, status, Policy.subMonitorFor(monitor, 1));
+				} catch (CoreException e) {
+					status.add(e.getStatus());
+				}
+				return status;
+			} finally {
+				hookEndBuild(trigger);
+			}
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**
@@ -290,51 +338,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	/**
-	 * Runs all builders on the given project. 
-	 * @return A status indicating if the build succeeded or failed
-	 */
-	public IStatus build(IProject project, int trigger, IProgressMonitor monitor) {
-		if (!canRun(trigger))
-			return Status.OK_STATUS;
-		try {
-			hookStartBuild(trigger);
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
-			basicBuild(project, trigger, status, monitor);
-			return status;
-		} finally {
-			hookEndBuild(trigger);
-		}
-	}
-
-	/**
 	 * Runs the builder with the given name on the given project. 
 	 * @return A status indicating if the build succeeded or failed
 	 */
 	public IStatus build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
-			monitor.beginTask(message, 1);
-			if (!canRun(trigger))
-				return Status.OK_STATUS;
-			try {
-				hookStartBuild(trigger);
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
-				ICommand command = getCommand(project, builderName, args);
-				try {
-					IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
-					if (builder != null)
-						basicBuild(trigger, builder, args, status, Policy.subMonitorFor(monitor, 1));
-				} catch (CoreException e) {
-					status.add(e.getStatus());
-				}
-				return status;
-			} finally {
-				hookEndBuild(trigger);
-			}
-		} finally {
-			monitor.done();
-		}
+		if (builderName == null)
+			return basicBuild(project, trigger, monitor);
+		return basicBuild(project, trigger, builderName, args, monitor);
 	}
 
 	private boolean canRun(int trigger) {
@@ -545,7 +555,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				return ResourceDeltaFactory.newEmptyDelta(project);
 			}
 			//now check against the cache
-			IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
+			IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), currentLastBuiltTree, currentTree);
 			if (result != null)
 				return result;
 
@@ -554,8 +564,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				startTime = System.currentTimeMillis();
 				Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
 			}
-			result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), -1);
-			deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
+			result = ResourceDeltaFactory.computeDelta(workspace, currentLastBuiltTree, currentTree, project.getFullPath(), -1);
+			deltaCache.cache(project.getFullPath(), currentLastBuiltTree, currentTree, result);
 			if (Policy.DEBUG_BUILD_FAILURE && result == null)
 				Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (Policy.DEBUG_BUILD_DELTA)
@@ -808,16 +818,16 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return false;
 		//on some triggers we build regardless of the delta
 		switch (trigger) {
-			case IncrementalProjectBuilder.CLEAN_BUILD:
+			case IncrementalProjectBuilder.CLEAN_BUILD :
 				return true;
-			case IncrementalProjectBuilder.FULL_BUILD:
+			case IncrementalProjectBuilder.FULL_BUILD :
 				return true;
-			case IncrementalProjectBuilder.INCREMENTAL_BUILD:
+			case IncrementalProjectBuilder.INCREMENTAL_BUILD :
 				if (currentBuilder.callOnEmptyDelta())
 					return true;
 				//fall through and check if there is a delta
 		}
-		
+
 		//compute the delta since the last built state
 		ElementTree oldTree = builder.getLastBuiltTree();
 		ElementTree newTree = workspace.getElementTree();

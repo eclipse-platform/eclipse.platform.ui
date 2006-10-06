@@ -268,8 +268,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				prepareOperation(rule, monitor);
 				beginOperation(true);
 				aboutToBuild(this, trigger);
-				IStatus result = getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-				broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				IStatus result;
+				try {
+					result = getBuildManager().build(trigger, Policy.subMonitorFor(monitor, Policy.opWork));
+				} finally {
+					//must fire POST_BUILD if PRE_BUILD has occurred
+					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+				}
 				if (!result.isOK())
 					throw new ResourceException(result);
 			} finally {
