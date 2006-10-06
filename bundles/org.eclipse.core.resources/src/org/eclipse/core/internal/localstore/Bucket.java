@@ -331,7 +331,10 @@ public abstract class Bucket {
 				return;
 			}
 			// ensure the parent location exists 
-			location.getParentFile().mkdirs();
+			File parent = location.getParentFile();
+			if (parent == null)
+				throw new IOException();//caught and rethrown below
+			parent.mkdirs();
 			DataOutputStream destination = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(location), 8192));
 			try {
 				destination.write(getVersion());
