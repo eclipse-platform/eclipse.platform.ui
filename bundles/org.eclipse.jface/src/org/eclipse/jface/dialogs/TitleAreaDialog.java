@@ -116,6 +116,8 @@ public class TitleAreaDialog extends TrayDialog {
 
 	private int messageLabelHeight;
 
+	private Image titleAreaImage;
+
 	/**
 	 * Instantiate a new title area dialog.
 	 * 
@@ -215,14 +217,19 @@ public class TitleAreaDialog extends TrayDialog {
 			background = JFaceColors.getBannerBackground(display);
 			foreground = JFaceColors.getBannerForeground(display);
 		}
-		
+
 		parent.setBackground(background);
 		int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		// Dialog image @ right
 		titleImageLabel = new Label(parent, SWT.CENTER);
 		titleImageLabel.setBackground(background);
-		titleImageLabel.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
+		if (titleAreaImage == null)
+			titleImageLabel.setImage(JFaceResources
+					.getImage(DLG_IMG_TITLE_BANNER));
+		else
+			titleImageLabel.setImage(titleAreaImage);
+
 		FormData imageData = new FormData();
 		imageData.top = new FormAttachment(0, 0);
 		// Note: do not use horizontalSpacing on the right as that would be a
@@ -442,8 +449,8 @@ public class TitleAreaDialog extends TrayDialog {
 			messageLabelData.left = new FormAttachment(messageImageLabel, 0);
 			messageLabelData.height = messageLabelHeight;
 			if (titleImageLargest)
-				messageLabelData.bottom = new FormAttachment(titleImageLabel, 0,
-						SWT.BOTTOM);
+				messageLabelData.bottom = new FormAttachment(titleImageLabel,
+						0, SWT.BOTTOM);
 			messageLabel.setLayoutData(messageLabelData);
 		}
 		// Do not layout before the dialog area has been created
@@ -580,16 +587,20 @@ public class TitleAreaDialog extends TrayDialog {
 	 *            the title image to be shown
 	 */
 	public void setTitleImage(Image newTitleImage) {
-		titleImageLabel.setImage(newTitleImage);
-		titleImageLabel.setVisible(newTitleImage != null);
-		if (newTitleImage != null) {
-			determineTitleImageLargest();
-			Control top;
-			if (titleImageLargest)
-				top = titleImageLabel;
-			else
-				top = messageLabel;
-			resetWorkAreaAttachments(top);
+
+		titleAreaImage = newTitleImage;
+		if (titleImageLabel != null) {
+			titleImageLabel.setImage(newTitleImage);
+			titleImageLabel.setVisible(newTitleImage != null);
+			if (newTitleImage != null) {
+				determineTitleImageLargest();
+				Control top;
+				if (titleImageLargest)
+					top = titleImageLabel;
+				else
+					top = messageLabel;
+				resetWorkAreaAttachments(top);
+			}
 		}
 	}
 
