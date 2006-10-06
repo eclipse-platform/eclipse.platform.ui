@@ -8,7 +8,7 @@
       <documentation>
          The workbench provides support for maintaining preferences.
 The purpose of this extension point is to allow plug-ins to add
-specific support for saving and loading specific groups of preferences.
+specific support for saving and loading of specific groups of preferences.
 Typically this is used for operations such as Import and Export.
       </documentation>
    </annotation>
@@ -84,7 +84,7 @@ Typically this is used for operations such as Import and Export.
             <meta.element translatable="true"/>
          </appInfo>
          <documentation>
-            an optional subelement whose body should represent a short description
+            An optional subelement whose body should represent a short description
 of the transfer engine functionality.
          </documentation>
       </annotation>
@@ -93,7 +93,7 @@ of the transfer engine functionality.
    <element name="mapping">
       <annotation>
          <documentation>
-            a subelement which represents a &lt;tt&gt;org.eclipse.core.runtime.preferences.IPreferenceFilter&lt;/tt&gt;.  It specifies 1 or more mappings from a scope &lt;tt&gt;org.eclipse.core.runtime.preferences.IScope&lt;/tt&gt; to 0 or more nodes where 0 or more keys are specified per node.  The rules for export and import behaviour for a filter can be found in the specifications in &lt;tt&gt;org.eclipse.core.runtime.preferences.IPreferenceFilter&lt;/tt&gt;.
+            a subelement which represents a &lt;tt&gt;org.eclipse.core.runtime.preferences.IPreferenceFilter&lt;/tt&gt;.  It specifies 1 or more mappings from a scope &lt;tt&gt;org.eclipse.core.runtime.preferences.IScope&lt;/tt&gt; to 0 or more nodes. 0 or more keys are specified per node.  The rules for export and import behaviour for a filter can be found in the specifications in &lt;tt&gt;org.eclipse.core.runtime.preferences.IPreferenceFilter&lt;/tt&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -164,7 +164,7 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
       </appInfo>
       <documentation>
          &lt;p&gt;
- Example that export all tranfers, exports all nodes for specified scopes.
+ Example that export all transfers, exports all nodes for specified scopes.
 &lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
@@ -174,12 +174,9 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
             icon=&quot;XYZ.gif&quot;
             name=&quot;Export All Transfer Test&quot;
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
-            &lt;mapping scope=&quot;instance&quot;&gt;
-            &lt;/mapping&gt;
-   &lt;mapping scope=&quot;configuration&quot;&gt;
-            &lt;/mapping&gt;
-            &lt;mapping scope=&quot;project&quot;&gt;
-            &lt;/mapping&gt;
+            &lt;mapping scope=&quot;instance&quot;/&gt;
+      &lt;mapping scope=&quot;configuration&quot;/&gt;
+            &lt;mapping scope=&quot;project&quot;/&gt;
    &lt;description&gt;
              Export all tranfer, exports all nodes for specified scopes
       &lt;/description&gt;
@@ -188,7 +185,7 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
-   Very Simple Transfer only provides required info and no more.  
+   Bare Bones Transfer only provides required info and no more.  
 &lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
@@ -197,8 +194,7 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
        &lt;transfer
             name=&quot;Bare Bones Transfer Test&quot;
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
-            &lt;mapping scope=&quot;instance&quot;&gt;
-            &lt;/mapping&gt;
+            &lt;mapping scope=&quot;instance&quot;/&gt;
     &lt;/transfer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
@@ -224,11 +220,10 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
                 &lt;entry node=&quot;org.eclipse.ui.ide&quot;/&gt;
                 &lt;entry node=&quot;org.eclipse.core.resources&quot;/&gt;
             &lt;/mapping&gt;
-   &lt;mapping scope=&quot;configuration&quot;&gt;
-            &lt;/mapping&gt;
-   &lt;description&gt;
-             Export many combinations of keys and nodes
-      &lt;/description&gt;
+      &lt;mapping scope=&quot;configuration&quot;/&gt;
+      &lt;description&gt;
+              Export many combinations of keys and nodes
+        &lt;/description&gt;
     &lt;/transfer&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
