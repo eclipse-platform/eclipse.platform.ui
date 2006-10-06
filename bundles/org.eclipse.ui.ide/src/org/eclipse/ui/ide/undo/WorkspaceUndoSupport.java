@@ -17,6 +17,8 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
@@ -54,7 +56,7 @@ public class WorkspaceUndoSupport {
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
-	
+
 	/**
 	 * Return the workspace root.
 	 * 
@@ -63,7 +65,7 @@ public class WorkspaceUndoSupport {
 	public static IWorkspaceRoot getWorkspaceRoot() {
 		return getWorkspace().getRoot();
 	}
-	
+
 	/**
 	 * Return the workspace rule factory.
 	 * 
@@ -73,7 +75,6 @@ public class WorkspaceUndoSupport {
 		return getWorkspace().getRuleFactory();
 	}
 
-
 	/**
 	 * Return the undo context that should be used for operations involving
 	 * tasks.
@@ -82,12 +83,13 @@ public class WorkspaceUndoSupport {
 	 */
 	public static IUndoContext getTasksUndoContext() {
 		if (tasksUndoContext == null) {
-			tasksUndoContext = new ObjectUndoContext(new Object(), "Tasks Context"); //$NON-NLS-1$
+			tasksUndoContext = new ObjectUndoContext(new Object(),
+					"Tasks Context"); //$NON-NLS-1$
 			tasksUndoContext.addMatch(getWorkspaceUndoContext());
 		}
 		return tasksUndoContext;
 	}
-	
+
 	/**
 	 * Return the undo context that should be used for operations involving
 	 * bookmarks.
@@ -96,10 +98,35 @@ public class WorkspaceUndoSupport {
 	 */
 	public static IUndoContext getBookmarksUndoContext() {
 		if (bookmarksUndoContext == null) {
-			bookmarksUndoContext = new ObjectUndoContext(new Object(), "Bookmarks Context"); //$NON-NLS-1$
+			bookmarksUndoContext = new ObjectUndoContext(new Object(),
+					"Bookmarks Context"); //$NON-NLS-1$
 			bookmarksUndoContext.addMatch(getWorkspaceUndoContext());
 		}
 		return bookmarksUndoContext;
+	}
+
+	/**
+	 * Make an <code>IAdaptable</code> that adapts to the specified shell,
+	 * suitable for passing for passing to any {@link IUndoableOperation} or
+	 * {@link IOperationHistory} method that requires an {@link IAdaptable}
+	 * <code>uiInfo</code> parameter.
+	 * 
+	 * @param shell
+	 *            the shell that should be returned by the IAdaptable when asked
+	 *            to adapt a shell. If this parameter is <code>null</code>,
+	 *            the returned shell will also be <code>null</code>.
+	 * 
+	 * @return an IAdaptable that will return the specified shell.
+	 */
+	public static IAdaptable getUiInfoAdapter(final Shell shell) {
+		return new IAdaptable() {
+			public Object getAdapter(Class clazz) {
+				if (clazz == Shell.class) {
+					return shell;
+				}
+				return null;
+			}
+		};
 	}
 
 	/**
