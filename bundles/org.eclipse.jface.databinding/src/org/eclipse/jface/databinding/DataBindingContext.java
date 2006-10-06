@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
+ *     Brad Reynolds - bug 159940
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.databinding.observable.Observables;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
@@ -76,6 +78,11 @@ public class DataBindingContext {
 	private List bindingEventListeners = new ArrayList();
 
 	private WritableList bindings = new WritableList();
+    
+    /**
+     * Unmodifiable version of {@link #bindings} for exposure publicly.
+     */
+    private IObservableList unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 
 	private List bindSupportFactories = new ArrayList();
 
@@ -355,13 +362,13 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an observable list with elements of type Binding, ordered by
+	 * Returns an unmodifiable observable list with elements of type Binding, ordered by
 	 * creation time
 	 * 
 	 * @return the observable list containing all bindings
 	 */
 	public IObservableList getBindings() {
-		return bindings;
+		return unmodifiableBindings;
 	}
 
 	/**
@@ -473,5 +480,20 @@ public class DataBindingContext {
         dbc.addBindSupportFactory(new DefaultBindSupportFactory());
 
         return dbc;
+    }
+    
+    /**
+     * Removes the binding.
+     * 
+     * @param binding
+     * @return <code>true</code> if was associated with the context,
+     *         <code>false</code> if not
+     */
+    public boolean removeBinding(Binding binding) {
+        if (bindings.contains(binding)) {
+            binding.setDataBindingContext(null);
+        }
+
+        return bindings.remove(binding);
     }
 }

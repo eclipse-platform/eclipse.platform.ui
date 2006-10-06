@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
+ *     Brad Reynolds - bug 159940
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -505,6 +506,31 @@ public class DatabindingContextTest extends TestCase {
         assertEquals(binding, dbc.getBindings().get(0));
     }
 
+    public void testGetBindingsImmutability() throws Exception {
+        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        BindingStub binding = new BindingStub(null);
+        dbc.addBinding(binding);
+
+        try {
+            dbc.getBindings().remove(0);
+            fail("exception should have been thrown");
+        } catch (UnsupportedOperationException e) {
+        }
+    }
+    
+    public void testRemoveBinding() throws Exception {
+        BindingStub binding = new BindingStub(null);
+        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        dbc.addBinding(binding);
+        
+        assertTrue("context should contain the binding", dbc.getBindings().contains(binding));
+        assertEquals("context should have been set on the binding", dbc, binding.context);
+        assertTrue("removing the factory should return true", dbc.removeBinding(binding));
+        assertNull("context should have been removed", binding.context);
+        assertFalse("binding should have been removed", dbc.getBindings().contains(binding));
+        assertFalse("when not found false should be returned", dbc.removeBinding(binding));
+    }
+    
     /**
      * {@link IValueChangeListener} implementation that counts the times
      * handleValueChange(...) is invoked.
@@ -529,6 +555,32 @@ public class DatabindingContextTest extends TestCase {
 
         public void handleListChange(IObservableList source, ListDiff diff) {
             count++;
+        }
+    }
+    
+    private static class BindingStub extends org.eclipse.jface.databinding.Binding {
+        org.eclipse.jface.databinding.DataBindingContext context;
+
+        public BindingStub(org.eclipse.jface.databinding.DataBindingContext context) {
+            super(context);
+        }
+        
+        public IObservableValue getPartialValidationError() {
+            return null;
+        }
+
+        public IObservableValue getValidationError() {
+            return null;
+        }
+
+        public void updateModelFromTarget() {            
+        }
+
+        public void updateTargetFromModel() {            
+        }
+
+        public void setDataBindingContext(org.eclipse.jface.databinding.DataBindingContext context) {
+            this.context = context;
         }
     }
 	
