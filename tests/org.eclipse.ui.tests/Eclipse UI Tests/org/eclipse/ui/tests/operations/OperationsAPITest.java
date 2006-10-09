@@ -765,4 +765,35 @@ public class OperationsAPITest extends TestCase {
 			}
 		}
 	}
+	
+	public void test159305() throws ExecutionException {
+		final int [] approvalCount = new int[1];
+		IOperationApprover approver;
+		approver = new IOperationApprover() {
+			public IStatus proceedUndoing(IUndoableOperation op, IOperationHistory history, IAdaptable uiInfo) {
+				approvalCount[0]++;
+				return Status.OK_STATUS;
+			}
+			public IStatus proceedRedoing(IUndoableOperation op, IOperationHistory history, IAdaptable uiInfo) {
+				approvalCount[0]--;
+				return Status.OK_STATUS;
+			}
+		};
+		history.addOperationApprover(approver);
+		history.undo(contextB, null, null);
+		// approval should have only run once for linear undo
+		assertTrue("Operation approver should run only once for linear undo", approvalCount[0] == 1);
+		history.redo(contextB, null, null);
+		assertTrue("Operation approver should run only once for linear redo", approvalCount[0] == 0);
+		
+		// approval should have only run once for direct undo
+		history.undoOperation(op5, null, null);
+		assertTrue("Operation approver should run only once for direct undo", approvalCount[0]== 1);
+		history.redoOperation(op5, null, null);
+		assertTrue("Operation approver should run only once for direct redo", approvalCount[0]== 0);
+		
+		// cleanup
+		history.removeOperationApprover(approver);
+	}
+
 }
