@@ -1084,16 +1084,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canRedo()) {
-			status = getRedoApproval(operation, info);
-			if (status.isOK()) {
-				status = doRedo(monitor, info, operation);
-			}
+			status = doRedo(monitor, info, operation);
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
 						"Redo operation not valid - " + operation); //$NON-NLS-1$
 			}
-
 			status = IOperationHistory.OPERATION_INVALID_STATUS;
 		}
 		return status;
@@ -1257,10 +1253,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 		Assert.isNotNull(operation);
 		IStatus status;
 		if (operation.canUndo()) {
-			status = getUndoApproval(operation, info);
-			if (status.isOK()) {
-				status = doUndo(monitor, info, operation);
-			}
+			status = doUndo(monitor, info, operation);
 		} else {
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				Tracing.printTrace("OPERATIONHISTORY", //$NON-NLS-1$
