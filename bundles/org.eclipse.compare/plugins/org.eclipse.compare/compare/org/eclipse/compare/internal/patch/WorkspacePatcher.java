@@ -215,7 +215,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 					List failed= new ArrayList();
 					List result= null;
 
-					int type= diff.getType();
+					int type= diff.getDiffType();
 					switch (type) {
 						case Differencer.ADDITION :
 							// patch it and collect rejected hunks
@@ -235,7 +235,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 							break;
 					}
 
-					if (failed.size() > 0) {
+					if (fGenerateRejectFile && failed.size() > 0) {
 						IPath pp= null;
 						if (path.segmentCount() > 1) {
 							pp= path.removeLastSegments(1);
@@ -310,4 +310,5 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 	public Object getParent(Object o) {
 		return null;
 	}
+
 }

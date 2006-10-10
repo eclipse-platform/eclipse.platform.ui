@@ -20,6 +20,12 @@ public final class PatchMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String HunkMergePage_GenerateRejectFile;
+	public static String HunkMergePage_Info;
+	public static String HunkMergePage_Merged;
+	public static String HunkMergePage_PageTitle;
+	public static String HunkMergePageInput_OrphanedHunk;
+	public static String HunkMergePageInput_WorkspaceCopy;
 	public static String PatchAction_ExceptionTitle;
 	public static String PatchAction_Exception;
 	public static String PatchAction_SavingDirtyEditorsTask;

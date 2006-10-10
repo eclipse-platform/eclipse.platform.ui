@@ -6,16 +6,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,6 +32,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -58,7 +63,7 @@ public class PreviewPatchPage2 extends WizardPage {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 	private PatchWizard fPatchWizard;
-	private PatcherCompareEditorInput patcherCompareEditorInput = new PatcherCompareEditorInput();
+	private PreviewPatchPageInput patcherCompareEditorInput = new PreviewPatchPageInput();
 	
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
@@ -72,8 +77,11 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Action fReversePatch;
 	private static final String reversePatchID = "PreviewPatchPage_reversePatch"; //$NON-NLS-1$
 	
-	protected boolean pageRecalculate= true;
+	private static final int DIFF_NODE = 0;
+	private static final int PROJECTDIFF_NODE = 1;
 	
+	protected boolean pageRecalculate= true;
+ 
 	class RetargetPatchDialog extends Dialog {
 
 		protected TreeViewer rpTreeViewer;
@@ -201,8 +209,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	public PreviewPatchPage2(PatchWizard pw) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
 		
-		fPatchWizard= pw;
-		
+		fPatchWizard= pw;		
 	}
 		
 	public void createControl(Composite parent) {
@@ -477,7 +484,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			Diff diff= diffs[i];
 			if (diff==null)
 				continue;
-			if (diff.getType()!=Differencer.ADDITION) {
+			if (diff.getDiffType()!=Differencer.ADDITION) {
 				IPath p= diff.fOldPath;
 				if (strip>0&&strip<p.segmentCount())
 					p= p.removeFirstSegments(strip);
@@ -526,6 +533,163 @@ public class PreviewPatchPage2 extends WizardPage {
 		return fPatchWizard.getPatcher().existsInTarget(path);
 	}
 	
+	public IWizardPage getNextPage() {
+		
+		/*//check to see if this page is complete
+		if (!isPageComplete())
+			return null;*/
+		
+		//set the contents of the hunk merge page
+		
+		HunkMergePage hunkMergePage = (HunkMergePage) fPatchWizard.getPage(HunkMergePage.HUNKMERGEPAGE_NAME);
+        IDiffElement[] children = patcherCompareEditorInput.getRoot().getChildren();
+ 
+		//Go through the children and build a new tree. Each Diff should contain all of the 
+        //hunks that have already been selected (and can be successfully applied) and the hunks
+        //that cannot be applied. If there are no hunks that can't be applied, skip the Hunk Merge
+        //page and proceed directly to the preview page.
+        boolean atLeastOneDiffProblem = false;
+        
+        if (children != null){
+        	
+            DiffNode newRoot = new DiffNode(Differencer.NO_CHANGE) {
+    			public boolean hasChildren() {
+    				return true;
+    			}
+    		};
+    		
+        	for (int i = 0; i < children.length; i++) {
+				if (children[i] instanceof PatcherDiffNode){
+					PatcherDiffNode patcherDiffNode = (PatcherDiffNode) children[i];
+					if (patcherDiffNode.getDiff().containsProblems()){
+						atLeastOneDiffProblem = true;
+						processDiff(patcherDiffNode, newRoot, hunkMergePage,DIFF_NODE);
+					}
+				} else if (children[i] instanceof DiffNode){
+					//project node
+					
+					//Get diff nodes
+					IDiffElement[] diffs = ((DiffNode)children[i]).getChildren();
+					
+					for (int j = 0; j < diffs.length; j++) {
+						if (diffs[j] instanceof PatcherDiffNode){
+							PatcherDiffNode diff = (PatcherDiffNode) diffs[j];
+							Diff tempDiff = diff.getDiff();
+							if (tempDiff.containsProblems()){
+								atLeastOneDiffProblem = true;
+								DiffNode projectNode = new DiffNode(newRoot, Differencer.CHANGE, null, children[i], null);
+								processDiff(diff, projectNode, hunkMergePage,PROJECTDIFF_NODE);
+							}
+						}
+					}
+				}
+			}
+        	
+            hunkMergePage.setRoot(newRoot); 
+        }
+		
+        if (atLeastOneDiffProblem){
+        	return super.getNextPage();
+        }
+        
+        return null;
+	}
+
+	private void processDiff(PatcherDiffNode diff, DiffNode rootNode, HunkMergePage hunkMergePage, int nodeType) {
+		//Get the diffs from the project
+		IDiffElement[] hunks = diff.getChildren();
+		if (hunks != null) {
+			//Construct a diff node that contains all of the selected hunks that can be successfully applied
+			//and make a temp patch of the file - all of the failed hunks should appear as children below it 
+			Diff tempDiff = diff.getDiff();
+			Diff tempNewDiff = new Diff(tempDiff.fOldPath, tempDiff.fOldDate, tempDiff.fNewPath, tempDiff.fNewDate);
+
+			ArrayList failedHunks = new ArrayList();
+			ArrayList successfulHunks = new ArrayList();
+
+			for (int i = 0; i < hunks.length; i++) {
+				if (hunks[i] instanceof PatcherDiffNode) {
+					PatcherDiffNode hunkNode = (PatcherDiffNode) hunks[i];
+					Hunk tempHunk = hunkNode.getHunk();
+					if (tempHunk.getHunkProblem()) {
+						failedHunks.add(hunkNode);
+					} else {
+						successfulHunks.add(hunkNode);
+						tempNewDiff.add(tempHunk);
+					}
+				}
+			}
+			try {
+				IPath filePath = new Path(tempDiff.getLabel(tempDiff));
+				IFile tempFile = null;
+				if (nodeType == PROJECTDIFF_NODE){
+					tempFile = tempDiff.getProject().getFile(filePath);
+				} else if (nodeType == DIFF_NODE){
+					tempFile = tempDiff.getTargetFile();
+				}
+				byte[] bytes = patcherCompareEditorInput.quickPatch(tempFile, this.fPatchWizard.getPatcher(), tempNewDiff);
+
+				ITypedElement tempNode;
+				PatchedFileNode patchedNode;
+
+				if (tempFile != null && tempFile.exists()) {
+					tempNode = new ResourceNode(tempFile);
+					patchedNode = new PatchedFileNode(bytes, tempNode.getType()/*"MANUALHUNKMERGE"*/, tempFile.getProjectRelativePath().toString(), true);
+				} else {
+					tempNode = new PatchedFileNode(new byte[0], filePath.getFileExtension(), PatchMessages.PatcherCompareEditorInput_FileNotFound);
+					patchedNode = new PatchedFileNode(bytes, tempNode.getType(), ""); //$NON-NLS-1$
+				}
+
+				//Set the patched file in the Hunk Merge for later retrieval
+				hunkMergePage.setMergedFile(tempDiff, patchedNode);
+				
+				DiffNode allFile = new DiffNode(rootNode, Differencer.CHANGE, null, tempDiff, null);
+				
+				//hang all of the failed nodes off of the new patched diff node
+				for (Iterator iterator = failedHunks.iterator(); iterator.hasNext();) {
+					PatcherDiffNode object = (PatcherDiffNode) iterator.next();
+					String strippedHunk= stripContextFromHunk(object.getHunk());
+					PatchedFileNode strippedHunkNode = new PatchedFileNode(strippedHunk.getBytes(),object.getRight().getType()/*"manualHunkMerge"*/, object.getRight().getName());
+					PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
+					PatcherDiffNode parentNode = new PatcherDiffNode(allFile, Differencer.CHANGE, null, patchedFileWrapper,strippedHunkNode, object.getHunk());
+					patchedFileWrapper.addContentChangeListener(hunkMergePage);
+					patchedFileWrapper.setParent(parentNode);
+				}
+			} catch (CoreException ex) {
+				//ignore 
+			}
+
+		}
+	}
+
+	private String stripContextFromHunk(Hunk hunk) {
+		String[] hunkLines = hunk.getLines();
+		StringBuffer result= new StringBuffer();
+		for (int i= 0; i<hunkLines.length; i++) {
+			String line= hunkLines[i];
+			String rest= line.substring(1);
+			switch (line.charAt(0)) {
+				case ' ' :
+					//skip the context
+					break;
+				case '-' :
+					result.append(rest);
+					break;
+				case '+' :
+					result.append(rest);
+					break;
+			}
+		}
+		
+		return result.toString();
+	}
 	
+	public boolean canFlipToNextPage() {
+		if (patcherCompareEditorInput.containsHunkErrors()){
+			return true;
+		}
+		
+		return false;
+	}
 
 }

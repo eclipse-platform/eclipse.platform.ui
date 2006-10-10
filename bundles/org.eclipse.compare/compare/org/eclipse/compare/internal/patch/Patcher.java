@@ -11,9 +11,13 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,16 +26,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubProgressMonitor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.util.Assert;
-
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.structuremergeviewer.Differencer;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * A Patcher 
@@ -73,7 +86,7 @@ public class Patcher {
 	private boolean fPreserveLineDelimiters= false;
 	private boolean fReverse= false;
 	private boolean fAdjustShift= true;
-	
+	protected boolean fGenerateRejectFile = true;
 	
 	public Patcher() {
 		// nothing to do
@@ -799,7 +812,7 @@ public class Patcher {
 			for (i= 0; i < fDiffs.length; i++) {
 				Diff diff= fDiffs[i];
 				if (diff.isEnabled()) {
-					switch (diff.getType()) {
+					switch (diff.getDiffType()) {
 					case Differencer.CHANGE:
 						list.add(createPath(container, getPath(diff)));
 						break;
@@ -833,7 +846,7 @@ public class Patcher {
 				List failed= new ArrayList();
 				List result= null;
 				
-				int type= diff.getType();
+				int type= diff.getDiffType();
 				switch (type) {
 				case Differencer.ADDITION:
 					// patch it and collect rejected hunks
@@ -853,7 +866,7 @@ public class Patcher {
 					break;
 				}
 
-				if (failed.size() > 0) {
+				if (fGenerateRejectFile && failed.size() > 0) {
 					IPath pp= null;
 					if (path.segmentCount() > 1) {
 						pp= path.removeLastSegments(1);
@@ -944,6 +957,10 @@ public class Patcher {
 			bytes= contents.getBytes();
 		}
 		
+		store(bytes,file, pm);
+	}
+
+	protected void store(byte[] bytes, IFile file, IProgressMonitor pm) throws CoreException {
 		InputStream is= new ByteArrayInputStream(bytes);
 		try {
 			if (file.exists()) {
@@ -961,6 +978,8 @@ public class Patcher {
 		}
 	}
 
+	
+	
 	/*
 	 * Concatenates all strings found in the given List.
 	 */
@@ -1169,5 +1188,9 @@ public class Patcher {
 					length= Math.min(length, diff.fNewPath.segmentCount());
 			}
 		return length;
+	}
+	
+	public void setGenerateRejects(boolean generateRejects){
+		this.fGenerateRejectFile = generateRejects;
 	}
 }

@@ -193,4 +193,8 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	void setHunkType(int hunkType) {
 		this.hunkType = hunkType;
 	}
+
+	public String[] getLines() {
+		return fLines;
+	}
 }

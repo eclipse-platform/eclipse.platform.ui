@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
@@ -21,9 +23,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class Diff implements IWorkbenchAdapter, IAdaptable {
+public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 
 	IPath fOldPath, fNewPath;
 	long fOldDate, fNewDate;	// if 0: no file
@@ -96,7 +99,7 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 		fHunks.add(hunk);
 	}
 	
-	/* package */ int getType() {
+	/* package */ int getDiffType() {
 	
 		boolean add = false;
 		boolean delete = false;
@@ -193,7 +196,7 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 		IFile file= getTargetFile();
 		boolean create= false;
 		//If this diff is an addition, make sure that it doesn't already exist
-		if (getType() == Differencer.ADDITION) {
+		if (getDiffType() == Differencer.ADDITION) {
 			if (file == null || !file.exists()) {
 				fMatches= true;
 			} else {
@@ -243,7 +246,7 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (object instanceof Diff) {
 			Diff diff= (Diff) object;
-			switch (diff.getType()) {
+			switch (diff.getDiffType()) {
 				case Differencer.ADDITION :
 					return addId;
 				case Differencer.DELETION :
@@ -291,6 +294,18 @@ public class Diff implements IWorkbenchAdapter, IAdaptable {
 			}
 		}
 		return false;
+	}
+
+	public Image getImage() {
+		return CompareUI.getImage(this);
+	}
+
+	public String getName() {
+		return getLabel(null);
+	}
+
+	public String getType() {
+		return ITypedElement.UNKNOWN_TYPE;
 	}
 
 }

@@ -653,7 +653,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				fComposite.layout(true);
 			
 			ToolBarManager tbm= CompareViewerPane.getToolBarManager(fComposite.getParent());
-			if (tbm != null) {
+			if (tbm != null ) {
 				updateToolItems();
 				tbm.update(true);
 				tbm.getControl().getParent().layout(true);
@@ -715,6 +715,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
 		fHandlerService= ps != null ? (IHandlerService)ps.getService(IHandlerService.class) : null;
 						
+		initializeToolbars(parent);
+	
+		return fComposite;
+	}
+
+	protected void initializeToolbars(Composite parent) {
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
 			tbm.removeAll();
@@ -761,8 +767,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 			
 			tbm.update(true);
 		}
-	
-		return fComposite;
 	}
 	
 	/* package */ boolean internalSetFocus() {

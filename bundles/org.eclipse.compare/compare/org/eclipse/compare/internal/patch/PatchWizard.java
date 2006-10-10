@@ -11,6 +11,9 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
@@ -37,6 +40,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	private InputPatchPage fPatchWizardPage;
 	private WorkspacePatcher fPatcher;
 	private PatchWizardDialog fDialog;
+	
+	private HashSet modDiffs;
+	private HashMap modFiles;
 	
 	/*
 	 * Creates a wizard for applying a patch file to the workspace.
@@ -81,8 +87,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		addPage(new PatchTargetPage(this));
 		if (System.getProperty("oldPatch") != null) //$NON-NLS-1$
 			addPage(new PreviewPatchPage(this));
-		else
+		else{ 
 			addPage(new PreviewPatchPage2(this));
+			addPage(new HunkMergePage(this));
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -97,28 +105,49 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	 */
 	public boolean performFinish() {
 		
-		fPatcher.setName(fPatchWizardPage.getPatchName());
+		//Before applying all of the enabled diffs you have to go through and disable the diffs
+		//that have been merged by hand - this only applies if the current page is the hunk merge page
+		IWizardPage currentPage = fDialog.getCurrentPage();
+		if (currentPage.getName().equals(HunkMergePage.HUNKMERGEPAGE_NAME)){
+			Diff[] diffs = fPatcher.getDiffs();
+			HunkMergePage hunkMergePage = (HunkMergePage) currentPage;
+			
+			hunkMergePage.ensureContentsSaved();
+			
+			modDiffs = hunkMergePage.getModifiedDiffs();
+			modFiles = hunkMergePage.getMergedFileContents();
+			for (int i = 0; i < diffs.length; i++) {
+				//if this diff has been modified by hand, mark it as disabled to prevent
+				//the patcher from modifying it later
+				if (modDiffs.contains(diffs[i])){
+					diffs[i].setEnabled(false);
+				}
+			}
+		}
 		
+		fPatcher.setName(fPatchWizardPage.getPatchName());
+
 		// make sure that the patch has been read
 		if (!fPatchWizardPage.isPatchRead())
 			fPatchWizardPage.readInPatch();
-		
+
 		try {
 			// create scheduling rule based on the type of patch - single or workspace
-			ISchedulingRule scheduleRule= null;
+			ISchedulingRule scheduleRule = null;
 			if (fPatcher.isWorkspacePatch()) {
 				// workspace patch 
-				scheduleRule= new MultiRule(fPatcher.getTargetProjects());
+				scheduleRule = new MultiRule(fPatcher.getTargetProjects());
 			} else {
 				// single patch
-				IResource resource= getTarget();
-				scheduleRule= ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
+				IResource resource = getTarget();
+				scheduleRule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
 			}
 
-			WorkspaceModifyOperation op= new WorkspaceModifyOperation(scheduleRule) {
+			WorkspaceModifyOperation op = new WorkspaceModifyOperation(scheduleRule) {
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						fPatcher.applyAll(monitor, getShell(), PatchMessages.PatchWizard_title);
+						writePatchedFiles(monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -127,26 +156,34 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			getContainer().run(true, false, op);
 
 		} catch (InvocationTargetException e) {
-			ExceptionHandler.handle(e,
-					PatchMessages.PatchWizard_title,	
-					PatchMessages.PatchWizard_unexpectedException_message);	
+			ExceptionHandler.handle(e, PatchMessages.PatchWizard_title, PatchMessages.PatchWizard_unexpectedException_message);
 		} catch (InterruptedException e) {
 			// cannot happen
 			// NeedWork: use assert!
 		}
-		
+
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {
-			IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-			section= workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
+			IDialogSettings workbenchSettings = CompareUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section = workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+			section = workbenchSettings.addNewSection(DIALOG_SETTINGS_KEY);
 			setDialogSettings(section);
 		}
-		
+
 		fPatchWizardPage.saveWidgetValues();
-		//fPreviewPatchPage.saveWidgetValues();
-		
+			//fPreviewPatchPage.saveWidgetValues();
 		return true;
+	}
+
+	private void writePatchedFiles(IProgressMonitor monitor) throws CoreException{
+		if (modDiffs != null){
+			Iterator iter = modDiffs.iterator();
+			while (iter.hasNext()){
+				Diff diff = (Diff) iter.next();
+				PatchedFileNode patchedFile = (PatchedFileNode) modFiles.get(diff);
+				fPatcher.store(patchedFile.getBytes(), diff.getTargetFile(), monitor);
+			}
+		}
 	}
 
 	public void setDialog(PatchWizardDialog dialog) {

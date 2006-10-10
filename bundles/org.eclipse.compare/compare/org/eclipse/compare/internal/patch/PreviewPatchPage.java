@@ -540,7 +540,7 @@ import com.ibm.icu.text.MessageFormat;
 			Diff diff= diffs[i];
 			if (diff==null)
 				continue;
-			if (diff.getType()!=Differencer.ADDITION) {
+			if (diff.getDiffType()!=Differencer.ADDITION) {
 				IPath p= diff.fOldPath;
 				if (strip>0&&strip<p.segmentCount())
 					p= p.removeFirstSegments(strip);

@@ -108,7 +108,8 @@ public class CompareConfiguration {
 	private Image fRightImage;
 	private Image fLeftImage;
 	private Image[] fImages= new Image[16];
-	
+	private boolean fCalculateDiffs = true;
+
 	/**
 	 * Creates a new configuration with editable left and right sides,
 	 * suitable default labels, and no images.
@@ -449,5 +450,25 @@ public class CompareConfiguration {
 	public Image getRightImage(Object element) {
 		return fRightImage;
 	}
+
+	/**
+	 * Returns whether a compare/merge viewer should calculate diffs
+	 * @return <code>true</code> if diffs are to be calculate, <code>false</code> otherwise
+	 * @since 3.3 
+	 */
+	public boolean getCalculateDiffs() {
+		return fCalculateDiffs;
+	}
+
+	/**
+	 * Used to specify if the compare/merge viewers should calculate the diffs between the
+	 * left and right sides. By default, it is initialized to <code>true</code>.
+	 * @param calculateDiffs
+	 * @since 3.3
+	 */
+	public void setCalculateDiffs(boolean calculateDiffs) {
+		fCalculateDiffs = calculateDiffs;
+	}
+	
 }
 

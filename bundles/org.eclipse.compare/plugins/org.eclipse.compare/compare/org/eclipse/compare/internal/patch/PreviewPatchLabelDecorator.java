@@ -43,7 +43,7 @@ public class PreviewPatchLabelDecorator implements ILabelDecorator {
 		
 		if (element instanceof Diff){
 		  Diff diff = (Diff) element;
-		  switch (diff.getType()){
+		  switch (diff.getDiffType()){
 			  case Differencer.ADDITION:
 			  return getImageFor(add + (diff.fMatches ? "" : error), image, diff.fMatches); //$NON-NLS-1$
 		
