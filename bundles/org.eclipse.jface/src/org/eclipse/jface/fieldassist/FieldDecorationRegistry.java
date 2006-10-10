@@ -11,6 +11,7 @@
 package org.eclipse.jface.fieldassist;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -182,7 +183,8 @@ public class FieldDecorationRegistry {
 	 * may use these values to reserve space in dialogs for decorations or to
 	 * adjust layouts so that decorated and non-decorated fields line up.
 	 */
-	private int maxDecorationWidth, maxDecorationHeight;
+	private int maxDecorationWidth = 0;
+	private int maxDecorationHeight = 0;
 
 	private HashMap /* <String id, FieldDecoration> */decorations = new HashMap();
 
@@ -260,6 +262,8 @@ public class FieldDecorationRegistry {
 	public void registerFieldDecoration(String id, String description,
 			Image image) {
 		decorations.put(id, new Entry(description, image));
+		// Recompute the maximums since this might be a replacement
+		recomputeMaximums();
 	}
 
 	/**
@@ -280,6 +284,9 @@ public class FieldDecorationRegistry {
 			String imageId) {
 		decorations.put(id, new Entry(description, imageId, JFaceResources
 				.getImageRegistry()));
+		// Recompute the maximums as this could be a replacement of a previous
+		// image.
+		recomputeMaximums();
 	}
 
 	/**
@@ -301,6 +308,8 @@ public class FieldDecorationRegistry {
 	public void registerFieldDecoration(String id, String description,
 			String imageId, ImageRegistry imageRegistry) {
 		decorations.put(id, new Entry(description, imageId, imageRegistry));
+		// Recompute the maximums since this could be a replacement
+		recomputeMaximums();
 	}
 
 	/**
@@ -322,7 +331,8 @@ public class FieldDecorationRegistry {
 	 *            the String id of the decoration to be unregistered.
 	 */
 	public void unregisterFieldDecoration(String id) {
-		decorations.put(id, null);
+		decorations.remove(id);
+		recomputeMaximums();
 	}
 
 	/**
@@ -338,12 +348,26 @@ public class FieldDecorationRegistry {
 		if (entry == null) {
 			return null;
 		}
-		FieldDecoration dec = ((Entry) entry).getDecoration();
-		Image image = dec.getImage();
-		if (image != null) {
-			maxDecorationHeight = Math.max(0, image.getBounds().height);
-			maxDecorationWidth = Math.max(0, image.getBounds().width);
+		return ((Entry) entry).getDecoration();
+
+	}
+
+	/*
+	 * The maximum decoration width and height must be recomputed. Typically
+	 * called in response to adding, removing, or replacing a decoration.
+	 */
+	private void recomputeMaximums() {
+		Iterator entries = decorations.values().iterator();
+		
+		maxDecorationHeight = 0;
+		maxDecorationWidth = 0;
+		while (entries.hasNext()) {
+			Image image = ((Entry)entries.next()).getDecoration().getImage();
+			if (image != null) {
+				maxDecorationHeight = Math.max(maxDecorationHeight, image.getBounds().height);
+				maxDecorationWidth = Math.max(maxDecorationWidth, image.getBounds().width);
+			}
 		}
-		return dec;
+
 	}
 }
