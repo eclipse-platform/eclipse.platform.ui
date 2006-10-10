@@ -27,12 +27,9 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * A toggle breakpoint action that can be contributed to an object. The action
  * will perform a toggle breakpoint operation for a selected object.
- * <p>
- * EXPERIMENTAL
- * </p>
- * <p>
- * Clients may subclass this class.
- * </p>
+ * 
+ * <p>Clients may subclass this class.</p>
+ * 
  * @since 3.0
  */
 public abstract class ToggleBreakpointObjectActionDelegate implements IObjectActionDelegate, IActionDelegate2 {
