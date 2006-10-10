@@ -31,7 +31,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Abstract implementation of a wizard selection page which simply displays a
@@ -116,7 +116,7 @@ public abstract class WorkbenchWizardListSelectionPage extends
         viewer = new TableViewer(table);
         viewer.setContentProvider(new WizardContentProvider());
         viewer.setLabelProvider(new WorkbenchLabelProvider());
-        viewer.setSorter(new WorkbenchViewerSorter());
+        viewer.setComparator(new WorkbenchViewerComparator());
         viewer.addSelectionChangedListener(this);
         viewer.addDoubleClickListener(this);
         viewer.setInput(wizardElements);

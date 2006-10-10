@@ -27,6 +27,11 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 
     private FilterSelectionAction filterAction;
 
+    /**
+     * Constructor. 
+     * 
+     * @param navigator
+     */
     public SortAndFilterActionGroup(IResourceNavigator navigator) {
         super(navigator);
     }
@@ -53,8 +58,8 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
     }
 
     public void updateActionBars() {
-        int criteria = navigator.getSorter().getCriteria();
-        sortByNameAction.setChecked(criteria == ResourceSorter.NAME);
-        sortByTypeAction.setChecked(criteria == ResourceSorter.TYPE);
+        int criteria = navigator.getComparator().getCriteria();
+        sortByNameAction.setChecked(criteria == ResourceComparator.NAME);
+        sortByTypeAction.setChecked(criteria == ResourceComparator.TYPE);
     }
 }

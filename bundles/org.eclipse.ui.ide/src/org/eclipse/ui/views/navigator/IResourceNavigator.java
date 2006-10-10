@@ -45,27 +45,52 @@ public interface IResourceNavigator extends IViewPart {
 
     /**
      * Returns the current sorter.
+     * @return the resource navigator's sorter
+     * 
+     * @deprecated as of 3.3, use {@link IResourceNavigator#getComparator()} instead
      */
     ResourceSorter getSorter();
 
     /**
      * Sets the current sorter.
+     * @param sorter the sorter to use
+     * 
+     * @deprecated as of 3.3, use {@link IResourceNavigator#setComparator()} instead
      */
     void setSorter(ResourceSorter sorter);
 
     /**
+     * Returns the current comparator.
+     * 
+     * @return the resource navigator's comparator
+     * @since 3.3
+     */
+    ResourceComparator getComparator();
+
+    /**
+     * Sets the current comparator.
+     * 
+     * @param comparator the comparator to use
+     * @since 3.3
+     */
+    void setComparator(ResourceComparator comparator);
+    
+    /**
      * Sets the values of the filter preference to be the 
-     * strings in preference values
+     * strings in preference values.
+     * @param patterns filter patterns to use on contents of the resource navigator
      */
     void setFiltersPreference(String[] patterns);
 
     /**
      * Returns the viewer which shows the resource tree.
+     * @return the resource navigator's tree viewer
      */
     TreeViewer getViewer();
 
     /**
      * Returns the frame list for this navigator.
+     * @return the list of frames maintained by the resource navigator 
      */
     FrameList getFrameList();
 

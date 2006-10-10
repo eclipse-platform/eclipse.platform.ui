@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * A working set selection dialog displays a list of working
@@ -216,7 +216,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 
         listViewer.setLabelProvider(labelProvider);
         listViewer.setContentProvider(contentProvider);
-        listViewer.setSorter(new WorkbenchViewerSorter());
+        listViewer.setComparator(new WorkbenchViewerComparator());
         
         listViewer.addFilter(new WorkingSetFilter(getSupportedWorkingSetIds()));
         

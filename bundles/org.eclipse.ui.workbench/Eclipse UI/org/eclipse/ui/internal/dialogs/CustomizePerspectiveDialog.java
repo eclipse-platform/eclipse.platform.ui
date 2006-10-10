@@ -107,14 +107,19 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardCategory;
 
-// @issue add class doc
+/**
+ * Dialog to allow users the ability to customize the perspective. This includes
+ * customizing menus and toolbars by adding, removing, or re-arranging commands
+ * or groups of commands.
+ * 
+ */
 // @issue need to break this not to show menu specific page
 public class CustomizePerspectiveDialog extends TrayDialog {
     private Perspective perspective;
@@ -466,6 +471,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         public void registerGlobalAction(IAction action) {
         }
 
+        /**
+         * Clean up the action bars.
+         */
 		public void dispose() {
 			coolBarManager.dispose();
 	        menuManager.dispose();	
@@ -1248,7 +1256,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         menuCategoriesViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         menuCategoriesViewer.setLabelProvider(new LabelProvider());
         menuCategoriesViewer.setContentProvider(new TreeContentProvider());
-        menuCategoriesViewer.setSorter(new WorkbenchViewerSorter());
+        menuCategoriesViewer.setComparator(new WorkbenchViewerComparator());
 
         // Menu items list
         Composite menuItemsGroup = new Composite(sashComposite, SWT.NONE);
@@ -1269,7 +1277,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
         menuItemsViewer.setLabelProvider(new ShortcutMenuItemLabelProvider());
         menuItemsViewer
                 .setContentProvider(new ShortcutMenuItemContentProvider());
-        menuItemsViewer.setSorter(new WorkbenchViewerSorter());
+        menuItemsViewer.setComparator(new WorkbenchViewerComparator());
 
         menuTable.setHeaderVisible(true);
         int[] columnWidths = new int[shortcutMenuColumnWidths.length];

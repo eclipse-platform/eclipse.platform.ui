@@ -36,20 +36,20 @@ public class SortViewAction extends ResourceNavigatorAction {
             setToolTipText(ResourceNavigatorMessages.SortView_toolTipByName);
         }
         setEnabled(true);
-        sortCriteria = sortByType ? ResourceSorter.TYPE : ResourceSorter.NAME;
+        sortCriteria = sortByType ? ResourceComparator.TYPE : ResourceComparator.NAME;
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				INavigatorHelpContextIds.SORT_VIEW_ACTION);
     }
 
     public void run() {
         IResourceNavigator navigator = getNavigator();
-        ResourceSorter sorter = navigator.getSorter();
+        ResourceComparator comparator = navigator.getComparator();
 
-        if (sorter == null) {
-			navigator.setSorter(new ResourceSorter(sortCriteria));
+        if (comparator == null) {
+			navigator.setComparator(new ResourceComparator(sortCriteria));
 		} else {
-            sorter.setCriteria(sortCriteria);
-            navigator.setSorter(sorter);
+			comparator.setCriteria(sortCriteria);
+            navigator.setComparator(comparator);
         }
 
     }

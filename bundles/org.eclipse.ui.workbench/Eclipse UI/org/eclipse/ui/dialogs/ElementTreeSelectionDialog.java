@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -58,7 +59,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
     private ISelectionStatusValidator fValidator = null;
 
-    private ViewerSorter fSorter;
+    private ViewerComparator fComparator;
 
     private boolean fAllowMultiple = true;
 
@@ -135,9 +136,19 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
     /**
      * Sets the sorter used by the tree viewer.
      * @param sorter
+     * @deprecated as of 3.3, use {@link ElementTreeSelectionDialog#setComparator(ViewerComparator)} instead
      */
     public void setSorter(ViewerSorter sorter) {
-        fSorter = sorter;
+        fComparator = sorter;
+    }
+    
+    /**
+     * Sets the comparator used by the tree viewer.
+     * @param comparator
+     * @since 3.3
+     */
+    public void setComparator(ViewerComparator comparator){
+    	fComparator = comparator;
     }
 
     /**
@@ -289,7 +300,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
             }
         });
 
-        fViewer.setSorter(fSorter);
+        fViewer.setComparator(fComparator);
         if (fFilters != null) {
             for (int i = 0; i != fFilters.size(); i++) {
 				fViewer.addFilter((ViewerFilter) fFilters.get(i));

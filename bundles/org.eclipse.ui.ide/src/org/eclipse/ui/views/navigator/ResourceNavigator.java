@@ -45,6 +45,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -282,7 +283,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
         initContextMenu();
 
-        initResourceSorter();
+        initResourceComparator();
         initWorkingSetFilter();
 
         // make sure input is set after sorters and filters,
@@ -407,7 +408,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         // If not in the dialog settings, check the preference store for the default setting. 
         // Use the UI plugin's preference store since this is a public preference.
         AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
+                .getBundle(PlatformUI.PLUGIN_ID);
         linkingEnabled = uiPlugin.getPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
     }
@@ -566,19 +567,32 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Returns the navigator's plugin.
+     * @return the UI plugin for this bundle
      */
     public AbstractUIPlugin getPlugin() {
         return IDEWorkbenchPlugin.getDefault();
     }
 
     /**
-     * Returns the sorter.
+     * Return the sorter.
+     * 
      * @since 2.0
+     * @deprecated as of 3.3, use {@link ResourceNavigator#getComparator()}
      */
     public ResourceSorter getSorter() {
         return (ResourceSorter) getTreeViewer().getSorter();
     }
 
+    /**
+     * Returns the comparator.
+     * 
+     * @return the <code>ResourceComparator</code>
+     * @since 3.3
+     */
+
+    public ResourceComparator getComparator(){
+    	return (ResourceComparator) getTreeViewer().getComparator();
+    }
     /**
      * Returns the resource viewer which shows the resource hierarchy.
      * @since 2.0
@@ -619,9 +633,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
             Object o = selection.getFirstElement();
             if (o instanceof IResource) {
                 return ((IResource) o).getFullPath().makeRelative().toString();
-            } else {
-                return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
-            }
+            } 
+            return ResourceNavigatorMessages.ResourceNavigator_oneItemSelected;
         }
         if (selection.size() > 1) {
             return NLS.bind(ResourceNavigatorMessages.ResourceNavigator_statusLine, String.valueOf(selection.size()));
@@ -807,6 +820,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
     /**
      * Initializes the sorter.
+     * 
+     * @deprecated as of 3.3, use {@link ResourceNavigator#initResourceComparator()} instead
      */
     protected void initResourceSorter() {
         int sortType = ResourceSorter.NAME;
@@ -827,6 +842,31 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         } catch (NumberFormatException e) {
         }
         setSorter(new ResourceSorter(sortType));
+    }
+    
+    /**
+     * Initializes the comparator.
+	 * @since 3.3
+     */
+    protected void initResourceComparator(){
+        int sortType = ResourceComparator.NAME;
+        try {
+            int sortInt = 0;
+            if (memento != null) {
+                String sortStr = memento.getString(TAG_SORTER);
+                if (sortStr != null) {
+					sortInt = new Integer(sortStr).intValue();
+				}
+            } else {
+                sortInt = settings.getInt(STORE_SORT_TYPE);
+            }
+            if (sortInt == ResourceComparator.NAME
+                    || sortInt == ResourceComparator.TYPE) {
+				sortType = sortInt;
+			}
+        } catch (NumberFormatException e) {
+        }
+        setComparator(new ResourceComparator(sortType));
     }
 
     /**
@@ -905,7 +945,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     private void migrateDialogSettings() {
         AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getPlugin(PlatformUI.PLUGIN_ID);
+                .getBundle(PlatformUI.PLUGIN_ID);
         IDialogSettings uiSettings = uiPlugin.getDialogSettings();
 
         uiSettings = uiSettings.getSection(STORE_SECTION);
@@ -1048,7 +1088,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         }
 
         //save sorter
-        memento.putInteger(TAG_SORTER, getSorter().getCriteria());
+        memento.putInteger(TAG_SORTER, getComparator().getCriteria());
 
         //save filters
         String filters[] = getPatternFilter().getPatterns();
@@ -1198,6 +1238,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * 
      * @param sorter the resource sorter
      * @since 2.0
+     * @deprecated as of 3.3, use {@link ResourceNavigator#setComparator(ResourceComparator)}
      */
     public void setSorter(ResourceSorter sorter) {
         TreeViewer viewer = getTreeViewer();
@@ -1214,6 +1255,29 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
 
         // update the sort actions' checked state
         updateActionBars((IStructuredSelection) viewer.getSelection());
+    }
+    
+    /**
+     * Sets the resource comparator
+     * 
+     * @param comparator the resource comparator
+     * @since 3.3
+     */
+    public void setComparator(ResourceComparator comparator){
+        TreeViewer viewer = getTreeViewer();
+        ViewerComparator viewerComparator = viewer.getComparator();
+
+        viewer.getControl().setRedraw(false);
+        if (viewerComparator == comparator) {
+            viewer.refresh();
+        } else {
+            viewer.setComparator(comparator);
+        }
+        viewer.getControl().setRedraw(true);
+        settings.put(STORE_SORT_TYPE, comparator.getCriteria());
+
+        // update the sort actions' checked state
+        updateActionBars((IStructuredSelection) viewer.getSelection());   	
     }
 
     /*

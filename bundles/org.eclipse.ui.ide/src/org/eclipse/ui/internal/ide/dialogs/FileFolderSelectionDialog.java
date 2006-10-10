@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
@@ -148,7 +148,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	/**
 	 * Viewer sorter that places folders first, then files.
 	 */
-	private static class FileViewerSorter extends ViewerSorter {
+	private static class FileViewerSorter extends ViewerComparator {
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -235,7 +235,7 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 	public FileFolderSelectionDialog(Shell parent, boolean multiSelect, int type) {
 		super(parent, new FileLabelProvider(), new FileContentProvider(
 				(type & IResource.FILE) != 0));
-		setSorter(new FileViewerSorter());
+		setComparator(new FileViewerSorter());
 		setValidator(new FileSelectionValidator(multiSelect,
 				(type & IResource.FOLDER) != 0));
 	}

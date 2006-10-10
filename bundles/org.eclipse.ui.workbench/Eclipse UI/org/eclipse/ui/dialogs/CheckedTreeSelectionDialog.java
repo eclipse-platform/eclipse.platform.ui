@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
@@ -56,7 +57,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 
     private ISelectionStatusValidator fValidator = null;
 
-    private ViewerSorter fSorter;
+    private ViewerComparator fComparator;
 
     private String fEmptyListMessage = WorkbenchMessages.CheckedTreeSelectionDialog_nothing_available; 
 
@@ -132,12 +133,25 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
     }
 
     /**
-     * Sets the sorter used by the tree viewer.
-     * 
-     * @param sorter
-     */
+	 * Sets the sorter used by the tree viewer.
+	 * 
+	 * @param sorter
+	 * @deprecated since 3.3, use
+	 *             {@link CheckedTreeSelectionDialog#setComparator(ViewerComparator)}
+	 *             instead
+	 */
     public void setSorter(ViewerSorter sorter) {
-        fSorter = sorter;
+        fComparator = sorter;
+    }
+    
+    /**
+     * Sets the comparator used by the tree viewer.
+     * 
+     * @param comparator
+     * @since 3.3
+     */
+    public void setComparator(ViewerComparator comparator){
+    	fComparator = comparator;
     }
 
     /**
@@ -308,7 +322,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
                 updateOKStatus();
             }
         });
-        fViewer.setSorter(fSorter);
+        fViewer.setComparator(fComparator);
         if (fFilters != null) {
             for (int i = 0; i != fFilters.size(); i++) {
 				fViewer.addFilter((ViewerFilter) fFilters.get(i));

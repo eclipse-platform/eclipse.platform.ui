@@ -42,7 +42,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.dialogs.IElementFilter;
 import org.eclipse.ui.internal.ide.dialogs.ResourceTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * The abstract superclass for a typical import wizard's main page.
@@ -228,9 +228,9 @@ public abstract class WizardResourceImportPage extends WizardDataTransferPage {
             }
         };
 
-        WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
-        this.selectionGroup.setTreeComparator(sorter);
-        this.selectionGroup.setListComparator(sorter);
+        WorkbenchViewerComparator comparator = new WorkbenchViewerComparator();
+        this.selectionGroup.setTreeComparator(comparator);
+        this.selectionGroup.setListComparator(comparator);
         this.selectionGroup.addCheckStateListener(listener);
 
     }

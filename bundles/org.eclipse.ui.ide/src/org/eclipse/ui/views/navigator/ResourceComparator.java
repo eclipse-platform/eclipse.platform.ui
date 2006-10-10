@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,10 +13,10 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
- * Sorter for viewers that display items of type <code>IResource</code>.
+ * Comparator for viewers that display items of type <code>IResource</code>.
  * The sorter supports two sort criteria:
  * <p>
  * <code>NAME</code>: Folders are given order precedence, followed by files.
@@ -32,9 +32,9 @@ import org.eclipse.jface.viewers.ViewerSorter;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  * 
- * @deprecated as of 3.3, use {@link ResourceComparator} instead
+ * @since 3.3
  */
-public class ResourceSorter extends ViewerSorter {
+public class ResourceComparator extends ViewerComparator {
 
     /**
      * Constructor argument value that indicates to sort items by name.
@@ -54,7 +54,7 @@ public class ResourceSorter extends ViewerSorter {
      * @param criteria the sort criterion to use: one of <code>NAME</code> or 
      *   <code>TYPE</code>
      */
-    public ResourceSorter(int criteria) {
+    public ResourceComparator(int criteria) {
         super();
         this.criteria = criteria;
     }
@@ -81,7 +81,7 @@ public class ResourceSorter extends ViewerSorter {
     }
 
     /* (non-Javadoc)
-     * Method declared on ViewerSorter.
+     * Method declared on ViewerComparator.
      */
     public int compare(Viewer viewer, Object o1, Object o2) {
         //have to deal with non-resources in navigator
@@ -135,7 +135,7 @@ public class ResourceSorter extends ViewerSorter {
      *  element is greater than the second element
      */
     protected int compareNames(IResource resource1, IResource resource2) {
-        return collator.compare(resource1.getName(), resource2.getName());
+        return getComparator().compare(resource1.getName(), resource2.getName());
     }
 
     /**
@@ -157,7 +157,7 @@ public class ResourceSorter extends ViewerSorter {
         // Compare extensions.  If they're different then return a value that
         // indicates correct extension ordering.  If they're the same then
         // return a value that indicates the correct NAME ordering.
-        int result = collator.compare(ext1, ext2);
+        int result = getComparator().compare(ext1, ext2);
 
         if (result != 0) {
 			return result;

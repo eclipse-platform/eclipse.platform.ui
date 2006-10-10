@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.CheckboxTreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * A standard file selection dialog which solicits a list of files from the user.
@@ -187,9 +187,9 @@ public class FileSelectionDialog extends SelectionDialog {
             }
         };
 
-        WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
-        selectionGroup.setTreeComparator(sorter);
-        selectionGroup.setListComparator(sorter);
+        WorkbenchViewerComparator comparator = new WorkbenchViewerComparator();
+        selectionGroup.setTreeComparator(comparator);
+        selectionGroup.setListComparator(comparator);
         selectionGroup.addCheckStateListener(listener);
 
         addSelectionButtons(composite);
