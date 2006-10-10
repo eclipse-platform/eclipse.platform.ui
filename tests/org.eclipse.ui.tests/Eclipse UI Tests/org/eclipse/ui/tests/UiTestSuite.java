@@ -26,6 +26,7 @@ import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.dnd.DragTestSuite;
 import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
+import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
@@ -86,6 +87,7 @@ public class UiTestSuite extends TestSuite {
         addTest(new TestSuite(LeakTests.class));
         addTest(new ConcurrencyTestSuite());
         addTest(new OperationsTestSuite());
+        addTest(new FieldAssistTestSuite());
         addTest(new MultiEditorTestSuite());
         addTest(new TestSuite(FilteredTreeTests.class));
     }
