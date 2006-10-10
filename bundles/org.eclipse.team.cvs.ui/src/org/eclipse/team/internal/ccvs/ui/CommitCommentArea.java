@@ -76,6 +76,7 @@ public class CommitCommentArea extends DialogArea {
             cc.setLayoutData(new GridData(GridData.FILL_BOTH));
             
             SourceViewer sourceViewer = new SourceViewer(cc, null, null, true, SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+            sourceViewer.getTextWidget().setIndent(2);
             
             if (isSpellingAnnotationEnabled()) {
 	            // to paint the annotations
