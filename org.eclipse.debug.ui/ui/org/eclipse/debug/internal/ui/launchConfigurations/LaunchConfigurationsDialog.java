@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -1454,7 +1455,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					path = sel.getPaths()[0];
 					pidx = findIndexOfParent(path.getFirstSegment());
 					if(path.getSegmentCount() == 2) {
-						cidx = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+						cidx = findIndexOfChild(pidx, path.getLastSegment());
 					}
 				}
 				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
@@ -1476,8 +1477,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						viewer.addFilter(fLCTFilter);
 					}
 				}
-				updateSelection(path, pidx, cidx);
-				return null;
+				if(viewer.getSelection().isEmpty()) {
+					updateSelection(path, pidx, cidx);
+				}
+				return Status.OK_STATUS;
 			}
 		};
 		
@@ -1537,7 +1540,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
 				}
 				else {
-					int cidex = findIndexOfChild(path.getFirstSegment(), path.getLastSegment());
+					int cidex = findIndexOfChild(findIndexOfParent(path.getFirstSegment()), path.getLastSegment());
 					TreeItem parent = tree.getItem(pidex);
 					int ccount = parent.getItemCount();
 					if(cidex == -1) {
@@ -1592,9 +1595,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the index of the child or -1 if not found
 	 * @since 3.2
 	 */
-	private int findIndexOfChild(Object parent, Object child) {
+	private int findIndexOfChild(int pidx, Object child) {
 		Tree tree = fLaunchConfigurationView.getTreeViewer().getTree();
-		int pidx = findIndexOfParent(parent);
 		if(pidx != -1) {
 			TreeItem root = tree.getItem(pidx);
 			TreeItem[] children = root.getItems();
