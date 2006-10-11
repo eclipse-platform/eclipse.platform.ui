@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.DisposeEvent;
@@ -53,6 +54,9 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
+
+	private static final String VIRTUAL_DISPOSE_KEY = Policy.JFACE
+			+ ".DISPOSE_LISTENER"; //$NON-NLS-1$
 
 	/**
 	 * Internal tree viewer implementation.
@@ -893,16 +897,21 @@ public class TreeViewer extends AbstractTreeViewer {
 		super.mapElement(element, item);
 		// make sure to unmap elements if the tree is virtual
 		if ((getTree().getStyle() & SWT.VIRTUAL) != 0) {
-			item.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					if (!treeIsDisposed) {
-						Object data = item.getData();
-						if (usingElementMap() && data != null) {
-							unmapElement(data, item);
+			// only add a dispose listener if item hasn't already on assigned
+			// because it is reused
+			if (item.getData(VIRTUAL_DISPOSE_KEY) == null) {
+				item.setData(VIRTUAL_DISPOSE_KEY, Boolean.TRUE);
+				item.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent e) {
+						if (!treeIsDisposed) {
+							Object data = item.getData();
+							if (usingElementMap() && data != null) {
+								unmapElement(data, item);
+							}
 						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 
