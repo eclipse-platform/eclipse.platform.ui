@@ -10,11 +10,20 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.*;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -73,14 +82,23 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		IDocument document = null;
 		final IEditorInput input = getDocumentKey(element);
 		if (input != null) {
-			final IDocumentProvider provider = Utilities.getDocumentProvider(input);
+			final IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
 			if (provider != null) {
 				try {
-					provider.connect(input);
+					final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(input, ISharedDocumentAdapter.class);
+					if (sda != null) {
+						sda.connect(provider, input);
+					} else {
+						provider.connect(input);
+					}
 					document = provider.getDocument(input);
 					IDisposable disposable = new IDisposable() {
 						public void dispose() {
-							provider.disconnect(input);
+							if (sda != null) {
+								sda.disconnect(provider, input);
+							} else {
+								provider.disconnect(input);
+							}
 						}
 					};
 					setupDocument(document);
@@ -175,11 +193,92 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		if (sda != null) {
 			return sda.getDocumentKey(element);
 		}
-		// TODO: ResourceNode is not shared document friendly
-		if (element instanceof ITypedElement && ! (element instanceof ResourceNode)) {
-			ITypedElement te = (ITypedElement) element;
-			return new TypedElementEditorInput(te);
-		}
 		return null;
+	}
+	
+	/**
+	 * Default implementation of save that extracts the contents from 
+	 * the document of an {@link IDocumentRange} and sets it on the
+	 * input. If the input is an {@link IEncodedStreamContentAccessor},
+	 * the charset of the input is used to extract the contents from the
+	 * document. If the input adapts to {@link ISharedDocumentAdapter} and
+	 * the document of the {@link IDocumentRange} matches that of the
+	 * input, then the save is issued through the shared document adapter.
+	 * @see org.eclipse.compare.structuremergeviewer.IStructureCreator#save(org.eclipse.compare.structuremergeviewer.IStructureComparator, java.lang.Object)
+	 */
+	public void save(IStructureComparator node, Object input) {
+		if (node instanceof IDocumentRange && input instanceof IEditableContent) {
+			IDocument document= ((IDocumentRange)node).getDocument();
+			// First check to see if we have a shared document
+			final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(input, ISharedDocumentAdapter.class);
+			if (sda != null) {
+				IEditorInput key = sda.getDocumentKey(input);
+				if (key != null) {
+					IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(key);
+					if (provider != null) {
+						IDocument providerDoc = provider.getDocument(key);
+						// We have to make sure that the document we are saving is the same as the shared document
+						if (providerDoc != null && providerDoc == document) {
+							if (save(provider, document, input, sda, key))
+								return;
+						}
+					}
+				}
+			}
+			IEditableContent bca= (IEditableContent) input;
+			String contents= document.get();
+			String encoding= null;
+			if (input instanceof IEncodedStreamContentAccessor) {
+				try {
+					encoding= ((IEncodedStreamContentAccessor)input).getCharset();
+				} catch (CoreException e1) {
+					// ignore
+				}
+			}
+			if (encoding == null)
+				encoding= ResourcesPlugin.getEncoding();
+			byte[] bytes;				
+			try {
+				bytes= contents.getBytes(encoding);
+			} catch (UnsupportedEncodingException e) {
+				bytes= contents.getBytes();	
+			}
+			bca.setContent(bytes);
+		}
+	}
+
+	private boolean save(final IDocumentProvider provider, final IDocument document,
+			final Object input, final ISharedDocumentAdapter sda, final IEditorInput key) {
+		try {
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						doSave(provider, document, input, sda, key, monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			};
+			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
+			progressService.run(false,false, runnable);
+			return true;
+		} catch (InvocationTargetException e) {
+			// TODO: Should show error to the user
+			Throwable t = e.getTargetException();
+			CompareUIPlugin.log(t);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+		return false;
+	}
+	
+	private void doSave(IDocumentProvider provider, IDocument document,
+			Object input, final ISharedDocumentAdapter sda, IEditorInput key, IProgressMonitor monitor) throws CoreException {
+		try {
+			provider.aboutToChange(key);
+			sda.saveDocument(provider, key, document, false, monitor);
+		} finally {
+			provider.changed(input);
+		}
 	}
 }

@@ -20,13 +20,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.IProgressService;
 
 
-public class TypedBufferedContent extends ResourceNode implements ISharedDocumentAdapter {
+public class TypedBufferedContent extends ResourceNode implements IAdaptable {
+	
+	private ISharedDocumentAdapter sharedDocumentAdapter;
+
 	public TypedBufferedContent(IFile resource) {
 		super(resource);
 	}
@@ -71,13 +72,18 @@ public class TypedBufferedContent extends ResourceNode implements ISharedDocumen
 	public void fireChange() {
 		fireContentChanged();
 	}
-	public IEditorInput getDocumentKey(Object element) {
-		if (element == this && getResource() instanceof IFile) {
-			IFile file = (IFile) getResource();
-			// Only return the input if the file exists since file buffers doesn't seem to handle the create case
-			if (file.exists())
-				return new FileEditorInput(file);
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == ISharedDocumentAdapter.class) {
+			synchronized (this) {
+				if (sharedDocumentAdapter == null)
+					sharedDocumentAdapter = new SharedDocumentAdapter();
+				return sharedDocumentAdapter;
+			}
 		}
-		return null;
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }

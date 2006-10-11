@@ -46,7 +46,6 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable, IResourceProvider {
 
 		private final IDiff node;
-		private long timestamp;
 
 		public ResourceDiffCompareInput(IDiff node) {
 			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
@@ -113,21 +112,13 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 
 		private static ITypedElement getLeftContributor(final IDiff node) {
 			// The left contributor is always the local resource
-			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			return new LocalResourceTypedElement(resource) {
-				public boolean isEditable() {
-					if(! resource.exists() && isOutgoingDeletion(node)) {
-						return false;
-					}
-					return super.isEditable();
-				}
-
-				private boolean isOutgoingDeletion(IDiff node) {
+			return new LocalResourceTypedElement(ResourceDiffTree.getResourceFor(node)) {
+				protected boolean isOutgoingDeletion() {
 					if (node instanceof IThreeWayDiff) {
 						IThreeWayDiff twd = (IThreeWayDiff) node;
 						return twd.getKind() == IDiff.REMOVE && twd.getDirection() == IThreeWayDiff.OUTGOING;
 					}
-					return false;
+					return super.isOutgoingDeletion();
 				}
 			};
 		}
@@ -182,6 +173,14 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			updateTimestamp();
 		}
 
+		public void updateTimestamp() {
+			((LocalResourceTypedElement)getLeft()).updateTimestamp();
+		}
+		
+		private boolean hasSaveConflict() {
+			return ((LocalResourceTypedElement)getLeft()).hasSaveConflict();
+		}
+
 		/* (non-Javadoc)
 		 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#getSaveable()
 		 */
@@ -229,8 +228,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		}
 		
 		public boolean checkUpdateConflict() {
-			long newTimestamp = ResourceDiffTree.getResourceFor(node).getLocalTimeStamp();
-			if(newTimestamp != timestamp) {
+			if(hasSaveConflict()) {
 				final MessageDialog dialog = 
 					new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
 							TeamUIMessages.SyncInfoCompareInput_0,  
@@ -253,10 +251,6 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 				}
 			}
 			return false;
-		}
-
-		public void updateTimestamp() {
-			timestamp = ResourceDiffTree.getResourceFor(node).getLocalTimeStamp();
 		}
 
 		public IResource getResource() {
@@ -299,6 +293,15 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			if (rdci.checkUpdateConflict())
 				return;
 		}
+		ITypedElement left = input.getLeft();
+		if (left instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
+			if (te.isConnected()) {
+				te.saveDocument(monitor);
+				// Saving the document should fire the necessary updates
+				return;
+			}
+		}
 		try {
 			isSaving = true;
 			monitor.beginTask(null, 100);
@@ -307,9 +310,10 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			editorInput.saveChanges(Policy.subMonitorFor(monitor, 40));
 			// Then we tell the input to commit its changes
 			// Only the left is ever saveable
-			ITypedElement left = input.getLeft();
-			if (left instanceof LocalResourceTypedElement)
-				((LocalResourceTypedElement) left).commit(Policy.subMonitorFor(monitor, 60));
+			if (left instanceof LocalResourceTypedElement) {
+				LocalResourceTypedElement te = (LocalResourceTypedElement) left;
+				te.commit(Policy.subMonitorFor(monitor, 60));
+			}
 		} finally {
 			// Make sure we fire a change for the compare input to update the viewers
 			if (input instanceof ResourceDiffCompareInput) {

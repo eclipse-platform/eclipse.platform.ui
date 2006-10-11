@@ -56,7 +56,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private MyDiffNode node;
 	private String description;
 	private IResource resource;
-	private long timestamp;
 	private boolean isSaving = false;
     private ISynchronizeParticipant participant;
 
@@ -88,8 +87,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		Assert.isNotNull(description);
 		this.description = description;
 		this.resource = sync.getLocal();
-		timestamp = resource.getLocalTimeStamp();
 		this.node = new MyDiffNode(null, sync);
+		updateTimestamp();
 		initializeContentChangeListeners();
 	}
 	
@@ -117,7 +116,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		final Control control = super.createContents(parent);
 		// See bug 66349
 		//ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		timestamp = resource.getLocalTimeStamp();
+		updateTimestamp();
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dispose();
@@ -259,9 +258,21 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			SyncInfo otherSyncInfo = ((SyncInfoCompareInput) other).getSyncInfo();
 			SyncInfo thisSyncInfo = getSyncInfo();
 			IResource otherResource = otherSyncInfo.getLocal();
-			return thisSyncInfo.equals(otherSyncInfo) && timestamp == otherResource.getLocalTimeStamp();
+			return thisSyncInfo.equals(otherSyncInfo) && getTimestamp() == otherResource.getLocalTimeStamp();
 		}
 		return false;
+	}
+
+	private long getTimestamp() {
+		return ((LocalResourceTypedElement)node.getLeft()).getTimestamp();
+	}
+	
+	private void updateTimestamp() {
+		((LocalResourceTypedElement)node.getLeft()).updateTimestamp();
+	}
+	
+	private boolean hasSaveConflict() {
+		return ((LocalResourceTypedElement)node.getLeft()).hasSaveConflict();
 	}
 
 	/*
@@ -271,6 +282,15 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		if (checkUpdateConflict())
 			return;
+		ITypedElement left = node.getLeft();
+		if (left instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
+			if (te.isConnected()) {
+				te.saveDocument(pm);
+				// Saving the document should fire the necessary updates
+				return;
+			}
+		}
 		try {
 			isSaving = true;
 			super.saveChanges(pm);
@@ -281,13 +301,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			node.fireChange();
 			setDirty(false);
 			isSaving = false;
-			timestamp = resource.getLocalTimeStamp();
+			updateTimestamp();
 		}
 	}
 
 	private boolean checkUpdateConflict() {
-		long newTimestamp = resource.getLocalTimeStamp();
-		if(newTimestamp != timestamp) {
+		if (hasSaveConflict()) {
 			final MessageDialog dialog = 
 				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
 						TeamUIMessages.SyncInfoCompareInput_0,  

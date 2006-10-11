@@ -10,40 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.IEncodedStorage;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourceAttributes;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -53,15 +29,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.texteditor.DocumentProviderRegistry;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import com.ibm.icu.text.MessageFormat;
@@ -705,44 +676,24 @@ public class Utilities {
 	
 	public static IDocument getDocument(char type, Object element, boolean isUsingDefaultContentProvider, boolean canHaveSharedDocument) {
 		ITypedElement te= getLeg(type, element);
+		if (te == null)
+			return null;
 		if (te instanceof IDocument)
 			return (IDocument) te;
 		if (te instanceof IDocumentRange)
 			return ((IDocumentRange) te).getDocument();
 		if (te instanceof IStreamContentAccessor)
 			return DocumentManager.get(te);
-		if (isUsingDefaultContentProvider) {
-			IEditorInput input = getDocumentKey(element, type, canHaveSharedDocument);
-			if (input != null) {
-				IDocumentProvider provider = getDocumentProvider(input);
-				if (provider != null)
-					return provider.getDocument(input);
-			}
-		}
-		return null;
-	}
-	
-	public static IDocumentProvider getDocumentProvider(IEditorInput input) {
-		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
-	}
-	
-	public static IEditorInput getDocumentKey(Object compareInput, char leg, boolean canShare) {
-		if (canShare) {
-			Object element = getLeg(leg, compareInput);
-			if (element != null) {
-				ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class, true);
-				if (sda != null) {
-					return sda.getDocumentKey(element);
+		if (isUsingDefaultContentProvider && canHaveSharedDocument) {
+			ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(te, ISharedDocumentAdapter.class, true);
+			if (sda != null) {
+				IEditorInput input = sda.getDocumentKey(element);
+				if (input != null) {
+					IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
+					if (provider != null)
+						return provider.getDocument(input);
 				}
 			}
-		}
-		if (compareInput instanceof ICompareInput) {
-			ICompareInput ci = (ICompareInput) compareInput;
-			ThreeWayTypedElementEditorInput editorInput = new ThreeWayTypedElementEditorInput(ci, leg);
-			// ResourceNode is not shared document friendly
-			if (editorInput.getTypedElement() instanceof ResourceNode)
-				return null;
-			return editorInput;
 		}
 		return null;
 	}

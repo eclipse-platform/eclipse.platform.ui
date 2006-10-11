@@ -18,11 +18,13 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.ui.IEditorInput;
 
-public abstract class StorageTypedElement implements ITypedElement, IEncodedStreamContentAccessor, ISharedDocumentAdapter {
+public abstract class StorageTypedElement implements ITypedElement, IEncodedStreamContentAccessor, IAdaptable {
 
 	private IStorage bufferedContents;
 	private final String localEncoding;
+	private ISharedDocumentAdapter sharedDocumentAdapter;
 	
 	public StorageTypedElement(String localEncoding){
 		this.localEncoding = localEncoding;
@@ -103,5 +105,30 @@ public abstract class StorageTypedElement implements ITypedElement, IEncodedStre
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == ISharedDocumentAdapter.class) {
+			synchronized (this) {
+				if (sharedDocumentAdapter == null)
+					sharedDocumentAdapter = new SharedDocumentAdapter() {
+						public IEditorInput getDocumentKey(Object element) {
+							return StorageTypedElement.this.getDocumentKey(element);
+						}
+					};
+				return sharedDocumentAdapter;
+			}
+		}
+		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	/**
+	 * Method called from the shared document adapter to get the document key.
+	 * @param element the element
+	 * @return the document key
+	 */
+	protected abstract IEditorInput getDocumentKey(Object element);
 
 }

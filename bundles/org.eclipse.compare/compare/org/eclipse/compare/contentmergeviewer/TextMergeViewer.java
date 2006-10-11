@@ -334,6 +334,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (fElement instanceof IDocumentRange) {
 				newDocument= ((IDocumentRange)fElement).getDocument();
 				range= ((IDocumentRange)fElement).getRange();
+				connectToSharedDocument();
 
 			} else if (fElement instanceof IDocument) {
 				newDocument= (IDocument) fElement;
@@ -344,6 +345,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					newDocument = createDocument();
 					DocumentManager.put(fElement, newDocument);
 					setupDocument(newDocument);
+				} else if (fDocumentProvider == null) {
+					// Connect to a shared document so we can get the proper save synchronization
+					connectToSharedDocument();
 				}
 			} else if (fElement == null) {	// deletion on one side
 				
@@ -377,7 +381,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 			boolean enabled= true;
 			if (newDocument == null) {
-				//System.out.println("setDocument: create new Document");
 				newDocument= new Document(""); //$NON-NLS-1$
 				enabled= false;
 			}
@@ -445,28 +448,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		private IDocument createDocument() {
 			// If the content provider is a text content provider, attempt to obtain
 			// a shared document (i.e. file buffer)
-			IDocument newDoc = null;
-			IEditorInput key = getDocumentKey();
-			if (key != null) {
-				if (fDocumentProvider != null) {
-					// We've already connected and setup the document
-					newDoc = fDocumentProvider.getDocument(key);
-				} else {
-					IDocumentProvider documentProvider = getDocumentProvider();
-					if (documentProvider != null) {
-						try {
-							documentProvider.connect(key);
-							setCachedDocumentProvider(key,
-									documentProvider);
-							newDoc = documentProvider.getDocument(key);
-							this.fViewer.updateDirtyState(key, documentProvider, fLeg);
-						} catch (CoreException e) {
-							// Connection failed. Log the error and continue without a shared document
-							CompareUIPlugin.log(e);
-						}
-					}
-				}
-			}
+			IDocument newDoc = connectToSharedDocument();
 			
 			if (newDoc == null) {
 				IStreamContentAccessor sca= (IStreamContentAccessor) fElement;
@@ -483,7 +465,56 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 			return newDoc;
 		}
+
+		/**
+		 * Connect to a shared document if possible. Return <code>null</code>
+		 * if the connection was not possible.
+		 * @return the shared document or <code>null</code> if connction to a 
+		 * shared document was not possible
+		 */
+		private IDocument connectToSharedDocument() {
+			IEditorInput key = getDocumentKey();
+			if (key != null) {
+				if (fDocumentProvider != null) {
+					// We've already connected and setup the document
+					return fDocumentProvider.getDocument(key);
+				}
+				IDocumentProvider documentProvider = getDocumentProvider();
+				if (documentProvider != null) {
+					try {
+						connect(documentProvider, key);
+						setCachedDocumentProvider(key,
+								documentProvider);
+						IDocument newDoc = documentProvider.getDocument(key);
+						this.fViewer.updateDirtyState(key, documentProvider, fLeg);
+						return newDoc;
+					} catch (CoreException e) {
+						// Connection failed. Log the error and continue without a shared document
+						CompareUIPlugin.log(e);
+					}
+				}
+			}
+			return null;
+		}
 		
+		private void connect(IDocumentProvider documentProvider, IEditorInput input) throws CoreException {
+			final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(fElement, ISharedDocumentAdapter.class);
+			if (sda != null) {
+				sda.connect(documentProvider, input);
+			} else {
+				documentProvider.connect(input);
+			}
+		}
+		
+		private void disconnect(IDocumentProvider provider, IEditorInput input) {
+			final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(fElement, ISharedDocumentAdapter.class);
+			if (sda != null) {
+				sda.disconnect(provider, input);
+			} else {
+				provider.disconnect(input);
+			}
+		}
+
 		private void setCachedDocumentProvider(IEditorInput key,
 				IDocumentProvider documentProvider) {
 			fDocumentKey = key;
@@ -502,23 +533,28 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				}
 			}
 			if (provider != null) {
-				provider.disconnect(input);
+				disconnect(provider, input);
 				provider.removeElementStateListener(this);
 			}
 		}
 		
+		/**
+		 * Return the document key used to obtain a shared document. A <code>null</code>
+		 * is returned in the following cases:
+		 * <ol>
+		 * <li>This contributor does not have a shared document adapter.</li>
+		 * <li>This text merge viewer has a document partitioner but uses the default partitioning.</li>
+		 * <li>This text merge viewer does not use he default content provider.</li>
+		 * </ol>
+		 * @return the document key used to obtain a shared document or <code>null</code>
+		 */
 		private IEditorInput getDocumentKey() {
 			if (fDocumentKey != null)
 				return fDocumentKey;
-			if (isUsingDefaultContentProvider() && fElement != null) {
-				Object viewerInput = fViewer.getInput();
-				if (Utilities.getLeg(fLeg, viewerInput) == fElement) {
-					return Utilities.getDocumentKey(viewerInput, fLeg, canHaveSharedDocument());
-				} else if (canHaveSharedDocument()) {
-					ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(fElement, ISharedDocumentAdapter.class, true);
-					if (sda != null) {
-						return sda.getDocumentKey(fElement);
-					}
+			if (isUsingDefaultContentProvider() && fElement != null && canHaveSharedDocument()) {
+				ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(fElement, ISharedDocumentAdapter.class, true);
+				if (sda != null) {
+					return sda.getDocumentKey(fElement);
 				}
 			}
 			return null;
@@ -532,7 +568,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (isUsingDefaultContentProvider()) {
 				IEditorInput input = getDocumentKey();
 				if (input != null)
-					return Utilities.getDocumentProvider(input);
+					return SharedDocumentAdapter.getDocumentProvider(input);
 			}
 			return null;
 		}
@@ -582,7 +618,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				if (document != null) {
 					try {
 						fDocumentProvider.aboutToChange(input);
-						fDocumentProvider.saveDocument(monitor, input, document, false);
+						final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(fElement, ISharedDocumentAdapter.class);
+						if (sda != null) {
+							sda.saveDocument(fDocumentProvider, input, document, false, monitor);
+						} else {
+							fDocumentProvider.saveDocument(monitor, input, document, false);
+						}
 					} finally {
 						fDocumentProvider.changed(input);
 					}
@@ -1028,12 +1069,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 			fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
-			
-			//check to see if the current compare configuration required diff calculation, if it doesn't then it doesn't need 
-			//synchronized scrolling
-			if (!configuration.getCalculateDiffs())
-				fSynchronizedScrolling = false;
-			
 			fShowMoreInfo= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_MORE_INFO);
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
@@ -1958,6 +1993,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		if (document != null)
 			return document;
+		// The document is not associated with the input of the viewer so try to find the document
 		return Utilities.getDocument(type, element, isUsingDefaultContentProvider(), canHaveSharedDocument());
 	}
 	
@@ -2139,7 +2175,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		updateControls();
 		updateToolItems();
 		
-		if (!fHasErrors && getCompareConfiguration().getCalculateDiffs())
+		if (!fHasErrors)
 			doDiff();
 
 		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
@@ -2149,7 +2185,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		updateVScrollBar();
 		refreshBirdsEyeView();
 		
-		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && getCompareConfiguration().getCalculateDiffs()) {
+		if (!fHasErrors && !emptyInput && !fComposite.isDisposed()) {
 			Diff selectDiff= null;
 			if (FIX_47640) {
 				if (leftRange != null)
@@ -3514,25 +3550,22 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 					
 	protected void updateToolItems() {
-		//only update toolbar items if diffs need to be calculated (which
-		//dictates whether a toolbar gets added at all)
-		if (getCompareConfiguration().getCalculateDiffs()){
-			if (fIgnoreAncestorItem != null)
-				fIgnoreAncestorItem.setVisible(isThreeWay());
-			
-			if (fCopyDiffLeftToRightItem != null) {
-				IAction a= fCopyDiffLeftToRightItem.getAction();
-				if (a != null)
-					a.setEnabled(a.isEnabled() && !fHasErrors);
-			}
-			if (fCopyDiffRightToLeftItem != null) {
-				IAction a= fCopyDiffRightToLeftItem.getAction();
-				if (a != null)
-					a.setEnabled(a.isEnabled() && !fHasErrors);
-			}
-			
-			super.updateToolItems();
+					
+		if (fIgnoreAncestorItem != null)
+			fIgnoreAncestorItem.setVisible(isThreeWay());
+		
+		if (fCopyDiffLeftToRightItem != null) {
+			IAction a= fCopyDiffLeftToRightItem.getAction();
+			if (a != null)
+				a.setEnabled(a.isEnabled() && !fHasErrors);
 		}
+		if (fCopyDiffRightToLeftItem != null) {
+			IAction a= fCopyDiffRightToLeftItem.getAction();
+			if (a != null)
+				a.setEnabled(a.isEnabled() && !fHasErrors);
+		}
+		
+		super.updateToolItems();
 	}
 	
 	//---- painting lines
@@ -4689,12 +4722,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			};
 		}
 		return null;
-	}
-	
-	protected void initializeToolbars(Composite parent) {
-		//only add toolbar items if diffs need to be calculated
-		if (getCompareConfiguration().getCalculateDiffs())
-			super.initializeToolbars(parent);
 	}
 	
 }
