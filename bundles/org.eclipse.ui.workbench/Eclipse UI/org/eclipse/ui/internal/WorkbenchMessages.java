@@ -277,7 +277,6 @@ public class WorkbenchMessages extends NLS {
 
 
 	public static String WorkbenchWindow_close;
-	public static String WorkbenchWindow_closeAll;
 	public static String WorkbenchPage_PerspectiveFormat;
 	public static String WorkbenchPage_ErrorCreatingPerspective;
 	public static String WorkbenchPage_UndefinedPerspective;

@@ -1001,7 +1001,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		if (perspectiveIsOpen(persp)) {
 			addCloseItem(menu);
 		}
-		addCloseAllItem(menu);
+
 		new MenuItem(menu, SWT.SEPARATOR);
 		addDockOnSubMenu(menu);
 		addShowTextItem(menu);
@@ -1023,25 +1023,6 @@ public class PerspectiveSwitcher implements IWindowTrim {
                             .getData();
                     item.getPage().closePerspective(item.getPerspective(),
                             true, true);
-                }
-            }
-        });
-    }
-    
-    private void addCloseAllItem(Menu menu) {
-    	MenuItem menuItem = new MenuItem(menu, SWT.NONE);
-        menuItem.setText(WorkbenchMessages.WorkbenchWindow_closeAll); 
-        window.getWorkbench().getHelpSystem().setHelp(menuItem,
-        		IWorkbenchHelpContextIds.CLOSE_ALL_PAGES_ACTION);
-        menuItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                ToolItem perspectiveToolItem = (ToolItem) popupMenu
-                        .getData();
-                if (perspectiveToolItem != null
-                        && !perspectiveToolItem.isDisposed()) {
-                    PerspectiveBarContributionItem item = (PerspectiveBarContributionItem) perspectiveToolItem
-                            .getData();
-                    item.getPage().closeAllPerspectives(true, true);
                 }
             }
         });
