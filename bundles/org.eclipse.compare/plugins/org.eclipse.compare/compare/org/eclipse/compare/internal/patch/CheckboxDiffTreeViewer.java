@@ -18,6 +18,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -92,7 +93,7 @@ public class CheckboxDiffTreeViewer extends ContainerCheckedTreeViewer {
 	private ResourceBundle fBundle;
 
 	public CheckboxDiffTreeViewer(Composite parent, CompareConfiguration compareConfiguration) {
-		super(parent);
+		super(parent, SWT.NONE);
 		initialize(compareConfiguration);
 	}
 
