@@ -12,7 +12,6 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import java.net.URI;
-import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -40,6 +39,8 @@ import org.eclipse.team.internal.ui.history.AbstractHistoryCategory;
 import org.eclipse.team.internal.ui.history.DateHistoryCategory;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.themes.ITheme;
+
+import com.ibm.icu.text.DateFormat;
 
 public class CVSHistoryTableProvider {
 
@@ -75,6 +76,7 @@ public class CVSHistoryTableProvider {
 		ImageDescriptor remoteRevDesc = null;
 		
 		ThemeListener themeListener;
+		private DateFormat dateFormat;
 		
 		public HistoryLabelProvider(CVSHistoryTableProvider provider){
 				PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener= new ThemeListener(provider));
@@ -166,7 +168,7 @@ public class CVSHistoryTableProvider {
 				case COL_DATE :
 					long date = entry.getTimestamp();
 					Date dateFromLong = new Date(date);
-					return DateFormat.getInstance().format(dateFromLong);
+					return getDateFormat().format(dateFromLong);
 				case COL_AUTHOR :
 					return entry.getAuthor();
 				case COL_COMMENT :
@@ -186,6 +188,12 @@ public class CVSHistoryTableProvider {
 			return ""; //$NON-NLS-1$
 		}
 
+		private synchronized DateFormat getDateFormat() {
+			if (dateFormat == null)
+				dateFormat = DateFormat.getInstance();
+			return dateFormat;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */

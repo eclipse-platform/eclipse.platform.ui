@@ -54,6 +54,7 @@ public class HistoryTableProvider {
 	 * The history label provider.
 	 */
 	class HistoryLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider, IFontProvider {
+		private DateFormat dateFormat;
 		public Image getColumnImage(Object element, int columnIndex) {
 			return null;
 		}
@@ -81,7 +82,7 @@ public class HistoryTableProvider {
 				case COL_DATE:
 					Date date = entry.getDate();
 					if (date == null) return CVSUIMessages.notAvailable; 
-					return DateFormat.getInstance().format(date);
+					return getDateFormat().format(date);
 				case COL_AUTHOR:
 					return entry.getAuthor();
 				case COL_COMMENT:
@@ -98,6 +99,13 @@ public class HistoryTableProvider {
 			}
 			return ""; //$NON-NLS-1$
 		}
+		
+		private synchronized DateFormat getDateFormat() {
+			if (dateFormat == null)
+				dateFormat = DateFormat.getInstance();
+			return dateFormat;
+		}
+		
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
 		 */

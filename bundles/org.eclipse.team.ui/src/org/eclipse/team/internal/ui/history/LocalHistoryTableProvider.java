@@ -44,6 +44,7 @@ public class LocalHistoryTableProvider {
 		ImageDescriptor localRevDesc = null;
 		
 		ThemeListener themeListener;
+		private DateFormat dateFormat;
 		
 		public LocalHistoryLabelProvider(LocalHistoryTableProvider provider){
 				PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener= new ThemeListener(provider));
@@ -100,9 +101,15 @@ public class LocalHistoryTableProvider {
 				case COL_DATE :
 					long date = entry.getTimestamp();
 					Date dateFromLong = new Date(date);
-					return DateFormat.getInstance().format(dateFromLong);
+					return getDateFormat().format(dateFromLong);
 			}
 			return ""; //$NON-NLS-1$
+		}
+
+		private synchronized DateFormat getDateFormat() {
+			if (dateFormat == null)
+				dateFormat = DateFormat.getInstance();
+			return dateFormat;
 		}
 
 		/* (non-Javadoc)

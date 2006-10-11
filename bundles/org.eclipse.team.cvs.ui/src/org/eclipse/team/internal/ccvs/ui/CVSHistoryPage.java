@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.DateFormat;
 import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
@@ -68,6 +67,9 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.util.Calendar;
 
 public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryCompareAdapter {
 	
@@ -147,6 +149,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private RevisionAnnotationController rulerSelectionListener;
 	
 	private int refreshRequest = 0;
+	private DateFormat dateTimeFormat;
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -1608,7 +1611,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (element instanceof TypedBufferedContent) {
 			//current revision
 			Date dateFromLong = new Date(((TypedBufferedContent) element).getModificationDate());
-			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), DateFormat.getDateTimeInstance().format(dateFromLong)});
+			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), getDateTimeFormat().format(dateFromLong)});
 			cc.setLeftEditable(true);
 			return label;
 
@@ -1629,6 +1632,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			}
 		}
 		return label;
+	}
+	
+	private synchronized DateFormat getDateTimeFormat() {
+		if (dateTimeFormat == null)
+			dateTimeFormat = DateFormat.getDateTimeInstance();
+		return dateTimeFormat;
 	}
 
 	public String getDescription() {
