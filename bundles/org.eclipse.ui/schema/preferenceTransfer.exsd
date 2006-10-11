@@ -104,9 +104,7 @@ of the transfer engine functionality.
             <annotation>
                <documentation>
                   an attribute specifying the name of the scope to map the provided nodes and keys to.
-
 Generally the scopes defined in org.eclipse.core.runtime.preferences and org.eclipse.core.resources are used. They are 
-
 configuration (@see org.eclipse.core.runtime.preferences.ConfigurationScope.SCOPE)
 instance (@see org.eclipse.core.runtime.preferences.InstanceScope.SCOPE)
 default (@see org.eclipse.core.runtime.preferences.DefaultScope.SCOPE)
