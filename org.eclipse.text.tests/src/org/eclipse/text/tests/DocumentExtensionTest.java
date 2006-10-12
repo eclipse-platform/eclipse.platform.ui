@@ -189,9 +189,9 @@ public class DocumentExtensionTest extends TestCase {
 		document.addDocumentListener(listener);
 		
 		try {
-			document.replace(2, 1, null);
-			document.replace(1, 1, null);
-			document.replace(0, 1, null);
+			document.replace(2, 1, "");
+			document.replace(1, 1, "");
+			document.replace(0, 1, "");
 		} catch (BadLocationException x) {
 			assertTrue(false);
 		}

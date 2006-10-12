@@ -47,7 +47,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 	}
 
 	public void testDeleteAfter() throws BadLocationException {
-		fDoc.replace(20, 2, null);
+		fDoc.replace(20, 2, "");
 		Assert.assertEquals(5, fPos.offset);
 		Assert.assertEquals(5, fPos.length);
 	}
@@ -59,7 +59,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 	}
 	
 	public void testDeleteBefore() throws BadLocationException {
-		fDoc.replace(2, 2, null);
+		fDoc.replace(2, 2, "");
 		Assert.assertEquals(3, fPos.offset);
 		Assert.assertEquals(5, fPos.length);
 	}
@@ -131,7 +131,7 @@ public class InclusivePositionUpdaterTest extends TestCase {
 	}
 	
 	public void testDeleted() throws BadLocationException {
-		fDoc.replace(4, 7, null);
+		fDoc.replace(4, 7, "");
 		Assert.assertTrue(fPos.isDeleted);
 	}
 

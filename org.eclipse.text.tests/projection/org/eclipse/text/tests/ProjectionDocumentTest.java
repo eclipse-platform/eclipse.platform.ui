@@ -1871,7 +1871,7 @@ public class ProjectionDocumentTest extends TestCase {
 		// delete slave content and check fragmentation, need to keep a single fragment as anchor
 		createProjectionB();
 		try {
-			fSlaveDocument.replace(0, fSlaveDocument.getLength(), null);
+			fSlaveDocument.replace(0, fSlaveDocument.getLength(), "");
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}
@@ -1892,7 +1892,7 @@ public class ProjectionDocumentTest extends TestCase {
 		
 		createProjectionB();
 		try {
-			fSlaveDocument.replace(0, fSlaveDocument.getLength(), null);
+			fSlaveDocument.replace(0, fSlaveDocument.getLength(), "");
 		} catch (BadLocationException e) {
 			assertTrue(false);
 		}

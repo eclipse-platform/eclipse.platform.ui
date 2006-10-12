@@ -147,7 +147,7 @@ public class ChildDocumentTest extends TestCase {
 	
 		try {
 	
-			fDocument.replace(21, 16, null);
+			fDocument.replace(21, 16, "");
 		
 		} catch (BadLocationException x) {
 			assertTrue("BadLocationException thrown", false);
@@ -172,7 +172,7 @@ public class ChildDocumentTest extends TestCase {
 	
 		try {
 	
-			fDocument.replace(0, fDocument.getLength(), null);
+			fDocument.replace(0, fDocument.getLength(), "");
 		
 		} catch (BadLocationException x) {
 			assertTrue("BadLocationException thrown", false);
@@ -431,7 +431,7 @@ public class ChildDocumentTest extends TestCase {
 		
 		try {
 	
-			fDocument.replace(0, 150, null);
+			fDocument.replace(0, 150, "");
 			fDocument.replace(fDocument.getLength(), 0, "xx");
 			fDocument.addPosition(actual[0]);
 			fDocument.replace(fDocument.getLength(), 0, "xxxxxxxx");
@@ -452,8 +452,8 @@ public class ChildDocumentTest extends TestCase {
 	
 		try {
 	
-			fDocument.replace(73, 1, null);
-			fDocument.replace(98, 1, null);
+			fDocument.replace(73, 1, "");
+			fDocument.replace(98, 1, "");
 		
 		} catch (BadLocationException x) {
 			assertTrue("BadLocationException thrown", false);
