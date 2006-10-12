@@ -51,7 +51,9 @@ public class DefaultAnimationFeedback {
         Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
         theShell.setBackground(color);
 
+        // Ensure that the background won't show on the initial display
         shellRegion = new Region(display);
+        theShell.setRegion(shellRegion);
 	}
 	
 	public void addStartRect(Rectangle rect) {
