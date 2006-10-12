@@ -126,21 +126,7 @@ public abstract class ResourceDescription {
 			throws CoreException {
 		IResource resource = createResourceHandle();
 		createExistentResourceFromHandle(resource, monitor);
-		if (modificationStamp != IResource.NULL_STAMP) {
-			resource.revertModificationStamp(modificationStamp);
-		}
-		if (localTimeStamp != IResource.NULL_STAMP) {
-			resource.setLocalTimeStamp(localTimeStamp);
-		}
-		if (resourceAttributes != null) {
-			resource.setResourceAttributes(resourceAttributes);
-		}
-		if (markerDescriptions != null) {
-			for (int i = 0; i < markerDescriptions.length; i++) {
-				markerDescriptions[i].resource = resource;
-				markerDescriptions[i].createMarker();
-			}
-		}
+		restoreResourceAttributes(resource, monitor);
 		return resource;
 	}
 
@@ -179,4 +165,34 @@ public abstract class ResourceDescription {
 	 */
 	public abstract void recordLastHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Restore any saved attributed of the specified resource. This method is
+	 * called after the existent resource represented by the receiver has been
+	 * created.
+	 * 
+	 * @param resource
+	 *            the newly created resource
+	 * @param monitor
+	 *            the progress monitor to use to report progress
+	 * @throws CoreException
+	 */
+	protected void restoreResourceAttributes(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
+		if (modificationStamp != IResource.NULL_STAMP) {
+			resource.revertModificationStamp(modificationStamp);
+		}
+		if (localTimeStamp != IResource.NULL_STAMP) {
+			resource.setLocalTimeStamp(localTimeStamp);
+		}
+		if (resourceAttributes != null) {
+			resource.setResourceAttributes(resourceAttributes);
+		}
+		if (markerDescriptions != null) {
+			for (int i = 0; i < markerDescriptions.length; i++) {
+				markerDescriptions[i].resource = resource;
+				markerDescriptions[i].createMarker();
+			}
+		}
+	}
 }

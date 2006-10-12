@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -37,6 +38,8 @@ public abstract class ContainerDescription extends ResourceDescription {
 	String name;
 
 	IPath location;
+	
+	String defaultCharSet;
 
 	private ResourceDescription[] members;
 
@@ -124,6 +127,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 		}
 		try {
 			if (container.exists()) {
+				defaultCharSet = container.getDefaultCharset(false);
 				IResource[] resourceMembers = container.members();
 				members = new ResourceDescription[resourceMembers.length];
 				for (int i = 0; i < resourceMembers.length; i++) {
@@ -248,6 +252,20 @@ public abstract class ContainerDescription extends ResourceDescription {
 			System.arraycopy(members, 0, expandedMembers, 0, members.length);
 			expandedMembers[members.length] = member;
 			members = expandedMembers;
+		}
+	}
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void restoreResourceAttributes(IResource resource, IProgressMonitor monitor) throws CoreException {
+		super.restoreResourceAttributes(resource, monitor);
+		Assert.isLegal(resource instanceof IContainer);
+		IContainer container = (IContainer)resource;
+		if (defaultCharSet != null) {
+			container.setDefaultCharset(defaultCharSet, monitor);
 		}
 	}
 }
