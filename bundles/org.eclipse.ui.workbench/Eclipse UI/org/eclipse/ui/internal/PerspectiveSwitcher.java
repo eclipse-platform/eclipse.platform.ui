@@ -16,7 +16,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -51,7 +50,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
@@ -187,8 +185,6 @@ public class PerspectiveSwitcher implements IWindowTrim {
 	private Listener dragListener;
 
 	private IDragOverListener dragTarget;
-
-	private IDragOverListener externalDragTarget;
 
 	private DisposeListener toolBarListener;
 
@@ -533,10 +529,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
 		}
 		PresentationUtil.removeDragListener(bar, dragListener);
 		DragUtil.removeDragTarget(perspectiveBar.getControl(), dragTarget);
-		DragUtil.removeDragTarget(null, externalDragTarget);
 		dragListener = null;
 		dragTarget = null;
-		externalDragTarget = null;
 	}
 
     /**
@@ -691,108 +685,9 @@ public class PerspectiveSwitcher implements IWindowTrim {
 
 		};
 
-		externalDragTarget = new IDragOverListener() {
-			protected ExternalPerspectiveDropTarget externalPerspectiveDropTarget;
-
-			class ExternalPerspectiveDropTarget extends AbstractDropTarget {
-
-				private PerspectiveBarContributionItem perspective;
-				private Rectangle rect; 
-				private Point location;
-
-				/**
-				 * @param location
-				 * @param draggedObject
-				 */
-				public ExternalPerspectiveDropTarget(Object draggedObject,
-						Point location) {
-					update(draggedObject, location);
-				}
-
-				/**
-				 * 
-				 * @param draggedObject
-				 * @param location
-				 */
-				private void update(Object draggedObject, Point location) {
-					this.location = location;
-					this.perspective = (PerspectiveBarContributionItem) draggedObject;
-				}
-
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.ui.internal.dnd.IDropTarget#drop()
-				 */
-				public void drop() {
-					IWorkbenchWindow workbenchWindow = Workbench.getInstance()
-							.getActiveWorkbenchWindow();
-					IWorkbenchPage page = workbenchWindow.getActivePage();
-					
-			        // Open the page.
-			        try {
-			        	workbenchWindow.getWorkbench().openWorkbenchWindow(perspective.getId(),
-								page.getInput());
-			        } catch (WorkbenchException e) {
-			            MessageDialog.openError(workbenchWindow.getShell(), WorkbenchMessages.OpenNewWindowMenu_dialogTitle, 
-			                    e.getMessage());
-			            return;
-			        }
-				}
-
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.ui.internal.dnd.IDropTarget#getCursor()
-				 */
-				public Cursor getCursor() {
-					return DragCursors.getCursor(DragCursors.OFFSCREEN);
-				}
-
-				public Rectangle getSnapRectangle() {
-					/*
-					 * ToolBar toolBar = perspectiveBar.getControl(); ToolItem
-					 * item = toolBar.getItem(toolBar.getDisplay().map(null,
-					 * toolBar, location)); Rectangle bounds; if (item != null &&
-					 * item != toolBar.getItem(0)) { bounds = item.getBounds(); }
-					 * else { // it should not be possible to start a drag with
-					 * item 0 return null; }
-					 */
-					if (rect == null) {
-						IWorkbenchWindow workbenchWindow = Workbench.getInstance()
-						.getActiveWorkbenchWindow();
-						rect = workbenchWindow.getShell().getBounds();
-					}
-					rect.x = location.x;
-					rect.y = location.y;					
-					return rect;
-				}
-			}
-
-			public IDropTarget drag(Control currentControl,
-					Object draggedObject, Point position,
-					Rectangle dragRectangle) {
-				if (draggedObject instanceof PerspectiveBarContributionItem) {
-					if (externalPerspectiveDropTarget == null) {
-						externalPerspectiveDropTarget = new ExternalPerspectiveDropTarget(
-								draggedObject, position);
-					} else {
-						externalPerspectiveDropTarget.update(draggedObject, position);
-					}
-					return externalPerspectiveDropTarget;
-				}// else if (draggedObject instanceof IPerspectiveBar) {
-				//	return new PerspectiveBarDropTarget();
-				//}
-
-				return null;
-			}
-
-		};
-
 		PresentationUtil.addDragListener(perspectiveBar.getControl(),
 				dragListener);
 		DragUtil.addDragTarget(perspectiveBar.getControl(), dragTarget);
-		DragUtil.addDragTarget(null, externalDragTarget);
 	}
 
 	private void setPropertyChangeListener() {
