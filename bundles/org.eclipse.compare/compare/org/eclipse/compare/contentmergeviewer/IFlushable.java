@@ -19,7 +19,7 @@ import org.eclipse.jface.text.IDocument;
  * model (for example, an {@link IDocument} for text based content) into the
  * underlying compare model ( most likely an instance of {@link IEditableContent}).
  * <p>
- * This interface may ne implemented by clients.
+ * This interface may be implemented by clients.
  * </p>
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
@@ -34,7 +34,9 @@ public interface IFlushable {
 	
 	/**
 	 * Request that the view contents be flushed to the underlying compare input.
-	 * @param monitor a progress monitor
+	 * Depending on the type of input, this may result in the contents being written
+	 * into the underlying model (e.g. file) as well. 
+	 * @param monitor a progress monitor or <code>null</code> if progress reporting is not desired
 	 */
 	void flush(IProgressMonitor monitor);
 }

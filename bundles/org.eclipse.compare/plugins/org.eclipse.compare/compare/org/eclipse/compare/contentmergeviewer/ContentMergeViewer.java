@@ -1015,9 +1015,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 		flush(monitor);
 	}
 	
-	/**
-	 * Flush the viewer model contents into the compare input.
-	 * @see IFlushable#flush(IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.IFlushable#flush(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void flush(IProgressMonitor monitor) {
 		flushContent(getInput(), monitor);
