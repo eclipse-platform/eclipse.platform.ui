@@ -21,7 +21,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
@@ -533,15 +533,7 @@ public class DialogMarkerProperties extends TrayDialog {
 				PlatformUI.getWorkbench()
 						.getOperationSupport()
 						.getOperationHistory().execute(op,
-								null, new IAdaptable() {
-									public Object getAdapter(
-											Class clazz) {
-										if (clazz == Shell.class) {
-											return getShell();
-										}
-										return null;
-									}
-								});
+								null, WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
 			} catch (ExecutionException e) {
 				IDEWorkbenchPlugin.log(e.getMessage(), e);
 			}

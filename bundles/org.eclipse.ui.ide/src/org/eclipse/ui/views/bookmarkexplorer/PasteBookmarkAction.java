@@ -19,13 +19,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
@@ -87,14 +86,7 @@ class PasteBookmarkAction extends BookmarkAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs,
 				resources, BookmarkMessages.PasteBookmark_undoText);
 		execute(op, BookmarkMessages.PasteBookmark_errorTitle, null,
-   				new IAdaptable() {
-   					public Object getAdapter(Class clazz) {
-   						if (clazz == Shell.class) {
-   							return view.getShell();
-   						}
-   						return null;
-   					}
-   				});
+				WorkspaceUndoUtil.getUiInfoAdapter(view.getShell()));
 
         // Need to do this in an asyncExec, even though we're in the UI thread here,
         // since the bookmark navigator updates itself with the addition in an asyncExec,

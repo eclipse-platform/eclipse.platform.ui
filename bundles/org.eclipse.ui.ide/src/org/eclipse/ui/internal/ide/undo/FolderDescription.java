@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.ui.ide.undo.WorkspaceUndoSupport;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 /**
  * FolderDescription is a lightweight description that describes a folder to be
@@ -67,7 +67,7 @@ public class FolderDescription extends ContainerDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#createResourceHandle()
 	 */
 	public IResource createResourceHandle() {
-		IWorkspaceRoot workspaceRoot = WorkspaceUndoSupport.getWorkspaceRoot();
+		IWorkspaceRoot workspaceRoot = WorkspaceUndoUtil.getWorkspaceRoot();
 		IPath folderPath = parent.getFullPath().append(name);
 		return workspaceRoot.getFolder(folderPath);
 	}

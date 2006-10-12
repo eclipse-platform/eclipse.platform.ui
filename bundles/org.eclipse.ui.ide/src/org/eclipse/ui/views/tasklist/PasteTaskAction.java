@@ -18,13 +18,12 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 import org.eclipse.ui.part.MarkerTransfer;
 
@@ -90,14 +89,7 @@ class PasteTaskAction extends TaskAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.TASK, attrs,
 				resources, getText());
 		execute(op, TaskListMessages.PasteTask_errorMessage, null,
-   				new IAdaptable() {
-   					public Object getAdapter(Class clazz) {
-   						if (clazz == Shell.class) {
-   							return getShell();
-   						}
-   						return null;
-   					}
-   				});
+				WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
 
         // Need to do this in an asyncExec, even though we're in the UI thread here,
         // since the task list updates itself with the addition in an asyncExec,

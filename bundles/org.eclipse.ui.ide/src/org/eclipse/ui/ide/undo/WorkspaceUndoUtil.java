@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
- * WorkspaceUndoSupport defines common utility methods and constants used by
+ * WorkspaceUndoUtil defines common utility methods and constants used by
  * clients who create undoable workspace operations.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.3
  * 
  */
-public class WorkspaceUndoSupport {
+public class WorkspaceUndoUtil {
 
 	private static ObjectUndoContext tasksUndoContext;
 
@@ -129,10 +129,7 @@ public class WorkspaceUndoSupport {
 		};
 	}
 
-	/**
-	 * This class should never be constructed.
-	 */
-	private WorkspaceUndoSupport() {
-		// Not allowed.
+	private WorkspaceUndoUtil() {
+		// should not construct
 	}
 }

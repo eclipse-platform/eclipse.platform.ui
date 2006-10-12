@@ -15,11 +15,10 @@ import java.util.List;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
@@ -53,14 +52,7 @@ class RemoveBookmarkAction extends BookmarkAction {
         list.toArray(markers);
      	IUndoableOperation op = new DeleteMarkersOperation(markers, BookmarkMessages.RemoveBookmark_undoText);
    		execute(op, BookmarkMessages.RemoveBookmark_errorTitle, null,
-   				new IAdaptable() {
-   					public Object getAdapter(Class clazz) {
-   						if (clazz == Shell.class) {
-   							return getView().getShell();
-   						}
-   						return null;
-   					}
-   				});
+   				WorkspaceUndoUtil.getUiInfoAdapter(getView().getShell()));
     }
 
     public void selectionChanged(IStructuredSelection sel) {

@@ -21,7 +21,6 @@ import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
@@ -31,10 +30,9 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
-import org.eclipse.ui.ide.undo.WorkspaceUndoSupport;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -96,17 +94,8 @@ public class BookmarkView extends MarkerView {
 								Map attrs = new HashMap();
 								attrs.put(IMarker.MESSAGE, value);
 								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyBookmark_title, true);
-						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, new IAdaptable() {
-						            	public Object getAdapter(Class clazz) {
-						            		if (clazz == Shell.class) {
-						            			return getSite().getShell();
-						            		}
-						            		return null;
-						            	}
-						            });
-								
-								
-								
+						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(
+						        		   op, null, WorkspaceUndoUtil.getUiInfoAdapter(getSite().getShell()));
 							}
 						}
 					} catch (ExecutionException e) {
@@ -281,7 +270,7 @@ public class BookmarkView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
 	 */
 	protected IUndoContext getUndoContext() {
-		return WorkspaceUndoSupport.getBookmarksUndoContext();
+		return WorkspaceUndoUtil.getBookmarksUndoContext();
 	}
 	
 }

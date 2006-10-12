@@ -18,13 +18,12 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.views.tasklist.TaskListMessages;
 
 /**
@@ -85,14 +84,6 @@ class PurgeCompletedAction extends TaskAction {
         completed.toArray(toDelete);
 		IUndoableOperation op = new DeleteMarkersOperation(toDelete, getText());
 		execute(op, TaskListMessages.PurgeCompleted_errorMessage, null,
-				new IAdaptable() {
-					public Object getAdapter(Class clazz) {
-						if (clazz == Shell.class) {
-							return getShell();
-						}
-						return null;
-					}
-				});
-
+				WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
     }
 }

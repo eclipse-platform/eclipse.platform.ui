@@ -16,13 +16,12 @@ import java.util.List;
 
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 /**
  * ActionDeleteCompleted is the action for deleting completed markers.
@@ -75,15 +74,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 				.size()]);
 		IUndoableOperation op = new DeleteMarkersOperation(markers, getText());
 		execute(op, MarkerMessages.deleteCompletedTasks_errorMessage, null,
-				new IAdaptable() {
-					public Object getAdapter(Class clazz) {
-						if (clazz == Shell.class && part != null) {
-							return part.getSite().getShell();
-						}
-						return null;
-					}
-				});
-
+				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
 	}
 
 	private List getCompletedTasks() {

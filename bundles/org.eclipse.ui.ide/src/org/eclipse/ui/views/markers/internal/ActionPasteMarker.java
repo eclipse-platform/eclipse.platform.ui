@@ -19,18 +19,17 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
@@ -119,14 +118,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(types,
 				attrs, resources, operationTitle);
 		execute(op, MarkerMessages.PasteMarker_errorTitle, null,
-				new IAdaptable() {
-					public Object getAdapter(Class clazz) {
-						if (clazz == Shell.class) {
-							return part.getSite().getShell();
-						}
-						return null;
-					}
-				});
+				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
 
 		// Need to do this in an asyncExec, even though we're in the UI thread
 		// here,

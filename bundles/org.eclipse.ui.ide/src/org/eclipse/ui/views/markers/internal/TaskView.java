@@ -18,7 +18,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -33,11 +32,10 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
-import org.eclipse.ui.ide.undo.WorkspaceUndoSupport;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -114,14 +112,8 @@ public class TaskView extends MarkerView {
 								attrs.put(IMarker.MESSAGE, value);
 							if (!attrs.isEmpty()) {
 								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyTask_title, true);
-						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, null, new IAdaptable() {
-						            	public Object getAdapter(Class clazz) {
-						            		if (clazz == Shell.class) {
-						            			return getSite().getShell();
-						            		}
-						            		return null;
-						            	}
-						            });
+						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(
+						        		   op, null, WorkspaceUndoUtil.getUiInfoAdapter(getSite().getShell()));
 							}
 						}
 						concreteMarker.refresh();
@@ -356,6 +348,6 @@ public class TaskView extends MarkerView {
 	 * @see org.eclipse.ui.views.markers.internal.MarkerView#getUndoContext()
 	 */
 	protected IUndoContext getUndoContext() {
-		return WorkspaceUndoSupport.getTasksUndoContext();
+		return WorkspaceUndoUtil.getTasksUndoContext();
 	}
 }

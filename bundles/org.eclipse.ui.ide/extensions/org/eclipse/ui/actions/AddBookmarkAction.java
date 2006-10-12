@@ -27,6 +27,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -120,14 +121,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 					try {
 						PlatformUI.getWorkbench().getOperationSupport()
 								.getOperationHistory().execute(op, null,
-										new IAdaptable() {
-											public Object getAdapter(Class clazz) {
-												if (clazz == Shell.class) {
-													return shell;
-												}
-												return null;
-											}
-										});
+										WorkspaceUndoUtil.getUiInfoAdapter(shell));
 					} catch (ExecutionException e) {
 						IDEWorkbenchPlugin.log(null, e); // We don't care
 					}

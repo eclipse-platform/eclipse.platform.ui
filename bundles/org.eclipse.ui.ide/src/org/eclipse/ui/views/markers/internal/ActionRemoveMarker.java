@@ -13,15 +13,14 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.DeleteMarkersOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 /**
  * Action to remove the selected bookmarks.
@@ -62,13 +61,7 @@ public class ActionRemoveMarker extends MarkerSelectionProviderAction {
 		DeleteMarkersOperation op = new DeleteMarkersOperation(
 				getSelectedMarkers(), operationTitle);
 		execute(op, MarkerMessages.RemoveMarker_errorTitle, null,
-				new IAdaptable() {
-					public Object getAdapter(Class clazz) {
-						if (clazz == Shell.class)
-							return part.getSite().getShell();
-						return null;
-					}
-				});
+				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
 	}
 
 	public void selectionChanged(IStructuredSelection selection) {
