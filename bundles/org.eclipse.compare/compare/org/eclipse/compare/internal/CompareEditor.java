@@ -12,25 +12,19 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.*;
-
+import org.eclipse.compare.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.Assert;
-
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
-
-import org.eclipse.compare.*;
-
 
 /**
  * A CompareEditor takes a ICompareEditorInput as input.
@@ -62,7 +56,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 
 	private CompareSaveable fSaveable;
 	
-	
+	/**
+	 * No-argument constructor required for extension points.
+	 */
 	public CompareEditor() {
 		// empty default implementation
 	}
@@ -85,6 +81,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		return super.getAdapter(key);
 	}
 	
+	/*
+	 * Helper method used by ComapreEditorConfiguration to get at the compare configuration of the editor
+	 */
 	/* package */ CompareConfiguration getCompareConfiguration() {
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput)
@@ -92,6 +91,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		return null;
 	}
 				
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite, org.eclipse.ui.IEditorInput)
+	 */
 	public void init(IEditorSite site, IEditorInput input) throws PartInitException {
 		
 		if (!(input instanceof CompareEditorInput))
@@ -101,6 +103,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		setInput(input);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
+	 */
 	public void setInput(IEditorInput input) {
 		try {
 	        doSetInput(input);
@@ -120,7 +125,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}				
 	}
 	
-	public void doSetInput(IEditorInput input) throws CoreException {
+	private void doSetInput(IEditorInput input) throws CoreException {
 	
 		if (!(input instanceof CompareEditorInput)) {
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, Utilities.getString("CompareEditor.invalidInput"), null); //$NON-NLS-1$
@@ -168,16 +173,22 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
         }
 	}
 	
-	public IActionBars getActionBars() {
+	/*
+	 * Helper method used to find an action bars using the Utilities#findActionsBars(Control)
+	 */
+	/* package */ IActionBars getActionBars() {
 		return fActionBars;
 	}
 	
-	public void setActionBars(IActionBars actionBars) {
+	/*
+	 * Set the action bars so the Utilities class can access it.
+	 */
+	/* package */ void setActionBars(IActionBars actionBars) {
 		fActionBars= actionBars;
 	}
 	
-	/*
-	 * @see IDesktopPart#createPartControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
 		parent.setData(this);
@@ -189,8 +200,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
 	}
 	
-	/*
-	 * @see DesktopPart#dispose
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
 	
@@ -203,8 +214,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		fPropertyChangeListener= null;
 	}
 			
-	/*
-	 * @see IDesktopPart#setFocus
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
 		IEditorInput input= getEditorInput();
@@ -212,29 +223,23 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			((CompareEditorInput)input).setFocus();
 	}
 	
-	/*
-	 * @see IEditorPart#isSaveAsAllowed()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
 	 */
 	public boolean isSaveAsAllowed() {
 		return false;
 	}
 	
-	public void gotoMarker(IMarker marker) {
-		// empty default implemenatation
-	}
-	
-	/**
+	/* (non-Javadoc)
 	 * Always throws an AssertionFailedException.
-	 */
-	/*
-	 * @see IEditorPart#doSaveAs()
+	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
 	 */
 	public void doSaveAs() {
 		Assert.isTrue(false); // Save As not supported for CompareEditor
 	}
 	
-	/*
-	 * @see IEditorPart#doSave()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void doSave(IProgressMonitor progressMonitor) {
 		
@@ -266,8 +271,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
 	}	
 		
-	/*
-	 * @see IEditorPart#isDirty()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.EditorPart#isDirty()
 	 */
 	public boolean isDirty() {
 		IEditorInput input= getEditorInput();
@@ -285,7 +290,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		return false;
 	}
 	
-	public void propertyChange(PropertyChangeEvent event) {
+	/* package */ void propertyChange(PropertyChangeEvent event) {
 		Object old_value= event.getOldValue();
 		Object new_value= event.getNewValue();
 		if (old_value == null || new_value == null || !old_value.equals(new_value))

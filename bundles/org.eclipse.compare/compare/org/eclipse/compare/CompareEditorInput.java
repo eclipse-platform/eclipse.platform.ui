@@ -80,22 +80,24 @@ import org.eclipse.ui.*;
  * in it. When comparing Java files this second structure viewer would show the structural
  * differences within a Java file, e.g. added, deleted or changed methods and fields.
  * <p>
- * Subclasses provide custom setups, e.g. for a Catchup/Release operation
+ * Subclasses provide custom setups, e.g. for a Catch-up/Release operation
  * by passing a subclass of <code>CompareConfiguration</code> and by implementing the <code>prepareInput</code> method.
  * If a subclass cannot use the <code>DiffTreeViewer</code> which is installed by default in the
  * top left pane, method <code>createDiffViewer</code> can be overridden.
  * <p>
  * If subclasses of this class implement {@link ISaveablesSource}, the compare editor will
  * pass these models through to the workbench. The editor will still show the dirty indicator 
- * if one of these underlying models is dirty. It is the reponsibility of subclasses that
+ * if one of these underlying models is dirty. It is the responsibility of subclasses that
  * implement this interface to call {@link #setDirty(boolean)} when the dirty state of
- * any of the models managed by the sublcass change dirty state.
+ * any of the models managed by the subclass change dirty state.
  * 
  * @see CompareUI
  * @see CompareEditorInput
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
+	private static final String NAV_DATA = "Nav"; //$NON-NLS-1$
+
 	private static final boolean DEBUG= false;
 
 	/**
@@ -403,7 +405,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
 		}
 		
-		fComposite.setData("Nav", //$NON-NLS-1$
+		fComposite.setData(NAV_DATA,
 			new CompareViewerSwitchingPane[] {
 				fStructureInputPane,
 				fStructurePane1,
@@ -523,7 +525,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					feed1(sel);	// we only feed downstream viewers if the top left pane is empty
 			}
 			
-			fComposite.setData("Nav", //$NON-NLS-1$
+			fComposite.setData(NAV_DATA,
 				new CompareViewerSwitchingPane[] {
 					fStructureInputPane,
 					fStructurePane1,
