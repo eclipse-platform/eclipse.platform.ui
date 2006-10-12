@@ -6,7 +6,7 @@
 		<topic label="B_topic2" href="B_topic2.html"/>
 		<anchor id="B_anchor"/>
 	</topic>
-	<filter name="os" value="!invalid">
-		<topic label="B_topic3" href="B_topic3.html"/>
-	</filter>
+	<topic label="B_topic3" href="B_topic3.html">
+		<filter name="os" value="!invalid"/>
+	</topic>
 </toc>

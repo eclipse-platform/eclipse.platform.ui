@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc id="doc.1">
+	<description>
+		This document contains a mixture of dynamic content and is used by other
+		tests that incorporate outside content, to make sure it is processed.
+	</description>
+	<element id="element.1">
+		This element has no replaces.
+	</element>
+	<element id="element.2">
+		This element is to be replaced.
+	</element>
+	<element id="element.3" filter="os=invalid">
+		This element should be filtered out.
+	</element>
+	<element id="element.4">
+		<description>This element should also be filtered out</description>
+		<filter name="ws" value="invalid"/>
+	</element>
+	<anchor id="anchor.1"/>
+	<anchor id="anchor.2"/>
+	<anchor id="anchor.3"/>
+</doc>

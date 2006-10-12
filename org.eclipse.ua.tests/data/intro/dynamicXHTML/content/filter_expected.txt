@@ -21,22 +21,22 @@ This page contains filtered content.
 
 
 
-<li filter="plugin=org.eclipse.help">The plugin <code>org.eclipse.help</code> is installed.</li>
+<li>The plugin <code>org.eclipse.help</code> is installed.</li>
 
 <!-- should never appear -->
 
 
-<li filter="product=org.eclipse.sdk.ide">The product <code>org.eclipse.sdk.ide</code> is running.</li>
+<li>The product <code>org.eclipse.sdk.ide</code> is running.</li>
 
 <!-- should never appear -->
 
 
-<li filter="category=org.eclipse.categories.developmentCategory">The category <code>org.eclipse.categories.developmentCategory</code> is enabled.</li>
+<li>The category <code>org.eclipse.categories.developmentCategory</code> is enabled.</li>
 
 <!-- should never appear -->
 
 
-<li filter="activity=org.eclipse.javaDevelopment">The activity <code>org.eclipse.javaDevelopment</code> is enabled.</li>
+<li>The activity <code>org.eclipse.javaDevelopment</code> is enabled.</li>
 
 <!-- should never appear -->
 

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<myDocument>
+	<paragraph id="paragraph.1">
+		This is the first paragraph from
+		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
+	</paragraph>
+	<paragraph id="paragraph.2">
+		This is the second paragraph from
+		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
+	</paragraph>
+</myDocument>

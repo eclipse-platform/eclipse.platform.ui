@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+	<description>
+		This file tests the extension (anchor contribution and element replace)
+		capability.
+	</description>
+	
+	<element id="element.1">
+		This element is used to test contributions and replaces from within
+		the same file.
+	</element>
+	
+	<!--
+	     Valid cases
+	-->
+
+	<!-- anchor with no contributions; should just remove -->
+	
+
+	<!-- anchor with one contribution -->
+	<extendedContent id="content">
+      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+   </extendedContent>
+
+	<!-- anchor with two contributions; one in legacy format (slash vs '#') -->
+	<extendedContent id="content2">
+      This is the second element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+   </extendedContent>
+<extendedContent id="content3">
+      This is the third element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+   </extendedContent>
+
+	<!-- anchor with a contribution with dynamic content -->
+	<doc id="doc.1">
+	<description>
+		This document contains a mixture of dynamic content and is used by other
+		tests that incorporate outside content, to make sure it is processed.
+	</description>
+	<element id="element.1">
+		This element has no replaces.
+	</element>
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	
+	
+	
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	<element id="element.2">
+		This is element 2 of doc2.xml
+	</element>
+<element id="element.3">
+		This is element 3 of doc2.xml
+	</element>
+</doc>
+
+	<!-- anchor with a contribution from this same file -->
+	<element id="element.1">
+		This element is used to test contributions and replaces from within
+		the same file.
+	</element>
+
+	<!-- anchor with xhtml body element contribution -->
+	<h1>Heading</h1>
+<p>
+This is the body of /org.eclipse.ua.tests/data/help/dynamic/extension/doc.xhtml.
+</p>
+<p>
+The body contains several elements, including these two paragraphs and the
+heading above.
+</p>
+	
+	<!-- element with no id; shouldn't be modified -->
+	<element/>
+
+	<!-- element with id but no replaces; shouldn't be modified -->
+	<element id="replace.1"/>
+
+	<!-- element to be replaced by another -->
+	<extendedContent id="content">
+      This is the first element from /org.eclipse.ua.tests/data/help/dynamic/extension.content.xml
+   </extendedContent>
+
+	<!-- element to be replaced by another with dynamic content -->
+	<doc id="doc.1">
+	<description>
+		This document contains a mixture of dynamic content and is used by other
+		tests that incorporate outside content, to make sure it is processed.
+	</description>
+	<element id="element.1">
+		This element has no replaces.
+	</element>
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	
+	
+	
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	<element id="element.2">
+		This is element 2 of doc2.xml
+	</element>
+<element id="element.3">
+		This is element 3 of doc2.xml
+	</element>
+</doc>
+
+	<!-- element to be replaced by another from the same file -->
+	<element id="element.1">
+		This element is used to test contributions and replaces from within
+		the same file.
+	</element>
+	
+	<!--
+	     Invalid cases
+	-->
+
+	<!-- anchor with valid id but invalid contributions -->
+	
+
+	<!-- anchor with missing id; should just remove -->
+	
+
+	<!-- anchor with missing id, wrong param; should just remove -->
+	
+
+	<!-- anchor with children elements; should just remove -->
+	
+
+	<!-- element with invalid replaces -->
+	<element id="replace.invalid"/>
+
+</root>

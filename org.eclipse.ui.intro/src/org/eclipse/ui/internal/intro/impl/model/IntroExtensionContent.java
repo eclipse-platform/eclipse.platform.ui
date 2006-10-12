@@ -17,7 +17,6 @@ import java.util.Vector;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.help.internal.xhtml.DOMUtil;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
@@ -205,8 +204,8 @@ public class IntroExtensionContent extends AbstractIntroElement {
 	    			}
 	    			else {
 	    				// no id specified, use the whole body
-	    				Element extensionBody = DOMUtil.getBodyElement(dom);
-	    				return DOMUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
+	    				Element extensionBody = ModelUtil.getBodyElement(dom);
+	    				return ModelUtil.getElementsByTagName(extensionBody, "*"); //$NON-NLS-1$
 	    			}
 	            }
             }

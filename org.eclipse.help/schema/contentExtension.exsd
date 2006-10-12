@@ -3,18 +3,19 @@
 <schema targetNamespace="org.eclipse.help">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help" id="contentExtension" name="Help Content Extension"/>
+         <meta.schema plugin="org.eclipse.help" id="contentExtension" name="Content Extension"/>
       </appInfo>
       <documentation>
-         This extension point is for supporting dynamic and reusable content in Help System pages. It allows for contributing content into an existing Help System page. Any XHTML page in the Help system can &quot;declare&quot; that it can accept content contributions by explicitly specifying these contribution points using an &lt;code&gt;anchor&lt;/code&gt; element. XHTML snippets can then be dynamically inserted into these documents at runtime.
+         This extension point is for supporting dynamic and reusable content in user assistance documents. It allows for contributing content into an existing document. Any document can declare that it can accept content contributions by explicitly specifying these contribution points using an &lt;code&gt;anchor&lt;/code&gt; element.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="contentExtension" minOccurs="1" maxOccurs="unbounded"/>
-         </sequence>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="contentExtension"/>
+            <element ref="contentExtensionProvider"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -45,30 +46,55 @@
    <element name="contentExtension">
       <annotation>
          <documentation>
-            Defines content extension to one or more Help system pages. The location of the content extension file is specified by the &lt;code&gt;file&lt;/code&gt; attribute.
+            Defines content extension to one or more user assistance documents. The location of the content extension file is specified by the &lt;code&gt;file&lt;/code&gt; attribute.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="file" type="string" use="required">
             <annotation>
                <documentation>
-                  a plugin-relative path to the location of an extension content file. An extension content file is an XML file that specifies the location of content contributions (as XHTML pages/snippets) and the target page where they should be merged into. The content file is parsed at run time by the Help system framework and each content extension is loaded and inserted into the target location specified by the anchor.
+                  a plugin-relative path to the location of an extension content file. An extension content file is an XML file that specifies the location of content contributions and the target page where they should be merged into. The content file is parsed at run time by the platform and each content extension is loaded and inserted into the target location specified by the anchor.
 
-This content file should have the following syntax:&lt;br&gt;
-&lt;code&gt;
+&lt;p&gt;
+This content file should have the following syntax:
+&lt;/p&gt;
 &lt;pre&gt;
- &lt;contentExtension&gt;
-  &lt;topicExtension content=&quot;plugin/relative/path/topicExtensionFile.xhml&quot; 
-  path=&quot;plugin_id/path_to_xhtml_file/anchor_id&quot;/&gt;
-  &lt;topicReplace content=&quot;topicReplaceFile.xhml&quot; path=&quot;plugin_id/path_to_xhtml_file/element_id&quot; /&gt;
- &lt;/contentExtension&gt;
+&lt;contentExtension&gt;
+   &lt;topicExtension
+         content=&quot;bundleRelativePath/content.xhml&quot; 
+         path=&quot;pluginId/path/file.xml#elementId&quot;/&gt;
+   &lt;topicReplace
+         content=&quot;bundleRelativePath/content.xhml&quot; 
+         path=&quot;pluginId/path/file.xml#elementId&quot;/&gt;
+&lt;/contentExtension&gt;
 &lt;/pre&gt;
-&lt;/code&gt;
- &lt;br&gt;
-&lt;code&gt;topicExtension&lt;/code&gt; is the markup used to insert content at the target anchor location. &lt;code&gt;topicReplace&lt;/code&gt; is the markup used to replace the content of the target element by the specified content. In other words, content can be contributed that either adds to the target location or replaces the content of the target location.
+
+&lt;p&gt;
+&lt;code&gt;topicExtension&lt;/code&gt; is the element used to insert content at the target anchor location. &lt;code&gt;topicReplace&lt;/code&gt; is the markup used to replace the content of the target element by the specified content. In other words, content can be contributed that either adds to the target location or replaces the content of the target location.
+&lt;/p&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contentExtensionProvider">
+      <annotation>
+         <documentation>
+            (&lt;b&gt;since 3.3&lt;/b&gt;) Allows java code to be plugged-in so that extensions can be generated at run-time. This is an alternative to the XML file, has the same capabilities, but doesn&apos;t require you to provide static XML.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the implementation class for the content extension provider.  This class must implement the &lt;code&gt;org.eclipse.help.AbstractContentExtensionProvider&lt;/code&gt; interface and must have a no-arg constructor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractContentExtensionProvider"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -80,28 +106,33 @@ This content file should have the following syntax:&lt;br&gt;
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of using the &lt;samp&gt;contentExtension&lt;/samp&gt; extension point.
+         &lt;p&gt;
+The following is an example of using the &lt;code&gt;contentExtension&lt;/code&gt; extension point.
+&lt;/p&gt;
 
-&lt;p&gt;(in file &lt;tt&gt;plugin.xml&lt;/tt&gt;)
+&lt;p&gt;
+In file &lt;code&gt;plugin.xml&lt;/code&gt;:
 &lt;pre&gt;
- &lt;extension point= &quot;org.eclipse.help.contentExtension&quot;&gt; 
-  &lt;contentExtension file=&quot;contentExtensionFile.xml&quot;/&gt;
- &lt;/extension&gt;
+   &lt;extension point=&quot;org.eclipse.help.contentExtension&quot;&gt; 
+      &lt;contentExtension file=&quot;contentExtensionFile.xml&quot;/&gt;
+   &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;p&gt;(in file &lt;tt&gt;contentExtensionFile.xml&lt;/tt&gt;)
+&lt;p&gt;
+In file &lt;code&gt;contentExtensionFile.xml&lt;/code&gt;:
 &lt;pre&gt;
-&lt;contentExtension&gt;
- &lt;topicExtension content=&quot;xhtml/topicA.xhtml&quot;
- path=&quot;org.xxx.yyy.somePluginId/xhtml/someHelpPage.xhtml/topicAnchor&quot;/&gt;
- &lt;/contentExtension&gt;
+   &lt;contentExtension&gt;
+      &lt;topicExtension
+            content=&quot;xhtml/topicA.xhtml&quot;
+            path=&quot;/org.xxx.yyy.somePluginId/xhtml/someHelpPage.xhtml#topicAnchor&quot;/&gt;
+   &lt;/contentExtension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-&lt;p&gt;The above contribution inserts the content of the XHTML file, &lt;samp&gt;topicA.xhtml&lt;/samp&gt;, into the target Help system page specified by the &lt;samp&gt;path&lt;/samp&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;samp&gt;topicAnchor&lt;/samp&gt; in page &lt;samp&gt;someHelpPage.xhtml&lt;/samp&gt; in plugin &lt;samp&gt;org.xxx.yyy.somePluginId&lt;/samp&gt;.
+&lt;p&gt;
+The above contribution inserts the content of the XHTML file, &lt;code&gt;topicA.xhtml&lt;/code&gt;, into the target Help system page specified by the &lt;code&gt;path&lt;/code&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;code&gt;topicAnchor&lt;/code&gt; in page &lt;code&gt;someHelpPage.xhtml&lt;/code&gt; in plugin &lt;code&gt;org.xxx.yyy.somePluginId&lt;/code&gt;.
 &lt;/p&gt;
-&lt;p&gt;The above contribution inserts the content of the XHTML file, &lt;samp&gt;topicA.xhtml&lt;/samp&gt;, into the target Help system page specified by the &lt;samp&gt;path&lt;/samp&gt; attribute. In this case, the content extension will be inserted in the location of an anchor called &lt;samp&gt;topicAnchor&lt;/samp&gt; in page &lt;samp&gt;someHelpPage.xhtml&lt;/samp&gt; in plugin &lt;samp&gt;org.xxx.yyy.somePluginId&lt;/samp&gt;.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -110,7 +141,7 @@ This content file should have the following syntax:&lt;br&gt;
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         No code is required to use this extension point.  All that is needed is to supply the appropriate content files mentioned in the plugin.xml file.
+         An implementation of &lt;code&gt;org.eclipse.help.AbstractContentExtensionProvider&lt;/code&gt; must be supplied if a &lt;code&gt;contentExtensionProvider&lt;/code&gt; is used.
       </documentation>
    </annotation>
 
@@ -119,7 +150,7 @@ This content file should have the following syntax:&lt;br&gt;
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The default implementation of the base help system supplied with the Eclipse platform fully supports this &lt;samp&gt;contentExtension&lt;/samp&gt; extension point.
+         The default implementation of the base help system supplied with the Eclipse platform fully supports this extension point.
       </documentation>
    </annotation>
 

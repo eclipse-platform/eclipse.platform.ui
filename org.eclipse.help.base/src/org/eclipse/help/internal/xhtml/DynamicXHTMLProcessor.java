@@ -16,7 +16,11 @@ import java.io.InputStream;
 
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.w3c.dom.Document;
+import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.FilterHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.XMLProcessor;
 
 /*
  * Performs any needed XHTML processing on the given input stream. If the input
@@ -25,6 +29,8 @@ import org.w3c.dom.Document;
 public class DynamicXHTMLProcessor {
 
 	private static IContentDescriber xhtmlDescriber;
+	private static XMLProcessor xmlProcessor;
+	private static XMLProcessor xmlProcessorNoFilter;
 
 	/*
 	 * Performs any needed processing. Does nothing if not XHTML.
@@ -36,29 +42,30 @@ public class DynamicXHTMLProcessor {
 		try {
 			buf.reset();
 			if (isXHTML) {
-				return processXHTML(href, buf, locale, filter);
+				if (filter) {
+					if (xmlProcessor == null) {
+						xmlProcessor = new XMLProcessor(new DOMProcessorHandler[] {
+								new IncludeHandler(locale),
+								new ExtensionHandler(locale),
+								new FilterHandler()
+						});
+					}
+					return xmlProcessor.process(buf, href);
+				}
+				if (xmlProcessorNoFilter == null) {
+					xmlProcessorNoFilter = new XMLProcessor(new DOMProcessorHandler[] {
+							new IncludeHandler(locale),
+							new ExtensionHandler(locale)
+					});
+				}
+				return xmlProcessorNoFilter.process(buf, href);
 			}
 		}
-		catch (IOException e) {
-			String msg = ""; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, e);
+		catch (Throwable t) {
+			String msg = "An error occured while attempting to process XHTML"; //$NON-NLS-1$
+			HelpBasePlugin.logError(msg, t);
 		}
 		return buf;
-	}
-	
-	/*
-	 * Processes the given XHTML input stream.
-	 */
-	private static InputStream processXHTML(String href, InputStream in, String locale, boolean filter) {
-		UAContentParser parser = new UAContentParser(in);
-		Document dom = parser.getDocument();
-		XHTMLSupport support = new XHTMLSupport(dom, href);
-		dom = support.processDOM(filter);
-		try {
-			in.close();
-		} catch (IOException e) {
-		}
-		return UATransformManager.getAsInputStream(dom);
 	}
 
 	/*

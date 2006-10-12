@@ -23,14 +23,14 @@ import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
  * where the content comes from.
  */
 public class HelpProvider implements IHelpProvider {
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.HelpPlugin.IHelpProvider#getHelpContent(java.lang.String)
+	 * @see org.eclipse.help.internal.HelpPlugin.IHelpProvider#getHelpContent(java.lang.String, java.lang.String)
 	 */
-	public InputStream getHelpContent(String href) {
+	public InputStream getHelpContent(String href, String locale) {
 		try {
 			URL helpURL = new URL("help", //$NON-NLS-1$
-					null, -1, href, HelpURLStreamHandler.getDefault());
+					null, -1, href + "?lang=" + locale, HelpURLStreamHandler.getDefault()); //$NON-NLS-1$
 			return helpURL.openStream();
 		} catch (IOException ioe) {
 			return null;

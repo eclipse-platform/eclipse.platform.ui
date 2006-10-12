@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<doc id="doc.2">
+	<description>
+		This document contains content to be included from and contributed to
+		doc1.xml.
+	</description>
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	<element id="element.2">
+		This is element 2 of doc2.xml
+	</element>
+	<element id="element.3">
+		This is element 3 of doc2.xml
+	</element>
+</doc>

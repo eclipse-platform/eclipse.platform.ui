@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
+import org.eclipse.help.internal.extension.ContentExtensionManager;
 import org.eclipse.help.internal.index.IndexFileProvider;
 import org.eclipse.help.internal.index.IndexManager;
 import org.eclipse.help.internal.toc.TocFileProvider;
@@ -52,6 +53,7 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	private TocManager tocManager;
 	private static Object tocManagerCreateLock = new Object();
 	private ContextManager contextManager;
+	private ContentExtensionManager contentExtensionManager;
 	private IndexManager indexManager;
 	private IHelpProvider helpProvider;
 	
@@ -148,6 +150,15 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 		return getDefault().contextManager;
 	}
 
+	/**
+	 * Used to obtain the ContentExtensionManager
+	 */
+	public static ContentExtensionManager getContentExtensionManager() {
+		if (getDefault().contentExtensionManager == null)
+			getDefault().contentExtensionManager = new ContentExtensionManager();
+		return getDefault().contentExtensionManager;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -212,6 +223,6 @@ public class HelpPlugin extends Plugin implements IRegistryChangeListener, Bundl
 	 * An interface by which higher plug-ins can serve help content.
 	 */
 	public static interface IHelpProvider {
-		public InputStream getHelpContent(String href);
+		public InputStream getHelpContent(String href, String locale);
 	}
 }

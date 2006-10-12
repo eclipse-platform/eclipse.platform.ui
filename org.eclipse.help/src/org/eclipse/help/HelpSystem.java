@@ -83,7 +83,8 @@ public final class HelpSystem {
 
 	/**
 	 * Returns an open input stream on the contents of the specified help
-	 * resource. The client is responsible for closing the stream when finished.
+	 * resource in the platform's current locale. The client is responsible for
+	 * closing the stream when finished.
 	 * 
 	 * @param href
 	 *            the URL (as a string) of the help resource
@@ -96,9 +97,30 @@ public final class HelpSystem {
 	 *         opened
 	 */
 	public static InputStream getHelpContent(String href) {
+		return getHelpContent(href, Platform.getNL());
+	}
+	
+	/**
+	 * Returns an open input stream on the contents of the specified help
+	 * resource for the speficied locale. The client is responsible for closing
+	 * the stream when finished.
+	 * 
+	 * @param href
+	 *            the URL (as a string) of the help resource
+	 *            <p>
+	 *            Valid href are as described in
+	 *            {@link  org.eclipse.help.IHelpResource#getHref IHelpResource.getHref}
+	 *            </p>
+	 * @param locale the locale code, e.g. en_US
+	 * @return an input stream containing the contents of the help resource, or
+	 *         <code>null</code> if the help resource could not be found and
+	 *         opened
+	 * @since 3.0
+	 */
+	public static InputStream getHelpContent(String href, String locale) {
 		IHelpProvider provider = HelpPlugin.getDefault().getHelpProvider();
 		if (provider != null) {
-			return provider.getHelpContent(href);
+			return provider.getHelpContent(href, locale);
 		}
 		return null;
 	}

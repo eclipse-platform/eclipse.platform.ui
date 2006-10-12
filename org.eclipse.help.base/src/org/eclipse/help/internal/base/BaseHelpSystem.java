@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
-import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.appserver.WebappManager;
@@ -188,11 +187,6 @@ public final class BaseHelpSystem {
          * document content.
          */
 		HelpPlugin.getDefault().setHelpProvider(new HelpProvider());
-		
-		/*
-         * Assigns the platform's content filter.
-         */
-		UAContentFilter.setContentFilterInternal(new HelpContentFilter());
 	}
 
 	public static boolean ensureWebappRunning() {

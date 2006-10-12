@@ -186,5 +186,11 @@
             class="org.eclipse.help.internal.base.remote.RemoteContextProvider">
       </contextProvider>
    </extension>
+   <extension
+         point="org.eclipse.help.contentExtension">
+      <contentExtensionProvider
+            class="org.eclipse.help.internal.base.remote.RemoteExtensionProvider">
+      </contentExtensionProvider>
+   </extension>
 
 </plugin>

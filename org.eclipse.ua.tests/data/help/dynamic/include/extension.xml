@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contentExtension>
+   <topicExtension
+         content="data/help/dynamic/include/doc1.xml#paragraph.1"
+         path="/org.eclipse.ua.tests/data/help/dynamic/include/doc2.xml#anchor">
+   </topicExtension>
+</contentExtension>

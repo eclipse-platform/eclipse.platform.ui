@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.eclipse.help.internal.search.federated.IndexerJob;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
+import org.eclipse.help.ui.internal.dynamic.FilterResolverExtension;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
-import org.eclipse.help.ui.internal.xhtml.UIContentFilterProcessor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -99,7 +99,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		super.start(context);
 		plugin = this;
 
-		XHTMLSupport.setFilterProcessor(new UIContentFilterProcessor());
+		FilterResolver.setExtension(new FilterResolverExtension());
 
 		// bundleContext = context;
 		// Setup debugging options

@@ -90,10 +90,12 @@ public class TocFileParser extends DefaultHandler {
 			Object[] entry = (Object[])iter.next();
 			Node node = (Node)entry[0];
 			Node parent = node.getParentInternal();
-			String filterExpression = (String)entry[1];
-			Filter filter = new Filter(filterExpression);
-			filter.addChild(node);
-			parent.replaceChild(node, filter);
+			if (parent != null) {
+				String filterExpression = (String)entry[1];
+				Filter filter = new Filter(filterExpression);
+				filter.addChild(node);
+				parent.replaceChild(node, filter);
+			}
 		}
 		
 		return tocContribution;
@@ -112,7 +114,8 @@ public class TocFileParser extends DefaultHandler {
 		} else if (qName.equals("anchor")) { //$NON-NLS-1$
 			node = handleAnchorElement(atts);
 		} else if (qName.equals("filter")) { //$NON-NLS-1$
-			node = handleFilterElement(atts);
+			handleFilterElement(atts);
+			return;
 		} else {
 			// ignore unknown elements
 			return;
@@ -138,8 +141,7 @@ public class TocFileParser extends DefaultHandler {
 	public final void endElement(String namespaceURI, String localName,
 			String qName) throws SAXException {
 		if (qName.equals("toc") || qName.equals("topic") //$NON-NLS-1$ //$NON-NLS-2$
-				|| qName.equals("link") || qName.equals("anchor") //$NON-NLS-1$ //$NON-NLS-2$
-				|| qName.equals("filter")) { //$NON-NLS-1$
+				|| qName.equals("link") || qName.equals("anchor")) { //$NON-NLS-1$ //$NON-NLS-2$
 			elementStack.pop();
 		}
 	}
@@ -208,18 +210,21 @@ public class TocFileParser extends DefaultHandler {
 		return new Anchor(id);
 	}
 
-	private Node handleFilterElement(Attributes atts) {
-		String name = atts.getValue("name"); //$NON-NLS-1$
-		String value = atts.getValue("value"); //$NON-NLS-1$
-		if (name == null || value == null) {
-			String msg = "Filter element missing one or more of required attributes {name, value} " + tocFile.getPluginId() + "/" + tocFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
-			HelpPlugin.logError(msg, null);
+	private void handleFilterElement(Attributes atts) {
+		if (!elementStack.isEmpty()) {
+			String name = atts.getValue("name"); //$NON-NLS-1$
+			String value = atts.getValue("value"); //$NON-NLS-1$
+			if (name == null || value == null) {
+				String msg = "Filter element missing one or more of required attributes {name, value} " + tocFile.getPluginId() + "/" + tocFile.getFile(); //$NON-NLS-1$ //$NON-NLS-2$
+				HelpPlugin.logError(msg, null);
+			}
+			boolean isNot = value.charAt(0) == '!';
+			if (isNot) {
+				value = value.substring(1);
+			}
+			String expression = name + (isNot ? "!=" : "=") + value; //$NON-NLS-1$ //$NON-NLS-2$
+			Node parent = (Node)elementStack.peek();
+			filterNodes.add(new Object[] { parent, expression });
 		}
-		boolean isNot = value.charAt(0) == '!';
-		if (isNot) {
-			value = value.substring(1);
-		}
-		String expression = name + (isNot ? "!=" : "=") + value; //$NON-NLS-1$ //$NON-NLS-2$
-		return new Filter(expression);
 	}
 }

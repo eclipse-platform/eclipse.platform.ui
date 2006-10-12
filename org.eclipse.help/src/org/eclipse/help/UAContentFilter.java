@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.help;
 
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.help.internal.FilterableUAElement;
+import org.eclipse.help.internal.dynamic.FilterResolver;
 
 /**
  * <p>
@@ -21,9 +26,9 @@ package org.eclipse.help;
  * 
  * @since 3.2
  */
-public abstract class UAContentFilter {
+public class UAContentFilter {
 	
-	private static UAContentFilter filterInternal;
+	private static FilterResolver resolver;
 	
 	/**
 	 * <p>
@@ -37,21 +42,33 @@ public abstract class UAContentFilter {
 	 * @return whether or not the element should be filtered out
 	 */
 	public static boolean isFiltered(Object element) {
-		if (filterInternal != null) {
-			return filterInternal.isFilteredInternal(element);
+		if (element instanceof FilterableUAElement) {
+			Map filters = ((FilterableUAElement)element).getFilters();
+			if (filters != null) {
+				Iterator iter = filters.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry)iter.next();
+					String name = (String)entry.getKey();
+					String value = (String)entry.getValue();
+					boolean not = (value.charAt(0) == '!');
+					if (not) {
+						value = value.substring(1);
+					}
+					if (resolver == null) {
+						resolver = new FilterResolver();
+					}
+					if (resolver.isFiltered(name, value, not)) {
+						return true;
+					}
+				}
+			}
+		}
+		else if (element instanceof String) {
+			if (resolver == null) {
+				resolver = new FilterResolver();
+			}
+			resolver.isFiltered((String)element);
 		}
 		return false;
-	}
-	
-	/*
-	 * Internal; do not use.
-	 */
-	public abstract boolean isFilteredInternal(Object element);
-	
-	/*
-	 * Internal; do not use.
-	 */
-	public static void setContentFilterInternal(UAContentFilter filterInternal) {
-		UAContentFilter.filterInternal = filterInternal;
 	}
 }

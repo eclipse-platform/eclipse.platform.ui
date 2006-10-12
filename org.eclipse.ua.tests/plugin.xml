@@ -256,50 +256,14 @@
        <toc file="data/help/search/toc2.xml" primary="true" extradir="data/help/search/extraDir"/>
        <toc file="data/help/search/toc3.xml" primary="false" extradir="data/help/search/extraDir2"/>
        <toc file="data/help/search/toc4.xml" primary="false" extradir="data/help/search/extraDir3"/>
-       <toc file="data/help/producer/toc.xml" primary="true"/>
        <toc file="data/help/index/toc.xml" primary="true"/>
        <toc file="data/help/index/tocIgnored.xml" primary="true"/>
    </extension>
 
-   <!--
-      For testing dynamic content
-   -->
-   <extension
-         point="org.eclipse.help.contentProducer">
-      <binding producerId="org.eclipse.help.dynamic"/>
-   </extension>
-
-   <!--
-      For testing XHTML content
-   -->
-   <extension
-         point="org.eclipse.help.base.luceneSearchParticipants">
-      <binding participantId="org.eclipse.help.base.xhtml"/>
-   </extension>
-
-   <!--
-      An activity used to test searching (see
-      XHTMLTest#testXHTMLActivityFilteringSearch())
-   -->
-   <extension
-         point="org.eclipse.ui.activities">
-      <category
-            name="testCategory"
-            description="testCategoryDescription"
-            id="org.eclipse.ua.tests.activity.category">
-      </category>
-      <activity
-            name="testActivity"
-            description="testActivityDescription"
-            id="org.eclipse.ua.tests.activity">
-      </activity>
-      <categoryActivityBinding
-	        activityId="org.eclipse.ua.tests.activity"
-	        categoryId="org.eclipse.ua.tests.activity.category">
-      </categoryActivityBinding>
-   </extension>
-
    <extension point= "org.eclipse.help.contentExtension"> 
+      <contentExtension file="data/help/dynamic/include/extension.xml"/>
+      <contentExtension file="data/help/dynamic/extension/extension.xml"/>
+      <contentExtension file="data/help/dynamic/shared/extension.xml"/>
       <contentExtension file="data/help/search/extension.xml"/>
       <contentExtension file="data/help/search/extension2.xml"/>
    </extension>
@@ -308,6 +272,14 @@
       <index
             file="data/help/index/index.xml">
       </index>
+   </extension>
+
+   <!--
+      For testing XHTML content
+   -->
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <binding participantId="org.eclipse.help.base.xhtml"/>
    </extension>
 
 </plugin>

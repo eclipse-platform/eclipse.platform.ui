@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+
+	<description>
+		This file tests the filtering capability. Below are some filters, some
+		of which should be applied and others which shouldn't.
+	</description>
+	
+	<!--
+	     Valid cases
+	-->
+	
+	<!-- simple test cases; don't filter -->
+	<element/>
+	<element/>
+	<element/>
+	<element/>
+	<element/>
+	<element/>
+	<element/>
+	<element/>
+
+	<!-- simple test case; filter -->
+	
+	
+	
+	
+	
+	
+	
+	
+
+	<!-- filter element test cases; don't filter -->
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+	<element>
+		
+	</element>
+
+	<!-- filter element test cases; filter -->
+	
+	
+	
+	
+	
+	
+	
+	
+
+	<!-- multiple filters; shouldn't filter -->
+	<element>
+		
+		
+	</element>
+
+	<!-- multiple filters; should filter -->
+	
+
+	<!-- filter with children; shouldn't filter -->
+	<element>
+		
+		<child>This child element shouldnt be filtered</child>
+	</element>
+
+	<!-- filter with children; should filter all -->
+	
+
+	<!-- filter with dynamic content; should filter -->
+	
+	
+
+	<!-- filter with dynamic content; shouldn't filter -->
+	<element>
+		<doc id="doc.1">
+	<description>
+		This document contains a mixture of dynamic content and is used by other
+		tests that incorporate outside content, to make sure it is processed.
+	</description>
+	<element id="element.1">
+		This element has no replaces.
+	</element>
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	
+	
+	
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	<element id="element.2">
+		This is element 2 of doc2.xml
+	</element>
+<element id="element.3">
+		This is element 3 of doc2.xml
+	</element>
+</doc>
+	</element>
+	<element>
+		
+		<doc id="doc.1">
+	<description>
+		This document contains a mixture of dynamic content and is used by other
+		tests that incorporate outside content, to make sure it is processed.
+	</description>
+	<element id="element.1">
+		This element has no replaces.
+	</element>
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	
+	
+	
+	<element id="element.1">
+		This is element 1 of doc2.xml
+	</element>
+	<element id="element.2">
+		This is element 2 of doc2.xml
+	</element>
+<element id="element.3">
+		This is element 3 of doc2.xml
+	</element>
+</doc>
+	</element>
+
+	<!--
+	     Invalid cases
+	-->
+
+	<!-- empty filter value -->
+	<element/>
+
+	<!-- no equals -->
+	<element/>
+
+	<!-- no value -->
+	<element/>
+
+	<!-- no name -->
+	<element/>
+
+	<!-- missing params -->
+	<element>
+		
+	</element>
+
+	<!-- missing name -->
+	<element>
+		
+	</element>
+
+	<!-- missing value -->
+	<element>
+		
+	</element>
+
+</root>

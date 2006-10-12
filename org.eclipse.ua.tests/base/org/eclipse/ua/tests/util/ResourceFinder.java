@@ -15,12 +15,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
+import org.osgi.framework.Bundle;
 
 /*
  * Utility methods for finding resources.
@@ -104,5 +106,21 @@ public class ResourceFinder {
 		URL[] array = new URL[list.size()];
 		list.toArray(array);
 		return array;
+	}
+	
+	/*
+	 * Finds all files in the given bundle under the given path that end with
+	 * the given suffix. Returns bundle-relative paths.
+	 */
+	public static String[] findFiles(Bundle bundle, String path, String suffix) {
+		List list = new ArrayList();
+		Enumeration e = bundle.getEntryPaths(path);
+		while (e.hasMoreElements()) {
+			String entry = (String)e.nextElement();
+			if (entry.endsWith(suffix)) {
+				list.add(entry);
+			}
+		}
+		return (String[])list.toArray(new String[list.size()]); 
 	}
 }

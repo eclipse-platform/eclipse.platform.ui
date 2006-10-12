@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<contentExtension>
+
+   <!-- valid contributions -->
+   
+   <topicExtension
+         content="data/help/dynamic/extension/content.xml#content"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#anchor.1">
+   </topicExtension>
+   
+   <topicExtension
+         content="data/help/dynamic/extension/content.xml#content2"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#anchor.2">
+   </topicExtension>
+   
+   <topicExtension
+         content="data/help/dynamic/extension/content.xml#content3"
+         path="org.eclipse.ua.tests/data/help/dynamic/extension.xml/anchor.2">
+   </topicExtension>
+
+   <topicExtension
+         content="data/help/dynamic/shared/doc1.xml#doc.1"
+         path="org.eclipse.ua.tests/data/help/dynamic/extension.xml/anchor.3">
+   </topicExtension>
+
+   <topicExtension
+         content="data/help/dynamic/extension.xml/element.1"
+         path="org.eclipse.ua.tests/data/help/dynamic/extension.xml/anchor.4">
+   </topicExtension>
+   
+   <topicExtension
+         content="data/help/dynamic/extension/doc.xhtml"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#anchor.xhtml">
+   </topicExtension>
+
+   <topicReplace
+         content="data/help/dynamic/extension/content.xml#content"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#replace.2">
+   </topicReplace>
+
+   <topicReplace
+         content="data/help/dynamic/shared/doc1.xml#doc.1"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#replace.3">
+   </topicReplace>
+
+   <topicReplace
+         content="data/help/dynamic/extension.xml#element.1"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#replace.4">
+   </topicReplace>
+   
+   <!-- invalid contributions -->
+   
+   <topicExtension
+         content="data/help/dynamic/extension/nonExistentFile.xml"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#anchor.invalidcontribution">
+   </topicExtension>
+
+   <topicExtension
+         content="data/help/dynamic/extension/content.xml#nonExistentId"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#anchor.invalidcontribution">
+   </topicExtension>
+
+   <topicReplace
+         content="data/help/dynamic/extension/nonExistentFile.xml"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#replace.invalid">
+   </topicReplace>
+
+   <topicReplace
+         content="data/help/dynamic/extension/content.xml#nonExistentId"
+         path="/org.eclipse.ua.tests/data/help/dynamic/extension.xml#replace.invalid">
+   </topicReplace>
+   
+</contentExtension>

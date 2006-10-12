@@ -11,7 +11,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -20,8 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.help.IContentExtension;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
 
 /*
  * Sends all topic extensions available on this host in XML form.
@@ -42,9 +42,8 @@ public class ExtensionServlet extends HttpServlet {
 		
 		String response = (String)locale2Response.get(locale);
 		if (response == null) {
-			Collection topicExtensions = XHTMLSupport.getTopicExtensions();
-			Collection topicReplaces = XHTMLSupport.getTopicReplaces();
-			response = ExtensionSerializer.serialize(topicExtensions, topicReplaces, locale);
+			IContentExtension[] extensions = HelpPlugin.getContentExtensionManager().getExtensions(locale);
+			response = ExtensionSerializer.serialize(extensions);
 			locale2Response.put(locale, response);
 		}
 		resp.getWriter().write(response);

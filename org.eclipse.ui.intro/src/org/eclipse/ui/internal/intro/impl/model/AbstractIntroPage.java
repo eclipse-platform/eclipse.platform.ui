@@ -16,7 +16,9 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.xhtml.XHTMLSupport;
+import org.eclipse.help.internal.dynamic.DOMProcessor;
+import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
+import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
@@ -72,6 +74,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // DOM representing XHTML content. DOM is only cached in the case of XHTML
     // content.
     private Document dom;
+    
+    private DOMProcessor domProcessor;
 
     // set when the content file is loaded (ie: loadChildren is called)
     private boolean isXHTMLPage;
@@ -646,7 +650,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         }
 
         // filter the content
-        XHTMLSupport.getFilterProcessor().applyFilters(dom);
+        if (domProcessor == null) {
+        	domProcessor = new DOMProcessor(new DOMProcessorHandler[] { new FilterHandler() });
+        }
+        domProcessor.process(dom.getDocumentElement(), null);
         
         // and resolve includes.
         resolveIncludes();

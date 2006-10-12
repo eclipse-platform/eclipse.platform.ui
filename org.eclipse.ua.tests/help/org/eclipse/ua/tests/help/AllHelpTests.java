@@ -14,9 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.help.context.AllContextTests;
+import org.eclipse.ua.tests.help.dynamic.AllDynamicTests;
 import org.eclipse.ua.tests.help.index.AllIndexTests;
 import org.eclipse.ua.tests.help.preferences.AllPreferencesTests;
-import org.eclipse.ua.tests.help.producer.AllProducerTests;
 import org.eclipse.ua.tests.help.search.AllSearchTests;
 import org.eclipse.ua.tests.help.toc.AllTocTests;
 
@@ -38,7 +38,7 @@ public class AllHelpTests extends TestSuite {
 	public AllHelpTests() {
 		addTest(AllContextTests.suite());
 		addTest(AllPreferencesTests.suite());
-		addTest(AllProducerTests.suite());
+		addTest(AllDynamicTests.suite());
 		addTest(AllSearchTests.suite());
 		addTest(AllTocTests.suite());
 		addTest(AllIndexTests.suite());

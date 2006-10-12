@@ -4,9 +4,9 @@
 <toc label="myToc" topic="myFakeTopic.html" link_to="myOtherToc.xml">
 	<anchor id="myAnchor"/>
 	<topic label="myTopic" href="myTopic.html">
-		<filter name="os" value="win32">
-			<topic label="mySubtopic" href="mySubtopic.html"/>
-		</filter>
+		<topic label="mySubtopic" href="mySubtopic.html">
+			<filter name="os" value="win32"/>
+		</topic>
 	</topic>
 	<link filter="ws!=gtk" toc="myOtherToc2.xml"/>
 </toc>

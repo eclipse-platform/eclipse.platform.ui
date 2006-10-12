@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<root>
+    <test id="test">
+	   <include path="/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml#paragraph.2"/>
+	   <anchor id="anchor"/>
+    </test>
+</root>
