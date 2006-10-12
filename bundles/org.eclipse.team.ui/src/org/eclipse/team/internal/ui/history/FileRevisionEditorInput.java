@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+import java.io.InputStream;
 import java.util.Date;
 
-import org.eclipse.core.resources.IFileState;
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -43,6 +43,31 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 		return new FileRevisionEditorInput(revision, storage);
 	}
 	
+	private static IStorage wrapStorage(final IStorage storage, final String charset) {
+		if (charset == null)
+			return storage;
+		return new IEncodedStorage() {
+			public Object getAdapter(Class adapter) {
+				return storage.getAdapter(adapter);
+			}
+			public boolean isReadOnly() {
+				return storage.isReadOnly();
+			}
+			public String getName() {
+				return storage.getName();
+			}
+			public IPath getFullPath() {
+				return storage.getFullPath();
+			}
+			public InputStream getContents() throws CoreException {
+				return storage.getContents();
+			}
+			public String getCharset() throws CoreException {
+				return charset;
+			}
+		};
+	}
+	
 	/**
 	 * Creates FileRevisionEditorInput on the given revision.
 	 * @param revision the file revision
@@ -59,6 +84,10 @@ public class FileRevisionEditorInput extends PlatformObject implements IWorkbenc
 		this(state, state);
 	}
 	
+	public FileRevisionEditorInput(Object revision, IStorage storage, String charset) {
+		this(revision, wrapStorage(storage, charset));
+	}
+
 	public IStorage getStorage() throws CoreException {
 		return storage;
 	}

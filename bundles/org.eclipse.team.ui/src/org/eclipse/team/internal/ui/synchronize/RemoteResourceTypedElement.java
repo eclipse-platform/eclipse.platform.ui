@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
@@ -69,7 +68,7 @@ public class RemoteResourceTypedElement extends StorageTypedElement {
 	 */
 	public IEditorInput getDocumentKey(Object element) {
 		if (element == this && getBufferedStorage() != null) {
-			return new FileRevisionEditorInput(new ResourceVariantFileRevision(remote), getBufferedStorage());
+			return new FileRevisionEditorInput(new ResourceVariantFileRevision(remote), getBufferedStorage(), getLocalEncoding());
 		}
 		return null;
 	}

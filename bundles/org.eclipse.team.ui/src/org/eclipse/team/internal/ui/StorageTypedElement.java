@@ -131,4 +131,8 @@ public abstract class StorageTypedElement implements ITypedElement, IEncodedStre
 	 */
 	protected abstract IEditorInput getDocumentKey(Object element);
 
+	public String getLocalEncoding() {
+		return localEncoding;
+	}
+
 }
