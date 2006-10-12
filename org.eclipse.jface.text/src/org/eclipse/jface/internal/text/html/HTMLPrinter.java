@@ -277,7 +277,7 @@ public class HTMLPrinter {
 	 * <li>font-family</li>
 	 * </ul>
 	 * The font's name is used as font family, a <code>sans-serif</code> default font family is
-	 * appened for the case that the given font name is not available.
+	 * appended for the case that the given font name is not available.
 	 * <p>
 	 * If the listed font attributes are not contained in the passed style list, nothing happens.
 	 * </p>
@@ -290,7 +290,10 @@ public class HTMLPrinter {
 	public static String convertTopLevelFont(String styles, FontData fontData) {
 		boolean bold= (fontData.getStyle() & SWT.BOLD) != 0;
 		boolean italic= (fontData.getStyle() & SWT.ITALIC) != 0;
+		
+		// See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 		String size= Integer.toString(fontData.getHeight()) + ("carbon".equals(SWT.getPlatform()) ? "px" : "pt"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		
 		String family= "'" + fontData.getName() + "',sans-serif"; //$NON-NLS-1$ //$NON-NLS-2$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-size:\\s*)\\d+pt(\\;?.*\\})", "$1" + size + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		styles= styles.replaceFirst("(html\\s*\\{.*(?:\\s|;)font-weight:\\s*)\\w+(\\;?.*\\})", "$1" + (bold ? "bold" : "normal") + "$2"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
