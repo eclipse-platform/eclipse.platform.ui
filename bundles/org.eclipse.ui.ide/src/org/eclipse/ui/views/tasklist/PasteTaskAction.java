@@ -89,7 +89,7 @@ class PasteTaskAction extends TaskAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.TASK, attrs,
 				resources, getText());
 		execute(op, TaskListMessages.PasteTask_errorMessage, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 
         // Need to do this in an asyncExec, even though we're in the UI thread here,
         // since the task list updates itself with the addition in an asyncExec,

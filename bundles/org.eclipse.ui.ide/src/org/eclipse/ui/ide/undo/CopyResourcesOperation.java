@@ -134,10 +134,10 @@ public class CopyResourcesOperation extends
 		monitor.beginTask("", 2); //$NON-NLS-1$
 		monitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		// undoing a copy is first deleting the copied resources...
-		AbstractResourcesOperation.delete(resources, new SubProgressMonitor(
+		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(
 				monitor, 1), uiInfo, true);
 		// then restoring any overwritten by the previous copy...
-		AbstractResourcesOperation.recreate(resourceDescriptions,
+		WorkspaceUndoUtil.recreate(resourceDescriptions,
 				new SubProgressMonitor(monitor, 1), uiInfo);
 		setResourceDescriptions(new ResourceDescription[0]);
 		// then setting the target resources and destination paths

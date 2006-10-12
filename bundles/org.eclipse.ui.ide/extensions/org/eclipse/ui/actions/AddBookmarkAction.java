@@ -121,7 +121,7 @@ public class AddBookmarkAction extends SelectionListenerAction {
 					try {
 						PlatformUI.getWorkbench().getOperationSupport()
 								.getOperationHistory().execute(op, null,
-										WorkspaceUndoUtil.getUiInfoAdapter(shell));
+										WorkspaceUndoUtil.getUIInfoAdapter(shell));
 					} catch (ExecutionException e) {
 						IDEWorkbenchPlugin.log(null, e); // We don't care
 					}

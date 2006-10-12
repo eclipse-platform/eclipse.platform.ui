@@ -16,13 +16,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 
 /**
  * ContainerDescription is a lightweight description that describes a container
@@ -62,7 +62,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 
 		// Does the container exist already? If so, then the parent exists and
 		// we use the normal creation constructor.
-		IWorkspaceRoot root = WorkspaceUndoUtil.getWorkspaceRoot();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IContainer currentContainer = (IContainer) root.findMember(fullPath);
 		if (container != null) {
 			return (ContainerDescription) ResourceDescription

@@ -62,7 +62,7 @@ class RemoveTaskAction extends TaskAction {
         list.toArray(markers);
      	IUndoableOperation op = new DeleteMarkersOperation(markers, TaskListMessages.RemoveTask_undoText);
    		execute(op, TaskListMessages.RemoveTask_errorMessage, null,
-   				WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
+   				WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
         // set the selection to be the one which took the place of the one with focus
         int count = table.getItemCount();
         if (focusIndex < count) {

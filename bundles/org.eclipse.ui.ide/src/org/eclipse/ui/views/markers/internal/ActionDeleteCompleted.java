@@ -74,7 +74,7 @@ public class ActionDeleteCompleted extends MarkerSelectionProviderAction {
 				.size()]);
 		IUndoableOperation op = new DeleteMarkersOperation(markers, getText());
 		execute(op, MarkerMessages.deleteCompletedTasks_errorMessage, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(part.getSite().getShell()));
 	}
 
 	private List getCompletedTasks() {

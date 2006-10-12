@@ -142,11 +142,11 @@ public abstract class AbstractCopyOrMoveResourcesOperation extends
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
 			if (move) {
-				overwrites = move(resources[i], getDestinationPath(
+				overwrites = WorkspaceUndoUtil.move(resources[i], getDestinationPath(
 						resources[i], i, true), new SubProgressMonitor(monitor,
 						1000 / resources.length), uiInfo);
 			} else {
-				overwrites = copy(
+				overwrites = WorkspaceUndoUtil.copy(
 						new IResource[] { resources[i] },
 						getDestinationPath(resources[i], i, true),
 						new SubProgressMonitor(monitor, 1000 / resources.length),

@@ -61,7 +61,7 @@ public class ActionRemoveMarker extends MarkerSelectionProviderAction {
 		DeleteMarkersOperation op = new DeleteMarkersOperation(
 				getSelectedMarkers(), operationTitle);
 		execute(op, MarkerMessages.RemoveMarker_errorTitle, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(part.getSite().getShell()));
 	}
 
 	public void selectionChanged(IStructuredSelection selection) {

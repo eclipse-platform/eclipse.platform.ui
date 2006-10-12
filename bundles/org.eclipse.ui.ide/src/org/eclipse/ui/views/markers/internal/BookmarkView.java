@@ -95,7 +95,7 @@ public class BookmarkView extends MarkerView {
 								attrs.put(IMarker.MESSAGE, value);
 								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyBookmark_title, true);
 						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(
-						        		   op, null, WorkspaceUndoUtil.getUiInfoAdapter(getSite().getShell()));
+						        		   op, null, WorkspaceUndoUtil.getUIInfoAdapter(getSite().getShell()));
 							}
 						}
 					} catch (ExecutionException e) {

@@ -86,7 +86,7 @@ class PasteBookmarkAction extends BookmarkAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(IMarker.BOOKMARK, attrs,
 				resources, BookmarkMessages.PasteBookmark_undoText);
 		execute(op, BookmarkMessages.PasteBookmark_errorTitle, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(view.getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(view.getShell()));
 
         // Need to do this in an asyncExec, even though we're in the UI thread here,
         // since the bookmark navigator updates itself with the addition in an asyncExec,

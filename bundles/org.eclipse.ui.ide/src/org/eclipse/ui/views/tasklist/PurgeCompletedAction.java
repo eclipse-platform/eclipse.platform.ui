@@ -84,6 +84,6 @@ class PurgeCompletedAction extends TaskAction {
         completed.toArray(toDelete);
 		IUndoableOperation op = new DeleteMarkersOperation(toDelete, getText());
 		execute(op, TaskListMessages.PurgeCompleted_errorMessage, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
     }
 }

@@ -259,14 +259,12 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=158129
 				if (types[i] != null) {
 					if (types[i].equals(IMarker.BOOKMARK)) {
-						addContext(WorkspaceUndoUtil
-								.getBookmarksUndoContext());
+						addContext(WorkspaceUndoUtil.getBookmarksUndoContext());
 					} else if (types[i].equals(IMarker.TASK)) {
 						addContext(WorkspaceUndoUtil.getTasksUndoContext());
 					} else if (types[i] != null) {
 						// type is not known, use the workspace undo context
-						addContext(WorkspaceUndoUtil
-								.getWorkspaceUndoContext());
+						addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
 					}
 				}
 			}
@@ -426,7 +424,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 		}
 		return Status.OK_STATUS;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -435,12 +433,11 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	protected ISchedulingRule getExecuteSchedulingRule() {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
-					.markerRule(resources[i]);
+			ruleArray[i] = getWorkspaceRuleFactory().markerRule(resources[i]);
 		}
 		return MultiRule.combine(ruleArray);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -449,9 +446,10 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	protected ISchedulingRule getUndoSchedulingRule() {
 		return getExecuteSchedulingRule();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
 	 */
 	protected void appendDescriptiveText(StringBuffer text) {

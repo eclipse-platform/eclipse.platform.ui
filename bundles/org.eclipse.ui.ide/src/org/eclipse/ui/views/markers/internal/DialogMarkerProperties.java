@@ -533,7 +533,7 @@ public class DialogMarkerProperties extends TrayDialog {
 				PlatformUI.getWorkbench()
 						.getOperationSupport()
 						.getOperationHistory().execute(op,
-								null, WorkspaceUndoUtil.getUiInfoAdapter(getShell()));
+								null, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 			} catch (ExecutionException e) {
 				IDEWorkbenchPlugin.log(e.getMessage(), e);
 			}

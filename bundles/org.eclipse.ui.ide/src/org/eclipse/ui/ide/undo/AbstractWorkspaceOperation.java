@@ -19,8 +19,10 @@ import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
@@ -78,31 +80,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	String[] modelProviderIds;
 
 	/**
-	 * Return the shell described by the specified adaptable, or the active
-	 * shell if no shell has been specified in the adaptable.
-	 * 
-	 * @param uiInfo
-	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller in order to supply UI information for prompting the
-	 *            user if necessary. When this parameter is not
-	 *            <code>null</code>, it contains an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class
-	 * 
-	 * @return the shell specified in the adaptable, or the active shell if no
-	 *         shell has been specified
-	 * 
-	 */
-	protected static Shell getShell(IAdaptable uiInfo) {
-		if (uiInfo != null) {
-			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
-			if (shell != null) {
-				return shell;
-			}
-		}
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-	}
-
-	/**
 	 * Create an AbstractWorkspaceOperation with the specified name.
 	 * 
 	 * @param name
@@ -148,7 +125,16 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @return the IWorkspace used by this operation.
 	 */
 	protected IWorkspace getWorkspace() {
-		return WorkspaceUndoUtil.getWorkspace();
+		return ResourcesPlugin.getWorkspace();
+	}
+
+	/**
+	 * Return the workspace rule factory associated with this operation.
+	 * 
+	 * @return the IResourceRuleFactory associated with this operation.
+	 */
+	protected IResourceRuleFactory getWorkspaceRuleFactory() {
+		return getWorkspace().getRuleFactory();
 	}
 
 	/**
@@ -727,6 +713,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *            the shell to be used for showing any UI information
 	 * @param errorTitle
 	 *            the title to be used in the error dialog.
+	 * @return a boolean indicating whether this exception should be propagated
+	 *         to the caller as an ExecutionException
 	 */
 	protected boolean handleCoreException(CoreException e, Shell shell,
 			String errorTitle) {
@@ -764,7 +752,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getExecuteSchedulingRule() {
-		return WorkspaceUndoUtil.getWorkspaceRoot();
+		return getWorkspace().getRoot();
 	}
 
 	/**
@@ -782,7 +770,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getUndoSchedulingRule() {
-		return WorkspaceUndoUtil.getWorkspaceRoot();
+		return getWorkspace().getRoot();
 	}
 
 	/**
@@ -845,5 +833,30 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		text.append(" resources: "); //$NON-NLS-1$
 		text.append(resources);
 		text.append('\'');
+	}
+	
+	/**
+	 * Return the shell described by the specified adaptable, or the active
+	 * shell if no shell has been specified in the adaptable.
+	 * 
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * 
+	 * @return the shell specified in the adaptable, or the active shell if no
+	 *         shell has been specified
+	 * 
+	 */
+	protected Shell getShell(IAdaptable uiInfo) {
+		if (uiInfo != null) {
+			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
+			if (shell != null) {
+				return shell;
+			}
+		}
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 	}
 }

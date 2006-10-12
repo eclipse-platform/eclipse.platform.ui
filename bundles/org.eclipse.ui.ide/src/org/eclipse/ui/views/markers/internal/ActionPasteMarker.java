@@ -118,7 +118,7 @@ public class ActionPasteMarker extends MarkerSelectionProviderAction {
 		final CreateMarkersOperation op = new CreateMarkersOperation(types,
 				attrs, resources, operationTitle);
 		execute(op, MarkerMessages.PasteMarker_errorTitle, null,
-				WorkspaceUndoUtil.getUiInfoAdapter(part.getSite().getShell()));
+				WorkspaceUndoUtil.getUIInfoAdapter(part.getSite().getShell()));
 
 		// Need to do this in an asyncExec, even though we're in the UI thread
 		// here,

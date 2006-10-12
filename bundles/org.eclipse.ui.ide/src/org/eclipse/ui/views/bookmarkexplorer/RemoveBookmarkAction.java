@@ -52,7 +52,7 @@ class RemoveBookmarkAction extends BookmarkAction {
         list.toArray(markers);
      	IUndoableOperation op = new DeleteMarkersOperation(markers, BookmarkMessages.RemoveBookmark_undoText);
    		execute(op, BookmarkMessages.RemoveBookmark_errorTitle, null,
-   				WorkspaceUndoUtil.getUiInfoAdapter(getView().getShell()));
+   				WorkspaceUndoUtil.getUIInfoAdapter(getView().getShell()));
     }
 
     public void selectionChanged(IStructuredSelection sel) {

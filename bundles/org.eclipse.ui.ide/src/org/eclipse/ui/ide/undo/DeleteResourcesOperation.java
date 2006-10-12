@@ -107,7 +107,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		}
 		return modified;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -116,12 +116,11 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	protected ISchedulingRule getExecuteSchedulingRule() {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
-					.deleteRule(resources[i]);
+			ruleArray[i] = getWorkspaceRuleFactory().deleteRule(resources[i]);
 		}
 		return MultiRule.combine(ruleArray);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -131,10 +130,9 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 2];
 		for (int i = 0; i < resourceDescriptions.length; i++) {
 			IResource resource = resourceDescriptions[i].createResourceHandle();
-			ruleArray[i * 2] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
-					.createRule(resource);
-			ruleArray[i * 2 + 1] = WorkspaceUndoUtil
-					.getWorkspaceRuleFactory().modifyRule(resource);
+			ruleArray[i * 2] = getWorkspaceRuleFactory().createRule(resource);
+			ruleArray[i * 2 + 1] = getWorkspaceRuleFactory().modifyRule(
+					resource);
 		}
 		return MultiRule.combine(ruleArray);
 	}
@@ -193,9 +191,10 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		}
 		return status;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
 	 */
 	protected void appendDescriptiveText(StringBuffer text) {

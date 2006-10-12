@@ -113,7 +113,7 @@ public class TaskView extends MarkerView {
 							if (!attrs.isEmpty()) {
 								IUndoableOperation op = new UpdateMarkersOperation(marker, attrs, MarkerMessages.modifyTask_title, true);
 						           PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(
-						        		   op, null, WorkspaceUndoUtil.getUiInfoAdapter(getSite().getShell()));
+						        		   op, null, WorkspaceUndoUtil.getUIInfoAdapter(getSite().getShell()));
 							}
 						}
 						concreteMarker.refresh();
