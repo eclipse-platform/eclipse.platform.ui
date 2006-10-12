@@ -408,7 +408,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         // If not in the dialog settings, check the preference store for the default setting. 
         // Use the UI plugin's preference store since this is a public preference.
         AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getBundle(PlatformUI.PLUGIN_ID);
+                .getPlugin(PlatformUI.PLUGIN_ID);
         linkingEnabled = uiPlugin.getPreferenceStore().getBoolean(
                 IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR);
     }
@@ -945,7 +945,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      */
     private void migrateDialogSettings() {
         AbstractUIPlugin uiPlugin = (AbstractUIPlugin) Platform
-                .getBundle(PlatformUI.PLUGIN_ID);
+                .getPlugin(PlatformUI.PLUGIN_ID);
         IDialogSettings uiSettings = uiPlugin.getDialogSettings();
 
         uiSettings = uiSettings.getSection(STORE_SECTION);
