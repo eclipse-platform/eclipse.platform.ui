@@ -22,11 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
@@ -88,7 +84,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		this.description = description;
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
-		updateTimestamp();
 		initializeContentChangeListeners();
 	}
 	
@@ -106,24 +101,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
         this(participant.getName(), sync);
         this.participant = participant;
     }
-
-    /* (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createContents(Composite parent) {
-		// Add a dispose listener to the created control so that we can use this
-		// to de-register our resource change listener.
-		final Control control = super.createContents(parent);
-		// See bug 66349
-		//ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
-		updateTimestamp();
-		control.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				dispose();
-			}
-		});
-		return control;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -177,11 +154,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 				job.schedule();
 			}
 		}
-	}
-	
-	private void dispose() {
-		// See bug 66349
-		//ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 	
 	/*
@@ -257,18 +229,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if (other instanceof SyncInfoCompareInput) {
 			SyncInfo otherSyncInfo = ((SyncInfoCompareInput) other).getSyncInfo();
 			SyncInfo thisSyncInfo = getSyncInfo();
-			IResource otherResource = otherSyncInfo.getLocal();
-			return thisSyncInfo.equals(otherSyncInfo) && getTimestamp() == otherResource.getLocalTimeStamp();
+			// Consider the inputs equal if the sync info are equal and the 
+			// left nodes are equal (i.e they have the same timestamp)
+			return thisSyncInfo.equals(otherSyncInfo) 
+				&& node.getLeft().equals(((SyncInfoCompareInput) other).node.getLeft());
 		}
 		return false;
-	}
-
-	private long getTimestamp() {
-		return ((LocalResourceTypedElement)node.getLeft()).getTimestamp();
-	}
-	
-	private void updateTimestamp() {
-		((LocalResourceTypedElement)node.getLeft()).updateTimestamp();
 	}
 	
 	private boolean hasSaveConflict() {
@@ -301,7 +267,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			node.fireChange();
 			setDirty(false);
 			isSaving = false;
-			updateTimestamp();
 		}
 	}
 

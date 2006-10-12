@@ -112,15 +112,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 
 		private static ITypedElement getLeftContributor(final IDiff node) {
 			// The left contributor is always the local resource
-			return new LocalResourceTypedElement(ResourceDiffTree.getResourceFor(node)) {
-				protected boolean isOutgoingDeletion() {
-					if (node instanceof IThreeWayDiff) {
-						IThreeWayDiff twd = (IThreeWayDiff) node;
-						return twd.getKind() == IDiff.REMOVE && twd.getDirection() == IThreeWayDiff.OUTGOING;
-					}
-					return super.isOutgoingDeletion();
-				}
-			};
+			return new LocalResourceTypedElement(ResourceDiffTree.getResourceFor(node));
 		}
 
 		private static ITypedElement getAncestor(IDiff node) {
@@ -170,11 +162,6 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 				FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
 				fste.cacheContents(monitor);
 			}
-			updateTimestamp();
-		}
-
-		public void updateTimestamp() {
-			((LocalResourceTypedElement)getLeft()).updateTimestamp();
 		}
 		
 		private boolean hasSaveConflict() {
@@ -318,7 +305,6 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			// Make sure we fire a change for the compare input to update the viewers
 			if (input instanceof ResourceDiffCompareInput) {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-				rdci.updateTimestamp();
 				rdci.fireChange();
 			}
 			setDirty(false);

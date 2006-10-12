@@ -13,19 +13,14 @@ package org.eclipse.compare;
 import java.io.*;
 import java.util.ArrayList;
 
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.jface.util.Assert;
-
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.compare.IResourceProvider;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.IStructureComparator;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.swt.graphics.Image;
 
 /**
- * A <code>ResourceNode</code> wrappers an <code>IResources</code> so that it can be used
+ * A <code>ResourceNode</code> wraps an <code>IResources</code> so that it can be used
  * as input for the differencing engine (interfaces <code>IStructureComparator</code> and <code>ITypedElement</code>)
  * and the <code>ReplaceWithEditionDialog</code> (interfaces <code>ITypedElement</code> and <code>IModificationDate</code>).
  * <p>

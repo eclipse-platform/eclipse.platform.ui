@@ -271,11 +271,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 	class ContributorInfo implements IElementStateListener {
 		private final TextMergeViewer fViewer;
-		final Object fElement;
-		char fLeg;
-		String fEncoding;
-		IDocumentProvider fDocumentProvider;
-		IEditorInput fDocumentKey;
+		private final Object fElement;
+		private char fLeg;
+		private String fEncoding;
+		private IDocumentProvider fDocumentProvider;
+		private IEditorInput fDocumentKey;
 		
 		public ContributorInfo(TextMergeViewer viewer, Object element, char leg) {
 			fViewer = viewer;
@@ -586,32 +586,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					fDocumentProvider != null
 					&& fDocumentProvider.getDocument(getDocumentKey()) == DocumentManager.get(object));
 		}
-
-		public boolean save() {
-			try {
-				IRunnableWithProgress runnable = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							doSave(monitor);
-						} catch (CoreException e) {
-							throw new InvocationTargetException(e);
-						}
-					}
-				};
-				IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
-				progressService.run(false,false, runnable);
-				return true;
-			} catch (InvocationTargetException e) {
-				// TODO: Should show error to the user
-				Throwable t = e.getTargetException();
-				CompareUIPlugin.log(t);
-			} catch (InterruptedException e) {
-				// Ignore
-			}
-			return false;
-		}
 		
-		private void doSave(IProgressMonitor monitor) throws CoreException {
+		public boolean save(IProgressMonitor monitor) throws CoreException {
 			if (fDocumentProvider != null) {
 				IEditorInput input = getDocumentKey();
 				IDocument document = fDocumentProvider.getDocument(input);
@@ -624,15 +600,21 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						} else {
 							fDocumentProvider.saveDocument(monitor, input, document, false);
 						}
+						return true;
 					} finally {
 						fDocumentProvider.changed(input);
 					}
 				}
 			}
+			return false;
 		}
 		
 		public void elementMoved(Object originalElement, Object movedElement) {
-			// TODO The file was moved
+			IEditorInput input = getDocumentKey();
+			if (input != null && input.equals(originalElement)) {
+				// This method will only get called if the buffer is not dirty
+				resetDocument();
+			}
 		}
 		public void elementDirtyStateChanged(Object element, boolean isDirty) {
 			IEditorInput input = getDocumentKey();
@@ -642,8 +624,25 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 
 		public void elementDeleted(Object element) {
-			// TODO The file was deleted. 
+			IEditorInput input = getDocumentKey();
+			if (input != null && input.equals(element)) {
+				// This method will only get called if the buffer is not dirty
+				resetDocument();
+			}
 		}
+		private void resetDocument() {
+			// Need to remove the document from the manager before refreshing
+			// or the old document will still be found
+			IDocument doc = DocumentManager.get(fElement);
+			if (doc != null) {
+				DocumentManager.remove(doc);
+			}
+			// TODO: This is fine for now but may need to be revisited if a refresh is performed
+			// higher up as well (e.g. perhaps a refresh request that waits until after all parties
+			// have been notified).
+			fViewer.refresh();
+		}
+
 		public void elementContentReplaced(Object element) {
 			IEditorInput input = getDocumentKey();
 			if (input != null && input.equals(element)) {
@@ -4669,37 +4668,78 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return viewPos;
 	}
 	
-	/*
-	 * Override save to handle the saving of shared documents
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#saveContent(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	/* package */ void saveContent(Object oldInput) {
+	/* package */ void flushContent(Object oldInput, IProgressMonitor monitor) {
 				
 		// check and handle any shared buffers
-		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
-		if (content instanceof MergeViewerContentProvider) {
-			
-			Object leftContent = content.getLeftContent(oldInput);
-			Object rightContent = content.getRightContent(oldInput);
-			
-			// TODO: How do we handle empty left or right
-			if (leftContent != null && getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
-				if (fLeftContributor.hasSharedDocument(leftContent)) {
-					if (fLeftContributor.save())
-						setLeftDirty(false);
-				}
+		IMergeViewerContentProvider content= getMergeContentProvider();
+		Object leftContent = content.getLeftContent(oldInput);
+		Object rightContent = content.getRightContent(oldInput);
+		
+		if (leftContent != null && getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
+			if (fLeftContributor.hasSharedDocument(leftContent)) {
+				if (save(fLeftContributor, monitor))
+					setLeftDirty(false);
 			}
-			
-			if (rightContent != null && getCompareConfiguration().isRightEditable() && isRightDirty()) {
-				if (fRightContributor.hasSharedDocument(rightContent)) {
-					if (fRightContributor.save())
-						setRightDirty(false);
-				}
+		}
+		
+		if (rightContent != null && getCompareConfiguration().isRightEditable() && isRightDirty()) {
+			if (fRightContributor.hasSharedDocument(rightContent)) {
+				if (save(fRightContributor, monitor))
+					setRightDirty(false);
 			}
 		}
 		
 		if (!(content instanceof MergeViewerContentProvider) || isLeftDirty() || isRightDirty()) {
-			super.saveContent(oldInput);
+			super.flushContent(oldInput, monitor);
 		}
+	}
+	
+	private boolean save(final ContributorInfo info, IProgressMonitor monitor) {
+		if (monitor == null) 
+			return save(info);
+		
+		try {
+			return info.save(monitor);
+		} catch (CoreException e) {
+			handleException(e);
+		}
+		return false;
+	}
+	
+	private boolean save(final ContributorInfo info) {
+		try {
+			final boolean[] saved = new boolean[] { false };
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						saved[0] = info.save(monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			};
+			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
+			progressService.run(false,false, runnable);
+			return saved[0];
+		} catch (InvocationTargetException e) {
+			handleException(e);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+		return false;
+	}
+
+	private void handleException(Throwable throwable) {
+		// TODO: Should show error to the user
+		if (throwable instanceof InvocationTargetException) {
+			InvocationTargetException ite = (InvocationTargetException) throwable;
+			handleException(ite.getTargetException());
+			return;
+		}
+		CompareUIPlugin.log(throwable);
 	}
 
 	/* (non-Javadoc)

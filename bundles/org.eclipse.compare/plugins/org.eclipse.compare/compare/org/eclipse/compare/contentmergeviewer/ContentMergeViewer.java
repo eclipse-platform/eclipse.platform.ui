@@ -69,7 +69,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 			
 		public void run() {
-			saveContent(getInput());
+			flushContent(getInput(), null);
 		}
 	}
 	
@@ -600,7 +600,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 									
 				switch (dialog.open()) {	// open returns index of pressed button
 				case 0:
-					saveContent(oldInput);
+					flushContent(oldInput, null);
 					break;
 				case 1:
 					setLeftDirty(false);
@@ -610,7 +610,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 					throw new ViewerSwitchingCancelled();
 				}
 			} else
-				saveContent(oldInput);
+				flushContent(oldInput, null);
 			return true;
 		}
 		return false;
@@ -1020,26 +1020,29 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @see IFlushable#flush(IProgressMonitor)
 	 */
 	public void flush(IProgressMonitor monitor) {
-		saveContent(getInput());
+		flushContent(getInput(), monitor);
 	}
 	
-	/*
-	 * Save modified content back to input elements via the content provider.
+	/**
+	 * Flush the modified content back to input elements via the content provider.
+	 * @param input the compare input
+	 * @param monitor a progress monitor or <code>null</code> if the method
+	 * was call from a place where a progress monitor was not available.
 	 */
-	/* package */ void saveContent(Object oldInput) {
+	/* package */ void flushContent(Object input, IProgressMonitor monitor) {
 				
 		// write back modified contents
 		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
 		
-		boolean leftEmpty= content.getLeftContent(oldInput) == null;
-		boolean rightEmpty= content.getRightContent(oldInput) == null;
+		boolean leftEmpty= content.getLeftContent(input) == null;
+		boolean rightEmpty= content.getRightContent(input) == null;
 
 		if (getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
 			byte[] bytes= getContents(true);
 			if (rightEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
 			setLeftDirty(false);
-			content.saveLeftContent(oldInput, bytes);
+			content.saveLeftContent(input, bytes);
 		}
 		
 		if (getCompareConfiguration().isRightEditable() && isRightDirty()) {
@@ -1047,7 +1050,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			if (leftEmpty && bytes != null && bytes.length == 0)
 				bytes= null;
 			setRightDirty(false);
-			content.saveRightContent(oldInput, bytes);
+			content.saveRightContent(input, bytes);
 		}
 	}
 

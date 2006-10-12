@@ -201,11 +201,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	 */
 	private static ITypedElement createTypeElement(final IResource resource, final int kind) {
 		if(resource != null) {
-			return new LocalResourceTypedElement(resource) {
-				protected boolean isOutgoingDeletion() {
-					return SyncInfo.getDirection(kind) == SyncInfo.OUTGOING && SyncInfo.getChange(kind) == SyncInfo.DELETION;
-				}
-			};
+			return new LocalResourceTypedElement(resource);
 		}
 		return null;
 	}
