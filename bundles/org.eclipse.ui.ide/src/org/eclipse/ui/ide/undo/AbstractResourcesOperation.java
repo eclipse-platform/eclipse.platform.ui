@@ -319,7 +319,7 @@ public abstract class AbstractResourcesOperation extends
 	 * @param pathIncludesName
 	 *            a boolean that indicates whether the specified path includes
 	 *            the resource's name at the destination. If this value is
-	 *            <true>, the destination will contain the desired name of the
+	 *            <code>true</code>, the destination will contain the desired name of the
 	 *            resource (usually only desired when only one resource is being
 	 *            copied). If this value is <code>false</code>, each
 	 *            resource's name will be appended to the destination.
