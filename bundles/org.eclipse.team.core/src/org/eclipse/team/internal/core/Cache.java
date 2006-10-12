@@ -72,6 +72,13 @@ public class Cache implements ICache {
 	 * @see org.eclipse.team.ui.mapping.ISynchronizeOperationContext#removeDisposeListener(org.eclipse.team.ui.mapping.IDisposeListener)
 	 */
 	public synchronized void removeDisposeListener(ICacheListener listener) {
+		removeCacheListener(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.ICache#removeCacheListener(org.eclipse.team.core.ICacheListener)
+	 */
+	public synchronized void removeCacheListener(ICacheListener listener) {
 		if (listeners != null)
 			listeners.remove(listener);
 	}

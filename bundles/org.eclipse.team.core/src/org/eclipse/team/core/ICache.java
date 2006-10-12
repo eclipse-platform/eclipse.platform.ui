@@ -54,6 +54,15 @@ public interface ICache {
 	 * Remove the listener. Removing a listener that is not registered
 	 * has no effect.
 	 * @param listener the listener to remove
+	 * @since 3.3
+	 */
+	void removeCacheListener(ICacheListener listener);
+	
+	/**
+	 * Remove the listener. Removing a listener that is not registered
+	 * has no effect.
+	 * @param listener the listener to remove
+	 * @deprecated use {@link #removeCacheListener(ICacheListener)}
 	 */
 	void removeDisposeListener(ICacheListener listener);
 	
