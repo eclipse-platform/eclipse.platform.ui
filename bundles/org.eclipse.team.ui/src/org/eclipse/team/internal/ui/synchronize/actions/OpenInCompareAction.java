@@ -116,7 +116,7 @@ public class OpenInCompareAction extends Action {
 
 	private static CompareEditorInput openCompareEditor(CompareEditorInput input, boolean keepFocus, ISynchronizePageSite site) {
 		IWorkbenchPage page = null;
-		if(site == null) {
+		if(site == null || site.getWorkbenchSite() == null) {
 			IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (window != null)
 				page = window.getActivePage();
