@@ -8,3 +8,6 @@ org.eclipse.ui.ide/debug/internalerror/openDialog=false
 
 # Verbose information when IDE performs explicit garbage collection
 org.eclipse.ui.ide/debug/gc=false
+
+# Print debug information when workspace undo monitor purges the undo history
+org.eclipse.ui.ide/debug/undomonitor=false
