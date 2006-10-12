@@ -142,7 +142,11 @@ abstract class ColumnViewer extends StructuredViewer {
 			viewer = createColumnViewer(columnOwner, CellLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
 			setViewerColumn(columnIndex, viewer);
-		} 
+		}
+		
+		if( viewer.getEditingSupport() == null && getCellModifier() != null ) {
+			setViewerColumn(columnIndex, viewer);
+		}
 
 		return viewer;
 	}
