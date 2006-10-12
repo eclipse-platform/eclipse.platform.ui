@@ -469,7 +469,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		/**
 		 * Connect to a shared document if possible. Return <code>null</code>
 		 * if the connection was not possible.
-		 * @return the shared document or <code>null</code> if connction to a 
+		 * @return the shared document or <code>null</code> if connection to a 
 		 * shared document was not possible
 		 */
 		private IDocument connectToSharedDocument() {
