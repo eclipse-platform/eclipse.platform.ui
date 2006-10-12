@@ -2249,7 +2249,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *  IResource resource; <br> 
 	 *  ... <br>
 	 *  if (attributes != null) {
-	 *     atributes.setExecutable(true); <br>
+	 *     attributes.setExecutable(true); <br>
 	 *     resource.setResourceAttributes(attributes); <br>
 	 *  }
 	 * </code>
