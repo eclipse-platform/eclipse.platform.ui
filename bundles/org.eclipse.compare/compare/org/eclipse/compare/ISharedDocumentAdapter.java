@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.texteditor.DocumentProviderRegistry;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 /**
@@ -37,7 +36,7 @@ public interface ISharedDocumentAdapter {
 	/**
 	 * Return the object that is to be used as the key for retrieving the
 	 * appropriate {@link IDocumentProvider} from the
-	 * {@link DocumentProviderRegistry} and for obtaining the shared
+	 * <code>DocumentProviderRegistry</code> and for obtaining the shared
 	 * {@link IDocument} from the document provider. Returns <code>null</code>
 	 * if the element does not have a shared document.
 	 * 
