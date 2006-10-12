@@ -57,6 +57,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ISelectionConversionService;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
+import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.update.core.SiteManager;
@@ -122,6 +123,12 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private IDEIdleHelper idleHelper;
 
 	private Listener settingsChangeListener;
+	
+	/**
+	 * Support class for monitoring workspace changes and periodically
+	 * validating the undo history
+	 */
+	private WorkspaceUndoMonitor workspaceUndoMonitor;
 
 	/**
 	 * Creates a new workbench advisor instance.
@@ -178,6 +185,9 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// initialize idle handler
 		idleHelper = new IDEIdleHelper(configurer);
+		
+		// initialize the workspace undo monitor
+		workspaceUndoMonitor = WorkspaceUndoMonitor.getInstance();
 
 		// show Help button in JFace dialogs
 		TrayDialog.setDialogHelpAvailable(true);
@@ -276,6 +286,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		if (idleHelper != null) {
 			idleHelper.shutdown();
 			idleHelper = null;
+		}
+		if (workspaceUndoMonitor != null) {
+			workspaceUndoMonitor.shutdown();
+			workspaceUndoMonitor = null;
 		}
 		if (IDEWorkbenchPlugin.getPluginWorkspace() != null) {
 			disconnectFromWorkspace();
