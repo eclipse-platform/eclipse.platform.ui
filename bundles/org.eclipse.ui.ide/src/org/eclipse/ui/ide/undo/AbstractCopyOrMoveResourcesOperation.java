@@ -238,9 +238,14 @@ public abstract class AbstractCopyOrMoveResourcesOperation extends
 			}
 		}
 
+		// No error conditions. If we are to quietly compute status, do not
+		// go any further.
+		if (quietCompute) {
+			return Status.OK_STATUS;
+		}
+
 		for (int i = 0; i < resources.length; i++) {
-			// No error conditions. Check and warn for any overwrites that may
-			// occur.
+			// Check and warn for any overwrites that may occur.
 			IResource newResource = null;
 			if (resources[i].getType() == IResource.PROJECT) {
 				// Projects may be moved to a new location or copied to a new
@@ -356,5 +361,18 @@ public abstract class AbstractCopyOrMoveResourcesOperation extends
 	protected boolean hasDestinationPath() {
 		return (destinationPaths != null && resources.length == destinationPaths.length)
 				|| (destination != null);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
+	 */
+	protected void appendDescriptiveText(StringBuffer text) {
+		super.appendDescriptiveText(text);
+		text.append(" destination: "); //$NON-NLS-1$
+		text.append(destination);
+		text.append(", destinationPaths: "); //$NON-NLS-1$
+		text.append(destinationPaths);
+		text.append('\'');
 	}
 }

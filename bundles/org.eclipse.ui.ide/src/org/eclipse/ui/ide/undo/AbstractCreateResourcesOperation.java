@@ -114,9 +114,9 @@ public abstract class AbstractCreateResourcesOperation extends
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 2];
 		for (int i = 0; i < resourceDescriptions.length; i++) {
 			IResource resource = resourceDescriptions[i].createResourceHandle();
-			ruleArray[i * 2] = WorkspaceUndoSupport.getWorkspaceRuleFactory()
+			ruleArray[i * 2] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
 					.createRule(resource);
-			ruleArray[i * 2 + 1] = WorkspaceUndoSupport
+			ruleArray[i * 2 + 1] = WorkspaceUndoUtil
 					.getWorkspaceRuleFactory().modifyRule(resource);
 		}
 		return MultiRule.combine(ruleArray);
@@ -130,7 +130,7 @@ public abstract class AbstractCreateResourcesOperation extends
 	protected ISchedulingRule getUndoSchedulingRule() {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = WorkspaceUndoSupport.getWorkspaceRuleFactory()
+			ruleArray[i] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
 					.deleteRule(resources[i]);
 		}
 		return MultiRule.combine(ruleArray);

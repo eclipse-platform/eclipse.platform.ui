@@ -54,8 +54,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * @since 3.3
  * 
  */
-abstract class AbstractWorkspaceOperation extends AbstractOperation implements
-		IAdvancedUndoableOperation, IAdvancedUndoableOperation2 {
+public abstract class AbstractWorkspaceOperation extends AbstractOperation
+		implements IAdvancedUndoableOperation, IAdvancedUndoableOperation2 {
 
 	private static String ELLIPSIS = "..."; //$NON-NLS-1$
 
@@ -68,6 +68,12 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	protected IResource[] resources;
 
 	private boolean isValid = true;
+
+	/*
+	 * Specifies whether any user prompting is appropriate while computing
+	 * status.
+	 */
+	protected boolean quietCompute = false;
 
 	String[] modelProviderIds;
 
@@ -142,7 +148,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * @return the IWorkspace used by this operation.
 	 */
 	protected IWorkspace getWorkspace() {
-		return WorkspaceUndoSupport.getWorkspace();
+		return WorkspaceUndoUtil.getWorkspace();
 	}
 
 	/**
@@ -432,7 +438,9 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * user as to how to proceed for each one, and return an OK or ERROR status
 	 * that accurately reflects the user's wishes, or to return a multi-status
 	 * that accurately describes all of the issues at hand, so that the caller
-	 * may potentially consult the user.
+	 * may potentially consult the user. (Note that the user should not be
+	 * consulted at all if a client has called {@link #setQuietCompute(boolean)}
+	 * with a value of <code>true</code>.)
 	 * 
 	 * This implementation computes the validity of execution by computing the
 	 * resource delta that would be generated on execution, and checking whether
@@ -444,9 +452,16 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see #setQuietCompute(boolean)
 	 */
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
+
+		// If we are not to prompt the user, nothing to do.
+		if (quietCompute) {
+			return status;
+		}
+
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
 		if (updateResourceChangeDescriptionFactory(factory, EXECUTE)) {
@@ -486,7 +501,9 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * user as to how to proceed for each one, and return an OK or ERROR status
 	 * that accurately reflects the user's wishes, or to return a multi-status
 	 * that accurately describes all of the issues at hand, so that the caller
-	 * may potentially consult the user.
+	 * may potentially consult the user. (Note that the user should not be
+	 * consulted at all if a client has called {@link #setQuietCompute(boolean)}
+	 * with a value of <code>true</code>.)
 	 * 
 	 * This implementation computes the validity of undo by computing the
 	 * resource delta that would be generated on undo, and checking whether any
@@ -498,9 +515,15 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see #setQuietCompute(boolean)
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
+		// If we are not to prompt the user, nothing to do.
+		if (quietCompute) {
+			return status;
+		}
+
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
 		if (updateResourceChangeDescriptionFactory(factory, UNDO)) {
@@ -540,7 +563,9 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * user as to how to proceed for each one, and return an OK or ERROR status
 	 * that accurately reflects the user's wishes, or to return a multi-status
 	 * that accurately describes all of the issues at hand, so that the caller
-	 * may potentially consult the user.
+	 * may potentially consult the user. (Note that the user should not be
+	 * consulted at all if a client has called {@link #setQuietCompute(boolean)}
+	 * with a value of <code>true</code>.)
 	 * 
 	 * This implementation computes the validity of redo by computing the
 	 * resource delta that would be generated on redo, and checking whether any
@@ -552,9 +577,15 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *         receiver
 	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 * @see #setQuietCompute(boolean)
 	 */
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
 		IStatus status = Status.OK_STATUS;
+		// If we are not to prompt the user, nothing to do.
+		if (quietCompute) {
+			return status;
+		}
+
 		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
 				.getValidator().createDeltaFactory();
 		if (updateResourceChangeDescriptionFactory(factory, REDO)) {
@@ -733,7 +764,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getExecuteSchedulingRule() {
-		return WorkspaceUndoSupport.getWorkspaceRoot();
+		return WorkspaceUndoUtil.getWorkspaceRoot();
 	}
 
 	/**
@@ -751,14 +782,14 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *      IProgressMonitor)
 	 */
 	protected ISchedulingRule getUndoSchedulingRule() {
-		return WorkspaceUndoSupport.getWorkspaceRoot();
+		return WorkspaceUndoUtil.getWorkspaceRoot();
 	}
 
 	/**
 	 * Return a scheduling rule appropriate for redoing this operation.
 	 * 
-	 * The default implementation considers the redo scheduling rule the
-	 * same as the original execution scheduling rule.
+	 * The default implementation considers the redo scheduling rule the same as
+	 * the original execution scheduling rule.
 	 * 
 	 * @return the scheduling rule to use when redoing this operation, or
 	 *         <code>null</code> if there are no scheduling restrictions for
@@ -769,5 +800,50 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 */
 	protected ISchedulingRule getRedoSchedulingRule() {
 		return getExecuteSchedulingRule();
+	}
+
+	/**
+	 * Set the boolean that determines whether the computation of the receiver's
+	 * execution, undo, or redo status may consult the user. The default value
+	 * is <code>false</code>. This flag should only be set to
+	 * <code>true</code> while some type of background/quiet computation of
+	 * validity is being performed, and should be restored to <code>false</code>
+	 * when complete.
+	 * 
+	 * @param quiet
+	 *            <code>true</code> if it is inappropriate to consult the user
+	 *            while computing status, and <code>false</code> if the user
+	 *            may be consulted.
+	 * 
+	 * @see #computeExecutionStatus(IProgressMonitor)
+	 * @see #computeUndoableStatus(IProgressMonitor)
+	 * @see #computeRedoableStatus(IProgressMonitor)
+	 */
+	public void setQuietCompute(boolean quiet) {
+		quietCompute = quiet;
+	}
+
+	/*
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		StringBuffer text = new StringBuffer(super.toString());
+		text.append("\n"); //$NON-NLS-1$
+		text.append(this.getClass().getName());
+		appendDescriptiveText(text);
+		return text.toString();
+	}
+
+	/**
+	 * Append any descriptive text to the specified string buffer to be shown in
+	 * the receiver's {@link #toString()} text.
+	 * 
+	 * @param text
+	 *            the StringBuffer on which to append the text
+	 */
+	protected void appendDescriptiveText(StringBuffer text) {
+		text.append(" resources: "); //$NON-NLS-1$
+		text.append(resources);
+		text.append('\'');
 	}
 }

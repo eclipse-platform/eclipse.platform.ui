@@ -116,7 +116,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	protected ISchedulingRule getExecuteSchedulingRule() {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = WorkspaceUndoSupport.getWorkspaceRuleFactory()
+			ruleArray[i] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
 					.deleteRule(resources[i]);
 		}
 		return MultiRule.combine(ruleArray);
@@ -131,9 +131,9 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 2];
 		for (int i = 0; i < resourceDescriptions.length; i++) {
 			IResource resource = resourceDescriptions[i].createResourceHandle();
-			ruleArray[i * 2] = WorkspaceUndoSupport.getWorkspaceRuleFactory()
+			ruleArray[i * 2] = WorkspaceUndoUtil.getWorkspaceRuleFactory()
 					.createRule(resource);
-			ruleArray[i * 2 + 1] = WorkspaceUndoSupport
+			ruleArray[i * 2 + 1] = WorkspaceUndoUtil
 					.getWorkspaceRuleFactory().modifyRule(resource);
 		}
 		return MultiRule.combine(ruleArray);
@@ -154,7 +154,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		}
 		if (status.isOK()) {
 			// If the resources to be deleted include projects whose content
-			// is to be deleted, warn the user that the data will be lost.
+			// is to be deleted, return a warning status describing the problem.
 			if (deleteContent && resourcesIncludesProjects()) {
 				status = getWarningStatus(
 						UndoMessages.DeleteResourcesOperation_DeletingProjectContentWarning,
@@ -192,5 +192,16 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 			status = computeDeleteStatus();
 		}
 		return status;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
+	 */
+	protected void appendDescriptiveText(StringBuffer text) {
+		super.appendDescriptiveText(text);
+		text.append(" deleteContent: "); //$NON-NLS-1$
+		text.append(deleteContent);
+		text.append('\'');
 	}
 }

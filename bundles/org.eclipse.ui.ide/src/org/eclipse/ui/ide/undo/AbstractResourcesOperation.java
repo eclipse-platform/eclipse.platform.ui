@@ -231,7 +231,7 @@ public abstract class AbstractResourcesOperation extends
 		monitor.beginTask("", 3); //$NON-NLS-1$
 		monitor
 				.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
-		IWorkspaceRoot workspaceRoot = WorkspaceUndoSupport.getWorkspaceRoot();
+		IWorkspaceRoot workspaceRoot = WorkspaceUndoUtil.getWorkspaceRoot();
 		List overwrittenResources = new ArrayList();
 
 		// Some moves are optimized and recorded as complete in this flag
@@ -343,7 +343,7 @@ public abstract class AbstractResourcesOperation extends
 			} else {
 				destinationPath = destination.append(source.getName());
 			}
-			IWorkspaceRoot workspaceRoot = WorkspaceUndoSupport
+			IWorkspaceRoot workspaceRoot = WorkspaceUndoUtil
 					.getWorkspaceRoot();
 			IResource existing = workspaceRoot.findMember(destinationPath);
 			if (source.getType() == IResource.FOLDER && existing != null) {
@@ -648,7 +648,7 @@ public abstract class AbstractResourcesOperation extends
 	private static boolean validateEdit(IFile source, IFile destination,
 			Shell shell) {
 		if (destination.isReadOnly()) {
-			IWorkspace workspace = WorkspaceUndoSupport.getWorkspace();
+			IWorkspace workspace = WorkspaceUndoUtil.getWorkspace();
 			IStatus status;
 			if (source.isReadOnly()) {
 				status = workspace.validateEdit(new IFile[] { source,
@@ -691,7 +691,7 @@ public abstract class AbstractResourcesOperation extends
 	 */
 	AbstractResourcesOperation(IResource[] resources, String label) {
 		super(label);
-		this.addContext(WorkspaceUndoSupport.getWorkspaceUndoContext());
+		this.addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
 
 		setTargetResources(resources);
 	}
@@ -707,7 +707,7 @@ public abstract class AbstractResourcesOperation extends
 	AbstractResourcesOperation(ResourceDescription[] resourceDescriptions,
 			String label) {
 		super(label);
-		addContext(WorkspaceUndoSupport.getWorkspaceUndoContext());
+		addContext(WorkspaceUndoUtil.getWorkspaceUndoContext());
 		setResourceDescriptions(resourceDescriptions);
 	}
 
@@ -875,5 +875,16 @@ public abstract class AbstractResourcesOperation extends
 		} else {
 			resourceDescriptions = descriptions;
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
+	 */
+	protected void appendDescriptiveText(StringBuffer text) {
+		super.appendDescriptiveText(text);
+		text.append(" resourceDescriptions: "); //$NON-NLS-1$
+		text.append(resourceDescriptions);
+		text.append('\'');
 	}
 }
