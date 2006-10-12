@@ -82,7 +82,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
 	 * 
-	 * @return the shell specified in the adapatable, or the active shell if no
+	 * @return the shell specified in the adaptable, or the active shell if no
 	 *         shell has been specified
 	 * 
 	 */
@@ -196,7 +196,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param uiInfo
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -254,7 +254,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param uiInfo
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -308,7 +308,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param uiInfo
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -359,7 +359,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param uiInfo
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -375,7 +375,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param uiInfo
+	 * @param info
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -680,7 +680,7 @@ abstract class AbstractWorkspaceOperation extends AbstractOperation implements
 	/**
 	 * Handle the core exception that occurred while trying to execute, undo, or
 	 * redo the operation, returning a boolean to indicate whether this
-	 * exception should cuase a {@link ExecutionException} to be thrown.
+	 * exception should cause a {@link ExecutionException} to be thrown.
 	 * 
 	 * It is safe to access UI in this method. The default implementation is to
 	 * show an error dialog, but subclasses may override this method to swallow
