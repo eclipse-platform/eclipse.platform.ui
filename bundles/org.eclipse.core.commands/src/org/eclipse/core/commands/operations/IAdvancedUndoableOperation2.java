@@ -48,7 +48,7 @@ public interface IAdvancedUndoableOperation2 {
 	 * @return the IStatus indicating the validity of the execute. The status
 	 *         severity should be set to <code>OK</code> if the execute can
 	 *         successfully be performed, and <code>ERROR</code> if it
-	 *         cannnot. Any other status is assumed to represent an ambiguous
+	 *         cannot. Any other severity is assumed to represent an ambiguous
 	 *         state.
 	 * @throws ExecutionException
 	 *             if an exception occurs while computing the validity.
