@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.ide.undo;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -132,8 +132,8 @@ public class FileDescription extends ResourceDescription {
 				fileHandle.createLink(location, IResource.ALLOW_MISSING_LOCAL,
 						new SubProgressMonitor(monitor, 200));
 			} else {
-				InputStream contents = new StringBufferInputStream(
-						UndoMessages.FileDescription_ContentsCouldNotBeRestored);
+				InputStream contents = new ByteArrayInputStream(
+						UndoMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
 				String charset = null;
 				// Retrieve the contents and charset from the file state.
 				// Other file state attributes, such as timestamps, have

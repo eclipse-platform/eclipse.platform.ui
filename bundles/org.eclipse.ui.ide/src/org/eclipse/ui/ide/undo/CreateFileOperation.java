@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.StringBufferInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -99,7 +99,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 				if (contents != null) {
 					return contents;
 				}
-				return new StringBufferInputStream(""); //$NON-NLS-1$
+				return new ByteArrayInputStream(new byte[0]);
 			}
 
 			/*
