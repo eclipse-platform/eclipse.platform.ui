@@ -395,6 +395,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		
 		if (store != null) {
 			final Button rememberButton = getForms().createButton(composite, TeamUIMessages.DiffTreeChangesSection_14, SWT.CHECK);
+			rememberButton.setToolTipText(TeamUIMessages.DiffTreeChangesSection_14);
 			data = new GridData(GridData.FILL_HORIZONTAL);
 			data.horizontalSpan = 2;
 			data.horizontalIndent=5;
