@@ -18,6 +18,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkbenchAdvisor_noPerspective;
 
 	public static String IDE_noFileEditorFound;
+	public static String IDE_coreExceptionFileStore;
 
 	public static String QuickStartAction_errorDialogTitle;
 	public static String QuickStartAction_infoReadError;
