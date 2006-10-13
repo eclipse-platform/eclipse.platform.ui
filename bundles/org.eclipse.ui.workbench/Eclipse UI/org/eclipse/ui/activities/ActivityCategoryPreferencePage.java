@@ -400,7 +400,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                         IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
     }
 
-    private void createButtons(Composite parent) {
+    private void createButtons(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(4, false);
         layout.marginHeight = layout.marginWidth = 0;
@@ -454,8 +454,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
                  * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
                  */
                 public void widgetSelected(SelectionEvent e) {
-                    Shell parent = e.display.getActiveShell();
-                    AdvancedDialog dialog = new AdvancedDialog(parent);
+                    AdvancedDialog dialog = new AdvancedDialog(parent.getShell());
                     dialog.open(); // logic for updating the working copy is in the dialog class.                    
                 }
             });

@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IActionDelegate2;
@@ -35,6 +34,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * A PluginAction is a proxy for an action extension.
@@ -226,14 +226,13 @@ public abstract class PluginAction extends Action implements
             if (delegate == null) {
                 MessageDialog
                         .openInformation(
-                                Display.getDefault().getActiveShell(),
+                                Util.getShellToParentOn(),
                                 WorkbenchMessages.Information, 
                                 WorkbenchMessages.PluginAction_operationNotAvailableMessage); 
                 return;
             }
             if (!isEnabled()) {
-                MessageDialog.openInformation(Display.getDefault()
-                        .getActiveShell(), WorkbenchMessages.Information, 
+                MessageDialog.openInformation(Util.getShellToParentOn(), WorkbenchMessages.Information, 
                         WorkbenchMessages.PluginAction_disabledMessage); 
                 return;
             }

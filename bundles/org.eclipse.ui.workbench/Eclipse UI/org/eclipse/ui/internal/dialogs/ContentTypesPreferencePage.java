@@ -328,7 +328,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
         return composite;
     }
 
-    private void createCharset(Composite parent) {
+    private void createCharset(final Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         GridLayout layout = new GridLayout(3, false);
         layout.marginHeight = layout.marginWidth = 0;
@@ -364,8 +364,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                     getSelectedContentType().setDefaultCharset(text);
                     setButton.setEnabled(false);
                 } catch (CoreException e1) {
-                    ErrorDialog.openError(e.widget.getDisplay()
-                            .getActiveShell(), null, null, e1.getStatus());
+                    ErrorDialog.openError(parent.getShell(), null, null, e1.getStatus());
                 }
             }
         });
@@ -391,7 +390,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
     /**
      * @param composite
      */
-    private void createFileAssociations(Composite composite) {
+    private void createFileAssociations(final Composite composite) {
         {
             Label label = new Label(composite, SWT.NONE);
             label.setFont(composite.getFont());
@@ -454,7 +453,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                  * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
                  */
                 public void widgetSelected(SelectionEvent e) {
-                    Shell shell = e.widget.getDisplay().getActiveShell();
+                    Shell shell = composite.getShell();
                     IContentType selectedContentType = getSelectedContentType();
                     FileExtensionDialog dialog = new FileExtensionDialog(shell);
                     if (dialog.open() == Window.OK) {
@@ -516,8 +515,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                         }
                     }
                     if (!result.isOK()) {
-                        ErrorDialog.openError(event.widget.getDisplay()
-                                .getActiveShell(), null, null, result);
+                        ErrorDialog.openError(composite.getShell(), null, null, result);
                     }
                     fileAssociationViewer.setInput(contentType);
                 }

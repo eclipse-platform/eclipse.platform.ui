@@ -703,8 +703,7 @@ public final class WorkbenchKeyboard {
 		IStatus status = new Status(IStatus.ERROR,
 				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
 		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(workbench.getDisplay().getActiveShell(), title,
-				message, status);
+		ErrorDialog.openError(Util.getShellToParentOn(), title, message, status);
 	}
 
 	/**
@@ -717,8 +716,7 @@ public final class WorkbenchKeyboard {
 			keyAssistDialog = new KeyAssistDialog(workbench, this, state);
 		}
 		if (keyAssistDialog.getShell() == null) {
-			final Shell parentShell = workbench.getDisplay().getActiveShell();
-			keyAssistDialog.setParentShell(parentShell);
+			keyAssistDialog.setParentShell(Util.getShellToParentOn());
 		}
 		keyAssistDialog.open();
 	}

@@ -17,11 +17,11 @@ import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.window.Window;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.EnablementDialog;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * 
@@ -89,8 +89,7 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor,
 			return identifier.getActivityIds();
 		}
 		
-        EnablementDialog dialog = new EnablementDialog(PlatformUI
-                .getWorkbench().getDisplay().getActiveShell(), identifier
+        EnablementDialog dialog = new EnablementDialog(Util.getShellToParentOn(), identifier
                 .getActivityIds(), strings);
         if (dialog.open() == Window.OK) {
             Set activities = dialog.getActivitiesToEnable();

@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -703,6 +704,24 @@ public final class Util {
 		}
 
 		return workbenchWindow;
+	}
+	
+	/**
+	 * Return an appropriate shell to parent dialogs on. This will be one of the
+	 * workbench windows (the active one) should any exist. Otherwise
+	 * <code>null</code> is returned.
+	 * 
+	 * @return the shell to parent on or <code>null</code> if there is no
+	 *         appropriate shell
+	 * @since 3.3
+	 */
+	public static Shell getShellToParentOn() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+		IWorkbenchWindow windowToParentOn = activeWindow == null ? (workbench
+				.getWorkbenchWindowCount() > 0 ? workbench
+				.getWorkbenchWindows()[0] : null) : activeWindow;
+		return windowToParentOn == null ? null : activeWindow.getShell();
 	}
 	
 }

@@ -81,7 +81,7 @@ public class IntroAction extends Action implements
         IntroDescriptor introDescriptor = ((Workbench) workbenchWindow
                 .getWorkbench()).getIntroDescriptor();
         if (introDescriptor == null) {
-            MessageDialog.openWarning(event.display.getActiveShell(),
+            MessageDialog.openWarning(workbenchWindow.getShell(),
                     IntroMessages.Intro_missing_product_title,
                     IntroMessages.Intro_missing_product_message);
         } else {
