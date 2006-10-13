@@ -13,6 +13,7 @@ package org.eclipse.ui.ide.undo;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -55,7 +56,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	public CreateFileOperation(IFile fileHandle, IPath linkLocation,
+	public CreateFileOperation(IFile fileHandle, URI linkLocation,
 			InputStream contents, String label) {
 		super(null, label);
 		ResourceDescription resourceDescription;

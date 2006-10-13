@@ -11,8 +11,9 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 import org.eclipse.ui.internal.ide.undo.FolderDescription;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
@@ -47,7 +48,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	public CreateFolderOperation(IFolder folderHandle, IPath linkLocation,
+	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
 			String label) {
 		super(null, label);
 		ContainerDescription containerDescription;

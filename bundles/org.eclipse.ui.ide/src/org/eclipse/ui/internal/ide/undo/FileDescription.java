@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.undo;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
@@ -38,7 +39,7 @@ public class FileDescription extends ResourceDescription {
 
 	String name;
 
-	IPath location;
+	URI location;
 
 	private IFileState fileState;
 
@@ -54,7 +55,7 @@ public class FileDescription extends ResourceDescription {
 		super(file);
 		this.name = file.getName();
 		if (file.isLinked()) {
-			location = file.getLocation();
+			location = file.getLocationURI();
 		}
 
 	}
@@ -75,7 +76,7 @@ public class FileDescription extends ResourceDescription {
 	 *            the file state that can be used to get information about the
 	 *            file, such as its initial content
 	 */
-	public FileDescription(IFile file, IPath linkLocation, IFileState fileState) {
+	public FileDescription(IFile file, URI linkLocation, IFileState fileState) {
 		super(file);
 		this.name = file.getName();
 		this.location = linkLocation;
@@ -84,7 +85,9 @@ public class FileDescription extends ResourceDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordLastHistory(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordLastHistory(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void recordLastHistory(IResource resource, IProgressMonitor monitor)
 			throws CoreException {
@@ -107,13 +110,15 @@ public class FileDescription extends ResourceDescription {
 	 */
 	public IResource createResourceHandle() {
 		IWorkspaceRoot workspaceRoot = parent.getWorkspace().getRoot();
-		IPath filePath = parent.getFullPath().append(name);
-		return workspaceRoot.getFile(filePath);
+		IPath fullPath = parent.getFullPath().append(name);
+		return workspaceRoot.getFile(fullPath);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
@@ -133,7 +138,8 @@ public class FileDescription extends ResourceDescription {
 						new SubProgressMonitor(monitor, 200));
 			} else {
 				InputStream contents = new ByteArrayInputStream(
-						UndoMessages.FileDescription_ContentsCouldNotBeRestored.getBytes());
+						UndoMessages.FileDescription_ContentsCouldNotBeRestored
+								.getBytes());
 				String charset = null;
 				// Retrieve the contents and charset from the file state.
 				// Other file state attributes, such as timestamps, have
@@ -158,6 +164,7 @@ public class FileDescription extends ResourceDescription {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#isValid()
 	 */
 	public boolean isValid() {
@@ -166,6 +173,7 @@ public class FileDescription extends ResourceDescription {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#getName()
 	 */
 	public String getName() {

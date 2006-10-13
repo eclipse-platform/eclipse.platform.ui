@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.ide.undo;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -37,7 +39,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 
 	String name;
 
-	IPath location;
+	URI location;
 	
 	String defaultCharSet;
 
@@ -123,7 +125,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 		super(container);
 		this.name = container.getName();
 		if (container.isLinked()) {
-			this.location = container.getLocation();
+			this.location = container.getLocationURI();
 		}
 		try {
 			if (container.isAccessible()) {

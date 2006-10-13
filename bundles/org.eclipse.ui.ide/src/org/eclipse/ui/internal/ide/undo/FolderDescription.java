@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.ide.undo;
 
+import java.net.URI;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -55,7 +57,7 @@ public class FolderDescription extends ContainerDescription {
 	 *            the location to which the folder is linked, or
 	 *            <code>null</code> if it is not linked
 	 */
-	public FolderDescription(IFolder folder, IPath linkLocation) {
+	public FolderDescription(IFolder folder, URI linkLocation) {
 		super(folder);
 		this.name = folder.getName();
 		this.location = linkLocation;
