@@ -79,7 +79,7 @@ public abstract class ResourceDescription {
 	protected ResourceDescription(IResource resource) {
 		super();
 		parent = resource.getParent();
-		if (resource.exists()) {
+		if (resource.isAccessible()) {
 			modificationStamp = resource.getModificationStamp();
 			localTimeStamp = resource.getLocalTimeStamp();
 			resourceAttributes = resource.getResourceAttributes();

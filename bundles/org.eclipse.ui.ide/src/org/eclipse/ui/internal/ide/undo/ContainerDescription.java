@@ -126,7 +126,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 			this.location = container.getLocation();
 		}
 		try {
-			if (container.exists()) {
+			if (container.isAccessible()) {
 				defaultCharSet = container.getDefaultCharset(false);
 				IResource[] resourceMembers = container.members();
 				members = new ResourceDescription[resourceMembers.length];

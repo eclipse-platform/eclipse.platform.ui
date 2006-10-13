@@ -43,14 +43,14 @@ public class ProjectDescription extends ContainerDescription {
 	 */
 	public ProjectDescription(IProject project) {
 		super(project);
-		Assert.isLegal(project.exists() && project.isOpen());
+		Assert.isLegal(project.isAccessible());
 		try {
 			this.projectDescription = project.getDescription();
 		} catch (CoreException e) {
 			// Eat this exception because it only occurs when the project
-			// does not exist or is not open, and we have already checked this.
-			// We do not want to throw exceptions on the simple constructor, as
-			// no one has actually tried to do anything yet.
+			// is not accessible and we have already checked this. We
+			// don't want to propagate the CoreException into the constructor
+			// API.
 		}
 	}
 
@@ -107,6 +107,7 @@ public class ProjectDescription extends ContainerDescription {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#getName()
 	 */
 	public String getName() {
