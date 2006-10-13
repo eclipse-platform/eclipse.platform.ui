@@ -1211,18 +1211,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
 		if (getShell() != null && getShell().isVisible()) {
-			if (getShell() != null) {
-				// Save focus control
-				fLastControl = getShell().getDisplay().getFocusControl();
-				if (fLastControl != null && fLastControl.getShell() != getShell()) {
-					fLastControl = null;
-				}
-				fProgressMonitorCancelButton.setEnabled(true);
-				// Attach the progress monitor part to the cancel button
-				fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
-				fProgressMonitorPart.getParent().setVisible(true);
-				fProgressMonitorCancelButton.setFocus();
+			// Save focus control
+			fLastControl = getShell().getDisplay().getFocusControl();
+			if (fLastControl != null && fLastControl.getShell() != getShell()) {
+				fLastControl = null;
 			}
+			fProgressMonitorCancelButton.setEnabled(true);
+			// Attach the progress monitor part to the cancel button
+			fProgressMonitorPart.attachToCancelComponent(fProgressMonitorCancelButton);
+			fProgressMonitorPart.getParent().setVisible(true);
+			fProgressMonitorCancelButton.setFocus();
 			fActiveRunningOperations++;
 			try {
 				ModalContext.run(runnable, fork, fProgressMonitorPart, getShell().getDisplay());
