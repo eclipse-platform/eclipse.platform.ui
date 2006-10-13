@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
@@ -70,6 +72,17 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				updateOKStatus();
+			}
+		});
+		fViewer.getTree().addTreeListener(new TreeListener(){
+
+			public void treeCollapsed(TreeEvent e) {
+				//no-op
+			}
+
+			public void treeExpanded(TreeEvent e) {
+				if (isWorkingSetSelected())
+					checkWorkingSetElements();
 			}
 		});
 		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
