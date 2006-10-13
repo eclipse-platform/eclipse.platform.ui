@@ -27,7 +27,7 @@ public interface IContentAssistantExtension3 {
 	 * Sets the key sequence to listen for in repeated invocation mode. If the key sequence is
 	 * encountered, a step in the repetition iteration is triggered.
 	 * 
-	 * @param sequence the key sequence to listen for in repeated invocation mode
+	 * @param sequence the key sequence used for the repeated invocation mode or <code>null</code> if none
 	 */
 	public void setRepeatedInvocationTrigger(KeySequence sequence);
 }

@@ -943,7 +943,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 *
 	 * @since 3.2
 	 */
-	private KeySequence fTriggerSequence= KeySequence.getInstance();
+	private KeySequence fTriggerSequence;
 
 
 	/**
@@ -2264,13 +2264,13 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	public void setRepeatedInvocationTrigger(KeySequence sequence) {
-		Assert.isNotNull(sequence);
 		fTriggerSequence= sequence;
 	}
 
 	/**
 	 * Returns the repeated invocation key sequence.
-	 * @return the repeated invocation key sequence
+	 * 
+	 * @return the repeated invocation key sequence or <code>null</code>, if none
 	 * @since 3.2
 	 */
 	KeySequence getTriggerSequence() {
