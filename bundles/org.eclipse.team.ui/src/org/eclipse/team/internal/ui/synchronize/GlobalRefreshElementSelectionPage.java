@@ -240,7 +240,7 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 	
 	protected void initializeScopingHint() {
 		String working_sets = settings.get(STORE_WORKING_SETS);
-		if (working_sets == null) {
+		if (working_sets == null || working_sets.equals("")) { //$NON-NLS-1$
 			participantScope.setSelection(true);
 			updateParticipantScope();
 		} else {
