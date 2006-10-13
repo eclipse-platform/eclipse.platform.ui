@@ -23,6 +23,15 @@ import org.eclipse.core.runtime.Assert;
  * @see org.eclipse.jface.text.IDocument
  */
 public class DocumentEvent {
+	
+	/**
+	 * Debug option for asserting that text is not null.
+	 * If the <code>org.eclipse.text/debug/DocumentEvent/assertTextNotNull</code>
+	 * system property is <code>true</code>
+	 * 
+	 * @since 3.3
+	 */
+	private static final boolean ASSERT_TEXT_NOT_NULL= Boolean.getBoolean("org.eclipse.text/debug/DocumentEvent/assertTextNotNull"); //$NON-NLS-1$
 
 	/** The changed document */
 	public IDocument fDocument;
@@ -31,7 +40,7 @@ public class DocumentEvent {
 	/** Length of the replaced document text */
 	public int fLength;
 	/** Text inserted into the document */
-	public String fText;
+	public String fText= ""; //$NON-NLS-1$
 	/**
 	 * The modification stamp of the document when firing this event.
 	 * @since 3.1
@@ -51,6 +60,9 @@ public class DocumentEvent {
 		Assert.isNotNull(doc);
 		Assert.isTrue(offset >= 0);
 		Assert.isTrue(length >= 0);
+
+		if (ASSERT_TEXT_NOT_NULL)
+			Assert.isNotNull(text);
 
 		fDocument= doc;
 		fOffset= offset;
