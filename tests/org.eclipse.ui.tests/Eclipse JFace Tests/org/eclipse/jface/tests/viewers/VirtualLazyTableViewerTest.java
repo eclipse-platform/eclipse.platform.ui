@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.widgets.Table;
 
@@ -115,6 +116,17 @@ public class VirtualLazyTableViewerTest extends VirtualTableViewerTest {
 		updatedElements.clear();
 		fViewer.setInput(fRootElement);
 		assertEquals(materializedSize, updatedElements.size());
+	}
+	
+	public void testBug160153() {
+		int childCount = fRootElement.getChildCount();
+		TestElement lastChild = fRootElement.getChildAt(childCount-1);
+		// materialize last child
+		fViewer.setSelection(new StructuredSelection(lastChild));
+		processEvents();
+		assertNotNull("last Child should be in the map", fViewer.testFindItem(lastChild));
+		((TableViewer)fViewer).setItemCount(childCount - 1);
+		assertNull("last Child should no longer be in the map", fViewer.testFindItem(lastChild));
 	}
 	
 

@@ -49,6 +49,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	 */
 	protected TableViewer createTableViewer(Composite parent) {
 		TableViewer viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.MULTI);
+		viewer.setUseHashlookup(true);
 		final Table table = viewer.getTable();
 		table.addListener(SWT.SetData, new Listener() {
 			/*

@@ -1253,6 +1253,16 @@ public class TableViewer extends ColumnViewer {
 	 * @since 3.1
 	 */
 	public void setItemCount(int count) {
+		int oldCount = getTable().getItemCount();
+		if (count < oldCount) {
+			// need to disassociate elements that are being disposed
+			for (int i = count; i < oldCount; i++) {
+				TableItem item = getTable().getItem(i);
+				if (item.getData() != null) {
+					disassociate(item);
+				}
+			}
+		}
 		getTable().setItemCount(count);
 		if (virtualManager != null) {
 			virtualManager.adjustCacheSize(count);
