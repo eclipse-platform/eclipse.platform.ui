@@ -61,4 +61,10 @@ public interface ITeamContentProviderDescriptor {
 	 */
 	public boolean isEnabled();
 
+	/**
+	 * Returns the name specified for this content provider as specified in the extension point.
+	 * @return a string containing the name or null if no name has been specified
+	 */
+	public String getName();
+
 }

@@ -437,6 +437,7 @@
    </extension>
    <extension
          id="teamContentProvider"
+         name="Workspace"
          point="org.eclipse.team.ui.teamContentProviders">
       <teamContentProvider
             contentExtensionId="org.eclipse.team.ui.resourceContent"

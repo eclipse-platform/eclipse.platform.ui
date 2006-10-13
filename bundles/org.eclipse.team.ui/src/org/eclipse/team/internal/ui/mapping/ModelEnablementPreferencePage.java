@@ -72,16 +72,22 @@ public class ModelEnablementPreferencePage extends PreferencePage implements IWo
 			public String getText(Object element) {
 				if (element instanceof ITeamContentProviderDescriptor) {
 					ITeamContentProviderDescriptor desc = (ITeamContentProviderDescriptor) element;
-					return getTextFor(desc.getModelProviderId());
+					return getTextFor(desc);
 				}
 				return super.getText(element);
 			}
-			private String getTextFor(String modelProviderId) {
-				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(modelProviderId);
+			private String getTextFor(ITeamContentProviderDescriptor teamContentDescriptor) {
+				String name = teamContentDescriptor.getName();
+				
+				if (name != null && !name.equals(""))  //$NON-NLS-1$
+					return name;
+				
+				String modelProviderID = teamContentDescriptor.getModelProviderId();
+				IModelProviderDescriptor desc = ModelProvider.getModelProviderDescriptor(modelProviderID);
 				if (desc != null) {
 					return getLabel(desc);
 				}
-				return modelProviderId;
+				return modelProviderID;
 			}
 			public Image getImage(Object element) {
 				if (element instanceof ITeamContentProviderDescriptor) {

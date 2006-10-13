@@ -38,6 +38,7 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 
 	private String modelProviderId;
 	private String contentExtensionId;
+	private String contentProviderName;
 
 	private ImageDescriptor imageDescriptor;
 
@@ -62,6 +63,7 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 			if (name.equalsIgnoreCase(TAG_TEAM_CONTENT_PROVIDER)) {
 				modelProviderId = element.getAttribute(ATT_MODEL_PROVIDER_ID);
 				contentExtensionId = element.getAttribute(ATT_CONTENT_EXTENSION_ID);
+				contentProviderName = extension.getLabel();
 			}
 			break;
 		}
@@ -184,5 +186,12 @@ public class TeamContentProviderDescriptor implements ITeamContentProviderDescri
 		if (!hasPreferences()) {
 			storePreferences();
 		}
+	}
+
+	public String getName() {
+		if (contentProviderName != null)
+			return contentProviderName;
+		
+		return null;
 	}
 }
