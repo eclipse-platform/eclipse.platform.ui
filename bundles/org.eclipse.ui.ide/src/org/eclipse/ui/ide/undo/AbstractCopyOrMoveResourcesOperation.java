@@ -32,7 +32,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * An AbstractCopyOrMoveResourcesOperation represents an undoable operation for
- * moving or copying one or more resources in the workspace.
+ * moving or copying one or more resources in the workspace. Clients may call
+ * the public API from a background thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
@@ -43,7 +44,7 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * @since 3.3
  * 
  */
-public abstract class AbstractCopyOrMoveResourcesOperation extends
+abstract class AbstractCopyOrMoveResourcesOperation extends
 		AbstractResourcesOperation {
 
 	// Used when there are different destination names for each resource
@@ -142,15 +143,16 @@ public abstract class AbstractCopyOrMoveResourcesOperation extends
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
 			if (move) {
-				overwrites = WorkspaceUndoUtil.move(resources[i], getDestinationPath(
-						resources[i], i, true), new SubProgressMonitor(monitor,
-						1000 / resources.length), uiInfo);
+				overwrites = WorkspaceUndoUtil
+						.move(resources[i], getDestinationPath(resources[i], i,
+								true), new SubProgressMonitor(monitor,
+								1000 / resources.length), uiInfo);
 			} else {
-				overwrites = WorkspaceUndoUtil.copy(
-						new IResource[] { resources[i] },
-						getDestinationPath(resources[i], i, true),
-						new SubProgressMonitor(monitor, 1000 / resources.length),
-						uiInfo, true);
+				overwrites = WorkspaceUndoUtil
+						.copy(new IResource[] { resources[i] },
+								getDestinationPath(resources[i], i, true),
+								new SubProgressMonitor(monitor,
+										1000 / resources.length), uiInfo, true);
 			}
 			// Accumulate the overwrites into the full list
 			for (int j = 0; j < overwrites.length; j++) {
@@ -362,9 +364,10 @@ public abstract class AbstractCopyOrMoveResourcesOperation extends
 		return (destinationPaths != null && resources.length == destinationPaths.length)
 				|| (destination != null);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
 	 */
 	protected void appendDescriptiveText(StringBuffer text) {

@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * the workspace. It handles common workspace operation activities such as
  * tracking which resources are affected by an operation, prompting the user
  * when there are possible side effects of operations, error handling for core
- * exceptions, etc.
+ * exceptions, etc. Clients may call the public API from a background thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
@@ -834,7 +834,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		text.append(resources);
 		text.append('\'');
 	}
-	
+
 	/**
 	 * Return the shell described by the specified adaptable, or the active
 	 * shell if no shell has been specified in the adaptable.

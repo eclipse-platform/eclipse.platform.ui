@@ -20,7 +20,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A CreateProjectOperation represents an undoable operation for creating a
- * project in the workspace.
+ * project in the workspace. Clients may call the public API from a background
+ * thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.

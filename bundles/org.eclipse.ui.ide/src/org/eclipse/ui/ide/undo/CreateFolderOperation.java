@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.ide.undo.ResourceDescription;
  * considered to be linked to the specified location. If a link location is not
  * specified, the folder will be created in the location specified by the
  * handle, and the entire containment path of the folder will be created if it
- * does not exist.
+ * does not exist. Clients may call the public API from a background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
@@ -47,15 +47,18 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	public CreateFolderOperation(IFolder folderHandle, IPath linkLocation, String label) {
+	public CreateFolderOperation(IFolder folderHandle, IPath linkLocation,
+			String label) {
 		super(null, label);
 		ContainerDescription containerDescription;
 		if (linkLocation == null) {
-			containerDescription = ContainerDescription.fromContainer(folderHandle);
+			containerDescription = ContainerDescription
+					.fromContainer(folderHandle);
 		} else {
 			// create a linked folder description
-			containerDescription = new FolderDescription(folderHandle, linkLocation);
+			containerDescription = new FolderDescription(folderHandle,
+					linkLocation);
 		}
-		setResourceDescriptions(new ResourceDescription[ ] {containerDescription});
+		setResourceDescriptions(new ResourceDescription[] { containerDescription });
 	}
 }

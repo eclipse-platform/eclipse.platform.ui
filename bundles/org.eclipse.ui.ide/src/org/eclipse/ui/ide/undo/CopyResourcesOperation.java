@@ -24,7 +24,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A CopyResourcesOperation represents an undoable operation for copying one or
- * more resources in the workspace.
+ * more resources in the workspace. Clients may call the public API from a
+ * background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
@@ -132,10 +133,11 @@ public class CopyResourcesOperation extends
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
 		monitor.beginTask("", 2); //$NON-NLS-1$
-		monitor.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
+		monitor
+				.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
 		// undoing a copy is first deleting the copied resources...
-		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(
-				monitor, 1), uiInfo, true);
+		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(monitor, 1),
+				uiInfo, true);
 		// then restoring any overwritten by the previous copy...
 		WorkspaceUndoUtil.recreate(resourceDescriptions,
 				new SubProgressMonitor(monitor, 1), uiInfo);

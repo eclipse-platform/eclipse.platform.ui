@@ -23,7 +23,8 @@ import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
  * A CreateResourcesOperation represents an undoable operation for creating
- * resources in the workspace.
+ * resources in the workspace. Clients may call the public API from a background
+ * thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
@@ -34,7 +35,7 @@ import org.eclipse.ui.internal.ide.undo.ResourceDescription;
  * @since 3.3
  * 
  */
-public abstract class AbstractCreateResourcesOperation extends
+abstract class AbstractCreateResourcesOperation extends
 		AbstractResourcesOperation {
 
 	/**

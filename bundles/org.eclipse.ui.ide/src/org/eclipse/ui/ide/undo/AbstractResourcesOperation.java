@@ -28,7 +28,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * An AbstractResourcesOperation represents an undoable operation that
  * manipulates resources. It provides implementations for resource rename,
  * delete, creation, and modification. It also assigns the workspace undo
- * context as the undo context for operations of this type.
+ * context as the undo context for operations of this type. Clients may call the
+ * public API from a background thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
@@ -39,8 +40,7 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * @since 3.3
  * 
  */
-public abstract class AbstractResourcesOperation extends
-		AbstractWorkspaceOperation {
+abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 
 	/*
 	 * The array of resource descriptions known by this operation to create or
@@ -98,8 +98,8 @@ public abstract class AbstractResourcesOperation extends
 	 */
 	protected void delete(IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean deleteContent) throws CoreException {
-		setResourceDescriptions(WorkspaceUndoUtil.delete(resources,
-				monitor, uiInfo, deleteContent));
+		setResourceDescriptions(WorkspaceUndoUtil.delete(resources, monitor,
+				uiInfo, deleteContent));
 		setTargetResources(new IResource[0]);
 	}
 
@@ -119,8 +119,8 @@ public abstract class AbstractResourcesOperation extends
 	 */
 	protected void recreate(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		setTargetResources(WorkspaceUndoUtil.recreate(
-				resourceDescriptions, monitor, uiInfo));
+		setTargetResources(WorkspaceUndoUtil.recreate(resourceDescriptions,
+				monitor, uiInfo));
 		setResourceDescriptions(new ResourceDescription[0]);
 	}
 
@@ -243,9 +243,10 @@ public abstract class AbstractResourcesOperation extends
 			resourceDescriptions = descriptions;
 		}
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#appendDescriptiveText(java.lang.StringBuffer)
 	 */
 	protected void appendDescriptiveText(StringBuffer text) {

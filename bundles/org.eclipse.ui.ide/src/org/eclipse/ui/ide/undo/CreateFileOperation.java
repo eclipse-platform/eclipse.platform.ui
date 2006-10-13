@@ -28,7 +28,7 @@ import org.eclipse.ui.internal.ide.undo.ResourceDescription;
  * be linked to the file at the specified location. If a link location is not
  * specified, the file will be created in the location specified by the handle,
  * and the entire containment path of the file will be created if it does not
- * exist.
+ * exist. Clients may call the public API from a background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
@@ -55,24 +55,30 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	public CreateFileOperation(IFile fileHandle, IPath linkLocation, InputStream contents, String label) {
+	public CreateFileOperation(IFile fileHandle, IPath linkLocation,
+			InputStream contents, String label) {
 		super(null, label);
 		ResourceDescription resourceDescription;
 		if (linkLocation == null) {
 			if (fileHandle.getParent().exists()) {
-				resourceDescription = new FileDescription(fileHandle, null, createFileState(fileHandle, contents));
+				resourceDescription = new FileDescription(fileHandle, null,
+						createFileState(fileHandle, contents));
 			} else {
 				// must first ensure descriptions for the parent folders are
 				// created
-				ContainerDescription containerDescription = ContainerDescription.fromContainer(fileHandle.getParent());
-				containerDescription.getFirstLeafFolder().addMember(new FileDescription(fileHandle, null, createFileState(fileHandle, contents)));
+				ContainerDescription containerDescription = ContainerDescription
+						.fromContainer(fileHandle.getParent());
+				containerDescription.getFirstLeafFolder().addMember(
+						new FileDescription(fileHandle, null, createFileState(
+								fileHandle, contents)));
 				resourceDescription = containerDescription;
 			}
 		} else {
 			// create a linked file description
-			resourceDescription = new FileDescription(fileHandle, linkLocation, createFileState(fileHandle, contents));
+			resourceDescription = new FileDescription(fileHandle, linkLocation,
+					createFileState(fileHandle, contents));
 		}
-		setResourceDescriptions(new ResourceDescription[ ] { resourceDescription });
+		setResourceDescriptions(new ResourceDescription[] { resourceDescription });
 
 	}
 
@@ -86,6 +92,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 		return new IFileState() {
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#getContents()
 			 */
 			public InputStream getContents() {
@@ -97,6 +104,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 			 */
 			public Object getAdapter(Class clazz) {
@@ -105,6 +113,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
 			 */
 			public String getCharset() {
@@ -114,8 +123,10 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 					return null;
 				}
 			}
+
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#getFullPath()
 			 */
 			public IPath getFullPath() {
@@ -124,6 +135,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#getName()
 			 */
 			public String getName() {
@@ -132,6 +144,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#exists()
 			 */
 			public boolean exists() {
@@ -140,6 +153,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#isReadOnly()
 			 */
 			public boolean isReadOnly() {
@@ -148,6 +162,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 
 			/*
 			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.core.resources.IFileState#getModificationTime()
 			 */
 			public long getModificationTime() {

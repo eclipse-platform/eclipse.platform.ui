@@ -23,7 +23,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * An UpdateMarkersOperation represents an undoable operation for updating one
- * or more markers in the workspace with one or more sets of attributes.
+ * or more markers in the workspace with one or more sets of attributes. Clients
+ * may call the public API from a background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.

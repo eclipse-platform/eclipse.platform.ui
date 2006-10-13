@@ -29,7 +29,8 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
 /**
  * An AbstractMarkersOperation represents an undoable operation that affects
  * markers on a resource. It provides implementations for marker creation,
- * deletion, and updating.
+ * deletion, and updating. Clients may call the public API from a background
+ * thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
