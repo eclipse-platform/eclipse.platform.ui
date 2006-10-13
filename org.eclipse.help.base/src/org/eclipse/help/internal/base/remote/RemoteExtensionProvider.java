@@ -13,16 +13,29 @@ package org.eclipse.help.internal.base.remote;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
 
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.help.AbstractContentExtensionProvider;
+import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
-public class RemoteExtensionProvider {
+public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	private static final String PATH_EXTENSIONS = "/extension"; //$NON-NLS-1$
 
-	public List getExtensions() {
+	public RemoteExtensionProvider() {
+		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				contentChanged();
+			}
+		});
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
+	 */
+	public IContentExtension[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -50,6 +63,6 @@ public class RemoteExtensionProvider {
 				}
 			}
 		}
-		return Collections.EMPTY_LIST;
+		return new IContentExtension[0];
 	}
 }

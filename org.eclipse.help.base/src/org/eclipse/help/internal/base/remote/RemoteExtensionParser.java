@@ -19,6 +19,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -28,10 +29,10 @@ public class RemoteExtensionParser extends DefaultHandler {
 
 	private List extensions = new ArrayList();
 
-	public List parse(InputStream in) throws ParserConfigurationException, SAXException, IOException {
+	public IContentExtension[] parse(InputStream in) throws ParserConfigurationException, SAXException, IOException {
 		SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
 		parser.parse(in, this);
-		return extensions;
+		return (IContentExtension[])extensions.toArray(new IContentExtension[extensions.size()]);
 	}
 
 	/* (non-Javadoc)
