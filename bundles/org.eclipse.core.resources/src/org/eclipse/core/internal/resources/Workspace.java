@@ -1602,7 +1602,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return nextMarkerId++;
 	}
 
-	public long nextNodeId() {
+	protected long nextNodeId() {
 		return nextNodeId++;
 	}
 
