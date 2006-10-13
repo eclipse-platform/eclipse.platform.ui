@@ -154,10 +154,11 @@ public class WorkspaceUndoUtil {
 	 * @return an array of ResourceDescriptions that can be used to restore the
 	 *         deleted resources.
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] delete(
-			IResource[] resourcesToDelete, IProgressMonitor monitor,
-			IAdaptable uiInfo, boolean deleteContent) throws CoreException {
+	static ResourceDescription[] delete(IResource[] resourcesToDelete,
+			IProgressMonitor monitor, IAdaptable uiInfo, boolean deleteContent)
+			throws CoreException {
 		final List exceptions = new ArrayList();
 		boolean forceOutOfSyncDelete = false;
 		ResourceDescription[] returnedResourceDescriptions = new ResourceDescription[resourcesToDelete.length];
@@ -180,7 +181,7 @@ public class WorkspaceUndoUtil {
 						if (children.length == 1
 								&& children[0].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
 							int result = queryDeleteOutOfSync(resource, uiInfo);
-	
+
 							if (result == IDialogConstants.YES_ID) {
 								// retry the delete with a force out of sync
 								delete(resource, new SubProgressMonitor(
@@ -236,17 +237,17 @@ public class WorkspaceUndoUtil {
 	 * @return an array of ResourceDescriptions describing any resources that
 	 *         were overwritten by the move operation
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	
-	static ResourceDescription[] move(IResource resourceToMove,
-			IPath newPath, IProgressMonitor monitor, IAdaptable uiInfo)
-			throws CoreException {
+
+	static ResourceDescription[] move(IResource resourceToMove, IPath newPath,
+			IProgressMonitor monitor, IAdaptable uiInfo) throws CoreException {
 		monitor.beginTask("", 3); //$NON-NLS-1$
 		monitor
 				.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
 		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
 		List overwrittenResources = new ArrayList();
-	
+
 		// Some moves are optimized and recorded as complete in this flag
 		boolean moved = false;
 		IResource newResource = workspaceRoot.findMember(newPath);
@@ -301,7 +302,7 @@ public class WorkspaceUndoUtil {
 						.move(newPath, IResource.KEEP_HISTORY
 								| IResource.SHALLOW, new SubProgressMonitor(
 								monitor, 2));
-	
+
 			}
 		}
 		monitor.done();
@@ -328,18 +329,19 @@ public class WorkspaceUndoUtil {
 	 * @param pathIncludesName
 	 *            a boolean that indicates whether the specified path includes
 	 *            the resource's name at the destination. If this value is
-	 *            <code>true</code>, the destination will contain the desired name of the
-	 *            resource (usually only desired when only one resource is being
-	 *            copied). If this value is <code>false</code>, each
-	 *            resource's name will be appended to the destination.
+	 *            <code>true</code>, the destination will contain the desired
+	 *            name of the resource (usually only desired when only one
+	 *            resource is being copied). If this value is <code>false</code>,
+	 *            each resource's name will be appended to the destination.
 	 * @return an array of ResourceDescriptions describing any resources that
 	 *         were overwritten by the move operation
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static ResourceDescription[] copy(IResource[] resources,
-			IPath destination, IProgressMonitor monitor, IAdaptable uiInfo,
+	static ResourceDescription[] copy(IResource[] resources, IPath destination,
+			IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean pathIncludesName) throws CoreException {
-	
+
 		monitor.beginTask("", resources.length); //$NON-NLS-1$
 		monitor
 				.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
@@ -357,7 +359,7 @@ public class WorkspaceUndoUtil {
 			if (source.getType() == IResource.FOLDER && existing != null) {
 				// The resource is a folder and it exists in the destination.
 				// Copy its children to the existing destination.
-				
+
 				if (source.isLinked() == existing.isLinked()) {
 					IResource[] children = ((IContainer) source).members();
 					ResourceDescription[] overwritten = copy(children,
@@ -366,7 +368,7 @@ public class WorkspaceUndoUtil {
 					for (int j = 0; j < overwritten.length; j++) {
 						overwrittenResources.add(overwritten[j]);
 					}
-	
+
 				} else {
 					// delete the destination folder, copying a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
@@ -427,7 +429,7 @@ public class WorkspaceUndoUtil {
 								new SubProgressMonitor(monitor, 1));
 					}
 				}
-	
+
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
@@ -435,9 +437,9 @@ public class WorkspaceUndoUtil {
 		}
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
-	
+
 	}
-	
+
 	/**
 	 * Recreate the resources from the specified resource descriptions.
 	 * 
@@ -453,9 +455,9 @@ public class WorkspaceUndoUtil {
 	 *            org.eclipse.swt.widgets.Shell.class
 	 * @return an array of resources that were created
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	static IResource[] recreate(
-			ResourceDescription[] resourcesToRecreate,
+	static IResource[] recreate(ResourceDescription[] resourcesToRecreate,
 			IProgressMonitor monitor, IAdaptable uiInfo) throws CoreException {
 		final List exceptions = new ArrayList();
 		IResource[] resourcesToReturn = new IResource[resourcesToRecreate.length];
@@ -507,6 +509,7 @@ public class WorkspaceUndoUtil {
 	 * @return a ResourceDescription that can be used to restore the deleted
 	 *         resource.
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	static ResourceDescription delete(IResource resourceToDelete,
 			IProgressMonitor monitor, IAdaptable uiInfo,
@@ -537,7 +540,7 @@ public class WorkspaceUndoUtil {
 					new SubProgressMonitor(monitor, 1));
 			monitor.done();
 		}
-	
+
 		return resourceDescription;
 	}
 
@@ -552,8 +555,8 @@ public class WorkspaceUndoUtil {
 		if (!(source instanceof IFile && existing instanceof IFile)) {
 			return null;
 		}
-		IFile file = (IFile)source;
-		IFile existingFile = (IFile)existing;
+		IFile file = (IFile) source;
+		IFile existingFile = (IFile) existing;
 		monitor
 				.beginTask(
 						UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress,
@@ -605,7 +608,7 @@ public class WorkspaceUndoUtil {
 			containerDescription.createExistentResourceFromHandle(container,
 					new NullProgressMonitor());
 		}
-	
+
 	}
 
 	/*
@@ -717,7 +720,7 @@ public class WorkspaceUndoUtil {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * Return the shell described by the specified adaptable, or the active
 	 * shell if no shell has been specified in the adaptable.

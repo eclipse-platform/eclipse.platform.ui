@@ -151,7 +151,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * This implementation checks a validity flag.
 	 * 
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#canExecute()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canExecute()
 	 */
 	public boolean canExecute() {
 		return isValid();
@@ -162,7 +162,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * This implementation checks a validity flag.
 	 * 
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#canUndo()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canUndo()
 	 */
 	public boolean canUndo() {
 		return isValid();
@@ -173,7 +173,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * This implementation checks a validity flag.
 	 * 
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#canRedo()
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#canRedo()
 	 */
 	public boolean canRedo() {
 		return isValid();
@@ -188,7 +188,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param info
+	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -198,25 +198,27 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *         to <code>OK</code> if the operation was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the execution.
+	 * @throws ExecutionException
+	 *             if an exception occurred during execution.
 	 * 
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#execute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus execute(IProgressMonitor monitor, final IAdaptable info)
+	public IStatus execute(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					doExecute(monitor, info);
+					doExecute(monitor, uiInfo);
 				}
 			}, getExecuteSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
 			final boolean[] propagateException = new boolean[1];
-			getShell(info).getDisplay().syncExec(new Runnable() {
+			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
 				public void run() {
 					propagateException[0] = handleCoreException(
 							e,
-							getShell(info),
+							getShell(uiInfo),
 							NLS
 									.bind(
 											UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
@@ -246,7 +248,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param info
+	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -256,24 +258,26 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 *         <code>OK</code> if the operation was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
 	 *         to represent an incompletion of the redo.
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
+	 * @throws ExecutionException
+	 *             if an exception occurred during execution.
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#redo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus redo(IProgressMonitor monitor, final IAdaptable info)
+	public IStatus redo(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					doExecute(monitor, info);
+					doExecute(monitor, uiInfo);
 				}
 			}, getRedoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
 			final boolean[] propagateException = new boolean[1];
-			getShell(info).getDisplay().syncExec(new Runnable() {
+			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
 				public void run() {
 					propagateException[0] = handleCoreException(
 							e,
-							getShell(info),
+							getShell(uiInfo),
 							NLS
 									.bind(
 											UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
@@ -300,7 +304,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param info
+	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
@@ -309,25 +313,27 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * @return the IStatus of the undo. The status severity should be set to
 	 *         <code>OK</code> if the operation was successful, and
 	 *         <code>ERROR</code> if it was not. Any other status is assumed
-	 *         to represent an incompletion of the undo.
-	 * @see org.eclipse.core.commands.operations.AbstractOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
+	 *         to represent an incompletion of the undo. *
+	 * @throws ExecutionException
+	 *             if an exception occurred during execution.
+	 * @see org.eclipse.core.commands.operations.IUndoableOperation#undo(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
-	public IStatus undo(IProgressMonitor monitor, final IAdaptable info)
+	public IStatus undo(IProgressMonitor monitor, final IAdaptable uiInfo)
 			throws ExecutionException {
 		try {
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) throws CoreException {
-					doUndo(monitor, info);
+					doUndo(monitor, uiInfo);
 				}
 			}, getUndoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
 			final boolean[] propagateException = new boolean[1];
-			getShell(info).getDisplay().syncExec(new Runnable() {
+			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
 				public void run() {
 					propagateException[0] = handleCoreException(
 							e,
-							getShell(info),
+							getShell(uiInfo),
 							NLS
 									.bind(
 											UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
@@ -351,15 +357,16 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param info
+	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
-	 * 
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
-	protected abstract void doUndo(IProgressMonitor monitor, IAdaptable info)
+	protected abstract void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException;
 
 	/**
@@ -367,15 +374,18 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
-	 * @param info
+	 * @param uiInfo
 	 *            the IAdaptable (or <code>null</code>) provided by the
 	 *            caller in order to supply UI information for prompting the
 	 *            user if necessary. When this parameter is not
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 * 
 	 */
-	protected abstract void doExecute(IProgressMonitor monitor, IAdaptable info)
-			throws CoreException;
+	protected abstract void doExecute(IProgressMonitor monitor,
+			IAdaptable uiInfo) throws CoreException;
 
 	/**
 	 * Return whether the proposed operation is valid. The default

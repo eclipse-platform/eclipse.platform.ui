@@ -95,6 +95,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 *            should be deleted along with the project. <code>false</code>
 	 *            if project content should not be deleted.
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	protected void delete(IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean deleteContent) throws CoreException {
@@ -116,6 +117,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 *            <code>null</code>, it contains an adapter for the
 	 *            org.eclipse.swt.widgets.Shell.class
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	protected void recreate(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {

@@ -100,6 +100,8 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * @param monitor
 	 *            the progress monitor to use for the delete
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 * 
 	 */
 	protected void deleteMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -125,6 +127,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 * @param monitor
 	 *            the progress monitor to use for the create
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	protected void createMarkers(int work, IProgressMonitor monitor)
 			throws CoreException {
@@ -154,6 +157,7 @@ abstract class AbstractMarkersOperation extends AbstractWorkspaceOperation {
 	 *            a boolean specifying whether the attributes are merged or
 	 *            considered to be a replacement of the previous attributes.
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 * 
 	 */
 	protected void updateMarkers(int work, IProgressMonitor monitor,

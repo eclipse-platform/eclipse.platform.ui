@@ -108,6 +108,7 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	 *            <code>true</code> if the operation is a move, and
 	 *            <code>false</code> if it is a copy
 	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	protected void moveOrCopy(IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean move) throws CoreException {
