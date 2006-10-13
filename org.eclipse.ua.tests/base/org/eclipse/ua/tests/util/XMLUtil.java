@@ -11,7 +11,6 @@
 package org.eclipse.ua.tests.util;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -103,7 +102,7 @@ public class XMLUtil extends Assert {
 		/* (non-Javadoc)
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
-		public InputSource resolveEntity(String publicId, String systemId) throws IOException, SAXException {
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}
 		
