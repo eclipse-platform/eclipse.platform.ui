@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 
-<meta content="Copyright (c) IBM Corporation and others 2000, 2005. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." name="copyright"/>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2005. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." />
 
-<meta content="text/html; charset=ISO-8859-1" http-equiv="Content-Type"/>
-<meta content="text/css" http-equiv="Content-Style-Type"/>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
 
-<link charset="ISO-8859-1" href="../book.css" rel="STYLESHEET" type="text/css"/>
+<link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css" />
 <title>Exporting files</title>
 <script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"> </script>
 </head>
@@ -18,17 +18,16 @@ Exporting files </h1>
 <p class="Para">Files can be exported from the Workbench either by:</p>
 <ul>
   <li> Dragging and dropping to the file system (Windows and Linux GTK only), or</li>
-  <li> <img align="texttop" alt="Windows only" border="0" src="../images/win_only.png"/>
+  <li> <img align="texttop" border="0" src="../images/win_only.png" alt="Windows only" />
     Copying and pasting to the file system, or</li>
   <li> Using the
   <a class="command-link" href="javascript:executeCommand(&quot;org.eclipse.ui.file.export&quot;)">
   <img src="PLUGINS_ROOT/org.eclipse.help/command_link.png"/>
-  <b>Export wizard</b>
-</a>.</li>
+  <b>Export wizard</b></a>.</li>
 </ul>
 <h2>
 Drag and drop or copy and paste</h2>
-<p class="Para"> <img align="texttop" alt="Windows only" border="0" src="../images/win_only.png"/> 
+<p class="Para"> <img align="texttop" border="0" src="../images/win_only.png" alt="Windows only" /> 
   The operating system's file system explorer can be used to export a copy of 
   a folder or file from the Workbench to the file system.</p>
 <ol>
@@ -64,8 +63,7 @@ Drag and drop or copy and paste</h2>
   <li> 
     <p class="Para"> In the Export wizard, select <b>File system</b>, then click 
       <b>Next</b>.</p>
-    <p class="Para"> <img alt="Export Wizard. Select an export destination." border="0" src="../images/Image42_export.png"/>
-</p>
+    <p class="Para"> <img src="../images/Image42_export.png" alt="Export Wizard. Select an export destination." border="0" /></p>
   </li>
   <li> 
     <p class="Para">Expand JaneQuser project, and click on JanesFolder. In the 
@@ -74,13 +72,11 @@ Drag and drop or copy and paste</h2>
       that some, but not all, of their contents will be exported.</p>
     <p class="Para">The <b>Select Types</b> button can be used to filter the types 
       of resources to export.</p>
-    <p class="Para">
-<strong>Note:</strong> To export JanesINIFile.ini only, simply 
+    <p class="Para"><strong>Note:</strong> To export JanesINIFile.ini only, simply 
       select it in the navigation view and choose <b>File &gt; Export</b>. The 
       Export wizard will automatically ensure it is the only file selected for 
       export. </p>
-    <p class="Para"> <img alt="Export Wizard. Enter a destination directory." border="0" src="../images/Image43_export_tree.png"/>
-</p>
+    <p class="Para"> <img src="../images/Image43_export_tree.png" alt="Export Wizard. Enter a destination directory." border="0" /></p>
   </li>
   <li> 
     <p class="Para"> In the <b> To directory</b> field, type or browse to select 

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <root>
 
 	<description>
@@ -10,22 +9,20 @@
 		This element is used to test includes within the same file.
 	</element>
 	
-	<!--
-	     Valid cases
-	-->
 	
-	<!-- valid include -->
+	
+	
 	<paragraph id="paragraph.1">
 		This is the first paragraph from
 		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
 	</paragraph>
 
-	<!-- include from same document -->
+	
 	<element id="element.1">
 		This element is used to test includes within the same file.
 	</element>
 
-	<!-- included element has yet more dynamic content -->
+	
 	<doc id="doc.1">
 	<description>
 		This document contains a mixture of dynamic content and is used by other
@@ -45,50 +42,47 @@
 	</element>
 	<element id="element.2">
 		This is element 2 of doc2.xml
-	</element>
-<element id="element.3">
+	</element><element id="element.3">
 		This is element 3 of doc2.xml
 	</element>
 </doc>
 
-	<!-- legacy format: no slash at beginning, slash in place of # -->
+	
 	<paragraph id="paragraph.1">
 		This is the first paragraph from
 		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
 	</paragraph>
 
-	<!-- extra unknown parameters -->
+	
 	<paragraph id="paragraph.1">
 		This is the first paragraph from
 		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
 	</paragraph>
 
-	<!-- extra unknown children -->
+	
 	<paragraph id="paragraph.1">
 		This is the first paragraph from
 		/org.eclipse.ua.tests/data/help/dynamic/include/doc1.xml
 	</paragraph>
 
-	<!--
-	     Invalid cases
-	-->
-
-	<!-- missing path -->
 	
 
-	<!-- missing path; unknown parameter -->
 	
-	
-	<!-- invalid bundle id -->
 	
 
-	<!-- invalid path -->
+	
+	
+	
+	
 	
 
-	<!-- invalid file -->
+	
 	
 
-	<!-- invalid id -->
+	
+	
+
+	
 	
 	
 </root>

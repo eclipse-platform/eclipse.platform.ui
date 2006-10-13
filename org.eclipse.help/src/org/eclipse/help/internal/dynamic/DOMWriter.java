@@ -40,7 +40,6 @@ public class DOMWriter {
 	        TransformerFactory factory = TransformerFactory.newInstance();
 	        transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 			DocumentType docType = document.getDoctype();
 			if (docType != null) {
 				transformer.setOutputProperty(OutputKeys.DOCTYPE_PUBLIC, docType.getPublicId());

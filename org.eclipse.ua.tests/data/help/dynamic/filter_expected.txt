@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <root>
 
 	<description>
@@ -6,21 +5,19 @@
 		of which should be applied and others which shouldn't.
 	</description>
 	
-	<!--
-	     Valid cases
-	-->
 	
-	<!-- simple test cases; don't filter -->
-	<element/>
-	<element/>
-	<element/>
-	<element/>
-	<element/>
-	<element/>
-	<element/>
-	<element/>
+	
+	
+	<element></element>
+	<element></element>
+	<element></element>
+	<element></element>
+	<element></element>
+	<element></element>
+	<element></element>
+	<element></element>
 
-	<!-- simple test case; filter -->
+	
 	
 	
 	
@@ -30,7 +27,7 @@
 	
 	
 
-	<!-- filter element test cases; don't filter -->
+	
 	<element>
 		
 	</element>
@@ -56,7 +53,7 @@
 		
 	</element>
 
-	<!-- filter element test cases; filter -->
+	
 	
 	
 	
@@ -66,29 +63,29 @@
 	
 	
 
-	<!-- multiple filters; shouldn't filter -->
+	
 	<element>
 		
 		
 	</element>
 
-	<!-- multiple filters; should filter -->
+	
 	
 
-	<!-- filter with children; shouldn't filter -->
+	
 	<element>
 		
 		<child>This child element shouldnt be filtered</child>
 	</element>
 
-	<!-- filter with children; should filter all -->
-	
-
-	<!-- filter with dynamic content; should filter -->
 	
 	
 
-	<!-- filter with dynamic content; shouldn't filter -->
+	
+	
+	
+
+	
 	<element>
 		<doc id="doc.1">
 	<description>
@@ -109,8 +106,7 @@
 	</element>
 	<element id="element.2">
 		This is element 2 of doc2.xml
-	</element>
-<element id="element.3">
+	</element><element id="element.3">
 		This is element 3 of doc2.xml
 	</element>
 </doc>
@@ -136,40 +132,37 @@
 	</element>
 	<element id="element.2">
 		This is element 2 of doc2.xml
-	</element>
-<element id="element.3">
+	</element><element id="element.3">
 		This is element 3 of doc2.xml
 	</element>
 </doc>
 	</element>
 
-	<!--
-	     Invalid cases
-	-->
+	
 
-	<!-- empty filter value -->
-	<element/>
+	
+	<element></element>
 
-	<!-- no equals -->
-	<element/>
+	
+	<element></element>
 
-	<!-- no value -->
-	<element/>
+	
+	<element></element>
 
-	<!-- no name -->
-	<element/>
+	
+	<element></element>
 
-	<!-- missing params -->
+	
 	<element>
 		
 	</element>
 
-	<!-- missing name -->
+	
 	<element>
 		
 	</element>
 
-	<!-- missing value -->
+	
 	<element>
 		
 	</element>
