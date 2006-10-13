@@ -24,6 +24,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
@@ -441,11 +443,21 @@ public class FastViewBar implements IWindowTrim {
 	        
 	        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW);
 	        showItem.setImage(tbImage);
+	        final String menuTip = WorkbenchMessages.FastViewBar_0;
+			showItem.setToolTipText(menuTip);
+
+	        // Add an accessibility name
+			menuTB.getAccessible().addAccessibleListener(
+					new AccessibleAdapter() {
+						public void getName(AccessibleEvent e) {
+							if (e.childID == menuTB.indexOf(showItem)) {
+								e.result = menuTip;
+							}
+						}
+					});
 	        
-	        String menuTip = WorkbenchMessages.FastViewBar_0;
-	        showItem.setToolTipText(menuTip);
-	        
-	        // Bring up the 'Add Fast View' menu on a left -or- right button click
+	        // Bring up the 'Add Fast View' menu on a left -or- right button
+			// click
 	        // Right click (context menu)
 	        showItem.addListener(SWT.MenuDetect, addMenuListener);        
 	        
@@ -1148,8 +1160,8 @@ public class FastViewBar implements IWindowTrim {
 	 * Restore all refs and close the group
 	 */
 	public void closeGroup() {
-		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
-		persp.closeTrimGroup(this);
+//		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+//		persp.closeTrimGroup(this);
 	}
 
 	/**
