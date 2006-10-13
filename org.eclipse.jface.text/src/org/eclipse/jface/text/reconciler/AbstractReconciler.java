@@ -266,7 +266,7 @@ abstract public class AbstractReconciler implements IReconciler {
 						fDirtyRegionQueue.purgeQueue();
 					}
 					if (fDocument != null && fDocument.getLength() > 0) {
-						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), null);
+						DocumentEvent e= new DocumentEvent(fDocument, 0, fDocument.getLength(), ""); //$NON-NLS-1$
 						createDirtyRegion(e);
 						fThread.reset();
 						fThread.suspendCallerWhileDirty();

@@ -386,7 +386,7 @@ public class ProjectionDocument extends AbstractDocument {
 			if (fragment == null)
 				throw new IllegalArgumentException();
 
-			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), null, offsetInMaster, lengthInMaster);
+			ProjectionDocumentEvent event= new ProjectionDocumentEvent(this, imageRegion.getOffset(), imageRegion.getLength(), "", offsetInMaster, lengthInMaster); //$NON-NLS-1$
 			super.fireDocumentAboutToBeChanged(event);
 
 			if (fragment.getOffset() == offsetInMaster) {
