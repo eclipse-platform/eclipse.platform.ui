@@ -13,7 +13,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ResourceSearchDialog;
+import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * 
  * @since 2.1
  */
-public class OpenResourceDialog extends ResourceSearchDialog {
+public class OpenResourceDialog extends FilteredResourcesSelectionDialog {
 
 	/**
 	 * Creates a new instance of the class.

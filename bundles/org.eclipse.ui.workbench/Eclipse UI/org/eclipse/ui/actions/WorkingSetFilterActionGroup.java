@@ -25,7 +25,9 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -42,6 +44,10 @@ import org.eclipse.ui.internal.util.Util;
  * @since 2.1 
  */
 public class WorkingSetFilterActionGroup extends ActionGroup {
+    private static final String TAG_WORKING_SET_NAME = "workingSetName"; //$NON-NLS-1$
+
+	private static final String TAG_IS_WINDOW_WORKING_SET = "isWindowWorkingSet"; //$NON-NLS-1$
+	
     public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
 
     private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$
@@ -63,6 +69,10 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
     private IMenuListener menuListener;
 
 	private IWorkbenchWindow workbenchWindow;
+
+	private IWorkbenchPage page;
+
+	private boolean allowWindowWorkingSetByDefault;
 
     /**
 	 * Creates a new instance of the receiver.
@@ -88,8 +98,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         editWorkingSetAction = new EditWorkingSetAction(this, shell);
         
         workbenchWindow = Util.getWorkbenchWindowForShell(shell);
+        allowWindowWorkingSetByDefault = false;
 		// set the default working set to be that of the window.
-		IWorkbenchPage page = workbenchWindow.getActivePage();
+		page = workbenchWindow.getActivePage();
 		if (page == null) {
 			IWorkbenchPage[] pages = workbenchWindow.getPages();
 			if (pages.length > 0) {
@@ -123,10 +134,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         }
     }
 
-    /**
-     * Removes the menu listener
-     * 
-     * @see ActionGroup#dispose()
+ 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionGroup#dispose()
      */
     public void dispose() {
         if (menuManager != null) {
@@ -135,11 +145,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         super.dispose();
     }
 
-    /**
-     * Adds working set actions to the specified action bar.
-     * 
-     * @param actionBars action bar to add working set actions to.
-     * @see ActionGroup#fillActionBars(IActionBars)
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
      */
     public void fillActionBars(IActionBars actionBars) {
         menuManager = actionBars.getMenuManager();
@@ -157,6 +165,26 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         };
         menuManager.addMenuListener(menuListener);
     }
+    
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	public void fillContextMenu(IMenuManager menuManager) {
+		menuManager.add(selectWorkingSetAction);
+		menuManager.add(clearWorkingSetAction);
+		menuManager.add(editWorkingSetAction);
+		menuManager.add(new Separator());
+		menuManager.add(new Separator(SEPARATOR_ID));
+
+		menuListener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				removePreviousMruWorkingSetActions(manager);
+				addMruWorkingSetActions(manager);
+			}
+		};
+		menuManager.addMenuListener(menuListener);
+	}
 
     /**
      * Returns the working set which is currently selected.
@@ -209,5 +237,67 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
                     WorkingSetFilterActionGroup.CHANGE_WORKING_SET,
                     oldWorkingSet, newWorkingSet));
         }
+	}
+
+	/**
+	 * Saves the state of the filter actions in a memento.
+	 * 
+	 * @param memento
+	 *            the memento
+	 */
+	public void saveState(IMemento memento) {
+		String workingSetName = ""; //$NON-NLS-1$
+		boolean isWindowWorkingSet = false;
+		if (workingSet != null) {
+			if (workingSet.isAggregateWorkingSet()) {
+				isWindowWorkingSet = true;
+			} else {
+				workingSetName = workingSet.getName();
+			}
+		}
+		memento.putString(TAG_IS_WINDOW_WORKING_SET, Boolean
+				.toString(isWindowWorkingSet));
+		memento.putString(TAG_WORKING_SET_NAME, workingSetName);
+	}
+
+	/**
+	 * Restores the state of the filter actions from a memento.
+	 * <p>
+	 * Note: This method does not refresh the viewer.
+	 * </p>
+	 * 
+	 * @param memento
+	 */
+	public void restoreState(IMemento memento) {
+		boolean isWindowWorkingSet;
+		if (memento.getString(TAG_IS_WINDOW_WORKING_SET) != null) {
+			isWindowWorkingSet = Boolean.valueOf(
+					memento.getString(TAG_IS_WINDOW_WORKING_SET))
+					.booleanValue();
+		} else {
+			isWindowWorkingSet = useWindowWorkingSetByDefault();
+		}
+		String workingSetName = memento.getString(TAG_WORKING_SET_NAME);
+		boolean hasWorkingSetName = workingSetName != null
+				&& workingSetName.length() > 0;
+
+		IWorkingSet ws = null;
+		// First handle name if present.
+		if (hasWorkingSetName) {
+			ws = PlatformUI.getWorkbench().getWorkingSetManager()
+					.getWorkingSet(workingSetName);
+		} else if (isWindowWorkingSet && page != null) {
+			ws = page.getAggregateWorkingSet();
+		}
+
+		setWorkingSet(ws);
+	}
+
+	private boolean useWindowWorkingSetByDefault() {
+		return allowWindowWorkingSetByDefault
+				&& PlatformUI
+						.getPreferenceStore()
+						.getBoolean(
+								IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT);
 	}
 }

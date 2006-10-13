@@ -929,6 +929,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AbstractSearchDialog_patternLabel;
 	public static String AbstractSearchDialog_listLabel;
 	public static String AbstractSearchDialog_toggleStatusAction;
+	public static String AbstractSearchDialog_removeItemsFromHistoryAction;
 	public static String AbstractSearchDialog_separatorLabel;
     
     // AbstractSeracher

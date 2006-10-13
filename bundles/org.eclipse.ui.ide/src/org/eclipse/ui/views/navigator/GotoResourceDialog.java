@@ -13,7 +13,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ResourceSearchDialog;
+import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
  * pattern used to filter the list of resources.
  * 
  */
-/* package */class GotoResourceDialog extends ResourceSearchDialog {
+/* package */class GotoResourceDialog extends FilteredResourcesSelectionDialog {
 
 	/**
 	 * Creates a new instance of the class.
