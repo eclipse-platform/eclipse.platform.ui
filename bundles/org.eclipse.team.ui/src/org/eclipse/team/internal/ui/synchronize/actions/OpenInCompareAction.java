@@ -74,8 +74,9 @@ public class OpenInCompareAction extends Action {
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 			ICompareInput input = msp.asCompareInput(object);
-			if (input != null && isOkToOpen(site, participant, input)) {
-				return openCompareEditor(new ModelCompareEditorInput(msp, input), keepFocus, site);
+			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
+			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
+				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, object, input, workbenchPage), keepFocus, site);
 			}
 		}
 		return null;
@@ -111,10 +112,24 @@ public class OpenInCompareAction extends Action {
 		Assert.isNotNull(participant);	
 		if(info.getLocal().getType() != IResource.FILE) return null;
 		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
-		return openCompareEditor(input, keepFocus, site);
+		return openCompareEditor(getWorkbenchPage(site), input, keepFocus, site);
 	}
 
-	private static CompareEditorInput openCompareEditor(CompareEditorInput input, boolean keepFocus, ISynchronizePageSite site) {
+	private static CompareEditorInput openCompareEditor(
+			IWorkbenchPage page, 
+			CompareEditorInput input, 
+			boolean keepFocus,
+			ISynchronizePageSite site) {
+		if (page == null)
+			return null;
+		openCompareEditor(input, page);
+		if(site != null && keepFocus) {
+			site.setFocus();
+		}
+		return input;
+	}
+
+	private static IWorkbenchPage getWorkbenchPage(ISynchronizePageSite site) {
 		IWorkbenchPage page = null;
 		if(site == null || site.getWorkbenchSite() == null) {
 			IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -123,14 +138,7 @@ public class OpenInCompareAction extends Action {
 		} else {
 			page = site.getWorkbenchSite().getPage();
 		}
-		if(page != null) {
-			openCompareEditor(input, page);
-			if(site != null && keepFocus) {
-				site.setFocus();
-			}
-			return input;
-		}			
-		return null;
+		return page;
 	}
 
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {

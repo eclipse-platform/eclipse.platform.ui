@@ -25,12 +25,12 @@ import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
-import org.eclipse.team.ui.mapping.SaveableComparison;
+import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
@@ -242,6 +242,40 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 
 		public IResource getResource() {
 			return ResourceDiffTree.getResourceFor(node);
+		}
+
+		public ICompareInputChangeNotifier getChangeNotifier(ISynchronizationContext context) {
+			ResourceCompareInputChangeNotifier notifier = (ResourceCompareInputChangeNotifier)context.getCache().get("org.eclipse.team.ui.ResourceChangeNotifier");
+			if (notifier == null) {
+				notifier = new ResourceCompareInputChangeNotifier(context);
+				context.getCache().put("org.eclipse.team.ui.ResourceChangeNotifier", notifier);
+			}
+			return notifier;
+		}
+		
+		public boolean equals(Object other) {
+			if (other == this)
+				return true;
+			if (other instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput otherInput = (ResourceDiffCompareInput) other;
+				return (isEqual(getLeft(), otherInput.getLeft())
+						&& isEqual(getRight(), otherInput.getRight())
+						&& isEqual(getAncestor(), otherInput.getAncestor()));
+			}
+			return false;
+		}
+		
+		private boolean isEqual(ITypedElement e1, ITypedElement e2) {
+			if (e1 == null) {
+				return e2 == null;
+			}
+			if (e2 == null)
+				return false;
+			return e1.equals(e2);
+		}
+
+		public int hashCode() {
+			return getResource().hashCode();
 		}
 	}
 	

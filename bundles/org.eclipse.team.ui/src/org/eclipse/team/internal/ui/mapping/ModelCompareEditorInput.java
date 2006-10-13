@@ -25,8 +25,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.ICache;
+import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.mapping.*;
@@ -39,17 +40,80 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
 	private final Saveable model;
+	private final ICacheListener contextListener;
+	private final IWorkbenchPage page;
+	private final Object modelObject;
+	private ICompareInputChangeNotifier changeNotifier;
+	private ICompareInputChangeListener changeListener;
 
-	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input) {
+	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, Object modelObject, ICompareInput input, IWorkbenchPage page) {
 		super(new CompareConfiguration());
+		Assert.isNotNull(page);
 		Assert.isNotNull(participant);
 		Assert.isNotNull(input);
+		this.page = page;
 		this.participant = participant;
 		this.input = input;
 		this.model = asSaveable(input);
+		this.modelObject = modelObject;
 		setDirty(model.isDirty());
+		contextListener = new ICacheListener() {
+				public void cacheDisposed(ICache cache) {
+					closeEditor();
+				}
+			};
+		participant.getContext().getCache().addCacheListener(contextListener);
+		registerForInputStateChanges();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#handleDispose()
+	 */
+	protected void handleDispose() {
+		super.handleDispose();
+		participant.getContext().getCache().removeCacheListener(contextListener);
+		deregisterForInputStateChanges();
+	}
+	
+	private void registerForInputStateChanges() {
+		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(modelObject);
+		if (adapter != null) {
+			changeNotifier = adapter.getChangeNotifier(participant.getContext(), input);
+			if (changeNotifier != null) {
+				changeListener = new ICompareInputChangeListener() {
+					public void compareInputsChanged(ICompareInputChangeEvent event) {
+						if (event.isInSync(input)) {
+							closeEditor();
+						}
+					}
+				};
+				changeNotifier.addChangeListener(changeListener);
+				changeNotifier.connect(input);
+			}
+		}
+	}
+	
+	private void deregisterForInputStateChanges() {
+		if (changeNotifier != null) {
+			changeNotifier.removeChangeListener(changeListener);
+			changeNotifier.disconnect(input);
+		}
+	}
+	
+	protected void closeEditor() {
+		if (isSaveNeeded()) {
+			// TODO: Need to indicate to the user that the editor is stale
+		} else {
+			Display display = page.getWorkbenchWindow().getShell().getDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					IEditorPart part = page.findEditor(ModelCompareEditorInput.this);
+					page.closeEditor(part, false);
+				}
+			});
+		}
+	}
+	
 	private Saveable asSaveable(ICompareInput input) {
 		if (input instanceof ISynchronizationCompareInput) {
 			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;

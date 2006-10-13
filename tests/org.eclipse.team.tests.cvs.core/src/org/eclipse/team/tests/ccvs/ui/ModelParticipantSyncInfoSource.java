@@ -169,7 +169,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		assertViewMatchesModel(subscriber);
 	}
 	
-	private void waitForCollectionToFinish(Subscriber subscriber) {
+	public void waitForCollectionToFinish(Subscriber subscriber) {
 		ModelSynchronizeParticipant family = getParticipant(subscriber);
 		while (waitUntilFamilyDone(subscriber) 
 				|| waitUntilFamilyDone(family)

@@ -28,8 +28,8 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * A abstract implementation of {@link ISynchronizationCompareAdapter}. Most of the methods
- * are no-ops except for the {@link #asCompareInput(ISynchronizationContext, Object) }
+ * A abstract implementation of {@link ISynchronizationCompareAdapter}. 
+ * The {@link #asCompareInput(ISynchronizationContext, Object) }
  * which will convert file objects to an appropriate compare input.
  * <p>
  * Clients may subclass this class.
@@ -39,9 +39,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 public abstract class SynchronizationCompareAdapter implements ISynchronizationCompareAdapter {
 
 	/**
-	 * Default implementaton that is capable of returning a compare input for objects
-	 * that adapt to {@link IFile}. Subclasses shoudl override if compare inputs are
-	 * availabel for other types of model elements.
+	 * Default implementation that is capable of returning a compare input for objects
+	 * that adapt to {@link IFile}. Subclasses should override if compare inputs are
+	 * available for other types of model elements.
 	 * @see ISynchronizationCompareAdapter#asCompareInput(ISynchronizationContext, Object)
 	 */
 	public ICompareInput asCompareInput(ISynchronizationContext context, Object o) {
@@ -170,5 +170,22 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 	 */
 	public int getSynchronizationState(ITeamStateProvider provider, ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException {
 		return -1;
+	}
+	
+	/**
+	 * Default implementation which returns a change notifier for any compare inputs returned
+	 * by the {@link #asCompareInput(ISynchronizationContext, Object)} implementation in this class
+	 * and <code>null</code> otherwise. Subclasses can extend to return change notifiers for their custom
+	 * compare inputs.
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getChangeNotifier(org.eclipse.team.core.mapping.ISynchronizationContext, org.eclipse.compare.structuremergeviewer.ICompareInput)
+	 */
+	public ICompareInputChangeNotifier getChangeNotifier(
+			ISynchronizationContext context, ICompareInput input) {
+		
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			return rdci.getChangeNotifier(context);
+		}
+		return null;
 	}
 }

@@ -110,5 +110,22 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 		}
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return fileRevision.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof FileRevisionTypedElement) {
+			FileRevisionTypedElement other = (FileRevisionTypedElement) obj;
+			return other.getFileRevision().equals(getFileRevision());
+		}
+		return false;
+	}
 
 }
