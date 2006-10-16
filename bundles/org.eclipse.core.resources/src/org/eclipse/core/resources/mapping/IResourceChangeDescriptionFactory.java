@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * 
  * @see ResourceChangeValidator
  * @see ModelProvider
- * 
  * @since 3.2
  */
 public interface IResourceChangeDescriptionFactory {
@@ -49,13 +48,12 @@ public interface IResourceChangeDescriptionFactory {
 
 	/**
 	 * Record the set of deltas representing a copy of the given resource to the
-	 * given path. 
-	 * TODO: Additional flag needed to describe change
+	 * given workspace path. 
 	 * @param resource the resource that will be copied
-	 * @param destination the destination the resource is being copied to
+	 * @param destination the full workspace path of the destination the resource is being copied to
 	 */
 	public void copy(IResource resource, IPath destination);
-	
+
 	/**
 	 * Record a delta that represents a resource being created.
 	 * @param resource the resource that is created
@@ -76,9 +74,9 @@ public interface IResourceChangeDescriptionFactory {
 
 	/**
 	 * Record the set of deltas representing a move of the given resource to the
-	 * given path. 
+	 * given workspace path. 
 	 * @param resource the resource that will be moved
-	 * @param destination the destination the resource is being moved to
+	 * @param destination the full workspace path of the destination the resource is being moved to
 	 */
 	public void move(IResource resource, IPath destination);
 
