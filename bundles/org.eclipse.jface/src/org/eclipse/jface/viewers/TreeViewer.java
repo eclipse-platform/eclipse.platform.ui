@@ -667,25 +667,23 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param element
 	 * @param count
 	 * 
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.2 release cycle. Please do not use this API
-	 * without consulting with the Platform/UI team.
-	 * </p>
-	 * 
 	 * @since 3.2
 	 */
-	public void setChildCount(Object element, int count) {
-		Tree tree = (Tree) doFindInputItem(element);
-		if (tree != null) {
-			tree.setItemCount(count);
-			return;
-		}
-		Widget[] items = findItems(element);
-		for (int i = 0; i < items.length; i++) {
-			TreeItem treeItem = (TreeItem) items[i];
-			treeItem.setItemCount(count);
-		}
+	public void setChildCount(final Object element, final int count) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				Tree tree = (Tree) doFindInputItem(element);
+				if (tree != null) {
+					tree.setItemCount(count);
+					return;
+				}
+				Widget[] items = findItems(element);
+				for (int i = 0; i < items.length; i++) {
+					TreeItem treeItem = (TreeItem) items[i];
+					treeItem.setItemCount(count);
+				}
+			}
+		});
 	}
 
 	/**
@@ -707,12 +705,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * 
 	 * @see #setChildCount(Object, int)
 	 * @see ILazyTreeContentProvider
-	 * 
-	 * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.2 release cycle. Please do not use this API
-	 * without consulting with the Platform/UI team.
-	 * </p>
 	 * 
 	 * @since 3.2
 	 */
