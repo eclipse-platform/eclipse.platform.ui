@@ -74,7 +74,9 @@ public interface IResourceChangeDescriptionFactory {
 
 	/**
 	 * Record the set of deltas representing a move of the given resource to the
-	 * given workspace path. 
+	 * given workspace path. Note that this API is used to describe a resource
+	 * being moved to another path in the workspace, rather than a move in the
+	 * file system. 
 	 * @param resource the resource that will be moved
 	 * @param destination the full workspace path of the destination the resource is being moved to
 	 */
