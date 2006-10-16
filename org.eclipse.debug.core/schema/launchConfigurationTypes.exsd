@@ -17,7 +17,7 @@ As of 3.2 the types can also define a migration delegate that can be used to set
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="launchConfigurationType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="launchConfigurationType" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -50,7 +50,7 @@ As of 3.2 the types can also define a migration delegate that can be used to set
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="0" maxOccurs="1">
             <element ref="fileExtension" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -130,6 +130,11 @@ Launch configuration instances of this type will delegate to instances of this c
    </element>
 
    <element name="fileExtension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <attribute name="extension" type="string" use="required">
             <annotation>
