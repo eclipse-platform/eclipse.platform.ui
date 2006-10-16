@@ -174,7 +174,7 @@
          <action
                id="org.eclipse.debug.ui.actions.ToggleStepFilters"
                hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
                disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
                icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
@@ -197,7 +197,7 @@
          <action
                id="org.eclipse.debug.ui.actions.StepReturn"
                hoverIcon="$nl$/icons/full/elcl16/stepreturn_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepReturnActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepReturn"
                disabledIcon="$nl$/icons/full/dlcl16/stepreturn_co.gif"
                icon="$nl$/icons/full/elcl16/stepreturn_co.gif"
@@ -208,7 +208,7 @@
          <action
                id="org.eclipse.debug.ui.actions.StepOver"
                hoverIcon="$nl$/icons/full/elcl16/stepover_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepOverActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepOverCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepOver"
                disabledIcon="$nl$/icons/full/dlcl16/stepover_co.gif"
                icon="$nl$/icons/full/elcl16/stepover_co.gif"
@@ -219,7 +219,7 @@
          <action
                id="org.eclipse.debug.ui.actions.StepInto"
                hoverIcon="$nl$/icons/full/elcl16/stepinto_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.StepIntoActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.StepInto"
                disabledIcon="$nl$/icons/full/dlcl16/stepinto_co.gif"
                icon="$nl$/icons/full/elcl16/stepinto_co.gif"
@@ -230,7 +230,7 @@
          <action
                id="org.eclipse.debug.ui.actions.Terminate"
                hoverIcon="$nl$/icons/full/elcl16/terminate_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.TerminateActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.TerminateCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Terminate"
                disabledIcon="$nl$/icons/full/dlcl16/terminate_co.gif"
                icon="$nl$/icons/full/elcl16/terminate_co.gif"
@@ -241,7 +241,7 @@
          <action
                id="org.eclipse.debug.ui.actions.Suspend"
                hoverIcon="$nl$/icons/full/elcl16/suspend_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.SuspendActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.SuspendCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Suspend"
                disabledIcon="$nl$/icons/full/dlcl16/suspend_co.gif"
                icon="$nl$/icons/full/elcl16/suspend_co.gif"
@@ -252,7 +252,7 @@
          <action
                id="org.eclipse.debug.ui.actions.Resume"
                hoverIcon="$nl$/icons/full/elcl16/resume_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.ResumeActionDelegate"
+               class="org.eclipse.debug.internal.ui.commands.actions.ResumeCommandActionDelegate"
                definitionId="org.eclipse.debug.ui.commands.Resume"
                disabledIcon="$nl$/icons/full/dlcl16/resume_co.gif"
                icon="$nl$/icons/full/elcl16/resume_co.gif"
@@ -553,19 +553,6 @@
                label="%RemoveAllTerminatedAction.label"
                tooltip="%RemoveAllTerminatedAction.tooltip">
          </action>
-         <action
-               id="org.eclipse.debug.ui.debugview.toolbar.toggleStepFilters"
-               toolbarPath="renderGroup"
-               hoverIcon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
-               disabledIcon="$nl$/icons/full/dlcl16/stepbystep_co.gif"
-               icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               label="%StepWithFiltersAction.label"
-               helpContextId="step_with_filters_action_context"
-               tooltip="%StepWithFiltersAction.tooltip"
-               style="toggle"
-               state="false">
-         </action>         
       </viewContribution>
      
 <!-- Contributions to Breakpoints View Toolbar -->
@@ -984,17 +971,6 @@
                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
                menubarPath="launchGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.removeAllTerminated">
-         </action>
-         <action
-               label="%StepWithFiltersAction.label"
-               icon="$nl$/icons/full/elcl16/stepbystep_co.gif"
-               helpContextId="step_with_filters_action_context"
-               definitionId="org.eclipse.debug.ui.commands.ToggleStepFilters"
-               class="org.eclipse.debug.internal.ui.actions.context.ToggleStepFiltersActionDelegate"
-               menubarPath="renderGroup"
-               id="org.eclipse.debug.ui.debugview.popupMenu.stepWithFilters"
-               style="toggle"
-               state="false">
          </action>
       </viewerContribution>
 <!-- Contributions to Breakpoints View Popup Menu -->

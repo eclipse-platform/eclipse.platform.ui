@@ -2,3 +2,4 @@ org.eclipse.debug.ui/debug = false
 org.eclipse.debug.ui/debug/viewers/model = false
 org.eclipse.debug.ui/debug/viewers/viewer = false
 org.eclipse.debug.ui/debug/viewers/deltas = false
+org.eclipse.debug.ui/debug/commands = false

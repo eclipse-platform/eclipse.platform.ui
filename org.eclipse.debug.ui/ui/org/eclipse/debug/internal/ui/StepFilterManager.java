@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.internal.ui.actions.context.ActionRequestMonitor;
-import org.eclipse.debug.internal.ui.actions.provisional.IAsynchronousStepFiltersAdapter;
+import org.eclipse.debug.internal.ui.commands.actions.ActionRequestMonitor;
+import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
 
 /**
  * As targets are launched, this manager sets its step filter
@@ -49,11 +49,9 @@ public class StepFilterManager implements ILaunchListener {
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchChanged(ILaunch launch) {
-		boolean useStepFilters = isUseStepFilters();
-		IAsynchronousStepFiltersAdapter stepFilterAdapter = (IAsynchronousStepFiltersAdapter)launch.getAdapter(IAsynchronousStepFiltersAdapter.class);
-		if (stepFilterAdapter != null)
-		{
-			stepFilterAdapter.setStepFiltersEnabled(launch, useStepFilters, new ActionRequestMonitor());
+		IStepFiltersCommand command = (IStepFiltersCommand)launch.getAdapter(IStepFiltersCommand.class);
+		if (command != null) {
+			command.execute(launch, new ActionRequestMonitor());
 		}
 	}
 	

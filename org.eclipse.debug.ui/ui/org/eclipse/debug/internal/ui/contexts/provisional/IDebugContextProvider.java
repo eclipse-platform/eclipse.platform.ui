@@ -32,18 +32,18 @@ public interface IDebugContextProvider {
 	public IWorkbenchPart getPart();
 	
     /**
-     * Registers the given listener for context notifications.
+     * Registers the given listener for context events.
      * 
-     * @param listener context listener
+     * @param listener event listener
      */
-	public void addDebugContextListener(IDebugContextListener listener);
+	public void addDebugContextEventListener(IDebugContextEventListener listener);
     
     /**
-     * Unregisters the given listener for context notifications.
+     * Unregisters the given listener for context events.
      * 
-     * @param listener context listener
+     * @param listener event listener
      */
-	public void removeDebugContextListener(IDebugContextListener listener);
+	public void removeDebugContextEventListener(IDebugContextEventListener listener);
 	
     /**
      * Returns the currently active context, possibly empty or <code>null</code>.

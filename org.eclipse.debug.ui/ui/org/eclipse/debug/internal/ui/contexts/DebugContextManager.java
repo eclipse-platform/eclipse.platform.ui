@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWindowListener;
@@ -214,6 +215,13 @@ public class DebugContextManager implements IDebugContextManager {
 	private DebugWindowContextService[] getServices() {
 		Collection sevices = fServices.values();
 		return (DebugWindowContextService[]) sevices.toArray(new DebugWindowContextService[sevices.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager#getContextService(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public IDebugContextService getContextService(IWorkbenchWindow window) {
+		return createService(window);
 	}
 	
 }

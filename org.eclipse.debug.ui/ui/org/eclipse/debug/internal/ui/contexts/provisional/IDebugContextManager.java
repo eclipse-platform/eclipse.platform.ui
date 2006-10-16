@@ -109,5 +109,14 @@ public interface IDebugContextManager {
 	 * 
 	 * @param listener
 	 */	
-	public void removeDebugContextListener(IDebugContextListener listener);		
+	public void removeDebugContextListener(IDebugContextListener listener);
+	
+	/**
+	 * Returns the context service for the specified window.
+	 * 
+	 * @param window
+	 * @return context service
+	 * @since 3.3
+	 */
+	public IDebugContextService getContextService(IWorkbenchWindow window);
 }

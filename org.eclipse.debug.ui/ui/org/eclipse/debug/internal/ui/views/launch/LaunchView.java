@@ -14,10 +14,7 @@ package org.eclipse.debug.internal.ui.views.launch;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.ISafeRunnable;
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -33,21 +30,22 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.actions.FindElementAction;
-import org.eclipse.debug.internal.ui.actions.context.AbstractDebugContextAction;
-import org.eclipse.debug.internal.ui.actions.context.DisconnectAction;
-import org.eclipse.debug.internal.ui.actions.context.DropToFrameAction;
-import org.eclipse.debug.internal.ui.actions.context.ResumeAction;
-import org.eclipse.debug.internal.ui.actions.context.StepIntoAction;
-import org.eclipse.debug.internal.ui.actions.context.StepOverAction;
-import org.eclipse.debug.internal.ui.actions.context.StepReturnAction;
-import org.eclipse.debug.internal.ui.actions.context.SuspendAction;
-import org.eclipse.debug.internal.ui.actions.context.TerminateAction;
-import org.eclipse.debug.internal.ui.actions.context.TerminateAllAction;
-import org.eclipse.debug.internal.ui.actions.context.TerminateAndRelaunchAction;
-import org.eclipse.debug.internal.ui.actions.context.TerminateAndRemoveAction;
+import org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.ResumeCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepOverCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.StepReturnCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.SuspendCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateAllAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateAndRelaunchAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateAndRemoveAction;
+import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersAction;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
+import org.eclipse.debug.internal.ui.contexts.provisional.AbstractDebugContextProvider;
+import org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
@@ -67,7 +65,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -118,6 +115,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     private static final String TERMINATE_ALL = "terminate_all"; //$NON-NLS-1$
 
     private static final String TERMINATE_AND_RELAUNCH = "terminate_relaunch"; //$NON-NLS-1$
+    
+    private static final String TOGGLE_STEP_FILTERS = "toggle_step_filters"; //$NON-NLS-1$
 			
 	/**
 	 * Whether this view is in the active page of a perspective.
@@ -134,40 +133,19 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
 
-	class ContextProvider implements IDebugContextProvider {
-		/**
-		 * Context listeners
-		 */
-		private ListenerList fListeners = new ListenerList();
+	class ContextProvider extends AbstractDebugContextProvider {
 		
+		public ContextProvider() {
+			super(LaunchView.this);
+			// TODO Auto-generated constructor stub
+		}
+
 		private ISelection fContext = null;
 		
 		protected void dispose() { 
 			fContext = null;
-			fListeners.clear();
 		}
 		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getPart()
-		 */
-		public IWorkbenchPart getPart() {
-			return LaunchView.this;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener)
-		 */
-		public void addDebugContextListener(IDebugContextListener listener) {
-			fListeners.add(listener);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#removeDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener)
-		 */
-		public void removeDebugContextListener(IDebugContextListener listener) {
-			fListeners.remove(listener);
-		}
-
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.contexts.IDebugContextProvider#getActiveContext()
 		 */
@@ -175,23 +153,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			return fContext;
 		}	
 		
-		protected void activate(final ISelection selection) {
+		protected void activate(ISelection selection) {
 			synchronized (this) {
 				fContext = selection;
 			}
-			Object[] listeners = fListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-                SafeRunner.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						listener.contextActivated(selection, ContextProvider.this.getPart());
-					}
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-				});
-				
-			}
+			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
 		protected void possibleContextChange(Object element) {
@@ -205,20 +171,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					return;
 				}
 			}
-			Object[] listeners = fListeners.getListeners();
-			final IStructuredSelection context = new StructuredSelection(element);
-			for (int i = 0; i < listeners.length; i++) {
-				final IDebugContextListener listener = (IDebugContextListener) listeners[i];
-                SafeRunner.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						listener.contextChanged(context, ContextProvider.this.getPart());
-					}
-					public void handleException(Throwable exception) {
-						DebugUIPlugin.log(exception);
-					}
-				});
-				
-			}					
+			fire(new DebugContextEvent(this, fContext, DebugContextEvent.CHANGED));					
 		}
 		
 	}
@@ -246,43 +199,42 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fLookupAction = new LookupSourceAction(this);
 		setAction(FIND_ACTION, new FindElementAction(this, (AsynchronousTreeViewer) getViewer()));
         
-        
-        IWorkbenchWindow window = getSite().getWorkbenchWindow();
-        TerminateAction terminateAction = new TerminateAction();
-        terminateAction.init(window);
-        setAction(TERMINATE, terminateAction);
-        DisconnectAction disconnectAction = new DisconnectAction();
-        disconnectAction.init(window);
-        setAction(DISCONNECT, disconnectAction);
-        SuspendAction suspendAction = new SuspendAction();
-        suspendAction.init(window);
-        setAction(SUSPEND, suspendAction);
-        ResumeAction resumeAction = new ResumeAction();
-        resumeAction.init(window);
-        setAction(RESUME, resumeAction);
-        StepReturnAction stepReturnAction = new StepReturnAction();
-        stepReturnAction.init(window);
-        setAction(STEP_RETURN, stepReturnAction);
-        StepOverAction stepOverAction = new StepOverAction();
-        stepOverAction.init(window);
-        setAction(STEP_OVER, stepOverAction);
-        StepIntoAction stepIntoAction = new StepIntoAction();
-        stepIntoAction.init(window);
-        setAction(STEP_INTO, stepIntoAction);
-        DropToFrameAction dropToFrameAction = new DropToFrameAction();
-        dropToFrameAction.init(window);
-        setAction(DROP_TO_FRAME, dropToFrameAction);
-        TerminateAndRemoveAction terminateAndRemoveAction = new TerminateAndRemoveAction();
-        terminateAndRemoveAction.init(window);
-        setAction(TERMINATE_AND_REMOVE, terminateAndRemoveAction);
-        TerminateAllAction terminateAll = new TerminateAllAction();
-        terminateAll.init(window);
-        setAction(TERMINATE_ALL, terminateAll);
-        TerminateAndRelaunchAction terminateAndRelaunchAction = new TerminateAndRelaunchAction();
-        terminateAndRelaunchAction.init(window);
-        setAction(TERMINATE_AND_RELAUNCH, terminateAndRelaunchAction);
+        addCapabilityAction(new TerminateCommandAction(), TERMINATE);
+        addCapabilityAction(new DisconnectCommandAction(), DISCONNECT);
+        addCapabilityAction(new SuspendCommandAction(), SUSPEND);
+        addCapabilityAction(new ResumeCommandAction(), RESUME);
+        addCapabilityAction(new StepReturnCommandAction(), STEP_RETURN);
+        addCapabilityAction(new StepOverCommandAction(), STEP_OVER);
+        addCapabilityAction(new StepIntoCommandAction(), STEP_INTO);
+        addCapabilityAction(new DropToFrameCommandAction(), DROP_TO_FRAME);
+        addCapabilityAction(new TerminateAndRemoveAction(), TERMINATE_AND_REMOVE);
+        addCapabilityAction(new TerminateAndRelaunchAction(), TERMINATE_AND_RELAUNCH);
+        addCapabilityAction(new TerminateAllAction(), TERMINATE_ALL);
+        addCapabilityAction(new ToggleStepFiltersAction(), TOGGLE_STEP_FILTERS);
 	}
+	
 
+	/**
+	 * Initializes the action and associates it with the given id.
+	 * 
+	 * @param capability
+	 * @param actionID
+	 */
+	private void addCapabilityAction(DebugCommandAction capability, String actionID) {
+		capability.init(this);
+		setAction(actionID, capability);
+	}
+	
+	/**
+	 * Disposes the given action.
+	 * 
+	 * @param actionID
+	 */
+	private void disposeCommandAction(String actionID) {
+		DebugCommandAction action = (DebugCommandAction) getAction(actionID);
+		action.dispose();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
@@ -431,6 +383,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         tbm.appendToGroup(IDebugUIConstants.STEP_RETURN_GROUP, getAction(STEP_RETURN));
         
         tbm.appendToGroup(IDebugUIConstants.EMPTY_STEP_GROUP, getAction(DROP_TO_FRAME));
+        
+        tbm.appendToGroup(IDebugUIConstants.RENDER_GROUP, getAction(TOGGLE_STEP_FILTERS));
 	}	
 
 	/* (non-Javadoc)
@@ -461,28 +415,17 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         PropertyDialogAction properties = (PropertyDialogAction) getAction("Properties"); //$NON-NLS-1$
         properties.dispose();
         
-        AbstractDebugContextAction action = (AbstractDebugContextAction) getAction(TERMINATE);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(DISCONNECT);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(SUSPEND);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(RESUME);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(STEP_RETURN);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(STEP_OVER);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(STEP_INTO);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(DROP_TO_FRAME);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(TERMINATE_AND_REMOVE);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(TERMINATE_ALL);
-        action.dispose();
-        action = (AbstractDebugContextAction) getAction(TERMINATE_AND_RELAUNCH);
-        action.dispose();
+        disposeCommandAction(TERMINATE);
+        disposeCommandAction(DISCONNECT);
+        disposeCommandAction(SUSPEND);
+        disposeCommandAction(RESUME);
+        disposeCommandAction(STEP_RETURN);
+        disposeCommandAction(STEP_OVER);
+        disposeCommandAction(STEP_INTO);
+        disposeCommandAction(DROP_TO_FRAME);
+        disposeCommandAction(TERMINATE_AND_REMOVE);
+        disposeCommandAction(TERMINATE_AND_RELAUNCH);
+        disposeCommandAction(TERMINATE_ALL);
     }
 
     /**
@@ -612,6 +555,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         menu.appendToGroup(IDebugUIConstants.STEP_RETURN_GROUP, getAction(STEP_RETURN));
         
         menu.appendToGroup(IDebugUIConstants.EMPTY_STEP_GROUP, getAction(DROP_TO_FRAME));
+        
+        menu.appendToGroup(IDebugUIConstants.RENDER_GROUP, getAction(TOGGLE_STEP_FILTERS));
     }
 	
 	/**
