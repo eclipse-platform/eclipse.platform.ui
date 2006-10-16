@@ -12,11 +12,7 @@
 package org.eclipse.ui.ide.undo;
 
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.undo.ProjectDescription;
-import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A CreateProjectOperation represents an undoable operation for creating a
@@ -47,27 +43,5 @@ public class CreateProjectOperation extends AbstractCreateResourcesOperation {
 			String label) {
 		super(new ProjectDescription[] { new ProjectDescription(
 				projectDescription) }, label);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Overridden to return a specific error message for the existence of a case
-	 * variant of a project.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getErrorMessage(org.eclipse.core.runtime.CoreException)
-	 */
-	protected String getErrorMessage(CoreException e) {
-		if (e.getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
-			if (resourceDescriptions != null
-					&& resourceDescriptions.length == 1) {
-				ProjectDescription project = (ProjectDescription) resourceDescriptions[0];
-				return NLS
-						.bind(
-								UndoMessages.CreateProjectOperation_caseVariantExistsError,
-								project.getName());
-			}
-		}
-		return super.getErrorMessage(e);
 	}
 }

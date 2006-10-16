@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -44,8 +43,9 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * An AbstractWorkspaceOperation represents an undoable operation that affects
  * the workspace. It handles common workspace operation activities such as
  * tracking which resources are affected by an operation, prompting the user
- * when there are possible side effects of operations, error handling for core
- * exceptions, etc. Clients may call the public API from a background thread.
+ * when there are possible side effects of operations, building execution
+ * exceptions from core exceptions, etc. Clients may call the public API from a
+ * background thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 
@@ -182,9 +182,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Execute the specified operation. This implementation executes the
 	 * operation in a workspace runnable and catches any CoreExceptions
-	 * resulting from the operation. An error dialog is shown to the user if a
-	 * CoreException occurs and the exception is propagated as an
-	 * ExecutionException if specified by the core exception handler
+	 * resulting from the operation. Unhandled CoreExceptions are propagated as
+	 * ExecutionExceptions.
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
@@ -213,27 +212,9 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				}
 			}, getExecuteSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
-			final boolean[] propagateException = new boolean[1];
-			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
-				public void run() {
-					propagateException[0] = handleCoreException(
-							e,
-							getShell(uiInfo),
-							NLS
-									.bind(
-											UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
-											getLabel()));
-
-				}
-
-			});
-			if (propagateException[0]) {
-				throw new ExecutionException(
-						NLS
-								.bind(
-										UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
-										getLabel()), e);
-			}
+			throw new ExecutionException(NLS.bind(
+					UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
+					getLabel()), e);
 		}
 		isValid = true;
 		return Status.OK_STATUS;
@@ -242,9 +223,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Redo the specified operation. This implementation redoes the operation in
 	 * a workspace runnable and catches any CoreExceptions resulting from the
-	 * operation. An error dialog is shown to the user if a CoreException occurs
-	 * and the exception is propagated as an ExecutionException if specified by
-	 * the core exception handler.
+	 * operation. Unhandled CoreExceptions are propagated as
+	 * ExecutionExceptions.
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
@@ -272,24 +252,10 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				}
 			}, getRedoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
-			final boolean[] propagateException = new boolean[1];
-			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
-				public void run() {
-					propagateException[0] = handleCoreException(
-							e,
-							getShell(uiInfo),
-							NLS
-									.bind(
-											UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
-											getLabel()));
-				}
+			throw new ExecutionException(NLS.bind(
+					UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
+					getLabel()), e);
 
-			});
-			if (propagateException[0]) {
-				throw new ExecutionException(NLS.bind(
-						UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
-						getLabel()), e);
-			}
 		}
 		isValid = true;
 		return Status.OK_STATUS;
@@ -298,9 +264,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Undo the specified operation. This implementation undoes the operation in
 	 * a workspace runnable and catches any CoreExceptions resulting from the
-	 * operation. An error dialog is shown to the user if a CoreException occurs
-	 * and the exception is propagated as an ExecutionException if specified by
-	 * the core exception handler.
+	 * operation. Unhandled CoreExceptions are propagated as
+	 * ExecutionExceptions.
 	 * 
 	 * @param monitor
 	 *            the progress monitor to use for the operation
@@ -328,25 +293,10 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				}
 			}, getUndoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
 		} catch (final CoreException e) {
-			final boolean[] propagateException = new boolean[1];
-			getShell(uiInfo).getDisplay().syncExec(new Runnable() {
-				public void run() {
-					propagateException[0] = handleCoreException(
-							e,
-							getShell(uiInfo),
-							NLS
-									.bind(
-											UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
-											getLabel()));
+			throw new ExecutionException(NLS.bind(
+					UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
+					getLabel()), e);
 
-				}
-
-			});
-			if (propagateException[0]) {
-				throw new ExecutionException(NLS.bind(
-						UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
-						getLabel()), e);
-			}
 		}
 		isValid = true;
 		return Status.OK_STATUS;
@@ -702,49 +652,6 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Handle the core exception that occurred while trying to execute, undo, or
-	 * redo the operation, returning a boolean to indicate whether this
-	 * exception should cause a {@link ExecutionException} to be thrown.
-	 * 
-	 * It is safe to access UI in this method. The default implementation is to
-	 * show an error dialog, but subclasses may override this method to swallow
-	 * certain exceptions or handle them differently.
-	 * 
-	 * If the only difference in handling the exception is to show a different
-	 * error message, subclasses should override
-	 * {@link #getErrorMessage(CoreException)} instead.
-	 * 
-	 * @param e
-	 *            the CoreException
-	 * @param shell
-	 *            the shell to be used for showing any UI information
-	 * @param errorTitle
-	 *            the title to be used in the error dialog.
-	 * @return a boolean indicating whether this exception should be propagated
-	 *         to the caller as an ExecutionException
-	 */
-	protected boolean handleCoreException(CoreException e, Shell shell,
-			String errorTitle) {
-		ErrorDialog.openError(shell, errorTitle, getErrorMessage(e), e
-				.getStatus());
-		return true;
-	}
-
-	/**
-	 * Return the specific error message to use when the specified core
-	 * exception occurs, or <code>null</code> to indicate that the the
-	 * exception's message should be used.
-	 * 
-	 * @param e
-	 *            the CoreException
-	 * @return the string to be used in any shown error message, or
-	 *         <code>null</code> if the exception's message should be shown.
-	 */
-	protected String getErrorMessage(CoreException e) {
-		return null;
 	}
 
 	/**
