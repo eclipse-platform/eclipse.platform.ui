@@ -355,7 +355,9 @@ function scrollIntoView(node) {
  * Scrolls the page so the node gets to the first line
  */
 function scrollToViewTop(node) {
-	window.scrollTo(0, node.offsetTop);
+    if (node != null) {
+	    window.scrollTo(0, node.offsetTop);
+	}
 }
 
 /*
