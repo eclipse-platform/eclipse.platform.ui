@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow, fix for 159597
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -1375,7 +1375,7 @@ public class TableViewer extends ColumnViewer {
 	 *         coordinates
 	 */
 	protected Item getItem(int x, int y) {
-		return table.getItem(new Point(x, y));
+		return table.getItem(table.toControl(new Point(x, y)));
 	}
 
 }
