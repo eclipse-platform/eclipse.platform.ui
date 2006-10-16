@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Fredy Dobler <fredy@dobler.net> - bug 159600
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -21,6 +22,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -87,15 +89,19 @@ class ToolTipSupport {
 				disposeTooltip(tip);
 				break;
 			case SWT.MouseHover:
-				Point p = new Point(event.x, event.y);
-				ViewerRow row = viewer.getRowPart(p);
-				viewer.getControl().setToolTipText(""); //$NON-NLS-1$
+                if (!(event.widget instanceof Control))
+                  break;
+                // map receiver-relative coordinates to display-relative coordinates
+                ViewerRow row = viewer.getRowPart(((Control) event.widget).toDisplay(
+                    event.x, event.y));
+                viewer.getControl().setToolTipText(""); //$NON-NLS-1$
 
-				if (row != null) {
-					popupTooltip(row, p);
-				}
-
-				break;
+                if (row != null)
+                {
+                  // use receiver-relative coordinates
+                  popupTooltip(row, new Point(event.x, event.y));
+                }
+                break;
 			}
 		}
 		
