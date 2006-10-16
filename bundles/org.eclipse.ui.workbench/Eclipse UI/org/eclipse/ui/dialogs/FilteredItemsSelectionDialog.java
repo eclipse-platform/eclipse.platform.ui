@@ -1334,14 +1334,14 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * @param element
-	 * @return
+	 * @return Object
 	 */
 	protected Object removeHistoryElement(Object element) {
 		return this.searcherHistory.remove(element);
 	}
 
 	/**
-	 * @return
+	 * @return Collection 
 	 */
 	protected Collection getHistoryElements() {
 		return searcherHistory.getValues();
