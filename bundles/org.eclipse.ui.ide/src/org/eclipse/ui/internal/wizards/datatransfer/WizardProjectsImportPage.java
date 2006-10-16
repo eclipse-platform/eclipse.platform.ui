@@ -1053,10 +1053,14 @@ public class WizardProjectsImportPage extends WizardPage implements
 				status);
 			return false;
 		}
-		finally {
-			ArchiveFileManipulations.clearProviderCache(getContainer().getShell());
-		}
 		return true;
+	}
+	
+	/**
+	 * Performs clean-up if the user cancels the wizard without doing anything
+	 */
+	public void performCancel() {
+		ArchiveFileManipulations.clearProviderCache(getContainer().getShell());		
 	}
 
 	/**

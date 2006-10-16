@@ -86,6 +86,7 @@ public class ExternalProjectImportWizard extends Wizard implements
      * Method declared on IWizard.
      */
     public boolean performCancel() {
+    	mainPage.performCancel();
         return true;
     }
 
