@@ -18,6 +18,7 @@ import java.net.URI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -41,7 +42,7 @@ public class FileDescription extends ResourceDescription {
 
 	URI location;
 
-	private IFileState fileState;
+	private IFileContentDescription fileContentDescription;
 
 	/**
 	 * Create a FileDescription that can be used to later restore the given
@@ -64,23 +65,24 @@ public class FileDescription extends ResourceDescription {
 	 * Create a file description from the specified file handle. The handle does
 	 * not exist, so no information should be derived from it. If a location
 	 * path is specified, this file should represent a link to another location.
-	 * The IFileState describes any state that should be used when the file
-	 * resource is created.
+	 * The content description describes any state that should be used when the
+	 * file resource is created.
 	 * 
 	 * @param file
 	 *            the file to be described
 	 * @param linkLocation
 	 *            the location of the file's link, or <code>null</code> if the
 	 *            file is not linked
-	 * @param fileState
-	 *            the file state that can be used to get information about the
-	 *            file, such as its initial content
+	 * @param fileContentDescription
+	 *            the file content description that can be used to get
+	 *            information about the file, such as its initial content
 	 */
-	public FileDescription(IFile file, URI linkLocation, IFileState fileState) {
+	public FileDescription(IFile file, URI linkLocation,
+			IFileContentDescription fileContentDescription) {
 		super(file);
 		this.name = file.getName();
 		this.location = linkLocation;
-		this.fileState = fileState;
+		this.fileContentDescription = fileContentDescription;
 	}
 
 	/*
@@ -99,7 +101,30 @@ public class FileDescription extends ResourceDescription {
 		}
 		IFileState[] states = ((IFile) resource).getHistory(monitor);
 		if (states.length > 0) {
-			this.fileState = states[0];
+			final IFileState state = states[0];
+			this.fileContentDescription = new IFileContentDescription() {
+				/*
+				 * (non-Javadoc)
+				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
+				 */
+				public String getCharset() throws CoreException {
+					return state.getCharset();
+				}
+				/*
+				 * (non-Javadoc)
+				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
+				 */
+				public boolean exists() {
+					return state.exists();
+				}
+				/*
+				 * (non-Javadoc)
+				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
+				 */
+				public InputStream getContents() throws CoreException {
+					return state.getContents();
+				}
+			};
 		}
 	}
 
@@ -141,13 +166,13 @@ public class FileDescription extends ResourceDescription {
 						UndoMessages.FileDescription_ContentsCouldNotBeRestored
 								.getBytes());
 				String charset = null;
-				// Retrieve the contents and charset from the file state.
-				// Other file state attributes, such as timestamps, have
-				// already been retrieved from the original IResource object
-				// and are restored in the superclass.
-				if (fileState != null && fileState.exists()) {
-					contents = fileState.getContents();
-					charset = fileState.getCharset();
+				// Retrieve the contents and charset from the file content
+				// description. Other file state attributes, such as timestamps,
+				// have already been retrieved from the original IResource
+				// object and are restored in the superclass.
+				if (fileContentDescription != null && fileContentDescription.exists()) {
+					contents = fileContentDescription.getContents();
+					charset = fileContentDescription.getCharset();
 				}
 				fileHandle.create(contents, false, new SubProgressMonitor(
 						monitor, 100));
@@ -156,6 +181,12 @@ public class FileDescription extends ResourceDescription {
 			}
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
+			}
+		} catch (CoreException e) {
+			if (e.getStatus().getCode() == IResourceStatus.PATH_OCCUPIED) {
+				fileHandle.refreshLocal(IResource.DEPTH_ZERO, null);
+			} else {
+				throw e;
 			}
 		} finally {
 			monitor.done();
@@ -168,7 +199,7 @@ public class FileDescription extends ResourceDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#isValid()
 	 */
 	public boolean isValid() {
-		return super.isValid() && fileState != null && fileState.exists();
+		return super.isValid() && fileContentDescription != null && fileContentDescription.exists();
 	}
 
 	/*

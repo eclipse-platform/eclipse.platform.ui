@@ -16,11 +16,10 @@ import java.io.InputStream;
 import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 import org.eclipse.ui.internal.ide.undo.FileDescription;
+import org.eclipse.ui.internal.ide.undo.IFileContentDescription;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
@@ -63,21 +62,22 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 		if (linkLocation == null) {
 			if (fileHandle.getParent().exists()) {
 				resourceDescription = new FileDescription(fileHandle, null,
-						createFileState(fileHandle, contents));
+						createFileContentDescription(fileHandle, contents));
 			} else {
 				// must first ensure descriptions for the parent folders are
 				// created
 				ContainerDescription containerDescription = ContainerDescription
 						.fromContainer(fileHandle.getParent());
 				containerDescription.getFirstLeafFolder().addMember(
-						new FileDescription(fileHandle, null, createFileState(
-								fileHandle, contents)));
+						new FileDescription(fileHandle, null,
+								createFileContentDescription(fileHandle,
+										contents)));
 				resourceDescription = containerDescription;
 			}
 		} else {
 			// create a linked file description
 			resourceDescription = new FileDescription(fileHandle, linkLocation,
-					createFileState(fileHandle, contents));
+					createFileContentDescription(fileHandle, contents));
 		}
 		setResourceDescriptions(new ResourceDescription[] { resourceDescription });
 
@@ -88,13 +88,13 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 	 * of the file to be created. Used to mimic file history when a resource is
 	 * first created.
 	 */
-	private IFileState createFileState(final IFile file,
-			final InputStream contents) {
-		return new IFileState() {
+	private IFileContentDescription createFileContentDescription(
+			final IFile file, final InputStream contents) {
+		return new IFileContentDescription() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.core.resources.IFileState#getContents()
+			 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
 			 */
 			public InputStream getContents() {
 				if (contents != null) {
@@ -106,16 +106,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-			 */
-			public Object getAdapter(Class clazz) {
-				return null;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IEncodedStorage#getCharset()
+			 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
 			 */
 			public String getCharset() {
 				try {
@@ -128,46 +119,10 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.core.resources.IFileState#getFullPath()
-			 */
-			public IPath getFullPath() {
-				return file.getFullPath();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IFileState#getName()
-			 */
-			public String getName() {
-				return file.getName();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IFileState#exists()
+			 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
 			 */
 			public boolean exists() {
 				return true;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IFileState#isReadOnly()
-			 */
-			public boolean isReadOnly() {
-				return true;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.resources.IFileState#getModificationTime()
-			 */
-			public long getModificationTime() {
-				return file.getLocalTimeStamp();
 			}
 		};
 	}
