@@ -146,7 +146,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the element or tree path
 	 * @return the items for that element
 	 */
-	private Widget[] internalFindItems(Object parentElementOrTreePath) {
+	/* package */ Widget[] internalFindItems(Object parentElementOrTreePath) {
 		Widget[] widgets = findItems(parentElementOrTreePath);
 		if (parentElementOrTreePath instanceof TreePath) {
 			TreePath path = (TreePath) parentElementOrTreePath;

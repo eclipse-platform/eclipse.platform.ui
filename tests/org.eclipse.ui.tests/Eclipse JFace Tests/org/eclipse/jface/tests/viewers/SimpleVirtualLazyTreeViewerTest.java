@@ -11,6 +11,8 @@
 package org.eclipse.jface.tests.viewers;
 
 import org.eclipse.jface.viewers.ILazyTreeContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,10 +31,16 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	private static final int NUM_ROOTS = 100;
+	private static final int NUM_CHILDREN = 10;
 
 	private boolean callbacksEnabled = true;
 
 	private class LazyTreeContentProvider implements ILazyTreeContentProvider {
+		/**
+		 * 
+		 */
+		private Object input;
+
 		public void updateElement(Object parent, int index) {
 			updateElementCallCount++;
 			String parentString = (String) parent;
@@ -40,7 +48,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 			// System.out.println(childElement);
 			if (callbacksEnabled) {
 				getTreeViewer().replace(parent, index, childElement);
-				getTreeViewer().setChildCount(childElement, 10);
+				getTreeViewer().setChildCount(childElement, NUM_CHILDREN);
 			}
 		}
 
@@ -49,7 +57,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		}
 
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// do nothing
+			this.input = newInput;
 		}
 
 		public Object getParent(Object element) {
@@ -61,7 +69,7 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		 */
 		public void updateChildCount(Object element, int currentChildCount) {
 			if (callbacksEnabled) {
-				getTreeViewer().setChildCount(element, 10);
+				getTreeViewer().setChildCount(element, element==input?NUM_ROOTS:NUM_CHILDREN);
 			}
 		}
 	}
@@ -79,11 +87,10 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	protected void setInput() {
 		String letterR = "R";
 		getTreeViewer().setInput(letterR);
-		getTreeViewer().setChildCount(letterR, NUM_ROOTS);
 	}
 
 	protected StructuredViewer createViewer(Composite parent) {
-		Tree tree = new Tree(fShell, SWT.VIRTUAL);
+		Tree tree = new Tree(fShell, SWT.VIRTUAL | SWT.MULTI);
 		TreeViewer treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(new LazyTreeContentProvider());
 		return treeViewer;
@@ -106,13 +113,13 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 		getTreeViewer().expandToLevel("R-0", 1);
 		// force redrawing the tree - this will trigger the SetData event
 		tree.update();
-		assertEquals(10, tree.getItem(0).getItemCount());
+		assertEquals(NUM_CHILDREN, tree.getItem(0).getItemCount());
 		TreeItem treeItem = tree.getItem(0).getItem(3);
 		expandAndNotify(treeItem);
 		// force redrawing the tree - this will trigger the SetData event
 		tree.update();
-		assertEquals(10, treeItem.getItemCount());
-		assertEquals(10, treeItem.getItems().length);
+		assertEquals(NUM_CHILDREN, treeItem.getItemCount());
+		assertEquals(NUM_CHILDREN, treeItem.getItems().length);
 		// interact();
 	}
 
@@ -140,5 +147,25 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 	public void testSetComparatorOnNullInput(){
 		fViewer.setInput(null);
 		fViewer.setComparator(new ViewerComparator());		
+	}
+	
+	/* test TreeViewer.remove(parent, index) */ 
+	public void testRemoveAt() {
+		TreeViewer treeViewer = (TreeViewer) fViewer;
+		treeViewer.remove(treeViewer.getInput(), 3);
+		assertEquals(NUM_ROOTS - 1, treeViewer.getTree().getItemCount());
+		treeViewer.getTree().update();
+		treeViewer.setSelection(new StructuredSelection(new Object[] { "R-0",
+				"R-1" }));
+		assertEquals(2, ((IStructuredSelection) treeViewer.getSelection())
+				.size());
+		assertTrue(updateElementCallCount < NUM_ROOTS / 2);
+		updateElementCallCount = 0;
+		treeViewer.remove(treeViewer.getInput(), 1);
+		assertEquals(NUM_ROOTS - 2, treeViewer.getTree().getItemCount());
+		processEvents();
+		assertEquals(1, ((IStructuredSelection) treeViewer.getSelection())
+				.size());
+		assertEquals(1, updateElementCallCount);
 	}
 }

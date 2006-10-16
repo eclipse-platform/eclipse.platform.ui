@@ -992,4 +992,39 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
+	/**
+	 * Removes the element at the specified index of the parent.  The selection is updated if required.
+	 * 
+	 * @param parentOrTreePath the parent element, the input element, or a tree path to the parent element 
+	 * @param index child index
+	 * @since 3.3
+	 */
+	public void remove(final Object parentOrTreePath, final int index) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (parentOrTreePath.equals(getInput())) {
+					Tree tree = (Tree) getControl();
+					if (index < tree.getItemCount()) {
+						TreeItem item = tree.getItem(index);
+						if (item.getData() != null) {
+							disassociate(item);
+						}
+						item.dispose();
+					}
+				} else {
+					Widget[] parentItems = internalFindItems(parentOrTreePath);
+					for (int i = 0; i < parentItems.length; i++) {
+						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (index < parentItem.getItemCount()) {
+							TreeItem item = parentItem.getItem(index);
+							if (item.getData() != null) {
+								disassociate(item);
+							}
+							item.dispose();
+						}
+					}
+				}
+			}
+		});
+	}       
 }
