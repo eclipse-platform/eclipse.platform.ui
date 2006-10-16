@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -115,11 +114,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getExecuteSchedulingRule()
 	 */
 	protected ISchedulingRule getExecuteSchedulingRule() {
-		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
-		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = getWorkspaceRuleFactory().deleteRule(resources[i]);
-		}
-		return MultiRule.combine(ruleArray);
+		return super.computeDeleteSchedulingRule();
 	}
 
 	/*
@@ -128,14 +123,7 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#getUndoSchedulingRule()
 	 */
 	protected ISchedulingRule getUndoSchedulingRule() {
-		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 2];
-		for (int i = 0; i < resourceDescriptions.length; i++) {
-			IResource resource = resourceDescriptions[i].createResourceHandle();
-			ruleArray[i * 2] = getWorkspaceRuleFactory().createRule(resource);
-			ruleArray[i * 2 + 1] = getWorkspaceRuleFactory().modifyRule(
-					resource);
-		}
-		return MultiRule.combine(ruleArray);
+		return super.computeCreateSchedulingRule();
 	}
 
 	/*

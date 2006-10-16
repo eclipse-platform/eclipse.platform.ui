@@ -19,7 +19,6 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -218,14 +216,17 @@ public class WorkspaceUndoUtil {
 	}
 
 	/**
-	 * Move the specified resource to the new path provided. The new path
-	 * includes any new name desired for the moved resource. Return the resource
-	 * descriptions for any resources that were overwritten as part of the move.
+	 * Move the specified resource to the new path provided. The new path is
+	 * relative to the workspace and includes any new name desired for the moved
+	 * resource. Note that this method does not handle the movement of a project
+	 * from one location URI to another. Return the resource descriptions for
+	 * any resources that were overwritten as part of the move.
 	 * 
 	 * @param resourceToMove
 	 *            the resource to be moved
 	 * @param newPath
-	 *            the destination path for the resource, including its name
+	 *            the workspace-relative destination path for the resource,
+	 *            including its name
 	 * @param monitor
 	 *            the progress monitor used to show progress
 	 * @param uiInfo
@@ -282,28 +283,10 @@ public class WorkspaceUndoUtil {
 		// Overwrites have been handled. If there is still a move to do, do
 		// so now.
 		if (!moved) {
-			if (resourceToMove.getType() == IResource.PROJECT) {
-				IProject project = (IProject) resourceToMove;
-				IProjectDescription description = project.getDescription();
-				description.setName(newPath.lastSegment());
-				// If the location is the default then set the location
-				// to null
-				IPath projectLocation = newPath.removeLastSegments(1);
-				if (projectLocation.equals(Platform.getLocation())) {
-					description.setLocation(null);
-				} else {
-					description.setLocation(projectLocation);
-				}
-				project.move(description, IResource.FORCE | IResource.SHALLOW,
-						new SubProgressMonitor(monitor, 2));
-			} else {
-				generateContainers(newPath.removeLastSegments(1));
-				resourceToMove
-						.move(newPath, IResource.KEEP_HISTORY
-								| IResource.SHALLOW, new SubProgressMonitor(
-								monitor, 2));
+			generateContainers(newPath.removeLastSegments(1));
+			resourceToMove.move(newPath, IResource.KEEP_HISTORY
+					| IResource.SHALLOW, new SubProgressMonitor(monitor, 2));
 
-			}
 		}
 		monitor.done();
 		return (ResourceDescription[]) overwrittenResources
@@ -317,7 +300,8 @@ public class WorkspaceUndoUtil {
 	 * @param resources
 	 *            the resources to be copied
 	 * @param destination
-	 *            the destination path for the resources
+	 *            the destination path for the resources, relative to the
+	 *            workspace
 	 * @param monitor
 	 *            the progress monitor used to show progress
 	 * @param uiInfo
@@ -402,32 +386,14 @@ public class WorkspaceUndoUtil {
 					}
 				} else {
 					// no resources are being overwritten
-					if (source.getType() == IResource.PROJECT) {
-						// Get a copy of the current description and modify it
-						IProjectDescription newDescription = ((IProject) source)
-								.getDescription();
-						newDescription.setName(destinationPath.lastSegment());
-						// If the location is the default then set the location
-						// to null
-						IPath projectLocation = destinationPath
-								.removeLastSegments(1);
-						if (projectLocation.equals(Platform.getLocation())) {
-							newDescription.setLocation(null);
-						} else {
-							newDescription.setLocation(projectLocation);
-						}
-						source.copy(newDescription, IResource.SHALLOW
-								| IResource.FORCE, monitor);
-					} else {
-						// ensure the destination path exists
-						IPath parentPath = destination;
-						if (pathIncludesName) {
-							parentPath = destination.removeLastSegments(1);
-						}
-						generateContainers(parentPath);
-						source.copy(destinationPath, IResource.SHALLOW,
-								new SubProgressMonitor(monitor, 1));
+					// ensure the destination path exists
+					IPath parentPath = destination;
+					if (pathIncludesName) {
+						parentPath = destination.removeLastSegments(1);
 					}
+					generateContainers(parentPath);
+					source.copy(destinationPath, IResource.SHALLOW,
+							new SubProgressMonitor(monitor, 1));
 				}
 
 				if (monitor.isCanceled()) {
@@ -595,7 +561,10 @@ public class WorkspaceUndoUtil {
 	 */
 	private static void generateContainers(IPath path) throws CoreException {
 		IContainer container;
-		if (path.segmentCount() == 1) {
+		if (path.segmentCount() == 0) {
+			// nothing to generate
+			return;
+		} else if (path.segmentCount() == 1) {
 			container = ResourcesPlugin.getWorkspace().getRoot().getProject(
 					path.segment(0));
 		} else {

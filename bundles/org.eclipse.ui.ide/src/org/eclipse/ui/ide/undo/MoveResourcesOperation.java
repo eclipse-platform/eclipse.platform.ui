@@ -71,6 +71,18 @@ public class MoveResourcesOperation extends
 		super(new IResource[] { resource }, new IPath[] { newPath }, label);
 	}
 
+	/**
+	 * Create a MoveResourcesOperation whose destination is not
+	 * yet specified.
+	 * 
+	 * @param resources
+	 *            the resources to be modified
+	 * @param label
+	 *            the label of the operation
+	 */
+	MoveResourcesOperation(IResource[] resources, String label) {
+		super(resources, label);
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -107,7 +119,7 @@ public class MoveResourcesOperation extends
 			IResourceChangeDescriptionFactory factory, int operation) {
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			factory.move(resource, getDestinationPath(resource, i, true));
+			factory.move(resource, getDestinationPath(resource, i));
 		}
 		return true;
 	}

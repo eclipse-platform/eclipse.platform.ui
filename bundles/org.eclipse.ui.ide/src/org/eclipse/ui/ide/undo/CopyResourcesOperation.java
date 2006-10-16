@@ -53,7 +53,8 @@ public class CopyResourcesOperation extends
 	 * @param resource
 	 *            the resource to be moved
 	 * @param newPath
-	 *            the new path for the resource, including its desired name.
+	 *            the new workspace-relative path for the resource, including
+	 *            its desired name.
 	 * @param label
 	 *            the label of the operation
 	 */
@@ -72,7 +73,8 @@ public class CopyResourcesOperation extends
 	 * @param resources
 	 *            the resources to be copied
 	 * @param destinationPath
-	 *            the destination path for the copied resource.
+	 *            the workspace-relative destination path for the copied
+	 *            resource.
 	 * @param label
 	 *            the label of the operation
 	 */
@@ -92,8 +94,9 @@ public class CopyResourcesOperation extends
 	 * @param resources
 	 *            the resources to be copied
 	 * @param destinationPaths
-	 *            a destination path for each copied resource, which includes
-	 *            the name of the resource at the new destination
+	 *            a workspace-relative destination path for each copied
+	 *            resource, which includes the name of the resource at the new
+	 *            destination
 	 * @param label
 	 *            the label of the operation
 	 */
@@ -101,11 +104,7 @@ public class CopyResourcesOperation extends
 			IPath[] destinationPaths, String label) {
 		super(resources, destinationPaths, label);
 		originalResources = resources;
-		// the destination array must be copied so it will be remembered.
-		// move and copy operations update the original array.
-		originalDestinationPaths = new IPath[destinationPaths.length];
-		System.arraycopy(destinationPaths, 0, originalDestinationPaths, 0,
-				destinationPaths.length);
+		originalDestinationPaths = destinationPaths;
 	}
 
 	/*
@@ -180,7 +179,7 @@ public class CopyResourcesOperation extends
 			for (int i = 0; i < resources.length; i++) {
 				update = true;
 				IResource resource = resources[i];
-				factory.copy(resource, getDestinationPath(resource, i, false));
+				factory.copy(resource, getDestinationPath(resource, i));
 			}
 		}
 		return update;

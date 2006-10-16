@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
@@ -256,5 +258,44 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		text.append(" resourceDescriptions: "); //$NON-NLS-1$
 		text.append(resourceDescriptions);
 		text.append('\'');
+	}
+
+	/**
+	 * Compute a scheduling rule for creating resources.
+	 * 
+	 * @return a scheduling rule appropriate for creating the resources
+	 *         specified in the resource descriptions
+	 */
+	protected ISchedulingRule computeCreateSchedulingRule() {
+		ISchedulingRule[] ruleArray = new ISchedulingRule[resourceDescriptions.length * 3];
+
+		for (int i = 0; i < resourceDescriptions.length; i++) {
+			IResource resource = resourceDescriptions[i].createResourceHandle();
+			// Need a rule for creating...
+			ruleArray[i * 3] = getWorkspaceRuleFactory().createRule(resource);
+			// ...and modifying
+			ruleArray[i * 3 + 1] = getWorkspaceRuleFactory().modifyRule(
+					resource);
+			// ...and changing the charset
+			ruleArray[i * 3 + 2] = getWorkspaceRuleFactory().charsetRule(
+					resource);
+	
+		}
+		return MultiRule.combine(ruleArray);
+	}
+
+	/**
+	 * Compute a scheduling rule for deleting resources.
+	 * 
+	 * @return a scheduling rule appropriate for deleting the resources
+	 *         specified in the receiver.
+	 */
+	protected ISchedulingRule computeDeleteSchedulingRule() {
+		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
+		for (int i = 0; i < resources.length; i++) {
+			ruleArray[i] = getWorkspaceRuleFactory().deleteRule(resources[i]);
+		}
+		return MultiRule.combine(ruleArray);
+
 	}
 }

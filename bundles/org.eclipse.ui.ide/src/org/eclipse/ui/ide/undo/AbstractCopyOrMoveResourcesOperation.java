@@ -16,14 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -92,6 +91,19 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	}
 
 	/**
+	 * Create an AbstractCopyOrMoveResourcesOperation whose destination is not
+	 * yet specified.
+	 * 
+	 * @param resources
+	 *            the resources to be modified
+	 * @param label
+	 *            the label of the operation
+	 */
+	AbstractCopyOrMoveResourcesOperation(IResource[] resources, String label) {
+		super(resources, label);
+	}
+
+	/**
 	 * Move or copy any known resources according to the destination parameters
 	 * known by this operation. Store enough information to undo and redo the
 	 * operation.
@@ -121,37 +133,27 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 		}
 		monitor.beginTask("", 2000); //$NON-NLS-1$
 		monitor.setTaskName(progressMessage);
-		IResource[] resourcesInNewLocations = new IResource[resources.length];
+		IResource[] resourcesAtDestination = new IResource[resources.length];
 		List overwrittenResources = new ArrayList();
 		IPath[] newDestinationPaths = new IPath[resources.length];
 
 		for (int i = 0; i < resources.length; i++) {
 			// Record the original path so this can be undone
-			if (resources[i].getType() == IResource.PROJECT) {
-				URI locationURI = ((IProject) resources[i]).getDescription()
-						.getLocationURI();
-				if (locationURI == null) {
-					newDestinationPaths[i] = Platform.getLocation().append(
-							resources[i].getName());
-				} else {
-					newDestinationPaths[i] = new Path(locationURI.getPath())
-							.append(resources[i].getName());
-				}
-			} else {
-				newDestinationPaths[i] = resources[i].getFullPath();
-			}
+			newDestinationPaths[i] = resources[i].getFullPath();
+
 			// Move or copy the resources and record the overwrites that would
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
 			if (move) {
 				overwrites = WorkspaceUndoUtil
-						.move(resources[i], getDestinationPath(resources[i], i,
-								true), new SubProgressMonitor(monitor,
-								1000 / resources.length), uiInfo);
+						.move(resources[i],
+								getDestinationPath(resources[i], i),
+								new SubProgressMonitor(monitor,
+										1000 / resources.length), uiInfo);
 			} else {
 				overwrites = WorkspaceUndoUtil
 						.copy(new IResource[] { resources[i] },
-								getDestinationPath(resources[i], i, true),
+								getDestinationPath(resources[i], i),
 								new SubProgressMonitor(monitor,
 										1000 / resources.length), uiInfo, true);
 			}
@@ -159,9 +161,9 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			for (int j = 0; j < overwrites.length; j++) {
 				overwrittenResources.add(overwrites[i]);
 			}
-			// Record the resource in its new location
-			resourcesInNewLocations[i] = getWorkspace().getRoot().findMember(
-					getDestinationPath(resources[i], i, false));
+			// Record the resource in its new destination path
+			resourcesAtDestination[i] = getWorkspace().getRoot().findMember(
+					getDestinationPath(resources[i], i));
 		}
 
 		// Are there any previously overwritten resources to restore now?
@@ -182,7 +184,7 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 		// Reset the target resources to refer to the resources in their new
 		// location. Note that the destination paths were reset to the original
 		// location as we did the move.
-		setTargetResources(resourcesInNewLocations);
+		setTargetResources(resourcesAtDestination);
 
 		// Reset the destination path to the new paths
 		destinationPaths = newDestinationPaths;
@@ -213,7 +215,7 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	protected IStatus computeMoveOrCopyStatus() {
 		// Check for error conditions first so that we do not prompt the user
 		// on warnings that eventually will not matter anyway.
-		if (resources == null || !hasDestinationPath()) {
+		if (resources == null) {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_NotEnoughInfo);
 		}
@@ -222,17 +224,17 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			// Does the resource still exist?
 			if (!resource.exists()) {
 				markInvalid();
-				return getErrorStatus(UndoMessages.MoveOrCopyResourceOperation_ResourceDoesNotExist);
+				return getErrorStatus(UndoMessages.AbstractCopyOrMoveResourcesOperation_ResourceDoesNotExist);
 			}
+
 			// Are we really trying to move it to a different name?
-			IPath proposedPath = getDestinationPath(resource, i, false);
-			if (resource.getFullPath().equals(proposedPath)) {
+			if (!isDestinationPathValid(resource, i)) {
 				markInvalid();
-				return getErrorStatus(UndoMessages.MoveOrCopyResourceOperation_SameNameOrLocation);
+				return getErrorStatus(UndoMessages.AbstractCopyOrMoveResourcesOperation_SameNameOrLocation);
 			}
 			// Is the proposed name valid?
 			IStatus status = getWorkspace().validateName(
-					proposedPath.lastSegment(), resource.getType());
+					getProposedName(resource, i), resource.getType());
 			if (status.getSeverity() == IStatus.ERROR) {
 				markInvalid();
 			}
@@ -249,21 +251,8 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 
 		for (int i = 0; i < resources.length; i++) {
 			// Check and warn for any overwrites that may occur.
-			IResource newResource = null;
-			if (resources[i].getType() == IResource.PROJECT) {
-				// Projects may be moved to a new location or copied to a new
-				// name. To cover both cases, we consider matching location
-				// paths, including name, to represent an overwrite.
-				IPath proposedPath = getDestinationPath(resources[i], i, true);
-				IPath existingPath = resources[i].getLocation().append(
-						resources[i].getName());
-				if (proposedPath.equals(existingPath)) {
-					newResource = resources[i];
-				}
-			} else {
-				IPath proposedPath = getDestinationPath(resources[i], i, false);
-				newResource = getWorkspace().getRoot().findMember(proposedPath);
-			}
+			IResource newResource = getOverwrittenResource(resources[i], i);
+
 			if (newResource != null) {
 				int result = queryOverwrite(newResource, null);
 				if (result == IDialogConstants.YES_TO_ALL_ID) {
@@ -283,87 +272,20 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 
 	/**
 	 * Return the destination path that should be used to move or copy the
-	 * specified resource.
+	 * specified resource. This path is relative to the workspace.
 	 * 
 	 * @param resource
 	 *            the resource being moved or copied
 	 * @param index
 	 *            the integer index of the resource in the resource array
-	 * @param includeProjectLocation
-	 *            if this resource is a project, a value of <code>true</code>
-	 *            indicates that the returned path should include the project's
-	 *            location, and <code>false</code> indicates that the path
-	 *            should not include the location
 	 * @return the path specifying the destination for the resource
 	 */
-	protected IPath getDestinationPath(IResource resource, int index,
-			boolean includeProjectLocation) {
-		if (resource.getType() == IResource.PROJECT) {
-			return getProjectDestinationPath((IProject) resource, index,
-					includeProjectLocation);
-		}
+	protected IPath getDestinationPath(IResource resource, int index) {
 		if (destinationPaths != null) {
 			return destinationPaths[index];
 		}
 		return destination.append(resource.getName());
 
-	}
-
-	/*
-	 * Return a path appropriate for moving or copying the specified project.
-	 * The boolean parameter determines whether the project's location should be
-	 * included in the path.
-	 */
-	private IPath getProjectDestinationPath(IProject project, int i,
-			boolean includeProjectLocation) {
-		String projectName;
-		IPath projectLocation = null;
-		if (destinationPaths != null) {
-			if (includeProjectLocation) {
-				IPath targetPath = destinationPaths[i];
-				if (targetPath.segmentCount() == 1) {
-					// we only have the name, so we must assume the same
-					// location as the source project
-					URI locationURI = null;
-					try {
-						locationURI = ((IProject) resources[i])
-								.getDescription().getLocationURI();
-					} catch (CoreException e) {
-						// assume null location
-					}
-					if (locationURI == null) {
-						targetPath = Platform.getLocation().append(
-								targetPath.lastSegment());
-					} else {
-						targetPath = new Path(locationURI.getPath())
-								.append(targetPath.lastSegment());
-					}
-				}
-				return targetPath;
-			}
-			// new name specified in destination path
-			projectName = destinationPaths[i].lastSegment();
-		} else {
-			// if not use the old name and common destination path
-			projectName = project.getName();
-			projectLocation = destination;
-		}
-		if (includeProjectLocation) {
-			return projectLocation.append(projectName);
-		}
-		return new Path(projectName);
-	}
-
-	/**
-	 * Return whether a destination path has been specified correctly for this
-	 * operation.
-	 * 
-	 * @return <code>true</code> if there is a destination path specified and
-	 *         <code>false</code> if one has not yet been specified.
-	 */
-	protected boolean hasDestinationPath() {
-		return (destinationPaths != null && resources.length == destinationPaths.length)
-				|| (destination != null);
 	}
 
 	/*
@@ -378,5 +300,90 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 		text.append(", destinationPaths: "); //$NON-NLS-1$
 		text.append(destinationPaths);
 		text.append('\'');
+	}
+
+	/**
+	 * Return any resource that will be overwritten by moving or copying the
+	 * specified resource to the destination recorded at the specified index.
+	 * 
+	 * @param resource
+	 *            the resource to be moved or copied
+	 * @param index
+	 *            the index within the destination array, if applicable
+	 * @return the resource that will be overwritten, or <code>null</code> if
+	 *         no resource will be overwritten.
+	 */
+	protected IResource getOverwrittenResource(IResource resource, int index) {
+		IPath proposedPath = getDestinationPath(resource, index);
+		return getWorkspace().getRoot().findMember(proposedPath);
+	}
+
+	/*
+	 * Move the project to its new location, returning its previous location.
+	 */
+	URI moveProject(IProject project, URI locationURI,
+			IProgressMonitor monitor) throws CoreException {
+		monitor
+				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_moveProjectProgress);
+
+		IProjectDescription description = project.getDescription();
+		// Record the original path so this can be undone
+		URI newDestinationURI = description.getLocationURI();
+		// Set the new location into the project's description
+		description.setLocationURI(locationURI);
+
+		project.move(description, IResource.FORCE | IResource.SHALLOW, monitor);
+
+		// Now adjust the projectLocation so this can be undone/redone.
+		return newDestinationURI;
+	}
+
+	/*
+	 * Copy the specified project, returning the handle of the copy.
+	 */
+	IProject copyProject(IProject project, IPath destinationPath,
+			URI locationURI, IProgressMonitor monitor)
+			throws CoreException {
+		monitor
+				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
+
+		IProjectDescription description = project.getDescription();
+
+		// Set the new name and location into the project's description
+		description.setName(destinationPath.lastSegment());
+		description.setLocationURI(locationURI);
+
+		project.copy(description, IResource.FORCE | IResource.SHALLOW, monitor);
+
+		// Now return the handle of the new project
+		return (IProject) getWorkspace().getRoot().findMember(destinationPath);
+	}
+
+	/**
+	 * Return a boolean indicating whether the proposed destination path for a
+	 * resource is valid.
+	 * 
+	 * @param resource
+	 *            the resource whose path is to be checked
+	 * @param index
+	 *            the integer index of the resource in the resource array
+	 * @return a boolean indicating whether the destination path is valid
+	 */
+	protected boolean isDestinationPathValid(IResource resource, int index) {
+		return !resource.getFullPath().equals(
+				getDestinationPath(resource, index));
+	}
+
+	/**
+	 * Return a string indicating the proposed name for the resource
+	 * 
+	 * @param resource
+	 *            the resource whose path is to be checked
+	 * @param index
+	 *            the integer index of the resource in the resource array
+	 * @return the string name of the resource
+	 */
+	protected String getProposedName(IResource resource, int index) {
+		return getDestinationPath(resource, index).lastSegment();
 	}
 }
