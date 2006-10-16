@@ -72,7 +72,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -247,7 +247,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13); 
                 dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); 
                 dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
-                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
                 if (dialog.open() == IDialogConstants.OK_ID) {
                     IResource resource = (IResource) dialog.getFirstResult();
                     String arg = resource.getFullPath().toString();
@@ -700,7 +700,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				return false;				
 			}
 		}
-		
 		return true;		
 	}
 

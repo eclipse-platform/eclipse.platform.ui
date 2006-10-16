@@ -930,6 +930,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				return false;
 			}
 		}
+		if(getWorkingCopy() != null) {
+			return !getWorkingCopy().isReadOnly();
+		}
 		return true;
 	}	
 	
@@ -1002,6 +1005,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				temp.append("]: "); //$NON-NLS-1$
 				temp.append(message);
 				return temp.toString();
+			}
+		}
+		if(getWorkingCopy() != null) {
+			if(getWorkingCopy().isReadOnly()) {
+				return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9;
 			}
 		}
 		return null;
@@ -1176,7 +1184,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Notification that the 'Revert' button has been pressed
 	 */
 	protected void handleRevertPressed() {
-		inputChanged(getOriginal());
+		try {
+			if(fTabGroup != null) {
+				fTabGroup.initializeFrom(fOriginal);
+				fWorkingCopy = fOriginal.getWorkingCopy();
+				refresh();
+				refreshStatus();
+			}
+		} 
+		catch (CoreException e) {DebugUIPlugin.log(e);}
 	}	
 	
 	/**

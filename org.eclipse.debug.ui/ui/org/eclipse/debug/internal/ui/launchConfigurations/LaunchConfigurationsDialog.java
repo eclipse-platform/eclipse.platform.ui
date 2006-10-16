@@ -109,6 +109,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Id for 'Cancel' button.
 	 */
 	protected static final int ID_CANCEL_BUTTON = IDialogConstants.CLIENT_ID + 3;
+	
+	/**
+	 * The id for the 'No' button on the discard changes message box
+	 * @since 3.3
+	 */
+	private static final int ID_DISCARD_BUTTON = IDialogConstants.CLIENT_ID + 4;
+	
 	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
 	 * total available screen width) as a result of tab labels in the edit area.
@@ -853,10 +860,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void handleClosePressed() {
 		int status = shouldSaveCurrentConfig();
 		if(status != IDialogConstants.CANCEL_ID) {
-			if(status == IDialogConstants.YES_ID) {
-				getTabViewer().handleApplyPressed();
+			if(status != ID_DISCARD_BUTTON) {
+				if(status == IDialogConstants.YES_ID) {
+					getTabViewer().handleApplyPressed();
+				}
+				cancelPressed();
 			}
-			cancelPressed();
 		}
 	}
 	
@@ -945,7 +954,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	protected void handleLaunchPressed() {
 		ILaunchConfiguration config = getTabViewer().getOriginal(); 
-		if (getTabViewer().isDirty()) {
+		if (getTabViewer().isDirty() & getTabViewer().canSave()) {
 			getTabViewer().handleApplyPressed();
 			config = getTabViewer().getOriginal();
 		}
@@ -1359,6 +1368,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			if (fLaunchConfigurationView != null) {
 				fLaunchConfigurationView.setAutoSelect(true);
 			}
+		}
+		if(val == IDialogConstants.NO_ID) {
+			val = ID_DISCARD_BUTTON;
 		}
 		return val;
 	}

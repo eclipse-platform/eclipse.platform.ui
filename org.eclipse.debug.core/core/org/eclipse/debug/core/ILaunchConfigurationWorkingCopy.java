@@ -45,6 +45,14 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public boolean isDirty();
 	
 	/**
+	 * Returns if the working copy can be written to or not (i.e. read-only in either the workspace or filesystem)
+	 * @return if the working copy is read-only or not
+	 * 
+	 * @since 3.3
+	 */
+	public boolean isReadOnly();
+	
+	/**
 	 * Saves this working copy to its underlying file and returns
 	 * a handle to the resulting launch configuration.
 	 * Has no effect if this configuration does not need saving.

@@ -198,6 +198,25 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	}
 
 	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		if(!isLocal()) {
+			IFile file = getFile();
+			if(file != null) {
+				return file.isReadOnly();
+			}
+		}
+		else {
+			File file = getLocation().toFile();
+			if(file != null) {
+				return file.exists() && !file.canWrite();
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Writes the new configuration information to a file.
 	 * 
 	 * @exception CoreException if writing the file fails
