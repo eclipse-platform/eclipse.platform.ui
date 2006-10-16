@@ -25,6 +25,7 @@ public class IncubatorMessages extends NLS {
 	public static String CtrlEAction_Menus;
 	public static String CtrlEAction_New;
 	public static String CtrlEAction_Preferences;
+	public static String CtrlEAction_Previous;
 	public static String CtrlEAction_Views;
 	static {
 		// initialize resource bundle

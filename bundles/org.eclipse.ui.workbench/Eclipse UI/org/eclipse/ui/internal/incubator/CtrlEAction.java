@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -35,6 +36,8 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -75,6 +78,10 @@ public class CtrlEAction extends AbstractHandler {
 
 	private IWorkbenchWindow window;
 
+	protected String rememberedText;
+
+	private LinkedList previousPicksList = new LinkedList();
+
 	/**
 	 * The constructor.
 	 */
@@ -111,6 +118,23 @@ public class CtrlEAction extends AbstractHandler {
 		return null;
 	}
 
+	private final static class QuickAccessTreeSorter extends TreePathViewerSorter {
+		public void sort(Viewer viewer, TreePath parentPath, Object[] elements) {
+			if (parentPath == null) {
+				return;
+			}
+			Object parent = parentPath.getLastSegment();
+			if (parent instanceof Node) {
+				Node node = (Node) parent;
+				// TODO replace with a proper check
+				if (node.name.equals(IncubatorMessages.CtrlEAction_Previous)) {
+					return;
+				}
+			}
+			super.sort(viewer, parentPath, elements);
+		}
+	}
+
 	/**
 	 * @since 3.2
 	 * 
@@ -119,10 +143,8 @@ public class CtrlEAction extends AbstractHandler {
 		private SortedSet commands;
 
 		/**
-		 * @param parent
-		 * @param style
-		 * @param style2
-		 * @param field
+		 * @param shell
+		 * @param commands
 		 */
 		public MyInfoPopup(Shell shell, SortedSet commands) {
 			super(shell, SWT.RESIZE, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE,
@@ -135,41 +157,51 @@ public class CtrlEAction extends AbstractHandler {
 		protected TreeViewer createTreeViewer(Composite parent, int style) {
 			TreeViewer viewer = new TreeViewer(parent, style);
 			viewer.setLabelProvider(new MyLabelProvider());
+			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
-		}		
+		}
 
 		protected Point getInitialSize() {
-			if(!MyInfoPopup.this.getPersistBounds()) {
+			if (!MyInfoPopup.this.getPersistBounds()) {
 				return new Point(300, 400);
 			}
 			return super.getInitialSize();
 		}
-		
+
 		protected Point getInitialLocation(Point initialSize) {
-			if(!MyInfoPopup.this.getPersistBounds()) {
+			if (!MyInfoPopup.this.getPersistBounds()) {
 				Point size = new Point(300, 400);
-				Rectangle parentBounds = MyInfoPopup.this.getParentShell().getBounds();
+				Rectangle parentBounds = MyInfoPopup.this.getParentShell()
+						.getBounds();
 				int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
 				int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
-				return new Point(x,y);
+				return new Point(x, y);
 			}
 			return super.getInitialLocation(initialSize);
 		}
 
 		protected IDialogSettings getDialogSettings() {
 			String sectionName = getId();
-			IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
-			if(settings == null) {
-				settings = WorkbenchPlugin.getDefault().getDialogSettings().addNewSection(sectionName);
+			IDialogSettings settings = WorkbenchPlugin.getDefault()
+					.getDialogSettings();
+			if (settings == null) {
+				settings = WorkbenchPlugin.getDefault().getDialogSettings()
+						.addNewSection(sectionName);
 			}
-			return settings;		
+			return settings;
 		}
 
 		protected String getId() {
 			return "org.eclipse.ui.internal.incubator.ctrlE"; //$NON-NLS-1$
 		}
 
+		public boolean close() {
+			rememberedText = getFilterText().getText();
+			return super.close();
+		}
+
 		protected void handleElementSelected(Object selectedElement) {
+			addPreviousPick(selectedElement);
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
 				if (selectedElement instanceof IViewDescriptor) {
@@ -249,6 +281,9 @@ public class CtrlEAction extends AbstractHandler {
 			return name;
 		}
 
+		/**
+		 * @return
+		 */
 		public String getImageId() {
 			return imageId;
 		}
@@ -256,6 +291,9 @@ public class CtrlEAction extends AbstractHandler {
 
 	private final class MyContentProvider implements ITreeContentProvider {
 		private Object input;
+
+		private Node previousNode = new Node(
+				IncubatorMessages.CtrlEAction_Previous, null);
 
 		private Node editorNode = new Node(
 				IncubatorMessages.CtrlEAction_Editors, null);
@@ -289,7 +327,9 @@ public class CtrlEAction extends AbstractHandler {
 
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof Node) {
-				if (editorNode.equals(parentElement)) {
+				if (previousNode.equals(parentElement)) {
+					return getPreviousPicks();
+				} else if (editorNode.equals(parentElement)) {
 					SaveablesList saveablesList = (SaveablesList) PlatformUI
 							.getWorkbench().getService(
 									ISaveablesLifecycleListener.class);
@@ -323,8 +363,9 @@ public class CtrlEAction extends AbstractHandler {
 				}
 			}
 			if (parentElement == input) {
-				return new Node[] { editorNode, viewNode, perspectiveNode,
-						commandNode, menusNode, newNode, preferencesNode };
+				return new Node[] { previousNode, editorNode, viewNode,
+						perspectiveNode, commandNode, menusNode, newNode,
+						preferencesNode };
 			}
 			return new Object[0];
 		}
@@ -489,6 +530,21 @@ public class CtrlEAction extends AbstractHandler {
 			}
 			return super.getText(element);
 		}
+	}
+	
+	/**
+	 * @param element
+	 */
+	private void addPreviousPick(Object element) {
+		previousPicksList.remove(element);
+		previousPicksList.addFirst(element);
+	}
+
+	/**
+	 * @return
+	 */
+	private Object[] getPreviousPicks() {
+		return previousPicksList.toArray();
 	}
 
 }
