@@ -130,6 +130,10 @@ public class TeamUIMessages extends NLS {
 
 	public static String MergeAllActionHandler_3;
 
+	public static String ModelElementSelectionPage_AllModelsDisabledMessage;
+
+	public static String ModelElementSelectionPage_AllModelsDisabledTitle;
+
 	public static String ModelEnablementPreferencePage_0;
 
 	public static String ModelEnablementPreferencePage_1;

@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -24,11 +25,13 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.team.core.mapping.ISynchronizationScope;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationScopeManager;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshElementSelectionPage;
 import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.mapping.ITeamContentProviderDescriptor;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -176,9 +179,30 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		if (visible && !initialized) {
 			initialize();
 			if (initialized) {
-				service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
-				service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(manager.getScope()), true);
-				fViewer.setInput(manager.getScope());
+				//check to see if all models are disabled
+				ISynchronizationScope syncScope = manager.getScope();
+				ModelProvider[] providers = syncScope.getModelProviders();
+				boolean foundEnabledModelProvider = false;
+				for (int i = 0; i < providers.length; i++) {
+					if (isEnabled(providers[i])){
+						foundEnabledModelProvider = true;
+						break;
+					}
+				}
+				
+				if (!foundEnabledModelProvider){
+					if (MessageDialog.openConfirm(getShell(), TeamUIMessages.ModelElementSelectionPage_AllModelsDisabledTitle, TeamUIMessages.ModelElementSelectionPage_AllModelsDisabledMessage)) {
+						ArrayList teamProviderDescriptors = new ArrayList();
+						for (int i = 0; i < providers.length; i++)
+							teamProviderDescriptors.add(TeamUI.getTeamContentProviderManager().getDescriptor(providers[i].getId()));
+						
+						ITeamContentProviderDescriptor[] desc = (ITeamContentProviderDescriptor[]) teamProviderDescriptors.toArray(new ITeamContentProviderDescriptor[teamProviderDescriptors.size()]);
+						TeamUI.getTeamContentProviderManager().setEnabledDescriptors(desc);
+					}
+				}
+				service.bindExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(syncScope), true);
+				service.getActivationService().activateExtensions(TeamUI.getTeamContentProviderManager().getContentProviderIds(syncScope), true);
+				fViewer.setInput(syncScope);
 				initializeScopingHint();
 			}
 		}
@@ -203,6 +227,11 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		} catch (InterruptedException e) {
 			// ignore
 		}
+	}
+	
+	private boolean isEnabled(ModelProvider provider) {
+		ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
+		return (desc != null && desc.isEnabled());
 	}
 
 }
