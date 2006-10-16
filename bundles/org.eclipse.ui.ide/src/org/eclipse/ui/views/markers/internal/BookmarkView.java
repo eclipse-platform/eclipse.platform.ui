@@ -22,6 +22,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -99,10 +100,18 @@ public class BookmarkView extends MarkerView {
 							}
 						}
 					} catch (ExecutionException e) {
-						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
+						if (e.getCause() instanceof CoreException) {
+							ErrorDialog.openError(
+									getSite().getShell(),
+									MarkerMessages.errorModifyingBookmark, null, ((CoreException)e.getCause()).getStatus()); 
+						} else {
+							// something rather unexpected occurred.
+							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
+						}
 					} catch (CoreException e) {
-						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingBookmark, e); 
-										
+						ErrorDialog.openError(
+								getSite().getShell(),
+								MarkerMessages.errorModifyingBookmark, null, e.getStatus()); 
 					}
 				}
 			}

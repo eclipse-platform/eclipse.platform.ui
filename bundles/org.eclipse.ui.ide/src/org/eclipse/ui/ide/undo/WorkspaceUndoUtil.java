@@ -690,11 +690,20 @@ public class WorkspaceUndoUtil {
 		return true;
 	}
 
-	/*
+	/**
 	 * Return the shell described by the specified adaptable, or the active
 	 * shell if no shell has been specified in the adaptable.
+	 * 
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * 
+	 * @return the Shell that can be used to show information
 	 */
-	private static Shell getShell(IAdaptable uiInfo) {
+	public static Shell getShell(IAdaptable uiInfo) {
 		if (uiInfo != null) {
 			Shell shell = (Shell) uiInfo.getAdapter(Shell.class);
 			if (shell != null) {

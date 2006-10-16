@@ -23,6 +23,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TrayDialog;
@@ -535,7 +536,12 @@ public class DialogMarkerProperties extends TrayDialog {
 						.getOperationHistory().execute(op,
 								null, WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
 			} catch (ExecutionException e) {
-				IDEWorkbenchPlugin.log(e.getMessage(), e);
+				if (e.getCause() instanceof CoreException) {
+					ErrorDialog.openError(
+	                        getShell(),
+	                        MarkerMessages.Error, null, ((CoreException)e.getCause()).getStatus());
+				} else
+					IDEWorkbenchPlugin.log(e.getMessage(), e);
 			}
 		}
 	}

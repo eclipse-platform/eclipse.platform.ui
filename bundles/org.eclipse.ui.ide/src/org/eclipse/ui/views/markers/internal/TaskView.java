@@ -18,9 +18,11 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -118,7 +120,14 @@ public class TaskView extends MarkerView {
 						}
 						concreteMarker.refresh();
 					} catch (ExecutionException e) {
-						IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingTask, e);
+						if (e.getCause() instanceof CoreException) {
+							ErrorDialog.openError(
+									getSite().getShell(),
+									MarkerMessages.errorModifyingTask, null, ((CoreException)e.getCause()).getStatus()); 
+						} else {
+							// something rather unexpected occurred.
+							IDEWorkbenchPlugin.log(MarkerMessages.errorModifyingTask, e); 
+						}
 					}				
 				}
 			}
