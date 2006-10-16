@@ -14,270 +14,31 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IThreeWayDiff;
-import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.mapping.IResourceDiff;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
-import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.mapping.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 /**
- * A saveable compare model that wraps an {@link IFile} based compare input.
+ * A saveable compare model that wraps an {@link IFile} based compare input. This saveable is
+ * created by the {@link ModelCompareEditorInput} instead of the {@link ResourceDiffCompareInput}
+ * because it needs access to the compare editor input in order to flush the viewers. Other model-based
+ * compare inputs do not need this since the compare input and viewers should be provided by the same model.
  */
 public class ResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
 
-	ICompareInput input;
-	ISynchronizeParticipant participant;
+	private ICompareInput input;
+	private final ISynchronizeParticipant participant;
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
-	
-	public static class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable, IResourceProvider {
-
-		private final IDiff node;
-
-		public ResourceDiffCompareInput(IDiff node) {
-			super(getCompareKind(node), getAncestor(node), getLeftContributor(node), getRightContributor(node));
-			this.node = node;
-		}
-		
-		/**
-		 * We need to make this public so we can fire a change event after
-		 * we save 
-		 */
-		public void fireChange() {
-			super.fireChange();
-		}
-		
-		private static int getCompareKind(IDiff node) {
-			int kind = 0;
-			switch (node.getKind()) {
-			case IDiff.CHANGE:
-				kind = Differencer.CHANGE;
-				break;
-			case IDiff.ADD:
-				kind = Differencer.ADDITION;
-				break;
-			case IDiff.REMOVE:
-				kind = Differencer.DELETION;
-				break;
-			}
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				switch (twd.getDirection()) {
-				case IThreeWayDiff.INCOMING:
-					kind |= Differencer.RIGHT;
-					break;
-				case IThreeWayDiff.OUTGOING:
-					kind |= Differencer.LEFT;
-					break;
-				case IThreeWayDiff.CONFLICTING:
-					kind |= Differencer.CONFLICTING;
-					break;
-				}
-			}
-			return kind;
-		}
-		
-		private static ITypedElement getRightContributor(IDiff node) {
-			// For a resource diff, use the after state
-			if (node instanceof IResourceDiff) {
-				IResourceDiff rd = (IResourceDiff) node;
-				return asTypedElement(rd.getAfterState(), getLocalEncoding(node));
-			}
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-				// If there is a remote change, use the after state
-				if (diff != null)
-					return getRightContributor(diff);
-				// There's no remote change so use the before state of the local
-				diff = (IResourceDiff)twd.getLocalChange();
-				return asTypedElement(diff.getBeforeState(), getLocalEncoding(node));
-				
-			}
-			return null;
-		}
-
-		private static ITypedElement getLeftContributor(final IDiff node) {
-			// The left contributor is always the local resource
-			return new LocalResourceTypedElement(ResourceDiffTree.getResourceFor(node));
-		}
-
-		private static ITypedElement getAncestor(IDiff node) {
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				IResourceDiff diff = (IResourceDiff)twd.getLocalChange();
-				if (diff == null)
-					diff = (IResourceDiff)twd.getRemoteChange();
-				return asTypedElement(diff.getBeforeState(), getLocalEncoding(node));
-				
-			}
-			return null;
-		}
-
-		private static String getLocalEncoding(IDiff node) {
-			IResource resource = ResourceDiffTree.getResourceFor(node);
-			if (resource instanceof IEncodedStorage) {
-				IEncodedStorage es = (IEncodedStorage) resource;
-				try {
-					return es.getCharset();
-				} catch (CoreException e) {
-					TeamUIPlugin.log(e);
-				}
-			}
-			return null;
-		}
-
-		private static ITypedElement asTypedElement(IFileRevision state, String localEncoding) {
-			if (state == null)
-				return null;
-			return new FileRevisionTypedElement(state, localEncoding);
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.mapping.IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-		 */
-		public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-			Utils.updateLabels(node, configuration, monitor);
-			// We need to cache contents here as well
-			Object ancestor = getAncestor();
-			if (ancestor instanceof FileRevisionTypedElement) {
-				FileRevisionTypedElement fste = (FileRevisionTypedElement) ancestor;
-				fste.cacheContents(monitor);
-			}
-			Object right = getRight();
-			if (right instanceof FileRevisionTypedElement) {
-				FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
-				fste.cacheContents(monitor);
-			}
-		}
-		
-		private boolean hasSaveConflict() {
-			return ((LocalResourceTypedElement)getLeft()).hasSaveConflict();
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#getSaveable()
-		 */
-		public SaveableComparison getSaveable() {
-			return null;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-		 */
-		public Object getAdapter(Class adapter) {
-			if (adapter == IFile.class || adapter == IResource.class) {
-				if (node instanceof IResourceDiff) {
-					IResourceDiff rd = (IResourceDiff) node;
-					return (IFile)rd.getResource();
-				}
-				if (node instanceof IThreeWayDiff) {
-					IThreeWayDiff twd = (IThreeWayDiff) node;
-					IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-					// If there is a remote change, use the after state
-					if (diff != null)
-						return (IFile)diff.getResource();
-					// There's no remote change so use the before state of the local
-					diff = (IResourceDiff)twd.getLocalChange();
-					return (IFile)diff.getResource();
-					
-				}
-			}
-			return null;
-		}
-
-		public String getFullPath() {
-			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			if (resource != null)
-				return resource.getFullPath().toString();
-			return getName();
-		}
-
-		public boolean isCompareInputFor(Object object) {
-			final IResource resource = ResourceDiffTree.getResourceFor(node);
-			IResource other = Utils.getResource(object);
-			if (resource != null && other != null)
-				return resource.equals(other);
-			return false;
-		}
-		
-		public boolean checkUpdateConflict() {
-			if(hasSaveConflict()) {
-				final MessageDialog dialog = 
-					new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
-							TeamUIMessages.SyncInfoCompareInput_0,  
-							null, 
-							TeamUIMessages.SyncInfoCompareInput_1,  
-							MessageDialog.QUESTION,
-						new String[] {
-							TeamUIMessages.SyncInfoCompareInput_2, 
-							IDialogConstants.CANCEL_LABEL}, 
-						0);
-				
-				int retval = dialog.open();
-				switch(retval) {
-					// save
-					case 0: 
-						return false;
-					// cancel
-					case 1:
-						return true;
-				}
-			}
-			return false;
-		}
-
-		public IResource getResource() {
-			return ResourceDiffTree.getResourceFor(node);
-		}
-
-		public ICompareInputChangeNotifier getChangeNotifier(ISynchronizationContext context) {
-			ResourceCompareInputChangeNotifier notifier = (ResourceCompareInputChangeNotifier)context.getCache().get("org.eclipse.team.ui.ResourceChangeNotifier");
-			if (notifier == null) {
-				notifier = new ResourceCompareInputChangeNotifier(context);
-				context.getCache().put("org.eclipse.team.ui.ResourceChangeNotifier", notifier);
-			}
-			return notifier;
-		}
-		
-		public boolean equals(Object other) {
-			if (other == this)
-				return true;
-			if (other instanceof ResourceDiffCompareInput) {
-				ResourceDiffCompareInput otherInput = (ResourceDiffCompareInput) other;
-				return (isEqual(getLeft(), otherInput.getLeft())
-						&& isEqual(getRight(), otherInput.getRight())
-						&& isEqual(getAncestor(), otherInput.getAncestor()));
-			}
-			return false;
-		}
-		
-		private boolean isEqual(ITypedElement e1, ITypedElement e2) {
-			if (e1 == null) {
-				return e2 == null;
-			}
-			if (e2 == null)
-				return false;
-			return e1.equals(e2);
-		}
-
-		public int hashCode() {
-			return getResource().hashCode();
-		}
-	}
+	private int hashCode;
+	private boolean hashCodeSet = false;
+	private IContentChangeListener contentChangeListener;
 	
 	public ResourceSaveableComparison(ICompareInput input, ISynchronizeParticipant participant, ModelCompareEditorInput editorInput) {
 		this.input = input;
@@ -291,17 +52,29 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		// where Save was picked from the context menu
 		ITypedElement te = input.getLeft();
 		if (te instanceof IContentChangeNotifier) {
-			((IContentChangeNotifier) te).addContentChangeListener(new IContentChangeListener() {
-				public void contentChanged(IContentChangeNotifier source) {
-					try {
-						if(! isSaving) {
-							performSave(new NullProgressMonitor());
-						}
-					} catch (CoreException e) {
-						TeamUIPlugin.log(e);
-					}
-				}
-			});
+			if (contentChangeListener == null) {
+				contentChangeListener = new IContentChangeListener() {
+								public void contentChanged(IContentChangeNotifier source) {
+									try {
+										if(! isSaving) {
+											performSave(new NullProgressMonitor());
+										}
+									} catch (CoreException e) {
+										TeamUIPlugin.log(e);
+									}
+								}
+							};
+			}
+			((IContentChangeNotifier) te).addContentChangeListener(contentChangeListener);
+		}
+	}
+	
+	private void removeContentChangeListeners() {
+		if (contentChangeListener != null) {
+			ITypedElement te = input.getLeft();
+			if (te instanceof IContentChangeNotifier) {
+				((IContentChangeNotifier) te).removeContentChangeListener(contentChangeListener);
+			}
 		}
 	}
 	
@@ -429,6 +202,33 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	}
 
 	public int hashCode() {
-		return input.hashCode();
+		// We want to remember the hash code so it never changes.
+		if (!hashCodeSet) {
+			hashCode = input.hashCode();
+			hashCodeSet = true;
+		}
+		return hashCode;
+	}
+
+	/**
+	 * Return the compare input that is managed by this saveable.
+	 * @return the compare input that is managed by this saveable
+	 */
+	public ICompareInput getInput() {
+		return input;
+	}
+
+	/**
+	 * Set the compare input managed by this saveable. This method is
+	 * only intended to work for inputs that represent the same comparison
+	 * but have a state change in one of the contributors.
+	 * @param input the compare input
+	 */
+	public void setInput(ICompareInput input) {
+		if (input != this.input) {
+			removeContentChangeListeners();
+			this.input = input;
+			initializeContentChangeListeners();
+		}
 	}
 }

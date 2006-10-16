@@ -17,6 +17,9 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -38,9 +41,9 @@ import org.eclipse.ui.*;
 public class ModelCompareEditorInput extends CompareEditorInput implements ISaveablesSource, IPropertyListener {
 
 	private final ModelSynchronizeParticipant participant;
-	private final ICompareInput input;
-	private final Saveable model;
-	private final ICacheListener contextListener;
+	private ICompareInput input;
+	private Saveable saveable;
+	private ICacheListener contextListener;
 	private final IWorkbenchPage page;
 	private final Object modelObject;
 	private ICompareInputChangeNotifier changeNotifier;
@@ -54,18 +57,26 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		this.page = page;
 		this.participant = participant;
 		this.input = input;
-		this.model = asSaveable(input);
 		this.modelObject = modelObject;
-		setDirty(model.isDirty());
-		contextListener = new ICacheListener() {
-				public void cacheDisposed(ICache cache) {
-					closeEditor();
-				}
-			};
-		participant.getContext().getCache().addCacheListener(contextListener);
-		registerForInputStateChanges();
+		this.saveable = asSaveable(this.input);
+		setDirty(saveable.isDirty());
 	}
 
+	protected void contentsCreated() {
+		super.contentsCreated();
+		contextListener = new ICacheListener() {
+			public void cacheDisposed(ICache cache) {
+				closeEditor();
+			}
+		};
+		participant.getContext().getCache().addCacheListener(contextListener);
+		registerForInputStateChanges();
+		if (saveable instanceof SaveableComparison) {
+			SaveableComparison scm = (SaveableComparison) saveable;
+			scm.addPropertyListener(this);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#handleDispose()
 	 */
@@ -73,6 +84,10 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
 		deregisterForInputStateChanges();
+		if (saveable instanceof SaveableComparison) {
+			SaveableComparison scm = (SaveableComparison) saveable;
+			scm.removePropertyListener(ModelCompareEditorInput.this);
+		}
 	}
 	
 	private void registerForInputStateChanges() {
@@ -84,6 +99,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 					public void compareInputsChanged(ICompareInputChangeEvent event) {
 						if (event.isInSync(input)) {
 							closeEditor();
+						} else if (event.hasChanged(input)) {
+							reset();
 						}
 					}
 				};
@@ -93,6 +110,69 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		}
 	}
 	
+	protected void reset() {
+		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(modelObject);
+		ICompareInput newInput = adapter.asCompareInput(participant.getContext(), modelObject);
+		if (newInput != null) {
+			deregisterForInputStateChanges();
+			input = newInput;
+			updateSaveable();
+			registerForInputStateChanges();
+			Display display = page.getWorkbenchWindow().getShell().getDisplay();
+			display.asyncExec(new Runnable() {
+				public void run() {
+					try {
+						getRunnableContext().run(true, true, new IRunnableWithProgress() {
+							public void run(IProgressMonitor monitor) throws InvocationTargetException,
+									InterruptedException {
+								refresh(monitor);
+							}
+						});
+					} catch (InvocationTargetException e) {
+						handleError("An error occurred while updating the comparison", e);
+					} catch (InterruptedException e) {
+						// Ignore
+					}
+				}
+			});
+		}
+		
+	}
+
+	private void updateSaveable() {
+		if (this.saveable instanceof ResourceSaveableComparison) {
+			ResourceSaveableComparison rsc = (ResourceSaveableComparison) this.saveable;
+			rsc.setInput(input);
+		}
+	}
+
+	protected void handleError(final String message, Throwable throwable) {
+		if (throwable instanceof InvocationTargetException) {
+			InvocationTargetException ite = (InvocationTargetException) throwable;
+			throwable = ite.getTargetException();
+		}
+		final IStatus status;
+		if (throwable instanceof CoreException) {
+			CoreException ce = (CoreException) throwable;
+			status = ce.getStatus();
+		} else {
+			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, message, throwable);
+		}
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				ErrorDialog.openError(getShell(), null, message, status);
+			}
+		});
+	}
+
+	protected Shell getShell() {
+		return Utils.getShell(null);
+	}
+
+	protected IRunnableContext getRunnableContext() {
+		return PlatformUI.getWorkbench().getProgressService();
+	}
+
 	private void deregisterForInputStateChanges() {
 		if (changeNotifier != null) {
 			changeNotifier.removeChangeListener(changeListener);
@@ -122,23 +202,6 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 				return compareModel;
 		}
 		return new ResourceSaveableComparison(input, participant, this);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#createContents(org.eclipse.swt.widgets.Composite)
-	 */
-	public Control createContents(Composite parent) {
-		Control control = super.createContents(parent);
-		if (model instanceof SaveableComparison) {
-			final SaveableComparison scm = (SaveableComparison) model;
-			scm.addPropertyListener(this);
-			control.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					scm.removePropertyListener(ModelCompareEditorInput.this);
-				}
-			});
-		}
-		return control;
 	}
 
 	/* (non-Javadoc)
@@ -189,7 +252,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 */
 	public void propertyChanged(Object source, int propId) {
 		if (propId == SaveableComparison.PROP_DIRTY) {
-			setDirty(model.isDirty());
+			setDirty(saveable.isDirty());
 		}
 	}
 	
@@ -257,10 +320,10 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 		Viewer newViewer = super.findContentViewer(oldViewer, input, parent);
 		boolean isNewViewer= newViewer != oldViewer;
-		if (isNewViewer && newViewer instanceof IPropertyChangeNotifier && model instanceof IPropertyChangeListener) {
+		if (isNewViewer && newViewer instanceof IPropertyChangeNotifier && saveable instanceof IPropertyChangeListener) {
 			// Register the model for change events if appropriate
 			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) newViewer;
-			final IPropertyChangeListener pcl = (IPropertyChangeListener) model;
+			final IPropertyChangeListener pcl = (IPropertyChangeListener) saveable;
 			dsp.addPropertyChangeListener(pcl);
 			Control c= newViewer.getControl();
 			c.addDisposeListener(
@@ -278,7 +341,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	 * {@inheritDoc}
 	 */
 	public Saveable[] getActiveSaveables() {
-		return new Saveable[] { model };
+		return new Saveable[] { saveable };
 	}
 
 	/**

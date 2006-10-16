@@ -31,8 +31,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 
@@ -322,6 +321,26 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 		fInput= prepareInput(monitor);
 	}
+	
+	/**
+	 * Re-run the compare operation and feed the new result into the editor input.
+	 * This method can only be invoked after the compare editor containing the input
+	 * has been totally initialized (e.g. after {@link #contentsCreated()} has been called.
+	 * @param monitor a progress monitor
+	 * @throws InterruptedException
+	 * @throws InvocationTargetException
+	 * @since 3.3
+	 */
+	protected void refresh(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
+		run(monitor);
+		if (!fComposite.isDisposed())
+			fComposite.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!fComposite.isDisposed())
+						feedInput();
+				}
+			});
+	}
 
 	/**
 	 * Runs the compare operation and returns the compare result.
@@ -398,12 +417,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		
 		fComposite.layout();
 
-		if (fStructureInputPane != null && fInput instanceof ICompareInput) {
-			fStructureInputPane.setInput(fInput);
-			ISelection sel= fStructureInputPane.getSelection();
-			if (sel == null || sel.isEmpty())
-				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
-		}
+		feedInput();
 		
 		fComposite.setData(NAV_DATA,
 			new CompareViewerSwitchingPane[] {
@@ -419,6 +433,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				handleDispose();
 			}
 		});
+		contentsCreated();
 		return fComposite;
 	}
 	
@@ -432,6 +447,18 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @since 3.3
 	 */
 	protected void handleDispose() {
+		// Default is to do nothing
+	}
+	
+	/**
+	 * Callback that occurs after the control for the input has
+	 * been created. If this method gets invoked then {@link #handleDispose()}
+	 * will be invoked when the control is disposed. Subclasses may extend this
+	 * method to register any listeners that need to be de-registered when the
+	 * input is disposed.
+	 * @since 3.3
+	 */
+	protected void contentsCreated() {
 		// Default is to do nothing
 	}
 
@@ -518,12 +545,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		);		
 
 		if (fUseOutlineView) {
-			if (fInput instanceof ICompareInput) {
-				fStructureInputPane.setInput(fInput);
-				ISelection sel= fStructureInputPane.getSelection();
-				if (sel == null || sel.isEmpty())
-					feed1(sel);	// we only feed downstream viewers if the top left pane is empty
-			}
+			feedInput();
 			
 			fComposite.setData(NAV_DATA,
 				new CompareViewerSwitchingPane[] {
@@ -536,6 +558,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		}
 
 		return h;
+	}
+
+	private void feedInput() {
+		if (fStructureInputPane != null && fInput instanceof ICompareInput) {
+			fStructureInputPane.setInput(fInput);
+			ISelection sel= fStructureInputPane.getSelection();
+			if (sel == null || sel.isEmpty())
+				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
+		}
 	}
 
 	private void feed1(final ISelection selection) {

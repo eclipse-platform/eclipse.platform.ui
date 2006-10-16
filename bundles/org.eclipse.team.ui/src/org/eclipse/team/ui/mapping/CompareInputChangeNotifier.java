@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.core.diff.IDiffChangeListener;
@@ -191,9 +190,12 @@ public abstract class CompareInputChangeNotifier implements
 		Object[] allListeners = listeners.getListeners();
 		for (int i = 0; i < allListeners.length; i++) {
 			final ICompareInputChangeListener listener = (ICompareInputChangeListener)allListeners[i];
-			SafeRunner.run(new SafeRunnable() {
+			SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
 					listener.compareInputsChanged(event);
+				}
+				public void handleException(Throwable exception) {
+					// Exception logged by SafeRunner
 				}
 			});
 		}
