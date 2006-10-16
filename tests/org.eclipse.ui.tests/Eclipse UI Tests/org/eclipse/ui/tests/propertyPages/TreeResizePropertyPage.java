@@ -11,30 +11,30 @@
 
 package org.eclipse.ui.tests.propertyPages;
 
-import org.eclipse.jface.layout.TableColumnAdapter;
+import org.eclipse.jface.layout.TreeColumnAdapter;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
- * The TableResizePropertyPage is an example of a property page with this resize
+ * The TreeResizePropertyPage is an example of a property page with this resize
  * capability
  * 
  * @since 3.3
  * 
  */
-public class TableResizePropertyPage extends PropertyPage {
+public class TreeResizePropertyPage extends PropertyPage {
 
 	/**
 	 * Constructor for TableResizePropertyPage.
 	 */
-	public TableResizePropertyPage() {
+	public TreeResizePropertyPage() {
 		super();
 	}
 
@@ -48,22 +48,21 @@ public class TableResizePropertyPage extends PropertyPage {
 		layout.marginHeight = 0;
 		enclosingComposite.setLayout(layout);
 
-		Table table = new Table(enclosingComposite, SWT.H_SCROLL | SWT.V_SCROLL
+		Tree tree = new Tree(enclosingComposite, SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.MULTI | SWT.FULL_SELECTION);
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		tree.setHeaderVisible(true);
+		tree.setLinesVisible(true);
 		GridData data = new GridData(GridData.FILL_BOTH);
-		table.setLayoutData(data);
+		tree.setLayoutData(data);
 
-		table.setHeaderVisible(true);
-		TableColumn column = new TableColumn(table, SWT.NULL);
+		tree.setHeaderVisible(true);
+		TreeColumn column = new TreeColumn(tree, SWT.NULL);
 		column.setText("Column 1");
 
-		column = new TableColumn(table, SWT.NULL);
+		column = new TreeColumn(tree, SWT.NULL);
 		column.setText("Column 2");
 
-		TableColumnAdapter adapter = new TableColumnAdapter(
-				table);
+		TreeColumnAdapter adapter = new TreeColumnAdapter(tree);
 		adapter.addColumnData(new ColumnWeightData(50, 100, true));
 		adapter.addColumnData(new ColumnWeightData(50, 100, true));
 		enclosingComposite.addControlListener(adapter);

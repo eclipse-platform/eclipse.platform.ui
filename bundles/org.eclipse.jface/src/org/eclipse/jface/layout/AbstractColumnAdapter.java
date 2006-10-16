@@ -6,8 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- * 	   IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - fixed scrollbar flashing
+ * 	   Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     IBM Corporation - API refactoring and general maintenance
  *******************************************************************************/
 package org.eclipse.jface.layout;
 
@@ -23,26 +23,29 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Scrollable;
 
 /**
- * The TableAdapter is a ControlAdapter used to set the size of a table in
- * a consistent way even during a resize unlike a {@link TableLayout} which only
- * sets initial sizes.
+ * The AbstractColumnAdapter is a ControlAdapter used to set the size of a table
+ * in a consistent way even during a resize unlike a {@link TableLayout} which
+ * only sets initial sizes. You can only add the adapter to a container whose
+ * <b>only</b> child is the table/tree control you want the layouts applied to.
  * 
  * @since 3.3
  */
-public class TableAdapter extends ControlAdapter {
-	private Table table;
+public abstract class AbstractColumnAdapter extends ControlAdapter {
+	
+	private static int COLUMN_TRIM = "carbon".equals(SWT.getPlatform()) ? 24 : 3; //$NON-NLS-1$
+
+	private Scrollable columnControl;
 
 	/**
 	 * Create a new instance of the receiver with the table to create specified.
 	 * 
 	 * @param control
 	 */
-	public TableAdapter(Table control) {
-		table = control;
+	public AbstractColumnAdapter(Scrollable control) {
+		columnControl = control;
 	}
 
 	/**
@@ -61,20 +64,54 @@ public class TableAdapter extends ControlAdapter {
 		columns.add(data);
 	}
 
+	/**
+	 * Compute the size of the scrollable.
+	 * @param scrollable
+	 * @return {@link Point}
+	 */
+	private Point computeSize(Scrollable scrollable) {
+		Point result = scrollable.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+		int width = 0;
+		int size = columns.size();
+		for (int i = 0; i < size; ++i) {
+			ColumnLayoutData layoutData = (ColumnLayoutData) columns.get(i);
+			if (layoutData instanceof ColumnPixelData) {
+				ColumnPixelData col = (ColumnPixelData) layoutData;
+				width += col.width;
+				if (col.addTrim) {
+					width += COLUMN_TRIM;
+				}
+			} else if (layoutData instanceof ColumnWeightData) {
+				ColumnWeightData col = (ColumnWeightData) layoutData;
+				width += col.minimumWidth;
+			} else {
+				Assert.isTrue(false, "Unknown column layout data"); //$NON-NLS-1$
+			}
+		}
+		if (width > result.x)
+			result.x = width;
+		return result;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.swt.events.ControlAdapter#controlResized(org.eclipse.swt.events.ControlEvent)
 	 */
 	public void controlResized(ControlEvent e) {
-		Rectangle area = table.getParent().getClientArea();
+		Assert
+				.isTrue(columnControl.getParent().getChildren().length == 1,
+						"The parent container can only hold the ColumnWidget as it's child"); //$NON-NLS-1$
 
-		int width = area.width - 2 * table.getBorderWidth();
-		Point preferredSize = table.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Rectangle area = columnControl.getParent().getClientArea();
+
+		int width = area.width - 2 * columnControl.getBorderWidth();
+		Point preferredSize = computeSize(columnControl);
 		if (preferredSize.y > area.height) {
 			// Subtract the scrollbar width from the total column width
 			// if a vertical scrollbar will be required
-			Point vBarSize = table.getVerticalBar().getSize();
+			Point vBarSize = columnControl.getVerticalBar().getSize();
 			width -= vBarSize.x;
 		}
 
@@ -85,27 +122,32 @@ public class TableAdapter extends ControlAdapter {
 		if (width <= 1)
 			return;
 
-		TableColumn[] tableColumns = table.getColumns();
-		int size = Math.min(columns.size(), tableColumns.length);
+		int size = Math.min(columns.size(), getColumnCount());
 		int[] widths = new int[size];
 		int fixedWidth = 0;
 		int numberOfWeightColumns = 0;
 		int totalWeight = 0;
 
+		ColumnPixelData pxData;
+		int pixels;
+
 		// First calc space occupied by fixed columns
 		for (int i = 0; i < size; i++) {
 			ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
 			if (col instanceof ColumnPixelData) {
-				int pixels = ((ColumnPixelData) col).width;
+				pxData = (ColumnPixelData) col;
+				pixels = pxData.width;
 				widths[i] = pixels;
 				fixedWidth += pixels;
+				if (pxData.addTrim) {
+					fixedWidth += COLUMN_TRIM;
+				}
 			} else if (col instanceof ColumnWeightData) {
 				ColumnWeightData cw = (ColumnWeightData) col;
 				numberOfWeightColumns++;
 				// first time, use the weight specified by the column data,
 				// otherwise use the actual width as the weight
 				// int weight = firstTime ? cw.weight :
-				tableColumns[i].getWidth();
 				int weight = cw.weight;
 				totalWeight += weight;
 			} else {
@@ -113,21 +155,22 @@ public class TableAdapter extends ControlAdapter {
 			}
 		}
 
+		int weight;
+		ColumnLayoutData col;
+		ColumnWeightData cw;
 		// Do we have columns that have a weight
 		if (numberOfWeightColumns > 0) {
 			// Now distribute the rest to the columns with weight.
 			int rest = width - fixedWidth;
 			int totalDistributed = 0;
 			for (int i = 0; i < size; ++i) {
-				ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
+				col = (ColumnLayoutData) columns.get(i);
 				if (col instanceof ColumnWeightData) {
-					ColumnWeightData cw = (ColumnWeightData) col;
+					cw = (ColumnWeightData) col;
 					// calculate weight as above
 					// int weight = firstTime ? cw.weight :
-					tableColumns[i].getWidth();
-					int weight = cw.weight;
-					int pixels = totalWeight == 0 ? 0 : weight * rest
-							/ totalWeight;
+					weight = cw.weight;
+					pixels = totalWeight == 0 ? 0 : weight * rest / totalWeight;
 					if (pixels < cw.minimumWidth)
 						pixels = cw.minimumWidth;
 					totalDistributed += pixels;
@@ -140,7 +183,7 @@ public class TableAdapter extends ControlAdapter {
 			for (int i = 0; diff > 0; ++i) {
 				if (i == size)
 					i = 0;
-				ColumnLayoutData col = (ColumnLayoutData) columns.get(i);
+				col = (ColumnLayoutData) columns.get(i);
 				if (col instanceof ColumnWeightData) {
 					++widths[i];
 					--diff;
@@ -148,23 +191,38 @@ public class TableAdapter extends ControlAdapter {
 			}
 		}
 
-		Point oldSize = table.getSize();
+		Point oldSize = columnControl.getSize();
 
 		if (!(oldSize.x > area.width)) {
-			table.setSize(area.width, area.height);
+			columnControl.setSize(area.width, area.height);
 		}
 
-		table.setRedraw(false);
-
-		for (int i = 0; i < size; i++) {
-			tableColumns[i].setWidth(widths[i]);
-		}
-
-		table.setRedraw(true);
+		columnControl.setRedraw(false);
+		setColumnWidths(widths);
+		columnControl.setRedraw(true);
 
 		if (oldSize.x > area.width) {
-			table.setSize(area.width, area.height);
+			columnControl.setSize(area.width, area.height);
 		}
 	}
 
+	/**
+	 * Get the number of columns for the receiver.
+	 * @return int
+	 */
+	abstract int getColumnCount();
+
+	/**
+	 * Set the widths of the columns.
+	 * @param widths
+	 */
+	abstract void setColumnWidths(int[] widths);
+
+	/**
+	 * Return the control being wrapped by this adapter.
+	 * @return Scrollable
+	 */
+	Scrollable getControl() {
+		return columnControl;
+	}
 }

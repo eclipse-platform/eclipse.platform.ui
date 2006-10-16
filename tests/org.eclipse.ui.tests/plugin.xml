@@ -2850,12 +2850,22 @@
       </page>
       <page
             class="org.eclipse.ui.tests.propertyPages.TableResizePropertyPage"
-            id="org.eclipse.ui.tests.resizePage"
+            id="org.eclipse.ui.tests.tableResizePage"
             name="Table Resize Test">
          <enabledWhen>
-            <instanceof
-                  value="org.eclipse.core.resources.IResource">
-            </instanceof>
+            <adapt
+                  type="org.eclipse.core.resources.IResource">
+            </adapt>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.ui.tests.propertyPages.TreeResizePropertyPage"
+            id="org.eclipse.ui.tests.treeResizePage"
+            name="Tree Resize Test">
+         <enabledWhen>
+            <adapt
+                  type="org.eclipse.core.resources.IResource">
+            </adapt>
          </enabledWhen>
       </page>
    </extension>
