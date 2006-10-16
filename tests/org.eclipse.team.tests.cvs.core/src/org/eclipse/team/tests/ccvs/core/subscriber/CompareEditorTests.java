@@ -12,7 +12,9 @@ package org.eclipse.team.tests.ccvs.core.subscriber;
 
 import junit.framework.Test;
 
+import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.SharedDocumentAdapter;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -20,9 +22,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.ccvs.core.CVSSyncTreeSubscriber;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.DialogSynchronizePageSite;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
@@ -191,6 +194,53 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input);
 		ModelParticipantSyncInfoSource.getParticipant(subscriber).dispose();
 		assertEditorOpen(input);
+	}
+	
+	public void testUpdateOnRemoteChange() throws CoreException {
+		IProject project = createProject(new String[] { "file1.txt"});
+		
+		// First open the editor
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		assertRevisionsEquals(input, project.getFile("file1.txt"));
+		
+		// Now change the remote and refresh the project
+		IProject copy = checkoutCopy(project, "-copy");
+		setContentsAndEnsureModified(copy.getFile("file1.txt"));
+		commitProject(copy);
+		refresh(getSubscriber(), project);
+		
+		// The input revision should now match the remote revision
+		assertRevisionsEquals(input, copy.getFile("file1.txt"));
+		
+	}
+	
+	public void testNoUpdateOnRemoteChangeWhenDirty() throws CoreException {
+		IProject project = createProject(new String[] { "file1.txt"});
+		
+		// First open the editor and dirty it
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		assertRevisionsEquals(input, project.getFile("file1.txt"));
+		dirtyEditor(project.getFile("file1.txt"), input);
+		
+		// Now change the remote and refresh the project
+		IProject copy = checkoutCopy(project, "-copy");
+		setContentsAndEnsureModified(copy.getFile("file1.txt"));
+		commitProject(copy);
+		refresh(getSubscriber(), project);
+		
+		// The input revision should still match the local project
+		assertRevisionsEquals(input, project.getFile("file1.txt"));
+		
+	}
+
+	private void assertRevisionsEquals(IEditorInput input, IFile file) throws CVSException {
+		CompareEditorInput cei = (CompareEditorInput)input;
+		DiffNode node = (DiffNode)cei.getCompareResult();
+		String remoteRevision = ((FileRevisionTypedElement)node.getRight()).getContentIdentifier();
+		String localRevision = CVSWorkspaceRoot.getCVSFileFor(file).getSyncInfo().getRevision();
+		assertEquals(localRevision, remoteRevision);
 	}
 	
 }

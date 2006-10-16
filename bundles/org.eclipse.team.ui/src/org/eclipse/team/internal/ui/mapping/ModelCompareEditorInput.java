@@ -111,6 +111,10 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	}
 	
 	protected void reset() {
+		if (isSaveNeeded()) {
+			// TODO: Don't reset if the editor is dirty
+			return;
+		}
 		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(modelObject);
 		ICompareInput newInput = adapter.asCompareInput(participant.getContext(), modelObject);
 		if (newInput != null) {
