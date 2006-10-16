@@ -1560,6 +1560,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void internalExpandToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
+			if (widget instanceof Item && widget.getData() != null
+					&& !isExpandable((Item) widget, null, widget.getData())) {
+				return;
+			}
 			createChildren(widget);
 			if (widget instanceof Item) {
 				setExpanded((Item) widget, true);
