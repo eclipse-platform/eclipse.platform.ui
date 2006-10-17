@@ -11,6 +11,9 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -20,6 +23,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -29,6 +33,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -69,7 +74,7 @@ import com.ibm.icu.text.MessageFormat;
  * buttons.
  */
 public class LaunchConfigurationTabGroupViewer extends Viewer {
-	
+
 	private final String EMPTY_STRING = ""; //$NON-NLS-1$
 	/**
 	 * Containing launch dialog
@@ -162,6 +167,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	private Composite fTabPlaceHolder = null;
 	
 	/**
+	 * A link to allow users to select a valid set of launch options for the specified mode
+	 * @since 3.3
+	 * EXPERIMENTAL
+	 */
+	private Link fOptionsLink = null;
+	
+	/**
 	 * A new composite replacing the perspectives tab
 	 * @since 3.2
 	 */
@@ -239,7 +251,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabPlaceHolder = new Composite(mainComp, SWT.NONE);
 		fTabPlaceHolder.setLayout(new StackLayout());
 		gd = new GridData(GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
 		fTabPlaceHolder.setLayoutData(gd);
         
 		fGettingStarted = new Composite(fTabPlaceHolder, SWT.NONE);
@@ -256,7 +267,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fTabComposite.setLayout(layout);
 		gd = new GridData(GridData.FILL_BOTH);
 		fTabComposite.setLayoutData(gd);
-        
+		
 		fNameLabel = new Label(fTabComposite, SWT.HORIZONTAL | SWT.LEFT);
 		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
         fNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
@@ -272,14 +283,46 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
     		
 		createTabFolder(fTabComposite);
 		
-		Composite buttonComp = new Composite(mainComp, SWT.NONE);
+		Composite blComp = SWTUtil.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
+		Composite linkComp = SWTUtil.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+//		a link for launch options
+		fOptionsLink = new Link(linkComp, SWT.NONE);
+		fOptionsLink.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_13);
+		fOptionsLink.setFont(linkComp.getFont());
+		gd = new GridData(GridData.BEGINNING);
+		fOptionsLink.setLayoutData(gd);
+		fOptionsLink.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				//collect the options available
+				SelectLaunchOptionsDialog sld = new SelectLaunchOptionsDialog(getShell(), 
+						getLaunchConfigurationDialog().getMode(), 
+						((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(fTabType.getIdentifier()));
+				if(sld.open() == IDialogConstants.OK_ID) {
+					//set the options to the config
+					Object[] res = sld.getResult();
+					if(res != null) {
+						HashSet list = new HashSet();
+						for(int i = 0; i < res.length; i++) {
+							list.add(res[i]);
+						}
+						ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
+						wc.setOptions(list);
+						refresh();
+						refreshStatus();
+					}
+				}
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});
+		fOptionsLink.setVisible(false);
+		
+		Composite buttonComp = new Composite(blComp, SWT.NONE);
 		GridLayout buttonCompLayout = new GridLayout();
 		buttonCompLayout.numColumns = 2;
 		buttonComp.setLayout(buttonCompLayout);
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		gd.horizontalSpan = 2;
 		buttonComp.setLayoutData(gd);
-
+		
 		fApplyButton = new Button(buttonComp, SWT.PUSH);
 		fApplyButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
@@ -302,6 +345,17 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		});
         Dialog.applyDialogFont(parent);
+	}
+	
+	/**
+	 * Shows/hides the options link on the top of the viewer
+	 * @param show true if the link should be visible, false otherwise
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	protected void showOptionsLink(boolean show) {
+		fOptionsLink.setVisible(show);
 	}
 	
 	/**
@@ -485,7 +539,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				error = tabs[i].getErrorMessage() != null;
 				item = fTabFolder.getItem(i);
 				setTabIcon(item, error, tabs[i]);
-			}		
+			}
+			fOptionsLink.setVisible(!canLaunchWithOptions());
 		}
 	}
 
@@ -961,8 +1016,41 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				return false;
 			}
 		}
+		
 		return true;
 	}	
+	
+	/**
+	 * Determines if the tab groups that is currently visible can launch with the currently selected
+	 * set of options.
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @return
+	 */
+	public boolean canLaunchWithOptions() {
+		if(fInitializingTabs) {
+			return false;
+		}
+		//check if selected options exist and that the selected combination can be launched
+		try {
+			ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
+			if(wc != null) {
+			Set options = wc.getOptions();
+				if(options.size() > 0) {
+					return ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(fTabType.getIdentifier(), getLaunchConfigurationDialog().getMode(), options).length > 0;
+				}
+			}
+		} 
+		catch (CoreException e) {
+			e.printStackTrace();
+		}
+		return true;
+	}
 	
 	/**
 	 * Returns the current error message or <code>null</code> if none.
@@ -991,6 +1079,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			return message;
 		}
 		
+	//EXPERIMENTAL
 		ILaunchConfigurationTab[] allTabs = getTabs();
 		for (int i = 0; i < allTabs.length; i++) {
 			ILaunchConfigurationTab tab = allTabs[i];
@@ -1010,6 +1099,19 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if(getWorkingCopy() != null) {
 			if(getWorkingCopy().isReadOnly()) {
 				return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9;
+			}
+		}
+		if(!canLaunchWithOptions()) {
+			try {
+				Object o = getInput();
+				String name = null;
+				if(o instanceof ILaunchConfiguration) {
+					ILaunchConfiguration lc = (ILaunchConfiguration) o;
+					name = LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14+lc.getName();
+				}
+				return (name == null ? LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_10 : name) + LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_11+getLaunchConfigurationDialog().getMode()+LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_12+getWorkingCopy().getOptions().toString();
+			} catch (CoreException e) {
+				e.printStackTrace();
 			}
 		}
 		return null;

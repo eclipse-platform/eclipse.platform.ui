@@ -1037,6 +1037,26 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     }
     
     /**
+     * Returns an image descriptor for the icon referenced by the given path
+     * and contributor name, or <code>null</code> if none.
+     * 
+     * @param name the name of the contributor
+     * @param path the path of the icon (from the configuration element)
+     * @return image descriptor or <code>null</code>
+     * @since 3.3
+     */
+    public static ImageDescriptor getImageDescriptor(String name, String path) {
+		Bundle bundle = Platform.getBundle(name);
+		if (path != null) {
+			URL iconURL = FileLocator.find(bundle , new Path(path), null);
+			if (iconURL != null) {
+				return ImageDescriptor.createFromURL(iconURL);
+			}
+		}    	
+		return null;
+    }
+    
+    /**
 	 * Performs extra filtering for launch configurations based on the prefs set on the 
 	 * Launch Configurations page
 	 * @param config the config to filter

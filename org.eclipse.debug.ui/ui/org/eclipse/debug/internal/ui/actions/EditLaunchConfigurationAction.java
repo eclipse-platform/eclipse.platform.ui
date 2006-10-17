@@ -36,7 +36,8 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 public class EditLaunchConfigurationAction extends SelectionListenerAction {
 	
 	private ILaunchConfiguration fConfiguration = null;
-	private String fMode =null;
+	private String fMode = null;
+	private boolean fTerminated = false;
 
 	/**
 	 * Constructs a new action.
@@ -87,6 +88,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 					}	
 					setLaunchConfiguration(configuration);
 					setMode(launch.getLaunchMode());
+					setIsTerminated(launch.isTerminated());
 					setText(MessageFormat.format(ActionMessages.EditLaunchConfigurationAction_1, new String[]{configuration.getName()})); 
 					ImageDescriptor descriptor = null;
 					try {
@@ -123,15 +125,30 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 		return fMode;
 	}
 	
+	protected boolean isTerminated() {
+		return fTerminated;
+	}
+	
+	protected void setIsTerminated(boolean terminated) {
+		fTerminated = terminated;
+	}
+	
 	/**
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		ILaunchGroup group = DebugUITools.getLaunchGroup(getLaunchConfiguration(), getMode());
 		if (group != null) {
-			DebugUITools.openLaunchConfigurationDialog(
-				DebugUIPlugin.getShell(), getLaunchConfiguration(),
-				group.getIdentifier(), null);
+			if(isTerminated()) {
+				DebugUITools.openLaunchConfigurationDialog(
+					DebugUIPlugin.getShell(), getLaunchConfiguration(),
+					group.getIdentifier(), null);
+			}
+			else {
+				DebugUITools.openLaunchConfigurationEditDialog(
+						DebugUIPlugin.getShell(), getLaunchConfiguration(),
+						group.getIdentifier(), null);
+			}
 		}
 	}
 

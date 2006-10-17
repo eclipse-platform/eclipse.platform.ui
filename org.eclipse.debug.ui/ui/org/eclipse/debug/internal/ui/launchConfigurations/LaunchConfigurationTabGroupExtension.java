@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 
 
@@ -84,15 +85,18 @@ public class LaunchConfigurationTabGroupExtension {
 	 */
 	protected Set getModes() {
 		if (fModes == null) {
-			IConfigurationElement[] modes= getConfigurationElement().getChildren("launchMode"); //$NON-NLS-1$
+			IConfigurationElement[] modes= getConfigurationElement().getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			if (modes.length > 0) {
 				fModes = new HashSet(modes.length);
 				fPerspectives = new Hashtable(modes.length);
+				IConfigurationElement element = null;
+				String perspective = null;
+				String mode = null;
 				for (int i = 0; i < modes.length; i++) {
-					IConfigurationElement element = modes[i];
-					String mode = element.getAttribute("mode"); //$NON-NLS-1$
+					element = modes[i];
+					mode = element.getAttribute(IConfigurationElementConstants.MODE);
 					fModes.add(mode);
-					String perspective = element.getAttribute("perspective"); //$NON-NLS-1$
+					perspective = element.getAttribute(IConfigurationElementConstants.PERSPECTIVE);
 					if (perspective != null) {
 						fPerspectives.put(mode, perspective);
 					}
@@ -127,7 +131,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 *  tab group is associated with
 	 */	
 	protected String getTypeIdentifier() {
-		return getConfigurationElement().getAttribute("type"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.TYPE);
 	}
 	
 	/**
@@ -139,7 +143,17 @@ public class LaunchConfigurationTabGroupExtension {
 	 * @since 2.1
 	 */	
 	protected String getHelpContextId() {
-		return getConfigurationElement().getAttribute("helpContextId"); //$NON-NLS-1$		
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.HELP_CONTEXT_ID);		
+	}
+	
+	/**
+	 * Returns the identifier of the tab group
+	 * @return the id of the tab group
+	 * 
+	 * @since 3.3
+	 */
+	protected String getIdentifier() {
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.ID); 
 	}
 	
 	/**
@@ -150,7 +164,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 * 	the tab group
 	 */
 	public ILaunchConfigurationTabGroup newTabGroup() throws CoreException {
-		return (ILaunchConfigurationTabGroup)getConfigurationElement().createExecutableExtension("class"); //$NON-NLS-1$
+		return (ILaunchConfigurationTabGroup)getConfigurationElement().createExecutableExtension(IConfigurationElementConstants.CLASS); 
 	}
 
 	/**
@@ -163,17 +177,18 @@ public class LaunchConfigurationTabGroupExtension {
 	public String getDescription(String mode) {
 		String description = null;
 		
-		IConfigurationElement[] children = fConfig.getChildren("launchMode"); //$NON-NLS-1$
+		IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 		if (children!= null && children.length != 0) {
+			IConfigurationElement child = null;
 			for (int i=0; i<children.length; i++) {
-				IConfigurationElement child = children[i];
+				child = children[i];
 				if (child.getAttribute("mode").equals(mode)) { //$NON-NLS-1$
-					description = child.getAttribute("description"); //$NON-NLS-1$
+					description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 				}
 			}
 		} 
 		if (description == null){
-			description = fConfig.getAttribute("description"); //$NON-NLS-1$
+			description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 		}
 		
 		if (description == null)

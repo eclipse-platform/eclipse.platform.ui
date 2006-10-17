@@ -13,6 +13,7 @@ package org.eclipse.debug.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -190,6 +191,27 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public List getAttribute(String attributeName, List defaultValue) throws CoreException;
 	
 	/**
+	 * Returns the <code>java.util.Set</code>-valued attribute with the given name.  
+	 * Returns the given default value if the attribute is undefined.
+	 *
+	 * @param attributeName the name of the attribute
+	 * @param defaultValue the value to use if no value is found
+	 * @return the value or the default value if no value was found.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurs while retrieving the attribute from
+	 *  underlying storage.</li>
+	 * <li>An attribute with the given name exists, but does not
+	 *  have a List value</li>
+	 * </ul>
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public Set getAttribute(String attributeName, Set defaultValue) throws CoreException;
+	
+	/**
 	 * Returns the <code>java.util.Map</code>-valued attribute with the given name.  
 	 * Returns the given default value if the attribute is undefined.
 	 *
@@ -302,6 +324,21 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @return the name of this launch configuration
 	 */
 	public String getName();		
+	
+	/**
+	 * Returns this configuration's launch options.
+	 *  
+	 * @return this configuration's launch options
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public Set getOptions() throws CoreException;
 	
 	/**
 	 * Returns the type of this launch configuration. This is a

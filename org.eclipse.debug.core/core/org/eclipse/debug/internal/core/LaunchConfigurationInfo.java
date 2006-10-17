@@ -12,10 +12,10 @@ package org.eclipse.debug.internal.core;
 
  
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -34,18 +34,35 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import com.ibm.icu.text.MessageFormat;
  
 /**
- * The information associated with a launch configuration
- * handle.
+ * The information associated with a launch configuration handle.
  */
 public class LaunchConfigurationInfo {
-
+	
 	/**
-	 * This configurations attribute table.
-	 * Keys are <code>String</code>s and values
-	 * are one of <code>String</code>, <code>Integer</code>,
-	 * or <code>Boolean</code>.
+	 * Constants fo XML element names and attrbiutes
+	 */
+	private static final String KEY = "key"; //$NON-NLS-1$
+	private static final String VALUE = "value"; //$NON-NLS-1$
+	private static final String SET_ENTRY = "setEntry"; //$NON-NLS-1$
+	private static final String LAUNCH_CONFIGURATION = "launchConfiguration"; //$NON-NLS-1$
+	private static final String MAP_ENTRY = "mapEntry"; //$NON-NLS-1$
+	private static final String LIST_ENTRY = "listEntry"; //$NON-NLS-1$
+	private static final String SET_ATTRIBUTE = "setAttribute"; //$NON-NLS-1$
+	private static final String MAP_ATTRIBUTE = "mapAttribute"; //$NON-NLS-1$
+	private static final String LIST_ATTRIBUTE = "listAttribute"; //$NON-NLS-1$
+	private static final String BOOLEAN_ATTRIBUTE = "booleanAttribute"; //$NON-NLS-1$
+	private static final String INT_ATTRIBUTE = "intAttribute"; //$NON-NLS-1$
+	private static final String STRING_ATTRIBUTE = "stringAttribute"; //$NON-NLS-1$
+	private static final String TYPE = "type"; //$NON-NLS-1$
+	
+	/**
+	 * This configurations attribute table. Keys are <code>String</code>s and
+	 * values are one of <code>String</code>, <code>Integer</code>, or
+	 * <code>Boolean</code>.
 	 */
 	private HashMap fAttributes;
 	
@@ -88,7 +105,8 @@ public class LaunchConfigurationInfo {
 	/**
 	 * Sets this configuration's attribute table.
 	 * 
-	 * @param table attribute table
+	 * @param table
+	 *            attribute table
 	 */	
 	private void setAttributeTable(HashMap table) {
 		fAttributes = table;
@@ -115,13 +133,13 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the <code>String</code> attribute with the
-	 * given key or the given default value if undefined.
+	 * Returns the <code>String</code> attribute with the given key or the
+	 * given default value if undefined.
 	 * 
-	 * @return attribute specified by given key or the defaultValue
-	 *  if undefined
-	 * @throws CoreException if the attribute with the given key exists
-	 *  but is not a <code>String</code>
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not a
+	 *             <code>String</code>
 	 */
 	protected String getStringAttribute(String key, String defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
@@ -140,13 +158,13 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the <code>int</code> attribute with the
-	 * given key or the given default value if undefined.
+	 * Returns the <code>int</code> attribute with the given key or the given
+	 * default value if undefined.
 	 * 
-	 * @return attribute specified by given key or the defaultValue
-	 *  if undefined
-	 * @throws CoreException if the attribute with the given key exists
-	 *  but is not an <code>int</code>
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not an
+	 *             <code>int</code>
 	 */
 	protected int getIntAttribute(String key, int defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
@@ -165,13 +183,13 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the <code>boolean</code> attribute with the
-	 * given key or the given default value if undefined.
+	 * Returns the <code>boolean</code> attribute with the given key or the
+	 * given default value if undefined.
 	 * 
-	 * @return attribute specified by given key or the defaultValue
-	 *  if undefined
-	 * @throws CoreException if the attribute with the given key exists
-	 *  but is not a <code>boolean</code>
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not a
+	 *             <code>boolean</code>
 	 */
 	protected boolean getBooleanAttribute(String key, boolean defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
@@ -190,13 +208,13 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the <code>java.util.List</code> attribute with the
-	 * given key or the given default value if undefined.
+	 * Returns the <code>java.util.List</code> attribute with the given key or
+	 * the given default value if undefined.
 	 * 
-	 * @return attribute specified by given key or the defaultValue
-	 *  if undefined
-	 * @throws CoreException if the attribute with the given key exists
-	 *  but is not a <code>java.util.List</code>
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not a
+	 *             <code>java.util.List</code>
 	 */
 	protected List getListAttribute(String key, List defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
@@ -215,13 +233,40 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the <code>java.util.Map</code> attribute with the
-	 * given key or the given default value if undefined.
+	 * Returns the <code>java.util.Set</code> attribute with the given key or
+	 * the given default value if undefined.
 	 * 
-	 * @return attribute specified by given key or the defaultValue
-	 *  if undefined
-	 * @throws CoreException if the attribute with the given key exists
-	 *  but is not a <code>java.util.Map</code>
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not a
+	 *             <code>java.util.Set</code>
+	 * 
+	 * @since 3.3 EXPERIMENTAL
+	 */
+	protected Set getSetAttribute(String key, Set defaultValue) throws CoreException {
+		Object attr = getAttributeTable().get(key);
+		if (attr != null) {
+			if (attr instanceof Set) {
+				return (Set)attr;
+			} 
+			throw new DebugException(
+				new Status(
+				 IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				 DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationInfo_35, new String[] {key}), null 
+				)
+			);
+		}
+		return defaultValue;
+	}
+	
+	/**
+	 * Returns the <code>java.util.Map</code> attribute with the given key or
+	 * the given default value if undefined.
+	 * 
+	 * @return attribute specified by given key or the defaultValue if undefined
+	 * @throws CoreException
+	 *             if the attribute with the given key exists but is not a
+	 *             <code>java.util.Map</code>
 	 */
 	protected Map getMapAttribute(String key, Map defaultValue) throws CoreException {
 		Object attr = getAttributeTable().get(key);
@@ -239,16 +284,17 @@ public class LaunchConfigurationInfo {
 		return defaultValue;
 	}
 	
-	/** 
+	/**
 	 * Sets this configuration's type.
 	 * 
-	 * @param type launch configuration type
+	 * @param type
+	 *            launch configuration type
 	 */
 	protected void setType(ILaunchConfigurationType type) {
 		fType = type;
 	}
 	
-	/** 
+	/**
 	 * Returns this configuration's type.
 	 * 
 	 * @return launch configuration type
@@ -280,11 +326,13 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Sets the given attribute to the given value. Only
-	 * working copy's should use this API.
+	 * Sets the given attribute to the given value. Only working copy's should
+	 * use this API.
 	 * 
-	 * @param key attribute key
-	 * @param value attribute value
+	 * @param key
+	 *            attribute key
+	 * @param value
+	 *            attribute value
 	 */
 	protected void setAttribute(String key, Object value) {
 		if (value == null) {
@@ -298,18 +346,22 @@ public class LaunchConfigurationInfo {
 	 * Returns the content of this info as XML
 	 * 
 	 * @return the content of this info as XML
-	 * @throws CoreException if a attribute has been set with a null key
-	 * @throws IOException if an exception occurs creating the XML
-	 * @throws ParserConfigurationException if an exception occurs creating the XML
-	 * @throws TransformerException if an exception occurs creating the XML
+	 * @throws CoreException
+	 *             if a attribute has been set with a null key
+	 * @throws IOException
+	 *             if an exception occurs creating the XML
+	 * @throws ParserConfigurationException
+	 *             if an exception occurs creating the XML
+	 * @throws TransformerException
+	 *             if an exception occurs creating the XML
 	 */
 	protected String getAsXML() throws CoreException, IOException, ParserConfigurationException, TransformerException {
 
 		Document doc = LaunchManager.getDocument();
-		Element configRootElement = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+		Element configRootElement = doc.createElement(LAUNCH_CONFIGURATION); 
 		doc.appendChild(configRootElement);
 		
-		configRootElement.setAttribute("type", getType().getIdentifier()); //$NON-NLS-1$
+		configRootElement.setAttribute(TYPE, getType().getIdentifier()); 
 		
 		Iterator keys = getAttributeTable().keySet().iterator();
 		while (keys.hasNext()) {
@@ -330,18 +382,20 @@ public class LaunchConfigurationInfo {
 			String valueString = null;
 			if (value instanceof String) {
 				valueString = (String)value;
-				element = createKeyValueElement(doc, "stringAttribute", key, valueString); //$NON-NLS-1$
+				element = createKeyValueElement(doc, STRING_ATTRIBUTE, key, valueString); 
 			} else if (value instanceof Integer) {
 				valueString = ((Integer)value).toString();
-				element = createKeyValueElement(doc, "intAttribute", key, valueString); //$NON-NLS-1$
+				element = createKeyValueElement(doc, INT_ATTRIBUTE, key, valueString); 
 			} else if (value instanceof Boolean) {
 				valueString = ((Boolean)value).toString();
-				element = createKeyValueElement(doc, "booleanAttribute", key, valueString); //$NON-NLS-1$
+				element = createKeyValueElement(doc, BOOLEAN_ATTRIBUTE, key, valueString); 
 			} else if (value instanceof List) {				
-				element = createListElement(doc, "listAttribute", key, (List)value); //$NON-NLS-1$
+				element = createListElement(doc, LIST_ATTRIBUTE, key, (List)value); 
 			} else if (value instanceof Map) {				
-				element = createMapElement(doc, "mapAttribute", key, (Map)value); //$NON-NLS-1$
-			}			
+				element = createMapElement(doc, MAP_ATTRIBUTE, key, (Map)value); 
+			} else if(value instanceof Set) {
+				element = createSetElement(doc, SET_ATTRIBUTE, key, (Set)value); 
+			}
 			configRootElement.appendChild(element);
 		}
 
@@ -349,51 +403,101 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Helper method that creates a 'key value' element of the specified type with the 
-	 * specified attribute values.
+	 * Helper method that creates a 'key value' element of the specified type
+	 * with the specified attribute values.
 	 */
 	protected Element createKeyValueElement(Document doc, String elementType, String key, String value) {
 		Element element = doc.createElement(elementType);
-		element.setAttribute("key", key); //$NON-NLS-1$
-		element.setAttribute("value", value); //$NON-NLS-1$
+		element.setAttribute(KEY, key); 
+		element.setAttribute(VALUE, value);
 		return element;
 	}
 	
+	/**
+	 * Creates a new <code>Element</code> for the specified
+	 * <code>java.util.List</code>
+	 * 
+	 * @param doc the doc to add the element to
+	 * @param elementType the type of the element
+	 * @param setKey the key for the element
+	 * @param list the list to fill the new element with
+	 * @return the new element
+	 */
 	protected Element createListElement(Document doc, String elementType, String listKey, List list) {
 		Element listElement = doc.createElement(elementType);
-		listElement.setAttribute("key", listKey); //$NON-NLS-1$
+		listElement.setAttribute(KEY, listKey); 
 		Iterator iterator = list.iterator();
 		while (iterator.hasNext()) {
 			String value = (String) iterator.next();
-			Element element = doc.createElement("listEntry"); //$NON-NLS-1$
-			element.setAttribute("value", value); //$NON-NLS-1$
+			Element element = doc.createElement(LIST_ENTRY); 
+			element.setAttribute(VALUE, value);
 			listElement.appendChild(element);
 		}		
 		return listElement;
 	}
 	
+	/**
+	 * Creates a new <code>Element</code> for the specified
+	 * <code>java.util.Set</code>
+	 * 
+	 * @param doc the doc to add the element to
+	 * @param elementType the type of the element
+	 * @param setKey the key for the element
+	 * @param set the set to fill the new element with
+	 * @return the new element
+	 * 
+	 * @since 3.3
+	 */
+	protected Element createSetElement(Document doc, String elementType, String setKey, Set set) {
+		Element setElement = doc.createElement(elementType);
+		setElement.setAttribute(KEY, setKey);
+		Element element = null;
+		for(Iterator iter = set.iterator(); iter.hasNext();) {
+			element = doc.createElement(SET_ENTRY);
+			element.setAttribute(VALUE, (String) iter.next());
+			setElement.appendChild(element);
+		}
+		return setElement;
+	}
+	
+	/**
+	 * Creates a new <code>Element</code> for the specified
+	 * <code>java.util.Map</code>
+	 * 
+	 * @param doc the doc to add the element to
+	 * @param elementType the type of the element
+	 * @param setKey the key for the element
+	 * @param map the map to fill the new element with
+	 * @return the new element
+	 * 
+	 */
 	protected Element createMapElement(Document doc, String elementType, String mapKey, Map map) {
 		Element mapElement = doc.createElement(elementType);
-		mapElement.setAttribute("key", mapKey); //$NON-NLS-1$
+		mapElement.setAttribute(KEY, mapKey); 
 		Iterator iterator = map.keySet().iterator();
 		while (iterator.hasNext()) {
 			String key = (String) iterator.next();
 			String value = (String) map.get(key);
-			Element element = doc.createElement("mapEntry"); //$NON-NLS-1$
-			element.setAttribute("key", key); //$NON-NLS-1$
-			element.setAttribute("value", value); //$NON-NLS-1$
+			Element element = doc.createElement(MAP_ENTRY); 
+			element.setAttribute(KEY, key); 
+			element.setAttribute(VALUE, value); 
 			mapElement.appendChild(element);
 		}		
 		return mapElement;		
 	}
 	
+	/**
+	 * Initializes the mapping of attributes from the XML file
+	 * @param root the root node from the XML document
+	 * @throws CoreException 
+	 */
 	protected void initializeFromXML(Element root) throws CoreException {
-		if (!root.getNodeName().equalsIgnoreCase("launchConfiguration")) { //$NON-NLS-1$
+		if (!root.getNodeName().equalsIgnoreCase(LAUNCH_CONFIGURATION)) { 
 			throw getInvalidFormatDebugException();
 		}
 		
 		// read type
-		String id = root.getAttribute("type"); //$NON-NLS-1$
+		String id = root.getAttribute(TYPE); 
 		if (id == null) {
 			throw getInvalidFormatDebugException();
 		} 
@@ -410,106 +514,174 @@ public class LaunchConfigurationInfo {
 		setType(type);
 		
 		NodeList list = root.getChildNodes();
-		int length = list.getLength();
-		for (int i = 0; i < length; ++i) {
-			Node node = list.item(i);
+		Node node = null;
+		Element element = null;
+		String nodeName = null;
+		for (int i = 0; i < list.getLength(); ++i) {
+			node = list.item(i);
 			short nodeType = node.getNodeType();
 			if (nodeType == Node.ELEMENT_NODE) {
-				Element element = (Element) node;
-				String nodeName = element.getNodeName();
-				
-				if (nodeName.equalsIgnoreCase("stringAttribute")) { //$NON-NLS-1$
+				element = (Element) node;
+				nodeName = element.getNodeName();
+				if (nodeName.equalsIgnoreCase(STRING_ATTRIBUTE)) { 
 					setStringAttribute(element);
-				} else if (nodeName.equalsIgnoreCase("intAttribute")) { //$NON-NLS-1$
+				} else if (nodeName.equalsIgnoreCase(INT_ATTRIBUTE)) { 
 					setIntegerAttribute(element);
-				} else if (nodeName.equalsIgnoreCase("booleanAttribute"))  { //$NON-NLS-1$
+				} else if (nodeName.equalsIgnoreCase(BOOLEAN_ATTRIBUTE))  { 
 					setBooleanAttribute(element);
-				} else if (nodeName.equalsIgnoreCase("listAttribute")) {   //$NON-NLS-1$
+				} else if (nodeName.equalsIgnoreCase(LIST_ATTRIBUTE)) {   
 					setListAttribute(element);					
-				} else if (nodeName.equalsIgnoreCase("mapAttribute")) {    //$NON-NLS-1$
+				} else if (nodeName.equalsIgnoreCase(MAP_ATTRIBUTE)) {    
 					setMapAttribute(element);										
+				} else if(nodeName.equalsIgnoreCase(SET_ATTRIBUTE)) { 
+					setSetAttribute(element);
 				}
 			}
 		}
 	}	
 	
+	/**
+	 * Loads a <code>String</code> from the specified element into the local attribute mapping
+	 * @param element the element to load from
+	 * @throws CoreException
+	 */
 	protected void setStringAttribute(Element element) throws CoreException {
-		String key = getKeyAttribute(element);
-		String value = getValueAttribute(element);
-		setAttribute(key, value);
+		setAttribute(getKeyAttribute(element), getValueAttribute(element));
 	}
 	
+	/**
+	 * Loads an <code>Integer</code> from the specified element into the local attribute mapping
+	 * @param element the element to load from
+	 * @throws CoreException
+	 */
 	protected void setIntegerAttribute(Element element) throws CoreException {
-		String key = getKeyAttribute(element);
-		String value = getValueAttribute(element);
-		setAttribute(key, new Integer(value));
+		setAttribute(getKeyAttribute(element), new Integer(getValueAttribute(element)));
 	}
 	
+	/**
+	 * Loads a <code>Boolean</code> from the specified element into the local attribute mapping
+	 * @param element the element to load from
+	 * @throws CoreException
+	 */
 	protected void setBooleanAttribute(Element element) throws CoreException {
-		String key = getKeyAttribute(element);
-		String value = getValueAttribute(element);
-		setAttribute(key, Boolean.valueOf(value));
+		setAttribute(getKeyAttribute(element), Boolean.valueOf(getValueAttribute(element)));
 	}
 	
+	/**
+	 * Reads a <code>List</code> attribute from the specified XML node and
+	 * loads it into the mapping of attributes
+	 * 
+	 * @param element the element to read the list attribute from
+	 * @throws CoreException if the element has an invalid format
+	 */
 	protected void setListAttribute(Element element) throws CoreException {
-		String listKey = element.getAttribute("key");  //$NON-NLS-1$
+		String listKey = element.getAttribute(KEY);  
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
 		List list = new ArrayList(entryCount);
+		Node node = null;
+		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {
-			Node node = nodeList.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element subElement = (Element) node;
-				String nodeName = subElement.getNodeName();				
-				if (!nodeName.equalsIgnoreCase("listEntry")) { //$NON-NLS-1$
+			node = nodeList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				selement = (Element) node;		
+				if (!selement.getNodeName().equalsIgnoreCase(LIST_ENTRY)) { 
 					throw getInvalidFormatDebugException();
 				}
-				String value = getValueAttribute(subElement);
-				list.add(value);
+				list.add(getValueAttribute(selement));
 			}
 		}
 		setAttribute(listKey, list);
 	}
 		
+	/**
+	 * Reads a <code>Set</code> attribute from the specified XML node and
+	 * loads it into the mapping of attributes
+	 * 
+	 * @param element the element to read the set attribute from
+	 * @throws CoreException if the element has an invalid format
+	 * 
+	 * @since 3.3
+	 */
+	protected void setSetAttribute(Element element) throws CoreException {
+		String setKey = element.getAttribute(KEY);
+		NodeList nodeList = element.getChildNodes();
+		int entryCount = nodeList.getLength();
+		Set set = new HashSet(entryCount);
+		Node node = null;
+		Element selement = null;
+		for(int i = 0; i < entryCount; i++) {
+			node = nodeList.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE) {
+				selement = (Element)node;
+				if(!selement.getNodeName().equalsIgnoreCase(SET_ENTRY)) { 
+					throw getInvalidFormatDebugException();
+				}
+				set.add(getValueAttribute(selement));
+			}
+		}
+		setAttribute(setKey, set);
+	}
+	
+	/**
+	 * Reads a <code>Map</code> attribute from the specified XML node and
+	 * loads it into the mapping of attributes
+	 * 
+	 * @param element the element to read the map attribute from
+	 * @throws CoreException if the element has an invalid format
+	 */
 	protected void setMapAttribute(Element element) throws CoreException {
-		String mapKey = element.getAttribute("key");  //$NON-NLS-1$
+		String mapKey = element.getAttribute(KEY);  
 		NodeList nodeList = element.getChildNodes();
 		int entryCount = nodeList.getLength();
 		Map map = new HashMap(entryCount);
+		Node node = null;
+		Element selement = null;
 		for (int i = 0; i < entryCount; i++) {
-			Node node = nodeList.item(i);
-			short type = node.getNodeType();
-			if (type == Node.ELEMENT_NODE) {
-				Element subElement = (Element) node;
-				String nodeName = subElement.getNodeName();				
-				if (!nodeName.equalsIgnoreCase("mapEntry")) { //$NON-NLS-1$
+			node = nodeList.item(i);
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				selement = (Element) node;		
+				if (!selement.getNodeName().equalsIgnoreCase(MAP_ENTRY)) { 
 					throw getInvalidFormatDebugException();
 				}
-				String key = getKeyAttribute(subElement);
-				String value = getValueAttribute(subElement);
-				map.put(key, value);
+				map.put(getKeyAttribute(selement), getValueAttribute(selement));
 			}
 		}
 		setAttribute(mapKey, map);
 	}
 		
+	/**
+	 * Returns the <code>String</code> representation of the 'key' attribute from the specified element
+	 * @param element the element to read from
+	 * @return the value
+	 * @throws CoreException
+	 */
 	protected String getKeyAttribute(Element element) throws CoreException {
-		String key = element.getAttribute("key");   //$NON-NLS-1$
+		String key = element.getAttribute(KEY);
 		if (key == null) {
 			throw getInvalidFormatDebugException();
 		}
 		return key;
 	}
 	
+	/**
+	 * Returns the <code>String</code> representation of the 'value' attribute from the specified element
+	 * @param element the element to read from
+	 * @return the value
+	 * @throws CoreException
+	 */
 	protected String getValueAttribute(Element element) throws CoreException {
-		String value = element.getAttribute("value");   //$NON-NLS-1$
+		String value = element.getAttribute(VALUE);   
 		if (value == null) {
 			throw getInvalidFormatDebugException();
 		}
 		return value;
 	}
 	
+	/**
+	 * Returns an invalid format exception for reuse
+	 * @return an invalid format exception
+	 */
 	protected DebugException getInvalidFormatDebugException() {
 		return 
 			new DebugException(
@@ -521,8 +693,9 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Two <code>LaunchConfigurationInfo</code> objects are equal if and only if they have the
-	 * same type and they have the same set of attributes with the same values.
+	 * Two <code>LaunchConfigurationInfo</code> objects are equal if and only
+	 * if they have the same type and they have the same set of attributes with
+	 * the same values.
 	 * 
 	 * @see Object#equals(Object)
 	 */
@@ -544,10 +717,10 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns whether the two attribute maps are equal, consulting
-	 * registered comparator extensions.
+	 * Returns whether the two attribute maps are equal, consulting registered
+	 * comparator extensions.
 	 * 
-	 * @param map1 attribute map
+	 * @param map1  attribute map
 	 * @param map2 attribute map
 	 * @return whether the two attribute maps are equal
 	 */
@@ -566,8 +739,12 @@ public class LaunchConfigurationInfo {
 				if (comp == null) {
 					if (fgIsSun14x) {
 						if(attr2 instanceof String & attr1 instanceof String) {
-							//this is a hack for bug 110215, on SUN 1.4.x, \r is stripped off when the stream is written to the DOM
-							//this is not the case for 1.5.x, so to be safe we are stripping \r off all strings before we compare for equality
+							// this is a hack for bug 110215, on SUN 1.4.x, \r
+							// is stripped off when the stream is written to the
+							// DOM
+							// this is not the case for 1.5.x, so to be safe we
+							// are stripping \r off all strings before we
+							// compare for equality
 							attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 							attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
 						}

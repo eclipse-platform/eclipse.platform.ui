@@ -35,6 +35,7 @@ import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationDialog;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationEditDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
@@ -458,7 +459,39 @@ public class DebugUITools {
     		
     	return Window.CANCEL;
     }
-			
+		
+    /**
+     * Open the launch configuration dialog on the specified launch
+     * configuration. The dialog displays the tabs for a single configuration
+     * only (a tree of launch configuration is not displayed)
+     * <p>
+     * If a status is specified, a status handler is consulted to handle the
+     * status. The status handler is passed the instance of the launch
+     * configuration dialog that is opened. This gives the status handler an
+     * opportunity to perform error handling/initialization as required.
+     * </p>
+     * @param shell the parent shell for the launch configuration dialog
+     * @param configuration the configuration to display
+     * @param groupIdentifier group identifier of the launch group the launch configuration
+     * belongs to
+     * @param status the status to display, or <code>null</code> if none 
+     * @return the return code from opening the launch configuration dialog -
+     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+     *  
+     * @since 3.3
+     * 
+     * EXPERIMENTAL
+     */
+    public static int openLaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
+    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+    	if (group != null) {
+    		LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, configuration, group);
+    		dialog.setInitialStatus(status);
+    		return dialog.open();
+    	} 
+    	return Window.CANCEL;
+    }
+    
 	/**
 	 * Saves all dirty editors and builds the workspace according to current
 	 * preference settings, and returns whether a launch should proceed.

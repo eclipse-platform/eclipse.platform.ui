@@ -526,7 +526,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
 				Object target = selection.getFirstElement();
 				if (target instanceof ILaunchConfiguration) {
-					if (getTabViewer().canLaunch()) {
+					if (getTabViewer().canLaunch() & getTabViewer().canLaunchWithOptions()) {
 						handleLaunchPressed();
 					}
 				} else {
@@ -1431,7 +1431,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 		getTabViewer().refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch());
+		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithOptions());
 	}
 
 	/* (non-Javadoc)

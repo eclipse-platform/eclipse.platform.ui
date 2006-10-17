@@ -60,21 +60,21 @@ As of 3.2 the types can also define a migration delegate that can be used to set
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="delegate" type="string" use="required">
+         <attribute name="delegate" type="string">
             <annotation>
                <documentation>
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
-Launch configuration instances of this type will delegate to instances of this class to perform launching.
+Launch configuration instances of this type will delegate to instances of this class to perform launching. Launch delegates can also be contributed for a launch configuration type via the &lt;code&gt;launchDelegates&lt;/code&gt; extension.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="modes" type="string" use="required">
+         <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  specifies a comma-separated list of the modes this type of lauch configuration supports - &quot;run&quot; and/or &quot;debug&quot;.
+                  specifies a comma-separated list of the modes this type of lauch configuration supports - &quot;run&quot; and/or &quot;debug&quot;. Launch modes can also be contributed for a launch configuration type via the &lt;code&gt;launchDelegates&lt;/code&gt; extension.
                </documentation>
             </annotation>
          </attribute>
@@ -106,6 +106,8 @@ Launch configuration instances of this type will delegate to instances of this c
             <annotation>
                <documentation>
                   The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type. This atttribute was added in the 3.0 release.
+
+With new API changes for 3.3M3 the sourcePathComputer id should be contributed via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point
                </documentation>
             </annotation>
          </attribute>
@@ -113,6 +115,8 @@ Launch configuration instances of this type will delegate to instances of this c
             <annotation>
                <documentation>
                   The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. This atttribute was added in the 3.0 release.
+
+With new API changes for 3.3M3 the sourceLocatorId id should be contributed via the &lt;code&gt;launchDelegates&lt;/code&gt; extension point
                </documentation>
             </annotation>
          </attribute>
@@ -123,6 +127,25 @@ Launch configuration instances of this type will delegate to instances of this c
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The id of the icon for this launch configuraiton type.
+
+since 3.3
+
+&lt;p&gt;
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This element has been added as
+part of a work in progress. There is no guarantee that this API will
+remain unchanged during the 3.3 release cycle. Please do not use this API
+without consulting with the Platform/Debug team.
+&lt;/p&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
          </attribute>

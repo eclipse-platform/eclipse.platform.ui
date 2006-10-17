@@ -58,6 +58,10 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog__Apply_17;
 	public static String LaunchConfigurationDialog__Name__16;
 	public static String LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20;
+
+	public static String LaunchConfigurationEditDialog_0;
+
+	public static String LaunchConfigurationEditDialog_1;
 	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
 	public static String LaunchConfigurationDialog_Dele_te_14;
@@ -89,7 +93,13 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationsDialog_Information_3;
 	public static String LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3;
 
+	public static String LaunchConfigurationTabGroupViewer_14;
+
 	public static String LaunchConfigurationTabGroupViewer_9;
+	public static String LaunchConfigurationTabGroupViewer_10;
+	public static String LaunchConfigurationTabGroupViewer_11;
+	public static String LaunchConfigurationTabGroupViewer_12;
+	public static String LaunchConfigurationTabGroupViewer_13;
 	public static String PerspectiveManager_Error_1;
 	public static String PerspectiveManager_Unable_to_switch_perpsectives_as_specified_by_launch___0__4;
 	public static String PerspectiveManager_Unable_to_switch_to_perspective___0__2;
@@ -202,5 +212,17 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CollapseAllLaunchConfigurationAction_1;
 
 	public static String CollapseAllLaunchConfigurationAction_2;
+
+	public static String SelectLaunchOptionsDialog_0;
+
+	public static String SelectLaunchOptionsDialog_1;
+
+	public static String SelectLaunchOptionsDialog_2;
+
+	public static String SelectLaunchOptionsDialog_3;
+
+	public static String SelectLaunchOptionsDialog_4;
+
+	public static String SelectLaunchOptionsDialog_5;
 
 }

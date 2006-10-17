@@ -27,6 +27,8 @@ public class DebugCoreMessages extends NLS {
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
 
+	public static String LaunchConfigurationInfo_35;
+
 	public static String LaunchOption_0;
 	public static String SystemPropertyResolver_0;	
 	public static String InputStreamMonitor_label;

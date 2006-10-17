@@ -126,8 +126,30 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @exception CoreException if unable to instantiate the
 	 *  delegate
 	 * @since 3.0
+	 * @deprecated in 3.3 delegates should be acquired using the new 
+	 * <code>getDelegate(String mode, Set options)</code> method.
+	 * 
 	 */	
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
+	
+	/**
+	 * Returns the launch delegate for the specified mode and options.
+	 * 
+	 * @param mode launch mode
+	 * @param options launch options
+	 * @return the <code>ILaunchConfigurationDelegate</code> for the given mode and options,
+	 * 		or <code>null</code> if none
+	 * @throws CoreException
+	 * @since 3.3
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public ILaunchConfigurationDelegate getDelegate(String mode, Set options) throws CoreException;
 	
 	/**
 	 * Returns the unique identifier for this type of launch configuration
@@ -154,9 +176,12 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	/**
 	 * Returns the identifier of the persistable source locator registered with
 	 * this launch configurations type, or <code>null</code> if unspecified.
-	 * Launch configuration types optionally specify this attribute
-	 * in their plug-in XML via the <code>sourceLocatorId</code> attribute.  
-	 *  
+	 * A source locator can be specified by a launch configuration type or
+	 * launch delegate extension's <code>sourceLocatorId</code> attribute.  
+	 * <p>
+	 * Only one source locator should be provided per launch configuration type
+	 * and its launch delegates.
+	 * </p>
 	 * @return the identifier of the persistable source locator registered with
 	 *  this launch configurations type, or <code>null</code> if unspecified
 	 * @since 3.0
@@ -166,9 +191,12 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	/**
 	 * Returns the source path computer registered with this launch configuration
 	 * type or <code>null</code> if unspecified. A source path computer can be
-	 * registered with a launch configuration type in plug-in XML via the
+	 * specified by a launch configuration type or launch delegate extension's
 	 * <code>sourcePathComputerId</code> attribute.
-	 * 
+	 * <p>
+	 * Only one source path computer should be provided per launch configuration type
+	 * and its launch delegates. 
+	 * </p>
 	 * @return the source path computer registered with this launch configuration
 	 * type or <code>null</code> if unspecified
 	 * @since 3.0
@@ -224,4 +252,34 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  specified mode
 	 */
 	public boolean supportsMode(String mode);
+	
+	/**
+	 * Returns the name of the plug-in that contributed this launch configuration type.
+	 * 
+	 * @return the name of contributing plug-in
+	 * @since 3.3
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public String getContributorName();
+	
+	/**
+	 * Returns the plug-in relative path of the image for this launch configuration type.
+	 * 
+	 * @return plug-in relative path for image
+	 * @since 3.3
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public String getImageDescriptorPath();
 }

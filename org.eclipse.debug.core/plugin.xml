@@ -161,13 +161,5 @@
             id="org.eclipse.debug.core.sourceLocatorMementoComparator">
       </launchConfigurationComparator>
    </extension>
-   <extension
-         point="org.eclipse.debug.core.launchOptions">
-      <launchOption
-            id="org.eclipse.debug.core.debug"
-            label="Debug"
-            option="debug">
-      </launchOption>
-   </extension>   
 
 </plugin>

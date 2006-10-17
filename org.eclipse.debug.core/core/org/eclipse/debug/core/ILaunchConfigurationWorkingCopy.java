@@ -13,6 +13,7 @@ package org.eclipse.debug.core;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -180,4 +181,55 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.2
 	 */
 	public void setMappedResources(IResource[] resources);
+	
+	/**
+	 * Set the launch options for this configuration.
+	 * Over-writes existing launch options.
+	 * <p>
+	 * If the specified list of options is empty or <code>null</code>,
+	 * the 'options' attribute is removed from the launch configuration altogether
+	 * </p>
+	 * @param new launch options or <code>null</code>
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public void setOptions(Set options);
+	
+	/**
+	 * Adds the specified launch options to this configuration's existing options.
+	 * 
+	 * @param options options to append to the current set of options specified
+	 *  as a set of launch option identifiers
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public void addOptions(Set options);
+	
+	/**
+	 * Removes the specified options from this configuration's existing options.
+	 * 
+	 * @param options options to remove specified as a set of launch option
+	 *  identifiers
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public void removeOptions(Set options);
 }

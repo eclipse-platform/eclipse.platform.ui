@@ -10,6 +10,7 @@
  	<type name="AbstractDebugView" />
  	<type name="AbstractLaunchConfigurationTab" />
  	<type name="AbstractLaunchConfigurationTabGroup" />
+ 	<type name="AbstractOptionLaunchConfigurationTab" />
  	<type name="BreakpointTypeCategory" />
  	<type name="CommonTab" subclass="false" />
  	<type name="DebugElementWorkbenchAdapter" />

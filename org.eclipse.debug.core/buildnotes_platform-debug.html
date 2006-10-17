@@ -11,22 +11,51 @@
 
 <h2>Summary of API changes in 3.3</h2>
 <ul>
-  <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute specifies the encoding
-   used by the console. When unspecified the default system encoding is used. This constant replaces
-   the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
-  <li>added <code>org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension</code> - this is an
-   interface that can be optionally implemented by <code>IWatchExpressionFactoryAdapter</code>'s. Allows
-   the <b>Create Watch Expression</b> action to be dynamically enabled based on the selected variables.</li>
+  <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute 
+    specifies the encoding used by the console. When unspecified the default system 
+    encoding is used. This constant replaces the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>added <code>org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension</code> 
+    - this is an interface that can be optionally implemented by <code>IWatchExpressionFactoryAdapter</code>'s. 
+    Allows the <b>Create Watch Expression</b> action to be dynamically enabled 
+    based on the selected variables.</li>
   <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
-  <li>added <code>DebugUITools.getLastLaunch(String id)</code> - provides access to the last launch in
-   each launch group.</li>
-   <li>Add <code>launchOptions</code> schema -- provides a new mechanism for providing launch options to the launching framework</li>
-   <li>Added <code>ILaunchOption</code> -- which describes a single contributed launch option within the launch manager</li>
-   <li>Added <code>ILaunchManager.getLaunchOptions()</code> -- returns and array of all of the <code>ILaunchOptions</code> registered with the launch manager</li>
-   <li>Added <code>ILaunchManager.getLaunchOption(String id)</code> -- returns the <code>ILaunchOption</code> associated with the given unique id, or <code>null</code></li>
+  <li>added <code>DebugUITools.getLastLaunch(String id)</code> - provides access 
+    to the last launch in each launch group.</li>
 </ul>
 
-<h2>Oct 3, 2006</h2>
+<h2>Summary of Launch Option conversion/changes in 3.3</h2>
+<ul>
+  <li>Added <code>launchOptions</code> schema -- provides a mechanism for contributing 
+    launch options</li>
+  <li>Added interface<code>ILaunchOption</code> -- describes a contributed launch 
+    option</li>
+  <li>Added method <code>ILaunchManager.getLaunchOptions()</code> -- returns all 
+    of the <code>contributed ILaunchOptions</code> </li>
+  <li>Added method <code>ILaunchManager.getLaunchOption(String id)</code> -- returns 
+    the <code>ILaunchOption</code> associated with the given unique id, or <code>null</code></li>
+  <li>Added method <code>ILaunchConfiguration.getOptions()</code> -- returns a 
+    configuration's launch options</li>
+  <li>Added method <code>ILaunchConfigurationWorkingCopy.setOptions(String[] options)</code> 
+    -- sets a configuration's options</li>
+  <li>Added method <code>ILaunchConfigurationType.getContributorName()</code> 
+    -- returns the name of the contributing plug-in </li>
+  <li>Added method <code>ILaunchConfigurationType.getImageDescriptorPath()</code> 
+    -- returns path of the image or <code>null</code></li>
+  <li>Added method <code>ILaunchConfigurationType.getDelegate(String mode, Set 
+    options)</code> -- returns the launch delegate for the specified mode and 
+    options</li>
+  <li>Deprecated method <code>ILaunchConfigurationType.getDelegate(String mode)</code> 
+    -- in favour of the new <code>getDelegate(String mode, String[] options) method</code></li>
+  <li>Added attrbute 'icon' in <code>launchConfigurationTypes</code> schema, in 
+    favour of contributing a seperate extension <code>launchConfigurationTypeImages</code></li>
+  <li>Added attribute 'name' to the <code>launchDelegates</code> schema, providing 
+    a human readable name for the delegate. To be used in duplicate resolution</li>
+  <li>Added attribute 'options' to the <code>launchDelegates</code> schema, providing 
+    the ability to specify launch options that this delegate can support</li>
+  <li>Added constant <code>EXTENSION_POINT_CONTRIBUTED_LAUNCH_TABS</code> to <code>IDebugUIConstants</code></li>
+</ul>
+
+<h2>Oct 3, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=158760">158760</a>: Warning in latest nightly build and integration build<br>
 

@@ -13,10 +13,11 @@ package org.eclipse.debug.internal.core;
  
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -44,6 +45,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -54,6 +56,8 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration handle.
@@ -80,6 +84,32 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.2
 	 */	
 	public static final String ATTR_MAPPED_RESOURCE_TYPES = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_TYPES"; //$NON-NLS-1$
+	
+	/**
+	 * The listing of applicable launch options for this configuration.
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This class has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public static final String ATTR_LAUNCH_OPTIONS = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_OPTIONS"; //$NON-NLS-1$
+	
+	/**
+	 * Status handler to prompt in the UI thread
+	 * 
+	 * @since 3.3
+	 */
+	protected static final IStatus promptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
+	
+	/**
+	 * Status handler to prompt the user to resolve the missing launch delegate issue
+	 * @since 3.3
+	 */
+	protected static final IStatus delegateNotAvailable = new Status(IStatus.INFO, "org.eclipse.debug.core", 226, "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Location this configuration is stored in. This 
@@ -271,6 +301,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getInfo().getListAttribute(attributeName, defaultValue);
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Set)
+	 */
+	public Set getAttribute(String attributeName, Set defaultValue) throws CoreException {
+		return getInfo().getSetAttribute(attributeName, defaultValue);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getAttribute(java.lang.String, java.util.Map)
 	 */
@@ -320,14 +357,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	/**
 	 * Returns the launch configuration delegate for this
 	 * launch configuration, for the specified launch mode.
-	 * 
 	 * @param mode launch mode
 	 * @return launch configuration delegate
 	 * @exception CoreException if the delegate was unable
 	 *  to be created
 	 */
-	protected ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
-		return getType().getDelegate(mode);
+	protected ILaunchConfigurationDelegate getDelegate(String mode, Set options) throws CoreException {
+		return getType().getDelegate(mode, options);
 	}
 
 	/* (non-Javadoc)
@@ -480,6 +516,14 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getLastLocationSegment();
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getOptions()
+	 */
+	public Set getOptions() throws CoreException {
+		Set options = getAttribute(ATTR_LAUNCH_OPTIONS, (Set)null); 
+		return (options != null ? new HashSet(options) : new HashSet(0));
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getType()
 	 */
@@ -570,7 +614,19 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-		ILaunchConfigurationDelegate delegate= getDelegate(mode);
+    	ILaunchConfigurationDelegate delegate = null;
+    	Set options = getOptions();
+    	try {
+    		delegate = getDelegate(mode, options);
+    	}
+    	catch(CoreException ce) {
+    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+    		
+    		//retry once the problem has been fixed
+    		options = getOptions();
+    		delegate = getDelegate(mode, options);
+    	}
 		ILaunchConfigurationDelegate2 delegate2 = null;
 		if (delegate instanceof ILaunchConfigurationDelegate2) {
 			delegate2 = (ILaunchConfigurationDelegate2) delegate;
@@ -690,5 +746,5 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getType().supportsMode(mode);
 	}
 	
-}//end class
+}
 

@@ -18,6 +18,7 @@
    <extension-point id="memoryRenderings" name="%memoryRenderingsExtensionPointName" schema="schema/memoryRenderings.exsd"/>
    <extension-point id="breakpointOrganizers" name="%BreakpointOrganizersName" schema="schema/breakpointOrganizers.exsd"/>
    <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
+   <extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabsExtension.name" schema="schema/launchConfigurationTabs.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -1314,7 +1315,13 @@
             class="org.eclipse.debug.internal.ui.launchConfigurations.DeleteLaunchConfigurationStatusHandler"
             code="225"
             id="org.eclipse.debug.ui.deleteAssociatedLaunchConfigs"
-            plugin="org.eclipse.debug.core"/> 
+            plugin="org.eclipse.debug.core"/>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.launchConfigurations.LaunchDelegateNotAvailableHandler"
+            code="226"
+            id="org.eclipse.debug.ui.statusHandler.launchDelegateNotAvailable"
+            plugin="org.eclipse.debug.core">
+      </statusHandler> 
    </extension>
    <extension
          point="org.eclipse.debug.ui.launchGroups">

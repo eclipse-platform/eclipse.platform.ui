@@ -927,6 +927,20 @@ public interface IDebugUIConstants {
 	public static final String EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS= "launchConfigurationTabGroups";	 //$NON-NLS-1$	
 
 	/**
+	 * Contributed Launch Configuration Tab extension point identifier
+	 * (value <code>"launchConfigurationTabs"</code>).
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This constant has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String EXTENSION_POINT_LAUNCH_TABS = "launchConfigurationTabs"; //$NON-NLS-1$
+	
+	/**
 	 * Launch shortcuts extension point identifier
 	 * (value <code>"launchShortcuts"</code>).
 	 * 

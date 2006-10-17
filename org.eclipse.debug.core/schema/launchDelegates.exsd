@@ -46,13 +46,30 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="0" maxOccurs="unbounded">
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
                   specifies a unique identifier for this launch delegate.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A human readable name for this delegate. This attribute was added in the 3.3. release.
+
+&lt;p&gt;
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
+part of a work in progress. There is no guarantee that this API will
+remain unchanged during the 3.3 release cycle. Please do not use this API
+without consulting with the Platform/Debug team.
+&lt;/p&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="delegate" type="string" use="required">
@@ -66,14 +83,14 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="modes" type="string" use="required">
+         <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  specifies a comma-separated list of the modes this lauch delegate supports.
+                  A comma-separated list of the launch modes this lauch delegate supports.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" type="string" use="required">
+         <attribute name="type" type="string">
             <annotation>
                <documentation>
                   identifier of an existing launch configuration type that this launch delegate is capable of launching.
@@ -91,6 +108,20 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
             <annotation>
                <documentation>
                   The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. Since 3.1, this attribute can be specified in a launchDelegate extension when unspecified in the assocaited launchConfigurationType extension. Only one source locater can be specified per launch configuration type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="options" type="string">
+            <annotation>
+               <documentation>
+                  A comma-separated list of the launch options this launch delegate supports. This attribute was added in the 3.3 release.
+
+&lt;p&gt;
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
+part of a work in progress. There is no guarantee that this API will
+remain unchanged during the 3.3 release cycle. Please do not use this API
+without consulting with the Platform/Debug team.
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -127,6 +158,23 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
 &lt;/p&gt;
 
 In the example above, the specified launch delegate is contributed to launch Java applications in profile mode.
+
+The previous example has been deprecated as of 3.3M3, but left in for brevity. See the following example for new usage.
+
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.debug.core.launchDelegates&quot;&gt;
+      &lt;launchDelegate
+            delegate=&quot;org.eclipse.jdt.launching.JavaLaunchDelegate&quot;
+            id=&quot;org.eclipse.jdt.launching.JavaLaunchDelegate&quot;
+            type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
+      modes=&quot;profile&quot;&gt;
+      &lt;/launchDelegate&gt;
+   &lt;/extension&gt;   
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In 3.3 mode-based launching has been deprecated, and in its place we have provided launching with options. Options are contributed via the &lt;code&gt;launchOptions&lt;/code&gt; extension point and can be referenced here to describe what options your launch delegate supports. Options are further arranged in the form of expressions that can be evaluated to determine suitablility of your delegate for a variety of combinations of options.
       </documentation>
    </annotation>
 

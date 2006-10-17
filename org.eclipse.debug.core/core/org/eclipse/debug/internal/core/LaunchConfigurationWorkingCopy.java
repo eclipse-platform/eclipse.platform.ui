@@ -16,10 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -39,6 +39,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A working copy launch configuration
@@ -194,7 +196,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		// write the new file
 		writeNewFile();
-		resetDirty();
+		fDirty = false;
 	}
 
 	/**
@@ -369,7 +371,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		LaunchConfigurationInfo info = original.getInfo();
 		setInfo(info.getCopy());
 		setContainer(original.getContainer());
-		resetDirty();
+		fDirty = false;
 	}
 	
 	/**
@@ -421,14 +423,47 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			getLaunchManager().getConfigurationNotifier().notify(this, LaunchManager.CHANGED);
 		}	
 	}
+		
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setOptions(java.util.List)
+	 */
+	public void setOptions(Set options) {
+		getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, (options.size() > 0 ? options : null));
+		setDirty();
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#addOptions(java.util.Set)
+	 */
+	public void addOptions(Set options) {
+		try {
+			Set opts = getOptions();
+			if(opts.addAll(options)) {
+				getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, opts);
+				setDirty();
+			}
+		} 
+		catch (CoreException e) {
+			DebugPlugin.log(e);
+		}
+	}
 	
 	/**
-	 * Sets this working copy's state to not dirty.
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#removeOptions(java.util.Set)
 	 */
-	private void resetDirty() {
-		fDirty = false;
-	}	
-		
+	public void removeOptions(Set options) {
+		try {
+			Set opts = getOptions();
+			if(opts.removeAll(options)) {
+				getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, opts);
+				setDirty();
+			}
+		} 
+		catch (CoreException e) {
+			DebugPlugin.log(e);
+		}
+	}
+	
 	/**
 	 * @see ILaunchConfigurationWorkingCopy#rename(String)
 	 */
@@ -593,7 +628,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_PATHS, paths);
 		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_TYPES, types);
-	}//end setResource
+	}
 
-}//end class
+}
 

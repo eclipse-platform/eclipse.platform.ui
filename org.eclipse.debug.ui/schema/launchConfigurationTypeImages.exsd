@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTypeImages" name="Launch Configuration Type Images"/>
-   </appInfo>
-   <documentation>
-      This extension point provides a way to associate an image with a launch configuration type.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.debug.ui" id="launchConfigurationTypeImages" name="Launch Configuration Type Images"/>
+      </appInfo>
+      <documentation>
+         This extension point provides a way to associate an image with a launch configuration type.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -22,24 +22,15 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  an optional identifier of the extension instance
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="name" type="string">
-            <annotation>
-               <documentation>
-                 an optional name of the extension instance
-               </documentation>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
    <element name="launchConfigurationTypeImage">
+      <annotation>
+         <documentation>
+            &lt;p&gt;Since 3.3, a launch configuration type image can be specified by a launch configuration type extension.&lt;/p&gt;
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -51,7 +42,7 @@
          <attribute name="configTypeID" type="string" use="required">
             <annotation>
                <documentation>
-                  specifies the fully qualified ID of a launch configuration type.(in 2.1, this attribute can also be specified using the "type" attribute, to be consistent with the launchConfigurationTabGroups extension point).
+                  specifies the fully qualified ID of a launch configuration type.(in 2.1, this attribute can also be specified using the &quot;type&quot; attribute, to be consistent with the launchConfigurationTabGroups extension point).
                </documentation>
             </annotation>
          </attribute>
@@ -77,24 +68,24 @@
 
 &lt;p&gt;
 &lt;pre&gt;
-	&lt;extension point="org.eclipse.debug.ui.launchConfigurationTypeImages"&gt;
-		&lt;launchConfigurationTypeImage
-			  id="com.example.FirstLaunchConfigurationTypeImage"
-			  configTypeID="com.example.FirstLaunchConfigurationType"
-			  icon="icons/FirstLaunchConfigurationType.gif"&gt;
-		&lt;/launchConfigurationTypeImage&gt;
-	&lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.debug.ui.launchConfigurationTypeImages&quot;&gt;
+  &lt;launchConfigurationTypeImage
+     id=&quot;com.example.FirstLaunchConfigurationTypeImage&quot;
+     configTypeID=&quot;com.example.FirstLaunchConfigurationType&quot;
+     icon=&quot;icons/FirstLaunchConfigurationType.gif&quot;&gt;
+  &lt;/launchConfigurationTypeImage&gt;
+ &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
-   
+
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 

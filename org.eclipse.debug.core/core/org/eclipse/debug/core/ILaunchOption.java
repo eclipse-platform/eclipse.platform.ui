@@ -16,18 +16,16 @@ package org.eclipse.debug.core;
  * 
  * Example contribution of the debug launch option:
  * <pre>
- * <extension
-         point="org.eclipse.debug.core.launchOptions">
-      <launchOption
-            id="org.eclipse.debug.core.debug"
-            label="Debug"
-            option="debug">
-      </launchOption>
-   </extension>   
+ * &lt;extension point=&quot;org.eclipse.debug.core.launchOptions&quot;&gt;
+ *    &lt;launchOption
+ *          id=&quot;org.eclipse.debug.core.debug&quot;
+ *          label=&quot;Debug&quot;&gt;
+ *    &lt;/launchOption&gt;
+ *  &lt;/extension&gt;   
  * </pre>
- * 
- * Clients are NOT intended to implement this interface
  * <p>
+ * Clients are <strong>NOT</strong> intended to implement this interface
+ * </p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will
  * remain unchanged during the 3.3 release cycle. Please do not use this API
@@ -45,14 +43,7 @@ public interface ILaunchOption {
 	public String getLabel();
 	
 	/**
-	 * Returns the launch option defined for this extension. The option is non-translatable, one word and
-	 * all lowercase.
-	 * @return the option defined by this extension
-	 */
-	public String getOption();
-	
-	/**
-	 * @return the unique id provided for this option e.g. org.eclipse.debug.core.debug
+	 * @return the unique id provided for this option e.g. debug
 	 */
 	public String getIdentifier();
 }
