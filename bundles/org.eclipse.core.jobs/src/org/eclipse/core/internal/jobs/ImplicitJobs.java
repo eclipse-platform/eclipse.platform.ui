@@ -80,7 +80,7 @@ class ImplicitJobs {
 			threadJob.push(rule);
 			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
-				//no need to re-aquire any locks because the thread did not wait to get this lock
+				//no need to re-acquire any locks because the thread did not wait to get this lock
 				if (manager.runNow(threadJob))
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
@@ -232,7 +232,7 @@ class ImplicitJobs {
 		Assert.isLegal(job == null);
 		//ensure calling thread owns the job being transferred
 		job = (ThreadJob) threadJobs.get(currentThread);
-		Assert.isLegal(job != null);
+		Assert.isNotNull(job);
 		Assert.isLegal(job.getRule() == rule);
 		//transfer the thread job without ending it
 		job.setThread(destinationThread);
