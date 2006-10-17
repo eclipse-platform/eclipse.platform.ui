@@ -71,7 +71,7 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			
 			TreeViewer treeViewer= (TreeViewer) viewer;
 
-			String matchName= ((ILabelProvider) treeViewer.getLabelProvider()).getText(element);
+			String matchName = getMatchName(element);
 			if (matchName != null && matcher.match(matchName))
 				return true;
 
@@ -410,14 +410,13 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 	}
 
 	private Object findElement(TreeItem[] items) {
-		ILabelProvider labelProvider= (ILabelProvider)treeViewer.getLabelProvider();
 		for (int i= 0; i < items.length; i++) {
 			Object element= items[i].getData();
 			if (matcher == null)
 				return element;
 
 			if (element != null) {
-				String label= labelProvider.getText(element);
+				String label= getMatchName(element);
 				if (matcher.match(label))
 					return element;
 			}
@@ -627,5 +626,17 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			viewMenuButtonComposite.setTabList(new Control[] { filterText });
 			composite.setTabList(new Control[] { viewMenuButtonComposite, treeViewer.getTree() });
 		}
+	}
+
+	/**
+	 * Returns the name of the given element used for matching. The default
+	 * implementation gets the name from the tree viewer's label provider.
+	 * Subclasses may override.
+	 * 
+	 * @param element the element
+	 * @return the name to be used for matching
+	 */
+	protected String getMatchName(Object element) {
+		return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(element);
 	}
 }

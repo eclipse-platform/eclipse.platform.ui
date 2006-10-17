@@ -34,6 +34,7 @@ import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -48,16 +49,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.Saveable;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
@@ -75,6 +75,8 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  * 
  */
 public class CtrlEAction extends AbstractHandler {
+
+	private static final String DIRTY_MARK = "*"; //$NON-NLS-1$
 
 	private IWorkbenchWindow window;
 
@@ -118,7 +120,16 @@ public class CtrlEAction extends AbstractHandler {
 		return null;
 	}
 
-	private final static class QuickAccessTreeSorter extends TreePathViewerSorter {
+	private final static class QuickAccessTreeSorter extends
+			TreePathViewerSorter {
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			ILabelProvider labelProvider = (ILabelProvider) ((TreeViewer) viewer)
+					.getLabelProvider();
+			String name1 = stripDirtyIndicator(labelProvider.getText(e1));
+			String name2 = stripDirtyIndicator(labelProvider.getText(e2));
+			return getComparator().compare(name1, name2);
+		}
+
 		public void sort(Viewer viewer, TreePath parentPath, Object[] elements) {
 			if (parentPath == null) {
 				return;
@@ -159,6 +170,11 @@ public class CtrlEAction extends AbstractHandler {
 			viewer.setLabelProvider(new MyLabelProvider());
 			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
+		}
+		
+		protected String getMatchName(Object element) {
+			String name = ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(element);
+			return stripDirtyIndicator(name);
 		}
 
 		protected Point getInitialSize() {
@@ -216,9 +232,12 @@ public class CtrlEAction extends AbstractHandler {
 					IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) selectedElement;
 					activePage.setPerspective(perspectiveDescriptor);
 				}
-				if (selectedElement instanceof Saveable) {
-					Saveable saveable = (Saveable) selectedElement;
-					saveable.show(activePage);
+				if (selectedElement instanceof IEditorReference) {
+					IEditorReference editorReference = (IEditorReference) selectedElement;
+					IWorkbenchPart part = editorReference.getPart(true);
+					if (part != null) {
+						activePage.activate(part);
+					}
 					return;
 				}
 				if (selectedElement instanceof PreferenceNode) {
@@ -330,10 +349,9 @@ public class CtrlEAction extends AbstractHandler {
 				if (previousNode.equals(parentElement)) {
 					return getPreviousPicks();
 				} else if (editorNode.equals(parentElement)) {
-					SaveablesList saveablesList = (SaveablesList) PlatformUI
-							.getWorkbench().getService(
-									ISaveablesLifecycleListener.class);
-					return saveablesList.getOpenModels();
+					if(window.getActivePage() != null) {
+						return window.getActivePage().getEditorReferences();
+					}
 				} else if (viewNode.equals(parentElement)) {
 					return PlatformUI.getWorkbench().getViewRegistry()
 							.getViews();
@@ -423,9 +441,9 @@ public class CtrlEAction extends AbstractHandler {
 				return findOrCreateImage(WorkbenchImages
 						.getImageDescriptor(node.getImageId()));
 			}
-			if (element instanceof Saveable) {
-				Saveable saveable = (Saveable) element;
-				return findOrCreateImage(saveable.getImageDescriptor());
+			if (element instanceof IEditorReference) {
+				IEditorReference editorReference = (IEditorReference) element;
+				return editorReference.getTitleImage();
 			}
 			if (element instanceof IViewDescriptor) {
 				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
@@ -475,10 +493,16 @@ public class CtrlEAction extends AbstractHandler {
 
 		public String getText(Object element) {
 			String separator = " - "; //$NON-NLS-1$
-			if (element instanceof Saveable) {
-				Saveable saveable = (Saveable) element;
-				return saveable.getName() + separator
-						+ saveable.getToolTipText();
+			if (element instanceof IEditorReference) {
+				IEditorReference editorReference = (IEditorReference) element;
+				StringBuffer result = new StringBuffer();
+				if (editorReference.isDirty()) {
+					result.append(DIRTY_MARK);
+				}
+				result.append(editorReference.getName());
+				result.append(separator);
+				result.append(editorReference.getTitleToolTip());
+				return result.toString();
 			}
 			if (element instanceof IViewDescriptor) {
 				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
@@ -546,5 +570,13 @@ public class CtrlEAction extends AbstractHandler {
 	private Object[] getPreviousPicks() {
 		return previousPicksList.toArray();
 	}
+
+	private static String stripDirtyIndicator(String elementName) {
+		if (elementName.startsWith(DIRTY_MARK)) {
+			elementName = elementName.substring(1);
+		}
+		return elementName;
+	}
+
 
 }
