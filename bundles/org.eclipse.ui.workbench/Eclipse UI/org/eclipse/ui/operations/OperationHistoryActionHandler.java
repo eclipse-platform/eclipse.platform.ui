@@ -211,12 +211,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
 	public void dispose() {
-		
+
 		IOperationHistory history = getHistory();
 		if (history != null) {
 			history.removeOperationHistoryListener(historyListener);
 		}
-		
+
 		if (isInvalid()) {
 			return;
 		}
@@ -249,7 +249,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (PlatformUI.getWorkbench() == null) {
 			return null;
 		}
-		
+
 		return PlatformUI.getWorkbench().getOperationSupport()
 				.getOperationHistory();
 	}
@@ -265,7 +265,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#run()
 	 */
 	public final void run() {
-		if  (isInvalid()) {
+		if (isInvalid()) {
 			return;
 		}
 
@@ -389,7 +389,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (isInvalid()) {
 			return;
 		}
-		
+
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
 		String tooltipText;
@@ -432,27 +432,33 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	}
 
 	/*
-	 * Report the specified execution exception to the log and to the user.
+	 * Report the specified exception to the log and to the user.
 	 */
 	final void reportException(Exception e) {
+		// get any nested exceptions
 		Throwable nestedException = StatusUtil.getCause(e);
 		Throwable exception = (nestedException == null) ? e : nestedException;
+
+		// Title and messages
 		String title = WorkbenchMessages.Error;
-		String message = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		String exceptionMessage = exception.getMessage();
 		if (exceptionMessage == null) {
-			exceptionMessage = message;
+			exceptionMessage = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		}
+		// If there is an included status in the exception, get it.
+		// Otherwise we will make one.
 		IStatus status = new Status(IStatus.ERROR,
 				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(getWorkbenchWindow().getShell(), title, message,
-				status);
+
+		// Log the problem and then show an error dialog
+		WorkbenchPlugin.log(exceptionMessage, status);
+		ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
+				exceptionMessage, status);
 	}
-	
+
 	/*
-	 * Answer true if the receiver is not valid for running commands,
-	 * accessing the history, etc.
+	 * Answer true if the receiver is not valid for running commands, accessing
+	 * the history, etc.
 	 */
 	final boolean isInvalid() {
 		return undoContext == null || site == null;
