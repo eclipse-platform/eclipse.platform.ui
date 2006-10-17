@@ -1160,8 +1160,8 @@ public class FastViewBar implements IWindowTrim {
 	 * Restore all refs and close the group
 	 */
 	public void closeGroup() {
-//		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
-//		persp.closeTrimGroup(this);
+		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+		persp.closeTrimGroup(this);
 	}
 
 	/**
