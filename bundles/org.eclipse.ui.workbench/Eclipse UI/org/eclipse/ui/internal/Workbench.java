@@ -657,8 +657,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			return false;
 		}
 
-		boolean closeEditors = !force && PrefUtil.getAPIPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
+		boolean closeEditors = !force
+				&& PrefUtil.getAPIPreferenceStore().getBoolean(
+						IWorkbenchPreferenceConstants.CLOSE_EDITORS_ON_EXIT);
 		if (closeEditors) {
 			SafeRunner.run(new SafeRunnable() {
 				public void run() {
@@ -724,8 +725,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbench.
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
 		final boolean finalConfirm = confirm;
@@ -766,6 +768,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 				}
 				IWorkbenchWindow w = getActiveWorkbenchWindow();
 				if (w == null) {
+					if (windows.length == 0) {
+						result[0] = false;
+						return;
+					}
 					w = windows[0];
 				}
 				// The fourth parameter is true to also save saveables from
@@ -821,11 +827,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *            {@link PlatformUI#RETURN_RESTART RETURN_RESTART}if the
 	 *            workbench was terminated with a call to
 	 *            {@link IWorkbench#restart IWorkbench.restart};
-	 *            {@link PlatformUI#RETURN_EMERGENCY_CLOSE} for an emergency shutdown
+	 *            {@link PlatformUI#RETURN_EMERGENCY_CLOSE} for an emergency
+	 *            shutdown
 	 *            {@link PlatformUI#RETURN_UNSTARTABLE RETURN_UNSTARTABLE}if
 	 *            the workbench could not be started; other values reserved for
 	 *            future use
-	 *            
+	 * 
 	 * @param force
 	 *            true to force the workbench close, and false for a "soft"
 	 *            close that can be canceled
@@ -1218,9 +1225,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * and hooks up all the required listeners.
 	 */
 	private final void initializeDefaultServices() {
-		
-		serviceLocator.registerService(ISaveablesLifecycleListener.class, new SaveablesList());
-		
+
+		serviceLocator.registerService(ISaveablesLifecycleListener.class,
+				new SaveablesList());
+
 		/*
 		 * Phase 1 of the initialization of commands. When this phase completes,
 		 * all the services and managers will exist, and be accessible via the
