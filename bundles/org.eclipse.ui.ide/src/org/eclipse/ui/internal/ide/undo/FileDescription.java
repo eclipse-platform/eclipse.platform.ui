@@ -41,6 +41,8 @@ public class FileDescription extends ResourceDescription {
 	String name;
 
 	URI location;
+	
+	String charset;
 
 	private IFileContentDescription fileContentDescription;
 
@@ -55,6 +57,11 @@ public class FileDescription extends ResourceDescription {
 	public FileDescription(IFile file) {
 		super(file);
 		this.name = file.getName();
+		try {
+			this.charset = file.getCharset(false);
+		} catch (CoreException e) {
+			// we don't care, a null charset is fine.
+		}
 		if (file.isLinked()) {
 			location = file.getLocationURI();
 		}
@@ -82,6 +89,7 @@ public class FileDescription extends ResourceDescription {
 		super(file);
 		this.name = file.getName();
 		this.location = linkLocation;
+		this.charset = null;
 		this.fileContentDescription = fileContentDescription;
 	}
 
@@ -105,13 +113,6 @@ public class FileDescription extends ResourceDescription {
 			this.fileContentDescription = new IFileContentDescription() {
 				/*
 				 * (non-Javadoc)
-				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
-				 */
-				public String getCharset() throws CoreException {
-					return state.getCharset();
-				}
-				/*
-				 * (non-Javadoc)
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
 				 */
 				public boolean exists() {
@@ -123,6 +124,13 @@ public class FileDescription extends ResourceDescription {
 				 */
 				public InputStream getContents() throws CoreException {
 					return state.getContents();
+				}
+				/*
+				 * (non-Javadoc)
+				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
+				 */
+				public String getCharset() throws CoreException {
+					return state.getCharset();
 				}
 			};
 		}
@@ -165,14 +173,17 @@ public class FileDescription extends ResourceDescription {
 				InputStream contents = new ByteArrayInputStream(
 						UndoMessages.FileDescription_ContentsCouldNotBeRestored
 								.getBytes());
-				String charset = null;
 				// Retrieve the contents and charset from the file content
 				// description. Other file state attributes, such as timestamps,
 				// have already been retrieved from the original IResource
 				// object and are restored in the superclass.
 				if (fileContentDescription != null && fileContentDescription.exists()) {
 					contents = fileContentDescription.getContents();
-					charset = fileContentDescription.getCharset();
+					// If the charset was explicitly recorded from the file handle,
+					// use it.  But if it is null, get it from the fileContentDescription.
+					if (charset == null) {
+						charset = fileContentDescription.getCharset();
+					}
 				}
 				fileHandle.create(contents, false, new SubProgressMonitor(
 						monitor, 100));

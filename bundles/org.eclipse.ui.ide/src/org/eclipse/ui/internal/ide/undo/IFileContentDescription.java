@@ -44,8 +44,8 @@ public interface IFileContentDescription {
 
 	/**
 	 * Returns the name of a charset encoding to be used when decoding the
-	 * contents into characters. Returns <code>null</code> if a proper
-	 * encoding cannot be determined.
+	 * contents into characters. Returns <code>null</code> if a charset
+	 * has not been explicitly specified.
 	 * 
 	 * @return the name of a charset, or <code>null</code>
 	 * @throws CoreException

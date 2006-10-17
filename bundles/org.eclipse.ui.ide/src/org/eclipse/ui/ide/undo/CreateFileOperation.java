@@ -110,7 +110,7 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 			 */
 			public String getCharset() {
 				try {
-					return file.getCharset();
+					return file.getCharset(false);
 				} catch (CoreException e) {
 					return null;
 				}
