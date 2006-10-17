@@ -2174,7 +2174,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		updateControls();
 		updateToolItems();
 		
-		if (!fHasErrors)
+		if (!fHasErrors && getCompareConfiguration().getCalculateDiffs())
 			doDiff();
 
 		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
@@ -2184,7 +2184,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		updateVScrollBar();
 		refreshBirdsEyeView();
 		
-		if (!fHasErrors && !emptyInput && !fComposite.isDisposed()) {
+		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && getCompareConfiguration().getCalculateDiffs()) {
 			Diff selectDiff= null;
 			if (FIX_47640) {
 				if (leftRange != null)
@@ -3549,22 +3549,25 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 					
 	protected void updateToolItems() {
-					
-		if (fIgnoreAncestorItem != null)
-			fIgnoreAncestorItem.setVisible(isThreeWay());
-		
-		if (fCopyDiffLeftToRightItem != null) {
-			IAction a= fCopyDiffLeftToRightItem.getAction();
-			if (a != null)
-				a.setEnabled(a.isEnabled() && !fHasErrors);
+		//only update toolbar items if diffs need to be calculated (which
+		//dictates whether a toolbar gets added at all)
+		if (getCompareConfiguration().getCalculateDiffs()){
+			if (fIgnoreAncestorItem != null)
+				fIgnoreAncestorItem.setVisible(isThreeWay());
+			
+			if (fCopyDiffLeftToRightItem != null) {
+				IAction a= fCopyDiffLeftToRightItem.getAction();
+				if (a != null)
+					a.setEnabled(a.isEnabled() && !fHasErrors);
+			}
+			if (fCopyDiffRightToLeftItem != null) {
+				IAction a= fCopyDiffRightToLeftItem.getAction();
+				if (a != null)
+					a.setEnabled(a.isEnabled() && !fHasErrors);
+			}
+			
+			super.updateToolItems();
 		}
-		if (fCopyDiffRightToLeftItem != null) {
-			IAction a= fCopyDiffRightToLeftItem.getAction();
-			if (a != null)
-				a.setEnabled(a.isEnabled() && !fHasErrors);
-		}
-		
-		super.updateToolItems();
 	}
 	
 	//---- painting lines
