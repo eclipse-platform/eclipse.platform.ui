@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * The TableColumnAdapter is the ControlAdapter used to maintain Table sizes
+ * The TreeColumnAdapter is the ControlAdapter used to maintain Table sizes
  * {@link Tree}.
  * 
  * @since 3.3
@@ -42,6 +42,9 @@ public class TreeColumnAdapter extends AbstractColumnAdapter {
 		return ((Tree) getControl()).getColumnCount();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.layout.AbstractColumnAdapter#setColumnWidths(int[])
+	 */
 	void setColumnWidths(int[] widths) {
 		TreeColumn[] columns = ((Tree) getControl()).getColumns();
 		for (int i = 0; i < widths.length; i++) {
