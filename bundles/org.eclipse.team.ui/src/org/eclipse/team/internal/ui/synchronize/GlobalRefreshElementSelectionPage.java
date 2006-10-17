@@ -362,6 +362,12 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 	protected boolean isWorkspaceSelected() {
 		return participantScope.getSelection();
 	}
+	
+	protected void setWorkspaceSelected(boolean selected) {
+		 workingSetScope.setSelection(!selected);
+		 selectedResourcesScope.setSelection(!selected);
+		 participantScope.setSelection(selected);
+	}
 
 	protected boolean isWorkingSetSelected() {
 		return workingSetScope.getSelection();
@@ -373,5 +379,9 @@ public abstract class GlobalRefreshElementSelectionPage extends WizardPage {
 
 	public ContainerCheckedTreeViewer getViewer() {
 		return fViewer;
+	}
+	
+	protected boolean isSelectedResourcesSelected() {
+		return selectedResourcesScope.getSelection();
 	}
 }

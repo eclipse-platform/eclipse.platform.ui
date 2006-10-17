@@ -74,7 +74,22 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 		fViewer.setLabelProvider(new DecoratingLabelProvider(service.createCommonLabelProvider(), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateOKStatus();
+				Object element = event.getElement();
+				//If the workspace model has been checked, switch the scope to workspace
+				if (event.getChecked() && element instanceof ModelProvider && ((ModelProvider) element).getId().equals(ModelProvider.RESOURCE_MODEL_PROVIDER_ID)) {
+						setWorkspaceSelected(true);
+				} else {
+					//Get the resource mapping from the element
+					ResourceMapping mapping = Utils.getResourceMapping(element);
+					if (mapping != null) {
+						if (!(element instanceof ModelProvider)) {
+							uncheckOtherModels(mapping.getModelProviderId());
+							event.getCheckable().setChecked(event.getElement(), event.getChecked());
+						}
+						updateOKStatus();
+					} else
+						updateOKStatus();
+				}
 			}
 		});
 		fViewer.getTree().addTreeListener(new TreeListener(){
@@ -232,6 +247,26 @@ public class ModelElementSelectionPage extends GlobalRefreshElementSelectionPage
 	private boolean isEnabled(ModelProvider provider) {
 		ITeamContentProviderDescriptor desc = TeamUI.getTeamContentProviderManager().getDescriptor(provider.getId());
 		return (desc != null && desc.isEnabled());
+	}
+	
+	private void uncheckOtherModels(String modelProviderId) {
+		
+		if (!isSelectedResourcesSelected()) {
+			ModelProvider[] providers = manager.getScope().getModelProviders();
+			ArrayList disabledProviders = new ArrayList();
+			for (int i = 0; i < providers.length; i++) {
+				if (!providers[i].getId().equals(modelProviderId)) {
+					disabledProviders.add(providers[i]);
+				}
+			}
+
+			for (Iterator iterator = disabledProviders.iterator(); iterator.hasNext();) {
+				ModelProvider disable = (ModelProvider) iterator.next();
+				fViewer.setChecked(disable, false);
+			}
+		}
+			
+		
 	}
 
 }
