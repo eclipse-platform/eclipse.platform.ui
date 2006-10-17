@@ -98,7 +98,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 			return;
 		}
 		if (target.exists(flags, false))
-			target.deleteResource(true, null);
+			target.deleteResource(true, errors);
 		node.setExistsWorkspace(false);
 	}
 
