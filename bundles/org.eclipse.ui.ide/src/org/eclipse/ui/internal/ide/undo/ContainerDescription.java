@@ -66,7 +66,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 		// we use the normal creation constructor.
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IContainer currentContainer = (IContainer) root.findMember(fullPath);
-		if (container != null) {
+		if (currentContainer != null) {
 			return (ContainerDescription) ResourceDescription
 					.fromResource(container);
 		}
