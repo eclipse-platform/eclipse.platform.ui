@@ -739,16 +739,37 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				}
 			} else {
 				//read process directly on other platforms
-				BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
-				String line= reader.readLine();
+				//we need to parse out matching '{' and '}' for function declarations in .bash environments
+				// pattern is [func name]=() { and we must find the '}' on its own line with no trailing ';'
+				InputStream stream = process.getInputStream();
+				InputStreamReader isreader = new InputStreamReader(stream);
+				BufferedReader reader = new BufferedReader(isreader);
+				String line = reader.readLine();
+				String key = null;
+				String value = null;
 				while (line != null) {
-					int separator= line.indexOf('=');
-					if (separator > 0) {
-						String key= line.substring(0, separator);
-						String value= line.substring(separator + 1);
-						cache.put(key, value);
+					int func = line.indexOf("=()"); //$NON-NLS-1$
+					if(func > 0) {
+						key = line.substring(0, func);
+						//scan until we find the closing '}' with no following chars
+						value = line.substring(func+1);
+						while(line != null && !line.equals("}")) { //$NON-NLS-1$
+							line = reader.readLine();
+							if(line != null) {
+								value += line;
+							}
+						}
 					}
-					line= reader.readLine();
+					else {
+						int separator = line.indexOf('=');
+						if (separator > 0) {
+							key = line.substring(0, separator);
+							value = line.substring(separator + 1);
+							
+						}
+					}
+					cache.put(key, value);
+					line = reader.readLine();
 				}
 				reader.close();
 			}
