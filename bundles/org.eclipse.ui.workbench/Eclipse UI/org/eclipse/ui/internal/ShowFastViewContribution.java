@@ -60,7 +60,8 @@ public class ShowFastViewContribution extends ContributionItem {
         	return;
         
         Perspective persp = fvb.getWindow().getActiveWorkbenchPage().getActivePerspective();
-        item.setEnabled(persp.isFastView(ref));
+        if (persp != null)
+        	item.setEnabled(persp.isFastView(ref));
     }
 
     public static ToolItem getItem(ToolBar toSearch, IWorkbenchPartReference ref) {
