@@ -263,7 +263,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		monitor = Policy.monitorFor(monitor);
 		final ISchedulingRule rule = getRuleFactory().buildRule();
 		try {
-			monitor.beginTask(null, Policy.opWork);
+			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			try {
 				prepareOperation(rule, monitor);
 				beginOperation(true);
@@ -1730,7 +1730,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public void run(IWorkspaceRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			int depth = -1;
 			boolean avoidNotification = (options & IWorkspace.AVOID_UPDATE) != 0;
 			try {
@@ -1821,7 +1821,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		monitor = Policy.monitorFor(monitor);
 		try {
 			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
-			monitor.beginTask(null, managers.length);
+			monitor.beginTask("", managers.length); //$NON-NLS-1$
 			String message = Messages.resources_shutdownProblems;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			// best effort to shutdown every object and free resources

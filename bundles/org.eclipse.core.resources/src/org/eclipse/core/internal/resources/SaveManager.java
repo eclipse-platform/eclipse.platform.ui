@@ -125,7 +125,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void broadcastLifecycle(final int lifecycle, Map contexts, final MultiStatus warnings, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, contexts.size());
+			monitor.beginTask("", contexts.size()); //$NON-NLS-1$
 			for (final Iterator it = contexts.entrySet().iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
 				Plugin plugin = (Plugin) entry.getKey();
@@ -609,7 +609,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 50);
+			monitor.beginTask("", 50); //$NON-NLS-1$
 			// need to open the tree to restore, but since we're not 
 			// inside an operation, be sure to close it afterwards
 			workspace.newWorkingTree();
@@ -661,7 +661,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 40);
+			monitor.beginTask("", 40); //$NON-NLS-1$
 			if (project.isOpen()) {
 				restoreTree(project, Policy.subMonitorFor(monitor, 10));
 			} else {
@@ -803,7 +803,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			monitor.beginTask(null, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			IPath snapLocation = workspace.getMetaArea().getSnapshotLocationFor(workspace.getRoot());
 			java.io.File localFile = snapLocation.toFile();
 
@@ -914,7 +914,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			monitor.beginTask(null, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(project, false);
 			IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 			if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists())
@@ -1207,7 +1207,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			monitor.beginTask(null, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			//the tree must be immutable
 			tree.immutable();
 			// don't need to snapshot if there are no changes 
@@ -1578,7 +1578,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void writeTree(Map statesToSave, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, Policy.totalWork);
+			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 			boolean wasImmutable = false;
 			try {
 				// Create an array of trees to save. Ensure that the current one is in the list
@@ -1642,7 +1642,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void writeTree(Project project, DataOutputStream output, IProgressMonitor monitor) throws IOException, CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 10);
+			monitor.beginTask("", 10); //$NON-NLS-1$
 			boolean wasImmutable = false;
 			try {
 				/**

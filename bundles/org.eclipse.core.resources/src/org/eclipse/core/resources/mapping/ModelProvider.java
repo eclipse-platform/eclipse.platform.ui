@@ -194,7 +194,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		try {
-			monitor.beginTask(null, 100 * mappings.length);
+			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
 			List traversals = new ArrayList();
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];

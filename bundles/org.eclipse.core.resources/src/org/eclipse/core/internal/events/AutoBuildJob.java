@@ -133,7 +133,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private void doBuild(IProgressMonitor monitor) throws CoreException, OperationCanceledException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, Policy.opWork);
+			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			final ISchedulingRule rule = workspace.getRuleFactory().buildRule();
 			try {
 				workspace.prepareOperation(rule, monitor);

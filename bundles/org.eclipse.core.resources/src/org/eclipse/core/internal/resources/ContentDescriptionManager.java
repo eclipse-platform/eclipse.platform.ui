@@ -65,9 +65,9 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			try {
-				monitor.beginTask(null, Policy.opWork);
+				monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 				//note that even though we are running in a workspace job, we
-				//must do a begin/endOperation to reacquire the workspace lock
+				//must do a begin/endOperation to re-acquire the workspace lock
 				final ISchedulingRule rule = workspace.getRoot();
 				try {
 					workspace.prepareOperation(rule, monitor);

@@ -97,7 +97,7 @@ public final class CompositeResourceMapping extends ResourceMapping {
 		if (monitor == null)
 			monitor = new NullProgressMonitor();
 		try {
-			monitor.beginTask(null, 100 * mappings.length);
+			monitor.beginTask("", 100 * mappings.length); //$NON-NLS-1$
 			List result = new ArrayList();
 			for (int i = 0; i < mappings.length; i++) {
 				ResourceMapping mapping = mappings[i];
