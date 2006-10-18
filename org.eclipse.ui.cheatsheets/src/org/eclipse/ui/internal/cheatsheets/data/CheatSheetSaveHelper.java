@@ -48,8 +48,6 @@ public class CheatSheetSaveHelper {
 
 	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
 	
-	private IStatus loadStatus;  // The status of the last load operation
-
 	/**
 	 * Constructor for CheatSheetSaveHelper.
 	 */
@@ -252,7 +250,6 @@ public class CheatSheetSaveHelper {
 	 * @return The state of this cheatsheet or null
 	 */
 	public Properties loadState(String csID) {
-		loadStatus = Status.OK_STATUS;
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(csID + DOT_XML);
 		if (readMemento == null) {
 			return null;
@@ -322,14 +319,6 @@ public class CheatSheetSaveHelper {
 			list.add(children[i].getString(IParserTags.ITEM));
 		}	
 		properties.put(key, list);
-	}
-
-	/**
-	 * Used to determine the status if loadStateFromMemento returned null
-	 * @return
-	 */
-	public IStatus getLoadStatus() {
-		return loadStatus;
 	}
 
 }

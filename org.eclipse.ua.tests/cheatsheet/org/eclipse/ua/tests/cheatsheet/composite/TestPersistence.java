@@ -24,6 +24,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetMo
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskGroup;
+import org.eclipse.ui.internal.cheatsheets.state.DefaultStateManager;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 
 public class TestPersistence extends TestCase {
@@ -56,7 +57,7 @@ public class TestPersistence extends TestCase {
 		rootTask = new TaskGroup(model, "root", "name", "kind");
 		task1 = new EditableTask(model, "task1", "name", "kind");
 		task2 = new EditableTask(model, "task2", "name", "kind");
-		helper = new CompositeCheatSheetSaveHelper();
+		helper = new CompositeCheatSheetSaveHelper(new DefaultStateManager());
 		model.setSaveHelper(helper);
 		editor1 = new MockTaskEditor();
 		editor2 = new MockTaskEditor();

@@ -23,6 +23,8 @@ import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
+import org.eclipse.ui.internal.cheatsheets.state.ICheatSheetStateManager;
+import org.eclipse.ui.internal.cheatsheets.state.NoSaveStateManager;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
@@ -38,15 +40,18 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
 public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
 	private Map taskMementoMap;
+	private ICheatSheetStateManager stateManager;
 
 	/**
 	 * Constructor 
 	 */
-	public CompositeCheatSheetSaveHelper() {
+	public CompositeCheatSheetSaveHelper(ICheatSheetStateManager stateManager) {
 		super();
+		this.stateManager = stateManager;
 	}
 
 	public IStatus loadCompositeState(CompositeCheatSheetModel model, Map layoutData) {
+		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;
 		XMLMemento readMemento = CheatSheetPlugin.getPlugin().readMemento(model.getId() + DOT_XML);
 		if (readMemento == null) {
 			return Status.OK_STATUS;
@@ -122,6 +127,7 @@ public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
 	 * @return
 	 */
 	public IStatus saveCompositeState(CompositeCheatSheetModel model, Map layoutData) {
+		if (stateManager instanceof NoSaveStateManager) return Status.OK_STATUS;	
 		XMLMemento writeMemento = XMLMemento.createWriteRoot(ICompositeCheatsheetTags.COMPOSITE_CHEATSHEET_STATE);
 		writeMemento.putString(IParserTags.ID, model.getId());		
         saveTaskState(writeMemento, (AbstractTask)model.getRootTask());

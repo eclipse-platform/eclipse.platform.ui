@@ -54,6 +54,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.EditableTask;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader.TaskExplorerNode;
+import org.eclipse.ui.internal.cheatsheets.state.ICheatSheetStateManager;
 import org.eclipse.ui.internal.cheatsheets.views.Page;
 import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
@@ -85,9 +86,9 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private ICompositeCheatSheetTask selectedTask;
 	private boolean initialized = false;;
 	
-	public CompositeCheatSheetPage(CompositeCheatSheetModel model) {
+	public CompositeCheatSheetPage(CompositeCheatSheetModel model, ICheatSheetStateManager stateManager) {
 		this.model = model;
-		saveHelper = new CompositeCheatSheetSaveHelper();
+		saveHelper = new CompositeCheatSheetSaveHelper(stateManager);
 	}
 
 	public void createPart(Composite parent) {

@@ -868,7 +868,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		} else if (model instanceof CompositeCheatSheetModel) {
 			CompositeCheatSheetModel compositeCheatSheetModel = ((CompositeCheatSheetModel)model);
 			compositeCheatSheetModel.setId(currentID);
-			currentPage = new CompositeCheatSheetPage(compositeCheatSheetModel);
+			currentPage = new CompositeCheatSheetPage(compositeCheatSheetModel, stateManager);
 			compositeCheatSheetModel.setCheatSheetManager(initManager());
 			setCollapseExpandButtonEnabled(false);
 	    }
