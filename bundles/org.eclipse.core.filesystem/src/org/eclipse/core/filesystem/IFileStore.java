@@ -350,8 +350,8 @@ public interface IFileStore extends IAdaptable {
 	 * needed.  This file need not exist in the underlying file system at the
 	 * time this method is called.
 	 * <p>
-	 * The returned stream is not guaranteed to be buffered efficiently.  When reading
-	 * large blocks of data from the stream, a <code>BufferedOutputStream</code>
+	 * The returned stream is not guaranteed to be buffered efficiently.  When writing
+	 * large blocks of data to the stream, a <code>BufferedOutputStream</code>
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * <p>
