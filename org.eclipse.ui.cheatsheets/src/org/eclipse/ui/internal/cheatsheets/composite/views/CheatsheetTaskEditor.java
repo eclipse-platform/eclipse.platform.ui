@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Dictionary;
 
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
@@ -22,6 +23,7 @@ import org.eclipse.ui.cheatsheets.CheatSheetListener;
 import org.eclipse.ui.cheatsheets.CheatSheetViewerFactory;
 import org.eclipse.ui.cheatsheets.ICheatSheetEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.state.MementoStateManager;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetViewer;
@@ -63,11 +65,13 @@ public class CheatsheetTaskEditor extends TaskEditor {
 				}
 				viewer.setInput(id, task.getName(), url, stateManager);				
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
-				return;
+				String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));			
+				viewer.showError(message);
 			}
-		} else {
+		} else if (id != null){
 		    viewer.setInput(id, stateManager);
+		} else {
+			viewer.showError(Messages.CHEATSHEET_TASK_NO_ID);
 		}
 		if (!showIntro) {
 			viewer.advanceIntroItem();

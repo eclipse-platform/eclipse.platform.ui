@@ -55,7 +55,7 @@ public class ParseFromString extends TestCase {
 	}
 
 	public void testXmlParserInput() {
-		ParserInput input = new ParserInput(VALID_CONTENT);
+		ParserInput input = new ParserInput(VALID_CONTENT, null);
 		assertNull(input.getUrl());
 		assertEquals(VALID_CONTENT, input.getXml());
 	}
@@ -69,7 +69,7 @@ public class ParseFromString extends TestCase {
 	}
 
 	public void testValidCheatsheet() {
-		ParserInput input = new ParserInput(VALID_CONTENT);
+		ParserInput input = new ParserInput(VALID_CONTENT, null);
 		CheatSheetParser parser = new CheatSheetParser();
 		ICheatSheet cheatSheet = parser.parse(input, CheatSheetParser.SIMPLE_ONLY);
 		assertNotNull(cheatSheet);
@@ -77,7 +77,7 @@ public class ParseFromString extends TestCase {
 	}
 	
 	public void testInvalidCheatsheet() {
-		ParserInput input = new ParserInput(INVALID_CONTENT);
+		ParserInput input = new ParserInput(INVALID_CONTENT, null);
 		CheatSheetParser parser = new CheatSheetParser();
 		ICheatSheet cheatSheet = parser.parse(input, CheatSheetParser.SIMPLE_ONLY);
 		assertNull(cheatSheet);

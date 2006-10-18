@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.cheatsheets.data;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -27,9 +28,16 @@ public class ParserInput {
 		xml = null;
 	}
 	
-	public ParserInput(String xml) {
+	public ParserInput(String xml, String basePath) {
 		this.xml = xml;
 		this.url = null;
+		if (basePath != null) {
+			try {
+				this.url = new URL(basePath);
+			} catch (MalformedURLException e) {
+				// leave the url null
+			}
+		}
 	}
 	
 	public ParserInput(URL url) {

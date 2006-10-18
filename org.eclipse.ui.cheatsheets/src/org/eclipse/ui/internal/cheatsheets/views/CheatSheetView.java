@@ -226,9 +226,9 @@ public class CheatSheetView extends ViewPart {
 		}
 	}
 
-	public void setInputFromXml(String id, String name, String xml) {
+	public void setInputFromXml(String id, String name, String xml, String basePath) {
 		if(viewer != null) {
-			viewer.setInputFromXml(id, name, xml);
+			viewer.setInputFromXml(id, name, xml, basePath);
 		}	
 	}
 }

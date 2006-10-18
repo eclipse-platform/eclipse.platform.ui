@@ -38,6 +38,7 @@ public final class OpenCheatSheetAction extends Action {
 	private String name;
 	private URL url;
 	private String xml;
+	private String basePath;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -84,6 +85,7 @@ public final class OpenCheatSheetAction extends Action {
 	 * @param xml the cheatsheet content in xml format
 	 * @exception IllegalArgumentException if the parameters
 	 * are <code>null</code>
+	 * @deprecated
 	 * @since 3.3
 	 */
 	public OpenCheatSheetAction(String id, String name, String xml) {
@@ -94,6 +96,34 @@ public final class OpenCheatSheetAction extends Action {
 		this.name = name;
 		this.xml = xml;
 	}
+	
+	/**
+	 * Creates an action that opens a cheat sheet using
+	 * XML passed in as a string.
+	 * 
+	 * @param id the id to give this cheat sheet
+	 * @param name the name to give this cheat sheet
+	 * @param xml the cheatsheet content in xml format
+	 * @param baseURL is a URL which is only required if the cheat sheet is
+	 * a composite cheat sheet which has tasks which use path parameters in which 
+	 * case the paths will be relative to baseURL. May be <code>null</code>
+	 * if this is not a composite cheat sheet
+	 * @exception IllegalArgumentException if the parameters
+	 * are <code>null</code>
+	 * @since 3.3
+	 */
+	public OpenCheatSheetAction(String id, String name, String xml, URL baseURL) {
+		if (id == null || name == null || xml == null) {
+			throw new IllegalArgumentException();
+		}
+		this.id = id;
+		this.name = name;
+		this.xml = xml;
+		if (baseURL !=null) {
+			basePath = baseURL.toExternalForm();
+		}
+	}
+
 
 	/* (non-javadoc)
 	 * This action will try to launch the cheat sheet view and populate
@@ -125,7 +155,7 @@ public final class OpenCheatSheetAction extends Action {
 		if(url != null) {
 			view.setInput(id, name, url);
 		} else if (xml != null) {
-			view.setInputFromXml(id, name, xml);
+			view.setInputFromXml(id, name, xml, basePath);
 		} else {
 			view.setInput(id);
 		}

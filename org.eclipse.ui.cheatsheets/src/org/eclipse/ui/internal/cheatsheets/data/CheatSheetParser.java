@@ -840,13 +840,12 @@ public class CheatSheetParser implements IStatusContainer {
 		InputStream is = null;
 		InputSource inputSource = null;
         String filename = ""; //$NON-NLS-1$
+		URL url = input.getUrl();
 
 		if (input.getXml() != null) {
 			StringReader reader = new StringReader(input.getXml()); 
 			inputSource = new InputSource(reader);
 		} else if (input.getUrl() != null){
-			URL url = input.getUrl();
-			filename = url.getFile();
 			try {
 				is = url.openStream();
 	
@@ -860,6 +859,10 @@ public class CheatSheetParser implements IStatusContainer {
 			}
 		} else {
 			return null;
+		}
+		
+		if (input.getUrl() != null){
+			filename = url.getFile();
 		}
 
 		Document document;

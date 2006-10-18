@@ -1118,7 +1118,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		restorePath = element.getRestorePath();
 		
 		if (contentXml != null) {
-			parserInput = new ParserInput(contentXml);
+			parserInput = new ParserInput(contentXml, restorePath);
 			return;		
 		}
 
@@ -1206,13 +1206,14 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		setInput(id, name, url, new DefaultStateManager());
 	}
 	
-	public void setInputFromXml(String id, String name, String xml) {
+	public void setInputFromXml(String id, String name, String xml, String basePath) {
 		if (id == null || name == null || xml == null) {
 			throw new IllegalArgumentException();
 		}
 		CheatSheetElement element = new CheatSheetElement(name);
 		element.setID(id);
 		element.setContentXml(xml);
+		element.setContentFile(basePath);
 
 		nullCheatSheetId = false;
 		invalidCheatSheetId = false;
@@ -1304,6 +1305,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (expandRestoreAction != null) {
 			expandRestoreAction.setEnabled(enable);
 		}
+	}
+
+	public void showError(String message) {
+		internalDispose();
+		if(howToBegin != null) {
+			howToBegin.dispose();
+			howToBegin = null;
+		}
+		createErrorPage(message);	
 	}
 
 }
