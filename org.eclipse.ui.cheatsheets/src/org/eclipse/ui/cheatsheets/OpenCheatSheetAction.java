@@ -83,27 +83,6 @@ public final class OpenCheatSheetAction extends Action {
 	 * @param id the id to give this cheat sheet
 	 * @param name the name to give this cheat sheet
 	 * @param xml the cheatsheet content in xml format
-	 * @exception IllegalArgumentException if the parameters
-	 * are <code>null</code>
-	 * @deprecated
-	 * @since 3.3
-	 */
-	public OpenCheatSheetAction(String id, String name, String xml) {
-		if (id == null || name == null || xml == null) {
-			throw new IllegalArgumentException();
-		}
-		this.id = id;
-		this.name = name;
-		this.xml = xml;
-	}
-	
-	/**
-	 * Creates an action that opens a cheat sheet using
-	 * XML passed in as a string.
-	 * 
-	 * @param id the id to give this cheat sheet
-	 * @param name the name to give this cheat sheet
-	 * @param xml the cheatsheet content in xml format
 	 * @param baseURL is a URL which is only required if the cheat sheet is
 	 * a composite cheat sheet which has tasks which use path parameters in which 
 	 * case the paths will be relative to baseURL. May be <code>null</code>
