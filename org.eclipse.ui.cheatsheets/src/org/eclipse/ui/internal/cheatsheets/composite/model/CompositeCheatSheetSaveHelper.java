@@ -21,7 +21,6 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.cheatsheets.ICheatSheetManager;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
-import org.eclipse.ui.internal.cheatsheets.data.CheatSheetSaveHelper;
 import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.state.ICheatSheetStateManager;
 import org.eclipse.ui.internal.cheatsheets.state.NoSaveStateManager;
@@ -37,7 +36,7 @@ import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
  * each task that has been started.
  */
 
-public class CompositeCheatSheetSaveHelper extends CheatSheetSaveHelper {
+public class CompositeCheatSheetSaveHelper {
 	private static final String DOT_XML = ".xml"; //$NON-NLS-1$
 	private Map taskMementoMap;
 	private ICheatSheetStateManager stateManager;
