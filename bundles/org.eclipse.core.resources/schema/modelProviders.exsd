@@ -17,7 +17,7 @@
          <sequence>
             <element ref="modelProvider"/>
             <element ref="extends-model" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="enablement"/>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
