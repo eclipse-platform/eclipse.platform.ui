@@ -48,6 +48,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
 	private static final String TAG_IS_WINDOW_WORKING_SET = "isWindowWorkingSet"; //$NON-NLS-1$
 	
+    /**
+     * Indicates if working set was changed
+     */
     public static final String CHANGE_WORKING_SET = "changeWorkingSet"; //$NON-NLS-1$
 
     private static final String SEPARATOR_ID = "workingSetGroupSeparator"; //$NON-NLS-1$

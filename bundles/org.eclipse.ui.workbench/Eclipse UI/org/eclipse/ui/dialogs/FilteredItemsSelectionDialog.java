@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -95,7 +94,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Shows a list of items to the user with a text entry field for a string
- * pattern used to filter the list of resources.
+ * pattern used to filter the list of items.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -121,8 +120,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	private TableViewer list;
 
 	private TableViewer details;
-
-	private SearchListContentProvider searchListContentProvider;
 
 	private SearchListLabelProvider searchListLabelProvider;
 
@@ -162,9 +159,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
-		this.searcherHistory = new SearcherHistory();
-		this.searcherModel = new SearcherModel();
-
+		this.history = new SearcherHistory();
 	}
 
 	/**
@@ -184,10 +179,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		return getSearchListLabelProvider().getProvider();
 	}
 
-	protected String getPattern() {
-		return pattern.getText();
-	}
-
+	/**
+	 * Adds viewer filter to item list
+	 */
 	protected void addListFilter(ViewerFilter filter) {
 		list.addFilter(filter);
 	}
@@ -279,7 +273,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			try {
 				IMemento memento = XMLMemento.createReadRoot(new StringReader(
 						setting));
-				restoreState(memento);
+				history.load(memento);
 			} catch (WorkbenchException e) {
 				// Simply don't restore the settings
 				WorkbenchPlugin.log(e);
@@ -307,7 +301,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		settings.put(SHOW_STATUS_LINE, toggleStatusLineAction.isChecked());
 
 		XMLMemento memento = XMLMemento.createWriteRoot(SEARCHER_SETTINGS);
-		saveState(memento);
+		history.save(memento);
 		StringWriter writer = new StringWriter();
 		try {
 			memento.save(writer);
@@ -463,9 +457,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
 				| SWT.BORDER | SWT.V_SCROLL);
-		searchListContentProvider = new SearchListContentProvider();
-		list.setContentProvider(searchListContentProvider);
-		searchListContentProvider.setElements(new Object[0]);
+		contentProvider = new ContentProvider(createFilter(), this.history);
+		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getSearchListLabelProvider());
 		list.setInput(new Object[0]);
 		gd = new GridData(GridData.FILL_BOTH);
@@ -476,7 +469,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		pattern.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				setFilter(createFilter(pattern.getText().trim()));
+				setFilter(createFilter());
 			}
 		});
 
@@ -551,7 +544,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				detailsContentProvider.setElements(new Object[0]);
 				details.getTable().setEnabled(false);
 			} else {
-				Object o = getItemDetails(element);
+				Object o = getItemDetails((AbstractSearchItem) element);
 				detailsContentProvider.setElements(new Object[] { o });
 				details.getTable().setEnabled(true);
 			}
@@ -657,7 +650,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 			list.getTable().setRedraw(false);
-			searchListContentProvider.setElements(searcherModel.getElements());
+			// searchListContentProvider.setElements(searcherModel.getElements());
 			list.refresh();
 			list.getTable().setRedraw(true);
 
@@ -674,10 +667,13 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		if (!progressLabel.isDisposed()) {
-			progressLabel.setText(searcherModel.getProgressMessage());
+			progressLabel.setText(contentProvider.getProgressMessage());
 		}
 	}
 
+	/**
+	 * Schedule refresh job
+	 */
 	public void scheduleRefresh() {
 		refreshJob.cancel();
 		refreshJob.schedule();
@@ -998,63 +994,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 	}
 
-	private class SearchListContentProvider implements
-			IStructuredContentProvider {
-
-		private Object[] elements;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-		 */
-		public Object[] getElements(Object inputElement) {
-
-			List list = new ArrayList();
-
-			boolean hasHistory = false;
-
-			for (int i = 0; i < elements.length; i++) {
-				if (((AbstractSearchItem) elements[i]).isHistory()) {
-					hasHistory = true;
-				}
-
-				if (hasHistory
-						&& !((AbstractSearchItem) elements[i]).isHistory()) {
-					list
-							.add(new SearchListSeparator(
-									WorkbenchMessages.AbstractSearchDialog_separatorLabel));
-					hasHistory = false;
-				}
-
-				list.add(elements[i]);
-			}
-
-			return list.toArray();
-		}
-
-		public void setElements(Object[] elements) {
-			this.elements = elements;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		public void dispose() {
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-		 *      java.lang.Object, java.lang.Object)
-		 */
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-	}
-
 	private class DetailsContentProvider implements IStructuredContentProvider {
 
 		private Object[] elements;
@@ -1068,6 +1007,11 @@ public abstract class FilteredItemsSelectionDialog extends
 			return elements;
 		}
 
+		/**
+		 * Sets table of elements
+		 * 
+		 * @param elements
+		 */
 		public void setElements(Object[] elements) {
 			this.elements = elements;
 		}
@@ -1126,6 +1070,9 @@ public abstract class FilteredItemsSelectionDialog extends
 			this.name = name;
 		}
 
+		/**
+		 * @return the name of the separator
+		 */
 		public String getName() {
 			return name;
 		}
@@ -1133,9 +1080,9 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	// --------------------S E A R C H E R---------------------------
 
-	private SearcherHistory searcherHistory;
+	private SearcherHistory history;
 
-	private SearcherModel searcherModel;
+	private ContentProvider contentProvider;
 
 	private AbstractSearchJob searchJob;
 
@@ -1143,23 +1090,23 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private SearchFilter filter;
 
-	private SearchFilter lastComplitedFilter = null;
+	private SearchFilter lastCompletedFilter = null;
 
 	/**
-	 * Get descritoions for concrete object
+	 * Gets details for concrete object
 	 * 
 	 * @param item
 	 * @return item description
 	 */
-	protected abstract Object getItemDetails(Object item);
+	protected abstract Object getItemDetails(AbstractSearchItem item);
 
 	/**
-	 * Validate and return status of the object
+	 * Validates and return status of the item
 	 * 
 	 * @param item
 	 * @return status of the item
 	 */
-	protected abstract IStatus validateItem(Object item);
+	protected abstract IStatus validateItem(AbstractSearchItem item);
 
 	/**
 	 * Get object respondent to item, which is return by dialog
@@ -1170,19 +1117,19 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract Object getObjectToReturn(Object item);
 
 	/**
-	 * Create instance of filter. It could be override to change behaviours of
+	 * Creates instance of filter. It could be override to change behaviours of
 	 * filtering.
 	 * 
 	 * @param text
 	 * @return filter to matching elements
 	 */
-	protected abstract SearchFilter createFilter(String text);
+	protected abstract SearchFilter createFilter();
 
 	/**
-	 * Returns comparator to sort elements inside model.
+	 * Returns comparator to sort items inside model.
 	 * 
 	 */
-	protected abstract Comparator getElementsComparator();
+	protected abstract Comparator getItemsComparator();
 
 	/**
 	 * Search elements mtehod used by SearchJob. It get elements filtered
@@ -1192,27 +1139,29 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @param contentProvider
 	 * @throws CoreException
 	 */
-	protected abstract void searchElements(ContentProvider contentProvider)
-			throws CoreException;
+	protected abstract void searchItems(IDialogContentProvider contentProvider,
+			IProgressMonitor progressMonitor) throws CoreException;
 
 	/**
-	 * Store <code>Object</code> in <code>Element</code>
-	 * 
-	 * @param object
-	 *            The object to store
-	 * @param element
-	 *            The Element to store to
-	 */
-	protected abstract void setAttributes(Object object, IMemento element);
-
-	/**
-	 * Return a new instance of an Object given <code>element</code>
+	 * Return a new instance of an AbstractSearchItem given memento element
 	 * 
 	 * @param element
 	 *            The element containing required information to create the
 	 *            Object
 	 */
-	protected abstract Object createFromElement(IMemento element);
+	protected abstract AbstractSearchItem restoreItemFromMemento(
+			IMemento element);
+
+	/**
+	 * Store <code>AbstractSearchItem</code> in <code>IMemento</code>
+	 * 
+	 * @param object
+	 *            The item to store
+	 * @param element
+	 *            The element to store to
+	 */
+	protected abstract void storeItemToMemento(AbstractSearchItem item,
+			IMemento element);
 
 	/**
 	 * Remove selected items form history set.
@@ -1220,25 +1169,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @param items
 	 */
 	private void removeSelectedItems(List items) {
-		searcherModel.removeElements(items);
-	}
-
-	/**
-	 * Restore a state of history of selected elements from memento
-	 * 
-	 * @param memento
-	 */
-	private void restoreState(IMemento memento) {
-		searcherHistory.load(memento);
-	}
-
-	/**
-	 * Save a state of history of selected elements to memento
-	 * 
-	 * @param memento
-	 */
-	private void saveState(IMemento memento) {
-		searcherHistory.save(memento);
+		contentProvider.removeElements(items);
 	}
 
 	/**
@@ -1247,24 +1178,22 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * new filter is subfilter of last one it schedule job schearching in cache.
 	 * If it is first searching or new filter isn't subfilter of last one it
 	 * schedule full seach.
-	 * 
 	 */
-	private void scheduleSearchJob() {
+	private synchronized void scheduleSearchJob() {
 		stop();
-		searcherModel = new SearcherModel();
-		if (lastComplitedFilter != null
-				&& lastComplitedFilter.isSubFilter(filter)) {
-			searchJob = new CachedResultSearchJob(lastCompletedResult,
-					searcherModel, filter);
+		if (lastCompletedFilter != null
+				&& lastCompletedFilter.isSubFilter(filter)) {
+			searchJob = new CachedResultSearchJob(contentProvider,
+					lastCompletedResult);
 		} else {
-			lastComplitedFilter = null;
+			lastCompletedFilter = null;
 			lastCompletedResult = null;
-			searchJob = new SearchJob(searcherModel, filter, searcherHistory);
+			searchJob = new SearchJob(contentProvider);
 		}
 		searchJob.schedule();
 	}
 
-	protected void stop() {
+	private void stop() {
 		if (searchJob != null) {
 			searchJob.stop();
 			searchJob = null;
@@ -1286,7 +1215,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				if ((searchItem1.isHistory() && searchItem2.isHistory())
 						|| (!searchItem1.isHistory() && !searchItem2
 								.isHistory()))
-					return getElementsComparator().compare(o1, o2);
+					return getItemsComparator().compare(o1, o2);
 
 				if (searchItem1.isHistory())
 					return -1;
@@ -1295,24 +1224,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 				return 0;
 			}
-
 		};
-	}
-
-	private void rememberResult(final List result) {
-		if (lastCompletedResult == null) {
-			lastComplitedFilter = filter;
-			lastCompletedResult = result;
-		}
-	}
-
-	/**
-	 * Get filter
-	 * 
-	 * @return current filter
-	 */
-	protected SearchFilter getFilter() {
-		return this.filter;
 	}
 
 	/**
@@ -1323,164 +1235,31 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected void setFilter(SearchFilter searchFilter) {
 		stop();
 		this.filter = searchFilter;
-		if (this.filter != null)
-			if (this.filter.getText().length() == 0) {
+		this.contentProvider = new ContentProvider(filter, this.history);
+		list.setContentProvider(contentProvider);
+
+		if (this.filter != null) {
+			if (this.filter.getPattern().length() == 0) {
 				filter = null;
-				searcherModel.reset();
 			} else {
 				scheduleSearchJob();
 			}
+		}
 	}
 
 	/**
+	 * Remove element from history
+	 * 
 	 * @param element
-	 * @return Object
+	 *            to remove
+	 * @return removed object
 	 */
 	protected Object removeHistoryElement(Object element) {
-		return this.searcherHistory.remove(element);
-	}
-
-	/**
-	 * @return Collection 
-	 */
-	protected Collection getHistoryElements() {
-		return searcherHistory.getValues();
-	}
-
-	/**
-	 * @param key
-	 * @return true if history contains key false in other way
-	 */
-	public boolean isHistoryContainsKey(Object key) {
-		return searcherHistory.containsKey(key);
+		return this.history.remove(element);
 	}
 
 	protected void accessedHistory(AbstractSearchItem searchItem) {
-		searcherHistory.accessed(searchItem);
-	}
-
-	/**
-	 * Data model for searcher. It collects matched elements. It is resist to
-	 * concurrent access. It conatains one synchronized sorted set for
-	 * collecting and sorting data elements using comparator. Comparator is
-	 * return by getElementComparator() method implemented in searcher.
-	 */
-	private class SearcherModel {
-
-		private SortedSet elements;
-
-		private String progressMessage = ""; //$NON-NLS-1$
-
-		/**
-		 * Create model using synchronized sorted set.
-		 */
-		public SearcherModel() {
-			this.elements = Collections.synchronizedSortedSet(new TreeSet(
-					getElementsComparator()));
-		}
-
-		/**
-		 * Get searched elements
-		 * 
-		 * @return searched elements
-		 */
-		public Object[] getElements() {
-			SortedSet sortedElements = new TreeSet(getHistoryComparator());
-			sortedElements.addAll(Arrays.asList(elements.toArray()));
-			return sortedElements.toArray();
-		}
-
-		/**
-		 * Get searched elements
-		 * 
-		 * @return searched elements
-		 */
-		public List getElementsList() {
-			SortedSet sortedElements = new TreeSet(getHistoryComparator());
-			sortedElements.addAll(Arrays.asList(elements.toArray()));
-			return new ArrayList(sortedElements);
-		}
-
-		/**
-		 * Get progress message
-		 * 
-		 * @return progress message
-		 */
-		public String getProgressMessage() {
-			return progressMessage;
-		}
-
-		/**
-		 * Set elements
-		 * 
-		 * @param items
-		 */
-		public void setElements(Object[] items) {
-			elements.clear();
-			elements.addAll(Arrays.asList(items));
-			refresh();
-		}
-
-		/**
-		 * Set history (selected elements)
-		 * 
-		 * @param items
-		 */
-		public void setHistory(Object[] items) {
-			elements.addAll(Arrays.asList(items));
-			refresh();
-		}
-
-		/**
-		 * Clear elemnts and history
-		 */
-		public void reset() {
-			this.elements.clear();
-			refresh();
-		}
-
-		/**
-		 * Add Element to elements collection
-		 * 
-		 * @param item
-		 */
-		public void addElement(Object item) {
-			this.elements.add(item);
-		}
-
-		/**
-		 * Schedule refresh job on the dialog
-		 */
-		public void refresh() {
-			refreshJob.schedule();
-		}
-
-		/**
-		 * Set progress message
-		 * 
-		 * @param progressMessage
-		 */
-		public void setProgressMessage(String progressMessage) {
-			this.progressMessage = progressMessage;
-			refresh();
-		}
-
-		/**
-		 * Remove elements form model
-		 * 
-		 * @param items
-		 */
-		public void removeElements(List items) {
-			for (Iterator iter = items.iterator(); iter.hasNext();) {
-				AbstractSearchItem item = (AbstractSearchItem) iter.next();
-				item.unmarkHistory();
-				searcherHistory.removeKey(item);
-				if (lastCompletedResult != null)
-					lastCompletedResult.remove(item);
-			}
-			refresh();
-		}
-
+		history.accessed(searchItem);
 	}
 
 	/**
@@ -1492,7 +1271,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	private static class SearcherProgressMonitor extends ProgressMonitorWrapper {
 
-		private SearcherModel model;
+		private ContentProvider contentProvider;
 
 		private String name;
 
@@ -1503,13 +1282,15 @@ public abstract class FilteredItemsSelectionDialog extends
 		private boolean done;
 
 		/**
+		 * Creates instance of SearcherProgressMonitor
+		 * 
 		 * @param monitor
-		 * @param model
+		 * @param contentProvider
 		 */
 		public SearcherProgressMonitor(IProgressMonitor monitor,
-				SearcherModel model) {
+				ContentProvider contentProvider) {
 			super(monitor);
-			this.model = model;
+			this.contentProvider = contentProvider;
 		}
 
 		public void setTaskName(String name) {
@@ -1531,18 +1312,18 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		public void done() {
 			done = true;
-			model.setProgressMessage(""); //$NON-NLS-1$
+			contentProvider.setProgressMessage(""); //$NON-NLS-1$
 			super.done();
 		}
 
 		/**
-		 * 
+		 * During work sets progress message after concrete part of work.
 		 */
 		public void internalWorked(double work) {
 			worked = worked + work;
 			if ((((int) (((worked - work) * 10) / totalWork)) < ((int) ((worked * 10) / totalWork)))
 					|| (((int) ((worked * 10) / totalWork)) == 0))
-				model.setProgressMessage(getMessage());
+				contentProvider.setProgressMessage(getMessage());
 		}
 
 		private String getMessage() {
@@ -1565,22 +1346,18 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Abstract job for searching elements. It is a pattern job for searching
-	 * elements in cache and full searching.
+	 * chached elements and full searching.
 	 * 
 	 * @since 3.3
 	 * 
 	 */
 	private abstract static class AbstractSearchJob extends Job {
 
-		protected SearcherModel model;
+		protected ContentProvider contentProvider;
 
-		protected SearchFilter searchFilter;
-
-		protected AbstractSearchJob(SearcherModel model,
-				SearchFilter searchFilter) {
+		protected AbstractSearchJob(ContentProvider contentProvider) {
 			super(WorkbenchMessages.AbstractSearcher_job_label);
-			this.model = model;
-			this.searchFilter = searchFilter;
+			this.contentProvider = contentProvider;
 			setSystem(true);
 		}
 
@@ -1591,7 +1368,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		protected final IStatus run(IProgressMonitor parent) {
 			SearcherProgressMonitor monitor = new SearcherProgressMonitor(
-					parent, model);
+					parent, contentProvider);
 			return doRun(monitor);
 		}
 
@@ -1618,23 +1395,14 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Search elements using filter
+		 * Searchs elements
 		 * 
-		 * @param filteredHistory
-		 *            set of history elements
 		 * @param monitor
 		 *            for monitoring progress
 		 * @throws CoreException
 		 */
-		protected abstract void searchResults(Set filteredHistory,
-				SearcherProgressMonitor monitor) throws CoreException;
-
-		/**
-		 * Get filtered history
-		 * 
-		 * @return lit of filtered history elements
-		 */
-		protected abstract List getFilteredHistory();
+		protected abstract void searchContent(SearcherProgressMonitor monitor)
+				throws CoreException;
 
 		/**
 		 * Main method for jobs.
@@ -1648,15 +1416,9 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 
-			model.reset();
+			searchContent(monitor);
 
-			List elements = getFilteredHistory();
-
-			model.setHistory(elements.toArray());
-
-			searchResults(new HashSet(elements), monitor);
-
-			model.refresh();
+			contentProvider.refresh();
 
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
@@ -1676,7 +1438,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Search matches element stored in cache.
+	 * Searchs elements in cache.
 	 * 
 	 * @since 3.3
 	 * 
@@ -1685,101 +1447,56 @@ public abstract class FilteredItemsSelectionDialog extends
 		private List lastResult;
 
 		/**
-		 * @param ticket
-		 *            of job
+		 * @param contentProvider
 		 * @param lastResult
-		 *            is list of last complited searched results (cache)
-		 * @param model
-		 *            to collect cearched elements
-		 * @param searchFilter
-		 *            for filtering elements
 		 */
-		public CachedResultSearchJob(List lastResult, SearcherModel model,
-				SearchFilter searchFilter) {
-			super(model, searchFilter);
+		public CachedResultSearchJob(ContentProvider contentProvider,
+				List lastResult) {
+			super(contentProvider);
 			this.lastResult = lastResult;
 		}
 
-		protected void searchResults(Set filteredHistory,
-				SearcherProgressMonitor monitor) {
+		protected void searchContent(SearcherProgressMonitor monitor) {
 
-			for (Iterator iter = lastResult.iterator(); iter.hasNext();) {
+			for (Iterator iter = this.lastResult.iterator(); iter.hasNext();) {
 				AbstractSearchItem searchitem = (AbstractSearchItem) iter
 						.next();
 				if (monitor.isCanceled())
 					break;
-				if (filteredHistory.contains(searchitem))
-					continue;
-				if (searchFilter.matchesElement(searchitem))
-					model.addElement(searchitem);
+				this.contentProvider.addSearchItem(searchitem);
 			}
 
 		}
 
-		protected List getFilteredHistory() {
-			List result = new ArrayList();
-
-			return result;
-		}
 	}
 
 	/**
-	 * Search matched elements in indicated set and in history. During searching
-	 * it refresh progres Monitor.
+	 * Searchs elements in indicated set and history. During searching it
+	 * refresh dialog (progres monitor and elements list).
 	 * 
 	 * @since 3.3
 	 * 
 	 */
 	private class SearchJob extends AbstractSearchJob {
 
-		SearcherHistory searcherHistory;
-
 		/**
-		 * @param ticket
-		 *            of job
-		 * @param model
-		 *            to collect cearched elements
-		 * @param searcher
-		 * @param searchFilter
-		 *            for filtering elements
+		 * Creates new instance of SearchJob
+		 * 
+		 * @param contentProvider
 		 */
-		public SearchJob(SearcherModel model, SearchFilter searchFilter,
-				SearcherHistory searcherHistory) {
-			super(model, searchFilter);
-			this.searcherHistory = searcherHistory;
+		public SearchJob(ContentProvider contentProvider) {
+			super(contentProvider);
 		}
 
-		public void stop() {
-			super.stop();
-		}
+		protected void searchContent(SearcherProgressMonitor monitor)
+				throws CoreException {
 
-		protected List getFilteredHistory() {
-			Collection values = searcherHistory.getValues();
-			List result = new ArrayList();
-			for (Iterator iter = values.iterator(); iter.hasNext();) {
-				AbstractSearchItem searchItem = (AbstractSearchItem) iter
-						.next();
+			this.contentProvider.addHistoryItems();
 
-				if (searchFilter == getFilter()
-						&& searchFilter.matchesElement(searchItem))
-					if (searchFilter.isConsistentElement(searchItem))
-						result.add(searchItem);
-					else
-						searcherHistory.removeKey(searchItem);
-			}
-			return result;
-		}
-
-		protected void searchResults(Set filteredHistory,
-				SearcherProgressMonitor monitor) throws CoreException {
-
-			ContentProvider contentProvider = new ContentProvider(this.model,
-					this.searchFilter, this.searcherHistory, monitor);
-
-			searchElements(contentProvider);
+			searchItems(this.contentProvider, monitor);
 
 			if (!monitor.isCanceled())
-				rememberResult(this.model.getElementsList());
+				this.contentProvider.rememberResult();
 		}
 	}
 
@@ -1802,15 +1519,15 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private static final int MAX_HISTORY_SIZE = 60;
 
-		private final Map history;
+		private final Map historyMap;
 
 		private final String rootNodeName;
 
 		private final String infoNodeName;
 
 		private SearcherHistory(String rootNodeName, String infoNodeName) {
-			history = Collections.synchronizedMap(new LinkedHashMap(80, 0.75f,
-					true) {
+			historyMap = Collections.synchronizedMap(new LinkedHashMap(80,
+					0.75f, true) {
 				private static final long serialVersionUID = 1L;
 
 				protected boolean removeEldestEntry(Map.Entry eldest) {
@@ -1832,7 +1549,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param object
 		 */
 		public synchronized void accessed(Object object) {
-			history.put(object, object);
+			historyMap.put(object, object);
 		}
 
 		/**
@@ -1840,7 +1557,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if history caontains object false in other way
 		 */
 		public synchronized boolean contains(Object object) {
-			return history.containsKey(object);
+			return historyMap.containsKey(object);
 		}
 
 		/**
@@ -1848,23 +1565,25 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if history contains key object false in other way
 		 */
 		public synchronized boolean containsKey(Object key) {
-			return history.containsKey(key);
+			return historyMap.containsKey(key);
 		}
 
 		/**
 		 * @return true if history is empty
 		 */
 		public synchronized boolean isEmpty() {
-			return history.isEmpty();
+			return historyMap.isEmpty();
 		}
 
 		/**
-		 * @param object
+		 * Remove element from history
+		 * 
+		 * @param element
 		 *            to remove form the history
-		 * @return removed object
+		 * @return removed element
 		 */
-		public synchronized Object remove(Object object) {
-			Object removed = history.remove(object);
+		public synchronized Object remove(Object element) {
+			Object removed = historyMap.remove(element);
 			return removed;
 		}
 
@@ -1874,7 +1593,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return removed key
 		 */
 		public synchronized Object removeKey(Object key) {
-			Object removed = history.remove(key);
+			Object removed = historyMap.remove(key);
 			return removed;
 		}
 
@@ -1895,9 +1614,9 @@ public abstract class FilteredItemsSelectionDialog extends
 					.getChildren(infoNodeName);
 			for (int i = 0; i < mementoElements.length; ++i) {
 				IMemento mementoElement = mementoElements[i];
-				Object object = createFromElement(mementoElement);
+				Object object = restoreItemFromMemento(mementoElement);
 				if (object != null)
-					history.put(object, object);
+					historyMap.put(object, object);
 			}
 		}
 
@@ -1912,23 +1631,23 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			Iterator values = getValues().iterator();
 			while (values.hasNext()) {
-				Object object = values.next();
+				AbstractSearchItem item = (AbstractSearchItem) values.next();
 				IMemento elementMemento = historyMemento
 						.createChild(infoNodeName);
-				setAttributes(object, elementMemento);
+				storeItemToMemento(item, elementMemento);
 			}
 
 		}
 
 		protected Set getKeys() {
-			return history.keySet();
+			return historyMap.keySet();
 		}
 
 		/**
 		 * @return collection of history elements
 		 */
 		public synchronized Collection getValues() {
-			return Collections.synchronizedCollection(history.values());
+			return Collections.synchronizedCollection(historyMap.values());
 		}
 
 	}
@@ -1940,34 +1659,34 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @since 3.3
 	 * 
 	 */
-	protected abstract static class SearchFilter {
+	protected abstract class SearchFilter {
 
-		private String text;
-
-		private SearchPattern nameMatcher;
+		private SearchPattern patternMatcher;
 
 		/**
+		 * Creates new instance of SearchFilter
+		 * 
 		 * @param text
 		 *            of the pattern
 		 */
 		public SearchFilter(String text) {
-			this.text = text;
-			nameMatcher = new SearchPattern(text);
+			this(new SearchPattern(text));
 		}
 
 		/**
+		 * Creates new instance of SearchFilter
+		 */
+		public SearchFilter() {
+			this(pattern.getText());
+		}
+
+		/**
+		 * Creates new instance of SearchFilter
+		 * 
 		 * @param searchPattern
 		 */
 		public SearchFilter(SearchPattern searchPattern) {
-			this.text = searchPattern.getPattern();
-			nameMatcher = searchPattern;
-		}
-
-		/**
-		 * @return text of the pattern
-		 */
-		public String getText() {
-			return text;
+			patternMatcher = searchPattern;
 		}
 
 		/**
@@ -1980,7 +1699,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *         sub-filter
 		 */
 		public boolean isSubFilter(SearchFilter filter) {
-			if (filter != null && filter.getNamePattern().startsWith(this.text)) {
+			if (filter != null
+					&& filter.getPattern().startsWith(this.getPattern())) {
 				return true;
 			}
 			return false;
@@ -1991,112 +1711,267 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *         implement camelCase cases
 		 */
 		public boolean isCamelCasePattern() {
-			return nameMatcher.getMatchKind() == SearchPattern.R_CAMELCASE_MATCH;
+			return patternMatcher.getMatchKind() == SearchPattern.RULE_CAMELCASE_MATCH;
 		}
 
 		/**
-		 * Set new pattern
+		 * Gets pattern string
 		 * 
-		 * @param namePattern
-		 */
-		public void setNamePattern(String namePattern) {
-			text = namePattern;
-			nameMatcher = new SearchPattern(namePattern);
-		}
-
-		/**
 		 * @return pattern for this filter
 		 */
-		public String getNamePattern() {
-			return nameMatcher.getPattern();
+		public String getPattern() {
+			return patternMatcher.getPattern();
+		}
+
+		protected boolean matches(String text) {
+			return patternMatcher.matches(text);
 		}
 
 		/**
-		 * @return search flag
-		 */
-		public int getSearchFlags() {
-			return nameMatcher.getMatchKind();
-		}
-
-		protected boolean matchesName(String name) {
-			return nameMatcher.matches(name);
-		}
-
-		/**
-		 * @param element
-		 * @return true if element matches wit false
-		 */
-		public abstract boolean matchesElement(Object element);
-
-		/**
-		 * Check consistency of elements. Element is inconsitent if is changed
-		 * element or remove
+		 * Matches items against filter conditions
 		 * 
-		 * @param searchitem
-		 * @return true if element is consistent false if element is inconsitent
+		 * @param item
+		 * @return true if item matches against filter conditions false
+		 *         otherwise
 		 */
-		public abstract boolean isConsistentElement(Object searchitem);
+		public abstract boolean matchItem(AbstractSearchItem item);
+
+		/**
+		 * Checks consistency of items. Item is inconsitent if was changed or
+		 * removed
+		 * 
+		 * @param item
+		 * @return true if item is consistent false if item is inconsitent
+		 */
+		public abstract boolean isItemConsistent(AbstractSearchItem item);
 
 	}
 
 	/**
-	 * Filters elements using searchPatter for comparation name of resources
-	 * with pattern.
+	 * An interface to content providers for FilterItemsSelectionDialog
 	 * 
 	 * @since 3.3
 	 * 
 	 */
-	protected static class ContentProvider {
-
-		private SearcherModel model;
-
-		private SearchFilter filter;
-
-		private SearcherHistory history;
-
-		private IProgressMonitor monitor;
+	protected interface IDialogContentProvider {
 
 		/**
-		 * @param model
-		 * @param filter
-		 * @param history
-		 * @param monitor
+		 * Adds items to content provider. During this itms are filtered by
+		 * filter. It's depend on
+		 * <code> matchsElement(AbstarctSearchItem item) <code>.
+		 * 
+		 * @param item
 		 */
-		public ContentProvider(SearcherModel model, SearchFilter filter,
-				SearcherHistory history, IProgressMonitor monitor) {
-			this.model = model;
-			this.filter = filter;
-			this.history = history;
-			this.monitor = monitor;
+		public void addSearchItem(AbstractSearchItem item);
+
+		/**
+		 * Gets filter
+		 * 
+		 * @return Returns the SearchFilter
+		 */
+		public SearchFilter getFilter();
+	}
+
+	/**
+	 * Collects filtered elements. Conatains one synchronized sorted set for
+	 * collecting filtered elements. All collected elements are sorted using
+	 * comparator. Comparator is return by getElementComparator() method. To
+	 * filtering elements it use implementation of SearchFilter. The key
+	 * function of filter used in to filtering is
+	 * matchsElement(AbstarctSearchItem item)
+	 * 
+	 * @since 3.3
+	 * 
+	 */
+	private class ContentProvider implements IDialogContentProvider,
+			IStructuredContentProvider {
+
+		private SearchFilter searchFilter;
+
+		private SearcherHistory searcherHistory;
+
+		private SortedSet sortedItems;
+
+		private String progressMessage = ""; //$NON-NLS-1$
+
+		/**
+		 * Creates new instance of ContentProvider
+		 * 
+		 * @param searchFilter
+		 * @param searcherHistory
+		 */
+		public ContentProvider(SearchFilter searchFilter,
+				SearcherHistory searcherHistory) {
+			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+					getItemsComparator()));
+			this.searchFilter = searchFilter;
+			this.searcherHistory = searcherHistory;
 		}
 
 		/**
-		 * @return Returns the monitor.
+		 * Creates new instance of ContentProvider
+		 * 
+		 * @param searcherHistory
 		 */
-		public IProgressMonitor getProgressMonitor() {
-			return monitor;
+		public ContentProvider(SearcherHistory searcherHistory) {
+			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+					getItemsComparator()));
+			this.searchFilter = createFilter();
+			this.searcherHistory = searcherHistory;
+		}
+
+		/**
+		 * Gets filter
+		 * 
+		 * @return Returns the searchFilter.
+		 */
+		public SearchFilter getFilter() {
+			return searchFilter;
+		}
+
+		/**
+		 * Remove all content items and resets progress message
+		 */
+		public void reset() {
+			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+					getItemsComparator()));
+			this.progressMessage = ""; //$NON-NLS-1$
+			this.refresh();
 		}
 
 		public void addSearchItem(AbstractSearchItem item) {
-			if (this.filter.matchesElement(item)
-					&& !this.history.containsKey(item))
-				this.model.addElement(item);
+			if (this.searchFilter.matchItem(item)
+			/* && !this.searcherHistory.containsKey(item) */)
+				this.sortedItems.add(item);
 		}
 
-		public void beginTask(String name, int totalWork) {
-			this.monitor.beginTask(name, totalWork);
+		/**
+		 * Add all history items to contentProvider
+		 */
+		public void addHistoryItems() {
+			Collection values = this.searcherHistory.getValues();
+			for (Iterator iter = values.iterator(); iter.hasNext();) {
+				AbstractSearchItem searchItem = (AbstractSearchItem) iter
+						.next();
+				if (this.searchFilter.matchItem(searchItem))
+					if (this.searchFilter.isItemConsistent(searchItem))
+						this.sortedItems.add(searchItem);
+					else
+						this.searcherHistory.removeKey(searchItem);
+			}
 		}
 
-		public void endTask() {
-			this.monitor.done();
+		/**
+		 * Refresh dialog.
+		 */
+		public void refresh() {
+			scheduleRefresh();
 		}
 
-		public void worked(int work) {
-			this.monitor.worked(work);
+		/**
+		 * Sets progress message
+		 * 
+		 * @param progressMessage
+		 */
+		public void setProgressMessage(String progressMessage) {
+			this.progressMessage = progressMessage;
+			this.refresh();
 		}
 
-		public boolean isDeactivated() {
-			return this.monitor.isCanceled();
+		/**
+		 * Gets progress message
+		 * 
+		 * @return progress message
+		 */
+		public String getProgressMessage() {
+			return progressMessage;
+		}
+
+		/**
+		 * 
+		 */
+		public void rememberResult() {
+			if (lastCompletedResult == null) {
+				lastCompletedFilter = searchFilter;
+				lastCompletedResult = Collections
+						.synchronizedList(new ArrayList(this.sortedItems));
+			}
+		}
+
+		/**
+		 * Remove list of items from history
+		 * 
+		 * @param items
+		 */
+		public void removeElements(List items) {
+			for (Iterator iter = items.iterator(); iter.hasNext();) {
+				AbstractSearchItem item = (AbstractSearchItem) iter.next();
+				item.unmarkHistory();
+				searcherHistory.removeKey(item);
+			}
+			this.refresh();
+		}
+
+		/**
+		 * Get searched items
+		 * 
+		 * @return searched items
+		 */
+		private Object[] getItems() {
+			SortedSet sortedElements = new TreeSet(getHistoryComparator());
+			sortedElements.addAll(Arrays.asList(sortedItems.toArray()));
+			return sortedElements.toArray();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+
+			List list = new ArrayList();
+
+			boolean hasHistory = false;
+
+			Object[] elements = getItems();
+
+			for (int i = 0; i < elements.length; i++) {
+				if (((AbstractSearchItem) elements[i]).isHistory()) {
+					hasHistory = true;
+				}
+
+				if (hasHistory
+						&& !((AbstractSearchItem) elements[i]).isHistory()) {
+					list
+							.add(new SearchListSeparator(
+									WorkbenchMessages.AbstractSearchDialog_separatorLabel));
+					hasHistory = false;
+				}
+
+				list.add(elements[i]);
+			}
+
+			return list.toArray();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
+			// TODO Auto-generated method stub
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// TODO Auto-generated method stub
 		}
 
 	}
@@ -2106,35 +1981,32 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * element and mark it as history or as duplicate. History flag helps
 	 * comparator during sort. Elements which are mark as history are at first
 	 * places od the list. The duplicate flag help dialog recognize which
-	 * elements are a duplicated .
-	 * 
-	 * @since 3.3
+	 * elements are duplicated.
 	 */
-	protected abstract class AbstractSearchItem {
+	protected static abstract class AbstractSearchItem {
 
 		private boolean duplicate = false;
 
 		private boolean isHistory = false;
 
 		/**
-		 * Check if it is duplicate
+		 * Checks item is duplicate
 		 * 
-		 * @return true if it's duplicate, else false
+		 * @return true if item is duplicated false in other way
 		 */
 		public boolean isDuplicate() {
 			return this.duplicate;
 		}
 
 		/**
-		 * 
-		 * Mark it as a duplicate
+		 * Mark item as duplicated
 		 */
 		public void markAsDuplicate() {
 			this.duplicate = true;
 		}
 
 		/**
-		 * Check if it is part of the selected history
+		 * Checks if item is part of the selected history
 		 * 
 		 * @return true if it's duplicate, else false
 		 */
@@ -2143,21 +2015,18 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * 
-		 * Mark it as a history
+		 * Marks item as a part of history
 		 */
 		public void markAsHistory() {
 			this.isHistory = true;
 		}
 
 		/**
-		 * 
-		 * Unmark item as a history
+		 * Unmarks history item
 		 */
 		public void unmarkHistory() {
 			this.isHistory = false;
 		}
-
 	}
 
 }

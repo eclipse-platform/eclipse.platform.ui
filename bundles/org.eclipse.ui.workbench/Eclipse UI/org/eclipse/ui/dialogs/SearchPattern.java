@@ -33,30 +33,30 @@ public class SearchPattern {
 	 * Match rule: The search pattern matches exactly the search result,
 	 * that is, the source of the search result equals the search pattern.
 	 */
-	public static final int R_EXACT_MATCH = 0;
+	public static final int RULE_EXACT_MATCH = 0;
 
 	/**
 	 * Match rule: The search pattern is a prefix of the search result.
 	 */
-	public static final int R_PREFIX_MATCH = 0x0001;
+	public static final int RULE_PREFIX_MATCH = 0x0001;
 
 	/**
 	 * Match rule: The search pattern contains one or more wild cards ('*' or '?'). 
 	 * A '*' wild-card can replace 0 or more characters in the search result.
 	 * A '?' wild-card replaces exactly 1 character in the search result.
 	 */
-	public static final int R_PATTERN_MATCH = 0x0002;
+	public static final int RULE_PATTERN_MATCH = 0x0002;
 
 	/**
 	 * Match rule: The search pattern contains a regular expression.
 	 */
-	public static final int R_REGEXP_MATCH = 0x0004;
+	public static final int RULE_REGEXP_MATCH = 0x0004;
 
 	/**
 	 * Match rule: The search pattern matches the search result only if cases are the same.
-	 * Can be combined to previous rules, e.g. {@link #R_EXACT_MATCH} | {@link #R_CASE_SENSITIVE}
+	 * Can be combined to previous rules, e.g. {@link #RULE_EXACT_MATCH} | {@link #RULE_CASE_SENSITIVE}
 	 */
-	public static final int R_CASE_SENSITIVE = 0x0008;
+	public static final int RULE_CASE_SENSITIVE = 0x0008;
 
 	/**
 	 * Match rule: The search pattern matches search results as raw/parameterized types/methods with same erasure.
@@ -72,13 +72,13 @@ public class SearchPattern {
 	 * 	<li>pattern: <code>&lt;Exception&gt;foo(new Exception())</code></li>
 	 * 	<li>match: <code>&lt;Object&gt;foo(new Object())</code></li>
 	 * 	</ul>
-	 * Can be combined to all other match rules, e.g. {@link #R_CASE_SENSITIVE} | {@link #R_ERASURE_MATCH}
+	 * Can be combined to all other match rules, e.g. {@link #RULE_CASE_SENSITIVE} | {@link #RULE_ERASURE_MATCH}
 	 * This rule is not activated by default, so raw types or parameterized types with same erasure will not be found
 	 * for pattern List&lt;String&gt;,
 	 * Note that with this pattern, the match selection will be only on the erasure even for parameterized types.
 	 * 
 	 */
-	public static final int R_ERASURE_MATCH = 0x0010;
+	public static final int RULE_ERASURE_MATCH = 0x0010;
 
 	/**
 	 * Match rule: The search pattern matches search results as raw/parameterized types/methods with equivalent type parameters.
@@ -105,21 +105,21 @@ public class SearchPattern {
 	 * 		<li><code>foo(new Exception())</code></li>
 	 *			</ul>
 	 * 	</ul>
-	 * Can be combined to all other match rules, e.g. {@link #R_CASE_SENSITIVE} | {@link #R_EQUIVALENT_MATCH}
+	 * Can be combined to all other match rules, e.g. {@link #RULE_CASE_SENSITIVE} | {@link #RULE_EQUIVALENT_MATCH}
 	 * This rule is not activated by default, so raw types or equivalent parameterized types will not be found
 	 * for pattern List&lt;String&gt;,
-	 * This mode is overridden by {@link  #R_ERASURE_MATCH} as erasure matches obviously include equivalent ones.
-	 * That means that pattern with rule set to {@link #R_EQUIVALENT_MATCH} | {@link  #R_ERASURE_MATCH}
-	 * will return same results than rule only set with {@link  #R_ERASURE_MATCH}.
+	 * This mode is overridden by {@link  #RULE_ERASURE_MATCH} as erasure matches obviously include equivalent ones.
+	 * That means that pattern with rule set to {@link #RULE_EQUIVALENT_MATCH} | {@link  #RULE_ERASURE_MATCH}
+	 * will return same results than rule only set with {@link  #RULE_ERASURE_MATCH}.
 	 * 
 	 */
-	public static final int R_EQUIVALENT_MATCH = 0x0020;
+	public static final int RULE_EQUIVALENT_MATCH = 0x0020;
 
 	/**
 	 * Match rule: The search pattern matches exactly the search result,
 	 * that is, the source of the search result equals the search pattern.
 	 */
-	public static final int R_FULL_MATCH = 0x0040;
+	public static final int RULE_FULL_MATCH = 0x0040;
 
 	/**
 	 * Match rule: The search pattern contains a Camel Case expression.
@@ -136,11 +136,11 @@ public class SearchPattern {
 	 * of Camel Case matching.
 	 * 
 	 *<br>
-	 * Can be combined to {@link #R_PREFIX_MATCH} match rule. For example,
+	 * Can be combined to {@link #RULE_PREFIX_MATCH} match rule. For example,
 	 * when prefix match rule is combined with Camel Case match rule,
 	 * <code>"nPE"</code> pattern will match <code>nPException</code>.
 	 *<br>
-	 * Match rule {@link #R_PATTERN_MATCH} may also be combined but both rules
+	 * Match rule {@link #RULE_PATTERN_MATCH} may also be combined but both rules
 	 * will not be used simultaneously as they are mutually exclusive.
 	 * Used match rule depends on whether string pattern contains specific pattern 
 	 * characters (e.g. '*' or '?') or not. If it does, then only Pattern match rule
@@ -150,17 +150,17 @@ public class SearchPattern {
 	 * use only Pattern match rule.
 	 * 
 	 */
-	public static final int R_CAMELCASE_MATCH = 0x0080;
+	public static final int RULE_CAMELCASE_MATCH = 0x0080;
 
-	private static final int MODE_MASK = R_EXACT_MATCH | R_PREFIX_MATCH | R_PATTERN_MATCH | R_REGEXP_MATCH;
+	private static final int MODE_MASK = RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH | RULE_REGEXP_MATCH;
 
 	private int matchRule;
 	
-	private String fPattern;
+	private String stringPattern;
 
 	private int matchKind;
 
-	private StringMatcher fStringMatcher;
+	private StringMatcher stringMatcher;
 
 	private static final char END_SYMBOL = '<';
 
@@ -173,52 +173,63 @@ public class SearchPattern {
 	 * It can be exact match, prefix match, pattern match or regexp match.
 	 * Rule can also be combined with a case sensitivity flag.
 	 * 
-	 * @param matchRule one of {@link #R_EXACT_MATCH}, {@link #R_PREFIX_MATCH}, {@link #R_PATTERN_MATCH},
-	 * 	{@link #R_REGEXP_MATCH}, {@link #R_CAMELCASE_MATCH} combined with one of following values:
-	 * 	{@link #R_CASE_SENSITIVE}, {@link #R_ERASURE_MATCH} or {@link #R_EQUIVALENT_MATCH}.
-	 *		e.g. {@link #R_EXACT_MATCH} | {@link #R_CASE_SENSITIVE} if an exact and case sensitive match is requested, 
-	 *		{@link #R_PREFIX_MATCH} if a prefix non case sensitive match is requested or {@link #R_EXACT_MATCH} | {@link #R_ERASURE_MATCH}
+	 * @param matchRule one of {@link #RULE_EXACT_MATCH}, {@link #RULE_PREFIX_MATCH}, {@link #RULE_PATTERN_MATCH},
+	 * 	{@link #RULE_REGEXP_MATCH}, {@link #RULE_CAMELCASE_MATCH} combined with one of following values:
+	 * 	{@link #RULE_CASE_SENSITIVE}, {@link #RULE_ERASURE_MATCH} or {@link #RULE_EQUIVALENT_MATCH}.
+	 *		e.g. {@link #RULE_EXACT_MATCH} | {@link #RULE_CASE_SENSITIVE} if an exact and case sensitive match is requested, 
+	 *		{@link #RULE_PREFIX_MATCH} if a prefix non case sensitive match is requested or {@link #RULE_EXACT_MATCH} | {@link #RULE_ERASURE_MATCH}
 	 *		if a non case sensitive and erasure match is requested.<br>
-	 * 	Note that {@link #R_ERASURE_MATCH} or {@link #R_EQUIVALENT_MATCH} have no effect
+	 * 	Note that {@link #RULE_ERASURE_MATCH} or {@link #RULE_EQUIVALENT_MATCH} have no effect
 	 * 	on non-generic types/methods search.<br>
 	 * 	Note also that default behavior for generic types/methods search is to find exact matches.
 	 */
 	public SearchPattern(int matchRule) {
 		this.matchRule = matchRule;
 		// Set full match implicit mode
-		if ((matchRule & (R_EQUIVALENT_MATCH | R_ERASURE_MATCH )) == 0) {
-			this.matchRule |= R_FULL_MATCH;
+		if ((matchRule & (RULE_EQUIVALENT_MATCH | RULE_ERASURE_MATCH )) == 0) {
+			this.matchRule |= RULE_FULL_MATCH;
 		}
 	}
 
 	/**
+	 * Creates new instance of SearchPattern
+	 * 
 	 * @param pattern of matching
 	 */
 	public SearchPattern(String pattern) {
-		this(pattern, R_EXACT_MATCH | R_PREFIX_MATCH | R_PATTERN_MATCH
-				| R_CAMELCASE_MATCH);
+		this(pattern, RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH
+				| RULE_CAMELCASE_MATCH);
 	}
 
 	/**
+	 * Creates new instance of SearchPattern
+	 * 
 	 * @param pattern of matching
 	 * @param allowedModes determine pattern matching mode
 	 */
 	public SearchPattern(String pattern, int allowedModes) {
 		initializePatternAndMatchKind(pattern);
 		matchKind = matchKind & allowedModes;
-		if (matchKind == R_PATTERN_MATCH) {
-			fStringMatcher = new StringMatcher(fPattern, true, false);
+		if (matchKind == RULE_PATTERN_MATCH) {
+			stringMatcher = new StringMatcher(stringPattern, true, false);
 		}
 	}
 
 	/**
+	 * Gets string pattern
+	 * 
 	 * @return pattern
 	 */
 	public String getPattern() {
-		return fPattern;
+		return stringPattern;
 	}
 
 	/**
+	 * Gets matching kind. It returns actual pattern matching mode.
+	 * Match mode is set during initialization pattern in method 
+	 * <code> initializePatternAndMatchKind(String pattern) <code>.
+	 * It depends on pattern kind .
+	 * 
 	 * @return kind of matching
 	 */
 	public int getMatchKind() {
@@ -226,74 +237,76 @@ public class SearchPattern {
 	}
 
 	/**
+	 * Matches text with pattern. matching is determine by matchKind. 
+	 * 
 	 * @param text
 	 * @return true if search pattern was mached with text
 	 * 			false in other way
 	 */
 	public boolean matches(String text) {
 		switch (matchKind) {
-		case R_PATTERN_MATCH:
-			return fStringMatcher.match(text);
-		case R_EXACT_MATCH:
-			return fPattern.equalsIgnoreCase(text);
-		case R_CAMELCASE_MATCH:
-			if (camelCaseMatch(fPattern, text)) {
+		case RULE_PATTERN_MATCH:
+			return stringMatcher.match(text);
+		case RULE_EXACT_MATCH:
+			return stringPattern.equalsIgnoreCase(text);
+		case RULE_CAMELCASE_MATCH:
+			if (camelCaseMatch(stringPattern, text)) {
 				return true;
 			}
 			// fall through to prefix match if camel case failed (bug
 			// 137244)
 		default:
-			return startsWithIgnoreCase(text, fPattern);
+			return startsWithIgnoreCase(text, stringPattern);
 		}
 	}
 
 	private void initializePatternAndMatchKind(String pattern) {
 		int length = pattern.length();
 		if (length == 0) {
-			matchKind = R_EXACT_MATCH;
-			fPattern = pattern;
+			matchKind = RULE_EXACT_MATCH;
+			stringPattern = pattern;
 			return;
 		}
 		char last = pattern.charAt(length - 1);
 
 		if (pattern.indexOf('*') != -1 || pattern.indexOf('?') != -1) {
-			matchKind = R_PATTERN_MATCH;
+			matchKind = RULE_PATTERN_MATCH;
 			switch (last) {
 			case END_SYMBOL:
-				fPattern = pattern.substring(0, length - 1);
+				stringPattern = pattern.substring(0, length - 1);
 				break;
 			case BLANK:
-				fPattern = pattern.trim();
+				stringPattern = pattern.trim();
 				break;
 			case ANY_STRING:
-				fPattern = pattern;
+				stringPattern = pattern;
 				break;
 			default:
-				fPattern = pattern + ANY_STRING;
+				stringPattern = pattern + ANY_STRING;
 			}
 			return;
 		}
 
 		if (last == END_SYMBOL) {
-			matchKind = R_EXACT_MATCH;
-			fPattern = pattern.substring(0, length - 1);
+			matchKind = RULE_EXACT_MATCH;
+			stringPattern = pattern.substring(0, length - 1);
 			return;
 		}
 
 		if (last == BLANK) {
-			matchKind = R_EXACT_MATCH;
-			fPattern = pattern.trim();
+			matchKind = RULE_EXACT_MATCH;
+			stringPattern = pattern.trim();
 			return;
 		}
 
-		if (validateMatchRule(pattern, R_CAMELCASE_MATCH) == R_CAMELCASE_MATCH) {
-			matchKind = R_CAMELCASE_MATCH;
-			fPattern = pattern;
+		if (validateMatchRule(pattern, RULE_CAMELCASE_MATCH) == RULE_CAMELCASE_MATCH) {
+			matchKind = RULE_CAMELCASE_MATCH;
+			stringPattern = pattern;
 			return;
 		}
 
-		matchKind = R_PREFIX_MATCH;
-		fPattern = pattern;
+		matchKind = RULE_PREFIX_MATCH;
+		stringPattern = pattern;
 	}
 
 	/**
@@ -728,9 +741,9 @@ public class SearchPattern {
 	}	
 
 	/**
-	 * It's a method for checking character of pattern.
-	 * It's check character allowed for specified set.
-	 * EveryOne can override
+	 * Checks pattern's character is allowed for specified set.
+	 * It could be override if you want change logic of camelCaseMatch methods. 
+	 * 
 	 * @param patternChar
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
@@ -739,8 +752,9 @@ public class SearchPattern {
 	}
 
 	/**
-	 * It's a method for checking character of element's name.
-	 * It's check character allowed for specified set. 
+	 * Checks character of element's name is allowed for specified set. 
+	 * It could be override if you want change logic of camelCaseMatch methods. 
+	 * 
 	 * @param nameChar - name of searched lement
 	 * @return if nameChar is in set of allowed characters for name of element
 	 */
@@ -775,11 +789,11 @@ public class SearchPattern {
 	public boolean matchesName(char[] pattern, char[] name) {
 		if (pattern == null) return true; // null is as if it was "*"
 		if (name != null) {
-			boolean isCaseSensitive = (this.matchRule & R_CASE_SENSITIVE) != 0;
-			boolean isCamelCase = (this.matchRule & R_CAMELCASE_MATCH) != 0;
+			boolean isCaseSensitive = (this.matchRule & RULE_CASE_SENSITIVE) != 0;
+			boolean isCamelCase = (this.matchRule & RULE_CAMELCASE_MATCH) != 0;
 			int matchMode = this.matchRule & MODE_MASK;
 			boolean emptyPattern = pattern.length == 0;
-			if (matchMode == R_PREFIX_MATCH && emptyPattern) return true;
+			if (matchMode == RULE_PREFIX_MATCH && emptyPattern) return true;
 			boolean sameLength = pattern.length == name.length;
 			boolean canBePrefix = name.length >= pattern.length;
 			boolean matchFirstChar = !isCaseSensitive || emptyPattern || (name.length > 0 &&  pattern[0] == name[0]);
@@ -787,8 +801,8 @@ public class SearchPattern {
 				return true;
 			}
 			switch (matchMode) {
-				case R_EXACT_MATCH :
-				case R_FULL_MATCH :
+				case RULE_EXACT_MATCH :
+				case RULE_FULL_MATCH :
 					if (!isCamelCase) {
 						if (sameLength && matchFirstChar) {
 							return CharOperation.equals(pattern, name, isCaseSensitive);
@@ -796,18 +810,18 @@ public class SearchPattern {
 						break;
 					}
 					// fall through next case to match as prefix if camel case failed
-				case R_PREFIX_MATCH :
+				case RULE_PREFIX_MATCH :
 					if (canBePrefix && matchFirstChar) {
 						return CharOperation.prefixEquals(pattern, name, isCaseSensitive);
 					}
 					break;
 
-				case R_PATTERN_MATCH :
+				case RULE_PATTERN_MATCH :
 					if (!isCaseSensitive)
 						pattern = CharOperation.toLowerCase(pattern);
 					return CharOperation.match(pattern, name, isCaseSensitive);
 
-				case R_REGEXP_MATCH :
+				case RULE_REGEXP_MATCH :
 					// TODO (frederic) implement regular expression match
 					return true;
 			}
@@ -820,26 +834,26 @@ public class SearchPattern {
 	 *<br>
 	 * Optimized (ie. returned match rule is modified) combinations are:
 	 * <ul>
-	 * 	<li>{@link #R_PATTERN_MATCH} without any '*' or '?' in string pattern:
+	 * 	<li>{@link #RULE_PATTERN_MATCH} without any '*' or '?' in string pattern:
 	 * 		pattern match bit is unset,
 	 * 	</li>
-	 * 	<li>{@link #R_PATTERN_MATCH} and {@link #R_PREFIX_MATCH}  bits simultaneously set:
+	 * 	<li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_PREFIX_MATCH}  bits simultaneously set:
 	 * 		prefix match bit is unset,
 	 * 	</li>
-	 * 	<li>{@link #R_PATTERN_MATCH} and {@link #R_CAMELCASE_MATCH}  bits simultaneously set:
+	 * 	<li>{@link #RULE_PATTERN_MATCH} and {@link #RULE_CAMELCASE_MATCH}  bits simultaneously set:
 	 * 		camel case match bit is unset,
 	 * 	</li>
-	 * 	<li>{@link #R_CAMELCASE_MATCH} with invalid combination of uppercase and lowercase characters:
+	 * 	<li>{@link #RULE_CAMELCASE_MATCH} with invalid combination of uppercase and lowercase characters:
 	 * 		camel case match bit is unset and replaced with prefix match pattern,
 	 * 	</li>
-	 * 	<li>{@link #R_CAMELCASE_MATCH} combined with {@link #R_PREFIX_MATCH} and {@link #R_CASE_SENSITIVE}
-	 * 		bits is reduced to only {@link #R_CAMELCASE_MATCH} as Camel Case search is already prefix and case sensitive,
+	 * 	<li>{@link #RULE_CAMELCASE_MATCH} combined with {@link #RULE_PREFIX_MATCH} and {@link #RULE_CASE_SENSITIVE}
+	 * 		bits is reduced to only {@link #RULE_CAMELCASE_MATCH} as Camel Case search is already prefix and case sensitive,
 	 * 	</li>
 	 * </ul>
 	 *<br>
 	 * Rejected (ie. returned match rule -1) combinations are:
 	 * <ul>
-	 * 	<li>{@link #R_REGEXP_MATCH} with any other match mode bit set,
+	 * 	<li>{@link #RULE_REGEXP_MATCH} with any other match mode bit set,
 	 * 	</li>
 	 * </ul>
 	 *
@@ -850,8 +864,8 @@ public class SearchPattern {
 	public static int validateMatchRule(String stringPattern, int matchRule) {
 
 		// Verify Regexp match rule
-		if ((matchRule & R_REGEXP_MATCH) != 0) {
-			if ((matchRule & R_PATTERN_MATCH) != 0 || (matchRule & R_PREFIX_MATCH) != 0 || (matchRule & R_CAMELCASE_MATCH) != 0) {
+		if ((matchRule & RULE_REGEXP_MATCH) != 0) {
+			if ((matchRule & RULE_PATTERN_MATCH) != 0 || (matchRule & RULE_PREFIX_MATCH) != 0 || (matchRule & RULE_CAMELCASE_MATCH) != 0) {
 				return -1;
 			}
 		}
@@ -861,19 +875,19 @@ public class SearchPattern {
 		int questionIndex = stringPattern.indexOf('?');
 		if (starIndex < 0 && questionIndex < 0) {
 			// reset pattern match bit if any
-			matchRule &= ~R_PATTERN_MATCH;
+			matchRule &= ~RULE_PATTERN_MATCH;
 		} else {
 			// force Pattern rule
-			matchRule |= R_PATTERN_MATCH;
+			matchRule |= RULE_PATTERN_MATCH;
 		}
-		if ((matchRule & R_PATTERN_MATCH) != 0) {
+		if ((matchRule & RULE_PATTERN_MATCH) != 0) {
 			// remove Camel Case and Prefix match bits if any
-			matchRule &= ~R_CAMELCASE_MATCH;
-			matchRule &= ~R_PREFIX_MATCH;
+			matchRule &= ~RULE_CAMELCASE_MATCH;
+			matchRule &= ~RULE_PREFIX_MATCH;
 		}
 
 		// Verify Camel Case match rule
-		if ((matchRule & R_CAMELCASE_MATCH) != 0) {
+		if ((matchRule & RULE_CAMELCASE_MATCH) != 0) {
 			// Verify sting pattern validity
 			int length = stringPattern.length();
 			boolean validCamelCase = true;
@@ -888,24 +902,29 @@ public class SearchPattern {
 			validCamelCase = validCamelCase && uppercase;
 			// Verify bits compatibility
 			if (validCamelCase) {
-				if ((matchRule & R_PREFIX_MATCH) != 0) {
-					if ((matchRule & R_CASE_SENSITIVE) != 0) {
+				if ((matchRule & RULE_PREFIX_MATCH) != 0) {
+					if ((matchRule & RULE_CASE_SENSITIVE) != 0) {
 						// This is equivalent to Camel Case match rule
-						matchRule &= ~R_PREFIX_MATCH;
-						matchRule &= ~R_CASE_SENSITIVE;
+						matchRule &= ~RULE_PREFIX_MATCH;
+						matchRule &= ~RULE_CASE_SENSITIVE;
 					}
 				}
 			} else {
-				matchRule &= ~R_CAMELCASE_MATCH;
-				if ((matchRule & R_PREFIX_MATCH) == 0) {
-					matchRule |= R_PREFIX_MATCH;
-					matchRule |= R_CASE_SENSITIVE;
+				matchRule &= ~RULE_CAMELCASE_MATCH;
+				if ((matchRule & RULE_PREFIX_MATCH) == 0) {
+					matchRule |= RULE_PREFIX_MATCH;
+					matchRule |= RULE_CASE_SENSITIVE;
 				}
 			}
 		}
 		return matchRule;
 	}
 
+	/**
+	 * Check if charater is valid camelCase character
+	 * @param character
+	 * @return true if cahracter is valid
+	 */
 	protected static boolean isValidCamelCaseChar(char ch) {
 		return true;
 	}
