@@ -267,6 +267,18 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	}
 
 	/**
+	 * Returns the option flags to use when deleting the given resource 
+	 */
+	private int computeFlags(IResource resourceToDelete) {
+		int flags = IResource.KEEP_HISTORY;
+		if (resourceToDelete.getType() == IResource.PROJECT) {
+			flags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT:
+				IResource.NEVER_DELETE_PROJECT_CONTENT;
+		}
+		return flags;
+	}
+
+	/**
 	 * Returns whether the selection contains linked resources.
 	 * 
 	 * @param resources
@@ -465,38 +477,31 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 */
 	private void delete(IResource resourceToDelete, IProgressMonitor monitor)
 			throws CoreException {
-		boolean force = false; // don't force deletion of out-of-sync resources
+		int flags = computeFlags(resourceToDelete);
 		try {
-			if (resourceToDelete.getType() == IResource.PROJECT) {
-				// if it's a project, ask whether content should be deleted too
-				IProject project = (IProject) resourceToDelete;
-				project.delete(deleteContent, force, monitor);
-			} else {
-				// if it's not a project, just delete it
-				resourceToDelete.delete(IResource.KEEP_HISTORY, monitor);
-			}
+			resourceToDelete.delete(flags, monitor);
 		} catch (CoreException exception) {
 			if (resourceToDelete.getType() == IResource.FILE) {
 				IStatus[] children = exception.getStatus().getChildren();
 
 				if (children.length == 1
 						&& children[0].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
+					boolean forceDelete = false;
 					if (forceOutOfSyncDelete) {
-						resourceToDelete.delete(IResource.KEEP_HISTORY
-								| IResource.FORCE, monitor);
+						forceDelete = true;
 					} else {
 						int result = queryDeleteOutOfSync(resourceToDelete);
-
 						if (result == IDialogConstants.YES_ID) {
-							resourceToDelete.delete(IResource.KEEP_HISTORY
-									| IResource.FORCE, monitor);
+							forceDelete = true;
 						} else if (result == IDialogConstants.YES_TO_ALL_ID) {
 							forceOutOfSyncDelete = true;
-							resourceToDelete.delete(IResource.KEEP_HISTORY
-									| IResource.FORCE, monitor);
+							forceDelete = true;
 						} else if (result == IDialogConstants.CANCEL_ID) {
 							throw new OperationCanceledException();
 						}
+					}
+					if (forceDelete) {
+						resourceToDelete.delete(flags | IResource.FORCE, monitor);
 					}
 				} else {
 					throw exception;
