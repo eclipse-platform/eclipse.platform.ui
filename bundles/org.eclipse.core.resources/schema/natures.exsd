@@ -93,7 +93,7 @@ equally suitable for a given file), the content type having affinity with any of
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  an optional identifier of the extension instance
+                  The simple identifier of the nature. This is appended to the plug-in id to form the fully qualified nature id.
                </documentation>
             </annotation>
          </attribute>

@@ -379,7 +379,9 @@ public interface IProject extends IContainer, IAdaptable {
 	 * This may cause the plug-in that provides the given nature to be activated.
 	 * </p>
 	 *
-	 * @param natureId the nature extension identifier
+	 * @param natureId the fully qualified nature extension identifier, formed
+	 * by combining the nature extension id with the id of the declaring plug-in.
+	 * (e.g. <code>"com.example.acmeplugin.coolnature"</code>)
 	 * @return the project nature object
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
