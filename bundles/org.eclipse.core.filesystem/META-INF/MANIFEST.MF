@@ -11,3 +11,4 @@ Export-Package: org.eclipse.core.filesystem,
  org.eclipse.core.internal.filesystem.local;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Eclipse-LazyStart: true

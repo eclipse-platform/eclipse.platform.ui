@@ -189,21 +189,22 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	public void delete(IResource target, int flags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+	monitor = Policy.monitorFor(monitor);
 		try {
 			Resource resource = (Resource) target;
-			int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
+			final int deleteWork = resource.countResources(IResource.DEPTH_INFINITE, false) * 2;
 			boolean force = (flags & IResource.FORCE) != 0;
+			int refreshWork = 0;
 			if (!force)
-				totalWork += 100;
+				refreshWork = Math.min(deleteWork, 100);
 			String title = NLS.bind(Messages.localstore_deleting, resource.getFullPath());
-			monitor.beginTask(title, totalWork);
+			monitor.beginTask(title, deleteWork + refreshWork);
 			monitor.subTask(""); //$NON-NLS-1$
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
 			List skipList = null;
 			UnifiedTree tree = new UnifiedTree(target);
 			if (!force) {
-				IProgressMonitor sub = Policy.subMonitorFor(monitor, 100);
+				IProgressMonitor sub = Policy.subMonitorFor(monitor, refreshWork);
 				sub.beginTask("", 1000); //$NON-NLS-1$
 				try {
 					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.localstore_deleteProblem, sub);
@@ -215,7 +216,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					sub.done();
 				}
 			}
-			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor, totalWork / 2);
+			DeleteVisitor deleteVisitor = new DeleteVisitor(skipList, flags, monitor, deleteWork);
 			tree.accept(deleteVisitor, IResource.DEPTH_INFINITE);
 			status.merge(deleteVisitor.getStatus());
 			if (!status.isOK())

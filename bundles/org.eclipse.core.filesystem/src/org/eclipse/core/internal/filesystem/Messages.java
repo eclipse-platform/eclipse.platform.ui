@@ -27,6 +27,7 @@ public class Messages extends NLS {
 	public static String couldNotRead;
 	public static String couldNotWrite;
 	public static String deleteProblem;
+	public static String deleting;
 	public static String failedCreateWrongType;
 	public static String failedMove;
 	public static String failedReadDuringWrite;

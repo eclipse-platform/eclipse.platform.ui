@@ -41,8 +41,6 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		this.keepHistory = (flags & IResource.KEEP_HISTORY) != 0;
 		this.monitor = monitor;
 		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.localstore_deleteProblem, null);
-		if (keepHistory)
-			ticks *= 2;
 	}
 
 	/**
@@ -119,6 +117,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 			store.addState(target.getFullPath(), node.getStore(), info, true);
 		}
 		monitor.worked(1);
+		ticks--;
 	}
 
 	protected void removeFromSkipList(IResource resource) {

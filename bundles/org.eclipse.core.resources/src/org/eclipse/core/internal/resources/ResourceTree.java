@@ -166,7 +166,7 @@ class ResourceTree implements IResourceTree {
 				return;
 			// Delete properties, generate marker deltas, and remove the node from the workspace tree.
 			try {
-				((Project)target).deleteResource(false, null);
+				((Project) target).deleteResource(false, null);
 			} catch (CoreException e) {
 				String message = NLS.bind(Messages.resources_errorDeleting, target.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, target.getFullPath(), message, e);
@@ -805,10 +805,9 @@ class ResourceTree implements IResourceTree {
 					// if the project is open, we must perform a best-effort deletion			
 					if (project.isOpen()) {
 						//use force because we already checked for synchronization above
-						localManager.delete(project, flags & IResource.FORCE, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
-						projectStore.delete(EFS.NONE, null);
+						localManager.delete(project, flags & IResource.FORCE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
 					} else {
-						projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
+						projectStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, Policy.totalWork * 7 / 8));
 					}
 				} catch (CoreException ce) {
 					message = NLS.bind(Messages.localstore_couldnotDelete, project.getFullPath());

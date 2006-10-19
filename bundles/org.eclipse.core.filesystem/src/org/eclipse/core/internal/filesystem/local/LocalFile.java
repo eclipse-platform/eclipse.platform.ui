@@ -94,13 +94,20 @@ public class LocalFile extends FileStore {
 	}
 
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
-		//TODO add progress
-		monitor = Policy.monitorFor(monitor);
-		String message = Messages.deleteProblem;
-		MultiStatus result = new MultiStatus(Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null);
-		internalDelete(file, filePath, result);
-		if (!result.isOK())
-			throw new CoreException(result);
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
+		else
+			monitor = new InfiniteProgress(monitor);
+		try {
+			monitor.beginTask(NLS.bind(Messages.deleting, this), 200);
+			String message = Messages.deleteProblem;
+			MultiStatus result = new MultiStatus(Policy.PI_FILE_SYSTEM, EFS.ERROR_DELETE, message, null);
+			internalDelete(file, filePath, result, monitor);
+			if (!result.isOK())
+				throw new CoreException(result);
+		} finally {
+			monitor.done();
+		}
 	}
 
 	public boolean equals(Object obj) {
@@ -108,7 +115,7 @@ public class LocalFile extends FileStore {
 			return false;
 		//Mac oddity: file.equals returns false when case is different even when
 		//file system is not case sensitive (Radar bug 3190672)
-		LocalFile otherFile = (LocalFile)obj;
+		LocalFile otherFile = (LocalFile) obj;
 		if (LocalFileSystem.MACOSX)
 			return filePath.toLowerCase().equals(otherFile.filePath.toLowerCase());
 		return file.equals(otherFile.file);
@@ -138,7 +145,7 @@ public class LocalFile extends FileStore {
 		info.setAttribute(EFS.ATTRIBUTE_HIDDEN, file.isHidden());
 		return info;
 	}
-	
+
 	public IFileStore getChild(IPath path) {
 		return new LocalFile(new File(file, path.toOSString()));
 	}
@@ -173,11 +180,12 @@ public class LocalFile extends FileStore {
 	 * the provided status object.  The filePath is passed as a parameter
 	 * to optimize java.io.File object creation.
 	 */
-	private boolean internalDelete(File target, String pathToDelete, MultiStatus status) {
+	private boolean internalDelete(File target, String pathToDelete, MultiStatus status, IProgressMonitor monitor) {
 		//first try to delete - this should succeed for files and symbolic links to directories
 		if (target.delete() || !target.exists())
 			return true;
 		if (target.isDirectory()) {
+			monitor.subTask(NLS.bind(Messages.deleting, target));
 			String[] list = target.list();
 			if (list == null)
 				list = EMPTY_STRING_ARRAY;
@@ -191,7 +199,8 @@ public class LocalFile extends FileStore {
 				childBuffer.append(list[i]);
 				String childName = childBuffer.toString();
 				// try best effort on all children so put logical OR at end
-				failedRecursive = !internalDelete(new java.io.File(childName), childName, status) || failedRecursive;
+				failedRecursive = !internalDelete(new java.io.File(childName), childName, status, monitor) || failedRecursive;
+				monitor.worked(1);
 			}
 			try {
 				// don't try to delete the root if one of the children failed
@@ -314,7 +323,7 @@ public class LocalFile extends FileStore {
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 1);
+			monitor.beginTask("", 1); //$NON-NLS-1$
 			return new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			String message;
@@ -334,7 +343,7 @@ public class LocalFile extends FileStore {
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(null, 1);
+			monitor.beginTask("", 1); //$NON-NLS-1$
 			return new FileOutputStream(file, (options & EFS.APPEND) != 0);
 		} catch (FileNotFoundException e) {
 			checkReadOnlyParent(file, e);
@@ -365,7 +374,7 @@ public class LocalFile extends FileStore {
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)
 			file.setLastModified(info.getLastModified());
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.filesystem.provider.FileStore#toLocalFile(int, org.eclipse.core.runtime.IProgressMonitor)
 	 */
