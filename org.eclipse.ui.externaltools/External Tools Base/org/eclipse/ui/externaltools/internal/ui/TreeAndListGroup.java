@@ -27,14 +27,14 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * This class was derived from org.eclipse.ui.internal.misc.CheckboxTreeAndListGroup
@@ -176,7 +176,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		listViewer.getTable().setFont(parent.getFont());
 		listViewer.setContentProvider(listContentProvider);
 		listViewer.setLabelProvider(listLabelProvider);
-		listViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		listViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				notifySelectionListeners(event);
@@ -204,7 +204,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(treeContentProvider);
 		treeViewer.setLabelProvider(treeLabelProvider);
-		treeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+        treeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		treeViewer.addSelectionChangedListener(this);
 	}
 	
@@ -276,8 +276,8 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	/**
 	 *	Set the sorter that is to be applied to self's list viewer
 	 */
-	public void setListSorter(ViewerSorter sorter) {
-		listViewer.setSorter(sorter);
+	public void setListSorter(ViewerComparator comparator) {
+		listViewer.setComparator(comparator);
 	}
 	/**
 	 * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
@@ -285,7 +285,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 * @param newRoot
 	 */
 	public void setRoot(Object newRoot) {
-		this.root = newRoot;
+		root = newRoot;
 		initialize();
 	}
 
@@ -300,17 +300,16 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		treeViewer.setLabelProvider(labelProvider);
 	}
 	/**
-	 *	Set the sorter that is to be applied to self's tree viewer
+	 *	Set the comparator that is to be applied to self's tree viewer
 	 */
-	public void setTreeSorter(ViewerSorter sorter) {
-		treeViewer.setSorter(sorter);
+	public void setTreeComparator(ViewerComparator comparator) {
+		treeViewer.setComparator(comparator);
 	}
 
 	/**
 	 * Set the focus on to the list widget.
 	 */
 	public void setFocus() {
-
-		this.treeViewer.getTree().setFocus();
+		treeViewer.getTree().setFocus();
 	}
 }

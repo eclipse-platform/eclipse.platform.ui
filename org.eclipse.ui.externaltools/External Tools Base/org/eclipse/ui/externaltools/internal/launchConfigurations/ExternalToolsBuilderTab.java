@@ -55,7 +55,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
@@ -231,7 +231,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
                 dialog.setTitle(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_24); 
                 dialog.setMessage(ExternalToolsLaunchConfigurationMessages.ExternalToolsBuilderTab_25); 
                 dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
-                dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+                dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
                 int buttonId = dialog.open();
                 if (buttonId == IDialogConstants.OK_ID) {
                     IResource resource = (IResource) dialog.getFirstResult();
