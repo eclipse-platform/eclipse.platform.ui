@@ -371,13 +371,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		//HACK Bug 139190 
 		getShell().addShellListener(new ShellAdapter() {
 			public void shellActivated(ShellEvent e) {
-				int tableWidth = table.getSize().x;
-				if (tableWidth > 0) {
-					int c1 = tableWidth / 3;
-					column1.setWidth(c1);
-					column2.setWidth(tableWidth - c1);
+				if(!table.isDisposed()) {
+					int tableWidth = table.getSize().x;
+					if (tableWidth > 0) {
+						int c1 = tableWidth / 3;
+						column1.setWidth(c1);
+						column2.setWidth(tableWidth - c1);
+					}
+					getShell().removeShellListener(this);
 				}
-				getShell().removeShellListener(this);
 			}
 		});
 		
