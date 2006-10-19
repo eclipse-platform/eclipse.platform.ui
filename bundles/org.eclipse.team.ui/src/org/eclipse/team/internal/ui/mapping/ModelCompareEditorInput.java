@@ -103,7 +103,10 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(ModelCompareEditorInput.this);
-			scm.doRevert(new NullProgressMonitor());
+		}
+		if (saveable instanceof ResourceSaveableComparison) {
+			ResourceSaveableComparison rsc = (ResourceSaveableComparison) saveable;
+			rsc.dispose();
 		}
 		if (input instanceof IDisposable) {
 			((IDisposable) input).dispose();
@@ -141,7 +144,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			if (compareModel != null)
 				return compareModel;
 		}
-		return new ResourceSaveableComparison(input, participant, this);
+		return new ResourceSaveableComparison(participant.getName(), input, this);
 	}
 
 	/* (non-Javadoc)

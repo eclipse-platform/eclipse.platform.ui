@@ -13,12 +13,9 @@ package org.eclipse.team.ui.synchronize;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.osgi.util.NLS;
@@ -26,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.internal.ui.mapping.ResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.ui.progress.UIJob;
 
@@ -52,8 +49,8 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private MyDiffNode node;
 	private String description;
 	private IResource resource;
-	private boolean isSaving = false;
     private ISynchronizeParticipant participant;
+	private final ResourceSaveableComparison saveable;
 
 	/*
 	 * This class exists so that we can force the text merge viewers to update by
@@ -84,7 +81,11 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		this.description = description;
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
-		initializeContentChangeListeners();
+		this.saveable = new ResourceSaveableComparison(description, node, this) {
+			protected void fireInputChange() {
+				node.fireChange();
+			}
+		};
 	}
 	
 	/**
@@ -102,14 +103,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
         this.participant = participant;
     }
 	
+    /* (non-Javadoc)
+     * @see org.eclipse.compare.CompareEditorInput#handleDispose()
+     */
     protected void handleDispose() {
     	super.handleDispose();
-    	Object left= node.getLeft();
-    	if (left instanceof LocalResourceTypedElement) {
-    		// When closing, make sure we discard any buffered content
-			LocalResourceTypedElement lrte = (LocalResourceTypedElement) left;
-			lrte.discardBuffer();
-		}
+    	saveable.dispose();
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -125,21 +124,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		CompareConfiguration cc = new CompareConfiguration();
 		//cc.setProperty(CompareConfiguration.USE_OUTLINE_VIEW, true);
 		return cc;
-	}
-
-	private void initializeContentChangeListeners() {
-		ITypedElement te = node.getLeft();
-		if (te instanceof IContentChangeNotifier) {
-			((IContentChangeNotifier) te).addContentChangeListener(new IContentChangeListener() {
-				public void contentChanged(IContentChangeNotifier source) {
-					try {
-						if(! isSaving)
-							saveChanges(new NullProgressMonitor());
-					} catch (CoreException e) {
-					}
-				}
-			});
-		}
 	}
 	
 	/**
@@ -245,74 +229,13 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		}
 		return false;
 	}
-	
-	private boolean hasSaveConflict() {
-		return !((LocalResourceTypedElement)node.getLeft()).isSynchronized();
-	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
-		if (checkUpdateConflict())
-			return;
-		ITypedElement left = node.getLeft();
-		if (left instanceof LocalResourceTypedElement) {
-			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
-			if (te.isConnected()) {
-				te.saveDocument(true, pm);
-				// Saving the document should fire the necessary updates
-				return;
-			}
-		}
-		try {
-			isSaving = true;
-			super.saveChanges(pm);
-			if (node != null) {
-				commit(pm, node);
-			}
-		} finally {
-			node.fireChange();
-			setDirty(false);
-			isSaving = false;
-		}
-	}
-
-	private boolean checkUpdateConflict() {
-		if (hasSaveConflict()) {
-			final MessageDialog dialog = 
-				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
-						TeamUIMessages.SyncInfoCompareInput_0,  
-						null, 
-						TeamUIMessages.SyncInfoCompareInput_1,  
-						MessageDialog.QUESTION,
-					new String[] {
-						TeamUIMessages.SyncInfoCompareInput_2, 
-						IDialogConstants.CANCEL_LABEL}, 
-					0);
-			
-			int retval = dialog.open();
-			switch(retval) {
-				// save
-				case 0: 
-					return false;
-				// cancel
-				case 1:
-					return true;
-			}
-		}
-		return false;
-	}
-	
-	private static void commit(IProgressMonitor pm, DiffNode node) throws CoreException {
-		ITypedElement left = node.getLeft();
-		if (left instanceof LocalResourceTypedElement)
-			 ((LocalResourceTypedElement) left).commit(pm);
-
-		ITypedElement right = node.getRight();
-		if (right instanceof LocalResourceTypedElement)
-			 ((LocalResourceTypedElement) right).commit(pm);
+		saveable.doSave(pm);
 	}
 
 	public SyncInfo getSyncInfo() {

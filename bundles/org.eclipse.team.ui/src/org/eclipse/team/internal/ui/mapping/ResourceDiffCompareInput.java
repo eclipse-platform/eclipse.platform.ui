@@ -15,8 +15,6 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -24,7 +22,8 @@ import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.IResourceDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
@@ -190,10 +189,6 @@ public class ResourceDiffCompareInput implements ISynchronizationCompareInput, I
 		configuration.setLabelProvider(this, getChangeNotifier().getLabelProvider());
 		ensureContentsCached(getAncestor(), getRight(), monitor);
 	}
-	
-	private boolean hasSaveConflict() {
-		return !((LocalResourceTypedElement)getLeft()).isSynchronized();
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#getSaveable()
@@ -244,36 +239,6 @@ public class ResourceDiffCompareInput implements ISynchronizationCompareInput, I
 		IResource other = Utils.getResource(object);
 		if (resource != null && other != null)
 			return resource.equals(other);
-		return false;
-	}
-	
-	/**
-	 * Check whether the file has changed on disk and prompt the user if it has.
-	 * @return whether the user choose to cancel the save or proceed
-	 */
-	public boolean checkUpdateConflict() {
-		if(hasSaveConflict()) {
-			final MessageDialog dialog = 
-				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
-						TeamUIMessages.SyncInfoCompareInput_0,  
-						null, 
-						TeamUIMessages.SyncInfoCompareInput_1,  
-						MessageDialog.QUESTION,
-					new String[] {
-						TeamUIMessages.SyncInfoCompareInput_2, 
-						IDialogConstants.CANCEL_LABEL}, 
-					0);
-			
-			int retval = dialog.open();
-			switch(retval) {
-				// save
-				case 0: 
-					return false;
-				// cancel
-				case 1:
-					return true;
-			}
-		}
 		return false;
 	}
 

@@ -33,6 +33,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.PlatformUI;
@@ -254,6 +255,12 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	protected void prepareCompareInput(final ICompareInput input) {
 		if (input == null)
 			return;
+		// Don't allow the use of shared documents with PageSaveableParts
+		Object left = input.getLeft();
+		if (left instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement lrte = (LocalResourceTypedElement) left;
+			lrte.enableSharedDocument(false);
+		}
 		IProgressService manager = PlatformUI.getWorkbench().getProgressService();
 		try {
 			// TODO: we need a better progress story here (i.e. support for cancellation) bug 127075

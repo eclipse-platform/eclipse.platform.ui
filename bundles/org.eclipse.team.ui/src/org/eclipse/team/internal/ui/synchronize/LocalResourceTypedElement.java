@@ -31,6 +31,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	private CountingSharedDocumentAdapter sharedDocumentAdapter;
 	private long timestamp;
 	private boolean exists;
+	private boolean useSharedDocument = true;
 
 	/**
 	 * Creates an element for the given resource.
@@ -101,7 +102,10 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == ISharedDocumentAdapter.class) {
-			return getSharedDocumentAdapter();
+			if (isSharedDocumentsEnable())
+				return getSharedDocumentAdapter();
+			else
+				return null;
 		}
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
@@ -249,6 +253,22 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 		if (sharedDocumentAdapter != null)
 			sharedDocumentAdapter.releaseBuffer();
 		super.discardBuffer();
+	}
+
+	/**
+	 * Return whether this element can use a shared document.
+	 * @return whether this element can use a shared document
+	 */
+	public boolean isSharedDocumentsEnable() {
+		return useSharedDocument;
+	}
+
+	/**
+	 * Set whether this element can use shared documents.
+	 * @param enablement whether this element can use shared documents
+	 */
+	public void enableSharedDocument(boolean enablement) {
+		this.useSharedDocument = enablement;
 	}
 
 }

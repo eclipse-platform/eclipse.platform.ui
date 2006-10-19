@@ -11,9 +11,11 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -21,28 +23,34 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.mapping.*;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 
 /**
  * A saveable compare model that wraps an {@link IFile} based compare input. This saveable is
- * created by the {@link ModelCompareEditorInput} instead of the {@link ResourceDiffCompareInput}
+ * created by the {@link CompareEditorInput} instead of the {@link ResourceDiffCompareInput}
  * because it needs access to the compare editor input in order to flush the viewers. Other model-based
  * compare inputs do not need this since the compare input and viewers should be provided by the same model.
+ * <p>
+ * This saveable assumes that the left node of the compare input is an {@link LocalResourceTypedElement}.
  */
 public class ResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
 
-	private ICompareInput input;
-	private final ISynchronizeParticipant participant;
+	private final ICompareInput input;
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
-	private int hashCode;
-	private boolean hashCodeSet = false;
 	private IContentChangeListener contentChangeListener;
+	private final String title;
 	
-	public ResourceSaveableComparison(ICompareInput input, ISynchronizeParticipant participant, ModelCompareEditorInput editorInput) {
+	/**
+	 * Create the resource-based saveable comparison.
+	 * @param title the title
+	 * @param input the compare input to be save
+	 * @param editorInput the editor input containing the comparison
+	 */
+	public ResourceSaveableComparison(String title, ICompareInput input, CompareEditorInput editorInput) {
+		this.title = title;
 		this.input = input;
-		this.participant = participant;
 		this.editorInput = editorInput;
 		initializeContentChangeListeners();
 	}
@@ -69,23 +77,28 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		}
 	}
 	
-	private void removeContentChangeListeners() {
+	/**
+	 * Dispose of the saveable.
+	 */
+	public void dispose() {
 		if (contentChangeListener != null) {
 			ITypedElement te = input.getLeft();
 			if (te instanceof IContentChangeNotifier) {
 				((IContentChangeNotifier) te).removeContentChangeListener(contentChangeListener);
 			}
 		}
+		// Discard of the left buffer
+		ITypedElement left = input.getLeft();
+		if (left instanceof LocalResourceTypedElement)
+			 ((LocalResourceTypedElement) left).discardBuffer();
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SaveableCompareModel#performSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	protected void performSave(IProgressMonitor monitor) throws CoreException {
-		if (input instanceof ResourceDiffCompareInput) {
-			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-			if (rdci.checkUpdateConflict())
-				return;
+		if (checkForUpdateConflicts()) {
+			return;
 		}
 		ITypedElement left = input.getLeft();
 		if (left instanceof LocalResourceTypedElement) {
@@ -101,7 +114,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			monitor.beginTask(null, 100);
 			// First, we need to flush the viewers so the changes get buffered
 			// in the input
-			editorInput.saveChanges(Policy.subMonitorFor(monitor, 40));
+			flushViewers(Policy.subMonitorFor(monitor, 40));
 			// Then we tell the input to commit its changes
 			// Only the left is ever saveable
 			if (left instanceof LocalResourceTypedElement) {
@@ -110,14 +123,71 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			}
 		} finally {
 			// Make sure we fire a change for the compare input to update the viewers
-			if (input instanceof ResourceDiffCompareInput) {
-				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-				rdci.fireChange();
-			}
+			fireInputChange();
 			setDirty(false);
 			isSaving = false;
 			monitor.done();
 		}
+	}
+
+	/**
+	 * Flush the contents of any viewers into the compare input.
+	 * @param monitor a progress monitor
+	 * @throws CoreException
+	 */
+	protected void flushViewers(IProgressMonitor monitor) throws CoreException {
+		editorInput.saveChanges(monitor);
+	}
+
+	/**
+	 * Fire an input change for the compare input. By default, this method
+	 * only works for {@link ResourceDiffCompareInput}. Subclass may override
+	 * for other input types.
+	 */
+	protected void fireInputChange() {
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			rdci.fireChange();
+		}
+	}
+
+	/**
+	 * Check whether there is a conflicting save on the file.
+	 * @return <code>true</code> if there was and the user chose to cancel the operation
+	 */
+	private boolean checkForUpdateConflicts() {
+		if(hasSaveConflict()) {
+			final MessageDialog dialog = 
+				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
+						TeamUIMessages.SyncInfoCompareInput_0,  
+						null, 
+						TeamUIMessages.SyncInfoCompareInput_1,  
+						MessageDialog.QUESTION,
+					new String[] {
+						TeamUIMessages.SyncInfoCompareInput_2, 
+						IDialogConstants.CANCEL_LABEL}, 
+					0);
+			
+			int retval = dialog.open();
+			switch(retval) {
+				// save
+				case 0: 
+					return false;
+				// cancel
+				case 1:
+					return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean hasSaveConflict() {
+		ITypedElement left = input.getLeft();
+		if (left instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
+			return !te.isSynchronized();
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -149,14 +219,14 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getName()
+	 * @see org.eclipse.ui.Saveable#getName()
 	 */
 	public String getName() {
 		return input.getName();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getToolTipText()
+	 * @see org.eclipse.ui.Saveable#getToolTipText()
 	 */
 	public String getToolTipText() {
 		String fullPath;
@@ -166,11 +236,11 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		} else {
 			fullPath = getName();
 		}
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, participant.getName()), fullPath });
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, title), fullPath });
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISaveableModel#getImageDescriptor()
+	 * @see org.eclipse.ui.Saveable#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		Image image = input.getImage();
@@ -193,6 +263,9 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		}			
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.Saveable#equals(java.lang.Object)
+	 */
 	public boolean equals(Object object) {
 		if (object instanceof ResourceSaveableComparison) {
 			ResourceSaveableComparison rscm = (ResourceSaveableComparison) object;
@@ -201,13 +274,11 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.Saveable#hashCode()
+	 */
 	public int hashCode() {
-		// We want to remember the hash code so it never changes.
-		if (!hashCodeSet) {
-			hashCode = input.hashCode();
-			hashCodeSet = true;
-		}
-		return hashCode;
+		return input.hashCode();
 	}
 
 	/**
@@ -216,19 +287,5 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	 */
 	public ICompareInput getInput() {
 		return input;
-	}
-
-	/**
-	 * Set the compare input managed by this saveable. This method is
-	 * only intended to work for inputs that represent the same comparison
-	 * but have a state change in one of the contributors.
-	 * @param input the compare input
-	 */
-	public void setInput(ICompareInput input) {
-		if (input != this.input) {
-			removeContentChangeListeners();
-			this.input = input;
-			initializeContentChangeListeners();
-		}
 	}
 }
