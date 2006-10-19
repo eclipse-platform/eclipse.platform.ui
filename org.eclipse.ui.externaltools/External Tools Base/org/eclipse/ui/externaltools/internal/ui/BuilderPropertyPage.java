@@ -413,15 +413,18 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 	 */
 	public void checkStateChanged(CheckStateChangedEvent event) {
 		Object element= event.getElement();
+		boolean checked = event.getChecked();
 		if (element instanceof ILaunchConfiguration) {
-			enableLaunchConfiguration((ILaunchConfiguration) element, event.getChecked());
+			enableLaunchConfiguration((ILaunchConfiguration) element, checked);
 		} else if (element instanceof ICommand) {
             Shell shell= getShell();
             if (shell == null) {
                 return;
             }
-			if (MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
-				enableCommand((ICommand)element, event.getChecked());
+            if (checked) {
+            	enableCommand((ICommand)element, checked);
+            } else if (MessageDialog.openConfirm(shell, ExternalToolsUIMessages.BuilderPropertyPage_6, ExternalToolsUIMessages.BuilderPropertyPage_7)) {
+				enableCommand((ICommand)element, checked);
 			} else {
 				viewer.removeCheckStateListener(this);
 				viewer.setChecked(element, true);
