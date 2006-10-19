@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.jface.util.Assert;
 
 /**
  * A settable IStatus. 
