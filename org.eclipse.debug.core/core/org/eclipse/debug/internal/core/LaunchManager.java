@@ -79,7 +79,6 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
-import org.eclipse.debug.core.ILaunchOption;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.IStatusHandler;
@@ -1317,47 +1316,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return (ILaunchMode[]) collection.toArray(new ILaunchMode[collection.size()]);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchOption(java.lang.String)
-	 */
-	public ILaunchOption getLaunchOption(String optionId) {
-		initializeLaunchOptions();
-		return (ILaunchOption)fLaunchOptions.get(optionId);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchOptions()
-	 */
-	public ILaunchOption[] getLaunchOptions() {
-		initializeLaunchOptions();
-		Collection col = fLaunchOptions.values();
-		return (ILaunchOption[])col.toArray(new ILaunchOption[col.size()]);
-	}
-	
-	/**
-	 * Initializes the listing of registered launch options. Does no work if the mapping is already populated.
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
-	 * @since 3.3  
-	 */
-	private synchronized void initializeLaunchOptions() {
-		if(fLaunchOptions == null) {
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_OPTIONS);
-			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-			fLaunchOptions = new HashMap();
-			ILaunchOption option = null;
-			for(int i =  0; i < infos.length; i++) {
-				option = new LaunchOption(infos[i]);
-				fLaunchOptions.put(option.getIdentifier(), option);
-			}
-		}
-	}
-	
 	/**
 	 * Returns all of the launch delegates. The rturned listing of delegates cannot be directly used to launch,
 	 * instead the method <code>IlaunchDelegate.getDelegate</code> must be used to acquire an executable form of
@@ -1377,51 +1335,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return (LaunchDelegate[]) col.toArray(new LaunchDelegate[col.size()]);
 	}
 	
-	/** Returns the launch delegates that applies to the specified options for the specified mode and type id
-	 * @param typeid the <code>ILaunchConfigurationType</code> id
-	 * @param the mode id
-	 * @param options the options to find the delegate for
-	 * @return the delegates that apply to the specified launch options for the specified mode and type id
-	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
-	 * @since 3.3
-	 */
-	public LaunchDelegate[] getLaunchDelegates(String typeid, String mode, Set options) {
-		initializeLaunchDelegates();
-		LaunchDelegate ld = null;
-		boolean applies = true;
-		ArrayList list = new ArrayList();
-		Object[] aoptions = options.toArray();
-		Set doptions = null;
-		for(Iterator iter = fLaunchDelegates.keySet().iterator(); iter.hasNext();) {
-			ld = (LaunchDelegate) fLaunchDelegates.get(iter.next());
-			doptions = ld.getOptions();
-			if(ld.appliesTo(typeid, mode)) {
-				if(options != null) {
-					if(doptions.size() > 0 & aoptions.length == 0) {
-						applies = false;
-					}
-					for(int i = 0; i < aoptions.length; i++) {
-						applies &= doptions.contains(aoptions[i]);
-					}
-				}
-				else if(doptions.size() > 0) {
-					applies = false;
-				}
-				if(applies) {
-					list.add(ld);
-				}
-				applies = true;
-			}
-		}
-		return (LaunchDelegate[]) list.toArray(new LaunchDelegate[list.size()]);
-	}
-	
 	/**
 	 * Returns the listing of launch delegates that apply to the specified 
 	 * <code>ILaunchConfigurationType</code> id
@@ -1439,73 +1352,11 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		LaunchDelegate ld = null;
 		for(Iterator iter = fLaunchDelegates.keySet().iterator(); iter.hasNext();) {
 			ld = (LaunchDelegate) fLaunchDelegates.get(iter.next());
-			if(ld.appliesTo(typeid)) {
+			if(ld.getLaunchConfigurationType().equals(typeid)) {
 				list.add(ld);
 			}
 		}
 		return (LaunchDelegate[]) list.toArray(new LaunchDelegate[list.size()]);
-	}
-	
-	/**
-	 * Returns the listing of duplicate launch delegates in the form of a <code>HashMap</code>, with the 
-	 * object arrangement: 
-	 * <p>
-	 * <pre>
-	 * HashMap<ILaunchConfigurationType, HashMap<string, LaunchDelegate[]>>
-	 * </pre>
-	 * </p>
-	 * <p>
-	 * Where the first map is keyed based on <code>ILaunchConfigurationType</code> ids and the inner map
-	 * is keyed by mode.
-	 * </p> 
-	 * @return the map of <code>LaunchDelegate</code>s that are in conflict for type, mode and options
-	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 */
-	public HashMap getDuplicateLaunchDelegates() {
-		initializeDuplicateLaunchDelegates();
-		return fDuplicateDelegates;
-	}
-	
-	/**
-	 * Lazily initializes the listing of duplicate launch delegates
-	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 */
-	private synchronized void initializeDuplicateLaunchDelegates() {
-		if(fDuplicateDelegates == null) {
-			fDuplicateDelegates = new HashMap();
-			//for each delegate get the delegates[]
-			LaunchDelegate[] delegates = getLaunchDelegates();
-			LaunchDelegate[] dupes = null;
-			ILaunchConfigurationType type = null;
-			Set modes = null;
-			Iterator iter = null;
-			Set options = null;
-			HashMap tmp = null;
-			String mode = null;
-			for(int i = 0; i < delegates.length; i++) {
-				type = getLaunchConfigurationType(delegates[i].getLaunchConfigurationType());
-				options = delegates[i].getOptions();
-				modes = type.getSupportedModes();
-				for(iter = modes.iterator(); iter.hasNext();) {
-					mode = (String) iter.next();
-					dupes = getLaunchDelegates(type.getIdentifier(), mode, options);
-					if(dupes.length > 1) {
-						tmp = (HashMap) fDuplicateDelegates.get(type);
-						if(tmp == null) {
-							tmp = new HashMap(dupes.length);
-						}
-						tmp.put(mode, dupes);
-						fDuplicateDelegates.put(type, tmp);
-					}
-				}
-			}
-		}
 	}
 	
 	/**
@@ -2229,5 +2080,44 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}		
 	}
 	
-	
+	/**
+	 * Returns the name of the given launch mode with accelerators removed,
+	 * or <code>null</code> if none.
+	 * 
+	 * @param id
+	 */
+	public String getLaunchModeName(String id) {
+		ILaunchMode launchMode = getLaunchMode(id);
+		if (launchMode != null) {
+			return removeAccelerators(launchMode.getLabel());
+		}
+		return null;
+	}
+	/**
+	 * Returns the label with any accelerators removed.
+	 * 
+	 * @return label without accelerators
+	 */
+    public static String removeAccelerators(String label) {
+        String title = label;
+        if (title != null) {
+            // strip out any '&' (accelerators)
+            int index = title.indexOf('&');
+            if (index == 0) {
+                title = title.substring(1);
+            } else if (index > 0) {
+                //DBCS languages use "(&X)" format
+                if (title.charAt(index - 1) == '(' && title.length() >= index + 3 && title.charAt(index + 2) == ')') {
+                    String first = title.substring(0, index - 1);
+                    String last = title.substring(index + 3);
+                    title = first + last;
+                } else if (index < (title.length() - 1)) {
+                    String first = title.substring(0, index);
+                    String last = title.substring(index + 1);
+                    title = first + last;
+                }
+            }
+        }
+        return title;
+    }	
 }

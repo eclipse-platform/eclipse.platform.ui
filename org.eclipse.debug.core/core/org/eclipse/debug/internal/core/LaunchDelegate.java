@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -75,9 +79,10 @@ public final class LaunchDelegate {
 		if(fDelegate == null) {
 			Object obj = fElement.createExecutableExtension(IConfigurationElementConstants.DELEGATE);
 			if(obj instanceof ILaunchConfigurationDelegate) {
-				return (ILaunchConfigurationDelegate)obj;
+				fDelegate = (ILaunchConfigurationDelegate)obj;
+			} else {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getIdentifier()}), null));
 			}
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getIdentifier()}), null));
 		}
 		return fDelegate;
 	}
@@ -169,22 +174,53 @@ public final class LaunchDelegate {
 	}
 
 	/**
-	 * Determines if the delegate applies to the specified launch configuration type via its id only (no expression evaluation is done)
-	 * @param configtypeId the id of the <code>ILaunchConfigurationType</code>.
-	 * @return true if the delegate applies to the associated config type, false otherwise
+	 * Returns all combinations of supported options.
+	 * 
+	 * @return combinations of supported options
 	 */
-	public boolean appliesTo(String configtypeId) {
-		return getLaunchConfigurationType().equals(configtypeId);
+	private Collection getOptionSets() {
+		Set optionSets = new HashSet(); 
+		optionSets.add(new HashSet()); // seed with the empty option set
+		Object[] options = getOptions().toArray();
+		boolean grew = false;
+		do {
+			grew = false;
+			Set[] sets = (Set[]) optionSets.toArray(new Set[optionSets.size()]);
+			for (int i = 0; i < sets.length; i++) {
+				Set optionSet = sets[i];
+				for (int j = 0; j < options.length; j++) {
+					Object option = options[j];
+					Set newOptionSet = new HashSet(optionSet);
+					if (newOptionSet.add(option)) {
+						if (optionSets.add(newOptionSet)) {
+							grew = true;
+						}
+					}
+				}				
+			}                                   
+		} while (grew);
+		return optionSets;
 	}
 	
 	/**
-	 * Determines if the delegate applies to the specified launch configuration type via its id and mode (no expression evaluation is done)
-	 * @param configtypeId the id of the <code>ILaunchConfigurationType</code>.
-	 * @param mode the mode
-	 * @return true if the delegate applies to the associated config type, false otherwise
+	 * Returns all supported launch mode combinations as sets of modes.
+	 *  
+	 * @return all supported launch mode combinations
 	 */
-	public boolean appliesTo(String configtypeId, String mode) {
-		return getLaunchConfigurationType().equals(configtypeId) & getModes().contains(mode);
+	List getModeCombinations() {
+		Collection optionSets = getOptionSets();
+		Object[] modes = getModes().toArray();
+		List combinations = new ArrayList(optionSets.size() * modes.length);
+		Iterator iterator = optionSets.iterator();
+		while (iterator.hasNext()) {
+			Set optionSet = (Set) iterator.next();
+			for (int i = 0; i < modes.length; i++) {
+				Object mode = modes[i];
+				Set set = new HashSet(optionSet);
+				set.add(mode);
+				combinations.add(set);
+			}			
+		}
+		return combinations;
 	}
-
 }

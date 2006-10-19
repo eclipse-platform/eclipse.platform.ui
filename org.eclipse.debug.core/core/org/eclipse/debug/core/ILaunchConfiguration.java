@@ -326,9 +326,13 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public String getName();		
 	
 	/**
-	 * Returns this configuration's launch options.
-	 *  
-	 * @return this configuration's launch options
+	 * Returns the launch modes that have been set on this configuration.
+	 * <p>
+	 * Setting launch modes on a configuration allows a launch to be
+	 * performed in mixed mode - for example, debug and profile at the
+	 * same time.
+	 * </p>
+	 * @return this configuration's launch modes
 	 * 
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
@@ -338,7 +342,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </p>
 	 * @since 3.3
 	 */
-	public Set getOptions() throws CoreException;
+	public Set getModes() throws CoreException;
 	
 	/**
 	 * Returns the type of this launch configuration. This is a

@@ -126,19 +126,18 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @exception CoreException if unable to instantiate the
 	 *  delegate
 	 * @since 3.0
-	 * @deprecated in 3.3 delegates should be acquired using the new 
-	 * <code>getDelegate(String mode, Set options)</code> method.
-	 * 
+	 * @deprecated since 3.3, the method <code>getDelegates(Set)</code> should be used
+	 *  instead, as there can be more than one capable delegate per mode or combination
+	 *  of modes 
 	 */	
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
 	
 	/**
-	 * Returns the launch delegate for the specified mode and options.
+	 * Returns the launch delegates capable of launching in the specified modes.
 	 * 
-	 * @param mode launch mode
-	 * @param options launch options
-	 * @return the <code>ILaunchConfigurationDelegate</code> for the given mode and options,
-	 * 		or <code>null</code> if none
+	 * @param modes set of launch modes
+	 * @return the <code>ILaunchConfigurationDelegate</code>s capable of launching
+	 * 		in the specified modes or an empty collection if none
 	 * @throws CoreException
 	 * @since 3.3
 	 * 
@@ -149,7 +148,38 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public ILaunchConfigurationDelegate getDelegate(String mode, Set options) throws CoreException;
+	public ILaunchConfigurationDelegate[] getDelegates(Set modes) throws CoreException;
+	
+	/**
+	 * Returns a collection of all supported launch mode combinations for 
+	 * this launch configuration type.
+	 * 
+	 * @return all supported launch mode combinations
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public Set[] getSupportedModeCombinations();
+	
+	/**
+	 * Returns whether this launch configuration supports the specified launch
+	 * mode combination.
+	 * 
+	 * @param modes launch mode combination
+	 * @return whether the launch mode combination is supported
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public boolean supportsModeCombination(Set modes);
 	
 	/**
 	 * Returns the unique identifier for this type of launch configuration

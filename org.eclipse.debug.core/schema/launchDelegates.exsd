@@ -114,7 +114,7 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
          <attribute name="options" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of the launch options this launch delegate supports. This attribute was added in the 3.3 release.
+                  A comma-separated list of launch modes this launch delegate supports in combination with its supported modes. This attribute was added in the 3.3 release to allow configurations to be launched in a mixed mode.
 
 &lt;p&gt;
 &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
@@ -151,30 +151,15 @@ without consulting with the Platform/Debug team.
    id=&quot;com.example.ExampleProfileDelegate&quot;
    delegate=&quot;com.example.ExampleProfileDelegate&quot;
    type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
-   modes=&quot;profile&quot;&gt;
+   modes=&quot;profile&quot;
+   options&quot;run, debug&quot;&gt;
   &lt;/launchDelegate&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-In the example above, the specified launch delegate is contributed to launch Java applications in profile mode.
+In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode.
 
-The previous example has been deprecated as of 3.3M3, but left in for brevity. See the following example for new usage.
-
-&lt;p&gt;
-&lt;pre&gt;
-&lt;extension point=&quot;org.eclipse.debug.core.launchDelegates&quot;&gt;
-      &lt;launchDelegate
-            delegate=&quot;org.eclipse.jdt.launching.JavaLaunchDelegate&quot;
-            id=&quot;org.eclipse.jdt.launching.JavaLaunchDelegate&quot;
-            type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
-      modes=&quot;profile&quot;&gt;
-      &lt;/launchDelegate&gt;
-   &lt;/extension&gt;   
-&lt;/pre&gt;
-&lt;/p&gt;
-
-In 3.3 mode-based launching has been deprecated, and in its place we have provided launching with options. Options are contributed via the &lt;code&gt;launchOptions&lt;/code&gt; extension point and can be referenced here to describe what options your launch delegate supports. Options are further arranged in the form of expressions that can be evaluated to determine suitablility of your delegate for a variety of combinations of options.
       </documentation>
    </annotation>
 

@@ -45,7 +45,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -86,17 +85,17 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public static final String ATTR_MAPPED_RESOURCE_TYPES = DebugPlugin.getUniqueIdentifier() + ".MAPPED_RESOURCE_TYPES"; //$NON-NLS-1$
 	
 	/**
-	 * The listing of applicable launch options for this configuration.
+	 * The launch modes set on this configuration.
 	 * 
 	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This class has been added as
+	 * <strong>EXPERIMENTAL</strong>. This attribute has been added as
 	 * part of a work in progress. There is no guarantee that this API will
 	 * remain unchanged during the 3.3 release cycle. Please do not use this API
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 * @since 3.3
 	 */
-	public static final String ATTR_LAUNCH_OPTIONS = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_OPTIONS"; //$NON-NLS-1$
+	public static final String ATTR_LAUNCH_MODES = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_MODES"; //$NON-NLS-1$
 	
 	/**
 	 * Status handler to prompt in the UI thread
@@ -354,18 +353,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return null;
 	}
 
-	/**
-	 * Returns the launch configuration delegate for this
-	 * launch configuration, for the specified launch mode.
-	 * @param mode launch mode
-	 * @return launch configuration delegate
-	 * @exception CoreException if the delegate was unable
-	 *  to be created
-	 */
-	protected ILaunchConfigurationDelegate getDelegate(String mode, Set options) throws CoreException {
-		return getType().getDelegate(mode, options);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getFile()
 	 */
@@ -516,11 +503,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return getLastLocationSegment();
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getOptions()
-	 */
-	public Set getOptions() throws CoreException {
-		Set options = getAttribute(ATTR_LAUNCH_OPTIONS, (Set)null); 
+	public Set getModes() throws CoreException {
+		Set options = getAttribute(ATTR_LAUNCH_MODES, (Set)null); 
 		return (options != null ? new HashSet(options) : new HashSet(0));
 	}
 	
@@ -614,19 +598,26 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
+    	Set modes = getModes();
+    	modes.add(mode);
+    	ILaunchConfigurationDelegate[] delegates = getType().getDelegates(modes);
     	ILaunchConfigurationDelegate delegate = null;
-    	Set options = getOptions();
-    	try {
-    		delegate = getDelegate(mode, options);
+    	if (delegates.length == 1) {
+    		delegate = delegates[0];
+    	} else if (delegates.length == 0) {
+    		//IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+    		//handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+    		// no delegates TODO:
+    		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+    				DebugPlugin.INTERNAL_ERROR, "No launch delegate", null); //$NON-NLS-1$
+    		throw new CoreException(status);
+    	} else {
+    		// multiple delegates TODO:
+    		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
+    				DebugPlugin.INTERNAL_ERROR, "Duplicate launch delegates", null); //$NON-NLS-1$
+    		throw new CoreException(status);
     	}
-    	catch(CoreException ce) {
-    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
-    		
-    		//retry once the problem has been fixed
-    		options = getOptions();
-    		delegate = getDelegate(mode, options);
-    	}
+    	
 		ILaunchConfigurationDelegate2 delegate2 = null;
 		if (delegate instanceof ILaunchConfigurationDelegate2) {
 			delegate2 = (ILaunchConfigurationDelegate2) delegate;

@@ -12,8 +12,10 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +25,10 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
@@ -252,5 +257,27 @@ public class LaunchConfigurationPresentationManager {
 		return (extension != null ? extension.getDescription(mode) : null);
 	}	
 	
+	/**
+	 * Returns a sorted list of launch mode names corresponding to the given identifiers.
+	 * 
+	 * @param modes set of launch mode identifiers
+	 * @return sorted list of launch mode names
+	 */
+	public List getLaunchModeNames(Set modes) {
+		List names = new ArrayList();
+		Iterator iterator = modes.iterator();
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		while (iterator.hasNext()) {
+			String id = (String) iterator.next();
+			ILaunchMode mode = manager.getLaunchMode(id);
+			if (mode == null) {
+				names.add(id);
+			} else {
+				names.add(DebugUIPlugin.removeAccelerators(mode.getLabel()));
+			}
+		}
+		Collections.sort(names);
+		return names;
+	}
 }
 

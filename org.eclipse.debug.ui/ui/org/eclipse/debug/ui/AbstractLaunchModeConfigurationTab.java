@@ -20,10 +20,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Common function for a launch tab that edits a launch option. 
+ * Common function for a launch tab that edits a launch mode. 
  * <p>
  * This class is intended to be subclassed by clients contributing launch tabs
- * that modify launch options.
+ * that modify launch modes on a launch configuration.
  * </p>
  * @since 3.3
  * 
@@ -34,23 +34,23 @@ import org.eclipse.swt.widgets.Composite;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public abstract class AbstractOptionLaunchConfigurationTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
+public abstract class AbstractLaunchModeConfigurationTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
 	
 	/**
-	 * Returns the set of the options this tab modifies.
+	 * Returns the set of the modes this tab modifies.
 	 * 
-	 * @return set of the options this tab modifies
+	 * @return set of the modes this tab modifies
 	 */
-	public abstract Set getOptions();
+	public abstract Set getModes();
 	
 	/**
-	 * Updates the controls associated with this tab's launch options.
+	 * Updates the controls associated with this tab's launch modes.
 	 * Called when a launch configuration has changed, which can occur when a tab 
-	 * is de-activated, or if an option is modified outside of the tabs' control.
+	 * is de-activated. Launch modes may have been modified outside of this tab's control.
 	 * 
-	 * @param options the current set of options specified by the working copy being edited
+	 * @param modes the current set of modes specified by the working copy being edited
 	 */
-	public abstract void updateOptionControls(Set options);
+	public abstract void updateLaunchModeControls(Set modes);
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -82,7 +82,7 @@ public abstract class AbstractOptionLaunchConfigurationTab extends AbstractLaunc
 	 */
 	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
 		try {
-			updateOptionControls(configuration.getOptions());
+			updateLaunchModeControls(configuration.getModes());
 		} 
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 	}

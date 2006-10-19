@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
@@ -294,7 +295,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fOptionsLink.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				//collect the options available
-				SelectLaunchOptionsDialog sld = new SelectLaunchOptionsDialog(getShell(), 
+				SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
 						getLaunchConfigurationDialog().getMode(), 
 						((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(fTabType.getIdentifier()));
 				if(sld.open() == IDialogConstants.OK_ID) {
@@ -306,7 +307,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 							list.add(res[i]);
 						}
 						ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
-						wc.setOptions(list);
+						wc.setModes(list);
 						refresh();
 						refreshStatus();
 					}
@@ -1040,14 +1041,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		try {
 			ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
 			if(wc != null) {
-			Set options = wc.getOptions();
-				if(options.size() > 0) {
-					return ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(fTabType.getIdentifier(), getLaunchConfigurationDialog().getMode(), options).length > 0;
-				}
+				Set modes = wc.getModes();
+				modes.add(getLaunchConfigurationDialog().getMode());
+				return wc.getType().supportsModeCombination(modes);
 			}
-		} 
-		catch (CoreException e) {
-			e.printStackTrace();
+		}  catch (CoreException e) {
 		}
 		return true;
 	}
@@ -1103,15 +1101,12 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 		if(!canLaunchWithOptions()) {
 			try {
-				Object o = getInput();
-				String name = null;
-				if(o instanceof ILaunchConfiguration) {
-					ILaunchConfiguration lc = (ILaunchConfiguration) o;
-					name = LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14+lc.getName();
-				}
-				return (name == null ? LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_10 : name) + LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_11+getLaunchConfigurationDialog().getMode()+LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_12+getWorkingCopy().getOptions().toString();
+				Set modes = getWorkingCopy().getModes();
+				modes.add(getLaunchConfigurationDialog().getMode());
+				List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
+				return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new String[]{names.toString()});
 			} catch (CoreException e) {
-				e.printStackTrace();
+				return e.getMessage();
 			}
 		}
 		return null;

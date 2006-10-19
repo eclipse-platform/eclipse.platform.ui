@@ -11,9 +11,12 @@
 package org.eclipse.debug.internal.core;
 
  
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,6 +32,7 @@ import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
@@ -81,7 +85,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * The delegates for launch configurations of this type.
 	 * Delegates are instantiated lazily as required. There may
 	 * be different delegates for different modes (since 3.0).
-	 * Map of mode to delegate
+	 * Map of modes (Set of modes) to list of delegates
 	 */
 	private Map fDelegates;
 	
@@ -122,33 +126,80 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate(java.lang.String)
 	 */
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
-		return getDelegate(mode, Collections.EMPTY_SET); 
+		Set modes = new HashSet();
+		modes.add(mode);
+		ILaunchConfigurationDelegate[] delegates = getDelegates(modes);
+		if (delegates.length > 0) {
+			return delegates[0];
+		}
+		IStatus status = null;
+		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(mode);
+		if (launchMode == null) {
+			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7,
+							new String[]{mode}));
+		} else {
+			status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+				MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_7,
+						new String[]{((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchModeName(mode)}));
+		}
+		throw new CoreException(status);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate(java.lang.String, java.lang.String[])
-	 */
-	public ILaunchConfigurationDelegate getDelegate(String mode, Set options) throws CoreException {
-		if (!supportsMode(mode)) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_9, new String[] {mode, getIdentifier()}), null));  
+	public ILaunchConfigurationDelegate[] getDelegates(Set modes) throws CoreException {
+		initializeDelegates();
+		Object[] theModes = modes.toArray();
+		for (int i = 0; i < theModes.length; i++) {
+			String mode = (String) theModes[i];
+			if (!supportsMode(mode)) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR,
+						MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_9, new String[] {mode, getIdentifier()}), null));  
+			}			
 		}
+		List delegates = (List) fDelegates.get(modes);
+		if (delegates == null) {
+			delegates = Collections.EMPTY_LIST;
+		}
+		ILaunchConfigurationDelegate[] result = new ILaunchConfigurationDelegate[delegates.size()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = ((LaunchDelegate)delegates.get(i)).getDelegate();
+		}
+		return result;
+	}
+	
+	private synchronized void initializeDelegates() {
 		if (fDelegates == null) {
-			// initialize delegate table with base modes
+			// initialize delegate
 			fDelegates = new Hashtable();
-		}
-		ILaunchConfigurationDelegate delegate = (ILaunchConfigurationDelegate)fDelegates.get(mode);
-		if (delegate == null) {
-			if(fModes.contains(mode)) {
-				LaunchDelegate[] delegates = ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier(), mode, options);
-				if(delegates.length > 0) {
-					return delegates[0].getDelegate();
+			LaunchDelegate[] launchDelegates = getLaunchDelegateExtensions();
+			for (int i = 0; i < launchDelegates.length; i++) {
+				LaunchDelegate delegate = launchDelegates[i];
+				List combintaions = delegate.getModeCombinations();
+				Iterator iterator = combintaions.iterator();
+				while (iterator.hasNext()) {
+					Set combination = (Set) iterator.next();
+					registerDelegate(delegate, combination);
 				}
 			}
-		} 
-		else {
-			return delegate;
+		}		
+	}
+
+	/**
+	 * Returns all launch delegate extensions registered for this configuration type.
+	 * 
+	 * @return all launch delegate extensions
+	 */
+	private LaunchDelegate[] getLaunchDelegateExtensions() {
+		return ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier());
+	}
+	
+	private void registerDelegate(LaunchDelegate delegate, Set modes) {
+		List delegatesForModes = (List) fDelegates.get(modes);
+		if (delegatesForModes == null) {
+			delegatesForModes = new ArrayList();
+			fDelegates.put(modes, delegatesForModes);
 		}
-		throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_10, new String[] {getIdentifier(), mode}), null));
+		delegatesForModes.add(delegate);
 	}
 
 	/* (non-Javadoc)
@@ -185,7 +236,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			//if not provided check all the applicable delegates for one and record the delegate if found,
 			//so it can be reused to try and find the source path computer
 			if(fSourceLocator == null) {
-				LaunchDelegate[] delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier());
+				LaunchDelegate[] delegates = getLaunchDelegateExtensions();
 				for(int i = 0; i < delegates.length; i++) {
 					fSourceLocator = delegates[i].getSourceLocatorId();
 					if(fSourceLocator != null) {
@@ -216,7 +267,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			else { 
 			//if not provided check all the applicable delegates for one and record the delegate if found,
 			//so it can be reused to try and find the source path computer
-				LaunchDelegate[] delegates = ((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier());
+				LaunchDelegate[] delegates = getLaunchDelegateExtensions();
 				for(int i = 0; i < delegates.length; i++) {
 					id = delegates[i].getSourcePathComputerId();
 					if(id != null) {
@@ -240,11 +291,9 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public Set getSupportedModes() {
 		if(fModes == null) {
 			fModes = new HashSet();
-			LaunchDelegate[] delegates = ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates();
+			LaunchDelegate[] delegates = getLaunchDelegateExtensions();
 			for(int i= 0; i < delegates.length; i++) {
-				if(delegates[i].appliesTo(getIdentifier())) {
-					fModes.addAll(delegates[i].getModes());
-				}
+				fModes.addAll(delegates[i].getModes());
 			}
 		}
 		return fModes;
@@ -337,6 +386,23 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public String getImageDescriptorPath() {
 		return fElement.getAttribute(IConfigurationElementConstants.ICON);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModeCombinations()
+	 */
+	public Set[] getSupportedModeCombinations() {
+		initializeDelegates();
+		Set combinations = fDelegates.keySet();
+		return (Set[])combinations.toArray(new Set[combinations.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsModeCombination(java.util.Set)
+	 */
+	public boolean supportsModeCombination(Set modes) {
+		initializeDelegates();
+		return fDelegates.containsKey(modes);
 	}
 }
 

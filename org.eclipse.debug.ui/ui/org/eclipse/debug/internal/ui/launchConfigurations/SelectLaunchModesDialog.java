@@ -38,24 +38,25 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This class provides a dialog to present the user with a list of of viable launch options in the event 
- * the plugin that provides either a launch option or a contributed launch delegate is no longer available.
- * The user can select one of the launch mode/option configuration sform this dialog and repair the option 
+ * the plug-in that provides either a launch option or a contributed launch delegate is no longer available.
+ * The user can select one of the launch mode/option configuration from this dialog and repair the option 
  * configuration state of the the current launch configuration
  * 
  *  @since 3.3
  *  
  *  EXPERIMENTAL
  */
-public class SelectLaunchOptionsDialog extends SelectionDialog {
+public class SelectLaunchModesDialog extends SelectionDialog {
 
 	/**
-	 * Builds labels for list control of the form: Mode + (no options) | [optionslist]
+	 * Builds labels for list control of the form: Mode + (no options) | [options list]
 	 */
 	class OptionsLabelProvider implements ILabelProvider {
 		public Image getImage(Object element) {return null;}
 		public String getText(Object element) {
 			LaunchDelegate del = (LaunchDelegate) element;
 			Set set = del.getOptions();
+			// TODO: illegal NLS
 			return del.getName() + LaunchConfigurationsMessages.SelectLaunchOptionsDialog_5 + fMode + (set.isEmpty() ? LaunchConfigurationsMessages.SelectLaunchOptionsDialog_0 : LaunchConfigurationsMessages.SelectLaunchOptionsDialog_1 + set);
 		}
 		public void addListener(ILabelProviderListener listener) {}
@@ -78,7 +79,7 @@ public class SelectLaunchOptionsDialog extends SelectionDialog {
 	 * @param message the message for the dialog
 	 * @param options the listing of arrays of options (each entry in the list must be an <code>Set</code> of options)
 	 */
-	public SelectLaunchOptionsDialog(Shell parentShell, String mode, LaunchDelegate[] delegates) {
+	public SelectLaunchModesDialog(Shell parentShell, String mode, LaunchDelegate[] delegates) {
 		super(parentShell);
 		super.setMessage(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_2);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);

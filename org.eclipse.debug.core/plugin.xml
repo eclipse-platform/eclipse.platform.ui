@@ -18,7 +18,6 @@
    <extension-point id="sourceContainerTypes" name="%sourceContainerTypesName" schema="schema/sourceContainerTypes.exsd"/>
    <extension-point id="sourcePathComputers" name="%sourcePathComputersName" schema="schema/sourcePathComputers.exsd"/>
    <extension-point id="logicalStructureProviders" name="%logicalStructureProvidersExtensionPointName" schema="schema/logicalStructureProviders.exsd"/>
-   <extension-point id="launchOptions" name="%launchOptionsExtensionpointName" schema="schema/launchOptions.exsd"/>
 
 <!-- Extensions -->
    <extension

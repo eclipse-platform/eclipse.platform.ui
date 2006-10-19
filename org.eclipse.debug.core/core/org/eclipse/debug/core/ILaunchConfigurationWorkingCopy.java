@@ -183,13 +183,14 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void setMappedResources(IResource[] resources);
 	
 	/**
-	 * Set the launch options for this configuration.
-	 * Over-writes existing launch options.
+	 * Set the launch modes for this configuration.
+	 * Over-writes existing launch modes.
 	 * <p>
-	 * If the specified list of options is empty or <code>null</code>,
-	 * the 'options' attribute is removed from the launch configuration altogether
+	 * Setting launch modes on a configuration allows the configuration to
+	 * be launched in a mixed mode - for example, debug and profile.
 	 * </p>
-	 * @param new launch options or <code>null</code>
+	 * @param modes launch mode identifiers to set on this configuration
+	 *  or <code>null</code> to clear mode settings
 	 * 
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
@@ -199,13 +200,16 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * </p>
 	 * @since 3.3
 	 */
-	public void setOptions(Set options);
+	public void setModes(Set modes);
 	
 	/**
-	 * Adds the specified launch options to this configuration's existing options.
-	 * 
-	 * @param options options to append to the current set of options specified
-	 *  as a set of launch option identifiers
+	 * Adds the specified launch modes to this configuration's settings.
+	 * <p>
+	 * Setting launch modes on a configuration allows the configuration to
+	 * be launched in a mixed mode - for example, debug and profile.
+	 * </p>
+	 * @param modes launch mode identifiers to append to the current set of
+	 * 	launch modes set on this configuration
 	 * 
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
@@ -215,13 +219,16 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * </p>
 	 * @since 3.3
 	 */
-	public void addOptions(Set options);
+	public void addModes(Set modes);
 	
 	/**
-	 * Removes the specified options from this configuration's existing options.
-	 * 
-	 * @param options options to remove specified as a set of launch option
-	 *  identifiers
+	 * Removes the specified launch modes from this configuration's settings.
+	 * <p>
+	 * Setting launch modes on a configuration allows the configuration to
+	 * be launched in a mixed mode - for example, debug and profile.
+	 * </p>
+	 * @param modes launch mode identifiers to remove from the current set of
+	 * 	launch modes set on this configuration
 	 * 
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
@@ -231,5 +238,5 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * </p>
 	 * @since 3.3
 	 */
-	public void removeOptions(Set options);
+	public void removeModes(Set modes);
 }

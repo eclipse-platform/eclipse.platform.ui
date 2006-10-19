@@ -424,22 +424,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}	
 	}
 		
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setOptions(java.util.List)
-	 */
-	public void setOptions(Set options) {
-		getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, (options.size() > 0 ? options : null));
+	public void setModes(Set options) {
+		getInfo().setAttribute(ATTR_LAUNCH_MODES, (options.size() > 0 ? options : null));
 		setDirty();
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#addOptions(java.util.Set)
-	 */
-	public void addOptions(Set options) {
+	public void addModes(Set options) {
 		try {
-			Set opts = getOptions();
+			Set opts = getModes();
 			if(opts.addAll(options)) {
-				getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, opts);
+				getInfo().setAttribute(ATTR_LAUNCH_MODES, opts);
 				setDirty();
 			}
 		} 
@@ -448,14 +442,11 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#removeOptions(java.util.Set)
-	 */
-	public void removeOptions(Set options) {
+	public void removeModes(Set options) {
 		try {
-			Set opts = getOptions();
+			Set opts = getModes();
 			if(opts.removeAll(options)) {
-				getInfo().setAttribute(ATTR_LAUNCH_OPTIONS, opts);
+				getInfo().setAttribute(ATTR_LAUNCH_MODES, opts);
 				setDirty();
 			}
 		} 

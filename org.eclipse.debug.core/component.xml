@@ -29,7 +29,6 @@
  	<type name="ILaunchListener" />
  	<type name="ILaunchManager" implement="false" />
  	<type name="ILaunchMode" implement="false" />
- 	<type name="ILaunchOption" implement="false" />
  	<type name="ILogicalStructureProvider" />
  	<type name="ILogicalStructureType" />
  	<type name="IMemoryBlockListener" />
