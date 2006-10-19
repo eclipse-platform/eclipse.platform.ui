@@ -175,13 +175,11 @@ public class AntJRETab extends JavaJRETab {
 		try {
 			 boolean isDefaultVMInstall= configuration.getAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			 if (isDefaultVMInstall) {
-			 	boolean needsSaving= false;
-			 	ILaunchConfigurationWorkingCopy copy;
+			 	ILaunchConfigurationWorkingCopy copy = null;
 			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
 			 		copy= (ILaunchConfigurationWorkingCopy) configuration;
 			 	} else {
 			 		copy= configuration.getWorkingCopy();
-			 		needsSaving= true;
 			 	}
 			 	
 			 	//null out the vm type and jre container path to get the default vm install from JavaRuntime
@@ -192,7 +190,7 @@ public class AntJRETab extends JavaJRETab {
 			 		//update if required
 			 		setDefaultVMInstallAttributes(defaultVMInstall, copy);
 			 	}
-				if (needsSaving) {
+				if (copy.isDirty() && !copy.isReadOnly()) {
 					configuration= copy.doSave();
 				}
 			 }
