@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import com.ibm.icu.text.MessageFormat;
 
 import java.io.File;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -58,7 +58,7 @@ import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
@@ -314,9 +314,9 @@ public class AddCustomDialog extends StatusDialog {
 			}
 		};
 
-		WorkbenchViewerSorter sorter = new WorkbenchViewerSorter();
-		this.selectionGroup.setTreeSorter(sorter);
-		this.selectionGroup.setListSorter(sorter);
+		WorkbenchViewerComparator comparator = new WorkbenchViewerComparator();
+		this.selectionGroup.setTreeComparator(comparator);
+		this.selectionGroup.setListSorter(comparator);
 		this.selectionGroup.addSelectionChangedListener(listener);
 		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {

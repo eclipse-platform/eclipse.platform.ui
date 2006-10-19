@@ -11,6 +11,7 @@
 package org.eclipse.ant.internal.ui.preferences;
 
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -31,7 +32,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class FileSelectionDialog extends ElementTreeSelectionDialog {
 	
@@ -49,7 +50,7 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		fFilter= new FileFilter(files, filterExtension);
 		fFilterMessage= filterMessage;
 		setInput(ResourcesPlugin.getWorkspace().getRoot());	
-		setSorter(new ResourceSorter(ResourceSorter.NAME));
+        setComparator(new ResourceComparator(ResourceComparator.NAME));
 		
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {

@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 /*
@@ -440,7 +440,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		fHighlightingColorListViewer= new TableViewer(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fHighlightingColorListViewer.setLabelProvider(new ColorListLabelProvider());
 		fHighlightingColorListViewer.setContentProvider(new ColorListContentProvider());
-		fHighlightingColorListViewer.setSorter(new WorkbenchViewerSorter());
+		fHighlightingColorListViewer.setComparator(new WorkbenchViewerComparator());
 		gd= new GridData(GridData.FILL_BOTH);
 		gd.heightHint= convertHeightInCharsToPixels(5);
 		fHighlightingColorListViewer.getControl().setLayoutData(gd);

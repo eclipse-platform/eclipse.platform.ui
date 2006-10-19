@@ -61,7 +61,7 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 public class AntClasspathBlock {
 
@@ -296,7 +296,7 @@ public class AntClasspathBlock {
 		dialog.setMessage(AntPreferencesMessages.AntClasspathBlock_45);
 		dialog.addFilter(filter);
 		dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());	
-		dialog.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
