@@ -30,6 +30,56 @@ import org.eclipse.team.core.history.ITag;
  */
 public abstract class FileRevision implements IFileRevision {
 
+	private static final class LocalFileRevision extends FileRevision {
+		private final IFile file;
+
+		private LocalFileRevision(IFile file) {
+			this.file = file;
+		}
+
+		public IStorage getStorage(IProgressMonitor monitor) {
+			return file;
+		}
+
+		public String getName() {
+			return file.getName();
+		}
+
+		public boolean exists() {
+			return file.exists();
+		}
+
+		public long getTimestamp() {
+			return file.getLocalTimeStamp();
+		}
+
+		public URI getURI() {
+			return file.getLocationURI();
+		}
+
+		public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
+			return this;
+		}
+
+		public boolean isPropertyMissing() {
+			return false;
+		}
+
+		public int hashCode() {
+			return file.hashCode();
+		}
+
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
+			if (obj instanceof LocalFileRevision) {
+				LocalFileRevision other = (LocalFileRevision) obj;
+				return other.file.equals(this.file);
+			}
+			return false;
+		}
+	}
+
 	/**
 	 * Return a file state representing the current state of the
 	 * local file.
@@ -38,29 +88,7 @@ public abstract class FileRevision implements IFileRevision {
 	 * local file
 	 */
 	public static IFileRevision getFileRevisionFor(final IFile file) {
-		return new FileRevision() {
-			public IStorage getStorage(IProgressMonitor monitor) {
-				return file;
-			}
-			public String getName() {
-				return file.getName();
-			}
-			public boolean exists() {
-				return file.exists();
-			}
-			public long getTimestamp() {
-				return file.getLocalTimeStamp();
-			}
-			public URI getURI() {
-				return file.getLocationURI();
-			}
-			public IFileRevision withAllProperties(IProgressMonitor monitor) throws CoreException {
-				return this;
-			}
-			public boolean isPropertyMissing() {
-				return false;
-			}
-		};
+		return new LocalFileRevision(file);
 	}
 
 	/* (non-Javadoc)

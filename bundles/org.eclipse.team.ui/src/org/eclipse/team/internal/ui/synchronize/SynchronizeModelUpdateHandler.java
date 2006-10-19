@@ -111,25 +111,6 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         }
 	}
 	
-	/**
-	 * This is a special event used to reset and connect sync sets.
-	 * The preemtive flag is used to indicate that the runnable should take
-	 * the highest priority and thus be placed on the front of the queue
-	 * and be processed as soon as possible, preemting any event that is currently
-	 * being processed. The curent event will continue processing once the 
-	 * high priority event has been processed
-	 */
-	class RunnableEvent extends Event {
-		private IWorkspaceRunnable runnable;
-		public RunnableEvent(IWorkspaceRunnable runnable) {
-			super(RUNNABLE);
-			this.runnable = runnable;
-		}
-		public void run(IProgressMonitor monitor) throws CoreException {
-			runnable.run(monitor);
-		}
-	}
-	
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 		public void propertyChange(final PropertyChangeEvent event) {
 			if (event.getProperty() == ISynchronizeModelElement.BUSY_PROPERTY) {
@@ -636,9 +617,9 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      */
     public void performUpdate(final IWorkspaceRunnable runnable, boolean preserveExpansion, boolean updateInUIThread) {
         if (updateInUIThread) {
-            queueEvent(new RunnableEvent(getUIUpdateRunnable(runnable, preserveExpansion)), true);
+            queueEvent(new BackgroundEventHandler.RunnableEvent(getUIUpdateRunnable(runnable, preserveExpansion), true), true);
         } else {
-	        queueEvent(new RunnableEvent(getBackgroundUpdateRunnable(runnable, preserveExpansion)), true);
+	        queueEvent(new BackgroundEventHandler.RunnableEvent(getBackgroundUpdateRunnable(runnable, preserveExpansion), true), true);
         }
     }
 

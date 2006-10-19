@@ -50,7 +50,7 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 			if (resource.getType() == IResource.FILE) {
 				IDiff node = context.getDiffTree().getDiff(resource);
 				if (node != null)
-					return new ResourceDiffCompareInput(node);
+					return new ResourceDiffCompareInput(node, context);
 			}
 		}
 		return null;
@@ -172,20 +172,4 @@ public abstract class SynchronizationCompareAdapter implements ISynchronizationC
 		return -1;
 	}
 	
-	/**
-	 * Default implementation which returns a change notifier for any compare inputs returned
-	 * by the {@link #asCompareInput(ISynchronizationContext, Object)} implementation in this class
-	 * and <code>null</code> otherwise. Subclasses can extend to return change notifiers for their custom
-	 * compare inputs.
-	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareAdapter#getChangeNotifier(org.eclipse.team.core.mapping.ISynchronizationContext, org.eclipse.compare.structuremergeviewer.ICompareInput)
-	 */
-	public ICompareInputChangeNotifier getChangeNotifier(
-			ISynchronizationContext context, ICompareInput input) {
-		
-		if (input instanceof ResourceDiffCompareInput) {
-			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-			return rdci.getChangeNotifier(context);
-		}
-		return null;
-	}
 }

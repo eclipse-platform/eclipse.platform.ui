@@ -65,5 +65,28 @@ public class TwoWayDiff extends Diff implements ITwoWayDiff {
 	public IPath getFromPath() {
 		return null;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.provider.Diff#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (super.equals(obj)) {
+			if (obj instanceof TwoWayDiff) {
+				TwoWayDiff other = (TwoWayDiff) obj;
+				return pathsEqual(getFromPath(), other.getFromPath()) && pathsEqual(getToPath(), other.getToPath());
+			}
+		}
+		return false;
+	}
+
+	private boolean pathsEqual(IPath path1, IPath path2) {
+		if (path1 == null)
+			return path2 == null;
+		if (path2 == null)
+			return false;
+		return path1.equals(path2);
+	}
 
 }

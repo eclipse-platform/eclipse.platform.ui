@@ -76,7 +76,7 @@ public class OpenInCompareAction extends Action {
 			ICompareInput input = msp.asCompareInput(object);
 			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
 			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
-				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, object, input, workbenchPage), keepFocus, site);
+				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage), keepFocus, site);
 			}
 		}
 		return null;

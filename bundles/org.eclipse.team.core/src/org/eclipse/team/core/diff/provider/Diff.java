@@ -86,4 +86,24 @@ public abstract class Diff implements IDiff {
 		String label = SyncInfoToDiffConverter.diffKindToString(kind);
 		return label; 
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return getPath().hashCode();
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof Diff) {
+			Diff other = (Diff) obj;
+			return other.getPath().equals(getPath()) && getStatus() == other.getStatus();
+		}
+		return false;
+	}
 }

@@ -76,5 +76,30 @@ public class ResourceDiff extends TwoWayDiff implements IResourceDiff {
 	public IResource getResource() {
 		return resource;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.provider.Diff#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (super.equals(obj)) {
+			if (obj instanceof ResourceDiff) {
+				ResourceDiff other = (ResourceDiff) obj;
+				return getResource().equals(getResource()) 
+					&& revisionsEqual(getBeforeState(), other.getBeforeState()) 
+					&& revisionsEqual(getAfterState(), other.getAfterState());
+			}
+		}
+		return false;
+	}
+
+	private boolean revisionsEqual(IFileRevision revision, IFileRevision revision2) {
+		if (revision == null)
+			return revision2 == null;
+		if (revision2 == null)
+			return false;
+		return revision.equals(revision2);
+	}
 
 }

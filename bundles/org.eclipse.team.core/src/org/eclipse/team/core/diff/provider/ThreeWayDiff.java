@@ -113,5 +113,29 @@ public class ThreeWayDiff extends Diff implements IThreeWayDiff {
 		}
 		return label; 
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.provider.Diff#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (super.equals(obj)) {
+			if (obj instanceof ThreeWayDiff) {
+				ThreeWayDiff other = (ThreeWayDiff) obj;
+				return changesEqual(getLocalChange(), other.getLocalChange()) 
+					&& changesEqual(getRemoteChange(), other.getRemoteChange());
+			}
+		}
+		return false;
+	}
+
+	private boolean changesEqual(ITwoWayDiff diff, ITwoWayDiff diff2) {
+		if (diff == null)
+			return diff2 == null;
+		if (diff2 == null)
+			return false;
+		return diff.equals(diff2);
+	}
 
 }

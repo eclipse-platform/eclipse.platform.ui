@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
@@ -51,6 +52,11 @@ import org.eclipse.team.core.TeamException;
  * @since 3.0
  */
 public abstract class BackgroundEventHandler {
+	
+	/**
+	 * Event type constant used to identify a runnable event
+	 */
+	public static final int RUNNABLE_EVENT = 1000;
 	
 	// Events that need to be processed
 	private List awaitingProcessing = new ArrayList();
@@ -147,6 +153,30 @@ public abstract class BackgroundEventHandler {
 				default :
 					return "INVALID"; //$NON-NLS-1$
 			}
+		}
+	}
+	
+	/**
+	 * This is a special event used to run some work in the background.
+	 * The preemptive flag is used to indicate that the runnable should take
+	 * the highest priority and thus be placed on the front of the queue
+	 * and be processed as soon as possible, preempting any event that is currently
+	 * being processed. The current event will continue processing once the 
+	 * high priority event has been processed
+	 */
+	public static class RunnableEvent extends Event {
+		private IWorkspaceRunnable runnable;
+		private boolean preemtive;
+		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
+			super(RUNNABLE_EVENT);
+			this.runnable = runnable;
+			this.preemtive = preemtive;
+		}
+		public void run(IProgressMonitor monitor) throws CoreException {
+			runnable.run(monitor);
+		}
+		public boolean isPreemtive() {
+			return preemtive;
 		}
 	}
 	
@@ -359,7 +389,10 @@ public abstract class BackgroundEventHandler {
 	}
 
 	/**
-	 * Notify clients of processed events.
+	 * Notify clients of processed events. Return <code>true</code> if there 
+	 * was something to dispatch and false otherwise. This is used to help
+	 * control the frequency of dispatches (e.g. if there is a lot of dispatching
+	 * going on, the frequency of dispatches may be reduced.
 	 * @param monitor a progress monitor
 	 */
 	protected abstract boolean doDispatchEvents(IProgressMonitor monitor) throws TeamException;

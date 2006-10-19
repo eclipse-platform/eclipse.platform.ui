@@ -235,7 +235,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/** Style bits for top level composite */
 	private int fStyles;
 	private ResourceBundle fBundle;
-	private CompareConfiguration fCompareConfiguration;
+	private final CompareConfiguration fCompareConfiguration;
 	private IPropertyChangeListener fPropertyChangeListener;
 	private ICompareInputChangeListener fCompareInputChangeListener;
 	private ListenerList fListenerList;
@@ -276,6 +276,17 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 	private java.util.List fActivations = new ArrayList();
 
+	private ILabelProviderListener labelChangeListener = new ILabelProviderListener() {
+		public void labelProviderChanged(LabelProviderChangedEvent event) {
+			Object[] elements = event.getElements();
+			for (int i = 0; i < elements.length; i++) {
+				Object object = elements[i];
+				if (object == getInput())
+					updateHeader();
+			}
+		}
+	};
+
 	//---- end
 	
 	/**
@@ -298,24 +309,29 @@ public abstract class ContentMergeViewer extends ContentViewer
 		
 		fCompareInputChangeListener= new ICompareInputChangeListener() {
 			public void compareInputChanged(ICompareInput input) {
-				ContentMergeViewer.this.internalRefresh(input);
+				if (input == getInput()) {
+					handleCompareInputChange(input);
+				}
 			}
 		};
 		
-		fCompareConfiguration= cc;
-		if (fCompareConfiguration != null) {
-			fPropertyChangeListener= new IPropertyChangeListener() {
-				public void propertyChange(PropertyChangeEvent event) {
-					ContentMergeViewer.this.propertyChange(event);
-				}
-			};
-			fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
-		}
+		// Make sure the compare configuration is not null
+		if (cc == null)
+			fCompareConfiguration = new CompareConfiguration();
+		else
+			fCompareConfiguration= cc;
+		fPropertyChangeListener= new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				ContentMergeViewer.this.propertyChange(event);
+			}
+		};
+		fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
 			
 		fLeftSaveAction= new SaveAction(true);
 		fLeftSaveAction.setEnabled(false);
 		fRightSaveAction= new SaveAction(false);
 		fRightSaveAction.setEnabled(false);
+		
 	}
 	
 	//---- hooks ---------------------
@@ -521,8 +537,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				action.setEnabled(enabled);
 			}
 		}
-		if (fCompareConfiguration != null)
-			fCompareConfiguration.setProperty(ANCESTOR_ENABLED, new Boolean(visible));
+		getCompareConfiguration().setProperty(ANCESTOR_ENABLED, new Boolean(visible));
 	}
 
 	//---- input
@@ -544,15 +559,29 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 */
 	protected final void inputChanged(Object input, Object oldInput) {
 		
-		if (input != oldInput)
-			if (oldInput instanceof ICompareInput)
-				((ICompareInput)oldInput).removeCompareInputChangeListener(fCompareInputChangeListener);
+		if (input != oldInput && oldInput != null) {
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(oldInput);
+			if (lp != null)
+				lp.removeListener(labelChangeListener);
+		}
+		
+		if (input != oldInput && oldInput instanceof ICompareInput) {
+			ICompareContainer container = getCompareConfiguration().getContainer();
+			container.removeCompareInputChangeListener((ICompareInput)oldInput, fCompareInputChangeListener);
+		}
 		
 		boolean success= doSave(input, oldInput);
 		
-		if (input != oldInput)
-			if (input instanceof ICompareInput)
-				((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
+		if (input != oldInput && input instanceof ICompareInput) {
+			ICompareContainer container = getCompareConfiguration().getContainer();
+			container.addCompareInputChangeListener((ICompareInput)input, fCompareInputChangeListener);
+		}
+		
+		if (input != oldInput && input != null) {
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(input);
+			if (lp != null)
+				lp.addListener(labelChangeListener);
+		}
 		
 		if (success) {
 			setLeftDirty(false);
@@ -583,8 +612,13 @@ public abstract class ContentMergeViewer extends ContentViewer
 		// before setting the new input we have to save the old
 		if (isLeftDirty() || isRightDirty()) {
 			
-			// post alert
-			if (fConfirmSave) {
+			
+			if (Utilities.RUNNING_TESTS) {
+				if (Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE) {
+					flushContent(oldInput, null);
+				}
+			} else if (fConfirmSave) {
+				// post alert
 				Shell shell= fComposite.getShell();
 				
 				MessageDialog dialog= new MessageDialog(shell,
@@ -756,7 +790,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				Utilities.registerAction(fHandlerService, fCopyRightToLeftAction, "org.eclipse.compare.copyAllRightToLeft", fActivations);	//$NON-NLS-1$
 			}
 			
-			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
+			Action a= new ChangePropertyAction(fBundle, getCompareConfiguration(), "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
 			a.setChecked(fAncestorEnabled);
 			fAncestorItem= new ActionContributionItem(a);
 			fAncestorItem.setVisible(false);
@@ -809,10 +843,17 @@ public abstract class ContentMergeViewer extends ContentViewer
 		fHandlerService= null;
 		
 		Object input= getInput();	
-		if (input instanceof ICompareInput)
-			((ICompareInput)input).removeCompareInputChangeListener(fCompareInputChangeListener);
+		if (input instanceof ICompareInput) {
+			ICompareContainer container = getCompareConfiguration().getContainer();
+			container.removeCompareInputChangeListener((ICompareInput)input, fCompareInputChangeListener);
+		}
+		if (input != null) {
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(input);
+			if (lp != null)
+				lp.removeListener(labelChangeListener);
+		}
 		
-		if (fCompareConfiguration != null && fPropertyChangeListener != null) {
+		if (fPropertyChangeListener != null) {
 			fCompareConfiguration.removePropertyChangeListener(fPropertyChangeListener);
 			fPropertyChangeListener= null;
 		}
@@ -1059,5 +1100,50 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 	/* package */ boolean isLeftDirty() {
 		return fLeftSaveAction.isEnabled();
+	}
+
+	/**
+	 * Handle a change to the given input reported from an {@link ICompareInputChangeListener}.
+	 * This class registers a listener with its input and reports any change events through
+	 * this method. By default, this method prompts for any unsaved changes and then refreshes 
+	 * the viewer. Subclasses may override.
+	 * @param input the input of this viewer that has changed
+	 * @since 3.3
+	 */
+	protected void handleCompareInputChange(ICompareInput input) {
+		// before setting the new input we have to save the old
+		if (isLeftDirty() || isRightDirty()) {
+			
+			if (Utilities.RUNNING_TESTS) {
+				if (Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE) {
+					flushContent(input, null);
+				}
+			} else {
+				// post alert
+				Shell shell= fComposite.getShell();
+				
+				MessageDialog dialog= new MessageDialog(shell,
+					"Resources Changed",
+					null, 	// accept the default window icon
+					"The resources being compared have changed outside the compare editor. Do you want to save your changes? Any unsaved changes will be discarded.",
+					MessageDialog.QUESTION,
+					new String[] {
+						IDialogConstants.YES_LABEL, // 0
+						IDialogConstants.NO_LABEL, // 1
+					},
+					0);		// default button index
+									
+				switch (dialog.open()) {	// open returns index of pressed button
+				case 0:
+					flushContent(input, null);
+					break;
+				case 1:
+					setLeftDirty(false);
+					setRightDirty(false);
+					break;
+				}
+			}
+		}
+		refresh();
 	}
 }

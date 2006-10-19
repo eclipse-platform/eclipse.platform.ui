@@ -81,31 +81,6 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 	}
 	
 	/**
-	 * This is a special event used to reset and connect sync sets.
-	 * The preemptive flag is used to indicate that the runnable should take
-	 * the highest priority and thus be placed on the front of the queue
-	 * and be processed as soon as possible, preempting any event that is currently
-	 * being processed. The current event will continue processing once the 
-	 * high priority event has been processed
-	 */
-	public class RunnableEvent extends Event {
-		static final int RUNNABLE = 1000;
-		private IWorkspaceRunnable runnable;
-		private boolean preemtive;
-		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
-			super(RUNNABLE);
-			this.runnable = runnable;
-			this.preemtive = preemtive;
-		}
-		public void run(IProgressMonitor monitor) throws CoreException {
-			runnable.run(monitor);
-		}
-		public boolean isPreemtive() {
-			return preemtive;
-		}
-	}
-	
-	/**
 	 * Create a handler. This will initialize all resources for the subscriber associated with
 	 * the set.
 	 * @param subscriber the subscriber
@@ -325,7 +300,7 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 			// Purposely not checking -
 			int type = event.getType();
 			switch (type) {
-				case RunnableEvent.RUNNABLE :
+				case BackgroundEventHandler.RUNNABLE_EVENT :
 					executeRunnable(event, monitor);
 					break;
 				case SubscriberEvent.REMOVAL :
@@ -351,7 +326,7 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 			handleCancel(e); 
 		} catch (RuntimeException e) {
 			// handle the exception and keep processing
-			if (event.getType() == RunnableEvent.RUNNABLE) {
+			if (event.getType() == BackgroundEventHandler.RUNNABLE_EVENT ) {
 				handleException(new TeamException(Messages.SubscriberEventHandler_10, e));
 			} else {
 				handleException(new TeamException(Messages.SubscriberEventHandler_10, e), event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, NLS.bind(Messages.SubscriberEventHandler_11, new String[] { event.getResource().getFullPath().toString(), e.getMessage() }));

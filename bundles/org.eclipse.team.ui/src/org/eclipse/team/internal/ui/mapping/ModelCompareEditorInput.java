@@ -13,13 +13,10 @@ package org.eclipse.team.internal.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -33,23 +30,24 @@ import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.*;
+import org.eclipse.ui.services.IDisposable;
 
 public class ModelCompareEditorInput extends CompareEditorInput implements ISaveablesSource, IPropertyListener {
 
 	private final ModelSynchronizeParticipant participant;
-	private ICompareInput input;
-	private Saveable saveable;
-	private ICacheListener contextListener;
+	private final ICompareInput input;
+	private final Saveable saveable;
+	private final ICacheListener contextListener;
 	private final IWorkbenchPage page;
-	private final Object modelObject;
-	private ICompareInputChangeNotifier changeNotifier;
-	private ICompareInputChangeListener changeListener;
+	private final ICompareInputChangeListener compareInputChangeListener;
+	private final ListenerList inputChangeListeners = new ListenerList(ListenerList.IDENTITY);
 
-	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, Object modelObject, ICompareInput input, IWorkbenchPage page) {
+	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page) {
 		super(new CompareConfiguration());
 		Assert.isNotNull(page);
 		Assert.isNotNull(participant);
@@ -57,20 +55,38 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		this.page = page;
 		this.participant = participant;
 		this.input = input;
-		this.modelObject = modelObject;
 		this.saveable = asSaveable(this.input);
 		setDirty(saveable.isDirty());
-	}
-
-	protected void contentsCreated() {
-		super.contentsCreated();
-		contextListener = new ICacheListener() {
-			public void cacheDisposed(ICache cache) {
-				closeEditor();
+		compareInputChangeListener = new ICompareInputChangeListener() {
+			public void compareInputChanged(ICompareInput source) {
+				if (source == ModelCompareEditorInput.this.input) {
+					boolean closed = false;
+					if (source.getKind() == Differencer.NO_CHANGE) {
+						closed = closeEditor(true);
+					}
+					if (!closed) {
+						// The editor was closed either because the compare input still has changes
+						// or because the editor input is dirty. In either case, fire the changes
+						// to the registered listeners
+						fireInputChange();
+					}
+				}
 			}
 		};
+		contextListener = new ICacheListener() {
+			public void cacheDisposed(ICache cache) {
+				closeEditor(true);
+			}
+		};
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#contentsCreated()
+	 */
+	protected void contentsCreated() {
+		super.contentsCreated();
 		participant.getContext().getCache().addCacheListener(contextListener);
-		registerForInputStateChanges();
+		input.addCompareInputChangeListener(compareInputChangeListener);
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.addPropertyListener(this);
@@ -83,118 +99,37 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	protected void handleDispose() {
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
-		deregisterForInputStateChanges();
+		input.removeCompareInputChangeListener(compareInputChangeListener);
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(ModelCompareEditorInput.this);
 		}
-	}
-	
-	private void registerForInputStateChanges() {
-		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(modelObject);
-		if (adapter != null) {
-			changeNotifier = adapter.getChangeNotifier(participant.getContext(), input);
-			if (changeNotifier != null) {
-				changeListener = new ICompareInputChangeListener() {
-					public void compareInputsChanged(ICompareInputChangeEvent event) {
-						if (event.isInSync(input)) {
-							closeEditor();
-						} else if (event.hasChanged(input)) {
-							reset();
-						}
-					}
-				};
-				changeNotifier.addChangeListener(changeListener);
-				changeNotifier.connect(input);
-			}
+		if (input instanceof IDisposable) {
+			((IDisposable) input).dispose();
 		}
 	}
 	
-	protected void reset() {
-		if (isSaveNeeded()) {
-			// TODO: Don't reset if the editor is dirty
-			return;
-		}
-		ISynchronizationCompareAdapter adapter = Utils.getCompareAdapter(modelObject);
-		ICompareInput newInput = adapter.asCompareInput(participant.getContext(), modelObject);
-		if (newInput != null) {
-			deregisterForInputStateChanges();
-			input = newInput;
-			updateSaveable();
-			registerForInputStateChanges();
-			Display display = page.getWorkbenchWindow().getShell().getDisplay();
-			display.asyncExec(new Runnable() {
-				public void run() {
-					try {
-						getRunnableContext().run(true, true, new IRunnableWithProgress() {
-							public void run(IProgressMonitor monitor) throws InvocationTargetException,
-									InterruptedException {
-								refresh(monitor);
-							}
-						});
-					} catch (InvocationTargetException e) {
-						handleError("An error occurred while updating the comparison", e);
-					} catch (InterruptedException e) {
-						// Ignore
-					}
-				}
-			});
-		}
-		
-	}
-
-	private void updateSaveable() {
-		if (this.saveable instanceof ResourceSaveableComparison) {
-			ResourceSaveableComparison rsc = (ResourceSaveableComparison) this.saveable;
-			rsc.setInput(input);
-		}
-	}
-
-	protected void handleError(final String message, Throwable throwable) {
-		if (throwable instanceof InvocationTargetException) {
-			InvocationTargetException ite = (InvocationTargetException) throwable;
-			throwable = ite.getTargetException();
-		}
-		final IStatus status;
-		if (throwable instanceof CoreException) {
-			CoreException ce = (CoreException) throwable;
-			status = ce.getStatus();
+	/**
+	 * Close the editor if it is not dirty. If it is still dirty, let the 
+	 * content merge viewer handle the compare input change.
+	 */
+	/* package */ boolean closeEditor(boolean checkForUnsavedChanges) {
+		if (isSaveNeeded() && checkForUnsavedChanges) {
+			return false;
 		} else {
-			status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, message, throwable);
-		}
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				ErrorDialog.openError(getShell(), null, message, status);
-			}
-		});
-	}
-
-	protected Shell getShell() {
-		return Utils.getShell(null);
-	}
-
-	protected IRunnableContext getRunnableContext() {
-		return PlatformUI.getWorkbench().getProgressService();
-	}
-
-	private void deregisterForInputStateChanges() {
-		if (changeNotifier != null) {
-			changeNotifier.removeChangeListener(changeListener);
-			changeNotifier.disconnect(input);
-		}
-	}
-	
-	protected void closeEditor() {
-		if (isSaveNeeded()) {
-			// TODO: Need to indicate to the user that the editor is stale
-		} else {
-			Display display = page.getWorkbenchWindow().getShell().getDisplay();
-			display.asyncExec(new Runnable() {
+			Runnable runnable = new Runnable() {
 				public void run() {
 					IEditorPart part = page.findEditor(ModelCompareEditorInput.this);
 					page.closeEditor(part, false);
 				}
-			});
+			};
+			if (Display.getCurrent() != null) {
+				runnable.run();
+			} else {
+				Display display = page.getWorkbenchWindow().getShell().getDisplay();
+				display.asyncExec(runnable);
+			}
+			return true;
 		}
 	}
 	
@@ -341,18 +276,59 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		return newViewer;
 	}
 
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 */
 	public Saveable[] getActiveSaveables() {
 		return new Saveable[] { saveable };
 	}
 
-	/**
-	 * {@inheritDoc}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
 	 */
 	public Saveable[] getSaveables() {
 		return getActiveSaveables();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void addCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		if (input == this.input) {
+			inputChangeListeners.add(listener);
+		} else {
+			super.addCompareInputChangeListener(input, listener);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void removeCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		if (input == this.input) {
+			inputChangeListeners.remove(listener);
+		} else {
+			super.removeCompareInputChangeListener(input, listener);
+		}
+	}
+	
+	/* package */ void fireInputChange() {
+		if (!inputChangeListeners.isEmpty()) {
+			Object[] allListeners = inputChangeListeners.getListeners();
+			for (int i = 0; i < allListeners.length; i++) {
+				final ICompareInputChangeListener listener = (ICompareInputChangeListener)allListeners[i];
+				SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						listener.compareInputChanged(input);
+					}
+					public void handleException(Throwable exception) {
+						// Logged by the safe runner
+					}
+				});
+			}
+		}
 	}
 
 }

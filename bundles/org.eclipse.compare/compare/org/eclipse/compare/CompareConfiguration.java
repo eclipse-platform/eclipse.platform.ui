@@ -11,18 +11,17 @@
 package org.eclipse.compare;
 
 import java.util.HashMap;
-
-import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.core.runtime.ListenerList;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.preference.IPreferenceStore;
+import java.util.Map;
 
 import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * A <code>CompareConfiguration</code> object
@@ -57,8 +56,7 @@ public class CompareConfiguration {
 	 * @since 3.0
 	 */
 	public static final String USE_OUTLINE_VIEW= "USE_OUTLINE_VIEW"; //$NON-NLS-1$
-
-
+	
 	private static final int WIDTH= 22;
 	
 	private static ImageDescriptor[] fgImages= new ImageDescriptor[16];
@@ -109,6 +107,102 @@ public class CompareConfiguration {
 	private Image fLeftImage;
 	private Image[] fImages= new Image[16];
 	private boolean fCalculateDiffs = true;
+	private ICompareContainer fContainer;
+	private DefaultLabelProvider labelProvider = new DefaultLabelProvider();
+	
+	private class DefaultLabelProvider extends LabelProvider implements ICompareInputLabelProvider {
+		private Map labelProviders = new HashMap();
+		public Image getAncestorImage(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				Image image = provider.getAncestorImage(input);
+				if (image != null)
+					return image;
+			}
+			return fAncestorImage;
+		}
+		public String getAncestorLabel(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				String label = provider.getAncestorLabel(input);
+				if (label != null)
+					return label;
+			}
+			return fAncestorLabel;
+		}
+		public Image getLeftImage(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				Image image = provider.getLeftImage(input);
+				if (image != null)
+					return image;
+			}
+			return fLeftImage;
+		}
+		public String getLeftLabel(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				String label = provider.getLeftLabel(input);
+				if (label != null)
+					return label;
+			}
+			return fLeftLabel;
+		}
+		public Image getRightImage(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				Image image = provider.getRightImage(input);
+				if (image != null)
+					return image;
+			}
+			return fRightImage;
+		}
+		public String getRightLabel(Object input) {
+			ICompareInputLabelProvider provider = getLabelProvider(input);
+			if (provider != null) {
+				String label = provider.getRightLabel(input);
+				if (label != null)
+					return label;
+			}
+			return fRightLabel;
+		}
+		public ICompareInputLabelProvider getLabelProvider(Object input) {
+			return (ICompareInputLabelProvider)labelProviders.get(input);
+		}
+		public void setLabelProvider(ICompareInput input, ICompareInputLabelProvider labelProvider) {
+			labelProviders.put(input, labelProvider);
+		}
+		public Image getImage(Object element) {
+			ICompareInputLabelProvider provider = getLabelProvider(element);
+			if (provider != null) {
+				Image image = provider.getImage(element);
+				if (image != null)
+					return image;
+			}
+			if (element instanceof ICompareInput) {
+				ICompareInput ci = (ICompareInput) element;
+				Image image = ci.getImage();
+				if (image != null)
+					return image;
+			}
+			return super.getImage(element);
+		}
+		public String getText(Object element) {
+			ICompareInputLabelProvider provider = getLabelProvider(element);
+			if (provider != null) {
+				String label = provider.getText(element);
+				if (label != null)
+					return label;
+			}
+			if (element instanceof ICompareInput) {
+				ICompareInput ci = (ICompareInput) element;
+				String label = ci.getName();
+				if (label != null)
+					return label;
+			}
+			return super.getText(element);
+		}
+	}
 
 	/**
 	 * Creates a new configuration with editable left and right sides,
@@ -224,6 +318,7 @@ public class CompareConfiguration {
 			}
 		}
 		fImages= null;
+		labelProvider.dispose();
 	}
 
 	/**
@@ -290,6 +385,10 @@ public class CompareConfiguration {
 	
 	/**
 	 * Sets the label to use for the ancestor of compare/merge viewers.
+	 * This label will be used if the element for which a label
+	 * is requested does not have an ancestor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the label.
 	 *
 	 * @param label the new label for the ancestor of compare/merge viewers
 	 */
@@ -305,12 +404,16 @@ public class CompareConfiguration {
 	 * @return the label for the ancestor side or <code>null</code>
 	 */
 	public String getAncestorLabel(Object element) {
-		return fAncestorLabel;
+		return labelProvider.getAncestorLabel(element);
 	}
-	
+
 	/**
 	 * Sets the image to use for the ancestor of compare/merge viewers.
 	 * The CompareConfiguration does not automatically dispose the old image.
+	 * This image will be used if the element for which a image
+	 * is requested does not have an ancestor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the image.
 	 *
 	 * @param image the new image for the ancestor of compare/merge viewers
 	 */
@@ -326,7 +429,7 @@ public class CompareConfiguration {
 	 * @return the image for the ancestor side or <code>null</code>
 	 */	
 	public Image getAncestorImage(Object element) {
-		return fAncestorImage;
+		return labelProvider.getAncestorImage(element);
 	}
 
 	//---- left side
@@ -351,6 +454,10 @@ public class CompareConfiguration {
 
 	/**
 	 * Sets the label to use for the left side of compare/merge viewers.
+	 * This label will be used if the element for which a label
+	 * is requested does not have a left contributor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the label.
 	 *
 	 * @param label the new label for the left side of compare/merge viewers
 	 */
@@ -366,12 +473,16 @@ public class CompareConfiguration {
 	 * @return the label for the left hand side or <code>null</code>
 	 */
 	public String getLeftLabel(Object element) {
-		return fLeftLabel;
+		return labelProvider.getLeftLabel(element);
 	}
 
 	/**
 	 * Sets the image to use for the left side of compare/merge viewers.
 	 * The compare configuration does not automatically dispose the old image.
+	 * This image will be used if the element for which a image
+	 * is requested does not have an left contributor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the image.
 	 *
 	 * @param image the new image for the left side of compare/merge viewers
 	 */
@@ -387,7 +498,7 @@ public class CompareConfiguration {
 	 * @return the image for the left hand side or <code>null</code>
 	 */	
 	public Image getLeftImage(Object element) {
-		return fLeftImage;
+		return labelProvider.getLeftImage(element);
 	}
 	
 	//---- right side
@@ -412,6 +523,10 @@ public class CompareConfiguration {
 
 	/**
 	 * Sets the label to use for the right side of compare/merge viewers.
+	 * This label will be used if the element for which a label
+	 * is requested does not have an right contributor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the label.
 	 *
 	 * @param label the new label for the right side of compare/merge viewers
 	 */
@@ -427,12 +542,16 @@ public class CompareConfiguration {
 	 * @return the label for the right hand side or <code>null</code>
 	 */
 	public String getRightLabel(Object element) {
-		return fRightLabel;
+		return labelProvider.getRightLabel(element);
 	}
 
 	/**
 	 * Sets the image to use for the right side of compare/merge viewers.
 	 * The compare configuration does not automatically dispose the old image.
+	 * This image will be used if the element for which a image
+	 * is requested does not have an right contributor or the element does not have
+	 * a registered label provider or the label provider returns <code>null</code>
+	 * as the image.
 	 *
 	 * @param image the new image for the right side of compare/merge viewers
 	 */
@@ -448,7 +567,7 @@ public class CompareConfiguration {
 	 * @return the image for the right hand side or <code>null</code>
 	 */
 	public Image getRightImage(Object element) {
-		return fRightImage;
+		return labelProvider.getRightImage(element);
 	}
 
 	/**
@@ -468,6 +587,61 @@ public class CompareConfiguration {
 	 */
 	public void setCalculateDiffs(boolean calculateDiffs) {
 		fCalculateDiffs = calculateDiffs;
+	}
+
+	/**
+	 * Return the container of the compare associated with this configuration.
+	 * @return the container of the compare associated with this configuration
+	 */
+	public ICompareContainer getContainer() {
+		if (fContainer == null) {
+			// Create a default container in case one is not provided
+			fContainer= new ICompareContainer() {
+				public void removeCompareInputChangeListener(ICompareInput input,
+						ICompareInputChangeListener listener) {
+					input.removeCompareInputChangeListener(listener);
+				}
+			
+				public void addCompareInputChangeListener(ICompareInput input,
+						ICompareInputChangeListener listener) {
+					input.addCompareInputChangeListener(listener);
+				}
+			};
+		}
+		return fContainer;
+	}
+
+	/**
+	 * Set the container of the compare associated with this configuration.
+	 * @param container the container of the compare associated with this configuration.
+	 */
+	public void setContainer(ICompareContainer container) {
+		fContainer = container;
+	}
+	
+	/**
+	 * Return the label provider for the given compare input or
+	 * <code>null</code> if there is no label provider. If there is
+	 * a label provider for an element, it is consulted to determine
+	 * the ancestor left and right labels and images.
+	 * 
+	 * @param input the compare input
+	 * @return the label provider for the given compare input
+	 */
+	public ICompareInputLabelProvider getLabelProvider(Object input) {
+		return labelProvider.getLabelProvider(input);
+	}
+	
+	/**
+	 * Set the label provider for the given compare input. The compare configuration
+	 * will not dispose of the label provider when the configuration is disposed.
+	 * It is up to the provider of the label provider to ensure that it is 
+	 * disposed when it is no longer needed.
+	 * @param input the compare input
+	 * @param labelProvider the label provider for the compare input
+	 */
+	public void setLabelProvider(ICompareInput input, ICompareInputLabelProvider labelProvider) {
+		this.labelProvider.setLabelProvider(input, labelProvider);
 	}
 	
 }

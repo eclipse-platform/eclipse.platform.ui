@@ -549,6 +549,11 @@ public class EclipseTest extends ResourceTest {
 	protected void assertContentsEqual(IFile resource, IFile resource2) throws CoreException {
 		assertTrue("Contents of " + resource.getProjectRelativePath() + " do not match", compareContent(resource.getContents(), resource2.getContents()));
 	}
+	
+	protected void assertContentsEqual(IFile file, String contents) throws CoreException {
+		assertTrue(compareContent(file.getContents(), new ByteArrayInputStream(contents.getBytes())));
+	}
+	
 	/*
 	 * Compare resources by casting them to their prpoer type
 	 */

@@ -399,7 +399,18 @@ public class Utilities {
 	 * Status constant indicating that an validateEdit call has changed the
 	 * content of a file on disk.
 	 */
-	private static final int VALIDATE_EDIT_PROBLEM= 10004;	
+	private static final int VALIDATE_EDIT_PROBLEM= 10004;
+	
+	/**
+	 * Constant used to indicate that tests are being run.
+	 */
+	public static boolean RUNNING_TESTS = false;
+
+	/**
+	 * Constant used while testing the indicate that changes should be flushed
+	 * when the compare input changes and a viewer is dirty.
+	 */
+	public static boolean TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;	
 	
 	/*
 	 * Makes the given resources committable. Committable means that all

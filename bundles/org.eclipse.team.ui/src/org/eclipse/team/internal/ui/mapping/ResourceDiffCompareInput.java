@@ -11,12 +11,13 @@
 package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
@@ -26,30 +27,56 @@ import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 
 /**
  * A resource-based compare input that gets it's contributors from an {@link IDiff}.
  */
-public class ResourceDiffCompareInput extends DiffNode implements ISynchronizationCompareInput, IAdaptable, IResourceProvider {
+public class ResourceDiffCompareInput implements ISynchronizationCompareInput, IAdaptable, IResourceProvider {
 
-	private final IDiff node;
+	private IDiff node;
+	private final ISynchronizationContext context;
+	private FileRevisionTypedElement ancestor;
+	private LocalResourceTypedElement left;
+	private FileRevisionTypedElement right;
+	private int kind;
+	private final ListenerList listeners = new ListenerList(ListenerList.IDENTITY);
 
 	/**
 	 * Create the compare input on the given diff.
 	 * @param diff the diff
+	 * @param context the synchronization context
 	 */
-	public ResourceDiffCompareInput(IDiff diff) {
-		super(getCompareKind(diff), getAncestor(diff), getLeftContributor(diff), getRightContributor(diff));
+	public ResourceDiffCompareInput(IDiff diff, ISynchronizationContext context) {
 		this.node = diff;
+		this.context = context;
+		this.kind = getCompareKind(diff);
+		this.ancestor = getAncestor(diff);
+		this.left = getLeftContributor(diff);
+		this.right = getRightContributor(diff);
 	}
 	
 	/**
-	 * We need to make this public so we can fire a change event after
-	 * we save 
+	 * Fire a compare input change event.
+	 * TODO: This method is public so that the change can be fired 
+	 * by the containing editor input on a save.
 	 */
 	public void fireChange() {
-		super.fireChange();
+		if (!listeners.isEmpty()) {
+			Object[] allListeners = listeners.getListeners();
+			for (int i = 0; i < allListeners.length; i++) {
+				final ICompareInputChangeListener listener = (ICompareInputChangeListener)allListeners[i];
+				SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						listener.compareInputChanged(ResourceDiffCompareInput.this);
+					}
+					public void handleException(Throwable exception) {
+						// Logged by the safe runner
+					}
+				});
+			}
+		}
 	}
 	
 	private static int getCompareKind(IDiff node) {
@@ -82,7 +109,7 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return kind;
 	}
 	
-	private static ITypedElement getRightContributor(IDiff node) {
+	private static FileRevisionTypedElement getRightContributor(IDiff node) {
 		// For a resource diff, use the after state
 		if (node instanceof IResourceDiff) {
 			IResourceDiff rd = (IResourceDiff) node;
@@ -102,12 +129,12 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return null;
 	}
 
-	private static ITypedElement getLeftContributor(final IDiff node) {
+	private static LocalResourceTypedElement getLeftContributor(final IDiff node) {
 		// The left contributor is always the local resource
 		return new LocalResourceTypedElement(ResourceDiffTree.getResourceFor(node));
 	}
 
-	private static ITypedElement getAncestor(IDiff node) {
+	private static FileRevisionTypedElement getAncestor(IDiff node) {
 		if (node instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) node;
 			IResourceDiff diff = (IResourceDiff)twd.getLocalChange();
@@ -132,32 +159,40 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return null;
 	}
 
-	private static ITypedElement asTypedElement(IFileRevision state, String localEncoding) {
+	private static FileRevisionTypedElement asTypedElement(IFileRevision state, String localEncoding) {
 		if (state == null)
 			return null;
 		return new FileRevisionTypedElement(state, localEncoding);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.IModelCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		Utils.updateLabels(node, configuration, monitor);
-		// We need to cache contents here as well
-		Object ancestor = getAncestor();
+	public static void ensureContentsCached(IDiff diff, IProgressMonitor monitor) throws CoreException {
+		if (diff != null) {
+			ensureContentsCached(getAncestor(diff), getRightContributor(diff), monitor);
+		}
+	}
+	
+	private static void ensureContentsCached(Object ancestor, Object right,
+			IProgressMonitor monitor) throws CoreException {
 		if (ancestor instanceof FileRevisionTypedElement) {
 			FileRevisionTypedElement fste = (FileRevisionTypedElement) ancestor;
 			fste.cacheContents(monitor);
 		}
-		Object right = getRight();
 		if (right instanceof FileRevisionTypedElement) {
 			FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
 			fste.cacheContents(monitor);
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#prepareInput(org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void prepareInput(CompareConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+		configuration.setLabelProvider(this, getChangeNotifier().getLabelProvider());
+		ensureContentsCached(getAncestor(), getRight(), monitor);
+	}
+	
 	private boolean hasSaveConflict() {
-		return ((LocalResourceTypedElement)getLeft()).hasSaveConflict();
+		return !((LocalResourceTypedElement)getLeft()).isSynchronized();
 	}
 
 	/* (non-Javadoc)
@@ -191,6 +226,9 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#getFullPath()
+	 */
 	public String getFullPath() {
 		final IResource resource = ResourceDiffTree.getResourceFor(node);
 		if (resource != null)
@@ -198,6 +236,9 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return getName();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.mapping.ISynchronizationCompareInput#isCompareInputFor(java.lang.Object)
+	 */
 	public boolean isCompareInputFor(Object object) {
 		final IResource resource = ResourceDiffTree.getResourceFor(node);
 		IResource other = Utils.getResource(object);
@@ -206,6 +247,10 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return false;
 	}
 	
+	/**
+	 * Check whether the file has changed on disk and prompt the user if it has.
+	 * @return whether the user choose to cancel the save or proceed
+	 */
 	public boolean checkUpdateConflict() {
 		if(hasSaveConflict()) {
 			final MessageDialog dialog = 
@@ -232,19 +277,59 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return false;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IResourceProvider#getResource()
+	 */
 	public IResource getResource() {
 		return ResourceDiffTree.getResourceFor(node);
 	}
 
-	public ICompareInputChangeNotifier getChangeNotifier(ISynchronizationContext context) {
-		ResourceCompareInputChangeNotifier notifier = (ResourceCompareInputChangeNotifier)context.getCache().get("org.eclipse.team.ui.ResourceChangeNotifier");
-		if (notifier == null) {
-			notifier = new ResourceCompareInputChangeNotifier(context);
-			context.getCache().put("org.eclipse.team.ui.ResourceChangeNotifier", notifier);
-		}
-		return notifier;
+	/**
+	 * Return a compare input change notifier that will detect changes in the synchronization context and
+	 * translate them into compare input change events by calling {@link #update()}.
+	 * @return a compare input change notifier
+	 */
+	public ResourceCompareInputChangeNotifier getChangeNotifier() {
+		return ResourceCompareInputChangeNotifier.getChangeNotifier(context);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void addCompareInputChangeListener(
+			ICompareInputChangeListener listener) {
+		if (!containsListener(listener)) {
+			listeners.add(listener);
+			getChangeNotifier().connect(this);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void removeCompareInputChangeListener(
+			ICompareInputChangeListener listener) {
+		if (containsListener(listener)) {
+			listeners.remove(listener);
+			getChangeNotifier().disconnect(this);
+		}
+	}
+	
+	private boolean containsListener(ICompareInputChangeListener listener) {
+		if (listeners.isEmpty())
+			return false;
+		Object[] allListeners = listeners.getListeners();
+		for (int i = 0; i < allListeners.length; i++) {
+			Object object = allListeners[i];
+			if (object == listener)
+				return true;
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#equals(java.lang.Object)
+	 */
 	public boolean equals(Object other) {
 		if (other == this)
 			return true;
@@ -266,7 +351,140 @@ public class ResourceDiffCompareInput extends DiffNode implements ISynchronizati
 		return e1.equals(e2);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#hashCode()
+	 */
 	public int hashCode() {
 		return getResource().hashCode();
 	}
+
+	/**
+	 * Re-obtain the diff for this compare input and update the kind and 3
+	 * contributor appropriately.
+	 */
+	public void update() {
+		IDiff newNode = context.getDiffTree().getDiff(getResource());
+		if (newNode == null) {
+			// The resource is in-sync. Just leave the ancestor and right the same and set the kind
+			kind = Differencer.NO_CHANGE;
+			fireChange();
+		} else {
+			LocalResourceTypedElement left = (LocalResourceTypedElement)getLeft();
+			if (!this.node.equals(newNode) || !left.isSynchronized()) {
+				this.node = newNode;
+				kind = getCompareKind(node);
+				left.update();
+				FileRevisionTypedElement newRight = getRightContributor(node);
+				propogateAuthorIfSameRevision(right, newRight);
+				right = newRight;
+				FileRevisionTypedElement newAncestor = getAncestor(node);
+				propogateAuthorIfSameRevision(ancestor, newAncestor);
+				ancestor = newAncestor;
+				propogateAuthorIfSameRevision(ancestor, right);
+				fireChange();
+			}
+		}
+	}
+
+	private boolean propogateAuthorIfSameRevision(FileRevisionTypedElement oldContributor,
+			FileRevisionTypedElement newContributor) {
+		if (oldContributor == null || newContributor == null)
+			return false;
+		String author = oldContributor.getAuthor();
+		if (newContributor.getAuthor() == null 
+				&& author != null
+				&& oldContributor.getContentIdentifier().equals(newContributor.getContentIdentifier())) {
+			newContributor.setAuthor(author);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return whether the diff associated with this input has changed.
+	 * @return whether the diff associated with this input has changed
+	 */
+	public boolean needsUpdate() {
+		IDiff newNode = context.getDiffTree().getDiff(getResource());
+		return newNode == null || !newNode.equals(node);
+	}
+
+	public void copy(boolean leftToRight) {
+		Assert.isTrue(false, "Copy is not support by this type of compare input"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getAncestor()
+	 */
+	public ITypedElement getAncestor() {
+		return ancestor;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getImage()
+	 */
+	public Image getImage() {
+		return left.getImage();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffElement#getKind()
+	 */
+	public int getKind() {
+		return kind;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getLeft()
+	 */
+	public ITypedElement getLeft() {
+		return left;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getName()
+	 */
+	public String getName() {
+		return left.getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getRight()
+	 */
+	public ITypedElement getRight() {
+		return right;
+	}
+
+	/**
+	 * Set the kind of this compare input
+	 * @param kind the new kind
+	 */
+	public void setKind(int kind) {
+		this.kind = kind;
+	}
+
+	/**
+	 * Return the local content id for this compare input.
+	 * @return the local content id for this compare input
+	 */
+	public String getLocalContentId() {
+		return Utils.getLocalContentId(node);
+	}
+
+	public boolean updateAuthorInfo(IProgressMonitor monitor) throws CoreException {
+		boolean authorFound = false;
+		if (ancestor != null && ancestor.getAuthor() == null) {
+			ancestor.fetchAuthor(monitor);
+			if (right != null && propogateAuthorIfSameRevision(ancestor, right)) {
+				return true;
+			}
+			authorFound = ancestor.getAuthor() != null;
+		}
+		if (right != null && right.getAuthor() == null) {
+			right.fetchAuthor(monitor);
+			authorFound |= right.getAuthor() != null;
+		}
+		return authorFound;
+	}
+
 }

@@ -126,16 +126,4 @@ public interface ISynchronizationCompareAdapter {
 	 */
 	public int getSynchronizationState(ITeamStateProvider provider, ResourceMapping mapping, int stateMask, IProgressMonitor monitor) throws CoreException;
 	
-	/**
-	 * Return the {@link ICompareInputChangeNotifier} for the given compare input or <code>null</code>
-	 * if change notification is not supported. The change notifier can be used by clients to react to changes.
-	 * Examples include refreshing a compare viewer in response to changes or even closing an open editor
-	 * if the compare input has no more changes.
-	 * @param context the synchronization context
-	 * @param input a compare input that was obtained from this adapter.
-	 * @return the change notifier for the given input or <code>null</code>
-	 * @since 3.3
-	 */
-	public ICompareInputChangeNotifier getChangeNotifier(ISynchronizationContext context, ICompareInput input);
-
 }

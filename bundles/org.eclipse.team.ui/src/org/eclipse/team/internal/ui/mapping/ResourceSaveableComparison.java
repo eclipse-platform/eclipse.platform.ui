@@ -54,16 +54,16 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		if (te instanceof IContentChangeNotifier) {
 			if (contentChangeListener == null) {
 				contentChangeListener = new IContentChangeListener() {
-								public void contentChanged(IContentChangeNotifier source) {
-									try {
-										if(! isSaving) {
-											performSave(new NullProgressMonitor());
-										}
-									} catch (CoreException e) {
-										TeamUIPlugin.log(e);
-									}
-								}
-							};
+					public void contentChanged(IContentChangeNotifier source) {
+						try {
+							if(! isSaving) {
+								performSave(new NullProgressMonitor());
+							}
+						} catch (CoreException e) {
+							TeamUIPlugin.log(e);
+						}
+					}
+				};
 			}
 			((IContentChangeNotifier) te).addContentChangeListener(contentChangeListener);
 		}
@@ -91,6 +91,10 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		if (left instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 			if (te.isConnected()) {
+				if (input instanceof ResourceDiffCompareInput) {
+					ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+					updateKind(rdci);
+				}
 				te.saveDocument(monitor);
 				// Saving the document should fire the necessary updates
 				return;
@@ -112,6 +116,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			// Make sure we fire a change for the compare input to update the viewers
 			if (input instanceof ResourceDiffCompareInput) {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				updateKind(rdci);
 				rdci.fireChange();
 			}
 			setDirty(false);
@@ -120,6 +125,14 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		}
 	}
 	
+	private void updateKind(ResourceDiffCompareInput rdci) {
+		if (rdci.getKind() == Differencer.NO_CHANGE) {
+			// We just saved so there must be a an outgoing change
+			rdci.setKind(Differencer.CHANGE | Differencer.LEFT);
+		}
+		
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.mapping.SaveableCompareModel#isDirty()
 	 */

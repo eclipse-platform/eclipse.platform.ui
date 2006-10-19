@@ -12,24 +12,151 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.util.*;
 
-import org.eclipse.compare.IResourceProvider;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.viewers.BaseLabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffChangeEvent;
+import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.mapping.CompareInputChangeNotifier;
+import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 
 /**
  * A change notifier for resource-based compare inputs.
  */
-public class ResourceCompareInputChangeNotifier extends
-		CompareInputChangeNotifier {
+public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifier {
 
+	static final String RESOURCE_CHANGE_NOTIFIER_PROPERTY = "org.eclipse.team.ui.ResourceChangeNotifier"; //$NON-NLS-1$
+
+	private class CompareInputLabelProvider extends BaseLabelProvider implements ICompareInputLabelProvider {
+
+		public Image getAncestorImage(Object input) {
+			// No image desired
+			return null;
+		}
+
+		public String getAncestorLabel(Object input) {
+			if (input instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				ITypedElement element = rdci.getAncestor();
+				if (element != null) {
+					final IFileRevision revision = ((FileRevisionTypedElement)element).getFileRevision();
+					if (revision != null) {
+						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+							String author = ((FileRevisionTypedElement)element).getAuthor();
+							if (author != null) {
+								return NLS.bind(TeamUIMessages.Utils_20, new String[] { revision.getContentIdentifier(), author });
+							} else if (revision.isPropertyMissing()) {
+								fetchAuthors(input);
+							}
+						}
+						return NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { revision.getContentIdentifier() }); 
+					} else {
+						return TeamUIMessages.SyncInfoCompareInput_baseLabel; 
+					}
+				}
+			}
+			return null;
+		}
+
+		public Image getLeftImage(Object input) {
+			// No image desired
+			return null;
+		}
+
+		public String getLeftLabel(Object input) {
+			if (input instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				String localContentId = rdci.getLocalContentId();
+				if (localContentId != null) {
+					return NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId }); 
+				} else {
+					return TeamUIMessages.SyncInfoCompareInput_localLabel; 
+				}
+			}
+			return null;
+		}
+
+		public Image getRightImage(Object input) {
+			// No image desired
+			return null;
+		}
+
+		public String getRightLabel(Object input) {
+			if (input instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				ITypedElement element = rdci.getRight();
+				if (element != null) {
+					final IFileRevision revision = ((FileRevisionTypedElement)element).getFileRevision();
+					if (revision != null) {
+						if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
+							String author = ((FileRevisionTypedElement)element).getAuthor();
+							if (author != null) {
+								return NLS.bind(TeamUIMessages.Utils_21, new String[] { revision.getContentIdentifier(), author });
+							} else if (revision.isPropertyMissing()) {
+								fetchAuthors(input);
+							}
+						}
+						return NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { revision.getContentIdentifier() }); 
+					} else {
+						return TeamUIMessages.SyncInfoCompareInput_remoteLabel; 
+					}
+				}
+			}
+			return null;
+		}
+
+		public Image getImage(Object element) {
+			if (element instanceof ICompareInput) {
+				ICompareInput ci = (ICompareInput) element;
+				return ci.getImage();
+			}
+			return null;
+		}
+
+		public String getText(Object element) {
+			if (element instanceof ICompareInput) {
+				ICompareInput ci = (ICompareInput) element;
+				return ci.getName();
+			}
+			return null;
+		}
+		
+		public void fireChangeEvent(final Object element) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					fireLabelProviderChanged(new LabelProviderChangedEvent(CompareInputLabelProvider.this, element));
+				}
+			
+			});
+		}
+	}
+	
+	/**
+	 * Return a compare input change notifier that will detect changes in the synchronization context and
+	 * translate them into compare input change events by calling {@link ResourceDiffCompareInput#update()}.
+	 * @param context  the synchronization context
+	 * @return a compare input change notifier
+	 */
+	public static ResourceCompareInputChangeNotifier getChangeNotifier(ISynchronizationContext context) {
+		ResourceCompareInputChangeNotifier notifier = (ResourceCompareInputChangeNotifier)context.getCache().get(ResourceCompareInputChangeNotifier.RESOURCE_CHANGE_NOTIFIER_PROPERTY);
+		if (notifier == null) {
+			notifier = new ResourceCompareInputChangeNotifier(context);
+			context.getCache().put(ResourceCompareInputChangeNotifier.RESOURCE_CHANGE_NOTIFIER_PROPERTY, notifier);
+		}
+		return notifier;
+	}
+
+	private final CompareInputLabelProvider labelProvider = new CompareInputLabelProvider();
+	
 	/**
 	 * Create a notifier
 	 * @param context a synchronization context
@@ -37,7 +164,12 @@ public class ResourceCompareInputChangeNotifier extends
 	public ResourceCompareInputChangeNotifier(ISynchronizationContext context) {
 		super(context);
 	}
-
+	
+	protected void handleDispose() {
+		super.handleDispose();
+		labelProvider.dispose();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
 	 */
@@ -125,15 +257,84 @@ public class ResourceCompareInputChangeNotifier extends
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.mapping.SynchronizationCompareInputChangeNotifier#isInSync(org.eclipse.compare.structuremergeviewer.ICompareInput)
+	/**
+	 * Handle the input changes by notifying any listeners of the changed inputs.
+	 * @param inputs the changed inputs
 	 */
-	protected boolean isInSync(ICompareInput input) {
-		IResource resource = getResource(input);
-		if (resource != null) {
-			return getContext().getDiffTree().getDiff(resource) == null;
+	private void handleInputChanges(ICompareInput[] inputs) {
+		List realChanges = getRealChanges(inputs);
+		if (! realChanges.isEmpty())
+			inputsChanged((ICompareInput[]) realChanges.toArray(new ICompareInput[realChanges.size()]));
+	}
+	
+	private List getRealChanges(ICompareInput[] inputs) {
+		List realChanges = new ArrayList();
+		for (int i = 0; i < inputs.length; i++) {
+			ICompareInput input = inputs[i];
+			if (input instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+				if (rdci.needsUpdate()) {
+					realChanges.add(rdci);
+				}
+			}
 		}
-		return false;
+		return realChanges;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier#fireChange(org.eclipse.compare.structuremergeviewer.ICompareInput)
+	 */
+	protected void fireChange(ICompareInput input) {
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			rdci.update();
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void prepareInput(ICompareInput input, IProgressMonitor monitor) {
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			IResource resource = rdci.getResource();
+			IDiff diff = getContext().getDiffTree().getDiff(resource);
+			try {
+				ResourceDiffCompareInput.ensureContentsCached(diff, monitor);
+			} catch (CoreException e) {
+				// Log the exception and continue
+				TeamUIPlugin.log(e);
+			}
+		}
+		super.prepareInput(input, monitor);
 	}
 
+	/**
+	 * Return the label provider for resource compare inputs.
+	 * @return the label provider for resource compare inputs
+	 */
+	public ICompareInputLabelProvider getLabelProvider() {
+		return labelProvider;
+	}
+
+	public void fetchAuthors(final Object input) {
+		runInBackground(new IWorkspaceRunnable() {
+			public void run(IProgressMonitor monitor) throws CoreException {
+				fetchAuthors(input, monitor);
+			}
+		});
+	}
+
+	protected void fetchAuthors(Object input, IProgressMonitor monitor) throws CoreException {
+		if (input instanceof ResourceDiffCompareInput) {
+			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
+			if (rdci.updateAuthorInfo(monitor)) {
+				fireLabelProviderChange(input);
+			}
+		}
+	}
+
+	private void fireLabelProviderChange(Object input) {
+		labelProvider.fireChangeEvent(input);
+	}
 }

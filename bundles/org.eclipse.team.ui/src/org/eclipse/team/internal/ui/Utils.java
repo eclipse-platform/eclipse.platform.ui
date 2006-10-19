@@ -322,67 +322,6 @@ public class Utils {
 			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
 		}
 	}
-	
-	public static void updateLabels(IDiff diff, CompareConfiguration config, IProgressMonitor monitor) {
-		final IFileRevision remote = getRemote(diff);
-		final IFileRevision base = getBase(diff);
-		String localContentId = getLocalContentId(diff);
-		if (localContentId != null) {
-			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); 
-		} else {
-			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); 
-		}
-		if (remote != null) {
-			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); 
-		} else {
-			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); 
-		}
-		if (base != null) {
-			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); 
-		} else {
-			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); 
-		}
-		updateLabelsWithAuthor(diff, config, monitor);
-	}
-	
-    public static void updateLabelsWithAuthor(IDiff diff, CompareConfiguration config, IProgressMonitor monitor) {
-        // Add the author to the remote or base
-        if (TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SHOW_AUTHOR_IN_COMPARE_EDITOR)) {
-	        if (diff != null) {
-	    		IFileRevision remote = getRemote(diff);
-	    		IFileRevision base = getBase(diff);
-	    		String remoteAuthor = null;
-	    		if (remote != null) {
-                    remote = getRevisionWithAuthor(remote, monitor);
-                    remoteAuthor = remote.getAuthor();
-                    if (remoteAuthor != null)
-                    	config.setRightLabel(NLS.bind(TeamUIMessages.Utils_21, new String[] { remote.getContentIdentifier(), remoteAuthor })); 
-	    		}
-	    		if (base != null) {
-                    String baseAuthor;
-                    if (remoteAuthor != null && remote.getContentIdentifier().equals(base.getContentIdentifier())) {
-                        baseAuthor = remoteAuthor;
-                    } else {
-                    	base = getRevisionWithAuthor(base, monitor);
-                        baseAuthor = base.getAuthor();
-                    }
-                    if (baseAuthor != null)
-                    	config.setAncestorLabel(NLS.bind(TeamUIMessages.Utils_20, new String[] { base.getContentIdentifier(), baseAuthor })); 
-	    		}
-	        }
-        }
-    }
-
-	private static IFileRevision getRevisionWithAuthor(IFileRevision remote, IProgressMonitor monitor) {
-		if (remote.getAuthor() == null && remote.isPropertyMissing()) {
-			try {
-				return remote.withAllProperties(monitor);
-			} catch (CoreException e) {
-				TeamUIPlugin.log(e);
-			}
-		}
-		return remote;
-	}
 
 	public static String getLocalContentId(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {

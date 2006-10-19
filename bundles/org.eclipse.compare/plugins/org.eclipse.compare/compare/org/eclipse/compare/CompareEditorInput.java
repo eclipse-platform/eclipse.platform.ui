@@ -93,7 +93,7 @@ import org.eclipse.ui.*;
  * @see CompareUI
  * @see CompareEditorInput
  */
-public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
+public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress, ICompareContainer {
 	
 	private static final String NAV_DATA = "Nav"; //$NON-NLS-1$
 
@@ -164,6 +164,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		IPreferenceStore ps= configuration.getPreferenceStore();
 		if (ps != null)
 			fStructureCompareOnSingleClick= ps.getBoolean(ComparePreferencePage.OPEN_STRUCTURE_COMPARE);
+		
+		configuration.setContainer(this);
 	}
 	
 	private boolean structureCompareOnSingleClick() {
@@ -321,26 +323,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 		fInput= prepareInput(monitor);
 	}
-	
-	/**
-	 * Re-run the compare operation and feed the new result into the editor input.
-	 * This method can only be invoked after the compare editor containing the input
-	 * has been totally initialized (e.g. after {@link #contentsCreated()} has been called.
-	 * @param monitor a progress monitor
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @since 3.3
-	 */
-	protected void refresh(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-		run(monitor);
-		if (!fComposite.isDisposed())
-			fComposite.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (!fComposite.isDisposed())
-						feedInput();
-				}
-			});
-	}
 
 	/**
 	 * Runs the compare operation and returns the compare result.
@@ -473,8 +455,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof DiffNode) {
-					DiffNode dn= (DiffNode) input;
+				if (input instanceof IDiffContainer) {
+					IDiffContainer dn= (IDiffContainer) input;
 					if (dn.hasChildren())
 						return createDiffViewer(this);
 				}
@@ -871,6 +853,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void addCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		input.addCompareInputChangeListener(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
+	public void removeCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		input.removeCompareInputChangeListener(listener);
 	}
 }
 

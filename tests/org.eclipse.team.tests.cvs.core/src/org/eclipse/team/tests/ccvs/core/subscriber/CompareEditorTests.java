@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core.subscriber;
 
+import java.io.ByteArrayInputStream;
+
 import junit.framework.Test;
 
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.SharedDocumentAdapter;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.*;
+import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +28,9 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
-import org.eclipse.team.internal.ui.synchronize.DialogSynchronizePageSite;
+import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
+import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 import org.eclipse.ui.*;
@@ -77,6 +81,35 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		assertNull("The editor is not closed", part);
 	}
 	
+	private void assertRevisionsEquals(IEditorInput input, IFile file) throws CVSException {
+		while (Display.getCurrent().readAndDispatch()) {};
+		CompareEditorInput cei = (CompareEditorInput)input;
+		ICompareInput node = (ICompareInput)cei.getCompareResult();
+		String remoteRevision = ((FileRevisionTypedElement)node.getRight()).getContentIdentifier();
+		String localRevision = CVSWorkspaceRoot.getCVSFileFor(file).getSyncInfo().getRevision();
+		assertEquals(localRevision, remoteRevision);
+	}
+	
+	private void assertEditorState(IEditorInput input) throws TeamException {
+		waitForCollectors();
+		while (Display.getCurrent().readAndDispatch()) {};
+		CompareEditorInput cei = (CompareEditorInput)input;
+		if (cei instanceof ModelCompareEditorInput) {
+			ModelCompareEditorInput mcei = (ModelCompareEditorInput) cei;
+			ICompareInput ci = (ICompareInput)mcei.getCompareResult();
+			if (ci instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) ci;
+				IFile file = (IFile)rdci.getResource();
+				LocalResourceTypedElement element = (LocalResourceTypedElement)rdci.getLeft();
+				CountingSharedDocumentAdapter adapter = (CountingSharedDocumentAdapter)element.getAdapter(ISharedDocumentAdapter.class);
+				assertTrue(element.exists() == file.exists());
+				assertTrue(file.exists() == adapter.isConnected());
+				return;
+			}
+		}
+		fail("Unexpected compare input type");
+	}
+	
 	private void closeAllEditors() {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().closeAllEditors(false);
 	}
@@ -95,74 +128,139 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		return null;
 	}
 	
-	private void dirtyEditor(IFile file, IEditorInput input) {
+	private void dirtyEditor(IFile file, IEditorInput input, String string) {
 		FileEditorInput fileEditorInput = new FileEditorInput(file);
 		IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(fileEditorInput);
 		IDocument document = provider.getDocument(fileEditorInput);
-		document.set("dirty");
+		document.set(string);
+	}
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		Utilities.RUNNING_TESTS = true;
 	}
 	
 	protected void tearDown() throws Exception {
 		closeAllEditors();
 		super.tearDown();
 	}
-
-	public void testCloseOnUpdate() throws CoreException {
-		IProject project = createProject(new String[] { "file1.txt"});
-		
-		IProject copy = checkoutCopy(project, "-copy");
-		setContentsAndEnsureModified(copy.getFile("file1.txt"));
-		commitProject(copy);
-		
-		refresh(getSubscriber(), project);
-		IEditorInput input = openEditor(project.getFile("file1.txt"));
-		updateProject(project, null, false);
-		waitForCollectors();
-		assertEditorClosed(input);
-	}
-
+	
 	private void waitForCollectors() throws TeamException {
 		((ModelParticipantSyncInfoSource)getSyncInfoSource()).waitForCollectionToFinish(getSubscriber());
 	}
-	
-	public void testCloseOnCommit() throws CoreException {
+
+	public void testCloseOnUpdate() throws CoreException {
+		// setup a project with an incoming change that is open in an editor
 		IProject project = createProject(new String[] { "file1.txt"});
-		setContentsAndEnsureModified(project.getFile("file1.txt"));
-		
+		IProject copy = checkoutCopy(project, "-copy");
+		setContentsAndEnsureModified(copy.getFile("file1.txt"));
+		commitProject(copy);
 		refresh(getSubscriber(), project);
 		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		
+		// Update and assert that the editor gets closed
+		updateProject(project, null, false);
+		waitForCollectors();
+		assertEditorClosed(input);
+	}
+	
+	public void testCloseOnCommit() throws CoreException {
+		// Setup a project with an outgoing change that is open in an editor
+		IProject project = createProject(new String[] { "file1.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		refresh(getSubscriber(), project);
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		
+		// Commit and assert that the editor gets closed
 		commitProject(project);
 		waitForCollectors();
 		assertEditorClosed(input);
 	}
 	
-	public void testStayOpenOnUpdateWhenDirty() throws CoreException {
+	public void testSaveOnUpdateWhenDirty() throws CoreException {
+		// setup a project with an incoming change that is open in an editor
 		IProject project = createProject(new String[] { "file1.txt"});
-		
 		IProject copy = checkoutCopy(project, "-copy");
 		setContentsAndEnsureModified(copy.getFile("file1.txt"));
 		commitProject(copy);
-		
 		refresh(getSubscriber(), project);
 		IEditorInput input = openEditor(project.getFile("file1.txt"));
-		dirtyEditor(project.getFile("file1.txt"), input);
-		// TODO: Should get a prompt to save the editor before updating
+		
+		// Dirty the editor
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
+		
+		// Update and ensure that the contents are written and the editor remains open
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
 		updateProject(project, null, false);
 		waitForCollectors();
-		assertEditorOpen(input);
+		assertContentsEqual(project.getFile("file1.txt"), contents);
+		// We would like the editor to stay open but its too complicated
+		// assertEditorOpen(input);
 	}
 	
-	public void testStayOpenOnCommitWhenDirty() throws CoreException {
+	public void testCloseOnUpdateWhenDirty() throws CoreException {
+		// setup a project with an incoming change that is open in an editor
 		IProject project = createProject(new String[] { "file1.txt"});
-		setContentsAndEnsureModified(project.getFile("file1.txt"));
-		
+		IProject copy = checkoutCopy(project, "-copy");
+		String incomingContents = "Incoming change";
+		setContentsAndEnsureModified(copy.getFile("file1.txt"), incomingContents);
+		commitProject(copy);
 		refresh(getSubscriber(), project);
 		IEditorInput input = openEditor(project.getFile("file1.txt"));
-		dirtyEditor(project.getFile("file1.txt"), input);
-		// TODO: Should get a prompt to save the editor before committing
+		
+		// Dirty the editor
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
+		
+		// Update and ensure that the editor is closed
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;
+		updateProject(project, null, false);
+		waitForCollectors();
+		assertContentsEqual(project.getFile("file1.txt"), incomingContents);
+		// We would like the editor to close but its too complicated to guarantee
+		// assertEditorClosed(input);
+	}
+
+	public void testSaveOnCommitWhenDirty() throws CoreException {
+		// Setup a project with an outgoing change that is open in an editor
+		IProject project = createProject(new String[] { "file1.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		refresh(getSubscriber(), project);
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		
+		// Dirty the editor
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
+		
+		// Commit and ensure that the contents are written and the editor remains open
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
 		commitProject(project);
 		waitForCollectors();
-		assertEditorOpen(input);
+		assertContentsEqual(project.getFile("file1.txt"), contents);
+		// We would like the editor to stay open but its too complicated
+		// assertEditorOpen(input);
+	}
+	
+	public void testCloseOnCommitWhenDirty() throws CoreException {
+		// Setup a project with an outgoing change that is open in an editor
+		IProject project = createProject(new String[] { "file1.txt"});
+		String committedContents = "Committed contents";
+		setContentsAndEnsureModified(project.getFile("file1.txt"), committedContents);
+		refresh(getSubscriber(), project);
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		
+		// Dirty the editor
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
+		
+		// Commit and ensure that the editor is closed
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = false;
+		commitProject(project);
+		waitForCollectors();
+		assertContentsEqual(project.getFile("file1.txt"), committedContents);
+		// We would like the editor to close but its too complicated to guarantee
+		// assertEditorClosed(input);
 	}
 	
 	public void testCloseOnParticipantDispose() throws CoreException {
@@ -191,7 +289,9 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		
 		refresh(subscriber, project);
 		IEditorInput input = openEditor(subscriber, project.getFile("file1.txt"));
-		dirtyEditor(project.getFile("file1.txt"), input);
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
 		ModelParticipantSyncInfoSource.getParticipant(subscriber).dispose();
 		assertEditorOpen(input);
 	}
@@ -199,7 +299,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	public void testUpdateOnRemoteChange() throws CoreException {
 		IProject project = createProject(new String[] { "file1.txt"});
 		
-		// First open the editor
+		// First open the editor on an outgoing change
 		setContentsAndEnsureModified(project.getFile("file1.txt"));
 		IEditorInput input = openEditor(project.getFile("file1.txt"));
 		assertRevisionsEquals(input, project.getFile("file1.txt"));
@@ -215,32 +315,51 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		
 	}
 	
-	public void testNoUpdateOnRemoteChangeWhenDirty() throws CoreException {
+	public void testUpdateOnRemoteChangeWhenDirty() throws CoreException {
 		IProject project = createProject(new String[] { "file1.txt"});
 		
 		// First open the editor and dirty it
 		setContentsAndEnsureModified(project.getFile("file1.txt"));
 		IEditorInput input = openEditor(project.getFile("file1.txt"));
 		assertRevisionsEquals(input, project.getFile("file1.txt"));
-		dirtyEditor(project.getFile("file1.txt"), input);
+		String contents = "this is the file contents";
+		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		
 		// Now change the remote and refresh the project
 		IProject copy = checkoutCopy(project, "-copy");
 		setContentsAndEnsureModified(copy.getFile("file1.txt"));
 		commitProject(copy);
+		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
 		refresh(getSubscriber(), project);
 		
-		// The input revision should still match the local project
-		assertRevisionsEquals(input, project.getFile("file1.txt"));
+		// The revision should be changed and the contents written to disk
+		assertRevisionsEquals(input, copy.getFile("file1.txt"));
+		assertContentsEqual(project.getFile("file1.txt"), contents);
 		
 	}
-
-	private void assertRevisionsEquals(IEditorInput input, IFile file) throws CVSException {
-		CompareEditorInput cei = (CompareEditorInput)input;
-		DiffNode node = (DiffNode)cei.getCompareResult();
-		String remoteRevision = ((FileRevisionTypedElement)node.getRight()).getContentIdentifier();
-		String localRevision = CVSWorkspaceRoot.getCVSFileFor(file).getSyncInfo().getRevision();
-		assertEquals(localRevision, remoteRevision);
+	
+	public void testFileCreation() throws CoreException {
+		// Create an outgoing deletion and open an editor
+		IProject project = createProject(new String[] { "file1.txt"});
+		project.getFile("file1.txt").delete(false, null);
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		assertEditorState(input);
+		
+		// Recreate the file
+		project.getFile("file1.txt").create(new ByteArrayInputStream("Recreated file".getBytes()), false, null);
+		assertEditorState(input);
+	}
+	
+	public void testFileDeletion() throws CoreException {
+		// Create an outgoing change and open an editor
+		IProject project = createProject(new String[] { "file1.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"));
+		IEditorInput input = openEditor(project.getFile("file1.txt"));
+		assertEditorState(input);
+		
+		// Delete the file
+		project.getFile("file1.txt").delete(false, null);
+		assertEditorState(input);
 	}
 	
 }

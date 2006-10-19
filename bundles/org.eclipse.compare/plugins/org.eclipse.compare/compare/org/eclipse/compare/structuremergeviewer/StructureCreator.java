@@ -276,7 +276,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 			Object input, final ISharedDocumentAdapter sda, IEditorInput key, IProgressMonitor monitor) throws CoreException {
 		try {
 			provider.aboutToChange(key);
-			sda.saveDocument(provider, key, document, false, monitor);
+			sda.flushDocument(provider, key, document, false, monitor);
 		} finally {
 			provider.changed(input);
 		}

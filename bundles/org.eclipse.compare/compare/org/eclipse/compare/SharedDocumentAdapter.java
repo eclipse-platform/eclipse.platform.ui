@@ -87,10 +87,15 @@ public class SharedDocumentAdapter implements ISharedDocumentAdapter {
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ISharedDocumentAdapter#saveDocument(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput, org.eclipse.jface.text.IDocument, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void saveDocument(IDocumentProvider provider,
+	public void flushDocument(IDocumentProvider provider,
 			IEditorInput documentKey, IDocument document, boolean overwrite,
 			IProgressMonitor monitor) throws CoreException {
-		provider.saveDocument(monitor, documentKey, document, overwrite);
+		try {
+			provider.aboutToChange(documentKey);
+			provider.saveDocument(monitor, documentKey, document, overwrite);
+		} finally {
+			provider.changed(documentKey);
+		}
 	}
 	
 	/**

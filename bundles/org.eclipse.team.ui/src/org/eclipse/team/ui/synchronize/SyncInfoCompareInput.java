@@ -238,7 +238,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	}
 	
 	private boolean hasSaveConflict() {
-		return ((LocalResourceTypedElement)node.getLeft()).hasSaveConflict();
+		return !((LocalResourceTypedElement)node.getLeft()).isSynchronized();
 	}
 
 	/*

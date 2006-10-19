@@ -68,13 +68,11 @@ public interface ISharedDocumentAdapter {
 	void disconnect(IDocumentProvider provider, IEditorInput documentKey);
 	
 	/**
-	 * Save the given document provided for the given element from the given
-	 * document provider. Saves should be performed through the adapter to allow
-	 * the provider of the compare input to perform any additional processing on save.
-	 * <p>
-	 * It should be noted that this method is invoked by the Compare framework classes
-	 * when a request to flush the viewers has been made. Clients should only use a shared
-	 * document when they want a viewer flush to be equated with a save to the underying file.
+	 * Flush the contents of the given document into the typed element that provided the
+	 * document. This method is invoked by the Compare framework classes
+	 * when a request to flush the viewers has been made. It is up to the implementor to decide
+	 * whether the changes in the buffer should be saved to disk at the time of the flush or
+	 * buffered to be saved at a later time.
 	 * 
 	 * @param provider the document provider
 	 * @param documentKey the element's key returned from {@link #getDocumentKey(Object)}
@@ -85,6 +83,6 @@ public interface ISharedDocumentAdapter {
 	 * @exception CoreException if document could not be stored to the given element
 	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
-	void saveDocument(IDocumentProvider provider, IEditorInput documentKey, IDocument document, boolean overwrite, IProgressMonitor monitor) throws CoreException;
+	void flushDocument(IDocumentProvider provider, IEditorInput documentKey, IDocument document, boolean overwrite, IProgressMonitor monitor) throws CoreException;
 
 }

@@ -28,7 +28,8 @@ import com.ibm.icu.text.DateFormat;
  */
 public class FileRevisionTypedElement extends StorageTypedElement {
 
-	IFileRevision fileRevision;
+	private IFileRevision fileRevision;
+	private String author;
 	
 	/**
 	 * Create a typed element that wraps the given file revision.
@@ -126,6 +127,23 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 			return other.getFileRevision().equals(getFileRevision());
 		}
 		return false;
+	}
+
+	public String getAuthor() {
+		if (author == null)
+			author = fileRevision.getAuthor();
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public void fetchAuthor(IProgressMonitor monitor) throws CoreException {
+		if (getAuthor() == null && fileRevision.isPropertyMissing()) {
+			IFileRevision other = fileRevision.withAllProperties(monitor);
+			author = other.getAuthor();
+		}
 	}
 
 }
