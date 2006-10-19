@@ -131,7 +131,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				string2= ((AntTargetNode) e2).getTarget().getDescription();
 			}
 			if (string1 != null && string2 != null) {
-				result= getCollator().compare(string1, string2);
+				result= getComparator().compare(string1, string2);
 			} else if (string1 == null) {
 				result= 1;
 			} else if (string2 == null) {

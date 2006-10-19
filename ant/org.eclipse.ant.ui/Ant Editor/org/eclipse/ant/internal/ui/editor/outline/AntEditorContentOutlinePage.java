@@ -136,7 +136,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 			String name1= ((AntElementNode) e1).getLabel();
 			String name2= ((AntElementNode) e2).getLabel();
-			return getCollator().compare(name1, name2);
+			return getComparator().compare(name1, name2);
 		}
 	}
 
