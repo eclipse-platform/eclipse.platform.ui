@@ -103,6 +103,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(ModelCompareEditorInput.this);
+			scm.doRevert(new NullProgressMonitor());
 		}
 		if (input instanceof IDisposable) {
 			((IDisposable) input).dispose();

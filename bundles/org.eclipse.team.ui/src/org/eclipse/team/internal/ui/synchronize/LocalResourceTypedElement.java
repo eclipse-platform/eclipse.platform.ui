@@ -55,7 +55,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 * contents will be buffered in the shared document and will not be pushed
 	 * to this element using {@link #setContent(byte[])}. Clients should check
 	 * whether the element {@link #isConnected()} and, if it is, they should call
-	 * {@link #saveDocument(IProgressMonitor)} to save the buffered contents to 
+	 * {@link #saveDocument(boolean, IProgressMonitor)} to save the buffered contents to 
 	 * the underlying resource.
 	 * @param monitor a progress monitor
 	 * @throws CoreException
@@ -127,7 +127,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 
 	/**
 	 * Return whether the element is connected to a shared document.
-	 * When connected, the element can be saved using {@link #saveDocument(IProgressMonitor)}.
+	 * When connected, the element can be saved using {@link #saveDocument(boolean, IProgressMonitor)}.
 	 * Otherwise, {@link #commit(IProgressMonitor)} should be used to save the buffered contents.
 	 * @return whether the element is connected to a shared document
 	 */
@@ -140,14 +140,16 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 * ZSave the shared document for this element. The save can only be performed
 	 * if the element is connected to a shared document. If the element is not
 	 * connected, <code>false</code> is returned.
+	 * @param overwrite indicates whether overwrite should be performed
+	 * 			while saving the given element if necessary
 	 * @param monitor a progress monitor
 	 * @return whether the save succeeded or not
 	 * @throws CoreException
 	 */
-	public boolean saveDocument(IProgressMonitor monitor) throws CoreException {
+	public boolean saveDocument(boolean overwrite, IProgressMonitor monitor) throws CoreException {
 		if (isConnected()) {
 			IEditorInput input = sharedDocumentAdapter.getDocumentKey(this);
-			sharedDocumentAdapter.saveDocument(input, monitor);
+			sharedDocumentAdapter.saveDocument(input, overwrite, monitor);
 			updateTimestamp();
 			return true;
 		}
@@ -238,6 +240,15 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 */
 	protected void fireContentChanged() {
 		super.fireContentChanged();
+	}
+	
+	/**
+	 * Discard of any buffered contents.
+	 */
+	public void discardBuffer() {
+		if (sharedDocumentAdapter != null)
+			sharedDocumentAdapter.releaseBuffer();
+		super.discardBuffer();
 	}
 
 }

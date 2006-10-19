@@ -18,10 +18,13 @@ import org.eclipse.compare.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 
 public class TypedBufferedContent extends ResourceNode implements IAdaptable {
@@ -80,7 +83,14 @@ public class TypedBufferedContent extends ResourceNode implements IAdaptable {
 		if (adapter == ISharedDocumentAdapter.class) {
 			synchronized (this) {
 				if (sharedDocumentAdapter == null)
-					sharedDocumentAdapter = new SharedDocumentAdapter();
+					sharedDocumentAdapter = new SharedDocumentAdapter() {
+						public void flushDocument(IDocumentProvider provider,
+								IEditorInput documentKey, IDocument document,
+								boolean overwrite, IProgressMonitor monitor)
+								throws CoreException {
+							// The document is read-only	
+						}
+					};
 				return sharedDocumentAdapter;
 			}
 		}

@@ -16,9 +16,11 @@ import org.eclipse.compare.*;
 import org.eclipse.core.resources.IEncodedStorage;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 
 public abstract class StorageTypedElement implements ITypedElement, IEncodedStreamContentAccessor, IAdaptable {
 
@@ -116,6 +118,12 @@ public abstract class StorageTypedElement implements ITypedElement, IEncodedStre
 					sharedDocumentAdapter = new SharedDocumentAdapter() {
 						public IEditorInput getDocumentKey(Object element) {
 							return StorageTypedElement.this.getDocumentKey(element);
+						}
+						public void flushDocument(IDocumentProvider provider,
+								IEditorInput documentKey, IDocument document,
+								boolean overwrite, IProgressMonitor monitor)
+								throws CoreException {
+							// The document is read-only
 						}
 					};
 				return sharedDocumentAdapter;

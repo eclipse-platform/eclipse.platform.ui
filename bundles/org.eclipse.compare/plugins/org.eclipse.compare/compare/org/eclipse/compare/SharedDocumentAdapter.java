@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  * </p>
  * @since 3.3
  */
-public class SharedDocumentAdapter implements ISharedDocumentAdapter {
+public abstract class SharedDocumentAdapter implements ISharedDocumentAdapter {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ISharedDocumentAdapter#connect(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput)
@@ -84,10 +84,18 @@ public class SharedDocumentAdapter implements ISharedDocumentAdapter {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ISharedDocumentAdapter#saveDocument(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput, org.eclipse.jface.text.IDocument, boolean, org.eclipse.core.runtime.IProgressMonitor)
+	/**
+	 * A helper method to save a document.
+	 * 
+	 * @param provider the document provider
+	 * @param documentKey the document key
+	 * @param document the document
+	 * @param overwrite indicates whether overwrite should be performed
+	 * 			while saving the given element if necessary
+	 * @param monitor a progress monitor
+	 * @throws CoreException
 	 */
-	public void flushDocument(IDocumentProvider provider,
+	protected void saveDocument(IDocumentProvider provider,
 			IEditorInput documentKey, IDocument document, boolean overwrite,
 			IProgressMonitor monitor) throws CoreException {
 		try {

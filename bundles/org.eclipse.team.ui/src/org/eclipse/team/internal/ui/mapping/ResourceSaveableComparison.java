@@ -91,11 +91,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 		if (left instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 			if (te.isConnected()) {
-				if (input instanceof ResourceDiffCompareInput) {
-					ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-					updateKind(rdci);
-				}
-				te.saveDocument(monitor);
+				te.saveDocument(true, monitor);
 				// Saving the document should fire the necessary updates
 				return;
 			}
@@ -116,21 +112,12 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 			// Make sure we fire a change for the compare input to update the viewers
 			if (input instanceof ResourceDiffCompareInput) {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-				updateKind(rdci);
 				rdci.fireChange();
 			}
 			setDirty(false);
 			isSaving = false;
 			monitor.done();
 		}
-	}
-	
-	private void updateKind(ResourceDiffCompareInput rdci) {
-		if (rdci.getKind() == Differencer.NO_CHANGE) {
-			// We just saved so there must be a an outgoing change
-			rdci.setKind(Differencer.CHANGE | Differencer.LEFT);
-		}
-		
 	}
 
 	/* (non-Javadoc)

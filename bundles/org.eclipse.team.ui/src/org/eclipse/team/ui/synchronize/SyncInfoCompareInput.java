@@ -102,6 +102,15 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
         this.participant = participant;
     }
 	
+    protected void handleDispose() {
+    	super.handleDispose();
+    	Object left= node.getLeft();
+    	if (left instanceof LocalResourceTypedElement) {
+    		// When closing, make sure we discard any buffered content
+			LocalResourceTypedElement lrte = (LocalResourceTypedElement) left;
+			lrte.discardBuffer();
+		}
+    }
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
@@ -252,7 +261,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if (left instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 			if (te.isConnected()) {
-				te.saveDocument(pm);
+				te.saveDocument(true, pm);
 				// Saving the document should fire the necessary updates
 				return;
 			}

@@ -1,10 +1,12 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.SharedDocumentAdapter;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
@@ -19,6 +21,7 @@ public class CountingSharedDocumentAdapter extends
 	
 	private int connectionCount;
 	private LocalResourceTypedElement element;
+	private boolean hasBufferedContents;
 
 	/**
 	 * Create the shared document adapter for the given element.
@@ -77,17 +80,41 @@ public class CountingSharedDocumentAdapter extends
 	/**
 	 * Save the shared document of the element of this adapter.
 	 * @param input the document key of the element.
+	 * @param overwrite indicates whether overwrite should be performed
+	 * 			while saving the given element if necessary
 	 * @param monitor a progress monitor
 	 * @return whether the save succeeded or not
 	 * @throws CoreException
 	 */
-	public boolean saveDocument(IEditorInput input, IProgressMonitor monitor) throws CoreException {
+	public boolean saveDocument(IEditorInput input, boolean overwrite, IProgressMonitor monitor) throws CoreException {
 		if (isConnected()) {
 			IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
-			flushDocument(provider, input, provider.getDocument(input), false, monitor);
+			try {
+				provider.aboutToChange(input);
+				provider.saveDocument(monitor, input, provider.getDocument(input), overwrite);
+			} finally {
+				provider.changed(input);
+				// When we write the document, remove out hold on the buffer
+				releaseBuffer();
+			}
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Release the buffer if this adapter has buffered the contents in response to
+	 * a {@link #flushDocument(IDocumentProvider, IEditorInput, IDocument, boolean, IProgressMonitor)}.
+	 */
+	public void releaseBuffer() {
+		if (hasBufferedContents) {
+			IEditorInput input = getDocumentKey(element);
+			if (input == null)
+				input = new FileEditorInput((IFile)element.getResource());
+			IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
+			provider.disconnect(input);
+			hasBufferedContents = false;
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -97,10 +124,13 @@ public class CountingSharedDocumentAdapter extends
 			IEditorInput documentKey, IDocument document,
 			boolean overwrite, IProgressMonitor monitor)
 			throws CoreException {
-		super.flushDocument(provider, documentKey, document, overwrite, monitor);
-		// After flushing, fire a content change event
-		// TODO: Causes an overflow
-		// this.element.fireContentChanged();
+		if (!hasBufferedContents) {
+			// On a flush, make an extra connection to the shared document so it will be kept even
+			// if it is no longer being viewed.
+			provider.connect(documentKey);
+			hasBufferedContents = true;
+		}
+		this.element.fireContentChanged();
 	}
 
 	/* (non-Javadoc)
