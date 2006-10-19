@@ -57,7 +57,9 @@ public interface IEvaluationContext {
 	
 	/**
 	 * Returns whether this evaluation context supports plug-in 
-	 * activation.
+	 * activation. If not set via {@link #setAllowPluginActivation(boolean)}
+	 * the parent value is returned. If no parent is set <code>false</code>
+	 * is returned.
 	 * 
 	 * @return whether plug-in activation is supported or not
 	 * @since 3.2
