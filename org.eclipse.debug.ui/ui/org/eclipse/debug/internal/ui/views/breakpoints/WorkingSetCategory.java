@@ -48,7 +48,7 @@ public class WorkingSetCategory extends PlatformObject implements IWorkbenchAdap
      * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
      */
     public ImageDescriptor getImageDescriptor(Object object) {
-        return fWorkingSet.getImage();
+        return fWorkingSet.getImageDescriptor();
     }
 
     /* (non-Javadoc)
