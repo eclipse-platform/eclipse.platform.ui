@@ -1120,7 +1120,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * Creates instance of filter. It could be override to change behaviours of
 	 * filtering.
 	 * 
-	 * @param text
 	 * @return filter to matching elements
 	 */
 	protected abstract SearchFilter createFilter();
@@ -1157,8 +1156,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * 
 	 * @param object
 	 *            The item to store
-	 * @param element
-	 *            The element to store to
 	 */
 	protected abstract void storeItemToMemento(AbstractSearchItem item,
 			IMemento element);

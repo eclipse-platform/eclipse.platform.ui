@@ -922,7 +922,7 @@ public class SearchPattern {
 
 	/**
 	 * Check if charater is valid camelCase character
-	 * @param character
+	 * @param ch
 	 * @return true if cahracter is valid
 	 */
 	protected static boolean isValidCamelCaseChar(char ch) {
