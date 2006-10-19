@@ -17,7 +17,7 @@ Some annotations serve as the UI counterpart of markers (see &lt;code&gt;org.ecl
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="type"/>
+            <element ref="type" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

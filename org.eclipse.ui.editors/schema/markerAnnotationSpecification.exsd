@@ -25,7 +25,7 @@ Annotation preference types that extend another annotation preference are allowe
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="specification"/>
+            <element ref="specification" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -157,7 +157,7 @@ since: 3.0
          <attribute name="contributesToHeader" type="boolean">
             <annotation>
                <documentation>
-                  The default value telling whether this marker annotation contributes to the overview ruler's header summary.
+                  The default value telling whether this marker annotation contributes to the overview ruler&apos;s header summary.
                </documentation>
             </annotation>
          </attribute>
@@ -213,7 +213,7 @@ since: 3.0
             <annotation>
                <documentation>
                   The path to the icon to be drawn for annotations of this annotation type. This icon will not
-                  be used if a Quick Fix is available and the "quickFixIcon" attribute has been specified.
+                  be used if a Quick Fix is available and the &quot;quickFixIcon&quot; attribute has been specified.
                </documentation>
             </annotation>
          </attribute>
@@ -249,7 +249,7 @@ since: 3.2
          <attribute name="annotationImageProvider" type="string">
             <annotation>
                <documentation>
-                  The optional annotation image provider. Must implement <code>IAnnotationImageProvider</code>.
+                  The optional annotation image provider. Must implement
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
