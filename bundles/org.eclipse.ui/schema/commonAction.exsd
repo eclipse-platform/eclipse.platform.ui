@@ -21,7 +21,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="separator" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="groupMarker" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">

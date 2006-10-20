@@ -91,7 +91,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="description"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

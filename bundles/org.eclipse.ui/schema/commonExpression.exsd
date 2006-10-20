@@ -58,7 +58,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="2" maxOccurs="2">
+         <choice minOccurs="2" maxOccurs="unbounded">
             <element ref="and"/>
             <element ref="or"/>
             <element ref="not"/>
@@ -77,7 +77,7 @@ The syntax is the same for the &lt;samp&gt;enablement&lt;/samp&gt; and &lt;samp&
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="2" maxOccurs="2">
+         <choice minOccurs="2" maxOccurs="unbounded">
             <element ref="and"/>
             <element ref="or"/>
             <element ref="not"/>

@@ -27,8 +27,8 @@ If these filtering mechanisms are inadequate an action contribution may use the 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="objectContribution"/>
-            <element ref="viewerContribution"/>
+            <element ref="objectContribution" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="viewerContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
