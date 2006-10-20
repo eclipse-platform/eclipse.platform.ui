@@ -354,7 +354,7 @@ class DeleteLineTarget {
 			fClipboard.saveState();
 
 		} else {
-			document.replace(deleteOffset, deleteLength, null);
+			document.replace(deleteOffset, deleteLength, ""); //$NON-NLS-1$
 		}
 	}
 }
