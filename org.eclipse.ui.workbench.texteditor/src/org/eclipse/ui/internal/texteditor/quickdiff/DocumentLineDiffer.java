@@ -501,7 +501,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 						clearModel();
 						fireModelChanged();
-						DocumentLineDiffer.this.notifyAll();
 						return e.getStatus();
 					}
 				} catch (OperationCanceledException e) {
@@ -525,7 +524,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 						clearModel();
 						fireModelChanged();
-						DocumentLineDiffer.this.notifyAll();
 						return Status.OK_STATUS;
 					}
 
@@ -631,9 +629,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 								// replace the private documents with the actual
 								leftEquivalent.setDocument(left);
 								rightEquivalent.setDocument(right);
-
-								// inform blocking calls.
-								DocumentLineDiffer.this.notifyAll();
 
 								break;
 							}
@@ -860,9 +855,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fireModelChanged(ame);
 			fUpdateNeeded= false;
 		}
-		
-		// notify waiters
-		notifyAll();
 	}
 
 	/**
