@@ -282,4 +282,26 @@ public abstract class ContainerDescription extends ResourceDescription {
 	public void setLocation(URI location) {
 		this.location = location;
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#verifyExistence(boolean)
+	 */
+	public boolean verifyExistence(boolean checkMembers) {
+		boolean existence = super.verifyExistence(checkMembers);
+		if (existence) {
+			if (checkMembers) {
+				// restore any children
+				if (members != null && members.length > 0) {
+					for (int i = 0; i < members.length; i++) {
+						if (!members[i].verifyExistence(checkMembers)) {
+							return false;
+						}
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 }

@@ -41,7 +41,7 @@ public class CopyResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
 
 	IResource[] originalResources;
-	
+
 	ResourceDescription[] originalResourceDescriptions;
 
 	IPath[] originalDestinationPaths = null;
@@ -63,7 +63,7 @@ public class CopyResourcesOperation extends
 	public CopyResourcesOperation(IResource resource, IPath newPath,
 			String label) {
 		super(new IResource[] { resource }, new IPath[] { newPath }, label);
-		setOriginalResources(new IResource[] {resource});
+		setOriginalResources(new IResource[] { resource });
 		originalDestinationPaths = new IPath[] { newPath };
 	}
 
@@ -219,12 +219,13 @@ public class CopyResourcesOperation extends
 		// undo the copy which involves deleting the copies. They may be all we
 		// have left.
 		if (originalResources == null) {
-			return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
+			markInvalid();
+			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
-		for (int i = 0; i < originalResources.length; i++) {
-			if (!resources[i].exists()) {
+		for (int i = 0; i < originalResourceDescriptions.length; i++) {
+			if (!originalResourceDescriptions[i].verifyExistence(true)) {
 				markInvalid();
-				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
+				return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 			}
 		}
 		// undoing a copy means deleting the copy that was made
@@ -255,16 +256,18 @@ public class CopyResourcesOperation extends
 		}
 		return status;
 	}
+
 	/*
-	 * Record the original resources, including a resource description to describe it.
-	 * This is so we can make sure the original resources and their subtrees are intact
-	 * before allowing a copy to be undone.
+	 * Record the original resources, including a resource description to
+	 * describe it. This is so we can make sure the original resources and their
+	 * subtrees are intact before allowing a copy to be undone.
 	 */
 	private void setOriginalResources(IResource[] originals) {
 		originalResources = originals;
 		originalResourceDescriptions = new ResourceDescription[originals.length];
-		for (int i=0; i<originals.length; i++) {
-			originalResourceDescriptions[i] = ResourceDescription.fromResource(originals[i]);
+		for (int i = 0; i < originals.length; i++) {
+			originalResourceDescriptions[i] = ResourceDescription
+					.fromResource(originals[i]);
 		}
 	}
 }

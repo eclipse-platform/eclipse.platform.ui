@@ -197,11 +197,33 @@ public abstract class ResourceDescription {
 			}
 		}
 	}
-	
+
 	/*
 	 * Return the workspace.
 	 */
 	IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
+	}
+
+	/**
+	 * Return a boolean indicating whether this description represents an
+	 * existent resource.
+	 * 
+	 * @param checkMembers
+	 *            Use <code>true</code> if members should also exist in order
+	 *            for this description to be considered existent. A value of
+	 *            <code>false</code> indicates that the existence of members
+	 *            does not matter.
+	 * 
+	 * @return a boolean indicating whether this description represents an
+	 *         existent resource.
+	 */
+	public boolean verifyExistence(boolean checkMembers) {
+		IContainer p = parent;
+		if (p == null) {
+			p = getWorkspace().getRoot();
+		}
+		IResource handle = p.findMember(getName());
+		return handle != null;
 	}
 }

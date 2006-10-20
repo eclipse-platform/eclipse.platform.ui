@@ -60,6 +60,8 @@ public class UndoMessages extends NLS {
 	
 	public static String DeleteResourcesOperation_DeletingProjectContentWarning;
 	
+	public static String CopyResourcesOperation_NotAllowedDueToDataLoss;
+	
 	public static String ProjectDescription_NewProjectProgress;
 	public static String FileDescription_NewFileProgress;
 	public static String FileDescription_SavingUndoInfoProgress;
