@@ -10,36 +10,56 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.internal.patch.CompareWithPatchAction.PatchWizardDialog;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-/* package */class PatchWizard extends Wizard {
+	public class PatchWizard extends Wizard {
 
 	// dialog store id constants
 	private final static String DIALOG_SETTINGS_KEY= "PatchWizard"; //$NON-NLS-1$
 
 	private boolean fHasNewDialogSettings;
+	
 	private InputPatchPage fPatchWizardPage;
+	private PatchTargetPage fPatchTargetPage;
+	private PreviewPatchPage2 fPreviewPage2;
+	private HunkMergePage fHunkeMergePage;
+	
 	private WorkspacePatcher fPatcher;
 	private PatchWizardDialog fDialog;
+	
+	private CompareConfiguration previewPatchPageConfiguration;
+	private CompareConfiguration hunkMergeConfiguration;
+	private IStorage patch;
+
+	private boolean patchReadIn;
 	
 	private HashSet modDiffs;
 	private HashMap modFiles;
@@ -47,12 +67,13 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	/*
 	 * Creates a wizard for applying a patch file to the workspace.
 	 */
-	/* package */PatchWizard(ISelection selection) {
+	public PatchWizard(ISelection selection) {
 
 		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png")); //$NON-NLS-1$
 		setWindowTitle(PatchMessages.PatchWizard_title);
 
 		fPatcher= new WorkspacePatcher();
+		patchReadIn = false;
 		setTarget(Utilities.getFirstResource(selection));
 
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
@@ -64,6 +85,86 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			setDialogSettings(section);
 		}
 	}
+
+
+	public PatchWizard(IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration, CompareConfiguration hunkMergeConfiguration, String patchWizardTitle, ImageDescriptor patchWizardImage) {
+		
+		if (patchWizardImage != null)
+			setDefaultPageImageDescriptor(patchWizardImage);
+		else
+			setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png")); //$NON-NLS-1$
+		
+			
+		if (patchWizardTitle != null)
+			setWindowTitle(patchWizardTitle);
+		else
+			setWindowTitle(PatchMessages.PatchWizard_title);
+
+		this.patch = patch;
+		this.previewPatchPageConfiguration = previewPatchConfiguration;
+		this.hunkMergeConfiguration = hunkMergeConfiguration;
+		
+		fPatcher= new WorkspacePatcher();
+		patchReadIn = false;
+		setTarget(target);
+		
+		//make sure that the reader always get closed
+		Reader reader = null;
+		try{
+			if (patch != null){
+				reader = createPatchReader(patch);
+				if (reader != null){
+					readInPatch(reader);
+				}
+			}
+		} finally {
+			if (reader != null){
+				try {
+					reader.close();
+				} catch (IOException e) { //ignored
+				}
+			}
+			IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
+			IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
+			if (section == null) {
+				fHasNewDialogSettings= true;
+			} else {
+				fHasNewDialogSettings= false;
+				setDialogSettings(section);
+			}
+		}
+	}
+
+	protected void readInPatch(Reader reader) {
+		if (reader != null) {
+			try {
+				fPatcher.parse(new BufferedReader(reader));
+				patchReadIn=true;
+			} catch (IOException ex) {
+				MessageDialog.openError(null,
+					PatchMessages.InputPatchPage_PatchErrorDialog_title, 
+					PatchMessages.InputPatchPage_ParseError_message); 
+			}
+		}
+	}
+
+
+	private Reader createPatchReader(IStorage file) {
+		String patchFilePath= file.getFullPath().toString();
+		Reader reader = null;
+		if (patchFilePath != null) {
+			try {
+				reader= new FileReader(patchFilePath);
+			} catch (FileNotFoundException ex) {
+				MessageDialog.openError(null,
+					PatchMessages.InputPatchPage_PatchErrorDialog_title,	
+					PatchMessages.InputPatchPage_PatchFileNotFound_message); 
+			}
+		}
+		
+		return reader;
+	}
+
 
 	WorkspacePatcher getPatcher() {
 		return fPatcher;
@@ -77,20 +178,25 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		fPatcher.setTarget(target);
 	}
 	
+	
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
 	public void addPages() {
-		super.addPages();
-		
-		addPage(fPatchWizardPage= new InputPatchPage(this));
-		addPage(new PatchTargetPage(this));
-		if (System.getProperty("oldPatch") != null) //$NON-NLS-1$
-			addPage(new PreviewPatchPage(this));
-		else{ 
-			addPage(new PreviewPatchPage2(this));
-			addPage(new HunkMergePage(this));
-		}
+		addPage(fPatchWizardPage = new InputPatchPage(this));
+		addPage(fPatchTargetPage = new PatchTargetPage(this));
+
+		if (previewPatchPageConfiguration != null)
+			fPreviewPage2 = new PreviewPatchPage2(this, previewPatchPageConfiguration);
+		else
+			fPreviewPage2 = new PreviewPatchPage2(this);
+		addPage(fPreviewPage2);
+
+		if (hunkMergeConfiguration != null)
+			fHunkeMergePage = new HunkMergePage(this, previewPatchPageConfiguration);
+		else
+			fHunkeMergePage = new HunkMergePage(this);
+		addPage(fHunkeMergePage);
 	}
 	
 	/* (non-Javadoc)
@@ -125,12 +231,21 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			}
 		}
 		
-		fPatcher.setName(fPatchWizardPage.getPatchName());
-
-		// make sure that the patch has been read
-		if (!fPatchWizardPage.isPatchRead())
-			fPatchWizardPage.readInPatch();
-
+		
+		if (fPatchWizardPage != null){
+			fPatcher.setName(fPatchWizardPage.getPatchName());
+			// make sure that the patch has been read
+			if (!fPatchWizardPage.isPatchRead())
+				fPatchWizardPage.readInPatch();
+		} else {
+			//either we have a patch from the patch input page or one has
+			//been specified; double check this
+			Assert.isNotNull(patch);
+			fPatcher.setName(patch.getFullPath().toString());
+			//make sure that the patch has been read in
+			Assert.isTrue(patchReadIn);
+		}
+		
 		try {
 			// create scheduling rule based on the type of patch - single or workspace
 			ISchedulingRule scheduleRule = null;
@@ -170,7 +285,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			setDialogSettings(section);
 		}
 
-		fPatchWizardPage.saveWidgetValues();
+		if (fPatchWizardPage != null)
+			fPatchWizardPage.saveWidgetValues();
 			//fPreviewPatchPage.saveWidgetValues();
 		return true;
 	}
@@ -193,4 +309,29 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	public void showPage(IWizardPage page) {
 		fDialog.showPage(page);
 	}
+	
+	public IWizardPage getNextPage(IWizardPage page) {
+		//no patch has been read in yet, input patch page
+		if (!patchReadIn)
+			return fPatchWizardPage;
+
+		//Check to see if we're already on the patch target page and if
+		//a target has been set - if it has return the next page in sequence (the preview patch page)
+		if (page instanceof PatchTargetPage && getTarget() != null) {
+			return super.getNextPage(page);
+		} else if (page instanceof InputPatchPage && !fPatcher.isWorkspacePatch()) {
+			//Check to see if we need a target
+			return fPatchTargetPage;
+		}
+		return super.getNextPage(page);
+	}
+
+	/**
+	 * Used to report that the patch has
+	 * 
+	 */
+	protected void patchReadIn() {
+		patchReadIn = true;
+	}
+	
 }

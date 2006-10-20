@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.internal.CompareUIPlugin;
@@ -63,7 +64,8 @@ public class PreviewPatchPage2 extends WizardPage {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 	private PatchWizard fPatchWizard;
-	private PreviewPatchPageInput patcherCompareEditorInput = new PreviewPatchPageInput();
+	private PreviewPatchPageInput patcherCompareEditorInput;
+	private CompareConfiguration previewPatchPageConfiguration;
 	
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
@@ -212,12 +214,24 @@ public class PreviewPatchPage2 extends WizardPage {
 		fPatchWizard= pw;		
 	}
 		
+	public PreviewPatchPage2(PatchWizard wizard, CompareConfiguration previewPatchPageConfiguration) {
+		this(wizard);
+		this.previewPatchPageConfiguration = previewPatchPageConfiguration;
+	}
+
 	public void createControl(Composite parent) {
 
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		//if a compare configuration has been passed make sure 
+		if (previewPatchPageConfiguration != null){
+			patcherCompareEditorInput = new PreviewPatchPageInput(previewPatchPageConfiguration);
+		} else {
+			patcherCompareEditorInput = new PreviewPatchPageInput();
+		}
+			
 		initializeDialogUnits(parent);
 		
 		buildPatchOptionsGroup(composite);

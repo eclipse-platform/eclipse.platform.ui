@@ -263,6 +263,8 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			if (reader != null) {
 				try {
 					patcher.parse(new BufferedReader(reader));
+					//report back to the patch wizard that the patch has been read in
+					fPatchWizard.patchReadIn();
 					fPatchRead=true;
 				} catch (IOException ex) {
 					MessageDialog.openError(null,

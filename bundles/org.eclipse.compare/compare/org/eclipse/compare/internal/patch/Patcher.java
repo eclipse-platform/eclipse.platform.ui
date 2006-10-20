@@ -39,7 +39,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -1141,6 +1140,7 @@ public class Patcher {
 	public void setTarget(IResource target) {
 		fTarget= target;
 	}
+	
 
 	/**
 	 * Iterates through all of the resources contained in the Patch Wizard target

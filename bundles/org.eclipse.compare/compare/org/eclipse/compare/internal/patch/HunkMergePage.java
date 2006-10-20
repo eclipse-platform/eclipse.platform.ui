@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
@@ -27,7 +28,8 @@ public class HunkMergePage extends WizardPage implements IContentChangeListener 
 	protected final static String HUNKMERGEPAGE_NAME = "HunkMergePage"; //$NON-NLS-1$
 
 	private HunkMergePageInput hunkMergeInput = new HunkMergePageInput();
-
+	private CompareConfiguration hunkMergePageConfiguration;
+	
 	PatchWizard fPatchWizard;
 
 	/*
@@ -44,7 +46,11 @@ public class HunkMergePage extends WizardPage implements IContentChangeListener 
 		super(HUNKMERGEPAGE_NAME, PatchMessages.HunkMergePage_PageTitle, null);
 		setDescription(PatchMessages.HunkMergePage_Info);
 		fPatchWizard = pw;
-
+	}
+	
+	public HunkMergePage(PatchWizard wizard, CompareConfiguration hunkMergePageConfiguration) {
+		this(wizard);
+		this.hunkMergePageConfiguration = hunkMergePageConfiguration;
 	}
 
 	public void createControl(Composite parent) {
@@ -53,6 +59,14 @@ public class HunkMergePage extends WizardPage implements IContentChangeListener 
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+		//if a compare configuration has been passed make sure 
+		if (hunkMergePageConfiguration != null){
+			hunkMergeInput = new HunkMergePageInput(hunkMergePageConfiguration);
+		} else {
+			hunkMergeInput = new HunkMergePageInput();
+		}
+			
+		
 		initializeDialogUnits(parent);
 
 		buildPatchOptionsGroup(composite);

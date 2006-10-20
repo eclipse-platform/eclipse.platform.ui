@@ -13,6 +13,14 @@ public class HunkMergePageInput extends PatcherCompareEditorInput {
 
 	protected HunkMergePage hunkMergePage;
 
+	public HunkMergePageInput(){
+		super();
+	}
+	
+	public HunkMergePageInput(CompareConfiguration config){
+		super(config);
+	}
+	
 	public Viewer createDiffViewer(Composite parent) {
 		this.viewer = new DiffTreeViewer(parent, getCompareConfiguration());
 		return viewer;
@@ -43,10 +51,19 @@ public class HunkMergePageInput extends PatcherCompareEditorInput {
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
-		String leftLabel = PatchMessages.HunkMergePageInput_WorkspaceCopy;
-		cc.setLeftLabel(leftLabel);
-		String rightLabel = PatchMessages.HunkMergePageInput_OrphanedHunk;
-		cc.setRightLabel(rightLabel);
+		
+		if (config != null){
+			cc.setLeftLabel(config.getLeftLabel(config));
+			cc.setLeftImage(config.getLeftImage(config));
+			cc.setRightLabel(config.getRightLabel(config));
+			cc.setRightImage(config.getRightImage(config));
+		} else {
+			String leftLabel = PatchMessages.HunkMergePageInput_WorkspaceCopy;
+			cc.setLeftLabel(leftLabel);
+			String rightLabel = PatchMessages.HunkMergePageInput_OrphanedHunk;
+			cc.setRightLabel(rightLabel);
+		}
+		
 	}
 
 	protected void updateEnablements() {

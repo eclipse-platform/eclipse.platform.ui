@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
@@ -22,6 +23,14 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 
 	private boolean containsHunkErrors = false;
 
+	public PreviewPatchPageInput(){
+		super();
+	}
+	
+	public PreviewPatchPageInput(CompareConfiguration config){
+		super(config);
+	}
+	
 	protected void updateTree(WorkspacePatcher patcher) {
 		if (viewer == null)
 			return;

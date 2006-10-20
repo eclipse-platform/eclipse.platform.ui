@@ -135,6 +135,8 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	protected HashMap nodesToDiffs;
 	protected HashMap contributedActions;
 	
+	protected CompareConfiguration config;
+	
 	public PatcherCompareEditorInput() {
 		super(new CompareConfiguration());
 		root = new DiffNode(Differencer.NO_CHANGE) {
@@ -143,6 +145,17 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 			}
 		};
 	}
+	
+	/**
+	 * Creates a new PatchCompareEditorInput and makes use of the passed in CompareConfiguration
+	 * to configure the UI elements.
+	 * @param config
+	 */
+	public PatcherCompareEditorInput(CompareConfiguration config) {
+		this();
+		this.config = config;
+	}
+
 
 	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		initLabels();
@@ -153,10 +166,18 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 		CompareConfiguration cc = getCompareConfiguration();
 		cc.setLeftEditable(false);
 		cc.setRightEditable(false);
-		String leftLabel = PatchMessages.PatcherCompareEditorInput_LocalCopy;
-		cc.setLeftLabel(leftLabel);
-		String rightLabel = PatchMessages.PatcherCompareEditorInput_AfterPatch;
-		cc.setRightLabel(rightLabel);
+		
+		if (config != null){
+			cc.setLeftLabel(config.getLeftLabel(config));
+			cc.setLeftImage(config.getLeftImage(config));
+			cc.setRightLabel(config.getRightLabel(config));
+			cc.setRightImage(config.getRightImage(config));
+		} else {
+			String leftLabel = PatchMessages.PatcherCompareEditorInput_LocalCopy;
+			cc.setLeftLabel(leftLabel);
+			String rightLabel = PatchMessages.PatcherCompareEditorInput_AfterPatch;
+			cc.setRightLabel(rightLabel);
+		}
 	}
 
 	public void updateInput(WorkspacePatcher patcher) {
