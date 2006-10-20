@@ -39,6 +39,11 @@ public class PatternFilter extends ViewerFilter {
 	 */
     private Map cache = new HashMap();
     
+    /*
+     * Maps parent elements to TRUE or FALSE
+     */
+    private Map foundAnyCache = new HashMap();
+    
 	/**
 	 * Whether to include a leading wildcard for all provided patterns.  A
 	 * trailing wildcard is always included.
@@ -49,6 +54,8 @@ public class PatternFilter extends ViewerFilter {
 	 * The string pattern matcher used for this pattern filter.  
 	 */
     private StringMatcher matcher;
+    
+    private static Object[] EMPTY = new Object[0];
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
@@ -60,12 +67,46 @@ public class PatternFilter extends ViewerFilter {
 
         Object[] filtered = (Object[]) cache.get(parent);
         if (filtered == null) {
-            filtered = super.filter(viewer, parent, elements);
+        	Boolean foundAny = (Boolean) foundAnyCache.get(parent);
+        	if (foundAny != null && !foundAny.booleanValue()) {
+        		filtered = EMPTY;
+        	} else {
+        		filtered = super.filter(viewer, parent, elements);
+        	}
             cache.put(parent, filtered);
         }
         return filtered;
     }
 
+    /**
+     * Returns true if any of the elements makes it through the filter. 
+     * @param viewer
+     * @param parent
+     * @param elements the elements (must not be an empty array)
+     * @return true if any of the elements makes it through the filter.
+     */
+    private boolean isAnyVisible(Viewer viewer, Object parent, Object[] elements) {
+    	if (matcher == null) {
+    		return true;
+    	}
+    	
+    	Object[] filtered = (Object[]) cache.get(parent);
+    	if (filtered != null) {
+    		return filtered.length > 0;
+    	}
+    	Boolean foundAny = (Boolean) foundAnyCache.get(parent);
+    	if (foundAny == null) {
+    		boolean elementFound = false;
+    		for (int i = 0; i < elements.length && !elementFound; i++) {
+				Object element = elements[i];
+	    		elementFound = isElementVisible(viewer, element);
+			}
+    		foundAny = Boolean.valueOf(elementFound);
+    		foundAnyCache.put(parent, foundAny);
+    	}
+    	return foundAny.booleanValue();
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ViewerFilter#select(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
      */
@@ -94,6 +135,7 @@ public class PatternFilter extends ViewerFilter {
      */
     public void setPattern(String patternString) {
         cache.clear();
+        foundAnyCache.clear();
         if (patternString == null || patternString.equals("")) { //$NON-NLS-1$
 			matcher = null;
 		} else {
@@ -166,7 +208,7 @@ public class PatternFilter extends ViewerFilter {
                 .getContentProvider()).getChildren(element);
 
         if ((children != null) && (children.length > 0)) {
-			return filter(viewer, element, children).length > 0;
+			return isAnyVisible(viewer, element, children);
 		}	
         return false;
     }
