@@ -60,8 +60,6 @@ public class SearchPattern {
 	 * <code>NullPointerException</code> type.</li>
 	 * </ul>
 	 * 
-	 * See {@link #camelCaseMatch(String, String)} for a detailed explanation of
-	 * Camel Case matching.
 	 * 
 	 * <br>
 	 * Can be combined to {@link #RULE_PREFIX_MATCH} match rule. For example,
