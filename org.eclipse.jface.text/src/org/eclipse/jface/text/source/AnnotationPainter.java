@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -45,6 +44,7 @@ import org.eclipse.jface.text.ITextInputListener;
 import org.eclipse.jface.text.ITextPresentationListener;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;

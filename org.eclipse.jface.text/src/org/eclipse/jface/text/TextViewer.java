@@ -68,7 +68,6 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
 import org.eclipse.jface.text.projection.ChildDocument;
 import org.eclipse.jface.text.projection.ChildDocumentManager;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;

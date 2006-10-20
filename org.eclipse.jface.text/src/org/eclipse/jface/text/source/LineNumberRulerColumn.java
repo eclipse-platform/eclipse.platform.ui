@@ -42,9 +42,9 @@ import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.TextEvent;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 /**
  * A vertical ruler column displaying line numbers.
@@ -625,8 +625,9 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 *             StyledText supports variable line heights
 	 */
 	protected int getVisibleLinesInViewport() {
-		return JFaceTextUtil.getVisibleLinesInViewport(fCachedTextWidget);
+		return getVisibleLinesInViewport(fCachedTextWidget);
 	}
+	
 
 	/**
 	 * Returns <code>true</code> if the viewport displays the entire viewer contents, i.e. the
@@ -792,4 +793,27 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	protected CompositeRuler getParentRuler() {
 		return fParentRuler;
 	}
+	
+	
+	/**
+	 * Returns the number of lines in the view port.
+	 * 
+	 * @param textWidget 
+	 * @return the number of lines visible in the view port <code>-1</code> if there's no client area
+	 * @deprecated this method should not be used - it relies on the widget using a uniform line height
+	 */
+	static int getVisibleLinesInViewport(StyledText textWidget) {
+		if (textWidget != null) {
+			Rectangle clArea= textWidget.getClientArea();
+			if (!clArea.isEmpty()) {
+				int firstPixel= 0;
+				int lastPixel= clArea.height - 1; // XXX what about margins? don't take trims as they include scrollbars
+				int first= JFaceTextUtil.getLineIndex(textWidget, firstPixel);
+				int last= JFaceTextUtil.getLineIndex(textWidget, lastPixel);
+				return last - first;
+			}
+		}
+		return -1;
+	}
+	
 }

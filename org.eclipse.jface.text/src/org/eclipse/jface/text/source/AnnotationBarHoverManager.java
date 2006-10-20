@@ -37,8 +37,6 @@ import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
-
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.AbstractInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;
@@ -47,6 +45,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 
@@ -559,7 +558,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 	 * @return the number of the currently visible lines
 	 */
 	private int computeNumberOfVisibleLines() {
-		return JFaceTextUtil.getVisibleLinesInViewport(fSourceViewer.getTextWidget());
+		// Hack to reduce amount of copied code.
+		return LineNumberRulerColumn.getVisibleLinesInViewport(fSourceViewer.getTextWidget());
 	}
 
 	/**

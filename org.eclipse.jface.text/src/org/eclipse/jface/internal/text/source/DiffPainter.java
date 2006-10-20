@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -37,7 +38,6 @@ import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISharedTextColors;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
 
 /**
  * A strategy for painting the quick diff colors onto the vertical ruler column. It also manages the

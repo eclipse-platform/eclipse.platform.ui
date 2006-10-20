@@ -32,6 +32,10 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.internal.text.revisions.RevisionPainter;
+import org.eclipse.jface.internal.text.source.DiffPainter;
+import org.eclipse.jface.viewers.ISelectionProvider;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -39,14 +43,10 @@ import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.RevisionInformation;
-
-import org.eclipse.jface.internal.text.JFaceTextUtil;
-import org.eclipse.jface.internal.text.revisions.RevisionPainter;
-import org.eclipse.jface.internal.text.source.DiffPainter;
-import org.eclipse.jface.viewers.ISelectionProvider;
 
 /**
  * A vertical ruler column displaying line numbers and serving as a UI for quick diff.
@@ -293,7 +293,8 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	 *             StyledText supports variable line heights
 	 */
 	protected int getVisibleLinesInViewport() {
-		return JFaceTextUtil.getVisibleLinesInViewport(fCachedTextWidget);
+		// Hack to reduce amount of copied code.
+		return LineNumberRulerColumn.getVisibleLinesInViewport(fCachedTextWidget);
 	}
 
 	/**

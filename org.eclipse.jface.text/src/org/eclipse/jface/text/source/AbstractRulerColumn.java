@@ -27,12 +27,12 @@ import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.Assert;
 
-import org.eclipse.jface.internal.text.JFaceTextUtil;
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.JFaceTextUtil;
 import org.eclipse.jface.text.TextEvent;
 
 
