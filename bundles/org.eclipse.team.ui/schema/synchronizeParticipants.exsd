@@ -16,7 +16,7 @@ A participant is a generic component that provides access to creating a page and
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="participant"/>
+            <element ref="participant" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
