@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.jface.text,
  org.eclipse.test.performance,
  org.eclipse.core.tests.harness,
- org.eclipse.ui.tests.harness
+ org.eclipse.ui.tests.harness,
+ org.eclipse.core.filesystem
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.ui.tests.TestPlugin
