@@ -58,6 +58,13 @@ import org.eclipse.ui.internal.util.Util;
  */
 public class AdvancedValidationUserApprover implements IOperationApprover,
 		IOperationApprover2 {
+	
+    /**
+     * Static to prevent opening of error dialogs for automated testing.
+     * 
+     * @since 3.3
+     */
+    public static boolean AUTOMATED_MODE = false;
 
 	private IUndoContext context;
 
@@ -279,6 +286,15 @@ public class AdvancedValidationUserApprover implements IOperationApprover,
 	 */
 	private IStatus reportAndInterpretStatus(IStatus status, IAdaptable uiInfo,
 			IUndoableOperation operation, int doing) {
+		// Nothing to report if we are running automated tests.  We will treat
+		// warnings as if they were authorized by the user.
+		if (AUTOMATED_MODE) {
+			if (status.getSeverity() == IStatus.WARNING) {
+				return Status.OK_STATUS;
+			}
+			return status;
+		}
+		
 		// CANCEL status is assumed to be initiated by the user, so there
 		// is nothing to report.
 		if (status.getSeverity() == IStatus.CANCEL) {
