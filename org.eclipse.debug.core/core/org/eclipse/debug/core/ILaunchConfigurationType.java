@@ -133,10 +133,10 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException;
 	
 	/**
-	 * Returns the launch delegates capable of launching in the specified modes.
+	 * Returns the delegates capable of launching in the specified modes.
 	 * 
 	 * @param modes set of launch modes
-	 * @return the <code>ILaunchConfigurationDelegate</code>s capable of launching
+	 * @return the <code>ILaunchDelegateProxy</code>s capable of launching
 	 * 		in the specified modes or an empty collection if none
 	 * @throws CoreException
 	 * @since 3.3
@@ -148,7 +148,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public ILaunchConfigurationDelegate[] getDelegates(Set modes) throws CoreException;
+	public ILaunchDelegateProxy[] getDelegates(Set modes) throws CoreException;
 	
 	/**
 	 * Returns a collection of all supported launch mode combinations for 
@@ -312,4 +312,5 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * </p>
 	 */
 	public String getImageDescriptorPath();
+
 }

@@ -31,6 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegateProxy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -128,9 +129,9 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
 		Set modes = new HashSet();
 		modes.add(mode);
-		ILaunchConfigurationDelegate[] delegates = getDelegates(modes);
+		ILaunchDelegateProxy[] delegates = getDelegates(modes);
 		if (delegates.length > 0) {
-			return delegates[0];
+			return delegates[0].getDelegate();
 		}
 		IStatus status = null;
 		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(mode);
@@ -146,7 +147,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		throw new CoreException(status);
 	}
 	
-	public ILaunchConfigurationDelegate[] getDelegates(Set modes) throws CoreException {
+	public ILaunchDelegateProxy[] getDelegates(Set modes) throws CoreException {
 		initializeDelegates();
 		Object[] theModes = modes.toArray();
 		for (int i = 0; i < theModes.length; i++) {
@@ -160,11 +161,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		if (delegates == null) {
 			delegates = Collections.EMPTY_LIST;
 		}
-		ILaunchConfigurationDelegate[] result = new ILaunchConfigurationDelegate[delegates.size()];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = ((LaunchDelegate)delegates.get(i)).getDelegate();
-		}
-		return result;
+		return (ILaunchDelegateProxy[]) delegates.toArray(new ILaunchDelegateProxy[delegates.size()]);
 	}
 	
 	private synchronized void initializeDelegates() {
@@ -394,7 +391,12 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public Set[] getSupportedModeCombinations() {
 		initializeDelegates();
 		Set combinations = fDelegates.keySet();
-		return (Set[])combinations.toArray(new Set[combinations.size()]);
+		Set[] sets = (Set[])combinations.toArray(new Set[combinations.size()]);
+		Set[] copy = new Set[sets.length];
+		for (int i = 0; i < copy.length; i++) {
+			copy[i] = new HashSet(sets[i]);
+		}
+		return copy;
 	}
 
 	/* (non-Javadoc)
@@ -404,5 +406,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		initializeDelegates();
 		return fDelegates.containsKey(modes);
 	}
+
 }
 

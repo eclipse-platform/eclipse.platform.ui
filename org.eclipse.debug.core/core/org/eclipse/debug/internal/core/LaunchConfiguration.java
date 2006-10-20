@@ -45,6 +45,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegateProxy;
+import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
@@ -600,13 +602,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
     	Set modes = getModes();
     	modes.add(mode);
-    	ILaunchConfigurationDelegate[] delegates = getType().getDelegates(modes);
+    	ILaunchDelegateProxy[] delegates = getType().getDelegates(modes);
     	ILaunchConfigurationDelegate delegate = null;
     	if (delegates.length == 1) {
-    		delegate = delegates[0];
+    		delegate = delegates[0].getDelegate();
     	} else if (delegates.length == 0) {
-    		//IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-    		//handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
     		// no delegates TODO:
     		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
     				DebugPlugin.INTERNAL_ERROR, "No launch delegate", null); //$NON-NLS-1$

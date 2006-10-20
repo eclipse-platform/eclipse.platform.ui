@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
-import org.eclipse.debug.internal.core.LaunchDelegate;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -49,15 +53,14 @@ import org.eclipse.ui.dialogs.SelectionDialog;
 public class SelectLaunchModesDialog extends SelectionDialog {
 
 	/**
-	 * Builds labels for list control of the form: Mode + (no options) | [options list]
+	 * Builds labels for list control
 	 */
 	class OptionsLabelProvider implements ILabelProvider {
 		public Image getImage(Object element) {return null;}
 		public String getText(Object element) {
-			LaunchDelegate del = (LaunchDelegate) element;
-			Set set = del.getOptions();
-			// TODO: illegal NLS
-			return del.getName() + LaunchConfigurationsMessages.SelectLaunchOptionsDialog_5 + fMode + (set.isEmpty() ? LaunchConfigurationsMessages.SelectLaunchOptionsDialog_0 : LaunchConfigurationsMessages.SelectLaunchOptionsDialog_1 + set);
+			Set modes = (Set) element;
+			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
+			return names.toString();
 		}
 		public void addListener(ILabelProviderListener listener) {}
 		public void dispose() {}
@@ -67,11 +70,9 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	
 	private static final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_OPTIONS_DIALOG"; //$NON-NLS-1$
 	
-	private LaunchDelegate[] fDelegates = null;
-	private String fMode = null;
-	private Object[] fResult = null;
 	private CheckboxTableViewer fTableViewer = null;
 	private Table fTable  = null;
+	private List fValidCombinations;
 	
 	/**
 	 * Constructor
@@ -79,13 +80,19 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	 * @param message the message for the dialog
 	 * @param options the listing of arrays of options (each entry in the list must be an <code>Set</code> of options)
 	 */
-	public SelectLaunchModesDialog(Shell parentShell, String mode, LaunchDelegate[] delegates) {
+	public SelectLaunchModesDialog(Shell parentShell, String mode, ILaunchConfiguration configuration) throws CoreException {
 		super(parentShell);
 		super.setMessage(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_2);
 		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fDelegates = delegates;
-		fMode = mode;
+		Set[] combinations = configuration.getType().getSupportedModeCombinations();
+		fValidCombinations = new ArrayList();
+		for (int i = 0; i < combinations.length; i++) {
+			Set set = combinations[i];
+			if (set.contains(mode)) {
+				fValidCombinations.add(set);
+			}
+		}
 	}
 	
 	/**
@@ -100,7 +107,7 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 		fTableViewer = new CheckboxTableViewer(fTable);
 		fTableViewer.setLabelProvider(new OptionsLabelProvider());
 		fTableViewer.setContentProvider(new ArrayContentProvider());
-		fTableViewer.setInput(fDelegates);
+		fTableViewer.setInput(fValidCombinations.toArray());
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fTableViewer.setAllChecked(false);
@@ -111,13 +118,6 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_OPTIONS_DIALOG);
 		return comp;
 	}
-	
-	/**
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
-	 */
-	public Object[] getResult() {
-		return fResult;
-	}
 
 	/**
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
@@ -125,7 +125,7 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	protected void okPressed() {
 		Object[] o =  fTableViewer.getCheckedElements();
 		if(o.length > 0) {
-			fResult = ((LaunchDelegate)o[0]).getOptions().toArray();
+			setResult(Arrays.asList(o));
 		}
 		super.okPressed();
 	}

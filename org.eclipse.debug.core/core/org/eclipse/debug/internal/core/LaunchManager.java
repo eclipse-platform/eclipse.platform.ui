@@ -1352,7 +1352,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		LaunchDelegate ld = null;
 		for(Iterator iter = fLaunchDelegates.keySet().iterator(); iter.hasNext();) {
 			ld = (LaunchDelegate) fLaunchDelegates.get(iter.next());
-			if(ld.getLaunchConfigurationType().equals(typeid)) {
+			if(ld.getLaunchConfigurationTypeId().equals(typeid)) {
 				list.add(ld);
 			}
 		}
@@ -1379,7 +1379,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			LaunchDelegate delegate = null;
 			for(int i = 0; i < infos.length; i++) {
 				delegate = new LaunchDelegate(infos[i]);
-				fLaunchDelegates.put(delegate.getIdentifier(), delegate);
+				fLaunchDelegates.put(delegate.getId(), delegate);
 			}
 			//get all delegates from launch configuration type contributions
 			extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPES);
@@ -1388,7 +1388,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				//must check to see if delegate is provided in contribution
 				if(infos[i].getAttribute(IConfigurationElementConstants.DELEGATE) != null) {
 					delegate = new LaunchDelegate(infos[i]);
-					fLaunchDelegates.put(delegate.getIdentifier(), delegate);
+					fLaunchDelegates.put(delegate.getId(), delegate);
 				}
 			}
 		}

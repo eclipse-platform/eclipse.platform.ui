@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchDelegateProxy;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 import com.ibm.icu.text.MessageFormat;
@@ -46,7 +47,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
-public final class LaunchDelegate {
+public final class LaunchDelegate implements ILaunchDelegateProxy {
 	
 	/**
 	 * The configuration element for this delegate
@@ -71,26 +72,19 @@ public final class LaunchDelegate {
 		fElement = element;
 	}
 	
-	/**
-	 * Returns the actual instance of the launch delegate specified 
-	 * @return the launch delegate
-	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if(fDelegate == null) {
 			Object obj = fElement.createExecutableExtension(IConfigurationElementConstants.DELEGATE);
 			if(obj instanceof ILaunchConfigurationDelegate) {
 				fDelegate = (ILaunchConfigurationDelegate)obj;
 			} else {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getIdentifier()}), null));
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_Launch_delegate_for__0__does_not_implement_required_interface_ILaunchConfigurationDelegate__1, new String[]{getId()}), null));
 			}
 		}
 		return fDelegate;
 	}
 
-	/**
-	 * @return returns the unique id of the delegate
-	 */
-	public String getIdentifier() {
+	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
 
@@ -98,7 +92,7 @@ public final class LaunchDelegate {
 	 * Returns the id of the associated <code>ILaunchConfigurationType</code> or <code>null</code> if none provided
 	 * @return the id of the <code>ILaunchConfigurationType</code> associated with this delegate
 	 */
-	public String getLaunchConfigurationType() {
+	public String getLaunchConfigurationTypeId() {
 		if(fType == null) {
 			//fall back to single association if no appliesTo
 			fType = fElement.getAttribute(IConfigurationElementConstants.TYPE);
@@ -110,11 +104,6 @@ public final class LaunchDelegate {
 		return fType;
 	}
 
-	/**
-	 * Returns the set of options provided to by this delegate
-	 * @return the options associated with this delegate. If no options are specified an empty set is
-	 * returned, never <code>null</code>.
-	 */
 	public Set getOptions() {
 		if(fOptions == null) {
 			fOptions = new HashSet();
@@ -129,12 +118,6 @@ public final class LaunchDelegate {
 		return fOptions;
 	}
 	
-	/**
-	 * This method is provided as a backward compatibility measure to allow access to modes, if mode-based
-	 * launching is still being used.
-	 * 
-	 * @return a set of modes for this delegate or the empty set if none are found, never <code>null</code>.
-	 */
 	public Set getModes() {
 		if (fModes == null) {
 			fModes = new HashSet();
@@ -155,6 +138,15 @@ public final class LaunchDelegate {
 	 */
 	public String getName() {
 		return fElement.getAttribute(IConfigurationElementConstants.NAME);
+	}
+	
+	/**
+	 * Returns the contributor name of this delegate (plug-in name).
+	 * 
+	 * @return contributor name
+	 */
+	public String getContributorName() {
+		return fElement.getContributor().getName();
 	}
 	
 	/**

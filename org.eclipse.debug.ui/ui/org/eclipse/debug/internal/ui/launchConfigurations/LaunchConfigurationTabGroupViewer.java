@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -295,22 +293,23 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		fOptionsLink.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				//collect the options available
-				SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
-						getLaunchConfigurationDialog().getMode(), 
-						((LaunchManager)DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(fTabType.getIdentifier()));
-				if(sld.open() == IDialogConstants.OK_ID) {
-					//set the options to the config
-					Object[] res = sld.getResult();
-					if(res != null) {
-						HashSet list = new HashSet();
-						for(int i = 0; i < res.length; i++) {
-							list.add(res[i]);
+				try {
+					SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
+							getLaunchConfigurationDialog().getMode(), getWorkingCopy());
+					if(sld.open() == IDialogConstants.OK_ID) {
+						//set the options to the config
+						Object[] res = sld.getResult();
+						if(res != null) {
+							Set modes = (Set) res[0];
+							modes.remove(getLaunchConfigurationDialog().getMode());
+							ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
+							wc.setModes(modes);
+							refresh();
+							refreshStatus();
 						}
-						ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
-						wc.setModes(list);
-						refresh();
-						refreshStatus();
 					}
+				} catch (CoreException ex) {
+					// TODO:
 				}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
