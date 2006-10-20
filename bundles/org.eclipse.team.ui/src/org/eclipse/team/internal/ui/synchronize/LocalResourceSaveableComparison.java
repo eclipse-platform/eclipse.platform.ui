@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -146,6 +147,8 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 */
 	private boolean checkForUpdateConflicts() {
 		if(hasSaveConflict()) {
+			if (Utilities.RUNNING_TESTS)
+				return !Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE;
 			final MessageDialog dialog = 
 				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
 						TeamUIMessages.SyncInfoCompareInput_0,  
