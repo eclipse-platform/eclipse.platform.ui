@@ -103,7 +103,9 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 			if (te.isConnected()) {
 				te.saveDocument(true, monitor);
-				// Saving the document should fire the necessary updates
+				// Saving the document should update the dirty state
+				// but we still need to fire an input change
+				fireInputChange();
 				return;
 			}
 		}

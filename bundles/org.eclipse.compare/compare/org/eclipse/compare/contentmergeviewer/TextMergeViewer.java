@@ -269,6 +269,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ContributorInfo fLeftContributor;
 	private ContributorInfo fRightContributor;
 	private ContributorInfo fAncestorContributor;
+	private boolean isRefreshing;
+	private int fSynchronziedScrollPosition;
 
 	class ContributorInfo implements IElementStateListener {
 		private final TextMergeViewer fViewer;
@@ -278,6 +280,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		private IDocumentProvider fDocumentProvider;
 		private IEditorInput fDocumentKey;
 		private ISelection fSelection;
+		private int fTopIndex = -1;
 		
 		public ContributorInfo(TextMergeViewer viewer, Object element, char leg) {
 			fViewer = viewer;
@@ -659,19 +662,31 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return fElement;
 		}
 
-		public void cacheSelection(ISelection selection) {
-			this.fSelection = selection;
+		public void cacheSelection(MergeSourceViewer viewer) {
+			if (viewer == null) {
+				this.fSelection = null;
+				this.fTopIndex = -1;
+			} else {
+				this.fSelection = viewer.getSelection();
+				this.fTopIndex = viewer.getTopIndex();
+			}
 		}
 
-		public void updateSelection(MergeSourceViewer viewer) {
+		public void updateSelection(MergeSourceViewer viewer, boolean includeScroll) {
 			if (fSelection != null)
 				viewer.setSelection(fSelection);
+			if (includeScroll && fTopIndex != -1) {
+				viewer.setTopIndex(fTopIndex);
+			}
 		}
 
 		public void transferContributorStateFrom(
 				ContributorInfo oldContributor) {
-			if (oldContributor != null)
+			if (oldContributor != null) {
 				fSelection = oldContributor.fSelection;
+				fTopIndex = oldContributor.fTopIndex;
+			}
+				
 		}
 	}
 	
@@ -1505,8 +1520,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			new Listener() {
 				public void handleEvent(Event e) {
 					int vpos= ((ScrollBar)e.widget).getSelection();
-					scrollVertical(vpos, vpos, vpos, null);
-					workaround65205();
+					synchronizedScrollVertical(vpos);
 				}
 			}
 		);
@@ -2209,10 +2223,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && getCompareConfiguration().getCalculateDiffs()) {
 			if (isRefreshing()) {
-				// TODO: need to consider synchronized scrolling?
-				fLeftContributor.updateSelection(fLeft);
-				fRightContributor.updateSelection(fRight);
-				fAncestorContributor.updateSelection(fAncestor);
+				fLeftContributor.updateSelection(fLeft, !fSynchronizedScrolling);
+				fRightContributor.updateSelection(fRight, !fSynchronizedScrolling);
+				fAncestorContributor.updateSelection(fAncestor, !fSynchronizedScrolling);
+				if (fSynchronizedScrolling && fSynchronziedScrollPosition != -1) {
+					synchronizedScrollVertical(fSynchronziedScrollPosition);
+				}
 			} else {
 				Diff selectDiff= null;
 				if (FIX_47640) {
@@ -2230,8 +2246,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 
 	private boolean isRefreshing() {
-		// TODO Auto-generated method stub
-		return false;
+		return isRefreshing;
 	}
 
 	private ContributorInfo createLegInfoFor(Object element, char leg) {
@@ -2416,10 +2431,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 	private void updateDirtyState(IEditorInput key,
 			IDocumentProvider documentProvider, char type) {
+		boolean dirty = documentProvider.canSaveDocument(key);
 		if (type == LEFT_CONTRIBUTOR)
-			setLeftDirty(documentProvider.canSaveDocument(key));
+			setLeftDirty(dirty);
 		else if (type == RIGHT_CONTRIBUTOR)
-			setRightDirty(documentProvider.canSaveDocument(key));
+			setRightDirty(dirty);
 	}
 
 	private Position getNewRange(char type, Object input) {
@@ -3523,17 +3539,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				else
 					clearStatus();
 			}
-// TODO
-//		} else if (key.equals(CompareConfiguration.REFRESHING_INPUT)) {
-//			if (event.getNewValue().equals(Boolean.TRUE)) {
-//				fLeftContributor.cacheSelection(fLeft.getSelection());
-//				fRightContributor.cacheSelection(fRight.getSelection());
-//				fAncestorContributor.cacheSelection(fAncestor.getSelection());
-//			} else {
-//				fLeftContributor.cacheSelection(null);
-//				fRightContributor.cacheSelection(null);
-//				fAncestorContributor.cacheSelection(null);
-//			}
+			
 		} else
 			super.propertyChange(event);
 	}
@@ -4810,4 +4816,36 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return null;
 	}
 	
+	protected void handleCompareInputChange(ICompareInput input) {
+		try {
+			beginRefresh();
+			super.handleCompareInputChange(input);
+		} finally {
+			endRefresh();
+		}
+	}
+
+	private void beginRefresh() {
+		isRefreshing = true;
+		fLeftContributor.cacheSelection(fLeft);
+		fRightContributor.cacheSelection(fRight);
+		fAncestorContributor.cacheSelection(fAncestor);
+		if (fSynchronizedScrolling) {
+			fSynchronziedScrollPosition = fVScrollBar.getSelection();
+		}
+		
+	}
+	
+	private void endRefresh() {
+		isRefreshing = false;
+		fLeftContributor.cacheSelection(null);
+		fRightContributor.cacheSelection(null);
+		fAncestorContributor.cacheSelection(null);
+		fSynchronziedScrollPosition = -1;
+	}
+
+	private void synchronizedScrollVertical(int vpos) {
+		scrollVertical(vpos, vpos, vpos, null);
+		workaround65205();
+	}
 }
