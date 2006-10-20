@@ -23,9 +23,9 @@ import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput;
+import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 
-public class CompareFileRevisionEditorInput extends LocalResourceCompareEditorInput {
+public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 
 	//constants for indicating which side contains the 
 	//current version of the resource

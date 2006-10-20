@@ -34,25 +34,22 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.services.IDisposable;
 
 /**
- * A compare editor input that makes use of {@link LocalResourceTypedElement} and
- * {@link LocalResourceSaveableComparison} in order to simplify the creation of
- * compare editors on a single file situated in the left pane. Furthermore, all
- * save operations do not buffer contents but instead write them to disk.
- * 
+ * A compare editor input that makes use of a {@link Saveable} to manage the save
+ * lifecycle of the editor input. If the element returned from 
+ * {@link #createFileElement(IFile)} is used as the left side of the compare input
+ * and the default saveable returned from {@link #createSaveable()} is used, then
+ * this compare input will provide the complete save lifecycle for the local file.
+ * <p>
+ * Clients may subclass this class.
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
+ * part of a work in progress. There is a guarantee neither that this API will
+ * work nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/Team team.
+ * </p>
  * @since 3.3
  */
-public abstract class LocalResourceCompareEditorInput extends CompareEditorInput implements ISaveablesSource {
-
-	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison {
-		public InternalResourceSaveableComparison(
-				ICompareInput input, CompareEditorInput editorInput) {
-			super(input, editorInput);
-		}
-
-		protected void fireInputChange() {
-			LocalResourceCompareEditorInput.this.fireInputChange();
-		}
-	}
+public abstract class SaveableCompareEditorInput extends CompareEditorInput implements ISaveablesSource {
 
 	private ICompareInputChangeListener compareInputChangeListener;
 	private final IWorkbenchPage page;
@@ -61,12 +58,26 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 	private IPropertyListener propertyListener;
 	
 	/**
-	 * Return a typed element that represents a local file.
+	 * Return a typed element that represents a local file. If the element
+	 * returned from this method is used as the left contributor of the compare
+	 * input for a {@link SaveableCompareEditorInput}, then the file will
+	 * be properly saved when the compare editor input or viewers are saved.
 	 * @param file the file
 	 * @return a typed element that represents a local file.
 	 */
 	public static ITypedElement createFileElement(IFile file) {
 		return new LocalResourceTypedElement(file);
+	}
+	
+	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison {
+		public InternalResourceSaveableComparison(
+				ICompareInput input, CompareEditorInput editorInput) {
+			super(input, editorInput);
+		}
+
+		protected void fireInputChange() {
+			SaveableCompareEditorInput.this.fireInputChange();
+		}
 	}
 	
 	/**
@@ -77,7 +88,7 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 	 * @param configuration the compare configuration 
 	 * @param page the workbench page that will contain the editor
 	 */
-	public LocalResourceCompareEditorInput(CompareConfiguration configuration, IWorkbenchPage page) {
+	public SaveableCompareEditorInput(CompareConfiguration configuration, IWorkbenchPage page) {
 		super(configuration);
 		this.page = page;
 	}
@@ -104,17 +115,18 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 			}
 		};
 		getCompareInput().addCompareInputChangeListener(compareInputChangeListener);
-		if (saveable instanceof SaveableComparison) {
+		if (getSaveable() instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			propertyListener = new IPropertyListener() {
-							public void propertyChanged(Object source, int propId) {
-								if (propId == SaveableComparison.PROP_DIRTY) {
-									setDirty(saveable.isDirty());
-								}
-							}
-						};
+				public void propertyChanged(Object source, int propId) {
+					if (propId == SaveableComparison.PROP_DIRTY) {
+						setDirty(saveable.isDirty());
+					}
+				}
+			};
 			scm.addPropertyListener(propertyListener);
 		}
+		setDirty(saveable.isDirty());
 	}
 	
 	/* (non-Javadoc)
@@ -141,12 +153,14 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 	 */
 	protected final Object prepareInput(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		final Object input = internalPrepareInput(monitor);
+		final ICompareInput input = internalPrepareInput(monitor);
+		setTitle(NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { input.getName() }));
 		return input;
 	}
 
 	/**
 	 * Method called from {@link #prepareInput(IProgressMonitor)} to obtain the input.
+	 * It's purpose is to ensure that the input is an instance of {@link ICompareInput}.
 	 * @param monitor a progress monitor
 	 * @return the compare input
 	 * @throws InvocationTargetException
@@ -156,8 +170,18 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 		throws InvocationTargetException, InterruptedException;
 	
 	/**
+	 * Return the compare input of this editor input.
+	 * @return the compare input of this editor input
+	 */
+	protected final ICompareInput getCompareInput() {
+		return (ICompareInput)getCompareResult();
+	}
+	
+	/**
 	 * Callback from the resource saveable that is invoked when the resource is
-	 * saved so that this input can fire a change event for its input.
+	 * saved so that this input can fire a change event for its input. Subclasses
+	 * only need this method if the left side of their compare input is
+	 * an element returned from {@link #createFileElement(IFile)}.
 	 */
 	protected abstract void fireInputChange();
 	
@@ -174,7 +198,7 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 		} else {
 			Runnable runnable = new Runnable() {
 				public void run() {
-					IEditorPart part = getPage().findEditor(LocalResourceCompareEditorInput.this);
+					IEditorPart part = getPage().findEditor(SaveableCompareEditorInput.this);
 					getPage().closeEditor(part, false);
 				}
 			};
@@ -201,7 +225,7 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 				final ICompareInputChangeListener listener = (ICompareInputChangeListener)allListeners[i];
 				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {
-						listener.compareInputChanged((ICompareInput)LocalResourceCompareEditorInput.this.getCompareResult());
+						listener.compareInputChanged((ICompareInput)SaveableCompareEditorInput.this.getCompareResult());
 					}
 					public void handleException(Throwable exception) {
 						// Logged by the safe runner
@@ -214,6 +238,9 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 	/**
 	 * Get the saveable that provides the save behavior for this compare editor input.
 	 * The {@link #createSaveable()} is called to create the saveable if it does not yet exist.
+	 * This method cannot be called until after the input is prepared (i.e. until after
+	 * the {@link #run(IProgressMonitor)} method is called which will in turn will invoke 
+	 * {@link #internalPrepareInput(IProgressMonitor)}.
 	 * @return saveable that provides the save behavior for this compare editor input.
 	 */
 	protected Saveable getSaveable() {
@@ -297,18 +324,6 @@ public abstract class LocalResourceCompareEditorInput extends CompareEditorInput
 			reg.put(ITeamUIImages.IMG_SYNC_VIEW, image);
 		}
 		return image;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
-	 */
-	public String getTitle() {
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { getCompareInput().getName() }); 
-	}
-	
-	private ICompareInput getCompareInput() {
-		return (ICompareInput)getCompareResult();
 	}
 
 	/*

@@ -61,7 +61,7 @@ import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
-import org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput;
+import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
@@ -1574,7 +1574,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				Object o = ss.getFirstElement();
 				if (o instanceof IFileRevision){
 					IFileRevision selectedFileRevision = (IFileRevision)o;
-					ITypedElement left = LocalResourceCompareEditorInput.createFileElement((IFile) file.getIResource());
+					ITypedElement left = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
 					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
 					DiffNode node = new DiffNode(left,right);
 					return node;
