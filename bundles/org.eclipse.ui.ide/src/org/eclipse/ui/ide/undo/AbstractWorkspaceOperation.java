@@ -15,7 +15,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
 import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.commands.operations.OperationStatus;
 import org.eclipse.core.resources.IResource;
@@ -421,8 +420,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 											getLabel()), factory.getDelta(),
 							modelProviderIds, true /* syncExec */);
 			if (!proceed) {
-				status = IOperationHistory.OPERATION_INVALID_STATUS;
-				markInvalid();
+				status = Status.CANCEL_STATUS;
 			}
 		}
 		return status;
@@ -483,8 +481,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 											getLabel()), factory.getDelta(),
 							modelProviderIds, true /* syncExec */);
 			if (!proceed) {
-				status = IOperationHistory.OPERATION_INVALID_STATUS;
-				markInvalid();
+				status = Status.CANCEL_STATUS;
 			}
 		}
 		return status;
@@ -545,8 +542,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 											getLabel()), factory.getDelta(),
 							modelProviderIds, true /* syncExec */);
 			if (!proceed) {
-				status = IOperationHistory.OPERATION_INVALID_STATUS;
-				markInvalid();
+				status = Status.CANCEL_STATUS;
 			}
 		}
 		return status;
@@ -707,22 +703,9 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 		return getExecuteSchedulingRule();
 	}
 
-	/**
-	 * Set the boolean that determines whether the computation of the receiver's
-	 * execution, undo, or redo status may consult the user. The default value
-	 * is <code>false</code>. This flag should only be set to
-	 * <code>true</code> while some type of background/quiet computation of
-	 * validity is being performed, and should be restored to <code>false</code>
-	 * when complete.
-	 * 
-	 * @param quiet
-	 *            <code>true</code> if it is inappropriate to consult the user
-	 *            while computing status, and <code>false</code> if the user
-	 *            may be consulted.
-	 * 
-	 * @see #computeExecutionStatus(IProgressMonitor)
-	 * @see #computeUndoableStatus(IProgressMonitor)
-	 * @see #computeRedoableStatus(IProgressMonitor)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
 	 */
 	public void setQuietCompute(boolean quiet) {
 		quietCompute = quiet;

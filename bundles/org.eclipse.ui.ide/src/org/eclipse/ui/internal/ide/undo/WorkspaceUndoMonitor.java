@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.ide.undo;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoableOperation;
@@ -19,8 +22,8 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.Policy;
 
@@ -44,7 +47,7 @@ public class WorkspaceUndoMonitor {
 	 * Number of workspace changes that will cause validation of undo history
 	 */
 	private static int CHANGE_THRESHHOLD = 10;
-	
+
 	/**
 	 * Prefix to use on debug info
 	 */
@@ -217,11 +220,22 @@ public class WorkspaceUndoMonitor {
 		// an error, flush the history. Anything less than an error status
 		// should be left alone so that the user can be prompted as to what
 		// should be done when an undo is actually attempted.
-		if (currentOp instanceof AbstractWorkspaceOperation) {
-			AbstractWorkspaceOperation op = (AbstractWorkspaceOperation) currentOp;
-			op.setQuietCompute(true);
-			IStatus status = op.computeUndoableStatus(null);
-			op.setQuietCompute(false);
+		if (currentOp instanceof IAdvancedUndoableOperation
+				&& currentOp instanceof IAdvancedUndoableOperation2) {
+			((IAdvancedUndoableOperation2) currentOp).setQuietCompute(true);
+			IStatus status;
+			try {
+				status = ((IAdvancedUndoableOperation) currentOp)
+						.computeUndoableStatus(null);
+			} catch (ExecutionException e) {
+				// Things are not really OK, but we do not want to
+				// interrupt the user with notification of this problem.
+				// For now, we pretend that everything is OK, knowing that
+				// computation will occur again just before the user attempts to
+				// undo this operation.
+				status = Status.OK_STATUS;
+			}
+			((IAdvancedUndoableOperation2) currentOp).setQuietCompute(false);
 			if (status.getSeverity() == IStatus.ERROR) {
 				flushWorkspaceHistory(currentOp);
 			}
@@ -234,12 +248,13 @@ public class WorkspaceUndoMonitor {
 	 */
 	private void flushWorkspaceHistory(IUndoableOperation op) {
 		if (Policy.DEBUG_UNDOMONITOR) {
-			System.out.println(DEBUG_PREFIX + "Flushing undo history due to "+op); //$NON-NLS-1$
+			System.out.println(DEBUG_PREFIX
+					+ "Flushing undo history due to " + op); //$NON-NLS-1$
 		}
 		getOperationHistory().dispose(
 				WorkspaceUndoUtil.getWorkspaceUndoContext(), true, true, false);
 	}
-	
+
 	/**
 	 * Reset the workspace change count
 	 */
@@ -249,14 +264,16 @@ public class WorkspaceUndoMonitor {
 			System.out.println(DEBUG_PREFIX + "Resetting change count to 0"); //$NON-NLS-1$
 		}
 	}
-	
+
 	/**
 	 * Increment the workspace change count
 	 */
 	private void incrementChangeCount() {
 		numChanges++;
 		if (Policy.DEBUG_UNDOMONITOR) {
-			System.out.println(DEBUG_PREFIX + "Incrementing workspace change count.  Count = "+numChanges); //$NON-NLS-1$
+			System.out
+					.println(DEBUG_PREFIX
+							+ "Incrementing workspace change count.  Count = " + numChanges); //$NON-NLS-1$
 		}
 	}
 }
