@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
@@ -68,16 +67,16 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * structure to perform the tests
  * 
  * <pre>
- *                              TEST_PROJECT_NAME
- *                              **TEST_FOLDER_NAME
- *                              ****TEST_SUBFOLDER_NAME
- *                              ******TEST_FILEINSUBFOLDER_NAME 
- *                              ****TEST_EMPTYFILE_NAME
- *                              ****TEST_RANDOMFILE_NAME
- *                              ****TEST_LINKEDFILE_NAME (linked to random location)
- *                              ****TEST_LINKEDFOLDER_NAME (linked to random location)
- *                              **TEST_FILEINPROJECT_NAME 
- *                              TEST_TARGETPROJECT_NAME
+ * TEST_PROJECT_NAME
+ * **TEST_FOLDER_NAME
+ * ****TEST_SUBFOLDER_NAME
+ * ******TEST_FILEINSUBFOLDER_NAME 
+ * ****TEST_EMPTYFILE_NAME
+ * ****TEST_RANDOMFILE_NAME
+ * ****TEST_LINKEDFILE_NAME (linked to random location)
+ * ****TEST_LINKEDFOLDER_NAME (linked to random location)
+ * **TEST_FILEINPROJECT_NAME 
+ * TEST_TARGETPROJECT_NAME
  * </pre>
  * 
  * @since 3.3
@@ -566,15 +565,20 @@ public class WorkspaceOperationsTests extends UITestCase {
 	private void executeExpectFail(AbstractWorkspaceOperation operation)
 			throws ExecutionException {
 		operation.setQuietCompute(true);
-		// 
-		assertFalse("Execution should not have OK status", history.execute(
-				operation, getMonitor(), null).equals(Status.OK_STATUS));
+		IStatus status = history.execute(operation, getMonitor(), null);
+		assertFalse("Execution should not have OK status", status.isOK());
 	}
 
 	private void undo() throws ExecutionException {
 		assertTrue("Operation can be undone", history.canUndo(context));
 		IStatus status = history.undo(context, getMonitor(), null);
 		assertTrue("Undo should be OK status", status.isOK());
+	}
+	
+	private void undoExpectFail(AbstractWorkspaceOperation operation) throws ExecutionException {
+		operation.setQuietCompute(true);
+		IStatus status = history.undo(context, getMonitor(), null);
+		assertFalse("Undo should not have OK status", status.isOK());
 	}
 
 	private void redo() throws ExecutionException {
@@ -1824,7 +1828,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	public void testWorkspaceUndoMonitor() throws ExecutionException,
 			CoreException {
 		// First we copy the project to the target location
-		// This gives us lots of stuff to delete in order to manufacture some 
+		// This gives us lots of stuff to delete in order to manufacture some
 		// workspace changes
 		CopyProjectOperation op = new CopyProjectOperation(testProject,
 				TEST_NEWPROJECT_NAME, null, "testProjectCopy");
@@ -1843,7 +1847,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		// op still doesn't know it's invalid because undo monitor hasn't
 		// had changes to force checking it.
 		assertTrue("Operation should be valid", op2.canUndo());
-		
+
 		// Now perform a bunch of changes
 		emptyTestFile.delete(true, getMonitor());
 		changes++;
@@ -1875,8 +1879,21 @@ public class WorkspaceOperationsTests extends UITestCase {
 		emptyTestFile.create(getContents(FILE_CONTENTS_EMPTY), true,
 				getMonitor());
 		changes++;
-		
-		assertTrue("Need to make at least the minimum number of changes", changes >= NUM_CHANGES);
+
+		assertTrue("Need to make at least the minimum number of changes",
+				changes >= NUM_CHANGES);
 		assertFalse("Operation should be invalid", op2.canUndo());
+	}
+
+	public void testProjectCopyUndoInvalid() throws ExecutionException,
+			CoreException {
+		// Create a new copy of a project
+		CopyProjectOperation op = new CopyProjectOperation(testProject,
+				TEST_NEWPROJECT_NAME, null, "testProjectCopyUndoInvalid");
+		execute(op);
+		// Now we "back door" delete one of the files in the source project
+		emptyTestFile.delete(true, getMonitor());
+		// The operation should know that undoing is dangerous
+		undoExpectFail(op);
 	}
 }
