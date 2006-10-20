@@ -37,6 +37,16 @@ public interface IConfigurationElementConstants {
 	public static final String LAUNCH_MODE = "launchMode"; //$NON-NLS-1$
 	
 	/**
+	 * the after node name for a configuration element
+	 */
+	public static final String AFTER = "after"; //$NON-NLS-1$
+	
+	/**
+	 * the placement node name for a configuration element
+	 */
+	public static final String PLACEMENT = "placement"; //$NON-NLS-1$
+	
+	/**
 	 * the label node name for a configuration element
 	 */
 	public static final String LABEL = "label"; //$NON-NLS-1$

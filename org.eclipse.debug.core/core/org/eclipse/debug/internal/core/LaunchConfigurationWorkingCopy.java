@@ -424,11 +424,17 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}	
 	}
 		
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setModes(java.util.Set)
+	 */
 	public void setModes(Set options) {
 		getInfo().setAttribute(ATTR_LAUNCH_MODES, (options.size() > 0 ? options : null));
 		setDirty();
 	}
 
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#addModes(java.util.Set)
+	 */
 	public void addModes(Set options) {
 		try {
 			Set opts = getModes();
@@ -442,11 +448,14 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#removeModes(java.util.Set)
+	 */
 	public void removeModes(Set options) {
 		try {
 			Set opts = getModes();
 			if(opts.removeAll(options)) {
-				getInfo().setAttribute(ATTR_LAUNCH_MODES, opts);
+				getInfo().setAttribute(ATTR_LAUNCH_MODES, (opts.size() < 1 ? null : opts));
 				setDirty();
 			}
 		} 

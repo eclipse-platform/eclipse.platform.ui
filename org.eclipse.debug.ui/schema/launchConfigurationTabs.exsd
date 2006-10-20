@@ -38,6 +38,9 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="placement"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -67,6 +70,23 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchConfigurationTab"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="placement">
+      <annotation>
+         <documentation>
+            This element allows contributors to specify relative locale for their contributed tab
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="after" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This attribute describes the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

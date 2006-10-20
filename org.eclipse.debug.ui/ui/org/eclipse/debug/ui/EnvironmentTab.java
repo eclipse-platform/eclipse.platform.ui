@@ -615,6 +615,13 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		return LaunchConfigurationsMessages.EnvironmentTab_Environment_7; 
 	}
 	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.debug.ui.environmentTab"; //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */

@@ -1,8 +1,13 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
+import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
@@ -23,7 +28,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	
 	private ILaunchConfigurationTabGroup fGroup = null;
 	private String fGroupId = null;
-	private ILaunchConfigurationTab[] fContributedTabs = null;
+	private List fTabs = null;
 	
 	/**
 	 * Constructor
@@ -47,12 +52,10 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#dispose()
 	 */
 	public void dispose() {
-		if(fGroup != null) {
-			fGroup.dispose();
-		}
-		if(fContributedTabs != null) {
-			for(int i = 0; i < fContributedTabs.length; i++) {
-				fContributedTabs[i].dispose();
+		if(fTabs != null) {
+			ILaunchConfigurationTab[] tabs = getTabs();
+			for(int i = 0; i < tabs.length; i++) {
+				tabs[i].dispose();
 			}
 		}
 	}
@@ -61,28 +64,59 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#getTabs()
 	 */
 	public ILaunchConfigurationTab[] getTabs() {
-		if(fContributedTabs == null) {
-			fContributedTabs = LaunchConfigurationPresentationManager.getDefault().createContributedTabs(fGroupId);
+		if(fTabs == null) {
+			fTabs = new ArrayList();
+			ILaunchConfigurationTab[] tmp = fGroup.getTabs();
+			for(int i = 0; i < tmp.length; i++) {
+				fTabs.add(tmp[i]);
+			}
+			LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId);
+			//copy contributed into correct postion or end if no id or id is not found
+			AbstractLaunchConfigurationTab alct = null;
+			String id = null;
+			List item = null;
+			for(int i = 0; i < ext.length; i++) {
+				id = ext[i].getRelativeTabId();
+				if(id != null) {
+					//position specified, try to find it
+					boolean found = false;
+					for(int j = 0; j < tmp.length; j++) {
+						if(tmp[j] instanceof AbstractLaunchConfigurationTab) {
+							alct = (AbstractLaunchConfigurationTab) tmp[j];
+							if(id.equals(alct.getTabId())) {
+								if(j != tmp.length-1) {
+									item = new ArrayList();
+									item.add(ext[i].getTab());
+									fTabs.addAll(j+1, item);
+									found = true;
+									break;
+								}
+							}
+						}
+					}
+					if(!found) {
+						//id did not match any tabs, add it to the end
+						fTabs.add(ext[i].getTab());
+					}
+				}
+				else {
+					//no position specified, add it to the end
+					fTabs.add(ext[i].getTab());
+				}
+			}
 		}
-		ILaunchConfigurationTab[] grouptabs = fGroup.getTabs();
-		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[grouptabs.length + fContributedTabs.length];
-		System.arraycopy(grouptabs, 0, tabs, 0, grouptabs.length);
-		System.arraycopy(fContributedTabs, 0, tabs, grouptabs.length, fContributedTabs.length);
-		return tabs;
+		return (ILaunchConfigurationTab[]) fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
 	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		if(fGroup != null) {
-			fGroup.initializeFrom(configuration);
-		}
-		if(fContributedTabs == null) {
+		if(fTabs == null) {
 			getTabs();
 		}
-		for(int i = 0; i < fContributedTabs.length; i++) {
-			fContributedTabs[i].initializeFrom(configuration);
+		for(int i = 0; i < fTabs.size(); i++) {
+			((ILaunchConfigurationTab)fTabs.get(i)).initializeFrom(configuration);
 		}
 	}
 
@@ -99,13 +133,9 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		if(fGroup != null) {
-			fGroup.performApply(configuration);
-			if(fContributedTabs == null) {
-				getTabs();
-			}
-			for(int i = 0; i < fContributedTabs.length; i++) {
-				fContributedTabs[i].performApply(configuration);
+		if(fTabs != null) {
+			for(int i = 0; i < fTabs.size(); i++) {
+				((ILaunchConfigurationTab)fTabs.get(i)).performApply(configuration);
 			}
 		}
 	}
@@ -114,13 +144,9 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		if(fGroup != null) {
-			fGroup.setDefaults(configuration);
-			if(fContributedTabs == null) { 
-				getTabs();
-			}
-			for(int i = 0; i < fContributedTabs.length; i++) {
-				fContributedTabs[i].setDefaults(configuration);
+		if(fTabs != null) {
+			for(int i = 0; i < fTabs.size(); i++) {
+				((ILaunchConfigurationTab)fTabs.get(i)).setDefaults(configuration);
 			}
 		}
 	}

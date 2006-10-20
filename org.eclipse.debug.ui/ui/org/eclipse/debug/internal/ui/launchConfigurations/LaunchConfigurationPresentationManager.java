@@ -33,7 +33,6 @@ import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 
 import com.ibm.icu.text.MessageFormat;
@@ -170,33 +169,20 @@ public class LaunchConfigurationPresentationManager {
 	}
 	
 	/**
-	 * Returns the listing of <code>ILaunchConfigurationTab</code>s for the specified <code>ILaunchConfigurationTabGroup</code>.
-	 * If no tabs are found for the specified id an empty array is returned, never <code>null</code>
-	 * @param groupid
-	 * @return the <code>ILaunchConfigurationTab</code>s for the specified <code>ILaunchConfigurationTabGroup</code> id,
-	 * or an empty array if none are found
+	 * Returns the proxy elements for all contributed tabs for the specified tab group id
+	 * @param groupid the id of the tab group
+	 * @return the listing of all of the tab extensions or an empty array, never <code>null</code>
 	 * 
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
 	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
 	 */
-	public ILaunchConfigurationTab[] createContributedTabs(String groupid) {
+	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid) {
 		Hashtable tabs = (Hashtable) fContributedTabs.get(groupid);
-		ArrayList list = new ArrayList();
 		if(tabs != null) {
-			LaunchConfigurationTabExtension ext = null;
-			for(Iterator iter = tabs.keySet().iterator(); iter.hasNext();) {
-				ext = (LaunchConfigurationTabExtension) tabs.get(iter.next());
-				if(ext != null) {
-					list.add(ext.getTab());
-				}
-			}
+			return (LaunchConfigurationTabExtension[]) tabs.values().toArray(new LaunchConfigurationTabExtension[tabs.size()]);
 		}
-		return (ILaunchConfigurationTab[]) list.toArray(new ILaunchConfigurationTab[list.size()]);
+		return new LaunchConfigurationTabExtension[0];
 	}
 	
 	/**

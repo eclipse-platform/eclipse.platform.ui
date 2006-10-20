@@ -757,6 +757,13 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		return LaunchConfigurationsMessages.CommonTab__Common_15; 
 	}
 	
+	/**
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 */
+	public String getTabId() {
+		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#canSave()
 	 */

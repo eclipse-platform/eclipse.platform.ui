@@ -277,7 +277,22 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	public Image getImage() {
 		return null;
 	}
-
+	
+	/**
+	 * This method is used to get the id for the current tabg or <code>null</code> if none.
+	 * 
+	 * Ids are used in 3.3 to allow contributed tabs
+	 * to be placed in relative locations, instead of only at the end of the tab group
+	 * @return the id of the tab or <code>null</code>
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public String getTabId() {
+		return null;
+	}
+	
 	/**
 	 * Convenience method to set a boolean attribute of on a launch
 	 * configuration. If the value being set is the default, the attribute's
