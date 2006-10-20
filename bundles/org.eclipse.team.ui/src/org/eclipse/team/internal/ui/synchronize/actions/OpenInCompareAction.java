@@ -156,7 +156,7 @@ public class OpenInCompareAction extends Action {
         		page.activate(editor);
         	}
         } else {
-        	CompareUI.openCompareEditor(input);
+        	CompareUI.openCompareEditorOnPage(input, page);
         }
     }
 	

@@ -12,20 +12,20 @@ package org.eclipse.team.internal.ui.history;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.ui.ISaveableWorkbenchPart;
-import org.eclipse.ui.IPropertyListener;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput;
 
-public class CompareFileRevisionEditorInput extends CompareEditorInput implements ISaveableWorkbenchPart {
+public class CompareFileRevisionEditorInput extends LocalResourceCompareEditorInput {
 
 	//constants for indicating which side contains the 
 	//current version of the resource
@@ -38,26 +38,38 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 	private IFile resource;
 	private int currentSide;
 	
+	public class MyDiffNode extends DiffNode {
+		public MyDiffNode(ITypedElement left, ITypedElement right) {
+			super(left, right);
+		}
+		public void fireChange() {
+			super.fireChange();
+		}
+	}
+	
 	/**
 	 * Creates a new CompareFileRevisionEditorInput.
 	 * @param left 
 	 * @param right 
 	 */
 	public CompareFileRevisionEditorInput(FileRevisionTypedElement left, FileRevisionTypedElement right) {
-		super(new CompareConfiguration());
+		super(new CompareConfiguration(), null);
 		this.left = left;
 		this.right = right;
 		this.resource = null;
 		this.currentSide = NO_CURRENT;
 	}
 
-	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput#internalPrepareInput(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected ICompareInput internalPrepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		initLabels();
 		//if one of the sides contain the current version of the file, enable it for editing
 		if(resource != null){
 			switch (currentSide){
 				case LEFT:
-				left = new TypedBufferedContent(resource);
+				left = new LocalResourceTypedElement(resource);
 				getCompareConfiguration().setLeftEditable(true);
 				break;
 				
@@ -67,7 +79,7 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 				String leftLabel = cc.getLeftLabel(left);
 				String rightLabel = cc.getRightLabel(right);
 				ITypedElement tempElement = left;
-				left = new TypedBufferedContent(resource);
+				left = new LocalResourceTypedElement(resource);
 				right = tempElement;
 				cc.setLeftEditable(true);
 				cc.setLeftLabel(rightLabel);
@@ -76,7 +88,8 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 			}
 			
 		}
-		return new DiffNode(left,right);
+		MyDiffNode input = new MyDiffNode(left,right);
+		return input;
 	}
 
 	private void initLabels() {
@@ -114,55 +127,15 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 		return label;
 	}
 
-	public void doSave(IProgressMonitor monitor) {
-		try {
-			saveChanges(monitor);
-		} catch (CoreException e) {
-			Utils.handle(e);
-		}
-	}
-
-	public void doSaveAs() {
-		// noop
-	}
-
-	public boolean isDirty() {
-		return isSaveNeeded();
-	}
-
-	public boolean isSaveAsAllowed() {
-		return false;
-	}
-
-	public boolean isSaveOnCloseNeeded() {
-		return true;
-	}
-
-	public void addPropertyListener(IPropertyListener listener) {
-		// noop
-	}
-
-	public void createPartControl(Composite parent) {
-		createContents(parent);
-	}
-
-	public void dispose() {	
-	}
-
-	public IWorkbenchPartSite getSite() {
-		return null;
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getToolTipText()
+	 */
 	public String getToolTipText() {
 		Object[] titleObject = new Object[3];
 		titleObject[0] = getLongName(left);
 		titleObject[1] = getContentIdentifier(left);
 		titleObject[2] = getContentIdentifier(right);
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
-	}
-
-	public void removePropertyListener(IPropertyListener listener) {
-		// noop
 	}
 	
 	/* (non-Javadoc)
@@ -190,11 +163,11 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
 			return fileRevisionElement.getName();
 		}
-		else if (element instanceof TypedBufferedContent){
-			TypedBufferedContent typedContent = (TypedBufferedContent) element;
+		else if (element instanceof LocalResourceTypedElement){
+			LocalResourceTypedElement typedContent = (LocalResourceTypedElement) element;
 			return typedContent.getResource().getName();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	private String getLongName(ITypedElement element) {
@@ -202,11 +175,11 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 			FileRevisionTypedElement fileRevisionElement = (FileRevisionTypedElement) element;
 			return fileRevisionElement.getPath();
 		}
-		else if (element instanceof TypedBufferedContent){
-			TypedBufferedContent typedContent = (TypedBufferedContent) element;
+		else if (element instanceof LocalResourceTypedElement){
+			LocalResourceTypedElement typedContent = (LocalResourceTypedElement) element;
 			return typedContent.getResource().getFullPath().toString();
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	private String getContentIdentifier(ITypedElement element){
@@ -229,14 +202,17 @@ public class CompareFileRevisionEditorInput extends CompareEditorInput implement
 				return fileRevisionElement.getContentIdentifier();
 			}
 		}
-		else if (element instanceof TypedBufferedContent){
+		else if (element instanceof LocalResourceTypedElement){
 			return TeamUIMessages.CompareFileRevisionEditorInput_2;
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
-	public String getTitleToolTip() {
-		return getTitleToolTip();
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput#fireInputChange()
+	 */
+	protected void fireInputChange() {
+		((MyDiffNode)getCompareResult()).fireChange();
 	}
 
 }

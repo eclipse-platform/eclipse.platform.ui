@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IEditableContent;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,7 +23,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
-import org.eclipse.team.internal.ui.history.TypedBufferedContent;
 import org.eclipse.team.ui.SaveablePartDialog;
 import org.eclipse.team.ui.history.*;
 
@@ -52,7 +52,7 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 		
 		public void replaceLocalWithCurrentlySelectedRevision() throws CoreException{
 			FileRevisionTypedElement right = (FileRevisionTypedElement) compareInput.getRight();
-			TypedBufferedContent left = (TypedBufferedContent)compareInput.getLeft();
+			IEditableContent left = (IEditableContent)compareInput.getLeft();
 			left.setContent(Utils.readBytes(right.getContents()));
 		}
 		

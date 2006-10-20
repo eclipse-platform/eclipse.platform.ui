@@ -8,7 +8,7 @@
  * Contributors:
  * IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.team.internal.ui.mapping;
+package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -18,11 +18,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
-import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 
 /**
@@ -38,16 +35,14 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
 	private IContentChangeListener contentChangeListener;
-	private final String title;
+
 	
 	/**
 	 * Create the resource-based saveable comparison.
-	 * @param title the title
 	 * @param input the compare input to be save
 	 * @param editorInput the editor input containing the comparison
 	 */
-	public LocalResourceSaveableComparison(String title, ICompareInput input, CompareEditorInput editorInput) {
-		this.title = title;
+	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput) {
 		this.input = input;
 		this.editorInput = editorInput;
 		initializeContentChangeListeners();
@@ -223,14 +218,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @see org.eclipse.ui.Saveable#getToolTipText()
 	 */
 	public String getToolTipText() {
-		String fullPath;
-		if (input instanceof ISynchronizationCompareInput) {
-			ISynchronizationCompareInput mci = (ISynchronizationCompareInput) input;
-			fullPath = mci.getFullPath();
-		} else {
-			fullPath = getName();
-		}
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, title), fullPath });
+		return editorInput.getToolTipText();
 	}
 
 	/* (non-Javadoc)

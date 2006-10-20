@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.mapping.LocalResourceSaveableComparison;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.ui.progress.UIJob;
 
@@ -81,7 +81,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		this.description = description;
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
-		this.saveable = new LocalResourceSaveableComparison(description, node, this) {
+		this.saveable = new LocalResourceSaveableComparison(node, this) {
 			protected void fireInputChange() {
 				node.fireChange();
 			}

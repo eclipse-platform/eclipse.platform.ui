@@ -127,7 +127,14 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 */
 	private synchronized ISharedDocumentAdapter getSharedDocumentAdapter() {
 		if (sharedDocumentAdapter == null)
-			sharedDocumentAdapter = new CountingSharedDocumentAdapter(this);
+			sharedDocumentAdapter = new CountingSharedDocumentAdapter(this, new CountingSharedDocumentAdapter.IInternalAccess() {
+				public void updateTimestamp() {
+					LocalResourceTypedElement.this.updateTimestamp();
+				}
+				public void fireContentChanged() {
+					LocalResourceTypedElement.this.fireContentChanged();
+				}
+			});
 		return sharedDocumentAdapter;
 	}
 

@@ -29,11 +29,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.SaveableComparison;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.services.IDisposable;
 
@@ -49,9 +49,9 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	
 	private final class ResourceDiffSaveableComparison extends
 	LocalResourceSaveableComparison {
-		private ResourceDiffSaveableComparison(String title,
+		private ResourceDiffSaveableComparison(
 				ICompareInput compareInput, CompareEditorInput compareEditorInput) {
-			super(title, compareInput, compareEditorInput);
+			super(compareInput, compareEditorInput);
 		}
 		
 		protected void fireInputChange() {
@@ -159,7 +159,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			if (compareModel != null)
 				return compareModel;
 		}
-		return new ResourceDiffSaveableComparison(participant.getName(), input, this);
+		return new ResourceDiffSaveableComparison(input, this);
 	}
 
 	/* (non-Javadoc)

@@ -15,8 +15,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
@@ -62,6 +61,7 @@ import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.internal.ui.history.*;
 import org.eclipse.team.ui.history.*;
+import org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.IPageSite;
@@ -1574,7 +1574,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				Object o = ss.getFirstElement();
 				if (o instanceof IFileRevision){
 					IFileRevision selectedFileRevision = (IFileRevision)o;
-					TypedBufferedContent left = new TypedBufferedContent((IFile) file.getIResource());
+					ITypedElement left = LocalResourceCompareEditorInput.createFileElement((IFile) file.getIResource());
 					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
 					DiffNode node = new DiffNode(left,right);
 					return node;
@@ -1608,11 +1608,16 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private String getFileRevisionLabel(ITypedElement element, CompareConfiguration cc) {
 		String label = null;
 
-		if (element instanceof TypedBufferedContent) {
+		if (element instanceof IEditableContent) {
 			//current revision
-			Date dateFromLong = new Date(((TypedBufferedContent) element).getModificationDate());
-			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), getDateTimeFormat().format(dateFromLong)});
-			cc.setLeftEditable(true);
+			if (element instanceof IModificationDate) {
+				IModificationDate md = (IModificationDate) element;
+				Date dateFromLong = new Date(md.getModificationDate());
+				label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ element.getName(), getDateTimeFormat().format(dateFromLong)});
+			} else {
+				label = element.getName();
+			}
+			cc.setLeftEditable(((IEditableContent)element).isEditable());
 			return label;
 
 		} else if (element instanceof FileRevisionTypedElement) {

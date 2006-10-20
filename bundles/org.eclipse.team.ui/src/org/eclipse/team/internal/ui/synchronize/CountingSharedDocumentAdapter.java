@@ -22,14 +22,22 @@ public class CountingSharedDocumentAdapter extends
 	private int connectionCount;
 	private LocalResourceTypedElement element;
 	private boolean hasBufferedContents;
+	private final IInternalAccess access;
 
+	public interface IInternalAccess {
+		void updateTimestamp();
+		void fireContentChanged();
+	}
+	
 	/**
 	 * Create the shared document adapter for the given element.
 	 * @param element the element
+	 * @param access access to element internals
 	 */
-	public CountingSharedDocumentAdapter(LocalResourceTypedElement element) {
+	public CountingSharedDocumentAdapter(LocalResourceTypedElement element, IInternalAccess access) {
 		super();
 		this.element = element;
+		this.access = access;
 	}
 
 	/* (non-Javadoc)
@@ -49,7 +57,7 @@ public class CountingSharedDocumentAdapter extends
 		connectionCount++;
 		if (connectionCount == 1) {
 			provider.addElementStateListener(this);
-			element.updateTimestamp();
+			access.updateTimestamp();
 		}
 	}
 
@@ -130,7 +138,7 @@ public class CountingSharedDocumentAdapter extends
 			provider.connect(documentKey);
 			hasBufferedContents = true;
 		}
-		this.element.fireContentChanged();
+		this.access.fireContentChanged();
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +167,7 @@ public class CountingSharedDocumentAdapter extends
 	 */
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		if (!isDirty) {
-			this.element.updateTimestamp();
+			this.access.updateTimestamp();
 		}
 	}
 
