@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.wizards.IWizardCategory;
@@ -109,7 +110,7 @@ public class CtrlEAction extends AbstractHandler {
 		if (window == null) {
 			return null;
 		}
-		FilteringInfoPopup popup = new MyInfoPopup(window.getShell(), commands);
+		FilteringInfoPopup popup = new MyInfoPopup(ProgressManagerUtil.getDefaultParent(), commands);
 		popup.setInput(new Object());
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
 				.getItems();
