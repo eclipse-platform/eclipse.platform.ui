@@ -272,7 +272,7 @@ public class WorkspaceUndoUtil {
 				// that is being overwritten, followed by the move
 				ResourceDescription[] deleted = delete(
 						new IResource[] { newResource },
-						new SubProgressMonitor(monitor, 1), uiInfo, false);
+						new SubProgressMonitor(monitor, 1), uiInfo, true);
 				for (int j = 0; j < deleted.length; j++) {
 					overwrittenResources.add(deleted[j]);
 				}
