@@ -46,6 +46,21 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 	private final IWorkbenchPage page;
 	private final ICompareInputChangeListener compareInputChangeListener;
 	private final ListenerList inputChangeListeners = new ListenerList(ListenerList.IDENTITY);
+	
+	private final class ResourceDiffSaveableComparison extends
+	LocalResourceSaveableComparison {
+		private ResourceDiffSaveableComparison(String title,
+				ICompareInput compareInput, CompareEditorInput compareEditorInput) {
+			super(title, compareInput, compareEditorInput);
+		}
+		
+		protected void fireInputChange() {
+			if (ModelCompareEditorInput.this.input instanceof ResourceDiffCompareInput) {
+				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) ModelCompareEditorInput.this.input;
+				rdci.fireChange();
+			}
+		}
+	}
 
 	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page) {
 		super(new CompareConfiguration());
@@ -68,7 +83,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 						// The editor was closed either because the compare input still has changes
 						// or because the editor input is dirty. In either case, fire the changes
 						// to the registered listeners
-						fireInputChange();
+						propogateInputChange();
 					}
 				}
 			}
@@ -104,8 +119,8 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(ModelCompareEditorInput.this);
 		}
-		if (saveable instanceof ResourceSaveableComparison) {
-			ResourceSaveableComparison rsc = (ResourceSaveableComparison) saveable;
+		if (saveable instanceof LocalResourceSaveableComparison) {
+			LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
 			rsc.dispose();
 		}
 		if (input instanceof IDisposable) {
@@ -144,7 +159,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 			if (compareModel != null)
 				return compareModel;
 		}
-		return new ResourceSaveableComparison(participant.getName(), input, this);
+		return new ResourceDiffSaveableComparison(participant.getName(), input, this);
 	}
 
 	/* (non-Javadoc)
@@ -318,7 +333,7 @@ public class ModelCompareEditorInput extends CompareEditorInput implements ISave
 		}
 	}
 	
-	/* package */ void fireInputChange() {
+	/* package */ void propogateInputChange() {
 		if (!inputChangeListeners.isEmpty()) {
 			Object[] allListeners = inputChangeListeners.getListeners();
 			for (int i = 0; i < allListeners.length; i++) {

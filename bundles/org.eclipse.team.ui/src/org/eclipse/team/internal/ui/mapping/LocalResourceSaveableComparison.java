@@ -12,7 +12,6 @@ package org.eclipse.team.internal.ui.mapping;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -27,14 +26,13 @@ import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 
 /**
- * A saveable compare model that wraps an {@link IFile} based compare input. This saveable is
- * created by the {@link CompareEditorInput} instead of the {@link ResourceDiffCompareInput}
- * because it needs access to the compare editor input in order to flush the viewers. Other model-based
- * compare inputs do not need this since the compare input and viewers should be provided by the same model.
- * <p>
- * This saveable assumes that the left node of the compare input is an {@link LocalResourceTypedElement}.
+ * A saveable that wraps a compare input in which the left side is a {@link LocalResourceTypedElement}
+ * and saves changes made to the file in compare when the viewers are flushed. 
+ * 
+ * @see LocalResourceTypedElement
+ * @since 3.3
  */
-public class ResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
+public abstract class LocalResourceSaveableComparison extends SaveableComparison implements IPropertyChangeListener {
 
 	private final ICompareInput input;
 	private final CompareEditorInput editorInput;
@@ -48,7 +46,7 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	 * @param input the compare input to be save
 	 * @param editorInput the editor input containing the comparison
 	 */
-	public ResourceSaveableComparison(String title, ICompareInput input, CompareEditorInput editorInput) {
+	public LocalResourceSaveableComparison(String title, ICompareInput input, CompareEditorInput editorInput) {
 		this.title = title;
 		this.input = input;
 		this.editorInput = editorInput;
@@ -140,16 +138,10 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	}
 
 	/**
-	 * Fire an input change for the compare input. By default, this method
-	 * only works for {@link ResourceDiffCompareInput}. Subclass may override
-	 * for other input types.
+	 * Fire an input change for the compare input after it has been 
+	 * saved.
 	 */
-	protected void fireInputChange() {
-		if (input instanceof ResourceDiffCompareInput) {
-			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-			rdci.fireChange();
-		}
-	}
+	protected abstract void fireInputChange();
 
 	/**
 	 * Check whether there is a conflicting save on the file.
@@ -267,8 +259,8 @@ public class ResourceSaveableComparison extends SaveableComparison implements IP
 	 * @see org.eclipse.ui.Saveable#equals(java.lang.Object)
 	 */
 	public boolean equals(Object object) {
-		if (object instanceof ResourceSaveableComparison) {
-			ResourceSaveableComparison rscm = (ResourceSaveableComparison) object;
+		if (object instanceof LocalResourceSaveableComparison) {
+			LocalResourceSaveableComparison rscm = (LocalResourceSaveableComparison) object;
 			return rscm.input.equals(input);
 		}
 		return false;

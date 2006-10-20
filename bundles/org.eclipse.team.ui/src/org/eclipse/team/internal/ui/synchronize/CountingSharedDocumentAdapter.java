@@ -169,4 +169,15 @@ public class CountingSharedDocumentAdapter extends
 	public void elementMoved(Object originalElement, Object movedElement) {
 		// Nothing to do
 	}
+
+	/**
+	 * Return whether the adapter has buffered contents. The adapter
+	 * buffers contents by connecting to the document through the document 
+	 * provider. This means that the adapter must be disconnected either by saving
+	 * or discarding the buffer.
+	 * @return whether the adapter has buffered contents
+	 */
+	public boolean hasBufferedContents() {
+		return hasBufferedContents;
+	}
 }

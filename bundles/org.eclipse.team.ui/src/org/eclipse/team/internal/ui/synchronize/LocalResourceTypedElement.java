@@ -20,10 +20,21 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.IEditorInput;
 
 /**
- * A resource node that is not buffered. Changes made to it are applied directly
- * to the underlying resource.
+ * A buffered resource node with the following characteristics:
+ * <ul>
+ * <li>Supports the use of file buffers (see {@link ISharedDocumentAdapter}.
+ * <li>Does not support file systems hierarchies (i.e. should not be used to represent a folder).
+ * <li>Does not allow editing when the file does not exist (see {@link #isEditable()}
+ * <li>Tracks whether the file has been changed on disk since it was loaded through the element
+ * (see {@link #isSynchronized()}).
+ * <li>Any buffered contents must either be saved or discarded when the element is no longer needed
+ * (see {@link #commit(IProgressMonitor)}, {@link #saveDocument(boolean, IProgressMonitor)} 
+ * and {@link #discardBuffer()})
+ * </ul>
+ * <p>
+ * This class may be instantiated but may not subclass it.
  * 
- * @since 3.0
+ * @since 3.3
  */
 public class LocalResourceTypedElement extends ResourceNode implements IAdaptable {
 
@@ -247,7 +258,12 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	}
 	
 	/**
-	 * Discard of any buffered contents.
+	 * Discard of any buffered contents. This must be called
+	 * when the local element is no longer needed but is dirty since a
+	 * the element will connect to a shared document when a merge viewer
+	 * flushes its contents to the element and it must be disconnected or the
+	 * buffer will remain.
+	 * #see {@link #isDirty()}
 	 */
 	public void discardBuffer() {
 		if (sharedDocumentAdapter != null)
@@ -260,15 +276,29 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 * @return whether this element can use a shared document
 	 */
 	public boolean isSharedDocumentsEnable() {
-		return useSharedDocument;
+		return useSharedDocument && getResource().getType() == IResource.FILE;
 	}
 
 	/**
-	 * Set whether this element can use shared documents.
+	 * Set whether this element can use shared documents. The enablement
+	 * will only apply to files (i.e. shared documents never apply to folders).
 	 * @param enablement whether this element can use shared documents
 	 */
 	public void enableSharedDocument(boolean enablement) {
 		this.useSharedDocument = enablement;
+	}
+
+	/**
+	 * Return whether this element is dirty. The element is
+	 * dirty if a merge viewer has flushed it's contents
+	 * to the element and the contents have not been saved.
+	 * @return whether this element is dirty
+	 * @see #commit(IProgressMonitor)
+	 * @see #saveDocument(boolean, IProgressMonitor)
+	 * @see #discardBuffer()
+	 */
+	public boolean isDirty() {
+		return fDirty || (sharedDocumentAdapter != null && sharedDocumentAdapter.hasBufferedContents());
 	}
 
 }
