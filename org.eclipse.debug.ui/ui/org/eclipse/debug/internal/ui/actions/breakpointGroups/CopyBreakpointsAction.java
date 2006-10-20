@@ -12,10 +12,10 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
