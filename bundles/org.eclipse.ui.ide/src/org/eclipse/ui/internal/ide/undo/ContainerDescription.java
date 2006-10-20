@@ -40,7 +40,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 	String name;
 
 	URI location;
-	
+
 	String defaultCharSet;
 
 	private ResourceDescription[] members;
@@ -257,17 +257,29 @@ public abstract class ContainerDescription extends ResourceDescription {
 		}
 	}
 
-
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected void restoreResourceAttributes(IResource resource, IProgressMonitor monitor) throws CoreException {
+	protected void restoreResourceAttributes(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
 		super.restoreResourceAttributes(resource, monitor);
 		Assert.isLegal(resource instanceof IContainer);
-		IContainer container = (IContainer)resource;
+		IContainer container = (IContainer) resource;
 		if (defaultCharSet != null) {
 			container.setDefaultCharset(defaultCharSet, monitor);
 		}
+	}
+
+	/**
+	 * Set the location to which this container is linked.
+	 * 
+	 * @param location
+	 *            the location URI, or <code>null</code> if there is no link
+	 */
+	public void setLocation(URI location) {
+		this.location = location;
 	}
 }

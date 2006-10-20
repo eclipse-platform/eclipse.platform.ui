@@ -41,7 +41,7 @@ public class FileDescription extends ResourceDescription {
 	String name;
 
 	URI location;
-	
+
 	String charset;
 
 	private IFileContentDescription fileContentDescription;
@@ -113,20 +113,25 @@ public class FileDescription extends ResourceDescription {
 			this.fileContentDescription = new IFileContentDescription() {
 				/*
 				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#exists()
 				 */
 				public boolean exists() {
 					return state.exists();
 				}
+
 				/*
 				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getContents()
 				 */
 				public InputStream getContents() throws CoreException {
 					return state.getContents();
 				}
+
 				/*
 				 * (non-Javadoc)
+				 * 
 				 * @see org.eclipse.ui.internal.ide.undo.IFileContentDescription#getCharset()
 				 */
 				public String getCharset() throws CoreException {
@@ -177,10 +182,13 @@ public class FileDescription extends ResourceDescription {
 				// description. Other file state attributes, such as timestamps,
 				// have already been retrieved from the original IResource
 				// object and are restored in the superclass.
-				if (fileContentDescription != null && fileContentDescription.exists()) {
+				if (fileContentDescription != null
+						&& fileContentDescription.exists()) {
 					contents = fileContentDescription.getContents();
-					// If the charset was explicitly recorded from the file handle,
-					// use it.  But if it is null, get it from the fileContentDescription.
+					// If the charset was explicitly recorded from the file
+					// handle,
+					// use it. But if it is null, get it from the
+					// fileContentDescription.
 					if (charset == null) {
 						charset = fileContentDescription.getCharset();
 					}
@@ -210,7 +218,11 @@ public class FileDescription extends ResourceDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#isValid()
 	 */
 	public boolean isValid() {
-		return super.isValid() && fileContentDescription != null && fileContentDescription.exists();
+		if (location != null) {
+			return super.isValid();
+		}
+		return super.isValid() && fileContentDescription != null
+				&& fileContentDescription.exists();
 	}
 
 	/*

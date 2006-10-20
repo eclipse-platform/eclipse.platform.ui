@@ -55,7 +55,8 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 	 * @param name
 	 *            the name of the copy
 	 * @param location
-	 *            the location for the project's content
+	 *            the location for the project's content, or <code>null</code>
+	 *            if the default project location should be used.
 	 * @param label
 	 *            the label of the operation
 	 */
@@ -63,7 +64,8 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 			String label) {
 		super(new IResource[] { project }, new Path(name), label);
 		Assert.isLegal(project != null);
-		if (URIUtil.toPath(location).equals(Platform.getLocation())) {
+		if (location != null
+				&& URIUtil.toPath(location).equals(Platform.getLocation())) {
 			projectLocation = null;
 		} else {
 			projectLocation = location;
@@ -128,10 +130,12 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 		setTargetResources(new IResource[] { newProject });
 		setResourceDescriptions(new ResourceDescription[0]);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource, int)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource,
+	 *      int)
 	 */
 	protected boolean isDestinationPathValid(IResource resource, int index) {
 		// path has already been validated in #computeMoveOrCopyStatus()
@@ -140,7 +144,9 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource, int)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource,
+	 *      int)
 	 */
 	protected String getProposedName(IResource resource, int index) {
 		return destination.lastSegment();

@@ -15,7 +15,6 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
-import org.eclipse.ui.internal.ide.undo.FolderDescription;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
@@ -51,14 +50,10 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
 			String label) {
 		super(null, label);
-		ContainerDescription containerDescription;
-		if (linkLocation == null) {
-			containerDescription = ContainerDescription
-					.fromContainer(folderHandle);
-		} else {
-			// create a linked folder description
-			containerDescription = new FolderDescription(folderHandle,
-					linkLocation);
+		ContainerDescription containerDescription = ContainerDescription
+				.fromContainer(folderHandle);
+		if (linkLocation != null) {
+			containerDescription.getFirstLeafFolder().setLocation(linkLocation);
 		}
 		setResourceDescriptions(new ResourceDescription[] { containerDescription });
 	}

@@ -45,7 +45,7 @@ public class MoveResourcesOperation extends
 	 *            the resources to be moved
 	 * @param destinationPath
 	 *            the destination path for the resources, not including the name
-	 *            of the new resource.
+	 *            of the moved resource.
 	 * @param label
 	 *            the label of the operation
 	 */

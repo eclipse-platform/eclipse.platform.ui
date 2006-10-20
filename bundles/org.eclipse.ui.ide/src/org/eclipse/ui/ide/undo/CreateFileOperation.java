@@ -59,25 +59,20 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 			InputStream contents, String label) {
 		super(null, label);
 		ResourceDescription resourceDescription;
-		if (linkLocation == null) {
-			if (fileHandle.getParent().exists()) {
-				resourceDescription = new FileDescription(fileHandle, null,
-						createFileContentDescription(fileHandle, contents));
-			} else {
-				// must first ensure descriptions for the parent folders are
-				// created
-				ContainerDescription containerDescription = ContainerDescription
-						.fromContainer(fileHandle.getParent());
-				containerDescription.getFirstLeafFolder().addMember(
-						new FileDescription(fileHandle, null,
-								createFileContentDescription(fileHandle,
-										contents)));
-				resourceDescription = containerDescription;
-			}
-		} else {
-			// create a linked file description
+		if (fileHandle.getParent().exists()) {
 			resourceDescription = new FileDescription(fileHandle, linkLocation,
 					createFileContentDescription(fileHandle, contents));
+		} else {
+			// must first ensure descriptions for the parent folders are
+			// created
+			ContainerDescription containerDescription = ContainerDescription
+					.fromContainer(fileHandle.getParent());
+			containerDescription.getFirstLeafFolder()
+					.addMember(
+							new FileDescription(fileHandle, linkLocation,
+									createFileContentDescription(fileHandle,
+											contents)));
+			resourceDescription = containerDescription;
 		}
 		setResourceDescriptions(new ResourceDescription[] { resourceDescription });
 

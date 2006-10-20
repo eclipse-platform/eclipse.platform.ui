@@ -41,6 +41,8 @@ public class CopyResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
 
 	IResource[] originalResources;
+	
+	ResourceDescription[] originalResourceDescriptions;
 
 	IPath[] originalDestinationPaths = null;
 
@@ -51,17 +53,17 @@ public class CopyResourcesOperation extends
 	 * location. The new location includes the name of the copy.
 	 * 
 	 * @param resource
-	 *            the resource to be moved
+	 *            the resource to be copied
 	 * @param newPath
-	 *            the new workspace-relative path for the resource, including
-	 *            its desired name.
+	 *            the new workspace-relative path for the copy, including its
+	 *            desired name.
 	 * @param label
 	 *            the label of the operation
 	 */
 	public CopyResourcesOperation(IResource resource, IPath newPath,
 			String label) {
 		super(new IResource[] { resource }, new IPath[] { newPath }, label);
-		originalResources = new IResource[] { resource };
+		setOriginalResources(new IResource[] {resource});
 		originalDestinationPaths = new IPath[] { newPath };
 	}
 
@@ -81,7 +83,7 @@ public class CopyResourcesOperation extends
 	public CopyResourcesOperation(IResource[] resources, IPath destinationPath,
 			String label) {
 		super(resources, destinationPath, label);
-		originalResources = resources;
+		setOriginalResources(resources);
 		originalDestination = destinationPath;
 	}
 
@@ -103,7 +105,7 @@ public class CopyResourcesOperation extends
 	public CopyResourcesOperation(IResource[] resources,
 			IPath[] destinationPaths, String label) {
 		super(resources, destinationPaths, label);
-		originalResources = resources;
+		setOriginalResources(resources);
 		originalDestinationPaths = destinationPaths;
 	}
 
@@ -210,6 +212,21 @@ public class CopyResourcesOperation extends
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeUndoableStatus(monitor);
+		if (!status.isOK()) {
+			return status;
+		}
+		// If the originals no longer exist, we do not want to attempt to
+		// undo the copy which involves deleting the copies. They may be all we
+		// have left.
+		if (originalResources == null) {
+			return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
+		}
+		for (int i = 0; i < originalResources.length; i++) {
+			if (!resources[i].exists()) {
+				markInvalid();
+				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
+			}
+		}
 		// undoing a copy means deleting the copy that was made
 		if (status.isOK()) {
 			status = computeDeleteStatus();
@@ -220,6 +237,7 @@ public class CopyResourcesOperation extends
 				&& resourceDescriptions.length > 0) {
 			status = computeCreateStatus();
 		}
+
 		return status;
 	}
 
@@ -236,5 +254,17 @@ public class CopyResourcesOperation extends
 			status = computeMoveOrCopyStatus();
 		}
 		return status;
+	}
+	/*
+	 * Record the original resources, including a resource description to describe it.
+	 * This is so we can make sure the original resources and their subtrees are intact
+	 * before allowing a copy to be undone.
+	 */
+	private void setOriginalResources(IResource[] originals) {
+		originalResources = originals;
+		originalResourceDescriptions = new ResourceDescription[originals.length];
+		for (int i=0; i<originals.length; i++) {
+			originalResourceDescriptions[i] = ResourceDescription.fromResource(originals[i]);
+		}
 	}
 }
