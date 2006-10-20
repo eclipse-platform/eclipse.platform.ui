@@ -124,6 +124,10 @@
             type="text"
             extension="prefs">
       </fileTypes>
+      <fileTypes
+            extension="ini"
+            type="text">
+      </fileTypes>
    </extension>
    <extension
          id="FileValidator"
