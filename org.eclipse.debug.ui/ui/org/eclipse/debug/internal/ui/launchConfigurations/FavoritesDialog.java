@@ -51,7 +51,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -168,7 +168,7 @@ public class FavoritesDialog extends TrayDialog {
 			}
 			list.removeAll(getFavorites());
 			Object[] objs = list.toArray();
-			new WorkbenchViewerSorter().sort(getFavoritesTable(), objs);
+			new WorkbenchViewerComparator().sort(getFavoritesTable(), objs);
 			return objs;
 		}
 

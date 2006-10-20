@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.ISelectionStatusValidator;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * The dialog for selecting the folder for which a source container will be created.
@@ -80,7 +80,7 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		super(parent, labelProvider, contentProvider);
 		setTitle(SourceLookupUIMessages.folderSelection_title);	//	
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
-		setSorter(new ResourceSorter(ResourceSorter.NAME));
+        setComparator(new ResourceComparator(ResourceComparator.NAME));
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			public IStatus validate(Object[] selection) {
 				for (int i= 0; i < selection.length; i++) {

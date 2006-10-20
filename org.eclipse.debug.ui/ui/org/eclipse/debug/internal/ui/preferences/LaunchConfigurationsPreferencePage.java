@@ -61,7 +61,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * Provides the Launch Configuration preference page to the Run/Debug preferences
@@ -252,7 +252,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		CheckboxTableViewer tviewer = new CheckboxTableViewer(fTable);
 		tviewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tviewer.setContentProvider(new TableContentProvider());
-		tviewer.setSorter(new WorkbenchViewerSorter());
+		tviewer.setComparator(new WorkbenchViewerComparator());
 		LaunchGroupExtension[] groups = new LaunchGroupExtension[] {
 				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP),
 				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(EXT_BUILDER_GROUP)};

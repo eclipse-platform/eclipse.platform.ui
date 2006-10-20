@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * A tree view of launch configurations
@@ -136,7 +136,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		TreeViewer treeViewer = fTree.getViewer();
 		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-		treeViewer.setSorter(new WorkbenchViewerSorter());
+		treeViewer.setComparator(new WorkbenchViewerComparator());
 		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), parent.getShell()));
 		if(fFilters != null) {
 			for (int i = 0; i < fFilters.length; i++) {

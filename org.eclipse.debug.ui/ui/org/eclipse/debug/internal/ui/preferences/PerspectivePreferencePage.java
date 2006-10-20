@@ -63,7 +63,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -516,7 +516,7 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		fTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fViewer = new TreeViewer(fTree);
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-		fViewer.setSorter(new WorkbenchViewerSorter());
+		fViewer.setComparator(new WorkbenchViewerComparator());
 		fViewer.setContentProvider(new LaunchConfigurationTreeContentProviderNoChildren(null, parent.getShell()));
 		fViewer.addFilter(new LaunchGroupFilter(fLCM.getLaunchGroup(DEBUG_LAUNCH_GROUP)));
 		fViewer.setInput(fLManager.getLaunchConfigurationTypes());
