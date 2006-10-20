@@ -582,8 +582,20 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				redoList.remove(operation);
 				internalRemove(operation);
 			} else {
-				// remove the reference to the context
-				operation.removeContext(context);
+				// remove the reference to the context.  
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=161786
+				// It is not enough to simply remove the context.  There could
+				// be one or more contexts that match the one we are trying to dispose.
+				IUndoContext[] contexts = operation.getContexts();
+				for (int j=0; j<contexts.length; j++) {
+					if (contexts[j].matches(context)) {
+						operation.removeContext(contexts[j]);
+					}
+				}
+				if (operation.getContexts().length == 0) {
+					redoList.remove(operation);
+					internalRemove(operation);
+				}
 			}
 		}
 	}
@@ -597,6 +609,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 					+ context);
 		}
 
+		// Get all operations that have the context (or one that matches)
 		Object[] filtered = filter(undoList, context);
 		for (int i = 0; i < filtered.length; i++) {
 			IUndoableOperation operation = (IUndoableOperation) filtered[i];
@@ -607,8 +620,20 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				undoList.remove(operation);
 				internalRemove(operation);
 			} else {
-				// remove the reference to the context
-				operation.removeContext(context);
+				// remove the reference to the context.  
+				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=161786
+				// It is not enough to simply remove the context.  There could
+				// be one or more contexts that match the one we are trying to dispose.
+				IUndoContext[] contexts = operation.getContexts();
+				for (int j=0; j<contexts.length; j++) {
+					if (contexts[j].matches(context)) {
+						operation.removeContext(contexts[j]);
+					}
+				}
+				if (operation.getContexts().length == 0) {
+					undoList.remove(operation);
+					internalRemove(operation);
+				}
 			}
 		}
 		/*
