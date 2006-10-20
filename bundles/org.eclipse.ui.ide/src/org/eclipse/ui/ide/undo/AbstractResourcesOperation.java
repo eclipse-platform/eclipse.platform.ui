@@ -19,10 +19,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
@@ -187,53 +183,6 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	}
 
 	/**
-	 * Ask the user whether the given resource should be overwritten.
-	 * 
-	 * @param resource
-	 *            the resource to be overwritten
-	 * @param uiInfo
-	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller in order to supply UI information for prompting the
-	 *            user. When this parameter is not <code>null</code>, it
-	 *            contains an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class
-	 * @return One of the IDialogConstants constants indicating which of the
-	 *         Yes, Yes to All, No, Cancel options has been selected by the
-	 *         user.
-	 */
-	protected int queryOverwrite(IResource resource, IAdaptable uiInfo) {
-		Shell shell = getShell(uiInfo);
-		final MessageDialog dialog = new MessageDialog(
-				shell,
-				UndoMessages.AbstractResourcesOperation_overwriteTitle,
-				null,
-				NLS
-						.bind(
-								UndoMessages.AbstractResourcesOperation_overwriteQuestion,
-								resource.getName()), MessageDialog.QUESTION,
-				new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0);
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				dialog.open();
-			}
-		});
-		int result = dialog.getReturnCode();
-		if (result == 0) {
-			return IDialogConstants.YES_ID;
-		}
-		if (result == 1) {
-			return IDialogConstants.YES_TO_ALL_ID;
-		}
-		if (result == 2) {
-			return IDialogConstants.NO_ID;
-		}
-		return IDialogConstants.CANCEL_ID;
-	}
-
-	/**
 	 * Set the array of resource descriptions describing resources to be
 	 * restored when undoing or redoing this operation.
 	 * 
@@ -279,7 +228,7 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			// ...and changing the charset
 			ruleArray[i * 3 + 2] = getWorkspaceRuleFactory().charsetRule(
 					resource);
-	
+
 		}
 		return MultiRule.combine(ruleArray);
 	}

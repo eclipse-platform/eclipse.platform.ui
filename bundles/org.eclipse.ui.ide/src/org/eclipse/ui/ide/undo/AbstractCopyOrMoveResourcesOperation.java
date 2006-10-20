@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
@@ -240,31 +239,6 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			}
 			if (!status.isOK()) {
 				return status;
-			}
-		}
-
-		// No error conditions. If we are to quietly compute status, do not
-		// go any further.
-		if (quietCompute) {
-			return Status.OK_STATUS;
-		}
-
-		for (int i = 0; i < resources.length; i++) {
-			// Check and warn for any overwrites that may occur.
-			IResource newResource = getOverwrittenResource(resources[i], i);
-
-			if (newResource != null) {
-				int result = queryOverwrite(newResource, null);
-				if (result == IDialogConstants.YES_TO_ALL_ID) {
-					return Status.OK_STATUS;
-				} else if (result == IDialogConstants.CANCEL_ID) {
-					return Status.CANCEL_STATUS;
-				} else if (result == IDialogConstants.NO_ID) {
-					markInvalid();
-					return getErrorStatus(UndoMessages.AbstractResourcesOperation_overwriteError);
-				}
-				// Otherwise (YES_ID) we continue checking each one
-				// individually.
 			}
 		}
 		return Status.OK_STATUS;

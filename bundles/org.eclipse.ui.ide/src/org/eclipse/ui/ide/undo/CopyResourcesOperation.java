@@ -27,6 +27,13 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * more resources in the workspace. Clients may call the public API from a
  * background thread.
  * 
+ * This operation can track any overwritten resources and restore them when the
+ * copy is undone. It is up to clients to determine whether overwrites are
+ * allowed. If a resource should not be overwritten, it should not be included
+ * in this operation. In addition to checking for overwrites, the target
+ * location for the copy is assumed to have already been validated by the
+ * client. It will not be revalidated on undo and redo.
+ * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * 

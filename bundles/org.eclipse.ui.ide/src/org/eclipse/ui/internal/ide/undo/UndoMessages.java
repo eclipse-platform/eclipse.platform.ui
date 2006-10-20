@@ -48,9 +48,6 @@ public class UndoMessages extends NLS {
 	public static String AbstractResourcesOperation_outOfSyncQuestion;
 	public static String AbstractResourcesOperation_deletionMessageTitle;
 	public static String AbstractResourcesOperation_deletionExceptionMessage;
-	public static String AbstractResourcesOperation_overwriteTitle;
-	public static String AbstractResourcesOperation_overwriteError;
-	public static String AbstractResourcesOperation_overwriteQuestion;
 	
 	public static String AbstractCopyOrMoveResourcesOperation_SameNameOrLocation;
 	public static String AbstractCopyOrMoveResourcesOperation_ResourceDoesNotExist;

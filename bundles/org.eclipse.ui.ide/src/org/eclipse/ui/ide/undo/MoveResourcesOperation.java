@@ -24,6 +24,13 @@ import org.eclipse.core.runtime.IStatus;
  * more resources in the workspace. Clients may call the public API from a
  * background thread.
  * 
+ * This operation can track any overwritten resources and restore them when the
+ * move is undone. It is up to clients to determine whether overwrites are
+ * allowed. If a resource should not be overwritten, it should not be included
+ * in this operation. In addition to checking for overwrites, the target
+ * location for the move is assumed to have already been validated by the
+ * client. It will not be revalidated on undo and redo.
+ * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * 
@@ -72,8 +79,7 @@ public class MoveResourcesOperation extends
 	}
 
 	/**
-	 * Create a MoveResourcesOperation whose destination is not
-	 * yet specified.
+	 * Create a MoveResourcesOperation whose destination is not yet specified.
 	 * 
 	 * @param resources
 	 *            the resources to be modified
@@ -83,6 +89,7 @@ public class MoveResourcesOperation extends
 	MoveResourcesOperation(IResource[] resources, String label) {
 		super(resources, label);
 	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
