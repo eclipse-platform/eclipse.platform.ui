@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -49,11 +52,7 @@ public class CopyResourcesOperation extends
 
 	IResource[] originalResources;
 
-	ResourceDescription[] originalResourceDescriptions;
-
-	IPath[] originalDestinationPaths = null;
-
-	IPath originalDestination = null;
+	ResourceDescription[] snapshotResourceDescriptions;
 
 	/**
 	 * Create a CopyResourcesOperation that copies a single resource to a new
@@ -71,7 +70,6 @@ public class CopyResourcesOperation extends
 			String label) {
 		super(new IResource[] { resource }, new IPath[] { newPath }, label);
 		setOriginalResources(new IResource[] { resource });
-		originalDestinationPaths = new IPath[] { newPath };
 	}
 
 	/**
@@ -91,7 +89,6 @@ public class CopyResourcesOperation extends
 			String label) {
 		super(resources, destinationPath, label);
 		setOriginalResources(resources);
-		originalDestination = destinationPath;
 	}
 
 	/**
@@ -113,7 +110,6 @@ public class CopyResourcesOperation extends
 			IPath[] destinationPaths, String label) {
 		super(resources, destinationPaths, label);
 		setOriginalResources(resources);
-		originalDestinationPaths = destinationPaths;
 	}
 
 	/*
@@ -126,7 +122,69 @@ public class CopyResourcesOperation extends
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		moveOrCopy(monitor, uiInfo, false); // false = copy
+		copy(monitor, uiInfo); 
+	}
+
+	/**
+	 * Move or copy any known resources according to the destination parameters
+	 * known by this operation. Store enough information to undo and redo the
+	 * operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 */
+	protected void copy(IProgressMonitor monitor, IAdaptable uiInfo)
+			throws CoreException {
+
+		monitor.beginTask("", 2000); //$NON-NLS-1$
+		monitor
+				.setTaskName(UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress);
+		List resourcesAtDestination = new ArrayList();
+		List overwrittenResources = new ArrayList();
+
+		for (int i = 0; i < resources.length; i++) {
+			// Copy the resources and record the overwrites that would
+			// be restored if this operation were reversed
+			ResourceDescription[] overwrites;
+			overwrites = WorkspaceUndoUtil.copy(
+					new IResource[] { resources[i] }, getDestinationPath(
+							resources[i], i), resourcesAtDestination,
+					new SubProgressMonitor(monitor, 1000 / resources.length),
+					uiInfo, true);
+			// Accumulate the overwrites into the full list
+			for (int j = 0; j < overwrites.length; j++) {
+				overwrittenResources.add(overwrites[j]);
+			}
+		}
+
+		// Are there any previously overwritten resources to restore now?
+		if (resourceDescriptions != null) {
+			for (int i = 0; i < resourceDescriptions.length; i++) {
+				if (resourceDescriptions[i] != null) {
+					resourceDescriptions[i]
+							.createResource(new SubProgressMonitor(monitor,
+									1000 / resourceDescriptions.length));
+				}
+			}
+		}
+
+		// Reset resource descriptions to the just overwritten resources
+		setResourceDescriptions((ResourceDescription[]) overwrittenResources
+				.toArray(new ResourceDescription[overwrittenResources.size()]));
+
+		// Reset the target resources to refer to the resources in their new
+		// location.
+		setTargetResources((IResource[]) resourcesAtDestination
+				.toArray(new IResource[resourcesAtDestination.size()]));
+		monitor.done();
 	}
 
 	/*
@@ -150,16 +208,10 @@ public class CopyResourcesOperation extends
 		WorkspaceUndoUtil.recreate(resourceDescriptions,
 				new SubProgressMonitor(monitor, 1), uiInfo);
 		setResourceDescriptions(new ResourceDescription[0]);
-		// then setting the target resources and destination paths
-		// back to the original ones
+		// then setting the target resources back to the original ones.
+		// Note that the destination paths never changed since they
+		// are not used during undo.
 		setTargetResources(originalResources);
-		if (originalDestination != null) {
-			destination = originalDestination;
-			destinationPaths = null;
-		} else {
-			destination = null;
-			destinationPaths = originalDestinationPaths;
-		}
 		monitor.done();
 	}
 
@@ -197,21 +249,6 @@ public class CopyResourcesOperation extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * This implementation computes the ability to copy the resources.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeExecutionStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * This implementation computes the ability to delete the original copy and
 	 * restore any overwritten resources.
 	 * 
@@ -229,8 +266,8 @@ public class CopyResourcesOperation extends
 			markInvalid();
 			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 		}
-		for (int i = 0; i < originalResourceDescriptions.length; i++) {
-			if (!originalResourceDescriptions[i].verifyExistence(true)) {
+		for (int i = 0; i < snapshotResourceDescriptions.length; i++) {
+			if (!snapshotResourceDescriptions[i].verifyExistence(true)) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
 			}
@@ -250,30 +287,15 @@ public class CopyResourcesOperation extends
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * This implementation computes the ability to copy the resources.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeRedoableStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
 	 * Record the original resources, including a resource description to
 	 * describe it. This is so we can make sure the original resources and their
 	 * subtrees are intact before allowing a copy to be undone.
 	 */
 	private void setOriginalResources(IResource[] originals) {
 		originalResources = originals;
-		originalResourceDescriptions = new ResourceDescription[originals.length];
+		snapshotResourceDescriptions = new ResourceDescription[originals.length];
 		for (int i = 0; i < originals.length; i++) {
-			originalResourceDescriptions[i] = ResourceDescription
+			snapshotResourceDescriptions[i] = ResourceDescription
 					.fromResource(originals[i]);
 		}
 	}

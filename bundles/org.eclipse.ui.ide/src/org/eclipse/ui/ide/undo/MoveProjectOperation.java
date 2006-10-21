@@ -87,15 +87,22 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	private IProject getProject() {
 		return (IProject) resources[0];
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource, int)
+	 */
+	protected boolean isDestinationPathValid(IResource resource, int index) {
+		// path has already been validated in #computeMoveOrCopyStatus()
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getOverwrittenResource(org.eclipse.core.resources.IResource,
-	 *      int)
+	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource, int)
 	 */
-	protected IResource getOverwrittenResource(IResource resource, int index) {
-		return null;
+	protected String getProposedName(IResource resource, int index) {
+		return getProject().getName();
 	}
 
 	/*
@@ -147,68 +154,6 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	}
 	
 	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#isDestinationPathValid(org.eclipse.core.resources.IResource, int)
-	 */
-	protected boolean isDestinationPathValid(IResource resource, int index) {
-		// path has already been validated in #computeMoveOrCopyStatus()
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.ide.undo.AbstractCopyOrMoveResourcesOperation#getProposedName(org.eclipse.core.resources.IResource, int)
-	 */
-	protected String getProposedName(IResource resource, int index) {
-		return getProject().getName();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Map execution to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeExecutionStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Map undo to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeUndoableStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Map redo to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeRedoableStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
 	 * Move the project to its new location, returning its previous location.
 	 */
 	URI moveProject(IProject project, URI locationURI, IProgressMonitor monitor)
@@ -226,5 +171,20 @@ public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	
 		// Now adjust the projectLocation so this can be undone/redone.
 		return newDestinationURI;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map undo to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeUndoableStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
 	}
 }

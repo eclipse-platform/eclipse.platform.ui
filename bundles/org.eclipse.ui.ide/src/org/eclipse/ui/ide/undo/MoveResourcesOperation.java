@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.ide.undo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -18,6 +21,9 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.internal.ide.undo.ResourceDescription;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A MoveResourcesOperation represents an undoable operation for moving one or
@@ -44,6 +50,12 @@ import org.eclipse.core.runtime.IStatus;
 public class MoveResourcesOperation extends
 		AbstractCopyOrMoveResourcesOperation {
 
+	IResource[] originalResources;
+
+	IPath originalDestination;
+
+	IPath[] originalDestinationPaths;
+
 	/**
 	 * Create a MoveResourcesOperation that moves all of the specified resources
 	 * to the same target location, using their existing names.
@@ -59,6 +71,9 @@ public class MoveResourcesOperation extends
 	public MoveResourcesOperation(IResource[] resources, IPath destinationPath,
 			String label) {
 		super(resources, destinationPath, label);
+		originalResources = this.resources;
+		originalDestination = this.destination;
+		originalDestinationPaths = this.destinationPaths;
 	}
 
 	/**
@@ -76,18 +91,9 @@ public class MoveResourcesOperation extends
 	public MoveResourcesOperation(IResource resource, IPath newPath,
 			String label) {
 		super(new IResource[] { resource }, new IPath[] { newPath }, label);
-	}
-
-	/**
-	 * Create a MoveResourcesOperation whose destination is not yet specified.
-	 * 
-	 * @param resources
-	 *            the resources to be modified
-	 * @param label
-	 *            the label of the operation
-	 */
-	MoveResourcesOperation(IResource[] resources, String label) {
-		super(resources, label);
+		originalResources = this.resources;
+		originalDestination = this.destination;
+		originalDestinationPaths = this.destinationPaths;
 	}
 
 	/*
@@ -100,7 +106,75 @@ public class MoveResourcesOperation extends
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		moveOrCopy(monitor, uiInfo, true); // true = move
+		move(monitor, uiInfo);
+	}
+
+	/**
+	 * Move any known resources according to the destination parameters known by
+	 * this operation. Store enough information to undo and redo the operation.
+	 * 
+	 * @param monitor
+	 *            the progress monitor to use for the operation
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 */
+	protected void move(IProgressMonitor monitor, IAdaptable uiInfo)
+			throws CoreException {
+
+		monitor.beginTask("", 2000); //$NON-NLS-1$
+		monitor
+				.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
+		List resourcesAtDestination = new ArrayList();
+		List undoDestinationPaths = new ArrayList();
+		List overwrittenResources = new ArrayList();
+
+		for (int i = 0; i < resources.length; i++) {
+			// Move the resources and record the overwrites that would
+			// be restored if this operation were reversed
+			ResourceDescription[] overwrites;
+			overwrites = WorkspaceUndoUtil.move(
+					new IResource[] { resources[i] }, getDestinationPath(
+							resources[i], i), resourcesAtDestination,
+					undoDestinationPaths, new SubProgressMonitor(monitor,
+							1000 / resources.length), uiInfo, true);
+
+			// Accumulate the overwrites into the full list
+			for (int j = 0; j < overwrites.length; j++) {
+				overwrittenResources.add(overwrites[j]);
+			}
+		}
+
+		// Are there any previously overwritten resources to restore now?
+		if (resourceDescriptions != null) {
+			for (int i = 0; i < resourceDescriptions.length; i++) {
+				if (resourceDescriptions[i] != null) {
+					resourceDescriptions[i]
+							.createResource(new SubProgressMonitor(monitor,
+									1000 / resourceDescriptions.length));
+				}
+			}
+		}
+
+		// Reset resource descriptions to the just overwritten resources
+		setResourceDescriptions((ResourceDescription[]) overwrittenResources
+				.toArray(new ResourceDescription[overwrittenResources.size()]));
+
+		// Reset the target resources to refer to the resources in their new
+		// location.
+		setTargetResources((IResource[]) resourcesAtDestination
+				.toArray(new IResource[resourcesAtDestination.size()]));
+		// Reset the destination paths that correspond to these resources
+		destinationPaths = (IPath[]) undoDestinationPaths
+				.toArray(new IPath[undoDestinationPaths.size()]);
+		destination = null;
+
+		monitor.done();
 	}
 
 	/*
@@ -113,7 +187,18 @@ public class MoveResourcesOperation extends
 	 */
 	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		moveOrCopy(monitor, uiInfo, true); // true = move
+		// We've recorded the original moves atomically, so perform the move
+		move(monitor, uiInfo);
+		// Now reset everything back to the way it was originally.
+		// If we don't do this, the move will be "precisely reversed."
+		// For example, if we merged a folder by moving certain files,
+		// we want redo to redo the folder merge, rather than remembering
+		// only the files that were originally merged. This makes us more
+		// adaptable to changes in the target.
+		setTargetResources(originalResources);
+		this.resourceDescriptions = new ResourceDescription[0];
+		this.destination = originalDestination;
+		this.destinationPaths = originalDestinationPaths;
 	}
 
 	/*
@@ -134,42 +219,12 @@ public class MoveResourcesOperation extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * Map execution to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeExecutionStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * Map undo to move status.
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeUndoableStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * Map redo to move status.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeRedoableStatus(monitor);
 		if (status.isOK()) {
 			status = computeMoveOrCopyStatus();
 		}

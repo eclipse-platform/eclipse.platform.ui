@@ -199,21 +199,6 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * This implementation computes the ability to copy the resources.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeExecutionStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * This implementation computes the ability to delete the original copy and
 	 * restore any overwritten resources.
 	 * 
@@ -235,21 +220,6 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		// undoing a copy means deleting the copy that was made
 		if (status.isOK()) {
 			status = computeDeleteStatus();
-		}
-		return status;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * This implementation computes the ability to copy the resources.
-	 * 
-	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
-		IStatus status = super.computeRedoableStatus(monitor);
-		if (status.isOK()) {
-			status = computeMoveOrCopyStatus();
 		}
 		return status;
 	}

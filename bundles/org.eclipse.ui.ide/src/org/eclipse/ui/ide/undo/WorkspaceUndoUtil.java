@@ -224,6 +224,8 @@ public class WorkspaceUndoUtil {
 	 * @param destination
 	 *            the destination path for the resources, relative to the
 	 *            workspace
+	 * @param resourcesAtDestination
+	 *            A list used to record the new copies.
 	 * @param monitor
 	 *            the progress monitor used to show progress
 	 * @param uiInfo
@@ -245,8 +247,8 @@ public class WorkspaceUndoUtil {
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	static ResourceDescription[] copy(IResource[] resources, IPath destination,
-			IProgressMonitor monitor, IAdaptable uiInfo,
-			boolean pathIncludesName) throws CoreException {
+			List resourcesAtDestination, IProgressMonitor monitor,
+			IAdaptable uiInfo, boolean pathIncludesName) throws CoreException {
 
 		monitor.beginTask("", resources.length); //$NON-NLS-1$
 		monitor
@@ -265,16 +267,16 @@ public class WorkspaceUndoUtil {
 			if (source.getType() == IResource.FOLDER && existing != null) {
 				// The resource is a folder and it exists in the destination.
 				// Copy its children to the existing destination.
-
 				if (source.isLinked() == existing.isLinked()) {
 					IResource[] children = ((IContainer) source).members();
 					ResourceDescription[] overwritten = copy(children,
-							destinationPath,
+							destinationPath, resourcesAtDestination,
 							new SubProgressMonitor(monitor, 1), uiInfo, false);
+					// We don't record the copy since this recursive call will
+					// do so. Just record the overwrites.
 					for (int j = 0; j < overwritten.length; j++) {
 						overwrittenResources.add(overwritten[j]);
 					}
-
 				} else {
 					// delete the destination folder, copying a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
@@ -283,6 +285,9 @@ public class WorkspaceUndoUtil {
 							new SubProgressMonitor(monitor, 0), uiInfo, false);
 					source.copy(destinationPath, IResource.SHALLOW,
 							new SubProgressMonitor(monitor, 1));
+					// Record the copy
+					resourcesAtDestination.add(getWorkspace().getRoot()
+							.findMember(destinationPath));
 					for (int j = 0; j < deleted.length; j++) {
 						overwrittenResources.add(deleted[j]);
 					}
@@ -293,6 +298,8 @@ public class WorkspaceUndoUtil {
 						overwrittenResources.add(copyOverExistingResource(
 								source, existing, new SubProgressMonitor(
 										monitor, 1), uiInfo, false));
+						// Record the "copy"
+						resourcesAtDestination.add(existing);
 					} else {
 						// Copying a linked resource over unlinked or vice
 						// versa. Can't use setContents here. Fixes bug 28772.
@@ -302,6 +309,9 @@ public class WorkspaceUndoUtil {
 								false);
 						source.copy(destinationPath, IResource.SHALLOW,
 								new SubProgressMonitor(monitor, 1));
+						// Record the copy
+						resourcesAtDestination.add(getWorkspace().getRoot()
+								.findMember(destinationPath));
 						for (int j = 0; j < deleted.length; j++) {
 							overwrittenResources.add(deleted[j]);
 						}
@@ -313,9 +323,17 @@ public class WorkspaceUndoUtil {
 					if (pathIncludesName) {
 						parentPath = destination.removeLastSegments(1);
 					}
-					generateContainers(parentPath);
+					IContainer generatedParent = generateContainers(parentPath);
 					source.copy(destinationPath, IResource.SHALLOW,
 							new SubProgressMonitor(monitor, 1));
+					// Record the copy. If we had to generate a parent
+					// folder, that should be recorded as part of the copy
+					if (generatedParent == null) {
+						resourcesAtDestination.add(getWorkspace().getRoot()
+								.findMember(destinationPath));
+					} else {
+						resourcesAtDestination.add(generatedParent);
+					}
 				}
 
 				if (monitor.isCanceled()) {
@@ -337,6 +355,10 @@ public class WorkspaceUndoUtil {
 	 * @param destination
 	 *            the destination path for the resources, relative to the
 	 *            workspace
+	 * @param resourcesAtDestination
+	 *            A list used to record each moved resource.
+	 * @param reverseDestinations
+	 *            A list used to record each moved resource's original location
 	 * @param monitor
 	 *            the progress monitor used to show progress
 	 * @param uiInfo
@@ -358,6 +380,7 @@ public class WorkspaceUndoUtil {
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
 	static ResourceDescription[] move(IResource[] resources, IPath destination,
+			List resourcesAtDestination, List reverseDestinations,
 			IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean pathIncludesName) throws CoreException {
 
@@ -381,22 +404,31 @@ public class WorkspaceUndoUtil {
 				if (source.isLinked() == existing.isLinked()) {
 					IResource[] children = ((IContainer) source).members();
 					ResourceDescription[] overwritten = move(children,
-							destinationPath,
-							new SubProgressMonitor(monitor, 1), uiInfo, false);
+							destinationPath, resourcesAtDestination,
+							reverseDestinations, new SubProgressMonitor(
+									monitor, 1), uiInfo, false);
+					// We don't record the moved resources since the recursive
+					// call has done so. Just record the overwrites.
 					for (int j = 0; j < overwritten.length; j++) {
 						overwrittenResources.add(overwritten[j]);
 					}
-					overwrittenResources.add(delete(source, monitor, uiInfo,
-							false, false));
+					// Delete the source.  No need to record it since it
+					// will get moved back.
+					delete(source, monitor, uiInfo, false, false);
 				} else {
 					// delete the destination folder, moving a linked folder
 					// over an unlinked one or vice versa. Fixes bug 28772.
 					ResourceDescription[] deleted = delete(
 							new IResource[] { existing },
 							new SubProgressMonitor(monitor, 0), uiInfo, false);
+					// Record the original path
+					reverseDestinations.add(source.getFullPath());
 					source.move(destinationPath, IResource.SHALLOW
 							| IResource.KEEP_HISTORY, new SubProgressMonitor(
 							monitor, 1));
+					// Record the resource at its destination
+					resourcesAtDestination.add(getWorkspace().getRoot()
+							.findMember(destinationPath));
 					for (int j = 0; j < deleted.length; j++) {
 						overwrittenResources.add(deleted[j]);
 					}
@@ -404,9 +436,12 @@ public class WorkspaceUndoUtil {
 			} else {
 				if (existing != null) {
 					if (source.isLinked() == existing.isLinked()) {
+						// Record the original path
+						reverseDestinations.add(source.getFullPath());
 						overwrittenResources.add(copyOverExistingResource(
 								source, existing, new SubProgressMonitor(
 										monitor, 1), uiInfo, true));
+						resourcesAtDestination.add(existing);
 					} else {
 						// Moving a linked resource over unlinked or vice
 						// versa. Can't use setContents here. Fixes bug 28772.
@@ -414,24 +449,39 @@ public class WorkspaceUndoUtil {
 								new IResource[] { existing },
 								new SubProgressMonitor(monitor, 0), uiInfo,
 								false);
+						reverseDestinations.add(source.getFullPath());
 						source.move(destinationPath, IResource.SHALLOW
 								| IResource.KEEP_HISTORY,
 								new SubProgressMonitor(monitor, 1));
+						// Record the resource at its destination
+						resourcesAtDestination.add(getWorkspace().getRoot()
+								.findMember(destinationPath));
 						for (int j = 0; j < deleted.length; j++) {
 							overwrittenResources.add(deleted[j]);
 						}
 					}
 				} else {
-					// no resources are being overwritten
+					// No resources are being overwritten.
+					// First record the source path
+					reverseDestinations.add(source.getFullPath());
 					// ensure the destination path exists
 					IPath parentPath = destination;
 					if (pathIncludesName) {
 						parentPath = destination.removeLastSegments(1);
 					}
-					generateContainers(parentPath);
+
+					IContainer generatedParent = generateContainers(parentPath);
 					source.move(destinationPath, IResource.SHALLOW
 							| IResource.KEEP_HISTORY, new SubProgressMonitor(
 							monitor, 1));
+					// Record the move. If we had to generate a parent
+					// folder, that should be recorded as part of the copy
+					if (generatedParent == null) {
+						resourcesAtDestination.add(getWorkspace().getRoot()
+								.findMember(destinationPath));
+					} else {
+						resourcesAtDestination.add(generatedParent);
+					}
 				}
 
 				if (monitor.isCanceled()) {
@@ -595,27 +645,36 @@ public class WorkspaceUndoUtil {
 
 	/*
 	 * Check for existence of the specified path and generate any containers
-	 * that do not yet exist.
+	 * that do not yet exist. Return any generated containers, or null if no
+	 * container had to be generated.
 	 */
-	private static void generateContainers(IPath path) throws CoreException {
-		IContainer container;
+	private static IContainer generateContainers(IPath path)
+			throws CoreException {
+		IResource container;
 		if (path.segmentCount() == 0) {
 			// nothing to generate
-			return;
-		} else if (path.segmentCount() == 1) {
+			return null;
+		}
+		container = getWorkspaceRoot().findMember(path);
+		// Nothing to generate because container exists
+		if (container != null) {
+			return null;
+		}
+
+		// Now make a non-existent handle representing the desired container
+		if (path.segmentCount() == 1) {
 			container = ResourcesPlugin.getWorkspace().getRoot().getProject(
 					path.segment(0));
 		} else {
 			container = ResourcesPlugin.getWorkspace().getRoot()
 					.getFolder(path);
 		}
-		if (container != null) {
-			ContainerDescription containerDescription = ContainerDescription
-					.fromContainer(container);
-			containerDescription.createExistentResourceFromHandle(container,
-					new NullProgressMonitor());
-		}
-
+		ContainerDescription containerDescription = ContainerDescription
+				.fromContainer((IContainer) container);
+		container = containerDescription.createResourceHandle();
+		containerDescription.createExistentResourceFromHandle(container,
+				new NullProgressMonitor());
+		return (IContainer) container;
 	}
 
 	/*

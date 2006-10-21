@@ -146,15 +146,6 @@ public abstract class ContainerDescription extends ResourceDescription {
 	}
 
 	/**
-	 * Create a resource handle that represents this container description.
-	 */
-	public IResource createResourceHandle() {
-		IWorkspaceRoot workspaceRoot = parent.getWorkspace().getRoot();
-		IPath folderPath = parent.getFullPath().append(name);
-		return workspaceRoot.getFolder(folderPath);
-	}
-
-	/**
 	 * Create any child resources known by this container description.
 	 * 
 	 * @param parentHandle

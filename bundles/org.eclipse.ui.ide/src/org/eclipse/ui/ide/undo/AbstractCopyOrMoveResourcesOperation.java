@@ -11,18 +11,13 @@
 
 package org.eclipse.ui.ide.undo;
 
-import java.util.ArrayList;
-import java.util.List;
+
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -99,94 +94,6 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 		super(resources, label);
 	}
 
-	/**
-	 * Move or copy any known resources according to the destination parameters
-	 * known by this operation. Store enough information to undo and redo the
-	 * operation.
-	 * 
-	 * @param monitor
-	 *            the progress monitor to use for the operation
-	 * @param uiInfo
-	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller in order to supply UI information for prompting the
-	 *            user if necessary. When this parameter is not
-	 *            <code>null</code>, it contains an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class
-	 * @param move
-	 *            <code>true</code> if the operation is a move, and
-	 *            <code>false</code> if it is a copy
-	 * @throws CoreException
-	 *             propagates any CoreExceptions thrown from the resources API
-	 */
-	protected void moveOrCopy(IProgressMonitor monitor, IAdaptable uiInfo,
-			boolean move) throws CoreException {
-
-		String progressMessage;
-		if (move) {
-			progressMessage = UndoMessages.AbstractResourcesOperation_MovingResources;
-		} else {
-			progressMessage = UndoMessages.AbstractResourcesOperation_CopyingResourcesProgress;
-		}
-		monitor.beginTask("", 2000); //$NON-NLS-1$
-		monitor.setTaskName(progressMessage);
-		IResource[] resourcesAtDestination = new IResource[resources.length];
-		List overwrittenResources = new ArrayList();
-		IPath[] newDestinationPaths = new IPath[resources.length];
-
-		for (int i = 0; i < resources.length; i++) {
-			// Record the original path so this can be undone
-			newDestinationPaths[i] = resources[i].getFullPath();
-
-			// Move or copy the resources and record the overwrites that would
-			// be restored if this operation were reversed
-			ResourceDescription[] overwrites;
-			if (move) {
-				overwrites = WorkspaceUndoUtil.move(
-						new IResource[] { resources[i] }, getDestinationPath(
-								resources[i], i), new SubProgressMonitor(
-								monitor, 1000 / resources.length), uiInfo, true);
-			} else {
-				overwrites = WorkspaceUndoUtil
-						.copy(new IResource[] { resources[i] },
-								getDestinationPath(resources[i], i),
-								new SubProgressMonitor(monitor,
-										1000 / resources.length), uiInfo, true);
-			}
-			// Accumulate the overwrites into the full list
-			for (int j = 0; j < overwrites.length; j++) {
-				overwrittenResources.add(overwrites[i]);
-			}
-			// Record the resource in its new destination path
-			resourcesAtDestination[i] = getWorkspace().getRoot().findMember(
-					getDestinationPath(resources[i], i));
-		}
-
-		// Are there any previously overwritten resources to restore now?
-		if (resourceDescriptions != null) {
-			for (int i = 0; i < resourceDescriptions.length; i++) {
-				if (resourceDescriptions[i] != null) {
-					resourceDescriptions[i]
-							.createResource(new SubProgressMonitor(monitor,
-									1000 / resourceDescriptions.length));
-				}
-			}
-		}
-
-		// Reset resource descriptions to the just overwritten resources
-		setResourceDescriptions((ResourceDescription[]) overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]));
-
-		// Reset the target resources to refer to the resources in their new
-		// location. Note that the destination paths were reset to the original
-		// location as we did the move.
-		setTargetResources(resourcesAtDestination);
-
-		// Reset the destination path to the new paths
-		destinationPaths = newDestinationPaths;
-		destination = null;
-
-		monitor.done();
-	}
 
 	/**
 	 * Compute the status for moving or copying the resources. A status severity
@@ -273,22 +180,6 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	}
 
 	/**
-	 * Return any resource that will be overwritten by moving or copying the
-	 * specified resource to the destination recorded at the specified index.
-	 * 
-	 * @param resource
-	 *            the resource to be moved or copied
-	 * @param index
-	 *            the index within the destination array, if applicable
-	 * @return the resource that will be overwritten, or <code>null</code> if
-	 *         no resource will be overwritten.
-	 */
-	protected IResource getOverwrittenResource(IResource resource, int index) {
-		IPath proposedPath = getDestinationPath(resource, index);
-		return getWorkspace().getRoot().findMember(proposedPath);
-	}
-
-	/**
 	 * Return a boolean indicating whether the proposed destination path for a
 	 * resource is valid.
 	 * 
@@ -314,5 +205,35 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	 */
 	protected String getProposedName(IResource resource, int index) {
 		return getDestinationPath(resource, index).lastSegment();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map execution to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeExecutionStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map redo to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeRedoableStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
 	}
 }
