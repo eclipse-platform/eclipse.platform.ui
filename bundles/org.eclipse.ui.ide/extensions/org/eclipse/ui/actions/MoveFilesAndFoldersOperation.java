@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
+import org.eclipse.ui.ide.undo.MoveResourcesOperation;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -61,6 +63,10 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @param resources the resources to move
      * @param destination destination to which resources will be moved
      * @param subMonitor a progress monitor for showing progress and for cancelation
+     * 
+     * @deprecated As of 3.3, the work is performed in the undoable operation
+	 * created in {@link #performCopy(IResource[], IPath, IProgressMonitor)}
+
      */
     protected void copy(IResource[] resources, IPath destination,
             IProgressMonitor subMonitor) throws CoreException {
@@ -169,6 +175,7 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
      * @param existing existing file to set the source content in
      * @param subMonitor a progress monitor for showing progress and for cancelation
      * @throws CoreException setContents failed
+     * @deprecated As of 3.3, this method is not called.
      */
     private void moveExisting(IResource source, IResource existing,
             IProgressMonitor subMonitor) throws CoreException {
@@ -223,4 +230,22 @@ public class MoveFilesAndFoldersOperation extends CopyFilesAndFoldersOperation {
     protected boolean isMove() {
     	return true;
     }
+    
+	/**
+	 * Returns an AbstractWorkspaceOperation suitable for performing the move or copy
+	 * operation that will move or copy the given resources to the given 
+	 * destination path.
+	 * 
+	 * @param resources
+	 * 			the resources to be moved or copied
+	 * @param destinationPath
+	 * 			the destination path to which the resources should be moved
+	 * @return the operation that should be used to perform the move or copy
+	 * @since 3.3
+	 */
+	protected AbstractWorkspaceOperation getUndoableCopyOrMoveOperation(IResource[] resources, IPath destinationPath) {
+		return new MoveResourcesOperation(resources, destinationPath, 
+				IDEWorkbenchMessages.CopyFilesAndFoldersOperation_moveTitle);
+		
+	}
 }

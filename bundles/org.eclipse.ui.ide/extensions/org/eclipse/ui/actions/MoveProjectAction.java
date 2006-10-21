@@ -11,23 +11,21 @@
 package org.eclipse.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ProjectLocationMoveDialog;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.undo.MoveProjectOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -43,8 +41,6 @@ public class MoveProjectAction extends CopyProjectAction {
 	private static String MOVE_TITLE = IDEWorkbenchMessages.MoveProjectAction_text;
 
 	private static String PROBLEMS_TITLE = IDEWorkbenchMessages.MoveProjectAction_dialogTitle;
-
-	private static String MOVE_PROGRESS_TITLE = IDEWorkbenchMessages.MoveProjectAction_progressMessage;
 
 	/**
 	 * The id of this action.
@@ -69,6 +65,9 @@ public class MoveProjectAction extends CopyProjectAction {
 	 * Return the title of the errors dialog.
 	 * 
 	 * @return java.lang.String
+	 * 
+	 * @deprecated As of 3.3, the error handling is performed by the undoable 
+	 * operation which handles the move.
 	 */
 	protected String getErrorsTitle() {
 		return PROBLEMS_TITLE;
@@ -78,45 +77,40 @@ public class MoveProjectAction extends CopyProjectAction {
 	 * Moves the project to the new values.
 	 * 
 	 * @param project
-	 *            the project to copy
-	 * @param projectName
-	 *            the name of the copy
+	 *            the project to move
 	 * @param newLocation
-	 *            IPath
+	 *            URI
 	 * @return <code>true</code> if the copy operation completed, and
 	 *         <code>false</code> if it was abandoned part way
 	 */
-	boolean performMove(final IProject project, final String projectName,
-			final IPath newLocation) {
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) {
-				try {
-					if (monitor.isCanceled()) {
-						throw new OperationCanceledException();
+	boolean performMove(final IProject project, 
+			final URI newLocation) {
+		
+		IRunnableWithProgress op =  new IRunnableWithProgress() {
+    		public void run(IProgressMonitor monitor) {
+    			MoveProjectOperation op = new MoveProjectOperation(project, newLocation, IDEWorkbenchMessages.MoveProjectAction_moveTitle);
+    			op.setModelProviderIds(getModelProviderIds());
+    			try {
+    				PlatformUI.getWorkbench().getOperationSupport()
+    						.getOperationHistory().execute(op, monitor, 
+    								WorkspaceUndoUtil.getUIInfoAdapter(shell));
+    			} catch (ExecutionException e) {
+					if (e.getCause() instanceof CoreException) {
+						recordError((CoreException)e.getCause());
+					} else {
+						IDEWorkbenchPlugin.log(e.getMessage(), e);
+						displayError(e.getMessage());
 					}
-					
-					monitor.setTaskName(MOVE_PROGRESS_TITLE);
-					//Get a copy of the current description and modify it
-					IProjectDescription newDescription = createDescription(
-							project, projectName, newLocation);
-
-					project.move(newDescription, IResource.FORCE
-							| IResource.SHALLOW, monitor);
-
-				} catch (CoreException e) {
-					recordError(e); // log error
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-
+    			}
+    		}
+    	};
+		
 		try {
 			new ProgressMonitorJobsDialog(shell).run(true, true, op);
 		} catch (InterruptedException e) {
 			return false;
 		} catch (InvocationTargetException e) {
-			// CoreExceptions are collected above, but unexpected runtime
+			// CoreExceptions are collected by the operation, but unexpected runtime
 			// exceptions and errors may still occur.
 			IDEWorkbenchPlugin.log(getClass(),
                     "performMove()", e.getTargetException()); //$NON-NLS-1$
@@ -152,20 +146,19 @@ public class MoveProjectAction extends CopyProjectAction {
 
 		IProject project = (IProject) getSelectedResources().get(0);
 
-		//Get the project name and location in a two element list
+		//Get the project name and location 
 		Object[] destinationPaths = queryDestinationParameters(project);
 		if (destinationPaths == null) {
 			return;
 		}
 
-		String projectName = (String) destinationPaths[0];
-		IPath newLocation = new Path((String) destinationPaths[1]);
-
-		if (!validateMove(project, projectName)) {
-			return;
-		}
+		// Ideally we would have gotten the URI directly from the
+		// ProjectLocationDialog, but for backward compatibility, we
+		// use the raw string and map back to a URI.  
+		URI newLocation = URIUtil.toURI((String)destinationPaths[1]);
 		
-		boolean completed = performMove(project, projectName, newLocation);
+		
+		boolean completed = performMove(project, newLocation);
 
 		if (!completed) {
 			return; // not appropriate to show errors
@@ -177,23 +170,5 @@ public class MoveProjectAction extends CopyProjectAction {
 					.openError(this.shell, PROBLEMS_TITLE, null, errorStatus);
 			errorStatus = null;
 		}
-	}
-	
-	/**
-	 * Validates the operation against the model providers.
-	 *
-	 * @param project the project to move
-	 * @param newName the new name
-	 * @return whether the operation should proceed
-	 * @since 3.2
-	 */
-    private boolean validateMove(IProject project, String newName) {
-    	if (project.getName().equals(newName)) {
-    		// Only the location changed
-    		return true;
-    	}
-    	IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
-    	factory.move(project, new Path(newName));
-		return IDE.promptToConfirm(shell, IDEWorkbenchMessages.CopyProjectAction_confirm, NLS.bind(IDEWorkbenchMessages.CopyProjectAction_warning, project.getName()), factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
 	}
 }

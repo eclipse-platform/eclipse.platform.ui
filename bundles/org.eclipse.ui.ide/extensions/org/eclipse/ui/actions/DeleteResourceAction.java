@@ -10,28 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,7 +35,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.undo.DeleteResourcesOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -207,11 +196,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	private boolean deleteContent = false;
 
 	/**
-	 * Whether or not to automatically delete out of sync resources
-	 */
-	private boolean forceOutOfSyncDelete = false;
-
-	/**
 	 * Flag that allows testing mode ... it won't pop up the project delete
 	 * dialog, and will return "delete all content".
 	 */
@@ -267,18 +251,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	}
 
 	/**
-	 * Returns the option flags to use when deleting the given resource 
-	 */
-	private int computeFlags(IResource resourceToDelete) {
-		int flags = IResource.KEEP_HISTORY;
-		if (resourceToDelete.getType() == IResource.PROJECT) {
-			flags |= deleteContent ? IResource.ALWAYS_DELETE_PROJECT_CONTENT:
-				IResource.NEVER_DELETE_PROJECT_CONTENT;
-		}
-		return flags;
-	}
-
-	/**
 	 * Returns whether the selection contains linked resources.
 	 * 
 	 * @param resources
@@ -329,44 +301,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	}
 
 	/**
-	 * Creates and returns a result status appropriate for the given list of
-	 * exceptions.
-	 * 
-	 * @param exceptions
-	 *            The list of exceptions that occurred (may be empty)
-	 * @return The result status for the deletion
-	 */
-	private IStatus createResult(List exceptions) {
-		if (exceptions.isEmpty()) {
-			return Status.OK_STATUS;
-		}
-		final int exceptionCount = exceptions.size();
-		if (exceptionCount == 1) {
-			return ((CoreException) exceptions.get(0)).getStatus();
-		}
-		CoreException[] children = (CoreException[]) exceptions
-				.toArray(new CoreException[exceptionCount]);
-		boolean outOfSync = false;
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getStatus().getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-				outOfSync = true;
-				break;
-			}
-		}
-		String title = outOfSync ? IDEWorkbenchMessages.DeleteResourceAction_outOfSyncError
-				: IDEWorkbenchMessages.DeleteResourceAction_deletionExceptionMessage;
-		final MultiStatus multi = new MultiStatus(
-				IDEWorkbenchPlugin.IDE_WORKBENCH, 0, title, null);
-		for (int i = 0; i < exceptionCount; i++) {
-			CoreException exception = children[i];
-			IStatus status = exception.getStatus();
-			multi.add(new Status(status.getSeverity(), status.getPlugin(),
-					status.getCode(), status.getMessage(), exception));
-		}
-		return multi;
-	}
-
-	/**
 	 * Asks the user to confirm a delete operation.
 	 * 
 	 * @param resources
@@ -375,13 +309,11 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	 *         <code>false</code> if the deletion should be abandoned
 	 */
 	private boolean confirmDelete(IResource[] resources) {
-		if (validateDelete(resources)) {
-			if (containsOnlyProjects(resources)) {
-				return confirmDeleteProjects(resources);
-			}
-			return confirmDeleteNonProjects(resources);
+		if (containsOnlyProjects(resources)) {
+			return confirmDeleteProjects(resources);
 		}
-		return false;
+		return confirmDeleteNonProjects(resources);
+		
 	}
 
 	/**
@@ -442,75 +374,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		return code == 0; // YES
 	}
 
-	/**
-	 * Deletes the given resources.
-	 */
-	private void delete(IResource[] resourcesToDelete, IProgressMonitor monitor)
-			throws CoreException {
-		final List exceptions = new ArrayList();
-		forceOutOfSyncDelete = false;
-		monitor.beginTask("", resourcesToDelete.length); //$NON-NLS-1$
-		try {
-			for (int i = 0; i < resourcesToDelete.length; ++i) {
-				if (monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				try {
-					delete(resourcesToDelete[i], new SubProgressMonitor(
-							monitor, 1,
-							SubProgressMonitor.PREPEND_MAIN_LABEL_TO_SUBTASK));
-				} catch (CoreException e) {
-					exceptions.add(e);
-				}
-			}
-			IStatus result = createResult(exceptions);
-			if (!result.isOK()) {
-				throw new CoreException(result);
-			}
-		} finally {
-			monitor.done();
-		}
-	}
 
-	/**
-	 * Deletes the given resource.
-	 */
-	private void delete(IResource resourceToDelete, IProgressMonitor monitor)
-			throws CoreException {
-		int flags = computeFlags(resourceToDelete);
-		try {
-			resourceToDelete.delete(flags, monitor);
-		} catch (CoreException exception) {
-			if (resourceToDelete.getType() == IResource.FILE) {
-				IStatus[] children = exception.getStatus().getChildren();
 
-				if (children.length == 1
-						&& children[0].getCode() == IResourceStatus.OUT_OF_SYNC_LOCAL) {
-					boolean forceDelete = false;
-					if (forceOutOfSyncDelete) {
-						forceDelete = true;
-					} else {
-						int result = queryDeleteOutOfSync(resourceToDelete);
-						if (result == IDialogConstants.YES_ID) {
-							forceDelete = true;
-						} else if (result == IDialogConstants.YES_TO_ALL_ID) {
-							forceOutOfSyncDelete = true;
-							forceDelete = true;
-						} else if (result == IDialogConstants.CANCEL_ID) {
-							throw new OperationCanceledException();
-						}
-					}
-					if (forceDelete) {
-						resourceToDelete.delete(flags | IResource.FORCE, monitor);
-					}
-				} else {
-					throw exception;
-				}
-			} else {
-				throw exception;
-			}
-		}
-	}
 
 	/**
 	 * Return an array of the currently selected resources.
@@ -598,17 +463,18 @@ public class DeleteResourceAction extends SelectionListenerAction {
 				IDEWorkbenchMessages.DeleteResourceAction_jobName) {
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					ResourcesPlugin.getWorkspace().run(
-							new IWorkspaceRunnable() {
-								public void run(IProgressMonitor monitor)
-										throws CoreException {
-									delete(resourcesToDelete, monitor);
-								}
-							}, null, IWorkspace.AVOID_UPDATE, monitor);
-				} catch (CoreException e) {
-					return e.getStatus();
+					DeleteResourcesOperation op = 
+						new DeleteResourcesOperation(resourcesToDelete, IDEWorkbenchMessages.DeleteResourceAction_operationLabel, deleteContent);
+					op.setModelProviderIds(getModelProviderIds());
+					return PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(op, monitor, 
+							WorkspaceUndoUtil.getUIInfoAdapter(shell));
+				} catch (ExecutionException e) {
+					if (e.getCause() instanceof CoreException) {
+						return ((CoreException)e.getCause()).getStatus();
+					} 
+					return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, e.getMessage(),e);
 				}
-				return Status.OK_STATUS;
 			}
 
 			/*
@@ -625,29 +491,8 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			}
 
 		};
-		deleteJob.setRule(getDeleteRule(resourcesToDelete));
 		deleteJob.setUser(true);
 		deleteJob.schedule();
-	}
-
-	/*
-	 * Return the scheduling rule that encompasses the deletion of the selected
-	 * resources
-	 */
-	private ISchedulingRule getDeleteRule(IResource[] resourcesToDelete) {
-		IResourceRuleFactory ruleFactory = ResourcesPlugin.getWorkspace()
-				.getRuleFactory();
-		ISchedulingRule combinedRule = null;
-		for (int i = 0; i < resourcesToDelete.length; i++) {
-			IResource resource = resourcesToDelete[i];
-			ISchedulingRule deleteRule = ruleFactory.deleteRule(resource);
-			if (combinedRule == null) {
-				combinedRule = deleteRule;
-			} else {
-				combinedRule = MultiRule.combine(combinedRule, deleteRule);
-			}
-		}
-		return combinedRule;
 	}
 
 	/**
@@ -680,71 +525,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return super.updateSelection(selection)
 				&& canDelete(getSelectedResourcesArray());
-	}
-
-	/**
-	 * Ask the user whether the given resource should be deleted despite being
-	 * out of sync with the file system.
-	 * 
-	 * @param resource
-	 *            the out of sync resource
-	 * @return One of the IDialogConstants constants indicating which of the
-	 *         Yes, Yes to All, No, Cancel options has been selected by the
-	 *         user.
-	 */
-	private int queryDeleteOutOfSync(IResource resource) {
-		final MessageDialog dialog = new MessageDialog(
-				shell,
-				IDEWorkbenchMessages.DeleteResourceAction_messageTitle,
-				null,
-				NLS
-						.bind(
-								IDEWorkbenchMessages.DeleteResourceAction_outOfSyncQuestion,
-								resource.getName()), MessageDialog.QUESTION,
-				new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.YES_TO_ALL_LABEL,
-						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0);
-		shell.getDisplay().syncExec(new Runnable() {
-			public void run() {
-				dialog.open();
-			}
-		});
-		int result = dialog.getReturnCode();
-		if (result == 0) {
-			return IDialogConstants.YES_ID;
-		}
-		if (result == 1) {
-			return IDialogConstants.YES_TO_ALL_ID;
-		}
-		if (result == 2) {
-			return IDialogConstants.NO_ID;
-		}
-		return IDialogConstants.CANCEL_ID;
-	}
-
-	/**
-	 * Validates the operation against the model providers.
-	 * 
-	 * @param resources
-	 *            the resources to be deleted
-	 * @return whether the operation should proceed
-	 */
-	private boolean validateDelete(IResource[] resources) {
-		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
-				.getValidator().createDeltaFactory();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			factory.delete(resource);
-		}
-		return IDE.promptToConfirm(shell,
-				IDEWorkbenchMessages.DeleteResourceAction_confirm,
-				IDEWorkbenchMessages.DeleteResourceAction_warning, factory
-						.getDelta(), getModelProviderIds(), false /*
-																	 * no need
-																	 * to
-																	 * syncExec
-																	 */);
 	}
 
 	/**

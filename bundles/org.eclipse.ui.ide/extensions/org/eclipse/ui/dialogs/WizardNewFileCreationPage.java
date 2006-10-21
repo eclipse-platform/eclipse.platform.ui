@@ -13,8 +13,11 @@ package org.eclipse.ui.dialogs;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.Iterator;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -28,12 +31,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
@@ -49,7 +51,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.ide.undo.CreateFileOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -84,7 +87,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
     // cache of newly-created file
     private IFile newFile;
 
-    private IPath linkTargetPath;
+    private URI linkTargetPath;
 
     // widgets
     private ResourceAndContainerGroup resourceGroup;
@@ -218,6 +221,10 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      * @param monitor the progress monitor to show visual progress with
      * @exception CoreException if the operation fails
      * @exception OperationCanceledException if the operation is canceled
+     * 
+     * @deprecated As of 3.3, use or override {@link #createNewFile()} which uses the
+     *   undoable operation support.  To supply customized file content for
+     *   a subclass, use {@link #getInitialContents()}.  
      */
     protected void createFile(IFile fileHandle, InputStream contents,
             IProgressMonitor monitor) throws CoreException {
@@ -280,7 +287,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
     protected void createLinkTarget() {
         String linkTarget = linkedResourceGroup.getLinkTarget();
         if (linkTarget != null) {
-            linkTargetPath = new Path(linkTarget);
+        	linkTargetPath = URIUtil.toURI(linkTarget);
         } else {
             linkTargetPath = null;
         }
@@ -321,45 +328,44 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
         final InputStream initialContents = getInitialContents();
 
         createLinkTarget();
-        WorkspaceModifyOperation op = new WorkspaceModifyOperation(createRule(newFileHandle)) {
-            protected void execute(IProgressMonitor monitor)
-                    throws CoreException {
-                try {
-                    monitor.beginTask(IDEWorkbenchMessages.WizardNewFileCreationPage_progress, 2000);
-                    ContainerGenerator generator = new ContainerGenerator(
-                            containerPath);
-                    generator.generateContainer(new SubProgressMonitor(monitor,
-                            1000));
-                    createFile(newFileHandle, initialContents,
-                            new SubProgressMonitor(monitor, 1000));
-                } finally {
-                    monitor.done();
-                }
-            }
-        };
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				CreateFileOperation op = new CreateFileOperation(
+						newFileHandle, linkTargetPath, initialContents,
+						IDEWorkbenchMessages.WizardNewFileCreationPage_title);
+				try {
+					PlatformUI.getWorkbench().getOperationSupport()
+							.getOperationHistory().execute(op, monitor,
+									WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
+				} catch (ExecutionException e) {
+					if (e.getCause() instanceof CoreException) {
+		                ErrorDialog
+		                        .openError(
+		                                getContainer().getShell(), // Was Utilities.getFocusShell()
+		                                IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle,
+		                                null, // no special message
+		                                ((CoreException) e.getCause())
+		                                        .getStatus());
+		            } else {
+		            	throw new InvocationTargetException(e);
+		            }
+				}
+			}
+		};
 
         try {
             getContainer().run(true, true, op);
         } catch (InterruptedException e) {
             return null;
         } catch (InvocationTargetException e) {
-            if (e.getTargetException() instanceof CoreException) {
-                ErrorDialog
-                        .openError(
-                                getContainer().getShell(), // Was Utilities.getFocusShell()
-                                IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle,
-                                null, // no special message
-                                ((CoreException) e.getTargetException())
-                                        .getStatus());
-            } else {
-                // CoreExceptions are handled above, but unexpected runtime exceptions and errors may still occur.
-                IDEWorkbenchPlugin.log(getClass(),
-                        "createNewFile()", e.getTargetException()); //$NON-NLS-1$
-                MessageDialog
-                        .openError(
-                                getContainer().getShell(),
-                                IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage, e.getTargetException().getMessage()));
-            }
+        	// Execution Exceptions are handled above but we may still get unexpected runtime errors.
+            IDEWorkbenchPlugin.log(getClass(),
+                    "createNewFile()", e.getTargetException()); //$NON-NLS-1$
+            MessageDialog
+                    .openError(
+                            getContainer().getShell(),
+                            IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage, e.getTargetException().getMessage()));
+            
             return null;
         }
 
@@ -375,6 +381,8 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
      * @param resource The resource being created
      * @return The scheduling rule for creating the given resource
      * @since 3.1
+     * @deprecated As of 3.3, scheduling rules are provided by the undoable
+     * operation that this page creates and executes.
      */
     protected ISchedulingRule createRule(IResource resource) {
 		IResource parent = resource.getParent();

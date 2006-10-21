@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -30,8 +31,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
-import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -47,15 +46,17 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.ide.undo.AbstractWorkspaceOperation;
+import org.eclipse.ui.ide.undo.CopyResourcesOperation;
+import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
@@ -388,6 +389,9 @@ public class CopyFilesAndFoldersOperation {
 	 *            destination to which resources will be copied
 	 * @param subMonitor
 	 *            a progress monitor for showing progress and for cancelation
+	 *          
+	 * @deprecated As of 3.3, the work is performed in the undoable operation
+	 * created in {@link #performCopy(IResource[], IPath, IProgressMonitor)}
 	 */
 	protected void copy(IResource[] resources, IPath destination,
 			IProgressMonitor subMonitor) throws CoreException {
@@ -541,28 +545,20 @@ public class CopyFilesAndFoldersOperation {
 			return copiedResources[0];
 		}
 
-		if (!validateOperation(resources, destinationPath)) {
-			return copiedResources[0];
-		}
-
-		if (fork) {
-			WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor monitor) {
-					copyResources(resources, destinationPath, copiedResources,
-							monitor);
-				}
-			};
-
-			try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true,
-						op);
-			} catch (InterruptedException e) {
-				return copiedResources[0];
-			} catch (InvocationTargetException e) {
-				display(e);
+		IRunnableWithProgress op = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				copyResources(resources, destinationPath, copiedResources,
+						monitor);
 			}
-		} else {
-			copyResources(resources, destinationPath, copiedResources, monitor);
+		};
+
+		try {
+			PlatformUI.getWorkbench().getProgressService().run(fork, true,
+					op);
+		} catch (InterruptedException e) {
+			return copiedResources[0];
+		} catch (InvocationTargetException e) {
+			display(e);
 		}
 
 		// If errors occurred, open an Error dialog
@@ -570,44 +566,8 @@ public class CopyFilesAndFoldersOperation {
 			displayError(errorStatus);
 			errorStatus = null;
 		}
+		
 		return copiedResources[0];
-	}
-
-	/**
-	 * Validates the copy or move operation.
-	 * 
-	 * @param resources
-	 *            the resources being copied or moved
-	 * @param destinationPath
-	 *            the destination of the copy or move
-	 * @return whether the operation should proceed
-	 * @since 3.2
-	 */
-	private boolean validateOperation(IResource[] resources,
-			IPath destinationPath) {
-		IResourceChangeDescriptionFactory factory = ResourceChangeValidator
-				.getValidator().createDeltaFactory();
-		for (int i = 0; i < resources.length; i++) {
-			IResource resource = resources[i];
-			if (isMove()) {
-				factory.move(resource, destinationPath.append(resource
-						.getName()));
-			} else {
-				factory.copy(resource, destinationPath.append(resource
-						.getName()));
-			}
-		}
-		String title;
-		String message;
-		if (isMove()) {
-			title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmMove;
-			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningMove;
-		} else {
-			title = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_confirmCopy;
-			message = IDEWorkbenchMessages.CopyFilesAndFoldersOperation_warningCopy;
-		}
-		return IDE.promptToConfirm(messageShell, title, message, factory
-				.getDelta(), modelProviderIds, true /* syncExec */);
 	}
 
 	/**
@@ -1190,16 +1150,21 @@ public class CopyFilesAndFoldersOperation {
 	private boolean performCopy(IResource[] resources, IPath destination,
 			IProgressMonitor monitor) {
 		try {
-			ContainerGenerator generator = new ContainerGenerator(destination);
-			generator.generateContainer(new SubProgressMonitor(monitor, 10));
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			copy(resources, destination, subMonitor);
-		} catch (CoreException e) {
-			recordError(e); // log error
+			AbstractWorkspaceOperation op = getUndoableCopyOrMoveOperation(
+					resources, destination);
+			op.setModelProviderIds(getModelProviderIds());
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(op, monitor, 
+							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof CoreException) {
+				recordError((CoreException)e.getCause());
+			} else {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
+				displayError(e.getMessage());
+			}
 			return false;
-		} finally {
-			monitor.done();
-		}
+		} 
 		return true;
 	}
 
@@ -1222,42 +1187,31 @@ public class CopyFilesAndFoldersOperation {
 	private boolean performCopyWithAutoRename(IResource[] resources,
 			IPath destination, IProgressMonitor monitor) {
 		IWorkspace workspace = resources[0].getWorkspace();
-
+		IPath [] destinationPaths = new IPath[resources.length];
 		try {
-			ContainerGenerator generator = new ContainerGenerator(destination);
-			generator.generateContainer(new SubProgressMonitor(monitor, 10));
-
-			IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 75);
-			subMonitor.beginTask(getOperationTitle(), resources.length);
-
 			for (int i = 0; i < resources.length; i++) {
 				IResource source = resources[i];
-				IPath destinationPath = destination.append(source.getName());
+				destinationPaths[i] = destination.append(source.getName());
 
-				if (workspace.getRoot().exists(destinationPath)) {
-					destinationPath = getNewNameFor(destinationPath, workspace);
-				}
-				if (destinationPath != null) {
-					try {
-						source.copy(destinationPath, IResource.SHALLOW,
-								new SubProgressMonitor(subMonitor, 0));
-					} catch (CoreException e) {
-						recordError(e); // log error
-						return false;
-					}
-				}
-				subMonitor.worked(1);
-				if (subMonitor.isCanceled()) {
-					throw new OperationCanceledException();
+				if (workspace.getRoot().exists(destinationPaths[i])) {
+					destinationPaths[i] = getNewNameFor(destinationPaths[i], workspace);
 				}
 			}
-		} catch (CoreException e) {
-			recordError(e); // log error
+			CopyResourcesOperation op = new CopyResourcesOperation(resources, destinationPaths, 
+					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
+			op.setModelProviderIds(getModelProviderIds());
+			PlatformUI.getWorkbench().getOperationSupport()
+					.getOperationHistory().execute(op, monitor, 
+							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
+		} catch (ExecutionException e) {
+			if (e.getCause() instanceof CoreException) {
+				recordError((CoreException)e.getCause());
+			} else {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
+				displayError(e.getMessage());
+			}
 			return false;
-		} finally {
-			monitor.done();
 		}
-
 		return true;
 	}
 
@@ -1743,5 +1697,22 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void setModelProviderIds(String[] modelProviderIds) {
 		this.modelProviderIds = modelProviderIds;
+	}
+	
+	/**
+	 * Returns an AbstractWorkspaceOperation suitable for performing the move or copy
+	 * operation that will move or copy the given resources to the given 
+	 * destination path.
+	 * 
+	 * @param resources
+	 * 			the resources to be moved or copied
+	 * @param destinationPath
+	 * 			the destination path to which the resources should be moved
+	 * @return the operation that should be used to perform the move or cop
+	 */
+	protected AbstractWorkspaceOperation getUndoableCopyOrMoveOperation(IResource[] resources, IPath destinationPath) {
+		return new CopyResourcesOperation(resources, destinationPath, 
+				IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
+		
 	}
 }

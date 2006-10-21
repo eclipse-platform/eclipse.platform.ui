@@ -146,7 +146,6 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String CopyProjectAction_title;
 	public static String CopyProjectAction_toolTip;
-	public static String CopyProjectAction_progressTitle;
 	public static String CopyProjectAction_copyTitle;
 	public static String CopyProjectAction_copyNameOneArg;
 	public static String CopyProjectAction_copyNameTwoArgs;
@@ -161,7 +160,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String MoveProjectAction_text;
 	public static String MoveProjectAction_toolTip;
 	public static String MoveProjectAction_moveTitle;
-	public static String MoveProjectAction_progressMessage;
 	public static String MoveProjectAction_dialogTitle;
 	public static String MoveProjectAction_internalError;
 
@@ -174,14 +172,16 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String RenameResourceAction_text;
 	public static String RenameResourceAction_toolTip;
+	public static String RenameResourceAction_operationTitle;
 	public static String RenameResourceAction_inputDialogTitle;
 	public static String RenameResourceAction_inputDialogMessage;
 	public static String RenameResourceAction_checkTitle;
 	public static String RenameResourceAction_readOnlyCheck;
 	public static String RenameResourceAction_resourceExists;
+	public static String RenameResourceAction_projectExists;
 	public static String RenameResourceAction_nameExists;
 	public static String RenameResourceAction_overwriteQuestion;
-	public static String RenameResourceAction_progressMessage;
+	public static String RenameResourceAction_overwriteProjectQuestion;
 	public static String RenameResourceAction_problemTitle;
 	public static String RenameResourceAction_progress;
 	public static String RenameResourceAction_nameMustBeDifferent;
@@ -203,12 +203,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String DeleteResourceAction_confirmLinkedResource1;
 	public static String DeleteResourceAction_confirmLinkedResourceN;
 	public static String DeleteResourceAction_readOnlyQuestion;
-	public static String DeleteResourceAction_messageTitle;
-	public static String DeleteResourceAction_outOfSyncError;
-	public static String DeleteResourceAction_outOfSyncQuestion;
-	public static String DeleteResourceAction_deletionExceptionMessage;
 	public static String DeleteResourceAction_jobName;
 	public static String DeleteResourceAction_checkJobName;
+	public static String DeleteResourceAction_operationLabel;
 
 	public static String AddBookmarkLabel;
 	public static String AddBookmarkToolTip;
@@ -298,6 +295,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
 	public static String CopyFilesAndFoldersOperation_infoNotFound;
+	public static String CopyFilesAndFoldersOperation_copyTitle;
+	public static String CopyFilesAndFoldersOperation_moveTitle;
 
 	public static String MoveFilesAndFoldersOperation_sameSourceAndDest;
 	public static String MoveFilesAndFoldersOperation_moveFailedTitle;
@@ -367,6 +366,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_progress;
 	public static String WizardNewFolderCreationPage_errorTitle;
 	public static String WizardNewFolderCreationPage_internalErrorTitle;
+	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
 
 	// --- New File ---
@@ -376,6 +376,8 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFileCreationPage_file;
 	public static String WizardNewFileCreationPage_internalErrorTitle;
 	public static String WizardNewFileCreationPage_internalErrorMessage;
+	public static String WizardNewFileCreationPage_title;
+
 
 	// --- Linked Resource ---
 	public static String WizardNewLinkPage_linkFileButton;
