@@ -216,84 +216,6 @@ public class WorkspaceUndoUtil {
 	}
 
 	/**
-	 * Move the specified resource to the new path provided. The new path is
-	 * relative to the workspace and includes any new name desired for the moved
-	 * resource. Note that this method does not handle the movement of a project
-	 * from one location URI to another. Return the resource descriptions for
-	 * any resources that were overwritten as part of the move.
-	 * 
-	 * @param resourceToMove
-	 *            the resource to be moved
-	 * @param newPath
-	 *            the workspace-relative destination path for the resource,
-	 *            including its name
-	 * @param monitor
-	 *            the progress monitor used to show progress
-	 * @param uiInfo
-	 *            the IAdaptable (or <code>null</code>) provided by the
-	 *            caller in order to supply UI information for prompting the
-	 *            user if necessary. When this parameter is not
-	 *            <code>null</code>, it contains an adapter for the
-	 *            org.eclipse.swt.widgets.Shell.class
-	 * @return an array of ResourceDescriptions describing any resources that
-	 *         were overwritten by the move operation
-	 * @throws CoreException
-	 *             propagates any CoreExceptions thrown from the resources API
-	 */
-
-	static ResourceDescription[] move(IResource resourceToMove, IPath newPath,
-			IProgressMonitor monitor, IAdaptable uiInfo) throws CoreException {
-		monitor.beginTask("", 3); //$NON-NLS-1$
-		monitor
-				.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
-		IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
-		List overwrittenResources = new ArrayList();
-
-		// Some moves are optimized and recorded as complete in this flag
-		boolean moved = false;
-		IResource newResource = workspaceRoot.findMember(newPath);
-		// If a resource already exists at the new location, we must
-		// overwrite it.
-		if (newResource != null) {
-			// File on file overwrite is optimized as a reset of the
-			// target file's contents
-			if (resourceToMove.getType() == IResource.FILE
-					&& newResource.getType() == IResource.FILE) {
-				IFile file = (IFile) resourceToMove;
-				IFile existingFile = (IFile) newResource;
-				ResourceDescription resourceDescription = copyOverExistingResource(
-						file, existingFile, monitor, uiInfo, true);
-				if (resourceDescription != null) {
-					overwrittenResources.add(resourceDescription);
-					moved = true;
-				}
-			} else {
-				// Any other overwrite is simply a delete of the resource
-				// that is being overwritten, followed by the move
-				ResourceDescription[] deleted = delete(
-						new IResource[] { newResource },
-						new SubProgressMonitor(monitor, 1), uiInfo, true);
-				for (int j = 0; j < deleted.length; j++) {
-					overwrittenResources.add(deleted[j]);
-				}
-			}
-		} else {
-			monitor.worked(100);
-		}
-		// Overwrites have been handled. If there is still a move to do, do
-		// so now.
-		if (!moved) {
-			generateContainers(newPath.removeLastSegments(1));
-			resourceToMove.move(newPath, IResource.KEEP_HISTORY
-					| IResource.SHALLOW, new SubProgressMonitor(monitor, 2));
-
-		}
-		monitor.done();
-		return (ResourceDescription[]) overwrittenResources
-				.toArray(new ResourceDescription[overwrittenResources.size()]);
-	}
-
-	/**
 	 * Copies the resources to the given destination. This method can be called
 	 * recursively to merge folders during folder copy.
 	 * 
@@ -318,7 +240,7 @@ public class WorkspaceUndoUtil {
 	 *            resource is being copied). If this value is <code>false</code>,
 	 *            each resource's name will be appended to the destination.
 	 * @return an array of ResourceDescriptions describing any resources that
-	 *         were overwritten by the move operation
+	 *         were overwritten by the copy operation
 	 * @throws CoreException
 	 *             propagates any CoreExceptions thrown from the resources API
 	 */
@@ -394,6 +316,122 @@ public class WorkspaceUndoUtil {
 					generateContainers(parentPath);
 					source.copy(destinationPath, IResource.SHALLOW,
 							new SubProgressMonitor(monitor, 1));
+				}
+
+				if (monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+			}
+		}
+		return (ResourceDescription[]) overwrittenResources
+				.toArray(new ResourceDescription[overwrittenResources.size()]);
+
+	}
+
+	/**
+	 * Moves the resources to the given destination. This method can be called
+	 * recursively to merge folders during folder move.
+	 * 
+	 * @param resources
+	 *            the resources to be moved
+	 * @param destination
+	 *            the destination path for the resources, relative to the
+	 *            workspace
+	 * @param monitor
+	 *            the progress monitor used to show progress
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @param pathIncludesName
+	 *            a boolean that indicates whether the specified path includes
+	 *            the resource's name at the destination. If this value is
+	 *            <code>true</code>, the destination will contain the desired
+	 *            name of the resource (usually only desired when only one
+	 *            resource is being moved). If this value is <code>false</code>,
+	 *            each resource's name will be appended to the destination.
+	 * @return an array of ResourceDescriptions describing any resources that
+	 *         were overwritten by the move operation
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 */
+	static ResourceDescription[] move(IResource[] resources, IPath destination,
+			IProgressMonitor monitor, IAdaptable uiInfo,
+			boolean pathIncludesName) throws CoreException {
+
+		monitor.beginTask("", resources.length); //$NON-NLS-1$
+		monitor
+				.setTaskName(UndoMessages.AbstractResourcesOperation_MovingResources);
+		List overwrittenResources = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			IResource source = resources[i];
+			IPath destinationPath;
+			if (pathIncludesName) {
+				destinationPath = destination;
+			} else {
+				destinationPath = destination.append(source.getName());
+			}
+			IWorkspaceRoot workspaceRoot = getWorkspaceRoot();
+			IResource existing = workspaceRoot.findMember(destinationPath);
+			if (source.getType() == IResource.FOLDER && existing != null) {
+				// The resource is a folder and it exists in the destination.
+				// Move its children to the existing destination.
+				if (source.isLinked() == existing.isLinked()) {
+					IResource[] children = ((IContainer) source).members();
+					ResourceDescription[] overwritten = move(children,
+							destinationPath,
+							new SubProgressMonitor(monitor, 1), uiInfo, false);
+					for (int j = 0; j < overwritten.length; j++) {
+						overwrittenResources.add(overwritten[j]);
+					}
+					overwrittenResources.add(delete(source, monitor, uiInfo,
+							false, false));
+				} else {
+					// delete the destination folder, moving a linked folder
+					// over an unlinked one or vice versa. Fixes bug 28772.
+					ResourceDescription[] deleted = delete(
+							new IResource[] { existing },
+							new SubProgressMonitor(monitor, 0), uiInfo, false);
+					source.move(destinationPath, IResource.SHALLOW
+							| IResource.KEEP_HISTORY, new SubProgressMonitor(
+							monitor, 1));
+					for (int j = 0; j < deleted.length; j++) {
+						overwrittenResources.add(deleted[j]);
+					}
+				}
+			} else {
+				if (existing != null) {
+					if (source.isLinked() == existing.isLinked()) {
+						overwrittenResources.add(copyOverExistingResource(
+								source, existing, new SubProgressMonitor(
+										monitor, 1), uiInfo, true));
+					} else {
+						// Moving a linked resource over unlinked or vice
+						// versa. Can't use setContents here. Fixes bug 28772.
+						ResourceDescription[] deleted = delete(
+								new IResource[] { existing },
+								new SubProgressMonitor(monitor, 0), uiInfo,
+								false);
+						source.move(destinationPath, IResource.SHALLOW
+								| IResource.KEEP_HISTORY,
+								new SubProgressMonitor(monitor, 1));
+						for (int j = 0; j < deleted.length; j++) {
+							overwrittenResources.add(deleted[j]);
+						}
+					}
+				} else {
+					// no resources are being overwritten
+					// ensure the destination path exists
+					IPath parentPath = destination;
+					if (pathIncludesName) {
+						parentPath = destination.removeLastSegments(1);
+					}
+					generateContainers(parentPath);
+					source.move(destinationPath, IResource.SHALLOW
+							| IResource.KEEP_HISTORY, new SubProgressMonitor(
+							monitor, 1));
 				}
 
 				if (monitor.isCanceled()) {

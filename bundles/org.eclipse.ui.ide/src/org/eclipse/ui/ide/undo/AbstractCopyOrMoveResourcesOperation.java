@@ -11,12 +11,9 @@
 
 package org.eclipse.ui.ide.undo;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -144,11 +141,10 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			// be restored if this operation were reversed
 			ResourceDescription[] overwrites;
 			if (move) {
-				overwrites = WorkspaceUndoUtil
-						.move(resources[i],
-								getDestinationPath(resources[i], i),
-								new SubProgressMonitor(monitor,
-										1000 / resources.length), uiInfo);
+				overwrites = WorkspaceUndoUtil.move(
+						new IResource[] { resources[i] }, getDestinationPath(
+								resources[i], i), new SubProgressMonitor(
+								monitor, 1000 / resources.length), uiInfo, true);
 			} else {
 				overwrites = WorkspaceUndoUtil
 						.copy(new IResource[] { resources[i] },
@@ -290,47 +286,6 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	protected IResource getOverwrittenResource(IResource resource, int index) {
 		IPath proposedPath = getDestinationPath(resource, index);
 		return getWorkspace().getRoot().findMember(proposedPath);
-	}
-
-	/*
-	 * Move the project to its new location, returning its previous location.
-	 */
-	URI moveProject(IProject project, URI locationURI,
-			IProgressMonitor monitor) throws CoreException {
-		monitor
-				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_moveProjectProgress);
-
-		IProjectDescription description = project.getDescription();
-		// Record the original path so this can be undone
-		URI newDestinationURI = description.getLocationURI();
-		// Set the new location into the project's description
-		description.setLocationURI(locationURI);
-
-		project.move(description, IResource.FORCE | IResource.SHALLOW, monitor);
-
-		// Now adjust the projectLocation so this can be undone/redone.
-		return newDestinationURI;
-	}
-
-	/*
-	 * Copy the specified project, returning the handle of the copy.
-	 */
-	IProject copyProject(IProject project, IPath destinationPath,
-			URI locationURI, IProgressMonitor monitor)
-			throws CoreException {
-		monitor
-				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
-
-		IProjectDescription description = project.getDescription();
-
-		// Set the new name and location into the project's description
-		description.setName(destinationPath.lastSegment());
-		description.setLocationURI(locationURI);
-
-		project.copy(description, IResource.FORCE | IResource.SHALLOW, monitor);
-
-		// Now return the handle of the new project
-		return (IProject) getWorkspace().getRoot().findMember(destinationPath);
 	}
 
 	/**

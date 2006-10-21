@@ -15,15 +15,20 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.internal.ide.undo.ProjectDescription;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
@@ -42,9 +47,13 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * @since 3.3
  * 
  */
-public class CopyProjectOperation extends CopyResourcesOperation {
+public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
 	private URI projectLocation;
+
+	private IProject originalProject;
+
+	private ProjectDescription originalProjectDescription;
 
 	/**
 	 * Create a CopyProjectOperation that copies the specified project and sets
@@ -64,19 +73,14 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 			String label) {
 		super(new IResource[] { project }, new Path(name), label);
 		Assert.isLegal(project != null);
+		originalProject = project;
+		originalProjectDescription = new ProjectDescription(project);
 		if (location != null
 				&& URIUtil.toPath(location).equals(Platform.getLocation())) {
 			projectLocation = null;
 		} else {
 			projectLocation = location;
 		}
-	}
-
-	/*
-	 * Get the project that this operation is moving.
-	 */
-	private IProject getProject() {
-		return (IProject) resources[0];
 	}
 
 	/*
@@ -118,16 +122,34 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * Map execute to moving the project
+	 * Map execute to copying the project
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
 	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	protected void doExecute(IProgressMonitor monitor, IAdaptable uiInfo)
 			throws CoreException {
-		IProject newProject = copyProject(getProject(), destination,
+		IProject newProject = copyProject(originalProject, destination,
 				projectLocation, monitor);
 		setTargetResources(new IResource[] { newProject });
+		setResourceDescriptions(new ResourceDescription[0]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map undo to deleting the project we just copied.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#doExecute(org.eclipse.core.runtime.IProgressMonitor,
+	 *      org.eclipse.core.runtime.IAdaptable)
+	 */
+	protected void doUndo(IProgressMonitor monitor, IAdaptable uiInfo)
+			throws CoreException {
+		// Delete the project that was copied
+		WorkspaceUndoUtil.delete(resources, new SubProgressMonitor(monitor, 1),
+				uiInfo, true);
+		// Set the target resource to the original
+		setTargetResources(new IResource[] { originalProject });
 		setResourceDescriptions(new ResourceDescription[0]);
 	}
 
@@ -150,5 +172,105 @@ public class CopyProjectOperation extends CopyResourcesOperation {
 	 */
 	protected String getProposedName(IResource resource, int index) {
 		return destination.lastSegment();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#updateResourceChangeDescriptionFactory(org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory,
+	 *      int)
+	 */
+	protected boolean updateResourceChangeDescriptionFactory(
+			IResourceChangeDescriptionFactory factory, int operation) {
+		boolean update = false;
+		if (operation == UNDO) {
+			for (int i = 0; i < resources.length; i++) {
+				update = true;
+				IResource resource = resources[i];
+				factory.delete(resource);
+			}
+		} else {
+			factory.copy(originalProject,
+					getDestinationPath(originalProject, 0));
+		}
+		return update;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * This implementation computes the ability to copy the resources.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeExecutionStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * This implementation computes the ability to delete the original copy and
+	 * restore any overwritten resources.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeUndoableStatus(monitor);
+		if (!status.isOK()) {
+			return status;
+		}
+		// If the original project content no longer exist, we do not want to
+		// attempt to undo the copy which involves deleting the copies. They may
+		// be all we have left.
+		if (originalProject == null
+				|| !originalProjectDescription.verifyExistence(true)) {
+			markInvalid();
+			return getErrorStatus(UndoMessages.CopyResourcesOperation_NotAllowedDueToDataLoss);
+		}
+		// undoing a copy means deleting the copy that was made
+		if (status.isOK()) {
+			status = computeDeleteStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * This implementation computes the ability to copy the resources.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeRedoableStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * Copy the specified project, returning the handle of the copy.
+	 */
+	IProject copyProject(IProject project, IPath destinationPath,
+			URI locationURI, IProgressMonitor monitor) throws CoreException {
+		monitor
+				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
+	
+		IProjectDescription description = project.getDescription();
+	
+		// Set the new name and location into the project's description
+		description.setName(destinationPath.lastSegment());
+		description.setLocationURI(locationURI);
+	
+		project.copy(description, IResource.FORCE | IResource.SHALLOW, monitor);
+	
+		// Now return the handle of the new project
+		return (IProject) getWorkspace().getRoot().findMember(destinationPath);
 	}
 }

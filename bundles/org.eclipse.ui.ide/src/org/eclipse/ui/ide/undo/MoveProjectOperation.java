@@ -15,6 +15,7 @@ import java.net.URI;
 
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.runtime.Assert;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
+import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A MoveProjectOperation represents an undoable operation for moving a
@@ -41,7 +43,7 @@ import org.eclipse.ui.internal.ide.undo.ResourceDescription;
  * @since 3.3
  * 
  */
-public class MoveProjectOperation extends MoveResourcesOperation {
+public class MoveProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 
 	private URI projectLocation;
 
@@ -159,5 +161,70 @@ public class MoveProjectOperation extends MoveResourcesOperation {
 	 */
 	protected String getProposedName(IResource resource, int index) {
 		return getProject().getName();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map execution to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeExecutionStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map undo to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeUndoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeUndoableStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Map redo to move status.
+	 * 
+	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeRedoableStatus(monitor);
+		if (status.isOK()) {
+			status = computeMoveOrCopyStatus();
+		}
+		return status;
+	}
+
+	/*
+	 * Move the project to its new location, returning its previous location.
+	 */
+	URI moveProject(IProject project, URI locationURI, IProgressMonitor monitor)
+			throws CoreException {
+		monitor
+				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_moveProjectProgress);
+	
+		IProjectDescription description = project.getDescription();
+		// Record the original path so this can be undone
+		URI newDestinationURI = description.getLocationURI();
+		// Set the new location into the project's description
+		description.setLocationURI(locationURI);
+	
+		project.move(description, IResource.FORCE | IResource.SHALLOW, monitor);
+	
+		// Now adjust the projectLocation so this can be undone/redone.
+		return newDestinationURI;
 	}
 }
