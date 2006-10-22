@@ -590,7 +590,7 @@ public class WorkspaceUndoUtil {
 			}
 			resourceToDelete.delete(updateFlags, new SubProgressMonitor(
 					monitor, 1));
-			resourceDescription.recordLastHistory(resourceToDelete,
+			resourceDescription.recordStateFromHistory(resourceToDelete,
 					new SubProgressMonitor(monitor, 1));
 			monitor.done();
 		}
@@ -625,7 +625,7 @@ public class WorkspaceUndoUtil {
 				existingFile.setContents(file.getContents(),
 						IResource.KEEP_HISTORY, new SubProgressMonitor(monitor,
 								1));
-				fileDescription.recordLastHistory(existingFile,
+				fileDescription.recordStateFromHistory(existingFile,
 						new SubProgressMonitor(monitor, 1));
 				// Now delete the source file if requested
 				// We don't need to remember anything about it, because

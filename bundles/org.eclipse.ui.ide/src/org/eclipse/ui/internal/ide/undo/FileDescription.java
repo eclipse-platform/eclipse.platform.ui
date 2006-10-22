@@ -96,11 +96,11 @@ public class FileDescription extends ResourceDescription {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordLastHistory(org.eclipse.core.resources.IResource,
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void recordLastHistory(IResource resource, IProgressMonitor monitor)
-			throws CoreException {
+	public void recordStateFromHistory(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
 		Assert.isLegal(resource.getType() == IResource.FILE);
 
 		if (location != null) {
@@ -109,7 +109,7 @@ public class FileDescription extends ResourceDescription {
 		}
 		IFileState[] states = ((IFile) resource).getHistory(monitor);
 		if (states.length > 0) {
-			final IFileState state = states[0];
+			final IFileState state = getMatchingFileState(states);
 			this.fileContentDescription = new IFileContentDescription() {
 				/*
 				 * (non-Javadoc)
@@ -232,5 +232,20 @@ public class FileDescription extends ResourceDescription {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/*
+	 * Get the file state that matches this file description. The local time
+	 * stamp is used to try to find a matching file state. If none can be found,
+	 * the most recent copy of the file state is used.
+	 */
+	private IFileState getMatchingFileState(IFileState[] states) {
+		for (int i = 0; i < states.length; i++) {
+			if (localTimeStamp == states[i].getModificationTime()) {
+				return states[i];
+			}
+		}
+		return states[0];
+
 	}
 }

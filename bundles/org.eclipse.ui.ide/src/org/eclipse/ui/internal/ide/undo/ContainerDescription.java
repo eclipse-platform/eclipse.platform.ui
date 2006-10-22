@@ -172,10 +172,10 @@ public abstract class ContainerDescription extends ResourceDescription {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordLastHistory(org.eclipse.core.resources.IResource,
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void recordLastHistory(IResource resource, IProgressMonitor monitor)
+	public void recordStateFromHistory(IResource resource, IProgressMonitor monitor)
 			throws CoreException {
 		monitor.beginTask(
 				UndoMessages.FolderDescription_SavingUndoInfoProgress, 100);
@@ -185,14 +185,14 @@ public abstract class ContainerDescription extends ResourceDescription {
 						((FileDescription) members[i]).name);
 				IFile fileHandle = resource.getWorkspace().getRoot().getFile(
 						path);
-				members[i].recordLastHistory(fileHandle,
+				members[i].recordStateFromHistory(fileHandle,
 						new SubProgressMonitor(monitor, 100 / members.length));
 			} else if (members[i] instanceof FolderDescription) {
 				IPath path = resource.getFullPath().append(
 						((FolderDescription) members[i]).name);
 				IFolder folderHandle = resource.getWorkspace().getRoot()
 						.getFolder(path);
-				members[i].recordLastHistory(folderHandle,
+				members[i].recordStateFromHistory(folderHandle,
 						new SubProgressMonitor(monitor, 100 / members.length));
 			}
 		}

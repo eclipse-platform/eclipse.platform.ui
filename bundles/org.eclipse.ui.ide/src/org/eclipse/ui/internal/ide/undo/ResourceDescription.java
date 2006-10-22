@@ -157,15 +157,16 @@ public abstract class ResourceDescription {
 	}
 
 	/**
-	 * Record the last known history of this resource if available.
+	 * Record the appropriate state of this resource description using
+	 * any available resource history.
 	 * 
 	 * @param resource
-	 *            the resource whose history is to be recorded.
+	 *            the resource whose state is to be recorded.
 	 * @param monitor
 	 *            the progress monitor to be used
 	 * @throws CoreException
 	 */
-	public abstract void recordLastHistory(IResource resource,
+	public abstract void recordStateFromHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException;
 
 	/**
