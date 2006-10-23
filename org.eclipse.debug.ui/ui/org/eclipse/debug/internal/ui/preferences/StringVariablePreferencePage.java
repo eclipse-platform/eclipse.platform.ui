@@ -10,10 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.IValueVariable;
@@ -38,7 +38,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -59,6 +59,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for creating and configuring simple
@@ -155,7 +157,7 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 		variableTable.getControl().setLayoutData(gridData);
 		variableTable.setContentProvider(variableContentProvider);
 		variableTable.setColumnProperties(variableTableColumnProperties);
-		variableTable.setSorter(new ViewerSorter() {
+		variableTable.setComparator(new ViewerComparator() {
 			public int compare(Viewer iViewer, Object e1, Object e2) {
 				if (e1 == null) {
 					return -1;

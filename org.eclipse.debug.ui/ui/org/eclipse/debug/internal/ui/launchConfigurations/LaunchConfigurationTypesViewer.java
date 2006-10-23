@@ -16,7 +16,7 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
@@ -61,7 +61,7 @@ public class LaunchConfigurationTypesViewer extends TableViewer {
 		super(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		setContentProvider(new ContentProvider());
 		setLabelProvider(DebugUITools.newDebugModelPresentation());
-		setSorter(new ViewerSorter());
+		setComparator(new ViewerComparator());
 		addFilter(new LaunchGroupFilter(launchGroup));
 		setInput(DebugPlugin.getDefault().getLaunchManager());
 	}

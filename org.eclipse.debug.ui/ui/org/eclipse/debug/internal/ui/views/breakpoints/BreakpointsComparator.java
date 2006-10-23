@@ -20,9 +20,11 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
-
-public class BreakpointsSorter extends ViewerSorter {
+import org.eclipse.jface.viewers.ViewerComparator;
+/**
+ * @since 3.3
+ */
+public class BreakpointsComparator extends ViewerComparator {
 		/**
 		 * @see ViewerSorter#isSorterProperty(Object, String)
 		 */

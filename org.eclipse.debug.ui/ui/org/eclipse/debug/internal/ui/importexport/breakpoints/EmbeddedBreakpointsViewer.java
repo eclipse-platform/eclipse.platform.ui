@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsContentProvider;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsLabelProvider;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsSorter;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointOrganizer;
@@ -134,7 +134,7 @@ public class EmbeddedBreakpointsViewer {
 		} else {
 			labelProvider = fView.getCheckboxViewer().getLabelProvider();
 		}
-		fViewer.setSorter(new BreakpointsSorter());
+		fViewer.setComparator(new BreakpointsComparator());
 		fViewer.setLabelProvider(labelProvider);
 		fViewer.addCheckStateListener(fCheckListener);
 		IBreakpointOrganizer[] orgs = null;

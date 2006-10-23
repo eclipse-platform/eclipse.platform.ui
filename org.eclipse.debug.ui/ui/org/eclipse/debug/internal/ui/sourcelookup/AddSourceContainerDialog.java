@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -98,7 +98,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
 		fViewer.setContentProvider(new ArrayContentProvider());			
-		fViewer.setSorter(new ViewerSorter());
+		fViewer.setComparator(new ViewerComparator());
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();

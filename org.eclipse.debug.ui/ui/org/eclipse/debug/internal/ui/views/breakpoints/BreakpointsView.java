@@ -133,7 +133,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		CheckboxTreeViewer viewer = new BreakpointsViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
         setViewer(viewer);
 		viewer.setContentProvider(fContentProvider);
-		viewer.setSorter(new BreakpointsSorter());
+		viewer.setComparator(new BreakpointsComparator());
 		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
 		viewer.addCheckStateListener(fCheckListener);
 		viewer.addTreeListener(new ITreeViewerListener() {

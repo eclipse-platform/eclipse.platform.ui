@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,7 +48,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -67,6 +66,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration tab for configuring the environment passed
@@ -141,7 +142,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				if (tableViewer.getTable().isDisposed()) {
 					return;
 				}
-				tableViewer.setSorter(new ViewerSorter() {
+				tableViewer.setComparator(new ViewerComparator() {
 					public int compare(Viewer iviewer, Object e1, Object e2) {
 						if (e1 == null) {
 							return -1;
