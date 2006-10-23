@@ -54,6 +54,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String OpenWorkspaceAction_toolTip;
 	public static String OpenWorkspaceAction_errorTitle;
 	public static String OpenWorkspaceAction_errorMessage;
+	public static String OpenWorkspaceAction_other;
 	public static String NewProjectAction_text;
 	public static String NewProjectAction_toolTip;
 	public static String NewExampleAction_text;
