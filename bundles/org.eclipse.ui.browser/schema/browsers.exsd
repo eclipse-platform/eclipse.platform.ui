@@ -12,8 +12,8 @@
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="browser" minOccurs="0" maxOccurs="unbounded"/>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="browser"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
