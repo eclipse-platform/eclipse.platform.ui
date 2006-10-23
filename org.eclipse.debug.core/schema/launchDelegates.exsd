@@ -46,8 +46,6 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -159,7 +157,6 @@ without consulting with the Platform/Debug team.
 &lt;/p&gt;
 
 In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode.
-
       </documentation>
    </annotation>
 
