@@ -52,8 +52,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -85,7 +85,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private boolean fFilterTopLevel;
 	private boolean fSort;
 
-	private ViewerSorter fSorter;
+	private ViewerComparator fComparator;
 	
 	private AntEditor fEditor;
 	
@@ -126,9 +126,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 	
-	private class AntOutlineSorter extends ViewerSorter {
-		/**
-		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	private class AntOutlineComparator extends ViewerComparator {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntElementNode && e2 instanceof AntElementNode)) {
@@ -236,12 +236,12 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	protected void setSort(boolean sort) {
 		fSort= sort;
 		if (sort) {
-			if (fSorter == null) {
-				fSorter= new AntOutlineSorter();
+			if (fComparator == null) {
+				fComparator= new AntOutlineComparator();
 			}
-			getTreeViewer().setSorter(fSorter);
+			getTreeViewer().setComparator(fComparator);
 		} else {
-			getTreeViewer().setSorter(null);
+			getTreeViewer().setComparator(null);
 		}
 		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_SORT, sort);
 	}

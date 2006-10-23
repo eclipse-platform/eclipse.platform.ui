@@ -20,7 +20,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 /**
  * Content provider that maintains a generic list of objects which are shown in
@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 public class AntContentProvider implements IStructuredContentProvider {
 	protected List elements = new ArrayList();
 	protected TableViewer tableViewer;
-	private ViewerSorter sorter= null;
+	private ViewerComparator fComparator= null;
 
 	public void add(Object o) {
 		if (elements.contains(o)) {
@@ -51,7 +51,7 @@ public class AntContentProvider implements IStructuredContentProvider {
 		tableViewer = (TableViewer) viewer;
 		elements.clear();
 		if (newInput != null) {
-			tableViewer.setSorter(getSorter());
+			tableViewer.setComparator(getComparator());
 			List list;
 			if (newInput instanceof List) {
 				list= (List) newInput;
@@ -73,17 +73,17 @@ public class AntContentProvider implements IStructuredContentProvider {
 		tableViewer.remove(array);
 	}
 	
-	protected ViewerSorter getSorter() {
-		if (sorter == null) {
-			sorter= new ViewerSorter() {
-				/**
-				 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	protected ViewerComparator getComparator() {
+		if (fComparator == null) {
+			fComparator= new ViewerComparator() {
+				/* (non-Javadoc)
+				 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 				 */
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					return e1.toString().compareToIgnoreCase(e2.toString());
 				}
 			};
 		}
-		return sorter;
+		return fComparator;
 	}
 }

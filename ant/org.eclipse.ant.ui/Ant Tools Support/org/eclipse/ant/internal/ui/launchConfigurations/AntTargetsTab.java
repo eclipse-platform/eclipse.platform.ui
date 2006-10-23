@@ -51,8 +51,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -107,12 +107,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public final static int SORT_DESCRIPTION_REVERSE= -2;
 	
 	/**
-	 * A sorter which can sort targets by name or description, in
+	 * A comparator which can sort targets by name or description, in
 	 * forward or reverse order.
 	 */
-	private class AntTargetsSorter extends ViewerSorter {
-		/**
-		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	private class AntTargetsComparator extends ViewerComparator {
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 		 */
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntTargetNode && e2 instanceof AntTargetNode)) {
@@ -386,7 +386,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setLabelProvider(new TargetTableLabelProvider());
 		fTableViewer.setContentProvider(new AntModelContentProvider());
-		fTableViewer.setSorter(new AntTargetsSorter());
+		fTableViewer.setComparator(new AntTargetsComparator());
 		
 		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
