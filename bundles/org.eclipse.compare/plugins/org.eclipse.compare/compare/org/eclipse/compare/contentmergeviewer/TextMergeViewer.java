@@ -1791,11 +1791,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fBirdsEyeCanvas.redraw();
 	}
 	
-	/*
-	 * Called whenever setFocus() is called on the ContentViewer's top level SWT Composite.
-	 * This implementation sets the focus to the first enabled text widget.
+	/**
+	 * Override to give focus to the pane that previously had focus or to a suitable
+	 * default pane.
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handleSetFocus()
+	 * @since 3.3
 	 */
-	/* package */ boolean internalSetFocus() {
+	protected boolean handleSetFocus() {
 		if (fFocusPart == null) {
 			if (fLeft != null && fLeft.getEnabled()) {
 				fFocusPart= fLeft;

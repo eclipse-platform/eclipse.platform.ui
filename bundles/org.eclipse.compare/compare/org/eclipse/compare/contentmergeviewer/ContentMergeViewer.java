@@ -719,7 +719,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 											
 		fComposite= new Composite(parent, fStyles | SWT.LEFT_TO_RIGHT) { // we force a specific direction
 			public boolean setFocus() {
-				return internalSetFocus();
+				return ContentMergeViewer.this.handleSetFocus();
 			}
 		};
 		fComposite.setData(CompareUI.COMPARE_VIEWER_TITLE, getTitle());
@@ -803,7 +803,14 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
-	/* package */ boolean internalSetFocus() {
+	/**
+	 * Callback that is invoked when the control of this merge viewer is given focus.
+	 * This method should return <code>true</code> if a particular widget was given focus
+	 * and false otherwise. By default, <code>false</code> is returned. Subclasses may override.
+	 * @return whether  particular widget was given focus
+	 * @since 3.3
+	 */
+	protected boolean handleSetFocus() {
 		return false;
 	}
 	
