@@ -12,6 +12,9 @@ package org.eclipse.compare;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 /**
  * A compare container is used to represent any UI that can contain compare viewers.
@@ -44,5 +47,15 @@ public interface ICompareContainer {
 	 * @param listener the compare input change listener
 	 */
 	public void removeCompareInputChangeListener(ICompareInput input, ICompareInputChangeListener listener);
+
+	/**
+	 * Register the content menu with the container to give the container a chance to
+	 * add additional items to the context menu such as popup menu object contributions.
+	 * The provided menu should have a {@link IWorkbenchActionConstants#MB_ADDITIONS}
+	 * separator as this is where the container will add actions.
+	 * @param menu the menu being registered
+	 * @param selectionProvider the selection provider
+	 */
+	public void registerContextMenu(MenuManager menu, ISelectionProvider selectionProvider);
 	
 }

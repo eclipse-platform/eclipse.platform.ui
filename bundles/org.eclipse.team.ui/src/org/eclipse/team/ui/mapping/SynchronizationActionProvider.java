@@ -100,7 +100,7 @@ public class SynchronizationActionProvider extends CommonActionProvider {
 			ICommonViewerWorkbenchSite cvws = (ICommonViewerWorkbenchSite) cvs;
 			final IWorkbenchPartSite wps = cvws.getSite();
 			if (wps instanceof IViewSite) {
-				openWithActions = new OpenWithActionGroup(configuration.getSite(), configuration.getParticipant(), false);
+				openWithActions = new OpenWithActionGroup(configuration, false);
 			}
 		}
 	}

@@ -18,8 +18,7 @@ import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -31,7 +30,8 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 
 
@@ -128,6 +128,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	boolean fStructureCompareOnSingleClick= true;
 	boolean fUseOutlineView= false;
+
+	private ICompareContainer fContainer;
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -860,7 +862,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void addCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		input.addCompareInputChangeListener(listener);
+		if (fContainer == null)
+			input.addCompareInputChangeListener(listener);
+		else 
+			fContainer.addCompareInputChangeListener(input, listener);
 	}
 	
 	/* (non-Javadoc)
@@ -868,7 +873,37 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void removeCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		input.removeCompareInputChangeListener(listener);
+		if (fContainer == null)
+			input.removeCompareInputChangeListener(listener);
+		else
+			fContainer.removeCompareInputChangeListener(input, listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+	 */
+	public void registerContextMenu(MenuManager menu, ISelectionProvider selectionProvider) {
+		if (fContainer != null)
+			fContainer.registerContextMenu(menu, selectionProvider);
+	}
+
+	/**
+	 * Set the container of this input to the given container
+	 * @param container the container
+	 * @since 3.3
+	 */
+	public void setContainer(ICompareContainer container) {
+		this.fContainer = container;
+	}
+
+	/**
+	 * Return the container of this input or <code>null</code> if there is no container
+	 * set. 
+	 * @return the container of this input or <code>null</code>
+	 * @since 3.3
+	 */
+	public final ICompareContainer getContainer() {
+		return fContainer;
 	}
 }
 

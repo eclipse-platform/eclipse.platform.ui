@@ -30,28 +30,34 @@ public class OpenWithActionGroup extends ActionGroup {
 
 	private OpenFileInSystemEditorAction openFileAction;
 	private OpenInCompareAction openInCompareAction;
-	private ISynchronizePageSite site;
-    private final ISynchronizeParticipant participant;
 	private final boolean includeOpenInCompare;
+	private final ISynchronizePageConfiguration configuration;
 
-	public OpenWithActionGroup(ISynchronizePageSite site, ISynchronizeParticipant participant, boolean includeOpenInCompare) {
-		this.participant = participant;
-		this.site = site;
+	public OpenWithActionGroup(ISynchronizePageConfiguration configuration, boolean includeOpenInCompare) {
+		this.configuration = configuration;
 		this.includeOpenInCompare = includeOpenInCompare;
 		makeActions();
 	}
 
 	protected void makeActions() {
-		IWorkbenchSite ws = site.getWorkbenchSite();
+		IWorkbenchSite ws = getSite().getWorkbenchSite();
 		if (ws != null) {
 			openFileAction = new OpenFileInSystemEditorAction(ws.getPage());
 			if (includeOpenInCompare)
-				openInCompareAction = new OpenInCompareAction(site, participant);
+				openInCompareAction = new OpenInCompareAction(configuration);
 		}
 	}
 
+	private ISynchronizeParticipant getParticipant() {
+		return configuration.getParticipant();
+	}
+
+	private ISynchronizePageSite getSite() {
+		return configuration.getSite();
+	}
+
 	public void fillContextMenu(IMenuManager menu, String groupId) {
-		ISelection selection = site.getSelectionProvider().getSelection();
+		ISelection selection = getSite().getSelectionProvider().getSelection();
 		if (selection instanceof IStructuredSelection && !hasFileMenu(menu)) {
 			fillOpenWithMenu(menu, groupId, (IStructuredSelection)selection);
 		}
@@ -77,6 +83,7 @@ public class OpenWithActionGroup extends ActionGroup {
         if(resources.length == 0 && openInCompareAction != null) {
         	// We can still show the compare editor open if the element has a compare input
         	if (elements.length == 1) {
+        		ISynchronizeParticipant participant = getParticipant();
         		if (participant instanceof ModelSynchronizeParticipant) {
 					ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
 					// TODO: This is inefficient
@@ -114,7 +121,7 @@ public class OpenWithActionGroup extends ActionGroup {
         
         if (resources.length == 1) {
             // Only support the "Open With..." submenu if exactly one file is selected.
-            IWorkbenchSite ws = site.getWorkbenchSite();
+            IWorkbenchSite ws = getSite().getWorkbenchSite();
             if (ws != null) {
                 MenuManager submenu =
                     new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 

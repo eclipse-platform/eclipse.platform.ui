@@ -40,7 +40,7 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 		final ISynchronizePageSite site = configuration.getSite();
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws instanceof IViewSite) {
-			openWithActions = new OpenWithActionGroup(site, configuration.getParticipant(), true);
+			openWithActions = new OpenWithActionGroup(configuration, true);
 			refactorActions = new RefactorActionGroup(site);
 			configuration.setProperty(SynchronizePageConfiguration.P_OPEN_ACTION, new Action() {
 				public void run() {

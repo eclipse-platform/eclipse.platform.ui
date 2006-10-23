@@ -38,34 +38,34 @@ import org.eclipse.ui.*;
  */
 public class OpenInCompareAction extends Action {
 	
-	private ISynchronizePageSite site;
-    private final ISynchronizeParticipant participant;
+	private final ISynchronizePageConfiguration configuration;
 	
-	public OpenInCompareAction(ISynchronizePageSite site, ISynchronizeParticipant participant) {
-		this.participant = participant;
-		this.site = site;
+	public OpenInCompareAction(ISynchronizePageConfiguration configuration) {
+		this.configuration = configuration;
 		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
 
 	public void run() {
-		ISelection selection = site.getSelectionProvider().getSelection();
+		ISelection selection = configuration.getSite().getSelectionProvider().getSelection();
 		if(selection instanceof IStructuredSelection) {
 			Object obj = ((IStructuredSelection) selection).getFirstElement();
 			if (obj instanceof SyncInfoModelElement) {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
 				    // Use the open strategy to decide if the editor or the sync view should have focus
-					openCompareEditor(participant, info, !OpenStrategy.activateOnOpen(), site);
+					openCompareEditor(configuration, info, !OpenStrategy.activateOnOpen());
 				}
 			} else if (obj != null){
-				openCompareEditor(participant, obj, !OpenStrategy.activateOnOpen(), site);
+				openCompareEditor(configuration, obj, !OpenStrategy.activateOnOpen());
 			}
 		}
 	}
 	
-	public static IEditorInput openCompareEditor(ISynchronizeParticipant participant, Object object, boolean keepFocus, ISynchronizePageSite site) {	
+	public static IEditorInput openCompareEditor(ISynchronizePageConfiguration configuration, Object object, boolean keepFocus) {	
 		Assert.isNotNull(object);
-		Assert.isNotNull(participant);
+		Assert.isNotNull(configuration);
+		ISynchronizeParticipant participant = configuration.getParticipant();
+		ISynchronizePageSite site = configuration.getSite();
 		if (object instanceof SyncInfoModelElement) {
 			SyncInfo info = ((SyncInfoModelElement) object).getSyncInfo();
 			if (info != null)
@@ -76,7 +76,7 @@ public class OpenInCompareAction extends Action {
 			ICompareInput input = msp.asCompareInput(object);
 			IWorkbenchPage workbenchPage = getWorkbenchPage(site);
 			if (input != null && workbenchPage != null && isOkToOpen(site, participant, input)) {
-				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage), keepFocus, site);
+				return openCompareEditor(workbenchPage, new ModelCompareEditorInput(msp, input, workbenchPage, configuration), keepFocus, site);
 			}
 		}
 		return null;

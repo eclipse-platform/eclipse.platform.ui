@@ -96,7 +96,7 @@ public class ModelSynchronizeParticipantActionGroup extends SynchronizePageActio
 		IWorkbenchSite ws = site.getWorkbenchSite();
 		if (ws instanceof IViewSite) {
 			showPreferences = new SyncViewerShowPreferencesAction(configuration);
-			openInCompareAction = new OpenInCompareAction(site, participant);
+			openInCompareAction = new OpenInCompareAction(configuration);
 			configuration.setProperty(SynchronizePageConfiguration.P_OPEN_ACTION, new Action() {
 				public void run() {
 					openInCompareAction.run();

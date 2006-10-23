@@ -103,18 +103,18 @@ public class NavigateAction extends Action {
 					if(navigator.selectChange(next)) {
 						if(! nav.selectChange(next)) {
 							selectedObject = getSelectedObject();
-							OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
+							OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
 						}
 					}				
 				}
 			} else {
 				// otherwise,try to open a compare editor on the object
-				IEditorInput input = OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
+				IEditorInput input = OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
 				if (input == null) {
 					// We couldn't open a compare editor on the object so try the next change
 					if(! nav.selectChange(next)) {
 						selectedObject = getSelectedObject();
-						OpenInCompareAction.openCompareEditor(participant, selectedObject, true /* keep focus */, site);
+						OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
 					}
 				}
 			}

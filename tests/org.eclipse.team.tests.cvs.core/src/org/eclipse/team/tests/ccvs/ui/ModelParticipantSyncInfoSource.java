@@ -469,7 +469,7 @@ public class ModelParticipantSyncInfoSource extends ParticipantSyncInfoSource {
 		commitResources(subscriber, resources);
 	}
 	
-	private ISynchronizePageConfiguration getConfiguration(Subscriber subscriber) {
+	public ISynchronizePageConfiguration getConfiguration(Subscriber subscriber) {
 		ModelSynchronizePage page = getPage(subscriber);
 		return page.getConfiguration();
 	}

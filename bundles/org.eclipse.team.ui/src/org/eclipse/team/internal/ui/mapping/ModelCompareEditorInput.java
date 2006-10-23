@@ -14,17 +14,22 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.Saveable;
+import org.eclipse.ui.*;
 
 /**
  * A saveable based compare editor input for compare inputs from a {@link ModelSynchronizeParticipant}.
@@ -34,9 +39,11 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput {
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
 	private final ICacheListener contextListener;
+	private final ISynchronizePageConfiguration synchronizeConfiguration;
 
-	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page) {
+	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page, ISynchronizePageConfiguration synchronizeConfiguration) {
 		super(new CompareConfiguration(), page);
+		this.synchronizeConfiguration = synchronizeConfiguration;
 		Assert.isNotNull(participant);
 		Assert.isNotNull(input);
 		this.participant = participant;
@@ -140,5 +147,78 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput {
 			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
 			rdci.fireChange();
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#registerContextMenu(org.eclipse.jface.action.MenuManager)
+	 */
+	public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
+		super.registerContextMenu(menu, provider);
+		final Saveable[] saveables = getActiveSaveables();
+		if (saveables.length == 1 && saveables[0] instanceof LocalResourceSaveableComparison) {
+			menu.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					handleMenuAboutToShow(manager);
+				}
+			});
+		}
+	}
+
+	protected void handleMenuAboutToShow(IMenuManager manager) {
+		StructuredSelection selection = new StructuredSelection(((ResourceDiffCompareInput)getCompareInput()).getResource());
+		final ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(getSynchronizeConfiguration());
+		markAsMergedHandler.updateEnablement(selection);
+		Action markAsMergedAction = new Action("Mark &as Merged") {
+			public void run() {
+				try {
+					markAsMergedHandler.execute(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
+				}
+			}
+			
+		};
+		Utils.initAction(markAsMergedAction, "action.markAsMerged."); //$NON-NLS-1$
+		markAsMergedAction.setEnabled(markAsMergedAction.isEnabled());
+		
+		final ResourceMergeHandler mergeHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), false);
+		mergeHandler.updateEnablement(selection);
+		Action mergeAction = new Action("&Merge") {
+			public void run() {
+				try {
+					mergeHandler.execute(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
+				}
+			}
+			
+		};
+		Utils.initAction(mergeAction, "action.merge."); //$NON-NLS-1$
+		mergeAction.setEnabled(markAsMergedAction.isEnabled());
+		
+		final ResourceMergeHandler overwriteHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), true);
+		overwriteHandler.updateEnablement(selection);
+		Action overwriteAction = new Action("&Overwrite") {
+			public void run() {
+				try {
+					overwriteHandler.execute(new ExecutionEvent());
+				} catch (ExecutionException e) {
+					TeamUIPlugin.log(IStatus.ERROR, e.getMessage(), e);
+				}
+			}
+			
+		};
+		Utils.initAction(overwriteAction, "action.overwrite."); //$NON-NLS-1$
+		overwriteAction.setEnabled(markAsMergedAction.isEnabled());
+		
+		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
+		manager.insertAfter("merge", new Separator("overwrite"));
+		manager.insertAfter("merge", markAsMergedAction);
+		manager.insertAfter("merge", mergeAction);
+		manager.insertAfter("overwrite", overwriteAction);
+	}
+
+	protected ISynchronizePageConfiguration getSynchronizeConfiguration() {
+		return synchronizeConfiguration;
 	}
 }

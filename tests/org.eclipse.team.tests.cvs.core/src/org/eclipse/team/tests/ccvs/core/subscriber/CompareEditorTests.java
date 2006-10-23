@@ -26,11 +26,11 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.CountingSharedDocumentAdapter;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
 import org.eclipse.ui.*;
@@ -59,7 +59,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	}
 	
 	private IEditorInput openEditor(Subscriber subscriber, Object element) {
-		IEditorInput input = OpenInCompareAction.openCompareEditor(ModelParticipantSyncInfoSource.getParticipant(subscriber), element, false, new DialogSynchronizePageSite(Utils.getShell(null), false));
+		IEditorInput input = OpenInCompareAction.openCompareEditor(((ModelParticipantSyncInfoSource)getSyncInfoSource()).getConfiguration(subscriber), element, false);
 		assertNotNull(input);
 		assertEditorOpen(input);
 		return input;

@@ -1927,7 +1927,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
 		
-		final MergeSourceViewer part= new MergeSourceViewer(parent, getDirection(), getResourceBundle());
+		final MergeSourceViewer part= new MergeSourceViewer(parent, getDirection(), getResourceBundle(), getCompareConfiguration().getContainer());
 		final StyledText te= part.getTextWidget();
 		
 		if (!fConfirmSave)

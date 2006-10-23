@@ -13,12 +13,16 @@ package org.eclipse.compare.internal;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -30,7 +34,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource {
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, ICompareContainer {
 	
 	/**
 	 * Internal property change listener for handling changes in the editor's input.
@@ -146,6 +150,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		super.setInput(input);
 		
 		CompareEditorInput cei= (CompareEditorInput) input;
+		cei.setContainer(this);
 
 		setTitleImage(cei.getTitleImage());
 		setPartName(cei.getTitle());	// was setTitle(cei.getTitle());
@@ -357,6 +362,20 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		public int hashCode() {
 			return CompareEditor.this.hashCode();
 		}
+	}
+
+	public void removeCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		input.removeCompareInputChangeListener(listener);
+	}
+	
+	public void addCompareInputChangeListener(ICompareInput input,
+			ICompareInputChangeListener listener) {
+		input.addCompareInputChangeListener(listener);
+	}
+	
+	public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
+		getSite().registerContextMenu(menu, provider);
 	}
 }
 

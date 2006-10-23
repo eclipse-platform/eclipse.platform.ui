@@ -16,10 +16,12 @@ import java.util.Map;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -601,10 +603,12 @@ public class CompareConfiguration {
 						ICompareInputChangeListener listener) {
 					input.removeCompareInputChangeListener(listener);
 				}
-			
 				public void addCompareInputChangeListener(ICompareInput input,
 						ICompareInputChangeListener listener) {
 					input.addCompareInputChangeListener(listener);
+				}
+				public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
+					// By default, do nothing
 				}
 			};
 		}

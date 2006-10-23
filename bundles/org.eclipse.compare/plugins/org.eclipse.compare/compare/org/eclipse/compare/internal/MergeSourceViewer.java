@@ -21,7 +21,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
+import org.eclipse.compare.ICompareContainer;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.text.*;
@@ -76,12 +78,7 @@ public class MergeSourceViewer extends SourceViewer
 	private boolean fAddSaveAction= true;
 	private boolean isConfigured = false;
 	
-	
-	public MergeSourceViewer(Composite parent, ResourceBundle bundle) {
-		this(parent, SWT.NONE, bundle);
-	}
-	
-	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle) {
+	public MergeSourceViewer(Composite parent, int style, ResourceBundle bundle, ICompareContainer container) {
 		super(parent, null, style | SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fResourceBundle= bundle;
@@ -91,6 +88,7 @@ public class MergeSourceViewer extends SourceViewer
 		menu.addMenuListener(this);
 		StyledText te= getTextWidget();
 		te.setMenu(menu.createContextMenu(te));
+		container.registerContextMenu(menu, this);
 	}
 	
 	public void rememberDocument(IDocument doc) {
@@ -383,6 +381,9 @@ public class MergeSourceViewer extends SourceViewer
 		menu.add(new Separator("undo")); //$NON-NLS-1$
 		addMenu(menu, UNDO_ID);
 		addMenu(menu, REDO_ID);
+		menu.add(new Separator("save")); //$NON-NLS-1$
+		if (fAddSaveAction)
+			addMenu(menu, SAVE_ID);
 	
 		menu.add(new Separator("ccp")); //$NON-NLS-1$
 		addMenu(menu, CUT_ID);
@@ -395,9 +396,7 @@ public class MergeSourceViewer extends SourceViewer
 		menu.add(new Separator("find")); //$NON-NLS-1$
 		//addMenu(menu, FIND_ID);
 		
-		menu.add(new Separator("save")); //$NON-NLS-1$
-		if (fAddSaveAction)
-			addMenu(menu, SAVE_ID);
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		menu.add(new Separator("rest")); //$NON-NLS-1$
 		
