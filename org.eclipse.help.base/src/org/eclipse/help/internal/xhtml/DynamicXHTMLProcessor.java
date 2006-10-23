@@ -47,6 +47,7 @@ public class DynamicXHTMLProcessor {
 						xmlProcessor = new XMLProcessor(new DOMProcessorHandler[] {
 								new IncludeHandler(locale),
 								new ExtensionHandler(locale),
+								new XHTMLCharsetHandler(),
 								new FilterHandler()
 						});
 					}
@@ -55,7 +56,8 @@ public class DynamicXHTMLProcessor {
 				if (xmlProcessorNoFilter == null) {
 					xmlProcessorNoFilter = new XMLProcessor(new DOMProcessorHandler[] {
 							new IncludeHandler(locale),
-							new ExtensionHandler(locale)
+							new ExtensionHandler(locale),
+							new XHTMLCharsetHandler()
 					});
 				}
 				return xmlProcessorNoFilter.process(buf, href);
