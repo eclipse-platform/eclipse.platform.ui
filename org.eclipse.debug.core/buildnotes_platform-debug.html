@@ -21,6 +21,8 @@
   <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
   <li>added <code>DebugUITools.getLastLaunch(String id)</code> - provides access 
     to the last launch in each launch group.</li>
+  <li>added <code>ILaunchConfiguration.isReadOnly()</code> - returns whether a configuration
+  is read-only in the file system. The debug UI disables editing of read-only configurations.</li>
 </ul>
 
 <h2>Summary of Extensible Launch Option conversion/changes in 3.3</h2>
@@ -67,9 +69,11 @@
   associated type.</li>
 </ul>
 
-<h2>Oct 23, 2006</h2> 
+<h2>Oct 24, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161896">161896</a>: Warnings in N20061022-0010<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151848">151848</a>: [launching] Write protected launch configurations fails in Launch Configuration Dialog<br>
+
 
 <h2>Oct 3, 2006</h2> 
 <h3>Problem Reports Fixed</h3>

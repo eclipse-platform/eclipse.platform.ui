@@ -545,4 +545,14 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 */
 	public boolean supportsMode(String mode) throws CoreException;
+	
+	/**
+	 * Returns whether this launch configuration is read-only.
+	 * A read-only configuration cannot be modified.
+	 * 
+	 * @return whether this configuration is read-only
+	 * 
+	 * @since 3.3
+	 */
+	public boolean isReadOnly();	
 }

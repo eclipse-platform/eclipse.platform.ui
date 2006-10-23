@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core;
 
  
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -737,6 +738,25 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public boolean supportsMode(String mode) throws CoreException {
 		return getType().supportsMode(mode);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		if(!isLocal()) {
+			IFile file = getFile();
+			if(file != null) {
+				return file.isReadOnly();
+			}
+		}
+		else {
+			File file = getLocation().toFile();
+			if(file != null) {
+				return file.exists() && !file.canWrite();
+			}
+		}
+		return false;
 	}
 	
 }
