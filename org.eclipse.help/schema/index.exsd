@@ -12,12 +12,10 @@
 
    <element name="extension">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
-            <choice>
-               <element ref="index"/>
-               <element ref="indexProvider"/>
-            </choice>
-         </sequence>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="index"/>
+            <element ref="indexProvider"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>

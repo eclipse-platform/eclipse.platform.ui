@@ -16,7 +16,7 @@ Cheat sheets may optionally specify a description subelement whose body should c
 
    <element name="extension">
       <complexType>
-         <choice>
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="category"/>
             <element ref="cheatsheet"/>
             <element ref="taskEditor"/>

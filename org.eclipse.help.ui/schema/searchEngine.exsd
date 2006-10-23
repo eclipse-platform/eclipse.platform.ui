@@ -20,10 +20,10 @@ of a search engine that can be individually modified. Products can preconfigure 
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="engineType" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="engine" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="engine"/>
+            <element ref="engineType"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -303,13 +303,13 @@ of a search engine that can be individually modified. Products can preconfigure 
             engineTypeId=&quot;org.eclipse.help.ui.web&quot;
             id=&quot;org.eclipse.sdk.Eclipse&quot;
             label=&quot;%search.Eclipse.label&quot;&gt;
-      		&lt;description&gt;
-	      		%search.Eclipse.desc
-      		&lt;/description&gt;
-      		&lt;param 
-      			name=&quot;url&quot; 
-      			value=&quot;http://eclipse.org/search/search.cgi?q={expression}&amp;amp;ul=&amp;amp;ps=20&amp;amp;m=all&quot;&gt;
-      		&lt;/param&gt;
+        &lt;description&gt;
+         %search.Eclipse.desc
+        &lt;/description&gt;
+        &lt;param 
+         name=&quot;url&quot; 
+         value=&quot;http://eclipse.org/search/search.cgi?q={expression}&amp;amp;ul=&amp;amp;ps=20&amp;amp;m=all&quot;&gt;
+        &lt;/param&gt;
       &lt;/engine&gt;
     &lt;/extension&gt;
 &lt;/pre&gt;

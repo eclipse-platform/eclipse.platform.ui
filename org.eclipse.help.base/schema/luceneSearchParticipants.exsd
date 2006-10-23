@@ -23,7 +23,7 @@ Search participants are associated with the plug-in the extension appears in. In
 
    <element name="extension">
       <complexType>
-         <choice>
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="searchParticipant"/>
             <element ref="binding"/>
          </choice>

@@ -26,11 +26,11 @@ point and specify TOC file(s).&lt;/li&gt;
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="tocProvider" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="index" minOccurs="0" maxOccurs="1"/>
-         </sequence>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="toc"/>
+            <element ref="tocProvider"/>
+            <element ref="index"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>

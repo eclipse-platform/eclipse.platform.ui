@@ -47,7 +47,7 @@
    <element name="browser">
       <complexType>
          <sequence>
-            <element ref="factoryclass"/>
+            <element ref="factoryclass" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>

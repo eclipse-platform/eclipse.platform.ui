@@ -14,12 +14,12 @@
 
    <element name="extension">
       <complexType>
-         <sequence>
-            <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
-            <element ref="standbyContentPart" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="theme" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
+         <choice minOccurs="0" maxOccurs="unbounded">
+            <element ref="configExtension"/>
+            <element ref="standbyContentPart"/>
+            <element ref="action"/>
+            <element ref="theme"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>

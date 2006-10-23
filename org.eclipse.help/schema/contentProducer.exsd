@@ -12,7 +12,7 @@
 
    <element name="extension">
       <complexType>
-         <choice>
+         <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="contentProducer"/>
             <element ref="binding"/>
          </choice>
