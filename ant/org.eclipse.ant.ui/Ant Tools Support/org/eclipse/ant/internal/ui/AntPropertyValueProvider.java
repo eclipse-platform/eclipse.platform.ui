@@ -39,10 +39,12 @@ public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 		if ("eclipse.target".equals(propertyName)) { //$NON-NLS-1$
 			try {
 			    IPath home= JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-				value = home.toFile().getAbsolutePath();
-				if (value.endsWith("/")) { //$NON-NLS-1$
-				    value = value.substring(0, value.length() - 1);
-				}
+			    if (home != null) {
+			    	value = home.toFile().getAbsolutePath();
+			    	if (value.endsWith("/")) { //$NON-NLS-1$
+			    		value = value.substring(0, value.length() - 1);
+			    	}
+			    }
 			} catch (Exception e) {
 				AntUIPlugin.log(e);
 			}
