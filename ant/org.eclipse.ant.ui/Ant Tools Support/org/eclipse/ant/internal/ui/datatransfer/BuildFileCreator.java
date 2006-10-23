@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, 97051, 128103
- *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210
+ *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *******************************************************************************/
 
@@ -453,7 +453,7 @@ public class BuildFileCreator
                 if (EclipseClasspath.isLibraryReference(entry))
                 {
                     IPath home = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-                    if (home.isPrefixOf(entries[i].getPath()))
+                    if (home != null && home.isPrefixOf(entries[i].getPath()))
                     {
                         variable2valueMap.put("ECLIPSE_HOME", home.toString()); //$NON-NLS-1$
                         jarFile = "${ECLIPSE_HOME}" + jarFile.substring(home.toString().length()); //$NON-NLS-1$ 
@@ -807,9 +807,10 @@ public class BuildFileCreator
     {
         // use ECLIPSE_HOME classpath variable
         IPath value = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-        variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
-                value + "", projectRoot)); //$NON-NLS-1$
-        
+        if (value != null) {
+        	variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
+                value.toString(), projectRoot));
+        }
         // <target name="init-eclipse-compiler" description="copy Eclipse compiler jars to ant lib directory">
         //     <property name="ECLIPSE_HOME" value="C:/Programme/eclipse-3.1" />
         //     <copy todir="${ant.library.dir}">
