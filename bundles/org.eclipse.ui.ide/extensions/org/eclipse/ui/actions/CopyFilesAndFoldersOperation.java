@@ -389,9 +389,10 @@ public class CopyFilesAndFoldersOperation {
 	 *            destination to which resources will be copied
 	 * @param subMonitor
 	 *            a progress monitor for showing progress and for cancelation
-	 *          
+	 * 
 	 * @deprecated As of 3.3, the work is performed in the undoable operation
-	 * created in {@link #performCopy(IResource[], IPath, IProgressMonitor)}
+	 *             created in
+	 *             {@link #getUndoableCopyOrMoveOperation(IResource[], IPath)}
 	 */
 	protected void copy(IResource[] resources, IPath destination,
 			IProgressMonitor subMonitor) throws CoreException {
@@ -553,8 +554,7 @@ public class CopyFilesAndFoldersOperation {
 		};
 
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(fork, true,
-					op);
+			PlatformUI.getWorkbench().getProgressService().run(fork, true, op);
 		} catch (InterruptedException e) {
 			return copiedResources[0];
 		} catch (InvocationTargetException e) {
@@ -566,7 +566,7 @@ public class CopyFilesAndFoldersOperation {
 			displayError(errorStatus);
 			errorStatus = null;
 		}
-		
+
 		return copiedResources[0];
 	}
 
@@ -927,9 +927,9 @@ public class CopyFilesAndFoldersOperation {
 	 * @param fileNames
 	 *            files to return File object for.
 	 * @return java.io.File objects for the given file names.
-	 * @deprecated This method is not longer in use anywhere in this class and
-	 *             is only provided for backwards compatability with subclasses
-	 *             of the receiver.
+	 * @deprecated As of 3.3, this method is no longer in use anywhere in this
+	 *             class and is only provided for backwards compatability with
+	 *             subclasses of the receiver.
 	 */
 	protected File[] getFiles(String[] fileNames) {
 		File[] files = new File[fileNames.length];
@@ -1154,17 +1154,17 @@ public class CopyFilesAndFoldersOperation {
 					resources, destination);
 			op.setModelProviderIds(getModelProviderIds());
 			PlatformUI.getWorkbench().getOperationSupport()
-					.getOperationHistory().execute(op, monitor, 
+					.getOperationHistory().execute(op, monitor,
 							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
 		} catch (ExecutionException e) {
 			if (e.getCause() instanceof CoreException) {
-				recordError((CoreException)e.getCause());
+				recordError((CoreException) e.getCause());
 			} else {
 				IDEWorkbenchPlugin.log(e.getMessage(), e);
 				displayError(e.getMessage());
 			}
 			return false;
-		} 
+		}
 		return true;
 	}
 
@@ -1187,25 +1187,27 @@ public class CopyFilesAndFoldersOperation {
 	private boolean performCopyWithAutoRename(IResource[] resources,
 			IPath destination, IProgressMonitor monitor) {
 		IWorkspace workspace = resources[0].getWorkspace();
-		IPath [] destinationPaths = new IPath[resources.length];
+		IPath[] destinationPaths = new IPath[resources.length];
 		try {
 			for (int i = 0; i < resources.length; i++) {
 				IResource source = resources[i];
 				destinationPaths[i] = destination.append(source.getName());
 
 				if (workspace.getRoot().exists(destinationPaths[i])) {
-					destinationPaths[i] = getNewNameFor(destinationPaths[i], workspace);
+					destinationPaths[i] = getNewNameFor(destinationPaths[i],
+							workspace);
 				}
 			}
-			CopyResourcesOperation op = new CopyResourcesOperation(resources, destinationPaths, 
+			CopyResourcesOperation op = new CopyResourcesOperation(resources,
+					destinationPaths,
 					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
 			op.setModelProviderIds(getModelProviderIds());
 			PlatformUI.getWorkbench().getOperationSupport()
-					.getOperationHistory().execute(op, monitor, 
+					.getOperationHistory().execute(op, monitor,
 							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
 		} catch (ExecutionException e) {
 			if (e.getCause() instanceof CoreException) {
-				recordError((CoreException)e.getCause());
+				recordError((CoreException) e.getCause());
 			} else {
 				IDEWorkbenchPlugin.log(e.getMessage(), e);
 				displayError(e.getMessage());
@@ -1376,7 +1378,6 @@ public class CopyFilesAndFoldersOperation {
 		return null;
 	}
 
-
 	/**
 	 * Validates that the given source resources can be copied to the
 	 * destination as decided by the VCM provider.
@@ -1458,9 +1459,8 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private String validateImportDestinationInternal(IContainer destination,
 			IFileStore[] sourceStores) {
-		if (!isAccessible(destination)) 
+		if (!isAccessible(destination))
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
-		
 
 		IFileStore destinationStore;
 		try {
@@ -1698,21 +1698,22 @@ public class CopyFilesAndFoldersOperation {
 	public void setModelProviderIds(String[] modelProviderIds) {
 		this.modelProviderIds = modelProviderIds;
 	}
-	
+
 	/**
-	 * Returns an AbstractWorkspaceOperation suitable for performing the move or copy
-	 * operation that will move or copy the given resources to the given 
+	 * Returns an AbstractWorkspaceOperation suitable for performing the move or
+	 * copy operation that will move or copy the given resources to the given
 	 * destination path.
 	 * 
 	 * @param resources
-	 * 			the resources to be moved or copied
+	 *            the resources to be moved or copied
 	 * @param destinationPath
-	 * 			the destination path to which the resources should be moved
+	 *            the destination path to which the resources should be moved
 	 * @return the operation that should be used to perform the move or cop
 	 */
-	protected AbstractWorkspaceOperation getUndoableCopyOrMoveOperation(IResource[] resources, IPath destinationPath) {
-		return new CopyResourcesOperation(resources, destinationPath, 
+	protected AbstractWorkspaceOperation getUndoableCopyOrMoveOperation(
+			IResource[] resources, IPath destinationPath) {
+		return new CopyResourcesOperation(resources, destinationPath,
 				IDEWorkbenchMessages.CopyFilesAndFoldersOperation_copyTitle);
-		
+
 	}
 }
