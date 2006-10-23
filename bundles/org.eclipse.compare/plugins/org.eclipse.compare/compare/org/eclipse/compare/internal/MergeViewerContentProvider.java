@@ -107,7 +107,7 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 			return false;
 		if (element instanceof ICompareInput) {
 			Object left= ((ICompareInput) element).getLeft();
-			if (left == null) {
+			if (left == null && element instanceof IDiffElement) {
 				IDiffElement parent= ((IDiffElement)element).getParent();
 				if (parent instanceof ICompareInput)
 					left= ((ICompareInput) parent).getLeft();
@@ -167,7 +167,7 @@ public class MergeViewerContentProvider implements IMergeViewerContentProvider {
 			return false;
 		if (element instanceof ICompareInput) {
 			Object right= ((ICompareInput) element).getRight();
-			if (right == null) {
+			if (right == null && element instanceof IDiffElement) {
 				IDiffContainer parent= ((IDiffElement)element).getParent();
 				if (parent instanceof ICompareInput)
 					right= ((ICompareInput) parent).getRight();
