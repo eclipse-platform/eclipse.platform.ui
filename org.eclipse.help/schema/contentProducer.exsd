@@ -45,7 +45,7 @@
 
    <element name="contentProducer">
       <complexType>
-         <sequence>
+         <sequence minOccurs="0" maxOccurs="1">
             <element ref="producer"/>
          </sequence>
          <attribute name="producer" type="string">
