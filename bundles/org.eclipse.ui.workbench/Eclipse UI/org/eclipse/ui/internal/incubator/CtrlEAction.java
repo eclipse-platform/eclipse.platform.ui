@@ -2,10 +2,12 @@ package org.eclipse.ui.internal.incubator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -37,6 +39,7 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -82,6 +85,8 @@ public class CtrlEAction extends AbstractHandler {
 	private IWorkbenchWindow window;
 
 	protected String rememberedText;
+	
+	protected Map previousPicksMap = new HashMap();
 
 	private LinkedList previousPicksList = new LinkedList();
 
@@ -171,6 +176,17 @@ public class CtrlEAction extends AbstractHandler {
 			viewer.setLabelProvider(new MyLabelProvider());
 			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
+		}
+				
+		protected void selectFirstMatch() {
+			String text = getFilterText().getText();
+			Object element = previousPicksMap.get(text);
+			if (element != null) {
+				getTreeViewer().setSelection(new StructuredSelection(element),
+						true);
+				return;
+			}
+			super.selectFirstMatch();
 		}
 		
 		protected String getMatchName(Object element) {
@@ -563,6 +579,7 @@ public class CtrlEAction extends AbstractHandler {
 	private void addPreviousPick(Object element) {
 		previousPicksList.remove(element);
 		previousPicksList.addFirst(element);
+		previousPicksMap.put(rememberedText, element);
 	}
 
 	/**
