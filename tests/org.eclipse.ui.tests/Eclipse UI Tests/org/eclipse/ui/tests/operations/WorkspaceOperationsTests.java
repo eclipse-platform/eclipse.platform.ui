@@ -1031,11 +1031,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project content was altered on redo rename", snap.isValid());
 	}
 
-	public void testProjectDeleteUndoRedo() throws ExecutionException,
-			CoreException {
+	public void testProjectDeleteUndoRedo() throws ExecutionException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
 				new IResource[] { testProject }, "testProjectDelete", false);
-		ProjectSnapshot snap = new ProjectSnapshot(testProject);
 		execute(op);
 		assertFalse("Project delete failed", testProject.exists());
 		undo();
