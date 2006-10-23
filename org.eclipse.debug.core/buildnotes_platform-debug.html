@@ -23,37 +23,53 @@
     to the last launch in each launch group.</li>
 </ul>
 
-<h2>Summary of Launch Option conversion/changes in 3.3</h2>
+<h2>Summary of Extensible Launch Option conversion/changes in 3.3</h2>
 <ul>
-  <li>Added <code>launchOptions</code> schema -- provides a mechanism for contributing 
-    launch options</li>
-  <li>Added interface<code>ILaunchOption</code> -- describes a contributed launch 
-    option</li>
-  <li>Added method <code>ILaunchManager.getLaunchOptions()</code> -- returns all 
-    of the <code>contributed ILaunchOptions</code> </li>
-  <li>Added method <code>ILaunchManager.getLaunchOption(String id)</code> -- returns 
-    the <code>ILaunchOption</code> associated with the given unique id, or <code>null</code></li>
-  <li>Added method <code>ILaunchConfiguration.getOptions()</code> -- returns a 
-    configuration's launch options</li>
-  <li>Added method <code>ILaunchConfigurationWorkingCopy.setOptions(String[] options)</code> 
-    -- sets a configuration's options</li>
   <li>Added method <code>ILaunchConfigurationType.getContributorName()</code> 
     -- returns the name of the contributing plug-in </li>
   <li>Added method <code>ILaunchConfigurationType.getImageDescriptorPath()</code> 
     -- returns path of the image or <code>null</code></li>
-  <li>Added method <code>ILaunchConfigurationType.getDelegate(String mode, Set 
-    options)</code> -- returns the launch delegate for the specified mode and 
-    options</li>
-  <li>Deprecated method <code>ILaunchConfigurationType.getDelegate(String mode)</code> 
-    -- in favour of the new <code>getDelegate(String mode, String[] options) method</code></li>
   <li>Added attrbute 'icon' in <code>launchConfigurationTypes</code> schema, in 
     favour of contributing a seperate extension <code>launchConfigurationTypeImages</code></li>
+  <li>Added tab id filed to <code>AbstractLaunchConfigurationTab</code> class</li>
+  <li>Provided tab ids for all debug provided tabs</li>
+  <li>Added method openLaunchConfigurationEditDialog -- opens the launch configuration dialog on a configuration to be
+  edited and launching can be continued</li>
+  <li>Added getAttribute() to <code>ILaunchConfiguration</code>, which returns a <code>java.util.Set</code></li>
+  <li>Added a new subclass of <code>LaunchConfigurationsDialog</code>, <code>LaunchConfigurationEditDialog</code> which allows
+  a configuration to be edited on the fly with a continue button.</li>
+  <li>Added method getSetAttribute to <code>LaunchConfigurationInfo</code></li>
+  <li>Added method getTabExtensions which returns the list of launchConfigurationTab extension proxies.</li>
+  <li>Added method getRelativeTabId to <code>LaunchConfigurationTabExtension</code> -- returns the id of the tab
+  that this tab should lbe placed relative to i.e.immediately after.</li>
+  <li>Added a select options <code>Link</code> to <code>LaunchConfiguraitonTabGroupViewer</code>, which is used to resolve problems</li>
+  with duplicate and unavailable launch delegates</li>
+  <li>Added new status handler <code>LaunchDelegateNotAvailabaleHandler</code>, which prompts a user to select a differnet launch delegate
+  to resolve problems with the current one.</li>
+  <li>Added method getLaunchDelegates to <code>LaunchManager</code> -- returns all of the contributed launch delegates.</li>
+  <li>Added method getLaunchDelegates(String typeid) to <code>LaunchManager</code> -- returns the launch delegates
+  contributed for the specific launch configuration type id.</li>
+  <li>Added method initializeLaunchDelegates to <code>LaunchManager</code> -- initially creates the listing of contributed launch delegates</li>
+  <li>Added dialog class <code>SelectLaunchModesDialog</code> -- used to allow users to select a differing launch delegate in the event 
+  there is a problem with the current one.</li>
+  <li>Added <code>LAUNCH_MODES</code> constant to <code>LaunchConfiguration</code></li>
+  <li>Added class <code>AbstractLaunchModeConfigurationTab</code> to provide some default implememtation for contributing a launch configuration
+  tab that provides a mode attribute.</li>
+  <li>Added class <code>LaunchConfigurationTabGroupWrapper</code> which provides a wrapper for a contributed launch group
+  and contributed tabs for that launch group.</li>
+  <li>Added constant <code>EXTENSION_POINT_LAUNCH_TABS</code> to <code>IDebugUIConstants</code> for finding contributed launch configuration
+  tabs.</li>
+  <li>Added interface <code>ILaunchDelegate</code> which provides API for access to a launch delegates extension point.</li>
   <li>Added attribute 'name' to the <code>launchDelegates</code> schema, providing 
     a human readable name for the delegate. To be used in duplicate resolution</li>
-  <li>Added attribute 'options' to the <code>launchDelegates</code> schema, providing 
-    the ability to specify launch options that this delegate can support</li>
-  <li>Added constant <code>EXTENSION_POINT_CONTRIBUTED_LAUNCH_TABS</code> to <code>IDebugUIConstants</code></li>
+  <li>Added method getModes to <code>ILaunchConfiguration</code> -- returns the set of modes that have been set on the launch configuration.</li>
+  <li>Added method getDelegates(Set) to <code>ILaunchConfigurationType</code> to return an array of <code>ILaunchDelegate</code> instances for the 
+  associated type.</li>
 </ul>
+
+<h2>Oct 23, 2006</h2> 
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161896">161896</a>: Warnings in N20061022-0010<br>
 
 <h2>Oct 3, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
