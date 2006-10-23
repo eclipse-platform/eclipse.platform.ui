@@ -39,6 +39,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	}
 
 	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		history = PlatformUI.getWorkbench().getOperationSupport().getOperationHistory();
 		context = PlatformUI.getWorkbench().getOperationSupport().getUndoContext();
 		contextA = new ObjectUndoContext("A");
@@ -68,6 +69,7 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 
 	protected void doTearDown() throws Exception {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, true);
+		super.doTearDown();
 	}
 	
 	public void testWorkspaceAdapter() {

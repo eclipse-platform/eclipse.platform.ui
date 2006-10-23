@@ -329,6 +329,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	}
 
 	protected void doSetUp() throws Exception {
+		super.doSetUp();
 		// Suppress validation UI
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
 		// Project
@@ -416,6 +417,19 @@ public class WorkspaceOperationsTests extends UITestCase {
 			clear(toDelete[i]);
 		}
 		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
+		
+		testProject = null;
+		targetProject = null;
+		testFolder = null;
+		testSubFolder = null;
+		testLinkedFolder = null;
+		emptyTestFile = null;
+		testFileWithContent = null;
+		testLinkedFile = null;
+		testFileInSubFolder = null;
+		testFileInProject = null;
+		
+		super.doTearDown();
 	}
 
 	private IWorkspace getWorkspace() {
