@@ -198,7 +198,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
             boolean enabled = true;
             for (Iterator iter = ss.iterator(); iter.hasNext();) {
                 Object element = iter.next();
-                enabled = execute(element) | enabled;
+                enabled = execute(element) & enabled;
             }
             // disable the action according to the command
             setEnabled(enabled);
