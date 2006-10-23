@@ -550,24 +550,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Keys are mode identifiers, values are <code>ILaunchMode</code>s.
 	 */
 	private Map fLaunchModes = null;
-	
-	/**
-	 * Registered launch options, or <code>null</code> if not initialized
-	 * Map is of the form <code>Map<id, option></code>
-	 * @since 3.3
-	 */
-	private HashMap fLaunchOptions = null;
-	
+		
 	/**
 	 * A map of LaunchDelegate objects stored by id of delegate, or launch config type
 	 */
 	private HashMap fLaunchDelegates = null;
 	
-	/**
-	 * A map of duplicate delegates arranged by config type id
-	 */
-	private HashMap fDuplicateDelegates = null;
-
 	/**
 	 * Collection of launches
 	 */
