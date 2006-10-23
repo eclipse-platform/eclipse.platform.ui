@@ -367,11 +367,10 @@ public class FilteredTree extends Composite {
 			        	 */
 						TreeItem[] items = getViewer().getTree().getItems();
 						int treeHeight = getViewer().getTree().getBounds().height;
-						int startHeight = items.length == 0 ? 0 : items[0].getBounds().y;
+						int numVisibleItems = treeHeight / getViewer().getTree().getItemHeight();
 						long stopTime = SOFT_MAX_EXPAND_TIME + System.currentTimeMillis();
 						if (items.length > 0
-								&& recursiveExpand(items, monitor, stopTime,
-										treeHeight, new int[] { startHeight })) {
+								&& recursiveExpand(items, monitor, stopTime, new int[] { numVisibleItems })) {
 							return Status.CANCEL_STATUS;
 						}
 			            
@@ -401,16 +400,15 @@ public class FilteredTree extends Composite {
 			 * @param provider 
 			 * @param monitor
 			 * @param cancelTime
-			 * @param currentHeight 
-			 * @param treeHeight 
-			 * @return
+			 * @param numItemsLeft 
+			 * @return true if canceled
 			 */
 			private boolean recursiveExpand(TreeItem[] items,
-					IProgressMonitor monitor, long cancelTime, int treeHeight, int[] currentHeight) {
+					IProgressMonitor monitor, long cancelTime, int[] numItemsLeft) {
 				boolean canceled = false;
 				for (int i = 0; !canceled && i < items.length; i++) {
 					TreeItem item = items[i];
-					boolean visible = currentHeight[0] <= treeHeight;
+					boolean visible = numItemsLeft[0]-- >= 0;
 					if (monitor.isCanceled()
 							|| (!visible && System.currentTimeMillis() > cancelTime)) {
 						canceled = true;
@@ -419,11 +417,10 @@ public class FilteredTree extends Composite {
 							// do the expansion through the viewer so that it can refresh children appropriately.
 							treeViewer.setExpandedState(item.getData(), true);
 						}
-						currentHeight[0] = currentHeight[0] + item.getBounds().height;
 						TreeItem[] children = item.getItems();
 						if (items.length > 0) {
 							canceled = recursiveExpand(children,
-									monitor, cancelTime, treeHeight, currentHeight);
+									monitor, cancelTime, numItemsLeft);
 						}
 					}
 				}
