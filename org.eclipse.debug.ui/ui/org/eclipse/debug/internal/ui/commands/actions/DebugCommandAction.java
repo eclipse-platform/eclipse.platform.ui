@@ -77,17 +77,19 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     }
 
     /**
-     * This method is analagous to the standard 'run' method for an <code>IAction</code>
+     * Executes this action on the given target object
+     * 
      * @param target the target to perform the action on
      */
-    protected void execute(Object target) {
+    protected boolean execute(Object target) {
     	if (target instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) target;
 			IDebugCommand capability = (IDebugCommand) adaptable.getAdapter(getCommandType());
 			if (capability != null) {
-				capability.execute(target, createStatusMonitor(target));
+				return capability.execute(target, createStatusMonitor(target));
 			}
 		}
+    	return false;
     }
     
     /**
@@ -119,7 +121,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#setEnabled(boolean)
      */
-    public void setEnabled(boolean enabled) {
+    public synchronized void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (fDelegate != null) {
             fDelegate.setEnabled(enabled);
@@ -189,17 +191,17 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#run()
      */
-    public void run() {
+    public synchronized void run() {
         ISelection selection = getContext();
         if (selection instanceof IStructuredSelection && isEnabled()) {
-            // disable the action so it cannot be run again until an event or
-            // selection change updates the enablement
-            setEnabled(false);
             IStructuredSelection ss = (IStructuredSelection) selection;
+            boolean enabled = true;
             for (Iterator iter = ss.iterator(); iter.hasNext();) {
                 Object element = iter.next();
-                execute(element);
+                enabled = execute(element) | enabled;
             }
+            // disable the action according to the command
+            setEnabled(enabled);
         }
     }
 

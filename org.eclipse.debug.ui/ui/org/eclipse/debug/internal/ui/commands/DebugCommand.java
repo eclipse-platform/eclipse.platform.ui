@@ -43,7 +43,7 @@ public abstract class DebugCommand implements IDebugCommand {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand#performCapability(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
 	 */
-	public void execute(final Object element, final IAsynchronousRequestMonitor requestMonitor) {
+	public boolean execute(final Object element, final IAsynchronousRequestMonitor requestMonitor) {
 		Job job = new Job("execute command") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				if (DEBUG_COMMANDS) {
@@ -69,7 +69,17 @@ public abstract class DebugCommand implements IDebugCommand {
 		};
 		job.setSystem(true);
 		job.schedule();
+		return isRemainEnabled();
 	}	
+	
+	/**
+	 * Returns whether this command should remain enabled after execution is invoked.
+	 * 
+	 * @return whether to remain enabled
+	 */
+	protected boolean isRemainEnabled() {
+		return false;
+	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand#checkCapability(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)

@@ -28,4 +28,8 @@ public abstract class StepCommand extends DebugCommand {
 		}
 		return null;
 	}
+	
+	protected boolean isRemainEnabled() {
+		return true;
+	}	
 }

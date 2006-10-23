@@ -29,11 +29,13 @@ public interface IDebugCommand {
 	
 	/**
 	 * Executes this command on the specified element reporting any status
-	 * to the given monitor.
+	 * to the given monitor and returns whether this command should
+	 * remain enabled or become disabled until the request completes.
 	 * 
 	 * @param element element to perform capability on
 	 * @param monitor status monitor
+	 * @return whether the command remains enabled
 	 */
-	public void execute(Object element, IAsynchronousRequestMonitor monitor);
+	public boolean execute(Object element, IAsynchronousRequestMonitor monitor);
 
 }
