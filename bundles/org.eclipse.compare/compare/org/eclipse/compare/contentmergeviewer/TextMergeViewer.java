@@ -37,6 +37,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -48,6 +49,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
@@ -1464,7 +1466,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fAncestor.setEditable(false);
 		fAncestor.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result = getCompareConfiguration().getAncestorLabel(getInput());
+				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_ancestor, getCompareConfiguration().getAncestorLabel(getInput()));
 			}
 		});
 		
@@ -1494,7 +1496,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fLeft.addAction(MergeSourceViewer.SAVE_ID, fLeftSaveAction);
 		fLeft.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result = getCompareConfiguration().getLeftLabel(getInput());
+				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_left, getCompareConfiguration().getLeftLabel(getInput()));
 			}
 		});
 			
@@ -1503,7 +1505,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
 		fRight.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			public void getName(AccessibleEvent e) {
-				e.result = getCompareConfiguration().getRightLabel(getInput());
+				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_right, getCompareConfiguration().getRightLabel(getInput()));
 			}
 		});
 		
@@ -2006,7 +2008,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	private void connectGlobalActions(MergeSourceViewer part) {
-		IActionBars actionBars= Utilities.findActionBars(fComposite);
+		IActionBars actionBars= getCompareConfiguration().getContainer().getActionBars();
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
 				IAction action= null; 
@@ -3274,13 +3276,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (! fShowMoreInfo)
 			return;
-		
-		IActionBars bars= Utilities.findActionBars(fComposite);
-		if (bars == null)
-			return;
-		IStatusLineManager slm= bars.getStatusLineManager();
-		if (slm == null)
-			return;
 					
 		String diffDescription;
 		
@@ -3311,19 +3306,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 		);
 	
-		slm.setMessage(s);
+		getCompareConfiguration().getContainer().setStatusMessage(s);
 	}
 
 	private void clearStatus() {
-		
-		IActionBars bars= Utilities.findActionBars(fComposite);
-		if (bars == null)
-			return;
-		IStatusLineManager slm= bars.getStatusLineManager();
-		if (slm == null)
-			return;
-						
-		slm.setMessage(null);
+		getCompareConfiguration().getContainer().setStatusMessage(null);
 	}
 	
 	private String getDiffType(Diff diff) {
@@ -3425,8 +3412,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
 
-		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
-		fHandlerService= ps != null ? (IHandlerService)ps.getService(IHandlerService.class) : null;
+		IServiceLocator locator = getCompareConfiguration().getContainer().getServiceLocator();
+		fHandlerService= locator != null ? (IHandlerService)locator.getService(IHandlerService.class) : null;
 		
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {

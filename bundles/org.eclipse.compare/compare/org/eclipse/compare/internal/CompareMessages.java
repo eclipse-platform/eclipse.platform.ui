@@ -21,10 +21,15 @@ public final class CompareMessages extends NLS {
 	}
 
 	public static String ComparePlugin_internal_error;
+	public static String ContentMergeViewer_resource_changed_description;
+	public static String ContentMergeViewer_resource_changed_title;
 	public static String ExceptionDialog_seeErrorLogMessage;
 	public static String CompareViewerSwitchingPane_Titleformat;
 	public static String StructureDiffViewer_NoStructuralDifferences;
 	public static String StructureDiffViewer_StructureError;
+	public static String TextMergeViewer_accessible_ancestor;
+	public static String TextMergeViewer_accessible_left;
+	public static String TextMergeViewer_accessible_right;
 	public static String TextMergeViewer_cursorPosition_format;
 	public static String TextMergeViewer_beforeLine_format;
 	public static String TextMergeViewer_range_format;

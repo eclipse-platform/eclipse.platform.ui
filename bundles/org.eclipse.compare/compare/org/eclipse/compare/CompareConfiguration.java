@@ -24,6 +24,8 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A <code>CompareConfiguration</code> object
@@ -609,6 +611,15 @@ public class CompareConfiguration {
 				}
 				public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
 					// By default, do nothing
+				}
+				public void setStatusMessage(String message) {
+					// By default, do nothing
+				}
+				public IActionBars getActionBars() {
+					return null;
+				}
+				public IServiceLocator getServiceLocator() {
+					return null;
 				}
 			};
 		}

@@ -14,7 +14,9 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A compare container is used to represent any UI that can contain compare viewers.
@@ -57,5 +59,25 @@ public interface ICompareContainer {
 	 * @param selectionProvider the selection provider
 	 */
 	public void registerContextMenu(MenuManager menu, ISelectionProvider selectionProvider);
+	
+	/**
+	 * Set the status message displayed by the container to the given message
+	 * @param message the status message
+	 */
+	public void setStatusMessage(String message);
+	
+	/**
+	 * Return the action bars for the container or <code>null</code> if the container
+	 * does not have an action bars.
+	 * @return the action bars for the container or <code>null</code>
+	 */
+	public IActionBars getActionBars();
+	
+	/**
+	 * Return the service locator for the container or <code>null</code> if the container
+	 * does not have one.
+	 * @return the service locator for the container or <code>null</code>
+	 */
+	public IServiceLocator getServiceLocator();
 	
 }

@@ -16,6 +16,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -28,6 +29,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -181,7 +183,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	/*
 	 * Helper method used to find an action bars using the Utilities#findActionsBars(Control)
 	 */
-	/* package */ IActionBars getActionBars() {
+	public IActionBars getActionBars() {
 		return fActionBars;
 	}
 	
@@ -364,18 +366,47 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
 	public void removeCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
 		input.removeCompareInputChangeListener(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
+	 */
 	public void addCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
 		input.addCompareInputChangeListener(listener);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+	 */
 	public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
 		getSite().registerContextMenu(menu, provider);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
+	 */
+	public void setStatusMessage(String message) {
+		if (fActionBars != null) {
+			IStatusLineManager slm= fActionBars.getStatusLineManager();
+			if (slm != null) {
+				slm.setMessage(message);
+			}
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
+	 */
+	public IServiceLocator getServiceLocator() {
+		return getSite();
+	}
+	
 }
 

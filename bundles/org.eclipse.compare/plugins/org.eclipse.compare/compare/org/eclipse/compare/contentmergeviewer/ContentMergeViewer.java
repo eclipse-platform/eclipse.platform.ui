@@ -29,8 +29,8 @@ import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -746,8 +746,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 				
 		createControls(fComposite);
 		
-		IWorkbenchPartSite ps= Utilities.findSite(fComposite);
-		fHandlerService= ps != null ? (IHandlerService)ps.getService(IHandlerService.class) : null;
+		IServiceLocator locator = getCompareConfiguration().getContainer().getServiceLocator();
+		fHandlerService= locator != null ? (IHandlerService)locator.getService(IHandlerService.class) : null;
 						
 		initializeToolbars(parent);
 	
@@ -1130,9 +1130,9 @@ public abstract class ContentMergeViewer extends ContentViewer
 				Shell shell= fComposite.getShell();
 				
 				MessageDialog dialog= new MessageDialog(shell,
-					"Resources Changed",
+					CompareMessages.ContentMergeViewer_resource_changed_title,
 					null, 	// accept the default window icon
-					"The resources being compared have changed outside the compare editor. Do you want to save your changes? Any unsaved changes will be discarded.",
+					CompareMessages.ContentMergeViewer_resource_changed_description,
 					MessageDialog.QUESTION,
 					new String[] {
 						IDialogConstants.YES_LABEL, // 0

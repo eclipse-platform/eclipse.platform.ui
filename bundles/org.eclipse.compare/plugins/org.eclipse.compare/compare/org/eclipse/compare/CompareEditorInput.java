@@ -33,6 +33,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
+import org.eclipse.ui.services.IServiceLocator;
 
 
 /**
@@ -886,7 +887,47 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (fContainer != null)
 			fContainer.registerContextMenu(menu, selectionProvider);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
+	 */
+	public void setStatusMessage(String message) {
+		if (fContainer == null) {
+			// Try the action bars directly
+			IActionBars actionBars= getActionBars();
+			if (actionBars != null) {
+				IStatusLineManager slm= actionBars.getStatusLineManager();
+				if (slm != null) {
+					slm.setMessage(message);
+				}
+			}
+		} else {
+			fContainer.setStatusMessage(message);
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getActionBars()
+	 */
+	public IActionBars getActionBars() {
+		if (fContainer == null) {
+			// The old way to find the action bars
+			return Utilities.findActionBars(fComposite);
+		}
+		return fContainer.getActionBars();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
+	 */
+	public IServiceLocator getServiceLocator() {
+		if (fContainer == null) {
+			// The old way to find the service locator
+			return Utilities.findSite(fComposite);
+		}
+		return fContainer.getServiceLocator();
+	}
+	
 	/**
 	 * Set the container of this input to the given container
 	 * @param container the container

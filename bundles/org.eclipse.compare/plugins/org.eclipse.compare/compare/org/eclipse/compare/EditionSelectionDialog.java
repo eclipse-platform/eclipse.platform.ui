@@ -10,43 +10,29 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashSet;
-import com.ibm.icu.util.Calendar;
-import java.util.Comparator;
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
 
+import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Widget;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.services.IServiceLocator;
 
-import org.eclipse.core.runtime.CoreException;
-
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.MessageFormat;
+import com.ibm.icu.util.Calendar;
 
 
 /**
@@ -190,6 +176,7 @@ public class EditionSelectionDialog extends ResizableDialog {
 	private Image fDateImage;
 	private Image fTimeImage;
 	private CompareViewerSwitchingPane fStructuredComparePane;
+	private Label statusLabel;
 	
 	/**
 	 * Creates a new modal, resizable dialog.
@@ -223,6 +210,36 @@ public class EditionSelectionDialog extends ResizableDialog {
 			fCompareConfiguration= new CompareConfiguration();
 			fCompareConfiguration.setLeftEditable(false);
 			fCompareConfiguration.setRightEditable(false);
+			fCompareConfiguration.setContainer(new ICompareContainer() {
+				public void setStatusMessage(String message) {
+					if (statusLabel != null && !statusLabel.isDisposed()) {
+						if (message == null) {
+							statusLabel.setText(""); //$NON-NLS-1$
+						} else {
+							statusLabel.setText(message);
+						}
+					}
+				}
+				public void removeCompareInputChangeListener(ICompareInput input,
+						ICompareInputChangeListener listener) {
+					input.removeCompareInputChangeListener(listener);
+				}
+				public void registerContextMenu(MenuManager menu,
+						ISelectionProvider selectionProvider) {
+					// Nothing to do
+				}
+				public IServiceLocator getServiceLocator() {
+					return null;
+				}
+				public IActionBars getActionBars() {
+					return null;
+				}
+				public void addCompareInputChangeListener(ICompareInput input,
+						ICompareInputChangeListener listener) {
+					input.addCompareInputChangeListener(listener);
+				}
+			
+			});
 		}
 		return fCompareConfiguration;
 	}
@@ -811,6 +828,14 @@ public class EditionSelectionDialog extends ResizableDialog {
 			}
 		};
 		vsplitter.setWeights(new int[] { 30, 70 });
+		
+		IPreferenceStore store= getCompareConfiguration().getPreferenceStore();
+		if (store != null) {
+			if (store.getBoolean(ComparePreferencePage.SHOW_MORE_INFO)) {
+				statusLabel = new Label(parent, SWT.NONE);
+				statusLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			}
+		}
 
 		applyDialogFont(parent);				
 		return parent;
