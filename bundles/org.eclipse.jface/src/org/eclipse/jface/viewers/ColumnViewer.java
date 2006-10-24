@@ -58,7 +58,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @return the cell or if no cell is found at this point
 	 */
 	ViewerCell getCell(Point point) {
-		ViewerRow row = getRowPart(point);
+		ViewerRow row = getViewerRow(point);
 		if (row != null) {
 			return row.getCell(point);
 		}
@@ -69,20 +69,21 @@ abstract class ColumnViewer extends StructuredViewer {
 	/**
 	 * Get the ViewerRow at point.
 	 * 
-	 * @param point
-	 * @return ViewerRow
+	 * @param point 
+	 * 			the point <b>relative to the display</b> you are interested in
+	 * @return ViewerRow the row or <code>null</code>if no row is found at this point
 	 */
-	protected ViewerRow getRowPart(Point point) {
+	protected ViewerRow getViewerRow(Point point) {
 		Item item = getItem(point.x, point.y);
 
 		if (item != null) {
-			return getRowPartFromItem(item);
+			return getViewerRowFromItem(item);
 		}
 
 		return null;
 	}
 
-	protected ViewerRow getRowPartFromItem(Widget item) {
+	protected ViewerRow getViewerRowFromItem(Widget item) {
 		return (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 	}
 
@@ -141,11 +142,11 @@ abstract class ColumnViewer extends StructuredViewer {
 		if (viewer == null) {
 			viewer = createColumnViewer(columnOwner, CellLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
-			setViewerColumn(columnIndex, viewer);
+			setupEditingSupport(columnIndex, viewer);
 		}
 		
 		if( viewer.getEditingSupport() == null && getCellModifier() != null ) {
-			setViewerColumn(columnIndex, viewer);
+			setupEditingSupport(columnIndex, viewer);
 		}
 
 		return viewer;
@@ -156,7 +157,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @param columnIndex
 	 * @param viewer
 	 */
-	public void setViewerColumn(final int columnIndex, ViewerColumn viewer) {
+	private void setupEditingSupport(final int columnIndex, ViewerColumn viewer) {
 		if (getCellModifier() != null) {
 			viewer.setEditingSupport(new EditingSupport() {
 

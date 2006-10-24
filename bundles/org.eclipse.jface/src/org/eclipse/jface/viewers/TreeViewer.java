@@ -164,7 +164,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 		for (int column = 0; column < columnCount; column++) {
 			ViewerColumn columnViewer = getViewerColumn(column);
-			columnViewer.refresh(updateCell(getRowPartFromItem(treeItem),
+			columnViewer.refresh(updateCell(getViewerRowFromItem(treeItem),
 					column));
 
 			// As it is possible for user code to run the event
@@ -461,7 +461,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		TreeItem item;
 
 		if (parent instanceof TreeItem) {
-			item = (TreeItem) createNewRowPart(getRowPartFromItem(parent),
+			item = (TreeItem) createNewRowPart(getViewerRowFromItem(parent),
 					flags, ix).getItem();
 		} else {
 			item = (TreeItem) createNewRowPart(null, flags, ix).getItem();
@@ -924,7 +924,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
-	protected ViewerRow getRowPartFromItem(Widget item) {
+	protected ViewerRow getViewerRowFromItem(Widget item) {
 		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 
 		if (part == null) {
@@ -945,17 +945,17 @@ public class TreeViewer extends AbstractTreeViewer {
 	private ViewerRow createNewRowPart(ViewerRow parent, int style, int rowIndex) {
 		if (parent == null) {
 			if (rowIndex >= 0) {
-				return getRowPartFromItem(new TreeItem(tree, style, rowIndex));
+				return getViewerRowFromItem(new TreeItem(tree, style, rowIndex));
 			}
-			return getRowPartFromItem(new TreeItem(tree, style));
+			return getViewerRowFromItem(new TreeItem(tree, style));
 		}
 
 		if (rowIndex >= 0) {
-			return getRowPartFromItem(new TreeItem((TreeItem) parent.getItem(),
+			return getViewerRowFromItem(new TreeItem((TreeItem) parent.getItem(),
 					SWT.NONE, rowIndex));
 		}
 
-		return getRowPartFromItem(new TreeItem((TreeItem) parent.getItem(),
+		return getViewerRowFromItem(new TreeItem((TreeItem) parent.getItem(),
 				SWT.NONE));
 	}
 

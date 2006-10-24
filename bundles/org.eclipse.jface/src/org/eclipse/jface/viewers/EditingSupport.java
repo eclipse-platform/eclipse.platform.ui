@@ -20,7 +20,7 @@ package org.eclipse.jface.viewers;
  * @since 3.3
  * 
  */
-abstract class EditingSupport {
+public abstract class EditingSupport {
 	/**
 	 * The editor to be shown
 	 * 
@@ -28,7 +28,7 @@ abstract class EditingSupport {
 	 *            the model element
 	 * @return the CellEditor
 	 */
-	abstract CellEditor getCellEditor(Object element);
+	protected abstract CellEditor getCellEditor(Object element);
 
 	/**
 	 * Is the cell editable
@@ -37,7 +37,7 @@ abstract class EditingSupport {
 	 *            the model element
 	 * @return true if editable
 	 */
-	abstract boolean canEdit(Object element);
+	protected abstract boolean canEdit(Object element);
 
 	/**
 	 * Get the value to set to the editor
@@ -46,7 +46,7 @@ abstract class EditingSupport {
 	 *            the model element
 	 * @return the value shown
 	 */
-	abstract Object getValue(Object element);
+	protected abstract Object getValue(Object element);
 
 	/**
 	 * Restore the value from the CellEditor
@@ -56,5 +56,5 @@ abstract class EditingSupport {
 	 * @param value
 	 *            the new value
 	 */
-	abstract void setValue(Object element, Object value);
+	protected abstract void setValue(Object element, Object value);
 }

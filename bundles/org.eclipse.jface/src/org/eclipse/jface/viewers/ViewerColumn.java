@@ -74,7 +74,7 @@ public final class ViewerColumn {
 	 * @param editingSupport
 	 *            The {@link EditingSupport} to set.
 	 */
-	void setEditingSupport(EditingSupport editingSupport) {
+	public void setEditingSupport(EditingSupport editingSupport) {
 		this.editingSupport = editingSupport;
 	}
 

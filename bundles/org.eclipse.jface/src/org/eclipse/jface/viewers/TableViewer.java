@@ -435,7 +435,7 @@ public class TableViewer extends ColumnViewer {
 			// TableViewer with 0 columns does not work
 			for (int column = 0; column < columnCount || column == 0; column++) {
 				ViewerColumn columnViewer = getViewerColumn(column);
-				columnViewer.refresh(updateCell(getRowPartFromItem(item),
+				columnViewer.refresh(updateCell(getViewerRowFromItem(item),
 						column));
 
 				// As it is possible for user code to run the event
@@ -1331,7 +1331,7 @@ public class TableViewer extends ColumnViewer {
 	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getRowPartFromItem(org.eclipse.swt.widgets.Widget)
 	 */
-	protected ViewerRow getRowPartFromItem(Widget item) {
+	protected ViewerRow getViewerRowFromItem(Widget item) {
 		ViewerRow part = (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 
 		if (part == null) {
@@ -1357,7 +1357,7 @@ public class TableViewer extends ColumnViewer {
 			item = new TableItem(table, style);
 		}
 
-		return getRowPartFromItem(item);
+		return getViewerRowFromItem(item);
 	}
 
 	/**

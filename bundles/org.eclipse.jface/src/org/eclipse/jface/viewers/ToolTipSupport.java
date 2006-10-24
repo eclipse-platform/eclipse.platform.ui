@@ -92,7 +92,7 @@ class ToolTipSupport {
                 if (!(event.widget instanceof Control))
                   break;
                 // map receiver-relative coordinates to display-relative coordinates
-                ViewerRow row = viewer.getRowPart(((Control) event.widget).toDisplay(
+                ViewerRow row = viewer.getViewerRow(((Control) event.widget).toDisplay(
                     event.x, event.y));
                 viewer.getControl().setToolTipText(""); //$NON-NLS-1$
 
