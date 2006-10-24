@@ -584,14 +584,18 @@ public class PreviewPatchPage2 extends WizardPage {
 					
 					//Get diff nodes
 					IDiffElement[] diffs = ((DiffNode)children[i]).getChildren();
-					
+					boolean projectNodeCreated = false;
+				    DiffNode projectNode = null;
 					for (int j = 0; j < diffs.length; j++) {
 						if (diffs[j] instanceof PatcherDiffNode){
 							PatcherDiffNode diff = (PatcherDiffNode) diffs[j];
 							Diff tempDiff = diff.getDiff();
 							if (tempDiff.containsProblems()){
 								atLeastOneDiffProblem = true;
-								DiffNode projectNode = new DiffNode(newRoot, Differencer.CHANGE, null, children[i], null);
+								if (!projectNodeCreated){
+									projectNode = new DiffNode(newRoot, Differencer.CHANGE, null, children[i], null);
+									projectNodeCreated=true;
+								}
 								processDiff(diff, projectNode, hunkMergePage,PROJECTDIFF_NODE);
 							}
 						}
