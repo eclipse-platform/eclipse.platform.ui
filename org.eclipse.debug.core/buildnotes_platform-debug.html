@@ -65,8 +65,12 @@
   <li>Added attribute 'name' to the <code>launchDelegates</code> schema, providing 
     a human readable name for the delegate. To be used in duplicate resolution</li>
   <li>Added method getModes to <code>ILaunchConfiguration</code> -- returns the set of modes that have been set on the launch configuration.</li>
-  <li>Added method getDelegates(Set) to <code>ILaunchConfigurationType</code> to return an array of <code>ILaunchDelegate</code> instances for the 
+  <li>Added method getDelegates(Set) to <code>ILaunchConfigurationType</code> to return an array of <code>ILaunchDelegate</code> instances for the
   associated type.</li>
+  <li>Added modeCombination element to the launchDelegates extension point -- allows comma seprerated lists of modes to be specified
+  in order to know what combinations of modes the associated launch delegate can launch</li> 
+  <li>Added method getSupportedModeCombinations to <code>ILaunchConfigurationType</code> -- returns a Set of Sets of the supported modes for the associated 
+  launch configuration type.</li>
 </ul>
 
 <h2>Oct 24, 2006</h2> 
@@ -79,6 +83,7 @@
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=158232">158232</a>: 'Terminate and relaunch' action is enabled for non-relaunchable configs<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161077">161077</a>: [schema] build N20061016-0010 schema errors<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161080">161080</a>: [schema] build &gt; N20061016-0010 schema errors<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157090">157090</a>: should adopt ICU Collator and use new APIs on StructuredViewer<br>
 
 <h2>Oct 3, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
