@@ -11,6 +11,7 @@
 package org.eclipse.compare;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
@@ -143,9 +144,22 @@ public class CompareViewerPane extends ViewForm {
 	
 	private ToolBarManager getToolBarManager() {
 		if (fToolBarManager == null) {
-			ToolBar tb= new ToolBar(this, SWT.FLAT);
+			final ToolBar tb = new ToolBar(this, SWT.FLAT);
 			setTopCenter(tb);
-			fToolBarManager= new ToolBarManager(tb);
+			fToolBarManager = new ToolBarManager(tb);
+			tb.getAccessible().addAccessibleListener(new AccessibleAdapter() {
+				public void getName(AccessibleEvent e) {
+					if (e.childID != ACC.CHILDID_SELF) {
+						ToolItem item = tb.getItem(e.childID);
+						if (item != null) {
+							String toolTip = item.getToolTipText();
+							if (toolTip != null) {
+								e.result = toolTip;
+							}
+						}
+					}
+				}
+			});
 		}
 		return fToolBarManager;
 	}
