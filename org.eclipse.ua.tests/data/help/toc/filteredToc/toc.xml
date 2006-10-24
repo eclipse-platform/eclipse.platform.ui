@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="filteredToc">
-	<topic label="filter.xml">
+<toc label="filter" link_to="data/help/toc/root.xml#content">
+	<topic label="filter">
 		<link toc="data/help/toc/filteredToc/filter.xml" />
 	</topic>
 </toc>

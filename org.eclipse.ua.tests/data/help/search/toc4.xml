@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Search test TOC3 (with extraDir)" link_to="toc2.xml#toc2Anchor">
+<toc label="search4" link_to="data/help/search/toc2.xml#toc2Anchor">
 	<topic label="test8.htm" href="data/help/search/test8.htm"/>
 </toc>

@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?NLS  TYPE="org.eclipse.help.toc"?>
-<toc label="Samples" topic="data/help/toc/extraContent/simple_page.html">
-   <topic label="Bats FOR product: Happy Bats, WAS; version: 9.0,8.0 ; platform: z/OS;AIX" href="data/help/toc/extraContent/simple_page.html">
-   	  <criteria name="prodname" value="Happy Bats" />
-   	  <criteria name="prodname" value="WAS" />
-   	  <criteria name="version" value="9.0" />
-	  <criteria name="version" value="8.0" />
-   	  <criteria name="platform" value="z/OS" />
-   	  <criteria name="platform" value="AIX" />
-      <topic label="Caring for your fruit bat FOR Version: 9.0; platform: z/OS; product: WAS" href="data/help/toc/extraContent/simple_page.html">
-	  	<criteria name="version" value="9.0" />
-   	  	<criteria name="platform" value="z/OS" />
-   	  	<criteria name="prodname" value="WAS" />
-	  </topic>
-      <topic label="Cleaning your fruit bat FOR Version: 8.0; platform: AIX; product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
-   	  	<criteria name="platform" value="AIX" />
-	  	<criteria name="version" value="8.0" />
-	  	<criteria name="prodname" value="Happy Bats" />
-   	  </topic>
-      <topic label="Feeding your bat" href="data/help/toc/extraContent/simple_page.html"/>
-      <topic label="Bat sonar" href="data/help/toc/extraContent/simple_page.html"/>
-      <topic label="Bat guano" href="data/help/toc/extraContent/simple_page.html"/>
-      <topic label="Bat history" href="data/help/toc/extraContent/simple_page.html"/>
-      <topic label="Bat recycling" href="data/help/toc/extraContent/simple_page.html"/>
-  </topic>
-	<topic label="Bats FOR product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
-		  <criteria name="prodname" value="Happy Bats" />
+<toc label="extraContent2" topic="data/help/toc/extraContent/simple_page.html" link_to="data/help/toc/root.xml#content">
+ 	<topic label="extraContent2">
+	   <topic label="Bats FOR product: Happy Bats, WAS; version: 9.0,8.0 ; platform: z/OS;AIX" href="data/help/toc/extraContent/simple_page.html">
+	   	  <criteria name="prodname" value="Happy Bats" />
+	   	  <criteria name="prodname" value="WAS" />
+	   	  <criteria name="version" value="9.0" />
+		  <criteria name="version" value="8.0" />
+	   	  <criteria name="platform" value="z/OS" />
+	   	  <criteria name="platform" value="AIX" />
+	      <topic label="Caring for your fruit bat FOR Version: 9.0; platform: z/OS; product: WAS" href="data/help/toc/extraContent/simple_page.html">
+		  	<criteria name="version" value="9.0" />
+	   	  	<criteria name="platform" value="z/OS" />
+	   	  	<criteria name="prodname" value="WAS" />
+		  </topic>
+	      <topic label="Cleaning your fruit bat FOR Version: 8.0; platform: AIX; product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
+	   	  	<criteria name="platform" value="AIX" />
+		  	<criteria name="version" value="8.0" />
+		  	<criteria name="prodname" value="Happy Bats" />
+	   	  </topic>
 	      <topic label="Feeding your bat" href="data/help/toc/extraContent/simple_page.html"/>
 	      <topic label="Bat sonar" href="data/help/toc/extraContent/simple_page.html"/>
 	      <topic label="Bat guano" href="data/help/toc/extraContent/simple_page.html"/>
 	      <topic label="Bat history" href="data/help/toc/extraContent/simple_page.html"/>
 	      <topic label="Bat recycling" href="data/help/toc/extraContent/simple_page.html"/>
+	    </topic>
+		<topic label="Bats FOR product: Happy Bats" href="data/help/toc/extraContent/simple_page.html">
+			  <criteria name="prodname" value="Happy Bats" />
+		      <topic label="Feeding your bat" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Bat sonar" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Bat guano" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Bat history" href="data/help/toc/extraContent/simple_page.html"/>
+		      <topic label="Bat recycling" href="data/help/toc/extraContent/simple_page.html"/>
+		</topic>
 	</topic>
 </toc>

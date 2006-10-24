@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Search test TOC">
-	<topic label="test1.xhtml" href="data/help/search/test1.xhtml"/>
-	<topic label="test2.xhtml" href="data/help/search/test2.xhtml"/>
-	<topic label="test3.xhtml" href="data/help/search/test3.xhtml"/>
-	<topic label="test4.xhtml" href="data/help/search/test4.xhtml"/>
-	<topic label="test5.xhtml" href="data/help/search/test5.xhtml"/>
-	<topic label="test6.xhtml" href="data/help/search/test6.xhtml"/>
-	<topic label="test7.html" href="data/help/search/test7.html"/>
-	<topic label="test9(a).htm" href="data/help/search/test9.htm"/>
-	<topic label="test9(b).htm" href="data/help/search/extraDir/../test9.htm"/>
-	<topic label="test9(c).htm" href="data/help/search//extraDir//subdir/../../test9.htm"/>
+<toc label="search" link_to="data/help/toc/root.xml#content">
+	<topic label="search">
+		<topic label="test1.xhtml" href="data/help/search/test1.xhtml"/>
+		<topic label="test2.xhtml" href="data/help/search/test2.xhtml"/>
+		<topic label="test3.xhtml" href="data/help/search/test3.xhtml"/>
+		<topic label="test4.xhtml" href="data/help/search/test4.xhtml"/>
+		<topic label="test5.xhtml" href="data/help/search/test5.xhtml"/>
+		<topic label="test6.xhtml" href="data/help/search/test6.xhtml"/>
+		<topic label="test7.html" href="data/help/search/test7.html"/>
+		<topic label="test9(a).htm" href="data/help/search/test9.htm"/>
+		<topic label="test9(b).htm" href="data/help/search/extraDir/../test9.htm"/>
+		<topic label="test9(c).htm" href="data/help/search//extraDir//subdir/../../test9.htm"/>
+	</topic>
 </toc>

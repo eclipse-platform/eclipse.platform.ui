@@ -372,18 +372,6 @@ public class TocManager {
 	}
 	
 	/*
-	 * For testing purposes only. Reloads everything.
-	 */
-	public void reset() {
-		tocProviders = null;
-		tocsByLocale = new HashMap();
-		tocsById = new HashMap();
-		tocsByTopic = null;
-		ignoredTopicHrefs = null;
-		getTocs(Platform.getNL());
-	}
-	
-	/*
 	 * Substitutes each item with it's corresponding mapping from the map.
 	 * Original List is not modified.
 	 */

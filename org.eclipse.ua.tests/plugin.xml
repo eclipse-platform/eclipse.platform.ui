@@ -246,18 +246,19 @@
       TOC test content
    -->
    <extension point="org.eclipse.help.toc">
-       <toc file="data/help/toc/filteredToc/toc.xml" primary="true" />
-       <toc file="data/help/toc/filteredToc/filter.xml" />
-       <toc file="data/help/toc/filteredToc/simple_toc.xml" />
-       <toc file="data/help/toc/extraContent/toc.xml" primary="true"/>
-       <toc file="data/help/toc/extraContent/toc2.xml" primary="true"/>
-       <toc file="data/help/toc/extraContent/simple_toc.xml" />
-       <toc file="data/help/search/toc.xml" primary="true"/>
-       <toc file="data/help/search/toc2.xml" primary="true" extradir="data/help/search/extraDir"/>
-       <toc file="data/help/search/toc3.xml" primary="false" extradir="data/help/search/extraDir2"/>
-       <toc file="data/help/search/toc4.xml" primary="false" extradir="data/help/search/extraDir3"/>
-       <toc file="data/help/index/toc.xml" primary="true"/>
-       <toc file="data/help/index/tocIgnored.xml" primary="true"/>
+       <toc file="data/help/toc/root.xml" primary="true"/>
+       <toc file="data/help/toc/filteredToc/toc.xml"/>
+       <toc file="data/help/toc/filteredToc/filter.xml"/>
+       <toc file="data/help/toc/filteredToc/simple_toc.xml"/>
+       <toc file="data/help/toc/extraContent/toc.xml"/>
+       <toc file="data/help/toc/extraContent/toc2.xml"/>
+       <toc file="data/help/toc/extraContent/simple_toc.xml"/>
+       <toc file="data/help/search/toc.xml"/>
+       <toc file="data/help/search/toc2.xml" extradir="data/help/search/extraDir"/>
+       <toc file="data/help/search/toc3.xml" extradir="data/help/search/extraDir2"/>
+       <toc file="data/help/search/toc4.xml" extradir="data/help/search/extraDir3"/>
+       <toc file="data/help/index/toc.xml"/>
+       <toc file="data/help/index/tocIgnored.xml"/>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 

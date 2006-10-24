@@ -46,7 +46,7 @@ public class ExtraDirTest extends TestCase {
 		{ "iusazemhdv", null, "/org.eclipse.ua.tests/data/help/search/test8.htm" },
 
 		// try with containing toc's search scope
-		{ "iusazemhdv", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/test8.htm" },
+		{ "iusazemhdv", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/test8.htm" },
 
 		// try with another toc's search scope; shouldn't find it
 		{ "iusazemhdv", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
@@ -55,37 +55,31 @@ public class ExtraDirTest extends TestCase {
 		{ "xzopsujjae", null, "/org.eclipse.ua.tests/data/help/search/extraDir/extraDoc1.htm" },
 
 		// extradir doc, with correct search scope
-		{ "xzopsujjae", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir/extraDoc1.htm" },
+		{ "xzopsujjae", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/extraDir/extraDoc1.htm" },
 
 		// extradir doc, with incorrect search scope
-		{ "xzopsujjae", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
+		{ "xzopsujjae", "/org.eclipse.platform.doc.user/toc.xml", null },
 
 		// extradir doc (in subdir), no search scope
 		{ "mrendiqwja", null, "/org.eclipse.ua.tests/data/help/search/extraDir/subDir/extraDoc2.htm" },
 
 		// extradir doc (in subdir), with correct search scope
-		{ "mrendiqwja", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir/subDir/extraDoc2.htm" },
+		{ "mrendiqwja", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/extraDir/subDir/extraDoc2.htm" },
 
 		// extradir doc (in subdir), with incorrect search scope
-		{ "mrendiqwja", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
-
-		// extradir doc link_to'ed from another toc (toc3.xml),no scope
-		{ "kleoiujfpn", null, "/org.eclipse.ua.tests/data/help/search/extraDir2/extraDoc.htm" },
-
-		// extradir doc link_to'ed from another toc (toc3.xml), with correct scope
-		{ "kleoiujfpn", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir2/extraDoc.htm" },
+		{ "mrendiqwja", "/org.eclipse.platform.doc.user/toc.xml", null },
 
 		// extradir doc link_to'ed from another toc (toc3.xml), with incorrect scope
-		{ "kleoiujfpn", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
+		{ "kleoiujfpn", "/org.eclipse.platform.doc.user/toc.xml", null },
 
 		// extradir doc linked into toc2.xml from toc4.xml, no scope
 		{ "fuqnejwmfh", null, "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
 
 		// extradir doc linked into toc2.xml from toc4.xml, correct scope
-		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/search/toc2.xml", "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
+		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
 
 		// extradir doc linked into toc2.xml from toc4.xml, incorrect scope
-		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/search/toc.xml", null },
+		{ "fuqnejwmfh", "/org.eclipse.platform.doc.user/toc.xml", null },
 	};
 	
 	/*
