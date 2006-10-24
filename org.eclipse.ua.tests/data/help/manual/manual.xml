@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="manual.xml" link_to="data/help/toc/root.xml#content">
+	<topic label="manual">
+		<topic label="dynamic xhtml" href="data/help/manual/dynamic.xhtml"/>
+	</topic>
+</toc>

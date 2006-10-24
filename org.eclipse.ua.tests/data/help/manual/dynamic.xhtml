@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Dynamic Content</title>
+</head>
+<body>
+
+	<p>This topic should always appear</p>
+
+	<!-- should never appear -->
+	<p filter="os=invalid">Your OS is invalid</p>
+	<p filter="ws=invalid">Your WS is invalid</p>
+	<p filter="arch=invalid">Your ARCH is invalid</p>
+	<p>
+		Your OS is win32 AND your WS is invalid
+		<filter name="os" value="win32"/>
+    	<filter name="ws" value="invalid"/>
+    </p>
+
+	<p filter="plugin=org.eclipse.help">The plugin org.eclipse.help is installed</p>
+
+	<!-- should never appear -->
+	<p filter="plugin=invalid">The plugin invalid is installed</p>
+
+	<p filter="product=org.eclipse.sdk.ide">The product org.eclipse.sdk.ide is running</p>
+
+	<!-- should never appear -->
+	<p filter="product=invalid">The product invalid is running</p>
+
+	<p filter="category=org.eclipse.categories.developmentCategory">The category org.eclipse.categories.developmentCategory is enabled</p>
+
+	<!-- should never appear -->
+	<p filter="category=invalid">The category invalid is enabled</p>
+
+	<p filter="activity=org.eclipse.javaDevelopment">The activity org.eclipse.javaDevelopment is enabled</p>
+
+	<!-- should never appear -->
+	<p filter="activity=invalid">The activity invalid is enabled</p>	
+
+</body>
+</html>

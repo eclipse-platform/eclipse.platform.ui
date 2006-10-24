@@ -247,6 +247,7 @@
    -->
    <extension point="org.eclipse.help.toc">
        <toc file="data/help/toc/root.xml" primary="true"/>
+       <toc file="data/help/manual/manual.xml"/>
        <toc file="data/help/toc/filteredToc/toc.xml"/>
        <toc file="data/help/toc/filteredToc/filter.xml"/>
        <toc file="data/help/toc/filteredToc/simple_toc.xml"/>

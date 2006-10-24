@@ -14,13 +14,17 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import org.eclipse.core.runtime.content.IContentDescriber;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
+import org.xml.sax.SAXException;
 
 /*
  * Performs any needed XHTML processing on the given input stream. If the input
@@ -35,37 +39,31 @@ public class DynamicXHTMLProcessor {
 	/*
 	 * Performs any needed processing. Does nothing if not XHTML.
 	 */
-	public static InputStream process(String href, InputStream in, String locale, boolean filter) {
+	public static InputStream process(String href, InputStream in, String locale, boolean filter) throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
 		BufferedInputStream buf = new BufferedInputStream(in, XHTMLContentDescriber.BUFFER_SIZE);
 		buf.mark(XHTMLContentDescriber.BUFFER_SIZE);
 		boolean isXHTML = isXHTML(buf);
-		try {
-			buf.reset();
-			if (isXHTML) {
-				if (filter) {
-					if (xmlProcessor == null) {
-						xmlProcessor = new XMLProcessor(new DOMProcessorHandler[] {
-								new IncludeHandler(locale),
-								new ExtensionHandler(locale),
-								new XHTMLCharsetHandler(),
-								new FilterHandler()
-						});
-					}
-					return xmlProcessor.process(buf, href);
-				}
-				if (xmlProcessorNoFilter == null) {
-					xmlProcessorNoFilter = new XMLProcessor(new DOMProcessorHandler[] {
+		buf.reset();
+		if (isXHTML) {
+			if (filter) {
+				if (xmlProcessor == null) {
+					xmlProcessor = new XMLProcessor(new DOMProcessorHandler[] {
 							new IncludeHandler(locale),
 							new ExtensionHandler(locale),
-							new XHTMLCharsetHandler()
+							new XHTMLCharsetHandler(),
+							new FilterHandler()
 					});
 				}
-				return xmlProcessorNoFilter.process(buf, href);
+				return xmlProcessor.process(buf, href);
 			}
-		}
-		catch (Throwable t) {
-			String msg = "An error occured while attempting to process XHTML"; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, t);
+			if (xmlProcessorNoFilter == null) {
+				xmlProcessorNoFilter = new XMLProcessor(new DOMProcessorHandler[] {
+						new IncludeHandler(locale),
+						new ExtensionHandler(locale),
+						new XHTMLCharsetHandler()
+				});
+			}
+			return xmlProcessorNoFilter.process(buf, href);
 		}
 		return buf;
 	}

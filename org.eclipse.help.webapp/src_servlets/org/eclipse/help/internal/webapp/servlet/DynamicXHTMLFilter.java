@@ -15,10 +15,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.base.remote.RemoteHelp;
+import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 
@@ -28,6 +32,10 @@ import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
  * filter.
  */
 public class DynamicXHTMLFilter implements IFilter {
+
+	private static final String ERROR_PAGE_PREFIX = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n</head>\n<body>"; //$NON-NLS-1$
+	private static final String ERROR_PAGE_SUFFIX = "</body>\n</html>"; //$NON-NLS-1$
+	private static final String CHARSET_UTF8 = "UTF-8"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
@@ -67,8 +75,27 @@ public class DynamicXHTMLFilter implements IFilter {
 					href = href.substring(servletPath.length());
 				}
 				
-				InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, RemoteHelp.isAllowed());
-				transferContent(in2, out);
+				try {
+					InputStream in2 = DynamicXHTMLProcessor.process(href, in, locale, RemoteHelp.isAllowed());
+					transferContent(in2, out);
+				}
+				catch (Throwable t) {
+					PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, CHARSET_UTF8));
+					writer.println(ERROR_PAGE_PREFIX);
+					writer.println("<p>"); //$NON-NLS-1$
+					writer.println(WebappResources.getString("ProcessingError", req.getLocale())); //$NON-NLS-1$
+					writer.println("</p>"); //$NON-NLS-1$
+					writer.println("<pre>"); //$NON-NLS-1$
+					
+					StringWriter w1 = new StringWriter();
+					PrintWriter w2 = new PrintWriter(w1);
+					t.printStackTrace(w2);
+					
+					writer.println(UrlUtil.htmlEncode(w1.getBuffer().toString()));
+					writer.println("</pre>"); //$NON-NLS-1$
+					writer.println(ERROR_PAGE_SUFFIX);
+					writer.close();
+				}
 			}
 		};
 		return out2;
