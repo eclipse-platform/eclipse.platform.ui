@@ -18,4 +18,7 @@ public interface ICompareUIConstants {
 	public static final String IGNORE_WHITESPACE_DISABLED= "dtool16/ignorews_edit.gif";	//$NON-NLS-1$
 	
 	public static final String REVERSE_PATCH_ENABLED = "etool16/reverse_enabled.gif";	//$NON-NLS-1$
+	
+	public static final String PROP_ANCESTOR_VISIBLE = PREFIX + "AncestorVisible"; //$NON-NLS-1$
+	public static final String PROP_IGNORE_ANCESTOR = PREFIX + "IgnoreAncestor"; //$NON-NLS-1$
 }

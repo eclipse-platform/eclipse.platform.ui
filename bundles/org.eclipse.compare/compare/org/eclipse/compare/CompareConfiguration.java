@@ -225,7 +225,7 @@ public class CompareConfiguration {
 		fPreferenceStore= prefStore;
 		if (fPreferenceStore != null) {
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE);
-			setProperty(ComparePreferencePage.INITIALLY_SHOW_ANCESTOR_PANE, new Boolean(b));
+			setProperty(ICompareUIConstants.PROP_ANCESTOR_VISIBLE, new Boolean(b));
 			
 			b= fPreferenceStore.getBoolean(ComparePreferencePage.IGNORE_WHITESPACE);
 			setProperty(CompareConfiguration.IGNORE_WHITESPACE, new Boolean(b));

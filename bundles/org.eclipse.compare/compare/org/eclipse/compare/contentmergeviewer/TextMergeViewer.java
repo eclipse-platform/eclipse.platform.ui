@@ -217,7 +217,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private int fInheritedDirection;	// inherited direction
 	private int fTextDirection;			// requested direction for embedded SourceViewer
 	
-	private boolean fIgnoreAncestor= false;
 	private ActionContributionItem fIgnoreAncestorItem;
 	private boolean fHighlightRanges;
 	
@@ -1018,10 +1017,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return false;
 		}
 				
-		int getMaxDiffHeight(boolean withAncestor) {
+		int getMaxDiffHeight() {
 			Point region= new Point(0, 0);
 			int h= fLeft.getLineRange(fLeftPos, region).y;
-			if (withAncestor)
+			if (isThreeWay())
 				h= Math.max(h, fAncestor.getLineRange(fAncestorPos, region).y);
 			return Math.max(h, fRight.getLineRange(fRightPos, region).y);
 		}
@@ -1728,7 +1727,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Iterator e= fAllDiffs.iterator();
 			for (int i= 0; e.hasNext(); i++) {
 				Diff diff= (Diff) e.next();
-				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight(fShowAncestor)
+				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight()
 											  : diff.getRightHeight();
 				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
 									
@@ -1764,7 +1763,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Iterator e= fAllDiffs.iterator();
 			for (int i= 0; e.hasNext(); i++) {
 				Diff diff= (Diff) e.next();
-				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight(fShowAncestor)
+				int h= fSynchronizedScrolling ? diff.getMaxDiffHeight()
 											  : diff.getRightHeight();
 								
 				if (useChange(diff.fDirection) && !diff.fIsWhitespace) {
@@ -2713,7 +2712,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				
 		boolean threeWay= isThreeWay();
 		
-		if (threeWay && !fIgnoreAncestor) {
+		if (threeWay && !isIgnoreAncestor()) {
 			aDoc= fAncestor.getDocument();
 			aRegion= fAncestor.getRegion();
 		}
@@ -2886,7 +2885,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				
 		boolean threeWay= isThreeWay();
 		
-		if (threeWay && !fIgnoreAncestor)
+		if (threeWay && !isIgnoreAncestor())
 			aDoc= fAncestor.getDocument();
 
 		boolean ignoreWhiteSpace= Utilities.getBoolean(getCompareConfiguration(), CompareConfiguration.IGNORE_WHITESPACE, false);		
@@ -3199,7 +3198,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		
 		if (fDirectionLabel != null) {
-			if (fHighlightRanges && fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
+			if (fHighlightRanges && fCurrentDiff != null && isThreeWay() && !isIgnoreAncestor()) {
 				fDirectionLabel.setImage(fCurrentDiff.getImage());
 			} else {
 				fDirectionLabel.setImage(null);
@@ -3418,13 +3417,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {
 			public void run() {
-				setIgnoreAncestor(! fIgnoreAncestor);
-				Utilities.initToggleAction(this, getResourceBundle(), ignoreAncestorActionKey, fIgnoreAncestor);
+				// First make sure the ancestor is hidden
+				if (!isIgnoreAncestor())
+					getCompareConfiguration().setProperty(ICompareUIConstants.PROP_ANCESTOR_VISIBLE, Boolean.FALSE);
+				// Then set the property to ignore the ancestor
+				getCompareConfiguration().setProperty(ICompareUIConstants.PROP_IGNORE_ANCESTOR, Boolean.valueOf(!isIgnoreAncestor()));
+				Utilities.initToggleAction(this, getResourceBundle(), ignoreAncestorActionKey, isIgnoreAncestor());
 			}
 		};
-		ignoreAncestorAction.setChecked(fIgnoreAncestor);
+		ignoreAncestorAction.setChecked(isIgnoreAncestor());
 		Utilities.initAction(ignoreAncestorAction, getResourceBundle(), ignoreAncestorActionKey);
-		Utilities.initToggleAction(ignoreAncestorAction, getResourceBundle(), ignoreAncestorActionKey, fIgnoreAncestor);
+		Utilities.initToggleAction(ignoreAncestorAction, getResourceBundle(), ignoreAncestorActionKey, isIgnoreAncestor());
 		
 		fIgnoreAncestorItem= new ActionContributionItem(ignoreAncestorAction);
 		fIgnoreAncestorItem.setVisible(false);
@@ -3491,19 +3494,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			
-			// clear stuff
-			fCurrentDiff= null;
-		 	fChangeDiffs= null;
-			fAllDiffs= null;
-					
-			doDiff();
-					
-			updateControls();
-			invalidateLines();
-			updateVScrollBar();
-			refreshBirdsEyeView();
-			
-			selectFirstDiff(true);
+			update(true);
 			
 //		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
 //			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
@@ -3546,27 +3537,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					clearStatus();
 			}
 			
-		} else
+		} else {
 			super.propertyChange(event);
-	}
-	
-	private void setIgnoreAncestor(boolean ignore) {
-		if (ignore != fIgnoreAncestor) {
-			fIgnoreAncestor= ignore;
-			setAncestorVisibility(false, !fIgnoreAncestor);
-		
-			// clear stuff
-			fCurrentDiff= null;
-		 	fChangeDiffs= null;
-			fAllDiffs= null;
-					
-			doDiff();
-					
-			invalidateLines();
-			updateVScrollBar();
-			refreshBirdsEyeView();
 			
-			selectFirstDiff(true);
+			if (key.equals(ICompareUIConstants.PROP_IGNORE_ANCESTOR)) {
+				update(false);
+			}
 		}
 	}
 	
@@ -3690,7 +3666,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	private boolean showResolveUI() {
-		if (!fUseResolveUI || !isThreeWay() || fIgnoreAncestor)
+		if (!fUseResolveUI || !isThreeWay() || isIgnoreAncestor())
 			return false;
 		CompareConfiguration cc= getCompareConfiguration();
 		// we only enable the new resolve UI if exactly one side is editable
@@ -3967,7 +3943,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		RGB selected_fill= getBackground(null);
 
-		if (isThreeWay() && !fIgnoreAncestor) {
+		if (isThreeWay() && !isIgnoreAncestor()) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -3990,7 +3966,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private RGB getStrokeColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
-		if (isThreeWay() && !fIgnoreAncestor) {
+		if (isThreeWay() && !isIgnoreAncestor()) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
 				if (fLeftIsLocal)
@@ -4085,7 +4061,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			setCurrentDiff(diff, true);
 			
 			if (diff != null && diff.fDirection == RangeDifference.ANCESTOR
-									&& !getAncestorEnabled())
+									&& !isAncestorVisible())
 				continue;
 				
 			break;
@@ -4198,7 +4174,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			// before we set fCurrentDiff we change the selection
 			// so that the paint code uses the old background colors
 			// otherwise selection isn't drawn correctly
-			if (isThreeWay() && !fIgnoreAncestor)
+			if (isThreeWay() && !isIgnoreAncestor())
 				fAncestor.setSelection(d.fAncestorPos);
 			fLeft.setSelection(d.fLeftPos);
 			fRight.setSelection(d.fRightPos);
@@ -4237,7 +4213,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			int ls= fLeft.getLineRange(d.fLeftPos, region).x;
 			int rs= fRight.getLineRange(d.fRightPos, region).x;
 			
-			if (isThreeWay() && !fIgnoreAncestor) {
+			if (isThreeWay() && !isIgnoreAncestor()) {
 				int as= fAncestor.getLineRange(d.fAncestorPos, region).x;
 				if (as >= fAncestor.getTopIndex() && as <= fAncestor.getBottomIndex())
 					ancestorIsVisible= true;
@@ -4273,7 +4249,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 						if (diff == d)
 							break;
 						if (fSynchronizedScrolling) {
-							vpos+= diff.getMaxDiffHeight(fShowAncestor);
+							vpos+= diff.getMaxDiffHeight();
 						} else {
 							avpos+= diff.getAncestorHeight();
 							lvpos+= diff.getLeftHeight();
@@ -4337,7 +4313,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	//--------------------------------------------------------------------------------
 	
 	void copyAllUnresolved(boolean leftToRight) {
-		if (fChangeDiffs != null && isThreeWay() && !fIgnoreAncestor) {
+		if (fChangeDiffs != null && isThreeWay() && !isIgnoreAncestor()) {
 			IRewriteTarget target= leftToRight ? fRight.getRewriteTarget() : fLeft.getRewriteTarget();
 			boolean compoundChangeStarted= false;
 			Iterator e= fChangeDiffs.iterator();
@@ -4413,11 +4389,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fLeftLineCount= fLeft.getLineCount();
 			setLeftDirty(true);
 		}
-		doDiff();
-		invalidateLines();
-		updateVScrollBar();
-		selectFirstDiff(true);
-		refreshBirdsEyeView();
+		update(false);
 	}
 
 	private void copyDiffLeftToRight() {
@@ -4526,7 +4498,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Iterator e= fAllDiffs.iterator();
 			for (int i= 0; e.hasNext(); i++) {
 				Diff diff= (Diff) e.next();
-				h+= diff.getMaxDiffHeight(fShowAncestor);
+				h+= diff.getMaxDiffHeight();
 			}
 		}
 		return h;
@@ -4587,7 +4559,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Position pos= diff.getPosition(w);
 			w.getLineRange(pos, region);
 			int realHeight= region.y;
-			int virtualHeight= diff.getMaxDiffHeight(fShowAncestor);
+			int virtualHeight= diff.getMaxDiffHeight();
 			if (vpos <= viewPos + realHeight) {	// OK, found!
 				vpos-= viewPos;	// make relative to this slot
 				// now scale position within this slot to virtual slot
@@ -4710,7 +4682,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Diff diff= (Diff) e.next();
 			Position pos= diff.getPosition(part);
 			int viewHeight= part.getLineRange(pos, region).y;
-			int virtualHeight= diff.getMaxDiffHeight(fShowAncestor);
+			int virtualHeight= diff.getMaxDiffHeight();
 			if (v < (virtualPos + virtualHeight)) {
 				v-= virtualPos;		// make relative to this slot
 				if (viewHeight <= 0) {
@@ -4727,9 +4699,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#saveContent(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#flushContent(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	/* package */ void flushContent(Object oldInput, IProgressMonitor monitor) {
+	protected void flushContent(Object oldInput, IProgressMonitor monitor) {
 				
 		// check and handle any shared buffers
 		IMergeViewerContentProvider content= getMergeContentProvider();
@@ -4822,10 +4794,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return null;
 	}
 	
-	protected void handleCompareInputChange(ICompareInput input) {
+	protected void handleCompareInputChange() {
 		try {
 			beginRefresh();
-			super.handleCompareInputChange(input);
+			super.handleCompareInputChange();
 		} finally {
 			endRefresh();
 		}
@@ -4853,5 +4825,26 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private void synchronizedScrollVertical(int vpos) {
 		scrollVertical(vpos, vpos, vpos, null);
 		workaround65205();
+	}
+	
+	private boolean isIgnoreAncestor() {
+		return Utilities.getBoolean(getCompareConfiguration(), ICompareUIConstants.PROP_IGNORE_ANCESTOR, false);
+	}
+	
+	/* package */ void update(boolean includeControls) {
+		// clear stuff
+		fCurrentDiff= null;
+	 	fChangeDiffs= null;
+		fAllDiffs= null;
+				
+		doDiff();
+		
+		if (includeControls)
+			updateControls();
+		invalidateLines();
+		updateVScrollBar();
+		refreshBirdsEyeView();
+		
+		selectFirstDiff(true);
 	}
 }
