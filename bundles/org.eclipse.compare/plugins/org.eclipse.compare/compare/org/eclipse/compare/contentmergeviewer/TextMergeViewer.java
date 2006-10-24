@@ -38,6 +38,8 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -1460,6 +1462,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 									
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
+		fAncestor.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getCompareConfiguration().getAncestorLabel(getInput());
+			}
+		});
 		
 		fSummaryHeader= new Canvas(composite, SWT.NONE);
 		fHeaderPainter= new HeaderPainter();
@@ -1485,10 +1492,20 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fLeft= createPart(composite);
 		fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fLeft.addAction(MergeSourceViewer.SAVE_ID, fLeftSaveAction);
+		fLeft.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getCompareConfiguration().getLeftLabel(getInput());
+			}
+		});
 			
 		fRight= createPart(composite);
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
+		fRight.getTextWidget().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+			public void getName(AccessibleEvent e) {
+				e.result = getCompareConfiguration().getRightLabel(getInput());
+			}
+		});
 		
 		hsynchViewport(fAncestor, fLeft, fRight);
 		hsynchViewport(fLeft, fAncestor, fRight);
