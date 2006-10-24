@@ -1298,9 +1298,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            the SWT tree event
 	 */
 	protected void handleTreeExpand(TreeEvent event) {
-		if (!(getContentProvider() instanceof ILazyTreeContentProvider)) {
-			createChildren(event.item);
-		}
+		createChildren(event.item);
 		if (event.item.getData() != null) {
 			fireTreeExpanded(new TreeExpansionEvent(this, event.item.getData()));
 		}

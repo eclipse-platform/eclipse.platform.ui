@@ -23,6 +23,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -46,11 +47,13 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * <p>
  * Content providers for tree viewers must implement either the
- * {@link ITreeContentProvider} interface or (as of 3.2) the
- * {@link ILazyTreeContentProvider} interface. If the content provider is an
- * <code>ILazyTreeContentProvider</code>, the underlying Tree must be created
- * using the {@link SWT#VIRTUAL} style bit, and the tree viewer will not support
- * sorting or filtering.
+ * {@link ITreeContentProvider} interface, (as of 3.2) the
+ * {@link ILazyTreeContentProvider} interface, or (as of 3.3) the
+ * {@link ILazyTreePathContentProvider}. If the content provider is an
+ * <code>ILazyTreeContentProvider</code> or an
+ * <code>ILazyTreePathContentProvider</code>, the underlying Tree must be
+ * created using the {@link SWT#VIRTUAL} style bit, and the tree viewer will not
+ * support sorting or filtering.
  * </p>
  */
 public class TreeViewer extends AbstractTreeViewer {
@@ -77,6 +80,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * Flag for whether the tree has been disposed of.
 	 */
 	private boolean treeIsDisposed = false;
+
+	private boolean contentProviderIsLazy;
+	private boolean contentProviderIsTreeBased;
 
 	/**
 	 * Creates a tree viewer on a newly-created tree control under the given
@@ -376,22 +382,19 @@ public class TreeViewer extends AbstractTreeViewer {
 			treeControl.addListener(SWT.SetData, new Listener() {
 
 				public void handleEvent(Event event) {
-					if (getContentProvider() instanceof ILazyTreeContentProvider) {
-						ILazyTreeContentProvider lazyContentProvider = (ILazyTreeContentProvider) getContentProvider();
+					if (contentProviderIsLazy) {
 						TreeItem item = (TreeItem) event.item;
 						TreeItem parentItem = item.getParentItem();
-						Object parent;
 						int index;
 						if (parentItem != null) {
-							parent = parentItem.getData();
 							index = parentItem.indexOf(item);
 						} else {
-							parent = getInput();
 							index = getTree().indexOf(item);
 						}
-						lazyContentProvider.updateElement(parent, index);
+						virtualLazyUpdateWidget(parentItem == null ? (Widget)getTree() : parentItem, index);
 					}
 				}
+
 			});
 		}
 	}
@@ -514,7 +517,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected void setExpanded(Item node, boolean expand) {
 		((TreeItem) node).setExpanded(expand);
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+		if (contentProviderIsLazy) {
 			// force repaints to happen
 			getControl().update();
 		}
@@ -645,14 +648,15 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected void assertContentProviderType(IContentProvider provider) {
-		if (provider instanceof ILazyTreeContentProvider) {
+		if (provider instanceof ILazyTreeContentProvider
+				|| provider instanceof ILazyTreePathContentProvider) {
 			return;
 		}
 		super.assertContentProviderType(provider);
 	}
 
 	protected Object[] getRawChildren(Object parent) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+		if (contentProviderIsLazy) {
 			return new Object[0];
 		}
 		return super.getRawChildren(parent);
@@ -660,24 +664,24 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	/**
 	 * For a TreeViewer with a tree with the VIRTUAL style bit set, set the
-	 * number of children of the given element. To set the number of children of
-	 * the invisible root of the tree, the input object is passed as the
-	 * element.
+	 * number of children of the given element or tree path. To set the number
+	 * of children of the invisible root of the tree, you can pass the input
+	 * object or an empty tree path.
 	 * 
-	 * @param element
+	 * @param elementOrTreePath
+	 *            the element, or tree path
 	 * @param count
 	 * 
 	 * @since 3.2
 	 */
-	public void setChildCount(final Object element, final int count) {
+	public void setChildCount(final Object elementOrTreePath, final int count) {
 		preservingSelection(new Runnable() {
 			public void run() {
-				Tree tree = (Tree) doFindInputItem(element);
-				if (tree != null) {
-					tree.setItemCount(count);
+				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+					getTree().setItemCount(count);
 					return;
 				}
-				Widget[] items = findItems(element);
+				Widget[] items = internalFindItems(elementOrTreePath);
 				for (int i = 0; i < items.length; i++) {
 					TreeItem treeItem = (TreeItem) items[i];
 					treeItem.setItemCount(count);
@@ -689,15 +693,16 @@ public class TreeViewer extends AbstractTreeViewer {
 	/**
 	 * For a TreeViewer with a tree with the VIRTUAL style bit set, replace the
 	 * given parent's child at index with the given element. If the given parent
-	 * is this viewer's input, this will replace the root element at the given
-	 * index.
+	 * is this viewer's input or an empty tree path, this will replace the root
+	 * element at the given index.
 	 * <p>
 	 * This method should be called by implementers of ILazyTreeContentProvider
 	 * to populate this viewer.
 	 * </p>
 	 * 
-	 * @param parent
-	 *            the parent of the element that should be updated
+	 * @param parentElementOrTreePath
+	 *            the parent of the element that should be updated, or the tree
+	 *            path to that parent
 	 * @param index
 	 *            the index in the parent's children
 	 * @param element
@@ -705,27 +710,34 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * 
 	 * @see #setChildCount(Object, int)
 	 * @see ILazyTreeContentProvider
+	 * @see ILazyTreePathContentProvider
 	 * 
 	 * @since 3.2
 	 */
-	public void replace(Object parent, int index, Object element) {
-		if (parent.equals(getInput())) {
-			if (index < tree.getItemCount()) {
-				updateItem(tree.getItem(index), element);
-			}
-		} else {
-			Widget[] parentItems = findItems(parent);
-			for (int i = 0; i < parentItems.length; i++) {
-				TreeItem parentItem = (TreeItem) parentItems[i];
-				if (index < parentItem.getItemCount()) {
-					updateItem(parentItem.getItem(index), element);
+	public void replace(final Object parentElementOrTreePath, final int index,
+			final Object element) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(parentElementOrTreePath)) {
+					if (index < tree.getItemCount()) {
+						updateItem(tree.getItem(index), element);
+					}
+				} else {
+					Widget[] parentItems = internalFindItems(parentElementOrTreePath);
+					for (int i = 0; i < parentItems.length; i++) {
+						TreeItem parentItem = (TreeItem) parentItems[i];
+						if (index < parentItem.getItemCount()) {
+							updateItem(parentItem.getItem(index), element);
+						}
+					}
 				}
 			}
-		}
+
+		});
 	}
 
 	public boolean isExpandable(Object element) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+		if (contentProviderIsLazy) {
 			TreeItem treeItem = (TreeItem) internalExpand(element, false);
 			if (treeItem == null) {
 				return false;
@@ -737,25 +749,23 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	protected Object getParentElement(Object element) {
-		if (!(element instanceof TreePath)
-				&& (getContentProvider() instanceof ILazyTreeContentProvider)) {
+		if (contentProviderIsLazy && !contentProviderIsTreeBased && !(element instanceof TreePath)) {
 			ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
 			return lazyTreeContentProvider.getParent(element);
+		}
+		if (contentProviderIsLazy && contentProviderIsTreeBased && !(element instanceof TreePath)) {
+			ILazyTreePathContentProvider lazyTreePathContentProvider = (ILazyTreePathContentProvider) getContentProvider();
+			TreePath[] parents = lazyTreePathContentProvider
+					.getParents(element);
+			if (parents != null && parents.length > 0) {
+				return parents[0];
+			}
 		}
 		return super.getParentElement(element);
 	}
 
 	protected void createChildren(Widget widget) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
-			final Item[] tis = getChildren(widget);
-			if (tis != null && tis.length > 0) {
-				// children already there, touch them
-				for (int i = 0; i < tis.length; i++) {
-					tis[i].getText();
-				}
-				return;
-			}
-			ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+		if (contentProviderIsLazy) {
 			Object element = widget.getData();
 			if (element == null && widget instanceof TreeItem) {
 				// parent has not been materialized
@@ -763,15 +773,20 @@ public class TreeViewer extends AbstractTreeViewer {
 				// try getting the element now that updateElement was called
 				element = widget.getData();
 			}
-			TreeItem[] children;
-			if (widget instanceof Tree) {
-				children = ((Tree) widget).getItems();
-			} else {
-				children = ((TreeItem) widget).getItems();
+			if (element ==  null) {
+				// give up because the parent is still not materialized
+				return;
 			}
-			if (element != null && children.length > 0) {
-				for (int i = 0; i < children.length; i++) {
-					lazyTreeContentProvider.updateElement(element, i);
+			Item[] children = getChildren(widget);
+			if (children.length == 1 && children[0].getData() == null) {
+				// found a dummy node
+				virtualLazyUpdateChildCount(widget, children.length);
+				children = getChildren(widget);
+			}
+			// touch all children to make sure they are materialized
+			for (int i = 0; i < children.length; i++) {
+				if (children[i].getData() == null) {
+					virtualLazyUpdateWidget(widget, i);
 				}
 			}
 			return;
@@ -781,7 +796,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	protected void internalAdd(Widget widget, Object parentElement,
 			Object[] childElements) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+		if (contentProviderIsLazy) {
 			if (widget instanceof TreeItem) {
 				TreeItem ti = (TreeItem) widget;
 				int count = ti.getItemCount() + childElements.length;
@@ -802,10 +817,9 @@ public class TreeViewer extends AbstractTreeViewer {
 			// already materialized
 			return;
 		}
-		if (!(getContentProvider() instanceof ILazyTreeContentProvider)) {
+		if (!contentProviderIsLazy) {
 			return;
 		}
-		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
 		int index;
 		Widget parent = treeItem.getParentItem();
 		if (parent == null) {
@@ -818,7 +832,7 @@ public class TreeViewer extends AbstractTreeViewer {
 			} else {
 				index = ((TreeItem) parent).indexOf(treeItem);
 			}
-			lazyTreeContentProvider.updateElement(parentElement, index);
+			virtualLazyUpdateWidget(parent, index);
 		}
 	}
 
@@ -830,7 +844,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected void internalRefreshStruct(Widget widget, Object element,
 			boolean updateLabels) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
+		if (contentProviderIsLazy) {
 			// first phase: update child counts
 			virtualRefreshChildCounts(widget, element);
 			// second phase: update labels
@@ -855,12 +869,10 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @param updateLabels
 	 */
 	private void virtualRefreshChildCounts(Widget widget, Object element) {
-		ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
 		if (widget instanceof Tree || ((TreeItem) widget).getExpanded()) {
 			// widget shows children - it is safe to call getChildren
 			if (element != null) {
-				lazyTreeContentProvider.updateChildCount(element,
-						getChildren(widget).length);
+				virtualLazyUpdateChildCount(widget, getChildren(widget).length);
 			} else {
 				if (widget instanceof Tree) {
 					((Tree) widget).setItemCount(0);
@@ -953,10 +965,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#internalInitializeTree(org.eclipse.swt.widgets.Control)
 	 */
 	protected void internalInitializeTree(Control widget) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
-			ILazyTreeContentProvider lazyTreeContentProvider = (ILazyTreeContentProvider) getContentProvider();
+		if (contentProviderIsLazy) {
 			if (widget instanceof Tree && widget.getData() != null) {
-				lazyTreeContentProvider.updateChildCount(widget.getData(), 0);
+				virtualLazyUpdateChildCount(widget, 0);
 				return;
 			}
 		}
@@ -970,15 +981,14 @@ public class TreeViewer extends AbstractTreeViewer {
 	 *      java.lang.Object)
 	 */
 	protected void updatePlus(Item item, Object element) {
-		if (getContentProvider() instanceof ILazyTreeContentProvider) {
-			ILazyTreeContentProvider contentProvider = (ILazyTreeContentProvider) getContentProvider();
+		if (contentProviderIsLazy) {
 			Object data = item.getData();
 			int itemCount = 0;
 			if (data != null) {
 				// item is already materialized
 				itemCount = ((TreeItem) item).getItemCount();
 			}
-			contentProvider.updateChildCount(element, itemCount);
+			virtualLazyUpdateHasChildren(item, itemCount);
 		} else {
 			super.updatePlus(item, element);
 		}
@@ -1018,5 +1028,137 @@ public class TreeViewer extends AbstractTreeViewer {
 				}
 			}
 		});
-	}       
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleTreeExpand(org.eclipse.swt.events.TreeEvent)
+	 */
+	protected void handleTreeExpand(TreeEvent event) {
+		if (contentProviderIsLazy) {
+			if (event.item.getData() != null) {
+				Item[] children = getChildren(event.item);
+				if (children.length == 1 && children[0].getData()==null) {
+					// we have a dummy child node, ask for an updated child
+					// count
+					virtualLazyUpdateChildCount(event.item, children.length);
+				}
+				fireTreeExpanded(new TreeExpansionEvent(this, event.item
+						.getData()));
+			}
+			return;
+		}
+		super.handleTreeExpand(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
+	 */
+	public void setContentProvider(IContentProvider provider) {
+		contentProviderIsLazy = (provider instanceof ILazyTreeContentProvider)
+				|| (provider instanceof ILazyTreePathContentProvider);
+		contentProviderIsTreeBased = provider instanceof ILazyTreePathContentProvider;
+		super.setContentProvider(provider);
+	}
+	
+	/**
+	 * For a TreeViewer with a tree with the VIRTUAL style bit set, inform the
+	 * viewer about whether the given element or tree path has children. Avoid
+	 * calling this method if the number of children has already been set.
+	 * 
+	 * @param elementOrTreePath
+	 *            the element, or tree path
+	 * @param hasChildren
+	 * 
+	 * @since 3.3
+	 */
+	public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {
+		if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+			if (hasChildren) {
+				virtualLazyUpdateChildCount(getTree(), getChildren(getTree()).length);
+			} else {
+				setChildCount(elementOrTreePath, 0);
+			}
+			return;
+		}
+		Widget[] items = internalFindItems(elementOrTreePath);
+		for (int i = 0; i < items.length; i++) {
+				TreeItem item = (TreeItem) items[i];
+				if (!hasChildren) {
+					item.setItemCount(0);
+				} else {
+					if (!item.getExpanded()) {
+						item.setItemCount(1);
+					}
+				}
+		}
+	}
+
+	/**
+	 * @param widget
+	 * @param i
+	 */
+	private void virtualLazyUpdateWidget(Widget widget, int index) {
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			if (widget instanceof Item) {
+				treePath = getTreePathFromItem((Item) widget);
+			} else {
+				treePath = TreePath.EMPTY;
+			}
+			((ILazyTreePathContentProvider) getContentProvider())
+					.updateElement(treePath, index);
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateElement(
+					widget.getData(), index);
+		}
+	}
+
+	/**
+	 * @param widget
+	 * @param i
+	 */
+	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			if (widget instanceof Item) {
+				treePath = getTreePathFromItem((Item) widget);
+			} else {
+				treePath = TreePath.EMPTY;
+			}
+			((ILazyTreePathContentProvider) getContentProvider())
+					.updateChildCount(treePath, currentChildCount);
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(widget.getData(), currentChildCount);
+		}
+	}
+	
+	/**
+	 * @param widget
+	 * @param i
+	 */
+	private void virtualLazyUpdateHasChildren(Item item, int currentChildCount) {
+		if (contentProviderIsTreeBased) {
+			TreePath treePath;
+			treePath = getTreePathFromItem(item);
+			if (currentChildCount == 0) {
+				// item is not expanded (but may have a plus currently)
+				((ILazyTreePathContentProvider) getContentProvider())
+						.updateHasChildren(treePath);
+			} else {
+				((ILazyTreePathContentProvider) getContentProvider())
+						.updateChildCount(treePath, currentChildCount);
+			}
+		} else {
+			((ILazyTreeContentProvider) getContentProvider()).updateChildCount(item.getData(), currentChildCount);
+		}
+	}
+
+	private boolean internalIsInputOrEmptyPath(final Object elementOrTreePath) {
+		if (elementOrTreePath.equals(getInput()))
+			return true;
+		if (!(elementOrTreePath instanceof TreePath))
+			return false;
+		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
+	}
+
 }
