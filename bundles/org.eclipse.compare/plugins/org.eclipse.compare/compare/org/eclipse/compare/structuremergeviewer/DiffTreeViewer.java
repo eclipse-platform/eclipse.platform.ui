@@ -552,7 +552,7 @@ public class DiffTreeViewer extends TreeViewer {
 	private boolean internalNavigate(boolean next, boolean fireOpen) {
 		
 		Control c= getControl();
-		if (!(c instanceof Tree))
+		if (!(c instanceof Tree) || c.isDisposed())
 			return false;
 			
 		Tree tree= (Tree) c;
