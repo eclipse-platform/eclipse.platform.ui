@@ -157,7 +157,7 @@ public class ThreadEventHandler extends DebugEventHandler {
 			// don't collapse thread when waiting for implicit eval to complete
 			fireDeltaUpdatingThread(thread, IModelDelta.STATE);
 		} else {
-			fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT);
+			fireDeltaAndClearTopFrame(thread, IModelDelta.CONTENT | IModelDelta.SELECT);
 		}
 	}
 	
