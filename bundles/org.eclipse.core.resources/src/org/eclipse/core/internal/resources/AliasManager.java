@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     manklu@web.de - fix for bug 156082
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -227,10 +228,15 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					if (previousStore.isParentOf(currentStore)) {
 						//resources will be null if they were in a list, in which case 
 						//they've already been passed to the doit
-						if (previousResource != null)
+						if (previousResource != null) {
 							doit.doit(previousResource.getProject());
+							//null out previous resource so we don't call doit twice with same resource
+							previousResource = null;
+						}
 						if (currentResource != null)
 							doit.doit(currentResource.getProject());
+						//keep iterating with the same previous store because there may be more overlaps
+						continue;
 					}
 				}
 				previousStore = currentStore;

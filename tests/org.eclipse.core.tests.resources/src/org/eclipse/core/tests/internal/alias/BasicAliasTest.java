@@ -191,6 +191,34 @@ public class BasicAliasTest extends ResourceTest {
 			Workspace.clear(location.toFile());
 		}
 	}
+	
+	/**
+	 * Regression test for bug 156082.  A project has aliases to multiple
+	 * other projects, but the other projects don't overlap each other.  I.e.,
+	 * Project Top overlaps Sub1 and Sub2, but Sub1 and Sub2 do not overlap each other.
+	 */
+	public void testBug156082() {
+		IProject top  = getWorkspace().getRoot().getProject("Bug156082_Top");
+		IProject sub1  = getWorkspace().getRoot().getProject("Bug156082_Sub1");
+		IProject sub2  = getWorkspace().getRoot().getProject("Bug156082_Sub2");
+		ensureExistsInWorkspace(top, true);
+		IProjectDescription desc1 = getWorkspace().newProjectDescription(sub1.getName());
+		desc1.setLocation(top.getLocation().append(sub1.getName()));
+		IProjectDescription desc2 = getWorkspace().newProjectDescription(sub2.getName());
+		desc2.setLocation(top.getLocation().append(sub2.getName()));
+		try {
+			sub1.create(desc1, getMonitor());
+			sub1.open(getMonitor());
+			sub2.create(desc2, getMonitor());
+			sub2.open(getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		IFile sub2File = sub2.getFile("file.txt");
+		IFile topFile = top.getFolder(sub2.getName()).getFile(sub2File.getName());
+		ensureExistsInWorkspace(sub2File, getRandomContents());
+		assertTrue("1.0", topFile.exists());
+	}
 
 	public void testCloseOpenProject() {
 		//close the project and make sure aliases in that project are no longer updated
