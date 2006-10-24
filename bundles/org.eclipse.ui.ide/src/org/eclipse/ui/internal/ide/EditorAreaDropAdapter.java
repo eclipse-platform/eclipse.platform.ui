@@ -56,6 +56,12 @@ public class EditorAreaDropAdapter extends DropTargetAdapter {
         event.feedback = DND.FEEDBACK_NONE;
     }
 
+    public void dragOver(DropTargetEvent event) {
+        // always indicate a copy
+        event.detail = DND.DROP_COPY;
+        event.feedback = DND.FEEDBACK_NONE;
+    }
+
     public void dragOperationChanged(DropTargetEvent event) {
         // always indicate a copy
         event.detail = DND.DROP_COPY;
