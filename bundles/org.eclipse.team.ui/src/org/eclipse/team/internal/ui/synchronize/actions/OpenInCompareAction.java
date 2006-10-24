@@ -53,7 +53,7 @@ public class OpenInCompareAction extends Action {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
 				    // Use the open strategy to decide if the editor or the sync view should have focus
-					openCompareEditor(configuration, info, !OpenStrategy.activateOnOpen());
+					openCompareEditor(configuration.getParticipant(), info, !OpenStrategy.activateOnOpen(), configuration.getSite());
 				}
 			} else if (obj != null){
 				openCompareEditor(configuration, obj, !OpenStrategy.activateOnOpen());
