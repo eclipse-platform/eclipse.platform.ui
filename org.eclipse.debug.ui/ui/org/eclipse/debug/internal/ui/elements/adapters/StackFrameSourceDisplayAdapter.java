@@ -56,6 +56,14 @@ public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
 								clearSourceSelection(event.getSource());
 							}
 							break;
+						case DebugEvent.CHANGE:
+							if (event.getSource() instanceof IStackFrame) {
+								if (event.getDetail() == DebugEvent.CONTENT) {
+									// force source lookup if a stack frame fires a content change event
+									clearCachedModel(event.getSource());
+								}
+							}
+							break;
 					}
 				}
 			}

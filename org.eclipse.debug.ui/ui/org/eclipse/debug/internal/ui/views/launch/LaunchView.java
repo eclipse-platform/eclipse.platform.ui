@@ -160,7 +160,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleContextChange(Object element) {
+		protected void possibleContextChange(Object element, int type) {
 			synchronized (this) {
 				if (fContext instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) fContext;
@@ -171,7 +171,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					return;
 				}
 			}
-			fire(new DebugContextEvent(this, fContext, DebugContextEvent.CHANGED));					
+			fire(new DebugContextEvent(this, fContext, type));					
 		}
 		
 	}
@@ -439,8 +439,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		updateObjects();
 	}
 	
-	protected void possibleContextChange(Object element) {
-		fProvider.possibleContextChange(element);
+	protected void possibleContextChange(Object element, int type) {
+		fProvider.possibleContextChange(element, type);
 	}
 
 	/* (non-Javadoc)

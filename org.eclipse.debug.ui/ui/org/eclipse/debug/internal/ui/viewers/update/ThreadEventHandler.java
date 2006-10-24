@@ -62,16 +62,21 @@ public class ThreadEventHandler extends DebugEventHandler {
 	protected void handleSuspend(DebugEvent event) {
         IThread thread = (IThread) event.getSource();
 		if (event.isEvaluation()) {
-			if (event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
-				return;
-			}
         	ModelDelta delta = buildRootDelta();
     		ModelDelta node = addPathToThread(delta, thread);
     		node = node.addNode(thread, IModelDelta.NO_CHANGE);
 			try {
 				IStackFrame frame = thread.getTopStackFrame();
                 if (frame != null) {
-                    node.addNode(frame, IModelDelta.STATE);
+                	int flag = IModelDelta.NO_CHANGE;
+                	if (event.getDetail() == DebugEvent.EVALUATION) {
+                		// explicit evaluations can change content
+                		flag = flag | IModelDelta.CONTENT;
+                	} else if (event.getDetail() == DebugEvent.EVALUATION_IMPLICIT) {
+                		// implicit evaluations can change state
+                		flag = flag | IModelDelta.STATE;
+                	}
+                    node.addNode(frame, flag);
                     fireDelta(delta);
                 }
 			} catch (DebugException e) {

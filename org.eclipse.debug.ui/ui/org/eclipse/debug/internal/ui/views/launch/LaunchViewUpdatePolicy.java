@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
+import org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.TreeUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
@@ -39,10 +40,20 @@ public class LaunchViewUpdatePolicy extends TreeUpdatePolicy {
 	 */
 	protected void handleState(AsynchronousTreeViewer viewer, IModelDelta delta) {
 		 super.handleState(viewer, delta);
-		 // only context change if not already selected
-		 if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
-			 fView.possibleContextChange(delta.getElement());
+		 if ((delta.getFlags() & (IModelDelta.CONTENT | IModelDelta.SELECT)) == 0) {
+			 // a state change without content or selection is a possible context change
+			 fView.possibleContextChange(delta.getElement(), DebugContextEvent.CHANGED);
 		 }
 	}
+
+	protected void handleContent(AsynchronousTreeViewer viewer, IModelDelta delta) {
+		super.handleContent(viewer, delta);
+		 if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
+			 // a content change without select or selection is a possible activation
+			 fView.possibleContextChange(delta.getElement(), DebugContextEvent.ACTIVATED);
+		 }
+	}
+	
+	
 
 }

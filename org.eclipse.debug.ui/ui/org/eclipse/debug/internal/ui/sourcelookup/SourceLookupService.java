@@ -50,7 +50,6 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void contextChanged(ISelection selection, IWorkbenchPart part) {	
-		displaySource(selection, part, true);
 	}
 	
 	/**
