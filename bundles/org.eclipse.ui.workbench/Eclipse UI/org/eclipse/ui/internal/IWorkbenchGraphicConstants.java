@@ -178,4 +178,14 @@ public interface IWorkbenchGraphicConstants {
      * Separator icon for selection dialogs.
      */
     public static final String IMG_OBJ_SEPARATOR = "IMG_OBJ_SEPARATOR"; //$NON-NLS-1$
+    
+    /** 
+     * Default icon for Quick Access nodes.
+     */
+    public static final String IMG_OBJ_NODE = "IMG_OBJ_NODE"; //$NON-NLS-1$
+    
+    /** 
+     * Default icon for Quick Access elements.
+     */
+    public static final String IMG_OBJ_ELEMENT = "IMG_OBJ_ELEMENT"; //$NON-NLS-1$
 }

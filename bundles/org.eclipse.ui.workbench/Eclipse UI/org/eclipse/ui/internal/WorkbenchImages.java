@@ -300,6 +300,11 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR, 
       		   PATH_OBJECT + "separator.gif", true); //$NON-NLS-1$
 
+        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_NODE,
+        		PATH_OBJECT + "generic_elements.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT,
+        		PATH_OBJECT + "generic_element.gif", true); //$NON-NLS-1$
+        
         declareImage(ISharedImages.IMG_OBJ_FILE,
                 PATH_OBJECT + "file_obj.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_OBJ_FOLDER,

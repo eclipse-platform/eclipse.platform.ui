@@ -329,10 +329,10 @@ public class CtrlEAction extends AbstractHandler {
 		private Object input;
 
 		private Node previousNode = new Node(
-				IncubatorMessages.CtrlEAction_Previous, null);
+				IncubatorMessages.CtrlEAction_Previous, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
 		private Node editorNode = new Node(
-				IncubatorMessages.CtrlEAction_Editors, null);
+				IncubatorMessages.CtrlEAction_Editors, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
 		private Node viewNode = new Node(IncubatorMessages.CtrlEAction_Views,
 				IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC);
@@ -342,15 +342,15 @@ public class CtrlEAction extends AbstractHandler {
 				IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
 
 		private Node commandNode = new Node(
-				IncubatorMessages.CtrlEAction_Commands, null);
+				IncubatorMessages.CtrlEAction_Commands, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
 		private Node menusNode = new Node(IncubatorMessages.CtrlEAction_Menus,
-				null);
+				IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
-		private Node newNode = new Node(IncubatorMessages.CtrlEAction_New, null);
+		private Node newNode = new Node(IncubatorMessages.CtrlEAction_New, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
 		private Node preferencesNode = new Node(
-				IncubatorMessages.CtrlEAction_Preferences, null);
+				IncubatorMessages.CtrlEAction_Preferences, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
 
 		private SortedSet commands;
 
@@ -453,33 +453,37 @@ public class CtrlEAction extends AbstractHandler {
 				JFaceResources.getResources());
 
 		public Image getImage(Object element) {
+			Image image = null;
 			if (element instanceof Node) {
 				Node node = (Node) element;
-				return findOrCreateImage(WorkbenchImages
+				image = findOrCreateImage(WorkbenchImages
 						.getImageDescriptor(node.getImageId()));
 			}
-			if (element instanceof IEditorReference) {
+			else if (element instanceof IEditorReference) {
 				IEditorReference editorReference = (IEditorReference) element;
-				return editorReference.getTitleImage();
+				image = editorReference.getTitleImage();
 			}
-			if (element instanceof IViewDescriptor) {
+			else if (element instanceof IViewDescriptor) {
 				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
-				return findOrCreateImage(viewDescriptor.getImageDescriptor());
+				image = findOrCreateImage(viewDescriptor.getImageDescriptor());
 			}
-			if (element instanceof IPerspectiveDescriptor) {
+			else if (element instanceof IPerspectiveDescriptor) {
 				IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) element;
-				return findOrCreateImage(perspectiveDescriptor
+				image = findOrCreateImage(perspectiveDescriptor
 						.getImageDescriptor());
 			}
-			if (element instanceof IPreferenceNode) {
+			else if (element instanceof IPreferenceNode) {
 				IPreferenceNode preferenceNode = (IPreferenceNode) element;
-				return preferenceNode.getLabelImage();
+				image = preferenceNode.getLabelImage();
 			}
-			if (element instanceof IWizardDescriptor) {
+			else if (element instanceof IWizardDescriptor) {
 				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
-				return findOrCreateImage(wizardDescriptor.getDescriptionImage());
+				image = findOrCreateImage(wizardDescriptor.getDescriptionImage());
 			}
-			return super.getImage(element);
+			if (image == null) {
+				image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT);
+			}
+			return image;
 		}
 
 		/**
