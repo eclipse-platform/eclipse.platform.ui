@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.ui.actions.IRunToLineTarget;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -63,7 +63,7 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		DebugContextManager.getDefault().removeDebugContextListener(fContextListener, fWindow);
+		DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(fContextListener);
 		super.dispose();
 	}
 	/* (non-Javadoc)
@@ -71,9 +71,9 @@ public class RetargetRunToLineAction extends RetargetAction {
 	 */
 	public void init(IWorkbenchWindow window) {
 		super.init(window);
-		IDebugContextManager manager = DebugContextManager.getDefault();
-		manager.addDebugContextListener(fContextListener, window);
-		ISelection activeContext = manager.getActiveContext(window);
+		IDebugContextService service = DebugContextManager.getDefault().getContextService(window);
+		service.addDebugContextListener(fContextListener);
+		ISelection activeContext = service.getActiveContext();
 		fContextListener.contextActivated(activeContext, null);
 	}
 		

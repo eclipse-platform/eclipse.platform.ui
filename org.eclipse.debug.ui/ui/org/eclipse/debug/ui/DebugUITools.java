@@ -192,7 +192,7 @@ public class DebugUITools {
 	public static IAdaptable getDebugContext() {
 	    IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
 	    if (activeWindow != null) {
-	    	ISelection activeContext = DebugContextManager.getDefault().getActiveContext(activeWindow);
+	    	ISelection activeContext = DebugContextManager.getDefault().getContextService(activeWindow).getActiveContext();
 	    	if (activeContext instanceof IStructuredSelection) {
 	    		IStructuredSelection selection = (IStructuredSelection) activeContext;
 	    		if (!selection.isEmpty()) {

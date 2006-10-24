@@ -156,8 +156,9 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         fWindow = window;
         fUpdateService = DebugCommandService.getService(fWindow);
         IDebugContextManager manager = DebugContextManager.getDefault();
-        manager.addDebugContextListener(this, window);
-        ISelection activeContext = manager.getActiveContext(window);
+        IDebugContextService contextService = manager.getContextService(window);
+		contextService.addDebugContextListener(this);
+        ISelection activeContext = contextService.getActiveContext();
         if (activeContext != null) {
         	fUpdateService.updateCommand(getCommandType(), new BooleanRequestMonitor(this, 1));
         } else {
@@ -181,10 +182,11 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @return structured selection
      */
     protected ISelection getContext() {
-    	if (fPart != null) {
-    		DebugContextManager.getDefault().getContextService(fWindow).getActiveContext(fPart.getSite().getId());
+    	IDebugContextService contextService = DebugContextManager.getDefault().getContextService(fWindow);
+		if (fPart != null) {
+    		contextService.getActiveContext(fPart.getSite().getId());
     	}
-        return DebugContextManager.getDefault().getActiveContext(fWindow);
+        return contextService.getActiveContext();
     }
 
     /*
@@ -218,11 +220,11 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      */
     public void dispose() {
         IDebugContextManager manager = DebugContextManager.getDefault();
+        IDebugContextService service = manager.getContextService(fWindow);
         if (fPart != null) {
-			IDebugContextService service = manager.getContextService(fWindow);
         	service.removeDebugContextListener(this, fPart.getSite().getId());
         } else {
-            manager.removeDebugContextListener(this, fWindow);
+            manager.removeDebugContextListener(this);
         }
         fWindow = null;
         fPart = null;

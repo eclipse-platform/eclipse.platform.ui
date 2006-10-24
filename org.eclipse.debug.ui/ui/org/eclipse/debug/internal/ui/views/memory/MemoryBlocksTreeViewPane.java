@@ -372,7 +372,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getPage().addSelectionListener(this);
 		
 		fDebugContextListener = new TreeViewPaneContextListener();
-		DebugContextManager.getDefault().addDebugContextListener(fDebugContextListener, fParent.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
 		
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -482,7 +482,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getSelectionProvider().removeSelectionChangedListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fAddMemoryBlockAction.dispose();
-		DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fParent.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
 		fEvtHandler.dispose();
 	}
 

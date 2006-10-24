@@ -10,23 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts.provisional;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * A debug context drives debugging - source lookup and action enablement in the 
- * debug user interface. The context service provides notification
- * of changes in the active context specific to the workbench, a specific window, or a
- * specific part.
+ * Manages debug context services. There is a debug context service
+ * for each workbench window. Clients interested in context change
+ * notification for all windows can register with the manager. 
  * <p>
- * Clients provide a context policy to notify the context service of interesting
- * contexts within a model. For example the debug platform provides a context policy
- * that maps debug events to suspended contexts.
+ * Clients may register debug context providers with the manager.
  * </p>
  * <p>
  * Not intended to be implemented by clients.
  * </p> 
- * @since 3.2
+ * @since 3.3
  */
 public interface IDebugContextManager {
 	
@@ -42,60 +38,7 @@ public interface IDebugContextManager {
 	 * 
 	 * @param provider
 	 */
-	public void removeDebugContextProvider(IDebugContextProvider provider);	
-	
-	/**
-	 * Registers for context activation notification in the given window.
-	 * 
-	 * @param listener
-	 * @param window
-	 */
-	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window);
-	/**
-	 * Unregisters for context activation notification in this service in the
-	 * given window.
-	 * 
-	 * @param listener
-	 * @param window
-	 */	
-	public void removeDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window);
-	
-	/**
-	 * Registers for context activation notification in the specified part of the
-	 * specified window.
-	 * 
-	 * @param listener
-	 * @param window
-	 * @param partId
-	 */
-	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window, String partId);
-	
-	/**
-	 * Unregisters for context activation notification in the specified part of
-	 * the specified window.
-	 * 
-	 * @param listener
-	 * @param partId
-	 */
-	public void removeDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window, String partId);
-		
-	/**
-	 * Returns the active context in the given window
-	 * or <code>null</code>.
-	 * 
-	 * @param window
-	 * @return
-	 */
-	public ISelection getActiveContext(IWorkbenchWindow window);
-	
-	/**
-	 * Returns the active context in the specified part of the given 
-	 * window or <code>null</code>.
-	 * 
-	 * @param partId
-	 * @return
-	 */
-	public ISelection getActiveContext(IWorkbenchWindow window, String partId);	
+	public void removeDebugContextProvider(IDebugContextProvider provider);		
 	
 	/**
 	 * Registers for context activation notification in all windows.

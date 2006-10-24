@@ -322,12 +322,12 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				
 			if (fWindow != null)
 			{
-				DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fWindow);
+				DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(fDebugContextListener);
 			}
 			
 			if (window != null)
 			{
-				DebugContextManager.getDefault().addDebugContextListener(fDebugContextListener, window);
+				DebugContextManager.getDefault().getContextService(window).addDebugContextListener(fDebugContextListener);
 			}
 			fWindow = window;
 		}
@@ -336,7 +336,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			fPart = part;
 		
 		if (fWindow != null)
-			setupActionDelegate(DebugContextManager.getDefault().getActiveContext(fWindow));
+			setupActionDelegate(DebugContextManager.getDefault().getContextService(fWindow).getActiveContext());
 	}
 
 }

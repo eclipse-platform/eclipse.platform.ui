@@ -31,7 +31,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	public DefaultWatchExpressionModelProxy(IWatchExpression expression, IWorkbenchWindow window) {
 		super(expression);
 		fWindow = window;
-		DebugContextManager.getDefault().addDebugContextListener(this, window);
+		DebugContextManager.getDefault().getContextService(window).addDebugContextListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -41,7 +41,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 		super.installed();
 		IWorkbenchPart part = getPresentationContext().getPart();
 		if (part != null) {
-			ISelection activeContext = DebugContextManager.getDefault().getActiveContext(part.getSite().getWorkbenchWindow());
+			ISelection activeContext = DebugContextManager.getDefault().getContextService(part.getSite().getWorkbenchWindow()).getActiveContext();
 			if (activeContext != null) {
 				contextActivated(activeContext, null);
 			}
@@ -53,7 +53,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 	 */
 	public synchronized void dispose() {
 		super.dispose();
-		DebugContextManager.getDefault().removeDebugContextListener(this, fWindow);
+		DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(this);
 		fWindow = null;
 	}
 

@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
+import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -89,7 +90,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		DebugContextManager.getDefault().removeDebugContextListener(fContextListener, fActivePart.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		fActivePart = null;
 		fPartTarget = null;
 		
@@ -180,13 +181,14 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	private void bindTo(IWorkbenchPart part) {
 		IDebugContextManager manager = DebugContextManager.getDefault();
 		if (fActivePart != null && !fActivePart.equals(part)) {
-			manager.removeDebugContextListener(fContextListener, fActivePart.getSite().getWorkbenchWindow());
+			manager.getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		}
 		fPartTarget = null;
 		fActivePart = part;
 		if (part != null) {
 			IWorkbenchWindow workbenchWindow = part.getSite().getWorkbenchWindow();
-			manager.addDebugContextListener(fContextListener, workbenchWindow);
+			IDebugContextService service = manager.getContextService(workbenchWindow);
+			service.addDebugContextListener(fContextListener);
 			fPartTarget  = (IRunToLineTarget) part.getAdapter(IRunToLineTarget.class);
 			if (fPartTarget == null) {
 				IAdapterManager adapterManager = Platform.getAdapterManager();
@@ -195,7 +197,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 					fPartTarget = (IRunToLineTarget) adapterManager.loadAdapter(part, IRunToLineTarget.class.getName());
 				}
 			}
-			ISelection activeContext = manager.getActiveContext(workbenchWindow);
+			ISelection activeContext = service.getActiveContext();
 			fContextListener.contextActivated(activeContext, part);
 		}
 		update();			

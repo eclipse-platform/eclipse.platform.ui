@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
 import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -97,8 +96,6 @@ public class DebugContextManager implements IDebugContextManager {
 		if (service == null) {
 			service = new DebugWindowContextService(window);
 			fServices.put(window, service);
-			// TODO: register 'null' provider (global)
-			
 			// register global listeners
 			Object[] listeners = fGlobalListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {
@@ -123,64 +120,6 @@ public class DebugContextManager implements IDebugContextManager {
 		if (service != null) {
 			service.removeProvider(provider);
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window) {
-		IDebugContextService service = createService(window);
-		service.addDebugContextListener(listener);			
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#removeDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void removeDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window) {
-		IDebugContextService service = getService(window);
-		if (service != null) {
-			service.removeDebugContextListener(listener);
-		}	
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, org.eclipse.ui.IWorkbenchWindow, java.lang.String)
-	 */
-	public void addDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window, String partId) {
-		DebugWindowContextService service = createService(window);
-		service.addDebugContextListener(listener, partId);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#removeDebugContextListener(org.eclipse.debug.ui.contexts.IDebugContextListener, org.eclipse.ui.IWorkbenchWindow, java.lang.String)
-	 */
-	public void removeDebugContextListener(IDebugContextListener listener, IWorkbenchWindow window, String partId) {
-		IDebugContextService service = getService(window);
-		if (service != null) {
-			service.removeDebugContextListener(listener, partId);
-		}		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#getActiveContext(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public ISelection getActiveContext(IWorkbenchWindow window) {
-		IDebugContextService service = getService(window);
-		if (service != null) {
-			return service.getActiveContext();
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#getActiveContext(org.eclipse.ui.IWorkbenchWindow, java.lang.String)
-	 */
-	public ISelection getActiveContext(IWorkbenchWindow window, String partId) {
-		IDebugContextService service = getService(window);
-		if (service != null) {
-			return service.getActiveContext(partId);
-		}
-		return null;
 	}
 
 	/* (non-Javadoc)

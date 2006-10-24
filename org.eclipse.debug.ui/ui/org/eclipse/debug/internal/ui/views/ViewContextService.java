@@ -582,14 +582,14 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         applyUserViewBindings();
 		loadPerspectives();
 		window.addPerspectiveListener(this);
-		DebugContextManager.getDefault().addDebugContextListener(this, window);
+		DebugContextManager.getDefault().getContextService(window).addDebugContextListener(this);
 		DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
 		fContextService.addContextManagerListener(this);
 	}
 	
 	public void dispose() {
 		fWindow.removePerspectiveListener(this);
-		DebugContextManager.getDefault().removeDebugContextListener(this, fWindow);
+		DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(this);
 		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 		fContextService.removeContextManagerListener(this);
 	}
@@ -670,7 +670,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                 applyUserViewBindings();
                 // clear activations to re-enable activation based on new settings
                 fPerspectiveToActivatedContexts.clear();
-                ISelection selection = DebugContextManager.getDefault().getActiveContext(fWindow);
+                ISelection selection = DebugContextManager.getDefault().getContextService(fWindow).getActiveContext();
                 contextActivated(selection, null);
             }
         }
@@ -890,7 +890,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
-			ISelection activeContext = DebugContextManager.getDefault().getActiveContext(fWindow);
+			ISelection activeContext = DebugContextManager.getDefault().getContextService(fWindow).getActiveContext();
 			if (activeContext != null) {
 				contextActivated(activeContext, null);
 			}

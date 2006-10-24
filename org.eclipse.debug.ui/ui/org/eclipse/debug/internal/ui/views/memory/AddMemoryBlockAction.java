@@ -104,7 +104,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		
 		// listen for context changed
-		DebugContextManager.getDefault().addDebugContextListener(this, site.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(site.getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		
 		// get current context
 		fCurrentContext = DebugUITools.getDebugContext();
@@ -338,7 +338,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		
 		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugContextManager.getDefault().removeDebugContextListener(this, fSite.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fSite.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)

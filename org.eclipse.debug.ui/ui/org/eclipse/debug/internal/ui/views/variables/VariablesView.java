@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -514,7 +513,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void dispose() {
 		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
-		DebugContextManager.getDefault().removeDebugContextListener(this, getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
@@ -823,7 +822,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
 
 		// listen to debug context
-		DebugContextManager.getDefault().addDebugContextListener(this, getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		return variablesViewer;
 	}
 	
@@ -1592,7 +1591,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		ISelection selection = DebugContextManager.getDefault().getActiveContext(getSite().getWorkbenchWindow());
+		ISelection selection = DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).getActiveContext();
 		contextActivated(selection, null);
 	}
 

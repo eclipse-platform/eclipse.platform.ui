@@ -126,14 +126,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
-		DebugContextManager.getDefault().addDebugContextListener(this, fParent.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(this);
 	}
 	
 	protected void removeListeners()
 	{
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this);
-		DebugContextManager.getDefault().removeDebugContextListener(this, fParent.getSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		
 		if (fStackLayout.topControl != null)
 		{

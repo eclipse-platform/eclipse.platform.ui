@@ -219,7 +219,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	
 	public void init(IViewPart view) {
 		fView = view;
-		DebugContextManager.getDefault().addDebugContextListener(fDebugContextListener, fView.getViewSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fView.getViewSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fListener);
 		updateActionEnablement();
 	}
@@ -347,7 +347,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	public void dispose() {
 		fAction = null;
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fListener);
-		DebugContextManager.getDefault().removeDebugContextListener(fDebugContextListener, fView.getViewSite().getWorkbenchWindow());
+		DebugContextManager.getDefault().getContextService(fView.getViewSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
 		
 		if (fMenuCreator != null)
 			fMenuCreator.dispose();

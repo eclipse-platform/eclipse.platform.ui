@@ -14,7 +14,11 @@ package org.eclipse.debug.internal.ui.views.launch;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -89,6 +93,7 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.progress.UIJob;
 
 public class LaunchView extends AbstractDebugView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
@@ -160,7 +165,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleContextChange(Object element, int type) {
+		protected void possibleContextChange(Object element, final int type) {
 			synchronized (this) {
 				if (fContext instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) fContext;
@@ -171,7 +176,15 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					return;
 				}
 			}
-			fire(new DebugContextEvent(this, fContext, type));					
+			Job job = new UIJob("context change") { //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					fire(new DebugContextEvent(ContextProvider.this, fContext, type));
+					return Status.OK_STATUS;
+				}
+			
+			}; 
+			job.setSystem(true);
+			job.schedule();
 		}
 		
 	}

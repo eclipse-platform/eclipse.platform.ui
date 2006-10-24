@@ -100,7 +100,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
         
         DebugPlugin.getDefault().addDebugEventListener(this);
-        DebugContextManager.getDefault().addDebugContextListener(this, fPage.getSite().getWorkbenchWindow());
+        DebugContextManager.getDefault().getContextService(fPage.getSite().getWorkbenchWindow()).addDebugContextListener(this);
         
         // contribute to toolbar
         IActionBars actionBars = fPage.getSite().getActionBars();
@@ -115,7 +115,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     public void dispose() {
         deactivated();
-        DebugContextManager.getDefault().removeDebugContextListener(this, fPage.getSite().getWorkbenchWindow());
+        DebugContextManager.getDefault().getContextService(fPage.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		DebugPlugin.getDefault().removeDebugEventListener(this);
         if (fRemoveTerminated != null) {
             fRemoveTerminated.dispose();
