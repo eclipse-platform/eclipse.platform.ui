@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * 
@@ -40,7 +41,8 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 
 	private Object setChangeListeners;
 
-	protected AbstractObservableSet() {
+	protected AbstractObservableSet(Realm realm) {
+		super(realm);
 	}
 
 	public void addSetChangeListener(ISetChangeListener listener) {

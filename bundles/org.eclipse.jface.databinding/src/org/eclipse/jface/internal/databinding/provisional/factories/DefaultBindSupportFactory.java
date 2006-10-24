@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.internal.databinding.internal.ClassLookupSupport;
 import org.eclipse.jface.internal.databinding.internal.Pair;
-import org.eclipse.jface.internal.databinding.provisional.BindingException;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverter;
 import org.eclipse.jface.internal.databinding.provisional.conversion.ToStringConverter;

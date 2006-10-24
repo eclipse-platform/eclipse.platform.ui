@@ -16,12 +16,20 @@ import java.util.Collection;
 
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 3.2
  *
  */
 public abstract class BaseObservableMapping extends AbstractObservable {
+
+	/**
+	 * @param realm
+	 */
+	public BaseObservableMapping(Realm realm) {
+		super(realm);
+	}
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of

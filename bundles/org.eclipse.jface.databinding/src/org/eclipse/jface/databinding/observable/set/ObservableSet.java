@@ -18,6 +18,7 @@ import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * 
@@ -37,7 +38,8 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 	protected Object elementType;
 
-	protected ObservableSet(Set wrappedSet, Object elementType) {
+	protected ObservableSet(Realm realm, Set wrappedSet, Object elementType) {
+		super(realm);
 		this.wrappedSet = wrappedSet;
 		this.elementType = elementType;
 	}

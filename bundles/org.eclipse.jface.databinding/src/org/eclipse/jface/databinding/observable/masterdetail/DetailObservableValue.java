@@ -44,12 +44,14 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 	private IObservableFactory factory;
 
 	/**
+	 * @param realm 
 	 * @param factory
 	 * @param outerObservableValue
 	 * @param detailType
 	 */
 	public DetailObservableValue(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
+		super(outerObservableValue.getRealm());
 		this.factory = factory;
 		this.detailType = detailType;
 		this.outerObservableValue = outerObservableValue;

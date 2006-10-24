@@ -13,6 +13,7 @@
 package org.eclipse.jface.databinding.observable.value;
 
 import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 1.0
@@ -23,24 +24,28 @@ public class WritableValue extends AbstractObservableValue {
 	private final Object valueType;
 
 	/**
+	 * @param realm 
 	 * @param initialValue
 	 */
-	public WritableValue(Object initialValue) {
-		this(null, initialValue);
+	public WritableValue(Realm realm, Object initialValue) {
+		this(realm, null, initialValue);
 	}
 
 	/**
+	 * @param realm 
 	 * @param type
 	 */
-	public WritableValue(Class type) {
-		this(type, null);
+	public WritableValue(Realm realm, Class type) {
+		this(realm, type, null);
 	}
 
 	/**
+	 * @param realm 
 	 * @param valueType
 	 * @param initialValue
 	 */
-	public WritableValue(Object valueType, Object initialValue) {
+	public WritableValue(Realm realm, Object valueType, Object initialValue) {
+		super(realm);
 		this.valueType = valueType;
 		this.value = initialValue;
 	}

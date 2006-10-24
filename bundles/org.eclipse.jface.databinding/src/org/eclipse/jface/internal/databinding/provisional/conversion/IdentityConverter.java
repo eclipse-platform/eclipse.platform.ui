@@ -11,7 +11,7 @@
  */
 package org.eclipse.jface.internal.databinding.provisional.conversion;
 
-import org.eclipse.jface.internal.databinding.provisional.BindingException;
+import org.eclipse.jface.databinding.BindingException;
 
 /**
  * TheIdentityConverter. Returns the source value (the identity function).

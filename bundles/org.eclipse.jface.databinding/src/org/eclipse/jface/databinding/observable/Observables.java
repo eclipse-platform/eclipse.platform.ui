@@ -46,11 +46,12 @@ public class Observables {
 	}
 
 	/**
+	 * @param realm 
 	 * @param set
 	 * @return Returns an observableSet backed by the given set
 	 */
-	public static IObservableSet staticObservableSet(Set set) {
-		return new ObservableSet(set, Object.class) {
+	public static IObservableSet staticObservableSet(Realm realm, Set set) {
+		return new ObservableSet(realm, set, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
 
@@ -76,11 +77,12 @@ public class Observables {
 	}
 
 	/**
+	 * @param realm 
 	 * @param list
 	 * @return
 	 */
-	public static IObservableList staticObservableList(List list) {
-		return new ObservableList(list, Object.class) {
+	public static IObservableList staticObservableList(Realm realm, List list) {
+		return new ObservableList(realm, list, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
 

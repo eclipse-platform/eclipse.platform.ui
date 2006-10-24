@@ -14,6 +14,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 import java.util.Iterator;
 
 import org.eclipse.jface.databinding.observable.IObservableCollection;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IListChangeListener;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ListDiff;
@@ -59,9 +60,11 @@ abstract public class ObservableMultiMappingWithDomain extends
 	private IObservableCollection domain;
 
 	/**
+	 * @param realm 
 	 * 
 	 */
-	public ObservableMultiMappingWithDomain() {
+	public ObservableMultiMappingWithDomain(Realm realm) {
+		super(realm);
 	}
 
 	/**

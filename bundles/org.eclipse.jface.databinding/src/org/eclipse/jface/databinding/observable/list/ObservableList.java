@@ -20,6 +20,7 @@ import java.util.ListIterator;
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * 
@@ -39,7 +40,8 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	private Object elementType;
 
-	protected ObservableList(List wrappedList, Object elementType) {
+	protected ObservableList(Realm realm, List wrappedList, Object elementType) {
+		super(realm);
 		this.wrappedList = wrappedList;
 		this.elementType = elementType;
 	}

@@ -12,6 +12,7 @@
 package org.eclipse.jface.internal.databinding.internal;
 
 import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.Binding;
 import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.BindingException;
 import org.eclipse.jface.databinding.DataBindingContext;
@@ -30,9 +31,8 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
 /**
  * @since 1.0
  * 
- * implementation note: this class extends a deprecated class for backwards compatibility
  */
-public class ValueBinding extends org.eclipse.jface.internal.databinding.provisional.Binding {
+public class ValueBinding extends Binding {
 
 	private final IObservableValue target;
 
@@ -48,11 +48,9 @@ public class ValueBinding extends org.eclipse.jface.internal.databinding.provisi
 
 	private boolean updating = false;
 
-	private WritableValue partialValidationErrorObservable = new WritableValue(
-			ValidationError.class, null);
+	private WritableValue partialValidationErrorObservable;
 
-	private WritableValue validationErrorObservable = new WritableValue(
-			ValidationError.class, null);
+	private WritableValue validationErrorObservable;
 
 	/**
 	 * @param context
@@ -65,6 +63,10 @@ public class ValueBinding extends org.eclipse.jface.internal.databinding.provisi
 		super(context);
 		this.target = target;
 		this.model = model;
+		validationErrorObservable = new WritableValue(context
+				.getValidationRealm(), ValidationError.class, null);
+		partialValidationErrorObservable = new WritableValue(context
+				.getValidationRealm(), ValidationError.class, null);
 		if (bindSpec.isUpdateTarget()) {
 			modelToTargetConverter = bindSpec.getModelToTargetConverter();
 			if (modelToTargetConverter == null) {

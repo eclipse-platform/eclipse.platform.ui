@@ -40,7 +40,7 @@ public class UnmodifiableObservableList extends ObservableList {
 	 * @param wrappedList
 	 */
 	public UnmodifiableObservableList(IObservableList wrappedList) {
-		super(wrappedList, wrappedList.getElementType());
+		super(wrappedList.getRealm(), wrappedList, wrappedList.getElementType());
 		this.wrappedList = wrappedList;
 
 		wrappedList.addListChangeListener(new IListChangeListener() {

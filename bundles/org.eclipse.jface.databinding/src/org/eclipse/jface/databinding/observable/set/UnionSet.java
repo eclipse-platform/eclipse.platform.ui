@@ -51,7 +51,7 @@ public final class UnionSet extends ObservableSet {
 	 * @param childSets
 	 */
 	public UnionSet(IObservableSet[] childSets) {
-		super(null, childSets[0].getElementType());
+		super(childSets[0].getRealm(), null, childSets[0].getElementType());
 		this.childSets = childSets;
 		this.stalenessTracker = new StalenessTracker(childSets,
 				stalenessConsumer);

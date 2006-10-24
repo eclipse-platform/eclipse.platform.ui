@@ -26,6 +26,13 @@ package org.eclipse.jface.databinding.observable;
 public interface IObservable {
 
 	/**
+	 * Returns the realm from which this obserable must be accessed, and
+	 *  
+	 * @return the realm
+	 */
+	public Realm getRealm();
+	
+	/**
 	 * Adds the given change listener to the list of change listeners.
 	 * 
 	 * @param listener

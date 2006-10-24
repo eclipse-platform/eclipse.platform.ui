@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.databinding.observable.Observables;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
@@ -77,7 +78,7 @@ public class DataBindingContext {
 
 	private List bindingEventListeners = new ArrayList();
 
-	private WritableList bindings = new WritableList();
+	private WritableList bindings;
     
     /**
      * Unmodifiable version of {@link #bindings} for exposure publicly.
@@ -88,41 +89,54 @@ public class DataBindingContext {
 
 	protected DataBindingContext parent;
 
-	private ComputedValue partialValidationError = new ComputedValue() {
-		protected Object calculate() {
-			int size = partialValidationErrors.size();
-			return size == 0 ? null : partialValidationErrors.get(size - 1);
-		}
-	};
+	private ComputedValue partialValidationError;
 
-	private ObservableList partialValidationErrors = new ValidationErrorList(
-			bindings, true);
+	private ObservableList partialValidationErrors;
 
-	private ComputedValue validationError = new ComputedValue() {
-		protected Object calculate() {
-			int size = validationErrors.size();
-			return size == 0 ? null : validationErrors.get(size - 1);
-		}
-	};
+	private ComputedValue validationError;
 
-	private ObservableList validationErrors = new ValidationErrorList(bindings,
-			false);
+	private ObservableList validationErrors;
 
 	private List childContexts = new ArrayList();
 
+	private Realm validationRealm;
+
 	/**
+	 * @param validationRealm 
 	 * 
 	 */
-	public DataBindingContext() {
+	public DataBindingContext(Realm validationRealm) {
+		this(null, validationRealm);
 	}
 
 	/**
 	 * @param parent
+	 * @param validationRealm 
 	 * 
 	 */
-	public DataBindingContext(DataBindingContext parent) {
+	public DataBindingContext(DataBindingContext parent, Realm validationRealm) {
 		this.parent = parent;
-		parent.addChild(this);
+		this.validationRealm = validationRealm;
+		if (parent != null) {
+			parent.addChild(this);
+		}
+		bindings = new WritableList(validationRealm);
+		partialValidationError = new ComputedValue(validationRealm) {
+			protected Object calculate() {
+				int size = partialValidationErrors.size();
+				return size == 0 ? null : partialValidationErrors.get(size - 1);
+			}
+		};
+		partialValidationErrors = new ValidationErrorList(validationRealm,
+				bindings, true);
+		validationError = new ComputedValue(validationRealm) {
+			protected Object calculate() {
+				int size = validationErrors.size();
+				return size == 0 ? null : validationErrors.get(size - 1);
+			}
+		};
+		validationErrors = new ValidationErrorList(validationRealm, bindings,
+				false);
 	}
 
 	protected void addChild(DataBindingContext context) {
@@ -472,11 +486,12 @@ public class DataBindingContext {
 	}
     
     /**
+     * @param validationRealm 
      * @return DataBindingContext with {@link IConverter converters} and
      *         {@link IValidator validators} for java's primitive types.
      */
-    public static DataBindingContext withDefaults() {
-        DataBindingContext dbc = new DataBindingContext();
+    public static DataBindingContext withDefaults(Realm validationRealm) {
+        DataBindingContext dbc = new DataBindingContext(validationRealm);
         dbc.addBindSupportFactory(new DefaultBindSupportFactory());
 
         return dbc;
@@ -496,4 +511,11 @@ public class DataBindingContext {
 
         return bindings.remove(binding);
     }
+
+	/**
+	 * @return
+	 */
+	public Realm getValidationRealm() {
+		return validationRealm;
+	}
 }

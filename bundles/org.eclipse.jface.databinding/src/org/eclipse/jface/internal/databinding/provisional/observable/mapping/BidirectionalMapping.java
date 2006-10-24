@@ -90,6 +90,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 	 */
 	public BidirectionalMapping(IObservableMapping wrappedMapping,
 			IObservableSet domain) {
+		super(domain.getRealm());
 		this.wrappedMapping = wrappedMapping;
 		this.domain = domain;
 		Set tempRange = new HashSet();
@@ -99,7 +100,7 @@ public class BidirectionalMapping extends AbstractObservableMapping implements
 			addMapping(functionValue, element);
 			tempRange.add(functionValue);
 		}
-		this.range = new WritableSet(tempRange);
+		this.range = new WritableSet(domain.getRealm(), tempRange);
 		domain.addSetChangeListener(domainListener);
 	}
 

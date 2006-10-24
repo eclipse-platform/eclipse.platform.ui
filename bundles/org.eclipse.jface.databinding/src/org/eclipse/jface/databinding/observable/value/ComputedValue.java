@@ -14,6 +14,7 @@ import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.IStaleListener;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * A Lazily calculated value that automatically computes and registers listeners
@@ -38,16 +39,19 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private IObservable[] dependencies = new IObservable[0];
 
 	/**
+	 * @param realm 
 	 * 
 	 */
-	public ComputedValue() {
-		this(Object.class);
+	public ComputedValue(Realm realm) {
+		this(realm, Object.class);
 	}
 
 	/**
+	 * @param realm 
 	 * @param valueType
 	 */
-	public ComputedValue(Object valueType) {
+	public ComputedValue(Realm realm, Object valueType) {
+		super(realm);
 		this.valueType = valueType;
 	}
 

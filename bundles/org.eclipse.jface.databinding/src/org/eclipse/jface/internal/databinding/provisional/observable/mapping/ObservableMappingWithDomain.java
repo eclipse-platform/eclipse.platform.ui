@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 import java.util.Iterator;
 
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
 import org.eclipse.jface.databinding.observable.set.SetDiff;
@@ -37,9 +38,11 @@ abstract public class ObservableMappingWithDomain extends AbstractObservableMapp
 	private IObservableSet domain;
 
 	/**
+	 * @param realm 
 	 * 
 	 */
-	public ObservableMappingWithDomain() {
+	public ObservableMappingWithDomain(Realm realm) {
+		super(realm);
 	}
 	
 	/**

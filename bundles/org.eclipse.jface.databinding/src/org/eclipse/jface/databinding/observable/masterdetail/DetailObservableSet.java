@@ -54,7 +54,7 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 	 */
 	public DetailObservableSet(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
-		super(new HashSet(), detailType);
+		super(outerObservableValue.getRealm(), new HashSet(), detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);

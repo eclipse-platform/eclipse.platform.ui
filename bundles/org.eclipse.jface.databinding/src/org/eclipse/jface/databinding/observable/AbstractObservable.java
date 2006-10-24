@@ -31,6 +31,15 @@ public abstract class AbstractObservable implements IObservable {
 	 * IChangeListener
 	 */
 	private Object staleListeners = null;
+	
+	private Realm realm;
+
+	/**
+	 * @param realm
+	 */
+	public AbstractObservable(Realm realm) {
+		this.realm = realm;
+	}
 
 	public void addChangeListener(IChangeListener listener) {
 		if (changeListeners == null) {
@@ -185,6 +194,13 @@ public abstract class AbstractObservable implements IObservable {
 	public void dispose() {
 		changeListeners = null;
 		staleListeners = null;
+	}
+
+	/**
+	 * @return Returns the realm.
+	 */
+	public Realm getRealm() {
+		return realm;
 	}
 
 }

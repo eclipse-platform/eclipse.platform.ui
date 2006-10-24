@@ -15,23 +15,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.databinding.Binding;
 import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.observable.ILazyListElementProvider;
 import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 /**
  * @since 1.0
  * 
  */
-public class ValidationErrorList extends ObservableList implements ILazyListElementProvider {
+public class ValidationErrorList extends ObservableList {
 
 	private boolean isDirty = true;
 
@@ -48,12 +48,13 @@ public class ValidationErrorList extends ObservableList implements ILazyListElem
 	};
 
 	/**
+	 * @param realm 
 	 * @param bindings
 	 * @param usePartialErrors
 	 */
-	public ValidationErrorList(WritableList bindings,
+	public ValidationErrorList(Realm realm, WritableList bindings,
 			boolean usePartialErrors) {
-		super(new ArrayList(), ValidationError.class);
+		super(realm, new ArrayList(), ValidationError.class);
 		this.bindings = bindings;
 		this.usePartialErrors = usePartialErrors;
 		bindings.addChangeListener(markDirtyChangeListener);

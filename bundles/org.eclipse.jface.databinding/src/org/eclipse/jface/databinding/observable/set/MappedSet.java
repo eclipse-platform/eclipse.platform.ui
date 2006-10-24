@@ -89,7 +89,7 @@ public class MappedSet extends ObservableSet {
 	 * @param mapping
 	 */
 	public MappedSet(IObservableSet input, IObservableMapping mapping) {
-		super(Collections.EMPTY_SET, mapping.getValueType());
+		super(input.getRealm(), Collections.EMPTY_SET, mapping.getValueType());
 		setWrappedSet(valueCounts.keySet());
 		this.wrappedMapping = mapping;
 		this.input = input;

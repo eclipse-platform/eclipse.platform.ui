@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 1.0
@@ -21,6 +22,13 @@ import org.eclipse.jface.databinding.observable.Diffs;
  */
 public abstract class AbstractVetoableValue extends AbstractObservableValue
 		implements IVetoableValue {
+
+	/**
+	 * @param realm
+	 */
+	public AbstractVetoableValue(Realm realm) {
+		super(realm);
+	}
 
 	public void setValue(Object value) {
 		Object currentValue = doGetValue();

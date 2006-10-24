@@ -13,6 +13,7 @@ package org.eclipse.jface.internal.databinding.provisional.observable.mapping;
 
 
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 1.0
@@ -20,6 +21,13 @@ import org.eclipse.jface.databinding.observable.ObservableTracker;
  */
 public abstract class AbstractObservableMapping extends BaseObservableMapping
 		implements IObservableMapping {
+
+	/**
+	 * @param realm
+	 */
+	public AbstractObservableMapping(Realm realm) {
+		super(realm);
+	}
 
 	final public Object getMappingValue(Object element) {
 		ObservableTracker.getterCalled(this);
