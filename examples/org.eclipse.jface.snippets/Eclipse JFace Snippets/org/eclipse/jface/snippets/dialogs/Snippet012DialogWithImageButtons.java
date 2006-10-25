@@ -1,5 +1,3 @@
-package org.eclipse.jface.snippets.dialogs;
-
 /*******************************************************************************
  * Copyright (c) 2006 Tom Schindl and others.
  * All rights reserved. This program and the accompanying materials
@@ -10,7 +8,7 @@ package org.eclipse.jface.snippets.dialogs;
  * Contributors:
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
-
+package org.eclipse.jface.snippets.dialogs;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
