@@ -1091,7 +1091,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		fPreferenceChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				TextMergeViewer.this.propertyChange(event);
+				TextMergeViewer.this.handlePropertyChangeEvent(event);
 			}
 		};
 
@@ -1847,11 +1847,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 	}
 	
-	/*
-	 * Creates the central Canvas.
-	 * Called from ContentMergeViewer.
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#createCenterControl(org.eclipse.swt.widgets.Composite)
 	 */
-	/* package */ Control createCenter(Composite parent) {
+	protected final Control createCenterControl(Composite parent) {
 		if (fSynchronizedScrolling) {
 			final Canvas canvas= new BufferedCanvas(parent, SWT.NONE) {
 				public void doPaint(GC gc) {
@@ -1885,7 +1884,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			
 			return canvas;
 		}
-		return super.createCenter(parent);
+		return super.createCenterControl(parent);
 	}
 	
 	private boolean handleMouseMoveOverCenter(Canvas canvas, int x, int y) {
@@ -1919,11 +1918,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return fButtonDiff != null;
 	}
 	
-	/*
-	 * Returns width of central canvas.
-	 * Overridden from ContentMergeViewer.
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#getCenterWidth()
 	 */
-	/* package */ int getCenterWidth() {
+	protected final int getCenterWidth() {
 		if (fSynchronizedScrolling)
 			return CENTER_WIDTH;
 		return super.getCenterWidth();
@@ -2556,6 +2554,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return new Region(start, length);
 	}
 		
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handleResizeAncestor(int, int, int, int)
+	 */
 	protected final void handleResizeAncestor(int x, int y, int width, int height) {
 		if (width > 0) {
 			Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
@@ -2586,9 +2587,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 	}
 
-	/*
-	 * Lays out everything.
-	 */
+  	/* (non-Javadoc)
+  	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handleResizeLeftRight(int, int, int, int, int, int)
+  	 */
   	protected final void handleResizeLeftRight(int x, int y, int width1, int centerWidth, int width2,  int height) {
   				
   		if (fBirdsEyeCanvas != null)
@@ -2610,7 +2611,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		x+= leftTextWidth;
 		
 		if (fCenter == null || fCenter.isDisposed())
-			fCenter= createCenter(composite);
+			fCenter= createCenterControl(composite);
 		fCenter.setBounds(x, y, centerWidth, height-scrollbarHeight);
 		x+= centerWidth;
 		
@@ -3485,7 +3486,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 	}
 	
-	/* package */ void propertyChange(PropertyChangeEvent event) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handlePropertyChangeEvent(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	protected void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		
 		String key= event.getProperty();
 		
@@ -3538,7 +3542,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 			
 		} else {
-			super.propertyChange(event);
+			super.handlePropertyChangeEvent(event);
 			
 			if (key.equals(ICompareUIConstants.PROP_IGNORE_ANCESTOR)) {
 				update(false);
@@ -3571,7 +3575,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		scrollVertical(0, 0, 0, null);
 		
 		// throw away central control (Sash or Canvas)
-		Control center= getCenter();
+		Control center= getCenterControl();
 		if (center != null && !center.isDisposed())
 			center.dispose();
 		
@@ -3632,7 +3636,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				if (fRightCanvas != null)
 					fRightCanvas.redraw();
 			}
-			Control center= getCenter();
+			Control center= getCenterControl();
 			if (center != null)
 				center.redraw();
 
@@ -3655,8 +3659,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fLeft != null && fLeft.isControlOkToUse())
 			fLeft.getTextWidget().redraw();
 			
-		if (Utilities.okToUse(getCenter()))
-			getCenter().redraw();
+		if (Utilities.okToUse(getCenterControl()))
+			getCenterControl().redraw();
 			
 		if (fRight != null && fRight.isControlOkToUse())
 			fRight.getTextWidget().redraw();
@@ -4619,7 +4623,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (fLeftCanvas != null)
 			fLeftCanvas.repaint();
 		
-		Control center= getCenter();
+		Control center= getCenterControl();
 		if (center instanceof BufferedCanvas)
 			((BufferedCanvas)center).repaint();
 		

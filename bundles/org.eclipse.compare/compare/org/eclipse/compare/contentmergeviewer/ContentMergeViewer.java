@@ -317,7 +317,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fCompareConfiguration= cc;
 		fPropertyChangeListener= new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
-				ContentMergeViewer.this.propertyChange(event);
+				ContentMergeViewer.this.handlePropertyChangeEvent(event);
 			}
 		};
 		fCompareConfiguration.addPropertyChangeListener(fPropertyChangeListener);
@@ -468,15 +468,22 @@ public abstract class ContentMergeViewer extends ContentViewer
 		};
 	}
 	
-	/*
+	/**
 	 * The <code>ContentMergeViewer</code> implementation of this 
 	 * <code>Viewer</code> method does nothing. Subclasses may reimplement.
+	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
 		// empty implementation
 	}
 
-	/* package */ void propertyChange(PropertyChangeEvent event) {
+	/**
+	 * Callback that is invoked when a property in the compare configuration 
+	 * ({@link #getCompareConfiguration()} changes.
+	 * @param event the property change event
+	 * @since 3.3
+	 */
+	protected void handlePropertyChangeEvent(PropertyChangeEvent event) {
 		
 		String key= event.getProperty();
 
@@ -545,6 +552,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * Return whether the input is a three-way comparison.
 	 * @return whether the input is a three-way comparison
+	 * @since 3.3
 	 */
 	protected boolean isThreeWay() {
 		return fIsThreeWay;
@@ -664,8 +672,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 		fConfirmSave= enable;
 	}
 	
-	/* (non Javadoc)
-	 * see Viewer.refresh
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
 		internalRefresh(getInput());
@@ -744,7 +752,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		new Resizer(fRightLabel, VERTICAL);
 		
 		if (fCenter == null || fCenter.isDisposed())
-			fCenter= createCenter(fComposite);
+			fCenter= createCenterControl(fComposite);
 				
 		createControls(fComposite);
 		
@@ -756,7 +764,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		return fComposite;
 	}
 
-	protected void initializeToolbars(Composite parent) {
+	private void initializeToolbars(Composite parent) {
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(parent);
 		if (tbm != null) {
 			tbm.removeAll();
@@ -816,39 +824,62 @@ public abstract class ContentMergeViewer extends ContentViewer
 		return false;
 	}
 	
-	/* package */ int getCenterWidth() {
+	/**
+	 * Return the desired width of the center control. This width is used
+	 * to calculate the values used to layout the ancestor, left and right sides.
+	 * @return the desired width of the center control
+	 * @see #handleResizeLeftRight(int, int, int, int, int, int)
+	 * @see #handleResizeAncestor(int, int, int, int)
+	 * @since 3.3
+	 */
+	protected int getCenterWidth() {
 		return 3;
 	}
 	
 	/**
 	 * Return whether the ancestor pane is visible or not.
 	 * @return whether the ancestor pane is visible or not
+	 * @since 3.3
 	 */
 	protected boolean isAncestorVisible() {
 		return fAncestorVisible;
 	}
 	
-	/* package */ Control createCenter(Composite parent) {
+	/**
+	 * Create the control that divides the left and right sides of the merge viewer.
+	 * @param parent the parent composite
+	 * @return the center control
+	 * @since 3.3
+	 */
+	protected Control createCenterControl(Composite parent) {
 		Sash sash= new Sash(parent, SWT.VERTICAL);
 		new Resizer(sash, HORIZONTAL);
 		return sash;
 	}
 	
-	/* package */ Control getCenter() {
+	/**
+	 * Return the center control that divides the left and right sides of the merge viewer.
+	 * This method returns the control that was created by calling {@link #createCenterControl(Composite)}.
+	 * @see #createCenterControl(Composite)
+	 * @return the center control
+	 * @since 3.3
+	 */
+	protected Control getCenterControl() {
 		return fCenter;
 	}
 		
-	/* 
-	 * @see Viewer.getControl()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#getControl()
 	 */
 	public Control getControl() {
 		return fComposite;
 	}
 	
-	/*
+	/**
 	 * Called on the viewer disposal.
 	 * Unregisters from the compare configuration.
 	 * Clients may extend if they have to do additional cleanup.
+	 * @see org.eclipse.jface.viewers.ContentViewer#handleDispose(org.eclipse.swt.events.DisposeEvent)
 	 */
 	protected void handleDispose(DisposeEvent event) {
 		
@@ -958,17 +989,30 @@ public abstract class ContentMergeViewer extends ContentViewer
 		IMergeViewerContentProvider content= getMergeContentProvider();
 		Object input= getInput();
 
+		// Only change a label if there is a new label available
 		if (fAncestorLabel != null) {
-			fAncestorLabel.setImage(content.getAncestorImage(input));
-			fAncestorLabel.setText(content.getAncestorLabel(input));
+			Image ancestorImage = content.getAncestorImage(input);
+			if (ancestorImage != null)
+				fAncestorLabel.setImage(ancestorImage);
+			String ancestorLabel = content.getAncestorLabel(input);
+			if (ancestorLabel != null)
+				fAncestorLabel.setText(ancestorLabel);
 		}
 		if (fLeftLabel != null) {
-			fLeftLabel.setImage(content.getLeftImage(input));
-			fLeftLabel.setText(content.getLeftLabel(input));
+			Image leftImage = content.getLeftImage(input);
+			if (leftImage != null)
+				fLeftLabel.setImage(leftImage);
+			String leftLabel = content.getLeftLabel(input);
+			if (leftLabel != null)
+				fLeftLabel.setText(leftLabel);
 		}
 		if (fRightLabel != null) {
-			fRightLabel.setImage(content.getRightImage(input));
-			fRightLabel.setText(content.getRightLabel(input));
+			Image rightImage = content.getRightImage(input);
+			if (rightImage != null)
+				fRightLabel.setImage(rightImage);
+			String rightLabel = content.getRightLabel(input);
+			if (rightLabel != null)
+				fRightLabel.setText(rightLabel);
 		}
 	}
 		
@@ -983,8 +1027,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	
 	//---- dirty state & saving state
 	
-	/* (non Javadoc)
-	 * see IPropertyChangeNotifier.addPropertyChangeListener
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IPropertyChangeNotifier#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListenerList == null)
@@ -992,8 +1036,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 		fListenerList.add(listener);
 	}
 	
-	/* (non Javadoc)
-	 * see IPropertyChangeNotifier.removePropertyChangeListener
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IPropertyChangeNotifier#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
 		if (fListenerList != null) {
@@ -1003,7 +1047,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 	}
 	
-	/* package */ void fireDirtyState(boolean state) {
+	private void fireDirtyState(boolean state) {
 		Utilities.firePropertyChange(fListenerList, this, CompareEditorInput.DIRTY_STATE, null, new Boolean(state));
 	}
 	
@@ -1019,7 +1063,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void setLeftDirty(boolean dirty) {
 		if (isLeftDirty() != dirty) {
 			fLeftSaveAction.setEnabled(dirty);
-			fireDirtyState(dirty);
+			if (dirty == isRightDirty())
+				fireDirtyState(dirty);
 		}
 	}
 	
@@ -1057,6 +1102,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * of the viewer as the first parameter.
 	 * @param monitor a progress monitor
 	 * @see org.eclipse.compare.contentmergeviewer.IFlushable#flush(org.eclipse.core.runtime.IProgressMonitor)
+	 * @since 3.3
 	 */
 	public final void flush(IProgressMonitor monitor) {
 		flushContent(getInput(), monitor);
@@ -1070,6 +1116,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @param input the compare input
 	 * @param monitor a progress monitor or <code>null</code> if the method
 	 * was call from a place where a progress monitor was not available.
+	 * @since 3.3
 	 */
 	protected void flushContent(Object input, IProgressMonitor monitor) {
 				
@@ -1099,6 +1146,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * Return the dirty state of the right side of this viewer.
 	 * @return the dirty state of the right side of this viewer
+	 * @since 3.3
 	 */
 	protected boolean isRightDirty() {
 		return fRightSaveAction.isEnabled();
@@ -1107,6 +1155,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	/**
 	 * Return the dirty state of the left side of this viewer.
 	 * @return the dirty state of the left side of this viewer
+	 * @since 3.3
 	 */
 	protected boolean isLeftDirty() {
 		return fLeftSaveAction.isEnabled();
