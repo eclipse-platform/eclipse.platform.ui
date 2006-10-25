@@ -124,7 +124,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 			if (fVerticalRuler != null && fIsVerticalRulerVisible) {
 				int verticalRulerWidth= fVerticalRuler.getWidth();
-				fVerticalRuler.getControl().setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
+				final Control verticalRulerControl= fVerticalRuler.getControl();
+				int oldWidth= verticalRulerControl.getBounds().width;
+				verticalRulerControl.setBounds(clArea.x, clArea.y + topTrim, verticalRulerWidth, clArea.height - scrollbarHeight - topTrim);
+				if (flushCache && getVisualAnnotationModel() != null && oldWidth == verticalRulerWidth)
+					verticalRulerControl.redraw();
 
 				x += verticalRulerWidth + fGap;
 				width -= verticalRulerWidth + fGap;
