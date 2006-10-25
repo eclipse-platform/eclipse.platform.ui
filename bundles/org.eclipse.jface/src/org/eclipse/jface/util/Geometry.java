@@ -184,6 +184,49 @@ public class Geometry {
     }
 
     /**
+     * <p>Returns a new difference Rectangle whose x, y, width, and height are equal to the difference of the corresponding
+     * attributes from the given rectangles</p>
+     * 
+     * <p></p>
+     * <b>Example: Compute the margins for a given Composite, and apply those same margins to a new GridLayout</b>
+     * 
+     * <code><pre>      
+     *      // Compute the client area, in the coordinate system of the input composite's parent  
+     *      Rectangle clientArea = Display.getCurrent().map(inputComposite, 
+     *      	inputComposite.getParent(), inputComposite.getClientArea());
+     *      
+     *      // Compute the margins for a given Composite by subtracting the client area from the composite's bounds
+     *      Rectangle margins = Geometry.subtract(inputComposite.getBounds(), clientArea);
+     *      
+     *      // Now apply these margins to a new GridLayout
+     *      GridLayout layout = GridLayoutFactory.fillDefaults().margins(margins).create();
+     * </pre></code>
+     * 
+     * @param rect1 first rectangle
+     * @param rect2 rectangle to subtract
+     * @return the difference between the two rectangles (computed as rect1 - rect2)
+     * @since 3.3
+     */
+    public static Rectangle subtract(Rectangle rect1, Rectangle rect2) {
+    	return new Rectangle(rect1.x - rect2.x, rect1.y - rect2.y, rect1.width - rect2.width, rect1.height - rect2.height);
+    }
+    
+    /**
+     * <p>Returns a new Rectangle whose x, y, width, and height is the sum of the x, y, width, and height values of 
+     * both rectangles respectively.</p>
+     * 
+     * @param rect1 first rectangle to add
+     * @param rect2 second rectangle to add
+     * @return a new rectangle whose x, y, height, and width attributes are the sum of the corresponding attributes from
+     *         the arguments.
+     * @since 3.3
+     */
+    public static Rectangle add(Rectangle rect1, Rectangle rect2) {
+    	return new Rectangle(rect1.x + rect2.x, rect1.y + rect2.y, 
+    			rect1.width + rect2.width, rect1.height + rect2.height);
+    }
+    
+    /**
      * Adds two points as 2d vectors. Returns a new point whose coordinates are
      * the sum of the original two points.
      * 
@@ -465,6 +508,50 @@ public class Geometry {
         rect.y += delta.y;
     }
 
+    /**
+     * Moves each edge of the given rectangle outward by the given amount. Negative values
+     * cause the rectangle to contract. Does not allow the rectangle's width or height to be
+     * reduced below zero.
+     *  
+     * @param rect normalized rectangle to modify
+     * @param differenceRect difference rectangle to be added to rect
+     * @since 3.3
+     */
+    public static void expand(Rectangle rect, Rectangle differenceRect) {
+    	rect.x += differenceRect.x;
+    	rect.y += differenceRect.y;
+    	rect.height = Math.max(0, rect.height + differenceRect.height);
+    	rect.width = Math.max(0, rect.width + differenceRect.width);
+    }
+    
+    /**
+     * <p>Returns a rectangle which, when added to another rectangle, will expand each side
+     * by the given number of units.</p>
+     * 
+     * <p>This is commonly used to store margin sizes. For example:</p>
+     * 
+     * <code><pre>
+     *     // Expands the left, right, top, and bottom 
+     *     // of the given control by 10, 5, 1, and 15 units respectively
+     *      
+     *     Rectangle margins = Geometry.createDifferenceRect(10,5,1,15);
+     *     Rectangle bounds = someControl.getBounds();
+     *     someControl.setBounds(Geometry.add(bounds, margins));
+     * </pre></code>
+     * 
+     * @param left distance to expand the left side (negative values move the edge inward)
+     * @param right distance to expand the right side (negative values move the edge inward)
+     * @param top distance to expand the top (negative values move the edge inward)
+     * @param bottom distance to expand the bottom (negative values move the edge inward)
+     * 
+     * @return a difference rectangle that, when added to another rectangle, will cause each
+     * side to expand by the given number of units
+     * @since 3.3
+     */
+    public static Rectangle createDiffRectangle(int left, int right, int top, int bottom) {
+    	return new Rectangle(-left, -top, left + right, top + bottom);
+    }
+    
     /**
      * Moves each edge of the given rectangle outward by the given amount. Negative values
      * cause the rectangle to contract. Does not allow the rectangle's width or height to be

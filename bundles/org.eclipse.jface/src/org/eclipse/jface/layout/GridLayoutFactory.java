@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jface.layout;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -188,7 +189,7 @@ public final class GridLayoutFactory {
 	 * specify the number of pixels of horizontal and vertical margin that will
 	 * be placed along the left/right and top/bottom edges of the layout. Note
 	 * that thes margins will be added to the ones specified by
-	 * {@link #margins(int, int, int, int)}.
+	 * {@link #extendedMargins(int, int, int, int)}.
 	 * 
 	 * @param width
 	 *            margin width (pixels)
@@ -223,7 +224,7 @@ public final class GridLayoutFactory {
 	 * 
 	 * @since 3.3
 	 */
-    public GridLayoutFactory margins(int left, int right, int top, int bottom) {
+    public GridLayoutFactory extendedMargins(int left, int right, int top, int bottom) {
         l.marginLeft = left;
         l.marginRight = right;
         l.marginTop = top;
@@ -231,6 +232,40 @@ public final class GridLayoutFactory {
         return this;
     }
 
+    /**
+	 * Sets the margins for layouts created with this factory. The margins
+	 * specify the number of pixels of horizontal and vertical margin that will
+	 * be placed along the left, right, top, and bottom edges of the layout.
+	 * Note that thes margins will be added to the ones specified by
+	 * {@link #margins(int, int)}.
+	 * 
+     * <code><pre>
+     *     // Construct a GridLayout whose left, right, top, and bottom 
+     *     // margin sizes are 10, 5, 0, and 15 respectively
+     *      
+     *     Rectangle margins = Geometry.createDiffRectangle(10,5,0,15);
+     *     GridLayoutFactory.fillDefaults().extendedMargins(margins).applyTo(composite1);
+     * </pre></code>
+	 * 
+	 * @param differenceRect rectangle which, when added to the client area of the
+	 *        layout, returns the outer area of the layout. The x and y values of
+	 *        the rectangle correspond to the position of the bounds of the 
+	 *        layout with respect to the client area. They should be negative. 
+	 *        The width and height correspond to the relative size of the bounds
+	 *        of the layout with respect to the client area, and should be positive. 
+	 * @return this
+	 * @see #spacing
+	 * 
+	 * @since 3.3
+	 */
+    public GridLayoutFactory extendedMargins(Rectangle differenceRect) {
+        l.marginLeft = -differenceRect.x;
+        l.marginTop = -differenceRect.y;
+        l.marginBottom = differenceRect.y + differenceRect.height;
+        l.marginRight = differenceRect.x + differenceRect.width;
+        return this;
+    }
+    
     /**
      * Sets the number of columns in the layout
      * 

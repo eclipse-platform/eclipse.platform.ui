@@ -28,5 +28,6 @@ public class AllTests extends TestSuite {
         addTest(new org.eclipse.jface.tests.dialogs.AllTests());
         addTest(new org.eclipse.jface.tests.images.AllTests());
         addTest(new org.eclipse.jface.tests.viewers.AllTests());
+        addTest(new org.eclipse.jface.tests.layout.AllTests());
     }
 }
