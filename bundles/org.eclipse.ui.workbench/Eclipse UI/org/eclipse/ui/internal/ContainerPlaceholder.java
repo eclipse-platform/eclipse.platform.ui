@@ -149,4 +149,22 @@ public class ContainerPlaceholder extends PartPlaceholder implements
     public boolean childIsZoomed(LayoutPart toTest) {
         return false;
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#setTrimState(int)
+     */
+    public void setTrimState(int newTrimState) {
+    	if (realContainer != null)
+    		getRealContainer().setTrimState(newTrimState);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.LayoutPart#getTrimState()
+     */
+    public int getTrimState() {
+    	if (realContainer != null)
+    		return getRealContainer().getTrimState();
+    	
+    	return super.getTrimState();
+    }
 }

@@ -12,7 +12,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.presentations.PresentablePart;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuDetach;
@@ -153,5 +159,91 @@ public class ViewStack extends PartStack {
      */
     public StackPresentation getTestPresentation() {
     	return getPresentation();
+    }
+
+    
+    // Trim Stack Support
+    
+    public void setTrimState(int newTrimState) {
+    	if (newTrimState == getTrimState())
+    		return;
+
+    	// Remember the new state
+    	int oldTrimState = getTrimState();
+    	
+    	// set the new one
+    	super.setTrimState(newTrimState);
+
+		WorkbenchWindow wbw = (WorkbenchWindow) getWorkbenchWindow();
+		if (wbw == null)
+			return;
+		
+		// Access workbench context
+        Perspective persp = page.getActivePerspective();
+    	ITrimManager tbm = wbw.getTrimManager();
+    	ViewStackTrimPart viewStackTrim = (ViewStackTrimPart) tbm.getTrim(getID());
+    	
+    	// Are we moving the View Stack -to- the trim?
+    	if (oldTrimState == LayoutPart.TRIMSTATE_NORMAL) {
+        	// Remove the real stack from the presentation
+        	ContainerPlaceholder ph = null;
+	        ph = new ContainerPlaceholder(getID());
+	        ph.setRealContainer(this);
+	        getContainer().replace(this, ph);
+	        page.refreshActiveView();
+
+        	// Is it already in the trim?
+        	if (viewStackTrim == null) {
+        		// If it's not already in the trim...create it
+        		int side = SWT.BOTTOM;
+        		if (persp != null)
+        			side = persp.calcStackSide(getBounds());
+        		
+        		viewStackTrim = new ViewStackTrimPart(wbw, ph);
+    	    	viewStackTrim.dock(side);
+        		tbm.addTrim(side, viewStackTrim);
+        	}
+	        
+        	// Refresh the trim's state and show it
+        	viewStackTrim.setPlaceholder(ph);
+        	viewStackTrim.refresh();
+        	
+        	// Make the views 'fast'
+        	if (persp != null) {
+        		List refs = viewStackTrim.getViewRefs();
+        		for (Iterator refIter = refs.iterator(); refIter
+						.hasNext();) {
+					IViewReference ref = (IViewReference) refIter.next();
+					persp.addFastViewHack(ref);
+				}
+        	}
+    		tbm.setTrimVisible(viewStackTrim, true);
+    	}
+    	
+    	// Are we restoring the View Stack -from- the trim?
+    	if (newTrimState == LayoutPart.TRIMSTATE_NORMAL) {
+    		if (viewStackTrim == null)
+    			return;
+        	
+        	// Make the views un-'fast'
+        	if (persp != null) {
+        		List refs = viewStackTrim.getViewRefs();
+        		for (Iterator refIter = refs.iterator(); refIter
+						.hasNext();) {
+					IViewReference ref = (IViewReference) refIter.next();
+					persp.removeFastViewHack(ref);
+				}
+        	}
+    		
+        	// hide the trim widget
+        	tbm.setTrimVisible(viewStackTrim, false);
+        	
+        	// Restore the real container
+        	ContainerPlaceholder ph = viewStackTrim.getPlaceholder();
+        	ILayoutContainer container = ph.getContainer();
+        	LayoutPart ps = ph.getRealContainer();
+    		ph.setRealContainer(null);
+            container.replace(ph, ps);
+    	}
     }
 }

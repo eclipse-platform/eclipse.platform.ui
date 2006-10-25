@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * Abstract container that groups various layout
@@ -57,7 +58,7 @@ public abstract class PartSashContainer extends LayoutPart implements
     private LayoutPart zoomedPart;
     
     // 'Smart' zoom
-    private boolean smartZoomed = false;
+    private LayoutPart smartZoomedPart = null;
 
     protected WorkbenchPage page;
 
@@ -853,51 +854,51 @@ public abstract class PartSashContainer extends LayoutPart implements
         this.parent.setBounds(r);
     }
 
-    private void smartZoomIn(LayoutPart part, Perspective persp) {
-    	// HACK!! since we aren't changing the 'state' maximize always
-    	// get called; 'unzoom' if necessary
-    	if (smartZoomed) {
-    		// Restore the editor area if necessary
-    		persp.showEditorArea();
-    		
-    		// Restore (close) and groups created during a zoom
-            persp.restoreZoomGroups();
-            
-            // we're 'unzoomed'
-            smartZoomed = false;
-            
-            // Remember that we need to trigger a layout
-            layoutDirty = true;
-
-            return;
-    	}
+    private void smartZoomIn(LayoutPart zoomingPart, Perspective persp) {
+    	// Prevent recursion
+    	if (smartZoomedPart != null)
+    		return;
     	
     	// 'Smart'(?) zoom...'minimize' all view stacks except the
     	// one we're zooming. If we're zooming the editor then -all-
     	// view stacks get minimized
         LayoutPart[] children = getChildren();
-        List stacks = new ArrayList();
+        List trimParts = new ArrayList();
         for (int i = 0; i < children.length; i++) {
-            LayoutPart child = children[i];
-    		// Close the editor stack unless it's the 'zooming' part
-    		if (child instanceof EditorSashContainer && child != part) { 
-    			persp.hideEditorArea();
-    		}
-    		else if (child instanceof ViewStack) {
-    			if (child != part) {
-    				stacks.add(child);
-    			}
-    		}
+            if (children[i] != zoomingPart)
+            	trimParts.add(children[i]);
         }
 
-        persp.moveToTrim(stacks, FastViewBar.GROUP_FVB | FastViewBar.ZOOM_GROUP);
+        persp.movePartsToTrim(trimParts, true);
         
         // We're -not- really zoomed, don't lie
         zoomedPart = null;
         
         // ...but we're 'zoomed'
-        smartZoomed = true;
+        smartZoomedPart = zoomingPart;
         
+        if (smartZoomedPart instanceof PartStack) {
+        	((PartStack)smartZoomedPart).setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
+        }
+        // Remember that we need to trigger a layout
+        layoutDirty = true;
+    }
+
+    private void smartZoomOut(Perspective persp) {
+    	// Prevent recursion
+    	if (smartZoomedPart == null)
+    		return;
+    	
+        // we're 'unzoomed'
+    	LayoutPart zoomedPartCache = smartZoomedPart;
+        smartZoomedPart = null;
+		
+		// Restore (close) trim parts created during a zoom
+        persp.restoreZoomedParts();
+        
+        if (zoomedPartCache instanceof PartStack) {
+        	((PartStack)zoomedPartCache).setPresentationState(IStackPresentationSite.STATE_RESTORED);
+        }
         // Remember that we need to trigger a layout
         layoutDirty = true;
     }
@@ -1024,6 +1025,15 @@ public abstract class PartSashContainer extends LayoutPart implements
      * Note: Method assumes we are active.
      */
     private void zoomOut() {
+        // 'Smart'? Zoom out
+		Perspective persp = this.getPage().getActivePerspective();
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
+    		smartZoomOut(persp);
+    		return;
+    	}
+    	
         // Sanity check.
         if (!isZoomed()) {
 			return;

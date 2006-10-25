@@ -182,10 +182,8 @@ public class FastViewBar implements IWindowTrim {
                 ViewPane pane = (ViewPane) iter.next();
                 IViewReference ref = pane.getViewReference();
                 
-                // Only allow one reference in an FVB per perspective
-                FastViewBar curFVB = getPage().getActivePerspective().getFVBForRef(ref);
-                if (curFVB == null && window.getFastViewBar().hasViewRef(ref))
-                	curFVB = window.getFastViewBar();
+                // Drop only occurs on the global fast view bar
+                FastViewBar curFVB = window.getFastViewBar();
                 	
                 if (curFVB != null) {
                 	curFVB.removeViewRef(ref);
@@ -483,7 +481,7 @@ public class FastViewBar implements IWindowTrim {
 	        // Construct an item to act as a 'menu button' (a la the PerspectiveSwitcher)
 	        restoreItem = new  ToolItem(menuTB, SWT.PUSH, 0);
 	        
-	        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_FASTVIEW);
+	        Image tbImage = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART);
 	        restoreItem.setImage(tbImage);
 	        
 	        String menuTip = WorkbenchMessages.StandardSystemToolbar_Restore;
@@ -1160,8 +1158,8 @@ public class FastViewBar implements IWindowTrim {
 	 * Restore all refs and close the group
 	 */
 	public void closeGroup() {
-		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
-		persp.closeTrimGroup(this);
+//		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+//		persp.closeTrimGroup(this);
 	}
 
 	/**

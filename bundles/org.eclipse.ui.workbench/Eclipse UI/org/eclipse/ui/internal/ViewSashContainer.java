@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IStatus;
@@ -19,6 +22,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 
 /**
  * Represents the top level container.
@@ -197,9 +202,10 @@ public class ViewSashContainer extends PartSashContainer {
 				}
             }
 
-            // If this is a folder save the contents.
+            // If this is a folder (ViewStack) save the contents.
             if (folder != null) {
                 childMem.putString(IWorkbenchConstants.TAG_FOLDER, "true");//$NON-NLS-1$
+                
                 IMemento folderMem = childMem
                         .createChild(IWorkbenchConstants.TAG_FOLDER);
                 result.add(folder.saveState(folderMem));
@@ -304,4 +310,66 @@ public class ViewSashContainer extends PartSashContainer {
 
         super.replace(oldChild, newChild);
     }
+
+	// Trim Stack Support
+	
+	/**
+	 * Restore any parts that are in the trim due
+	 * to a zoom (maximize) operation
+	 */
+	public boolean restoreZoomedTrimParts() {
+		boolean needsLayout = false;
+    	LayoutPart[] children = getChildren();
+    	for (int i = 0; i < children.length; i++) {
+			if (children[i].getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM) {
+				// All parts in the trim must have placeholders
+				if (children[i] instanceof PartPlaceholder) {
+					// restore the part from the trim
+					PartPlaceholder ph = (PartPlaceholder) children[i];
+					ph.setTrimState(LayoutPart.TRIMSTATE_NORMAL);
+					needsLayout = true;
+				}
+			}
+    	}
+    	
+    	return needsLayout;
+	}
+
+	/**
+	 * @return A list containibg all trim representing a LayoutPart
+	 */
+	public List getTrimForParts() {
+		List trim = new ArrayList();
+
+		// If a part is in the trim then get the trim element using the part's
+		// id
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+		LayoutPart[] children = getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getTrimState() == LayoutPart.TRIMSTATE_IN_TRIM
+					|| children[i].getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM) {
+				IWindowTrim partTrim = tbm.getTrim(children[i].getID());
+				if (partTrim != null)
+					trim.add(partTrim);
+			}
+		}
+
+		return trim;
+	}
+	
+	/**
+	 * Show any trim representing parts of this layout
+	 * @param visible true to show the trim, false to hide it
+	 */
+	public void setTrimVisible(boolean visible) {
+		List partTrim = getTrimForParts();
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+		for (Iterator trimPartIter = partTrim.iterator(); trimPartIter
+				.hasNext();) {
+			IWindowTrim trimForPart = (IWindowTrim) trimPartIter.next();
+			tbm.setTrimVisible(trimForPart, visible);
+		}
+	}
 }

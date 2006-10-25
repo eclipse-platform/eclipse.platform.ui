@@ -53,10 +53,12 @@ public interface IWorkbenchGraphicConstants {
     
     //Fast view enabled and disabled icons
     public final static String IMG_ETOOL_NEW_FASTVIEW = "IMG_ETOOL_NEW_FASTVIEW"; //$NON-NLS-1$
-    public final static String IMG_ETOOL_RESTORE_FASTVIEW = "IMG_ETOOL_RESTORE_FASTVIEW"; //$NON-NLS-1$
-    
     public final static String IMG_DTOOL_NEW_FASTVIEW = "IMG_DTOOL_NEW_FASTVIEW"; //$NON-NLS-1$
 
+    // TrimStack buttons
+    public final static String IMG_ETOOL_RESTORE_TRIMPART = "IMG_ETOOL_RESTORE_TRIMPART"; //$NON-NLS-1$
+    public final static String IMG_ETOOL_EDITOR_TRIMPART = "IMG_ETOOL_EDITOR_TRIMPART"; //$NON-NLS-1$
+    
     // local toolbars
     
     public final static String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW"; //$NON-NLS-1$

@@ -24,8 +24,6 @@ import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dnd.IDragAndDropService;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.services.IDisposable;
 
 /**

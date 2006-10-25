@@ -567,7 +567,7 @@ public class WorkbenchMessages extends NLS {
 	public static String StandardSystemToolbar_Maximize;
 	public static String StandardSystemToolbar_Restore;
 
-	public static String ViewPane_moveToTrim;
+	public static String EditorArea_Tooltip;
 	public static String ViewPane_fastView;
 	public static String ViewPane_minimizeView;
 	public static String ViewPane_moveView;

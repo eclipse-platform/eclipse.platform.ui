@@ -908,6 +908,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         String activeTabID = memento
                 .getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
 
+        // Trim Stack Support
+    	Integer trimState = memento.getInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE);
+    	if (trimState != null && trimState.intValue() != LayoutPart.TRIMSTATE_NORMAL)
+    		setTrimState(trimState.intValue());
+        
         // Read the page elements.
         IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
         if (children != null) {
@@ -1011,6 +1016,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 			memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID, requestedCurrent
                     .getCompoundId());
 		}
+        
+        // Trim Stack Support
+        if (getTrimState() != LayoutPart.TRIMSTATE_NORMAL)
+        	memento.putInteger(IWorkbenchConstants.TAG_PART_TRIMSTATE, getTrimState());
 
         Iterator iter = children.iterator();
         while (iter.hasNext()) {
@@ -1171,7 +1180,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     		// Make a one element list to pass on
     		List stacks = new ArrayList();
     		stacks.add(this);
-    		persp.moveToTrim(stacks, FastViewBar.GROUP_FVB);
+    		persp.movePartsToTrim(stacks, false);
     		return;
     	}
     	
@@ -1484,5 +1493,18 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyListener) listeners[i]).propertyChanged(this, id);
         }
+    }
+    
+    // TrimStack Support
+    
+    /**
+     * Explicitly sets the presentation state. This is used by the
+     * new min/max code to force the CTabFolder to show the proper
+     * state without going through the 'setState' code (which causes
+     * nasty side-effects.
+     * @param newState The state to set the presentation to
+     */
+    public void setPresentationState(int newState) {
+    	presentationSite.setPresentationState(newState);
     }
 }

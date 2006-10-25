@@ -118,6 +118,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
 
+    public static final String TAG_PART_TRIMSTATE = "inTrim"; //$NON-NLS-1$
+
     public static final String TAG_RELATIVE = "relative"; //$NON-NLS-1$
 
     public static final String TAG_RELATIONSHIP = "relationship"; //$NON-NLS-1$

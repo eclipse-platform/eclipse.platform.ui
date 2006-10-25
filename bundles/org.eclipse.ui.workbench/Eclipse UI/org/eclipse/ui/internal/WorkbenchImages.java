@@ -225,11 +225,14 @@ public/*final*/class WorkbenchImages {
 
         declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_NEW_FASTVIEW,
                 PATH_ETOOL + "new_fastview.gif", true); //$NON-NLS-1$
-        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_FASTVIEW,
-                PATH_ETOOL + "fastview_restore.gif", true); //$NON-NLS-1$
         declareImage(IWorkbenchGraphicConstants.IMG_DTOOL_NEW_FASTVIEW,
                 PATH_DTOOL + "new_fastview.gif", true); //$NON-NLS-1$
 
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_RESTORE_TRIMPART,
+                PATH_ETOOL + "fastview_restore.gif", true); //$NON-NLS-1$
+        declareImage(IWorkbenchGraphicConstants.IMG_ETOOL_EDITOR_TRIMPART,
+                PATH_ETOOL + "editor_area.gif", true); //$NON-NLS-1$
+        
         declareImage(ISharedImages.IMG_TOOL_FORWARD, PATH_ELOCALTOOL
                 + "forward_nav.gif", true); //$NON-NLS-1$
         declareImage(ISharedImages.IMG_TOOL_FORWARD_HOVER, PATH_ELOCALTOOL
