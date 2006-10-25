@@ -73,29 +73,31 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 * @throws CoreException
 	 */
 	public void commit(IProgressMonitor monitor) throws CoreException {
-		if (fDirty) {
-
-			IResource resource = getResource();
-			if (resource instanceof IFile) {
-				ByteArrayInputStream is = new ByteArrayInputStream(getContent());
-				try {
-					IFile file = (IFile) resource;
-					if (file.exists())
-						file.setContents(is, false, true, monitor);
-					else
-						file.create(is, false, monitor);
-					fDirty = false;
-				} finally {
-					fireContentChanged();
-					if (is != null)
-						try {
-							is.close();
-						} catch (IOException ex) {
-						}
+		if (isDirty()) {
+			if (isConnected()) {
+				saveDocument(true, monitor);
+			} else {
+				IResource resource = getResource();
+				if (resource instanceof IFile) {
+					ByteArrayInputStream is = new ByteArrayInputStream(getContent());
+					try {
+						IFile file = (IFile) resource;
+						if (file.exists())
+							file.setContents(is, false, true, monitor);
+						else
+							file.create(is, false, monitor);
+						fDirty = false;
+					} finally {
+						fireContentChanged();
+						if (is != null)
+							try {
+								is.close();
+							} catch (IOException ex) {
+							}
+					}
 				}
+				updateTimestamp();
 			}
-			
-			updateTimestamp();
 		}
 	}
 	

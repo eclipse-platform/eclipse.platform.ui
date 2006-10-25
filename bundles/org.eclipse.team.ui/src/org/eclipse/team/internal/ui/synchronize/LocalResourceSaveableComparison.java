@@ -94,17 +94,6 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 		if (checkForUpdateConflicts()) {
 			return;
 		}
-		ITypedElement left = input.getLeft();
-		if (left instanceof LocalResourceTypedElement) {
-			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
-			if (te.isConnected()) {
-				te.saveDocument(true, monitor);
-				// Saving the document should update the dirty state
-				// but we still need to fire an input change
-				fireInputChange();
-				return;
-			}
-		}
 		try {
 			isSaving = true;
 			monitor.beginTask(null, 100);
@@ -113,6 +102,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			flushViewers(Policy.subMonitorFor(monitor, 40));
 			// Then we tell the input to commit its changes
 			// Only the left is ever saveable
+			ITypedElement left = input.getLeft();
 			if (left instanceof LocalResourceTypedElement) {
 				LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 				te.commit(Policy.subMonitorFor(monitor, 60));
