@@ -241,8 +241,10 @@ public class JobManager implements IJobManager {
 		}
 		//call monitor outside sync block
 		if (monitor != null) {
-			if (!monitor.isCanceled())
+			if (!monitor.isCanceled()) {
 				monitor.setCanceled(true);
+				job.canceling();
+			}
 			return false;
 		}
 		//only notify listeners if the job was waiting or sleeping

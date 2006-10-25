@@ -373,6 +373,34 @@ public class JobTest extends TestCase {
 		assertEquals("1.2", 0, runningCount[0]);
 	}
 	
+	/**
+	 * Tests the hook method {@link Job#canceling}.
+	 */
+	public void testCanceling() {
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		final boolean[] canceling = new boolean[] {false};
+		Job job = new Job("Testing#testCanceling") {
+			protected IStatus run(IProgressMonitor monitor) {
+				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+				return Status.OK_STATUS;
+			}
+			protected void canceling() {
+				canceling[0] = true;
+			}
+		};
+		//schedule the job and wait on the barrier until it is running
+		job.schedule();
+		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
+		assertTrue("1.0", !canceling[0]);
+		job.cancel();
+		assertTrue("1.0", canceling[0]);
+		//let the job finish
+		barrier.setStatus(TestBarrier.STATUS_RUNNING);
+		waitForState(job, Job.NONE);
+	}
+	
 	public void testGetName() {
 		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
 		assertTrue("1.1", longJob.getName().equals("Long Test Job"));

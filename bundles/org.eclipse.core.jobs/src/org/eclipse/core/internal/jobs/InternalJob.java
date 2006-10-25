@@ -130,6 +130,13 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected boolean cancel() {
 		return manager.cancel(this);
 	}
+	
+	/* (non-Javadoc)
+	 * @see Job#canceling()
+	 */
+	protected void canceling() {
+		//default implementation does nothing
+	}
 
 	/* (on-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)

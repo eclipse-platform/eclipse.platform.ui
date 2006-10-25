@@ -193,6 +193,18 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	public final boolean cancel() {
 		return super.cancel();
 	}
+	
+	/**
+	 * A hook method indicating that this job is running and {@link #cancel()}
+	 * is being called for the first time.
+	 * <p>
+	 * Subclasses may override this method to perform additional work when
+	 * a cancelation request is made.  This default implementation does nothing
+	 * @since 3.3
+	 */
+	protected void canceling() {
+		//default implementation does nothing
+	}
 
 	/**
 	 * Jobs that complete their execution asynchronously must indicate when they
