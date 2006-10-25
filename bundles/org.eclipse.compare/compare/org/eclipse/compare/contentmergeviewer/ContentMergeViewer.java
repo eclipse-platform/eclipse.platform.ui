@@ -696,6 +696,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 			if (fAncestorVisible && oldFlag != fIsThreeWay)
 				fComposite.layout(true);
 			
+									
+			Object left= content.getLeftContent(input);
+			Object right= content.getRightContent(input);
+			updateContent(ancestor, left, right);
+			
+			updateHeader();
 			ToolBarManager tbm= CompareViewerPane.getToolBarManager(fComposite.getParent());
 			if (tbm != null ) {
 				updateToolItems();
@@ -703,11 +709,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 				tbm.getControl().getParent().layout(true);
 			}
 			
-			updateHeader();
-									
-			Object left= content.getLeftContent(input);
-			Object right= content.getRightContent(input);
-			updateContent(ancestor, left, right);
 		}
 	}
 	
@@ -1063,7 +1064,8 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void setLeftDirty(boolean dirty) {
 		if (isLeftDirty() != dirty) {
 			fLeftSaveAction.setEnabled(dirty);
-			if (dirty == isRightDirty())
+			// Only fire the event if the combined dirty state has changed
+			if ((!isRightDirty() && !isLeftDirty()) || (!isRightDirty() && isLeftDirty()))
 				fireDirtyState(dirty);
 		}
 	}
@@ -1080,7 +1082,9 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void setRightDirty(boolean dirty) {
 		if (isRightDirty() != dirty) {
 			fRightSaveAction.setEnabled(dirty);
-			fireDirtyState(dirty);
+			// Only fire the event if the combined dirty state has changed
+			if ((!isRightDirty() && !isLeftDirty()) || (isRightDirty() && !isLeftDirty()))
+				fireDirtyState(dirty);
 		}
 	}
 	

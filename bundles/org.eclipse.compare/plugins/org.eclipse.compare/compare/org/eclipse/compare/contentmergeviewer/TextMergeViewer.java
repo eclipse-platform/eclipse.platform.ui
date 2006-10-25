@@ -2226,18 +2226,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		fAncestorContributor.setDocument(fAncestor);
 		
-		updateHeader();
-		updateToolItems();
-		
-		if (!fHasErrors && getCompareConfiguration().getCalculateDiffs())
-			doDiff();
-
 		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
 		fLeft.setEditable(cc.isLeftEditable() && cp.isLeftEditable(input));
 		
-		invalidateLines();
-		updateVScrollBar();
-		refreshBirdsEyeView();
+		update(false);
 		
 		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && getCompareConfiguration().getCalculateDiffs()) {
 			if (isRefreshing()) {
@@ -3499,6 +3491,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			
 			update(true);
+			selectFirstDiff(true);
 			
 //		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
 //			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
@@ -3546,6 +3539,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			
 			if (key.equals(ICompareUIConstants.PROP_IGNORE_ANCESTOR)) {
 				update(false);
+				selectFirstDiff(true);
 			}
 		}
 	}
@@ -4394,6 +4388,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			setLeftDirty(true);
 		}
 		update(false);
+		selectFirstDiff(true);
 	}
 
 	private void copyDiffLeftToRight() {
@@ -4840,15 +4835,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fCurrentDiff= null;
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
-				
-		doDiff();
+		
+		if (!fHasErrors && getCompareConfiguration().getCalculateDiffs())
+			doDiff();
 		
 		if (includeControls)
 			updateControls();
 		invalidateLines();
 		updateVScrollBar();
 		refreshBirdsEyeView();
-		
-		selectFirstDiff(true);
 	}
 }
