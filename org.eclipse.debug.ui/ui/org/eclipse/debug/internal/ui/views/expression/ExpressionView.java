@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -31,7 +32,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPart;
  
 /**
  * Displays expressions and their values with a detail
@@ -86,12 +86,14 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		if (!isVisible()) {
-			return;
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			if (!isVisible()) {
+				return;
+			}
+			// update actions
+			updateAction("ContentAssist"); //$NON-NLS-1$
 		}
-		// update actions
-		updateAction("ContentAssist"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

@@ -19,10 +19,10 @@ import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
 import org.eclipse.debug.internal.ui.commands.provisional.ITerminateCommand;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Action which terminates a launch and then re-launches it.
@@ -59,7 +59,8 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		return ITerminateCommand.class;
 	}
 
-	public void contextActivated(ISelection context, IWorkbenchPart part) {
+	public void debugContextChanged(DebugContextEvent event) {
+		ISelection context = event.getContext();
 		if (context instanceof IStructuredSelection) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
 			for (int i = 0; i < elements.length; i++) {
@@ -69,7 +70,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 				}
 			} 
 		}
-		super.contextActivated(context, part);
+		super.debugContextChanged(event);
 	}
 
     protected boolean canRelaunch(Object element) {

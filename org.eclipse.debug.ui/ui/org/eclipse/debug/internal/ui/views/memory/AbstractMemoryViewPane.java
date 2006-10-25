@@ -18,9 +18,8 @@ import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -126,14 +125,14 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 	{
 		MemoryViewUtil.getMemoryBlockManager().addListener(this);
 		fParent.getViewSite().getPage().addSelectionListener(this);
-		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(this);
 	}
 	
 	protected void removeListeners()
 	{
 		MemoryViewUtil.getMemoryBlockManager().removeListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this);
-		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		
 		if (fStackLayout.topControl != null)
 		{

@@ -19,8 +19,9 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -132,16 +133,17 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 	private class DebugContextListener implements IDebugContextListener
 	{
 
-		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		private void contextActivated(ISelection selection) {
 			setupActionDelegate(selection);
 			updateAction(fAction, fCurrentSelection);
 			
 		}
 
-		public void contextChanged(ISelection selection, IWorkbenchPart part) {
-			setupActionDelegate(selection);
-			updateAction(fAction, fCurrentSelection);
+		public void debugContextChanged(DebugContextEvent event) {
+			contextActivated(event.getContext());
 		}
+
+		
 	}
 	
 	private void setupActionDelegate(ISelection context)
@@ -322,12 +324,12 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				
 			if (fWindow != null)
 			{
-				DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(fDebugContextListener);
+				DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(fDebugContextListener);
 			}
 			
 			if (window != null)
 			{
-				DebugContextManager.getDefault().getContextService(window).addDebugContextListener(fDebugContextListener);
+				DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(fDebugContextListener);
 			}
 			fWindow = window;
 		}
@@ -336,7 +338,7 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			fPart = part;
 		
 		if (fWindow != null)
-			setupActionDelegate(DebugContextManager.getDefault().getContextService(fWindow).getActiveContext());
+			setupActionDelegate(DebugUITools.getDebugContextManager().getContextService(fWindow).getActiveContext());
 	}
 
 }

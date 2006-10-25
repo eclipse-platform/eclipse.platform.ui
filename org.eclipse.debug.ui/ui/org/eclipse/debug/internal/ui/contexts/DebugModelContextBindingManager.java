@@ -33,10 +33,11 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
@@ -119,7 +120,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		loadDebugModelContextBindings();
 		loadDebugModelActivityExtensions();
 		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
-		DebugContextManager.getDefault().addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().addDebugContextListener(this);
 		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench().getActivitySupport();
 		activitySupport.getActivityManager().addActivityManagerListener(this);
 	}
@@ -172,15 +173,15 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		}
 	}	
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection) selection;
-			Iterator iterator = ss.iterator();
-			while (iterator.hasNext()) {
-				activated(iterator.next()); 
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			ISelection selection = event.getContext();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Iterator iterator = ss.iterator();
+				while (iterator.hasNext()) {
+					activated(iterator.next()); 
+				}
 			}
 		}
 	}
@@ -275,12 +276,6 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			fLanuchToContextActivations.put(launch, activations);
 		}
 		activations.add(activation);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
 	}
 
 	/**

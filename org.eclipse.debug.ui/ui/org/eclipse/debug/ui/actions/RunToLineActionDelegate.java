@@ -18,11 +18,11 @@ import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextManager;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -55,15 +55,12 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	private IWorkbenchPart fActivePart = null;
 	private IRunToLineTarget fPartTarget = null;
 	private IAction fAction = null;
-	private IDebugContextListener fContextListener = new DebugContextListener();
+	private DebugContextListener fContextListener = new DebugContextListener();
 	private ISuspendResume fTargetElement = null;
 	
 	class DebugContextListener implements IDebugContextListener {
 
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		protected void contextActivated(ISelection selection) {
 			fTargetElement = null;
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
@@ -76,12 +73,9 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 			}
 			update();
 		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-		 */
-		public void contextChanged(ISelection selection, IWorkbenchPart part) {
-			contextActivated(selection, part);
+
+		public void debugContextChanged(DebugContextEvent event) {
+			contextActivated(event.getContext());
 		}
 		
 	}		
@@ -90,7 +84,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
 	public void dispose() {
-		DebugContextManager.getDefault().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		fActivePart = null;
 		fPartTarget = null;
 		
@@ -179,7 +173,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 	 * @param part
 	 */
 	private void bindTo(IWorkbenchPart part) {
-		IDebugContextManager manager = DebugContextManager.getDefault();
+		IDebugContextManager manager = DebugUITools.getDebugContextManager();
 		if (fActivePart != null && !fActivePart.equals(part)) {
 			manager.getContextService(fActivePart.getSite().getWorkbenchWindow()).removeDebugContextListener(fContextListener);
 		}
@@ -198,7 +192,7 @@ public class RunToLineActionDelegate implements IEditorActionDelegate, IActionDe
 				}
 			}
 			ISelection activeContext = service.getActiveContext();
-			fContextListener.contextActivated(activeContext, part);
+			fContextListener.contextActivated(activeContext);
 		}
 		update();			
 	}

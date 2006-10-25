@@ -76,6 +76,14 @@
 	<type name="IConsoleLineTracker" />
 	<type name="IConsoleLineTrackerExtension" />
  </package>
+ <package name="org.eclipse.debug.ui.contexts">
+	<type name="AbstractDebugContextProvider" instantiate="false" subclass="true"/>
+	<type name="DebugContextEvent" instantiate="true" subclass="false"/>
+	<type name="IDebugContextListener"/>
+	<type name="IDebugContextManager" implement="false"/>
+	<type name="IDebugContextProvider" />
+	<type name="IDebugContextService" implement="false"/>
+ </package>
  <package name="org.eclipse.debug.ui.memory">
 	<type name="AbstractMemoryRendering" />
 	<type name="AbstractMemoryRenderingBindingsProvider" />

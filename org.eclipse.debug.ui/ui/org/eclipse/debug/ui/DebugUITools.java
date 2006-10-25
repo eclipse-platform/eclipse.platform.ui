@@ -44,6 +44,7 @@ import org.eclipse.debug.internal.ui.memory.MemoryRenderingManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIUtils;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
+import org.eclipse.debug.ui.contexts.IDebugContextManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
@@ -192,7 +193,7 @@ public class DebugUITools {
 	public static IAdaptable getDebugContext() {
 	    IWorkbenchWindow activeWindow = SelectedResourceManager.getDefault().getActiveWindow();
 	    if (activeWindow != null) {
-	    	ISelection activeContext = DebugContextManager.getDefault().getContextService(activeWindow).getActiveContext();
+	    	ISelection activeContext = DebugUITools.getDebugContextManager().getContextService(activeWindow).getActiveContext();
 	    	if (activeContext instanceof IStructuredSelection) {
 	    		IStructuredSelection selection = (IStructuredSelection) activeContext;
 	    		if (!selection.isEmpty()) {
@@ -799,5 +800,21 @@ public class DebugUITools {
 	 */
 	public static Color getPreferenceColor(String id) {
 		return DebugUIPlugin.getPreferenceColor(id);
+	}
+	
+	/**
+	 * Returns the debug context manager.
+	 * 
+	 * @return debug context manager
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public static IDebugContextManager getDebugContextManager() {
+		return DebugContextManager.getDefault();
 	}
 }

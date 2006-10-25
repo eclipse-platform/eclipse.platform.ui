@@ -15,9 +15,9 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ui.IWorkbenchPart;
 
 public class ToggleStepFiltersAction extends DebugCommandAction {
 	
@@ -65,14 +65,12 @@ public class ToggleStepFiltersAction extends DebugCommandAction {
     	return AS_CHECK_BOX;
     }
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart, org.eclipse.debug.internal.ui.contexts.IDebugContextService)
-	 */
-	public void contextActivated(ISelection context, IWorkbenchPart part) {
+	public void debugContextChanged(DebugContextEvent event) {
+		ISelection context = event.getContext();
 		if (context.isEmpty()) {
 			setEnabled(true);
 		} else {
-			super.contextActivated(context, part);
+			super.debugContextChanged(event);
 		}
 	}
     

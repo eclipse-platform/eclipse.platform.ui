@@ -30,6 +30,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CreateRendering;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -1193,7 +1194,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		return fIsDisposed;
 	}
 
-	public void contextActivated(final ISelection selection, IWorkbenchPart part) {
+	public void contextActivated(final ISelection selection) {
 		
 		UIJob job = new UIJob("contextActivated"){ //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) 
@@ -1230,9 +1231,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		job.schedule();
 	}
 
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
-	}
-
 	/**
 	 * @param memory
 	 */
@@ -1255,5 +1253,15 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 		}
 		
 		return folder;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
+	 */
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			contextActivated(event.getContext());
+		}
+		
 	}
 }

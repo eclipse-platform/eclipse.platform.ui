@@ -36,19 +36,17 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 
 
 /**
@@ -104,7 +102,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_MONITOR_EXPRESSION));
 		
 		// listen for context changed
-		DebugContextManager.getDefault().getContextService(site.getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(site.getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		
 		// get current context
 		fCurrentContext = DebugUITools.getDebugContext();
@@ -338,7 +336,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		
 		// remove listeners
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		DebugContextManager.getDefault().getContextService(fSite.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(fSite.getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 	}
 	
 	private void addDefaultRenderings(IMemoryBlock memoryBlock)
@@ -408,12 +406,14 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 		job.schedule();
 	}
 
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		IAdaptable context = DebugUITools.getDebugContext();
-		updateAction(context);
-		fCurrentContext = context;
-	}
-
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {		
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
+	 */
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			IAdaptable context = DebugUITools.getDebugContext();
+			updateAction(context);
+			fCurrentContext = context;			
+		}
 	}
 }

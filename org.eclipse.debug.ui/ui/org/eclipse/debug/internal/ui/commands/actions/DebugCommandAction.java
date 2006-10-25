@@ -15,11 +15,11 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -109,15 +109,15 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      */
     abstract protected Class getCommandType();
     
-    public void contextActivated(ISelection context, IWorkbenchPart part) {
+    public void update(ISelection context) {
     	fUpdateService.postUpdateCommand(getCommandType(), new CommandMonitor(this));
-    }
+    }    
 
-    public void contextChanged(ISelection context, IWorkbenchPart part) {
-        contextActivated(context, part);
-    }
+    public void debugContextChanged(DebugContextEvent event) {
+		update(event.getContext());
+	}
 
-    /*
+	/*
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#setEnabled(boolean)
      */
@@ -137,7 +137,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         fPart = part;
         fWindow = part.getSite().getWorkbenchWindow();
         fUpdateService = DebugCommandService.getService(fWindow);
-        IDebugContextService service = DebugContextManager.getDefault().getContextService(fWindow);
+        IDebugContextService service = getDebugContextService();
 		String partId = part.getSite().getId();
 		service.addDebugContextListener(this, partId);
         ISelection activeContext = service.getActiveContext(partId);
@@ -155,8 +155,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     public void init(IWorkbenchWindow window) {
         fWindow = window;
         fUpdateService = DebugCommandService.getService(fWindow);
-        IDebugContextManager manager = DebugContextManager.getDefault();
-        IDebugContextService contextService = manager.getContextService(window);
+        IDebugContextService contextService = getDebugContextService();
 		contextService.addDebugContextListener(this);
         ISelection activeContext = contextService.getActiveContext();
         if (activeContext != null) {
@@ -182,11 +181,10 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @return structured selection
      */
     protected ISelection getContext() {
-    	IDebugContextService contextService = DebugContextManager.getDefault().getContextService(fWindow);
 		if (fPart != null) {
-    		contextService.getActiveContext(fPart.getSite().getId());
+			getDebugContextService().getActiveContext(fPart.getSite().getId());
     	}
-        return contextService.getActiveContext();
+        return getDebugContextService().getActiveContext();
     }
 
     /*
@@ -219,15 +217,22 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * Clean up when removing
      */
     public void dispose() {
-        IDebugContextManager manager = DebugContextManager.getDefault();
-        IDebugContextService service = manager.getContextService(fWindow);
+        IDebugContextService service = getDebugContextService();
         if (fPart != null) {
         	service.removeDebugContextListener(this, fPart.getSite().getId());
         } else {
-            manager.removeDebugContextListener(this);
+            service.removeDebugContextListener(this);
         }
         fWindow = null;
         fPart = null;
+    }
+    
+    /**
+     * Returns the context service this action linked to.
+     * @return
+     */
+    protected IDebugContextService getDebugContextService() {
+    	return DebugUITools.getDebugContextManager().getContextService(fWindow);
     }
 
     /**

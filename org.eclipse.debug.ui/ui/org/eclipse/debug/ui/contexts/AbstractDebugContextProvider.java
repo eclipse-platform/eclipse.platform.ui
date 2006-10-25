@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts.provisional;
+package org.eclipse.debug.ui.contexts;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
@@ -22,6 +22,12 @@ import org.eclipse.ui.IWorkbenchPart;
  * Clients implementing context providers should subclass this class.
  * </p>
  * @since 3.3
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This class has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * remain unchanged during the 3.3 release cycle. Please do not use this API
+ * without consulting with the Platform/Debug team.
+ * </p>
  */
 public abstract class AbstractDebugContextProvider implements IDebugContextProvider {
 	
@@ -47,7 +53,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#addDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
 	 */
-	public void addDebugContextEventListener(IDebugContextEventListener listener) {
+	public void addDebugContextListener(IDebugContextListener listener) {
 		fListeners.add(listener);
 	}
 
@@ -61,7 +67,7 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider#removeDebugContextEventListener(org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextEventListener)
 	 */
-	public void removeDebugContextEventListener(IDebugContextEventListener listener) {
+	public void removeDebugContextListener(IDebugContextListener listener) {
 		fListeners.remove(listener);
 	}
 
@@ -73,10 +79,10 @@ public abstract class AbstractDebugContextProvider implements IDebugContextProvi
 	protected void fire(final DebugContextEvent event) {
 		Object[] listeners = fListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
-			final IDebugContextEventListener listener = (IDebugContextEventListener) listeners[i];
+			final IDebugContextListener listener = (IDebugContextListener) listeners[i];
             SafeRunner.run(new ISafeRunnable() {
 				public void run() throws Exception {
-					listener.contextEvent(event);
+					listener.debugContextChanged(event);
 				}
 				public void handleException(Throwable exception) {
 					DebugUIPlugin.log(exception);

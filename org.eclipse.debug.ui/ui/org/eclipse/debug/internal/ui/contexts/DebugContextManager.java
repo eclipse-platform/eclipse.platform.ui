@@ -15,13 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextProvider;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextManager;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -80,16 +78,6 @@ public class DebugContextManager implements IDebugContextManager {
 		}
 		return fgDefault;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#addDebugContextProvider(org.eclipse.debug.ui.contexts.IDebugContextProvider)
-	 */
-	public void addDebugContextProvider(IDebugContextProvider provider) {
-		IWorkbenchPart part = provider.getPart();
-		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
-		DebugWindowContextService service = createService(window);
-		service.addProvider(provider);
-	}
 	
 	protected DebugWindowContextService createService(IWorkbenchWindow window) {
 		DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
@@ -109,18 +97,6 @@ public class DebugContextManager implements IDebugContextManager {
 	protected IDebugContextService getService(IWorkbenchWindow window) {
 		return (DebugWindowContextService) fServices.get(window);
 	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextManager#removeDebugContextProvider(org.eclipse.debug.ui.contexts.IDebugContextProvider)
-	 */
-	public void removeDebugContextProvider(IDebugContextProvider provider) {
-		IWorkbenchPart part = provider.getPart();
-		IWorkbenchWindow window = part.getSite().getWorkbenchWindow();
-		DebugWindowContextService service = (DebugWindowContextService) fServices.get(window);
-		if (service != null) {
-			service.removeProvider(provider);
-		}
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextManager#addDebugContextListener(org.eclipse.debug.internal.ui.contexts.IDebugContextListener)

@@ -18,13 +18,13 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
 import org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWindowListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -72,7 +72,7 @@ public class DebugCommandService implements IDebugContextListener {
 	
 	public DebugCommandService(IWorkbenchWindow window) {
 		fWindow = window;
-		fContextService = DebugContextManager.getDefault().getContextService(window);
+		fContextService = DebugUITools.getDebugContextManager().getContextService(window);
 		fContextService.addPostDebugContextListener(this);
 		PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
 		
@@ -189,17 +189,9 @@ public class DebugCommandService implements IDebugContextListener {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart, org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService)
-	 */
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
-		postUpdate(selection);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart, org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextService)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
-		postUpdate(selection);
+	public void debugContextChanged(DebugContextEvent event) {
+		postUpdate(event.getContext());
 	}	
+	
+	
 }

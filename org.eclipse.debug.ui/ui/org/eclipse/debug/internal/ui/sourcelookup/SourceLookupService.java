@@ -11,9 +11,10 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -31,27 +32,19 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	
 	public SourceLookupService(IWorkbenchWindow window) {
 		fWindow = window;
-		DebugContextManager.getDefault().getContextService(window).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(window).addDebugContextListener(this);
 	}
 	
 	public void dispose() {
-		DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(fWindow).removeDebugContextListener(this);
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextActivated(java.lang.Object, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public synchronized void contextActivated(ISelection selection, IWorkbenchPart part) {
-		displaySource(selection, part, false);
+	public synchronized void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
+		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {	
-	}
-	
+		
 	/**
 	 * Displays source for the given selection and part, optionally forcing
 	 * a source lookup.

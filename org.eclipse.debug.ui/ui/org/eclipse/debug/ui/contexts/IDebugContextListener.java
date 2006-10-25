@@ -8,16 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts.provisional;
+package org.eclipse.debug.ui.contexts;
 
-import org.eclipse.debug.core.ILaunch;
 
 /**
- * Listeners are notified when a launch has suspended at a context
- * where debugging should being. For example, at a breakpoint.
+ * A debug context listener is notified of debug context events.
  * <p>
  * Clients may implement this interface.
  * </p>
+ * @see DebugContextEvent
+ * @see IDebugContextManager
+ * @see IDebugContextService
+ * @see IDebugContextProvider
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as
@@ -26,15 +28,13 @@ import org.eclipse.debug.core.ILaunch;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface ISuspendTriggerListener {
+public interface IDebugContextListener {
 	
 	/**
-	 * Notification the given launch has suspended at the
-	 * specified context.
+	 * Notification the debug context has changed as specified by the given event.
 	 * 
-	 * @param launch
-	 * @param context
+	 * @param event debug context event
 	 */
-	public void suspended(ILaunch launch, Object context);
+	public void debugContextChanged(DebugContextEvent event);
 
 }

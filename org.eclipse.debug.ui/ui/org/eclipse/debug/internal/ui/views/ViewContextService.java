@@ -36,11 +36,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
 import org.eclipse.debug.internal.ui.contexts.DebugModelContextBindingManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IPerspectiveDescriptor;
@@ -48,7 +49,6 @@ import org.eclipse.ui.IPerspectiveListener4;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -569,6 +569,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
             }       
         }
     }
+    
+    private IDebugContextService getDebugContextService() {
+    	return DebugUITools.getDebugContextManager().getContextService(fWindow);
+    }
 	
 	/**
 	 * Creates a service for the given window
@@ -582,14 +586,14 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
         applyUserViewBindings();
 		loadPerspectives();
 		window.addPerspectiveListener(this);
-		DebugContextManager.getDefault().getContextService(window).addDebugContextListener(this);
+		getDebugContextService().addDebugContextListener(this);
 		DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
 		fContextService.addContextManagerListener(this);
 	}
 	
 	public void dispose() {
 		fWindow.removePerspectiveListener(this);
-		DebugContextManager.getDefault().getContextService(fWindow).removeDebugContextListener(this);
+		getDebugContextService().removeDebugContextListener(this);
 		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 		fContextService.removeContextManagerListener(this);
 	}
@@ -670,8 +674,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
                 applyUserViewBindings();
                 // clear activations to re-enable activation based on new settings
                 fPerspectiveToActivatedContexts.clear();
-                ISelection selection = DebugContextManager.getDefault().getContextService(fWindow).getActiveContext();
-                contextActivated(selection, null);
+                ISelection selection = getDebugContextService().getActiveContext();
+                contextActivated(selection);
             }
         }
 	}	
@@ -715,12 +719,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			list.add(token);
 		}
 		return list;
-	}	
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextListener#contextActivated(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
+	}
+	
+	public void contextActivated(ISelection selection) {
 		if (isEnabledPerspective()) {
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
@@ -820,10 +821,10 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			contextActivated(event.getContext());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -890,9 +891,9 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	 */
 	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		if (page.getWorkbenchWindow().equals(fWindow)) {
-			ISelection activeContext = DebugContextManager.getDefault().getContextService(fWindow).getActiveContext();
+			ISelection activeContext = getDebugContextService().getActiveContext();
 			if (activeContext != null) {
-				contextActivated(activeContext, null);
+				contextActivated(activeContext);
 			}
 		}
 	}

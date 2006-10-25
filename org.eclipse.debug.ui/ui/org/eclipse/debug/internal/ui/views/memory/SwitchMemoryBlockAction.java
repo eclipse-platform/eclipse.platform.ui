@@ -23,10 +23,10 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -42,7 +42,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 public class SwitchMemoryBlockAction extends Action implements IViewActionDelegate, IActionDelegate2 {
@@ -63,13 +62,11 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	
 	private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
 
-		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		public void debugContextChanged(DebugContextEvent event) {
 			updateActionEnablement();
 		}
-
-		public void contextChanged(ISelection selection, IWorkbenchPart part) {
-			updateActionEnablement();
-		}};
+		
+	};
 	
 	/**
 	 * Switch tab folder for fMemoryBlock to the top in Memory Rendering View
@@ -219,7 +216,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	
 	public void init(IViewPart view) {
 		fView = view;
-		DebugContextManager.getDefault().getContextService(fView.getViewSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fView.getViewSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fListener);
 		updateActionEnablement();
 	}
@@ -347,7 +344,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	public void dispose() {
 		fAction = null;
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fListener);
-		DebugContextManager.getDefault().getContextService(fView.getViewSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fView.getViewSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
 		
 		if (fMenuCreator != null)
 			fMenuCreator.dispose();

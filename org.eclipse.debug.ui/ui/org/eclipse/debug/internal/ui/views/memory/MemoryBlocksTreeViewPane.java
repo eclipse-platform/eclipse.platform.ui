@@ -32,13 +32,13 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.views.variables.ViewerState;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -289,7 +289,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	
 	class TreeViewPaneContextListener implements IDebugContextListener
 	{
-		public void contextActivated(ISelection selection, IWorkbenchPart part) {
+		public void contextActivated(ISelection selection) {
 			
 			if (selection.isEmpty() && fRetrieval != null)
 			{
@@ -342,10 +342,15 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			}
 		}
 
-		public void contextChanged(ISelection selection, IWorkbenchPart part) {
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
+		 */
+		public void debugContextChanged(DebugContextEvent event) {
+			if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+				contextActivated(event.getContext());
+			}
 		}
 	}
-	
 	
 	public MemoryBlocksTreeViewPane(IViewPart parent)
 	{
@@ -372,7 +377,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getPage().addSelectionListener(this);
 		
 		fDebugContextListener = new TreeViewPaneContextListener();
-		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).addDebugContextListener(fDebugContextListener);
 		
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
@@ -482,7 +487,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fParent.getViewSite().getSelectionProvider().removeSelectionChangedListener(this);
 		fParent.getViewSite().getPage().removeSelectionListener(this); 
 		fAddMemoryBlockAction.dispose();
-		DebugContextManager.getDefault().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
+		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
 		fEvtHandler.dispose();
 	}
 

@@ -51,8 +51,6 @@ import org.eclipse.debug.internal.ui.actions.variables.AssignValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
-import org.eclipse.debug.internal.ui.contexts.DebugContextManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.PresentationContext;
@@ -60,10 +58,13 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IValueDetailListener;
+import org.eclipse.debug.ui.contexts.DebugContextEvent;
+import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -513,7 +514,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	public void dispose() {
 		getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
-		DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).removeDebugContextListener(this);
 		getSite().getWorkbenchWindow().removePerspectiveListener(this);
 		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		JFaceResources.getFontRegistry().removeListener(this);
@@ -822,7 +823,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
 
 		// listen to debug context
-		DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
+		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		return variablesViewer;
 	}
 	
@@ -1456,9 +1457,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextActivated(java.lang.Object, org.eclipse.ui.IWorkbenchPart)
+	 * @see org.eclipse.debug.internal.ui.contexts.provisional.IDebugContextListener#contextEvent(org.eclipse.debug.internal.ui.contexts.provisional.DebugContextEvent)
 	 */
-	public void contextActivated(ISelection selection, IWorkbenchPart part) {
+	public void debugContextChanged(DebugContextEvent event) {
+		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
+			contextActivated(event.getContext());
+		}
+	}
+
+	public void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
 			return;
 		}
@@ -1472,13 +1479,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		updateAction(FIND_ELEMENT);
 		updateAction(FIND_ACTION);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.contexts.IDebugContextListener#contextChanged(org.eclipse.jface.viewers.ISelection, org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void contextChanged(ISelection selection, IWorkbenchPart part) {		
-	}	
-	
+		
 	/**
 	 * Delegate to the <code>DOUBLE_CLICK_ACTION</code>,
 	 * if any.
@@ -1591,8 +1592,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected void becomesVisible() {
 		super.becomesVisible();
-		ISelection selection = DebugContextManager.getDefault().getContextService(getSite().getWorkbenchWindow()).getActiveContext();
-		contextActivated(selection, null);
+		ISelection selection = DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).getActiveContext();
+		contextActivated(selection);
 	}
 
 	/**
