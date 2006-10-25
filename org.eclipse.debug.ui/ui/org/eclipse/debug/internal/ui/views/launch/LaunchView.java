@@ -165,7 +165,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleContextChange(Object element, final int type) {
+		protected void possibleContextChange(Object element, int type) {
 			synchronized (this) {
 				if (fContext instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) fContext;
@@ -176,15 +176,21 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					return;
 				}
 			}
-			Job job = new UIJob("context change") { //$NON-NLS-1$
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					fire(new DebugContextEvent(ContextProvider.this, fContext, type));
-					return Status.OK_STATUS;
-				}
-			
-			}; 
-			job.setSystem(true);
-			job.schedule();
+			DebugContextEvent event = new DebugContextEvent(ContextProvider.this, fContext, type);
+			if (getControl().getDisplay().getThread() == Thread.currentThread()) {
+				fire(event);
+			} else {
+				final DebugContextEvent finalEvent = event;
+				Job job = new UIJob("context change") { //$NON-NLS-1$
+					public IStatus runInUIThread(IProgressMonitor monitor) {
+						fire(finalEvent);
+						return Status.OK_STATUS;
+					}
+				
+				}; 
+				job.setSystem(true);
+				job.schedule();
+			}
 		}
 		
 	}
