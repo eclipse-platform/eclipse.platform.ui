@@ -152,8 +152,10 @@ public final class DiffPainter {
 
 		// draw diff info
 		final int lastLine= end(visibleModelLines);
+		final int width= getWidth();
+		final Color deletionColor= getDeletionColor();
 		for (int line= visibleModelLines.getStartLine(); line < lastLine; line++) {
-			paintLine(line, gc);
+			paintLine(line, gc, width, deletionColor);
 		}
 	}
 
@@ -211,8 +213,10 @@ public final class DiffPainter {
 	 * 
 	 * @param line the model line to paint
 	 * @param gc the {@link GC} to paint onto
+	 * @param width the width of the column
+	 * @param deletionColor the background color used to indicate deletions
 	 */
-	private void paintLine(int line, GC gc) {
+	private void paintLine(int line, GC gc, int width, Color deletionColor) {
 		int widgetLine= JFaceTextUtil.modelLineToWidgetLine(fViewer, line);
 		if (widgetLine == -1)
 			return;
@@ -220,9 +224,6 @@ public final class DiffPainter {
 		ILineDiffInfo info= getDiffInfo(line);
 
 		if (info != null) {
-			// width of the column
-			int width= getWidth();
-
 			int y= fWidget.getLinePixel(widgetLine);
 			int lineHeight= fWidget.getLineHeight(fWidget.getOffsetAtLine(widgetLine));
 
@@ -236,16 +237,11 @@ public final class DiffPainter {
 			int delBefore= info.getRemovedLinesAbove();
 			int delBelow= info.getRemovedLinesBelow();
 			if (delBefore > 0 || delBelow > 0) {
-				Color deletionColor= getDeletionColor();
 				gc.setForeground(deletionColor);
-
-				if (delBefore > 0) {
+				if (delBefore > 0)
 					gc.drawLine(0, y, width, y);
-				}
-
-				if (delBelow > 0) {
+				if (delBelow > 0)
 					gc.drawLine(0, y + lineHeight - 1, width, y + lineHeight - 1);
-				}
 			}
 		}
 	}
