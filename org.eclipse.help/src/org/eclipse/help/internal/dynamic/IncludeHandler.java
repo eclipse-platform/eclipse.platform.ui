@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.eclipse.help.Node;
 
 /*
- * The handler responsible for processing includes, where an element is pulled
+ * The handler responsible for processing includes, where a node is pulled
  * in from another document.
  */
-public class IncludeHandler extends DOMProcessorHandler {
+public class IncludeHandler extends DocumentProcessorHandler {
 
 	private static final String ELEMENT_INCLUDE = "include"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
@@ -34,22 +33,22 @@ public class IncludeHandler extends DOMProcessorHandler {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.DOMProcessorHandler#handle(org.w3c.dom.Element, java.lang.String)
+	 * @see org.eclipse.help.internal.dynamic.DocumentProcessorHandler#handle(org.eclipse.help.Node, java.lang.String)
 	 */
-	public short handle(Element elem, String id) {
-		if (ELEMENT_INCLUDE.equals(elem.getNodeName())) {
-			String path = elem.getAttribute(ATTRIBUTE_PATH);
-			if (path.length() > 0) {
+	public short handle(Node node, String id) {
+		if (ELEMENT_INCLUDE.equals(node.getName())) {
+			String path = node.getAttribute(ATTRIBUTE_PATH);
+			if (path != null && path.length() > 0) {
 				String bundleId = getBundleId(path);
 				String relativePath = getRelativePath(path);
 				String elementId = getElementId(path);
 				if (bundleId != null && relativePath != null && elementId != null) {
-					resolveInclude(bundleId, relativePath, elementId, elem, locale);
+					resolveInclude(bundleId, relativePath, elementId, node, locale);
 				}
 			}
 			else {
 				// remove invalid includes
-				elem.getParentNode().removeChild(elem);
+				node.getParent().removeChild(node);
 			}
 			return HANDLED_SKIP;
 		}
@@ -57,23 +56,23 @@ public class IncludeHandler extends DOMProcessorHandler {
 	}
 	
 	/*
-	 * Processes the include; replaces the element with the one described by
+	 * Processes the include; replaces the node with the one described by
 	 * the parameters.
 	 */
-	private void resolveInclude(String bundleId, String relativePath, String elementId, Element elem, String locale) {
+	private void resolveInclude(String bundleId, String relativePath, String elementId, Node node, String locale) {
 		if (resolver == null) {
 			resolver = new IncludeResolver(getProcessor(), locale);
 		}
-		Node parent = elem.getParentNode();
+		Node parent = node.getParent();
 		if (parent != null) {
 			try {
-				Element elemToInclude = resolver.resolve(bundleId, relativePath, elementId);
-				Node importedNode = elem.getOwnerDocument().importNode(elemToInclude, true);
-				parent.replaceChild(importedNode, elem);
+				Node nodeToInclude = resolver.resolve(bundleId, relativePath, elementId);
+				parent.insertBefore(nodeToInclude, node);
+				parent.removeChild(node);
 			}
 			catch (Throwable t) {
 				// remove invalid includes
-				parent.removeChild(elem);
+				parent.removeChild(node);
 			}
 		}
 	}

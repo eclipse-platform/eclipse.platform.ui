@@ -59,12 +59,16 @@
 	</element>
 
 	
-	<h1>Heading</h1><p>
+	
+<h1>Heading</h1>
+<p>
 This is the body of /org.eclipse.ua.tests/data/help/dynamic/extension/doc.xhtml.
-</p><p>
+</p>
+<p>
 The body contains several elements, including these two paragraphs and the
 heading above.
 </p>
+
 	
 	
 	<element></element>

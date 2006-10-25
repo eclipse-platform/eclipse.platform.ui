@@ -16,8 +16,9 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.dynamic.DOMProcessor;
-import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
+import org.eclipse.help.internal.dynamic.DOMNode;
+import org.eclipse.help.internal.dynamic.DocumentProcessor;
+import org.eclipse.help.internal.dynamic.DocumentProcessorHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -75,7 +76,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     // content.
     private Document dom;
     
-    private DOMProcessor domProcessor;
+    private DocumentProcessor domProcessor;
 
     // set when the content file is loaded (ie: loadChildren is called)
     private boolean isXHTMLPage;
@@ -651,9 +652,10 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // filter the content
         if (domProcessor == null) {
-        	domProcessor = new DOMProcessor(new DOMProcessorHandler[] { new FilterHandler() });
+        	domProcessor = new DocumentProcessor(new DocumentProcessorHandler[] { new FilterHandler() });
         }
-        domProcessor.process(dom.getDocumentElement(), null);
+        DOMNode node = new DOMNode(dom);
+        domProcessor.process(node, null);
         
         // and resolve includes.
         resolveIncludes();

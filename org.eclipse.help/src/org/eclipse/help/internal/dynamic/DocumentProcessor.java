@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.eclipse.help.Node;
 
 /*
- * A DOM processor that traverses every element of a DOM and allows
- * handlers to perform operations on the elements.
+ * A document processor that traverses every node of a document and allows
+ * handlers to perform operations on the nodes.
  */
-public class DOMProcessor {
+public class DocumentProcessor {
 
-	private DOMProcessorHandler[] handlers;
+	private DocumentProcessorHandler[] handlers;
 	
 	/*
 	 * Creates a processor with the given handlers.
 	 */
-	public DOMProcessor(DOMProcessorHandler[] handlers) {
+	public DocumentProcessor(DocumentProcessorHandler[] handlers) {
 		this.handlers = handlers;
 		for (int i=0;i<handlers.length;++i) {
 			handlers[i].setProcessor(this);
@@ -32,29 +31,25 @@ public class DOMProcessor {
 	}
 	
 	/*
-	 * Processes the given element and all its descendants, which exist
+	 * Processes the given node and all its descendants, which exist
 	 * inside a document identified by the given id.
 	 */
-	public void process(Element element, String id) {
+	public void process(Node node, String id) {
 		for (int i=0;i<handlers.length;++i) {
-			short result = handlers[i].handle(element, id);
-			if (result == DOMProcessorHandler.HANDLED_CONTINUE) {
+			short result = handlers[i].handle(node, id);
+			if (result == DocumentProcessorHandler.HANDLED_CONTINUE) {
 				// handler wants us to keep processing children
 				break;
 			}
-			if (result == DOMProcessorHandler.HANDLED_SKIP) {
+			if (result == DocumentProcessorHandler.HANDLED_SKIP) {
 				// handler wants us to skip children
 				return;
 			}
 		}
 		// process each child
-		Node child = element.getFirstChild();
-		while (child != null) {
-			Node next = child.getNextSibling();
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				process((Element)child, id);
-			}
-			child = next;
+		Node[] children = node.getChildren();
+		for (int i=0;i<children.length;++i) {
+			process(children[i], id);
 		}
 	}
 }

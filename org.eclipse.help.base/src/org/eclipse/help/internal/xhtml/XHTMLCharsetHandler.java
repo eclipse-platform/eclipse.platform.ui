@@ -10,15 +10,15 @@
  *******************************************************************************/
 package org.eclipse.help.internal.xhtml;
 
-import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
-import org.w3c.dom.Element;
+import org.eclipse.help.Node;
+import org.eclipse.help.internal.dynamic.DocumentProcessorHandler;
 
 /*
  * Converts the charset in XHTML meta tag to UTF-8. This is the encoding
  * output by the XMLProcessor, and we need the charset in the meta tags
  * to match, otherwise browsers will be confused.
  */
-public class XHTMLCharsetHandler extends DOMProcessorHandler {
+public class XHTMLCharsetHandler extends DocumentProcessorHandler {
 
 	private static final String ELEMENT_META = "meta"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
@@ -26,13 +26,13 @@ public class XHTMLCharsetHandler extends DOMProcessorHandler {
 	private static final String ENCODING_UTF8 = "UTF-8"; //$NON-NLS-1$
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.internal.dynamic.DOMProcessorHandler#handle(org.w3c.dom.Element, java.lang.String)
+	 * @see org.eclipse.help.internal.dynamic.DocumentProcessorHandler#handle(org.eclipse.help.Node, java.lang.String)
 	 */
-	public short handle(Element elem, String id) {
-		if (ELEMENT_META.equals(elem.getNodeName())) {
-			String content = elem.getAttribute(ATTRIBUTE_CONTENT);
-			if (content.startsWith(PREFIX_CHARSET)) {
-				elem.setAttribute(ATTRIBUTE_CONTENT, PREFIX_CHARSET + ENCODING_UTF8);
+	public short handle(Node node, String id) {
+		if (ELEMENT_META.equals(node.getName())) {
+			String content = node.getAttribute(ATTRIBUTE_CONTENT);
+			if (content != null && content.startsWith(PREFIX_CHARSET)) {
+				node.setAttribute(ATTRIBUTE_CONTENT, PREFIX_CHARSET + ENCODING_UTF8);
 				return HANDLED_CONTINUE;
 			}
 		}

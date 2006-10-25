@@ -17,7 +17,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.dynamic.DOMProcessorHandler;
+import org.eclipse.help.internal.dynamic.DocumentProcessorHandler;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
@@ -38,7 +38,7 @@ public class XMLProcessorTest extends TestCase {
 	}
 	
 	public void testXMLProcessor() throws Exception {
-		DOMProcessorHandler[] handlers = new DOMProcessorHandler[] {
+		DocumentProcessorHandler[] handlers = new DocumentProcessorHandler[] {
 				new IncludeHandler(Platform.getNL()),
 				new ExtensionHandler(Platform.getNL()),
 				new FilterHandler(),

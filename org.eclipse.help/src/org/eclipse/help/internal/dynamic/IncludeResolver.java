@@ -16,20 +16,19 @@ import java.io.InputStream;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.HelpSystem;
+import org.eclipse.help.Node;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /*
- * Resolves includes by parsing the target document, extracting the element and
+ * Resolves includes by parsing the target document, extracting the node and
  * replacing the original include with it.
  */
 public class IncludeResolver {
 	
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
-	private DOMProcessor processor;
+	private DocumentProcessor processor;
 	private DOMReader reader;
 	private String locale;
 	
@@ -37,7 +36,7 @@ public class IncludeResolver {
 	 * Creates the resolver. It must have a DOMProcessor for processing the
 	 * included content, and must know the locale of the content to include.
 	 */
-	public IncludeResolver(DOMProcessor processor, String locale) {
+	public IncludeResolver(DocumentProcessor processor, String locale) {
 		this.processor = processor;
 		this.locale = locale;
 	}
@@ -45,13 +44,13 @@ public class IncludeResolver {
 	/*
 	 * Resolves the include target to a processed Element.
 	 */
-	public Element resolve(String bundleId, String relativePath, String elementId) throws IOException, SAXException, ParserConfigurationException {
+	public Node resolve(String bundleId, String relativePath, String nodeId) throws IOException, SAXException, ParserConfigurationException {
 		String href = '/' + bundleId + '/' + relativePath;
 		InputStream in = HelpSystem.getHelpContent(href, locale);
 		try {
-			Element element = findElement(in, elementId);
-			processor.process(element, href);
-			return element;
+			Node node = findNode(in, nodeId);
+			processor.process(node, href);
+			return node;
 		}
 		finally {
 			try {
@@ -62,37 +61,31 @@ public class IncludeResolver {
 	}
 	
 	/*
-	 * Finds the specified element from the given XML input stream.
+	 * Finds the specified node from the given XML input stream.
 	 */
-	private Element findElement(InputStream in, String elementId) throws IOException, SAXException, ParserConfigurationException {
+	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
 			reader = new DOMReader();
 		}
 		Document document = reader.read(in);
-		Element elem = document.getElementById(elementId);
-		if (elem != null) {
-			return elem;
-		}
-		return findElement(document.getDocumentElement(), elementId);
+		DOMNode node = new DOMNode(document);
+		return findNode(node, nodeId);
 	}
 	
 	/*
-	 * Finds the specified element under the given DOM subtree.
+	 * Finds the specified node under the given subtree.
 	 */
-	private Element findElement(Element elem, String elementId) {
-		if (elem.getAttribute(ATTRIBUTE_ID).equals(elementId)) {
-			return elem;
+	private Node findNode(Node node, String nodeId) {
+		String id = node.getAttribute(ATTRIBUTE_ID);
+		if (id != null && id.equals(nodeId)) {
+			return node;
 		}
-		Node child = elem.getFirstChild();
-		while (child != null) {
-			Node next = child.getNextSibling();
-			if (child.getNodeType() == Node.ELEMENT_NODE) {
-				Element result = findElement((Element)child, elementId);
-				if (result != null) {
-					return result;
-				}
+		Node[] children = node.getChildren();
+		for (int i=0;i<children.length;++i) {
+			Node result = findNode(children[i], nodeId);
+			if (result != null) {
+				return result;
 			}
-			child = next;
 		}
 		return null;
 	}

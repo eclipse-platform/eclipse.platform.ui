@@ -26,15 +26,15 @@ import org.xml.sax.SAXException;
  */
 public class XMLProcessor {
 
-	private DOMProcessor processor;
+	private DocumentProcessor processor;
 	private DOMReader reader;
 	private DOMWriter writer;
 	
 	/*
 	 * Creates the processor, which will use the given handlers.
 	 */
-	public XMLProcessor(DOMProcessorHandler[] handlers) {
-		processor = new DOMProcessor(handlers);
+	public XMLProcessor(DocumentProcessorHandler[] handlers) {
+		processor = new DocumentProcessor(handlers);
 	}
 	
 	/*
@@ -46,7 +46,8 @@ public class XMLProcessor {
 			reader = new DOMReader();
 		}
 		Document document = reader.read(in);
-		processor.process(document.getDocumentElement(), id);
+		DOMNode node = new DOMNode(document);
+		processor.process(node, id);
 		if (writer == null) {
 			writer = new DOMWriter();
 		}
