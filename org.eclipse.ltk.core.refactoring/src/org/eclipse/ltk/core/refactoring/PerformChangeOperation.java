@@ -15,7 +15,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -65,6 +67,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	
 	private boolean fChangeExecuted;
 	private boolean fChangeExecutionFailed;
+	private ISchedulingRule fSchedulingRule;
 	
 	/**
 	 * Creates a new perform change operation instance for the given change.
@@ -74,6 +77,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	public PerformChangeOperation(Change change) {
 		Assert.isNotNull(change);
 		fChange= change;
+		fSchedulingRule= ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	/**
@@ -87,6 +91,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 	public PerformChangeOperation(CreateChangeOperation op) {
 		Assert.isNotNull(op);
 		fCreateChangeOperation= op;
+		fSchedulingRule= ResourcesPlugin.getWorkspace().getRoot();
 	}
 	
 	/**
@@ -173,6 +178,20 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		}
 		fUndoManager= manager;
 		fUndoName= undoName;
+	}
+	
+	/**
+	 * Sets the scheduling rule used to execute this operation. If
+	 * not set then the workspace root is used. The Change operation
+	 * must be able to be performed in the provided scheduling rule.
+	 * 
+	 * @param rule the Rule to use, not null
+	 * @since 3.3
+	 */
+	public void setSchedulingRule(ISchedulingRule rule) {
+		Assert.isNotNull(rule);
+		
+		fSchedulingRule= rule;
 	}
 
 	/**
@@ -277,7 +296,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 				}
 			}
 		};
-		ResourcesPlugin.getWorkspace().run(runnable, pm);
+		ResourcesPlugin.getWorkspace().run(runnable, fSchedulingRule, IWorkspace.AVOID_UPDATE, pm);
 	}
 	
 	private boolean createChange() {
