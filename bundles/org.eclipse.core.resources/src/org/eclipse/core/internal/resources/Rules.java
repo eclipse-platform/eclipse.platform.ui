@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.team.ResourceRuleFactory;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.jobs.MultiRule;
  * for the resource that the operation is proposing to modify.
  */
 class Rules implements IResourceRuleFactory, ILifecycleListener {
+	private final ResourceRuleFactory defaultFactory = new ResourceRuleFactory() {};
 	/**
 	 * Map of project names to the factory for that project.
 	 */
@@ -83,6 +85,9 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	private IResourceRuleFactory factoryFor(IResource destination) {
 		IResourceRuleFactory fac = (IResourceRuleFactory) projectsToRules.get(destination.getFullPath().segment(0));
 		if (fac == null) {
+			//use the default factory if the project is not yet accessible
+			if (!destination.getProject().isAccessible())
+				return defaultFactory;
 			//ask the team hook to supply one
 			fac = teamHook.getRuleFactory(destination.getProject());
 			projectsToRules.put(destination.getFullPath().segment(0), fac);
