@@ -135,20 +135,12 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
 	 * @see org.eclipse.jface.text.source.LineNumberRulerColumn#createDisplayString(int)
 	 */
 	protected String createDisplayString(int line) {
-		String string;
-		if (fCharacterDisplay && getModel() != null) {
-			String diffChar= fDiffPainter.getDisplayCharacter(line);
-			if (fShowNumbers)
-				string= super.createDisplayString(line) + diffChar;
-			else
-				string= diffChar;
-		} else {
-			if (fShowNumbers)
-				string= super.createDisplayString(line);
-			else
-				string= ""; //$NON-NLS-1$
-		}
-		return string;
+		StringBuffer buffer= new StringBuffer();
+		if (fShowNumbers)
+			buffer.append(super.createDisplayString(line));
+		if (fCharacterDisplay && getModel() != null)
+			buffer.append(fDiffPainter.getDisplayCharacter(line));
+		return buffer.toString();
 	}
 
 	/*
@@ -301,7 +293,7 @@ public final class LineNumberChangeRulerColumn extends LineNumberRulerColumn imp
      */
     public int getWidth() {
    		int width= super.getWidth();
-		return width > 0 ? width : 10; // minimal width to display quick diff / revisions if no textual info is shown
+		return width > 0 ? width : 8; // minimal width to display quick diff / revisions if no textual info is shown
     }
 
     /**
