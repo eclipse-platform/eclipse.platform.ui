@@ -241,7 +241,7 @@ public class Snippet010OwnerDraw {
 	private class AustriaEntry extends CountryEntry {
 
 		AustriaEntry() {
-			super("Österreich", "Austria", "TBD");
+			super("\u00D6sterreich", "Austria", "TBD");
 		}
 
 		/*
