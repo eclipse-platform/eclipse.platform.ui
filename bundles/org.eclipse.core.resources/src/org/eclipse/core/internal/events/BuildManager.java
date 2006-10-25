@@ -124,6 +124,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		this.workspace = workspace;
 		this.autoBuildJob = new AutoBuildJob(workspace);
 		this.lock = workspaceLock;
+		InternalBuilder.buildManager = this;
 	}
 
 	private void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {

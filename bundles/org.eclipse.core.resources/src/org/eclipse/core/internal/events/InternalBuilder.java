@@ -12,7 +12,6 @@ package org.eclipse.core.internal.events;
 
 import java.util.Map;
 import org.eclipse.core.internal.resources.ICoreConstants;
-import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -24,7 +23,11 @@ import org.eclipse.core.runtime.*;
  * @see IncrementalProjectBuilder
  */
 public abstract class InternalBuilder {
-	private static BuildManager buildManager = ((Workspace) ResourcesPlugin.getWorkspace()).getBuildManager();
+	/**
+	 * Hold a direct reference to the build manager as an optimization.
+	 * This will be initialized by BuildManager when it is constructed.
+	 */
+	static BuildManager buildManager;
 	private ICommand command;
 	private boolean forgetStateRequested = false;
 	private IProject[] interestingProjects = ICoreConstants.EMPTY_PROJECT_ARRAY;
