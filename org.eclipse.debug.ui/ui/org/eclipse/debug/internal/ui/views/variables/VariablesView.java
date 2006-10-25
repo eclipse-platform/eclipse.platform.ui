@@ -1465,7 +1465,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 	}
 
-	public void contextActivated(ISelection selection) {
+	protected void contextActivated(ISelection selection) {
 		if (!isAvailable() || !isVisible()) {
 			return;
 		}
