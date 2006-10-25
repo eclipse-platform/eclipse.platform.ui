@@ -72,8 +72,14 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (fCommitButton != null && fCompareEditorInput != null)
-			fCommitButton.setEnabled(fCompareEditorInput.isSaveNeeded());
+		if (event.getProperty().equals(CompareEditorInput.DIRTY_STATE)) {
+			if (fCommitButton != null && fCompareEditorInput != null)
+				fCommitButton.setEnabled(fCompareEditorInput.isSaveNeeded());
+		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE)) {
+			getShell().setText(fCompareEditorInput.getTitle());
+		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE_IMAGE)) {
+			getShell().setImage(fCompareEditorInput.getTitleImage());
+		}
 	}
 	
 	/* (non-Javadoc)

@@ -21,4 +21,6 @@ public interface ICompareUIConstants {
 	
 	public static final String PROP_ANCESTOR_VISIBLE = PREFIX + "AncestorVisible"; //$NON-NLS-1$
 	public static final String PROP_IGNORE_ANCESTOR = PREFIX + "IgnoreAncestor"; //$NON-NLS-1$
+	public static final String PROP_TITLE = PREFIX + "Title"; //$NON-NLS-1$
+	public static final String PROP_TITLE_IMAGE = "TitleImage"; //$NON-NLS-1$
 }

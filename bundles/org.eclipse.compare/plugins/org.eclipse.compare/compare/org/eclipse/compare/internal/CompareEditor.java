@@ -36,25 +36,11 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, ICompareContainer {
-	
-	/**
-	 * Internal property change listener for handling changes in the editor's input.
-	 */
-	class PropertyChangeListener implements IPropertyChangeListener {
-		/*
-		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-		 */
-		public void propertyChange(PropertyChangeEvent event) {
-			CompareEditor.this.propertyChange(event);
-		}
-	}
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, ICompareContainer, IPropertyChangeListener {
 
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
-	/** The editor's property change listener. */
-	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 	/** the SWT control */
 	private Control fControl;
 	/** the outline page */
@@ -140,7 +126,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 
 		IEditorInput oldInput= getEditorInput();
 		if (oldInput instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).removePropertyChangeListener(fPropertyChangeListener);
+			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
 
 		ISaveablesLifecycleListener lifecycleListener= null;
 		if (oldInput != null) {
@@ -155,11 +141,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		cei.setContainer(this);
 
 		setTitleImage(cei.getTitleImage());
-		setPartName(cei.getTitle());	// was setTitle(cei.getTitle());
+		setPartName(cei.getTitle());
 		setTitleToolTip(cei.getToolTipText());
 				
 		if (input instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).addPropertyChangeListener(fPropertyChangeListener);
+			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
 			
 		if (oldInput != null) {
 			if (fControl != null && !fControl.isDisposed()) {
@@ -214,11 +200,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	
 		IEditorInput input= getEditorInput();
 		if (input instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).removePropertyChangeListener(fPropertyChangeListener);
+			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
 								
 		super.dispose();
-		
-		fPropertyChangeListener= null;
 	}
 			
 	/* (non-Javadoc)
@@ -297,11 +281,21 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		return false;
 	}
 	
-	/* package */ void propertyChange(PropertyChangeEvent event) {
-		Object old_value= event.getOldValue();
-		Object new_value= event.getNewValue();
-		if (old_value == null || new_value == null || !old_value.equals(new_value))
-			firePropertyChange(PROP_DIRTY);
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(CompareEditorInput.DIRTY_STATE)) {
+			Object old_value= event.getOldValue();
+			Object new_value= event.getNewValue();
+			if (old_value == null || new_value == null || !old_value.equals(new_value))
+				firePropertyChange(PROP_DIRTY);
+		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE)) {
+			setPartName(((CompareEditorInput)getEditorInput()).getTitle());
+			setTitleToolTip(((CompareEditorInput)getEditorInput()).getToolTipText());
+		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE_IMAGE)) {
+			setTitleImage(((CompareEditorInput)getEditorInput()).getTitleImage());
+		}
 	}
 
 	/* (non-Javadoc)

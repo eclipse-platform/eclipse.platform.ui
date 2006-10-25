@@ -14,6 +14,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.diff.IDiff;
@@ -78,34 +79,37 @@ public class ResourceDiffCompareInput implements ISynchronizationCompareInput, I
 		}
 	}
 	
-	private static int getCompareKind(IDiff node) {
-		int kind = 0;
-		switch (node.getKind()) {
-		case IDiff.CHANGE:
-			kind = Differencer.CHANGE;
-			break;
-		case IDiff.ADD:
-			kind = Differencer.ADDITION;
-			break;
-		case IDiff.REMOVE:
-			kind = Differencer.DELETION;
-			break;
-		}
-		if (node instanceof IThreeWayDiff) {
-			IThreeWayDiff twd = (IThreeWayDiff) node;
-			switch (twd.getDirection()) {
-			case IThreeWayDiff.INCOMING:
-				kind |= Differencer.RIGHT;
+	public static int getCompareKind(IDiff node) {
+		int compareKind = 0;
+		if (node != null) {
+			switch (node.getKind()) {
+			case IDiff.ADD:
+				compareKind = Differencer.ADDITION;
 				break;
-			case IThreeWayDiff.OUTGOING:
-				kind |= Differencer.LEFT;
+			case IDiff.REMOVE:
+				compareKind = Differencer.DELETION;
 				break;
-			case IThreeWayDiff.CONFLICTING:
-				kind |= Differencer.CONFLICTING;
+			case IDiff.CHANGE:
+				compareKind = Differencer.CHANGE;
 				break;
 			}
+			if (node instanceof IThreeWayDiff) {
+				IThreeWayDiff twd = (IThreeWayDiff) node;			
+				switch (twd.getDirection()) {
+				case IThreeWayDiff.OUTGOING :
+					compareKind |= Differencer.RIGHT;
+					break;
+				case IThreeWayDiff.INCOMING :
+					compareKind |= Differencer.LEFT;
+					break;
+				case IThreeWayDiff.CONFLICTING :
+					compareKind |= Differencer.LEFT;
+					compareKind |= Differencer.RIGHT;
+					break;
+				}
+			}
 		}
-		return kind;
+		return compareKind;
 	}
 	
 	private static FileRevisionTypedElement getRightContributor(IDiff node) {
@@ -202,21 +206,11 @@ public class ResourceDiffCompareInput implements ISynchronizationCompareInput, I
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IFile.class || adapter == IResource.class) {
-			if (node instanceof IResourceDiff) {
-				IResourceDiff rd = (IResourceDiff) node;
-				return (IFile)rd.getResource();
-			}
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;
-				IResourceDiff diff = (IResourceDiff)twd.getRemoteChange();
-				// If there is a remote change, use the after state
-				if (diff != null)
-					return (IFile)diff.getResource();
-				// There's no remote change so use the before state of the local
-				diff = (IResourceDiff)twd.getLocalChange();
-				return (IFile)diff.getResource();
-				
-			}
+			return ResourceDiffTree.getResourceFor(node);
+		}
+		if (adapter == ResourceMapping.class) {
+			IResource resource = ResourceDiffTree.getResourceFor(node);
+			return resource.getAdapter(adapter);
 		}
 		return null;
 	}

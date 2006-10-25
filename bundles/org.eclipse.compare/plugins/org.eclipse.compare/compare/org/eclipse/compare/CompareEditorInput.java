@@ -104,6 +104,23 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * The name of the "dirty" property (value <code>"DIRTY_STATE"</code>).
 	 */
 	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
+	
+	/**
+	 * The name of the "title" property. This property is fired when the title
+	 * of the compare input changes. Clients should also re-obtain the tool tip
+	 * when this property changes.
+	 * @see #getTitle()
+	 * @since 3.3
+	 */
+	public static final String PROP_TITLE= ICompareUIConstants.PROP_TITLE;
+	
+	/**
+	 * The name of the "title image" property. This property is fired when the title
+	 * image of the compare input changes.
+	 * @see #getTitleImage()
+	 * @since 3.3
+	 */
+	public static final String PROP_TITLE_IMAGE= ICompareUIConstants.PROP_TITLE_IMAGE;
 		
 	private static final String COMPARE_EDITOR_IMAGE_NAME= "eview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
@@ -267,7 +284,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @param title the title to use for the CompareEditor
 	 */
 	public void setTitle(String title) {
+		String oldTitle = fTitle;
 		fTitle= title;
+		Utilities.firePropertyChange(fListenerList, this, PROP_TITLE, oldTitle, title);
 	}
 	
 	/**
@@ -945,6 +964,16 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public final ICompareContainer getContainer() {
 		return fContainer;
+	}
+	
+	/**
+	 * Fire the given property change event to all listeners 
+	 * registered with this compare editor input.
+	 * @param event the property change event
+	 * @since 3.3
+	 */
+	protected void firePropertyChange(PropertyChangeEvent event) {
+		Utilities.firePropertyChange(fListenerList, event);
 	}
 }
 

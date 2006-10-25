@@ -102,15 +102,24 @@ public class Utilities {
 		return dflt;
 	}
 	
-	public static void firePropertyChange(ListenerList ll, Object source, String property, Object old, Object newValue) {
-		if (ll != null) {
-			PropertyChangeEvent event= null;
-			Object[] listeners= ll.getListeners();
+	public static void firePropertyChange(ListenerList listenerList, Object source, String property, Object old, Object newValue) {
+		PropertyChangeEvent event= new PropertyChangeEvent(source, property, old, newValue);
+		firePropertyChange(listenerList, event);
+	}
+	
+	public static void firePropertyChange(ListenerList listenerList, final PropertyChangeEvent event) {
+		if (listenerList != null) {
+			Object[] listeners= listenerList.getListeners();
 			for (int i= 0; i < listeners.length; i++) {
-				IPropertyChangeListener l= (IPropertyChangeListener) listeners[i];
-				if (event == null)
-					event= new PropertyChangeEvent(source, property, old, newValue);
-				l.propertyChange(event);
+				final IPropertyChangeListener listener= (IPropertyChangeListener) listeners[i];
+				SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						listener.propertyChange(event);
+					}
+					public void handleException(Throwable exception) {
+						// Logged by SafeRunner
+					}
+				});
 			}
 		}
 	}

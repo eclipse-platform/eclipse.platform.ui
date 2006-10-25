@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ResourceMapping;
@@ -29,6 +29,7 @@ import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
 import org.eclipse.team.internal.ui.synchronize.ImageManager;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamUI;
@@ -73,9 +74,14 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	 * @see CompareConfiguration#getImage(Image, int)
 	 */
 	protected Image decorateImage(Image base, Object element) {
-		IDiff node = getDiff(element);
 		Image decoratedImage;
-		decoratedImage = getCompareImage(base, node);				
+		if (element instanceof ICompareInput) {
+			ICompareInput ci = (ICompareInput) element;
+			decoratedImage = getCompareImage(base, ci.getKind());	
+		} else {
+			IDiff node = getDiff(element);
+			decoratedImage = getCompareImage(base, node);
+		}
 		// The reason we still overlay the compare image is to
 		// ensure that the image width for all images shown in the viewer
 		// are consistent.
@@ -112,36 +118,16 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	}
 
 	private Image getCompareImage(Image base, IDiff node) {
-		int compareKind = 0;
-		if (node != null) {
-			switch (node.getKind()) {
-			case IDiff.ADD:
-				compareKind = Differencer.ADDITION;
-				break;
-			case IDiff.REMOVE:
-				compareKind = Differencer.DELETION;
-				break;
-			case IDiff.CHANGE:
-				compareKind = Differencer.CHANGE;
-				break;
-			}
-			if (node instanceof IThreeWayDiff) {
-				IThreeWayDiff twd = (IThreeWayDiff) node;			
-				switch (twd.getDirection()) {
-				case IThreeWayDiff.OUTGOING :
-					compareKind |= Differencer.RIGHT;
-					break;
-				case IThreeWayDiff.INCOMING :
-					compareKind |= Differencer.LEFT;
-					break;
-				case IThreeWayDiff.CONFLICTING :
-					compareKind |= Differencer.LEFT;
-					compareKind |= Differencer.RIGHT;
-					break;
-				}
-			}
-		}	
+		int compareKind = getCompareKind(node);	
+		return getCompareImage(base, compareKind);
+	}
+
+	private Image getCompareImage(Image base, int compareKind) {
 		return getImageManager().getImage(base, compareKind);
+	}
+
+	private int getCompareKind(IDiff node) {
+		return ResourceDiffCompareInput.getCompareKind(node);
 	}
 	
 	/* (non-Javadoc)
