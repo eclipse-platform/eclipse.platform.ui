@@ -51,7 +51,6 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	private static final int BUSY_STATE_CHANGED = 2;
 	private static final int RESET = 3;
 	private static final int SYNC_INFO_SET_CHANGED = 4;
-	private static final int RUNNABLE = 5;
 	
 	private AbstractSynchronizeModelProvider provider;
 	
@@ -201,7 +200,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
      */
     protected void processEvent(Event event, IProgressMonitor monitor) throws CoreException {
         switch (event.getType()) {
-		case RUNNABLE :
+		case BackgroundEventHandler.RUNNABLE_EVENT :
 			executeRunnable(event, monitor);
 			break;
         case MARKERS_CHANGED:
