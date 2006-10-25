@@ -40,8 +40,10 @@ import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
 /**
  * <code>PartSite</code> is the general implementation for an
@@ -485,6 +487,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 
 		if (IWorkbenchSiteProgressService.class == adapter) {
 			return getSiteProgressService();
+		}
+		
+		if (IWorkbenchPartTestable.class == adapter) {
+			return new WorkbenchPartTestable(this);
 		}
 
 		return Platform.getAdapterManager().getAdapter(this, adapter);
