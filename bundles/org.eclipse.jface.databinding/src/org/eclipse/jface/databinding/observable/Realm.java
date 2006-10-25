@@ -38,6 +38,22 @@ public abstract class Realm {
 
 	/**
 	 * Causes the <code>run()</code> method of the runnable to be invoked from
+	 * within this realm. If the caller is executing in this realm, the
+	 * runnable's run method is invoked directly, otherwise it is run at the
+	 * next reasonable opportunity using asyncExec.
+	 * 
+	 * @param runnable
+	 */
+	public void exec(Runnable runnable) {
+		if (isCurrent()) {
+			runnable.run();
+		} else {
+			asyncExec(runnable);
+		}
+	}
+
+	/**
+	 * Causes the <code>run()</code> method of the runnable to be invoked from
 	 * within this realm at the next reasonable opportunity. The caller of this
 	 * method continues to run in parallel, and is not notified when the
 	 * runnable has completed.
@@ -51,7 +67,7 @@ public abstract class Realm {
 			workQueue.notifyAll();
 		}
 	}
-
+	
 	/**
 	 * 
 	 */

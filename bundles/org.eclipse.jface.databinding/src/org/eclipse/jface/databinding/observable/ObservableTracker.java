@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.internal.databinding.internal.IdentityWrapper;
 
 /**
@@ -128,6 +129,7 @@ public class ObservableTracker {
 	 * @param observable
 	 */
 	public static void getterCalled(IObservable observable) {
+		Assert.isTrue(observable.getRealm().isCurrent());
 		Set lastObservableSet = (Set) currentObservableSet.get();
 		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
 				.get();

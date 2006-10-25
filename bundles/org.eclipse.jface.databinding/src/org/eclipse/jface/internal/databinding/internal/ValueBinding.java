@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.Binding;
 import org.eclipse.jface.databinding.BindingEvent;
@@ -46,7 +47,8 @@ public class ValueBinding extends Binding {
 
 	private IDomainValidator domainValidator;
 
-	private boolean updating = false;
+	private boolean updatingTarget = false;
+	private boolean updatingModel = false;
 
 	private WritableValue partialValidationErrorObservable;
 
@@ -132,7 +134,7 @@ public class ValueBinding extends Binding {
 	
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
 		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {
-			if (updating)
+			if (updatingTarget)
 				return true;
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
@@ -145,21 +147,29 @@ public class ValueBinding extends Binding {
 	};
 
 	private final IValueChangeListener targetChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
-			if (updating)
+		public void handleValueChange(IObservableValue source, final ValueDiff diff) {
+			if (updatingTarget)
 				return;
 			// the target (usually a widget) has changed, validate
 			// the value and update the source
-			updateModelFromTarget(diff);
+			model.getRealm().exec(new Runnable() {
+				public void run() {
+					doUpdateModelFromTarget(diff);
+				}
+			});
 		}
 	};
 
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
-			if (updating)
+		public void handleValueChange(IObservableValue source, final ValueDiff diff) {
+			if (updatingModel)
 				return;
 			// The model has changed so we must update the target
-			doUpdateTargetFromModel(diff);
+			model.getRealm().exec(new Runnable() {
+				public void run() {
+					doUpdateTargetFromModel(diff);
+				}
+			});
 		}
 	};
 
@@ -171,12 +181,13 @@ public class ValueBinding extends Binding {
 	 * @param changeEvent
 	 *            TODO
 	 */
-	public void updateModelFromTarget(ValueDiff diff) {
+	private void doUpdateModelFromTarget(ValueDiff diff) {
+		Assert.isTrue(model.getRealm().isCurrent());
 		BindingEvent e = new BindingEvent(model, target, diff,
 				BindingEvent.EVENT_COPY_TO_MODEL,
 				BindingEvent.PIPELINE_AFTER_GET) {
 		};
-		e.originalValue = target.getValue();
+		e.originalValue = diff.getNewValue();
 		if (failure(errMsg(fireBindingEvent(e)))) {
 			return;
 		}
@@ -191,7 +202,7 @@ public class ValueBinding extends Binding {
 		}
 
 		try {
-			updating = true;
+			updatingModel = true;
 
 			e.convertedValue = targetToModelConverter.convert(e.originalValue);
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
@@ -217,7 +228,7 @@ public class ValueBinding extends Binding {
 				ex);
 			validationErrorObservable.setValue(error);
 		} finally {
-			updating = false;
+			updatingModel = false;
 		}
 	}
 
@@ -241,9 +252,14 @@ public class ValueBinding extends Binding {
 		return errMsg(validationError);
 	}
 
-	private ValidationError errMsg(ValidationError validationError) {
-		partialValidationErrorObservable.setValue(null);
-		validationErrorObservable.setValue(validationError);
+	private ValidationError errMsg(final ValidationError validationError) {
+		Assert.isTrue(partialValidationErrorObservable.getRealm().equals(validationErrorObservable.getRealm()));
+		partialValidationErrorObservable.getRealm().exec(new Runnable() {
+			public void run() {
+				partialValidationErrorObservable.setValue(null);
+				validationErrorObservable.setValue(validationError);
+			}
+		});
 		return validationError;
 	}
 
@@ -256,21 +272,35 @@ public class ValueBinding extends Binding {
 		return false;
 	}
 
+	/**
+	 *  Can be called from any thread/realm.
+	 */
 	public void updateTargetFromModel() {
-		doUpdateTargetFromModel(Diffs.createValueDiff(null, model.getValue()));
+		model.getRealm().exec(new Runnable() {
+			public void run() {
+				final ValueDiff valueDiff = Diffs.createValueDiff(null, model
+						.getValue());
+				target.getRealm().exec(new Runnable() {
+					public void run() {
+						doUpdateTargetFromModel(valueDiff);
+					}
+				});
+			}
+		});
 	}
 
 	/**
 	 * @param diff
 	 */
-	public void doUpdateTargetFromModel(ValueDiff diff) {
+	private void doUpdateTargetFromModel(ValueDiff diff) {
+		Assert.isTrue(target.getRealm().isCurrent());
 		try {
-			updating = true;
+			updatingTarget = true;
 			BindingEvent e = new BindingEvent(model, target, diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
 					BindingEvent.PIPELINE_AFTER_GET) {
 			};
-			e.originalValue = model.getValue();
+			e.originalValue = diff.getNewValue();
 			if (failure(errMsg(fireBindingEvent(e)))) {
 				return;
 			}
@@ -292,12 +322,16 @@ public class ValueBinding extends Binding {
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			ValidationError error = ValidationError.error(
+			final ValidationError error = ValidationError.error(
 				BindingMessages.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
 				ex);
-			validationErrorObservable.setValue(error);
+			validationErrorObservable.getRealm().exec(new Runnable() {
+				public void run() {
+					validationErrorObservable.setValue(error);
+				}
+			});
 		} finally {
-			updating = false;
+			updatingTarget = false;
 		}
 	}
 
@@ -309,8 +343,20 @@ public class ValueBinding extends Binding {
 		return partialValidationErrorObservable;
 	}
 
+	/**
+	 *  Can be called from any thread/realm.
+	 */
 	public void updateModelFromTarget() {
-		updateModelFromTarget(Diffs.createValueDiff(target.getValue(), target
-				.getValue()));
+		target.getRealm().exec(new Runnable() {
+			public void run() {
+				final ValueDiff valueDiff = Diffs.createValueDiff(target
+						.getValue(), target.getValue());
+				model.getRealm().exec(new Runnable() {
+					public void run() {
+						doUpdateModelFromTarget(valueDiff);
+					}
+				});
+			}
+		});
 	}
 }

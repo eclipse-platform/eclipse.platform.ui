@@ -16,12 +16,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.jface.internal.databinding.provisional.observable.map.MapDiff;
 
 /**
  * @since 1.0
@@ -173,4 +175,119 @@ public class Diffs {
 		};
 	}
 
+	/**
+	 * @param addedKey
+	 * @param newValue
+	 * @return
+	 */
+	public static MapDiff createMapDiffSingleAdd(final Object addedKey, final Object newValue) {
+		return new MapDiff() {
+
+			public Set getAddedKeys() {
+				return Collections.singleton(addedKey);
+			}
+
+			public Set getChangedKeys() {
+				return Collections.EMPTY_SET;
+			}
+
+			public Object getNewValue(Object key) {
+				return newValue;
+			}
+
+			public Object getOldValue(Object key) {
+				return null;
+			}
+
+			public Set getRemovedKeys() {
+				return Collections.EMPTY_SET;
+			}};
+	}
+
+	/**
+	 * @param existingKey
+	 * @param oldValue
+	 * @param newValue
+	 * @return
+	 */
+	public static MapDiff createMapDiffSingleChange(final Object existingKey, final Object oldValue, final Object newValue) {
+		return new MapDiff() {
+			
+			public Set getAddedKeys() {
+				return Collections.EMPTY_SET;
+			}
+			
+			public Set getChangedKeys() {
+				return Collections.singleton(existingKey);
+			}
+			
+			public Object getNewValue(Object key) {
+				return newValue;
+			}
+			
+			public Object getOldValue(Object key) {
+				return oldValue;
+			}
+			
+			public Set getRemovedKeys() {
+				return Collections.EMPTY_SET;
+			}};
+	}
+	
+	/**
+	 * @param removedKey
+	 * @param oldValue
+	 * @return
+	 */
+	public static MapDiff createMapDiffSingleRemove(final Object removedKey, final Object oldValue) {
+		return new MapDiff() {
+			
+			public Set getAddedKeys() {
+				return Collections.EMPTY_SET;
+			}
+			
+			public Set getChangedKeys() {
+				return Collections.EMPTY_SET;
+			}
+			
+			public Object getNewValue(Object key) {
+				return null;
+			}
+			
+			public Object getOldValue(Object key) {
+				return oldValue;
+			}
+			
+			public Set getRemovedKeys() {
+				return Collections.singleton(removedKey);
+			}};
+	}
+
+	/**
+	 * @param copyOfOldMap 
+	 * @return
+	 */
+	public static MapDiff createMapDiffRemoveAll(final Map copyOfOldMap) {
+		return new MapDiff() {
+			
+			public Set getAddedKeys() {
+				return Collections.EMPTY_SET;
+			}
+			
+			public Set getChangedKeys() {
+				return Collections.EMPTY_SET;
+			}
+			
+			public Object getNewValue(Object key) {
+				return null;
+			}
+			
+			public Object getOldValue(Object key) {
+				return copyOfOldMap.get(key);
+			}
+			
+			public Set getRemovedKeys() {
+				return copyOfOldMap.keySet();
+			}};
+	}
 }
