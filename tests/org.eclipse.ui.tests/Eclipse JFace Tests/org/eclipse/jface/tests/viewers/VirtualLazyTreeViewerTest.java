@@ -108,8 +108,4 @@ public class VirtualLazyTreeViewerTest extends TreeViewerTest {
     	// no need to test since virtual trees do not support sorting
     }
     
-    public void testSetInput() {
-    	// temporarily disabled
-    }
-    
 }
