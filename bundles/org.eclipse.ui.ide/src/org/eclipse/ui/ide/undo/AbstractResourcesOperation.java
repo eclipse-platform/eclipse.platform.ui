@@ -240,9 +240,12 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 *         specified in the receiver.
 	 */
 	protected ISchedulingRule computeDeleteSchedulingRule() {
-		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length];
+		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length*2];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i] = getWorkspaceRuleFactory().deleteRule(resources[i]);
+			ruleArray[i*2] = getWorkspaceRuleFactory().deleteRule(resources[i]);
+			// we include a modify rule because we may have to open a project
+			// to record its resources before deleting it.
+			ruleArray[i*2+1] = getWorkspaceRuleFactory().modifyRule(resources[i]);
 		}
 		return MultiRule.combine(ruleArray);
 

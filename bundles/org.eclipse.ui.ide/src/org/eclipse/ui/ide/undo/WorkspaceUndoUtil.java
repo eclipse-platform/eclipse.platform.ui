@@ -412,7 +412,7 @@ public class WorkspaceUndoUtil {
 					for (int j = 0; j < overwritten.length; j++) {
 						overwrittenResources.add(overwritten[j]);
 					}
-					// Delete the source.  No need to record it since it
+					// Delete the source. No need to record it since it
 					// will get moved back.
 					delete(source, monitor, uiInfo, false, false);
 				} else {
@@ -569,15 +569,27 @@ public class WorkspaceUndoUtil {
 			IProgressMonitor monitor, IAdaptable uiInfo,
 			boolean forceOutOfSyncDelete, boolean deleteContent)
 			throws CoreException {
-		ResourceDescription resourceDescription = ResourceDescription
-				.fromResource(resourceToDelete);
+		ResourceDescription resourceDescription;
 		if (resourceToDelete.getType() == IResource.PROJECT) {
-			// it is a project
+			// it is a project. If the project is closed, we need
+			// to open it in order to properly capture all of its
+			// children.
+			IProject project = (IProject) resourceToDelete;
+			boolean open = project.isOpen();
+			if (!open) {
+				project.open(null);
+			}
+			resourceDescription = ResourceDescription
+					.fromResource(resourceToDelete);
+			if (!open) {
+				project.close(null);
+			}
 			monitor
 					.setTaskName(UndoMessages.AbstractResourcesOperation_DeleteResourcesProgress);
-			IProject project = (IProject) resourceToDelete;
 			project.delete(deleteContent, forceOutOfSyncDelete, monitor);
 		} else {
+			resourceDescription = ResourceDescription
+					.fromResource(resourceToDelete);
 			// if it's not a project, just delete it
 			monitor.beginTask("", 2); //$NON-NLS-1$
 			monitor
