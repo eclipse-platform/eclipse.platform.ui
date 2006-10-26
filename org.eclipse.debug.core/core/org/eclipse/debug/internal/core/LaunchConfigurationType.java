@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core;
 
  
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,6 +85,13 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * </p>
 	 */
 	private ISourcePathComputer fSourcePathComputer = null;
+	
+	/**
+	 * Cache for the migraiton delegate
+	 * 
+	 * @since 3.3
+	 */
+	private ILaunchConfigurationMigrationDelegate fMigrationDelegate = null;
 	
 	/**
 	 * The source locator id for this config type
@@ -175,9 +181,9 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException {
 		initializeDelegates();
 		initializePreferredDelegates();
-		List delegates = (List) fDelegates.get(modes);
+		Set delegates = (Set) fDelegates.get(modes);
 		if (delegates == null) {
-			delegates = Collections.EMPTY_LIST;
+			delegates = Collections.EMPTY_SET;
 		}
 		return (ILaunchDelegate[]) delegates.toArray(new ILaunchDelegate[delegates.size()]);
 	}
@@ -257,17 +263,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 			fDelegates = new Hashtable();
 			LaunchDelegate[] launchDelegates = getLaunchDelegateExtensions();
 			LaunchDelegate delegate = null;
-			List modelist = null, tmp = null;
-			Set modes = null;
+			List modelist = null;
+			Set modes = null, tmp = null;
 			for (int i = 0; i < launchDelegates.length; i++) {
 				delegate = launchDelegates[i];
 				modelist = delegate.getModes();
 				for(int j = 0; j < modelist.size(); j++) {
 					//cache the delegate based on its set of modes and delegate
 					modes = (Set) modelist.get(j);
-					tmp = (List) fDelegates.get(modes);
+					tmp = (Set) fDelegates.get(modes);
 					if (tmp == null) {
-						tmp = new ArrayList();
+						tmp = new HashSet();
 						fDelegates.put(modes, tmp);
 					}
 					tmp.add(delegate);
@@ -404,7 +410,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 	
 	/**
-	 * determines if the specified candidate is suitable for migration by loading it delegate.
+	 * determines if the specified candidate is suitable for migration by loading its delegate.
+	 * if we initialize the delegate and it has not been provided, return false instead of failing
 	 * @param candidate the candidate to inspect for migration suitability
 	 * @return true if the specified launch configuration is suitable for migration, false otherwise
 	 * @throws CoreException
@@ -412,20 +419,21 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @since 3.2
 	 */
 	public boolean isMigrationCandidate(ILaunchConfiguration candidate) throws CoreException {
-		if(getAttribute(IConfigurationElementConstants.MIGRATION_DELEGATE) != null) {
-			if(fDelegates == null) {
-				fDelegates = new Hashtable();
-			}
-			Object delegate = fDelegates.get(IConfigurationElementConstants.MIGRATION_DELEGATE);
-			if(delegate == null) {
-				delegate = fElement.createExecutableExtension(IConfigurationElementConstants.MIGRATION_DELEGATE);
-				fDelegates.put(IConfigurationElementConstants.MIGRATION_DELEGATE, delegate);
-			}
-			if(delegate instanceof ILaunchConfigurationMigrationDelegate) {
-				return ((ILaunchConfigurationMigrationDelegate)delegate).isCandidate(candidate);
-			}
+		initializeMigrationDelegate();
+		if(fMigrationDelegate != null) {
+			return fMigrationDelegate.isCandidate(candidate);
 		}
 		return false;
+	}
+	
+	/**
+	 * This method initializes the migration delegate
+	 * @throws CoreException
+	 */
+	private synchronized void initializeMigrationDelegate() throws CoreException {
+		if(fElement.getAttribute(IConfigurationElementConstants.MIGRATION_DELEGATE) != null && fMigrationDelegate == null) {
+			fMigrationDelegate = (ILaunchConfigurationMigrationDelegate) fElement.createExecutableExtension(IConfigurationElementConstants.MIGRATION_DELEGATE);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -442,25 +450,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/**
-	 * migrates the specified launch configuration by loading its delegate
+	 * Migrates the specified launch configuration by loading its delegate.
+	 * In the event the migration delegate has not been provided do nothing.
 	 * @param candidate the candidate launch configuration to migrate
 	 * @throws CoreException
 	 * 
 	 * @since 3.2
 	 */
 	public void migrate(ILaunchConfiguration candidate) throws CoreException {
-		if(getAttribute(IConfigurationElementConstants.MIGRATION_DELEGATE) != null) { 
-			if(fDelegates == null) {
-				fDelegates = new Hashtable();
-			}
-			Object delegate = fDelegates.get(IConfigurationElementConstants.MIGRATION_DELEGATE);
-			if(delegate == null) {
-				delegate = fElement.createExecutableExtension(IConfigurationElementConstants.MIGRATION_DELEGATE);
-				fDelegates.put(IConfigurationElementConstants.MIGRATION_DELEGATE, delegate);
-			}
-			if(delegate instanceof ILaunchConfigurationMigrationDelegate) {
-				((ILaunchConfigurationMigrationDelegate)delegate).migrate(candidate);
-			}
+		initializeMigrationDelegate();
+		if(fMigrationDelegate != null) {
+			fMigrationDelegate.migrate(candidate);
 		}
 	}
 	
