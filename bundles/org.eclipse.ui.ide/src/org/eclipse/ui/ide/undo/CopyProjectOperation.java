@@ -74,7 +74,6 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 		super(new IResource[] { project }, new Path(name), label);
 		Assert.isLegal(project != null);
 		originalProject = project;
-		originalProjectDescription = new ProjectDescription(project);
 		if (location != null
 				&& URIUtil.toPath(location).equals(Platform.getLocation())) {
 			projectLocation = null;
@@ -231,15 +230,26 @@ public class CopyProjectOperation extends AbstractCopyOrMoveResourcesOperation {
 			URI locationURI, IProgressMonitor monitor) throws CoreException {
 		monitor
 				.setTaskName(UndoMessages.AbstractCopyOrMoveResourcesOperation_copyProjectProgress);
-	
+
+		boolean open = project.isOpen();
+		if (!open) {
+			// Must open project in order to get the original project
+			// description for performing the undo.
+			project.open(null);
+		}
+		originalProjectDescription = new ProjectDescription(project);
 		IProjectDescription description = project.getDescription();
-	
+
 		// Set the new name and location into the project's description
 		description.setName(destinationPath.lastSegment());
 		description.setLocationURI(locationURI);
-	
+
 		project.copy(description, IResource.FORCE | IResource.SHALLOW, monitor);
-	
+
+		// Close the original project if it was closed when we started.
+		if (!open) {
+			project.close(null);
+		}
 		// Now return the handle of the new project
 		return (IProject) getWorkspace().getRoot().findMember(destinationPath);
 	}

@@ -43,7 +43,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 
 	String defaultCharSet;
 
-	private ResourceDescription[] members;
+	ResourceDescription[] members;
 
 	/**
 	 * Create a container description from the specified container handle that

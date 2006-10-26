@@ -113,4 +113,35 @@ public class ProjectDescription extends ContainerDescription {
 	public String getName() {
 		return projectDescription.getName();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#verifyExistence(boolean)
+	 */
+	public boolean verifyExistence(boolean checkMembers) {
+		// We can only check members if the project is open.
+		if (checkMembers && members.length > 0) {
+			boolean existence;
+			IProject projectHandle = (IProject) createResourceHandle();
+			if (projectHandle.exists()) {
+				try {
+					boolean open = projectHandle.isOpen();
+					if (!open) {
+						projectHandle.open(null);
+					}
+					existence = super.verifyExistence(checkMembers);
+					if (!open) {
+						projectHandle.close(null);
+					}
+				} catch (CoreException e) {
+					existence = false;
+				}
+				return existence;
+			}
+			return false;
+		}
+		return super.verifyExistence(checkMembers);
+
+	}
 }
