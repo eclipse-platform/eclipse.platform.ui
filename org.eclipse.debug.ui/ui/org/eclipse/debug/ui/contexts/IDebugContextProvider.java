@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * </p>
  * @see IDebugContextManager
  * @see IDebugContextService
- * @see IDebugContextEventListener
+ * @see IDebugContextListener
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as
