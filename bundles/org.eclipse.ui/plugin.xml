@@ -959,6 +959,10 @@
             categoryId="org.eclipse.ui.presentation.default"
             presentationId="org.eclipse.ui.presentations.default">
       </categoryPresentationBinding>
+      <categoryPresentationBinding
+            categoryId="org.eclipse.ui.presentation.default"
+            presentationId="org.eclipse.ui.presentations.33">
+      </categoryPresentationBinding>
       <fontDefinition
             label="%FontsPreference.BannerFontLabel"
             categoryId="org.eclipse.ui.workbenchMisc"
