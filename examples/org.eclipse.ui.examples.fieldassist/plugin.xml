@@ -16,6 +16,15 @@
             </separator>
          </menu>
          <action
+               label="%Actions.Dialog2Name"
+               icon="icons/sample.gif"
+               class="org.eclipse.ui.examples.fieldassist.actions.ShowDialogAction2"
+               tooltip="%Actions.Dialog2Tooltip"
+               menubarPath="exampleMenu/exampleGroup"
+               toolbarPath="exampleGroup"
+               id="org.eclipse.ui.examples.fieldassist.actions.ExampleAction">
+         </action>
+         <action
                label="%Actions.DialogName"
                icon="icons/sample.gif"
                class="org.eclipse.ui.examples.fieldassist.actions.ShowDialogAction"
