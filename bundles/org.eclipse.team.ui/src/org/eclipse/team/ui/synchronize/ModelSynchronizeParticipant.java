@@ -426,6 +426,9 @@ public class ModelSynchronizeParticipant extends
 			return refreshSchedule.getRefreshable();
 			
 		}
+		if (adapter == SubscriberRefreshSchedule.class) {
+			return refreshSchedule;
+		}
 		return super.getAdapter(adapter);
 	}
 	

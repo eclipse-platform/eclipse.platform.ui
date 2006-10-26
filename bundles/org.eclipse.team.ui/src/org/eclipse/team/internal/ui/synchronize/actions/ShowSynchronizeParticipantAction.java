@@ -95,6 +95,11 @@ public class ShowSynchronizeParticipantAction extends Action implements IPropert
                 if(schedule!=null && schedule.isEnabled()) {
                   drawImage(scheduledData, 0, 0);
                 }
+            } else {
+    			SubscriberRefreshSchedule schedule = (SubscriberRefreshSchedule)Utils.getAdapter(participant, SubscriberRefreshSchedule.class);
+                if(schedule!=null && schedule.isEnabled()) {
+                    drawImage(scheduledData, 0, 0);
+                }
             }
 		}
 
