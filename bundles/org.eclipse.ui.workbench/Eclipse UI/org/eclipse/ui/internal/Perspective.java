@@ -806,13 +806,6 @@ public class Perspective {
 			editorArea.setVisible(isEditorAreaVisible());
 		}
 
-		// update the 'global' FVB
-		FastViewBar fvb = ((WorkbenchWindow) page.getWorkbenchWindow())
-				.getFastViewBar();
-		if (fvb != null) {
-			fvb.setViewRefs(fastViews);
-		}
-
 		// Update fast views.
 		// Make sure the control for the fastviews are create so they can
 		// be activated.
