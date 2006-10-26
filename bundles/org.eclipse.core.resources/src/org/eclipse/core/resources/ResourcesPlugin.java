@@ -15,6 +15,8 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for the Resources plug-in.  This is
@@ -259,13 +261,8 @@ public final class ResourcesPlugin extends Plugin {
 	 * when the facilities provided by the Resources plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
-	 * 
-	 * @param pluginDescriptor the plug-in descriptor for the
-	 *   Resources plug-in
-	 * @deprecated
 	 */
-	public ResourcesPlugin(IPluginDescriptor pluginDescriptor) {
-		super(pluginDescriptor);
+	public ResourcesPlugin() {
 		plugin = this;
 	}
 
@@ -331,31 +328,30 @@ public final class ResourcesPlugin extends Plugin {
 	}
 
 	/**
-	 * This implementation of the corresponding <code>Plugin</code> method
-	 * closes the workspace (without saving).
-	 * @see Plugin#shutdown()
-	 * @deprecated
+	 * This implementation of the corresponding {@link BundleActivator} method
+	 * closes the workspace without saving.
+	 * @see BundleActivator#stop(BundleContext)
 	 */
-	public void shutdown() throws CoreException {
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
 		if (workspace == null)
 			return;
 		// save the preferences for this plug-in
 		getPlugin().savePluginPreferences();
 		workspace.close(null);
 
-		/* Forget workspace only if successfully closed, to
-		 * make it easier to debug cases where close() is failing.
-		 */
+		// Forget workspace only if successfully closed, to
+		// make it easier to debug cases where close() is failing.
 		workspace = null;
 	}
 
 	/**
-	 * This implementation of the corresponding <code>Plugin</code> method
+	 * This implementation of the corresponding {@link BundleActivator} method
 	 * opens the workspace.
-	 * @see Plugin#startup()
-	 * @deprecated
+	 * @see BundleActivator#start(BundleContext)
 	 */
-	public void startup() throws CoreException {
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
 		if (!new LocalMetaArea().hasSavedWorkspace()) {
 			constructWorkspace();
 		}

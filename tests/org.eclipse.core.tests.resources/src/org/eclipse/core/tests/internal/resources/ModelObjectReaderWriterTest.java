@@ -18,7 +18,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
-import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -48,7 +47,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		super(name);
 	}
 
-	private HashMap buildBaselineDescriptors(IPath pluginPath) {
+	private HashMap buildBaselineDescriptors() {
 		HashMap result = new HashMap();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
@@ -483,16 +482,9 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	}
 
 	public void testMultipleProjectDescriptions() throws Throwable {
-		URL whereToLook = null;
-		PluginDescriptor tempPlugin = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.resources");
-		String pluginPath = Platform.resolve(tempPlugin.getInstallURL()).toExternalForm().concat("MultipleProjectTestFiles/");
-		try {
-			whereToLook = new URL(pluginPath);
-		} catch (java.net.MalformedURLException e) {
-			assertTrue("Bad URL for " + pluginPath, true);
-		}
+		URL whereToLook = Platform.getBundle("org.eclipse.core.tests.resources").getEntry("MultipleProjectTestFiles/");
 		String[] members = {"abc.project", "def.project", "org.apache.lucene.project", "org.eclipse.ant.core.project"};
-		HashMap baselines = buildBaselineDescriptors(new Path(pluginPath));
+		HashMap baselines = buildBaselineDescriptors();
 		ProjectDescriptionReader reader = new ProjectDescriptionReader();
 
 		for (int i = 0; i < members.length; i++) {

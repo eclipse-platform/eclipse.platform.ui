@@ -32,8 +32,7 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 	/** constants */
 	private static final String SAVE_NUMBER_LOCATION = "saveNumber";
 
-	public SaveParticipant2Plugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public SaveParticipant2Plugin() {
 		deltaVerifier = new ResourceDeltaVerifier();
 	}
 
@@ -79,7 +78,7 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 	}
 
 	public String getPluginId() {
-		return getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.core.tests.resources.saveparticipant2"; //$NON-NLS-1$
 	}
 
 	/**

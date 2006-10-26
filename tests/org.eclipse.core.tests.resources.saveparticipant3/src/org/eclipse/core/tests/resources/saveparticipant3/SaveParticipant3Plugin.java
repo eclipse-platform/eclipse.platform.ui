@@ -20,8 +20,8 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 	protected boolean shouldFail = false;
 	protected static final String file1 = "file_1";
 
-	public SaveParticipant3Plugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public SaveParticipant3Plugin() {
+		super();
 	}
 
 	protected IPath getFilePath(String name) {

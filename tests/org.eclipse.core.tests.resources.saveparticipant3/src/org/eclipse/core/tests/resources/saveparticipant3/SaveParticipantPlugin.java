@@ -32,8 +32,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 	/** lifecycle log */
 	protected MultiStatus saveLifecycleLog;
 
-	public SaveParticipantPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public SaveParticipantPlugin() {
 		deltaVerifier = new ResourceDeltaVerifier();
 	}
 

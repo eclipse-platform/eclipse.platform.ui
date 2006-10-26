@@ -32,8 +32,7 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	/** constants */
 	private static final String SAVE_NUMBER_LOCATION = "saveNumber";
 
-	public SaveParticipant1Plugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public SaveParticipant1Plugin() {
 		deltaVerifier = new ResourceDeltaVerifier();
 	}
 
