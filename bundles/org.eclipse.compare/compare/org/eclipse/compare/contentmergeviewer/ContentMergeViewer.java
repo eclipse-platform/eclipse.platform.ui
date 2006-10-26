@@ -241,7 +241,6 @@ public abstract class ContentMergeViewer extends ContentViewer
 	
 	private boolean fIsThreeWay;		// whether their is an ancestor
 	private boolean fAncestorVisible;	// whether the ancestor pane is visible
-	private boolean fIgnoreAncestor;    // whether the ancestor should be ignored
 	private ActionContributionItem fAncestorItem;
 	
 	private Action fCopyLeftToRightAction;	// copy from left to right
