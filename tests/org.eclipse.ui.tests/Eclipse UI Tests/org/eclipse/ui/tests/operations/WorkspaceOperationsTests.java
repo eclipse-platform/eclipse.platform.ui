@@ -67,16 +67,16 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * structure to perform the tests
  * 
  * <pre>
- * TEST_PROJECT_NAME
- * **TEST_FOLDER_NAME
- * ****TEST_SUBFOLDER_NAME
- * ******TEST_FILEINSUBFOLDER_NAME 
- * ****TEST_EMPTYFILE_NAME
- * ****TEST_RANDOMFILE_NAME
- * ****TEST_LINKEDFILE_NAME (linked to random location)
- * ****TEST_LINKEDFOLDER_NAME (linked to random location)
- * **TEST_FILEINPROJECT_NAME 
- * TEST_TARGETPROJECT_NAME
+ *  TEST_PROJECT_NAME
+ *  **TEST_FOLDER_NAME
+ *  ****TEST_SUBFOLDER_NAME
+ *  ******TEST_FILEINSUBFOLDER_NAME 
+ *  ****TEST_EMPTYFILE_NAME
+ *  ****TEST_RANDOMFILE_NAME
+ *  ****TEST_LINKEDFILE_NAME (linked to random location)
+ *  ****TEST_LINKEDFOLDER_NAME (linked to random location)
+ *  **TEST_FILEINPROJECT_NAME 
+ *  TEST_TARGETPROJECT_NAME
  * </pre>
  * 
  * @since 3.3
@@ -283,11 +283,19 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 		ProjectSnapshot(IProject project) throws CoreException {
 			name = project.getName();
+			boolean open = project.isOpen();
+			if (!open) {
+				project.open(null);
+			}
 			IResource[] members = project.members();
 			memberSnapshots = new ResourceSnapshot[members.length];
 			for (int i = 0; i < members.length; i++) {
 				memberSnapshots[i] = snapshotFromResource(members[i]);
 			}
+			if (!open) {
+				project.close(null);
+			}
+
 		}
 
 		boolean isValid(IResource parent) throws CoreException {
@@ -296,6 +304,13 @@ public class WorkspaceOperationsTests extends UITestCase {
 			if (resource == null || !(resource instanceof IProject)) {
 				return false;
 			}
+			IProject project = (IProject) resource;
+			// Must open it to validate the content
+			boolean open = project.isOpen();
+			if (!open) {
+				project.open(null);
+			}
+
 			for (int i = 0; i < memberSnapshots.length; i++) {
 				if (!fileNameExcludes.contains(memberSnapshots[i].name)) {
 					if (!memberSnapshots[i].isValid(resource)) {
@@ -303,6 +318,11 @@ public class WorkspaceOperationsTests extends UITestCase {
 					}
 				}
 			}
+
+			if (!open) {
+				project.close(null);
+			}
+
 			return true;
 		}
 
@@ -417,7 +437,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 			clear(toDelete[i]);
 		}
 		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
-		
+
 		testProject = null;
 		targetProject = null;
 		testFolder = null;
@@ -428,7 +448,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		testLinkedFile = null;
 		testFileInSubFolder = null;
 		testFileInProject = null;
-		
+
 		super.doTearDown();
 	}
 
@@ -588,8 +608,9 @@ public class WorkspaceOperationsTests extends UITestCase {
 		IStatus status = history.undo(context, getMonitor(), null);
 		assertTrue("Undo should be OK status", status.isOK());
 	}
-	
-	private void undoExpectFail(AbstractWorkspaceOperation operation) throws ExecutionException {
+
+	private void undoExpectFail(AbstractWorkspaceOperation operation)
+			throws ExecutionException {
 		operation.setQuietCompute(true);
 		IStatus status = history.undo(context, getMonitor(), null);
 		assertFalse("Undo should not have OK status", status.isOK());
@@ -975,6 +996,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source project was altered", snap.isValid());
 	}
 
+	public void testProjectClosedCopyUndoRedo() throws ExecutionException,
+			CoreException {
+		testProject.close(getMonitor());
+		testProjectCopyUndoRedo();
+	}
+
 	public void testProjectCopyAndChangeLocationUndoRedo()
 			throws ExecutionException, CoreException {
 		URI projectTargetLocation = URIUtil.toURI(URIUtil.toPath(
@@ -1000,6 +1027,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.getDescription().getLocationURI(), projectTargetLocation);
 		snap.name = TEST_PROJECT_NAME;
 		assertTrue("Source project was altered", snap.isValid());
+	}
+
+	public void testProjectClosedCopyAndChangeLocationUndoRedo()
+			throws ExecutionException, CoreException {
+		testProject.close(getMonitor());
+		testProjectCopyAndChangeLocationUndoRedo();
 	}
 
 	public void testProjectCopyAndChangeToInvalidLocationUndoRedo()
@@ -1053,6 +1086,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 	}
 
+	public void testProjectClosedDeleteUndoRedo() throws ExecutionException,
+			CoreException {
+		testProject.close(getMonitor());
+		testProjectDeleteUndoRedo();
+	}
+
 	public void testProjectDeleteWithContentUndoRedo()
 			throws ExecutionException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1064,6 +1103,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project was recreated", testProject.exists());
 		redo();
 		assertFalse("Redo delete failed", testProject.exists());
+	}
+
+	public void testProjectClosedDeleteWithContentUndoRedo()
+			throws ExecutionException, CoreException {
+		testProject.close(getMonitor());
+		testProjectDeleteWithContentUndoRedo();
 	}
 
 	public void testFolderCreateLeafUndoRedo() throws ExecutionException {
