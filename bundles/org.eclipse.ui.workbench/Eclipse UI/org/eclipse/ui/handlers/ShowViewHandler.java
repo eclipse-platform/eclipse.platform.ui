@@ -23,11 +23,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.FastViewBar;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.views.IViewDescriptor;
 
@@ -142,8 +140,10 @@ public final class ShowViewHandler extends AbstractHandler {
                 ref = (IViewReference)wp.getReference(part); 
             }
             
-            FastViewBar bar = ((WorkbenchWindow)wp.getWorkbenchWindow()).getFastViewBar();
-            bar.adoptView(ref, -1, true, true);
+            if (!wp.isFastView(ref)) {
+                wp.addFastView(ref);
+            }
+            wp.activate(ref.getPart(true));
         } else {
             activePage.showView(viewId);
         }
