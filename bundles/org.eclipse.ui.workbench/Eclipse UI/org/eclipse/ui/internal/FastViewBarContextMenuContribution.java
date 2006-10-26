@@ -44,32 +44,31 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         // TODO Auto-generated method stub
         super.fill(menu, index);
         
-        if (bar.isTrueFastView()) {
-		    orientationItem = new MenuItem(menu, SWT.CASCADE, index++);
-		    {
-		        orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
-		
-		        Menu orientationSwtMenu = new Menu(orientationItem);
-		        RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
-		                currentOrientation);
-		        orientationMenu
-		                .addMenuItem(
-		                        WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
-		        orientationMenu
-		                .addMenuItem(
-		                        WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
-		
-		        orientationItem.setMenu(orientationSwtMenu);
-		    }
-	
-	        restoreItem = new MenuItem(menu, SWT.CHECK, index++);
-	        restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
-	        restoreItem.addSelectionListener(new SelectionAdapter() {
-	            public void widgetSelected(SelectionEvent e) {
-	                bar.restoreView(selectedView, true);
-	            }
-	        });
-	    }
+
+        orientationItem = new MenuItem(menu, SWT.CASCADE, index++);
+        {
+            orientationItem.setText(WorkbenchMessages.FastViewBar_view_orientation);
+
+            Menu orientationSwtMenu = new Menu(orientationItem);
+            RadioMenu orientationMenu = new RadioMenu(orientationSwtMenu,
+                    currentOrientation);
+            orientationMenu
+                    .addMenuItem(
+                            WorkbenchMessages.FastViewBar_horizontal, new Integer(SWT.HORIZONTAL)); 
+            orientationMenu
+                    .addMenuItem(
+                            WorkbenchMessages.FastViewBar_vertical, new Integer(SWT.VERTICAL)); 
+
+            orientationItem.setMenu(orientationSwtMenu);
+        }
+
+        restoreItem = new MenuItem(menu, SWT.CHECK, index++);
+        restoreItem.setText(WorkbenchMessages.ViewPane_fastView);
+        restoreItem.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                bar.restoreView(selectedView);
+            }
+        });
 
         closeItem = new MenuItem(menu, SWT.NONE, index++);
         closeItem.setText(WorkbenchMessages.WorkbenchWindow_close); 
@@ -89,14 +88,12 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
         // Set menu item enablement etc based on whether a view is selected
         WorkbenchPage page = bar.getWindow().getActiveWorkbenchPage();
         
-        if (restoreItem != null) {
-	        if (selectedView != null) {
-	        	restoreItem.setEnabled(page!=null && page.isMoveable(selectedView));
-	        } else {
-	        	restoreItem.setEnabled(false);
-	        }
-	        restoreItem.setSelection(true);
+        if (selectedView != null) {
+        	restoreItem.setEnabled(page!=null && page.isMoveable(selectedView));
+        } else {
+        	restoreItem.setEnabled(false);
         }
+        restoreItem.setSelection(true);
         
         if (selectedView != null) {
 			closeItem
@@ -105,14 +102,12 @@ public class FastViewBarContextMenuContribution extends ContributionItem {
 			closeItem.setEnabled(false);
 		}
         
-        if (orientationItem != null) {
-	        orientationItem.setEnabled(selectedView != null);
-	        if (selectedView != null) {
-	            // Set the new orientation, but avoid re-sending the event to our own
-	            // listener
-	            currentOrientation.set(bar.getOrientation(selectedView),
-	                    orientationChangeListener);
-	        }
+        orientationItem.setEnabled(selectedView != null);
+        if (selectedView != null) {
+            // Set the new orientation, but avoid re-sending the event to our own
+            // listener
+            currentOrientation.set(bar.getOrientation(selectedView),
+                    orientationChangeListener);
         }
     }
     
