@@ -36,12 +36,12 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerListener;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.debug.internal.ui.views.ViewContextService;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.contexts.ISuspendTrigger;
+import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.swt.widgets.Display;
@@ -162,7 +162,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
 	public synchronized void launchRemoved(final ILaunch launch) {
-        ISuspendTriggerAdapter trigger = (ISuspendTriggerAdapter) launch.getAdapter(ISuspendTriggerAdapter.class);
+        ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
             trigger.removeSuspendTriggerListener(this);
         }
@@ -195,7 +195,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @see ILaunchListener#launchAdded(ILaunch)
 	 */
 	public synchronized void launchAdded(ILaunch launch) {
-        ISuspendTriggerAdapter trigger = (ISuspendTriggerAdapter) launch.getAdapter(ISuspendTriggerAdapter.class);
+        ISuspendTrigger trigger = (ISuspendTrigger) launch.getAdapter(ISuspendTrigger.class);
         if (trigger != null) {
             trigger.addSuspendTriggerListener(this);
         }

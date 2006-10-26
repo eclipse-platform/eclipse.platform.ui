@@ -8,12 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.contexts.provisional;
+package org.eclipse.debug.ui.contexts;
 
 /**
- * Adapter retrieved from an <code>ILaunch</code> that notifies
- * listeners when it suspends at a context where debugging should
- * be initiated by the user. For example, when a breakpoint is encountered.
+ * A suspend trigger notifies listeners when a launch suspends at a context
+ * where debugging should begin. For example, when a breakpoint is encountered.
+ * <p>
+ * The debug platform retrieves a suspend trigger from each registered launch
+ * and listens to suspend notifications in order to initiate debug sessions - i.e.
+ * switch to the desired perspective, activate the debug view, etc., based on user
+ * preferences. The debug platform asks each registered launch for its suspend
+ * trigger adapter or registers with the launch itself if it implements
+ * <code>ISuspendTrigger</code>.
+ * </p>  
  * <p>
  * It is important that the same instance of a suspend trigger adapter is
  * returned each time it is asked for the same object, such that listeners
@@ -22,8 +29,14 @@ package org.eclipse.debug.internal.ui.contexts.provisional;
  * with a new adapter the next time one is requested. 
  * </p>
  * <p>
- * Clients may implement this interface.
+ * Clients may implement this interface. The debug platform provides a suspend trigger
+ * adapter for implementations of <code>ILaunch</code>. The implementation provided by 
+ * the platform is based on a standard debug model that fires debug events. Clients
+ * wishing to provide their own implementation must also provide their own implementation
+ * of <code>ILaunch</code> (or subclass of <code>Launch</code>), in order to register
+ * their suspend trigger adapter.
  * </p>
+ * @see ISuspendTriggerListener
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as
@@ -32,7 +45,7 @@ package org.eclipse.debug.internal.ui.contexts.provisional;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface ISuspendTriggerAdapter {
+public interface ISuspendTrigger {
 	
     /**
      * Registers the given listener for suspend notifications.
@@ -42,7 +55,7 @@ public interface ISuspendTriggerAdapter {
 	public void addSuspendTriggerListener(ISuspendTriggerListener listener);
     
     /**
-     * Deregisters the given listener for suspend notifications.
+     * Unregisters the given listener for suspend notifications.
      * 
      * @param listener suspend listener
      */

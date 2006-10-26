@@ -15,7 +15,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISuspendTriggerAdapter;
+import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 
 /**
  * @since 3.2
@@ -28,7 +28,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public synchronized Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (adapterType.equals(ISuspendTriggerAdapter.class)) {
+		if (adapterType.equals(ISuspendTrigger.class)) {
 			if (adaptableObject instanceof ILaunch) {
 				Object trigger = fSuspendTriggers.get(adaptableObject);
 				if (trigger == null) {
@@ -45,7 +45,7 @@ public class SuspendTriggerAdapterFactory implements IAdapterFactory {
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
 	 */
 	public Class[] getAdapterList() {
-		return new Class[]{ISuspendTriggerAdapter.class};
+		return new Class[]{ISuspendTrigger.class};
 	}
 	
 	public synchronized void dispose(LaunchSuspendTrigger trigger) {

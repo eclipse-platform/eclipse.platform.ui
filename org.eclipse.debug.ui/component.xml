@@ -83,6 +83,8 @@
 	<type name="IDebugContextManager" implement="false"/>
 	<type name="IDebugContextProvider" />
 	<type name="IDebugContextService" implement="false"/>
+	<type name="ISuspendTrigger" />
+	<type name="ISuspendTriggerListener" implement="false"/>
  </package>
  <package name="org.eclipse.debug.ui.memory">
 	<type name="AbstractMemoryRendering" />
