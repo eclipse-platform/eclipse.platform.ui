@@ -26,7 +26,6 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.MultiLaunchGroupFilter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -147,20 +146,6 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		setTitle(DebugPreferencesMessages.LaunchConfigurationsPreferencePage_1);
 	}
 	
-	/**
-	 * creates a composite to place tab controls on
-	 * @param parent the parent to create to composite for
-	 * @return a composite for setting as a tabitem control
-	 */
-	private Composite createComposite(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		comp.setLayoutData(gd);
-		Dialog.applyDialogFont(comp);
-		return comp;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
@@ -174,10 +159,10 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 */
 	protected Control createContents(Composite parent) {
 		fFieldEditors = new ArrayList();
-		Composite comp = createComposite(parent);
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		//filtering options
 		Group group = createGroupComposite(comp, DebugPreferencesMessages.LaunchingPreferencePage_32);
-		Composite spacer = createComposite(group);
+		Composite spacer = SWTUtil.createComposite(group, group.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		FieldEditor edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED, DebugPreferencesMessages.LaunchingPreferencePage_33, SWT.NONE, spacer);
 		fFieldEditors.add(edit);
 		edit = new BooleanFieldEditor(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_DELETED, DebugPreferencesMessages.LaunchingPreferencePage_34, SWT.NONE, spacer);
@@ -225,7 +210,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * @return the new composite with the type selection table in it
 	 */
 	private Composite createTypeFiltering(Composite parent) {
-		Composite comp = createComposite(parent);
+		Composite comp = SWTUtil.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		BooleanFieldEditor2 editor = new BooleanFieldEditor2(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_0, SWT.NONE, comp);
 		editor.setPropertyChangeListener(new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {

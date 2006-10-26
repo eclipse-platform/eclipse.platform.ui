@@ -71,6 +71,11 @@
   in order to know what combinations of modes the associated launch delegate can launch</li> 
   <li>Added method getSupportedModeCombinations to <code>ILaunchConfigurationType</code> -- returns a Set of Sets of the supported modes for the associated 
   launch configuration type.</li>
+  <li>Added delegateName attribute to the launchConfioguratyionTypes extension point -- allows an human readable name for the associated launch delegate to be specified</li>
+  <li>Added DELEGATE_NAME constant to IConfigurationElementConstants</li>
+  <li>Added new class DuplicateLaunchDelegatesStatusHandler to handle the case where dupliate launch delegates have been found and prompts as necessary</li>
+  <li>Added new class LaunchDelegateNoptAvailableHandler to handle the case where no launch delegate is available to launch the current set of options, and prompts if necessary</li>
+  <li>Added constant PREF_PROMPT_FOR_DUPLICATE_DELEGATES to IDebugPreferenceConstants</li>
 </ul>
 
 <h2>Oct 24, 2006</h2> 

@@ -136,7 +136,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * Returns the delegates capable of launching in the specified modes.
 	 * 
 	 * @param modes set of launch modes
-	 * @return the <code>ILaunchDelegateProxy</code>s capable of launching
+	 * @return the <code>ILaunchDelegate</code>s capable of launching
 	 * 		in the specified modes or an empty collection if none
 	 * @throws CoreException
 	 * @since 3.3
@@ -148,22 +148,30 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public ILaunchDelegateProxy[] getDelegates(Set modes) throws CoreException;
+	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException;
 	
 	/**
-	 * Returns a collection of all supported launch mode combinations for 
-	 * this launch configuration type.
+	 * Returns the preferred launch delegate for this type in the specified mode set
+	 * @param modes the set of modes to support
+	 * @return the preferred delegate proxy or <code>null</code> if none
+	 * @throws CoreException
 	 * 
-	 * @return all supported launch mode combinations
 	 * @since 3.3
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
+	 * 
+	 * EXPERIMENTAL
 	 */
-	public Set[] getSupportedModeCombinations();
+	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException;
+	
+	/**
+	 * Allows the preferred launch delegate to be setfor this type with the specifie set of modes
+	 * @param delegate the delegate proxy to set as the default one
+	 * @throws CoreException
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public void setPreferredDelegate(Set modes, ILaunchDelegate delegate) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration supports the specified launch
@@ -179,7 +187,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public boolean supportsModeCombination(Set modes);
+	public boolean supportsModes(Set modes);
 	
 	/**
 	 * Returns the unique identifier for this type of launch configuration
@@ -237,10 +245,29 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * Returns all of the registered supported modes for this launch configuration type.
 	 * This method does not return null.
 	 * 
+	 * <p>
+	 * The returned set does not convey any mode combination capability nor does it describe how or what the type can launch, all this method does is return
+	 * a set of strings of all the modes in some way associated with this type 
+	 * </p>
+	 * 
 	 * @return the set of all supported modes
 	 * @since 3.2
+	 * 
+	 * @deprecated Since 3.3 all modes are provided as sets and not individual strings. The method <code>getSupportedModeCombinations</code>
+	 * should be used instead to retrive the complete listing of supported modes and their allowable combinations.
 	 */
 	public Set getSupportedModes();
+	
+	/**
+	 * Returns a <code>java.util.Set</code> of <code>java.util.Set</code>s containing all of the supported mode combinations
+	 * for this type
+	 * @return a set of sets of all the supported mode combinations supported by this type
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public Set getSupportedModeCombinations();
 	
 	/**
 	 * Returns whether this launch configuration type is public.  Public configuration

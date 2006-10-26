@@ -145,6 +145,15 @@
             name="%LaunchConfigurationsPage.name">
          <keywordReference id="org.eclipse.debug.ui.launchconfigurations"/>
       </page>
+      <page
+            category="org.eclipse.debug.ui.LaunchingPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.LaunchDelegatesPreferencePage"
+            id="org.eclipse.debug.ui.LaunchDelegatesPreferencePage"
+            name="%LaunchDelegatesPreferencePage.name">
+         <keywordReference
+               id="org.eclipse.debug.ui.launchDelegatesKeywords">
+         </keywordReference>
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1321,6 +1330,12 @@
             code="226"
             id="org.eclipse.debug.ui.statusHandler.launchDelegateNotAvailable"
             plugin="org.eclipse.debug.core">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.launchConfigurations.DuplicateLaunchDelegatesStatusHandler"
+            code="227"
+            id="org.eclipse.debug.ui.statusHandler.duplicateLaunchDelegatesDetected"
+            plugin="org.eclipse.debug.core">
       </statusHandler> 
    </extension>
    <extension
@@ -2293,6 +2308,10 @@ M4 = Platform-specific fourth key
        <keyword
              id="org.eclipse.debug.ui.launchconfigurations"
              label="%preferenceKeywords.launchConfigurations"/>
+       <keyword
+             id="org.eclipse.debug.ui.launchDelegatesKeywords"
+             label="launch delegate duplicate run debug profile mode configuration">
+       </keyword>
     </extension>
     <extension
           point="org.eclipse.ui.importWizards">

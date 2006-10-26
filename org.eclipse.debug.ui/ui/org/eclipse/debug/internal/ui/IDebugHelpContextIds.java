@@ -73,6 +73,7 @@ public interface IDebugHelpContextIds {
 	public static final String LAUNCHING_PREFERENCE_PAGE = PREFIX + "launching_preference_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_CONFIGURATION_PREFERENCE_PAGE = PREFIX + "launch_configuration_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEW_MANAGEMENT_PREFERENCE_PAGE = PREFIX + "view_management_preference_page_context"; //$NON-NLS-1$
+	public static final String LAUNCH_DELEGATES_PREFERENCE_PAGE = PREFIX + "launch_delegate_preference_page_context"; //$NON-NLS-1$
 	
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
@@ -97,7 +98,9 @@ public interface IDebugHelpContextIds {
 	public static final String MAX_DETAILS_LENGTH_DIALOG = PREFIX + "max_details_length_dialog_context"; //$NON-NLS-1$
 	public static final String SELECT_DEFAULT_WORKINGSET_DIALOG = PREFIX + "select_breakpoint_workingset_dialog"; //$NON-NLS-1$
 	public static final String DELETE_ASSOCIATED_LAUNCH_CONFIGS_DIALOG = PREFIX + "delete_associated_launch_configs_dialog"; //$NON-NLS-1$
-	public static final String SELECT_LAUNCH_OPTIONS_DIALOG = PREFIX + "select_launch_options_dialog"; //$NON-NLS-1$
+	public static final String SELECT_LAUNCH_MODES_DIALOG = PREFIX + "select_launch_modes_dialog"; //$NON-NLS-1$
+	public static final String SELECT_LAUNCH_DELEGATES_DIALOG = PREFIX + "select_launch_delegates_dialog"; //$NON-NLS-1$
+	public static final String SELECT_DUPE_LAUNCH_DELEGATE_ACTION_DIALOG = PREFIX + "select_dupe_delegate_action_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$

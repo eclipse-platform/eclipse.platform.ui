@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
@@ -284,9 +286,10 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		
 		Composite blComp = SWTUtil.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		Composite linkComp = SWTUtil.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
-//		a link for launch options
+
+	//a link for launch options
 		fOptionsLink = new Link(linkComp, SWT.NONE);
-		fOptionsLink.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_13);
+		
 		fOptionsLink.setFont(linkComp.getFont());
 		gd = new GridData(GridData.BEGINNING);
 		fOptionsLink.setLayoutData(gd);
@@ -294,23 +297,37 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			public void widgetSelected(SelectionEvent e) {
 				//collect the options available
 				try {
-					SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
-							getLaunchConfigurationDialog().getMode(), getWorkingCopy());
-					if(sld.open() == IDialogConstants.OK_ID) {
-						//set the options to the config
-						Object[] res = sld.getResult();
-						if(res != null) {
-							Set modes = (Set) res[0];
-							modes.remove(getLaunchConfigurationDialog().getMode());
-							ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
-							wc.setModes(modes);
-							refresh();
-							refreshStatus();
+					if(!canLaunchWithModes()) {
+						SelectLaunchModesDialog sld = new SelectLaunchModesDialog(getShell(), 
+								getLaunchConfigurationDialog().getMode(), getWorkingCopy());
+						if(sld.open() == IDialogConstants.OK_ID) {
+							//set the options to the config
+							Object[] res = sld.getResult();
+							if(res != null) {
+								Set modes = (Set) res[0];
+								modes.remove(getLaunchConfigurationDialog().getMode());
+								ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
+								wc.setModes(modes);
+								refresh();
+								refreshStatus();
+							}
 						}
 					}
-				} catch (CoreException ex) {
-					// TODO:
-				}
+					else if(hasDuplicateDelegates()) {
+						Set modes = new HashSet();
+						modes.add(getLaunchConfigurationDialog().getMode());
+						modes.addAll(getWorkingCopy().getModes());
+						SelectLaunchDelegatesDialog sld = new SelectLaunchDelegatesDialog(getShell(), fTabType.getDelegates(modes));
+						if(sld.open() == IDialogConstants.OK_ID) {
+							Object[] res = sld.getResult();
+							if(res != null) {
+								fTabType.setPreferredDelegate(modes, (ILaunchDelegate) res[0]);
+								refresh();
+								refreshStatus();
+							}
+						}
+					}
+				} catch (CoreException ex) {}
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {}
 		});
@@ -345,17 +362,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			}
 		});
         Dialog.applyDialogFont(parent);
-	}
-	
-	/**
-	 * Shows/hides the options link on the top of the viewer
-	 * @param show true if the link should be visible, false otherwise
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 */
-	protected void showOptionsLink(boolean show) {
-		fOptionsLink.setVisible(show);
 	}
 	
 	/**
@@ -525,7 +531,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (fInitializingTabs) {
 			return;
 		}
-		
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (!fInitializingTabs && tabs != null) {
 			// update the working copy from the active tab
@@ -540,7 +545,13 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				item = fTabFolder.getItem(i);
 				setTabIcon(item, error, tabs[i]);
 			}
-			fOptionsLink.setVisible(!canLaunchWithOptions());
+			if(!canLaunchWithModes()) {
+				fOptionsLink.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_13);
+			}
+			else if(hasDuplicateDelegates()) {
+				fOptionsLink.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_15);
+			}
+			fOptionsLink.setVisible(!canLaunchWithModes() || hasDuplicateDelegates());
 		}
 	}
 
@@ -1032,7 +1043,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * </p>
 	 * @return
 	 */
-	public boolean canLaunchWithOptions() {
+	public boolean canLaunchWithModes() {
 		if(fInitializingTabs) {
 			return false;
 		}
@@ -1042,11 +1053,40 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if(wc != null) {
 				Set modes = wc.getModes();
 				modes.add(getLaunchConfigurationDialog().getMode());
-				return wc.getType().supportsModeCombination(modes);
+				return wc.getType().supportsModes(modes);
 			}
 		}  catch (CoreException e) {
 		}
 		return true;
+	}
+	
+	/**
+	 * Returns if the type currently showing in the tab group viewer has duplicate launch delegates for the given set of modes.
+	 * 
+	 * The given set of modes comprises the current mode that the launch dialog was opened in as well as any modes that have been set on the launch
+	 * configuration.
+	 * @return the true if there are duplicates, false otherwise
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public boolean hasDuplicateDelegates() {
+		if(fInitializingTabs) {
+			return false;
+		}
+		try {
+			ILaunchConfiguration config = getWorkingCopy();
+			if(config != null) {
+				Set modes = config.getModes();
+				modes.add(getLaunchConfigurationDialog().getMode());
+				if(fTabType.getDelegates(modes).length > 1) {
+					return fTabType.getPreferredDelegate(modes) == null;
+				}
+			}
+		}
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		return false;
 	}
 	
 	/**
@@ -1076,7 +1116,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			return message;
 		}
 		
-	//EXPERIMENTAL
 		ILaunchConfigurationTab[] allTabs = getTabs();
 		for (int i = 0; i < allTabs.length; i++) {
 			ILaunchConfigurationTab tab = allTabs[i];
@@ -1098,7 +1137,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9;
 			}
 		}
-		if(!canLaunchWithOptions()) {
+		//EXPERIMENTAL
+		if(!canLaunchWithModes()) {
 			try {
 				Set modes = getWorkingCopy().getModes();
 				modes.add(getLaunchConfigurationDialog().getMode());
@@ -1107,6 +1147,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			} catch (CoreException e) {
 				return e.getMessage();
 			}
+		}
+		if(hasDuplicateDelegates()) {
+			try {
+				Set modes = getWorkingCopy().getModes();
+				modes.add(getLaunchConfigurationDialog().getMode());
+				List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
+				return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_16, new String[] {names.toString()});
+			}
+			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
 		return null;
 	}	

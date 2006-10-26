@@ -12,11 +12,12 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This class is used to construct a launch configuraityon dialog used to edit a launch configuration and continue,
+ * This class is used to construct a launch configuration dialog used to edit a launch configuration and continue or cancel (optional),
  * not allowing a launch to occur.
  * 
  * @since 3.3
@@ -25,8 +26,18 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 
-	public LaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group) {
+	private boolean fShowCancel = false;
+	
+	/**
+	 * Constructor
+	 * @param shell the shell to create this dialog on
+	 * @param launchConfiguration the launch config that this dialog is allowing you to edit
+	 * @param group the launch group associated with the showing tab group
+	 * @param showcancel if the cancel button should be shown or not
+	 */
+	public LaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group, boolean showcancel) {
 		super(shell, launchConfiguration, group);
+		fShowCancel = showcancel;
 	}
 
 	/* (non-Javadoc)
@@ -40,7 +51,10 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, ID_CLOSE_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationEditDialog_1, true);  
+		createButton(parent, ID_LAUNCH_BUTTON, LaunchConfigurationsMessages.LaunchConfigurationEditDialog_1, true);
+		if(fShowCancel) {
+			createButton(parent, ID_CANCEL_BUTTON, IDialogConstants.CANCEL_LABEL, false);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -48,6 +62,7 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 	 */
 	public void updateButtons() {
 		getTabViewer().refresh();
+		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
 	}
 	
 	/* (non-Javadoc)
@@ -55,5 +70,26 @@ public class LaunchConfigurationEditDialog extends LaunchConfigurationDialog {
 	 */
 	protected String getDialogSettingsSectionName() {
 		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_EDIT_DIALOG_SECTION"; //$NON-NLS-1$
+	}
+
+	/**
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		if(buttonId == ID_LAUNCH_BUTTON) {
+			setReturnCode(IDialogConstants.OK_ID);
+			int status = shouldSaveCurrentConfig();
+			if(status != IDialogConstants.CANCEL_ID) {
+				if(status != ID_DISCARD_BUTTON) {
+					if(status == IDialogConstants.YES_ID) {
+						getTabViewer().handleApplyPressed();
+					}
+				}
+			}
+		}
+		else if(buttonId == ID_CANCEL_BUTTON) {
+			setReturnCode(IDialogConstants.CANCEL_ID);
+		}
+		close();
 	}
 }

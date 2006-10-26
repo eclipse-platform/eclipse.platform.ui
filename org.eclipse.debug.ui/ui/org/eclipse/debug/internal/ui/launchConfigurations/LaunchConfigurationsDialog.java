@@ -114,7 +114,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * The id for the 'No' button on the discard changes message box
 	 * @since 3.3
 	 */
-	private static final int ID_DISCARD_BUTTON = IDialogConstants.CLIENT_ID + 4;
+	protected static final int ID_DISCARD_BUTTON = IDialogConstants.CLIENT_ID + 4;
 	
 	/**
 	 * Constant specifying how wide this dialog is allowed to get (as a percentage of
@@ -324,7 +324,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * 
 	 * @return if we can discard the current config or not
 	 */
-	private int shouldSaveCurrentConfig() {				
+	protected int shouldSaveCurrentConfig() {				
 		if (getTabViewer().isDirty()) {
 			if (getTabViewer().canSave()) {
 				return showSaveChangesDialog();
@@ -526,7 +526,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
 				Object target = selection.getFirstElement();
 				if (target instanceof ILaunchConfiguration) {
-					if (getTabViewer().canLaunch() & getTabViewer().canLaunchWithOptions()) {
+					if (getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates()) {
 						handleLaunchPressed();
 					}
 				} else {
@@ -1431,7 +1431,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getDeleteAction().setEnabled(getDeleteAction().isEnabled());
 		getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
 		getTabViewer().refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithOptions());
+		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch() & getTabViewer().canLaunchWithModes() & !getTabViewer().hasDuplicateDelegates());
 	}
 
 	/* (non-Javadoc)

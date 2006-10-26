@@ -1,28 +1,14 @@
-/*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- * 
- * Contributors:
- *     IBM Corporation - initial API and implementation
- *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -41,27 +27,33 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
- * This class provides a dialog to present the user with a list of of viable launch options in the event 
- * the plug-in that provides either a launch option or a contributed launch delegate is no longer available.
- * The user can select one of the launch mode/option configuration from this dialog and repair the option 
- * configuration state of the the current launch configuration
+ * This dialog class enables users to select preferred launch tooling from a list of available tooling if there are 
+ * duplicates for the current launch (config type and mode set)
  * 
- *  @since 3.3
- *  
- *  EXPERIMENTAL
+ * @since 3.3
+ * 
+ * EXPERIMENTAL
  */
-public class SelectLaunchModesDialog extends SelectionDialog {
+public class SelectLaunchDelegatesDialog extends SelectionDialog {
 
 	/**
 	 * Builds labels for list control
 	 */
-	class OptionsLabelProvider implements ILabelProvider {
+	class DelegatesLabelProvider implements ILabelProvider {
 		public Image getImage(Object element) {return null;}
 		public String getText(Object element) {
-			Set modes = (Set) element;
-			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
-			return names.toString();
+			if(element instanceof ILaunchDelegate) {
+				ILaunchDelegate ldp = (ILaunchDelegate) element;
+				String name = ldp.getName();
+				if(name == null) {
+					name = ldp.getContributorName();
+				}
+				return name;
+			}
+			return element.toString();
 		}
 		public void addListener(ILabelProviderListener listener) {}
 		public void dispose() {}
@@ -69,34 +61,25 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 		public void removeListener(ILabelProviderListener listener) {}
 	}
 	
-	private static final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_MODES_DIALOG"; //$NON-NLS-1$
+	private static final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_DELEGATES_DIALOG"; //$NON-NLS-1$
 	
 	private CheckboxTableViewer fTableViewer = null;
 	private Table fTable  = null;
-	private List fValidModes = null;
+	private ILaunchDelegate[] fDelegates = null;
 	
 	/**
 	 * Constructor
 	 * @param parentShell the parent shell
-	 * @param mode the current mode context
-	 * @param configuration the current launch configuration context
+	 * @param delegates the current delegates context
 	 * 
 	 * @throws CoreException
 	 */
-	public SelectLaunchModesDialog(Shell parentShell, String mode, ILaunchConfiguration configuration) throws CoreException {
+	public SelectLaunchDelegatesDialog(Shell parentShell, ILaunchDelegate[] delegates) {
 		super(parentShell);
-		super.setMessage(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_2);
-		super.setTitle(LaunchConfigurationsMessages.SelectLaunchOptionsDialog_3);
+		super.setMessage(MessageFormat.format(LaunchConfigurationsMessages.SelectLaunchDelegatesDialog_0, new String[] {}));
+		super.setTitle(LaunchConfigurationsMessages.SelectLaunchDelegatesDialog_1);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
-		fValidModes = new ArrayList();
-		Set modes = configuration.getType().getSupportedModeCombinations();
-		Set modeset = null;
-		for(Iterator iter = modes.iterator(); iter.hasNext();) {
-			modeset = (Set) iter.next();
-			if(modeset.contains(mode)) {
-				fValidModes.add(modeset);
-			}
-		}
+		fDelegates = delegates;
 	}
 	
 	/**
@@ -105,22 +88,31 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	protected Control createDialogArea(Composite parent) {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
-		SWTUtil.createLabel(comp, LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4, 1);
+		SWTUtil.createLabel(comp, LaunchConfigurationsMessages.SelectLaunchDelegatesDialog_2, 1);
 		fTable = new Table(comp, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
 		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer = new CheckboxTableViewer(fTable);
-		fTableViewer.setLabelProvider(new OptionsLabelProvider());
+		fTableViewer.setLabelProvider(new DelegatesLabelProvider());
 		fTableViewer.setContentProvider(new ArrayContentProvider());
-		fTableViewer.setInput(fValidModes.toArray());
+		fTableViewer.setInput(fDelegates);
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fTableViewer.setAllChecked(false);
 				fTableViewer.setChecked(event.getElement(), true);
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 		});
-		Dialog.applyDialogFont(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG);
+		Dialog.applyDialogFont(comp);		
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_DELEGATES_DIALOG);
 		return comp;
+	}
+
+	/**
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
 	/**

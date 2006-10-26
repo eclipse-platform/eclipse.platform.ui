@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -22,7 +20,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchDelegateProxy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 import com.ibm.icu.text.MessageFormat;
@@ -47,7 +45,7 @@ import com.ibm.icu.text.MessageFormat;
  * 
  * @since 3.3
  */
-public final class LaunchDelegate implements ILaunchDelegateProxy {
+public final class LaunchDelegate implements ILaunchDelegate {
 	
 	/**
 	 * The configuration element for this delegate
@@ -59,9 +57,9 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 	 */
 	private ILaunchConfigurationDelegate fDelegate = null;
 	
-	//lists of cached entries
+	//a listing of sets of 
+	private List fLaunchModes = null;
 	private HashSet fModes = null;
-	private HashSet fOptions = null;
 	private String fType = null;
 	
 	/**
@@ -72,6 +70,9 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 		fElement = element;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getDelegate()
+	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
 		if(fDelegate == null) {
 			Object obj = fElement.createExecutableExtension(IConfigurationElementConstants.DELEGATE);
@@ -84,6 +85,9 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 		return fDelegate;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getId()
+	 */
 	public String getId() {
 		return fElement.getAttribute(IConfigurationElementConstants.ID);
 	}
@@ -103,25 +107,16 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 		}
 		return fType;
 	}
-
-	public Set getOptions() {
-		if(fOptions == null) {
-			fOptions = new HashSet();
-			String option = fElement.getAttribute(IConfigurationElementConstants.OPTIONS);
-			if(option != null) {
-				String[] options = option.split(","); //$NON-NLS-1$
-				for(int i = 0; i < options.length; i++) {
-					fOptions.add(options[i].trim());
-				}
-			}
-		}
-		return fOptions;
-	}
 	
-	public Set getModes() {
+	/**
+	 * Parse a list of modes and creates a new set of them
+	 * @param element the configuraiton element to read from
+	 * @return a set of launch modes created form a comma seperated list
+	 */
+	private Set getModes(IConfigurationElement element) {
 		if (fModes == null) {
 			fModes = new HashSet();
-			String modes = fElement.getAttribute(IConfigurationElementConstants.MODES); 
+			String modes = element.getAttribute(IConfigurationElementConstants.MODES); 
 			if (modes != null) {
 				String[] strings = modes.split(","); //$NON-NLS-1$
 				for (int i = 0; i < strings.length; i++) {
@@ -132,12 +127,43 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 		return fModes;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchDelegateProxy#getModes()
+	 */
+	public List getModes() {
+		if(fLaunchModes == null) {
+			fLaunchModes = new ArrayList();
+			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.MODE_COMBINATION);
+			for (int i = 0; i < children.length; i++) {
+				fLaunchModes.add(getModes(children[i]));
+			}
+			//try to get the modes from the old definition and make each one
+			//a seperate set of one element
+			String modes = fElement.getAttribute(IConfigurationElementConstants.MODES); 
+			if (modes != null) {
+				String[] strings = modes.split(","); //$NON-NLS-1$
+				HashSet modeset = null;
+				for (int i = 0; i < strings.length; i++) {
+					modeset = new HashSet();
+					modeset.add(strings[i].trim());
+					fLaunchModes.add(modeset);
+				}
+			}
+		}
+		return fLaunchModes;
+	}
+	
 	/**
 	 * Returns the human readable name for this launch delegate
 	 * @return the human readable name for this launch delegate, or <code>null</code> if none
 	 */
 	public String getName() {
-		return fElement.getAttribute(IConfigurationElementConstants.NAME);
+		//try a delegateName attribute first, in the event this delegate was made from an ILaunchConfigurationType
+		String name = fElement.getAttribute(IConfigurationElementConstants.DELEGATE_NAME);
+		if(name == null) {
+			return fElement.getAttribute(IConfigurationElementConstants.NAME);
+		}
+		return name;
 	}
 	
 	/**
@@ -163,56 +189,5 @@ public final class LaunchDelegate implements ILaunchDelegateProxy {
 	 */
 	public String getSourcePathComputerId() {
 		return fElement.getAttribute(IConfigurationElementConstants.SOURCE_PATH_COMPUTER);
-	}
-
-	/**
-	 * Returns all combinations of supported options.
-	 * 
-	 * @return combinations of supported options
-	 */
-	private Collection getOptionSets() {
-		Set optionSets = new HashSet(); 
-		optionSets.add(new HashSet()); // seed with the empty option set
-		Object[] options = getOptions().toArray();
-		boolean grew = false;
-		do {
-			grew = false;
-			Set[] sets = (Set[]) optionSets.toArray(new Set[optionSets.size()]);
-			for (int i = 0; i < sets.length; i++) {
-				Set optionSet = sets[i];
-				for (int j = 0; j < options.length; j++) {
-					Object option = options[j];
-					Set newOptionSet = new HashSet(optionSet);
-					if (newOptionSet.add(option)) {
-						if (optionSets.add(newOptionSet)) {
-							grew = true;
-						}
-					}
-				}				
-			}                                   
-		} while (grew);
-		return optionSets;
-	}
-	
-	/**
-	 * Returns all supported launch mode combinations as sets of modes.
-	 *  
-	 * @return all supported launch mode combinations
-	 */
-	List getModeCombinations() {
-		Collection optionSets = getOptionSets();
-		Object[] modes = getModes().toArray();
-		List combinations = new ArrayList(optionSets.size() * modes.length);
-		Iterator iterator = optionSets.iterator();
-		while (iterator.hasNext()) {
-			Set optionSet = (Set) iterator.next();
-			for (int i = 0; i < modes.length; i++) {
-				Object mode = modes[i];
-				Set set = new HashSet(optionSet);
-				set.add(mode);
-				combinations.add(set);
-			}			
-		}
-		return combinations;
 	}
 }

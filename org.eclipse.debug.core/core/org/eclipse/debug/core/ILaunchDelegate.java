@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core;
 
-import java.util.Set;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -28,7 +28,7 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface ILaunchDelegateProxy {
+public interface ILaunchDelegate {
 
 	/**
 	 * Returns this delegate's unique identifier.
@@ -62,18 +62,11 @@ public interface ILaunchDelegateProxy {
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
 	
 	/**
-	 * Returns the launch modes this delegate supports.
-	 * 
-	 * @return launch modes as a set of launch mode identifiers
+	 * Returns the complete set of launch modes as a list of sets.
+	 * If no modes are available an empty list is returned, never <code>null</code>
+	 * @return the complete set of launch modes for this delegate as a list
+	 * of sets
 	 */
-	public Set getModes();
-	
-	/**
-	 * Returns the launch modes this delegate supports in combination with
-	 * its modes specified by <code>getModes()</code>.
-	 * 
-	 * @return launch options as a set of launch mode identifiers
-	 */
-	public Set getOptions();
+	public List getModes();
 	
 }

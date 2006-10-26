@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 
@@ -120,6 +121,7 @@ public class SWTUtil {
 		l.setText(text);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = hspan;
+		gd.grabExcessHorizontalSpace = false;
 		l.setLayoutData(gd);
 		return l;
 	}
@@ -261,14 +263,41 @@ public class SWTUtil {
     }
 	
 	/**
-	 * creates a vertical spacer for seperating components
-	 * @param comp
-	 * @param numlines
+	 * Creates a composite that uses the parents' font and has a gridlayout
+	 * @param parent thep arent to add the composite to
+	 * @param columns the number of columns the composite should have
+	 * @param hspan the mhorizontal span the new composite should take up in the parent
+	 * @param fill the fill style of the composite {@link GridData}
+	 * @return a new composite with a grid layout
+	 * 
 	 * @since 3.3
 	 */
-	public static void createVerticalSpacer(Composite comp, int numlines) {
-		Label lbl = new Label(comp, SWT.NONE);
+	public static Composite createComposite(Composite parent, int columns, int hspan, int fill) {
+		Composite g = new Composite(parent, SWT.NONE);
+    	g.setLayout(new GridLayout(columns, false));
+    	g.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
+		gd.horizontalSpan = hspan;
+    	g.setLayoutData(gd);
+    	return g;
+	}
+	
+	/**
+	 * Creates a vertical spacer for seperating components. If applied to a 
+	 * <code>GridLayout</code>, this method will automatically span all of the columns of the parent
+	 * to make vertical space
+	 * 
+	 * @param parent the parent composite to add this spacer to
+	 * @param numlines the number of vertical lines to make as space
+	 * @since 3.3
+	 */
+	public static void createVerticalSpacer(Composite parent, int numlines) {
+		Label lbl = new Label(parent, SWT.NONE);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		Layout layout = parent.getLayout();
+		if(layout instanceof GridLayout) {
+			gd.horizontalSpan = ((GridLayout)parent.getLayout()).numColumns;
+		}
 		gd.heightHint = numlines;
 		lbl.setLayoutData(gd);
 	}

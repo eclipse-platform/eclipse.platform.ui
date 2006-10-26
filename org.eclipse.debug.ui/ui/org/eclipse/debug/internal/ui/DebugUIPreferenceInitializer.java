@@ -82,6 +82,10 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		prefs.setDefault(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, 10000);
 		
+		//LaunchDelegatePreferencePage
+		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_FOR_DUPLICATE_DELEGATES, true);
+		prefs.setDefault(IDebugPreferenceConstants.PREF_DEFAULT_DUPLICATE_DELEGATE_ACTION, "dialog"); //$NON-NLS-1$
+		
 		//Registers View
 		prefs.setDefault(IDebugPreferenceConstants.REGISTERS_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		

@@ -95,6 +95,10 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationTabGroupViewer_14;
 
+	public static String LaunchConfigurationTabGroupViewer_15;
+
+	public static String LaunchConfigurationTabGroupViewer_16;
+
 	public static String LaunchConfigurationTabGroupViewer_9;
 	public static String LaunchConfigurationTabGroupViewer_13;
 	public static String PerspectiveManager_Error_1;
@@ -192,28 +196,30 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationTabGroupViewer_8;
 
 	public static String FilterDropDownMenuCreator_0;
-
 	public static String FilterDropDownMenuCreator_1;
-
 	public static String FilterDropDownMenuCreator_2;
-
 	public static String FilterDropDownMenuCreator_3;
-
 	public static String FilterDropDownMenuCreator_4;
 
 	public static String LaunchConfigurationsDialog_5;
 	public static String LaunchConfigurationsDialog_c_ancel;
 
 	public static String CollapseAllLaunchConfigurationAction_0;
-
 	public static String CollapseAllLaunchConfigurationAction_1;
-
 	public static String CollapseAllLaunchConfigurationAction_2;
 
+	public static String SelectLaunchDelegateActionDialog_0;
+	public static String SelectLaunchDelegateActionDialog_1;
+	public static String SelectLaunchDelegateActionDialog_4;
+	public static String SelectLaunchDelegateActionDialog_5;
+	public static String SelectLaunchDelegateActionDialog_6;
+	public static String SelectLaunchDelegateActionDialog_7;
+	public static String SelectLaunchDelegatesDialog_0;
+
+	public static String SelectLaunchDelegatesDialog_1;
+	public static String SelectLaunchDelegatesDialog_2;
 	public static String SelectLaunchOptionsDialog_2;
-
 	public static String SelectLaunchOptionsDialog_3;
-
 	public static String SelectLaunchOptionsDialog_4;
 
 }

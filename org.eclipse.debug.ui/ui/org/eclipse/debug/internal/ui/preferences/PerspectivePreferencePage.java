@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.preferences;
 
 import java.io.IOException;
 import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,6 +46,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -70,6 +70,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Provides one place to set perspective preferences
@@ -254,32 +256,32 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 								HashMap map = (HashMap) fTypeInformationMapping.get(typeobj);
 								if(map == null) {
 									map = new HashMap();
-								}//end if
+								}
 								map.put(mode, (perspective != null ? perspective : IDebugUIConstants.PERSPECTIVE_NONE));
 								fTypeInformationMapping.put(typeobj, map);
-							}//end if
-						}// end if
-					}// end if
-				}// end for
-			}// end try
+							}
+						}
+					}
+				}
+			}
 			catch (ParserConfigurationException e) {DebugUIPlugin.log(e);} 
 			catch (SAXException e) {DebugUIPlugin.log(e);}
 			catch (IOException e) {DebugUIPlugin.log(e);}
-		}// end if
+		}
 		perspec.load();
 		suspend.load();
 		TreeItem item = findLastSelected(getPreferenceStore().getString(LAST_SELECTED_CONFIGTYPE));
 		if (item != null) {
 			fTree.setSelection(new TreeItem[] { item });
-		}// end if
+		}
 		else {
 			if(fTree.getItemCount() > 0) {
 				fTree.setSelection(new TreeItem[] { fTree.getItem(0) });
 			}
-		}// end else
+		}
 		fCurrentType = (ILaunchConfigurationType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		buildComboBoxes(fCurrentType);
-	}// restoreState
+	}
 
 	/**
 	 * Sets the default perspectives for the modes of an ILaunchConfiguration
@@ -373,24 +375,15 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 				}
 			}
 		}
-		fPerspectiveComp.layout();
+		fPerspectiveComp.layout(new Control[] {fComboPlaceHolder});
+		resizeShell();
 	}
 
-	/**
-	 * Handles the change in selection from the launch configuration listing
-	 * 
-	 * @param event
-	 *            the selection changed event
-	 */
-	private void handleLaunchConfigurationSelectionChanged(SelectionChangedEvent event) {
-		// handle prompting and saving before moving on.
-		ILaunchConfigurationType type = (ILaunchConfigurationType) ((IStructuredSelection) event.getSelection()).getFirstElement();
-		if(type != null) {
-			if(!type.equals(fCurrentType)) {
-				//if they are the same do nothing
-				fCurrentType = type;
-				buildComboBoxes(fCurrentType);
-			}
+	private void resizeShell() {
+		Point pnt = this.getShell().getSize();
+		Point p = this.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		if(pnt.x < p.x) {
+			this.getShell().setSize(p);
 		}
 	}
 
@@ -523,7 +516,15 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		fViewer.expandAll();
 		fViewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
-						handleLaunchConfigurationSelectionChanged(event);
+						// handle prompting and saving before moving on.
+						ILaunchConfigurationType type = (ILaunchConfigurationType) ((IStructuredSelection) event.getSelection()).getFirstElement();
+						if(type != null) {
+							if(!type.equals(fCurrentType)) {
+								//if they are the same do nothing
+								fCurrentType = type;
+								buildComboBoxes(fCurrentType);
+							}
+						}
 					}
 				});
 		fPerspectiveComp = new Composite(comp, SWT.NONE);

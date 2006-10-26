@@ -46,6 +46,9 @@
          </appInfo>
       </annotation>
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="modeCombination" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -57,7 +60,9 @@
             <annotation>
                <documentation>
                   A human readable name for this delegate. This attribute was added in the 3.3. release.
-
+&lt;p&gt;
+An example of a &apos;human readable name&apos; would be something like (in the case of the default java application delegate): Eclipse JDT Java Tooling
+&lt;/p&gt;
 &lt;p&gt;
 &lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
 part of a work in progress. There is no guarantee that this API will
@@ -84,7 +89,11 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
          <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of the launch modes this lauch delegate supports.
+                  A comma-separated list of the launch modes this delegate supports.
+
+&lt;p&gt;
+New in 3.3: the comma seperated list of modes provided here, instead of via the modeCombination sub elements, will result in a set being created for each mode individually with no other combinations.
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -109,17 +118,32 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="options" type="string">
+      </complexType>
+   </element>
+
+   <element name="modeCombination">
+      <annotation>
+         <documentation>
+            This element represents a collection of mode combinations that this delegate can launch. Each entry of a modeCombination is a comma seperated listing of a single combination of modes the delegate supports.
+
+For example, a delegate that supports debugging, profiling and code coverage might have a modeCombination of:
+
+[debug, profile, coverage]
+
+since 3.3
+
+EXPERIMENTAL
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="modes" type="string" use="required">
             <annotation>
                <documentation>
-                  A comma-separated list of launch modes this launch delegate supports in combination with its supported modes. This attribute was added in the 3.3 release to allow configurations to be launched in a mixed mode.
+                  the modes attribute represents a comma seperated listing of a combination of modes that the associated delegate can launch
 
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This attribute has been added as
-part of a work in progress. There is no guarantee that this API will
-remain unchanged during the 3.3 release cycle. Please do not use this API
-without consulting with the Platform/Debug team.
-&lt;/p&gt;
+since 3.3
+
+EXPERIMENTAL
                </documentation>
             </annotation>
          </attribute>
@@ -149,14 +173,15 @@ without consulting with the Platform/Debug team.
    id=&quot;com.example.ExampleProfileDelegate&quot;
    delegate=&quot;com.example.ExampleProfileDelegate&quot;
    type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
-   modes=&quot;profile&quot;
-   options&quot;run, debug&quot;&gt;
+   name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
   &lt;/launchDelegate&gt;
+  &lt;modeCombination modes=&quot;run, profile&quot;&gt;&lt;/modeCombination&gt;
+  &lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode.
+In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode, with code coverage in debug mode only.
       </documentation>
    </annotation>
 

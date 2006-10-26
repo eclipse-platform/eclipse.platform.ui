@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class provides a mechanism to prompt users in the UI thread from debug.core in the case where
@@ -35,12 +36,15 @@ public class LaunchDelegateNotAvailableHandler implements IStatusHandler {
 		if(source instanceof Object[]) {
 			Object[] infos = (Object[]) source;
 			if(infos.length == 2) {
-				ILaunchConfiguration config = (ILaunchConfiguration) infos[0];
-				String mode = (String) infos[1];
-				DebugUITools.openLaunchConfigurationEditDialog(DebugUIPlugin.getShell(), 
-						config, 
-						DebugUITools.getLaunchGroup(config, mode).getIdentifier(),
-						null);
+				final ILaunchConfiguration config = (ILaunchConfiguration) infos[0];
+				final String mode = (String) infos[1];
+				final Shell shell = DebugUIPlugin.getShell();
+				Runnable runnable = new Runnable() {
+					public void run() {
+						DebugUITools.openLaunchConfigurationDialog(shell, config, DebugUITools.getLaunchGroup(config, mode).getIdentifier(), null);
+					}
+				};
+				DebugUIPlugin.getStandardDisplay().asyncExec(runnable);
 			}
 		}
 		return Status.OK_STATUS;

@@ -476,6 +476,7 @@ public class DebugUITools {
      * @param groupIdentifier group identifier of the launch group the launch configuration
      * belongs to
      * @param status the status to display, or <code>null</code> if none 
+     * @param showCancel if the cancel button should be shown in the particular instance of the dialog
      * @return the return code from opening the launch configuration dialog -
      *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
      *  
@@ -483,10 +484,10 @@ public class DebugUITools {
      * 
      * EXPERIMENTAL
      */
-    public static int openLaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status) {
+    public static int openLaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status, boolean showCancel) {
     	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
     	if (group != null) {
-    		LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, configuration, group);
+    		LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, configuration, group, showCancel);
     		dialog.setInitialStatus(status);
     		return dialog.open();
     	} 

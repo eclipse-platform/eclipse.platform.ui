@@ -82,6 +82,11 @@ public interface IConfigurationElementConstants {
 	public static final String MODES = "modes"; //$NON-NLS-1$
 	
 	/**
+	 * the modesCombination node name for a configuraiton element 
+	 */
+	public static final String MODE_COMBINATION = "modeCombination"; //$NON-NLS-1$
+	
+	/**
 	 * the mode node name for a configuration element
 	 */
 	public static final String MODE = "mode"; //$NON-NLS-1$
@@ -100,6 +105,11 @@ public interface IConfigurationElementConstants {
 	 * the delegate node name for a configuration element
 	 */
 	public static final String DELEGATE = "delegate"; //$NON-NLS-1$
+	
+	/**
+	 * the delegatename node name for a configuration element
+	 */
+	public static final String DELEGATE_NAME = "delegateName"; //$NON-NLS-1$
 	
 	/**
 	 * the group node name for a configuration element

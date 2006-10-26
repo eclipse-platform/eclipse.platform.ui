@@ -46,7 +46,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchDelegateProxy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -112,6 +112,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.3
 	 */
 	protected static final IStatus delegateNotAvailable = new Status(IStatus.INFO, "org.eclipse.debug.core", 226, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	/**
+	 * Status handle to prompt the user to resolve duplicate launch delegates being detected
+	 * 
+	 *  @since 3.3
+	 */
+	protected static final IStatus duplicateDelegates = new Status(IStatus.INFO, "org.eclipse.debug.core", 227, "", null);  //$NON-NLS-1$//$NON-NLS-2$
 	
 	/**
 	 * Location this configuration is stored in. This 
@@ -600,25 +607,39 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
+    	if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
     	Set modes = getModes();
     	modes.add(mode);
-    	ILaunchDelegateProxy[] delegates = getType().getDelegates(modes);
+    	ILaunchDelegate[] delegates = getType().getDelegates(modes);
     	ILaunchConfigurationDelegate delegate = null;
     	if (delegates.length == 1) {
     		delegate = delegates[0].getDelegate();
     	} else if (delegates.length == 0) {
+    		monitor.setCanceled(true);
     		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
     		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
-    		// no delegates TODO:
-    		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
-    				DebugPlugin.INTERNAL_ERROR, "No launch delegate", null); //$NON-NLS-1$
+    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found, canceling launch and returning", null); //$NON-NLS-1$
     		throw new CoreException(status);
     	} else {
-    		// multiple delegates TODO:
-    		IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
-    				DebugPlugin.INTERNAL_ERROR, "Duplicate launch delegates", null); //$NON-NLS-1$
-    		throw new CoreException(status);
+    		ILaunchDelegate del = getType().getPreferredDelegate(modes);
+    		if(del == null) {
+    			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+    			IStatus status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
+				if(status != null && status.isOK()) {
+					delegate = getType().getPreferredDelegate(modes).getDelegate();
+				}
+				else {
+					monitor.setCanceled(true);
+					status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launch tooling detected, canceling launch and returning", null); //$NON-NLS-1$
+		    		throw new CoreException(status);
+				}
+    		}
+    		else {
+    			delegate = del.getDelegate();
+    		}
     	}
     	
 		ILaunchConfigurationDelegate2 delegate2 = null;
@@ -651,9 +672,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
 		launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);
 		
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}		
+				
 		// perform initial pre-launch sanity checks
 		if (delegate2 != null) {
 			if (!(delegate2.preLaunchCheck(this, mode, monitor))) {

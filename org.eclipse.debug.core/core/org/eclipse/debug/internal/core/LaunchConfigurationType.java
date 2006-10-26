@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.core;
  
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -31,7 +32,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchDelegateProxy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -55,7 +56,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 *  a listing of modes contributed to this launch configuration type
 	 *  @since 3.3
 	 *  
-	 *  <p>
+	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This field has been added as
 	 * part of a work in progress. There is no guarantee that this API will
 	 * remain unchanged during the 3.3 release cycle. Please do not use this API
@@ -63,6 +64,15 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * </p>
 	 */
 	private Set fModes = null;
+	
+	/**
+	 * A set of sets containing all of the supported mode combinations of this type
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	private Set fModeCombinations = null;
 	
 	/**
 	 * the default source path computer for this config type
@@ -88,9 +98,21 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * be different delegates for different modes (since 3.0).
 	 * Map of modes (Set of modes) to list of delegates
 	 */
-	private Map fDelegates;
+	private Map fDelegates = null;
 	
-	private LaunchDelegate fSourceProvider;
+	/**
+	 * The source provider cache entry
+	 */
+	private LaunchDelegate fSourceProvider = null;
+	
+	/**
+	 * A map of preferred launch delegates for mode combinations
+	 * 
+	 *  @since 3.3
+	 *  
+	 *  EXPERIMENTAL
+	 */
+	private Map fPreferredDelegates = null;
 	
 	/**
 	 * Constructs a new launch configuration type on the
@@ -129,7 +151,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public ILaunchConfigurationDelegate getDelegate(String mode) throws CoreException {
 		Set modes = new HashSet();
 		modes.add(mode);
-		ILaunchDelegateProxy[] delegates = getDelegates(modes);
+		ILaunchDelegate[] delegates = getDelegates(modes);
 		if (delegates.length > 0) {
 			return delegates[0].getDelegate();
 		}
@@ -147,40 +169,113 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		throw new CoreException(status);
 	}
 	
-	public ILaunchDelegateProxy[] getDelegates(Set modes) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegates(java.util.Set)
+	 */
+	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException {
 		initializeDelegates();
-		Object[] theModes = modes.toArray();
-		for (int i = 0; i < theModes.length; i++) {
-			String mode = (String) theModes[i];
-			if (!supportsMode(mode)) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR,
-						MessageFormat.format(DebugCoreMessages.LaunchConfigurationType_9, new String[] {mode, getIdentifier()}), null));  
-			}			
-		}
+		initializePreferredDelegates();
 		List delegates = (List) fDelegates.get(modes);
 		if (delegates == null) {
 			delegates = Collections.EMPTY_LIST;
 		}
-		return (ILaunchDelegateProxy[]) delegates.toArray(new ILaunchDelegateProxy[delegates.size()]);
+		return (ILaunchDelegate[]) delegates.toArray(new ILaunchDelegate[delegates.size()]);
 	}
 	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setPreferredDelegate(java.util.Set, org.eclipse.debug.core.ILaunchDelegateProxy)
+	 */
+	public void setPreferredDelegate(Set modes, ILaunchDelegate delegate) {
+		if(fPreferredDelegates == null) {
+			fPreferredDelegates = new HashMap();
+		}
+		fPreferredDelegates.put(modes, delegate);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPreferredDelegate(java.util.Set)
+	 */
+	public ILaunchDelegate getPreferredDelegate(Set modes) {
+		initializePreferredDelegates();
+		return (ILaunchDelegate) fPreferredDelegates.get(modes);
+	}
+	
+	/**
+	 * Internal use method to allow access to the listing of preferred delegates. Delegates are stored in the map by their mode set combinations.
+	 * <p>
+	 * preferred delegates are stored as:
+	 * <pre>
+	 *  Map&lt;modeset, delegate&gt;
+	 * </pre>
+	 * </p>
+	 * @return the <code>java.util.Map</code> of preferred delegates or an empty <code>java.util.Map</code> if no prefererd delegates are specified, never <code>null</code>
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public Map getPreferredDelegates() {
+		initializePreferredDelegates();
+		return fPreferredDelegates;
+	}
+	
+	/**
+	 * This method is used to initialize the listing of preferred launch delegates for this type
+	 * 
+	 * <p>
+	 * Undecide if this code should live in the launch manager and have it load a listing of all perferred launch 
+	 * delegates that each config type could then query as needed when looking for their preferrred delegate. 
+	 * Seems like it would be alot less work...
+	 * </p>
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	private synchronized void initializePreferredDelegates() {
+		if(fPreferredDelegates == null) {
+			fPreferredDelegates = new HashMap();
+			initializeDelegates();
+			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+			ILaunchDelegate delegate = null;
+			Set modes = null;
+			for(Iterator iter = fDelegates.keySet().iterator(); iter.hasNext();) {
+				modes = (Set) iter.next();
+				delegate = lm.getPreferredDelegate(getIdentifier(), modes);
+				if(delegate != null) {
+					fPreferredDelegates.put(modes, delegate);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Initializes the listing of launch delegates for this type
+	 */
 	private synchronized void initializeDelegates() {
 		if (fDelegates == null) {
 			// initialize delegate
 			fDelegates = new Hashtable();
 			LaunchDelegate[] launchDelegates = getLaunchDelegateExtensions();
+			LaunchDelegate delegate = null;
+			List modelist = null, tmp = null;
+			Set modes = null;
 			for (int i = 0; i < launchDelegates.length; i++) {
-				LaunchDelegate delegate = launchDelegates[i];
-				List combintaions = delegate.getModeCombinations();
-				Iterator iterator = combintaions.iterator();
-				while (iterator.hasNext()) {
-					Set combination = (Set) iterator.next();
-					registerDelegate(delegate, combination);
+				delegate = launchDelegates[i];
+				modelist = delegate.getModes();
+				for(int j = 0; j < modelist.size(); j++) {
+					//cache the delegate based on its set of modes and delegate
+					modes = (Set) modelist.get(j);
+					tmp = (List) fDelegates.get(modes);
+					if (tmp == null) {
+						tmp = new ArrayList();
+						fDelegates.put(modes, tmp);
+					}
+					tmp.add(delegate);
 				}
 			}
-		}		
+		}
 	}
-
+	
 	/**
 	 * Returns all launch delegate extensions registered for this configuration type.
 	 * 
@@ -188,15 +283,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	private LaunchDelegate[] getLaunchDelegateExtensions() {
 		return ((LaunchManager) DebugPlugin.getDefault().getLaunchManager()).getLaunchDelegates(getIdentifier());
-	}
-	
-	private void registerDelegate(LaunchDelegate delegate, Set modes) {
-		List delegatesForModes = (List) fDelegates.get(modes);
-		if (delegatesForModes == null) {
-			delegatesForModes = new ArrayList();
-			fDelegates.put(modes, delegatesForModes);
-		}
-		delegatesForModes.add(delegate);
 	}
 
 	/* (non-Javadoc)
@@ -289,13 +375,34 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		if(fModes == null) {
 			fModes = new HashSet();
 			LaunchDelegate[] delegates = getLaunchDelegateExtensions();
+			List modesets = null;
 			for(int i= 0; i < delegates.length; i++) {
-				fModes.addAll(delegates[i].getModes());
+				modesets = delegates[i].getModes();
+				for(Iterator iter = modesets.iterator(); iter.hasNext();) {
+					fModes.addAll((Set) iter.next());
+				}
 			}
 		}
 		return fModes;
 	}
-
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModeCombinations()
+	 */
+	public Set getSupportedModeCombinations() {
+		if(fModeCombinations == null) {
+			initializeDelegates();
+			fModeCombinations = new HashSet();
+			fModeCombinations = fDelegates.keySet();
+		}
+		//return a clone or bad things happen
+		HashSet set = new HashSet();
+		for(Iterator iter = fModeCombinations.iterator(); iter.hasNext();) {
+			set.add(new HashSet((Set) iter.next()));
+		}
+		return set;
+	}
+	
 	/**
 	 * determines if the specified candidate is suitable for migration by loading it delegate.
 	 * @param candidate the candidate to inspect for migration suitability
@@ -368,7 +475,17 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsMode(java.lang.String)
 	 */
 	public boolean supportsMode(String mode) {
-		return getSupportedModes().contains(mode);
+		if(fModeCombinations == null) {
+			getSupportedModeCombinations();
+		}
+		Set modes = null;
+		for(Iterator iter = fModeCombinations.iterator(); iter.hasNext();) {
+			modes = (Set) iter.next();
+			if(modes.size() == 1 && modes.contains(mode)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)
@@ -386,25 +503,13 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModeCombinations()
-	 */
-	public Set[] getSupportedModeCombinations() {
-		initializeDelegates();
-		Set combinations = fDelegates.keySet();
-		Set[] sets = (Set[])combinations.toArray(new Set[combinations.size()]);
-		Set[] copy = new Set[sets.length];
-		for (int i = 0; i < copy.length; i++) {
-			copy[i] = new HashSet(sets[i]);
-		}
-		return copy;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsModeCombination(java.util.Set)
 	 */
-	public boolean supportsModeCombination(Set modes) {
-		initializeDelegates();
-		return fDelegates.containsKey(modes);
+	public boolean supportsModes(Set modes) {
+		if(fModeCombinations == null) {
+			getSupportedModeCombinations();
+		}
+		return fModeCombinations.contains(modes);
 	}
 
 }

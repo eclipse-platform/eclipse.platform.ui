@@ -265,6 +265,20 @@ public interface IInternalDebugUIConstants {
 	public static final String PREF_MAX_DETAIL_LENGTH = IDebugUIConstants.PLUGIN_ID + ".max_detail_length"; //$NON-NLS-1$
 	    
 	/**
+	 * Constant to describe the 'list' action for duplicate launch delegate resolution
+	 * @since 3.3
+	 * EXPERIMENTAL
+	 */
+	public static final String DELEGATE_ACTION_ID_LIST = "list"; //$NON-NLS-1$
+	
+	/**
+	 * Constant to describe the 'dialog' action for duplicate delegate resolution 
+	 * @since 3.3
+	 * EXPERIMENTAL
+	 */
+	public static final String DELEGATE_ACTION_ID_DIALOG = "dialog"; //$NON-NLS-1$
+	
+	/**
 	 * Font for Memory View
 	 * 
 	 * @since 3.0
