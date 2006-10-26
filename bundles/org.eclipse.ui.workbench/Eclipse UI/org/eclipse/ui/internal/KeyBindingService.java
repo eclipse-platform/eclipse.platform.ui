@@ -30,6 +30,7 @@ import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.EnabledSubmission;
+import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
 
 /**
  * This service provides a nestable implementation of a key binding service.
@@ -483,6 +484,14 @@ public final class KeyBindingService implements INestableKeyBindingService {
         if (disposed) {
 			return;
 		}
+        
+        if (action instanceof CommandLegacyActionWrapper) {
+        	// this is a registration of a fake action for an already
+			// registered handler
+			WorkbenchPlugin
+					.log("Cannot register a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
+			return;
+        }
 
         unregisterAction(action);
         String commandId = action.getActionDefinitionId();
@@ -579,6 +588,14 @@ public final class KeyBindingService implements INestableKeyBindingService {
         if (disposed) {
 			return;
 		}
+        
+        if (action instanceof CommandLegacyActionWrapper) {
+        	// this is a registration of a fake action for an already
+			// registered handler
+			WorkbenchPlugin
+					.log("Cannot unregister a CommandLegacyActionWrapper out of the system"); //$NON-NLS-1$
+			return;
+        }
 
         String commandId = action.getActionDefinitionId();
 

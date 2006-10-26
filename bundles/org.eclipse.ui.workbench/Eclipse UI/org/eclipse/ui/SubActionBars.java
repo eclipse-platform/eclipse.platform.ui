@@ -35,6 +35,7 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.EditorActionBars;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 import org.eclipse.ui.services.IServiceLocator;
@@ -457,6 +458,14 @@ public class SubActionBars extends EventManager implements IActionBars {
 			 */
 			WorkbenchPlugin
 					.log("Cannot set the global action handler for a null action id"); //$NON-NLS-1$
+			return;
+		}
+		
+		if (handler instanceof CommandLegacyActionWrapper) {
+        	// this is a registration of a fake action for an already
+			// registered handler
+			WorkbenchPlugin
+					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
 			return;
 		}
 		
