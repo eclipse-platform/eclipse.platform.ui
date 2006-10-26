@@ -99,7 +99,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	private DeltaDataTree currentDelta;
 	private ElementTree currentLastBuiltTree;
 	private ElementTree currentTree;
-	
+
 	/**
 	 * Caches the IResourceDelta for a pair of trees
 	 */
@@ -184,10 +184,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
-		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = NLS.bind(Messages.events_building_1, project.getFullPath());
-			monitor.beginTask(message, Math.max(1, commands.length));
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
 				BuildCommand command = (BuildCommand) commands[i];
@@ -198,8 +195,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			}
 		} catch (CoreException e) {
 			status.add(e.getStatus());
-		} finally {
-			monitor.done();
 		}
 	}
 
@@ -221,29 +216,37 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	private void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
-		if (!project.isAccessible())
-			return;
-		final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
-		if (commands.length == 0)
-			return;
-		ISafeRunnable code = new ISafeRunnable() {
-			public void handleException(Throwable e) {
-				if (e instanceof OperationCanceledException)
-					throw (OperationCanceledException) e;
-				// don't log the exception....it is already being logged in Workspace#run
-				// should never get here because the lower-level build code wrappers
-				// builder exceptions in core exceptions if required.
-				String message = e.getMessage();
-				if (message == null)
-					message = NLS.bind(Messages.events_unknown, e.getClass().getName(), project.getName());
-				status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
-			}
+		try {
+			final ICommand[] commands;
+			if (project.isAccessible())
+				commands = ((Project) project).internalGetDescription().getBuildSpec(false);
+			else
+				commands = null;
+			int work = commands == null ? 0 : commands.length;
+			monitor.beginTask(NLS.bind(Messages.events_building_1, project.getFullPath()), work);
+			if (work == 0)
+				return;
+			ISafeRunnable code = new ISafeRunnable() {
+				public void handleException(Throwable e) {
+					if (e instanceof OperationCanceledException)
+						throw (OperationCanceledException) e;
+					// don't log the exception....it is already being logged in Workspace#run
+					// should never get here because the lower-level build code wrappers
+					// builder exceptions in core exceptions if required.
+					String errorText = e.getMessage();
+					if (errorText == null)
+						errorText = NLS.bind(Messages.events_unknown, e.getClass().getName(), project.getName());
+					status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, errorText, e));
+				}
 
-			public void run() throws Exception {
-				basicBuild(project, trigger, commands, status, monitor);
-			}
-		};
-		SafeRunner.run(code);
+				public void run() throws Exception {
+					basicBuild(project, trigger, commands, status, monitor);
+				}
+			};
+			SafeRunner.run(code);
+		} finally {
+			monitor.done();
+		}
 	}
 
 	/**
@@ -325,7 +328,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				leftover.removeAll(Arrays.asList(ordered));
 				IProject[] unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
-
 				basicBuildLoop(ordered, unordered, trigger, status, monitor);
 				return status;
 			} finally {
@@ -343,6 +345,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * @return A status indicating if the build succeeded or failed
 	 */
 	public IStatus build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) {
+		monitor = Policy.monitorFor(monitor);
 		if (builderName == null)
 			return basicBuild(project, trigger, monitor);
 		return basicBuild(project, trigger, builderName, args, monitor);
