@@ -284,6 +284,12 @@
             id="org.eclipse.team.ui.synchronizeLast">
       </command>
       <command
+            name="%Command.applyPatch.name"
+            categoryId="org.eclipse.team.ui.category.team"
+            description="%Command.applyPatch.description"
+            id="org.eclipse.team.ui.applyPatch">
+      </command>
+      <command
        		name="%Synchronizing.perspective"
         	description="%Synchronizing.openPerspectiveDescription"
         	categoryId="org.eclipse.ui.category.perspectives"
@@ -338,6 +344,14 @@
                class="org.eclipse.team.internal.ui.actions.ConfigureProjectAction"
                menubarPath="project/open.ext"
                id="org.eclipse.team.ui.ConfigureProject"/>
+         <action
+               allowLabelUpdate="true"
+               class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
+               definitionId="org.eclipse.team.ui.applyPatch"
+               id="org.eclipse.team.ui.ApplyPatchAction"
+               label="%ApplyPatch.label"
+               menubarPath="project/additions"
+               tooltip="%ApplyPatch.tooltip"/>
       </actionSet>
    </extension>
    

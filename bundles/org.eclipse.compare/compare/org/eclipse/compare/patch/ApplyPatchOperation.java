@@ -97,6 +97,19 @@ public class ApplyPatchOperation implements Runnable {
 	}
 	
 	/**
+	 * Create an operation for the given part and resource. This method is a convenience
+	 * method that calls {@link #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration, CompareConfiguration)}
+	 * with null for the other parameters.
+	 * @param targetPart an IResource which the patch is to be applied to or <code>null</code>
+	 * @param resource an IResource which the patch is to be applied to or <code>null</code>
+	 * @see #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration, CompareConfiguration)
+	 */
+	public ApplyPatchOperation(IWorkbenchPart targetPart, IResource resource) {
+		this(targetPart, null, resource, null, null);
+	}
+
+	/**
+	 * Open the Apply Patch wizard using the values associated with this operation.
 	 * This method must be called from the UI thread.
 	 */
 	public void openWizard() {

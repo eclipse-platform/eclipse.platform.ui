@@ -36,7 +36,7 @@ public class CompareWithPatchAction extends BaseCompareAction implements IObject
 	protected void run(ISelection selection) {
 		IResource firstResource = Utilities.getFirstResource(selection);
 		
-		final ApplyPatchOperation patchOp = new ApplyPatchOperation( targetPart, null ,firstResource, null, null);
+		final ApplyPatchOperation patchOp = new ApplyPatchOperation( targetPart, firstResource);
 	
 		targetPart.getSite().getShell().getDisplay().asyncExec(new Runnable(){
 			public void run() {
