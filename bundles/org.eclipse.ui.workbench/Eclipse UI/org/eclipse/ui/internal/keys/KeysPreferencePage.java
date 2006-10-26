@@ -1640,30 +1640,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 					// Do nothing.
 				}
 			}
-
-			Map categoriesByName = new HashMap();
-
-			for (Iterator iterator = commandService.getDefinedCategoryIds()
-					.iterator(); iterator.hasNext();) {
-				Category category = commandService
-						.getCategory((String) iterator.next());
-
-				try {
-					String name = category.getName();
-					Collection categories = (Collection) categoriesByName
-							.get(name);
-
-					if (categories == null) {
-						categories = new HashSet();
-						categoriesByName.put(name, categories);
-					}
-
-					categories.add(category);
-				} catch (NotDefinedException eNotDefined) {
-					// Do nothing
-				}
-			}
-
+			
 			Map commandsByName = new HashMap();
 
 			for (Iterator iterator = commandService.getDefinedCommandIds()
@@ -1684,6 +1661,58 @@ public final class KeysPreferencePage extends PreferencePage implements
 					}
 
 					commands.add(command);
+				} catch (NotDefinedException eNotDefined) {
+					// Do nothing
+				}
+			}
+			
+			// moved here to allow us to remove any empty categories
+			commandIdsByCategoryId = new HashMap();
+
+			for (Iterator iterator = commandService.getDefinedCommandIds()
+					.iterator(); iterator.hasNext();) {
+				final Command command = commandService
+						.getCommand((String) iterator.next());
+				if (!isActive(command)) {
+					continue;
+				}
+
+				try {
+					String categoryId = command.getCategory().getId();
+					Collection commandIds = (Collection) commandIdsByCategoryId
+							.get(categoryId);
+
+					if (commandIds == null) {
+						commandIds = new HashSet();
+						commandIdsByCategoryId.put(categoryId, commandIds);
+					}
+
+					commandIds.add(command.getId());
+				} catch (NotDefinedException eNotDefined) {
+					// Do nothing
+				}
+			}
+
+			Map categoriesByName = new HashMap();
+
+			for (Iterator iterator = commandService.getDefinedCategoryIds()
+					.iterator(); iterator.hasNext();) {
+				Category category = commandService
+						.getCategory((String) iterator.next());
+
+				try {
+					if (commandIdsByCategoryId.containsKey(category.getId())) {
+						String name = category.getName();
+						Collection categories = (Collection) categoriesByName
+								.get(name);
+
+						if (categories == null) {
+							categories = new HashSet();
+							categoriesByName.put(name, categories);
+						}
+
+						categories.add(category);
+					}
 				} catch (NotDefinedException eNotDefined) {
 					// Do nothing
 				}
@@ -1793,31 +1822,6 @@ public final class KeysPreferencePage extends PreferencePage implements
 			}
 
 			Scheme activeScheme = bindingService.getActiveScheme();
-			commandIdsByCategoryId = new HashMap();
-
-			for (Iterator iterator = commandService.getDefinedCommandIds()
-					.iterator(); iterator.hasNext();) {
-				final Command command = commandService
-						.getCommand((String) iterator.next());
-				if (!isActive(command)) {
-					continue;
-				}
-
-				try {
-					String categoryId = command.getCategory().getId();
-					Collection commandIds = (Collection) commandIdsByCategoryId
-							.get(categoryId);
-
-					if (commandIds == null) {
-						commandIds = new HashSet();
-						commandIdsByCategoryId.put(categoryId, commandIds);
-					}
-
-					commandIds.add(command.getId());
-				} catch (NotDefinedException eNotDefined) {
-					// Do nothing
-				}
-			}
 
 			// Make an internal copy of the binding manager, for local changes.
 			try {
