@@ -133,7 +133,7 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 
 	protected void resetSaveLifecycleLog() {
 		String message = "save lifecycle log for SaveParticipantPlugin";
-		saveLifecycleLog = new MultiStatus(getPluginId(), Status.OK, message, null);
+		saveLifecycleLog = new MultiStatus(getPluginId(), IStatus.OK, message, null);
 	}
 
 	public void rollback(ISaveContext context) {
@@ -154,42 +154,42 @@ public class SaveParticipant2Plugin extends Plugin implements ISaveParticipant {
 				// in cases we do not expect any of the ids to be null.
 				if (context.getPreviousSaveNumber() != expectedPreviousSaveNumber) {
 					String message = getMessage(expectedPreviousSaveNumber, context.getPreviousSaveNumber());
-					return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, null);
+					return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null);
 				}
 			} catch (NullPointerException e) {
 				String message = getMessage(expectedPreviousSaveNumber, context.getPreviousSaveNumber());
-				return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, e);
+				return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e);
 			}
 		}
 		// save kind
 		if (context.getKind() != saveKind) {
 			String message = "Save kind was different than expected.";
-			return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, null);
+			return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null);
 		}
-		return new Status(Status.OK, getPluginId(), Status.OK, "OK", null);
+		return new Status(IStatus.OK, getPluginId(), IStatus.OK, "OK", null);
 	}
 
 	private IStatus validate(ISavedState state) {
 		if (state == null && expectedPreviousSaveNumber == 0)
-			return new Status(Status.OK, getPluginId(), Status.OK, "OK", null);
+			return new Status(IStatus.OK, getPluginId(), IStatus.OK, "OK", null);
 		try {
 			// Test if id or delta are different than expected. Also, catch NullPointerException
 			// in cases we do not expect any of the states to be null.
 			state.processResourceChangeEvents(deltaVerifier);
 			if (state.getSaveNumber() != expectedPreviousSaveNumber) {
 				String message = "saved id is different than expected";
-				return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, null);
+				return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null);
 			}
 			if (!deltaVerifier.isDeltaValid()) {
 				String message = "delta is different than expected\n";
 				message = message + deltaVerifier.getMessage();
-				return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, null);
+				return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, null);
 			}
 		} catch (NullPointerException e) {
 			String message = "ISavedState is different than expected";
-			return new Status(Status.ERROR, getPluginId(), Status.ERROR, message, e);
+			return new Status(IStatus.ERROR, getPluginId(), IStatus.ERROR, message, e);
 		}
-		return new Status(Status.OK, getPluginId(), Status.OK, "OK", null);
+		return new Status(IStatus.OK, getPluginId(), IStatus.OK, "OK", null);
 	}
 
 	/**
