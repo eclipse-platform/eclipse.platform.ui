@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
@@ -18,8 +21,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
-public class ToggleStepFiltersAction extends DebugCommandAction {
+public class ToggleStepFiltersAction extends DebugCommandAction implements IPropertyChangeListener {
+	
+	private boolean fInitialized = !DebugUITools.isUseStepFilters();
 	
 	public ImageDescriptor getDisabledImageDescriptor() {
 		return DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TOGGLE_STEP_FILTERS);
@@ -58,7 +65,14 @@ public class ToggleStepFiltersAction extends DebugCommandAction {
 	}
 
     public void run() {
-    	DebugUITools.setUseStepFilters(!DebugUITools.isUseStepFilters());
+    	// ignore initial call to run from abstract debug view
+    	// that runs the action to initialize it's state when
+    	// the workbench persisted the action as "on"
+    	if (fInitialized) {
+    		DebugUITools.setUseStepFilters(!DebugUITools.isUseStepFilters());
+    	} else {
+    		fInitialized = true;
+    	}
     }
 	
     public int getStyle() {
@@ -72,6 +86,39 @@ public class ToggleStepFiltersAction extends DebugCommandAction {
 		} else {
 			super.debugContextChanged(event);
 		}
+	}
+
+	public void init(IWorkbenchPart part) {
+		super.init(part);
+		initState();
+	}
+
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		initState();
+	}
+    
+    protected void initState() {
+    	DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+    }
+
+	public void dispose() {
+		super.dispose();
+		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
+			boolean checked = DebugUITools.isUseStepFilters();
+			setChecked(checked);
+			DebugCommandActionDelegate delegate = getDelegate();
+			if (delegate != null) {
+				delegate.getAction().setChecked(checked);
+			}
+		}		
 	}
     
     

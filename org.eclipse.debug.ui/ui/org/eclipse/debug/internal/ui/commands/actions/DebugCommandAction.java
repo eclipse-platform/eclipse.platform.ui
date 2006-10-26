@@ -67,8 +67,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
             PlatformUI.getWorkbench().getHelpSystem().setHelp(this, helpContextId);
         setEnabled(false);
     }
-   
-    /**
+
+	/**
      * Set the current delegate
      * @param delegate
      */
@@ -275,4 +275,14 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @see org.eclipse.jface.action.Action#getImageDescriptor()
      */
     public abstract ImageDescriptor getImageDescriptor();
+    
+    /**
+     * Returns the delegate associated with this action or <code>null</code>
+     * if none.
+     * 
+     * @return delegate or <code>null</code>
+     */
+    protected DebugCommandActionDelegate getDelegate() {
+    	return fDelegate;
+    }
 }
