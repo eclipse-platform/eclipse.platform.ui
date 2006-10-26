@@ -11,6 +11,9 @@
 
 package org.eclipse.debug.internal.ui.commands.actions;
 
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.ui.IWorkbenchWindow;
+
 /**
  * Toggle step filters action delegate.
  * 
@@ -23,5 +26,11 @@ public class ToggleStepFiltersCommandActionDelegate extends DebugCommandActionDe
         setAction(new ToggleStepFiltersAction());
     }
 
+	public void init(IWorkbenchWindow window) {
+		super.init(window);
+		setChecked(DebugUITools.isUseStepFilters());
+	}
+
+    
     
 }

@@ -117,6 +117,10 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
         fWindowAction.setEnabled(enabled);
     }
     
+    public void setChecked(boolean checked) {
+    	fWindowAction.setChecked(checked);
+    }
+    
     protected IAction getWindowAction()
     {
     	return fWindowAction;

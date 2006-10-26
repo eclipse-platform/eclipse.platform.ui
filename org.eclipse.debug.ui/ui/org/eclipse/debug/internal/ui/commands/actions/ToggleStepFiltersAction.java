@@ -116,7 +116,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 			setChecked(checked);
 			DebugCommandActionDelegate delegate = getDelegate();
 			if (delegate != null) {
-				delegate.getAction().setChecked(checked);
+				delegate.setChecked(checked);
 			}
 		}		
 	}
