@@ -31,6 +31,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**
@@ -202,5 +203,15 @@ public class Bug99858Test extends TestCase {
 		Display display = Display.getCurrent();
 		while (display.readAndDispatch())
 			;
+	}
+	
+	protected void setUp() throws Exception {
+		super.setUp();
+		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
+	}
+	
+	protected void tearDown() throws Exception {
+		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
+		super.tearDown();
 	}
 }
