@@ -11,14 +11,11 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.internal.RectangleAnimation;
 import org.eclipse.ui.internal.ViewPane;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
@@ -65,36 +62,31 @@ public class SystemMenuFastView extends Action implements ISelfUpdatingAction {
         return viewRef;
     }
 
-    private WorkbenchWindow getWorkbenchWindow() {
-    	return (WorkbenchWindow) viewPane.getPane().getPage().getWorkbenchWindow();
-    }
-
     public boolean shouldBeVisible() {
         if (viewPane == null || viewPane.getPane().getPage() == null) {
             return false;
         }
 
-        return getWorkbenchWindow().getShowFastViewBars() && viewPane != null
+        WorkbenchWindow workbenchWindow = (WorkbenchWindow) viewPane.getPane().getPage()
+                .getWorkbenchWindow();
+
+        return workbenchWindow.getShowFastViewBars() && viewPane != null
                 && site.isPartMoveable(viewPane);
     }
-    
+
     public void dispose() {
         viewPane = null;
     }
 
     public void run() {
         if (viewPane.getPane() instanceof ViewPane) {
+            ViewPane pane = (ViewPane) viewPane.getPane();
+            
             if (!isChecked()) {
-            	Rectangle viewBounds = DragUtil.getDisplayBounds(viewPane.getControl());
-            	Rectangle fvbBounds = DragUtil.getDisplayBounds(getWorkbenchWindow().getFastViewBar().getControl());
-            	RectangleAnimation animation = new RectangleAnimation(getWorkbenchWindow().getShell(), viewBounds, fvbBounds);
-            	
-                getWorkbenchWindow().getFastViewBar().adoptView(getReference(), -1, true, false);
-                
-                animation.schedule();
+                pane.doMakeFast();
             } else {
-                getWorkbenchWindow().getFastViewBar().restoreView(getReference(), true);
-            }
+                pane.doRemoveFast();
+            }   
         }
     }
 }
