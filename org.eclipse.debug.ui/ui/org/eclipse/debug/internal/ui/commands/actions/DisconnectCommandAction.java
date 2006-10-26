@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.commands.provisional.IDisconnectCommand;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.commands.IDisconnectCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * Disconnect action.

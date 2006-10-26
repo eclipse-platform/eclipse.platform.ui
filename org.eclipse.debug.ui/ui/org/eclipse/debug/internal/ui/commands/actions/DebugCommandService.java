@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
-import org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
+import org.eclipse.debug.ui.commands.IDebugCommand;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
@@ -107,7 +107,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param monitor
 	 */
-	public void postUpdateCommand(Class commandType, IBooleanRequestMonitor monitor) {
+	public void postUpdateCommand(Class commandType, IBooleanStatusMonitor monitor) {
 		ProxyBooleanRequestMonitor proxy = (ProxyBooleanRequestMonitor) fCommandUpdates.get(commandType);
 		if (proxy == null) {
 			proxy = new ProxyBooleanRequestMonitor();
@@ -122,7 +122,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param requestMonitor
 	 */
-	public void updateCommand(Class commandType, IBooleanRequestMonitor requestMonitor) {
+	public void updateCommand(Class commandType, IBooleanStatusMonitor requestMonitor) {
 		ISelection context = fContextService.getActiveContext();
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();

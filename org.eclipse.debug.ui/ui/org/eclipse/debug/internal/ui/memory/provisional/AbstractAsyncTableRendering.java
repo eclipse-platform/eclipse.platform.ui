@@ -34,7 +34,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
@@ -61,6 +60,7 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingConte
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
@@ -458,7 +458,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}};
 		
 	private IPresentationErrorListener fPresentationErrorListener = new IPresentationErrorListener() {
-		public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {
+		public void handlePresentationFailure(IStatusMonitor monitor, IStatus status) {
 			showMessage(status.getMessage());
 		}};
 	

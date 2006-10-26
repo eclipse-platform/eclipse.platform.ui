@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Common function for request monitors
@@ -19,13 +19,13 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  * @since 3.3
  *
  */
-public abstract class AbstractRequestMonitor implements IAsynchronousRequestMonitor {
+public abstract class AbstractRequestMonitor implements IStatusMonitor {
 	
 	private IStatus fStatus;
 	private boolean fCancelled = false;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor#setStatus(org.eclipse.core.runtime.IStatus)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IStatusMonitor#setStatus(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setStatus(IStatus status) {
 		fStatus = status;
@@ -76,7 +76,7 @@ public abstract class AbstractRequestMonitor implements IAsynchronousRequestMoni
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor#getStatus()
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IStatusMonitor#getStatus()
 	 */
 	public IStatus getStatus() {
 		return fStatus;

@@ -12,9 +12,9 @@
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 public interface IPresentationErrorListener {
 	
-	public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status);
+	public void handlePresentationFailure(IStatusMonitor monitor, IStatus status);
 }

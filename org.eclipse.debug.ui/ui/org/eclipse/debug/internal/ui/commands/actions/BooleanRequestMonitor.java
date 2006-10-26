@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
+import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -20,7 +20,7 @@ import org.eclipse.jface.action.IAction;
  * @since 3.3
  *
  */
-public class BooleanRequestMonitor extends AbstractRequestMonitor implements IBooleanRequestMonitor {
+public class BooleanRequestMonitor extends AbstractRequestMonitor implements IBooleanStatusMonitor {
 	
 	private IAction fAction;
 	private int fNumVoters;

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.progress.UIJob;
 
@@ -39,7 +39,7 @@ public class VariablesViewer extends AsynchronousTreeViewer{
 		fRestoreJob.setSystem(true);
 	}
 
-	protected void updateComplete(IAsynchronousRequestMonitor update) {
+	protected void updateComplete(IStatusMonitor update) {
 		if (fView != null && !hasPendingUpdates()) {
 			fRestoreJob.schedule();
 			fView.populateDetailPane();
@@ -49,7 +49,7 @@ public class VariablesViewer extends AsynchronousTreeViewer{
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.treeviewer.AsynchronousTreeViewer#handlePresentationFailure(org.eclipse.debug.internal.ui.treeviewer.IPresentationRequestMonitor, org.eclipse.core.runtime.IStatus)
 	 */
-	protected void handlePresentationFailure(IAsynchronousRequestMonitor update, IStatus status) {
+	protected void handlePresentationFailure(IStatusMonitor update, IStatus status) {
 		fView.showMessage(status.getMessage());
 	}
 	

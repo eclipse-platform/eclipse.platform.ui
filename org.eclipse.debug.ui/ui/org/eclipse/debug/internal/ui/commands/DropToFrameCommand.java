@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.commands;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDropToFrame;
-import org.eclipse.debug.internal.ui.commands.provisional.IDropToFrameCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IDropToFrameCommand;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Default drop to frame command for the standard debug model.
@@ -23,11 +23,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  */
 public class DropToFrameCommand extends DebugCommand implements IDropToFrameCommand {
 
-	protected boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException {
 		return ((IDropToFrame)target).canDropToFrame();
 	}
 
-	protected void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected void doExecute(Object target, IStatusMonitor monitor) throws CoreException {
 		((IDropToFrame)target).dropToFrame();
 	}
 

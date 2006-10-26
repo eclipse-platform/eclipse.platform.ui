@@ -28,15 +28,15 @@ import org.eclipse.debug.internal.ui.commands.StepOverCommand;
 import org.eclipse.debug.internal.ui.commands.StepReturnCommand;
 import org.eclipse.debug.internal.ui.commands.SuspendCommand;
 import org.eclipse.debug.internal.ui.commands.TerminateCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IDisconnectCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IDropToFrameCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IResumeCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepIntoCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepOverCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepReturnCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.ISuspendCommand;
-import org.eclipse.debug.internal.ui.commands.provisional.ITerminateCommand;
+import org.eclipse.debug.ui.commands.IDisconnectCommand;
+import org.eclipse.debug.ui.commands.IDropToFrameCommand;
+import org.eclipse.debug.ui.commands.IResumeCommand;
+import org.eclipse.debug.ui.commands.IStepFiltersCommand;
+import org.eclipse.debug.ui.commands.IStepIntoCommand;
+import org.eclipse.debug.ui.commands.IStepOverCommand;
+import org.eclipse.debug.ui.commands.IStepReturnCommand;
+import org.eclipse.debug.ui.commands.ISuspendCommand;
+import org.eclipse.debug.ui.commands.ITerminateCommand;
 
 /**
  * Adapter factory for debug capabilities.

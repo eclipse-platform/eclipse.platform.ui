@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepReturnCommand;
+import org.eclipse.debug.ui.commands.IStepReturnCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**

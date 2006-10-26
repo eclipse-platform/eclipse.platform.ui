@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
-import org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
+import org.eclipse.debug.ui.commands.IDebugCommand;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Common function for standard debug commands.
@@ -41,9 +41,9 @@ public abstract class DebugCommand implements IDebugCommand {
 	} 	
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand#performCapability(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor)
+	 * @see org.eclipse.debug.ui.commands.IDebugCommand#performCapability(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IStatusMonitor)
 	 */
-	public boolean execute(final Object element, final IAsynchronousRequestMonitor requestMonitor) {
+	public boolean execute(final Object element, final IStatusMonitor requestMonitor) {
 		Job job = new Job("execute command") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				if (DEBUG_COMMANDS) {
@@ -82,9 +82,9 @@ public abstract class DebugCommand implements IDebugCommand {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand#checkCapability(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
+	 * @see org.eclipse.debug.ui.commands.IDebugCommand#checkCapability(java.lang.Object, org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor)
 	 */
-	public void canExecute(final Object element, final IBooleanRequestMonitor requestMonitor) {
+	public void canExecute(final Object element, final IBooleanStatusMonitor requestMonitor) {
 		Job job = new Job("check command") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				if (DEBUG_COMMANDS) {
@@ -127,7 +127,7 @@ public abstract class DebugCommand implements IDebugCommand {
 	 * @param target object to perform on
 	 * @param monitor progress monitor
 	 */
-	protected abstract void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException;
+	protected abstract void doExecute(Object target, IStatusMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns whether this command is executable.
@@ -136,7 +136,7 @@ public abstract class DebugCommand implements IDebugCommand {
 	 * @param monitor progress monitor
 	 * @return whether this command can be executed
 	 */
-	protected abstract boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException;
+	protected abstract boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns the appropriate command adapter from the given object.

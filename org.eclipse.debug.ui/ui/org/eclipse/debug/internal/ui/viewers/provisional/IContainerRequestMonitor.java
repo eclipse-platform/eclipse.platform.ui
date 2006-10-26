@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+
 /**
  * A request monitor that collects whether an element contains
  * children.
@@ -18,7 +20,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
  * </p>
  * @since 3.2
  */
-public interface IContainerRequestMonitor extends IAsynchronousRequestMonitor {
+public interface IContainerRequestMonitor extends IStatusMonitor {
 
 	/**
 	 * Sets whether an element contains children.

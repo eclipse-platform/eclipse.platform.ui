@@ -8,16 +8,24 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.commands.provisional;
+package org.eclipse.debug.ui.commands;
 
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 
 /**
- * Request monitor for obtaining a boolean result asynchronously.
- * 
+ * A status monitor that accepts a boolean result. Used by debug commands
+ * to specify enabled state.
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.3
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * remain unchanged during the 3.3 release cycle. Please do not use this API
+ * without consulting with the Platform/Debug team.
+ * </p>
  */
-public interface IBooleanRequestMonitor extends IAsynchronousRequestMonitor {
+public interface IBooleanStatusMonitor extends IStatusMonitor {
 
 	/**
 	 * Sets the result of a boolean request.

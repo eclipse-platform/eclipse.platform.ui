@@ -14,9 +14,9 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.commands.provisional.IDebugCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.commands.IDebugCommand;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
@@ -98,7 +98,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @param target target of the command
      * @return status monitor to execute with
      */
-    protected IAsynchronousRequestMonitor createStatusMonitor(Object target) {
+    protected IStatusMonitor createStatusMonitor(Object target) {
     	return new ActionRequestMonitor();
     }
     

@@ -18,8 +18,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.commands.provisional.ITerminateCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.ui.commands.ITerminateCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -86,7 +86,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		return ITerminateCommand.class;
 	}
 
-	protected IAsynchronousRequestMonitor createStatusMonitor(Object target) {
+	protected IStatusMonitor createStatusMonitor(Object target) {
 		return new TerminateAndRemoveMonitor(target);
 	}
 

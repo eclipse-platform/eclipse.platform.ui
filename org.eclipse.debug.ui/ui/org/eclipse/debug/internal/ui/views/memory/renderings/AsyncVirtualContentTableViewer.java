@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTableViewer;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -78,7 +78,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		return fPendingTopIndexKey;
 	}
 	
-	protected void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {
+	protected void handlePresentationFailure(IStatusMonitor monitor, IStatus status) {
 		notifyPresentationError(monitor, status);
 	}
 	
@@ -341,7 +341,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		fPresentationErrorListeners.remove(errorListener);
 	}
 	
-	private void notifyPresentationError(final IAsynchronousRequestMonitor monitor, final IStatus status)
+	private void notifyPresentationError(final IStatusMonitor monitor, final IStatus status)
 	{
 		Object[] listeners = fPresentationErrorListeners.getListeners();
 	 
@@ -451,7 +451,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		return table.getItemHeight();
 	}
 
-	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
+	protected void updateComplete(IStatusMonitor monitor) {
 		super.updateComplete(monitor);
 		attemptSetTopIndex();
 		if (monitor instanceof ILabelRequestMonitor)

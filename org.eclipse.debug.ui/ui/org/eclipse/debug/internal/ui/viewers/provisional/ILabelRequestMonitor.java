@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -22,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
  * </p>
  * @since 3.2
  */
-public interface ILabelRequestMonitor extends IAsynchronousRequestMonitor {
+public interface ILabelRequestMonitor extends IStatusMonitor {
 
 	/**
 	 * Sets the text of the label. Cannot be <code>null</code>.

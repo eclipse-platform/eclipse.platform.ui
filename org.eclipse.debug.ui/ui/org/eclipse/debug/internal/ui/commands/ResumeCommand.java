@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.internal.ui.commands.provisional.IResumeCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IResumeCommand;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Default resume command for the standard debug model.
@@ -22,11 +22,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  */
 public class ResumeCommand extends SuspendCommand implements IResumeCommand {
 
-	protected boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException {
 		return ((ISuspendResume)target).canResume();
 	}
 
-	protected void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected void doExecute(Object target, IStatusMonitor monitor) throws CoreException {
 		((ISuspendResume)target).resume();
 	}
 

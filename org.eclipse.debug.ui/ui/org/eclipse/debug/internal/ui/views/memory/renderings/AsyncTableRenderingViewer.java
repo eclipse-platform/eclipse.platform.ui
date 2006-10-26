@@ -22,8 +22,8 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousModel;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ICellModifier;
@@ -988,7 +988,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		}
 	}
 
-	public void handlePresentationFailure(IAsynchronousRequestMonitor monitor, IStatus status) {
+	public void handlePresentationFailure(IStatusMonitor monitor, IStatus status) {
 		super.handlePresentationFailure(monitor, status);
 	}
 	
@@ -1038,7 +1038,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 		return new TableRenderingModel(this);
 	}
 
-	protected void updateComplete(IAsynchronousRequestMonitor monitor) {
+	protected void updateComplete(IStatusMonitor monitor) {
 		super.updateComplete(monitor);
 		
 		if (!hasPendingUpdates() && !fTableCursor.isDisposed())

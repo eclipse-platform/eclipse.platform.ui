@@ -16,9 +16,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
-import org.eclipse.debug.internal.ui.commands.provisional.ITerminateCommand;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.ui.commands.ITerminateCommand;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,7 +50,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		
 	}
 
-	protected IAsynchronousRequestMonitor createStatusMonitor(Object target) {
+	protected IStatusMonitor createStatusMonitor(Object target) {
 		ILaunch launch = RelaunchActionDelegate.getLaunch(target);
 		return new RequestMonitor(launch);
 	}

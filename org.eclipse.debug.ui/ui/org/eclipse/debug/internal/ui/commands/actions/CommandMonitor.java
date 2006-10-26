@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
+import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
 import org.eclipse.jface.action.IAction;
 
 /**
@@ -18,7 +18,7 @@ import org.eclipse.jface.action.IAction;
  * 
  * @since 3.3
  */
-public class CommandMonitor extends AbstractRequestMonitor implements IBooleanRequestMonitor {
+public class CommandMonitor extends AbstractRequestMonitor implements IBooleanStatusMonitor {
 	
 	private IAction fAction;
 	

@@ -67,6 +67,20 @@
 	<type name="ToggleMethodBreakpointActionDelegate" instantiate="false" subclass="false" />
 	<type name="ToggleWatchpointActionDelegate" instantiate="false" subclass="false" />
  </package>
+ <package name="org.eclipse.debug.ui.commands">
+ 	<type name="IBooleanStatusMonitor" implement="false"/>
+ 	<type name="IDebugCommand"/>
+ 	<type name="IDisconnectCommand"/>
+ 	<type name="IDropToFrameCommand"/>
+ 	<type name="IResumeCommand"/>
+ 	<type name="IStatusMonitor" implement="false"/>
+ 	<type name="IStepFiltersCommand"/>
+ 	<type name="IStepIntoCommand"/>
+ 	<type name="IStepOverCommand"/>
+ 	<type name="IStepReturnCommand"/>
+ 	<type name="ISuspendCommand"/>
+ 	<type name="ITerminateCommand"/>
+ </package>
  <package name="org.eclipse.debug.ui.console">
 	<type name="ConsoleColorProvider" />
 	<type name="FileLink" subclass="false" />

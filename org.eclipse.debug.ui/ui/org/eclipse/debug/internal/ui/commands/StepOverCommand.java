@@ -12,8 +12,8 @@ package org.eclipse.debug.internal.ui.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IStep;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepOverCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.ui.commands.IStepOverCommand;
 
 /**
  * Default step over command for the standard debug model.
@@ -22,11 +22,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  */
 public class StepOverCommand extends StepCommand implements IStepOverCommand {
 
-	protected boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException {
 		return ((IStep)target).canStepOver();
 	}
 
-	protected void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected void doExecute(Object target, IStatusMonitor monitor) throws CoreException {
 		((IStep)target).stepOver();
 	}
 

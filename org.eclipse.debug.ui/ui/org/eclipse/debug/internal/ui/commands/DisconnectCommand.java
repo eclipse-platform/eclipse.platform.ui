@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.commands;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IDisconnect;
-import org.eclipse.debug.internal.ui.commands.provisional.IDisconnectCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
+import org.eclipse.debug.ui.commands.IDisconnectCommand;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Default disconnect command for the standard debug model.
@@ -23,11 +23,11 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMon
  */
 public class DisconnectCommand extends DebugCommand implements IDisconnectCommand {
 
-	protected boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException {
 		return ((IDisconnect)target).canDisconnect();
 	}
 
-	protected void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected void doExecute(Object target, IStatusMonitor monitor) throws CoreException {
 		((IDisconnect)target).disconnect();
 	}
 

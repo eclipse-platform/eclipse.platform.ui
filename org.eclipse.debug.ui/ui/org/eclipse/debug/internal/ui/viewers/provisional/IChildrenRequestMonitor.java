@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+
 /**
  * A request monitor that collects children from an asynchronous tree content adapter.
  * <p>
@@ -17,7 +19,7 @@ package org.eclipse.debug.internal.ui.viewers.provisional;
  * </p>
  * @since 3.2
  */
-public interface IChildrenRequestMonitor extends IAsynchronousRequestMonitor {
+public interface IChildrenRequestMonitor extends IStatusMonitor {
 
 	/**
 	 * Adds the given child to this request.

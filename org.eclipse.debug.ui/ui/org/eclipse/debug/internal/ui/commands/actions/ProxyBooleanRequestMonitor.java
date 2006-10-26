@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor;
+import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
 
 /**
  * Boolean request monitor that collects boolean results from a number of voters.
@@ -24,7 +24,7 @@ import org.eclipse.debug.internal.ui.commands.provisional.IBooleanRequestMonitor
  * @since 3.3
  *
  */
-public class ProxyBooleanRequestMonitor extends AbstractRequestMonitor implements IBooleanRequestMonitor {
+public class ProxyBooleanRequestMonitor extends AbstractRequestMonitor implements IBooleanStatusMonitor {
 	
 	private List fMonitors = new ArrayList();
 	private int fNumVoters;
@@ -52,7 +52,7 @@ public class ProxyBooleanRequestMonitor extends AbstractRequestMonitor implement
 				fDone = true;
 				Iterator monitors = fMonitors.iterator();
 				while (monitors.hasNext()) {
-					IBooleanRequestMonitor monitor = (IBooleanRequestMonitor) monitors.next();
+					IBooleanStatusMonitor monitor = (IBooleanStatusMonitor) monitors.next();
 					monitor.setStatus(getStatus());
 					if (isCanceled()) {
 						monitor.setCanceled(true);
@@ -80,7 +80,7 @@ public class ProxyBooleanRequestMonitor extends AbstractRequestMonitor implement
 	 * 
 	 * @param monitor
 	 */
-	void addMonitor(IBooleanRequestMonitor monitor) {
+	void addMonitor(IBooleanStatusMonitor monitor) {
 		fMonitors.add(monitor);
 	}
 }

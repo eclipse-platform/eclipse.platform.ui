@@ -17,9 +17,9 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStepFilters;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.ui.commands.IStepFiltersCommand;
 
 /**
  * Default toggle step filters command for the standard debug model.
@@ -28,7 +28,7 @@ import org.eclipse.debug.ui.DebugUITools;
  */
 public class StepFiltersCommand extends DebugCommand implements IStepFiltersCommand {
 
-	protected boolean isExecutable(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected boolean isExecutable(Object target, IStatusMonitor monitor) throws CoreException {
 		IStepFilters[] filters = (IStepFilters[]) target;
 		for (int i = 0; i < filters.length; i++) {
 			IStepFilters filter = filters[i];
@@ -39,7 +39,7 @@ public class StepFiltersCommand extends DebugCommand implements IStepFiltersComm
 		return true;
 	}
 
-	protected void doExecute(Object target, IAsynchronousRequestMonitor monitor) throws CoreException {
+	protected void doExecute(Object target, IStatusMonitor monitor) throws CoreException {
 		IStepFilters[] filters = (IStepFilters[]) target;
 		for (int i = 0; i < filters.length; i++) {
 			IStepFilters filter = filters[i];

@@ -28,12 +28,12 @@ import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAda
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 
@@ -165,7 +165,7 @@ public abstract class AsynchronousModel {
     protected synchronized void cancelPendingUpdates() {
         Iterator updates = fPendingUpdates.iterator();
         while (updates.hasNext()) {
-            IAsynchronousRequestMonitor update = (IAsynchronousRequestMonitor) updates.next();
+            IStatusMonitor update = (IStatusMonitor) updates.next();
             updates.remove();
             update.setCanceled(true);
         }
@@ -338,7 +338,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param update the update to schedule
 	 */
-	protected void requestScheduled(IAsynchronousRequestMonitor update) {
+	protected void requestScheduled(IStatusMonitor update) {
 		AsynchronousRequestMonitor absUpdate = (AsynchronousRequestMonitor) update;
 		synchronized (fPendingUpdates) {
 			Iterator updates = fPendingUpdates.listIterator();
@@ -358,7 +358,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param update
 	 */
-	protected void requestComplete(IAsynchronousRequestMonitor update) {
+	protected void requestComplete(IStatusMonitor update) {
 		synchronized (fPendingUpdates) {
 			fPendingUpdates.remove(update);
 		}
@@ -369,7 +369,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param update
 	 */
-	protected void viewerUpdateScheduled(IAsynchronousRequestMonitor update) {
+	protected void viewerUpdateScheduled(IStatusMonitor update) {
 		// synch viewer updates and pending updates on same lock - fPendingUpdates
 		synchronized (fPendingUpdates) {
 			fViewerUpdates.add(update);
@@ -491,7 +491,7 @@ public abstract class AsynchronousModel {
 	 * 
 	 * @param monitor
 	 */
-	protected void viewerUpdateComplete(IAsynchronousRequestMonitor monitor) {
+	protected void viewerUpdateComplete(IStatusMonitor monitor) {
 		// synch viewer updates and pending updates on same lock - fPendingUpdates
 		synchronized (fPendingUpdates) {
 			fViewerUpdates.remove(monitor);

@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.internal.ui.commands.actions.ActionRequestMonitor;
-import org.eclipse.debug.internal.ui.commands.provisional.IStepFiltersCommand;
+import org.eclipse.debug.ui.commands.IStepFiltersCommand;
 
 /**
  * As targets are launched, this manager sets its step filter
