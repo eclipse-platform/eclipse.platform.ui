@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 public interface IWorkbenchPartTestable {
 
 	/**
-	 * Get the {@link org.eclipse.swt.Composite} provided to the parts
+	 * Get the {@link org.eclipse.swt.widgets.Composite} provided to the parts
 	 * {@link org.eclipse.ui.IWorkbenchPart#createPartControl(Composite)}
 	 * method.
 	 * 
