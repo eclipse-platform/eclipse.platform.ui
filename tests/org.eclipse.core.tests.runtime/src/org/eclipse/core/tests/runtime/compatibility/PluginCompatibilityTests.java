@@ -12,9 +12,7 @@ package org.eclipse.core.tests.runtime.compatibility;
 
 import java.io.IOException;
 import junit.framework.*;
-import org.eclipse.core.internal.plugins.InternalPlatform;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.PluginVersionIdentifier;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.runtime.RuntimeTestsPlugin;
 import org.osgi.framework.*;
@@ -35,7 +33,7 @@ public class PluginCompatibilityTests extends TestCase {
 				assertEquals("1.0", "bundle01", installed[0].getSymbolicName());
 				assertEquals("1.1", new Version("1.0"), new Version((String) installed[0].getHeaders().get(Constants.BUNDLE_VERSION)));
 				assertEquals("1.2", Bundle.RESOLVED, installed[0].getState());
-				IPluginDescriptor descriptor = InternalPlatform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
+				IPluginDescriptor descriptor = Platform.getPluginRegistry().getPluginDescriptor("bundle01", new PluginVersionIdentifier("1.0"));
 				assertNotNull("2.0", descriptor);
 				assertNotNull("2.1", descriptor.getRuntimeLibraries());
 				// see bug 89845. Changed in 3.1...even bundles with no libraries have "dot"

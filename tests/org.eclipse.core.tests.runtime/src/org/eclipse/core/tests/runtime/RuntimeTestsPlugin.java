@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
@@ -23,8 +22,7 @@ public class RuntimeTestsPlugin extends Plugin {
 
 	public static final String TEST_FILES_ROOT = "Plugin_Testing/";
 
-	public RuntimeTestsPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public RuntimeTestsPlugin() {
 		plugin = this;
 	}
 
