@@ -24,7 +24,6 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.ExpressionContentAdapter;
@@ -53,6 +52,7 @@ import org.eclipse.debug.internal.ui.viewers.provisional.IModelSelectionPolicyFa
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
@@ -63,7 +63,7 @@ import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 public class DebugElementAdapterFactory implements IAdapterFactory {
 	
 	private static IModelProxyFactoryAdapter fgModelProxyFactoryAdapter = new DefaultModelProxyFactory();
-	private static ISourceDisplayAdapter fgStackFrameSourceDisplayAdapter = new StackFrameSourceDisplayAdapter();
+	private static ISourceDisplay fgStackFrameSourceDisplayAdapter = new StackFrameSourceDisplayAdapter();
 	private static IModelSelectionPolicyFactoryAdapter fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
@@ -162,7 +162,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	return fgModelProxyFactoryAdapter;
         }
         
-        if (adapterType.equals(ISourceDisplayAdapter.class)) {
+        if (adapterType.equals(ISourceDisplay.class)) {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgStackFrameSourceDisplayAdapter;
         	}
@@ -193,7 +193,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      */
     public Class[] getAdapterList() {
         return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplayAdapter.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresentationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
+        		IModelProxyFactoryAdapter.class, ISourceDisplay.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresentationFactoryAdapter.class, IColumnEditorFactoryAdapter.class};
     }
 
 }

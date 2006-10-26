@@ -1,0 +1,51 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.ui.sourcelookup;
+
+import org.eclipse.ui.IWorkbenchPage;
+
+/**
+ * Displays source for a debug model element. The debug platform displays
+ * source whenever a debug context containing a single element is
+ * activated (a structured selection with one element). The debug platform
+ * displays source by asking an element for its <code>ISourceDisplay</code>
+ * adapter or using the element directly if implements <code>ISourceDisplay</code>.
+ * <p>
+ * The debug platform provides a source display adapter for instances
+ * of <code>IStackFrame</code>. The standard adapter uses the source locator associated
+ * with the stack frame's launch to lookup source. Clients may provide their own
+ * source display adapters as required. 
+ * </p> 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * @see org.eclipse.core.runtime.IAdaptable
+ * @since 3.3
+ * <p>
+ * <strong>EXPERIMENTAL</strong>. This interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * remain unchanged during the 3.3 release cycle. Please do not use this API
+ * without consulting with the Platform/Debug team.
+ * </p>
+ */
+public interface ISourceDisplay {
+	
+	/**
+	 * Displays source for the given element in the specified page.
+	 * 
+	 * @param element debug model element to display source for
+	 * @param page the page in which to display source
+	 * @param forceSourceLookup whether source lookup should be performed,
+	 *  ignoring any previously cached results for the same element
+	 */
+	public void displaySource(Object element, IWorkbenchPage page, boolean forceSourceLookup);
+	
+}

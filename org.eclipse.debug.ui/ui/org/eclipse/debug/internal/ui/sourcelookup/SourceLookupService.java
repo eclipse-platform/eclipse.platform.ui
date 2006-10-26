@@ -11,10 +11,10 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * 
  * @since 3.2
  */
-public class SourceLookupService implements IDebugContextListener, ISourceDisplayAdapter {
+public class SourceLookupService implements IDebugContextListener, ISourceDisplay {
 	
 	private IWorkbenchWindow fWindow;
 	
@@ -75,7 +75,7 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	public void displaySource(Object context, IWorkbenchPage page, boolean forceSourceLookup) {
 		if (context instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) context;
-			ISourceDisplayAdapter adapter = (ISourceDisplayAdapter) adaptable.getAdapter(ISourceDisplayAdapter.class);
+			ISourceDisplay adapter = (ISourceDisplay) adaptable.getAdapter(ISourceDisplay.class);
 			if (adapter != null) {						
 				adapter.displaySource(context, page, forceSourceLookup);
 			}

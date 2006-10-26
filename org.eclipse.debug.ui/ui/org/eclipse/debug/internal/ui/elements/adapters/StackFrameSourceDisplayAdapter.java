@@ -23,10 +23,10 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.InstructionPointerManager;
-import org.eclipse.debug.internal.ui.contexts.provisional.ISourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.internal.ui.views.launch.DecorationManager;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.progress.UIJob;
@@ -34,7 +34,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * @since 3.2
  */
-public class StackFrameSourceDisplayAdapter implements ISourceDisplayAdapter {
+public class StackFrameSourceDisplayAdapter implements ISourceDisplay {
 
 	private IStackFrame fPrevFrame;
 	private SourceLookupResult fPrevResult;
