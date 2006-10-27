@@ -4098,8 +4098,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		try {
 			++ fErrorCorrectionOnSave;
 
-			Shell shell= getSite().getShell();
-
 			boolean isSynchronized= false;
 			IDocumentProvider p= getDocumentProvider();
 
@@ -4116,7 +4114,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				String title= EditorMessages.Editor_error_save_outofsync_title;
 				String msg= EditorMessages.Editor_error_save_outofsync_message;
 
-				if (MessageDialog.openQuestion(shell, title, msg))
+				if (MessageDialog.openQuestion(getSite().getShell(), title, msg))
 					performSave(true, progressMonitor);
 				else {
 					/*
@@ -4130,7 +4128,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else {
 				String title= EditorMessages.Editor_error_save_title;
 				String msg= EditorMessages.Editor_error_save_message;
-				ErrorDialog.openError(shell, title, msg, exception.getStatus());
+				openSaveErrorDialog(title, msg, exception);
 
 				/*
 				 * 1GEUPKR: ITPJUI:ALL - Loosing work with simultaneous edits
@@ -4143,6 +4141,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} finally {
 			-- fErrorCorrectionOnSave;
 		}
+	}
+
+	/**
+	 * Presents an error dialog to the user when a problem
+	 * happens during save.
+	 * <p>
+	 * Subclasses can decide to override the given title and message.
+	 * </p>
+	 * 
+	 * @param title	the dialog title
+	 * @param message the message to display
+	 * @param exception the exception to handle
+	 * @since 3.3
+	 */
+	protected void openSaveErrorDialog(String title, String message, CoreException  exception) {
+		ErrorDialog.openError(getSite().getShell(), title, message, exception.getStatus());
 	}
 
 	/**
