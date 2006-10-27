@@ -115,7 +115,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 
 			private void mergePerspectives(PropertyChangeEvent event) {
 				IPreferenceStore store = (IPreferenceStore) event.getSource();
-				if (event.getNewValue() == null) {
+				if (event.getNewValue() == null
+						|| event.getNewValue().equals("")) { //$NON-NLS-1$
 					/*
 					 * Perpsective is being removed; if the user has deleted or
 					 * reverted a custom perspective, let the change pass
@@ -126,7 +127,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 					IPerspectiveDescriptor[] perspectiveList = getPerspectives();
 					for (int i = 0; i < perspectiveList.length; i++) {
 						String id = perspectiveList[i].getId();
-						if (event.getProperty().startsWith(id)) { // found
+						if (event.getProperty().equals(id + PERSP)) { // found
 							// descriptor
 							// see if the perspective has been flagged for
 							// reverting or deleting
