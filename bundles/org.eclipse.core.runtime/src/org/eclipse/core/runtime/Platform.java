@@ -855,12 +855,10 @@ public final class Platform {
 	 * 
 	 * @return the platform's job manager
 	 * @since 3.0
-	 * XXX deprecate to use Job.getJobManager().
-	 * Does it need to have a service? YES.
+	 * @deprecated The method {@link Job#getJobManager()} should be used instead.
 	 */
 	public static IJobManager getJobManager() {
 		return Job.getJobManager();
-		// TODO: deprecate?
 	}
 
 	/**
