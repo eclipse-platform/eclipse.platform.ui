@@ -229,15 +229,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		}
 		return false;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
-	 */
-	public void saveChanges(IProgressMonitor pm) throws CoreException {
-		saveable.doSave(pm);
-	}
-
+	
 	public SyncInfo getSyncInfo() {
 		return node.getSyncInfo();
 	}
