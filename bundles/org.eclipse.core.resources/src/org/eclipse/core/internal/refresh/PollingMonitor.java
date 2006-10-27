@@ -140,6 +140,9 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		//reschedule automatically - shouldRun will cancel if not needed
 		//make sure it doesn't run more than 5% of the time
 		long delay = Math.max(MIN_FREQUENCY, time * 20);
+		//back off even more if there are other jobs running
+		if (!getJobManager().isIdle())
+			delay *= 2;
 		if (RefreshManager.DEBUG)
 			System.out.println(RefreshManager.DEBUG_PREFIX + "rescheduling polling job in: " + delay / 1000 + " seconds"); //$NON-NLS-1$ //$NON-NLS-2$
 		//don't reschedule the job if the resources plugin has been shut down
