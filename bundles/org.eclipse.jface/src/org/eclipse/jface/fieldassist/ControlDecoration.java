@@ -413,7 +413,6 @@ public class ControlDecoration {
 				Rectangle rect = getDecorationRectangle(control);
 				if (shouldShowDecoration()) {
 					event.gc.drawImage(decoration.getImage(), rect.x, rect.y);
-					System.out.println("Drawing image"); //$NON-NLS-1$
 				}
 			}
 		};
