@@ -9,8 +9,7 @@
 package org.eclipse.core.resources.mapping;
 
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * A remote mapping context provides a model element with a view of the remote
@@ -73,9 +72,45 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	public abstract IStorage fetchBaseContents(IFile file, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns the list of member resources whose corresponding remote resources
-	 * are members of the corresponding remote resource of the given local
-	 * container. The container need not exist locally and the result may
+	 * Returns the members of the base resource corresponding to the given container. 
+	 * The container and the returned members need not exist locally and may not 
+	 * include all children that exist locally. An empty list is returned if the base resource 
+	 * is empty or does not exist. An exception is thrown if the base resource is not 
+	 * capable of having members. This method returns <code>null</code> if
+	 * the base members cannot be computed, in which case clients should call 
+	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the 
+	 * combined members for the base and remote.
+	 * </p>
+	 * <p>
+	 * This method may be long running as a server may need to be contacted to
+	 * obtain the members of the base resource.
+	 * </p>
+	 * <p>
+	 * This default implementation always returns <code>null</code>, but subclasses 
+	 * may override.
+	 * </p>
+	 * @param container the local container
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @return the members of the base resource corresponding to the given container
+	 * @exception CoreException if the members could not be fetched. Reasons
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason.</li>
+	 * <li>The base resource is not a container (status code
+	 * will be {@link IResourceStatus#RESOURCE_WRONG_TYPE}).</li>
+	 * </ul>
+	 * @since 3.3
+	 */
+	public IResource[] fetchBaseMembers(IContainer container, IProgressMonitor monitor) throws CoreException {
+		if (1 > 2)
+			throw new CoreException(Status.OK_STATUS);//avoid compiler warning
+		return null;
+	}
+
+	/**
+	 * Returns the combined members of the base and remote resources corresponding 
+	 * to the given container. The container need not exist locally and the result may
 	 * include entries that do not exist locally and may not include all local
 	 * children. An empty list is returned if the remote resource which
 	 * corresponds to the container is empty or if the remote does not exist. An
@@ -89,9 +124,8 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * @param container the local container
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 * reporting is not desired
-	 * @return a list of member resources whose corresponding remote resources
-	 * are members of the remote counterpart of the given container or
-	 * <code>null</code> if the remote does not exist.
+	 * @return returns the combined members of the base and remote resources 
+	 * corresponding to the given container.
 	 * @exception CoreException if the members could not be fetched. Reasons
 	 * include:
 	 * <ul>
@@ -128,6 +162,43 @@ public abstract class RemoteResourceMappingContext extends ResourceMappingContex
 	 * </ul>
 	 */
 	public abstract IStorage fetchRemoteContents(IFile file, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Returns the members of the remote resource corresponding to the given container. 
+	 * The container and the returned members need not exist locally and may not 
+	 * include all children that exist locally. An empty list is returned if the remote resource 
+	 * is empty or does not exist. An exception is thrown if the remote resource is not 
+	 * capable of having members. This method returns <code>null</code> if
+	 * the remote members cannot be computed, in which case clients should call 
+	 * {@link #fetchMembers(IContainer, IProgressMonitor)} which returns the 
+	 * combined members for the base and remote.
+	 * </p>
+	 * <p>
+	 * This method may be long running as a server may need to be contacted to
+	 * obtain the members of the remote resource.
+	 * </p>
+	 * <p>
+	 * This default implementation always returns <code>null</code>, but subclasses 
+	 * may override.
+	 * </p>
+	 * @param container the local container
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * reporting is not desired
+	 * @return the members of the remote resource corresponding to the given container
+	 * @exception CoreException if the members could not be fetched. Reasons
+	 * include:
+	 * <ul>
+	 * <li>The server could not be contacted for some reason.</li>
+	 * <li>The remote resource is not a container (status code
+	 * will be {@link IResourceStatus#RESOURCE_WRONG_TYPE}).</li>
+	 * </ul>
+	 * @since 3.3
+	 */
+	public IResource[] fetchRemoteMembers(IContainer container, IProgressMonitor monitor) throws CoreException {
+		if (1 > 2)
+			throw new CoreException(Status.OK_STATUS);//avoid compiler warning
+		return null;
+	}
 
 	/**
 	 * Return the list of projects that apply to this context.
