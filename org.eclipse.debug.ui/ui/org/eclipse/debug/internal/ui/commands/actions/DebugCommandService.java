@@ -76,19 +76,19 @@ public class DebugCommandService implements IDebugContextListener {
 		fContextService.addPostDebugContextListener(this);
 		PlatformUI.getWorkbench().addWindowListener(new IWindowListener() {
 		
-			public void windowOpened(IWorkbenchWindow window) {
+			public void windowOpened(IWorkbenchWindow w) {
 			}
 		
-			public void windowDeactivated(IWorkbenchWindow window) {
+			public void windowDeactivated(IWorkbenchWindow w) {
 			}
 		
-			public void windowClosed(IWorkbenchWindow window) {
-				if (fWindow == window) {
+			public void windowClosed(IWorkbenchWindow w) {
+				if (fWindow == w) {
 					dispose();
 				}
 			}
 		
-			public void windowActivated(IWorkbenchWindow window) {
+			public void windowActivated(IWorkbenchWindow w) {
 			}
 		
 		});
@@ -108,12 +108,14 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param monitor
 	 */
 	public void postUpdateCommand(Class commandType, IBooleanStatusMonitor monitor) {
-		ProxyBooleanRequestMonitor proxy = (ProxyBooleanRequestMonitor) fCommandUpdates.get(commandType);
-		if (proxy == null) {
-			proxy = new ProxyBooleanRequestMonitor();
-			fCommandUpdates.put(commandType, proxy);
+		synchronized (fCommandUpdates) {
+			ProxyBooleanRequestMonitor proxy = (ProxyBooleanRequestMonitor) fCommandUpdates.get(commandType);
+			if (proxy == null) {
+				proxy = new ProxyBooleanRequestMonitor();
+				fCommandUpdates.put(commandType, proxy);
+			}
+			proxy.addMonitor(monitor);					
 		}
-		proxy.addMonitor(monitor);		
 	}
 	
 	/**
@@ -136,9 +138,14 @@ public class DebugCommandService implements IDebugContextListener {
 	}	
 	
 	private void postUpdate(ISelection context) {
+		Map commands = null;
+		synchronized (fCommandUpdates) {
+			commands = fCommandUpdates;
+			fCommandUpdates = new HashMap(commands.size());
+		}
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			Iterator iterator = fCommandUpdates.entrySet().iterator();
+			Iterator iterator = commands.entrySet().iterator();
 			while (iterator.hasNext()) {
 				Entry entry = (Entry) iterator.next();
 				Class commandType = (Class)entry.getKey();
@@ -146,14 +153,14 @@ public class DebugCommandService implements IDebugContextListener {
 				updateCommand(commandType, elements, monitor);
 			}
 		} else {
-			Iterator iterator = fCommandUpdates.values().iterator();
+			Iterator iterator = commands.values().iterator();
 			while (iterator.hasNext()) {
 				ProxyBooleanRequestMonitor monitor = (ProxyBooleanRequestMonitor) iterator.next();
 				monitor.setCanceled(true);
 				monitor.done();
 			}
 		}
-		fCommandUpdates.clear();		
+		commands.clear();		
 	}
 	
 	/**
