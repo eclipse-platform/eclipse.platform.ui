@@ -279,17 +279,21 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 	
 	/**
-	 * This method is used to get the id for the current tabg or <code>null</code> if none.
-	 * 
-	 * Ids are used in 3.3 to allow contributed tabs
-	 * to be placed in relative locations, instead of only at the end of the tab group
-	 * @return the id of the tab or <code>null</code>
-	 * 
+	 * Returns this tab's unique identifier or <code>null</code> if none.
+	 * <p>
+	 * Tab identifiers allow contributed tabs to be ordered relative to one
+	 * another.
+	 * </p>
+	 * @return tab id or <code>null</code>
 	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
 	 */
-	public String getTabId() {
+	public String getId() {
 		return null;
 	}
 	

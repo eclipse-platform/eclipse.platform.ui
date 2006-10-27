@@ -187,7 +187,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public boolean supportsModes(Set modes);
+	public boolean supportsModeCombination(Set modes);
 	
 	/**
 	 * Returns the unique identifier for this type of launch configuration

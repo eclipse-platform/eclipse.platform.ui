@@ -1053,7 +1053,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if(wc != null) {
 				Set modes = wc.getModes();
 				modes.add(getLaunchConfigurationDialog().getMode());
-				return wc.getType().supportsModes(modes);
+				return wc.getType().supportsModeCombination(modes);
 			}
 		}  catch (CoreException e) {
 		}

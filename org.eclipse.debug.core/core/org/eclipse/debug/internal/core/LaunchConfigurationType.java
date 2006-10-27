@@ -505,7 +505,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsModeCombination(java.util.Set)
 	 */
-	public boolean supportsModes(Set modes) {
+	public boolean supportsModeCombination(Set modes) {
 		if(fModeCombinations == null) {
 			getSupportedModeCombinations();
 		}

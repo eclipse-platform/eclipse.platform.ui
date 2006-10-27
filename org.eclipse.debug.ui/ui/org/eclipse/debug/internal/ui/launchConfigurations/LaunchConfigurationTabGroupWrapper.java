@@ -83,7 +83,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 					for(int j = 0; j < tmp.length; j++) {
 						if(tmp[j] instanceof AbstractLaunchConfigurationTab) {
 							alct = (AbstractLaunchConfigurationTab) tmp[j];
-							if(id.equals(alct.getTabId())) {
+							if(id.equals(alct.getId())) {
 								if(j != tmp.length-1) {
 									item = new ArrayList();
 									item.add(ext[i].getTab());

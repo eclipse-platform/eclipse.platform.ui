@@ -762,7 +762,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.3
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.debug.ui.commonTab"; //$NON-NLS-1$
 	}
 	

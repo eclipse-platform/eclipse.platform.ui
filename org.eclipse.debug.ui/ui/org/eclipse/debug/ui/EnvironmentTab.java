@@ -621,7 +621,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * 
 	 * @since 3.3
 	 */
-	public String getTabId() {
+	public String getId() {
 		return "org.eclipse.debug.ui.environmentTab"; //$NON-NLS-1$
 	}
 	
