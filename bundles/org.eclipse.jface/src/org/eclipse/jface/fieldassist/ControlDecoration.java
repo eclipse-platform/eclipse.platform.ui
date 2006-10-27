@@ -123,6 +123,16 @@ public class ControlDecoration {
 	private int marginWidth = 0;
 
 	/**
+	 * The focus listener
+	 */
+	private FocusListener focusListener;
+
+	/**
+	 * The dispose listener
+	 */
+	private DisposeListener disposeListener;
+
+	/**
 	 * The paint listener installed for drawing the decoration
 	 */
 	private PaintListener paintListener;
@@ -142,7 +152,7 @@ public class ControlDecoration {
 	 * time.
 	 */
 	private Control moveListeningTarget = null;
-	
+
 	/**
 	 * Debug counter used to match add and remove listeners
 	 */
@@ -402,12 +412,15 @@ public class ControlDecoration {
 	 * Add any listeners needed on the target control.
 	 */
 	private void addControlListeners() {
-		control.addDisposeListener(new DisposeListener() {
+		disposeListener = new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
 				dispose();
 			}
-		});
-		control.addFocusListener(new FocusListener() {
+		};
+		printAddListener(control, "DISPOSE"); //$NON-NLS-1$
+		control.addDisposeListener(disposeListener);
+
+		focusListener = new FocusListener() {
 			public void focusGained(FocusEvent event) {
 				hasFocus = true;
 				if (showOnlyOnFocus) {
@@ -421,8 +434,10 @@ public class ControlDecoration {
 					update();
 				}
 			}
+		};
+		printAddListener(control, "FOCUS"); //$NON-NLS-1$
+		control.addFocusListener(focusListener);
 
-		});
 		// Listener for painting the decoration
 		paintListener = new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -475,7 +490,8 @@ public class ControlDecoration {
 							target.addMouseMoveListener(mouseMoveListener);
 							moveListeningTarget = target;
 						} else if (target != moveListeningTarget) {
-							printRemoveListener(moveListeningTarget, "MOUSEMOVE"); //$NON-NLS-1$
+							printRemoveListener(moveListeningTarget,
+									"MOUSEMOVE"); //$NON-NLS-1$
 							moveListeningTarget
 									.removeMouseMoveListener(mouseMoveListener);
 							printAddListener(target, "MOUSEMOVE"); //$NON-NLS-1$
@@ -713,6 +729,20 @@ public class ControlDecoration {
 		if (hover != null) {
 			hover.dispose();
 		}
+		removeControlListeners();
+	}
+
+	/*
+	 * Remove any listeners installed on the controls.
+	 */
+	private void removeControlListeners() {
+		printRemoveListener(control, "FOCUS"); //$NON-NLS-1$
+		control.removeFocusListener(focusListener);
+		focusListener = null;
+		
+		printRemoveListener(control, "DISPOSE"); //$NON-NLS-1$
+		control.removeDisposeListener(disposeListener);
+		disposeListener = null;
 
 		// We installed paint and track listeners all the way up the parent
 		// tree.
@@ -726,17 +756,22 @@ public class ControlDecoration {
 				break;
 			c = c.getParent();
 		}
+		paintListener = null;
+		mouseListener = null;
+		
 		// We may have a remaining mouse move listener installed
 		if (moveListeningTarget != null) {
 			printRemoveListener(moveListeningTarget, "MOUSEMOVE"); //$NON-NLS-1$
 			moveListeningTarget.removeMouseMoveListener(mouseMoveListener);
 			moveListeningTarget = null;
+			mouseMoveListener = null;
 		}
 		if (DEBUG) {
 			if (listenerInstalls > 0) {
 				System.out.println("LISTENER LEAK>>>CHECK TRACE ABOVE"); //$NON-NLS-1$
 			} else if (listenerInstalls < 0) {
-				System.out.println("REMOVED UNREGISTERED LISTENERS>>>CHECK TRACE ABOVE"); //$NON-NLS-1$
+				System.out
+						.println("REMOVED UNREGISTERED LISTENERS>>>CHECK TRACE ABOVE"); //$NON-NLS-1$
 			} else {
 				System.out.println("ALL INSTALLED LISTENERS WERE REMOVED."); //$NON-NLS-1$
 			}
@@ -803,22 +838,26 @@ public class ControlDecoration {
 		}
 		return true;
 	}
-	
+
 	/*
 	 * If in debug mode, print info about adding the specified listener.
 	 */
 	private void printAddListener(Widget widget, String listenerType) {
 		listenerInstalls++;
 		if (DEBUG) {
-			System.out.println("Added listener>>>"+listenerType+" to>>>" + widget);  //$NON-NLS-1$//$NON-NLS-2$
+			System.out
+					.println("Added listener>>>" + listenerType + " to>>>" + widget); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
+
 	/*
 	 * If in debug mode, print info about adding the specified listener.
 	 */
 	private void printRemoveListener(Widget widget, String listenerType) {
 		listenerInstalls--;
 		if (DEBUG) {
-			System.out.println("Removed listener>>>"+listenerType+" to>>>" + widget);  //$NON-NLS-1$//$NON-NLS-2$
+			System.out
+					.println("Removed listener>>>" + listenerType + " from>>>" + widget); //$NON-NLS-1$//$NON-NLS-2$
 		}
-	}}
+	}
+}
