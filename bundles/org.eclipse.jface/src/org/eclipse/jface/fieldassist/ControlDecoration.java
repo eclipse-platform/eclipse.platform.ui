@@ -28,6 +28,7 @@ import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * ControlDecoration renders an image decoration near a control. It allows
@@ -48,9 +49,10 @@ import org.eclipse.swt.widgets.Shell;
  * any decorations added to the field. ControlDecoration simply renders the
  * decoration adjacent to the specified (already created) control, with no
  * guarantee that the decoration won't be clipped or otherwise obscured or
- * overlapped by adjacent controls. The tradeoff is one of guaranteed placement
- * (via {@link DecoratedField}) vs. more flexibility in creating the control,
- * using ControLDecoration, along with less concern for aligning decorated and
+ * overlapped by adjacent controls, including another ControlDecoration placed
+ * in the same location. The tradeoff is one of guaranteed placement (via
+ * {@link DecoratedField}) vs. more flexibility in creating the control, using
+ * ControlDecoration, along with less concern for aligning decorated and
  * non-decorated fields.
  * <p>
  * Clients using ControlDecoration should typically ensure that enough margin
@@ -73,6 +75,10 @@ import org.eclipse.swt.widgets.Shell;
  * @see DecoratedField
  */
 public class ControlDecoration {
+	/**
+	 * Debug flag for tracing
+	 */
+	private static boolean DEBUG = false;
 
 	/**
 	 * Cached platform flags for dealing with platform-specific issues.
@@ -130,6 +136,17 @@ public class ControlDecoration {
 	 * The mouse move listener installed for tracking the hover
 	 */
 	private MouseMoveListener mouseMoveListener;
+
+	/**
+	 * Control that we last installed a move listener on. We only want one at a
+	 * time.
+	 */
+	private Control moveListeningTarget = null;
+	
+	/**
+	 * Debug counter used to match add and remove listeners
+	 */
+	private int listenerInstalls = 0;
 
 	/**
 	 * The current rectangle used for tracking mouse moves
@@ -424,8 +441,11 @@ public class ControlDecoration {
 				if (showHover) {
 					if (!decorationRectangle.contains(event.x, event.y)) {
 						hideHover();
+						// No need to listen any longer
+						printRemoveListener(event.widget, "MOUSEMOVE"); //$NON-NLS-1$
 						((Control) event.widget)
 								.removeMouseMoveListener(mouseMoveListener);
+						moveListeningTarget = null;
 					}
 				}
 			}
@@ -435,8 +455,12 @@ public class ControlDecoration {
 		mouseListener = new MouseTrackListener() {
 			public void mouseExit(MouseEvent event) {
 				// Just in case we didn't catch it before.
-				((Control) event.widget)
-						.removeMouseMoveListener(mouseMoveListener);
+				Control target = (Control) event.widget;
+				if (target == moveListeningTarget) {
+					printRemoveListener(target, "MOUSEMOVE"); //$NON-NLS-1$
+					target.removeMouseMoveListener(mouseMoveListener);
+					moveListeningTarget = null;
+				}
 				hideHover();
 			}
 
@@ -445,8 +469,21 @@ public class ControlDecoration {
 					decorationRectangle = getDecorationRectangle((Control) event.widget);
 					if (decorationRectangle.contains(event.x, event.y)) {
 						showHoverText(decoration.getDescription());
-						((Control) event.widget)
-								.addMouseMoveListener(mouseMoveListener);
+						Control target = (Control) event.widget;
+						if (moveListeningTarget == null) {
+							printAddListener(target, "MOUSEMOVE"); //$NON-NLS-1$
+							target.addMouseMoveListener(mouseMoveListener);
+							moveListeningTarget = target;
+						} else if (target != moveListeningTarget) {
+							printRemoveListener(moveListeningTarget, "MOUSEMOVE"); //$NON-NLS-1$
+							moveListeningTarget
+									.removeMouseMoveListener(mouseMoveListener);
+							printAddListener(target, "MOUSEMOVE"); //$NON-NLS-1$
+							target.addMouseMoveListener(mouseMoveListener);
+							moveListeningTarget = target;
+						} else {
+							// It is already installed on this control.
+						}
 					}
 				}
 			}
@@ -460,7 +497,9 @@ public class ControlDecoration {
 		// is providing the margin space, so hook all the way up.
 		Control c = control.getParent();
 		while (c != null) {
+			printAddListener(c, "PAINT"); //$NON-NLS-1$
 			c.addPaintListener(paintListener);
+			printAddListener(c, "MOUSE"); //$NON-NLS-1$
 			c.addMouseTrackListener(mouseListener);
 			c.redraw();
 			if (c instanceof Shell)
@@ -674,6 +713,34 @@ public class ControlDecoration {
 		if (hover != null) {
 			hover.dispose();
 		}
+
+		// We installed paint and track listeners all the way up the parent
+		// tree.
+		Control c = control.getParent();
+		while (c != null) {
+			printRemoveListener(c, "PAINT"); //$NON-NLS-1$
+			c.removePaintListener(paintListener);
+			printRemoveListener(c, "MOUSE"); //$NON-NLS-1$
+			c.removeMouseTrackListener(mouseListener);
+			if (c instanceof Shell)
+				break;
+			c = c.getParent();
+		}
+		// We may have a remaining mouse move listener installed
+		if (moveListeningTarget != null) {
+			printRemoveListener(moveListeningTarget, "MOUSEMOVE"); //$NON-NLS-1$
+			moveListeningTarget.removeMouseMoveListener(mouseMoveListener);
+			moveListeningTarget = null;
+		}
+		if (DEBUG) {
+			if (listenerInstalls > 0) {
+				System.out.println("LISTENER LEAK>>>CHECK TRACE ABOVE"); //$NON-NLS-1$
+			} else if (listenerInstalls < 0) {
+				System.out.println("REMOVED UNREGISTERED LISTENERS>>>CHECK TRACE ABOVE"); //$NON-NLS-1$
+			} else {
+				System.out.println("ALL INSTALLED LISTENERS WERE REMOVED."); //$NON-NLS-1$
+			}
+		}
 	}
 
 	/*
@@ -736,4 +803,22 @@ public class ControlDecoration {
 		}
 		return true;
 	}
-}
+	
+	/*
+	 * If in debug mode, print info about adding the specified listener.
+	 */
+	private void printAddListener(Widget widget, String listenerType) {
+		listenerInstalls++;
+		if (DEBUG) {
+			System.out.println("Added listener>>>"+listenerType+" to>>>" + widget);  //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}
+	/*
+	 * If in debug mode, print info about adding the specified listener.
+	 */
+	private void printRemoveListener(Widget widget, String listenerType) {
+		listenerInstalls--;
+		if (DEBUG) {
+			System.out.println("Removed listener>>>"+listenerType+" to>>>" + widget);  //$NON-NLS-1$//$NON-NLS-2$
+		}
+	}}
