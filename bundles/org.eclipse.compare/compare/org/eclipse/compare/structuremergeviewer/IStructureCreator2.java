@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
+import org.eclipse.compare.ISharedDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.services.IDisposable;
 
@@ -41,6 +42,13 @@ public interface IStructureCreator2 extends IStructureCreator {
 	 * {@link IDisposable} interface, clients are expected to dispose of the
 	 * comparator when it is no longer used. This is done to allow structure creators
 	 * to make use of shared resources such a file buffers.
+	 * <p>
+	 * Also, the node returned from this method should adapt to an 
+	 * {@link ISharedDocumentAdapter} if the provided input has 
+	 * a shared document adapter and it is being used by the 
+	 * this creator. The convenience class {@link SharedDocumentAdapterWrapper}
+	 * is provided to allow the creator to wrap the adapter of the input
+	 * so that the proper key can be returned.
 	 * 
 	 * @param input
 	 *            the object from which to create the tree of

@@ -29,7 +29,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.mapping.ResourceDiffCompareInput;
-import org.eclipse.team.internal.ui.synchronize.CountingSharedDocumentAdapter;
+import org.eclipse.team.internal.ui.synchronize.EditableSharedDocumentAdapter;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.tests.ccvs.ui.ModelParticipantSyncInfoSource;
@@ -101,7 +101,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) ci;
 				IFile file = (IFile)rdci.getResource();
 				LocalResourceTypedElement element = (LocalResourceTypedElement)rdci.getLeft();
-				CountingSharedDocumentAdapter adapter = (CountingSharedDocumentAdapter)element.getAdapter(ISharedDocumentAdapter.class);
+				EditableSharedDocumentAdapter adapter = (EditableSharedDocumentAdapter)element.getAdapter(ISharedDocumentAdapter.class);
 				assertTrue(element.exists() == file.exists());
 				assertTrue(file.exists() == adapter.isConnected());
 				return;

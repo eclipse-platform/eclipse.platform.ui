@@ -39,7 +39,7 @@ import org.eclipse.ui.IEditorInput;
 public class LocalResourceTypedElement extends ResourceNode implements IAdaptable {
 
 	private boolean fDirty = false;
-	private CountingSharedDocumentAdapter sharedDocumentAdapter;
+	private EditableSharedDocumentAdapter sharedDocumentAdapter;
 	private long timestamp;
 	private boolean exists;
 	private boolean useSharedDocument = true;
@@ -129,12 +129,21 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 */
 	private synchronized ISharedDocumentAdapter getSharedDocumentAdapter() {
 		if (sharedDocumentAdapter == null)
-			sharedDocumentAdapter = new CountingSharedDocumentAdapter(this, new CountingSharedDocumentAdapter.IInternalAccess() {
-				public void updateTimestamp() {
+			sharedDocumentAdapter = new EditableSharedDocumentAdapter(new EditableSharedDocumentAdapter.ISharedDocumentAdapterListener() {
+				public void handleDocumentConnected() {
 					LocalResourceTypedElement.this.updateTimestamp();
 				}
-				public void fireContentChanged() {
+				public void handleDocumentFlushed() {
 					LocalResourceTypedElement.this.fireContentChanged();
+				}
+				public void handleDocumentDeleted() {
+					LocalResourceTypedElement.this.update();
+				}
+				public void handleDocumentSaved() {
+					LocalResourceTypedElement.this.updateTimestamp();
+				}
+				public void handleDocumentDisconnected() {
+					// Nothing to do
 				}
 			});
 		return sharedDocumentAdapter;
@@ -285,7 +294,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 	 * @return whether this element can use a shared document
 	 */
 	public boolean isSharedDocumentsEnable() {
-		return useSharedDocument && getResource().getType() == IResource.FILE;
+		return useSharedDocument && getResource().getType() == IResource.FILE && exists;
 	}
 
 	/**

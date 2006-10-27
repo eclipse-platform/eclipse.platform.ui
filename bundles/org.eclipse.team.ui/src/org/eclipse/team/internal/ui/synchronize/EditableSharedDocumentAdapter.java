@@ -1,53 +1,78 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.compare.SharedDocumentAdapter;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 
 /**
  * A shared document adapter that tracks whether the element is
- * connected to a shared document in order to ensure that
- * any saves/commits that occur while connected are performed
- * through the shared buffer.
+ * connected to a shared document and whether the contents have been
+ * flushed from a compare viewer. When contents are flushed, this
+ * adapter will connect to the document provider to ensure that
+ * the changes are not lost (see {@link #hasBufferedContents()}. 
+ * In order to avoid a leak, the buffer must
+ * either be saved (see {@link #saveDocument(IEditorInput, boolean, IProgressMonitor)}
+ * or released (see {@link #releaseBuffer()}.
+ * <p>
+ * This adapter must have a one-to-one correspondence to 
+ * a typed element.
  */
-public class CountingSharedDocumentAdapter extends
+public class EditableSharedDocumentAdapter extends
 		SharedDocumentAdapter implements IElementStateListener {
 	
 	private int connectionCount;
-	private LocalResourceTypedElement element;
-	private boolean hasBufferedContents;
-	private final IInternalAccess access;
+	private final ISharedDocumentAdapterListener listener;
+	private IEditorInput bufferedKey;
 
-	public interface IInternalAccess {
-		void updateTimestamp();
-		void fireContentChanged();
+	/**
+	 * Interface that provides this adapter with the state of the typed element
+	 * and supports call backs to the element when the adapter state changes.
+	 */
+	public interface ISharedDocumentAdapterListener {
+		
+		/**
+		 * Method that is invoked when the adapter connects to the
+		 * document provider. This method is only invoked when the
+		 * adapter first connects to the document.
+		 */
+		void handleDocumentConnected();
+		
+		/**
+		 * Method that is invoked when the adapter disconnects from the
+		 * document provider. This method is only invoked when the
+		 * adapter no longer has any connection to the document provider.
+		 */
+		void handleDocumentDisconnected();
+		
+		/**
+		 * Method invoked when changes in the document are flushed to the adapter.
+		 */
+		void handleDocumentFlushed();
+		
+		/**
+		 * Method invoked when the file behind the shared document is deleted.
+		 */
+		void handleDocumentDeleted();
+		
+		/**
+		 * Method invoked when the document dirty state changes from dirty to clean.
+		 */
+		void handleDocumentSaved();
 	}
 	
 	/**
 	 * Create the shared document adapter for the given element.
-	 * @param element the element
-	 * @param access access to element internals
+	 * @param listener access to element internals
 	 */
-	public CountingSharedDocumentAdapter(LocalResourceTypedElement element, IInternalAccess access) {
+	public EditableSharedDocumentAdapter(ISharedDocumentAdapterListener listener) {
 		super();
-		this.element = element;
-		this.access = access;
+		this.listener = listener;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.SharedDocumentAdapter#getDocumentKey(java.lang.Object)
-	 */
-	public IEditorInput getDocumentKey(Object element) {
-		if (this.element.exists())
-			return super.getDocumentKey(element);
-		return null;
-	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.SharedDocumentAdapter#connect(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput)
 	 */
@@ -57,7 +82,7 @@ public class CountingSharedDocumentAdapter extends
 		connectionCount++;
 		if (connectionCount == 1) {
 			provider.addElementStateListener(this);
-			access.updateTimestamp();
+			listener.handleDocumentConnected();
 		}
 	}
 
@@ -73,6 +98,7 @@ public class CountingSharedDocumentAdapter extends
 				connectionCount--;
 			if (connectionCount == 0) {
 				provider.removeElementStateListener(this);
+				listener.handleDocumentDisconnected();
 			}
 		}
 	}
@@ -98,10 +124,8 @@ public class CountingSharedDocumentAdapter extends
 		if (isConnected()) {
 			IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
 			try {
-				provider.aboutToChange(input);
-				provider.saveDocument(monitor, input, provider.getDocument(input), overwrite);
+				saveDocument(provider, input, provider.getDocument(input), overwrite, monitor);
 			} finally {
-				provider.changed(input);
 				// When we write the document, remove out hold on the buffer
 				releaseBuffer();
 			}
@@ -115,13 +139,10 @@ public class CountingSharedDocumentAdapter extends
 	 * a {@link #flushDocument(IDocumentProvider, IEditorInput, IDocument, boolean, IProgressMonitor)}.
 	 */
 	public void releaseBuffer() {
-		if (hasBufferedContents) {
-			IEditorInput input = getDocumentKey(element);
-			if (input == null)
-				input = new FileEditorInput((IFile)element.getResource());
-			IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
-			provider.disconnect(input);
-			hasBufferedContents = false;
+		if (bufferedKey != null) {
+			IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(bufferedKey);
+			provider.disconnect(bufferedKey);
+			bufferedKey = null;
 		}
 	}
 	
@@ -132,13 +153,13 @@ public class CountingSharedDocumentAdapter extends
 			IEditorInput documentKey, IDocument document,
 			boolean overwrite, IProgressMonitor monitor)
 			throws CoreException {
-		if (!hasBufferedContents) {
+		if (!hasBufferedContents()) {
 			// On a flush, make an extra connection to the shared document so it will be kept even
 			// if it is no longer being viewed.
-			provider.connect(documentKey);
-			hasBufferedContents = true;
+			bufferedKey = documentKey;
+			provider.connect(bufferedKey);
 		}
-		this.access.fireContentChanged();
+		this.listener.handleDocumentFlushed();
 	}
 
 	/* (non-Javadoc)
@@ -159,7 +180,7 @@ public class CountingSharedDocumentAdapter extends
 	 * @see org.eclipse.ui.texteditor.IElementStateListener#elementDeleted(java.lang.Object)
 	 */
 	public void elementDeleted(Object element) {
-		this.element.update();
+		listener.handleDocumentDeleted();
 	}
 
 	/* (non-Javadoc)
@@ -167,7 +188,7 @@ public class CountingSharedDocumentAdapter extends
 	 */
 	public void elementDirtyStateChanged(Object element, boolean isDirty) {
 		if (!isDirty) {
-			this.access.updateTimestamp();
+			this.listener.handleDocumentSaved();
 		}
 	}
 
@@ -186,6 +207,6 @@ public class CountingSharedDocumentAdapter extends
 	 * @return whether the adapter has buffered contents
 	 */
 	public boolean hasBufferedContents() {
-		return hasBufferedContents;
+		return bufferedKey != null;
 	}
 }
