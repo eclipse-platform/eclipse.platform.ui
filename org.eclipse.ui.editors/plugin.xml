@@ -239,7 +239,7 @@
             name="%editorLinkedMode"
             category="org.eclipse.ui.preferencePages.GeneralTextEditor"
             class="org.eclipse.ui.internal.editors.text.LinkedModePreferencePage"
-            id="org.eclipse.ui.internal.editors.preferencePages.LinkedModePreferencePage">
+            id="org.eclipse.ui.editors.preferencePages.LinkedModePreferencePage">
          <keywordReference id="org.eclipse.ui.editors.linkedmode"/>
       </page>
       
