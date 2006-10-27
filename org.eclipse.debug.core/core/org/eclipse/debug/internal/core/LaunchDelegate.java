@@ -59,7 +59,6 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	
 	//a listing of sets of 
 	private List fLaunchModes = null;
-	private HashSet fModes = null;
 	private String fType = null;
 	
 	/**
@@ -109,22 +108,21 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	}
 	
 	/**
-	 * Parse a list of modes and creates a new set of them
-	 * @param element the configuraiton element to read from
-	 * @return a set of launch modes created form a comma seperated list
+	 * Simple method to parse mode strings (seperated by commmas)
+	 * @param element the config element to read the mode string from
+	 * @return a set of the parsed strings or an empty collection
+	 * @since 3.3
 	 */
-	private Set getModes(IConfigurationElement element) {
-		if (fModes == null) {
-			fModes = new HashSet();
-			String modes = element.getAttribute(IConfigurationElementConstants.MODES); 
-			if (modes != null) {
-				String[] strings = modes.split(","); //$NON-NLS-1$
-				for (int i = 0; i < strings.length; i++) {
-					fModes.add(strings[i].trim());
-				}
+	private Set parseModes(IConfigurationElement element) {
+		HashSet set = new HashSet();
+		String modes = element.getAttribute(IConfigurationElementConstants.MODES); 
+		if (modes != null) {
+			String[] strings = modes.split(","); //$NON-NLS-1$
+			for (int i = 0; i < strings.length; i++) {
+				set.add(strings[i].trim());
 			}
 		}
-		return fModes;
+		return set;
 	}
 	
 	/* (non-Javadoc)
@@ -135,7 +133,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			fLaunchModes = new ArrayList();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.MODE_COMBINATION);
 			for (int i = 0; i < children.length; i++) {
-				fLaunchModes.add(getModes(children[i]));
+				fLaunchModes.add(parseModes(children[i]));
 			}
 			//try to get the modes from the old definition and make each one
 			//a seperate set of one element
