@@ -634,7 +634,7 @@ public class ControlDecoration {
 	 * 
 	 * @param decoration
 	 */
-	private void update() {
+	protected void update() {
 		Rectangle rect = getDecorationRectangle(control.getShell());
 		// Redraw this rectangle in all children
 		control.getShell()
@@ -682,7 +682,7 @@ public class ControlDecoration {
 	 * coordinates relative to the specified control. If the specified control
 	 * is null, return the rectangle in display coordinates.
 	 */
-	private Rectangle getDecorationRectangle(Control targetControl) {
+	protected Rectangle getDecorationRectangle(Control targetControl) {
 		if (decoration == null || decoration.getImage() == null) {
 			return new Rectangle(0, 0, 0, 0);
 		}
