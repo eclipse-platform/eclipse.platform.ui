@@ -21,9 +21,9 @@ import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.list.ListDiff;
 import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
+import org.eclipse.jface.databinding.observable.map.MapDiff;
 import org.eclipse.jface.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.map.MapDiff;
 
 /**
  * @since 1.0
@@ -269,25 +269,60 @@ public class Diffs {
 	 */
 	public static MapDiff createMapDiffRemoveAll(final Map copyOfOldMap) {
 		return new MapDiff() {
-			
+
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
-			
+
 			public Set getChangedKeys() {
 				return Collections.EMPTY_SET;
 			}
-			
+
 			public Object getNewValue(Object key) {
 				return null;
 			}
-			
+
 			public Object getOldValue(Object key) {
 				return copyOfOldMap.get(key);
 			}
-			
+
 			public Set getRemovedKeys() {
 				return copyOfOldMap.keySet();
-			}};
+			}
+		};
+	}
+
+	/**
+	 * @param addedKeys 
+	 * @param removedKeys 
+	 * @param changedKeys 
+	 * @param oldValues 
+	 * @param newValues 
+	 * @return 
+	 */
+	public static MapDiff createMapDiff(final Set addedKeys, final Set removedKeys,
+			final Set changedKeys, final Map oldValues, final Map newValues) {
+		return new MapDiff() {
+
+			public Set getAddedKeys() {
+				return addedKeys;
+			}
+
+			public Set getChangedKeys() {
+				return changedKeys;
+			}
+
+			public Object getNewValue(Object key) {
+				return newValues.get(key);
+			}
+
+			public Object getOldValue(Object key) {
+				return oldValues.get(key);
+			}
+
+			public Set getRemovedKeys() {
+				return removedKeys;
+			}
+		};
 	}
 }

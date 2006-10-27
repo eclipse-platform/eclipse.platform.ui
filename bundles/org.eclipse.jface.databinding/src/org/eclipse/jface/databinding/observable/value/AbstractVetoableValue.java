@@ -26,10 +26,17 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	/**
 	 * @param realm
 	 */
+	public AbstractVetoableValue() {
+		this(Realm.getDefault());
+	}
+
+	/**
+	 * @param realm
+	 */
 	public AbstractVetoableValue(Realm realm) {
 		super(realm);
 	}
-
+	
 	public void setValue(Object value) {
 		Object currentValue = doGetValue();
 		ValueDiff diff = Diffs.createValueDiff(currentValue, value);

@@ -40,12 +40,16 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	private Object elementType;
 
+	protected ObservableList(List wrappedList, Object elementType) {
+		this(Realm.getDefault(), wrappedList, elementType);
+	}
+
 	protected ObservableList(Realm realm, List wrappedList, Object elementType) {
 		super(realm);
 		this.wrappedList = wrappedList;
 		this.elementType = elementType;
 	}
-
+	
 	public void addListChangeListener(IListChangeListener listener) {
 		if (listChangeListeners == null) {
 			boolean hadListeners = hasListeners();

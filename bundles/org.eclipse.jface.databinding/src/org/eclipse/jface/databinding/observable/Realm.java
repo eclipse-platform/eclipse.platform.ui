@@ -25,6 +25,30 @@ import java.util.LinkedList;
  */
 public abstract class Realm {
 
+	private static ThreadLocal defaultRealm = new ThreadLocal();
+
+	/**
+	 * Returns the default realm for the calling thread, or <code>null</code>
+	 * if no default realm has been set.
+	 * 
+	 * @return the default realm, or <code>null</code>
+	 */
+	public static Realm getDefault() {
+		return (Realm) defaultRealm.get();
+	}
+
+	/**
+	 * Sets the default realm for the calling thread. Each thread can have its
+	 * own default realm.
+	 * 
+	 * @param realm
+	 *            the realm, or <code>null</code> to clear the current default
+	 *            realm
+	 */
+	public static void setDefault(Realm realm) {
+		defaultRealm.set(realm);
+	}
+
 	/**
 	 * @return true if the caller is executing in this realm. This method must
 	 *         not have side-effects (such as, for example, implicitly placing
@@ -67,7 +91,7 @@ public abstract class Realm {
 			workQueue.notifyAll();
 		}
 	}
-	
+
 	/**
 	 * 
 	 */

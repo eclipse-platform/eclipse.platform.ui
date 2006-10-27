@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IStaleListener;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * Subclasses should override at least get(int index) and size()
@@ -47,6 +49,24 @@ public abstract class AbstractObservableList extends AbstractList implements
 	 */
 	private Object staleListeners = null;
 
+	private Realm realm;
+	
+	/**
+	 * @param realm 
+	 * 
+	 */
+	public AbstractObservableList(Realm realm) {
+		Assert.isNotNull(realm);
+		this.realm = realm;
+	}
+
+	/**
+	 * 
+	 */
+	public AbstractObservableList() {
+		this(Realm.getDefault());
+	}
+	
 	public boolean isStale() {
 		return false;
 	}
@@ -396,4 +416,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		return super.lastIndexOf(o);
 	}
 
+	public Realm getRealm() {
+		return realm;
+	}
 }

@@ -42,10 +42,26 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	 * @param realm 
 	 * 
 	 */
+	public ComputedValue() {
+		this(Realm.getDefault(), Object.class);
+	}
+
+	/**
+	 * @param realm 
+	 * @param valueType
+	 */
+	public ComputedValue(Object valueType) {
+		this(Realm.getDefault(), valueType);
+	}
+
+	/**
+	 * @param realm 
+	 * 
+	 */
 	public ComputedValue(Realm realm) {
 		this(realm, Object.class);
 	}
-
+	
 	/**
 	 * @param realm 
 	 * @param valueType
@@ -54,7 +70,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 		super(realm);
 		this.valueType = valueType;
 	}
-
+	
 	/**
 	 * Inner class that implements interfaces that we don't want to expose as
 	 * public API. Each interface could have been implemented using a separate

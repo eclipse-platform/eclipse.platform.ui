@@ -28,10 +28,17 @@ abstract public class AbstractObservableValue extends AbstractObservable
 	/**
 	 * @param realm
 	 */
+	public AbstractObservableValue() {
+		this(Realm.getDefault());
+	}
+
+	/**
+	 * @param realm
+	 */
 	public AbstractObservableValue(Realm realm) {
 		super(realm);
 	}
-
+	
 	private Collection valueChangeListeners = null;
 
 	public void addValueChangeListener(IValueChangeListener listener) {

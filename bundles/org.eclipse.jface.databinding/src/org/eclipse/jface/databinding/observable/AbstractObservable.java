@@ -14,6 +14,8 @@ package org.eclipse.jface.databinding.observable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * @since 1.0
  * 
@@ -38,6 +40,7 @@ public abstract class AbstractObservable implements IObservable {
 	 * @param realm
 	 */
 	public AbstractObservable(Realm realm) {
+		Assert.isNotNull(realm);
 		this.realm = realm;
 	}
 

@@ -38,12 +38,16 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 	protected Object elementType;
 
+	protected ObservableSet(Set wrappedSet, Object elementType) {
+		this(Realm.getDefault(), wrappedSet, elementType);
+	}
+
 	protected ObservableSet(Realm realm, Set wrappedSet, Object elementType) {
 		super(realm);
 		this.wrappedSet = wrappedSet;
 		this.elementType = elementType;
 	}
-
+	
 	public void addSetChangeListener(ISetChangeListener listener) {
 		if (setChangeListeners == null) {
 			boolean hadListeners = hasListeners();

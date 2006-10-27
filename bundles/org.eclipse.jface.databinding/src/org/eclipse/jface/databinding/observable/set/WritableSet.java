@@ -30,10 +30,44 @@ public class WritableSet extends ObservableSet {
 	 * @param realm 
 	 * @param wrappedSet
 	 */
+	public WritableSet() {
+		this(Realm.getDefault(), Object.class);
+	}
+
+	/**
+	 * @param realm 
+	 * @param c
+	 */
+	public WritableSet(Collection c) {
+		this(Realm.getDefault(), c, Object.class);
+	}
+
+	/**
+	 * @param realm 
+	 * @param c
+	 * @param elementType 
+	 */
+	public WritableSet(Collection c, Object elementType) {
+		this(Realm.getDefault(), new HashSet(c), elementType);
+	}
+
+	
+	/**
+	 * @param realm 
+	 * @param elementType
+	 */
+	public WritableSet(Object elementType) {
+		this(Realm.getDefault(), new HashSet(), elementType);
+	}
+
+	/**
+	 * @param realm 
+	 * @param wrappedSet
+	 */
 	public WritableSet(Realm realm) {
 		this(realm, Object.class);
 	}
-
+	
 	/**
 	 * @param realm 
 	 * @param c
@@ -41,7 +75,7 @@ public class WritableSet extends ObservableSet {
 	public WritableSet(Realm realm, Collection c) {
 		this(realm, c, Object.class);
 	}
-
+	
 	/**
 	 * @param realm 
 	 * @param c
@@ -51,7 +85,7 @@ public class WritableSet extends ObservableSet {
 		super(realm, new HashSet(c), elementType);
 		this.elementType = elementType;
 	}
-
+	
 	/**
 	 * @param realm 
 	 * @param elementType

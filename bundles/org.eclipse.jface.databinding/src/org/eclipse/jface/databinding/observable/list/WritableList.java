@@ -26,11 +26,29 @@ import org.eclipse.jface.databinding.observable.Realm;
 public class WritableList extends ObservableList {
 
 	/**
+	 * Creates an empty writable list in the default realm, containing elements of type Object.
+	 * @param realm 
+	 */
+	public WritableList() {
+		this(Realm.getDefault(), Object.class);
+	}
+
+	/**
 	 * Creates an empty writable list containing elements of type Object.
 	 * @param realm 
 	 */
 	public WritableList(Realm realm) {
 		this(realm, Object.class);
+	}
+	
+	/**
+	 * Creates an empty writable list in the default realm, containing elements of the given type.
+	 * @param realm 
+	 * 
+	 * @param elementType
+	 */
+	public WritableList(Object elementType) {
+		this(Realm.getDefault(), new ArrayList(), elementType);
 	}
 
 	/**
@@ -42,7 +60,7 @@ public class WritableList extends ObservableList {
 	public WritableList(Realm realm, Object elementType) {
 		super(realm, new ArrayList(), elementType);
 	}
-
+	
 	/**
 	 * Creates a writable list containing elements of the given type,
 	 * wrapping an existing client-supplied list.
