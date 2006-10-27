@@ -10,72 +10,116 @@
 <h1> Eclipse 3.3 Debug Platform Build Notes&nbsp;</h1>
 
 <h2>Summary of API changes in 3.3</h2>
+<h3>Launching</h3>
+The launch framework has been enhanced to support the following: 
+<ul>
+  <li> Mixed mode launching - for example, allows an application to debugged and 
+    profiled at the same time</li>
+  <li> Multiple launch delegates for the same configuration type and mode combination 
+    - for example, allows multiple Java profilers to exist in the workbench side 
+    by side</li>
+  <li>Contribution of extra tabs to existing tab groups - for example, allows 
+    a profiler to contribute a profile options tab to an existing tab group in 
+    the launch dialog</li>
+  <li>Read-only launch configurations - for example, if a launch configuration 
+    is stored in the file system in a read-only state, the launch configuration 
+    cannot be edited in the launch dialog</li>
+</ul>
+<p>The following extension points have been added: </p>
+<ul>
+  <li><code>org.eclipse.debug.ui.launchConfigurationTabs</code> - allows a tab 
+    to be contributed to an existing tab group in the launch configuration dialog 
+    <ul>
+      <li>added extension point identifier constant <code>IDebugUIConstants.EXTENSION_POINT_LAUNCH_TABS</code> 
+      </li>
+    </ul>
+  </li>
+</ul>
+<p>The following extension points have been enhanced: </p>
+<ul>
+  <li><code>org.eclipse.debug.core.launchDelegates </code> 
+    <ul>
+      <li>addition of optional <code>name</code> attribute to allow users to select 
+        a launcher when more than one is available</li>
+      <li>addition of optional <code>modeCombination</code> element to specify 
+        supported mixed launch modes</li>
+    </ul>
+  </li>
+  <li><code>org.eclipse.debug.core.launchConfigurationTypes </code> 
+    <ul>
+      <li>addition of optional <code>icon</code> attribute to allow an icon to 
+        be contributed in the same extension as its type. This can only be used 
+        if the icon is in the same plug-in as the launch configuration type.</li>
+      <li>addition of optional <code>delegateName </code>attribute to allow users 
+        to select a launcher when more than one is available</li>
+    </ul>
+  </li>
+</ul>
+<p>The following types have been added:</p>
+<ul>
+  <li>added interface <code>org.eclipse.debug.core.ILaunchDelegate</code> - provides 
+    access to a launch delegate extensions and attributes</li>
+  <li>added class org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab - abstract 
+    implementation of a launch tab that modifies a configuration's launch mode</li>
+</ul>
+<p>The following types have been modified in support of launching enhamcements:</p>
+<ul>
+  <li>org.eclipse.debug.core.ILaunchConfiguration 
+    <ul>
+      <li>added method getAttribute(String key, Set defaultValue)</li>
+      <li>added method getModes()</li>
+      <li>added method isReadOnly()</li>
+    </ul>
+  </li>
+  <li>org.eclipse.debug.core.ILaunchConfigurationType 
+    <ul>
+      <li>deprecated method getDelegate(String mode)</li>
+      <li>added method getDelegates(Set modes)</li>
+      <li>added method getPreferredDelegate(Set modes)</li>
+      <li>added method setPreferredDelegate(Set modes)</li>
+      <li>added method supportsModes(Set modes)</li>
+      <li>deprecated method getSupportedModes()</li>
+      <li>added method getSupportedModeCombinations()</li>
+      <li>added method getContributorName()</li>
+      <li>added method getImageDescriptorPath()</li>
+    </ul>
+  </li>
+  <li>org.eclipse.debug.core.ILaunchConfigurationWorkingCopy 
+    <ul>
+      <li>added method addModes(Set modes)</li>
+      <li>added method setModes(Set modes)</li>
+      <li>added method removeModes(Set modes)</li>
+    </ul>
+  </li>
+  <li>org.eclipse.debug.ui.DebugUITools 
+    <ul>
+      <li>added method getLastLaunch(String id)</li>
+      <li>added method openLaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration 
+        configuration, String groupIdentifier, IStatus status, boolean showCancel)</li>
+    </ul>
+  </li>
+  <li>org.eclipse.debug.ui.AbstractLaunchConfigurationTab 
+    <ul>
+      <li>added method getId()</li>
+    </ul>
+  </li>
+</ul>
+<h3>Debug Context Service</h3>
+<h3>Debug Commands</h3>
+<h3>Source Lookup</h3>
+<h3>Console</h3>
 <ul>
   <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute 
     specifies the encoding used by the console. When unspecified the default system 
     encoding is used. This constant replaces the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+</ul>
+<h3>Expressions</h3>
+<ul>
   <li>added <code>org.eclipse.debug.ui.actions.IWatchExpressionFactoryAdapterExtension</code> 
     - this is an interface that can be optionally implemented by <code>IWatchExpressionFactoryAdapter</code>'s. 
     Allows the <b>Create Watch Expression</b> action to be dynamically enabled 
     based on the selected variables.</li>
-  <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
-  <li>added <code>DebugUITools.getLastLaunch(String id)</code> - provides access 
-    to the last launch in each launch group.</li>
-  <li>added <code>ILaunchConfiguration.isReadOnly()</code> - returns whether a configuration
-  is read-only in the file system. The debug UI disables editing of read-only configurations.</li>
-</ul>
-
-<h2>Summary of Extensible Launch Option conversion/changes in 3.3</h2>
-<ul>
-  <li>Added method <code>ILaunchConfigurationType.getContributorName()</code> 
-    -- returns the name of the contributing plug-in </li>
-  <li>Added method <code>ILaunchConfigurationType.getImageDescriptorPath()</code> 
-    -- returns path of the image or <code>null</code></li>
-  <li>Added attrbute 'icon' in <code>launchConfigurationTypes</code> schema, in 
-    favour of contributing a seperate extension <code>launchConfigurationTypeImages</code></li>
-  <li>Added tab id filed to <code>AbstractLaunchConfigurationTab</code> class</li>
-  <li>Provided tab ids for all debug provided tabs</li>
-  <li>Added method openLaunchConfigurationEditDialog -- opens the launch configuration dialog on a configuration to be
-  edited and launching can be continued</li>
-  <li>Added getAttribute() to <code>ILaunchConfiguration</code>, which returns a <code>java.util.Set</code></li>
-  <li>Added a new subclass of <code>LaunchConfigurationsDialog</code>, <code>LaunchConfigurationEditDialog</code> which allows
-  a configuration to be edited on the fly with a continue button.</li>
-  <li>Added method getSetAttribute to <code>LaunchConfigurationInfo</code></li>
-  <li>Added method getTabExtensions which returns the list of launchConfigurationTab extension proxies.</li>
-  <li>Added method getRelativeTabId to <code>LaunchConfigurationTabExtension</code> -- returns the id of the tab
-  that this tab should lbe placed relative to i.e.immediately after.</li>
-  <li>Added a select options <code>Link</code> to <code>LaunchConfiguraitonTabGroupViewer</code>, which is used to resolve problems</li>
-  with duplicate and unavailable launch delegates</li>
-  <li>Added new status handler <code>LaunchDelegateNotAvailabaleHandler</code>, which prompts a user to select a differnet launch delegate
-  to resolve problems with the current one.</li>
-  <li>Added method getLaunchDelegates to <code>LaunchManager</code> -- returns all of the contributed launch delegates.</li>
-  <li>Added method getLaunchDelegates(String typeid) to <code>LaunchManager</code> -- returns the launch delegates
-  contributed for the specific launch configuration type id.</li>
-  <li>Added method initializeLaunchDelegates to <code>LaunchManager</code> -- initially creates the listing of contributed launch delegates</li>
-  <li>Added dialog class <code>SelectLaunchModesDialog</code> -- used to allow users to select a differing launch delegate in the event 
-  there is a problem with the current one.</li>
-  <li>Added <code>LAUNCH_MODES</code> constant to <code>LaunchConfiguration</code></li>
-  <li>Added class <code>AbstractLaunchModeConfigurationTab</code> to provide some default implememtation for contributing a launch configuration
-  tab that provides a mode attribute.</li>
-  <li>Added class <code>LaunchConfigurationTabGroupWrapper</code> which provides a wrapper for a contributed launch group
-  and contributed tabs for that launch group.</li>
-  <li>Added constant <code>EXTENSION_POINT_LAUNCH_TABS</code> to <code>IDebugUIConstants</code> for finding contributed launch configuration
-  tabs.</li>
-  <li>Added interface <code>ILaunchDelegate</code> which provides API for access to a launch delegates extension point.</li>
-  <li>Added attribute 'name' to the <code>launchDelegates</code> schema, providing 
-    a human readable name for the delegate. To be used in duplicate resolution</li>
-  <li>Added method getModes to <code>ILaunchConfiguration</code> -- returns the set of modes that have been set on the launch configuration.</li>
-  <li>Added method getDelegates(Set) to <code>ILaunchConfigurationType</code> to return an array of <code>ILaunchDelegate</code> instances for the
-  associated type.</li>
-  <li>Added modeCombination element to the launchDelegates extension point -- allows comma seprerated lists of modes to be specified
-  in order to know what combinations of modes the associated launch delegate can launch</li> 
-  <li>Added method getSupportedModeCombinations to <code>ILaunchConfigurationType</code> -- returns a Set of Sets of the supported modes for the associated 
-  launch configuration type.</li>
-  <li>Added delegateName attribute to the launchConfioguratyionTypes extension point -- allows an human readable name for the associated launch delegate to be specified</li>
-  <li>Added DELEGATE_NAME constant to IConfigurationElementConstants</li>
-  <li>Added new class DuplicateLaunchDelegatesStatusHandler to handle the case where dupliate launch delegates have been found and prompts as necessary</li>
-  <li>Added new class LaunchDelegateNoptAvailableHandler to handle the case where no launch delegate is available to launch the current set of options, and prompts if necessary</li>
-  <li>Added constant PREF_PROMPT_FOR_DUPLICATE_DELEGATES to IDebugPreferenceConstants</li>
 </ul>
 
 <h2>Oct 24, 2006</h2> 
