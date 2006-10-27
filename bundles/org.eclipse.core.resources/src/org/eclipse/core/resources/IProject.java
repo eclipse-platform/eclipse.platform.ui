@@ -44,7 +44,9 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
 public interface IProject extends IContainer, IAdaptable {
 	/**
 	 * Invokes the <code>build</code> method of the specified builder 
-	 * for this project. Does nothing if this project is closed.
+	 * for this project. Does nothing if this project is closed.  If this project
+	 * has multiple builders on its build spec matching the given name, only
+	 * the first matching builder will be run.
 	 * <p>
 	 * The builder name is declared in the extension that plugs in
 	 * to the standard <code>org.eclipse.core.resources.builders</code> 
