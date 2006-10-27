@@ -62,7 +62,7 @@ The launch framework has been enhanced to support the following:
   <li>added class org.eclipse.debug.ui.AbstractLaunchModeConfigurationTab - abstract 
     implementation of a launch tab that modifies a configuration's launch mode</li>
 </ul>
-<p>The following types have been modified in support of launching enhamcements:</p>
+<p>The following types have been modified in support of launching enhancements:</p>
 <ul>
   <li>org.eclipse.debug.core.ILaunchConfiguration 
     <ul>
@@ -105,8 +105,73 @@ The launch framework has been enhanced to support the following:
   </li>
 </ul>
 <h3>Debug Context Service</h3>
+<p>A debug context represents the active state of a program being debugged. The 
+  active debug context drives the enabled state of debug actions (step, terminate, 
+  etc.), source lookup, visible variables, watch expression values, etc. A set 
+  of classes and interfaces have been added allowing clients to respond to and 
+  provide the active debug context.</p>
+<p>The package <code>org.eclipse.debug.ui.contexts</code> has been added with 
+  the following types:</p>
+<ul>
+  <li><code>AbstractDebugContextProvider</code></li>
+  <li><code>DebugContextEvent</code></li>
+  <li><code>IDebugContextListener</code></li>
+  <li><code>IDebugContextManager</code></li>
+  <li><code>IDebugContextProvider</code></li>
+  <li><code>IDebugContextService</code></li>
+  <li><code>ISuspendTrigger</code></li>
+  <li><code>ISuspendTriggerListener</code></li>
+</ul>
+<p>The following types have been modified</p>
+<ul>
+  <li><code>org.eclipse.debug.ui.DebugUITools </code> 
+    <ul>
+      <li>added method <code>getDebugContextManager()</code></li>
+    </ul>
+  </li>
+</ul>
 <h3>Debug Commands</h3>
+<p>Debug commands represent common debug operations implemented by debuggers - 
+  for example, step over, suspend, resume, and terminate. The debug platform allows 
+  debuggers to provide custom implementations of the operations by implementing 
+  the debug command interfaces. The platform provides a user interface and actions 
+  that delegate to the command implementations. As well, the platform provides 
+  a standard implementation of the commands for debuggers that are implementations 
+  of the standard debug model. Debuggers may override the standard implementation 
+  by directly implementing the command interfaces in debug model elements or by 
+  registering adapters for the command interfaces on debug model elements. The 
+  command interfaces are to be implemented in a non-blocking fashion, and are 
+  designed with an asynchronous API, allowing clients to cancel a command or report 
+  failure via a status monitor.</p>
+<p>The package<code> org.eclipse.debug.ui.commands</code> has been added with 
+  the following types:</p>
+<ul>
+  <li><code>IBooleanStatusMonitor</code></li>
+  <li><code>IDebugCommand</code></li>
+  <li><code>IDisconnectCommand</code></li>
+  <li><code>IDropToFrameCommand</code></li>
+  <li><code>IResumeCommand</code></li>
+  <li><code>IStatusMonitor</code></li>
+  <li><code>IStepFiltersCommand</code></li>
+  <li><code>IStepIntoCommand</code></li>
+  <li><code>IStepOverCommand</code></li>
+  <li><code>IStepReturnCommand</code></li>
+  <li><code> ISuspendCommand</code></li>
+  <li><code> ITerminateCommand</code></li>
+</ul>
 <h3>Source Lookup</h3>
+<p>Source lookup is driven by the active debug context. When a context is activated 
+  the debug platform displays source for that context. Clients may provide a custom 
+  implementation of source lookup by implementing the source display interface 
+  directly on their debug model elements, or by providing an adapter for the source 
+  display interface. The debug platform provides a standard implementation of 
+  source display for debuggers that are an implementation of the standard debug 
+  model - i.e. implementations of <code>IStackFrame</code> that have an associated 
+  <code>ISourceLocator</code>.</p>
+<p>The following interface has been added:</p>
+<ul>
+  <li><code>org.eclipse.debug.ui.sourcelookup.ISourceDisplay</code></li>
+</ul>
 <h3>Console</h3>
 <ul>
   <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute 
