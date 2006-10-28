@@ -617,7 +617,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getTabId()
+	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
 	 * 
 	 * @since 3.3
 	 */
