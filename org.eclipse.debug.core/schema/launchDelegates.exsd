@@ -124,26 +124,14 @@ New in 3.3: the comma seperated list of modes provided here, instead of via the 
    <element name="modeCombination">
       <annotation>
          <documentation>
-            This element represents a collection of mode combinations that this delegate can launch. Each entry of a modeCombination is a comma seperated listing of a single combination of modes the delegate supports.
-
-For example, a delegate that supports debugging, profiling and code coverage might have a modeCombination of:
-
-[debug, profile, coverage]
-
-since 3.3
-
-EXPERIMENTAL
+            This element represents a collection of mode combinations that this delegate can launch. Each modeCombination attribute is a comma seperated list specifying a combination of modes the delegate supports. For example, a delegate that supports debugging, profiling and code coverage might have a modeCombination of consisting of debug, profile, and coverage. This element was added in the 3.3 release. EXPERIMENTAL.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="modes" type="string" use="required">
             <annotation>
                <documentation>
-                  the modes attribute represents a comma seperated listing of a combination of modes that the associated delegate can launch
-
-since 3.3
-
-EXPERIMENTAL
+                  a comma seperated list specifying a combination of modes the associated delegate can launch. This attribute was added in the 3.3 release. EXPERIMENTAL.
                </documentation>
             </annotation>
          </attribute>
