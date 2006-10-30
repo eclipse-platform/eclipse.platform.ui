@@ -2,25 +2,28 @@ package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.IContentChangeListener;
+import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.ResourceNode;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -32,8 +35,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -60,7 +63,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 import com.ibm.icu.text.MessageFormat;
 
 
-public class PreviewPatchPage2 extends WizardPage {
+public class PreviewPatchPage2 extends WizardPage implements IContentChangeListener {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 	private PatchWizard fPatchWizard;
@@ -70,8 +73,8 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
 	
-	private Action fRetargetSelection;
-	private static final String retargetID = "PreviewPatchPage_retargetSelection"; //$NON-NLS-1$
+	private Action fIncludeToggle;
+	private static final String toggleInclusionID = "PreviewPatchPage_toggleInclusion"; //$NON-NLS-1$
 	
 	private Action fIgnoreWhiteSpace;
 	private static final String ignoreWSID = "PreviewPatchPage_ignoreWhiteSpace"; //$NON-NLS-1$
@@ -79,18 +82,29 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Action fReversePatch;
 	private static final String reversePatchID = "PreviewPatchPage_reversePatch"; //$NON-NLS-1$
 	
+	private Action fRetargetResource;
+	private static final String  retargetDiffID = "PreviewPatchPage_retargetDiffIDSelection"; //$NON-NLS-1$
+	
 	private static final int DIFF_NODE = 0;
 	private static final int PROJECTDIFF_NODE = 1;
 	
 	protected boolean pageRecalculate= true;
- 
+	//tracks which diffs actually get edited
+	private HashSet alteredDiffs = new HashSet();
+
+	// maps diffs to merged file contents
+	private HashMap alteredFiles = new HashMap();
+	
+	
 	class RetargetPatchDialog extends Dialog {
 
 		protected TreeViewer rpTreeViewer;
 		protected DiffNode rpSelectedNode;
 		protected DiffProject rpSelectedProject;
 		protected IProject rpTargetProject;
-
+		private IFile rpTargetResource;
+		
+		protected int mode;
 		public RetargetPatchDialog(Shell shell, ISelection selection) {
 			super(shell);
 			setShellStyle(getShellStyle()|SWT.RESIZE);
@@ -126,15 +140,37 @@ public class PreviewPatchPage2 extends WizardPage {
 			gd.heightHint= 0;
 			rpTreeViewer.getTree().setLayoutData(gd);
 
-			rpTreeViewer.setContentProvider(new RetargetPatchContentProvider());
+			//determine what type of selection this is, project or diff/hunk
+			if (rpSelectedNode instanceof PatcherDiffNode){
+				//either a diff or a hunk
+				mode = DIFF_NODE;
+				switch(((PatcherDiffNode) rpSelectedNode).getPatchNodeType()){
+				
+				case PatcherDiffNode.HUNK:
+					Diff diff = (Diff) ((PatcherDiffNode) rpSelectedNode).getHunk().getParent(rpSelectedNode);
+					//set the selection to the diff resource
+					rpTreeViewer.setSelection(new StructuredSelection(diff.getTargetFile()));
+					break;
+					
+				case PatcherDiffNode.DIFF:
+					diff = ((PatcherDiffNode) rpSelectedNode).getDiff();
+					//set the selection to the diff resource
+					rpTreeViewer.setSelection(new StructuredSelection(diff.getTargetFile()));
+					break;
+					
+				case PatcherDiffNode.PROJECT:
+					rpSelectedProject = ((PatcherDiffNode) rpSelectedNode).getDiffProject();
+					rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
+					mode = PROJECTDIFF_NODE;
+					break;
+				}
+			}
+			
+			rpTreeViewer.setContentProvider(new RetargetPatchContentProvider(mode));
 			rpTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
 			rpTreeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 			rpTreeViewer.setInput(ResourcesPlugin.getWorkspace());
-			ITypedElement tempProject = rpSelectedNode.getLeft();
-			if (tempProject instanceof DiffProject){
-				rpSelectedProject = (DiffProject)tempProject;
-				rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
-			}
+			
 			
 			setupListeners();
 
@@ -144,17 +180,62 @@ public class PreviewPatchPage2 extends WizardPage {
 		}
 
 		protected void okPressed() {
-			rpSelectedProject.setProject(rpTargetProject);
-			super.okPressed();
+			if (rpSelectedNode != null && rpSelectedNode instanceof PatcherDiffNode && rpTargetResource != null){
+					PatcherDiffNode patchedNode =(PatcherDiffNode) rpSelectedNode;
+					switch(patchedNode.getPatchNodeType()){
+					
+					case PatcherDiffNode.PROJECT:
+						//copy over all diffs to new target resource
+						
+						break;
+						
+					case PatcherDiffNode.DIFF:
+						//copy over all hunks to new target resource
+						Diff tempDiff = patchedNode.getDiff();
+						Hunk[] tempHunks = tempDiff.getHunks();
+						for (int i = 0; i < tempHunks.length; i++) {
+							tempDiff.remove(tempHunks[i]);
+						}
+						
+						if (fPatchWizard.getPatcher().isWorkspacePatch()){
+							//since the diff has no more hunks to apply, remove it from the parent and the patcher
+							tempDiff.getProject().remove(tempDiff);
+							fPatchWizard.getPatcher().removeDiff(tempDiff);
+						} else {
+							//since the diff has no more hunks to apply, remove it from the patcher
+							fPatchWizard.getPatcher().removeDiff(tempDiff);
+						}
+						
+						patcherCompareEditorInput.addHunksToFile(rpTargetResource, tempHunks);
+						break;
+						
+					case PatcherDiffNode.HUNK:
+						//copy hunk over to new target resource
+						tempDiff = (Diff) patchedNode.getHunk().getParent(patchedNode);
+						tempDiff.remove(patchedNode.getHunk());
+						patcherCompareEditorInput.addHunksToFile(rpTargetResource, new Hunk[]{patchedNode.getHunk()});
+						break;
+					}
+					
+	
+				//Set the project if needed
+				if (rpSelectedProject != null)
+					rpSelectedProject.setProject(rpTargetProject);
+			}
+			super.okPressed();	
 		}
 
 		void setupListeners() {
 			rpTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection s= (IStructuredSelection) event.getSelection();
 					Object obj= s.getFirstElement();
 					if (obj instanceof IProject)
 						rpTargetProject= (IProject) obj;
+					else if (obj instanceof IFile)
+						rpTargetResource = (IFile) obj;
 				}
 			});
 
@@ -184,6 +265,11 @@ public class PreviewPatchPage2 extends WizardPage {
 	class RetargetPatchContentProvider extends BaseWorkbenchContentProvider {
 		//Never show closed projects
 		boolean showClosedProjects= false;
+		//Used to limit providers to just projects for retargeting projects
+		int mode;
+		public RetargetPatchContentProvider(int mode) {
+			 this.mode = mode;
+		}
 
 		public Object[] getChildren(Object element) {
 			if (element instanceof IWorkspace) {
@@ -201,7 +287,7 @@ public class PreviewPatchPage2 extends WizardPage {
 				return accessibleProjects.toArray();
 			}
 
-			if (element instanceof IProject) {
+			if (element instanceof IProject && mode==PROJECTDIFF_NODE) {
 				return new Object[0];
 			}
 			return super.getChildren(element);
@@ -252,36 +338,82 @@ public class PreviewPatchPage2 extends WizardPage {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				Object obj= sel.getFirstElement();
 				
-				patcherCompareEditorInput.setContributedActionEnablement(retargetID, false);
-				if (fPatchWizard.getPatcher().isWorkspacePatch() && obj instanceof DiffNode) {
-					//check to see that the selected element is a Diff Project
-					ITypedElement element = ((DiffNode) obj).getLeft();
-					if (element != null && element instanceof DiffProject){
-						patcherCompareEditorInput.setContributedActionEnablement(retargetID, true);
+				if (obj instanceof PatcherDiffNode){
+					//either a diff or a hunk
+					Diff diff = ((PatcherDiffNode) obj).getDiff();
+					if (diff != null){
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
+					} else {
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetHunk);
 					}
+				} else if (obj instanceof DiffNode) {
+					//either a toplevel Project or a Diff
+					ITypedElement tempNode = ((DiffNode) obj).getLeft();
+					if (tempNode instanceof DiffProject){
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetProject);
+					} else if (tempNode instanceof Diff){
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
+					}				
 				}
-
 			}
 
 		});
+		
+		patcherCompareEditorInput.getViewer().addDoubleClickListener(new IDoubleClickListener() {
+			
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
+				Object obj= sel.getFirstElement();
+				
+				//make sure anu unsaved changes are saved before switching editablity
+				ensureContentsSaved();
+				
+				if (obj instanceof PatcherDiffNode){
+					switch (((PatcherDiffNode)obj).getPatchNodeType()){
+						case PatcherDiffNode.HUNK:
+							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(true);
+							break;
+						
+						default:
+							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(false);
+							break;
+					}
+				} /*else if (obj instanceof DiffNode) {
+					//either a toplevel Project or a Diff
+					ITypedElement tempNode = ((DiffNode) obj).getLeft();
+					if (tempNode instanceof DiffProject){
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, "Retarget Project");
+					} else if (tempNode instanceof Diff){
+						patcherCompareEditorInput.setContributedActionName(retargetDiffID, "Retarget Diff");
+					}				
+				}*/
+			}
+
+		});
+		patcherCompareEditorInput.contributeDiffViewerMenuItems(getMenuActions());
+
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		setControl(composite);
 		
 	}
 	
 	private Action[] getContributedActions() {
-		fRetargetSelection= new Action(PatchMessages.PreviewPatchPage2_RetargetAction, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
+		fIncludeToggle= new Action(PatchMessages.PreviewPatchPage2_IncludeElement, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
 			public void run() {
-				Shell shell = getShell();
 				ISelection selection = patcherCompareEditorInput.getViewer().getSelection();
-				final RetargetPatchDialog dialog= new RetargetPatchDialog(shell, selection);
-				dialog.open();
-				patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
+				if (selection instanceof TreeSelection){
+					Object obj = ((TreeSelection) selection).getFirstElement();
+					if (obj instanceof PatcherDiffNode){
+						PatcherDiffNode node = ((PatcherDiffNode) obj);
+						node.setIncludeElement(!node.getIncludeElement());
+					}
+				}
+				patcherCompareEditorInput.getViewer().refresh();
 			}
 		};
-		fRetargetSelection.setToolTipText(PatchMessages.PreviewPatchPage2_RetargetTooltip);
-		fRetargetSelection.setEnabled(false);
-		fRetargetSelection.setId(retargetID);
+		fIncludeToggle.setToolTipText(PatchMessages.PreviewPatchPage2_IncludeElementText);
+		fIncludeToggle.setEnabled(true);
+		fIncludeToggle.setId(toggleInclusionID);
 		
 		fIgnoreWhiteSpace = new Action(PatchMessages.PreviewPatchPage2_IgnoreWSAction, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_ENABLED)){
 			public void run(){
@@ -308,9 +440,29 @@ public class PreviewPatchPage2 extends WizardPage {
 		fReversePatch.setToolTipText(PatchMessages.PreviewPatchPage_ReversePatch_text);
 		fReversePatch.setId(reversePatchID);
 		
-		return new Action[]{fIgnoreWhiteSpace, fRetargetSelection, fReversePatch};
+		return new Action[]{fIncludeToggle, fIgnoreWhiteSpace, fReversePatch};
 	}
 
+		private Action[] getMenuActions() {
+			fRetargetResource = new Action(PatchMessages.PreviewPatchPage2_RetargetDiff, CompareUIPlugin
+				.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
+			public void run() {
+				Shell shell = getShell();
+				ISelection selection = patcherCompareEditorInput.getViewer()
+						.getSelection();
+				final RetargetPatchDialog dialog = new RetargetPatchDialog(shell, selection);
+				dialog.open();
+				patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
+				patcherCompareEditorInput.getViewer().refresh();
+			}
+		};
+		fRetargetResource
+				.setToolTipText(PatchMessages.PreviewPatchPage2_RetargetTooltip);
+		fRetargetResource.setEnabled(true);
+		fRetargetResource.setId(retargetDiffID);
+
+		return new Action[] { fIncludeToggle, fRetargetResource };
+	}
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		//Need to handle input and rebuild tree only when becoming visible
@@ -546,168 +698,77 @@ public class PreviewPatchPage2 extends WizardPage {
 	private IFile existsInSelection(IPath path) {
 		return fPatchWizard.getPatcher().existsInTarget(path);
 	}
+
+	public void contentChanged(IContentChangeNotifier source) {
+		if (source instanceof PatchedFileWrapper) {
+			PatcherDiffNode parentNode = ((PatchedFileWrapper) source).getParent();
+			
+			//the only content that can be altered are hunks - make sure this is true
+			Assert.isTrue(parentNode.getPatchNodeType() == PatcherDiffNode.HUNK);
+			
+			//since it has been changed, it is now included in the patch by default
+			parentNode.setIncludeElement(true);
+			
+			//update the hunk node name
+			String name = parentNode.getName();
+			int index = name
+					.lastIndexOf(PatchMessages.PreviewPatchPage_NoMatch_error);
+			if (index != -1) {
+				parentNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {name.substring(0, index), PatchMessages.HunkMergePage_Merged}));
+			} else {
+				//make sure we add one merged to the label
+				index = name.lastIndexOf(PatchMessages.HunkMergePage_Merged);
+				if (index == -1) 
+					parentNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {name, PatchMessages.HunkMergePage_Merged}));
+			}
+			
+			//update the diff node name 
+			PatcherDiffNode diffNode= (PatcherDiffNode) parentNode.getParent();
+			Assert.isTrue(diffNode.getPatchNodeType() == PatcherDiffNode.DIFF);
+			index = diffNode.getName().lastIndexOf(PatchMessages.HunkMergePage_Merged);
+			if (index == -1)
+				diffNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {diffNode.getName(), PatchMessages.HunkMergePage_Merged}));
 	
-	public IWizardPage getNextPage() {
-		
-		/*//check to see if this page is complete
-		if (!isPageComplete())
-			return null;*/
-		
-		//set the contents of the hunk merge page
-		
-		HunkMergePage hunkMergePage = (HunkMergePage) fPatchWizard.getPage(HunkMergePage.HUNKMERGEPAGE_NAME);
-        IDiffElement[] children = patcherCompareEditorInput.getRoot().getChildren();
- 
-		//Go through the children and build a new tree. Each Diff should contain all of the 
-        //hunks that have already been selected (and can be successfully applied) and the hunks
-        //that cannot be applied. If there are no hunks that can't be applied, skip the Hunk Merge
-        //page and proceed directly to the preview page.
-        boolean atLeastOneDiffProblem = false;
-        
-        if (children != null){
-        	
-            DiffNode newRoot = new DiffNode(Differencer.NO_CHANGE) {
-    			public boolean hasChildren() {
-    				return true;
-    			}
-    		};
-    		
-        	for (int i = 0; i < children.length; i++) {
-				if (children[i] instanceof PatcherDiffNode){
-					PatcherDiffNode patcherDiffNode = (PatcherDiffNode) children[i];
-					if (patcherDiffNode.getDiff().containsProblems()){
-						atLeastOneDiffProblem = true;
-						processDiff(patcherDiffNode, newRoot, hunkMergePage,DIFF_NODE);
-					}
-				} else if (children[i] instanceof DiffNode){
-					//project node
-					
-					//Get diff nodes
-					IDiffElement[] diffs = ((DiffNode)children[i]).getChildren();
-					boolean projectNodeCreated = false;
-				    DiffNode projectNode = null;
-					for (int j = 0; j < diffs.length; j++) {
-						if (diffs[j] instanceof PatcherDiffNode){
-							PatcherDiffNode diff = (PatcherDiffNode) diffs[j];
-							Diff tempDiff = diff.getDiff();
-							if (tempDiff.containsProblems()){
-								atLeastOneDiffProblem = true;
-								if (!projectNodeCreated){
-									projectNode = new DiffNode(newRoot, Differencer.CHANGE, null, children[i], null);
-									projectNodeCreated=true;
-								}
-								processDiff(diff, projectNode, hunkMergePage,PROJECTDIFF_NODE);
-							}
-						}
-					}
-				}
-			}
-        	
-            hunkMergePage.setRoot(newRoot); 
-        }
-		
-        if (atLeastOneDiffProblem){
-        	return super.getNextPage();
-        }
-        
-        return null;
-	}
+			patcherCompareEditorInput.getViewer().update(diffNode, null);
+			patcherCompareEditorInput.getViewer().refresh();
+			patcherCompareEditorInput.updateTree();
+			
+			Hunk tempHunk = parentNode.getHunk();
+			Assert.isNotNull(tempHunk);
+			Diff tempDiff = (Diff) tempHunk.getParent(tempHunk);
+			Assert.isNotNull(tempDiff);
+			alteredDiffs.add(tempDiff);
 
-	private void processDiff(PatcherDiffNode diff, DiffNode rootNode, HunkMergePage hunkMergePage, int nodeType) {
-		//Get the diffs from the project
-		IDiffElement[] hunks = diff.getChildren();
-		if (hunks != null) {
-			//Construct a diff node that contains all of the selected hunks that can be successfully applied
-			//and make a temp patch of the file - all of the failed hunks should appear as children below it 
-			Diff tempDiff = diff.getDiff();
-			Diff tempNewDiff = new Diff(tempDiff.fOldPath, tempDiff.fOldDate, tempDiff.fNewPath, tempDiff.fNewDate);
-
-			ArrayList failedHunks = new ArrayList();
-			ArrayList successfulHunks = new ArrayList();
-
-			for (int i = 0; i < hunks.length; i++) {
-				if (hunks[i] instanceof PatcherDiffNode) {
-					PatcherDiffNode hunkNode = (PatcherDiffNode) hunks[i];
-					Hunk tempHunk = hunkNode.getHunk();
-					if (tempHunk.getHunkProblem()) {
-						failedHunks.add(hunkNode);
-					} else {
-						successfulHunks.add(hunkNode);
-						tempNewDiff.add(tempHunk);
-					}
-				}
-			}
-			try {
-				IPath filePath = new Path(tempDiff.getLabel(tempDiff));
-				IFile tempFile = null;
-				if (nodeType == PROJECTDIFF_NODE){
-					tempFile = tempDiff.getProject().getFile(filePath);
-				} else if (nodeType == DIFF_NODE){
-					tempFile = tempDiff.getTargetFile();
-				}
-				byte[] bytes = patcherCompareEditorInput.quickPatch(tempFile, this.fPatchWizard.getPatcher(), tempNewDiff);
-
-				ITypedElement tempNode;
-				PatchedFileNode patchedNode;
-
-				if (tempFile != null && tempFile.exists()) {
-					tempNode = new ResourceNode(tempFile);
-					patchedNode = new PatchedFileNode(bytes, tempNode.getType()/*"MANUALHUNKMERGE"*/, tempFile.getProjectRelativePath().toString(), true);
-				} else {
-					tempNode = new PatchedFileNode(new byte[0], filePath.getFileExtension(), PatchMessages.PatcherCompareEditorInput_FileNotFound);
-					patchedNode = new PatchedFileNode(bytes, tempNode.getType(), ""); //$NON-NLS-1$
-				}
-
-				//Set the patched file in the Hunk Merge for later retrieval
-				hunkMergePage.setMergedFile(tempDiff, patchedNode);
-				
-				DiffNode allFile = new DiffNode(rootNode, Differencer.CHANGE, null, tempDiff, null);
-				
-				//hang all of the failed nodes off of the new patched diff node
-				for (Iterator iterator = failedHunks.iterator(); iterator.hasNext();) {
-					PatcherDiffNode object = (PatcherDiffNode) iterator.next();
-					String strippedHunk= stripContextFromHunk(object.getHunk());
-					PatchedFileNode strippedHunkNode = new PatchedFileNode(strippedHunk.getBytes(),object.getRight().getType()/*"manualHunkMerge"*/, object.getRight().getName());
-					PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
-					PatcherDiffNode parentNode = new PatcherDiffNode(allFile, Differencer.CHANGE, null, patchedFileWrapper,strippedHunkNode, object.getHunk());
-					patchedFileWrapper.addContentChangeListener(hunkMergePage);
-					patchedFileWrapper.setParent(parentNode);
-				}
-			} catch (CoreException ex) {
-				//ignore 
-			}
-
+			alteredFiles.put(tempDiff, tempDiff.getTargetFile());
+			
+			// now that one hunk has been changed this page can be considered complete
+			setPageComplete(true);
 		}
-	}
-
-	private String stripContextFromHunk(Hunk hunk) {
-		String[] hunkLines = hunk.getLines();
-		StringBuffer result= new StringBuffer();
-		for (int i= 0; i<hunkLines.length; i++) {
-			String line= hunkLines[i];
-			String rest= line.substring(1);
-			switch (line.charAt(0)) {
-				case ' ' :
-					//skip the context
-					break;
-				case '-' :
-					result.append(rest);
-					break;
-				case '+' :
-					result.append(rest);
-					break;
-			}
-		}
-		
-		return result.toString();
 	}
 	
-	public boolean canFlipToNextPage() {
-		if (patcherCompareEditorInput.containsHunkErrors()){
-			return true;
-		}
-		
-		return false;
+	public HashMap getMergedFileContents() {
+		return alteredFiles;
 	}
+
+	public void setMergedFile(Diff tempDiff, IFile rpTargetResource) {
+		alteredFiles.put(tempDiff, rpTargetResource);
+	}
+
+	public HashSet getModifiedDiffs() {
+		return alteredDiffs;
+	}
+
+	public void setAlteredDiff(Diff tempDiff){
+		alteredDiffs.add(tempDiff);
+	}
+	
+	public void ensureContentsSaved() {
+		try {
+			patcherCompareEditorInput.saveChanges(new NullProgressMonitor());
+		} catch (CoreException e) {
+			//ignore
+		}
+	}
+	
 
 }

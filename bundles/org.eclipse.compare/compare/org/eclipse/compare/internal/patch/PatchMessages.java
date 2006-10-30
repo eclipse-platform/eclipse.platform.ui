@@ -35,6 +35,7 @@ public final class PatchMessages extends NLS {
 	public static String PatcherCompareEditorInput_AfterPatch;
 	public static String PatcherCompareEditorInput_FileNotFound;
 	public static String PatcherCompareEditorInput_LocalCopy;
+	public static String PatcherCompareEditorInput_NotIncluded;
 	public static String PatcherCompareEditorInput_PatchContents;
 	public static String PatchWizard_title;
 	public static String PatchWizard_unexpectedException_message;
@@ -99,6 +100,11 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchLabelDecorator_ProjectDoesNotExist;
 	public static String PreviewPatchPage2_IgnoreWSAction;
 	public static String PreviewPatchPage2_IgnoreWSTooltip;
+	public static String PreviewPatchPage2_IncludeElement;
+	public static String PreviewPatchPage2_IncludeElementText;
 	public static String PreviewPatchPage2_RetargetAction;
+	public static String PreviewPatchPage2_RetargetDiff;
+	public static String PreviewPatchPage2_RetargetHunk;
+	public static String PreviewPatchPage2_RetargetProject;
 	public static String PreviewPatchPage2_RetargetTooltip;
 }

@@ -1193,4 +1193,22 @@ public class Patcher {
 	public void setGenerateRejects(boolean generateRejects){
 		this.fGenerateRejectFile = generateRejects;
 	}
+	
+	public void addDiff(Diff newDiff){
+		Diff[] temp = new Diff[fDiffs.length + 1];
+		System.arraycopy(fDiffs,0, temp, 0, fDiffs.length);
+		temp[fDiffs.length] = newDiff;
+		fDiffs = temp;
+	}
+	
+	public void removeDiff(Diff diffToRemove){
+		Diff[] temp = new Diff[fDiffs.length - 1];
+		int counter = 0;
+		for (int i = 0; i < fDiffs.length; i++) {
+			if (fDiffs[i] != diffToRemove){
+				temp[counter++] = fDiffs[i];
+			}
+		}
+		fDiffs = temp;
+	}
 }

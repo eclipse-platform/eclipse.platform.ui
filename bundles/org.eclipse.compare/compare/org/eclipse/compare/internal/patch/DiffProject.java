@@ -136,4 +136,17 @@ public class DiffProject implements IWorkbenchAdapter, IAdaptable, ITypedElement
 	public String getType() {
 		return ITypedElement.FOLDER_TYPE;
 	}
+
+	public void remove(Diff tempDiff) {
+		fDiffs.remove(tempDiff);
+	}
+
+	public void setEnabled(boolean include) {
+		//set all diffs to the passed in enablement
+		Iterator iter = fDiffs.iterator();
+		while (iter.hasNext()){
+			Diff diff = (Diff) iter.next();
+			diff.setEnabled(include);
+		}
+	}
 }

@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -50,13 +52,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	private InputPatchPage fPatchWizardPage;
 	private PatchTargetPage fPatchTargetPage;
 	private PreviewPatchPage2 fPreviewPage2;
-	private HunkMergePage fHunkeMergePage;
 	
 	private WorkspacePatcher fPatcher;
 	private PatchWizardDialog fDialog;
 	
 	private CompareConfiguration previewPatchPageConfiguration;
-	private CompareConfiguration hunkMergeConfiguration;
 	private IStorage patch;
 
 	private boolean patchReadIn;
@@ -87,7 +87,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	}
 
 
-	public PatchWizard(IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration, CompareConfiguration hunkMergeConfiguration, String patchWizardTitle, ImageDescriptor patchWizardImage) {
+	public PatchWizard(IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration, String patchWizardTitle, ImageDescriptor patchWizardImage) {
 		
 		if (patchWizardImage != null)
 			setDefaultPageImageDescriptor(patchWizardImage);
@@ -102,7 +102,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 		this.patch = patch;
 		this.previewPatchPageConfiguration = previewPatchConfiguration;
-		this.hunkMergeConfiguration = hunkMergeConfiguration;
 		
 		fPatcher= new WorkspacePatcher();
 		patchReadIn = false;
@@ -186,17 +185,16 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		addPage(fPatchWizardPage = new InputPatchPage(this));
 		addPage(fPatchTargetPage = new PatchTargetPage(this));
 
-		if (previewPatchPageConfiguration != null)
-			fPreviewPage2 = new PreviewPatchPage2(this, previewPatchPageConfiguration);
-		else
-			fPreviewPage2 = new PreviewPatchPage2(this);
-		addPage(fPreviewPage2);
-
-		if (hunkMergeConfiguration != null)
-			fHunkeMergePage = new HunkMergePage(this, previewPatchPageConfiguration);
-		else
-			fHunkeMergePage = new HunkMergePage(this);
-		addPage(fHunkeMergePage);
+		if (System.getProperty("oldPatch") != null) //$NON-NLS-1$
+			addPage(new PreviewPatchPage(this));
+		else {
+			if (previewPatchPageConfiguration != null)
+				fPreviewPage2 = new PreviewPatchPage2(this,
+						previewPatchPageConfiguration);
+			else
+				fPreviewPage2 = new PreviewPatchPage2(this);
+			addPage(fPreviewPage2);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -214,24 +212,32 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		//Before applying all of the enabled diffs you have to go through and disable the diffs
 		//that have been merged by hand - this only applies if the current page is the hunk merge page
 		IWizardPage currentPage = fDialog.getCurrentPage();
-		if (currentPage.getName().equals(HunkMergePage.HUNKMERGEPAGE_NAME)){
+		ISchedulingRule[] retargetedFiles = new ISchedulingRule[0];
+		
+		
+		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
 			Diff[] diffs = fPatcher.getDiffs();
-			HunkMergePage hunkMergePage = (HunkMergePage) currentPage;
+			PreviewPatchPage2 previewPage = (PreviewPatchPage2) currentPage;
 			
-			hunkMergePage.ensureContentsSaved();
+			previewPage.ensureContentsSaved();
 			
-			modDiffs = hunkMergePage.getModifiedDiffs();
-			modFiles = hunkMergePage.getMergedFileContents();
+			modDiffs = previewPage.getModifiedDiffs();
+			modFiles = previewPage.getMergedFileContents();
+			
+			ArrayList retargetedFilesSchedulingRules = new ArrayList();
 			for (int i = 0; i < diffs.length; i++) {
 				//if this diff has been modified by hand, mark it as disabled to prevent
 				//the patcher from modifying it later
 				if (modDiffs.contains(diffs[i])){
 					diffs[i].setEnabled(false);
 				}
+				
+				if (diffs[i].isRetargeted())
+					retargetedFilesSchedulingRules.add(diffs[i].getTargetFile());
 			}
+			retargetedFiles = (ISchedulingRule[]) retargetedFilesSchedulingRules.toArray(new ISchedulingRule[retargetedFilesSchedulingRules.size()]);
 		}
-		
-		
+	
 		if (fPatchWizardPage != null){
 			fPatcher.setName(fPatchWizardPage.getPatchName());
 			// make sure that the patch has been read
@@ -251,7 +257,11 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			ISchedulingRule scheduleRule = null;
 			if (fPatcher.isWorkspacePatch()) {
 				// workspace patch 
-				scheduleRule = new MultiRule(fPatcher.getTargetProjects());
+				ISchedulingRule[] projectRules = fPatcher.getTargetProjects();
+				ISchedulingRule[] allSchedulingRules = new ISchedulingRule[projectRules.length + retargetedFiles.length];
+				System.arraycopy(projectRules, 0, allSchedulingRules, 0, projectRules.length);
+				System.arraycopy(retargetedFiles, 0, allSchedulingRules, projectRules.length, retargetedFiles.length);
+				scheduleRule = new MultiRule(allSchedulingRules);
 			} else {
 				// single patch
 				IResource resource = getTarget();
@@ -296,8 +306,9 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			Iterator iter = modDiffs.iterator();
 			while (iter.hasNext()){
 				Diff diff = (Diff) iter.next();
-				PatchedFileNode patchedFile = (PatchedFileNode) modFiles.get(diff);
-				fPatcher.store(patchedFile.getBytes(), diff.getTargetFile(), monitor);
+				IFile patchedFile = (IFile) modFiles.get(diff);
+				byte[] bytes= Utilities.readBytes(patchedFile.getContents());
+				fPatcher.store(bytes, diff.getTargetFile(), monitor);
 			}
 		}
 	}

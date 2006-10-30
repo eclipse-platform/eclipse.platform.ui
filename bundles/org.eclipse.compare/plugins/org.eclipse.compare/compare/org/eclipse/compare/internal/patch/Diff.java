@@ -39,7 +39,11 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 	String fErrorMessage;
 	int fStrip;
 	int fFuzzFactor;
-
+	
+	//Used for retargeting
+	IPath originalPath;
+	IFile newTargetFile;
+	
 	static ImageDescriptor addId= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"); //$NON-NLS-1$
 	static ImageDescriptor delId= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"); //$NON-NLS-1$
 	private WorkspacePatcher patcher;
@@ -97,6 +101,10 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 	
 	/* package */ void add(Hunk hunk) {
 		fHunks.add(hunk);
+	}
+	
+	/* package */ void remove(Hunk hunk) {
+		fHunks.remove(hunk);
 	}
 	
 	/* package */ int getDiffType() {
@@ -233,6 +241,10 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 	}
 
 	public IFile getTargetFile() {
+		//if diff has been retargeted just return the new file
+		if (isRetargeted())
+			return newTargetFile;
+		
 		if (fProject != null)
 			return fProject.getFile(getStrippedPath(fStrip));
 		return getPatcher().existsInTarget(getStrippedPath(fStrip));
@@ -307,6 +319,28 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 	public String getType() {
 		return ITypedElement.UNKNOWN_TYPE;
 	}
+	
+	public void retargetDiff(IFile newTarget){
+		//only bother holding on to the initial path
+		if (originalPath == null)
+			originalPath = fOldPath;
+		fOldPath = newTarget.getProjectRelativePath();
+		fNewPath = newTarget.getProjectRelativePath();
+		newTargetFile= newTarget;
+	}
+	
+	public boolean isRetargeted(){
+		if (originalPath != null){
+			return !fOldPath.equals(originalPath);
+		}
+		return false;
+	}
 
+	public String getOriginalName(){
+		if (originalPath != null)
+			return originalPath.toString();
+		
+		return ""; //$NON-NLS-1$
+	}
 }
 

@@ -1,6 +1,5 @@
 package org.eclipse.compare.internal.patch;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -11,7 +10,7 @@ import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -21,6 +20,8 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 
 	protected PreviewPatchPage2 previewPatchPage;
 
+	private HashMap filesToDiffs;
+	
 	private boolean containsHunkErrors = false;
 
 	public PreviewPatchPageInput(){
@@ -31,60 +32,37 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 		super(config);
 	}
 	
-	protected void updateTree(WorkspacePatcher patcher) {
+	protected void updateTree() {
 		if (viewer == null)
 			return;
-
-		int strip = previewPatchPage.getStripPrefixSegments();
+		
+		//
 		// Get the elements from the content provider
 		ITreeContentProvider contentProvider = (ITreeContentProvider) viewer
 				.getContentProvider();
 		Object[] projects = contentProvider.getElements(root);
-		ArrayList hunksToCheck = new ArrayList();
-		ArrayList nodesToCheck = new ArrayList();
+	
 		// Iterate through projects and call reset on each project
 		for (int j = 0; j < projects.length; j++) {
-			if (!(projects[j] instanceof PatcherDiffNode)) {
-				DiffNode projectNode = (DiffNode) projects[j];
-				ITypedElement project = projectNode.getLeft();
-				Assert.isNotNull(project);
-				Assert.isTrue(project instanceof DiffProject);
-				hunksToCheck.addAll(((DiffProject) project).reset(patcher,
-						strip, previewPatchPage.getFuzzFactor()));
+			if ((projects[j] instanceof PatcherDiffNode) && ((PatcherDiffNode)projects[j]).getPatchNodeType() == PatcherDiffNode.PROJECT) {
+				PatcherDiffNode projectNode = (PatcherDiffNode) projects[j];
+				
+				//call reset on the project
+				projectNode.getDiffProject().reset(workspacePatcher, previewPatchPage.getStripPrefixSegments(), previewPatchPage.getFuzzFactor());
 				IDiffElement[] diffNodes = projectNode.getChildren();
 
-				Iterator iter = hunksToCheck.iterator();
-				while (iter.hasNext()) {
-					Hunk hunkToMatch = (Hunk) iter.next();
-					Object matchingHunkNode = nodesToDiffs.get(hunkToMatch);
-					if (matchingHunkNode != null)
-						nodesToCheck.add(matchingHunkNode);
-
-				}
 				for (int i = 0; i < diffNodes.length; i++) {
 					viewer.update(diffNodes[i], null);
-					IDiffElement[] hunkNodes = ((PatcherDiffNode) diffNodes[i])
-							.getChildren();
+					IDiffElement[] hunkNodes = ((PatcherDiffNode) diffNodes[i]).getChildren();
 					for (int k = 0; k < hunkNodes.length; k++) {
 						viewer.update(hunkNodes[k], null);
 					}
 				}
 
 			} else {
-				if (projects[j] instanceof PatcherDiffNode) {
 					PatcherDiffNode diffNode = (PatcherDiffNode) projects[j];
-					hunksToCheck.addAll(diffNode.getDiff().reset(patcher,
-							strip, previewPatchPage.getFuzzFactor()));
+					diffNode.getDiff().reset(workspacePatcher, previewPatchPage.getStripPrefixSegments(), previewPatchPage.getFuzzFactor());
 					IDiffElement[] diffNodes = diffNode.getChildren();
-
-					Iterator iter = hunksToCheck.iterator();
-					while (iter.hasNext()) {
-						Hunk hunkToMatch = (Hunk) iter.next();
-						Object matchingHunkNode = nodesToDiffs.get(hunkToMatch);
-						if (matchingHunkNode != null)
-							nodesToCheck.add(matchingHunkNode);
-
-					}
 					for (int i = 0; i < diffNodes.length; i++) {
 						viewer.update(diffNodes[i], null);
 						IDiffElement[] hunkNodes = ((PatcherDiffNode) diffNodes[i])
@@ -95,225 +73,136 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 					}
 				}
 			}
-		}
 		viewer.refresh();
-		((CheckboxDiffTreeViewer) viewer).setCheckedElements(nodesToCheck
-				.toArray());
 
 		updateEnablements();
 	}
-
-	protected void buildTree(WorkspacePatcher patcher) {
-
-		if (patcher.isWorkspacePatch()) {
-
-			if (root.hasChildren()) {
-				IDiffElement[] children = root.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					root.remove(children[i]);
-				}
-			}
-
-			nodesToDiffs = new HashMap();
-
-			DiffProject[] projects = patcher.getDiffProjects();
-			try {
-				for (int i = 0; i < projects.length; i++) {
-					DiffNode projectNode = new DiffNode(root,
-							Differencer.CHANGE, null, projects[i], null);
-					Iterator iter = projects[i].fDiffs.iterator();
-					while (iter.hasNext()) {
-						Object obj = iter.next();
-						if (obj instanceof Diff) {
-							Diff diff = (Diff) obj;
-							IPath filePath = new Path(diff.getLabel(diff));
-							IFile tempFile = projects[i].getFile(filePath);
-							byte[] bytes = quickPatch(tempFile, patcher, diff);
-							int differencer = Differencer.CHANGE;
-							if (failedHunks.size() != 0) {
-								differencer += Differencer.CONFLICTING;
-							}
-
-							ITypedElement tempNode;
-							PatchedFileNode patchedNode;
-
-							if (tempFile != null && tempFile.exists()) {
-								tempNode = new ResourceNode(tempFile);
-								patchedNode = new PatchedFileNode(bytes,
-										tempNode.getType(), tempFile
-												.getProjectRelativePath()
-												.toString());
-							} else {
-								tempNode = new PatchedFileNode(
-										new byte[0],
-										filePath.getFileExtension(),
-										PatchMessages.PatcherCompareEditorInput_FileNotFound);
-								patchedNode = new PatchedFileNode(bytes,
-										tempNode.getType(), ""); //$NON-NLS-1$
-							}
-
-							PatcherDiffNode allFile = new PatcherDiffNode(
-									projectNode, differencer, tempNode,
-									tempNode, patchedNode, diff);
-							// Add individual hunks to each Diff node
-							Hunk[] hunks = diff.getHunks();
-							for (int j = 0; j < hunks.length; j++) {
-								Diff tempDiff = new Diff(diff.fOldPath,
-										diff.fOldDate, diff.fNewPath,
-										diff.fNewDate);
-								tempDiff.add(hunks[j]);
-								bytes = quickPatch(tempFile, patcher, tempDiff);
-								differencer = Differencer.NO_CHANGE;
-								switch (hunks[j].getHunkType()) {
-								case Hunk.ADDED:
-									differencer += Differencer.ADDITION;
-									break;
-
-								case Hunk.CHANGED:
-									differencer += Differencer.CHANGE;
-									break;
-
-								case Hunk.DELETED:
-									differencer += Differencer.DELETION;
-									break;
-								}
-
-								if (failedHunks.size() != 0) {
-									containsHunkErrors = true;
-									differencer += Differencer.CONFLICTING;
-									String[] hunkContents = createInput(hunks[j]);
-									PatchedFileNode ancestor = new PatchedFileNode(
-											hunkContents[LEFT].getBytes(),
-											hunks[j].fParent.getPath()
-													.getFileExtension(),
-											hunks[j].getDescription());
-									patchedNode = new PatchedFileNode(
-											hunkContents[RIGHT].getBytes(),
-											tempNode.getType(), hunks[j]
-													.getDescription());
-									PatcherDiffNode hunkNode = new PatcherDiffNode(
-											allFile, differencer, ancestor,
-											tempNode, patchedNode, hunks[j]);
-									nodesToDiffs.put(hunks[j], hunkNode);
-								} else {
-									patchedNode = new PatchedFileNode(bytes,
-											tempNode.getType(), hunks[j]
-													.getDescription());
-									PatcherDiffNode hunkNode = new PatcherDiffNode(
-											allFile, differencer, tempNode,
-											tempNode, patchedNode, hunks[j]);
-									nodesToDiffs.put(hunks[j], hunkNode);
-								}
-							}
-
-						}
-
-					}
-
-				}
-
-			} catch (CoreException e) {
-				// ignore
-			}
-			viewer.setInput(root);
-			viewer.refresh();
-		} else {
-			if (root.hasChildren()) {
-				IDiffElement[] children = root.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					root.remove(children[i]);
-				}
-			}
-
-			nodesToDiffs = new HashMap();
-
-			Diff[] diffs = patcher.getDiffs();
-			try {
-				for (int i = 0; i < diffs.length; i++) {
-					Diff diff = diffs[i];
-					IPath filePath = new Path(diff.getLabel(diff));
-					IFile tempFile = patcher.existsInTarget(filePath);
-
-					byte[] bytes = quickPatch(tempFile, patcher, diff);
-					int differencer = Differencer.CHANGE;
-					if (failedHunks.size() != 0) {
-						differencer += Differencer.CONFLICTING;
-					}
-
-					ITypedElement tempNode;
-					PatchedFileNode patchedNode;
-
-					if (tempFile != null && tempFile.exists()) {
-						tempNode = new ResourceNode(tempFile);
-						patchedNode = new PatchedFileNode(bytes, tempNode
-								.getType(), tempFile.getProjectRelativePath()
-								.toString());
-					} else {
-						tempNode = new PatchedFileNode(
-								new byte[0],
-								filePath.getFileExtension(),
-								PatchMessages.PatcherCompareEditorInput_FileNotFound);
-						patchedNode = new PatchedFileNode(bytes, tempNode
-								.getType(), ""); //$NON-NLS-1$
-					}
-
-					PatcherDiffNode allFile = new PatcherDiffNode(root,
-							differencer, tempNode, tempNode, patchedNode, diff);
-					// Add individual hunks to each Diff node
-					Hunk[] hunks = diff.getHunks();
-					for (int j = 0; j < hunks.length; j++) {
-						Diff tempDiff = new Diff(diff.fOldPath, diff.fOldDate,
-								diff.fNewPath, diff.fNewDate);
-						tempDiff.add(hunks[j]);
-						bytes = quickPatch(tempFile, patcher, tempDiff);
-						differencer = Differencer.NO_CHANGE;
-						switch (hunks[j].getHunkType()) {
-						case Hunk.ADDED:
-							differencer += Differencer.ADDITION;
-							break;
-
-						case Hunk.CHANGED:
-							differencer += Differencer.CHANGE;
-							break;
-
-						case Hunk.DELETED:
-							differencer += Differencer.DELETION;
-							break;
-						}
-
-						if (failedHunks.size() != 0) {
-							containsHunkErrors = true;
-							differencer += Differencer.CONFLICTING;
-							String[] hunkContents = createInput(hunks[j]);
-							PatchedFileNode ancestor = new PatchedFileNode(
-									hunkContents[LEFT].getBytes(),
-									hunks[j].fParent.getPath()
-											.getFileExtension(), hunks[j]
-											.getDescription());
-							patchedNode = new PatchedFileNode(
-									hunkContents[RIGHT].getBytes(), tempNode
-											.getType(), hunks[j]
-											.getDescription());
-							PatcherDiffNode hunkNode = new PatcherDiffNode(
-									allFile, differencer, ancestor, tempNode,
-									patchedNode, hunks[j]);
-							nodesToDiffs.put(hunks[j], hunkNode);
-						} else {
-							patchedNode = new PatchedFileNode(bytes, tempNode
-									.getType(), hunks[j].getDescription());
-							PatcherDiffNode hunkNode = new PatcherDiffNode(
-									allFile, differencer, tempNode, tempNode,
-									patchedNode, hunks[j]);
-							nodesToDiffs.put(hunks[j], hunkNode);
-						}
-					}
-
-				}
-			} catch (CoreException ex) {// ignore
-			}
-
+	
+	protected void buildTree(WorkspacePatcher patcher){
+		
+		//clean root
+		if (root.hasChildren()) {
+			resetRoot();
 		}
+		
+		//new nodes to diffs mapping
+		nodesToDiffs = new HashMap();
+		filesToDiffs = new HashMap();
+		
+		if (patcher.isWorkspacePatch()){
+			processProjects(patcher.getDiffProjects());
+		} else {
+			processDiffs(patcher.getDiffs());
+		}
+		
+		viewer.setInput(root);
+		viewer.refresh();
+	}
+	private void processDiffs(Diff[] diffs) { 
+		for (int i = 0; i < diffs.length; i++) {
+			IPath filePath = new Path(diffs[i].getLabel( diffs[i]));
+			IFile tempFile = workspacePatcher.existsInTarget(filePath);
+			processDiff(diffs[i], tempFile, root);
+		}
+	}
 
+	private void processProjects(DiffProject[] diffProjects) {
+		//create diffProject nodes
+		for (int i = 0; i < diffProjects.length; i++) {
+			PatcherDiffNode projectNode = new PatcherDiffNode(root,Differencer.CHANGE, null, diffProjects[i], null, diffProjects[i]);
+			Iterator iter = diffProjects[i].fDiffs.iterator();
+			while (iter.hasNext()){
+				Object obj = iter.next();
+				if (obj instanceof Diff) {
+					Diff diff = (Diff) obj;
+					IPath filePath = new Path(diff.getLabel(diff));
+					IFile tempFile = diffProjects[i].getFile(filePath);
+					processDiff(diff, tempFile, projectNode);
+				}
+			}
+		}
+	}
+
+	private void processDiff(Diff diff, IFile tempFile, DiffNode rootNode) {
+		byte[] bytes;
+		try {
+			bytes = quickPatch(tempFile, workspacePatcher, diff);
+
+			int differencer = Differencer.CHANGE;
+			if (failedHunks.size() != 0) {
+				differencer += Differencer.CONFLICTING;
+			}
+
+			ITypedElement tempNode;
+			PatchedFileNode patchedNode;
+
+			if (tempFile != null && tempFile.exists()) {
+				tempNode = new ResourceNode(tempFile);
+				patchedNode = new PatchedFileNode(bytes, tempNode.getType(),
+						tempFile.getProjectRelativePath().toString(), true);
+				filesToDiffs.put(tempFile, diff);
+			} else {
+				IPath filePath = new Path(diff.getLabel(diff));
+				tempNode = new PatchedFileNode(new byte[0], filePath
+						.getFileExtension(),
+						PatchMessages.PatcherCompareEditorInput_FileNotFound);
+				patchedNode = new PatchedFileNode(bytes, tempNode.getType(), ""); //$NON-NLS-1$
+			}
+			
+			//PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
+			PatcherDiffNode diffNode = new PatcherDiffNode(rootNode,differencer, tempNode, tempNode, patchedNode, diff);
+
+			nodesToDiffs.put(diff, diffNode);
+			
+			//process hunks
+			Hunk[] hunks = diff.getHunks();
+			for (int j = 0; j < hunks.length; j++) {
+				processHunk(hunks[j], diff, diffNode, tempFile, tempNode, patchedNode);
+			}
+		} catch (CoreException e) {//ignore
+		}
+	}
+
+	private void processHunk(Hunk hunk, Diff diff,PatcherDiffNode diffNode, IFile fileToPatch, ITypedElement resourceNode, PatchedFileNode patchedNode) {
+		Diff tempDiff = new Diff(diff.fOldPath, diff.fOldDate, diff.fNewPath,diff.fNewDate);
+		tempDiff.add(hunk);
+		try {
+			quickPatch(fileToPatch, workspacePatcher, tempDiff);
+			int differencer = Differencer.NO_CHANGE;
+
+			switch (hunk.getHunkType()) {
+			case Hunk.ADDED:
+				differencer += Differencer.ADDITION;
+				break;
+
+			case Hunk.CHANGED:
+				differencer += Differencer.CHANGE;
+				break;
+
+			case Hunk.DELETED:
+				differencer += Differencer.DELETION;
+				break;
+			}
+
+			// only add a hunk to the node if it can't be patched
+			if (failedHunks.size() != 0) {
+				containsHunkErrors = true;
+			/*	differencer += Differencer.CONFLICTING;
+				String[] hunkContents = createInput(hunk);
+				PatchedFileNode ancestor = new PatchedFileNode(	hunkContents[LEFT].getBytes(), hunk.fParent.getPath().getFileExtension(), hunk.getDescription());
+				PatchedFileNode patchedNode2 = new PatchedFileNode(hunkContents[RIGHT].getBytes(), resourceNode.getType(),hunk.getDescription());
+				//create the new hunk node
+				new PatcherDiffNode(diffNode,differencer, ancestor, resourceNode, patchedNode2, hunk);
+				*/
+				String strippedHunk= stripContextFromHunk(hunk);
+				PatchedFileNode strippedHunkNode = new PatchedFileNode(strippedHunk.getBytes(),resourceNode.getType()/*"manualHunkMerge"*/, hunk.getDescription());
+				PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
+				PatcherDiffNode parentNode = new PatcherDiffNode(diffNode, Differencer.CHANGE, null, patchedFileWrapper,strippedHunkNode, hunk);
+				patchedFileWrapper.addContentChangeListener(previewPatchPage);
+				patchedFileWrapper.setParent(parentNode);
+			}
+		} catch (CoreException e) {//ignore
+		}
 	}
 
 	/**
@@ -358,7 +247,9 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 
 	private boolean updateEnablement(boolean oneIsEnabled,
 			PatcherDiffNode diffNode) {
-		boolean checked = ((CheckboxDiffTreeViewer) viewer)
+		
+		
+		/*boolean checked = ((CheckboxDiffTreeViewer) viewer)
 				.getChecked(diffNode);
 		Diff diff = diffNode.getDiff();
 		Assert.isNotNull(diff);
@@ -390,12 +281,90 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 
 			}
 		}
-
-		return oneIsEnabled;
+*/
+		return true;
 	}
 
 	public boolean containsHunkErrors() {
 		return containsHunkErrors;
 	}
+	
+	private String stripContextFromHunk(Hunk hunk) {
+		String[] hunkLines = hunk.getLines();
+		StringBuffer result= new StringBuffer();
+		for (int i= 0; i<hunkLines.length; i++) {
+			String line= hunkLines[i];
+			String rest= line.substring(1);
+			switch (line.charAt(0)) {
+				case ' ' :
+					//skip the context
+					break;
+				case '-' :
+					result.append(rest);
+					break;
+				case '+' :
+					result.append(rest);
+					break;
+			}
+		}
+		
+		return result.toString();
+	}
+	
+	public void addHunksToFile(IFile rpTargetResource, Hunk[] hunks) {
+		Object obj = filesToDiffs.get(rpTargetResource);
+		if (obj != null && obj instanceof Diff){
+			for (int i = 0; i < hunks.length; i++) {
+				hunks[i].setParent((Diff) obj);
+				((Diff) obj).add(hunks[i]);
+			}
+		} else {
+			//couldn't find file either create a new diff or new project etc.
+			DiffProject diffProject = null;
+			if (workspacePatcher.isWorkspacePatch()){
+				//see if the project already exists
+				IProject project = rpTargetResource.getProject();
+				DiffProject[] diffProjects = workspacePatcher.getDiffProjects();
+				for (int i = 0; i < diffProjects.length; i++) {
+					if (diffProjects[i].getProject().equals(project)){
+						diffProject = diffProjects[i];
+						break;
+					}
+				}
+				if (diffProject == null){
+					//create a new diff project
+					diffProject = new DiffProject(project);
+					//add the diffProject to the array
+					DiffProject[] newProjectArray = new DiffProject[diffProjects.length + 1];
+					System.arraycopy(diffProjects, 0, newProjectArray, 0, diffProjects.length);
+					//add the new project to the end
+					newProjectArray[diffProjects.length] = diffProject;
+					workspacePatcher.setDiffProjects(newProjectArray);
+				}
+			}
+			
+			//Create a new diff
+			Diff tempDiff = new Diff(rpTargetResource.getProjectRelativePath(), 0, rpTargetResource.getProjectRelativePath(), 0);
+			for (int i = 0; i < hunks.length; i++) {
+				tempDiff.add(hunks[i]);
+			}
+			
+			//add diffProject is not null only in the workspace patch case
+			if (diffProject != null){
+				diffProject.addDiff(tempDiff);
+				workspacePatcher.addDiff(tempDiff);
+			} else {
+				//not a workspace patch, add newly created diff to patcher
+				workspacePatcher.addDiff(tempDiff);
+			}
+			
+			//add new diff to altered diffs
+			previewPatchPage.setAlteredDiff(tempDiff);
+			previewPatchPage.setMergedFile(tempDiff, rpTargetResource);
+							
+		}
+		
+	}
+
 
 }

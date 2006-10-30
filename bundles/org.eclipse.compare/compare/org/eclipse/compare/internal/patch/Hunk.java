@@ -197,4 +197,9 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 	public String[] getLines() {
 		return fLines;
 	}
+
+	public void setParent(Diff diff) {
+		this.fParent = diff;
+		
+	}
 }

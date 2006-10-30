@@ -311,4 +311,10 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		return null;
 	}
 
+	public void setDiffProjects(DiffProject[] newProjectArray) {
+		fDiffProjects = new DiffProject[newProjectArray.length];
+		System.arraycopy(newProjectArray,0, fDiffProjects, 0, newProjectArray.length);
+	}
+
+
 }

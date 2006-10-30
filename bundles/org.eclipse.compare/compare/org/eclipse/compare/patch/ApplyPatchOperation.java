@@ -38,12 +38,6 @@ public class ApplyPatchOperation implements Runnable {
 	private CompareConfiguration previewPatchConfiguration;
 	
 	/**
-	 * Used for the Manual Hunk Merge page.
-	 */
-	private CompareConfiguration hunkMergeConfiguration;
-	
-	
-	/**
 	 * The patch to use as an input into the Apply Patch wizard
 	 */
 	private IStorage patch;
@@ -85,27 +79,25 @@ public class ApplyPatchOperation implements Runnable {
 	 * @param patch		an IStorage containing a patch in unified diff format or <code>null</code>
 	 * @param target	an IResource which the patch is to be applied to or <code>null</code>
 	 * @param previewPatchConfiguration	a CompareConfiguration supplying the labels and images for the preview patch page or <code>null</code>
-	 * @param hunkMergeConfiguration 	a CompareConfiguration supplying the labels and images for the hunk merge page or <code>null</code>
 	 */
-	public ApplyPatchOperation(IWorkbenchPart part, IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration, CompareConfiguration hunkMergeConfiguration) {
+	public ApplyPatchOperation(IWorkbenchPart part, IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration) {
 		Assert.isNotNull(part);
 		this.part = part;
 		this.patch = patch;
 		this.target = target;
 		this.previewPatchConfiguration = previewPatchConfiguration;
-		this.hunkMergeConfiguration = hunkMergeConfiguration;
 	}
 	
 	/**
 	 * Create an operation for the given part and resource. This method is a convenience
-	 * method that calls {@link #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration, CompareConfiguration)}
+	 * method that calls {@link #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration)}
 	 * with null for the other parameters.
 	 * @param targetPart an IResource which the patch is to be applied to or <code>null</code>
 	 * @param resource an IResource which the patch is to be applied to or <code>null</code>
-	 * @see #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration, CompareConfiguration)
+	 * @see #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration)
 	 */
 	public ApplyPatchOperation(IWorkbenchPart targetPart, IResource resource) {
-		this(targetPart, null, resource, null, null);
+		this(targetPart, null, resource, null);
 	}
 
 	/**
@@ -116,7 +108,7 @@ public class ApplyPatchOperation implements Runnable {
 		
 		saveAllEditors();
 		
-		PatchWizard wizard = new PatchWizard(patch, target, previewPatchConfiguration, hunkMergeConfiguration, patchWizardTitle, patchWizardImage);
+		PatchWizard wizard = new PatchWizard(patch, target, previewPatchConfiguration, patchWizardTitle, patchWizardImage);
 		
 		PatchWizardDialog dialog = new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
 		wizard.setDialog(dialog);
