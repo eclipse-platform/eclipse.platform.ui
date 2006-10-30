@@ -109,16 +109,21 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      */
     abstract protected Class getCommandType();
     
+    /**
+     * @param context
+     */
     public void update(ISelection context) {
     	fUpdateService.postUpdateCommand(getCommandType(), new CommandMonitor(this));
     }    
 
+    /**
+     * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
+     */
     public void debugContextChanged(DebugContextEvent event) {
 		update(event.getContext());
 	}
 
-	/*
-     * (non-Javadoc)
+    /**
      * @see org.eclipse.jface.action.Action#setEnabled(boolean)
      */
     public synchronized void setEnabled(boolean enabled) {
