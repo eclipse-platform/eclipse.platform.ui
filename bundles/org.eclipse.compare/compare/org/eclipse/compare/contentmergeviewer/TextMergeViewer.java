@@ -158,6 +158,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private static final int LW= 1;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;
+	protected static final String STEP_INTO_PROPERTY = null;
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
@@ -274,6 +275,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ContributorInfo fAncestorContributor;
 	private boolean isRefreshing;
 	private int fSynchronziedScrollPosition;
+	private ActionContributionItem fStepIntoItem;
 
 	class ContributorInfo implements IElementStateListener {
 		private final TextMergeViewer fViewer;
@@ -1129,7 +1131,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					selectFirstDiff(flag == INavigatable.FIRST_CHANGE);
 					return false;
 				}
-				return navigate(flag == INavigatable.NEXT_CHANGE, false, false);
+				return navigate(flag == INavigatable.NEXT_CHANGE, false, isStepIntoEnabled());
 			}
 			public Object getInput() {
 				return TextMergeViewer.this.getInput();
@@ -1873,7 +1875,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 							fCenterButton.setVisible(false);
 							if (fButtonDiff != null) {
 								setCurrentDiff(fButtonDiff, false);
-								copy(fCurrentDiff, false, fCurrentDiff.fDirection == RangeDifference.CONFLICT);
+								copy(fCurrentDiff, false, fCurrentDiff.fDirection != RangeDifference.CONFLICT);
 							}
 						}
 					}
@@ -3430,7 +3432,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					
 		Action a= new Action() {
 			public void run() {
-				navigate(true, true, true);
+				navigate(true, true, isStepIntoEnabled());
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.NextDiff."); //$NON-NLS-1$
@@ -3440,7 +3442,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		a= new Action() {
 			public void run() {
-				navigate(false, true, true);
+				navigate(false, true, isStepIntoEnabled());
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff."); //$NON-NLS-1$
@@ -3448,6 +3450,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		tbm.appendToGroup("navigation", fPreviousItem); //$NON-NLS-1$
 		Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.selectPreviousChange", fActivations);	//$NON-NLS-1$
 
+		a= new ChangePropertyAction(getResourceBundle(), getCompareConfiguration(), "action.StepInto.", STEP_INTO_PROPERTY); //$NON-NLS-1$
+		fStepIntoItem = new ActionContributionItem(a);
+		tbm.appendToGroup("navigation", fStepIntoItem); //$NON-NLS-1$
+		//Utilities.registerAction(fHandlerService, a, "org.eclipse.compare.stepIntoChange", fActivations);	//$NON-NLS-1$
 		
 		CompareConfiguration cc= getCompareConfiguration();
 		
@@ -4405,7 +4411,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private void copy(Diff diff, boolean leftToRight, boolean gotoNext) {
 		if (copy(diff, leftToRight)) {
 			if (gotoNext) {
-				navigate(true, true, true);
+				navigate(true, true, false /* don't step in */);
 			} else {
 				revealDiff(diff, true);
 				updateControls();
@@ -4844,5 +4850,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		invalidateLines();
 		updateVScrollBar();
 		refreshBirdsEyeView();
+	}
+
+	private boolean isStepIntoEnabled() {
+		return Utilities.getBoolean(getCompareConfiguration(), STEP_INTO_PROPERTY, false);
 	}
 }

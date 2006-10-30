@@ -18,6 +18,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
 import org.eclipse.compare.*; 
 
@@ -101,6 +102,9 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 			actionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), fNext);
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fPrevious);
 
+			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, fNext);
+			actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, fPrevious);
+			
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);
 		}		
