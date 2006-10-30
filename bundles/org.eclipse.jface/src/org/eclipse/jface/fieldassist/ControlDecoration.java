@@ -685,8 +685,6 @@ public class ControlDecoration {
 	/**
 	 * Something has changed, requiring redraw. Redraw the decoration and update
 	 * the hover text if appropriate.
-	 * 
-	 * @param decoration
 	 */
 	protected void update() {
 		Rectangle rect = getDecorationRectangle(control.getShell());
@@ -739,7 +737,7 @@ public class ControlDecoration {
 		printRemoveListener(control, "FOCUS"); //$NON-NLS-1$
 		control.removeFocusListener(focusListener);
 		focusListener = null;
-		
+
 		printRemoveListener(control, "DISPOSE"); //$NON-NLS-1$
 		control.removeDisposeListener(disposeListener);
 		disposeListener = null;
@@ -758,7 +756,7 @@ public class ControlDecoration {
 		}
 		paintListener = null;
 		mouseListener = null;
-		
+
 		// We may have a remaining mouse move listener installed
 		if (moveListeningTarget != null) {
 			printRemoveListener(moveListeningTarget, "MOUSEMOVE"); //$NON-NLS-1$
