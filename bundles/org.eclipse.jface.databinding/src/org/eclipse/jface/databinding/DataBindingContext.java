@@ -14,7 +14,6 @@
 package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -85,7 +84,7 @@ public class DataBindingContext {
      */
     private IObservableList unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 
-	private List bindSupportFactories;
+	private List bindSupportFactories = new ArrayList();
 
 	protected DataBindingContext parent;
 
@@ -112,28 +111,18 @@ public class DataBindingContext {
 	private List childContexts = new ArrayList();
 
 	/**
-	 * Creates a data binding context set up with a
-	 * {@link DefaultBindSupportFactory}, supplying converters and validators
-	 * for common data types.
+	 * 
 	 */
 	public DataBindingContext() {
-		this(null, new BindSupportFactory[]{new DefaultBindSupportFactory()});
 	}
 
 	/**
-	 * @param parent 
-	 *            may be null
-	 * @param factories
-	 *            an array of bind support factories that will be consulted in
-	 *            the given order when creating converters and validators.
+	 * @param parent
+	 * 
 	 */
-	public DataBindingContext(DataBindingContext parent,
-			BindSupportFactory[] factories) {
+	public DataBindingContext(DataBindingContext parent) {
 		this.parent = parent;
-		if (parent != null) {
-			parent.addChild(this);
-		}
-		bindSupportFactories = new ArrayList(Arrays.asList(factories));
+		parent.addChild(this);
 	}
 
 	protected void addChild(DataBindingContext context) {
@@ -160,7 +149,7 @@ public class DataBindingContext {
 	 * @param factory
 	 *            the factory to add.
 	 */
-	protected void addBindSupportFactory(BindSupportFactory factory) {
+	public void addBindSupportFactory(BindSupportFactory factory) {
 		bindSupportFactories.add(factory);
 	}
 
@@ -481,6 +470,17 @@ public class DataBindingContext {
 			binding.updateTargetFromModel();
 		}
 	}
+    
+    /**
+     * @return DataBindingContext with {@link IConverter converters} and
+     *         {@link IValidator validators} for java's primitive types.
+     */
+    public static DataBindingContext withDefaults() {
+        DataBindingContext dbc = new DataBindingContext();
+        dbc.addBindSupportFactory(new DefaultBindSupportFactory());
+
+        return dbc;
+    }
     
     /**
      * Removes the binding.
