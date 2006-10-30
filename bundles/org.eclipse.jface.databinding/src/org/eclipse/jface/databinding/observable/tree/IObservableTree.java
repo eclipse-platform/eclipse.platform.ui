@@ -15,7 +15,11 @@ import org.eclipse.jface.databinding.observable.IObservable;
 
 /**
  * 
- * An ordered tree whose changes can be tracked by tree change listeners.
+ * A tree whose changes can be tracked by tree change listeners. If the tree is
+ * ordered ({@link #isOrdered()}), the order of children for a given tree path
+ * matters, and tree change notifications will always specify indices. If the
+ * tree is unordered, the children of a tree path are an unordered set and
+ * indices in change notifications are not specified.
  * 
  * <p>
  * This interface is not intended to be implemented by clients. Clients should

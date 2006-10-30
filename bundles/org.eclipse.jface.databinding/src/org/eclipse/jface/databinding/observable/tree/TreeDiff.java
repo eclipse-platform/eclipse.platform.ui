@@ -11,8 +11,6 @@
 
 package org.eclipse.jface.databinding.observable.tree;
 
-import java.util.LinkedList;
-
 import org.eclipse.jface.databinding.observable.IDiff;
 
 /**
@@ -22,9 +20,13 @@ import org.eclipse.jface.databinding.observable.IDiff;
 public abstract class TreeDiff implements IDiff {
 
 	/**
-	 * @return
+	 * Returns the tree path (possibly empty) of the parent, or
+	 * <code>null</code> if this tree diff is a child of another tree diff
+	 * (only the root tree diff must return a non-null path).
+	 * 
+	 * @return the tree path (possibly empty) of the unchanged parent
 	 */
-	public abstract TreeDiff getParent();
+	public abstract TreePath getParentPath();
 
 	/**
 	 * 
@@ -57,7 +59,8 @@ public abstract class TreeDiff implements IDiff {
 	public abstract Object getOldElement();
 
 	/**
-	 * @return the element that was not changed, added, or the replacement element
+	 * @return the element that was not changed, added, or the replacement
+	 *         element
 	 */
 	public abstract Object getNewElement();
 
@@ -80,25 +83,13 @@ public abstract class TreeDiff implements IDiff {
 	 * @param visitor
 	 */
 	public void accept(TreeDiffVisitor visitor) {
-		doAccept(visitor, buildTreePath(new LinkedList()));
+		doAccept(visitor, getParentPath());
 	}
 
-	/**
-	 * @param empty
-	 * @return
-	 */
-	private TreePath buildTreePath(LinkedList tail) {
-		if (getParent() == null) {
-			return new TreePath(tail.toArray());
-		}
-		tail.addFirst(getNewElement());
-		return getParent().buildTreePath(tail);
-	}
-
-	private void doAccept(TreeDiffVisitor visitor, TreePath currentPath) {
+	private void doAccept(TreeDiffVisitor visitor, TreePath parentPath) {
+		TreePath currentPath = parentPath.createChildPath(getNewElement());
 		boolean recurse = visitor.visit(this, currentPath);
-		if (recurse && getNewElement() != null) {
-			currentPath = currentPath.createChildPath(getNewElement());
+		if (recurse) {
 			TreeDiff[] children = getChildren();
 			for (int i = 0; i < children.length; i++) {
 				TreeDiff child = children[i];
