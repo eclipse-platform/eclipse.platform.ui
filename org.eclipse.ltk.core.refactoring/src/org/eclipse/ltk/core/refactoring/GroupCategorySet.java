@@ -72,13 +72,13 @@ public class GroupCategorySet {
 		return new GroupCategorySet(combined);
 	}
 	
-	private List fContent;
+	private List/*<GroupCategory>*/ fContent;
 	
 	private GroupCategorySet() {
 		fContent= Collections.EMPTY_LIST;
 	}
 	
-	private GroupCategorySet(Set categories) {
+	private GroupCategorySet(Set/*<GroupCategory>*/ categories) {
 		fContent= new ArrayList(categories);
 	}
 	
@@ -131,7 +131,7 @@ public class GroupCategorySet {
 	 * @return <code>true</code> if one of the given categories is 
 	 *  contained in this set; otherwise <code>false</code>
 	 */
-	public boolean containsOneCategory(List categories) {
+	public boolean containsOneCategory(List/*<GroupCategory>*/ categories) {
 		for (Iterator iter= categories.iterator(); iter.hasNext();) {
 			GroupCategory category= (GroupCategory)iter.next();
 			if(contains(category))
@@ -147,7 +147,7 @@ public class GroupCategorySet {
 	 * @return an unmodifiable list containing all group
 	 *  categories
 	 */
-	public List asList() {
+	public List/*<GroupCategory>*/ asList() {
 		return Collections.unmodifiableList(fContent);
 	}
 }
