@@ -186,8 +186,13 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 		return Utils.getKey(getId(), getSecondaryId()).hashCode();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#doesSupportRefresh()
+	/**
+	 * Return whether this participant can be refreshed. Participants that can
+	 * be refreshed may have a Synchronize menu item contributed to their context menu
+	 * and can also be refreshed from the Synchronize drop-down toolbar item. 
+	 * When refreshed from the toolbar item, the {@link ISynchronizeParticipant#run(org.eclipse.ui.IWorkbenchPart)}
+	 * method is called.
+	 * @return whether this participant can be refreshed
 	 */
 	public boolean doesSupportSynchronize() {
 		return true;
