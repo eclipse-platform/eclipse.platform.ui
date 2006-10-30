@@ -377,7 +377,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(NLS.bind(Messages.moving, destination.toString()), 100);
-			copy(destination, options, Policy.subMonitorFor(monitor, 70));
+			copy(destination, options & EFS.OVERWRITE, Policy.subMonitorFor(monitor, 70));
 			delete(EFS.NONE, Policy.subMonitorFor(monitor, 30));
 		} catch (CoreException e) {
 			//throw new error to indicate failure occurred during a move
