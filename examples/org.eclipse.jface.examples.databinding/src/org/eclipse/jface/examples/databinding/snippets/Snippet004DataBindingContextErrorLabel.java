@@ -47,7 +47,7 @@ public class Snippet004DataBindingContextErrorLabel {
         errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
         GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(errorLabel);
 
-        DataBindingContext dbc = DataBindingContext.withDefaults();
+        DataBindingContext dbc = new DataBindingContext();
 
         // Bind the text to the value.
         dbc.bindValue(SWTObservables.getText(text, SWT.Modify),

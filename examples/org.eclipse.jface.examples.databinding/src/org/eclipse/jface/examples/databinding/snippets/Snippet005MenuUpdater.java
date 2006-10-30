@@ -29,7 +29,7 @@ public class Snippet005MenuUpdater {
 		Shell shell = new Shell(display);
 
 		final WritableList menuItemStrings = new WritableList();
-		display.timerExec(5000, new Runnable() {
+		display.asyncExec(new Runnable() {
 			public void run() {
 				System.out.println("adding item");
 				menuItemStrings.add(new Date().toString());

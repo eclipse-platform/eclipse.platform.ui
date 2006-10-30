@@ -119,7 +119,7 @@ public final class DataBindingContext extends org.eclipse.jface.databinding.Data
 	 * 
 	 */
 	public DataBindingContext(DataBindingContext parent) {
-		super(parent);
+		super(parent, new BindSupportFactory[0]);
 	}
 	
 	/**
@@ -306,5 +306,9 @@ public final class DataBindingContext extends org.eclipse.jface.databinding.Data
 	 */
 	public void registerForDispose(IObservable observable) {
 		createdObservables.add(observable);
+	}
+	
+	public void addBindSupportFactory(BindSupportFactory factory) {
+		super.addBindSupportFactory(factory);
 	}
 }

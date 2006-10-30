@@ -20,11 +20,11 @@ import org.eclipse.jface.examples.databinding.DataBindingFactory1;
 import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTProperties;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
-import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
@@ -163,7 +163,6 @@ public class Snippet001NestedSelectionWithCombo {
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
-			shell.setLayout(new RowLayout(SWT.VERTICAL));
 			
 			List peopleList = new List(shell, SWT.BORDER);
 			Text name = new Text(shell, SWT.BORDER);
@@ -173,7 +172,7 @@ public class Snippet001NestedSelectionWithCombo {
 			DataBindingContext bindingContext = new DataBindingFactory1().createContext(shell);
 			
 			ListViewer peopleListViewer = new ListViewer(peopleList);
-			ComboViewer cityViewer = new ComboViewer(city);
+			//ComboViewer cityViewer = new ComboViewer(city);
 
 			bindingContext.bind(peopleListViewer, 
 					new ListModelDescription(
@@ -196,17 +195,18 @@ public class Snippet001NestedSelectionWithCombo {
 							Boolean.FALSE), 
 					null);
 			
-			bindingContext.bind(new Property(cityViewer, ViewersProperties.CONTENT),
+			bindingContext.bind(new Property(city, SWTProperties.ITEMS),
 					new Property(viewModel, "cities"),
 					null);
 			
-			bindingContext.bind(new Property(cityViewer, ViewersProperties.SINGLE_SELECTION),
+			bindingContext.bind(new Property(city, SWTProperties.SELECTION),
 					new Property(selectedObservable, 
 							"city", 
 							String.class, 
 							Boolean.FALSE),
 					null);
 
+			GridLayoutFactory.swtDefaults().applyTo(shell);
 			// Open and return the Shell
 			shell.pack();
 			shell.open();

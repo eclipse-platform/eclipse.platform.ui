@@ -34,7 +34,7 @@ public class HelloWorld {
 		Display display = new Display();
 		Shell shell = new Shell(display);
         
-		DataBindingContext dbc = DataBindingContext.withDefaults();
+		DataBindingContext dbc = new DataBindingContext();
 		Combo combo = new Combo(shell, SWT.READ_ONLY);
 		WritableList list = new WritableList();
 		list.add("Hello");

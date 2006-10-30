@@ -37,6 +37,7 @@ import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityCon
 import org.eclipse.jface.internal.databinding.provisional.conversion.ToStringConverter;
 import org.eclipse.jface.internal.databinding.provisional.description.NestedProperty;
 import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.IObservableFactory;
 import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
@@ -405,11 +406,10 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	public void testWithDefaults() throws Exception {
-	    org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
+	    org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext(null, new BindSupportFactory[0]);
         assertNull("converter should not exist by default", dbc.createConverter(String.class, String.class));
         
-        dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
-        assertNotNull(dbc);
+        dbc = new org.eclipse.jface.databinding.DataBindingContext();
         assertNotNull("converter was not initialized with defaults", dbc.createConverter(String.class, String.class));
 	}
 
@@ -428,7 +428,7 @@ public class DatabindingContextTest extends TestCase {
         WritableValue modelObservable = new WritableValue(String.class);
 
         final String errorMessage = "error";
-        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
         ValueChangeCounter errorCounter = new ValueChangeCounter();
         ListChangeCounter errorsCounter = new ListChangeCounter();
 
@@ -473,7 +473,7 @@ public class DatabindingContextTest extends TestCase {
         WritableValue targetValue = new WritableValue(String.class);
         WritableValue modelValue = new WritableValue(String.class);
 
-        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
         assertNotNull(dbc.getBindings());
         assertEquals(0, dbc.getBindings().size());
 
@@ -495,7 +495,7 @@ public class DatabindingContextTest extends TestCase {
         WritableList targetList = new WritableList(Object.class);
         WritableList modelList = new WritableList(Object.class);
 
-        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
         assertNotNull(dbc.getBindings());
         assertEquals(0, dbc.getBindings().size());
 
@@ -507,7 +507,7 @@ public class DatabindingContextTest extends TestCase {
     }
 
     public void testGetBindingsImmutability() throws Exception {
-        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
         BindingStub binding = new BindingStub(null);
         dbc.addBinding(binding);
 
@@ -520,7 +520,7 @@ public class DatabindingContextTest extends TestCase {
     
     public void testRemoveBinding() throws Exception {
         BindingStub binding = new BindingStub(null);
-        org.eclipse.jface.databinding.DataBindingContext dbc = org.eclipse.jface.databinding.DataBindingContext.withDefaults();
+        org.eclipse.jface.databinding.DataBindingContext dbc = new org.eclipse.jface.databinding.DataBindingContext();
         dbc.addBinding(binding);
         
         assertTrue("context should contain the binding", dbc.getBindings().contains(binding));
