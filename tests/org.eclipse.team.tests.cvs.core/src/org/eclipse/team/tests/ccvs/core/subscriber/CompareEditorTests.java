@@ -103,7 +103,9 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 				LocalResourceTypedElement element = (LocalResourceTypedElement)rdci.getLeft();
 				EditableSharedDocumentAdapter adapter = (EditableSharedDocumentAdapter)element.getAdapter(ISharedDocumentAdapter.class);
 				assertTrue(element.exists() == file.exists());
-				assertTrue(file.exists() == adapter.isConnected());
+				assertTrue(file.exists() == (adapter != null));
+				if (file.exists())
+					assertTrue(adapter.isConnected());
 				return;
 			}
 		}
