@@ -11,10 +11,16 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An <code>AbstractContextProvider</code> is a mechanism to provide arbitrary
  * context-sensitive help for any part of the UI. <code>AbstractContextProvider
  * </code>s must be registered via the <code>org.eclipse.help.contexts</code>
  * extension point.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3. In particular, the
+ * return type of getContext() may change.
+ * </p>
  * 
  * @since 3.3
  */

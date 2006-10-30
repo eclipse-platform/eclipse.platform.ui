@@ -11,10 +11,13 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An <code>ITocContribution</code> represents either a complete or partial
  * table of contents, as well as its metadata.
- * 
- * This interface is intended to be implemented by clients.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3.
+ * </p>
  * 
  * @since 3.3
  */

@@ -11,8 +11,13 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An <code>IIndexContribution</code> represents a set of index keywords and
  * their metadata.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3.
+ * </p>
  * 
  * @since 3.3
  */

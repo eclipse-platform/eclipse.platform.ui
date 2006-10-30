@@ -13,11 +13,17 @@ package org.eclipse.help;
 import org.eclipse.help.internal.HelpPlugin;
 
 /**
+ * <p>
  * An <code>AbstractContentExtensionProvider</code> is a mechanism to provide
  * arbitrary content extensions (e.g. contributions to anchors or element
  * replacements). <code>AbstractContentExtensionProvider</code>s must be
  * registered via the <code>org.eclipse.help.contentExtension</code>
  * extension point.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3. In particular, the
+ * return type of getContentExtensions() may change.
+ * </p>
  * 
  * @since 3.3
  */

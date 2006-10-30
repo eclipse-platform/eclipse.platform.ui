@@ -11,9 +11,15 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An <code>IContentExtension</code> is an extension or a modification on
  * a user assistance document or part of a document. Different extension
  * types provide different ways to modify or add to a document.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3. This interface may be
+ * removed in favor of using an untyped model similar to DOM.
+ * </p>
  * 
  * @since 3.3
  */

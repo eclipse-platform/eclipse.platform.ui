@@ -11,8 +11,14 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An include node is a marker to signal that content from another document
  * should be pulled into the document in which the include resides.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3. This interface may be
+ * removed in favor of using an untyped model similar to DOM.
+ * </p>
  * 
  * @since 3.3
  */

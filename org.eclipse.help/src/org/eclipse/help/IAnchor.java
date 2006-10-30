@@ -11,8 +11,14 @@
 package org.eclipse.help;
 
 /**
+ * <p>
  * An anchor represents a location at which content can be added from outside
  * the document.
+ * </p>
+ * <p>
+ * IMPORTANT: This API is still subject to change in 3.3. This interface may be
+ * removed in favor of using an untyped model similar to DOM.
+ * </p>
  * 
  * @since 3.3
  */
