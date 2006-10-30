@@ -14,6 +14,11 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.core.resources.IResource;
+
+import org.eclipse.ltk.core.refactoring.Change;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -113,7 +118,7 @@ public abstract class PreviewNode {
 	 * 
 	 * @throws CoreException if an error occurred while feeding the input
 	 */
-	abstract void feedInput(IChangePreviewViewer viewer, List categories) throws CoreException;
+	abstract void feedInput(IChangePreviewViewer viewer, List/*<GroupCategory>*/ categories) throws CoreException;
 	
 	/**
 	 * Sets the activation status for this <code>PreviewNode</code>. When a 
@@ -151,7 +156,7 @@ public abstract class PreviewNode {
 	
 	/**
 	 * Returns <code>true</code> if the change node has
-	 * one of the given group categories. Otherwise
+	 * one of the given group categories. Otherwise,
 	 * <code>false</code> is returned.
 	 *
 	 * @param categories the group categories to check
@@ -159,5 +164,34 @@ public abstract class PreviewNode {
 	 * @return whether the change node has one of the given 
 	 *  group categories
 	 */
-	abstract boolean hasOneGroupCategory(List categories);
+	abstract boolean hasOneGroupCategory(List/*<GroupCategory>*/ categories);
+	
+	/**
+	 * Returns <code>true</code> if the change node contains
+	 * at least one derived resource. Otherwise, <code>false</code> is returned.
+	 *
+	 * @return whether the change node contains a derived resource
+	 */
+	abstract boolean hasDerived();
+
+	/**
+	 * Returns <code>true</code> iff the change node contains a derived
+	 * resource.
+	 * 
+	 * @param change the change
+	 * @return whether the change contains a derived resource
+	 */
+	static boolean hasDerivedResourceChange(Change change) {
+		Object modifiedElement= change.getModifiedElement();
+		if (modifiedElement instanceof IResource) {
+			return ((IResource) modifiedElement).isDerived();
+		} else if (modifiedElement instanceof IAdaptable) {
+			IAdaptable adaptable= (IAdaptable) modifiedElement;
+			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
+			if (resource != null) {
+				return resource.isDerived();
+			}
+		}
+		return false;
+	}
 }

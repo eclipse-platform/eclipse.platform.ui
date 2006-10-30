@@ -14,12 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.eclipse.core.runtime.IAdaptable;
-
-import org.eclipse.core.resources.IResource;
-
-import org.eclipse.ltk.core.refactoring.Change;
-
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
@@ -41,7 +35,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 	
 	public String getText(Object object) {
 		String text= ((PreviewNode)object).getText();
-		if (isDerivedFile(object)) {
+		if (isDerived(object)) {
 			return Messages.format(RefactoringUIMessages.ChangeElementLabelProvider_derived, text);
 		} else {
 			return text;
@@ -49,30 +43,16 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 	}
 	
 	public Font getFont(Object element) {
-		if (isDerivedFile(element)) {
+		if (isDerived(element)) {
 			return JFaceResources.getFontRegistry().getItalic(JFaceResources.DIALOG_FONT);
 		} else {
 			return null;
 		}
 	}
 
-	private boolean isDerivedFile(Object element) {
+	private boolean isDerived(Object element) {
 		PreviewNode node= (PreviewNode)element;
-		if (! (node instanceof AbstractChangeNode))
-			return false;
-		
-		Change change= ((AbstractChangeNode) node).getChange();
-		Object modifiedElement= change.getModifiedElement();
-		if (modifiedElement instanceof IResource) {
-			return ((IResource) modifiedElement).isDerived();
-		} else if (modifiedElement instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) modifiedElement;
-			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
-			if (resource != null) {
-				return resource.isDerived();
-			}
-		}
-		return false;
+		return node.hasDerived();
 	}
 	
 	public void dispose() {

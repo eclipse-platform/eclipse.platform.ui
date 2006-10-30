@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
+
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
@@ -27,7 +28,7 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 
 public abstract class AbstractChangeNode extends PreviewNode {
 
-	private Change fChange;
+	private final Change fChange;
 	private PreviewNode[] fChildren;
 
 	public static PreviewNode createNode(PreviewNode parent, RefactoringPreviewChangeFilter filter, Change change) {
@@ -114,6 +115,17 @@ public abstract class AbstractChangeNode extends PreviewNode {
 		return false;
 	}
 	
+	boolean hasDerived() {
+		if (hasDerivedResourceChange(fChange))
+			return true;
+		PreviewNode[] children= getChildren();
+		for (int i= 0; i < children.length; i++) {
+			if (children[i].hasDerived())
+				return true;
+		}
+		return false;
+	}
+
 	int getDefaultChangeActive() {
 		int result= fChange.isEnabled() ? ACTIVE : INACTIVE;
 		if (fChildren != null) {

@@ -100,6 +100,10 @@ public final class TextEditGroupNode extends TextEditChangeNode.ChildNode {
 		return fChangeGroup.getGroupCategorySet().containsOneCategory(categories);
 	}
 	
+	boolean hasDerived() {
+		return PreviewNode.hasDerivedResourceChange(fChangeGroup.getTextEditChange());
+	}
+	
 	GroupCategorySet getGroupCategorySet() {
 		return fChangeGroup.getGroupCategorySet();
 	}

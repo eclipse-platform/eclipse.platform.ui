@@ -66,6 +66,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
@@ -98,6 +100,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			return fLabel;
 		}
 		public void setInput(ChangePreviewViewerInput input) {
+		}
+	}
+	
+	private static class DerivedFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			return ! ((PreviewNode) element).hasDerived();
 		}
 	}
 	
@@ -174,11 +182,44 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			});
 		}
 	}
+	private class HideDerivedAction extends Action {
+		private static final String PREVIEW_WIZARD_PAGE_HIDE_DERIVED= "PreviewWizardPage.hide.derived"; //$NON-NLS-1$
+		private final DerivedFilter fDerivedFilter;
+		public HideDerivedAction() {
+			super(RefactoringUIMessages.PreviewWizardPage_hideDerived_text, IAction.AS_CHECK_BOX);
+			fDerivedFilter= new DerivedFilter();
+			boolean hideDerived= getRefactoringSettings().getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
+			setChecked(hideDerived);
+			if (hideDerived) {
+				addFilter();
+			}
+		}
+		public void run() {
+			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
+				public final void run() {
+					boolean hideDerived= isChecked();
+					getRefactoringSettings().put(PREVIEW_WIZARD_PAGE_HIDE_DERIVED, hideDerived);
+					if (hideDerived) {
+						addFilter();
+					} else {
+						removeFilter();
+					}
+				}
+			});
+		}
+		private void addFilter() {
+			fTreeViewer.addFilter(fDerivedFilter);
+		}
+		private void removeFilter() {
+			fTreeViewer.removeFilter(fDerivedFilter);
+		}
+	}
 	private class FilterDropDownAction extends Action implements IMenuCreator {
 		private Menu fMenu;
 		private ShowAllAction fShowAllAction;
 		private FilterAction[] fFilterActions;
 		private Action fActiveAction;
+		private HideDerivedAction fHideDerivedAction;
 		
 		public FilterDropDownAction() {
 			setImageDescriptor(RefactoringPluginImages.DESC_ELCL_FILTER);
@@ -187,7 +228,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			setToolTipText(RefactoringUIMessages.PreviewWizardPage_filterChanges);
 			setMenuCreator(this);
 		}
-		public void initialize(Collection groupCategories) {
+		public void initialize(Collection/*<GroupCategory>*/ groupCategories) {
 			List list= new ArrayList(groupCategories);
 			Collections.sort(list, new Comparator() {
 				private Collator fCollator= Collator.getInstance();
@@ -204,7 +245,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			for (Iterator iter= list.iterator(); iter.hasNext();) {
 				fFilterActions[i++]= new FilterAction(this, (GroupCategory)iter.next());
 			}
-			setEnabled(list.size() > 0);
+			fHideDerivedAction= new HideDerivedAction();
 		}
 		public void dispose() {
 			if (fMenu != null) {
@@ -215,11 +256,15 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		public Menu getMenu(Control parent) {
 			dispose();
 			fMenu= new Menu(parent);
-			new ActionContributionItem(fShowAllAction).fill(fMenu, -1);
-			new MenuItem(fMenu, SWT.SEPARATOR);
-			for (int i= 0; i < fFilterActions.length; i++) {
-				new ActionContributionItem(fFilterActions[i]).fill(fMenu, -1);
+			if (fFilterActions.length != 0) {
+				new ActionContributionItem(fShowAllAction).fill(fMenu, -1);
+				new MenuItem(fMenu, SWT.SEPARATOR);
+				for (int i= 0; i < fFilterActions.length; i++) {
+					new ActionContributionItem(fFilterActions[i]).fill(fMenu, -1);
+				}
+				new MenuItem(fMenu, SWT.SEPARATOR);
 			}
+			new ActionContributionItem(fHideDerivedAction).fill(fMenu, -1);
 			return fMenu;
 		}
 		public Menu getMenu(Menu parent) {
@@ -244,7 +289,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 	
 	protected Change fChange;
-	private List fActiveGroupCategories;
+	private List/*<GroupCategory>*/ fActiveGroupCategories;
 	protected CompositeChange fTreeViewerInputChange;
 	private PreviewNode fCurrentSelection;
 	private PageBook fPageContainer;
@@ -391,7 +436,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		tbm.add(fPreviousAction);
 		tbm.add(new Separator());
 		fFilterDropDownAction= new FilterDropDownAction();
-		fFilterDropDownAction.setEnabled(false);
 		tbm.add(fFilterDropDownAction);
 		
 		tbm.update(true);
@@ -595,13 +639,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	//---- manage group categories --------------------------------------------
 	
-	private Collection collectGroupCategories() {
-		Set result= new HashSet();
+	private Collection/*<GroupCategory>*/ collectGroupCategories() {
+		Set/*<GroupCategory>*/ result= new HashSet();
 		collectGroupCategories(result, fChange);
 		return result;
 	}
 	
-	private void collectGroupCategories(Set result, Change change) {
+	private void collectGroupCategories(Set/*<GroupCategory>*/ result, Change change) {
 		if (change instanceof TextEditBasedChange) {
 			TextEditBasedChangeGroup[] groups= ((TextEditBasedChange)change).getChangeGroups();
 			for (int i= 0; i < groups.length; i++) {

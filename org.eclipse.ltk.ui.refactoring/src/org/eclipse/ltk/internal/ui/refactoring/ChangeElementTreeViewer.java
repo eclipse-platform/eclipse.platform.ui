@@ -70,11 +70,15 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		});
 	}
 	
-	public void setGroupCategory(List groupCategories) {
+	public void setGroupCategory(List/*<GroupCategory>*/ groupCategories) {
 		((GroupCategoryFilter)(getFilters()[0])).setGroupCategory(groupCategories);
+		refresh();
+	}
+	
+	public void refresh() {
 		try {
 			fDeferredTreeItemUpdates= new ArrayList();
-			refresh();
+			super.refresh();
 			processDeferredTreeItemUpdates();
 		} finally  {
 			fDeferredTreeItemUpdates= null;

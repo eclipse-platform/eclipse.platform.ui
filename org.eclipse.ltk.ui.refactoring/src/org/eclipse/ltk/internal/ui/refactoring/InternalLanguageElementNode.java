@@ -30,7 +30,7 @@ import org.eclipse.ltk.ui.refactoring.TextEditChangeNode.ChildNode;
 
 public abstract class InternalLanguageElementNode extends TextEditChangeNode.ChildNode {
 
-	private List fChildren;
+	private List/*<ChildNode>*/ fChildren;
 	private GroupCategorySet fGroupCategories;
 	
 	protected InternalLanguageElementNode(PreviewNode parent) {
@@ -92,6 +92,17 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 		if (fChildren == null)
 			return false;
 		return getGroupCategorySet().containsOneCategory(categories);
+	}
+	
+	boolean hasDerived() {
+		if (fChildren == null)
+			return false;
+		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
+			PreviewNode node= (PreviewNode)iter.next();
+			if (node.hasDerived())
+				return true;
+		}
+		return false;
 	}
 	
 	private GroupCategorySet getGroupCategorySet() {
