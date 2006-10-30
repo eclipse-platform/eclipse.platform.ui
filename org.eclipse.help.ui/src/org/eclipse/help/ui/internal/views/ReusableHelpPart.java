@@ -14,7 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.text.Collator; // can't use ICU, public instance
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,6 +31,7 @@ import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
@@ -1257,7 +1258,9 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	private void contributeToDropDownMenu(IMenuManager manager) {
 		addPageAction(manager, IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_ALL_TOPICS_PAGE);
-		addPageAction(manager, IHelpUIConstants.HV_INDEX_PAGE);
+		if (HelpPlugin.getIndexManager().isIndexContributed()) {
+			addPageAction(manager, IHelpUIConstants.HV_INDEX_PAGE);
+		}
 		addPageAction(manager, IHelpUIConstants.HV_FSEARCH_PAGE);
 		addPageAction(manager, IHelpUIConstants.HV_BOOKMARKS_PAGE);
 	}
@@ -1708,7 +1711,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	static public int getDefaultStyle() {
-		return ALL_TOPICS | CONTEXT_HELP | SEARCH | BOOKMARKS | INDEX;
+		int style = ALL_TOPICS | CONTEXT_HELP | SEARCH | BOOKMARKS;
+
+		if (HelpPlugin.getIndexManager().isIndexContributed())
+			style |= INDEX;
+
+		return style; 
 	}
 }
 
