@@ -41,9 +41,9 @@ public class Spreadsheet {
 
 	private static final int COUNTER_UPDATE_DELAY = 1000;
 
-	private static final int NUM_COLUMNS = 26;
+	private static final int NUM_COLUMNS = 16;
 
-	private static final int NUM_ROWS = 200;
+	private static final int NUM_ROWS = 100;
 
 	/**
 	 * 0 for no output, 1 for some, 2 for more
@@ -144,7 +144,7 @@ public class Spreadsheet {
 		Shell shell = new Shell(display);
 
 		final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
-				| SWT.FULL_SELECTION);
+				| SWT.FULL_SELECTION | SWT.VIRTUAL);
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 
