@@ -2446,17 +2446,34 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 		int min = Math.min(elementChildren.length, items.length);
 
-		// Note: In the code below, doing disassociate calls before associate
-		// calls is important,
-		// since a later disassociate can undo an earlier associate,
-		// if items are changing position.
-
-		// dispose of all items beyond the end of the current elements
-		for (int i = items.length; --i >= min;) {
-			if (items[i].getData() != null) {
-				disassociate(items[i]);
+		// dispose of surplus items, optimizing for the case where elements have
+		// been deleted but not reordered, or all elements have been removed.
+		int numItemsToDispose = items.length - min;
+		if (numItemsToDispose > 0) {
+			CustomHashtable children = newHashtable(elementChildren.length * 2);
+			for (int i = 0; i < elementChildren.length; i++) {
+				Object elementChild = elementChildren[i];
+				children.put(elementChild, elementChild);
 			}
-			items[i].dispose();
+			int i = 0;
+			while (numItemsToDispose > 0 && i < items.length) {
+				Object data = items[i].getData();
+				if (data == null || items.length - i <= numItemsToDispose || !children.containsKey(data)) {
+					if (data != null) {
+						disassociate(items[i]);
+					}
+					items[i].dispose();
+					if (i + 1 < items.length) {
+						// The components at positions i+1 through
+						// items.length-1 in the source array are copied into
+						// positions i through items.length-2
+						System.arraycopy(items, i + 1, items, i, items.length - (i+1));
+					}
+					numItemsToDispose--;
+				} else {
+					i++;
+				}
+			}
 		}
 
 		// compare first min items, and update item if necessary
