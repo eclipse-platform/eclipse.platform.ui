@@ -97,5 +97,9 @@ public class PatchedFileWrapper implements ITypedElement, IStreamContentAccessor
 	public void setPatchedFile(PatchedFileNode patchedFileNode){
 		this.patchedFile = patchedFileNode;
 	}
+	
+	public PatchedFileNode getPatchedFilNode(){
+		return patchedFile;
+	}
 
 }

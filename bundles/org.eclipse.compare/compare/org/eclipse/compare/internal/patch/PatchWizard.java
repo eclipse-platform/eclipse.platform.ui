@@ -25,7 +25,6 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -306,9 +305,8 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			Iterator iter = modDiffs.iterator();
 			while (iter.hasNext()){
 				Diff diff = (Diff) iter.next();
-				IFile patchedFile = (IFile) modFiles.get(diff);
-				byte[] bytes= Utilities.readBytes(patchedFile.getContents());
-				fPatcher.store(bytes, diff.getTargetFile(), monitor);
+				PatchedFileNode patchedFile = (PatchedFileNode) modFiles.get(diff);
+				fPatcher.store(patchedFile.getBytes(), diff.getTargetFile(), monitor);
 			}
 		}
 	}

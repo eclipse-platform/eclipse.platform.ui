@@ -750,7 +750,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			Assert.isNotNull(tempDiff);
 			alteredDiffs.add(tempDiff);
 
-			alteredFiles.put(tempDiff, tempDiff.getTargetFile());
+			alteredFiles.put(tempDiff, ((PatchedFileWrapper) source).getPatchedFilNode());
 			
 			// now that one hunk has been changed this page can be considered complete
 			setPageComplete(true);
@@ -761,8 +761,8 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		return alteredFiles;
 	}
 
-	public void setMergedFile(Diff tempDiff, IFile rpTargetResource) {
-		alteredFiles.put(tempDiff, rpTargetResource);
+	public void setMergedFile(Diff tempDiff, PatchedFileNode node) {
+		alteredFiles.put(tempDiff, node);
 	}
 
 	public HashSet getModifiedDiffs() {

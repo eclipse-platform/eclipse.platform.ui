@@ -360,7 +360,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 			
 			//add new diff to altered diffs
 			previewPatchPage.setAlteredDiff(tempDiff);
-			previewPatchPage.setMergedFile(tempDiff, rpTargetResource);
+			filesToDiffs.put(rpTargetResource, tempDiff);
 							
 		}
 		
