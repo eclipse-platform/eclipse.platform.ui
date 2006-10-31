@@ -289,7 +289,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		try {
 			progressDialog.run(false, true, runnable);
 		} catch (InvocationTargetException e) {
-			reportException(e);
+			Throwable t = e.getCause();
+			if (t == null) {
+				reportException(e);
+			} else {
+				reportException(t);
+			}
 		} catch (InterruptedException e) {
 			// Operation was cancelled and acknowledged by runnable with this
 			// exception.
@@ -434,10 +439,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	/*
 	 * Report the specified exception to the log and to the user.
 	 */
-	final void reportException(Exception e) {
+	final void reportException(Throwable t) {
 		// get any nested exceptions
-		Throwable nestedException = StatusUtil.getCause(e);
-		Throwable exception = (nestedException == null) ? e : nestedException;
+		Throwable nestedException = StatusUtil.getCause(t);
+		Throwable exception = (nestedException == null) ? t : nestedException;
 
 		// Title and messages
 		String title = WorkbenchMessages.Error;
@@ -445,15 +450,13 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		if (exceptionMessage == null) {
 			exceptionMessage = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		}
-		// If there is an included status in the exception, get it.
-		// Otherwise we will make one.
 		IStatus status = new Status(IStatus.ERROR,
 				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
 
 		// Log the problem and then show an error dialog
 		WorkbenchPlugin.log(exceptionMessage, status);
 		ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
-				exceptionMessage, status);
+				null, status);
 	}
 
 	/*
