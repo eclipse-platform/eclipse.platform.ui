@@ -20,6 +20,7 @@ import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.*;
 
 /**
@@ -908,7 +909,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	protected void waitForBuild() {
 		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 		} catch (OperationCanceledException e) {
 			//ignore
 		} catch (InterruptedException e) {
@@ -921,7 +922,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	protected void waitForRefresh() {
 		try {
-			Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
+			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
 		} catch (OperationCanceledException e) {
 			//ignore
 		} catch (InterruptedException e) {

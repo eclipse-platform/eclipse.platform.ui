@@ -17,6 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Tests behavior of IResourceChangeListener, including validation
@@ -312,7 +313,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			getWorkspace().run(body, getMonitor());
 			//wait for autobuild so POST_BUILD will fire
 			try {
-				Platform.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
+				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
 			} catch (OperationCanceledException e) {
 				//ignore
 			} catch (InterruptedException e) {

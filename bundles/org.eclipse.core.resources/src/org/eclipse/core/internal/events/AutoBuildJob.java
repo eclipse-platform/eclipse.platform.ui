@@ -38,7 +38,6 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private boolean interrupted = false;
 	private long lastBuild = 0L;
 	private Workspace workspace;
-	private final IJobManager jobManager = Platform.getJobManager();
 	private final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
@@ -118,7 +117,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 				break;
 			case RUNNING :
 				//make sure autobuild doesn't interrupt itself
-				interrupted = jobManager.currentJob() != this;
+				interrupted = Job.getJobManager().currentJob() != this;
 				if (interrupted && Policy.DEBUG_BUILD_INTERRUPT) {
 					System.out.println("Autobuild was interrupted:"); //$NON-NLS-1$
 					new Exception().fillInStackTrace().printStackTrace();

@@ -20,6 +20,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -37,7 +38,7 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 	 */
 	public static void waitForCacheFlush() {
 		try {
-			Platform.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
+			Job.getJobManager().join(ContentDescriptionManager.FAMILY_DESCRIPTION_CACHE_FLUSH, null);
 		} catch (OperationCanceledException e) {
 			//ignore
 		} catch (InterruptedException e) {

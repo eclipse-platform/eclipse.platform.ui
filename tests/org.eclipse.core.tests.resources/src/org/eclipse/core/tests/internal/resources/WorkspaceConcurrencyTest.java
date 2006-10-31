@@ -50,7 +50,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 			final IProject project = getWorkspace().getRoot().getProject("testEndRuleInWorkspaceOperation");
 			getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor) {
-					Platform.getJobManager().endRule(project);
+					Job.getJobManager().endRule(project);
 				}
 			}, project, IResource.NONE, getMonitor());
 			//should have failed

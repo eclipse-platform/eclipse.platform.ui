@@ -26,6 +26,7 @@ import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.xml.sax.InputSource;
@@ -375,7 +376,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 		} finally {
 			//release the scheduling rule to be a good job citizen
-			Platform.getJobManager().endRule(getRoot());
+			Job.getJobManager().endRule(getRoot());
 			monitor.done();
 		}
 	}

@@ -94,7 +94,7 @@ public class StringPoolJob extends Job {
 		final ISchedulingRule rule = MultiRule.combine(rules);
 		long start = -1;
 		int savings = 0;
-		final IJobManager jobManager = Platform.getJobManager();
+		final IJobManager jobManager = Job.getJobManager();
 		try {
 			jobManager.beginRule(rule, monitor);
 			start = System.currentTimeMillis();

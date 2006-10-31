@@ -64,7 +64,7 @@ public class WorkManager implements IManager {
 
 	public WorkManager(Workspace workspace) {
 		this.workspace = workspace;
-		this.jobManager = Platform.getJobManager();
+		this.jobManager = Job.getJobManager();
 		this.lock = jobManager.newLock();
 	}
 	
