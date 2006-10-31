@@ -128,6 +128,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	protected LaunchConfigurationType(IConfigurationElement element) {
 		fElement = element;
+		initializePreferredDelegates();
 	}
 	
 	/* (non-Javadoc)
@@ -202,7 +203,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getPreferredDelegate(java.util.Set)
 	 */
 	public ILaunchDelegate getPreferredDelegate(Set modes) {
-		initializePreferredDelegates();
 		return (ILaunchDelegate) fPreferredDelegates.get(modes);
 	}
 	
@@ -221,7 +221,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * EXPERIMENTAL
 	 */
 	public Map getPreferredDelegates() {
-		initializePreferredDelegates();
 		return fPreferredDelegates;
 	}
 	
