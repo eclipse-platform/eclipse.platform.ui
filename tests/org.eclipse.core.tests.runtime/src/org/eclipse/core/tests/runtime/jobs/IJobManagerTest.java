@@ -147,7 +147,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			protected IStatus run(IProgressMonitor monitor) {
 				monitor.beginTask(getName(), 1);
 				try {
-					Platform.getJobManager().beginRule(rule, null);
+					Job.getJobManager().beginRule(rule, null);
 					monitor.worked(1);
 				} finally {
 					monitor.done();
@@ -243,7 +243,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 					}
 				}
 				//job should now be finishing asynchronously in this thread
-				success[0] = job == Platform.getJobManager().currentJob();
+				success[0] = job == Job.getJobManager().currentJob();
 				job.done(Status.OK_STATUS);
 			}
 		};
@@ -780,7 +780,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		job.setFamily(family);
 		job.schedule();
 		try {
-			Platform.getJobManager().join(family, null);
+			Job.getJobManager().join(family, null);
 		} catch (OperationCanceledException e) {
 			fail("1.0", e);
 		} catch (InterruptedException e) {
@@ -804,7 +804,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		job.setFamily(family);
 		job.schedule();
 		try {
-			Platform.getJobManager().join(family, null);
+			Job.getJobManager().join(family, null);
 		} catch (OperationCanceledException e) {
 			fail("1.0", e);
 		} catch (InterruptedException e) {

@@ -11,12 +11,9 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import junit.framework.*;
+import junit.framework.Assert;
 import org.eclipse.core.internal.jobs.Worker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
@@ -68,6 +65,11 @@ public class JobTest extends TestCase {
 
 	}
 
+	private void cancel(Job[] jobs) {
+		for (int i = 0; i < jobs.length; i++)
+			jobs[i].cancel();
+	}
+
 	/*
 	 * @see TestCase#setUp()
 	 */
@@ -90,6 +92,8 @@ public class JobTest extends TestCase {
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		waitForState(shortJob, Job.NONE);
+		waitForState(longJob, Job.NONE);
 	}
 
 	//see bug #43566
@@ -354,9 +358,11 @@ public class JobTest extends TestCase {
 			public void aboutToRun(IJobChangeEvent event) {
 				event.getJob().cancel();
 			}
+
 			public void done(IJobChangeEvent event) {
 				doneCount[0]++;
 			}
+
 			public void running(IJobChangeEvent event) {
 				runningCount[0]++;
 			}
@@ -372,7 +378,7 @@ public class JobTest extends TestCase {
 		assertEquals("1.1", 1, doneCount[0]);
 		assertEquals("1.2", 0, runningCount[0]);
 	}
-	
+
 	/**
 	 * Tests the hook method {@link Job#canceling}.
 	 */
@@ -381,13 +387,14 @@ public class JobTest extends TestCase {
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		final boolean[] canceling = new boolean[] {false};
 		Job job = new Job("Testing#testCanceling") {
+			protected void canceling() {
+				canceling[0] = true;
+			}
+
 			protected IStatus run(IProgressMonitor monitor) {
 				barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
 				barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
 				return Status.OK_STATUS;
-			}
-			protected void canceling() {
-				canceling[0] = true;
 			}
 		};
 		//schedule the job and wait on the barrier until it is running
@@ -400,7 +407,7 @@ public class JobTest extends TestCase {
 		barrier.setStatus(TestBarrier.STATUS_RUNNING);
 		waitForState(job, Job.NONE);
 	}
-	
+
 	public void testGetName() {
 		assertTrue("1.0", shortJob.getName().equals("Short Test Job"));
 		assertTrue("1.1", longJob.getName().equals("Long Test Job"));
@@ -450,9 +457,8 @@ public class JobTest extends TestCase {
 		assertTrue("1.1", shortJob.getResult().getSeverity() == IStatus.OK);
 
 		//cancel a long job
-		longJob.schedule(1000000);
-		assertTrue("1.3", longJob.sleep());
-		longJob.wakeUp();
+		waitForState(longJob, Job.NONE);
+		longJob.schedule();
 		waitForState(longJob, Job.RUNNING);
 		longJob.cancel();
 		waitForState(longJob, Job.NONE);
@@ -491,6 +497,52 @@ public class JobTest extends TestCase {
 
 		shortJob.setThread(null);
 		assertTrue("1.3", shortJob.getThread() == null);
+	}
+
+	public void testIsBlocking() {
+		IdentityRule rule = new IdentityRule();
+		TestJob high = new TestJob("TestIsBlocking.long", 10000, 100);
+		high.setRule(rule);
+		high.setPriority(Job.LONG);
+		TestJob medium = new TestJob("TestIsBlocking.build", 10000, 100);
+		medium.setRule(rule);
+		medium.setPriority(Job.BUILD);
+		TestJob low = new TestJob("TestIsBlocking.decorate", 10000, 100);
+		low.setRule(rule);
+		low.setPriority(Job.DECORATE);
+
+		//start the build job, and make sure it is not blocking
+		medium.schedule();
+		waitForState(medium, Job.RUNNING);
+		assertTrue("1.0", !medium.isBlocking());
+		//schedule a lower priority job, and it should still not be blocking
+		low.schedule();
+		assertTrue("1.1", !medium.isBlocking());
+		//schedule a higher priority job - now it should be blocking
+		high.schedule();
+		//wait for the high priority job to become blocked
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			//ignore
+		}
+		assertTrue("1.2", medium.isBlocking());
+
+		//cancel everything
+		Job[] jobs = new Job[] {high, medium, low};
+		cancel(jobs);
+		waitForState(jobs, Job.NONE);
+
+		//a higher priority system job should not be blocking
+		high.setSystem(true);
+		medium.schedule();
+		waitForState(medium, Job.RUNNING);
+		high.schedule();
+		assertTrue("2.0", !medium.isBlocking());
+
+		//clean up
+		cancel(jobs);
+		waitForState(jobs, Job.NONE);
 	}
 
 	public void testIsSystem() {
@@ -586,7 +638,7 @@ public class JobTest extends TestCase {
 		//wait until the join succeeds
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
 	}
-	
+
 	/**
 	 * This is a regression test for bug 60323. If a job change listener
 	 * removed itself from the listener list during the done() change event,
@@ -917,7 +969,7 @@ public class JobTest extends TestCase {
 		} catch (RuntimeException e) {
 			//should fail
 		}
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		IProgressMonitor group = Job.getJobManager().createProgressGroup();
 		group.beginTask("Group task name", 10);
 		longJob.setProgressGroup(group, 5);
 
@@ -1046,6 +1098,11 @@ public class JobTest extends TestCase {
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to change state.", i++ < 100);
 		}
+	}
+
+	private void waitForState(Job[] jobs, int state) {
+		for (int i = 0; i < jobs.length; i++)
+			waitForState(jobs[i], state);
 	}
 
 	/**

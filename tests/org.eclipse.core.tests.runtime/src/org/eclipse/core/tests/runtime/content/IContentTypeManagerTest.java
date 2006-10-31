@@ -17,6 +17,7 @@ import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
@@ -136,7 +137,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		super.tearDown();
 		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 
 		// ensure none is left running after we finish
-		Platform.getJobManager().join(FAMILY_CHARSET_DELTA, getMonitor());
+		Job.getJobManager().join(FAMILY_CHARSET_DELTA, getMonitor());
 	}
 
 	/**

@@ -132,7 +132,7 @@ public class AbstractJobManagerTest extends TestCase {
 	 */
 	protected void dumpState() {
 		System.out.println("**** BEGIN DUMP JOB MANAGER INFORMATION ****"); 
-		Job[] jobs = Platform.getJobManager().find(null);
+		Job[] jobs = Job.getJobManager().find(null);
 		for (int j = 0; j < jobs.length; j++)
 			System.out.println("" + jobs[j] + " state: " + JobManager.printState(jobs[j].getState())); 
 		System.out.println("**** END DUMP JOB MANAGER INFORMATION ****");
