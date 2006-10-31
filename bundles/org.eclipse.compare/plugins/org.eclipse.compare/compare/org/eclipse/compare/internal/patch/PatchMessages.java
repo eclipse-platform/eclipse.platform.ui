@@ -102,6 +102,8 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage2_IgnoreWSTooltip;
 	public static String PreviewPatchPage2_IncludeElement;
 	public static String PreviewPatchPage2_IncludeElementText;
+	public static String PreviewPatchPage2_OrphanedHunk;
+	public static String PreviewPatchPage2_PatchedLocalFile;
 	public static String PreviewPatchPage2_RetargetAction;
 	public static String PreviewPatchPage2_RetargetDiff;
 	public static String PreviewPatchPage2_RetargetHunk;

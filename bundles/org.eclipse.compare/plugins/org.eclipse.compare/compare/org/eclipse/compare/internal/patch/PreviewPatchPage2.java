@@ -372,21 +372,15 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 					switch (((PatcherDiffNode)obj).getPatchNodeType()){
 						case PatcherDiffNode.HUNK:
 							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(true);
+							patcherCompareEditorInput.getCompareConfiguration().setLeftLabel(PatchMessages.PreviewPatchPage2_PatchedLocalFile);
+							patcherCompareEditorInput.getCompareConfiguration().setRightLabel(PatchMessages.PreviewPatchPage2_OrphanedHunk);
 							break;
 						
 						default:
 							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(false);
 							break;
 					}
-				} /*else if (obj instanceof DiffNode) {
-					//either a toplevel Project or a Diff
-					ITypedElement tempNode = ((DiffNode) obj).getLeft();
-					if (tempNode instanceof DiffProject){
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, "Retarget Project");
-					} else if (tempNode instanceof Diff){
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, "Retarget Diff");
-					}				
-				}*/
+				}
 			}
 
 		});
@@ -525,7 +519,24 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		fStripPrefixSegments.setLayoutData(gd);
 
 		addSpacer(group);
-
+		
+		//
+		final Button generateRejects = new Button(pair, SWT.CHECK);
+		generateRejects.setText(PatchMessages.HunkMergePage_GenerateRejectFile);
+		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.GRAB_HORIZONTAL);
+		generateRejects.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fPatchWizard.getPatcher().setGenerateRejects(
+						generateRejects.getSelection());
+			}
+		});
+		generateRejects.setSelection(true);
+		generateRejects.setLayoutData(gd);
+		//
+		
+		addSpacer(group);
 		// 2nd row
 		pair= new Composite(group, SWT.NONE);
 		gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
@@ -560,7 +571,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		Point minSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		gd.widthHint = Math.max(widthHint, minSize.x);		
 		b.setLayoutData(gd);
-
+		
 		// register listeners
 
 		if (fStripPrefixSegments!=null)

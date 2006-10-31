@@ -195,7 +195,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 				new PatcherDiffNode(diffNode,differencer, ancestor, resourceNode, patchedNode2, hunk);
 				*/
 				String strippedHunk= stripContextFromHunk(hunk);
-				PatchedFileNode strippedHunkNode = new PatchedFileNode(strippedHunk.getBytes(),resourceNode.getType()/*"manualHunkMerge"*/, hunk.getDescription());
+				PatchedFileNode strippedHunkNode = new HunkPatchedFileNode(strippedHunk.getBytes(),resourceNode.getType()/*"manualHunkMerge"*/, hunk.getDescription());
 				PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
 				PatcherDiffNode parentNode = new PatcherDiffNode(diffNode, Differencer.CHANGE, null, patchedFileWrapper,strippedHunkNode, hunk);
 				patchedFileWrapper.addContentChangeListener(previewPatchPage);

@@ -4,8 +4,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -14,10 +16,12 @@ import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.DiffImage;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.DiffTreeViewer;
 import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,6 +37,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
@@ -44,7 +49,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	class PatcherCompareEditorDecorator implements ILabelDecorator {
 
 		/** Maps strings to images */
-		//private Map fImages= new Hashtable(10);
+		private Map fImages= new Hashtable(10);
 		private List fDisposeOnShutdownImages= new ArrayList();
 
 		ImageDescriptor errId= CompareUIPlugin.getImageDescriptor("ovr16/error_ov.gif");	//$NON-NLS-1$
@@ -54,7 +59,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 		static final String delete = "del"; //$NON-NLS-1$
 		
 		public Image decorateImage(Image image, Object element) {
-			/*if (element instanceof PatcherDiffNode){
+			if (element instanceof PatcherDiffNode){
 				PatcherDiffNode myDiffNode = (PatcherDiffNode) element;
 				Diff diff = myDiffNode.getDiff();
 				Hunk hunk = myDiffNode.getHunk();
@@ -72,11 +77,11 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 				} else if (hunk != null){
 					return getImageFor((hunk.fMatches ? "" : error),image, hunk.fMatches); //$NON-NLS-1$
 				}
-			}*/
+			}
 			return null;
 		}
 
-	/*	private Image getImageFor(String id, Image image, boolean hasMatches) {
+		private Image getImageFor(String id, Image image, boolean hasMatches) {
 			Image cached_image = (Image) fImages.get(id);
 			if (cached_image == null){
 				DiffImage diffImage = new DiffImage(image, hasMatches ? null : errId, 16, false);
@@ -85,7 +90,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 				fDisposeOnShutdownImages.add(cached_image);
 			}
 			return cached_image;
-		}*/
+		}
 
 		public String decorateText(String text, Object element) {
 			if (element instanceof PatcherDiffNode){
@@ -149,6 +154,27 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 		} 
 		
 	}
+	
+	class PatcherCompareEditorLabelProvider extends LabelProvider {
+		
+		public String getText(Object element) {
+		
+			if (element instanceof IDiffElement)
+				return ((IDiffElement)element).getName();
+			
+			
+			return "No name"; //$NON-NLS-1$
+		}
+	
+		public Image getImage(Object element) {
+			if (element instanceof IDiffElement) {
+				IDiffElement input= (IDiffElement) element;	
+				return input.getImage();
+			}
+			return null;
+		}
+	}
+	
 	protected DiffNode root;
 	protected List failedHunks;
 	
@@ -253,7 +279,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 			
 		IBaseLabelProvider labelProvider = ((DiffTreeViewer) viewer).getLabelProvider();
 		if (labelProvider instanceof ILabelProvider){
-			((DiffTreeViewer)viewer).setLabelProvider(new DecoratingLabelProvider((ILabelProvider) labelProvider, new PatcherCompareEditorDecorator()));
+			((DiffTreeViewer)viewer).setLabelProvider(new DecoratingLabelProvider(new PatcherCompareEditorLabelProvider(), new PatcherCompareEditorDecorator()));
 		}
 		((DiffTreeViewer)viewer).getTree().setData(CompareUI.COMPARE_VIEWER_TITLE, PatchMessages.PatcherCompareEditorInput_PatchContents);
 		((DiffTreeViewer)viewer).setInput(this);
