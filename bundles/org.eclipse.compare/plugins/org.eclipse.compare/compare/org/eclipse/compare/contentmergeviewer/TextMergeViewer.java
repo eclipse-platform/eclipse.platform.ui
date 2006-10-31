@@ -4875,6 +4875,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handleCompareInputChange()
+	 */
 	protected void handleCompareInputChange() {
 		try {
 			beginRefresh();
