@@ -13,6 +13,7 @@ package org.eclipse.help.internal.search.federated;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -47,7 +48,7 @@ public class LocalHelp implements ISearchEngine2 {
 		// If the indexer has been started and is currently running,
 		// wait for it to finish.
 		try {
-			Platform.getJobManager().join(IndexerJob.FAMILY, monitor);
+			Job.getJobManager().join(IndexerJob.FAMILY, monitor);
 		} catch (InterruptedException e) {
 		}
 		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,

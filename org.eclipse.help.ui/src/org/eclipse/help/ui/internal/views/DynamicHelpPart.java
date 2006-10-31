@@ -164,11 +164,11 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		});
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		jobListener = new JobListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		Job.getJobManager().addJobChangeListener(jobListener);
 	}
 
 	public void dispose() {
-		Platform.getJobManager().removeJobChangeListener(jobListener);
+		Job.getJobManager().removeJobChangeListener(jobListener);
 		stop();
 		super.dispose();
 	}
@@ -242,7 +242,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
 					try {
-						Platform.getJobManager().join(IndexerJob.FAMILY,
+						Job.getJobManager().join(IndexerJob.FAMILY,
 								monitor);
 					} catch (InterruptedException e) {
 						// TODO should we do someting here?

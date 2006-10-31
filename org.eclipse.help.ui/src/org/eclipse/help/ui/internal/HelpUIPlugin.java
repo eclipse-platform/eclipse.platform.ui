@@ -13,6 +13,7 @@ package org.eclipse.help.ui.internal;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -86,7 +87,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		// Make sure we cancel indexer if it is currently running
-		Platform.getJobManager().cancel(IndexerJob.FAMILY);
+		Job.getJobManager().cancel(IndexerJob.FAMILY);
 		super.stop(context);
 	}
 

@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2006 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -15,7 +15,6 @@ import java.util.Observable;
 import java.util.Observer;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -124,7 +123,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 
 		public void done(IJobChangeEvent event) {
 			if (event.getJob().belongsTo(FederatedSearchJob.FAMILY)) {
-				Job[] searchJobs = Platform.getJobManager().find(FederatedSearchJob.FAMILY);
+				Job[] searchJobs = Job.getJobManager().find(FederatedSearchJob.FAMILY);
 				if (searchJobs.length == 0) {
 					// search finished
 					searchInProgress = false;
@@ -258,7 +257,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		toolkit.paintBordersFor(filteringGroup);
 		toolkit.paintBordersFor(container);
 		jobListener = new JobListener();
-		Platform.getJobManager().addJobChangeListener(jobListener);
+		Job.getJobManager().addJobChangeListener(jobListener);
 	}
 
 	private void createAdvancedLink(Composite parent, FormToolkit toolkit) {
@@ -595,7 +594,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			parent.getEngineManager().deleteObserver(engineObserver);
 			engineObserver = null;
 		}
-		Platform.getJobManager().removeJobChangeListener(jobListener);
+		Job.getJobManager().removeJobChangeListener(jobListener);
 		stop();
 		super.dispose();
 	}
@@ -692,7 +691,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 	public void stop() {
 		SearchResultsPart results = (SearchResultsPart) parent.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		results.canceling();
-		Platform.getJobManager().cancel(FederatedSearchJob.FAMILY);
+		Job.getJobManager().cancel(FederatedSearchJob.FAMILY);
 	}
 
 	public void toggleRoleFilter() {

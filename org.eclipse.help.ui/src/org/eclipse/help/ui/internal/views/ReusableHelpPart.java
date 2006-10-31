@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
@@ -651,7 +650,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		// make sure we have the index but
 		// don't schedule the indexer job if one is
 		// already running
-		Job[] jobs = Platform.getJobManager().find(IndexerJob.FAMILY);
+		Job[] jobs = Job.getJobManager().find(IndexerJob.FAMILY);
 		if (jobs.length == 0) {
 			IndexerJob indexerJob = new IndexerJob();
 			indexerJob.schedule();
