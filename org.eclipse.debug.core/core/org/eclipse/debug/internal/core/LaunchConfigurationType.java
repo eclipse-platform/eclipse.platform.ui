@@ -181,7 +181,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 */
 	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException {
 		initializeDelegates();
-		initializePreferredDelegates();
 		Set delegates = (Set) fDelegates.get(modes);
 		if (delegates == null) {
 			delegates = Collections.EMPTY_SET;
