@@ -12,7 +12,16 @@
 
 <h2 align="left">Package Specification</h2>
 
-<p>This package provides a set interfaces and classses for listening to and specifying 
-  the active debug in each workbench window.</p>
+<p>This package provides a set interfaces and classes relating to the active debug 
+  context.</p>
+<p>A debug context represents an active state of a program being debugged. The 
+  active debug context drives the enabled state of debug actions (step, terminate, 
+  etc.), source lookup, visible variables, watch expression values, etc. The debug 
+  platform allows clients to register for context change notification in order 
+  to respond to changes in the active debug state, as well as register context 
+  providers that drive the active debug state. The debug platform has context 
+  listeners and providers itself. For example, the debug platform's stepping actions 
+  register for context change notification to update enabled state and the Debug 
+  view registers as a context provider.</p>
 </body>
 </html>
