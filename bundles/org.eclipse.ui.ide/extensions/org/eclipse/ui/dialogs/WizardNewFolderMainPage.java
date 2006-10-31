@@ -321,7 +321,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 		createLinkTarget();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+			public void run(IProgressMonitor monitor)  {
 				CreateFolderOperation op = new CreateFolderOperation(
 						newFolderHandle, linkTargetPath,
 						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
@@ -329,18 +329,28 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					PlatformUI.getWorkbench().getOperationSupport()
 							.getOperationHistory().execute(op, monitor,
 									WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
-				} catch (ExecutionException e) {
-					if (e.getCause() instanceof CoreException) {
-		                ErrorDialog
-		                        .openError(
-		                                getContainer().getShell(), // Was Utilities.getFocusShell()
-		                                IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
-		                                null, // no special message
-		                                ((CoreException) e.getCause())
-		                                        .getStatus());
-					} else {
-						throw new InvocationTargetException(e);
-					}
+				} catch (final ExecutionException e) {
+					getContainer().getShell().getDisplay().syncExec(
+							new Runnable() {
+								public void run() {
+									if (e.getCause() instanceof CoreException) {
+						                ErrorDialog
+						                        .openError(
+						                                getContainer().getShell(), // Was Utilities.getFocusShell()
+						                                IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
+						                                null, // no special message
+						                                ((CoreException) e.getCause())
+						                                        .getStatus());
+									} else {
+										IDEWorkbenchPlugin.log(getClass(),
+												"createNewFolder()", e.getCause()); //$NON-NLS-1$
+							            MessageDialog
+											.openError(
+												getContainer().getShell(),
+												IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFolder_internalError, e.getCause().getMessage()));
+									}
+								}
+							});
 				}
 			}
 		};
