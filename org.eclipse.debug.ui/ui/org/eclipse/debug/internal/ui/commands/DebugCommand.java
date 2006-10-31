@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
 import org.eclipse.debug.ui.commands.IDebugCommand;
 import org.eclipse.debug.ui.commands.IStatusMonitor;
@@ -59,9 +58,6 @@ public abstract class DebugCommand implements IDebugCommand {
 							System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
 						}
 					}
-				} else {
-					requestMonitor.setStatus(new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR, "element did not adapt to capability", //$NON-NLS-1$
-							null));
 				}
 				requestMonitor.done();
 				return Status.OK_STATUS;

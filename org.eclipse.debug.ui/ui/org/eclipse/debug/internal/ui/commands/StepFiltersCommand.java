@@ -58,10 +58,13 @@ public class StepFiltersCommand extends DebugCommand implements IStepFiltersComm
 				} else {
 					filters[i] = (IStepFilters) ((IAdaptable)element).getAdapter(IStepFilters.class);
 				}
+				if (filters[i] == null) {
+					return null;
+				}
 			}
 			return filters;
 		}
-        return new IStepFilters[0];
+        return null;
 	}
 	
    private IDebugTarget[] getDebugTargets(Object element) {
