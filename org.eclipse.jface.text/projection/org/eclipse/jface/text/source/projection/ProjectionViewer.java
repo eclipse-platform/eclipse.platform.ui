@@ -1612,7 +1612,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 
 	private void deleteTextRange(int offset, int length, StyledText textWidget) throws BadLocationException {
-		getDocument().replace(offset, length, null);
+		getDocument().replace(offset, length, ""); //$NON-NLS-1$
 		int widgetCaret= modelOffset2WidgetOffset(offset);
 		if (widgetCaret > -1)
 			textWidget.setSelection(widgetCaret);
