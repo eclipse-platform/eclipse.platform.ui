@@ -69,9 +69,7 @@ public class ResourceNode extends BufferedContent
 	 * see IModificationDate.getModificationDate
 	 */
 	public long getModificationDate() {
-		IPath path= fResource.getLocation();
-		File file= path.toFile();
-		return file.lastModified();
+		return fResource.getLocalTimeStamp();
 	}
 	
 	/* (non Javadoc)
