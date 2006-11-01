@@ -133,10 +133,8 @@ public class FileUtil {
 	}
 
 	/**
-	 * Returns true if the given file system locations overlap. If "bothDirections" is true,
-	 * this means they are the same, or one is a proper prefix of the other.  If "bothDirections"
-	 * is false, this method only returns true if the locations are the same, or the first location
-	 * is a prefix of the second.  Returns false if the locations do not overlap
+	 * Returns true if the given file system locations overlap, and false otherwise. 
+	 * Overlap means the locations are the same, or one is a proper prefix of the other.
 	 */
 	public static boolean isOverlapping(URI location1, URI location2) {
 		return computeOverlap(location1, location2, true);
