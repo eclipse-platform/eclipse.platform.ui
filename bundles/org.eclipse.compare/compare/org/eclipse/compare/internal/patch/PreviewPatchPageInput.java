@@ -197,7 +197,11 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 				String strippedHunk= stripContextFromHunk(hunk);
 				PatchedFileNode strippedHunkNode = new HunkPatchedFileNode(strippedHunk.getBytes(),resourceNode.getType()/*"manualHunkMerge"*/, hunk.getDescription());
 				PatchedFileWrapper patchedFileWrapper = new PatchedFileWrapper(patchedNode);
-				PatcherDiffNode parentNode = new PatcherDiffNode(diffNode, Differencer.CHANGE, null, patchedFileWrapper,strippedHunkNode, hunk);
+				//create ancestor
+				String[] hunkContents = createInput(hunk);
+				PatchedFileNode ancestor = new PatchedFileNode(	hunkContents[LEFT].getBytes(), hunk.fParent.getPath().getFileExtension(), hunk.getDescription());
+				
+				PatcherDiffNode parentNode = new PatcherDiffNode(diffNode, Differencer.CHANGE, ancestor, patchedFileWrapper,strippedHunkNode, hunk);
 				patchedFileWrapper.addContentChangeListener(previewPatchPage);
 				patchedFileWrapper.setParent(parentNode);
 			}
@@ -300,7 +304,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 					//skip the context
 					break;
 				case '-' :
-					result.append(rest);
+					//don't add removed lines
 					break;
 				case '+' :
 					result.append(rest);
