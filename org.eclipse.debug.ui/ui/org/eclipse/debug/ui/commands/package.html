@@ -17,5 +17,12 @@
   The debug platform provides actions corresponding to the common debug commands. 
   The actions delegate to the command interfaces to determine enabled state and 
   execute.</p>
+<p>A debugger implementation can provide its own implementation of a command by 
+  implementing a command interface directly, or by providing an adapter that implements 
+  the command interface. The debug platform's actions update enabled state and 
+  execute based on the active debug context. The debug platform provides implementations 
+  of the common debug commands for debuggers that are an implementation of the 
+  standard debug model. For example, the debug platform registers an <code>IStepOverCommand</code> 
+  adapter for implementations of <code>IStep</code>.</p>
 </body>
 </html>
