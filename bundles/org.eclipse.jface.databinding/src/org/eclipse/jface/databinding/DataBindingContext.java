@@ -14,9 +14,11 @@
 package org.eclipse.jface.databinding;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.observable.Observables;
 import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
@@ -85,7 +87,7 @@ public class DataBindingContext {
      */
     private IObservableList unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 
-	private List bindSupportFactories = new ArrayList();
+	private List bindSupportFactories;
 
 	protected DataBindingContext parent;
 
@@ -102,24 +104,46 @@ public class DataBindingContext {
 	private Realm validationRealm;
 
 	/**
-	 * @param validationRealm 
-	 * 
+	 * Creates a data binding context, using the current default realm for the
+	 * validation observables, and set up with a
+	 * {@link DefaultBindSupportFactory}, supplying converters and validators
+	 * for common data types.
 	 */
-	public DataBindingContext(Realm validationRealm) {
-		this(null, validationRealm);
+	public DataBindingContext() {
+		this(null, Realm.getDefault(),
+				new BindSupportFactory[] { new DefaultBindSupportFactory() });
 	}
 
 	/**
-	 * @param parent
-	 * @param validationRealm 
+	 * Creates a data binding context set up with a
+	 * {@link DefaultBindSupportFactory}, supplying converters and validators
+	 * for common data types.
 	 * 
+	 * @param validationRealm
+	 *            the realm to be used for the validation observables
 	 */
-	public DataBindingContext(DataBindingContext parent, Realm validationRealm) {
+	public DataBindingContext(Realm validationRealm) {
+		this(null, validationRealm, new BindSupportFactory[]{new DefaultBindSupportFactory()});
+	}
+	
+	/**
+	 * @param parent
+	 *            may be null
+	 * @param validationRealm
+	 *            the realm to be used for the validation observables
+	 * @param factories
+	 *            an array of bind support factories that will be consulted in
+	 *            the given order when creating converters and validators.
+	 */
+	public DataBindingContext(DataBindingContext parent, Realm validationRealm, BindSupportFactory[] factories) {
+		Assert.isNotNull(validationRealm);
+		Assert.isNotNull(bindSupportFactories);
 		this.parent = parent;
-		this.validationRealm = validationRealm;
 		if (parent != null) {
 			parent.addChild(this);
 		}
+		this.validationRealm = validationRealm;
+		this.bindSupportFactories = new ArrayList(Arrays.asList(factories));
 		bindings = new WritableList(validationRealm);
 		partialValidationError = new ComputedValue(validationRealm) {
 			protected Object calculate() {
@@ -153,18 +177,6 @@ public class DataBindingContext {
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
-	}
-
-	/**
-	 * Adds a factory that can create converters and validators. The list of
-	 * bind support factories is used for creating converters and validators
-	 * when binding without specifying a converter or validator.
-	 * 
-	 * @param factory
-	 *            the factory to add.
-	 */
-	public void addBindSupportFactory(BindSupportFactory factory) {
-		bindSupportFactories.add(factory);
 	}
 
 	/**
@@ -484,18 +496,6 @@ public class DataBindingContext {
 			binding.updateTargetFromModel();
 		}
 	}
-    
-    /**
-     * @param validationRealm 
-     * @return DataBindingContext with {@link IConverter converters} and
-     *         {@link IValidator validators} for java's primitive types.
-     */
-    public static DataBindingContext withDefaults(Realm validationRealm) {
-        DataBindingContext dbc = new DataBindingContext(validationRealm);
-        dbc.addBindSupportFactory(new DefaultBindSupportFactory());
-
-        return dbc;
-    }
     
     /**
      * Removes the binding.
