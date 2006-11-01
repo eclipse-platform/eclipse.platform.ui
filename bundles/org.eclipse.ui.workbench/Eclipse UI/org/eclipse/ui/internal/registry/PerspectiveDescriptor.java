@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak (brockj_eclipse@ihug.com.au) - handler registration
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -40,7 +41,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * perspective.</li>
  * </ol>
  * 
- * @author Brock Janiczak (brockj_eclipse@ihug.com.au) - handler registration
  */
 public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		IPluginContribution {
