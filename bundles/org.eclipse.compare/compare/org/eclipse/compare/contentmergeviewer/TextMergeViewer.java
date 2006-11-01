@@ -2307,6 +2307,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
 		fLeft.setEditable(cc.isLeftEditable() && cp.isLeftEditable(input));
 		
+		//if the input is part of a patch hunk, toggle synchronized scrolling
+		if (isPatchHunk() && fSynchronizedScrolling){
+			toggleSynchMode();
+		} else {
+			//reset fSynchronizedScrolling to its original value
+			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+		}
+		
 		update(false);
 		
 		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && !isPatchHunk()) {
@@ -2331,6 +2339,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					selectFirstDiff(true);
 			}
 		}
+		
 	}
 
 	private boolean isRefreshing() {
