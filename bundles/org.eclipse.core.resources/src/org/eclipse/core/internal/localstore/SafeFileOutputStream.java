@@ -80,9 +80,16 @@ public class SafeFileOutputStream extends OutputStream {
 			return;
 		if (sourceFile.renameTo(destinationFile))
 			return;
-		InputStream source = new BufferedInputStream(new FileInputStream(sourceFile));
-		OutputStream destination = new BufferedOutputStream(new FileOutputStream(destinationFile));
-		transferStreams(source, destination);
+		InputStream source = null;
+		OutputStream destination = null;
+		try {
+			source = new BufferedInputStream(new FileInputStream(sourceFile));
+			destination = new BufferedOutputStream(new FileOutputStream(destinationFile));
+			transferStreams(source, destination);
+		} finally {
+			FileUtil.safeClose(source);
+			FileUtil.safeClose(destination);
+		}
 	}
 
 	protected void createTempFile(String tempPath) {
@@ -105,17 +112,12 @@ public class SafeFileOutputStream extends OutputStream {
 	}
 
 	protected void transferStreams(InputStream source, OutputStream destination) throws IOException {
-		try {
-			byte[] buffer = new byte[8192];
-			while (true) {
-				int bytesRead = source.read(buffer);
-				if (bytesRead == -1)
-					break;
-				destination.write(buffer, 0, bytesRead);
-			}
-		} finally {
-			FileUtil.safeClose(source);
-			FileUtil.safeClose(destination);
+		byte[] buffer = new byte[8192];
+		while (true) {
+			int bytesRead = source.read(buffer);
+			if (bytesRead == -1)
+				break;
+			destination.write(buffer, 0, bytesRead);
 		}
 	}
 
