@@ -91,8 +91,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <p>
 	 * The path should be absolute; a relative path will be treated as
 	 * absolute.  The path segments need not be valid names; a
-	 * trailing separator is ignored. The resulting resource(s) need not exist in the
-	 * workspace.
+	 * trailing separator is ignored. The resulting resources may not currently exist.
 	 * <p>
 	 * @param location a path in the local file system
 	 * @return the corresponding containers in the workspace, or an empty array if none
@@ -114,8 +113,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * <code>FOLDER</code>). 
 	 * <p>
 	 * The URI must be absolute; its segments need not be valid names; a
-	 * trailing separator is ignored. The resulting resource(s) need not exist in the
-	 * workspace.
+	 * trailing separator is ignored. The resulting resources may not currently exist.
 	 * <p>
 	 * @param location a URI path into some file system
 	 * @return the corresponding containers in the workspace, or an empty array if none
@@ -128,7 +126,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * in the local file system.  Returns an empty array if there are none.
 	 * The path should be absolute; a relative path will be treated as
 	 * absolute.  The path segments need not be valid names.
-	 * The resulting file(s) need not exist in the workspace.
+	 * The resulting files may not currently exist.
 	 * <p>
 	 * @param location a path in the local file system
 	 * @return the corresponding files in the workspace, or an empty array if none
@@ -140,7 +138,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * Returns the handles of all files that are mapped to the given URI.
 	 * Returns an empty array if there are none.
 	 * The URI must be absolute; its path segments need not be valid names.
-	 * The resulting file(s) need not exist in the workspace.
+	 * The resulting files may not currently exist.
 	 * <p>
 	 * @param location a URI path into some file system
 	 * @return the corresponding files in the workspace, or an empty array if none
@@ -159,7 +157,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * will be a folder (type <code>FOLDER</code>).
 	 * The path should be absolute; a relative path will be treated as
 	 * absolute.  The path segments need not be valid names; a trailing separator is ignored.
-	 * The resulting resource need not exist in the workspace.
+	 * The resulting resource may not currently exist.
 	 * <p>
 	 * This method returns null when the given file system location is not equal to 
 	 * or under the location of any existing project in the workspace, or equal to the 
@@ -184,7 +182,7 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
 	 * in the local file system, or <code>null</code> if none.
 	 * The path should be absolute; a relative path will be treated as
 	 * absolute.  The path segments need not be valid names.
-	 * The resulting file need not exist in the workspace.
+	 * The resulting file may not currently exist.
 	 * <p>
 	 * This method returns null when the given file system location is not under
 	 * the location of any existing project in the workspace.
