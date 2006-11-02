@@ -920,7 +920,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 					new Throwable().printStackTrace(System.out);
 				}
 
-				// TODO posting here is a problem for annotations that are being
+				// XXX: posting here is a problem for annotations that are being
 				// removed and the positions of which are not updated to document
 				// changes any more. If the document gets modified between
 				// now and running the posted runnable, the position information
@@ -1282,8 +1282,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
 			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
 		} catch (IllegalArgumentException x) {
-			// should not happen
-			widgetOffset= 0;
+			widgetOffset= getInclusiveTopIndexStartOffset();
 		}
 		
 		int widgetEndOffset;
@@ -1292,9 +1291,9 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
 			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
 		} catch (IllegalArgumentException x) {
-			// happens if the editor is not "full", eg. the last line of the document is visible in the editor
+			// happens if the editor is not "full", e.g. the last line of the document is visible in the editor
 			// in that case, simply use the last character
-			widgetEndOffset= fTextWidget.getCharCount();
+			widgetEndOffset= getExclusiveBottomIndexEndOffset();
 		}
 		
 		IRegion clippingRegion= getModelRange(widgetOffset, widgetEndOffset - widgetOffset);
