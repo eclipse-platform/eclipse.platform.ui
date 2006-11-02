@@ -10,13 +10,13 @@ import java.util.List;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
-import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -37,6 +37,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -101,8 +102,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		protected TreeViewer rpTreeViewer;
 		protected DiffNode rpSelectedNode;
 		protected DiffProject rpSelectedProject;
-		protected IProject rpTargetProject;
-		private IFile rpTargetResource;
+		private IResource rpTargetResource;
 		
 		protected int mode;
 		public RetargetPatchDialog(Shell shell, ISelection selection) {
@@ -113,6 +113,15 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			}
 		}
 
+		protected Control createButtonBar(Composite parent) {
+			Control control = super.createButtonBar(parent);
+			
+			Button okButton = this.getButton(IDialogConstants.OK_ID);
+			okButton.setEnabled(false);
+			
+			return control;
+		}
+		
 		protected Control createDialogArea(Composite parent) {
 			Composite composite= (Composite) super.createDialogArea(parent);
 
@@ -171,7 +180,6 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			rpTreeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
 			rpTreeViewer.setInput(ResourcesPlugin.getWorkspace());
 			
-			
 			setupListeners();
 
 			Dialog.applyDialogFont(composite);
@@ -183,10 +191,20 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			if (rpSelectedNode != null && rpSelectedNode instanceof PatcherDiffNode && rpTargetResource != null){
 					PatcherDiffNode patchedNode =(PatcherDiffNode) rpSelectedNode;
 					switch(patchedNode.getPatchNodeType()){
-					
-					case PatcherDiffNode.PROJECT:
-						//copy over all diffs to new target resource
 						
+					case PatcherDiffNode.PROJECT:
+						DiffProject project = patchedNode.getDiffProject();
+						Object[] diffs = project.getChildren(project);
+						
+						DiffProject selectedProject = getSelectedDiffProject();
+						
+						//copy over the diffs to the new project
+						for (int i = 0; i < diffs.length; i++) {
+							((Diff)diffs[i]).setProject(selectedProject);
+						}
+						
+						//since the project has been retargeted, remove it from the patcher
+						fPatchWizard.getPatcher().removeProject(project);
 						break;
 						
 					case PatcherDiffNode.DIFF:
@@ -216,13 +234,30 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 						patcherCompareEditorInput.addHunksToFile(rpTargetResource, new Hunk[]{patchedNode.getHunk()});
 						break;
 					}
-					
-	
-				//Set the project if needed
-				if (rpSelectedProject != null)
-					rpSelectedProject.setProject(rpTargetProject);
+				
 			}
 			super.okPressed();	
+		}
+		
+		
+		private DiffProject getSelectedDiffProject() {
+			WorkspacePatcher patcher = fPatchWizard.getPatcher();
+			DiffProject[] projects = patcher.getDiffProjects();
+			for (int i = 0; i < projects.length; i++) {
+				if (projects[i].getProject().equals(rpTargetResource))
+					return projects[i];
+			}
+			
+			//Create a new diff project
+			DiffProject newProject = new DiffProject((IProject)rpTargetResource);
+			//add the diffProject to the array
+			DiffProject[] newProjectArray = new DiffProject[projects.length + 1];
+			System.arraycopy(projects, 0, newProjectArray, 0, projects.length);
+			//add the new project to the end
+			newProjectArray[projects.length] = newProject;
+			patcher.setDiffProjects(newProjectArray);
+			
+			return newProject;
 		}
 
 		void setupListeners() {
@@ -232,10 +267,26 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection s= (IStructuredSelection) event.getSelection();
 					Object obj= s.getFirstElement();
-					if (obj instanceof IProject)
-						rpTargetProject= (IProject) obj;
-					else if (obj instanceof IFile)
-						rpTargetResource = (IFile) obj;
+					if (obj instanceof IResource){
+						rpTargetResource = (IResource) obj;
+						PatcherDiffNode patchedNode =(PatcherDiffNode) rpSelectedNode;
+						switch(patchedNode.getPatchNodeType()){
+							case PatcherDiffNode.DIFF:
+							case PatcherDiffNode.HUNK:
+								if (rpTargetResource instanceof IFile){
+									Button okButton = getButton(IDialogConstants.OK_ID);
+									okButton.setEnabled(true);
+								}
+								break;
+							
+							case PatcherDiffNode.PROJECT:
+								if (rpTargetResource instanceof IProject){
+									Button okButton = getButton(IDialogConstants.OK_ID);
+									okButton.setEnabled(true);
+								}
+								break;
+						}
+					}
 				}
 			});
 
@@ -339,22 +390,23 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 				Object obj= sel.getFirstElement();
 				
 				if (obj instanceof PatcherDiffNode){
-					//either a diff or a hunk
-					Diff diff = ((PatcherDiffNode) obj).getDiff();
-					if (diff != null){
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
-					} else {
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetHunk);
+					switch(((PatcherDiffNode) obj).getPatchNodeType()){
+						case PatcherDiffNode.PROJECT:
+							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetProject);
+							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, true);
+							break;
+						
+						case PatcherDiffNode.DIFF:
+							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
+							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, ((PatcherDiffNode) obj).getDiff().containsProblems());
+							break;
+							
+						case PatcherDiffNode.HUNK:
+							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetHunk);
+							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, true);
+							break;
 					}
-				} else if (obj instanceof DiffNode) {
-					//either a toplevel Project or a Diff
-					ITypedElement tempNode = ((DiffNode) obj).getLeft();
-					if (tempNode instanceof DiffProject){
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetProject);
-					} else if (tempNode instanceof Diff){
-						patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
-					}				
-				}
+				} 
 			}
 
 		});
@@ -378,6 +430,8 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 						
 						default:
 							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(false);
+							patcherCompareEditorInput.getCompareConfiguration().setLeftLabel(PatchMessages.PatcherCompareEditorInput_LocalCopy);
+							patcherCompareEditorInput.getCompareConfiguration().setRightLabel(PatchMessages.PatcherCompareEditorInput_AfterPatch);
 							break;
 					}
 				}
@@ -387,6 +441,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		patcherCompareEditorInput.contributeDiffViewerMenuItems(getMenuActions());
 
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
+	
 		setControl(composite);
 		
 	}
@@ -445,9 +500,11 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 				ISelection selection = patcherCompareEditorInput.getViewer()
 						.getSelection();
 				final RetargetPatchDialog dialog = new RetargetPatchDialog(shell, selection);
-				dialog.open();
-				patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
-				patcherCompareEditorInput.getViewer().refresh();
+				int returnCode = dialog.open();
+				if (returnCode == Window.OK){
+					patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
+					patcherCompareEditorInput.getViewer().refresh();
+				}
 			}
 		};
 		fRetargetResource

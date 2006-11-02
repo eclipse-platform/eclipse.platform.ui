@@ -47,6 +47,7 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 	static ImageDescriptor addId= CompareUIPlugin.getImageDescriptor("ovr16/add_ov.gif"); //$NON-NLS-1$
 	static ImageDescriptor delId= CompareUIPlugin.getImageDescriptor("ovr16/del_ov.gif"); //$NON-NLS-1$
 	private WorkspacePatcher patcher;
+	private boolean retargeted = false;
 	
  	/* package */ Diff(IPath oldPath, long oldDate, IPath newPath, long newDate) {
 		fOldPath= oldPath;
@@ -327,13 +328,11 @@ public class Diff implements IWorkbenchAdapter, IAdaptable, ITypedElement {
 		fOldPath = newTarget.getProjectRelativePath();
 		fNewPath = newTarget.getProjectRelativePath();
 		newTargetFile= newTarget;
+		retargeted  = true;
 	}
 	
 	public boolean isRetargeted(){
-		if (originalPath != null){
-			return !fOldPath.equals(originalPath);
-		}
-		return false;
+		return retargeted;
 	}
 
 	public String getOriginalName(){

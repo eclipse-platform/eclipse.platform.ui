@@ -351,10 +351,10 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	}
 	
 	public void setContributedActionName(String actionID, String name){
-		/*Object obj = contributedMenuActions.get(actionID);
+		Object obj = contributedActions.get(actionID);
 		if (obj != null && obj instanceof Action){
 			((Action) obj).setText(name);
-		}*/
+		}
 	}
 	
 	public void contributeDiffViewerMenuItems(Action[] menuActions) {

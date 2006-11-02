@@ -316,5 +316,16 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		System.arraycopy(newProjectArray,0, fDiffProjects, 0, newProjectArray.length);
 	}
 
+	public void removeProject(DiffProject project) {
+		DiffProject[] temp = new DiffProject[fDiffProjects.length - 1];
+		int counter = 0;
+		for (int i = 0; i < fDiffProjects.length; i++) {
+			if (fDiffProjects[i] != project){
+				temp[counter++] = fDiffProjects[i];
+			}
+		}
+		fDiffProjects = temp;
+	}
+
 
 }

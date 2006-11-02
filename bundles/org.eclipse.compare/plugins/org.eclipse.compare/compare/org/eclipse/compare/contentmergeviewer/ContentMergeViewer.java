@@ -1165,7 +1165,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 
 	/**
-	 * Handle a change to the given input reported from an {@link ICompareInputChangeListener}.
+	 * Handle a change to the given input reported from an {@link org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener}.
 	 * This class registers a listener with its input and reports any change events through
 	 * this method. By default, this method prompts for any unsaved changes and then refreshes 
 	 * the viewer. Subclasses may override.

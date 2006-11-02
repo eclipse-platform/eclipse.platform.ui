@@ -11,6 +11,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -315,7 +316,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 		return result.toString();
 	}
 	
-	public void addHunksToFile(IFile rpTargetResource, Hunk[] hunks) {
+	public void addHunksToFile(IResource rpTargetResource, Hunk[] hunks) {
 		Object obj = filesToDiffs.get(rpTargetResource);
 		if (obj != null && obj instanceof Diff){
 			for (int i = 0; i < hunks.length; i++) {
@@ -350,9 +351,10 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 			//Create a new diff
 			Diff tempDiff = new Diff(rpTargetResource.getProjectRelativePath(), 0, rpTargetResource.getProjectRelativePath(), 0);
 			for (int i = 0; i < hunks.length; i++) {
+				hunks[i].setParent(tempDiff);
 				tempDiff.add(hunks[i]);
 			}
-			
+			tempDiff.retargetDiff((IFile) rpTargetResource);
 			//add diffProject is not null only in the workspace patch case
 			if (diffProject != null){
 				diffProject.addDiff(tempDiff);
@@ -362,10 +364,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 				workspacePatcher.addDiff(tempDiff);
 			}
 			
-			//add new diff to altered diffs
-			previewPatchPage.setAlteredDiff(tempDiff);
-			filesToDiffs.put(rpTargetResource, tempDiff);
-							
+			filesToDiffs.put(rpTargetResource, tempDiff);				
 		}
 		
 	}
