@@ -218,7 +218,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		ISchedulingRule[] retargetedFiles = new ISchedulingRule[0];
 		
 		
-		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
+		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE2_NAME)){
 			Diff[] diffs = fPatcher.getDiffs();
 			PreviewPatchPage2 previewPage = (PreviewPatchPage2) currentPage;
 			
