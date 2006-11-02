@@ -74,7 +74,7 @@ public class ContextServlet extends HttpServlet {
 		if (writer == null) {
 			writer = new NodeWriter();
 		}
-		writer.write(context, buf, true, "   ", true); //$NON-NLS-1$
+		writer.write(context, buf, false, null, true);
 		return buf.toString();
 	}
 }

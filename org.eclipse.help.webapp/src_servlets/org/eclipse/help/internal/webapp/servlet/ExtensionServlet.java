@@ -62,7 +62,7 @@ public class ExtensionServlet extends HttpServlet {
 			if (writer == null) {
 				writer = new NodeWriter();
 			}
-			writer.write(contributions[i], buf, true, "   ", true); //$NON-NLS-1$
+			writer.write(contributions[i], buf, false, null, true);
 		}
 		buf.append("</contentExtensions>\n"); //$NON-NLS-1$
 		return buf.toString();
