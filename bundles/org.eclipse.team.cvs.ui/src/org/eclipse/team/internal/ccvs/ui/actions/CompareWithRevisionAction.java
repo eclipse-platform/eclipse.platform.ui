@@ -12,6 +12,8 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -21,8 +23,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.history.HistoryPageSaveablePart;
-import org.eclipse.team.ui.history.IHistoryPage;
+import org.eclipse.team.ui.history.*;
 
 /**
  * Compare with revision will allow a user to browse the history of a file, compare with the
@@ -55,7 +56,14 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	}
 	
 	protected void showCompareInDialog(Shell shell, Object object){
-		HistoryPageSaveablePart.showHistoryInDialog(shell, object);
+		IHistoryPageSource pageSource = HistoryPageSource.getHistoryPageSource(object);
+		if (pageSource != null && pageSource.canShowHistoryFor(object)) {
+			CompareConfiguration cc = new CompareConfiguration();
+			cc.setLeftEditable(false);
+			cc.setRightEditable(false);
+			HistoryPageCompareEditorInput input = new HistoryPageCompareEditorInput(cc, pageSource, object);
+			CompareUI.openCompareDialog(input);
+		}
 	}
 	
 	/**

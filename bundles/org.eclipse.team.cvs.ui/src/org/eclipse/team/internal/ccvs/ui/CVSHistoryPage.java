@@ -379,17 +379,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 		handler.addOpenListener(new IOpenEventListener() {
-		public void handleOpen(SelectionEvent e) {
-				StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
-				if (compareMode){
-					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
-					compareAction.selectionChanged(sel);
-					compareAction.run();
-				} else {
-					//Pass in the entire structured selection to allow for multiple editor openings
-					StructuredSelection sel = tableStructuredSelection;
-					openAction.selectionChanged(sel);
-					openAction.run();
+			public void handleOpen(SelectionEvent e) {
+				if (getSite() != null) {
+					StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+					if (compareMode){
+						StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+						compareAction.selectionChanged(sel);
+						compareAction.run();
+					} else {
+						//Pass in the entire structured selection to allow for multiple editor openings
+						StructuredSelection sel = tableStructuredSelection;
+						openAction.selectionChanged(sel);
+						openAction.run();
+					}
 				}
 			}
 		});
@@ -1597,8 +1599,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 	
 	private void initLabels(ICompareInput input, CompareConfiguration cc) {
-		cc.setLeftEditable(false);
-		cc.setRightEditable(false);
 		String leftLabel = getFileRevisionLabel(input.getLeft(), cc);
 		cc.setLeftLabel(leftLabel);
 		String rightLabel = getFileRevisionLabel(input.getRight(), cc);
@@ -1617,7 +1617,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			} else {
 				label = element.getName();
 			}
-			cc.setLeftEditable(((IEditableContent)element).isEditable());
 			return label;
 
 		} else if (element instanceof FileRevisionTypedElement) {

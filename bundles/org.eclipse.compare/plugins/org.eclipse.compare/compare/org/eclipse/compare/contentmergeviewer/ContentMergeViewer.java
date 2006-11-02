@@ -59,7 +59,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see TextMergeViewer
  */
 public abstract class ContentMergeViewer extends ContentViewer
-					implements IPropertyChangeNotifier, IFlushable, ISavable {
+					implements IPropertyChangeNotifier, IFlushable {
 	
 	class SaveAction extends MergeViewerAction {
 				

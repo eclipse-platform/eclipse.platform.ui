@@ -32,6 +32,7 @@ import org.eclipse.ui.part.Page;
  * Displays a history page combined with the compare/merge infrastructure. This only works properly if the
  * history page adapts to an {@link IHistoryCompareAdapter}.
  * 
+ * @deprecated use {@link HistoryPageCompareEditorInput}
  * @since 3.2
  */
 public class HistoryPageSaveablePart extends PageSaveablePart {
@@ -46,7 +47,7 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 	 * shown if an {@link IHistoryPageSource} can be found for the object.
 	 * @param shell the parent sell
 	 * @param object the object
-	 * @return whether the object had an {@link IHistoryPageSource} availabel or not
+	 * @return whether the object had an {@link IHistoryPageSource} available or not
 	 */
 	public static boolean showHistoryInDialog(Shell shell, Object object) {
 		IHistoryPageSource pageSource = HistoryPageSource.getHistoryPageSource(object);
@@ -152,6 +153,9 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.SaveablePartAdapter#dispose()
+	 */
 	public void dispose() {
 		super.dispose();
 		if (historyPage != null)

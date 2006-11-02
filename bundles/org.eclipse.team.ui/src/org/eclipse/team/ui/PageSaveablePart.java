@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.CompareNavigator;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -417,18 +417,6 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 			IFlushable flushable = (IFlushable)Utils.getAdapter(element, IFlushable.class);
 			if (flushable != null)
 				flushable.flush(monitor);
-			else {
-				try {
-					// This code is here for backwards compatibility
-					// It can be removed after the 3.3 release since it is 
-					// for internal code that was used by clients
-					ISavable savable = (ISavable)Utils.getAdapter(element, ISavable.class);
-					if (savable != null)
-						savable.save(monitor);
-				} catch (CoreException e) {
-					CompareUIPlugin.log(e);
-				}
-			}
 		}
 	}
 

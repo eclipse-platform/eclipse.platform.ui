@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import org.eclipse.compare.CompareViewerSwitchingPane;
+import org.eclipse.compare.CompareViewerPane;
 
 /**
  * The precursor to {@link org.eclipse.compare.CompareNavigator}. This class is being keep around
@@ -19,7 +19,7 @@ import org.eclipse.compare.CompareViewerSwitchingPane;
  */
 public class CompareNavigator extends org.eclipse.compare.CompareNavigator {
 
-	public CompareNavigator(CompareViewerSwitchingPane[] panes) {
+	public CompareNavigator(CompareViewerPane[] panes) {
 		super(panes);
 	}
 	

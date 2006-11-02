@@ -10,17 +10,16 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.swt.events.*;
+import org.eclipse.compare.contentmergeviewer.IFlushable;
+import org.eclipse.compare.internal.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.viewers.*;
-
-import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import com.ibm.icu.text.MessageFormat;
 
 
 /**
@@ -36,25 +35,12 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  * 
  * @since 2.0
  */
-public abstract class CompareViewerSwitchingPane extends CompareViewerPane
-				implements ISelectionChangedListener, ISelectionProvider, IDoubleClickListener, IAdaptable {
+public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 	
 	private Viewer fViewer;
-	private Object fInput;
-	private ListenerList fSelectionListeners= new ListenerList();
-	private ListenerList fDoubleClickListener= new ListenerList();
-	private ListenerList fOpenListener= new ListenerList();
 	private boolean fControlVisibility= false;
 	private String fTitle;
 	private String fTitleArgument;
-	
-	private IOpenListener fOpenHandler= new IOpenListener() {
-		public void open(OpenEvent event) {
-			Object[] listeners= fOpenListener.getListeners();
-			for (int i= 0; i < listeners.length; i++)
-				((IOpenListener) listeners[i]).open(event);
-		}
-	};
 	
 	/**
 	 * Creates a <code>CompareViewerSwitchingPane</code> as a child of the given parent and with the
@@ -104,11 +90,9 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 					if (fViewer instanceof StructuredViewer) {
 						StructuredViewer sv= (StructuredViewer) fViewer;
 						sv.removeDoubleClickListener(CompareViewerSwitchingPane.this);
-						sv.removeOpenListener(fOpenHandler);
+						sv.removeOpenListener(CompareViewerSwitchingPane.this);
 					}
 					fViewer= null;
-					fInput= null;
-					fSelectionListeners= null;
 				}
 			}
 		);
@@ -137,7 +121,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			if (fViewer instanceof StructuredViewer) {
 				StructuredViewer sv= (StructuredViewer) fViewer;
 				sv.removeDoubleClickListener(this);
-				sv.removeOpenListener(fOpenHandler);
+				sv.removeOpenListener(this);
 			}
 
 			Control content= getContent();
@@ -168,7 +152,7 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			if (fViewer instanceof StructuredViewer) {
 				StructuredViewer sv= (StructuredViewer) fViewer;
 				sv.addDoubleClickListener(this);
-				sv.addOpenListener(fOpenHandler);
+				sv.addOpenListener(this);
 			}
 			
 			if (oldEmpty != newEmpty) {	// re-layout my container
@@ -203,51 +187,21 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		return fViewer == null || fViewer instanceof NullViewer;
 	}
 
-	public void addSelectionChangedListener(ISelectionChangedListener l) {
-		fSelectionListeners.add(l);
-	}
-
-	public void removeSelectionChangedListener(ISelectionChangedListener l) {
-		fSelectionListeners.remove(l);
-	}
-
-	public void addDoubleClickListener(IDoubleClickListener l) {
-		fDoubleClickListener.add(l);
-	}
-
-	public void removeDoubleClickListener(IDoubleClickListener l) {
-		fDoubleClickListener.remove(l);
-	}
-
-	public void addOpenListener(IOpenListener l) {
-		fOpenListener.add(l);
-	}
-
-	public void removeOpenListener(IOpenListener l) {
-		fOpenListener.remove(l);
-	}
-
-	public void doubleClick(DoubleClickEvent event) {
-		Object[] listeners= fDoubleClickListener.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((IDoubleClickListener) listeners[i]).doubleClick(event);
-	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareViewerPane#getSelection()
+	 */
 	public ISelection getSelection() {
 		if (fViewer != null)
 			return fViewer.getSelection();
-		return null;
+		return super.getSelection();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareViewerPane#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
 	public void setSelection(ISelection s) {
 		if (fViewer != null)
 			 fViewer.setSelection(s);
-	}
-
-	public void selectionChanged(SelectionChangedEvent ev) {
-		Object[] listeners= fSelectionListeners.getListeners();
-		for (int i= 0; i < listeners.length; i++)
-			((ISelectionChangedListener) listeners[i]).selectionChanged(ev);
 	}
 	
 	private boolean hasFocus2() {
@@ -276,12 +230,12 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	 */ 
 	public void setInput(Object input) {
 
-		if (fInput == input)
+		if (getInput() == input)
 			return;
 			
 		boolean hadFocus= hasFocus2();
 		
-		fInput= input;
+		super.setInput(input);
 
 		// viewer switching
 		Viewer newViewer= null;
@@ -343,15 +297,6 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			setText("");	//$NON-NLS-1$
 		}
 	}
-
-	/**
-	 * Returns the current input of this pane or null if the pane has no input.
-	 * 
-	 * @return an <code>Object</code> that is the input to this pane or null if the pane has no input.
-	 */
-	public Object getInput() {
-		return fInput;
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -372,20 +317,26 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			if (data instanceof INavigatable)
 				return data;
 		}
-		if (adapter == IOpenable.class) { 
-			if (isEmpty())
-				return null;
-			Viewer viewer= getViewer();
-			if (viewer == null)
-				return null;
-			Control control= viewer.getControl();
-			if (control == null)
-				return null;
-			Object data= control.getData(IOpenable.OPENABLE_PROPERTY);
-			if (data instanceof IOpenable)
-				return data;
+		if (adapter == IFlushable.class) {
+			Viewer v= getViewer();
+			IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
+			if (flushable != null)
+				return flushable;
 		}
-		return Platform.getAdapterManager().getAdapter(this, adapter);
+		return super.getAdapter(adapter);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Composite#setFocus()
+	 */
+	public boolean setFocus() {
+		Viewer v= getViewer();
+		if (v != null) {
+			Control c= v.getControl();
+			if (c != null)
+				c.setFocus();
+		}
+		return super.setFocus();
 	}
 
 	/**

@@ -14,7 +14,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.IOpenable;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -195,14 +194,6 @@ public class DiffTreeViewer extends TreeViewer {
 			}
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
-		
-		// Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-		IOpenable openable= new IOpenable() {
-			public void openSelected() {
-				internalOpen();
-			}
-		};
-		tree.setData(IOpenable.OPENABLE_PROPERTY, openable);
 		
 		fLeftIsLocal= Utilities.getBoolean(configuration, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 

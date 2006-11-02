@@ -10,15 +10,17 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.custom.*;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.action.ToolBarManager;
 
 /**
  * A <code>CompareViewerPane</code> is a convenience class which installs a
@@ -32,9 +34,14 @@ import org.eclipse.jface.action.ToolBarManager;
  * 
  * @since 2.0
  */
-public class CompareViewerPane extends ViewForm {
+public class CompareViewerPane extends ViewForm implements ISelectionProvider, 
+		IDoubleClickListener, ISelectionChangedListener, IOpenListener, IAdaptable {
 	
 	private ToolBarManager fToolBarManager;
+	private Object fInput;
+	private ListenerList fSelectionListeners= new ListenerList();
+	private ListenerList fDoubleClickListener= new ListenerList();
+	private ListenerList fOpenListener= new ListenerList();
 
 	/**
 	 * Constructs a new instance of this class given its parent
@@ -84,6 +91,8 @@ public class CompareViewerPane extends ViewForm {
 					fToolBarManager.dispose();
 					fToolBarManager= null;
 				}
+				fInput= null;
+				fSelectionListeners= null;
 			}
 		});
 	}
@@ -162,5 +171,131 @@ public class CompareViewerPane extends ViewForm {
 			});
 		}
 		return fToolBarManager;
+	}
+	
+	/**
+	 * Returns the current input of this pane or null if the pane has no input.
+	 * 
+	 * @return an <code>Object</code> that is the input to this pane or null if the pane has no input.
+	 * 
+	 * @since 3.3
+	 */
+	public Object getInput() {
+		return fInput;
+	}
+	
+	/**
+	 * Sets the input object of this pane. 
+	 * 
+	 * @param input the new input object or <code>null</code>
+	 * @since 3.3
+	 */ 
+	public void setInput(Object input) {
+		if (fInput != input)
+			fInput= input;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void addSelectionChangedListener(ISelectionChangedListener l) {
+		fSelectionListeners.add(l);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(org.eclipse.jface.viewers.ISelectionChangedListener)
+	 */
+	public void removeSelectionChangedListener(ISelectionChangedListener l) {
+		fSelectionListeners.remove(l);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+	 */
+	public ISelection getSelection() {
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(org.eclipse.jface.viewers.ISelection)
+	 */
+	public void setSelection(ISelection s) {
+		// Default is to do nothing
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent ev) {
+		Object[] listeners= fSelectionListeners.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((ISelectionChangedListener) listeners[i]).selectionChanged(ev);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+	 */
+	public void doubleClick(DoubleClickEvent event) {
+		Object[] listeners= fDoubleClickListener.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IDoubleClickListener) listeners[i]).doubleClick(event);
+	}
+
+	/**
+	 * Add a double-click listener to the pane. The listener will get
+	 * invoked when the contents of the pane are double-clicked. Adding
+	 * a listener that is already registered has no effect.
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void addDoubleClickListener(IDoubleClickListener listener) {
+		fDoubleClickListener.add(listener);
+	}
+
+	/**
+	 * Remove a double-click listener. Removing a listener that is not 
+	 * registered has no effect.
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void removeDoubleClickListener(IDoubleClickListener listener) {
+		fDoubleClickListener.remove(listener);
+	}
+
+	/**
+	 * Add an open listener to the pane. The listener will get
+	 * invoked when the contents of the pane are double-clicked. Adding
+	 * a listener that is already registered has no effect.
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void addOpenListener(IOpenListener listener) {
+		fOpenListener.add(listener);
+	}
+
+	/**
+	 * Remove an open listener. Removing a listener that is not 
+	 * registered has no effect.
+	 * @param listener the listener
+	 * @since 3.3
+	 */
+	public void removeOpenListener(IOpenListener listener) {
+		fOpenListener.remove(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IOpenListener#open(org.eclipse.jface.viewers.OpenEvent)
+	 */
+	public void open(OpenEvent event) {
+		Object[] listeners= fOpenListener.getListeners();
+		for (int i= 0; i < listeners.length; i++)
+			((IOpenListener) listeners[i]).open(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }

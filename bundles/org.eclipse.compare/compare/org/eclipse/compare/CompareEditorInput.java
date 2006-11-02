@@ -95,8 +95,6 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see CompareEditorInput
  */
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress, ICompareContainer {
-	
-	private static final String NAV_DATA = "Nav"; //$NON-NLS-1$
 
 	private static final boolean DEBUG= false;
 
@@ -127,11 +125,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	private Splitter fComposite;
 	private CompareConfiguration fCompareConfiguration;
-	private CompareViewerSwitchingPane fStructureInputPane;
+	private CompareViewerPane fStructureInputPane;
 	private CompareViewerSwitchingPane fStructurePane1;
 	private CompareViewerSwitchingPane fStructurePane2;
 	private CompareViewerSwitchingPane fContentInputPane;
-	private CompareViewerSwitchingPane fFocusPane;
+	private CompareViewerPane fFocusPane;
 	private String fMessage;
 	private Object fInput;
 	private String fTitle;
@@ -199,7 +197,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
 			if (fNavigator == null)
 				fNavigator= new org.eclipse.compare.internal.CompareNavigator(
-					new CompareViewerSwitchingPane[] {
+					new CompareViewerPane[] {
 						fStructureInputPane,
 						fStructurePane1,
 						fStructurePane2,
@@ -422,15 +420,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fComposite.layout();
 
 		feedInput();
-		
-		fComposite.setData(NAV_DATA,
-			new CompareViewerSwitchingPane[] {
-				fStructureInputPane,
-				fStructurePane1,
-				fStructurePane2,
-				fContentInputPane
-			}
-		);
 	
 		fComposite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -475,18 +464,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Control createOutlineContents(Composite parent, int direction) {
 		final Splitter h= new Splitter(parent, direction);
 
-		fStructureInputPane= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof IDiffContainer) {
-					IDiffContainer dn= (IDiffContainer) input;
-					if (dn.hasChildren())
-						return createDiffViewer(this);
-				}
-				if (input instanceof ICompareInput)
-					return findStructureViewer(oldViewer, (ICompareInput)input, this);
-				return null;
-			}
-		};
+		fStructureInputPane= createStructureInputPane(h);
 		fFocusPane= fStructureInputPane;
 		
 		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
@@ -550,22 +528,39 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 		if (fUseOutlineView) {
 			feedInput();
-			
-			fComposite.setData(NAV_DATA,
-				new CompareViewerSwitchingPane[] {
-					fStructureInputPane,
-					fStructurePane1,
-					fStructurePane2,
-					fContentInputPane
-				}
-			);
 		}
 
 		return h;
 	}
 
+	/**
+	 * Create the pane that will contain the structure input pane (upper left).
+	 * By default, a {@link CompareViewerSwitchingPane} is returned. Subclasses
+	 * may override to provide an alternate pane.
+	 * @param parent the parent composite
+	 * @return the structure input pane
+	 * @since 3.3
+	 */
+	protected CompareViewerPane createStructureInputPane(
+			final Composite parent) {
+		return new CompareViewerSwitchingPane(parent, SWT.BORDER | SWT.FLAT, true) {
+			protected Viewer getViewer(Viewer oldViewer, Object input) {
+				if (input instanceof IDiffContainer) {
+					IDiffContainer dn= (IDiffContainer) input;
+					if (dn.hasChildren())
+						return createDiffViewer(this);
+				}
+				if (input instanceof ICompareInput)
+					return findStructureViewer(oldViewer, (ICompareInput)input, this);
+				return null;
+			}
+		};
+	}
+
 	private void feedInput() {
-		if (fStructureInputPane != null && fInput instanceof ICompareInput) {
+		if (fStructureInputPane != null 
+				&& (fInput instanceof ICompareInput 
+						|| !(fStructureInputPane instanceof CompareViewerSwitchingPane))) {
 			fStructureInputPane.setInput(fInput);
 			ISelection sel= fStructureInputPane.getSelection();
 			if (sel == null || sel.isEmpty())
@@ -666,12 +661,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void setFocus() {
 		if (fFocusPane != null) {
-			Viewer v= fFocusPane.getViewer();
-			if (v != null) {
-				Control c= v.getControl();
-				if (c != null)
-					c.setFocus();
-			}
+			fFocusPane.setFocus();
 		} else if (fComposite != null)
 			fComposite.setFocus();
 	}
@@ -856,24 +846,11 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		flushViewer(fContentInputPane, monitor);
 	}
 		
-	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) {
+	private static void flushViewer(CompareViewerPane pane, IProgressMonitor pm) {
 		if (pane != null) {
-			Viewer v= pane.getViewer();
-			IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
+			IFlushable flushable = (IFlushable)Utilities.getAdapter(pane, IFlushable.class);
 			if (flushable != null)
 				flushable.flush(pm);
-			else {
-				// This code is here for backwards compatibility
-				// It can be removed after the 3.3 release since it is 
-				// for internal code that was used by clients
-				try {
-					ISavable savable = (ISavable)Utilities.getAdapter(v, ISavable.class);
-					if (savable != null)
-						savable.save(pm);
-				} catch (CoreException e) {
-					CompareUIPlugin.log(e);
-				}
-			}
 		}
 	}
 	
