@@ -69,6 +69,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String PREF_SAVE_ALL_EDITORS= PREFIX + "SaveAllEditors"; //$NON-NLS-1$
 	public static final String SHOW_MORE_INFO= PREFIX + "ShowMoreInfo"; //$NON-NLS-1$
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
+	public static final String USE_OLDAPPLYPATCH= PREFIX + "OldApplyPatch"; //$NON-NLS-1$
+	
 	//public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
 	//public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
@@ -91,6 +93,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, INITIALLY_SHOW_ANCESTOR_PANE),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, SHOW_MORE_INFO),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, IGNORE_WHITESPACE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_OLDAPPLYPATCH),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, PREF_SAVE_ALL_EDITORS),
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND),
@@ -115,7 +118,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(USE_SINGLE_LINE, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
 		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
-		
+		store.setDefault(USE_OLDAPPLYPATCH, true);
 		store.setDefault(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, true);
 	}
 
@@ -231,7 +234,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.structureCompare.label", OPEN_STRUCTURE_COMPARE, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.showMoreInfo.label", SHOW_MORE_INFO, 0);	//$NON-NLS-1$
 		addCheckBox(composite, "ComparePreferencePage.ignoreWhitespace.label", IGNORE_WHITESPACE, 0);	//$NON-NLS-1$
-		
+		addCheckBox(composite, "ComparePreferencePage.useOldApplyPatch.label", USE_OLDAPPLYPATCH, 0);	//$NON-NLS-1$
 		// a spacer
 		new Label(composite, SWT.NONE);
 

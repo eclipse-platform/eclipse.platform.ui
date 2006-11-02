@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -183,8 +185,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	public void addPages() {
 		addPage(fPatchWizardPage = new InputPatchPage(this));
 		addPage(fPatchTargetPage = new PatchTargetPage(this));
-
-		if (System.getProperty("oldPatch") != null) //$NON-NLS-1$
+		
+		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
+		boolean preference = store.getBoolean(ComparePreferencePage.USE_OLDAPPLYPATCH);
+		if (System.getProperty("oldPatch") != null || preference) //$NON-NLS-1$
 			addPage(new PreviewPatchPage(this));
 		else {
 			if (previewPatchPageConfiguration != null)
