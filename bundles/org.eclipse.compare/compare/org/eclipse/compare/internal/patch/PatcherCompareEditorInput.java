@@ -66,19 +66,22 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 					Diff diff = myDiffNode.getDiff();
 					switch(diff.getDiffType()){
 						  case Differencer.ADDITION:
-						  return getCompareConfiguration().getImage(image, Differencer.ADDITION);
+						  return getCompareConfiguration().getImage(image, Differencer.ADDITION | Differencer.LEFT);
 					
 						  case Differencer.DELETION:
-						  return getCompareConfiguration().getImage(image, Differencer.DELETION);
+						  return getCompareConfiguration().getImage(image, Differencer.DELETION | Differencer.LEFT);
+						  
+						  default:
+							  return  getCompareConfiguration().getImage(image, Differencer.CHANGE | Differencer.LEFT);
 					}
-					break;
+	
 				
 				case PatcherDiffNode.HUNK:
 					Hunk hunk = myDiffNode.getHunk();
-					return getImageFor((hunk.fMatches ? "" : error),image, hunk.fMatches); //$NON-NLS-1$	
+					return getCompareConfiguration().getImage(getImageFor((hunk.fMatches ? "" : error),image, hunk.fMatches), Differencer.NO_CHANGE); //$NON-NLS-1$	
 				}
 			}
-			return null;
+			return getCompareConfiguration().getImage(image, Differencer.NO_CHANGE);
 		}
 
 		private Image getImageFor(String id, Image image, boolean hasMatches) {
