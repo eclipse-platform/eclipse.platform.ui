@@ -109,7 +109,7 @@ public class WordRule implements IRule {
 	 */
 	public IToken evaluate(ICharacterScanner scanner) {
 		int c= scanner.read();
-		if (fDetector.isWordStart((char) c)) {
+		if (c != ICharacterScanner.EOF && fDetector.isWordStart((char) c)) {
 			if (fColumn == UNDEFINED || (fColumn == scanner.getColumn() - 1)) {
 
 				fBuffer.setLength(0);
