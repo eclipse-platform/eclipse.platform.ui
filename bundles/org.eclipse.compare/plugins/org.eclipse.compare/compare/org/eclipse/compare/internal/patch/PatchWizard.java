@@ -61,6 +61,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	private IStorage patch;
 
 	private boolean patchReadIn;
+	private boolean useNewPage;
 	
 	private HashSet modDiffs;
 	private HashMap modFiles;
@@ -188,15 +189,17 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		
 		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
 		boolean preference = store.getBoolean(ComparePreferencePage.USE_OLDAPPLYPATCH);
-		if (System.getProperty("oldPatch") != null || preference) //$NON-NLS-1$
+		if (System.getProperty("oldPatch") != null || preference){ //$NON-NLS-1${
 			addPage(new PreviewPatchPage(this));
-		else {
+			useNewPage = false;
+		}else {
 			if (previewPatchPageConfiguration != null)
 				fPreviewPage2 = new PreviewPatchPage2(this,
 						previewPatchPageConfiguration);
 			else
 				fPreviewPage2 = new PreviewPatchPage2(this);
 			addPage(fPreviewPage2);
+			useNewPage = true;
 		}
 	}
 	
@@ -218,7 +221,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		ISchedulingRule[] retargetedFiles = new ISchedulingRule[0];
 		
 		
-		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE2_NAME)){
+		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME) && useNewPage){
 			Diff[] diffs = fPatcher.getDiffs();
 			PreviewPatchPage2 previewPage = (PreviewPatchPage2) currentPage;
 			

@@ -66,7 +66,7 @@ import com.ibm.icu.text.MessageFormat;
 
 public class PreviewPatchPage2 extends WizardPage implements IContentChangeListener {
 
-	protected final static String PREVIEWPATCHPAGE2_NAME= "PreviewPatchPage2";  //$NON-NLS-1$
+	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 	private PatchWizard fPatchWizard;
 	private PreviewPatchPageInput patcherCompareEditorInput;
 	private CompareConfiguration previewPatchPageConfiguration;
@@ -346,7 +346,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 	}
 
 	public PreviewPatchPage2(PatchWizard pw) {
-		super(PREVIEWPATCHPAGE2_NAME, PatchMessages.PreviewPatchPage_title, null);
+		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
 		
 		fPatchWizard= pw;		
 	}
