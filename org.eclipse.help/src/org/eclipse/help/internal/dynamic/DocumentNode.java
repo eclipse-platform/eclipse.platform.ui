@@ -73,7 +73,7 @@ public class DocumentNode extends org.eclipse.help.Node {
 			}
 			return names;
 		}
-		return null;
+		return new HashSet(0);
 	}
 	
 	/* (non-Javadoc)
@@ -141,6 +141,16 @@ public class DocumentNode extends org.eclipse.help.Node {
 	public void removeChild(org.eclipse.help.Node nodeToRemove) {
 		if (nodeToRemove instanceof DocumentNode) {
 			node.removeChild(((DocumentNode)nodeToRemove).node);
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.Node#setAttribute(java.lang.String, java.lang.String)
+	 */
+	public void setAttribute(String name, String value) {
+		if (node.getNodeType() == Node.ELEMENT_NODE) {
+			Element elem = (Element)node;
+			elem.setAttribute(name, value);
 		}
 	}
 	
