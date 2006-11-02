@@ -36,7 +36,6 @@ public class IndexManager {
 
 	private static final String EXTENSION_POINT_ID_INDEX = HelpPlugin.PLUGIN_ID + ".index"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_INDEX_PROVIDER = "indexProvider"; //$NON-NLS-1$
-	private static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
 	
 	private Map indexContributionsByLocale = new HashMap();
@@ -148,20 +147,6 @@ public class IndexManager {
 			indexProviders = (AbstractIndexProvider[])providers.toArray(new AbstractIndexProvider[providers.size()]);
 		}
 		return indexProviders;
-	}
-	
-	/*
-	 * Returns whether or not there is any index data available.
-	 */
-	public boolean isIndexContributed() {
-		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_INDEX);
-		for (int i=0;i<elements.length;++i) {
-			if (ELEMENT_NAME_INDEX.equals(elements[i].getName())) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/*

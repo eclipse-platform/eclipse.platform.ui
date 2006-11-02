@@ -87,7 +87,7 @@ public class LayoutData extends RequestData {
 		View linksview = null;
 		View bookmarksview = null;
 
-		if (preferences.isIndexView() && HelpPlugin.getIndexManager().isIndexContributed())
+		if (preferences.isIndexView())
 			indexview = new View("index", //$NON-NLS-1$
 					"", //$NON-NLS-1$
 					preferences.getImagesDirectory() + "/index_view.gif", 'I', !HelpPlugin.getIndexManager().isIndexLoaded(getLocale())); //$NON-NLS-1$
