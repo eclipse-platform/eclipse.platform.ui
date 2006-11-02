@@ -16,13 +16,13 @@ import org.eclipse.help.Node;
  * A handler that is notified when the document processor visits a node,
  * allowing it to process the node and return a result.
  */
-public abstract class DocumentProcessorHandler {
+public abstract class NodeHandler {
 	
 	public static final short UNHANDLED = 0;
 	public static final short HANDLED_CONTINUE = 1;
 	public static final short HANDLED_SKIP = 2;
 	
-	private DocumentProcessor processor;
+	private NodeProcessor processor;
 	
 	/*
 	 * Will be called for every node visited by the processor,
@@ -33,7 +33,7 @@ public abstract class DocumentProcessorHandler {
 	/*
 	 * Returns the processor that is calling this handler.
 	 */
-	public DocumentProcessor getProcessor() {
+	public NodeProcessor getProcessor() {
 		return processor;
 	}
 
@@ -41,7 +41,7 @@ public abstract class DocumentProcessorHandler {
 	 * Sets the processor that is calling this handler. This should only
 	 * be called by the processor.
 	 */
-	public void setProcessor(DocumentProcessor processor) {
+	public void setProcessor(NodeProcessor processor) {
 		this.processor = processor;
 	}	
 }

@@ -163,6 +163,15 @@ public class Node {
 	}
 	
 	/**
+	 * Sets the node's name.
+	 * 
+	 * @param name the name of the node
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	/**
 	 * Sets the value of the node.
 	 * 
 	 * @param value the value of this node

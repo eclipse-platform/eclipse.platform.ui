@@ -29,7 +29,6 @@ public class AllTocTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllTocTests() {
-		addTest(TocFileParserTest.suite());
 		addTest(TocAssemblerTest.suite());
 	}
 }

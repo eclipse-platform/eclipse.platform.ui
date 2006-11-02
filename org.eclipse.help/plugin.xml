@@ -15,7 +15,7 @@
 
    <extension
          point="org.eclipse.help.contexts">
-      <contextProvider class="org.eclipse.help.internal.context.ContextsFileProvider"/>
+      <contextProvider class="org.eclipse.help.internal.context.ContextFileProvider"/>
    </extension>
 
    <extension

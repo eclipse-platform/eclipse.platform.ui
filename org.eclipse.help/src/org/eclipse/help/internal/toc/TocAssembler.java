@@ -11,18 +11,18 @@
 package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
-import org.eclipse.help.ITocContribution;
-import org.eclipse.help.internal.Anchor;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.Include;
-import org.eclipse.help.internal.Node;
+import org.eclipse.help.Node;
+import org.eclipse.help.TocContribution;
+import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeProcessor;
 
 /*
  * Assembles toc contributions (toc fragments) into complete, linked, and
@@ -30,178 +30,322 @@ import org.eclipse.help.internal.Node;
  */
 public class TocAssembler {
 
-	private List workingCopy;
-	private List includes;
-	private Map id2AnchorMap;
-	private Map id2ContributionMap;
+	private static final String ELEMENT_LINK = "link"; //$NON-NLS-1$
+	private static final String ELEMENT_ANCHOR = "anchor"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_TOC = "toc"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	
+	private NodeProcessor processor;
+	private NodeHandler[] handlers;
+	
+	private List contributions;
+	private Map contributionsById;
+	private Map contributionsByLinkTo;
+	private Set processedContributions;
 	
 	/*
-	 * Assembles the given toc contributions into complete linked
+	 * Assembles the given toc contributions into complete, linked
 	 * books. The originals are not modified.
 	 */
 	public List assemble(List contributions) {
-		workingCopy = createWorkingCopy(contributions);
-		discoverNodes();
-		processLinkTos();
-		processIncludes();
-		processOrphans();
-		return workingCopy;
+		this.contributions = copy(contributions);
+		contributionsById = null;
+		contributionsByLinkTo = null;
+		processedContributions = null;
+		
+		List books = getBooks();
+		Iterator iter = books.iterator();
+		while (iter.hasNext()) {
+			TocContribution book = (TocContribution)iter.next();
+			process(book);
+		}
+		return books;
 	}
 	
 	/*
-	 * Creates an identical copy of the given contributions. The list and all
-	 * its contents are duplicated (deep copy).
+	 * Performs a deep copy of all the contributions in the given list
+	 * and returns a new list.
 	 */
-	private List createWorkingCopy(List contributions) {
-		List workingCopy = new ArrayList(contributions.size());
+	private List copy(List contributions) {
+		List copies = new ArrayList(contributions.size());
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
-			ITocContribution contribution = (ITocContribution)iter.next();
-			workingCopy.add(TocPrefetcher.prefetch(contribution));
+			Node node = (Node)iter.next();
+			copies.add(copy(node));
 		}
-		return workingCopy;
+		return copies;
 	}
-	
+
 	/*
-	 * Traverse through all toc contributions to find and make note of any
-	 * nodes that require processing, specifically anchors and includes.
+	 * Performs a deep copy of the given node and all its children.
 	 */
-	private void discoverNodes() {
-		includes = new ArrayList();
-		id2AnchorMap = new HashMap();
-		id2ContributionMap = new HashMap();
-		Iterator iter = workingCopy.iterator();
+	private Node copy(Node node) {
+		// copy node
+		Node copy = node instanceof TocContribution ? new TocContribution() : new Node();
+		copy.setName(node.getName());
+		copy.setValue(node.getValue());
+		Iterator iter = node.getAttributes().iterator();
 		while (iter.hasNext()) {
-			TocContribution contrib = (TocContribution)iter.next();
-			id2ContributionMap.put(contrib.getId(), contrib);
-			discover((Toc)contrib.getToc(), contrib);
-		}
-	}
-	
-	/*
-	 * Traverse the given node from the given contribution to find nodes
-	 * that require processing.
-	 */
-	private void discover(Node node, TocContribution contrib) {
-		// is it one of the nodes that need processing?
-		if (node instanceof Anchor) {
-			String id = contrib.getId() + '#' + ((Anchor)node).getId();
-			id2AnchorMap.put(id, node);
-		}
-		else if (node instanceof Include) {
-			includes.add(node);
+			String name = (String)iter.next();
+			String value = node.getAttribute(name);
+			copy.setAttribute(name, value);
 		}
 		
-		// recursively discover all descendants
-		Node[] children = node.getChildrenInternal();
+		// copy children
+		Node[] children = node.getChildren();
 		for (int i=0;i<children.length;++i) {
-			discover(children[i], contrib);
+			copy.appendChild(copy(children[i]));
 		}
-	}
-	
-	private Toc getOwningToc(Node node) {
-		while (node != null && !(node instanceof Toc)) {
-			node = node.getParentInternal();
-		}
-		return (Toc)node;
+		return copy;
 	}
 	
 	/*
-	 * Processes all link_tos. Any contribution may specify that it should be
-	 * inserted at a specific anchor in another toc contribution.
+	 * Returns the list of contributions that should appear as root TOCs
+	 * (books). Contributions are books if:
+	 * 
+	 * 1. isPrimary() returns true.
+	 * 2. The toc has no "link_to" attribute defined (does not link into
+	 *    another toc).
+	 * 3. No other toc has a link to this contribution (via "link" element).
 	 */
-	private void processLinkTos() {
-		ListIterator iter = workingCopy.listIterator();
-		while (iter.hasNext()) {
-			TocContribution contribution = (TocContribution)iter.next();
-			String target = contribution.getLinkTo();
-			if (target != null) {
-				// find the target anchor				
-				Anchor anchor = (Anchor)id2AnchorMap.get(target);
-				if (anchor != null) {
-					Toc toc = (Toc)contribution.getToc();
-					anchor.addChildren(toc.getChildrenInternal());
-					
-					// combine the extra documents into the larger contribution
-					int numberSignIndex = target.indexOf('#');
-					String contributionId = target.substring(0, numberSignIndex);
-					TocContribution targetContribution = (TocContribution)id2ContributionMap.get(contributionId);
-					targetContribution.addExtraDocuments(contribution.getExtraDocuments());
-				}
-				else {
-					String msg = "TOC contribution \"" + contribution.getId() + "\"'s link_to target anchor could not be found: " + target;  //$NON-NLS-1$//$NON-NLS-2$
-					HelpPlugin.logError(msg, null);
-				}
-				// this is no longer a top-level toc, so remove it from book list
-				iter.remove();
-			}
-		}
-		// anchors are no longer needed; remove them
-		removeIntermediateNodes(id2AnchorMap.values());
-	}
-	
-	/*
-	 * Process all include directives by replacing the include node with
-	 * the target toc.
-	 */
-	private void processIncludes() {
-		Iterator iter = includes.iterator();
-		while (iter.hasNext()) {
-			Include include = (Include)iter.next();
-			TocContribution contrib = (TocContribution)id2ContributionMap.get(include.getTarget());
-			if (contrib != null) {
-				Toc toc = (Toc)contrib.getToc();
-				include.getParentInternal().replaceChild(include, toc.getChildrenInternal());
-				
-				// no longer a top-level toc, so remove it from book list
-				workingCopy.remove(contrib);
-				
-				// combine the extra documents into the larger toc
-				Toc owningToc = getOwningToc(include);
-				TocContribution owningContribution = (TocContribution)owningToc.getTocContribution();
-				owningContribution.addExtraDocuments(contrib.getExtraDocuments());
-			}
-			else {
-				String msg = "TOC contribution include target could not be found: " + include.getTarget(); //$NON-NLS-1$
-				HelpPlugin.logError(msg, null);
-			}
-		}
-	}
-	
-	/*
-	 * Processes all remaining contribution that are not primary and have not
-	 * been linked under any other toc (orphan tocs).
-	 */
-	private void processOrphans() {
-		ListIterator iter = workingCopy.listIterator();
+	private List getBooks() {
+		Set linkedContributionIds = getLinkedContributionIds(contributions);
+		List books = new ArrayList();
+		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			if (!contrib.isPrimary()) {
-				iter.remove();
+			if (contrib.isPrimary() && contrib.getToc().getAttribute(ATTRIBUTE_LINK_TO) == null && !linkedContributionIds.contains(contrib.getId())) {
+				books.add(contrib);
 			}
 		}
+		return books;
 	}
 	
 	/*
-	 * Removes the given node from the tree, but not its children. The children
-	 * are "pulled up" one level.
+	 * Returns the set of ids of contributions that are linked to by other
+	 * contributions, i.e. at least one other contribution has a link element
+	 * pointing to it.
 	 */
-	private void removeIntermediateNode(Node node) {
-		Node parent = (Node)node.getParent();
-		if (parent != null) {
-			Node[] children = node.getChildrenInternal();
-			parent.replaceChild(node, children);
+	private Set getLinkedContributionIds(List contributions) {
+		if (processor == null) {
+			processor = new NodeProcessor();
+		}
+		final Set linkedContributionIds = new HashSet();
+		NodeHandler[] linkFinder = new NodeHandler[] {
+			new NodeHandler() {
+				public short handle(Node node, String id) {
+					if (ELEMENT_LINK.equals(node.getName())) {
+						String toc = node.getAttribute(ATTRIBUTE_TOC);
+						if (toc != null) {
+							TocContribution srcContribution = getContribution(id);
+							linkedContributionIds.add(HrefUtil.normalizeHref(srcContribution.getContributorId(), toc));
+						}
+					}
+					return UNHANDLED;
+				}
+			}
+		};
+		processor.setHandlers(linkFinder);
+		Iterator iter = contributions.iterator();
+		while (iter.hasNext()) {
+			TocContribution contrib = (TocContribution)iter.next();
+			processor.process(contrib.getToc(), contrib.getId());
+		}
+		return linkedContributionIds;
+	}
+	
+	/*
+	 * Processes the given contribution, if it hasn't been processed yet. This
+	 * performs the following operations:
+	 * 
+	 * 1. Topic hrefs are normalized, e.g. "path/doc.html" ->
+	 *    "/my.plugin/path/doc.html"
+	 * 2. Links are resolved, link is replaced with target content, extra docs
+	 *    are merged.
+	 * 3. Anchor contributions are resolved, tocs with link_to's are inserted
+	 *    at anchors and extra docs merged.
+	 */
+	private void process(TocContribution contribution) {
+		if (processedContributions == null) {
+			processedContributions = new HashSet();
+		}
+		// don't process the same one twice
+		if (!processedContributions.contains(contribution)) {
+			if (processor == null) {
+				processor = new NodeProcessor();
+			}
+			if (handlers == null) {
+				handlers = new NodeHandler[] {
+					new NormalizeHandler(),
+					new LinkHandler(),
+					new AnchorHandler(),
+				};
+			}
+			processor.setHandlers(handlers);
+			processor.process(contribution.getToc(), contribution.getId());
+			processedContributions.add(contribution);
 		}
 	}
 	
 	/*
-	 * Removes all the given nodes from the tree, but not its children. The
-	 * children are "pulled up" one level.
+	 * Returns the contribution with the given id.
 	 */
-	private void removeIntermediateNodes(Collection nodes) {
-		Iterator iter = nodes.iterator();
-		while (iter.hasNext()) {
-			removeIntermediateNode((Node)iter.next());
+	private TocContribution getContribution(String id) {
+		if (contributionsById == null) {
+			contributionsById = new HashMap();
+			Iterator iter = contributions.iterator();
+			while (iter.hasNext()) {
+				TocContribution contribution = (TocContribution)iter.next();
+				contributionsById.put(contribution.getId(), contribution);
+			}
+		}
+		return (TocContribution)contributionsById.get(id);
+	}
+	
+	/*
+	 * Returns all contributions that define a link_to attribute pointing to
+	 * the given anchor path. The path has the form "<contributionId>#<anchorId>",
+	 * e.g. "/my.plugin/toc.xml#myAnchor".
+	 */
+	private TocContribution[] getAnchorContributions(String anchorPath) {
+		if (contributionsByLinkTo == null) {
+			contributionsByLinkTo = new HashMap();
+			Iterator iter = contributions.iterator();
+			while (iter.hasNext()) {
+				TocContribution srcContribution = (TocContribution)iter.next();
+				String linkTo = srcContribution.getToc().getAttribute(ATTRIBUTE_LINK_TO);
+				if (linkTo != null) {
+					String destAnchorPath = HrefUtil.normalizeHref(srcContribution.getContributorId(), linkTo);
+					TocContribution[] array = (TocContribution[])contributionsByLinkTo.get(destAnchorPath);
+					if (array == null) {
+						array = new TocContribution[] { srcContribution };
+					}
+					else {
+						TocContribution[] temp = new TocContribution[array.length + 1];
+						System.arraycopy(array, 0, temp, 0, array.length);
+						temp[array.length] = srcContribution;
+						array = temp;
+					}
+					contributionsByLinkTo.put(destAnchorPath, array);
+				}
+			}
+		}
+		TocContribution[] contributions = (TocContribution[])contributionsByLinkTo.get(anchorPath);
+		if (contributions == null) {
+			contributions = new TocContribution[0];
+		}
+		return contributions;
+	}
+	
+	/*
+	 * Handler that resolves link elements (replaces the link element with
+	 * the linked-to toc's children.
+	 */
+	private class LinkHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (ELEMENT_LINK.equals(node.getName())) {
+				Node parent = node.getParent();
+				if (parent != null) {
+					String toc = node.getAttribute(ATTRIBUTE_TOC);
+					if (toc != null) {
+						TocContribution destContribution = getContribution(id);
+						TocContribution srcContribution = getContribution(HrefUtil.normalizeHref(destContribution.getContributorId(), toc));
+						if (srcContribution != null) {
+							process(srcContribution);
+							Node[] children = srcContribution.getToc().getChildren();
+							for (int i=0;i<children.length;++i) {
+								parent.insertBefore(copy(children[i]), node);
+							}
+							
+							// combine extra docs
+							String[] srcExtraDocuments = srcContribution.getExtraDocuments();
+							String[] destExtraDocuments = destContribution.getExtraDocuments();
+							if (srcExtraDocuments.length != 0) {
+								String[] combinedExtraDocuments;
+								if (destExtraDocuments.length == 0) {
+									combinedExtraDocuments = destExtraDocuments;
+								}
+								else {
+									combinedExtraDocuments = new String[destExtraDocuments.length + srcExtraDocuments.length];
+									System.arraycopy(srcExtraDocuments, 0, combinedExtraDocuments, 0, srcExtraDocuments.length);
+									System.arraycopy(destExtraDocuments, 0, combinedExtraDocuments, srcExtraDocuments.length, destExtraDocuments.length);
+								}
+								destContribution.setExtraDocuments(combinedExtraDocuments);
+							}
+						}
+						parent.removeChild(node);
+					}
+				}
+				return HANDLED_SKIP;
+			}
+			return UNHANDLED;
+		}
+	}
+
+	/*
+	 * Handles anchor contributions. If any contribution's toc wants to link
+	 * into this one at the current anchor, link it in.
+	 */
+	private class AnchorHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (ELEMENT_ANCHOR.equals(node.getName())) {
+				Node parent = node.getParent();
+				if (parent != null) {
+					String anchorId = node.getAttribute(ATTRIBUTE_ID);
+					if (anchorId != null) {
+						TocContribution destContribution = getContribution(id);
+						TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
+						for (int i=0;i<srcContributions.length;++i) {
+							process(srcContributions[i]);
+							Node[] children = srcContributions[i].getToc().getChildren();
+							for (int j=0;j<children.length;++j) {
+								parent.insertBefore(copy(children[j]), node);
+							}
+							
+							// combine extra docs
+							String[] srcExtraDocuments = srcContributions[i].getExtraDocuments();
+							String[] destExtraDocuments = destContribution.getExtraDocuments();
+							if (srcExtraDocuments.length != 0) {
+								String[] combinedExtraDocuments;
+								if (destExtraDocuments.length == 0) {
+									combinedExtraDocuments = destExtraDocuments;
+								}
+								else {
+									combinedExtraDocuments = new String[destExtraDocuments.length + srcExtraDocuments.length];
+									System.arraycopy(srcExtraDocuments, 0, combinedExtraDocuments, 0, srcExtraDocuments.length);
+									System.arraycopy(destExtraDocuments, 0, combinedExtraDocuments, srcExtraDocuments.length, destExtraDocuments.length);
+								}
+								destContribution.setExtraDocuments(combinedExtraDocuments);
+							}
+						}
+						parent.removeChild(node);
+					}
+				}
+				return HANDLED_SKIP;
+			}
+			return UNHANDLED;
+		}
+	}
+
+	/*
+	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
+	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
+	 */
+	private class NormalizeHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (Topic.NAME.equals(node.getName())) {
+				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+				if (href != null) {
+					TocContribution contribution = getContribution(id);
+					if (contribution != null) {
+						String pluginId = contribution.getContributorId();
+						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+					}
+				}
+				return HANDLED_CONTINUE;
+			}
+			return UNHANDLED;
 		}
 	}
 }

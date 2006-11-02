@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
-import org.eclipse.help.IContentExtension;
 import org.eclipse.help.Node;
+import org.eclipse.help.internal.extension.ContentExtension;
 
 /*
  * The handler responsible for processing content extensions (contributions
  * into anchors and element replacements).
  */
-public class ExtensionHandler extends DocumentProcessorHandler {
+public class ExtensionHandler extends NodeHandler {
 
 	private static final String ELEMENT_ANCHOR = "anchor"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
@@ -35,10 +35,10 @@ public class ExtensionHandler extends DocumentProcessorHandler {
 	
 	public short handle(Node node, String path) {
 		if (ELEMENT_ANCHOR.equals(node.getName())) {
-			return handleExtension(node, path, IContentExtension.CONTRIBUTION);
+			return handleExtension(node, path, ContentExtension.CONTRIBUTION);
 		}
 		if (node.getAttribute(ATTRIBUTE_ID) != null) {
-			return handleExtension(node, path, IContentExtension.REPLACE);
+			return handleExtension(node, path, ContentExtension.REPLACE);
 		}
 		return UNHANDLED;
 	}
@@ -65,7 +65,7 @@ public class ExtensionHandler extends DocumentProcessorHandler {
 			}
 		}
 		// always remove anchors, even invalid ones
-		if (type == IContentExtension.CONTRIBUTION) {
+		if (type == ContentExtension.CONTRIBUTION) {
 			node.getParent().removeChild(node);
 			return HANDLED_SKIP;
 		}

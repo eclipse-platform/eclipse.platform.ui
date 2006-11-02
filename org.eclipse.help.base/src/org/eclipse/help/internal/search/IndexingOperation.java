@@ -30,8 +30,8 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.help.IToc;
-import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpBaseResources;
@@ -466,7 +466,7 @@ class IndexingOperation {
 			for (int j = 0; j < topics.length; j++) {
 				add(topics[j], hrefs);
 			}
-			ITocContribution contrib = tocs[i].getTocContribution();
+			TocContribution contrib = tocs[i].getTocContribution();
 			String[] extraDocs = contrib.getExtraDocuments();
 			for (int j=0;j<extraDocs.length;++j) {
 				add(extraDocs[j], hrefs);

@@ -10,16 +10,29 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
-import com.ibm.icu.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.eclipse.help.internal.context.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledTextContent;
+import org.eclipse.swt.custom.TextChangeListener;
+import org.eclipse.swt.graphics.Drawable;
+import org.eclipse.swt.graphics.GC;
+
+import com.ibm.icu.text.BreakIterator;
 
 public class StyledLineWrapper implements StyledTextContent {
+
+	/**
+	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
+	 */
+	public static final String BOLD_CLOSE_TAG = "</@#$b>"; //$NON-NLS-1$
+	/**
+	 * Internal representation of &lt;b&gt; - unlikely to occur in a text
+	 */
+	public static final String BOLD_TAG = "<@#$b>"; //$NON-NLS-1$
+
 	private Drawable drawable;
 
 	/** Lines after splitting */
@@ -264,14 +277,14 @@ public class StyledLineWrapper implements StyledTextContent {
 			StyleRange style = new StyleRange();
 			style.fontStyle = SWT.BOLD;
 			// the index of the starting style in styled text
-			int start = text.indexOf(ContextsNode.BOLD_TAG, offset);
+			int start = text.indexOf(BOLD_TAG, offset);
 			if (start == -1)
 				break;
 			String prefix = getUnstyledText(text.substring(0, start));
 			style.start = prefix.length();
 			// the index of the ending style in styled text
 			offset = start + 1;
-			int end = text.indexOf(ContextsNode.BOLD_CLOSE_TAG, offset);
+			int end = text.indexOf(BOLD_CLOSE_TAG, offset);
 			if (end == -1)
 				break;
 			prefix = getUnstyledText(text.substring(0, end));

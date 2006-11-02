@@ -23,19 +23,19 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.IContentExtension;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
  * Manages content extensions (contributions into anchors and element
- * replacements).
+ * replacements) for user assistance documents.
  */
 public class ContentExtensionManager {
 
 	private static final String EXTENSION_POINT_ID_CONTENT_EXTENSION = HelpPlugin.PLUGIN_ID + ".contentExtension"; //$NON-NLS-1$
 	private static final String ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER = "contentExtensionProvider"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_NAME_CLASS = "class"; //$NON-NLS-1$
-	private static final IContentExtension[] EMPTY_ARRAY = new IContentExtension[0];
+	private static final ContentExtension[] EMPTY_ARRAY = new ContentExtension[0];
 	
 	private AbstractContentExtensionProvider[] contentExtensionProviders;
 	private Map extensionsByPath;
@@ -44,7 +44,7 @@ public class ContentExtensionManager {
 	/*
 	 * Returns all known extensions for the given locale.
 	 */
-	public IContentExtension[] getExtensions(String locale) {
+	public ContentExtension[] getExtensions(String locale) {
 		if (extensionsByPath == null) {
 			loadExtensions(locale);
 		}
@@ -57,20 +57,20 @@ public class ContentExtensionManager {
 		while (iter.hasNext()) {
 			extensions.addAll((Collection)iter.next());
 		}
-		return (IContentExtension[])extensions.toArray(new IContentExtension[extensions.size()]);
+		return (ContentExtension[])extensions.toArray(new ContentExtension[extensions.size()]);
 	}
 	
 	/*
 	 * Get all extensions of the given type whose target matches the given path.
 	 */
-	public IContentExtension[] getExtensions(String path, int type, String locale) {
+	public ContentExtension[] getExtensions(String path, int type, String locale) {
 		if (extensionsByPath == null) {
 			loadExtensions(locale);
 		}
-		Map map = (type == IContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
+		Map map = (type == ContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
 		List extensions = (List)map.get(path);
 		if (extensions != null) {
-			return (IContentExtension[])extensions.toArray(new IContentExtension[extensions.size()]);
+			return (ContentExtension[])extensions.toArray(new ContentExtension[extensions.size()]);
 		}
 		return EMPTY_ARRAY;
 	}
@@ -97,9 +97,16 @@ public class ContentExtensionManager {
 		replacesByPath = new HashMap();
 		contentExtensionProviders = getContentExtensionProviders();
 		for (int i=0;i<contentExtensionProviders.length;++i) {
-			IContentExtension[] extensions;
+			ContentExtension[] extensions;
 			try {
-				extensions = contentExtensionProviders[i].getContentExtensions(locale);
+				Node[] nodes = contentExtensionProviders[i].getContentExtensions(locale);
+				extensions = new ContentExtension[nodes.length];
+				for (int j=0;j<nodes.length;++j) {
+					ContentExtension ext = new ContentExtension(nodes[j]);
+					ext.setContent(normalizePath(ext.getContent()));
+					ext.setPath(normalizePath(ext.getPath()));
+					extensions[j] = ext;
+				}
 			}
 			catch (Throwable t) {
 				String msg = "An error occured while querying one of the user assistance content extension providers (" + contentExtensionProviders[i] + ')'; //$NON-NLS-1$
@@ -108,8 +115,8 @@ public class ContentExtensionManager {
 			}
 			for (int j=0;j<extensions.length;++j) {
 				try {
-					ContentExtension ext = ContentExtensionPrefetcher.prefetch(extensions[j]);
-					Map map = (ext.getType() == IContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
+					ContentExtension ext = extensions[j];
+					Map map = (ext.getType() == ContentExtension.CONTRIBUTION ? extensionsByPath : replacesByPath);
 					List list = (List)map.get(ext.getPath());
 					if (list == null) {
 						list = new ArrayList();
@@ -174,5 +181,52 @@ public class ContentExtensionManager {
 			contentExtensionProviders = (AbstractContentExtensionProvider[])providers.toArray(new AbstractContentExtensionProvider[providers.size()]);
 		}
 		return contentExtensionProviders;
+	}
+	
+	/*
+	 * Normalizes the given path by adding a leading slash if one doesn't
+	 * exist, and converting the final slash into a '#' if it is thought to
+	 * separate the end of the document with the element (legacy form).
+	 */
+	private String normalizePath(String path) {
+		int bundleStart, bundleEnd;
+		int pathStart, pathEnd;
+		int elementStart, elementEnd;
+		
+		bundleStart = path.charAt(0) == '/' ? 1 : 0;
+		bundleEnd = path.indexOf('/', bundleStart);
+		
+		pathStart = bundleEnd + 1;
+		pathEnd = path.indexOf('#', pathStart);
+		if (pathEnd == -1) {
+			int lastSlash = path.lastIndexOf('/');
+			if (lastSlash > 0) {
+				int secondLastSlash = path.lastIndexOf('/', lastSlash - 1);
+				if (secondLastSlash != -1) {
+					String secondLastToken = path.substring(secondLastSlash, lastSlash);
+					boolean hasDot = (secondLastToken.indexOf('.') != -1);
+					if (hasDot) {
+						pathEnd = lastSlash;
+					}
+				}
+			}
+			if (pathEnd == -1) {
+				pathEnd = path.length();
+			}
+		}
+		
+		elementStart = Math.min(pathEnd + 1, path.length());
+		elementEnd = path.length();
+		
+		if (bundleEnd > bundleStart && pathStart > bundleEnd && pathEnd > pathStart && elementStart >= pathEnd && elementEnd >= elementStart) {
+			String bundleId = path.substring(bundleStart, bundleEnd);
+			String relativePath = path.substring(pathStart, pathEnd);
+			String elementId = path.substring(elementStart, elementEnd);
+			path = '/' + bundleId + '/' + relativePath;
+			if (elementId.length() > 0) {
+				path += '#' + elementId;
+			}
+		}
+		return path;
 	}
 }

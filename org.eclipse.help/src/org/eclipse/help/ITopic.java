@@ -16,7 +16,7 @@ package org.eclipse.help;
  * 
  * @since 2.0
  */
-public interface ITopic extends INode, IHelpResource {
+public interface ITopic extends IHelpResource {
 	/**
 	 * This is element name used for topic in XML files.
 	 */

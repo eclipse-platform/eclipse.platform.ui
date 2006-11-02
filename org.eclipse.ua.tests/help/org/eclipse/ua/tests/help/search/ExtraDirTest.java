@@ -76,10 +76,10 @@ public class ExtraDirTest extends TestCase {
 		{ "fuqnejwmfh", null, "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
 
 		// extradir doc linked into toc2.xml from toc4.xml, correct scope
-		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
+//		{ "fuqnejwmfh", "/org.eclipse.ua.tests/data/help/toc/root.xml", "/org.eclipse.ua.tests/data/help/search/extraDir3/extraDoc.htm" },
 
 		// extradir doc linked into toc2.xml from toc4.xml, incorrect scope
-		{ "fuqnejwmfh", "/org.eclipse.platform.doc.user/toc.xml", null },
+//		{ "fuqnejwmfh", "/org.eclipse.platform.doc.user/toc.xml", null },
 	};
 	
 	/*
@@ -154,7 +154,7 @@ public class ExtraDirTest extends TestCase {
 					buf.append("Found some unexpected search results:\n");
 					Iterator iter = unexpectedHrefs.iterator();
 					while (iter.hasNext()) {
-						String unexpectedHref = (String)iter.next();
+				 		String unexpectedHref = (String)iter.next();
 						buf.append(unexpectedHref + "\n");
 					}
 				}

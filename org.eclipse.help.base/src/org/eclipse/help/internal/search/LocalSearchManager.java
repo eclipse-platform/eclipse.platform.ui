@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.ITocsChangedListener;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.IndexingOperation.IndexingException;
@@ -45,7 +44,7 @@ import org.osgi.framework.Bundle;
 /*
  * Manages indexing and searching for all local help content.
  */
-public class LocalSearchManager implements ITocsChangedListener {
+public class LocalSearchManager {
 
 	private static final String SEARCH_PARTICIPANT_XP_FULLNAME = "org.eclipse.help.base.luceneSearchParticipants"; //$NON-NLS-1$
 	private static final String SEARCH_PARTICIPANT_XP_NAME = "searchParticipant"; //$NON-NLS-1$
@@ -139,14 +138,6 @@ public class LocalSearchManager implements ITocsChangedListener {
 				}
 			}
 		}
-	}
-
-	/**
-	 * Constructs a Search manager.
-	 */
-	public LocalSearchManager() {
-		super();
-		HelpPlugin.getDefault().addTocsChangedListener(this);
 	}
 
 	/**

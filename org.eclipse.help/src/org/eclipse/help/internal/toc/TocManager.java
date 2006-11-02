@@ -27,14 +27,12 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IToc;
-import org.eclipse.help.ITocContribution;
+import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 /*
- * Manages toc contributions (ITocContribution) supplied by the various toc
+ * Manages toc contributions (TocContribution) supplied by the various toc
  * providers (AbstractTocProvider).
  */
 public class TocManager {
@@ -54,26 +52,26 @@ public class TocManager {
 	/*
 	 * Returns all toc entries (complete books) for the given locale.
 	 */
-	public synchronized IToc[] getTocs(String locale) {
-		IToc[] tocs = (IToc[])tocsByLocale.get(locale);
+	public synchronized Toc[] getTocs(String locale) {
+		Toc[] tocs = (Toc[])tocsByLocale.get(locale);
 		if (tocs == null) {
-			ITocContribution[] raw = getRootTocContributions(locale);
-			ITocContribution[] filtered = filterTocContributions(raw);
-			ITocContribution[] ordered = orderTocContributions(filtered);
+			TocContribution[] raw = getRootTocContributions(locale);
+			TocContribution[] filtered = filterTocContributions(raw);
+			TocContribution[] ordered = orderTocContributions(filtered);
 			List orderedTocs = new ArrayList(ordered.length);
 			for (int i=0;i<ordered.length;++i) {
 				try {
-					IToc toc = ordered[i].getToc();
+					Toc toc = new Toc(ordered[i].getToc());
 					orderedTocs.add(toc);
 					tocsById.put(ordered[i].getId(), toc);
 				}
 				catch (Throwable t) {
 					// log and skip
-					String msg = "Error getting " + IToc.class.getName() + " from " + ITocContribution.class.getName() + ": " + ordered[i]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + Toc.class.getName() + " from " + TocContribution.class.getName() + ": " + ordered[i]; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 				}
 			}
-			tocs = (IToc[])orderedTocs.toArray(new IToc[orderedTocs.size()]);
+			tocs = (Toc[])orderedTocs.toArray(new Toc[orderedTocs.size()]);
 			tocsByLocale.put(locale, tocs);
 		}
 		return tocs;
@@ -83,43 +81,43 @@ public class TocManager {
 	 * Returns the toc whose toc contribution has the given id, for the
 	 * given locale.
 	 */
-	public synchronized IToc getToc(String id, String locale) {
+	public synchronized Toc getToc(String id, String locale) {
 		getTocs(locale);
-		return (IToc)tocsById.get(id);
+		return (Toc)tocsById.get(id);
 	}
 	
-	public synchronized IToc getOwningToc(String href) {
+	public synchronized Toc getOwningToc(String href) {
 		if (tocsByTopic == null) {
 			tocsByTopic = new HashMap();
-			IToc[] tocs = HelpSystem.getTocs();
+			Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
 			for (int i=0;i<tocs.length;++i) {
-				ITocContribution contribution = tocs[i].getTocContribution();
+				TocContribution contribution = tocs[i].getTocContribution();
 				String[] extraDocuments = contribution.getExtraDocuments();
 				for (int j=0;j<extraDocuments.length;++j) {
 					tocsByTopic.put(extraDocuments[j], tocs[i]);
 				}
 			}
 		}
-		return (IToc)tocsByTopic.get(href);
+		return (Toc)tocsByTopic.get(href);
 	}
 	
 	/*
 	 * Returns all toc contributions for the given locale, from all toc
 	 * providers.
 	 */
-	public synchronized ITocContribution[] getTocContributions(String locale) {
-		ITocContribution[] cached = (ITocContribution[])tocContributionsByLocale.get(locale);
+	public synchronized TocContribution[] getTocContributions(String locale) {
+		TocContribution[] cached = (TocContribution[])tocContributionsByLocale.get(locale);
 		if (cached == null) {
 			List contributions = new ArrayList();
 			AbstractTocProvider[] providers = getTocProviders();
 			for (int i=0;i<providers.length;++i) {
-				ITocContribution[] contrib;
+				TocContribution[] contrib;
 				try {
 					contrib = providers[i].getTocContributions(locale);
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + ITocContribution.class.getName() + " from " + AbstractTocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + TocContribution.class.getName() + " from " + AbstractTocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -128,21 +126,11 @@ public class TocManager {
 				for (int j=0;j<contrib.length;++j) {
 					// null means no contribution
 					if (contrib[j] != null) {
-						// pre-fetch everything and cache for safety
-						try {
-							ITocContribution prefetched = TocPrefetcher.prefetch(contrib[j]);
-							contributions.add(prefetched);
-						}
-						catch (Throwable t) {
-							// log, and skip this offending contribution
-							String msg = "Error getting ITocContribution information from " + contrib[j].getClass().getName(); //$NON-NLS-1$
-							HelpPlugin.logError(msg, t);
-							continue;
-						}
+						contributions.add(contrib[j]);
 					}
 				}
 			}
-			cached = (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
+			cached = (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
 			tocContributionsByLocale.put(locale, cached);
 		}
 		return cached;
@@ -165,13 +153,13 @@ public class TocManager {
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredTocs, filter the contribution.
 	 */
-	private ITocContribution[] filterTocContributions(ITocContribution[] unfiltered) {
+	private TocContribution[] filterTocContributions(TocContribution[] unfiltered) {
 		Set tocsToFilter = getIgnoredTocContributions();
 		List filtered = new ArrayList();
 		Set ignoredHrefs = new HashSet();
 		Set notIgnoredHrefs = new HashSet();
 		for (int i=0;i<unfiltered.length;++i) {
-			Toc toc = (Toc)unfiltered[i].getToc();
+			Toc toc = new Toc(unfiltered[i].getToc());
 			Set hrefs = toc.getHref2TopicMap().keySet();
 			if (!tocsToFilter.contains(unfiltered[i].getId()) &&
 					!tocsToFilter.contains(unfiltered[i].getCategoryId())) {
@@ -189,15 +177,15 @@ public class TocManager {
 		 */
 		ignoredTopicHrefs = ignoredHrefs;
 		ignoredTopicHrefs.removeAll(notIgnoredHrefs);
-		return (ITocContribution[])filtered.toArray(new ITocContribution[filtered.size()]);
+		return (TocContribution[])filtered.toArray(new TocContribution[filtered.size()]);
 	}
 
-	private ITocContribution[] getRootTocContributions(String locale) {
-		ITocContribution[] contributions = getTocContributions(locale);
+	private TocContribution[] getRootTocContributions(String locale) {
+		TocContribution[] contributions = getTocContributions(locale);
 		List unassembled = new ArrayList(Arrays.asList(contributions));
 		TocAssembler assembler = new TocAssembler();
 		List assembled = assembler.assemble(unassembled);
-		return (ITocContribution[])assembled.toArray(new ITocContribution[assembled.size()]);
+		return (TocContribution[])assembled.toArray(new TocContribution[assembled.size()]);
 	}
 	
 	private Set getIgnoredTocContributions() {
@@ -267,7 +255,7 @@ public class TocManager {
 	/*
 	 * Orders the given toc contributions by category and product preference.
 	 */
-	private ITocContribution[] orderTocContributions(ITocContribution[] unorderedTocs) {
+	private TocContribution[] orderTocContributions(TocContribution[] unorderedTocs) {
 		// first categorize the TOCs
 		List itemsToOrder = new ArrayList();
 		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
@@ -275,12 +263,12 @@ public class TocManager {
 		// order them
 		List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
 			
-		// replace with actual ITocContribution or category
+		// replace with actual TocContribution or category
 		orderedItems = substituteValues(orderedItems, categorized);
 			
 		// expand the categories
 		orderedItems = expandCategories(orderedItems);
-		return (ITocContribution[])orderedItems.toArray(new ITocContribution[orderedItems.size()]);
+		return (TocContribution[])orderedItems.toArray(new TocContribution[orderedItems.size()]);
 	}
 	
 	/*
@@ -293,14 +281,14 @@ public class TocManager {
 		Map categorized = new HashMap();
 		Iterator iter = tocs.iterator();
 		while (iter.hasNext()) {
-			ITocContribution toc = (ITocContribution)iter.next();
+			TocContribution toc = (TocContribution)iter.next();
 			String categoryId;
 			try {
 				categoryId = toc.getCategoryId();
 			}
 			catch (Throwable t) {
 				// log and skip
-				String msg = "Error retrieving categoryId from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+				String msg = "Error retrieving categoryId from " + TocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
 				HelpPlugin.logError(msg, t);
 				continue;
 			}
@@ -323,7 +311,7 @@ public class TocManager {
 				}
 				catch (Throwable t) {
 					// log and skip
-					String msg = "Error retrieving id from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
+					String msg = "Error retrieving id from " + TocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -343,7 +331,7 @@ public class TocManager {
 		Iterator iter = entries.iterator();
 		while (iter.hasNext()) {
 			Object entry = iter.next();
-			if (entry instanceof ITocContribution) {
+			if (entry instanceof TocContribution) {
 				expanded.add(entry);
 			}
 			else if (entry instanceof TocCategory) {

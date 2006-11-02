@@ -19,8 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContext;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.context.Context;
+import org.eclipse.help.internal.dynamic.NodeWriter;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
@@ -33,7 +34,8 @@ public class ContextServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
 	private static final String PARAMETER_ID = "id"; //$NON-NLS-1$
-	private static Map localeAndId2Response = new WeakHashMap();
+	private Map responseByLocaleAndId;
+	private NodeWriter writer;
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -43,12 +45,15 @@ public class ContextServlet extends HttpServlet {
 		String id = req.getParameter(PARAMETER_ID);
 		if (id != null) {
 			String localeAndId = locale + id;
-			String response = (String)localeAndId2Response.get(localeAndId);
+			if (responseByLocaleAndId == null) {
+				responseByLocaleAndId = new WeakHashMap();
+			}
+			String response = (String)responseByLocaleAndId.get(localeAndId);
 			if (response == null) {
-				IContext context = HelpSystem.getContext(id, locale);
+				Context context = HelpPlugin.getContextManager().getContext(id, locale);
 				if (context != null) {
-					response = ContextSerializer.serialize(context, id);
-					localeAndId2Response.put(localeAndId, response);
+					response = serialize(context, id);
+					responseByLocaleAndId.put(localeAndId, response);
 				}
 			}
 			if (response != null) {
@@ -61,5 +66,15 @@ public class ContextServlet extends HttpServlet {
 		else {
 			resp.sendError(400); // bad request; missing parameter
 		}
+	}
+	
+	private String serialize(Context context, String id) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
+		if (writer == null) {
+			writer = new NodeWriter();
+		}
+		writer.write(context, buf, true, "   ", true); //$NON-NLS-1$
+		return buf.toString();
 	}
 }

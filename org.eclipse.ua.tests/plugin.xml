@@ -232,17 +232,6 @@
    </extension>
 
    <!--
-      Context help test content
-   -->
-   <extension
-         point="org.eclipse.help.contexts"
-         id="contextTest">
-      <contexts
-            file="data/help/context/contexts.xml">
-      </contexts>
-   </extension>
-   
-   <!--
       TOC test content
    -->
    <extension point="org.eclipse.help.toc">

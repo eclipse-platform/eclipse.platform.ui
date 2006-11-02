@@ -19,8 +19,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.ITocContribution;
+import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.dynamic.NodeWriter;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /*
@@ -35,7 +36,8 @@ import org.eclipse.help.internal.webapp.data.UrlUtil;
 public class TocServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
-	private static Map locale2Response = new WeakHashMap();
+	private Map responseByLocale;
+	private NodeWriter writer;
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
@@ -43,12 +45,29 @@ public class TocServlet extends HttpServlet {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		
-		String response = (String)locale2Response.get(locale);
+		if (responseByLocale == null) {
+			responseByLocale = new WeakHashMap();
+		}
+		String response = (String)responseByLocale.get(locale);
 		if (response == null) {
-			ITocContribution[] contributions = HelpPlugin.getTocManager().getTocContributions(locale);
-			response = TocSerializer.serialize(contributions, locale);
-			locale2Response.put(locale, response);
+			TocContribution[] contributions = HelpPlugin.getTocManager().getTocContributions(locale);
+			response = serialize(contributions, locale);
+			responseByLocale.put(locale, response);
 		}
 		resp.getWriter().write(response);
+	}
+		
+	private String serialize(TocContribution[] contributions, String locale) {
+		StringBuffer buf = new StringBuffer();
+		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
+		buf.append("<tocContributions>\n"); //$NON-NLS-1$
+		for (int i = 0; i < contributions.length; ++i) {
+			if (writer == null) {
+				writer = new NodeWriter();
+			}
+			writer.write(contributions[i], buf, true, "   ", false); //$NON-NLS-1$
+		}
+		buf.append("</tocContributions>\n"); //$NON-NLS-1$
+		return buf.toString();
 	}
 }

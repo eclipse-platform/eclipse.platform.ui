@@ -28,15 +28,15 @@ public class IncludeResolver {
 	
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
-	private DocumentProcessor processor;
-	private DOMReader reader;
+	private NodeProcessor processor;
+	private DocumentReader reader;
 	private String locale;
 	
 	/*
 	 * Creates the resolver. It must have a DOMProcessor for processing the
 	 * included content, and must know the locale of the content to include.
 	 */
-	public IncludeResolver(DocumentProcessor processor, String locale) {
+	public IncludeResolver(NodeProcessor processor, String locale) {
 		this.processor = processor;
 		this.locale = locale;
 	}
@@ -65,10 +65,10 @@ public class IncludeResolver {
 	 */
 	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
-			reader = new DOMReader();
+			reader = new DocumentReader();
 		}
 		Document document = reader.read(in);
-		DOMNode node = new DOMNode(document);
+		DocumentNode node = new DocumentNode(document);
 		return findNode(node, nodeId);
 	}
 	

@@ -16,7 +16,7 @@ package org.eclipse.help;
  * 
  * @since 2.0
  */
-public interface IToc extends INode, IHelpResource {
+public interface IToc extends IHelpResource {
 	/**
 	 * This is element name used for TOC in XML files.
 	 */
@@ -31,7 +31,7 @@ public interface IToc extends INode, IHelpResource {
 	 * 
 	 * @return the toc's contribution
 	 */
-	public ITocContribution getTocContribution();
+	public TocContribution getTocContribution();
 	
 	/**
 	 * Obtains the topics directly contained by a toc.

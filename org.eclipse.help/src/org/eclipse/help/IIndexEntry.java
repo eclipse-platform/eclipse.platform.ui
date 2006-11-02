@@ -17,7 +17,8 @@ package org.eclipse.help;
  * 
  * @since 3.2
  */
-public interface IIndexEntry extends INode {
+public interface IIndexEntry {
+	
     /**
      * Returns the keyword that this entry is associated with
      *
@@ -34,6 +35,8 @@ public interface IIndexEntry extends INode {
 
     /**
      * Obtains the index subentries contained in the entry.
+     * 
+     * @return the index subentries
      */
     public IIndexEntry[] getSubentries();
 }

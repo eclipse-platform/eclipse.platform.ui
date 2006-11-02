@@ -28,7 +28,7 @@ import org.w3c.dom.DocumentType;
 /*
  * A utility class that converts Documents (DOMs) into XML.
  */
-public class DOMWriter {
+public class DocumentWriter {
 
 	private Transformer transformer;
 

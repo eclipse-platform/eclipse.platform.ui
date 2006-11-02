@@ -22,13 +22,13 @@ import org.eclipse.help.internal.HelpPlugin;
 public abstract class AbstractTocProvider {
 
 	/**
-	 * Returns all <code>ITocContribution</code>s for this provider. Providers
+	 * Returns all <code>TocContribution</code>s for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the contributions for this provider
 	 */
-	public abstract ITocContribution[] getTocContributions(String locale);
+	public abstract TocContribution[] getTocContributions(String locale);
 	
 	/**
 	 * Notifies the platform that the content managed by this provider may

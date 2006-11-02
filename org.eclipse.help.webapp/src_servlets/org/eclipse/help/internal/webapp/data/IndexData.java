@@ -14,6 +14,7 @@ package org.eclipse.help.internal.webapp.data;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -23,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.Node;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
@@ -385,7 +386,7 @@ public class IndexData extends ActivitiesData {
 		for (int i=0;i<entries.length;++i) {
 			IndexEntry entry = extractEnabled(entries[i]);
 			if (entry != null) {
-				enabledIndex.addChild(entry);
+				enabledIndex.appendChild(entry);
 			}
 		}
 		return enabledIndex;
@@ -416,8 +417,12 @@ public class IndexData extends ActivitiesData {
 		}
 
 		if (!enabledChildren.isEmpty()) {
-			IndexEntry newEntry = new IndexEntry(entry.getKeyword());
-			newEntry.addChildren((Node[])enabledChildren.toArray(new Node[enabledChildren.size()]));
+			IndexEntry newEntry = new IndexEntry();
+			newEntry.setKeyword(entry.getKeyword());
+			Iterator iter = enabledChildren.iterator();
+			while (iter.hasNext()) {
+				newEntry.appendChild((Node)iter.next());
+			}
 			return newEntry;
 		}
 		return null;

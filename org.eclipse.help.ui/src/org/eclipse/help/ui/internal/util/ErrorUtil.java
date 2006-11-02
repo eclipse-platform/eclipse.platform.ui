@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.util;
 
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.util.IErrorUtil;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -74,9 +73,6 @@ public class ErrorUtil implements IErrorUtil {
 			shell = new Shell();
 		}
 		MessageDialog.openInformation(shell, title, msg);
-		if (HelpPlugin.DEBUG) {
-			System.out.println(msg);
-		}
 	}
 
 	/**

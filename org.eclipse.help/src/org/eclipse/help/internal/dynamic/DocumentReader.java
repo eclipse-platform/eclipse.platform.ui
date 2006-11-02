@@ -27,7 +27,7 @@ import org.xml.sax.SAXException;
  * A utility class that converts an input stream of XML into a Document
  * (a DOM) for processing.
  */
-public class DOMReader {
+public class DocumentReader {
 
 	private DocumentBuilder builder;
 

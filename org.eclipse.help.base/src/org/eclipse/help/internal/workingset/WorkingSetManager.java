@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.ITocsChangedListener;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.w3c.dom.Document;
@@ -51,8 +50,7 @@ import org.xml.sax.SAXException;
  * 
  * @since 2.1
  */
-public class WorkingSetManager implements IHelpWorkingSetManager,
-		ITocsChangedListener {
+public class WorkingSetManager implements IHelpWorkingSetManager {
 
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
@@ -72,7 +70,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 	 */
 	public WorkingSetManager() {
 		restoreState();
-		HelpPlugin.getDefault().addTocsChangedListener(this);
 	}
 
 	public AdaptableTocsArray getRoot() {

@@ -8,14 +8,14 @@
 	
 	
 	
-	<element></element>
-	<element></element>
-	<element></element>
-	<element></element>
-	<element></element>
-	<element></element>
-	<element></element>
-	<element></element>
+	<element filter="os!=invalid"></element>
+	<element filter="ws!=invalid"></element>
+	<element filter="arch!=invalid"></element>
+	<element filter="product!=invalid"></element>
+	<element filter="plugin!=invalid"></element>
+	<element filter="category!=invalid"></element>
+	<element filter="activity!=invalid"></element>
+	<element filter="systemProperty!=invalid"></element>
 
 	
 	
@@ -29,28 +29,28 @@
 
 	
 	<element>
-		
+		<filter name="os" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="ws" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="arch" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="product" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="plugin" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="category" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="activity" value="!invalid"></filter>
 	</element>
 	<element>
-		
+		<filter name="systemProperty" value="!invalid"></filter>
 	</element>
 
 	
@@ -60,21 +60,21 @@
 	
 	
 	
-	
-	
-
-	
-	<element>
-		
-		
-	</element>
-
 	
 	
 
 	
 	<element>
-		
+		<filter name="os" value="!invalid"></filter>
+		<filter name="ws" value="!invalid"></filter>
+	</element>
+
+	
+	
+
+	
+	<element>
+		<filter name="os" value="!invalid"></filter>
 		<child>This child element shouldnt be filtered</child>
 	</element>
 
@@ -86,7 +86,7 @@
 	
 
 	
-	<element>
+	<element filter="os!=invalid">
 		<doc id="doc.1">
 	<description>
 		This document contains a mixture of dynamic content and is used by other
@@ -112,7 +112,7 @@
 </doc>
 	</element>
 	<element>
-		
+		<filter name="os" value="!invalid"></filter>
 		<doc id="doc.1">
 	<description>
 		This document contains a mixture of dynamic content and is used by other
@@ -141,30 +141,30 @@
 	
 
 	
-	<element></element>
+	<element filter=""></element>
 
 	
-	<element></element>
+	<element filter="invalid"></element>
 
 	
-	<element></element>
+	<element filter="invalid="></element>
 
 	
-	<element></element>
+	<element filter="=invalid"></element>
 
 	
 	<element>
-		
+		<filter></filter>
 	</element>
 
 	
 	<element>
-		
+		<filter value="invalid"></filter>
 	</element>
 
 	
 	<element>
-		
+		<filter name="invalid"></filter>
 	</element>
 
 </root>

@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.IContentExtension;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
 import org.osgi.framework.Bundle;
 
@@ -27,27 +27,32 @@ import org.osgi.framework.Bundle;
  */
 public class ContentExtensionFileProvider extends AbstractContentExtensionProvider {
 
-	private static final String EXTENSION_POINT_ID_CONTENT_EXTENSION = HelpPlugin.PLUGIN_ID + ".contentExtension"; //$NON-NLS-1$
-	private static final String ELEMENT_NAME_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_NAME_FILE = "file"; //$NON-NLS-1$
+	private static final String EXTENSION_POINT_CONTENT_EXTENSION = HelpPlugin.PLUGIN_ID + ".contentExtension"; //$NON-NLS-1$
+	private static final String ELEMENT_CONTENT_EXTENSION = "contentExtension"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_FILE = "file"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
 	 */
-	public IContentExtension[] getContentExtensions(String locale) {
+	public Node[] getContentExtensions(String locale) {
 		List extensions = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		ContentExtensionFileParser parser = new ContentExtensionFileParser();
-		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTENT_EXTENSION);
+		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_CONTENT_EXTENSION);
 		for (int i=0;i<elements.length;++i) {
-			if (ELEMENT_NAME_CONTENT_EXTENSION.equals(elements[i].getName())) {
-				String file = elements[i].getAttribute(ATTRIBUTE_NAME_FILE);
+			if (ELEMENT_CONTENT_EXTENSION.equals(elements[i].getName())) {
+				String file = elements[i].getAttribute(ATTRIBUTE_FILE);
 				String bundleId = elements[i].getContributor().getName();
 				Bundle bundle = Platform.getBundle(bundleId);
 				if (bundle != null) {
 					try {
-						IContentExtension[] ext = parser.parse(bundle, file);
+						Node[] ext = parser.parse(bundle, file);
 						for (int j=0;j<ext.length;++j) {
+							String content = ext[j].getAttribute(ATTRIBUTE_CONTENT);
+							if (content != null) {
+								ext[j].setAttribute(ATTRIBUTE_CONTENT, '/' + bundleId + '/' + content);
+							}
 							extensions.add(ext[j]);
 						}
 					}
@@ -58,6 +63,6 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 				}
 			}
 		}
-		return (IContentExtension[])extensions.toArray(new IContentExtension[extensions.size()]);
+		return (Node[])extensions.toArray(new Node[extensions.size()]);
 	}
 }

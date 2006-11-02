@@ -27,10 +27,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.help.INode;
 import org.eclipse.help.IToc;
-import org.eclipse.help.ITocContribution;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
 import org.eclipse.help.internal.workingset.AdaptableTocsArray;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -307,7 +306,7 @@ public class InfoCenterPage extends RootScopePage {
 		for (int i = 0; i < engines.getLength(); i++) {
 			final Node node = engines.item(i);
 			IToc toc = new IToc() {
-				public ITocContribution getTocContribution() {
+				public TocContribution getTocContribution() {
 					return null;
 				}
 				public ITopic[] getTopics() {
@@ -323,12 +322,6 @@ public class InfoCenterPage extends RootScopePage {
 				public String getLabel() {
 					return node.getAttributes().getNamedItem("label") //$NON-NLS-1$
 							.getNodeValue();
-				}
-				public INode[] getChildren() {
-					return new INode[0];
-				}
-				public INode getParent() {
-					return null;
 				}
 			};
 			list.add(toc);

@@ -4,4 +4,5 @@
 <toc label="A">
 	<topic filter="ws=invalid" label="A_topic" href="A_topic.html"/>
 	<link toc="data/help/toc/assembler/b.xml"/>
+	<link toc="data/help/toc/assembler/d.xml"/>
 </toc>

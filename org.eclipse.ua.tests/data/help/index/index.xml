@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <index>
-   <entry keyword="topic1.html">
+   <entry keyword="keyword1">
       <topic href="data/help/index/topic1.html"/>
    </entry>
-   <entry keyword="topic2.html">
+   <entry keyword="keyword2">
       <topic href="data/help/index/topic2.html"/>
    </entry>
-   <entry keyword="topic3.html">
+   <entry keyword="keyword3">
       <topic href="data/help/index/topic3.html"/>
    </entry>
-   <entry keyword="topic4.html">
+   <entry keyword="keyword4">
       <topic href="data/help/index/topic4.html"/>
    </entry>
 </index>

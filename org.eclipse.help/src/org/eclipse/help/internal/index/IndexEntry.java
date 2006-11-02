@@ -11,66 +11,61 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.help.IIndexEntry;
-import org.eclipse.help.INode;
 import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.Node;
+import org.eclipse.help.Node;
+import org.eclipse.help.internal.NodeAdapter;
+import org.eclipse.help.internal.Topic;
 
-/**
- * An internal implementation of index entry
+/*
+ * Adapts a "entry" Node as an IIndexEntry. All methods operate on the
+ * underlying adapted Node.
  */
-public class IndexEntry extends Node implements IIndexEntry {
+public class IndexEntry extends NodeAdapter implements IIndexEntry {
 	
-    private String keyword;
-    private IIndexEntry[] subentries;
-    private ITopic[] topics;
-
-    public IndexEntry(String keyword) {
-    	this.keyword = keyword;
+	public static final String NAME = "entry"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_KEYWORD = "keyword"; //$NON-NLS-1$
+	
+	/*
+	 * Constructs a new index entry adapter for an empty entry node.
+	 */
+	public IndexEntry() {
+		super();
+		setName(NAME);
 	}
 
-    public String getKeyword() {
-        return keyword;
-    }
-    
-    public IIndexEntry[] getSubentries() {
-		if (subentries == null) {
-			INode[] children = getChildren();
-			if (children.length > 0) {
-				List list = new ArrayList();
-				for (int i=0;i<children.length;++i) {
-					if (children[i] instanceof IIndexEntry) {
-						list.add(children[i]);
-					}
-				}
-				subentries = (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
-			}
-			else {
-				subentries = new IIndexEntry[0];
-			}
-		}
-		return subentries;
-    }
-    
-    public ITopic[] getTopics() {
-		if (topics == null) {
-			INode[] children = getChildren();
-			if (children.length > 0) {
-				List list = new ArrayList();
-				for (int i=0;i<children.length;++i) {
-					if (children[i] instanceof ITopic) {
-						list.add(children[i]);
-					}
-				}
-				topics = (ITopic[])list.toArray(new ITopic[list.size()]);
-			}
-			else {
-				topics = new ITopic[0];
-			}
-		}
-		return topics;
-    }
+	/*
+	 * Constructs a new index entry adapter for the given entry node.
+	 */
+	public IndexEntry(Node node) {
+		super(node);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IIndexEntry#getKeyword()
+	 */
+	public String getKeyword() {
+		return node.getAttribute(ATTRIBUTE_KEYWORD);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IIndexEntry#getSubentries()
+	 */
+	public IIndexEntry[] getSubentries() {
+		return (IIndexEntry[])getChildren(NAME, IndexEntry.class);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IIndexEntry#getTopics()
+	 */
+	public ITopic[] getTopics() {
+		return (ITopic[])getChildren(Topic.NAME, Topic.class);
+	}
+	
+	/*
+	 * Sets the entry's keyword.
+	 */
+	public void setKeyword(String keyword) {
+		node.setAttribute(ATTRIBUTE_KEYWORD, keyword);
+	}
 }

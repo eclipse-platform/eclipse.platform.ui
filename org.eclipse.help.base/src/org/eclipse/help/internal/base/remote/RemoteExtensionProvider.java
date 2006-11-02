@@ -17,12 +17,15 @@ import java.net.URL;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractContentExtensionProvider;
-import org.eclipse.help.IContentExtension;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.dynamic.NodeReader;
 
 public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 
 	private static final String PATH_EXTENSIONS = "/extension"; //$NON-NLS-1$
+
+	private NodeReader reader;
 
 	public RemoteExtensionProvider() {
 		RemoteHelp.addPreferenceChangeListener(new IPreferenceChangeListener() {
@@ -32,17 +35,17 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 		});
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractContentExtensionProvider#getContentExtensions(java.lang.String)
-	 */
-	public IContentExtension[] getContentExtensions(String locale) {
+	public Node[] getContentExtensions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
 				URL url = RemoteHelp.getURL(PATH_EXTENSIONS);
 				in = url.openStream();
-				RemoteExtensionParser parser = new RemoteExtensionParser();
-				return parser.parse(in);
+				if (reader == null) {
+					reader = new NodeReader();
+				}
+				Node node = reader.read(in);
+				return node.getChildren();
 			}
 			catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
@@ -63,6 +66,6 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 				}
 			}
 		}
-		return new IContentExtension[0];
+		return new Node[0];
 	}
 }

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.ITocContribution;
 import org.eclipse.help.AbstractTocProvider;
+import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -36,21 +36,21 @@ public class TocFileProvider extends AbstractTocProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractTocProvider#getTocContributions(java.lang.String)
 	 */
-	public ITocContribution[] getTocContributions(String locale) {
+	public TocContribution[] getTocContributions(String locale) {
 		List contributions = new ArrayList();
 		TocFile[] tocFiles = getTocFiles(locale);
 		TocFileParser parser = new TocFileParser();
 		for (int i=0;i<tocFiles.length;++i) {
 			try {
-				ITocContribution toc = parser.parse(tocFiles[i]);
+				TocContribution toc = parser.parse(tocFiles[i]);
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
 				String msg = "Error reading toc file \"" + tocFiles[i].getFile() + "\" in extension specified in plug-in: " + tocFiles[i].getPluginId(); //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, null);
+				HelpPlugin.logError(msg, t);
 			}
 		}
-		return (ITocContribution[])contributions.toArray(new ITocContribution[contributions.size()]);
+		return (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
 	}
 
 	/*

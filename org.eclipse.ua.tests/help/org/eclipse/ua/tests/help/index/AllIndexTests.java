@@ -29,7 +29,6 @@ public class AllIndexTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllIndexTests() {
-		addTest(IndexFileParserTest.suite());
 		addTest(IndexAssemblerTest.suite());
 	}
 }

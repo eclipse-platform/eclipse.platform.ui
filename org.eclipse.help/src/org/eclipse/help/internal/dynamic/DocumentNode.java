@@ -27,7 +27,7 @@ import org.w3c.dom.NodeList;
  * reads and writes to an underlying DOM node. This allows us to use the same
  * processor for two models, by adapting one of them.
  */
-public class DOMNode extends org.eclipse.help.Node {
+public class DocumentNode extends org.eclipse.help.Node {
 
 	private Node node;
 	
@@ -35,7 +35,7 @@ public class DOMNode extends org.eclipse.help.Node {
 	 * Creates an adapter for the given DOM node. All operations on this node
 	 * will be performed on the given node instead.
 	 */
-	public DOMNode(Node node) {
+	public DocumentNode(Node node) {
 		this.node = node;
 	}
 	
@@ -43,7 +43,7 @@ public class DOMNode extends org.eclipse.help.Node {
 	 * @see org.eclipse.help.Node#appendChild(org.eclipse.help.Node)
 	 */
 	public void appendChild(org.eclipse.help.Node newChild) {
-		DOMNode newNode = copyNode(newChild);
+		DocumentNode newNode = copyNode(newChild);
 		node.appendChild(newNode.node);
 	}
 		
@@ -86,7 +86,7 @@ public class DOMNode extends org.eclipse.help.Node {
 			for (int i=0;i<list.getLength();++i) {
 				Node child = list.item(i);
 				if (child.getNodeType() == Node.ELEMENT_NODE || child.getNodeType() == Node.TEXT_NODE) {
-					children.add(new DOMNode(child));
+					children.add(new DocumentNode(child));
 				}
 			}
 			return (org.eclipse.help.Node[])children.toArray(new org.eclipse.help.Node[children.size()]);
@@ -105,7 +105,7 @@ public class DOMNode extends org.eclipse.help.Node {
 	 * @see org.eclipse.help.Node#getParent()
 	 */
 	public org.eclipse.help.Node getParent() {
-		return new DOMNode(node.getParentNode());
+		return new DocumentNode(node.getParentNode());
 	}
 	
 	/* (non-Javadoc)
@@ -119,9 +119,9 @@ public class DOMNode extends org.eclipse.help.Node {
 	 * @see org.eclipse.help.Node#insertBefore(org.eclipse.help.Node, org.eclipse.help.Node)
 	 */
 	public void insertBefore(org.eclipse.help.Node newChild, org.eclipse.help.Node refChild) {
-		if (refChild instanceof DOMNode) {
-			DOMNode newNode = copyNode(newChild);
-			node.insertBefore(newNode.node, ((DOMNode)refChild).node);
+		if (refChild instanceof DocumentNode) {
+			DocumentNode newNode = copyNode(newChild);
+			node.insertBefore(newNode.node, ((DocumentNode)refChild).node);
 		}
 	}
 	
@@ -139,8 +139,8 @@ public class DOMNode extends org.eclipse.help.Node {
 	 * @see org.eclipse.help.Node#removeChild(org.eclipse.help.Node)
 	 */
 	public void removeChild(org.eclipse.help.Node nodeToRemove) {
-		if (nodeToRemove instanceof DOMNode) {
-			node.removeChild(((DOMNode)nodeToRemove).node);
+		if (nodeToRemove instanceof DocumentNode) {
+			node.removeChild(((DocumentNode)nodeToRemove).node);
 		}
 	}
 	
@@ -154,7 +154,7 @@ public class DOMNode extends org.eclipse.help.Node {
 	/*
 	 * Copies the given node as a DOMNode for this document.
 	 */
-	private DOMNode copyNode(org.eclipse.help.Node nodeToCopy) {
+	private DocumentNode copyNode(org.eclipse.help.Node nodeToCopy) {
 		// copy the node itself
 		Document dom = node.getOwnerDocument();
 		Node newNode;
@@ -174,7 +174,7 @@ public class DOMNode extends org.eclipse.help.Node {
 		}
 		
 		// copy children
-		DOMNode copy = new DOMNode(newNode);
+		DocumentNode copy = new DocumentNode(newNode);
 		org.eclipse.help.Node[] children = nodeToCopy.getChildren();
 		for (int i=0;i<children.length;++i) {
 			copy.appendChild(children[i]);

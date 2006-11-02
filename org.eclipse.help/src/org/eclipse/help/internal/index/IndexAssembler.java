@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,14 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IIndex;
-import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.IndexContribution;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.Node;
+import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.toc.TocManager;
-import org.eclipse.help.internal.toc.Topic;
 
 /*
  * Assembles individual keyword index contributions into a complete, fully
@@ -43,7 +43,7 @@ public class IndexAssembler {
 	 * Assembles the given index contributions into a complete, sorted index.
 	 * The originals are not modified.
 	 */
-	public IIndex assemble(List contributions) {
+	public Index assemble(List contributions) {
 		this.contributions = contributions;
 		processMerge();
 		processTopics();
@@ -59,7 +59,7 @@ public class IndexAssembler {
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
-			mergeChildren(index, (Index)contribution.getIndex());
+			mergeChildren(index, contribution.getIndex());
 		}
 	}
 	
@@ -73,39 +73,39 @@ public class IndexAssembler {
 		// create data structures for fast lookup
 		Map entriesByKeyword = new HashMap();
 		Set topicHrefs = new HashSet();
-		Node[] childrenA = a.getChildrenInternal();
+		Node[] childrenA = a.getChildren();
 		for (int i=0;i<childrenA.length;++i) {
 			Node childA = childrenA[i];
-			if (childA instanceof IndexEntry) {
-				entriesByKeyword.put(((IndexEntry)childA).getKeyword(), childA);
+			if (IndexEntry.NAME.equals(childA.getName())) {
+				entriesByKeyword.put(childA.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD), childA);
 			}
-			else if (childA instanceof Topic) {
-				topicHrefs.add(((Topic)childA).getHref());
+			else if (Topic.NAME.equals(childA.getName())) {
+				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
 			}
 		}
 		
 		// now do the merge
-		Node[] childrenB = b.getChildrenInternal();
+		Node[] childrenB = b.getChildren();
 		for (int i=0;i<childrenB.length;++i) {
 			Node childB = childrenB[i];
-			if (childB instanceof IndexEntry) {
-				String keyword = ((IndexEntry)childB).getKeyword();
+			if (IndexEntry.NAME.equals(childB.getName())) {
+				String keyword = childB.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 				if (entriesByKeyword.containsKey(keyword)) {
 					// duplicate keyword; merge children
-					mergeChildren((IndexEntry)entriesByKeyword.get(keyword), childB);
+					mergeChildren((Node)entriesByKeyword.get(keyword), childB);
 				}
 				else {
 					// wasn't a duplicate
-					a.addChild(childB);
+					a.appendChild(childB);
 					entriesByKeyword.put(keyword, childB);
 				}
 			}
-			else if (childB instanceof Topic) {
-				String href = ((Topic)childB).getHref();
+			else if (Topic.NAME.equals(childB.getName())) {
+				String href = childB.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (!topicHrefs.contains(href)) {
 					// add topic only if href doesn't exist yet
-					a.addChild(childB);
-					topicHrefs.add(((Topic)childB).getHref());
+					a.appendChild(childB);
+					topicHrefs.add(href);
 				}
 			}
 		}
@@ -123,12 +123,12 @@ public class IndexAssembler {
 				 * topics first, then entries, etc. Then within each
 				 * group, sort alphabetically.
 				 */
-				int c1 = getCategory(o1);
-				int c2 = getCategory(o2);
+				int c1 = getCategory((Node)o1);
+				int c2 = getCategory((Node)o2);
 				if (c1 == c2) {
 					// same type of object; compare alphabetically
-					String s1 = getLabel(o1).toLowerCase();
-					String s2 = getLabel(o2).toLowerCase();
+					String s1 = getLabel((Node)o1).toLowerCase();
+					String s2 = getLabel((Node)o2).toLowerCase();
 					return s1.compareTo(s2);
 				}
 				else {
@@ -141,19 +141,19 @@ public class IndexAssembler {
 	}
 	
 	/*
-	 * Returns the category of the object. The order is:
+	 * Returns the category of the node. The order is:
 	 * 1. topics
 	 * 2. entries starting with non-alphanumeric
 	 * 3. entries starting with digit
 	 * 4. entries starting with alpha
 	 * 5. other
 	 */
-	private static int getCategory(Object o) {
-		if (o instanceof ITopic) {
+	private static int getCategory(Node node) {
+		if (Topic.NAME.equals(node.getName())) {
 			return 0;
 		}
-		else if (o instanceof IIndexEntry) {
-			String keyword = ((IIndexEntry)o).getKeyword();
+		else if (IndexEntry.NAME.equals(node.getName())) {
+			String keyword = node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 			if (keyword != null && keyword.length() > 0) {
 				char c = keyword.charAt(0);
 				if (Character.isDigit(c)) {
@@ -175,15 +175,15 @@ public class IndexAssembler {
 	 * Returns the string that will be displayed for the given object,
 	 * used for sorting.
 	 */
-	private static String getLabel(Object o) {
-		if (o instanceof ITopic) {
-			return ((ITopic)o).getLabel();
+	private static String getLabel(Node node) {
+		if (Topic.NAME.equals(node.getName())) {
+			return node.getAttribute(Topic.ATTRIBUTE_LABEL);
 		}
-		else if (o instanceof IIndexEntry) {
-			return ((IIndexEntry)o).getKeyword();
+		else if (IndexEntry.NAME.equals(node.getName())) {
+			return node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 		}
 		else {
-			return o.toString();
+			return node.getName();
 		}
 	}
 	
@@ -192,7 +192,7 @@ public class IndexAssembler {
 	 * ignored tocs.
 	 */
 	private void processTopics() {
-		processTopics(index.getChildrenInternal());
+		processTopics(index.getChildren());
 	}
 	
 	/*
@@ -201,8 +201,8 @@ public class IndexAssembler {
 	 */
 	private void processTopics(Node[] nodes) {
 		for (int i=0;i<nodes.length;++i) {
-			if (nodes[i] instanceof Topic) {
-				Topic topic = (Topic)nodes[i];
+			if (Topic.NAME.equals(nodes[i].getName())) {
+				Topic topic = nodes[i] instanceof Topic ? (Topic)nodes[i] : new Topic(nodes[i]);
 				String label = topic.getLabel();
 				String href = topic.getHref();
 				boolean isLabelEmpty = (label == null || label.length() == 0);
@@ -221,10 +221,10 @@ public class IndexAssembler {
 					topic.setLabel(""); //$NON-NLS-1$
 				}
 				if (tocManager.isTopicIgnored(href)) {
-					topic.getParentInternal().removeChild(topic);
+					topic.getParent().removeChild(nodes[i]);
 				}
 			}
-			Node[] children = nodes[i].getChildrenInternal();
+			Node[] children = nodes[i].getChildren();
 			processTopics(children);
 		}
 	}
@@ -234,8 +234,17 @@ public class IndexAssembler {
 	 * Comparator.
 	 */
 	private void sort(Node node, Comparator c) {
-		node.sortChildren(c);
-		Node[] children = node.getChildrenInternal();
+		// sort children
+		Node[] children = node.getChildren();
+		for (int i=0;i<children.length;++i) {
+			node.removeChild(children[i]);
+		}
+		Arrays.sort(children, c);
+		for (int i=0;i<children.length;++i) {
+			node.appendChild(children[i]);
+		}
+		
+		// sort children's children
 		for (int i=0;i<children.length;++i) {
 			sort(children[i], c);
 		}

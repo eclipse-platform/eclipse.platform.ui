@@ -2,9 +2,11 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <toc label="B">
-	<topic label="B_topic1" href="B_topic1.html">
-		<topic label="B_topic2" href="B_topic2.html"/>
-		<topic label="C_topic" href="C_topic.html"/>
+	<topic label="B_topic1" href="/org.eclipse.ua.tests/B_topic1.html">
+		<topic label="B_topic2" href="/org.eclipse.ua.tests/B_topic2.html"/>
+		<topic label="C_topic" href="/org.eclipse.ua.tests/C_topic.html"/>
 	</topic>
-	<topic label="B_topic3" href="B_topic3.html"/>
+	<topic label="B_topic3" href="/org.eclipse.ua.tests/B_topic3.html">
+		<filter name="os" value="!invalid"/>
+	</topic>
 </toc>

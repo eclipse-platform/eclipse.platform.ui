@@ -17,7 +17,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.help.AbstractIndexProvider;
-import org.eclipse.help.IIndexContribution;
+import org.eclipse.help.IndexContribution;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /*
@@ -42,9 +42,9 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
+	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(String)
 	 */
-	public IIndexContribution[] getIndexContributions(String locale) {
+	public IndexContribution[] getIndexContributions(String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -72,6 +72,6 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 				}
 			}
 		}
-		return new IIndexContribution[0];
+		return new IndexContribution[0];
 	}
 }

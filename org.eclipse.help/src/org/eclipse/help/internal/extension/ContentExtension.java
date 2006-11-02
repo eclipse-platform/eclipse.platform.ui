@@ -10,44 +10,81 @@
  *******************************************************************************/
 package org.eclipse.help.internal.extension;
 
-import org.eclipse.help.IContentExtension;
+import org.eclipse.help.Node;
+import org.eclipse.help.internal.NodeAdapter;
 
 /*
- * A concrete model element that implements IContentExtension.
+ * Adapts a "context" Node and provides convenience methods for operating
+ * on it. All methods operate on the underlying adapted Node.
  */
-public class ContentExtension implements IContentExtension {
+public class ContentExtension extends NodeAdapter {
 	
-	private String content;
-	private String path;
-	private int type;
+	private static final String NAME_CONTRIBUTION = "topicExtension"; //$NON-NLS-1$
+	private static final String NAME_REPLACE = "topicReplace"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
+	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
+	
+	// type for contribution into anchor
+	public static final int CONTRIBUTION = 0;
+	
+	// type for element replacement
+	public static final int REPLACE = 1;
 	
 	/*
-	 * Creates the extension with the given info.
+	 * Constructs a new content extension adapter for an empty extension node.
+	 * (contribution type by default).
 	 */
-	public ContentExtension(String content, String path, int type) {
-		this.content = content;
-		this.path = path;
-		this.type = type;
+	public ContentExtension() {
+		super();
+		setName(NAME_CONTRIBUTION);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContentExtension#getContent()
+	/*
+	 * Constructs a new adapter for the given content extension node.
+	 */
+	public ContentExtension(Node node) {
+		super(node);
+	}
+	
+	/*
+	 * Returns the extension's content.
 	 */
 	public String getContent() {
-		return content;
+		return getAttribute(ATTRIBUTE_CONTENT);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContentExtension#getPath()
+	/*
+	 * Returns the extensions target path.
 	 */
 	public String getPath() {
-		return path;
+		return getAttribute(ATTRIBUTE_PATH);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContentExtension#getType()
+	/*
+	 * Returns the extension type (either a contribution or replace).
 	 */
 	public int getType() {
-		return type;
+		return (getName().equals(NAME_CONTRIBUTION)) ? CONTRIBUTION : REPLACE;
+	}
+	
+	/*
+	 * Sets the extension's content.
+	 */
+	public void setContent(String content) {
+		setAttribute(ATTRIBUTE_CONTENT, content);
+	}
+	
+	/*
+	 * Sets the extension's target path.
+	 */
+	public void setPath(String path) {
+		setAttribute(ATTRIBUTE_PATH, path);
+	}
+	
+	/*
+	 * Sets the extension type.
+	 */
+	public void setType(int type) {
+		setName(type == CONTRIBUTION ? NAME_CONTRIBUTION : NAME_REPLACE);
 	}
 }

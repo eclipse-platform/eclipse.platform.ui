@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.AbstractIndexProvider;
+import org.eclipse.help.IndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
 
 /*
@@ -33,13 +33,13 @@ public class IndexFileProvider extends AbstractIndexProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractIndexProvider#getIndexContributions(java.lang.String)
 	 */
-	public IIndexContribution[] getIndexContributions(String locale) {
+	public IndexContribution[] getIndexContributions(String locale) {
 		List contributions = new ArrayList();
 		IndexFile[] indexFiles = getIndexFiles(locale);
 		IndexFileParser parser = new IndexFileParser();
 		for (int i=0;i<indexFiles.length;++i) {
 			try {
-				IIndexContribution toc = parser.parse(indexFiles[i]);
+				IndexContribution toc = parser.parse(indexFiles[i]);
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
@@ -47,7 +47,7 @@ public class IndexFileProvider extends AbstractIndexProvider {
 				HelpPlugin.logError(msg, null);
 			}
 		}
-		return (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
+		return (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
 	}
 
 	/*

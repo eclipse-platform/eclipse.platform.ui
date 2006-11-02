@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndex;
-import org.eclipse.help.IIndexContribution;
+import org.eclipse.help.IndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
 
 public class IndexManager {
@@ -42,9 +42,9 @@ public class IndexManager {
 	private Map indexContributionsByLocale = new HashMap();
 	private Map indexesByLocale = new HashMap();
 	private AbstractIndexProvider[] indexProviders;
-
+	
 	public synchronized IIndex getIndex(String locale) {
-		IIndex index = (IIndex)indexesByLocale.get(locale);
+		Index index = (Index)indexesByLocale.get(locale);
 		if (index == null) {
 			List contributions = Arrays.asList(getIndexContributions(locale));
 			filterIndexContributions(contributions);
@@ -59,19 +59,19 @@ public class IndexManager {
 	 * Returns all index contributions for the given locale, from all
 	 * providers.
 	 */
-	public synchronized IIndexContribution[] getIndexContributions(String locale) {
-		IIndexContribution[] cached = (IIndexContribution[])indexContributionsByLocale.get(locale);
+	public synchronized IndexContribution[] getIndexContributions(String locale) {
+		IndexContribution[] cached = (IndexContribution[])indexContributionsByLocale.get(locale);
 		if (cached == null) {
 			List contributions = new ArrayList();
 			AbstractIndexProvider[] providers = getIndexProviders();
 			for (int i=0;i<providers.length;++i) {
-				IIndexContribution[] contrib;
+				IndexContribution[] contrib;
 				try {
 					contrib = providers[i].getIndexContributions(locale);
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + IIndexContribution.class.getName() + " from " + AbstractIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting " + IndexContribution.class.getName() + " from " + AbstractIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
@@ -80,21 +80,11 @@ public class IndexManager {
 				for (int j=0;j<contrib.length;++j) {
 					// null means no contribution
 					if (contrib[j] != null) {
-						// pre-fetch everything and cache for safety
-						try {
-							IIndexContribution prefetched = IndexPrefetcher.prefetch(contrib[j]);
-							contributions.add(prefetched);
-						}
-						catch (Throwable t) {
-							// log, and skip this offending contribution
-							String msg = "Error getting IIndexContribution information from " + contrib[j].getClass().getName(); //$NON-NLS-1$
-							HelpPlugin.logError(msg, t);
-							continue;
-						}
+						contributions.add(contrib[j]);
 					}
 				}
 			}
-			cached = (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
+			cached = (IndexContribution[])contributions.toArray(new IndexContribution[contributions.size()]);
 			indexContributionsByLocale.put(locale, cached);
 		}
 		return cached;
@@ -191,7 +181,7 @@ public class IndexManager {
 		Set indexesToFilter = getIgnoredIndexContributions();
 		ListIterator iter = unfiltered.listIterator();
 		while (iter.hasNext()) {
-			IIndexContribution contribution = (IIndexContribution)iter.next();
+			IndexContribution contribution = (IndexContribution)iter.next();
 			if (indexesToFilter.contains(contribution.getId())) {
 				iter.remove();
 			}

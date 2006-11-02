@@ -193,7 +193,7 @@ public class HelpDisplay {
 
 	private String getContextID(IContext context) {
 		if (context instanceof Context)
-			return ((Context) context).getID();
+			return ((Context)context).getId();
 		return HelpPlugin.getContextManager().addContext(context);
 	}
 

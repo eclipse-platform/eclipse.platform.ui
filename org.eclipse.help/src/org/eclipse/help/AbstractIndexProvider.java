@@ -22,13 +22,13 @@ import org.eclipse.help.internal.HelpPlugin;
 public abstract class AbstractIndexProvider {
 
 	/**
-	 * Returns all <code>IIndexContribution</code>s for this provider. Providers
+	 * Returns all <code>IndexContribution</code>s for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
 	 * 
 	 * @param locale the locale for which to get contributions
 	 * @return all the index contributions for this provider
 	 */
-	public abstract IIndexContribution[] getIndexContributions(String locale);
+	public abstract IndexContribution[] getIndexContributions(String locale);
 	
 	/**
 	 * Notifies the platform that the content managed by this provider may

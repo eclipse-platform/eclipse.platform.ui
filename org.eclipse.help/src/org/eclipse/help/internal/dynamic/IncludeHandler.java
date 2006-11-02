@@ -16,7 +16,7 @@ import org.eclipse.help.Node;
  * The handler responsible for processing includes, where a node is pulled
  * in from another document.
  */
-public class IncludeHandler extends DocumentProcessorHandler {
+public class IncludeHandler extends NodeHandler {
 
 	private static final String ELEMENT_INCLUDE = "include"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$

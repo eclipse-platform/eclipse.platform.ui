@@ -18,9 +18,9 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.HelpSystem;
-import org.eclipse.help.IContentExtension;
 import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -35,8 +35,8 @@ public class ExtensionResolver {
 	private static final String ELEMENT_BODY = "body"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
-	private DocumentProcessor processor;
-	private DOMReader reader;
+	private NodeProcessor processor;
+	private DocumentReader reader;
 	private String locale;
 	private ContentExtensionManager manager;
 	
@@ -44,7 +44,7 @@ public class ExtensionResolver {
 	 * Creates the resolver. The processor is needed to process the extension
 	 * content, and locale because we're pulling in content from other documents.
 	 */
-	public ExtensionResolver(DocumentProcessor processor, String locale) {
+	public ExtensionResolver(NodeProcessor processor, String locale) {
 		this.processor = processor;
 		this.locale = locale;
 	}
@@ -56,7 +56,7 @@ public class ExtensionResolver {
 		if (manager == null) {
 			manager = HelpPlugin.getContentExtensionManager();
 		}
-		IContentExtension[] extensions = manager.getExtensions(path, type, locale);
+		ContentExtension[] extensions = manager.getExtensions(path, type, locale);
 		List list = new ArrayList();
 		for (int i=0;i<extensions.length;++i) {
 			String content = extensions[i].getContent();
@@ -153,10 +153,10 @@ public class ExtensionResolver {
 	 */
 	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
-			reader = new DOMReader();
+			reader = new DocumentReader();
 		}
 		Document document = reader.read(in);
-		Node node = new DOMNode(document);
+		Node node = new DocumentNode(document);
 		return findNode(node, nodeId);
 	}
 	
@@ -185,10 +185,10 @@ public class ExtensionResolver {
 	 */
 	private Node[] findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
 		if (reader == null) {
-			reader = new DOMReader();
+			reader = new DocumentReader();
 		}
 		Document document = reader.read(in);
-		Node node = new DOMNode(document);
+		Node node = new DocumentNode(document);
 		return findBody(node);
 	}
 	

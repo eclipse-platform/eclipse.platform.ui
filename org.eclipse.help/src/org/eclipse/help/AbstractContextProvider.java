@@ -11,16 +11,10 @@
 package org.eclipse.help;
 
 /**
- * <p>
  * An <code>AbstractContextProvider</code> is a mechanism to provide arbitrary
  * context-sensitive help for any part of the UI. <code>AbstractContextProvider
  * </code>s must be registered via the <code>org.eclipse.help.contexts</code>
  * extension point.
- * </p>
- * <p>
- * IMPORTANT: This API is still subject to change in 3.3. In particular, the
- * return type of getContext() may change.
- * </p>
  * 
  * @since 3.3
  */
@@ -28,12 +22,13 @@ public abstract class AbstractContextProvider {
 
 	/**
 	 * Returns the context-sensitive help content for the UI element with the
-	 * given context help ID, and for the given locale.
+	 * given context help ID, and for the given locale. The document model must
+	 * conform to the context-sensitive help XML schema.
 	 * 
 	 * @param id the unique context help ID, e.g. "org.my.plugin.my_context_id"
 	 * @return the context help, or <code>null</code> if not available
 	 */
-	public abstract IContext getContext(String id, String locale);
+	public abstract Node getContext(String id, String locale);
 
 	/**
 	 * Returns an array of <code>String</code>s containing the ids of the

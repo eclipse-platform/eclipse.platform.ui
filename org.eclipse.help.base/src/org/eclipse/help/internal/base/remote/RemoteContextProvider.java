@@ -16,8 +16,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.eclipse.help.AbstractContextProvider;
-import org.eclipse.help.IContext;
+import org.eclipse.help.Node;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.dynamic.NodeReader;
 
 /*
  * Provides the context-sensitive help data that is located on the remote
@@ -30,10 +31,12 @@ public class RemoteContextProvider extends AbstractContextProvider {
 	private static final String PARAM_ID = "id"; //$NON-NLS-1$
 	private static final String PARAM_LANG = "lang"; //$NON-NLS-1$
 
+	private NodeReader reader;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContextProvider#getContext(java.lang.String, java.lang.String)
 	 */
-	public IContext getContext(String id, String locale) {
+	public Node getContext(String id, String locale) {
 		if (RemoteHelp.isEnabled()) {
 			InputStream in = null;
 			try {
@@ -41,8 +44,10 @@ public class RemoteContextProvider extends AbstractContextProvider {
 				HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 				if (connection.getResponseCode() == 200) {
 					in = connection.getInputStream();
-					RemoteContextParser parser = new RemoteContextParser();
-					return parser.parse(in);
+					if (reader == null) {
+						reader = new NodeReader();
+					}
+					return reader.read(in);
 				}
 			}
 			catch (IOException e) {

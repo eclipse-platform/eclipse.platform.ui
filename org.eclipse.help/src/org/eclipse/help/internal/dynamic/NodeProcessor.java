@@ -16,18 +16,22 @@ import org.eclipse.help.Node;
  * A document processor that traverses every node of a document and allows
  * handlers to perform operations on the nodes.
  */
-public class DocumentProcessor {
+public class NodeProcessor {
 
-	private DocumentProcessorHandler[] handlers;
+	private NodeHandler[] handlers;
+	
+	/*
+	 * Creates a processor with no handlers.
+	 */	
+	public NodeProcessor() {
+		handlers = new NodeHandler[0];
+	}
 	
 	/*
 	 * Creates a processor with the given handlers.
 	 */
-	public DocumentProcessor(DocumentProcessorHandler[] handlers) {
-		this.handlers = handlers;
-		for (int i=0;i<handlers.length;++i) {
-			handlers[i].setProcessor(this);
-		}
+	public NodeProcessor(NodeHandler[] handlers) {
+		setHandlers(handlers);
 	}
 	
 	/*
@@ -37,11 +41,11 @@ public class DocumentProcessor {
 	public void process(Node node, String id) {
 		for (int i=0;i<handlers.length;++i) {
 			short result = handlers[i].handle(node, id);
-			if (result == DocumentProcessorHandler.HANDLED_CONTINUE) {
+			if (result == NodeHandler.HANDLED_CONTINUE) {
 				// handler wants us to keep processing children
 				break;
 			}
-			if (result == DocumentProcessorHandler.HANDLED_SKIP) {
+			if (result == NodeHandler.HANDLED_SKIP) {
 				// handler wants us to skip children
 				return;
 			}
@@ -50,6 +54,18 @@ public class DocumentProcessor {
 		Node[] children = node.getChildren();
 		for (int i=0;i<children.length;++i) {
 			process(children[i], id);
+		}
+	}
+	
+	/*
+	 * Sets the handlers for this processor.
+	 */
+	public void setHandlers(NodeHandler[] handlers) {
+		if (this.handlers != handlers) {
+			this.handlers = handlers;
+			for (int i=0;i<handlers.length;++i) {
+				handlers[i].setProcessor(this);
+			}
 		}
 	}
 }

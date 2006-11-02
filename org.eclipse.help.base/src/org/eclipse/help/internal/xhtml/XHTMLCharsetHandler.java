@@ -11,14 +11,14 @@
 package org.eclipse.help.internal.xhtml;
 
 import org.eclipse.help.Node;
-import org.eclipse.help.internal.dynamic.DocumentProcessorHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
 
 /*
  * Converts the charset in XHTML meta tag to UTF-8. This is the encoding
  * output by the XMLProcessor, and we need the charset in the meta tags
  * to match, otherwise browsers will be confused.
  */
-public class XHTMLCharsetHandler extends DocumentProcessorHandler {
+public class XHTMLCharsetHandler extends NodeHandler {
 
 	private static final String ELEMENT_META = "meta"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$

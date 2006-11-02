@@ -12,10 +12,15 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.Dictionary;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.search.*;
-import org.eclipse.help.ui.*;
-import org.eclipse.help.ui.internal.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.help.search.ISearchEngine;
+import org.eclipse.help.search.ISearchScope;
+import org.eclipse.help.ui.ISearchScopeFactory;
+import org.eclipse.help.ui.RootScopePage;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.help.ui.internal.HelpUIResources;
+import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -97,7 +102,7 @@ public class EngineTypeDescriptor {
 					return (ISearchEngine)obj;
 			}
 			catch (CoreException e) {
-				HelpUIPlugin.logWarning("Engine " + eclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
+				HelpUIPlugin.logError("Engine " + eclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;
@@ -114,7 +119,7 @@ public class EngineTypeDescriptor {
 					}
 				}
 				catch (CoreException e) {
-                    HelpUIPlugin.logWarning("Scope factory " + fclass + " cannot be instantiated"); //$NON-NLS-1$ //$NON-NLS-2$
+                    HelpUIPlugin.logError("Scope factory " + fclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

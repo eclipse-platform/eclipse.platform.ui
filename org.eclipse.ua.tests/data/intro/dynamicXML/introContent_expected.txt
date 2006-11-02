@@ -99,46 +99,86 @@ PAGE id = filter
 				style-id = null
 		GROUP: id = null
 				label = null
-				children = 1
+				children = 5
 				style-id = null
 						LINK: id = null
 								label = Sanity test
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null
+						LINK: id = null
+								label = Your OS is invalid.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
+						LINK: id = null
+								label = Your WS is invalid.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
+						LINK: id = null
+								label = Your ARCH is invalid.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
+						LINK: id = null
+								label = Your OS is win32 AND your WS is invalid.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
 		GROUP: id = null
 				label = null
-				children = 1
+				children = 2
 				style-id = null
 						LINK: id = null
 								label = The plugin org.eclipse.help is installed.
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null
+						LINK: id = null
+								label = The plugin invalid is installed.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
 		GROUP: id = null
 				label = null
-				children = 1
+				children = 2
 				style-id = null
 						LINK: id = null
 								label = The product org.eclipse.sdk.ide is running.
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null
+						LINK: id = null
+								label = The product invalid is running.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
 		GROUP: id = null
 				label = null
-				children = 1
+				children = 2
 				style-id = null
 						LINK: id = null
 								label = The category org.eclipse.categories.developmentCategory is enabled.
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null
+						LINK: id = null
+								label = The category invalid is enabled.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
 		GROUP: id = null
 				label = null
-				children = 1
+				children = 2
 				style-id = null
 						LINK: id = null
 								label = The activity org.eclipse.javaDevelopment is enabled.
+								text = null
+								url = http://org.eclipse.ui.intro/showPage?id=filter
+								style-id = null
+						LINK: id = null
+								label = The activity invalid is enabled.
 								text = null
 								url = http://org.eclipse.ui.intro/showPage?id=filter
 								style-id = null

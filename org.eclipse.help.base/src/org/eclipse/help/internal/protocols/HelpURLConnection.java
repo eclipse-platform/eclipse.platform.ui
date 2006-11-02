@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.util.ResourceLocator;
@@ -89,9 +88,6 @@ public class HelpURLConnection extends URLConnection {
 		parseQuery();
 
 		setDefaultUseCaches(isCacheable());
-		if (HelpPlugin.DEBUG_PROTOCOLS) {
-			System.out.println("HelpURLConnection: url=" + url); //$NON-NLS-1$
-		}
 	}
 
 	/**

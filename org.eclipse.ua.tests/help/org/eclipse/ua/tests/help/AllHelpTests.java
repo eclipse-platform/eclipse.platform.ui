@@ -13,7 +13,6 @@ package org.eclipse.ua.tests.help;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ua.tests.help.context.AllContextTests;
 import org.eclipse.ua.tests.help.dynamic.AllDynamicTests;
 import org.eclipse.ua.tests.help.index.AllIndexTests;
 import org.eclipse.ua.tests.help.preferences.AllPreferencesTests;
@@ -36,7 +35,6 @@ public class AllHelpTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllHelpTests() {
-		addTest(AllContextTests.suite());
 		addTest(AllPreferencesTests.suite());
 		addTest(AllDynamicTests.suite());
 		addTest(AllSearchTests.suite());

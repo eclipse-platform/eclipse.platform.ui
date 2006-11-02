@@ -10,135 +10,88 @@
  *     Phil Loats (IBM Corp.) - fix to use only foundation APIs
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import java.util.List;
 
-import org.eclipse.help.*;
-import org.xml.sax.*;
-/**
- * Context object, as defined in the map.xml
+import org.eclipse.help.IContext;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.Node;
+import org.eclipse.help.internal.NodeAdapter;
+import org.eclipse.help.internal.Topic;
+
+/*
+ * Adapts a "context" Node as an IContext. All methods operate on the
+ * underlying adapted Node.
  */
-public class Context extends ContextsNode implements IContext2 {
-	private String text;
-	protected String pluginID;
-	protected String shortID;
-	protected String title;
-	/**
-	 * Context constructor.
+public class Context extends NodeAdapter implements IContext {
+
+	public static final String NAME = "context"; //$NON-NLS-1$
+	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	
+	/*
+	 * Constructs a new context adapter for an empty context node.
 	 */
-	public Context(Attributes attrs) {
-		super(attrs);
-		if (attrs == null)
-			return;
-		shortID = attrs.getValue("id"); //$NON-NLS-1$
-		title = attrs.getValue("title"); //$NON-NLS-1$
+	public Context() {
+		super();
+		setName(NAME);
 	}
-	private static String stripStyle(String s, String style) {
-		int len = s.length();
-		int skipLen = style.length();
-		StringBuffer sb = new StringBuffer(s.length());
-		int idx;
-		int lastIdx=0;
-		
-		while ((idx = s.indexOf(style, lastIdx)) != -1) {
-			int start = idx;
-			boolean hasSpace = false;
-			while ((start>lastIdx) && Character.isWhitespace(s.charAt(start-1))) { 
-				start--;
-			}
-			if (idx != start)
-				hasSpace = true;
-			//add everthing to start
-			sb.append(s.substring(lastIdx, start));
-			
-			// skip style
-			idx += skipLen;
-			int end = idx;
-			while ((end<len) && Character.isWhitespace(s.charAt(end)))
-				end++;
-			if (end != idx)
-				hasSpace = true;
-			lastIdx = end;
-			
-			if (hasSpace)
-				sb.append(' ');
-		}
-		
-		// add everything else
-		sb.append(s.substring(lastIdx, len));
-		return sb.toString();
-	}
-	/**
-	 * @return plain text (without <@#$b>or </@#$b> bug 59541)
+
+	/*
+	 * Constructs a new context adapter for the given context node.
 	 */
-	public String getText() {
-		//PAL foundation
-		/*
-		return text
-		// if there are spaces on any or both side of bold they need to be
-				// collapsed to one
-				.replaceAll("(\\s+</?@#\\$b>\\s*)|(\\s*</?@#\\$b>\\s+)", " ") //$NON-NLS-1$ //$NON-NLS-2$
-				.replaceAll("</?@#\\$b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		*/
-		return stripStyle(stripStyle(text,"<@#$b>"),"</@#$b>");  //$NON-NLS-1$//$NON-NLS-2$
-	}
-	/**
-	 * @return styled text with <@#$b>and </@#$b> to mark bold range
-	 */
-	public String getStyledText() {
-		return text;
-	}
-	public IHelpResource[] getRelatedTopics() {
-		if (children.size() > 0) {
-			IHelpResource[] related = new IHelpResource[children.size()];
-			children.toArray(related);
-			return related;
-		}
-		// signal empty toc. handled by calling class.
-		return null;
-	}
-	public void setStyledText(String s) {
-		text = s;
-	}
-	/**
-	 * Obtains short id (without plugin)
-	 */
-	public String getShortId() {
-		return shortID;
-	}
-	public String getID() {
-		return pluginID + "." + shortID; //$NON-NLS-1$
-	}
-	/**
-	 * Sets the pluginID.
-	 * 
-	 * @param pluginID
-	 *            The pluginID to set
-	 */
-	public void setPluginID(String pluginID) {
-		this.pluginID = pluginID;
-	}
-	/**
-	 * @see ContextsNode#build(ContextsBuilder)
-	 */
-	public void build(ContextsBuilder builder) {
-		builder.build(this);
-	}
-	/**
-	 * Replaces children list
-	 */
-	public void setChildren(List children) {
-		this.children = children;
+	public Context(Node node) {
+		super(node);
 	}
 	
-	public String getCategory(IHelpResource topic) {
-		// For backward compatibility, all the topics
-		// will continue to belong to the default category
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IContext#getRelatedTopics()
+	 */
+	public IHelpResource[] getRelatedTopics() {
+		return (Topic[])getChildren(Topic.NAME, Topic.class);
+	}
+	
+	/*
+	 * Returns the Context's unique id. 
+	 */
+	public String getId() {
+		return getAttribute(ATTRIBUTE_ID);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IContext#getText()
+	 */
+	public String getText() {
+		Node[] children = getChildren();
+		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+			Node description = children[0];
+			Node[] descriptionChildren = description.getChildren();
+			if (descriptionChildren.length > 0) {
+				return descriptionChildren[0].getValue();
+			}
+		}
 		return null;
 	}
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.IContext2#getTitle()
+
+	/*
+	 * Sets the Context's unique id.
 	 */
-	public String getTitle() {
-		return title;
+	public void setId(String id) {
+		setAttribute(ATTRIBUTE_ID, id);
+	}
+
+	/*
+	 * Sets the Context's description text.
+	 */
+	public void setText(String text) {
+		Node[] children = getChildren();
+		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+			Node description = children[0];
+			Node[] descriptionChildren = description.getChildren();
+			for (int i=0;i<descriptionChildren.length;++i) {
+				description.removeChild(descriptionChildren[i]);
+			}
+			Node textNode = new Node();
+			textNode.setValue(text);
+			description.appendChild(textNode);
+		}
 	}
 }

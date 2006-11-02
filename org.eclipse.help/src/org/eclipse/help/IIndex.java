@@ -17,7 +17,7 @@ package org.eclipse.help;
  * 
  * @since 3.2
  */
-public interface IIndex extends INode {
+public interface IIndex {
 	
 	/**
 	 * Obtains the index entries contained in the index.

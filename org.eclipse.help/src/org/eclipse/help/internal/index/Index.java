@@ -11,37 +11,38 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
-import org.eclipse.help.INode;
-import org.eclipse.help.internal.Node;
+import org.eclipse.help.Node;
+import org.eclipse.help.internal.NodeAdapter;
 
 /*
- * Help index implementation
+ * Adapts a "index" Node as an IIndex. All methods operate on the
+ * underlying adapted Node.
  */
-public class Index extends Node implements IIndex {
+public class Index extends NodeAdapter implements IIndex {
     
-	private IIndexEntry[] entries;
+	public static final String NAME = "index"; //$NON-NLS-1$
+
+	/*
+	 * Constructs a new index adapter for an empty index node.
+	 */
+	public Index() {
+		super();
+		setName(NAME);
+	}
 	
+	/*
+	 * Constructs a new index adapter for the given index node.
+	 */
+	public Index(Node node) {
+		super(node);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.IIndex#getEntries()
+	 */
 	public IIndexEntry[] getEntries() {
-		if (entries == null) {
-			INode[] children = getChildren();
-			if (children.length > 0) {
-				List list = new ArrayList();
-				for (int i=0;i<children.length;++i) {
-					if (children[i] instanceof IIndexEntry) {
-						list.add(children[i]);
-					}
-				}
-				entries = (IIndexEntry[])list.toArray(new IIndexEntry[list.size()]);
-			}
-			else {
-				entries = new IIndexEntry[0];
-			}
-		}
-		return entries;
+		return (IndexEntry[])getChildren(IndexEntry.NAME, IndexEntry.class);
 	}
 }
