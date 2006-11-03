@@ -205,7 +205,7 @@ public class ContentProposalAdapter {
 					}
 					// Traversal does not contain a character. Set doit true
 					// to indicate TRAVERSE_NONE will occur and that no key
-					// event will be triggered. We will check for navigation 
+					// event will be triggered. We will check for navigation
 					// keys below.
 					e.detail = SWT.TRAVERSE_NONE;
 					e.doit = true;
@@ -215,7 +215,7 @@ public class ContentProposalAdapter {
 					e.doit = propagateKeys;
 				}
 
-				// No character. Check for navigation keys. 
+				// No character. Check for navigation keys.
 
 				if (key == 0) {
 					int newSelection = proposalTable.getSelectionIndex();
@@ -228,10 +228,10 @@ public class ContentProposalAdapter {
 							newSelection = proposalTable.getItemCount() - 1;
 						}
 						// Not typical - usually we get this as a Traverse and
-						// therefore it never propagates.  Added for consistency.
+						// therefore it never propagates. Added for consistency.
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 
 						break;
@@ -242,10 +242,10 @@ public class ContentProposalAdapter {
 							newSelection = 0;
 						}
 						// Not typical - usually we get this as a Traverse and
-						// therefore it never propagates.  Added for consistency.
+						// therefore it never propagates. Added for consistency.
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 
 						break;
@@ -257,7 +257,7 @@ public class ContentProposalAdapter {
 						}
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 						break;
 
@@ -268,7 +268,7 @@ public class ContentProposalAdapter {
 						}
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 						break;
 
@@ -276,7 +276,7 @@ public class ContentProposalAdapter {
 						newSelection = 0;
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 						break;
 
@@ -284,24 +284,26 @@ public class ContentProposalAdapter {
 						newSelection = proposalTable.getItemCount() - 1;
 						if (e.type == SWT.KeyDown) {
 							// don't propagate to control
-							e.doit = false;		
+							e.doit = false;
 						}
 						break;
-						
-					// If received as a Traverse, these should propagate 
-				    // to the control as keydown.  If received as a keydown,
-				    // proposals should be recomputed since the cursor
-				    // position has changed.
+
+					// If received as a Traverse, these should propagate
+					// to the control as keydown. If received as a keydown,
+					// proposals should be recomputed since the cursor
+					// position has changed.
 					case SWT.ARROW_LEFT:
 					case SWT.ARROW_RIGHT:
 						if (e.type == SWT.Traverse) {
 							e.doit = false;
 						} else {
 							e.doit = true;
-							String contents = getControlContentAdapter().getControlContents(
-									getControl());
-							// If there are no contents, changes in cursor position 
-							// have no effect.  Note also that we do not affect the filter
+							String contents = getControlContentAdapter()
+									.getControlContents(getControl());
+							// If there are no contents, changes in cursor
+							// position
+							// have no effect. Note also that we do not affect
+							// the filter
 							// text on ARROW_LEFT as we would with BS.
 							if (contents.length() > 0) {
 								asyncRecomputeProposals(filterText);
@@ -367,13 +369,15 @@ public class ContentProposalAdapter {
 						asyncRecomputeProposals(filterText);
 						return;
 					}
-					// There is no filtering provided by us, but some 
+					// There is no filtering provided by us, but some
 					// clients provide their own filtering based on content.
 					// Recompute the proposals if the cursor position
-					// will change (is not at 0).  
-					int pos = getControlContentAdapter().getCursorPosition(getControl());
+					// will change (is not at 0).
+					int pos = getControlContentAdapter().getCursorPosition(
+							getControl());
 					// We rely on the fact that the contents and pos do not yet
-					// reflect the result of the BS.  If the contents were already empty, then BS should not cause
+					// reflect the result of the BS. If the contents were
+					// already empty, then BS should not cause
 					// a recompute.
 					if (pos > 0) {
 						asyncRecomputeProposals(filterText);
@@ -574,10 +578,11 @@ public class ContentProposalAdapter {
 					false, false, null, infoText);
 			this.proposals = proposals;
 		}
+
 		/*
-		 * Overridden to force change of colors.
-		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=136244
-		 * (non-Javadoc)
+		 * Overridden to force change of colors. See
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=136244 (non-Javadoc)
+		 * 
 		 * @see org.eclipse.jface.dialogs.PopupDialog#createContents(org.eclipse.swt.widgets.Composite)
 		 */
 		protected Control createContents(Composite parent) {
@@ -585,9 +590,9 @@ public class ContentProposalAdapter {
 			changeDefaultColors(parent);
 			return contents;
 		}
-		
+
 		/*
-		 * Set the colors of the popup.  The contents have already been created.
+		 * Set the colors of the popup. The contents have already been created.
 		 */
 		private void changeDefaultColors(Control control) {
 			applyForegroundColor(getShell().getDisplay().getSystemColor(
@@ -628,7 +633,7 @@ public class ContentProposalAdapter {
 
 				public void widgetSelected(SelectionEvent e) {
 					// If a proposal has been selected, show it in the secondary
-					// popup.  Otherwise close the popup.
+					// popup. Otherwise close the popup.
 					if (e.item == null) {
 						if (infoPopup != null) {
 							infoPopup.close();
@@ -876,8 +881,8 @@ public class ContentProposalAdapter {
 		}
 
 		/*
-		 * Show the currently selected proposal's description in a 
-		 * secondary popup.
+		 * Show the currently selected proposal's description in a secondary
+		 * popup.
 		 */
 		private void showProposalDescription() {
 			// If we do not already have a pending update, then
@@ -909,7 +914,8 @@ public class ContentProposalAdapter {
 											infoPopup = new InfoPopupDialog(
 													getShell());
 											infoPopup.open();
-											infoPopup.getShell()
+											infoPopup
+													.getShell()
 													.addDisposeListener(
 															new DisposeListener() {
 																public void widgetDisposed(
@@ -918,7 +924,8 @@ public class ContentProposalAdapter {
 																}
 															});
 										}
-										infoPopup.setContents(p.getDescription());
+										infoPopup.setContents(p
+												.getDescription());
 									} else if (infoPopup != null) {
 										infoPopup.close();
 									}
@@ -953,7 +960,7 @@ public class ContentProposalAdapter {
 		 * caches. Repopulate the popup if it is open.
 		 */
 		private void recomputeProposals(String filterText) {
-			IContentProposal [] allProposals = getProposals();
+			IContentProposal[] allProposals = getProposals();
 			// If the non-filtered proposal list is empty, we should
 			// close the popup.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
@@ -1175,11 +1182,10 @@ public class ContentProposalAdapter {
 	 * The delay in milliseconds used when autoactivating the popup.
 	 */
 	private int autoActivationDelay = 0;
-	
+
 	/*
-	 * A boolean indicating whether a keystroke has been received.  
-	 * Used to see if an autoactivation delay was interrupted by 
-	 * a keystroke.
+	 * A boolean indicating whether a keystroke has been received. Used to see
+	 * if an autoactivation delay was interrupted by a keystroke.
 	 */
 	private boolean receivedKeyDown;
 
@@ -1424,25 +1430,25 @@ public class ContentProposalAdapter {
 
 	/**
 	 * Set the integer style that indicates how keystrokes affect the content of
-	 * the proposal popup while it is open.  Popup-based filtering is useful for
-	 * narrowing and navigating the list of proposals provided once the popup is 
-	 * open.  Filtering of the proposals will occur even when the control content
-	 * is not affected by user typing.  Note that automatic filtering is not used to
-	 * achieve content-sensitive filtering such as auto-completion. Filtering that is
-	 * sensitive to changes in the control content should be performed by the
-	 * supplied {@link IContentProposalProvider}.
+	 * the proposal popup while it is open. Popup-based filtering is useful for
+	 * narrowing and navigating the list of proposals provided once the popup is
+	 * open. Filtering of the proposals will occur even when the control content
+	 * is not affected by user typing. Note that automatic filtering is not used
+	 * to achieve content-sensitive filtering such as auto-completion. Filtering
+	 * that is sensitive to changes in the control content should be performed
+	 * by the supplied {@link IContentProposalProvider}.
 	 * 
 	 * @param filterStyle
-	 *            a constant indicating how keystrokes received in the proposal 
+	 *            a constant indicating how keystrokes received in the proposal
 	 *            popup affect filtering of the proposals shown.
-	 *            <code>FILTER_NONE</code> specifies that no automatic filtering 
-	 *            of the content proposal list will occur as keys are typed in the
-	 *            popup.
-	 *            <code>FILTER_CUMULATIVE</code> specifies that the content of
-	 *            the popup will be filtered by a string containing all the
-	 *            characters typed since the popup has been open.
-	 *            <code>FILTER_CHARACTER</code> specifies that the content of the
-	 *            popup will be filtered by the most recently typed character.
+	 *            <code>FILTER_NONE</code> specifies that no automatic
+	 *            filtering of the content proposal list will occur as keys are
+	 *            typed in the popup. <code>FILTER_CUMULATIVE</code> specifies
+	 *            that the content of the popup will be filtered by a string
+	 *            containing all the characters typed since the popup has been
+	 *            open. <code>FILTER_CHARACTER</code> specifies that the
+	 *            content of the popup will be filtered by the most recently
+	 *            typed character.
 	 */
 	public void setFilterStyle(int filterStyle) {
 		this.filterStyle = filterStyle;
@@ -1638,8 +1644,10 @@ public class ContentProposalAdapter {
 								autoActivate();
 							}
 						} else {
-							// No autoactivation occurred, so record the key down
-							// as a means to interrupt any autoactivation that is
+							// No autoactivation occurred, so record the key
+							// down
+							// as a means to interrupt any autoactivation that
+							// is
 							// pending.
 							receivedKeyDown = true;
 						}
@@ -1648,12 +1656,13 @@ public class ContentProposalAdapter {
 
 				// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377
 				// Given that we will close the popup when there are no valid
-			    // proposals, we must reopen it when there are.  Normally, the
+				// proposals, we must reopen it when there are. Normally, the
 				// keydown event handling will catch all the cases where it
-				// should reopen.  But when autoactivation should occur on all
-			    // content changes, we check it here after keys have been processed.
+				// should reopen. But when autoactivation should occur on all
+				// content changes, we check it here after keys have been
+				// processed.
 				case SWT.Modify:
-					if (triggerKeyStroke == null && autoActivateString  == null) {
+					if (triggerKeyStroke == null && autoActivateString == null) {
 						if (DEBUG) {
 							dump("Modify event triggers autoactivation", e); //$NON-NLS-1$
 						}
@@ -1702,19 +1711,19 @@ public class ContentProposalAdapter {
 
 	/**
 	 * Open the proposal popup and display the proposals provided by the
-	 * proposal provider. If there are no proposals to be shown, do not show
-	 * the popup.  This method returns immediately. That is, it does not
-	 * wait for the popup to open or a proposal to be selected.
+	 * proposal provider. If there are no proposals to be shown, do not show the
+	 * popup. This method returns immediately. That is, it does not wait for the
+	 * popup to open or a proposal to be selected.
 	 * 
-	 * @param autoActivated a boolean indicating whether the popup was
-	 * autoactivated.  If false, a beep will sound when no proposals
-	 * can be shown.
+	 * @param autoActivated
+	 *            a boolean indicating whether the popup was autoactivated. If
+	 *            false, a beep will sound when no proposals can be shown.
 	 */
 	private void openProposalPopup(boolean autoActivated) {
 		if (isValid()) {
 			if (popup == null) {
 				// Check whether there are any proposals to be shown.
-				recordCursorPosition();  // must be done before getting proposals
+				recordCursorPosition(); // must be done before getting proposals
 				IContentProposal[] proposals = getProposals();
 				if (proposals.length > 0) {
 					if (DEBUG) {
@@ -1734,16 +1743,30 @@ public class ContentProposalAdapter {
 			}
 		}
 	}
-	
+
 	/**
 	 * Open the proposal popup and display the proposals provided by the
 	 * proposal provider. This method returns immediately. That is, it does not
-	 * wait for a proposal to be selected.  This method is used by subclasses
-	 * to explicitly invoke the opening of the popup.  If there are no proposals
-	 * to show, the popup will not open and a beep will be sounded.
+	 * wait for a proposal to be selected. This method is used by subclasses to
+	 * explicitly invoke the opening of the popup. If there are no proposals to
+	 * show, the popup will not open and a beep will be sounded.
 	 */
 	protected void openProposalPopup() {
 		openProposalPopup(false);
+	}
+
+	/**
+	 * Close the proposal popup without accepting a proposal. This method
+	 * returns immediately, and has no effect if the proposal popup was not
+	 * open. This method is used by subclasses to explicitly close the popup
+	 * based on additional logic.
+	 * 
+	 * @since 3.3
+	 */
+	protected void closeProposalPopup() {
+		if (popup != null) {
+			popup.close();
+		}
 	}
 
 	/*
@@ -1823,10 +1846,10 @@ public class ContentProposalAdapter {
 
 		}
 	}
-	
+
 	/*
-	 * Get the proposals from the proposal provider. 
-	 * Gets all of the proposals without doing any filtering.
+	 * Get the proposals from the proposal provider. Gets all of the proposals
+	 * without doing any filtering.
 	 */
 	private IContentProposal[] getProposals() {
 		if (proposalProvider == null || !isValid()) {
@@ -1839,14 +1862,14 @@ public class ContentProposalAdapter {
 		}
 		String contents = getControlContentAdapter().getControlContents(
 				getControl());
-		IContentProposal[] proposals = proposalProvider.getProposals(
-				contents, position);
+		IContentProposal[] proposals = proposalProvider.getProposals(contents,
+				position);
 		return proposals;
 	}
-	
+
 	/**
-	 * Autoactivation has been triggered.
-	 * Open the popup using any specified delay.
+	 * Autoactivation has been triggered. Open the popup using any specified
+	 * delay.
 	 */
 	private void autoActivate() {
 		if (autoActivationDelay > 0) {
@@ -1860,12 +1883,11 @@ public class ContentProposalAdapter {
 					if (!isValid() || receivedKeyDown) {
 						return;
 					}
-					getControl().getDisplay().syncExec(
-							new Runnable() {
-								public void run() {
-									openProposalPopup(true);
-								}
-							});
+					getControl().getDisplay().syncExec(new Runnable() {
+						public void run() {
+							openProposalPopup(true);
+						}
+					});
 				}
 			};
 			Thread t = new Thread(runnable);
@@ -1877,14 +1899,13 @@ public class ContentProposalAdapter {
 			// some event that will cause the cursor position or
 			// other important info to change as a result of this
 			// event occurring.
-			getControl().getDisplay().asyncExec(
-					new Runnable() {
-						public void run() {
-							if (isValid()) {
-								openProposalPopup(true);
-							}
-						}
-					});
+			getControl().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (isValid()) {
+						openProposalPopup(true);
+					}
+				}
+			});
 		}
 	}
 }
