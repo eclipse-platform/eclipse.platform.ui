@@ -33,24 +33,29 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 public class ProjectDescription extends ContainerDescription {
 
 	private IProjectDescription projectDescription;
+	private boolean openOnCreate = true;
 
 	/**
 	 * Create a project description from a specified project.
 	 * 
 	 * @param project
-	 *            The project to be described. The project must exist and be
-	 *            open.
+	 *            The project to be described. The project must exist.
 	 */
 	public ProjectDescription(IProject project) {
 		super(project);
-		Assert.isLegal(project.isAccessible());
-		try {
-			this.projectDescription = project.getDescription();
-		} catch (CoreException e) {
-			// Eat this exception because it only occurs when the project
-			// is not accessible and we have already checked this. We
-			// don't want to propagate the CoreException into the constructor
-			// API.
+		Assert.isLegal(project.exists());
+		if (project.isOpen()) {
+			try {
+				this.projectDescription = project.getDescription();
+			} catch (CoreException e) {
+				// Eat this exception because it only occurs when the project
+				// is not accessible and we have already checked this. We
+				// don't want to propagate the CoreException into the
+				// constructor
+				// API.
+			}
+		} else {
+			openOnCreate = false;
 		}
 	}
 
@@ -100,8 +105,10 @@ public class ProjectDescription extends ContainerDescription {
 		if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
-		projectHandle.open(IResource.BACKGROUND_REFRESH,
-				new SubProgressMonitor(monitor, 100));
+		if (openOnCreate) {
+			projectHandle.open(IResource.BACKGROUND_REFRESH,
+					new SubProgressMonitor(monitor, 100));
+		}
 		monitor.done();
 	}
 
@@ -111,7 +118,10 @@ public class ProjectDescription extends ContainerDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#getName()
 	 */
 	public String getName() {
-		return projectDescription.getName();
+		if (projectDescription != null) {
+			return projectDescription.getName();
+		}
+		return super.getName();
 	}
 
 	/*
@@ -121,27 +131,10 @@ public class ProjectDescription extends ContainerDescription {
 	 */
 	public boolean verifyExistence(boolean checkMembers) {
 		// We can only check members if the project is open.
-		if (checkMembers && members.length > 0) {
-			boolean existence;
-			IProject projectHandle = (IProject) createResourceHandle();
-			if (projectHandle.exists()) {
-				try {
-					boolean open = projectHandle.isOpen();
-					if (!open) {
-						projectHandle.open(null);
-					}
-					existence = super.verifyExistence(checkMembers);
-					if (!open) {
-						projectHandle.close(null);
-					}
-				} catch (CoreException e) {
-					existence = false;
-				}
-				return existence;
-			}
-			return false;
+		IProject projectHandle = (IProject) createResourceHandle();
+		if (projectHandle.isAccessible()) {
+			return super.verifyExistence(checkMembers);
 		}
-		return super.verifyExistence(checkMembers);
-
+		return super.verifyExistence(false);
 	}
 }
