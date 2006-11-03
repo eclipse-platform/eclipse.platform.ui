@@ -22,6 +22,7 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
@@ -400,6 +401,39 @@ public class ControlDecoration {
 	}
 
 	/**
+	 * Construct a ControlDecoration for decorating the specified control at the
+	 * specified position. The decoration to be displayed will be specified at a
+	 * later time.
+	 * <p>
+	 * SWT constants are used to specify the position of the decoration relative
+	 * to the control. The position should include style bits describing both
+	 * the vertical and horizontal orientation. <code>SWT.LEFT</code> and
+	 * <code>SWT.RIGHT</code> describe the horizontal placement of the
+	 * decoration relative to the control, and the constants
+	 * <code>SWT.TOP</code>, <code>SWT.CENTER</code>, and
+	 * <code>SWT.BOTTOM</code> describe the vertical alignment of the
+	 * decoration relative to the control. Decorations always appear on either
+	 * the left or right side of the control, never above or below it. For
+	 * example, a decoration appearing on the left side of the field, at the
+	 * top, is specified as SWT.LEFT | SWT.TOP. If no position style bits are
+	 * specified, the control decoration will be positioned to the left and
+	 * center of the control (<code>SWT.LEFT | SWT.CENTER</code>).
+	 * </p>
+	 * 
+	 * @param control
+	 *            the control to be decorated
+	 * @param position
+	 *            bit-wise or of position constants (<code>SWT.TOP</code>,
+	 *            <code>SWT.BOTTOM</code>, <code>SWT.LEFT</code>,
+	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
+	 * 
+	 * @see #setDecoration(FieldDecoration)
+	 */
+	public ControlDecoration(Control control, int position) {
+		this(control, null, position);
+	}
+
+	/**
 	 * Get the control that is decorated by the receiver.
 	 * 
 	 * @return the Control decorated by the receiver.
@@ -444,7 +478,7 @@ public class ControlDecoration {
 				Control control = (Control) event.widget;
 				Rectangle rect = getDecorationRectangle(control);
 				if (shouldShowDecoration()) {
-					event.gc.drawImage(decoration.getImage(), rect.x, rect.y);
+					event.gc.drawImage(getImage(), rect.x, rect.y);
 				}
 			}
 		};
@@ -483,7 +517,7 @@ public class ControlDecoration {
 				if (showHover) {
 					decorationRectangle = getDecorationRectangle((Control) event.widget);
 					if (decorationRectangle.contains(event.x, event.y)) {
-						showHoverText(decoration.getDescription());
+						showHoverText(getDescriptionText());
 						Control target = (Control) event.widget;
 						if (moveListeningTarget == null) {
 							printAddListener(target, "MOUSEMOVE"); //$NON-NLS-1$
@@ -538,6 +572,9 @@ public class ControlDecoration {
 	 *            if no text should be shown.
 	 */
 	public void showHoverText(String text) {
+		if (control == null) {
+			return;
+		}
 		showHoverText(text, control);
 	}
 
@@ -687,14 +724,17 @@ public class ControlDecoration {
 	 * the hover text if appropriate.
 	 */
 	protected void update() {
+		if (control == null) {
+			return;
+		}
 		Rectangle rect = getDecorationRectangle(control.getShell());
 		// Redraw this rectangle in all children
 		control.getShell()
 				.redraw(rect.x, rect.y, rect.width, rect.height, true);
 		control.getShell().update();
-		if (hover != null && decoration.getDescription() != null) {
-			hover.setText(decoration.getDescription(),
-					getDecorationRectangle(control.getParent()), control);
+		if (hover != null && getDescriptionText() != null) {
+			hover.setText(getDescriptionText(), getDecorationRectangle(control
+					.getParent()), control);
 		}
 	}
 
@@ -712,6 +752,12 @@ public class ControlDecoration {
 			hideHover();
 			return;
 		}
+		
+		// If there is no control, nothing to do
+		if (control == null) {
+			return;
+		}
+		// Create the hover if it's not showing
 		if (hover == null) {
 			hover = new Hover(hoverNear.getShell());
 		}
@@ -726,6 +772,7 @@ public class ControlDecoration {
 	private void dispose() {
 		if (hover != null) {
 			hover.dispose();
+			hover = null;
 		}
 		removeControlListeners();
 	}
@@ -734,6 +781,9 @@ public class ControlDecoration {
 	 * Remove any listeners installed on the controls.
 	 */
 	private void removeControlListeners() {
+		if (control == null) {
+			return;
+		}
 		printRemoveListener(control, "FOCUS"); //$NON-NLS-1$
 		control.removeFocusListener(focusListener);
 		focusListener = null;
@@ -782,11 +832,11 @@ public class ControlDecoration {
 	 * is null, return the rectangle in display coordinates.
 	 */
 	protected Rectangle getDecorationRectangle(Control targetControl) {
-		if (decoration == null || decoration.getImage() == null) {
+		if (getImage() == null || control == null) {
 			return new Rectangle(0, 0, 0, 0);
 		}
 		// Compute the bounds first relative to the control's parent.
-		Rectangle imageBounds = decoration.getImage().getBounds();
+		Rectangle imageBounds = getImage().getBounds();
 		Rectangle controlBounds = control.getBounds();
 		int x, y;
 		// Compute x
@@ -827,8 +877,7 @@ public class ControlDecoration {
 		if (!visible) {
 			return false;
 		}
-		if (control == null || control.isDisposed() || decoration == null
-				|| decoration.getImage() == null) {
+		if (control == null || control.isDisposed() || getImage() == null) {
 			return false;
 		}
 		if (showOnlyOnFocus) {
@@ -857,5 +906,25 @@ public class ControlDecoration {
 			System.out
 					.println("Removed listener>>>" + listenerType + " from>>>" + widget); //$NON-NLS-1$//$NON-NLS-2$
 		}
+	}
+
+	/*
+	 * Get the image that should be shown. May be null.
+	 */
+	private Image getImage() {
+		if (decoration == null) {
+			return null;
+		}
+		return decoration.getImage();
+	}
+
+	/*
+	 * Get the description text that should be shown. May be null.
+	 */
+	private String getDescriptionText() {
+		if (decoration == null) {
+			return null;
+		}
+		return decoration.getDescription();
 	}
 }
