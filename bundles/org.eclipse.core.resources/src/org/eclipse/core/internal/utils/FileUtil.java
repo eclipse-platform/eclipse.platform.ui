@@ -113,9 +113,21 @@ public class FileUtil {
 			return false;
 		if (EFS.SCHEME_FILE.equals(scheme1) && EFS.SCHEME_FILE.equals(scheme2))
 			return computeOverlap(URIUtil.toPath(location1), URIUtil.toPath(location2), bothDirections);
-		String string1 = location1.toString();
-		String string2 = location2.toString();
-		return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
+		IFileSystem system = null;
+		try {
+			system = EFS.getFileSystem(scheme1);
+		} catch (CoreException e) {
+			//handled below
+		}
+		if (system == null) {
+			//we are stuck with string comparison
+			String string1 = location1.toString();
+			String string2 = location2.toString();
+			return string1.startsWith(string2) || (bothDirections && string2.startsWith(string1));
+		}
+		IFileStore store1 = system.getStore(location1);
+		IFileStore store2 = system.getStore(location2);
+		return store1.equals(store2) || store1.isParentOf(store2) || (bothDirections && store2.isParentOf(store1));
 	}
 
 	/**
