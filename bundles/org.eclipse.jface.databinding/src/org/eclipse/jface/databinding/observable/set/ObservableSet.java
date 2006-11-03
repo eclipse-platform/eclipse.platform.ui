@@ -94,9 +94,6 @@ public abstract class ObservableSet extends AbstractObservable implements
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || setChangeListeners!=null;
 	}

@@ -12,16 +12,11 @@
 package org.eclipse.jface.databinding.observable.map;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.databinding.observable.AbstractObservable;
-import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
 import org.eclipse.jface.databinding.observable.Realm;
 
@@ -33,7 +28,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	private ListenerList mapChangeListeners = new ListenerList();
 	
-	private Map wrappedMap;
+	protected Map wrappedMap;
 
 	private boolean stale = false;
 	
@@ -106,26 +101,6 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		return wrappedMap.keySet();
 	}
 
-	public Object put(Object key, Object value) {
-		ObservableTracker.getterCalled(this);
-		Object result = wrappedMap.put(key, value);
-		if (result==null) {
-			fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
-		} else {
-			fireMapChange(Diffs.createMapDiffSingleChange(key, value, result));
-		}
-		return result;
-	}
-
-	public Object remove(Object key) {
-		ObservableTracker.getterCalled(this);
-		Object result = wrappedMap.remove(key);
-		if (result!=null) {
-			fireMapChange(Diffs.createMapDiffSingleRemove(key, result));
-		}
-		return result;
-	}
-
 	public int size() {
 		ObservableTracker.getterCalled(this);
 		return wrappedMap.size();
@@ -134,28 +109,6 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	public Collection values() {
 		ObservableTracker.getterCalled(this);
 		return wrappedMap.values();
-	}
-
-	public void clear() {
-		Map copy = new HashMap(wrappedMap.size());
-		copy.putAll(wrappedMap);
-		wrappedMap.clear();
-		fireMapChange(Diffs.createMapDiffRemoveAll(copy));
-	}
-
-	public void putAll(Map map) {
-		Set addedKeys = new HashSet(map.size());
-		Map changes = new HashMap(map.size());
-		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {
-			Map.Entry entry = (Entry) it.next();
-			Object previousValue = wrappedMap.put(entry.getKey(), entry.getValue());
-			if (previousValue==null) {
-				addedKeys.add(entry.getKey());
-			} else {
-				changes.put(entry.getKey(), previousValue);
-			}
-		}
-		fireMapChange(Diffs.createMapDiff(addedKeys, Collections.EMPTY_SET, changes.keySet(), changes, wrappedMap));
 	}
 
 	/**
@@ -177,6 +130,22 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		if (!wasStale && stale) {
 			fireStale();
 		}
+	}
+
+	public Object put(Object key, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	public Object remove(Object key) {
+		throw new UnsupportedOperationException();
+	}
+
+	public void clear() {
+		throw new UnsupportedOperationException();
+	}
+
+	public void putAll(Map arg0) {
+		throw new UnsupportedOperationException();
 	}
 
 }

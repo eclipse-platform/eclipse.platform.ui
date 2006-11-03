@@ -20,7 +20,6 @@ Export-Package: org.eclipse.jface.databinding,
  org.eclipse.jface.internal.databinding.internal.observable;x-internal:=true,
  org.eclipse.jface.internal.databinding.provisional.conversion;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.factories;x-internal:=false,
- org.eclipse.jface.internal.databinding.provisional.observable.mapping;x-internal:=false,
  org.eclipse.jface.internal.databinding.provisional.validation;x-internal:=false
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)";resolution:=optional

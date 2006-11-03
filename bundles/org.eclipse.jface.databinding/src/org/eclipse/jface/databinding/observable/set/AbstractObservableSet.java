@@ -97,9 +97,6 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 
 	protected abstract Set getWrappedSet();
 	
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || setChangeListeners!=null;
 	}
