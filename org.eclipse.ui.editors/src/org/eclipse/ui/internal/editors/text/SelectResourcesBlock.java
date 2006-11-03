@@ -231,6 +231,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		tree.setFont(parent.getFont());
 
 		treeViewer= new CheckboxTreeViewer(tree);
+		treeViewer.setUseHashlookup(true);
 		treeViewer.setContentProvider(treeContentProvider);
 		treeViewer.setLabelProvider(treeLabelProvider);
 		treeViewer.addTreeListener(this);
