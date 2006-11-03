@@ -35,7 +35,7 @@ public class MemoryFileStore extends FileStore {
 		return names == null ? EMPTY_STRING_ARRAY : names;
 	}
 
-	public void delete(int options, IProgressMonitor monitor) throws CoreException {
+	public void delete(int options, IProgressMonitor monitor) {
 		TREE.delete(path);
 	}
 
