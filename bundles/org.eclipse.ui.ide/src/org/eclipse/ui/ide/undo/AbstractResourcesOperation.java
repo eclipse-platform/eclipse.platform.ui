@@ -139,16 +139,25 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 * caller (such as the action that creates the operation) so that the user
 	 * is not continually prompted or warned about conditions that were
 	 * acceptable at the time of original execution.
+	 * 
+	 * @param allowOverwrite
+	 *            a boolean that specifies whether resource creation should be
+	 *            allowed to overwrite an existent resource.
 	 */
-	protected IStatus computeCreateStatus() {
+	protected IStatus computeCreateStatus(boolean allowOverwrite) {
 		if (resourceDescriptions == null || resourceDescriptions.length == 0) {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_NotEnoughInfo);
 		}
 		for (int i = 0; i < resourceDescriptions.length; i++) {
+			// Check for enough info to restore the resource
 			if (!resourceDescriptions[i].isValid()) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
+			} else if (!allowOverwrite && resourceDescriptions[i].verifyExistence(false)) {
+				// overwrites are not allowed and the resource already exists
+				markInvalid();
+				return getErrorStatus(UndoMessages.AbstractResourcesOperation_ResourcesAlreadyExist);
 			}
 		}
 		return Status.OK_STATUS;
@@ -240,12 +249,14 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 	 *         specified in the receiver.
 	 */
 	protected ISchedulingRule computeDeleteSchedulingRule() {
-		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length*2];
+		ISchedulingRule[] ruleArray = new ISchedulingRule[resources.length * 2];
 		for (int i = 0; i < resources.length; i++) {
-			ruleArray[i*2] = getWorkspaceRuleFactory().deleteRule(resources[i]);
+			ruleArray[i * 2] = getWorkspaceRuleFactory().deleteRule(
+					resources[i]);
 			// we include a modify rule because we may have to open a project
 			// to record its resources before deleting it.
-			ruleArray[i*2+1] = getWorkspaceRuleFactory().modifyRule(resources[i]);
+			ruleArray[i * 2 + 1] = getWorkspaceRuleFactory().modifyRule(
+					resources[i]);
 		}
 		return MultiRule.combine(ruleArray);
 

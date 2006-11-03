@@ -280,7 +280,7 @@ public class CopyResourcesOperation extends
 		// recreate them?
 		if (status.isOK() && resourceDescriptions != null
 				&& resourceDescriptions.length > 0) {
-			status = computeCreateStatus();
+			status = computeCreateStatus(true);
 		}
 
 		return status;

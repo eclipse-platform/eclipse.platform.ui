@@ -133,7 +133,7 @@ abstract class AbstractCreateResourcesOperation extends
 	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeExecutionStatus(monitor);
 		if (status.isOK()) {
-			status = computeCreateStatus();
+			status = computeCreateStatus(true);
 		}
 		return status;
 	}
@@ -163,7 +163,7 @@ abstract class AbstractCreateResourcesOperation extends
 	public IStatus computeRedoableStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeRedoableStatus(monitor);
 		if (status.isOK()) {
-			status = computeCreateStatus();
+			status = computeCreateStatus(true);
 		}
 		return status;
 	}

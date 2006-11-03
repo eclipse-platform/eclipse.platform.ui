@@ -1953,4 +1953,20 @@ public class WorkspaceOperationsTests extends UITestCase {
 		// The operation should know that undoing is dangerous
 		undoExpectFail(op);
 	}
+	
+	public void test162655() throws ExecutionException, CoreException {
+		DeleteResourcesOperation op = new DeleteResourcesOperation(
+				new IResource[] { testProject }, "testProjectDelete", false);
+		execute(op);
+		assertFalse("Project delete failed", testProject.exists());
+		
+		// recreate outside the scope of undo
+		testProject = getWorkspace().getRoot().getProject(TEST_PROJECT_NAME);
+		testProject.create(getMonitor());
+		testProject.open(getMonitor());
+		assertTrue("Project creation failed", testProject.exists());
+	
+		// Now that project exists again, the undo should fail.
+		undoExpectFail(op);
+	}
 }

@@ -161,7 +161,10 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	public IStatus computeUndoableStatus(IProgressMonitor monitor) {
 		IStatus status = super.computeUndoableStatus(monitor);
 		if (status.isOK()) {
-			status = computeCreateStatus();
+			// Recreating should not allow overwriting anything that is there,
+			// because we have no way to restore it.
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=162655
+			status = computeCreateStatus(false);
 		}
 		return status;
 	}

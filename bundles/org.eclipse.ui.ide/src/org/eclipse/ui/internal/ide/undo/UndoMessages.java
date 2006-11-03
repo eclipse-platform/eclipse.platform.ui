@@ -38,6 +38,7 @@ public class UndoMessages extends NLS {
 	public static String AbstractWorkspaceOperation_GenericWarningMessage;
 	
 	public static String AbstractResourcesOperation_ResourcesDoNotExist;
+	public static String AbstractResourcesOperation_ResourcesAlreadyExist;
 	public static String AbstractResourcesOperation_NotEnoughInfo;
 	public static String AbstractResourcesOperation_InvalidRestoreInfo;
 	public static String AbstractResourcesOperation_DeleteResourcesProgress;
