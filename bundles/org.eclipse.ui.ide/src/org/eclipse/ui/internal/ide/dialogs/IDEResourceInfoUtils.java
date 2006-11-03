@@ -124,7 +124,8 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (info.exists()) {
-			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
+			DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG,
+					DateFormat.MEDIUM);
 			return format.format(new Date(info.getLastModified()));
 		}
 		return NOT_EXIST_TEXT;
@@ -222,14 +223,15 @@ public class IDEResourceInfoUtils {
 
 		IFileStore store = getFileStore(location);
 		//don't access the file system for closed projects (bug 151089)
-		if (isProjectAccessible(resource) && resolvedLocation != null && !isPathVariable(resource)) {
+		if (isProjectAccessible(resource) && resolvedLocation != null
+				&& !isPathVariable(resource)) {
 			// No path variable used. Display the file not exist message
 			// in the location. Fixes bug 33318.
 			if (store == null) {
 				return UNKNOWN_LABEL;
 			}
 			if (!store.fetchInfo().exists()) {
-				return NLS.bind(FILE_NOT_EXIST_TEXT, location.toString());
+				return NLS.bind(FILE_NOT_EXIST_TEXT, store.toString());
 			}
 		}
 		if (store != null) {
@@ -316,7 +318,8 @@ public class IDEResourceInfoUtils {
 	 * @param description
 	 * @return String
 	 */
-	public static String getTypeString(IResource resource, IContentDescription description) {
+	public static String getTypeString(IResource resource,
+			IContentDescription description) {
 
 		if (resource.getType() == IResource.FILE) {
 			if (resource.isLinked()) {
@@ -326,7 +329,8 @@ public class IDEResourceInfoUtils {
 			if (resource instanceof IFile) {
 				String contentType = getContentTypeString(description);
 				if (contentType != null) {
-					return MessageFormat.format(FILE_TYPE_FORMAT, new String[] {contentType});
+					return MessageFormat.format(FILE_TYPE_FORMAT,
+							new String[] { contentType });
 				}
 			}
 			return FILE_LABEL;
@@ -393,7 +397,8 @@ public class IDEResourceInfoUtils {
 	 * @param monitor
 	 * @return IFileStore[]
 	 */
-	public static IFileStore[] listFileStores(IFileStore store, IFileStoreFilter fileFilter, IProgressMonitor monitor) {
+	public static IFileStore[] listFileStores(IFileStore store,
+			IFileStoreFilter fileFilter, IProgressMonitor monitor) {
 		ArrayList result = new ArrayList();
 		IFileStore[] children;
 		try {
