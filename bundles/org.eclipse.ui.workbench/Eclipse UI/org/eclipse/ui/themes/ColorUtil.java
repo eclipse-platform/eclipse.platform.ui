@@ -12,6 +12,7 @@ package org.eclipse.ui.themes;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.SWT;
@@ -26,6 +27,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public final class ColorUtil {
 
+	private static Field[] cachedFields;
+	
 	/**
 	 * Process the given string and return a corresponding RGB object.
 	 * 
@@ -35,18 +38,12 @@ public final class ColorUtil {
 	 *         if it could not be determined
 	 */
 	private static RGB process(String value) {
+		Field [] fields = getFields();
 		try {
-			Class clazz = SWT.class;
-			Field[] fields = clazz.getDeclaredFields();
 			for (int i = 0; i < fields.length; i++) {
 				Field field = fields[i];
-				if (field.getType() == Integer.TYPE
-						&& Modifier.isStatic(field.getModifiers())
-						&& Modifier.isPublic(field.getModifiers())
-						&& Modifier.isFinal(field.getModifiers())) {
-					if (value.equals(field.getName())) {
-						return getSystemColor(field.getInt(null));
-					}
+				if (field.getName().equals(value)) {
+					return getSystemColor(field.getInt(null));
 				}
 			}
 		} catch (IllegalArgumentException e) {
@@ -57,6 +54,34 @@ public final class ColorUtil {
 			// getInt(null)
 		}
 		return getSystemColor(SWT.COLOR_BLACK);
+	}
+
+	/**
+	 * Get the SWT constant fields.
+	 * 
+	 * @return the fields
+	 * @since 3.3
+	 */
+	private static Field[] getFields() {
+		if (cachedFields == null) {
+			Class clazz = SWT.class;		
+			Field[] allFields = clazz.getDeclaredFields();
+			ArrayList applicableFields = new ArrayList(allFields.length);
+			
+			for (int i = 0; i < allFields.length; i++) {
+				Field field = allFields[i];
+				if (field.getType() == Integer.TYPE
+						&& Modifier.isStatic(field.getModifiers())
+						&& Modifier.isPublic(field.getModifiers())
+						&& Modifier.isFinal(field.getModifiers())
+						&& field.getName().startsWith("COLOR")) { //$NON-NLS-1$
+				
+					applicableFields.add(field);
+				}
+			}
+			cachedFields = (Field []) applicableFields.toArray(new Field [applicableFields.size()]);
+		}
+		return cachedFields;
 	}
 
 	/**
