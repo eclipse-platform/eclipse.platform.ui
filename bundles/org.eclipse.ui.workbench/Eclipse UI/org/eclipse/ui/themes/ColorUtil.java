@@ -42,7 +42,7 @@ public final class ColorUtil {
 		try {
 			for (int i = 0; i < fields.length; i++) {
 				Field field = fields[i];
-				if (value.equals(field.getName())) {
+				if (field.getName().equals(value)) {
 					return getSystemColor(field.getInt(null));
 				}
 			}
