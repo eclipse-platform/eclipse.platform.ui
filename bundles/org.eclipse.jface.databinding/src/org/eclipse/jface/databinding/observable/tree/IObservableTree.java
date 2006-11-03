@@ -31,6 +31,13 @@ import org.eclipse.jface.databinding.observable.IObservable;
  * @since 1.1
  */
 public interface IObservableTree extends IObservable {
+	
+	/**
+	 * Element that can be returned from synchronous getters if this observable
+	 * tree is lazy.
+	 */
+	public final static Object UNKNOWN_ELEMENT = new Object();
+	
 	/**
 	 * @param listener
 	 */
@@ -49,10 +56,90 @@ public interface IObservableTree extends IObservable {
 	 * @return true if the order of children for a given parent is important
 	 */
 	public boolean isOrdered();
+	
+	/**
+	 * Returns whether this tree is optimized to fetch subsets of children
+	 * lazily and possibly asynchronously. Implies {@link #isOrdered()}.
+	 * 
+	 * @return true if this tree 
+	 */
+	public boolean isLazy();
 
 	/**
 	 * @param parentPath
 	 * @return
 	 */
 	public Object[] getChildren(TreePath parentPath);
+	
+	/**
+	 * @param parentPath
+	 * @param children
+	 */
+	public void setChildren(TreePath parentPath, Object[] children);
+	
+	/**
+	 * @param parentPath
+	 * @param childElement
+	 */
+	public void addChild(TreePath parentPath, Object childElement);
+	
+	/**
+	 * @param parentPath
+	 * @param childElement 
+	 */
+	public void removeChild(TreePath parentPath, Object childElement);
+	
+	/**
+	 * @param parentPath
+	 * @param index
+	 * @param childElement
+	 */
+	public void insertChild(TreePath parentPath, int index, Object childElement);
+	
+	/**
+	 * @param parentPath
+	 * @param index
+	 */
+	public void removeChild(TreePath parentPath, int index);
+	
+	/**
+	 * @param parentPath
+	 * @return
+	 */
+	public boolean hasChildren(TreePath parentPath);
+	
+	/**
+	 * @param parentPath
+	 * @return
+	 */
+	public int getChildCount(TreePath parentPath);
+	
+	/**
+	 * @param parentPath
+	 * @param count
+	 */
+	public void setChildCount(TreePath parentPath, int count);
+	
+	/**
+	 * Updates the number of children for the given parent elements in the
+	 * specified request.
+	 * 
+	 * @param update specifies counts to update and stores result
+	 */
+	public void updateChildrenCount(IChildrenCountUpdate update);
+	
+	/**
+	 * Updates children as requested by the update.
+	 * 
+	 * @param update specifies children to update and stores result
+	 */	
+	public void updateChildren(IChildrenUpdate update);
+	
+	/**
+	 * Updates whether elements have children.
+	 * 
+	 * @param update specifies elements to update and stores result
+	 */
+	public void updateHasChildren(IHasChildrenUpdate update);
+
 }

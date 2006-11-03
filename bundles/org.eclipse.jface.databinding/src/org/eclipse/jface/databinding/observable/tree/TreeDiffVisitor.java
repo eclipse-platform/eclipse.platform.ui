@@ -29,5 +29,5 @@ public abstract class TreeDiffVisitor {
 	 * @return <code>true</code> if the tree diff's children should be
 	 *         visited; <code>false</code> if they should be skipped.
 	 */
-	public abstract boolean visit(TreeDiff diff, TreePath currentPath);
+	public abstract boolean visit(TreeDiffNode diff, TreePath currentPath);
 }

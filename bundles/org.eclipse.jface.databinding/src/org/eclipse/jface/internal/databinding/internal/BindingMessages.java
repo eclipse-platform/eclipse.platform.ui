@@ -24,6 +24,11 @@ public class BindingMessages {
 	 */
 	private static final ResourceBundle bundle = ResourceBundle
 			.getBundle("org.eclipse.jface.internal.databinding.internal.messages"); //$NON-NLS-1$
+	
+	/**
+	 * 
+	 */
+	public static final String INDEX_OUT_OF_RANGE = "index out of range"; //$NON-NLS-1$
 
 	/**
 	 * Returns the resource object with the given key in the resource bundle for
