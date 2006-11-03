@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +22,8 @@ import java.util.Set;
 import org.eclipse.help.Node;
 import org.eclipse.help.TocContribution;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
 
@@ -180,6 +183,8 @@ public class TocAssembler {
 					new NormalizeHandler(),
 					new LinkHandler(),
 					new AnchorHandler(),
+					new IncludeHandler(contribution.getLocale()),
+					new ExtensionHandler(contribution.getLocale()),
 				};
 			}
 			processor.setHandlers(handlers);
@@ -239,6 +244,26 @@ public class TocAssembler {
 	}
 	
 	/*
+	 * Adds the given extra documents to the contribution.
+	 */
+	private void addExtraDocuments(TocContribution contribution, String[] extraDocuments) {
+		if (extraDocuments.length > 0) {
+			String[] destExtraDocuments = contribution.getExtraDocuments();
+			String[] combinedExtraDocuments;
+			if (destExtraDocuments.length == 0) {
+				combinedExtraDocuments = extraDocuments;
+			}
+			else {
+				Set set = new HashSet();
+				set.addAll(Arrays.asList(destExtraDocuments));
+				set.addAll(Arrays.asList(extraDocuments));
+				combinedExtraDocuments = (String[])set.toArray(new String[set.size()]);
+			}
+			contribution.setExtraDocuments(combinedExtraDocuments);
+		}
+	}
+	
+	/*
 	 * Handler that resolves link elements (replaces the link element with
 	 * the linked-to toc's children.
 	 */
@@ -257,22 +282,7 @@ public class TocAssembler {
 							for (int i=0;i<children.length;++i) {
 								parent.insertBefore(copy(children[i]), node);
 							}
-							
-							// combine extra docs
-							String[] srcExtraDocuments = srcContribution.getExtraDocuments();
-							String[] destExtraDocuments = destContribution.getExtraDocuments();
-							if (srcExtraDocuments.length != 0) {
-								String[] combinedExtraDocuments;
-								if (destExtraDocuments.length == 0) {
-									combinedExtraDocuments = destExtraDocuments;
-								}
-								else {
-									combinedExtraDocuments = new String[destExtraDocuments.length + srcExtraDocuments.length];
-									System.arraycopy(srcExtraDocuments, 0, combinedExtraDocuments, 0, srcExtraDocuments.length);
-									System.arraycopy(destExtraDocuments, 0, combinedExtraDocuments, srcExtraDocuments.length, destExtraDocuments.length);
-								}
-								destContribution.setExtraDocuments(combinedExtraDocuments);
-							}
+							addExtraDocuments(destContribution, srcContribution.getExtraDocuments());
 						}
 						parent.removeChild(node);
 					}
@@ -295,35 +305,21 @@ public class TocAssembler {
 					String anchorId = node.getAttribute(ATTRIBUTE_ID);
 					if (anchorId != null) {
 						TocContribution destContribution = getContribution(id);
-						TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
-						for (int i=0;i<srcContributions.length;++i) {
-							process(srcContributions[i]);
-							Node[] children = srcContributions[i].getToc().getChildren();
-							for (int j=0;j<children.length;++j) {
-								parent.insertBefore(copy(children[j]), node);
-							}
-							
-							// combine extra docs
-							String[] srcExtraDocuments = srcContributions[i].getExtraDocuments();
-							String[] destExtraDocuments = destContribution.getExtraDocuments();
-							if (srcExtraDocuments.length != 0) {
-								String[] combinedExtraDocuments;
-								if (destExtraDocuments.length == 0) {
-									combinedExtraDocuments = destExtraDocuments;
+						if (destContribution != null) {
+							TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
+							for (int i=0;i<srcContributions.length;++i) {
+								process(srcContributions[i]);
+								Node[] children = srcContributions[i].getToc().getChildren();
+								for (int j=0;j<children.length;++j) {
+									parent.insertBefore(copy(children[j]), node);
 								}
-								else {
-									combinedExtraDocuments = new String[destExtraDocuments.length + srcExtraDocuments.length];
-									System.arraycopy(srcExtraDocuments, 0, combinedExtraDocuments, 0, srcExtraDocuments.length);
-									System.arraycopy(destExtraDocuments, 0, combinedExtraDocuments, srcExtraDocuments.length, destExtraDocuments.length);
-								}
-								destContribution.setExtraDocuments(combinedExtraDocuments);
+								addExtraDocuments(destContribution, srcContributions[i].getExtraDocuments());
 							}
 						}
-						parent.removeChild(node);
 					}
 				}
-				return HANDLED_SKIP;
 			}
+			// allow the extension handler to act on anchors afterwards
 			return UNHANDLED;
 		}
 	}
@@ -341,6 +337,13 @@ public class TocAssembler {
 					if (contribution != null) {
 						String pluginId = contribution.getContributorId();
 						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+					}
+					else {
+						int index = id.indexOf('/', 1);
+						if (index != -1) {
+							String pluginId = id.substring(1, index);
+							node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+						}
 					}
 				}
 				return HANDLED_CONTINUE;
