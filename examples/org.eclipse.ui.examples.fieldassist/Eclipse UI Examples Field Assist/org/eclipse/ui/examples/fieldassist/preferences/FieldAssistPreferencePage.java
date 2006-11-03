@@ -49,6 +49,55 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 	 * editor knows how to save and
 	 */
 	public void createFieldEditors() {
+		addField(new RadioGroupFieldEditor(
+				PreferenceConstants.PREF_DECORATORIMPL,
+				TaskAssistExampleMessages.Preferences_DecoratorImpl,
+				1,
+				new String[][] {
+						{
+								PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION,
+								PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION },
+						{
+								PreferenceConstants.PREF_DECORATORIMPL_DECORATEDFIELD,
+								PreferenceConstants.PREF_DECORATORIMPL_DECORATEDFIELD } },
+				getFieldEditorParent()));
+
+		addField(new RadioGroupFieldEditor(
+				PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION,
+				TaskAssistExampleMessages.Preferences_DecoratorVert,
+				1,
+				new String[][] {
+						{
+								TaskAssistExampleMessages.Preferences_DecoratorTop,
+								PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_TOP },
+						{
+								TaskAssistExampleMessages.Preferences_DecoratorCenter,
+								PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_CENTER },
+						{
+								TaskAssistExampleMessages.Preferences_DecoratorBottom,
+								PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_BOTTOM } },
+				getFieldEditorParent()));
+
+		addField(new RadioGroupFieldEditor(
+				PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION,
+				TaskAssistExampleMessages.Preferences_DecoratorHorz,
+				1,
+				new String[][] {
+						{
+								TaskAssistExampleMessages.Preferences_DecoratorLeft,
+								PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION_LEFT },
+						{
+								TaskAssistExampleMessages.Preferences_DecoratorRight,
+								PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION_RIGHT } },
+				getFieldEditorParent()));
+
+		IntegerFieldEditor editor = new IntegerFieldEditor(
+				PreferenceConstants.PREF_DECORATOR_MARGINWIDTH,
+				TaskAssistExampleMessages.Preferences_DecoratorMargin,
+				getFieldEditorParent());
+		editor.setValidRange(0, 10);
+		addField(editor);
+
 		Label label = new Label(getFieldEditorParent(), SWT.WRAP);
 		label.setText(TaskAssistExampleMessages.Preferences_ErrorIndicator);
 		addField(new BooleanFieldEditor(
@@ -60,27 +109,32 @@ public class FieldAssistPreferencePage extends FieldEditorPreferencePage
 				PreferenceConstants.PREF_SHOWERRORDECORATION,
 				TaskAssistExampleMessages.Preferences_ShowErrorDecorator,
 				getFieldEditorParent()));
-		
+
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.PREF_SHOWERRORCOLOR,
 				TaskAssistExampleMessages.Preferences_ShowErrorColor,
 				getFieldEditorParent()));
-		
-		label = new Label(getFieldEditorParent(), SWT.WRAP);
 
 		label = new Label(getFieldEditorParent(), SWT.WRAP);
-		label.setText(TaskAssistExampleMessages.Preferences_RequiredFieldIndicator);
+		label
+				.setText(TaskAssistExampleMessages.Preferences_RequiredFieldIndicator);
+		addField(new BooleanFieldEditor(
+				PreferenceConstants.PREF_SHOWREQUIREDFIELDLABELINDICATOR,
+				TaskAssistExampleMessages.Preferences_ShowRequiredFieldLabelIndicator,
+				getFieldEditorParent()));
+
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.PREF_SHOWREQUIREDFIELDDECORATION,
 				TaskAssistExampleMessages.Preferences_ShowRequiredFieldDecorator,
 				getFieldEditorParent()));
-		
+
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.PREF_SHOWREQUIREDFIELDCOLOR,
 				TaskAssistExampleMessages.Preferences_ShowRequiredFieldColor,
 				getFieldEditorParent()));
 
 		label = new Label(getFieldEditorParent(), SWT.WRAP);
+		label.setText(TaskAssistExampleMessages.Preferences_DecoratorDetails);
 		addField(new BooleanFieldEditor(
 				PreferenceConstants.PREF_SHOWWARNINGDECORATION,
 				TaskAssistExampleMessages.Preferences_ShowWarningDecorator,

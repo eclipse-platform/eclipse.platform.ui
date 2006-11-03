@@ -39,30 +39,40 @@ public class TaskAssistExampleMessages extends NLS {
 	public static String Preferences_ShowProposalCue;
 	public static String Preferences_RequiredFieldIndicator;
 	public static String Preferences_ShowRequiredFieldDecorator;
+	public static String Preferences_ShowRequiredFieldLabelIndicator;
 	public static String Preferences_ShowRequiredFieldColor;
 	public static String Preferences_Description;
 	public static String Preferences_ContentAssistDescription;
-	
+	public static String Preferences_DecoratorDetails;
+	public static String Preferences_DecoratorImpl;
+	public static String Preferences_DecoratorVert;
+	public static String Preferences_DecoratorTop;
+	public static String Preferences_DecoratorCenter;
+	public static String Preferences_DecoratorBottom;
+	public static String Preferences_DecoratorHorz;
+	public static String Preferences_DecoratorLeft;
+	public static String Preferences_DecoratorRight;
+	public static String Preferences_DecoratorMargin;
 	public static String Decorator_Warning;
 	public static String Decorator_Error;
 	public static String Decorator_ContentAssist;
 
- 	public static String ExampleDialog_UserError;
+	public static String ExampleDialog_UserError;
 	public static String ExampleDialog_WarningName;
 	public static String ExampleDialog_UserWarning;
 	public static String ExampleDialog_AgeWarning;
 	public static String ExampleDialog_Title;
 	public static String ExampleDialog_SecurityGroup;
+	public static String ExampleDialog_AutoCompleteGroup;
 	public static String ExampleDialog_UserName;
 	public static String ExampleDialog_ComboUserName;
 	public static String ExampleDialog_Age;
 	public static String ExampleDialog_Password;
 	public static String ExampleDialog_ProposalDescription;
-	
-	   static {
-			// load message values from bundle file
-			NLS.initializeMessages(BUNDLE_NAME, TaskAssistExampleMessages.class);
-		}
 
+	static {
+		// load message values from bundle file
+		NLS.initializeMessages(BUNDLE_NAME, TaskAssistExampleMessages.class);
+	}
 
 }

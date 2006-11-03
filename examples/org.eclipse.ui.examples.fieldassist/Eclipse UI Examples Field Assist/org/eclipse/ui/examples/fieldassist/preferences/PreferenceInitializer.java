@@ -29,12 +29,17 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		IPreferenceStore store = FieldAssistPlugin.getDefault()
 				.getPreferenceStore();
 		store.setDefault(PreferenceConstants.PREF_SHOWERRORDECORATION, true);
-		store.setDefault(PreferenceConstants.PREF_SHOWERRORCOLOR, true);
+		store.setDefault(PreferenceConstants.PREF_SHOWERRORCOLOR, false);
 		store.setDefault(PreferenceConstants.PREF_SHOWERRORMESSAGE, true);
 		store.setDefault(PreferenceConstants.PREF_SHOWWARNINGDECORATION, true);
-		store.setDefault(PreferenceConstants.PREF_SHOWREQUIREDFIELDCOLOR, true);
-		store.setDefault(PreferenceConstants.PREF_SHOWREQUIREDFIELDDECORATION, true);
+		store.setDefault(PreferenceConstants.PREF_SHOWREQUIREDFIELDCOLOR, false);
+		store.setDefault(PreferenceConstants.PREF_SHOWREQUIREDFIELDDECORATION, false);
+		store.setDefault(PreferenceConstants.PREF_SHOWREQUIREDFIELDLABELINDICATOR, true);
 		store.setDefault(PreferenceConstants.PREF_SHOWCONTENTPROPOSALCUE, true);
+		store.setDefault(PreferenceConstants.PREF_DECORATORIMPL, PreferenceConstants.PREF_DECORATORIMPL_CONTROLDECORATION);
+		store.setDefault(PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION, PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION_LEFT);
+		store.setDefault(PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION, PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_CENTER);
+		store.setDefault(PreferenceConstants.PREF_DECORATOR_MARGINWIDTH, 0);
 		store.setDefault(PreferenceConstants.PREF_CONTENTASSISTKEY, PreferenceConstants.PREF_CONTENTASSISTKEY1);
 		store.setDefault(PreferenceConstants.PREF_CONTENTASSISTKEY_PROPAGATE, false);
 		store.setDefault(PreferenceConstants.PREF_SHOWSECONDARYPOPUP, true);

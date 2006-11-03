@@ -20,9 +20,8 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.fieldassist.ComboContentAdapter;
+import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldAssistColors;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
@@ -33,16 +32,11 @@ import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -53,17 +47,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.examples.fieldassist.preferences.PreferenceConstants;
 
 /**
- * Example dialog that shows different field assist capabilities, using
- * ControlDecorator to draw field-level decorations. The visual design in this
- * version of the dialog calls for required field emphasis to be shown with the
- * label, while content assist, error, and warning decorations are shown in a
- * shared slot to the left and center of the field.
- * <p>
- * Note that clients do not worry about aligning decorated and non-decorated
- * fields when using ControlDecorator, although it is up to the client to ensure
- * there is enough blank space for the decorator to paint properly.
+ * Example dialog that shows different field assist capabilities.
  */
-public class ExampleDialog2 extends StatusDialog {
+public abstract class FieldAssistTestDialog extends StatusDialog {
 
 	class SpinnerContentAdapter implements IControlContentAdapter {
 		// We are only implementing this for our internal use, not for
@@ -97,24 +83,28 @@ public class ExampleDialog2 extends StatusDialog {
 	}
 
 	abstract class SmartField {
-		ControlDecoration controlDecoration;
+		// Cast to different types by each subclass
+		Object decImpl;
+
+		Control control;
 
 		IControlContentAdapter contentAdapter;
 
 		FieldDecoration errorDecoration, warningDecoration;
 
-		SmartField(ControlDecoration decoration, IControlContentAdapter adapter) {
-			this.controlDecoration = decoration;
+		SmartField(Object decImpl, Control control,
+				IControlContentAdapter adapter) {
+			this.decImpl = decImpl;
 			this.contentAdapter = adapter;
-		}
-
-		String getContents() {
-			return contentAdapter.getControlContents(controlDecoration
-					.getControl());
+			this.control = control;
 		}
 
 		boolean isRequiredField() {
 			return true;
+		}
+
+		boolean hasContentAssist() {
+			return false;
 		}
 
 		FieldDecoration getErrorDecoration() {
@@ -146,16 +136,15 @@ public class ExampleDialog2 extends StatusDialog {
 				}
 			}
 			return warningDecoration;
+		}
 
+		String getContents() {
+			return contentAdapter.getControlContents(control);
 		}
 
 		abstract boolean isValid();
 
 		abstract boolean isWarning();
-
-		boolean hasContentAssist() {
-			return false;
-		}
 
 		String getErrorMessage() {
 			return null;
@@ -169,8 +158,9 @@ public class ExampleDialog2 extends StatusDialog {
 
 	class UserField extends SmartField {
 
-		UserField(ControlDecoration decoration, IControlContentAdapter adapter) {
-			super(decoration, adapter);
+		UserField(Object decImpl, Control control,
+				IControlContentAdapter adapter) {
+			super(decImpl, control, adapter);
 		}
 
 		boolean isValid() {
@@ -199,13 +189,12 @@ public class ExampleDialog2 extends StatusDialog {
 		boolean hasContentAssist() {
 			return true;
 		}
-
 	}
 
 	class AgeField extends SmartField {
 
-		AgeField(ControlDecoration decoration, IControlContentAdapter adapter) {
-			super(decoration, adapter);
+		AgeField(Object decImpl, Control control, IControlContentAdapter adapter) {
+			super(decImpl, control, adapter);
 		}
 
 		boolean isValid() {
@@ -214,7 +203,7 @@ public class ExampleDialog2 extends StatusDialog {
 		}
 
 		boolean isWarning() {
-			Spinner spinner = (Spinner) controlDecoration.getControl();
+			Spinner spinner = (Spinner) control;
 			return spinner.getSelection() > 65;
 		}
 
@@ -223,18 +212,22 @@ public class ExampleDialog2 extends StatusDialog {
 		}
 	}
 
-	private String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-			"teresa", "tori", "daniela" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	String[] validUsers = { "tom", "dick", "harry", "ferdinand", "tim",
+			"teresa", "tori", "daniela", "aaron", "kevin", "tod", "mike",
+			"kim", "eric", "paul" };
 
-	private String triggerKey;
+	String triggerKey;
 
-	private String username;
+	String username;
 
-	private boolean showErrorDecoration, showErrorMessage, showErrorColor,
+	boolean showErrorDecoration, showErrorMessage, showErrorColor,
 			showWarningDecoration, showRequiredFieldColor,
-			showRequiredFieldDecoration, showSecondaryPopup;
+			showRequiredFieldDecoration, showRequiredFieldLabelIndicator,
+			showSecondaryPopup, showContentAssist;
 
-	private Color defaultTextColor, errorColor;
+	int marginWidth;
+
+	Color defaultTextColor, errorColor;
 
 	/**
 	 * Open the exapmle dialog.
@@ -244,7 +237,7 @@ public class ExampleDialog2 extends StatusDialog {
 	 * @param username
 	 *            the default username
 	 */
-	public ExampleDialog2(Shell parent, String username) {
+	public FieldAssistTestDialog(Shell parent, String username) {
 		super(parent);
 		setTitle(TaskAssistExampleMessages.ExampleDialog_Title);
 		this.username = username;
@@ -256,139 +249,36 @@ public class ExampleDialog2 extends StatusDialog {
 		Composite outer = (Composite) super.createDialogArea(parent);
 
 		initializeDialogUnits(outer);
+		createSecurityGroup(outer);
 
-		Group main = new Group(outer, SWT.NONE);
-		main.setLayoutData(new GridData(GridData.FILL_BOTH));
-		main.setText(TaskAssistExampleMessages.ExampleDialog_SecurityGroup);
+		// Create a simple field to show how field assist can be used for
+		// autocomplete.
+		Group autoComplete = new Group(outer, SWT.NONE);
+		autoComplete.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		main.setLayout(layout);
+		autoComplete.setLayout(layout);
+		autoComplete
+				.setText(TaskAssistExampleMessages.ExampleDialog_AutoCompleteGroup);
 
-		Label label = new Label(main, SWT.LEFT);
+		Label label = new Label(autoComplete, SWT.LEFT);
 		label.setText(TaskAssistExampleMessages.ExampleDialog_UserName);
 
-		// Create a field representing a user name
-		Text text = new Text(main, SWT.BORDER);
-		ControlDecoration dec = new ControlDecoration(text, getCueDecoration(),
-				SWT.LEFT | SWT.CENTER);
-		dec.setShowOnlyOnFocus(true);
-		final SmartField textField = new UserField(dec,
-				new TextContentAdapter());
-		if (showRequiredFieldDecoration && textField.isRequiredField()) {
-			addRequiredFieldIndicator(label);
-		}
-		defaultTextColor = text.getBackground();
-		text.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				handleModify(textField);
-			}
-		});
-		text.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent event) {
-				handleFocusGained(textField);
-			}
-
-			public void focusLost(FocusEvent event) {
-				handleFocusLost(textField);
-			}
-
-		});
-
-		text.setText(username);
-		installContentProposalAdapter(text, new TextContentAdapter());
+		// Create an auto-complete field representing a user name
+		Text text = new Text(autoComplete, SWT.BORDER);
 		text.setLayoutData(getFieldGridData());
-		// prime the required field color by calling the focus lost handler.
-		handleFocusLost(textField);
-
-		label = new Label(main, SWT.LEFT);
-		label.setText(TaskAssistExampleMessages.ExampleDialog_ComboUserName);
-
-		// Create a combo field representing a user name
-		Combo combo = new Combo(main, SWT.BORDER | SWT.DROP_DOWN);
-		dec = new ControlDecoration(combo, getCueDecoration(), SWT.LEFT
-				| SWT.CENTER);
-		dec.setShowOnlyOnFocus(true);
-
-		final SmartField comboField = new UserField(dec,
-				new ComboContentAdapter());
-		if (showRequiredFieldDecoration) {
-			addRequiredFieldIndicator(label);
-		}
-		combo.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				handleModify(comboField);
-			}
-		});
-		combo.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent event) {
-				handleFocusGained(comboField);
-			}
-
-			public void focusLost(FocusEvent event) {
-				handleFocusLost(comboField);
-			}
-
-		});
-		combo.setText(username);
-		combo.setItems(validUsers);
-		combo.setLayoutData(getFieldGridData());
-		installContentProposalAdapter(combo, new ComboContentAdapter());
-		// prime the required field color by calling the focus lost handler.
-		handleFocusLost(comboField);
-
-		// Create a spinner representing a user age
-		label = new Label(main, SWT.LEFT);
-		label.setText(TaskAssistExampleMessages.ExampleDialog_Age);
-
-		Spinner spinner = new Spinner(main, SWT.BORDER);
-		dec = new ControlDecoration(spinner, getWarningDecoration(), SWT.LEFT
-				| SWT.CENTER);
-		dec.hide();
-
-		if (showRequiredFieldDecoration) {
-			addRequiredFieldIndicator(label);
-		}
-		final SmartField spinnerField = new AgeField(dec,
-				new SpinnerContentAdapter());
-		spinner.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				handleModify(spinnerField);
-			}
-		});
-		combo.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent event) {
-				handleFocusGained(spinnerField);
-			}
-
-			public void focusLost(FocusEvent event) {
-				handleFocusLost(spinnerField);
-			}
-
-		});
-		spinner.setSelection(40);
-		spinner.setLayoutData(getFieldGridData());
-
-		// prime the required field color by calling the focus lost handler.
-		handleFocusLost(spinnerField);
-
-		// This field has no decorator
-		label = new Label(main, SWT.LEFT);
-		label.setText(TaskAssistExampleMessages.ExampleDialog_Password);
-		text = new Text(main, SWT.BORDER);
-		text.setText("******"); //$NON-NLS-1$
-		text.setLayoutData(getFieldGridData());
-		if (showRequiredFieldDecoration) {
-			addRequiredFieldIndicator(label);
-		}
+		new AutoCompleteField(text, new TextContentAdapter(), validUsers);
 
 		Dialog.applyDialogFont(outer);
 
-		return main;
+		return outer;
 	}
+
+	abstract void createSecurityGroup(Composite parent);
 
 	private void getPreferenceValues() {
 		IPreferenceStore store = FieldAssistPlugin.getDefault()
@@ -405,13 +295,18 @@ public class ExampleDialog2 extends StatusDialog {
 				.getBoolean(PreferenceConstants.PREF_SHOWREQUIREDFIELDCOLOR);
 		showRequiredFieldDecoration = store
 				.getBoolean(PreferenceConstants.PREF_SHOWREQUIREDFIELDDECORATION);
+		showRequiredFieldLabelIndicator = store
+				.getBoolean(PreferenceConstants.PREF_SHOWREQUIREDFIELDLABELINDICATOR);
 		showSecondaryPopup = store
 				.getBoolean(PreferenceConstants.PREF_SHOWSECONDARYPOPUP);
+		showContentAssist = store
+				.getBoolean(PreferenceConstants.PREF_SHOWCONTENTPROPOSALCUE);
 		triggerKey = store.getString(PreferenceConstants.PREF_CONTENTASSISTKEY);
-
+		marginWidth = store
+				.getInt(PreferenceConstants.PREF_DECORATOR_MARGINWIDTH);
 	}
 
-	private FieldDecoration getCueDecoration() {
+	FieldDecoration getCueDecoration() {
 		// We use our own decoration which is based on the JFace version.
 		FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
 		FieldDecoration dec = registry
@@ -431,12 +326,12 @@ public class ExampleDialog2 extends StatusDialog {
 		return dec;
 	}
 
-	private FieldDecoration getWarningDecoration() {
+	FieldDecoration getWarningDecoration() {
 		return FieldDecorationRegistry.getDefault().getFieldDecoration(
 				FieldDecorationRegistry.DEC_WARNING);
 	}
 
-	private void handleModify(SmartField smartField) {
+	void handleModify(SmartField smartField) {
 		// Error indicator supercedes all others
 		if (!smartField.isValid()) {
 			showError(smartField);
@@ -446,44 +341,56 @@ public class ExampleDialog2 extends StatusDialog {
 				showWarning(smartField);
 			} else {
 				hideWarning(smartField);
-				if (smartField.hasContentAssist()
-						&& FieldAssistPlugin
-								.getDefault()
-								.getPreferenceStore()
-								.getBoolean(
-										PreferenceConstants.PREF_SHOWCONTENTPROPOSALCUE)) {
-					showContentAssist(smartField);
+				if (showContentAssist && smartField.hasContentAssist()) {
+					showContentAssistDecoration(smartField, true);
+				} else {
+					showContentAssistDecoration(smartField, false);
+					showRequiredFieldDecoration(smartField,
+							showRequiredFieldDecoration);
 				}
 			}
 		}
 	}
 
-	private void handleFocusGained(SmartField smartField) {
+	GridData getFieldGridData() {
+		int margin = FieldDecorationRegistry.getDefault()
+				.getMaximumDecorationWidth();
+		GridData data = new GridData();
+		data.horizontalAlignment = SWT.FILL;
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + margin;
+		data.horizontalIndent = margin;
+		data.grabExcessHorizontalSpace = true;
+		return data;
+
+	}
+
+	abstract void showRequiredFieldDecoration(SmartField smartField,
+			boolean show);
+
+	abstract void showContentAssistDecoration(SmartField smartField,
+			boolean show);
+
+	void handleFocusGained(SmartField smartField) {
 		// only set color if error color not already showing
 		if (showErrorColor && !smartField.isValid())
 			return;
 		if (showRequiredFieldColor && smartField.isRequiredField()) {
-			smartField.controlDecoration.getControl().setBackground(
-					defaultTextColor);
+			smartField.control.setBackground(defaultTextColor);
 		}
 	}
 
-	private void handleFocusLost(SmartField smartField) {
+	void handleFocusLost(SmartField smartField) {
 		// only set color if error color not showing
 		if (showErrorColor && !smartField.isValid())
 			return;
 		if (showRequiredFieldColor && smartField.isRequiredField()
 				&& smartField.getContents().length() == 0) {
-			smartField.controlDecoration
-					.getControl()
-					.setBackground(
-							FieldAssistColors
-									.getRequiredFieldBackgroundColor(smartField.controlDecoration
-											.getControl()));
+			smartField.control.setBackground(FieldAssistColors
+					.getRequiredFieldBackgroundColor(smartField.control));
 		}
 	}
 
-	private void showError(SmartField smartField) {
+	void showError(SmartField smartField) {
 		FieldDecoration dec = smartField.getErrorDecoration();
 		if (showErrorMessage) {
 			updateStatus(new Status(IStatus.ERROR,
@@ -491,52 +398,42 @@ public class ExampleDialog2 extends StatusDialog {
 							.getDescription(), null));
 		}
 		if (showErrorDecoration) {
-			smartField.controlDecoration.setDecoration(dec);
-			smartField.controlDecoration.setShowOnlyOnFocus(false);
-			smartField.controlDecoration.show();
+			showErrorDecoration(smartField, true);
 		}
 		if (showErrorColor) {
-			smartField.controlDecoration.getControl().setBackground(
-					getErrorColor(smartField.controlDecoration.getControl()));
+			smartField.control.setBackground(getErrorColor(smartField.control));
 		}
 	}
 
-	private void hideError(SmartField smartField) {
+	abstract void showErrorDecoration(SmartField smartField, boolean show);
+
+	void hideError(SmartField smartField) {
 		if (showErrorMessage) {
 			this.updateStatus(Status.OK_STATUS);
 		}
 		if (showErrorDecoration) {
-			smartField.controlDecoration.hide();
+			showErrorDecoration(smartField, false);
 		}
 		if (showErrorColor) {
-			smartField.controlDecoration.getControl().setBackground(
-					defaultTextColor);
+			smartField.control.setBackground(defaultTextColor);
 		}
 	}
 
-	private void showWarning(SmartField smartField) {
+	void showWarning(SmartField smartField) {
 		if (showWarningDecoration) {
-			FieldDecoration dec = smartField.getWarningDecoration();
-			smartField.controlDecoration.setDecoration(dec);
-			smartField.controlDecoration.setShowOnlyOnFocus(false);
-			smartField.controlDecoration.show();
+			showWarningDecoration(smartField, true);
 		}
 	}
 
-	private void hideWarning(SmartField smartField) {
+	void hideWarning(SmartField smartField) {
 		if (showWarningDecoration) {
-			smartField.controlDecoration.hide();
+			showWarningDecoration(smartField, false);
 		}
 	}
 
-	private void showContentAssist(SmartField smartField) {
-		FieldDecoration dec = getCueDecoration();
-		smartField.controlDecoration.setDecoration(dec);
-		smartField.controlDecoration.setShowOnlyOnFocus(true);
-		smartField.controlDecoration.show();
-	}
+	abstract void showWarningDecoration(SmartField smartField, boolean show);
 
-	private void installContentProposalAdapter(Control control,
+	void installContentProposalAdapter(Control control,
 			IControlContentAdapter contentAdapter) {
 		IPreferenceStore store = FieldAssistPlugin.getDefault()
 				.getPreferenceStore();
@@ -564,7 +461,11 @@ public class ExampleDialog2 extends StatusDialog {
 
 		ContentProposalAdapter adapter = new ContentProposalAdapter(control,
 				contentAdapter, getContentProposalProvider(), keyStroke,
-				autoActivationCharacters);
+				autoActivationCharacters) {
+			public void closeProposalPopup() {
+				closeProposalPopup();
+			}
+		};
 		adapter.setAutoActivationDelay(autoActivationDelay);
 		adapter.setPropagateKeys(propagate);
 		adapter.setFilterStyle(getContentAssistFilterStyle());
@@ -633,18 +534,6 @@ public class ExampleDialog2 extends StatusDialog {
 		return ContentProposalAdapter.FILTER_NONE;
 	}
 
-	private GridData getFieldGridData() {
-		int margin = FieldDecorationRegistry.getDefault()
-				.getMaximumDecorationWidth();
-		GridData data = new GridData();
-		data.horizontalAlignment = SWT.FILL;
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH + margin;
-		data.horizontalIndent = margin;
-		data.grabExcessHorizontalSpace = true;
-		return data;
-
-	}
-
 	private Color getErrorColor(Control control) {
 		if (errorColor == null) {
 			RGB rgb = FieldAssistColors.computeErrorFieldBackgroundRGB(control);
@@ -660,13 +549,42 @@ public class ExampleDialog2 extends StatusDialog {
 		return super.close();
 	}
 
-	private void addRequiredFieldIndicator(Label label) {
+	void addRequiredFieldIndicator(Label label) {
 		String text = label.getText();
-		// This concatenation could be done by a field assist helper
-		// API, or else done automatically inside a smarter,
-		// "extended field."
+		// This concatenation could be done by a field assist helper.
 		text = text.concat("*");
 		label.setText(text);
 	}
 
+	FieldDecoration getRequiredFieldDecoration() {
+		return FieldDecorationRegistry.getDefault().getFieldDecoration(
+				FieldDecorationRegistry.DEC_REQUIRED);
+	}
+
+	int getDecorationLocationBits() {
+		IPreferenceStore store = FieldAssistPlugin.getDefault()
+				.getPreferenceStore();
+		int bits = 0;
+		String vert = store
+				.getString(PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION);
+		if (vert
+				.equals(PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_BOTTOM)) {
+			bits = SWT.BOTTOM;
+		} else if (vert
+				.equals(PreferenceConstants.PREF_DECORATOR_VERTICALLOCATION_CENTER)) {
+			bits = SWT.CENTER;
+		} else {
+			bits = SWT.TOP;
+		}
+
+		String horz = store
+				.getString(PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION);
+		if (horz
+				.equals(PreferenceConstants.PREF_DECORATOR_HORIZONTALLOCATION_RIGHT)) {
+			bits |= SWT.RIGHT;
+		} else {
+			bits |= SWT.LEFT;
+		}
+		return bits;
+	}
 }

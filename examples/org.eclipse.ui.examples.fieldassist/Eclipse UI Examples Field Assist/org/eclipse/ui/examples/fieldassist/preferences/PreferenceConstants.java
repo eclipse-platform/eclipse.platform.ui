@@ -15,7 +15,19 @@ package org.eclipse.ui.examples.fieldassist.preferences;
  * Constant definitions for plug-in preferences
  */
 public class PreferenceConstants {
-
+	public static final String PREF_DECORATORIMPL = "prefDecoratorImplementation";
+	public static final String PREF_DECORATORIMPL_DECORATEDFIELD = "DecoratedField";
+	public static final String PREF_DECORATORIMPL_CONTROLDECORATION = "ControlDecoration";
+	
+	public static final String PREF_DECORATOR_VERTICALLOCATION = "prefDecoratorVerticalLocation";
+	public static final String PREF_DECORATOR_VERTICALLOCATION_TOP = "prefDecoratorVerticalTop";
+	public static final String PREF_DECORATOR_VERTICALLOCATION_CENTER = "prefDecoratorVerticalCenter";
+	public static final String PREF_DECORATOR_VERTICALLOCATION_BOTTOM = "prefDecoratorVerticalBottom";
+	public static final String PREF_DECORATOR_HORIZONTALLOCATION = "prefDecoratorHorizontalLocation";
+	public static final String PREF_DECORATOR_HORIZONTALLOCATION_LEFT = "prefDecoratorHorizontalLeft";
+	public static final String PREF_DECORATOR_HORIZONTALLOCATION_RIGHT = "prefDecoratorHorizontalRight";
+	
+	public static final String PREF_DECORATOR_MARGINWIDTH = "prefDecoratorMarginWidth";
 
 	public static final String PREF_SHOWERRORDECORATION = "prefShowErrorDecoration";
 	public static final String PREF_SHOWERRORMESSAGE = "prefShowErrorMessage";
@@ -25,6 +37,7 @@ public class PreferenceConstants {
 	
 	public static final String PREF_SHOWREQUIREDFIELDDECORATION = "prefShowRequiredFieldDecoration";
 	public static final String PREF_SHOWREQUIREDFIELDCOLOR = "prefShowRequiredFieldColor";	
+	public static final String PREF_SHOWREQUIREDFIELDLABELINDICATOR = "prefShowRequiredFieldLabelIndicator";	
 	
 	public static final String PREF_SHOWCONTENTPROPOSALCUE = "prefShowContentProposalCue";	
 
@@ -37,7 +50,6 @@ public class PreferenceConstants {
 	public static final String PREF_CONTENTASSISTKEY2 = "*";
 	public static final String PREF_CONTENTASSISTKEYAUTO = "Alphanumeric key (on auto-activate delay)";
 	public static final String PREF_CONTENTASSISTKEYAUTOSUBSET = "t, d (on auto-activate delay)";
-	
 	
 	public static final String PREF_CONTENTASSISTRESULT = "prefContentResult";
 	public static final String PREF_CONTENTASSISTRESULT_REPLACE = "replace";
