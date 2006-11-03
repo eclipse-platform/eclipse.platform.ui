@@ -544,7 +544,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 */
 	private Iterator getAnnotationIterator(boolean cleanup, boolean recurse) {
 
-		if (!recurse)
+		if (!recurse || fAttachments.isEmpty())
 			return getAnnotationIterator(cleanup);
 
 		List iterators= new ArrayList(fAttachments.size() + 1);
