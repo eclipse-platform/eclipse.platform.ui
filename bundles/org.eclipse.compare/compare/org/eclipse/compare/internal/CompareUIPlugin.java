@@ -12,38 +12,27 @@ package org.eclipse.compare.internal;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.net.URL;
+import java.util.*;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.*;
+import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 
@@ -424,7 +413,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, IReusableEditor editor) {
 	    
-		if (compareResultOK(input)) {
+		if (compareResultOK(input, null)) {
 			
 			if (editor != null) {	// reuse the given editor
 				editor.setInput(input);
@@ -457,7 +446,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
 				
-		if (compareResultOK(input)) {
+		if (compareResultOK(input, null)) {
 			CompareDialog dialog= new CompareDialog(getShell(), input);
 			dialog.open();
 		}
@@ -466,12 +455,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	/*
 	 * @return <code>true</code> if compare result is OK to show, <code>false</code> otherwise
 	 */
-	private boolean compareResultOK(CompareEditorInput input) {
+	public boolean compareResultOK(CompareEditorInput input, IRunnableContext context) {
 		final Shell shell= getShell();
 		try {
 			
-			// run operation in separate thread and make it canceable
-			PlatformUI.getWorkbench().getProgressService().run(true, true, input);
+			// run operation in separate thread and make it cancelable
+			if (context == null)
+				context = PlatformUI.getWorkbench().getProgressService();
+			context.run(true, true, input);
 			
 			String message= input.getMessage();
 			if (message != null) {
@@ -487,7 +478,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return true;
 
 		} catch (InterruptedException x) {
-			// cancelled by user		
+			// canceled by user		
 		} catch (InvocationTargetException x) {
 			MessageDialog.openError(shell, Utilities.getString("CompareUIPlugin.compareFailed"), x.getTargetException().getMessage()); //$NON-NLS-1$
 		}

@@ -108,7 +108,7 @@ public class SaveablePartDialog extends TrayDialog {
 	 */
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings compareSettings = TeamUIPlugin.getPlugin().getDialogSettings();
-		String sectionName = this.getClass().getName() + "5";
+		String sectionName = this.getClass().getName();
 		IDialogSettings dialogSettings = compareSettings.getSection(sectionName);
 		if (dialogSettings == null) {
 			hasSettings = false;
