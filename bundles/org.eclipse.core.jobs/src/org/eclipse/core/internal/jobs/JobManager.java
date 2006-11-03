@@ -625,20 +625,23 @@ public class JobManager implements IJobManager {
 	 */
 	protected boolean isBlocking(InternalJob runningJob) {
 		synchronized (lock) {
-			//if this job isn't running, it can't be blocking anyone
+			// if this job isn't running, it can't be blocking anyone
 			if (runningJob.getState() != Job.RUNNING)
 				return false;
-			//if any job is queued behind this one, it is blocked by it
+			// if any job is queued behind this one, it is blocked by it
 			InternalJob previous = runningJob.previous();
 			while (previous != null) {
-				if (!previous.isSystem())
-					return true;
-				//implicit jobs should interrupt unless they act on behalf of system jobs
-				if (previous instanceof ThreadJob && ((ThreadJob) previous).shouldInterrupt())
-					return true;
+				// ignore jobs of lower priority (higher priority value means lower priority)
+				if (previous.getPriority() < runningJob.getPriority()) {
+					if (!previous.isSystem())
+						return true;
+					// implicit jobs should interrupt unless they act on behalf of system jobs
+					if (previous instanceof ThreadJob && ((ThreadJob) previous).shouldInterrupt())
+						return true;
+				}
 				previous = previous.previous();
 			}
-			//none found
+			// none found
 			return false;
 		}
 	}
