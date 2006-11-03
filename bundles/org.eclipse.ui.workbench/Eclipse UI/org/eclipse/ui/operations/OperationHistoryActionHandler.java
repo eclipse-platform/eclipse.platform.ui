@@ -368,6 +368,10 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 *            the context to be used for the undo history
 	 */
 	public void setContext(IUndoContext context) {
+		// optimization - do nothing if there was no real change
+		if (context == undoContext) {
+			return;
+		}
 		undoContext = context;
 		update();
 	}
