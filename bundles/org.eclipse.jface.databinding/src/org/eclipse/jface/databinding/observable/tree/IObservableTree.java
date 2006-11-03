@@ -67,7 +67,7 @@ public interface IObservableTree extends IObservable {
 
 	/**
 	 * @param parentPath
-	 * @return
+	 * @return the children at the given parent path
 	 */
 	public Object[] getChildren(TreePath parentPath);
 	
@@ -104,13 +104,13 @@ public interface IObservableTree extends IObservable {
 	
 	/**
 	 * @param parentPath
-	 * @return
+	 * @return <code>true</code> if the element at the given path has children
 	 */
 	public boolean hasChildren(TreePath parentPath);
 	
 	/**
 	 * @param parentPath
-	 * @return
+	 * @return the number of children of the element at the given path 
 	 */
 	public int getChildCount(TreePath parentPath);
 	

@@ -67,7 +67,7 @@ public class Observables {
 	public static IObservableList emptyObservableList(Realm realm) {
 		return new EmptyObservableList(realm);
 	}
-	
+
 	/**
 	 * Returns an empty observable set. The returned set continues to work after
 	 * it has been disposed of and can be disposed of multiple times.
@@ -89,7 +89,7 @@ public class Observables {
 	public static IObservableSet emptyObservableSet(Realm realm) {
 		return new EmptyObservableSet(realm);
 	}
-	
+
 	/**
 	 * @param realm
 	 * @param set
@@ -117,15 +117,15 @@ public class Observables {
 		return new ObservableSet(realm, set, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
-			
+
 			public void addStaleListener(IStaleListener listener) {
 			}
-			
+
 			public void addSetChangeListener(ISetChangeListener listener) {
 			}
 		};
 	}
-	
+
 	/**
 	 * Returns an observable set that contains the same elements as the given
 	 * set, and fires the same events as the given set, but can be disposed of
@@ -142,34 +142,25 @@ public class Observables {
 	/**
 	 * @param realm
 	 * @param list
-	 * @return
+	 * @return an observable list that never fires events
 	 */
 	public static IObservableList staticObservableList(List list) {
-		return new ObservableList(Realm.getDefault(), list, Object.class) {
-			public void addChangeListener(IChangeListener listener) {
-			}
-
-			public void addStaleListener(IStaleListener listener) {
-			}
-
-			public void addListChangeListener(IListChangeListener listener) {
-			}
-		};
+		return staticObservableList(Realm.getDefault(), list);
 	}
 
 	/**
 	 * @param realm
 	 * @param list
-	 * @return
+	 * @return an observable list that never fires events
 	 */
 	public static IObservableList staticObservableList(Realm realm, List list) {
 		return new ObservableList(realm, list, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
-			
+
 			public void addStaleListener(IStaleListener listener) {
 			}
-			
+
 			public void addListChangeListener(IListChangeListener listener) {
 			}
 		};

@@ -48,7 +48,7 @@ public abstract class TreeDiffNode {
 	public static final int INDEX_UNKNOWN = -1;
 
 	/**
-	 * @return
+	 * @return the change type
 	 */
 	public abstract int getChangeType();
 
@@ -72,7 +72,7 @@ public abstract class TreeDiffNode {
 	 * Returns the child tree diff objects that describe changes to children. If
 	 * the change type is REMOVED, there will be no children.
 	 * 
-	 * @return
+	 * @return the nodes representing changes to children
 	 */
 	public abstract TreeDiffNode[] getChildren();
 

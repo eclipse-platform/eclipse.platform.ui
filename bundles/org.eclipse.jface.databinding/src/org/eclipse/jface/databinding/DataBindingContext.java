@@ -513,7 +513,7 @@ public class DataBindingContext {
     }
 
 	/**
-	 * @return
+	 * @return the realm for the validation observables
 	 */
 	public Realm getValidationRealm() {
 		return validationRealm;

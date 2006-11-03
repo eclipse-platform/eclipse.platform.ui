@@ -95,9 +95,6 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || valueChangeListeners != null;
 	}

@@ -181,9 +181,10 @@ public class Diffs {
 	/**
 	 * @param addedKey
 	 * @param newValue
-	 * @return
+	 * @return a map diff
 	 */
-	public static MapDiff createMapDiffSingleAdd(final Object addedKey, final Object newValue) {
+	public static MapDiff createMapDiffSingleAdd(final Object addedKey,
+			final Object newValue) {
 		return new MapDiff() {
 
 			public Set getAddedKeys() {
@@ -204,71 +205,76 @@ public class Diffs {
 
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
-			}};
+			}
+		};
 	}
 
 	/**
 	 * @param existingKey
 	 * @param oldValue
 	 * @param newValue
-	 * @return
+	 * @return a map diff
 	 */
-	public static MapDiff createMapDiffSingleChange(final Object existingKey, final Object oldValue, final Object newValue) {
+	public static MapDiff createMapDiffSingleChange(final Object existingKey,
+			final Object oldValue, final Object newValue) {
 		return new MapDiff() {
-			
+
 			public Set getAddedKeys() {
 				return Collections.EMPTY_SET;
 			}
-			
+
 			public Set getChangedKeys() {
 				return Collections.singleton(existingKey);
 			}
-			
+
 			public Object getNewValue(Object key) {
 				return newValue;
 			}
-			
+
 			public Object getOldValue(Object key) {
 				return oldValue;
 			}
-			
+
 			public Set getRemovedKeys() {
 				return Collections.EMPTY_SET;
-			}};
-	}
-	
-	/**
-	 * @param removedKey
-	 * @param oldValue
-	 * @return
-	 */
-	public static MapDiff createMapDiffSingleRemove(final Object removedKey, final Object oldValue) {
-		return new MapDiff() {
-			
-			public Set getAddedKeys() {
-				return Collections.EMPTY_SET;
 			}
-			
-			public Set getChangedKeys() {
-				return Collections.EMPTY_SET;
-			}
-			
-			public Object getNewValue(Object key) {
-				return null;
-			}
-			
-			public Object getOldValue(Object key) {
-				return oldValue;
-			}
-			
-			public Set getRemovedKeys() {
-				return Collections.singleton(removedKey);
-			}};
+		};
 	}
 
 	/**
-	 * @param copyOfOldMap 
-	 * @return
+	 * @param removedKey
+	 * @param oldValue
+	 * @return a map diff
+	 */
+	public static MapDiff createMapDiffSingleRemove(final Object removedKey,
+			final Object oldValue) {
+		return new MapDiff() {
+
+			public Set getAddedKeys() {
+				return Collections.EMPTY_SET;
+			}
+
+			public Set getChangedKeys() {
+				return Collections.EMPTY_SET;
+			}
+
+			public Object getNewValue(Object key) {
+				return null;
+			}
+
+			public Object getOldValue(Object key) {
+				return oldValue;
+			}
+
+			public Set getRemovedKeys() {
+				return Collections.singleton(removedKey);
+			}
+		};
+	}
+
+	/**
+	 * @param copyOfOldMap
+	 * @return a map diff
 	 */
 	public static MapDiff createMapDiffRemoveAll(final Map copyOfOldMap) {
 		return new MapDiff() {
@@ -296,15 +302,16 @@ public class Diffs {
 	}
 
 	/**
-	 * @param addedKeys 
-	 * @param removedKeys 
-	 * @param changedKeys 
-	 * @param oldValues 
-	 * @param newValues 
-	 * @return 
+	 * @param addedKeys
+	 * @param removedKeys
+	 * @param changedKeys
+	 * @param oldValues
+	 * @param newValues
+	 * @return a map diff
 	 */
-	public static MapDiff createMapDiff(final Set addedKeys, final Set removedKeys,
-			final Set changedKeys, final Map oldValues, final Map newValues) {
+	public static MapDiff createMapDiff(final Set addedKeys,
+			final Set removedKeys, final Set changedKeys, final Map oldValues,
+			final Map newValues) {
 		return new MapDiff() {
 
 			public Set getAddedKeys() {
