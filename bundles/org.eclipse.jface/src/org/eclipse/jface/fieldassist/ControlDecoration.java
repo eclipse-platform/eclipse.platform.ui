@@ -434,9 +434,29 @@ public class ControlDecoration {
 	}
 
 	/**
+	 * Detach this ControlDecoration from its control. This method is intended
+	 * to be used when the control outlives the need for its decoration. Once a
+	 * ControlDecoration has been detached from its control, it is no longer
+	 * useful. This method has no effect if the receiver is already detached
+	 * from its control.
+	 */
+	public void detach() {
+		if (control == null) {
+			return;
+		}
+		if (hover != null) {
+			hover.dispose();
+			hover = null;
+		}
+		removeControlListeners();
+		control = null;
+	}
+
+	/**
 	 * Get the control that is decorated by the receiver.
 	 * 
-	 * @return the Control decorated by the receiver.
+	 * @return the Control decorated by the receiver. May be <code>null</code>
+	 *         if the control has been uninstalled.
 	 */
 	public Control getControl() {
 		return control;
@@ -448,7 +468,7 @@ public class ControlDecoration {
 	private void addControlListeners() {
 		disposeListener = new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
-				dispose();
+				detach();
 			}
 		};
 		printAddListener(control, "DISPOSE"); //$NON-NLS-1$
@@ -752,7 +772,7 @@ public class ControlDecoration {
 			hideHover();
 			return;
 		}
-		
+
 		// If there is no control, nothing to do
 		if (control == null) {
 			return;
@@ -764,17 +784,6 @@ public class ControlDecoration {
 		hover.setText(text, getDecorationRectangle(control.getParent()),
 				control);
 		hover.setVisible(true);
-	}
-
-	/*
-	 * The associated control is being disposed.
-	 */
-	private void dispose() {
-		if (hover != null) {
-			hover.dispose();
-			hover = null;
-		}
-		removeControlListeners();
 	}
 
 	/*
