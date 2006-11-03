@@ -15,9 +15,7 @@ package org.eclipse.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
-
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -279,12 +277,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 * Creates the link target path if a link target has been specified.
 	 */
 	protected void createLinkTarget() {
-		String linkTarget = linkedResourceGroup.getLinkTarget();
-		if (linkTarget != null) {
-			linkTargetPath = URIUtil.toURI(linkTarget);
-		} else {
-			linkTargetPath = null;
-		}
+		linkTargetPath = linkedResourceGroup.getLinkTargetURI();
 	}
 
 	/**
@@ -321,33 +314,47 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 		createLinkTarget();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)  {
+			public void run(IProgressMonitor monitor) {
 				CreateFolderOperation op = new CreateFolderOperation(
 						newFolderHandle, linkTargetPath,
 						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 				try {
 					PlatformUI.getWorkbench().getOperationSupport()
-							.getOperationHistory().execute(op, monitor,
-									WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
+							.getOperationHistory().execute(
+									op,
+									monitor,
+									WorkspaceUndoUtil
+											.getUIInfoAdapter(getShell()));
 				} catch (final ExecutionException e) {
 					getContainer().getShell().getDisplay().syncExec(
 							new Runnable() {
 								public void run() {
 									if (e.getCause() instanceof CoreException) {
-						                ErrorDialog
-						                        .openError(
-						                                getContainer().getShell(), // Was Utilities.getFocusShell()
-						                                IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
-						                                null, // no special message
-						                                ((CoreException) e.getCause())
-						                                        .getStatus());
+										ErrorDialog
+												.openError(
+														getContainer()
+																.getShell(), // Was Utilities.getFocusShell()
+														IDEWorkbenchMessages.WizardNewFolderCreationPage_errorTitle,
+														null, // no special message
+														((CoreException) e
+																.getCause())
+																.getStatus());
 									} else {
-										IDEWorkbenchPlugin.log(getClass(),
-												"createNewFolder()", e.getCause()); //$NON-NLS-1$
-							            MessageDialog
-											.openError(
-												getContainer().getShell(),
-												IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFolder_internalError, e.getCause().getMessage()));
+										IDEWorkbenchPlugin
+												.log(
+														getClass(),
+														"createNewFolder()", e.getCause()); //$NON-NLS-1$
+										MessageDialog
+												.openError(
+														getContainer()
+																.getShell(),
+														IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
+														NLS
+																.bind(
+																		IDEWorkbenchMessages.WizardNewFolder_internalError,
+																		e
+																				.getCause()
+																				.getMessage()));
 									}
 								}
 							});
@@ -364,10 +371,14 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			// exceptions and errors may still occur.
 			IDEWorkbenchPlugin.log(getClass(),
 					"createNewFolder()", e.getTargetException()); //$NON-NLS-1$
-            MessageDialog
-				.openError(
-					getContainer().getShell(),
-					IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle, NLS.bind(IDEWorkbenchMessages.WizardNewFolder_internalError, e.getTargetException().getMessage()));
+			MessageDialog
+					.openError(
+							getContainer().getShell(),
+							IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
+							NLS
+									.bind(
+											IDEWorkbenchMessages.WizardNewFolder_internalError,
+											e.getTargetException().getMessage()));
 			return null;
 		}
 

@@ -15,9 +15,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
-
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -297,12 +295,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 	 * Creates the link target path if a link target has been specified.
 	 */
 	protected void createLinkTarget() {
-		String linkTarget = linkedResourceGroup.getLinkTarget();
-		if (linkTarget != null) {
-			linkTargetPath = URIUtil.toURI(linkTarget);
-		} else {
-			linkTargetPath = null;
-		}
+		linkTargetPath = linkedResourceGroup.getLinkTargetURI();
 	}
 
 	/**
@@ -364,7 +357,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 														// Utilities.getFocusShell()
 														IDEWorkbenchMessages.WizardNewFileCreationPage_errorTitle,
 														null, // no special
-																// message
+														// message
 														((CoreException) e
 																.getCause())
 																.getStatus());

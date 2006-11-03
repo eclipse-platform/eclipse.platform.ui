@@ -12,9 +12,10 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
-
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -358,12 +359,15 @@ public class CreateLinkedResourceGroup {
 	 * @return the link target location entered by the user. null if the user
 	 *         chose not to create a link.
 	 */
-	public String getLinkTarget() {
-		if (createLink) {
-			return linkTarget;
+	public URI getLinkTargetURI() {
+		if (!createLink)
+			return null;
+		FileSystemConfiguration configuration = getSelectedConfiguration();
+		if (configuration == null) {
+			return URIUtil.toURI(linkTarget);
 		}
-
-		return null;
+		//validate non-local file system location
+		return configuration.getContributor().getURI(linkTarget);
 	}
 
 	/**
@@ -441,7 +445,7 @@ public class CreateLinkedResourceGroup {
 	 * @return FileSystemConfiguration or <code>null</code>
 	 */
 	private FileSystemConfiguration getSelectedConfiguration() {
-		if(fileSystemSelectionArea == null)
+		if (fileSystemSelectionArea == null)
 			return null;
 		return fileSystemSelectionArea.getSelectedConfiguration();
 	}
@@ -573,42 +577,38 @@ public class CreateLinkedResourceGroup {
 	 *         specified link target is valid given the linkHandle.
 	 */
 	public IStatus validateLinkLocation(IResource linkHandle) {
-		if (linkTargetField == null || linkTargetField.isDisposed()) {
-			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		if (linkTargetField == null || linkTargetField.isDisposed()
+				|| !createLink) {
+			return Status.OK_STATUS;
 		}
-
 		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-		IPath path = new Path(linkTarget);
-
-		if (createLink == false) {
-			return createStatus(IStatus.OK, ""); //$NON-NLS-1$
+		FileSystemConfiguration configuration = getSelectedConfiguration();
+		if (configuration == null
+				|| EFS.SCHEME_FILE.equals(configuration.getScheme())) {
+			//Special handling for UNC paths. See bug 90825
+			IPath location = new Path(linkTarget);
+			if (location.isUNC()) {
+				return createStatus(
+						IStatus.WARNING,
+						IDEWorkbenchMessages.CreateLinkedResourceGroup_unableToValidateLinkTarget);
+			}
 		}
-
-		if (path.isUNC()) {
-			// print that path is not valid, but don't do core validation. See
-			// bug 90825.
-			return createStatus(
-					IStatus.WARNING,
-					IDEWorkbenchMessages.CreateLinkedResourceGroup_unableToValidateLinkTarget);
-		}
-
-		IStatus locationStatus = workspace.validateLinkLocation(linkHandle,
-				path);
+		URI locationURI = getLinkTargetURI();
+		IStatus locationStatus = workspace.validateLinkLocationURI(linkHandle,
+				locationURI);
 		if (locationStatus.getSeverity() == IStatus.ERROR) {
 			return locationStatus;
 		}
 
 		// use the resolved link target name
-		String resolvedLinkTarget = resolvedPathLabelData.getText();
-		path = new Path(resolvedLinkTarget);
 		IFileInfo linkTargetFile = IDEResourceInfoUtils
-				.getFileInfo(resolvedLinkTarget);
+				.getFileInfo(locationURI);
 		if (linkTargetFile != null && linkTargetFile.exists()) {
 			IStatus fileTypeStatus = validateFileType(linkTargetFile);
-			if (fileTypeStatus.isOK() == false) {
+			if (!fileTypeStatus.isOK()) {
 				return fileTypeStatus;
 			}
-		} else if (locationStatus.getSeverity() == IStatus.OK) {
+		} else if (locationStatus.isOK()) {
 			// locationStatus takes precedence over missing location warning.
 			return createStatus(
 					IStatus.WARNING,
