@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.filesystem.ram;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.*;
@@ -28,7 +27,7 @@ public class MemoryFileStore extends FileStore {
 
 	public MemoryFileStore(IPath path) {
 		super();
-		this.path = path;
+		this.path = path.setDevice(null);
 	}
 
 	public String[] childNames(int options, IProgressMonitor monitor) {
@@ -54,6 +53,8 @@ public class MemoryFileStore extends FileStore {
 	}
 
 	public IFileStore getParent() {
+		if (path.segmentCount() == 0)
+			return null;
 		return new MemoryFileStore(path.removeLastSegments(1));
 	}
 
@@ -75,11 +76,6 @@ public class MemoryFileStore extends FileStore {
 	}
 
 	public URI toURI() {
-		try {
-			return new URI(MemoryFileSystem.SCHEME_MEMORY, path.toPortableString(), null);
-		} catch (URISyntaxException e) {
-			//should not happen
-			throw new RuntimeException(e);
-		}
+		return MemoryFileSystem.toURI(path);
 	}
 }
