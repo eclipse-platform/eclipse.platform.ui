@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.ui;
 
-import org.eclipse.compare.internal.ResizableDialog;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.TeamUIMessages;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A dialog that displays a {@link org.eclipse.team.ui.ISaveableWorkbenchPart} and
@@ -26,9 +29,11 @@ import org.eclipse.team.internal.ui.TeamUIMessages;
  * @see SaveablePartAdapter
  * @since 3.0
  */
-public class SaveablePartDialog extends ResizableDialog {
+public class SaveablePartDialog extends TrayDialog {
 		
 	private ISaveableWorkbenchPart input;
+	private String fContextId;
+	private boolean hasSettings = true;
 
 	/**
 	 * Creates a dialog with the given title and input. The input is not created until the dialog
@@ -38,7 +43,8 @@ public class SaveablePartDialog extends ResizableDialog {
 	 * @param input the part to show in the dialog.
 	 */
 	public SaveablePartDialog(Shell shell, ISaveableWorkbenchPart input) {
-		super(shell, null);
+		super(shell);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		this.input = input;
 	}
 	
@@ -74,7 +80,6 @@ public class SaveablePartDialog extends ResizableDialog {
 	 * Save any changes to the compare editor.
 	 */
 	private void saveChanges() {
-		// TODO: need to look for other saveable model sources
 		MessageDialog dialog = new MessageDialog(
 				getShell(), TeamUIMessages.ParticipantCompareDialog_2, null,  
 				TeamUIMessages.ParticipantCompareDialog_3, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, 
@@ -96,5 +101,61 @@ public class SaveablePartDialog extends ResizableDialog {
 	 */
 	protected ISaveableWorkbenchPart getInput() {
 		return input;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings compareSettings = TeamUIPlugin.getPlugin().getDialogSettings();
+		String sectionName = this.getClass().getName() + "5";
+		IDialogSettings dialogSettings = compareSettings.getSection(sectionName);
+		if (dialogSettings == null) {
+			hasSettings = false;
+			dialogSettings = compareSettings.addNewSection(sectionName);
+		}
+		return dialogSettings;
+	}
+	
+	/**
+	 * Set the help content id of this dialog.
+	 * @param contextId the help context id
+	 */
+	public void setHelpContextId(String contextId) {
+		fContextId= contextId;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.window.Window#configureShell(Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		if (fContextId != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, fContextId);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Point initialSize = super.getInitialSize();
+		if (hasSettings) {
+			return initialSize;
+		}
+		// If we don't have settings we need to come up with a reasonable default
+		// since we can't depend on the compare editor input layout returning a good default size
+		int width= 0;
+		int height= 0;
+		Shell shell= getParentShell();
+		if (shell != null) {
+			Point parentSize= shell.getSize();
+			width= parentSize.x-100;
+			height= parentSize.y-100;
+		}
+		if (width < 700)
+			width= 700;
+		if (height < 500)
+			height= 500;
+		return new Point(width, height);
 	}
 }

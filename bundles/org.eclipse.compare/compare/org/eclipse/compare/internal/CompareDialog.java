@@ -12,39 +12,52 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.compare.ICompareContainer;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.services.IServiceLocator;
 
-
-public class CompareDialog extends ResizableDialog implements IPropertyChangeListener, ICompareContainer {
-		
+/**
+ * This is a dialog that can host a {@link CompareEditorInput}.
+ * <p>
+ * This class can be used as is or can be subclassed.
+ * 
+ * @since 3.3
+ */
+public class CompareDialog extends TrayDialog implements IPropertyChangeListener, ICompareContainer {
+	
+	public static final int NO_COMPARE_RESULT = 100;
+	
 	private CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
 	private Label statusLabel;
-
+	boolean hasSettings = true;
+	
+	/**
+	 * Create a dialog to host the given input.
+	 * @param shell a shell
+	 * @param input the dialog input
+	 */
 	CompareDialog(Shell shell, CompareEditorInput input) {
-		super(shell, null);
-		
+		super(shell);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		Assert.isNotNull(input);
 		fCompareEditorInput= input;
-		fCompareEditorInput.addPropertyChangeListener(this);
-		fCompareEditorInput.setContainer(this);
-		setHelpContextId(ICompareContextIds.COMPARE_DIALOG);
 	}
 	
 	/* (non-Javadoc)
@@ -63,9 +76,27 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		fCommitButton= createButton(parent, IDialogConstants.OK_ID, Utilities.getString("CompareDialog.commitAction.label"), true); //$NON-NLS-1$
-		fCommitButton.setEnabled(false);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		if (isInputEditable()) {
+			fCommitButton= createButton(parent, IDialogConstants.OK_ID, Utilities.getString("CompareDialog.commitAction.label"), true); //$NON-NLS-1$
+			fCommitButton.setEnabled(false);
+			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		} else {
+			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
+		}
+	}
+
+	/**
+	 * Return whether the compare editor input of this dialog is editable.
+	 * By default, the input is editable if the compare configuration
+	 * indicates that either the left or right sides are editable.
+	 * Subclasses may override.
+	 * @return whether the compare editor input of this dialog is editable
+	 * @see CompareConfiguration#isLeftEditable()
+	 * @see CompareConfiguration#isRightEditable()
+	 */
+	protected boolean isInputEditable() {
+		return fCompareEditorInput.getCompareConfiguration().isLeftEditable() 
+			|| fCompareEditorInput.getCompareConfiguration().isRightEditable();
 	}
 
 	/* (non-Javadoc)
@@ -111,6 +142,11 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
+		
+		// Before opening, set the container of the input and listen
+		// for changes to the input
+		fCompareEditorInput.addPropertyChangeListener(this);
+		fCompareEditorInput.setContainer(this);
 		
 		int rc= super.open();
 		
@@ -181,6 +217,9 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 		input.removeCompareInputChangeListener(listener);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
+	 */
 	public void setStatusMessage(String message) {
 		if (statusLabel != null && !statusLabel.isDisposed()) {
 			if (message == null) {
@@ -190,4 +229,99 @@ public class CompareDialog extends ResizableDialog implements IPropertyChangeLis
 			}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
+	 */
+	protected IDialogSettings getDialogBoundsSettings() {
+		IDialogSettings compareSettings = CompareUIPlugin.getDefault().getDialogSettings();
+		String sectionName = this.getClass().getName();
+		IDialogSettings dialogSettings = compareSettings.getSection(sectionName);
+		if (dialogSettings == null) {
+			hasSettings = false;
+			dialogSettings = compareSettings.addNewSection(sectionName);
+		}
+		return dialogSettings;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.internal.ResizableDialog#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		if (getHelpContextId() != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell, getHelpContextId());
+	}
+
+	/**
+	 * Return the help content id for this dialog or <code>null</code>.
+	 * By default, a generic help content id is returned. Subclasses may
+	 * override.
+	 * @return the help content id for this dialog or <code>null</code>
+	 */
+	public String getHelpContextId() {
+		return ICompareContextIds.COMPARE_DIALOG;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 */
+	protected Point getInitialSize() {
+		Point initialSize = super.getInitialSize();
+		if (hasSettings) {
+			return initialSize;
+		}
+		return getDefaultSize();
+	}
+
+	/**
+	 * If we don't have settings we need to come up with a reasonable default
+	 * since we can't depend on the compare editor input layout returning a 
+	 * good default size.
+	 * @return the default size of the dialog
+	 */
+	protected Point getDefaultSize() {
+		int width= 0;
+		int height= 0;
+		Shell shell= getParentShell();
+		if (shell != null) {
+			Point parentSize= shell.getSize();
+			width= parentSize.x-100;
+			height= parentSize.y-100;
+		}
+		if (width < 700)
+			width= 700;
+		if (height < 500)
+			height= 500;
+		return new Point(width, height);
+	}
+	
+	/**
+	 * Initialize the compare editor input of this dialog by invoking the
+	 * {@link CompareEditorInput#run(IProgressMonitor)} using the provided
+	 * context. If no context is provided, a default context (most likely the
+	 * progress service) will be used.
+	 * @param context a runnable context or <code>null</code> if the default context is desired.
+	 * @return whether the compare editor input has a valid compare result 
+	 * 		(see {@link CompareEditorInput#getCompareResult()})
+	 */
+	protected boolean prepareInput(IRunnableContext context) {
+		return CompareUIPlugin.getDefault().compareResultOK(fCompareEditorInput, context);
+	}
+	
+	/**
+	 * Prepare the compare editor input of this dialog and then open the dialog
+	 * if the compare result was OK. If the compare result was not OK, then
+	 * {@link #NO_COMPARE_RESULT} is returned.
+	 * @return the result returned from the {@link #open()} method or
+	 * {@link #NO_COMPARE_RESULT} if there was no compare result and the 
+	 * dialog was not opened.
+	 */
+	public int prepareAndOpen() {
+		if (prepareInput(null)) {
+			return open();
+		}
+		return NO_COMPARE_RESULT;
+	}
+
 }
