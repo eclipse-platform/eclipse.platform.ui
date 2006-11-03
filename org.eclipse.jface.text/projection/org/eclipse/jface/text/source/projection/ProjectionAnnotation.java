@@ -11,13 +11,13 @@
 package org.eclipse.jface.text.source.projection;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import org.eclipse.jface.text.source.Annotation;
@@ -98,16 +98,15 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 
 	private void drawRangeIndication(GC gc, Canvas canvas, Rectangle r) {
 		final int MARGIN= 3;
-		Color fg= gc.getForeground();
-		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
-
-		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
+		
 		/* cap the height - at least on GTK, large numbers are converted to
 		 * negatives at some point */
 		int height= Math.min(r.y + r.height - MARGIN, canvas.getSize().y);
+		
+		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
+		gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 		gc.drawLine(r.x + 4, r.y + 12, r.x + 4, height);
 		gc.drawLine(r.x + 4, height, r.x + r.width - MARGIN, height);
-		gc.setForeground(fg);
 	}
 
 	/*

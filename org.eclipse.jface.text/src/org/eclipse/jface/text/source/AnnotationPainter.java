@@ -116,19 +116,11 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				Point right= textWidget.getLocationAtOffset(offset + length);
 
 				int[] polyline= computePolyline(left, right, textWidget.getBaseline(offset), textWidget.getLineHeight(offset));
-
-				
-				int currentLineWidth= gc.getLineWidth();
-				int currentLineStyle= gc.getLineStyle();
 				
 				gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
 				gc.setLineStyle(SWT.LINE_SOLID);
 				gc.setForeground(color);
-				
 				gc.drawPolyline(polyline);
-				
-				gc.setLineWidth(currentLineWidth);
-				gc.setLineStyle(currentLineStyle);
 
 			} else {
 				textWidget.redrawRange(offset, length, true);
