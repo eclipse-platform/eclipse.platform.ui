@@ -75,6 +75,8 @@ public class FieldDecorationRegistry {
 	private static final String IMG_DEC_FIELD_REQUIRED = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_REQUIRED"; //$NON-NLS-1$
 
 	private static final String IMG_DEC_FIELD_ERROR = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR"; //$NON-NLS-1$
+	
+	private static final String IMG_DEC_FIELD_ERROR_QUICKFIX = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR_QUICKFIX"; //$NON-NLS-1$
 
 	private static final String IMG_DEC_FIELD_WARNING = "org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING"; //$NON-NLS-1$
 
@@ -87,17 +89,21 @@ public class FieldDecorationRegistry {
 		// Define the images used in the standard decorations.
 		imageRegistry.put(IMG_DEC_FIELD_CONTENT_PROPOSAL, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/content_proposal_cue.gif"));//$NON-NLS-1$
+						"images/contassist_ovr.gif"));//$NON-NLS-1$
 		imageRegistry.put(IMG_DEC_FIELD_ERROR, ImageDescriptor.createFromFile(
-				FieldDecorationRegistry.class, "images/error_cue.gif"));//$NON-NLS-1$
+				FieldDecorationRegistry.class, "images/error_ovr.gif"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_WARNING, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/warning_cue.gif"));//$NON-NLS-1$
+						"images/warn_ovr.gif"));//$NON-NLS-1$
 
 		imageRegistry.put(IMG_DEC_FIELD_REQUIRED, ImageDescriptor
 				.createFromFile(FieldDecorationRegistry.class,
-						"images/required_field_cue.gif"));//$NON-NLS-1$		
+						"images/required_field_cue.gif"));//$NON-NLS-1$	
+		
+		imageRegistry.put(IMG_DEC_FIELD_ERROR_QUICKFIX, ImageDescriptor
+				.createFromFile(FieldDecorationRegistry.class,
+						"images/errorqf_ovr.gif"));//$NON-NLS-1$		
 
 		// Define the standard decorations. Some do not have standard
 		// descriptions. Use null in these cases.
