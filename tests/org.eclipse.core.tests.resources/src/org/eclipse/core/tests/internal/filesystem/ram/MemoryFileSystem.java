@@ -30,7 +30,7 @@ public class MemoryFileSystem extends FileSystem {
 	 */
 	public static URI toURI(IPath path) {
 		try {
-			return new URI(MemoryFileSystem.SCHEME_MEMORY, null, path.setDevice(null).toPortableString(), null);
+			return new URI(MemoryFileSystem.SCHEME_MEMORY, path.setDevice(null).toPortableString(), null);
 		} catch (URISyntaxException e) {
 			//should not happen
 			throw new RuntimeException(e);
