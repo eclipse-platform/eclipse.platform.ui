@@ -188,7 +188,8 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		FieldDecoration dec = smartField.getErrorDecoration();
 		ControlDecoration cd = (ControlDecoration) smartField.decImpl;
 		if (show) {
-			cd.setDecoration(dec);
+			cd.setImage(dec.getImage());
+			cd.setDescriptionText(dec.getDescription());
 			cd.setShowOnlyOnFocus(false);
 			cd.show();
 		} else {
@@ -200,7 +201,8 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		FieldDecoration dec = smartField.getWarningDecoration();
 		ControlDecoration cd = (ControlDecoration) smartField.decImpl;
 		if (show) {
-			cd.setDecoration(dec);
+			cd.setImage(dec.getImage());
+			cd.setDescriptionText(dec.getDescription());
 			cd.setShowOnlyOnFocus(false);
 			cd.show();
 		} else {
@@ -212,7 +214,8 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		FieldDecoration dec = getRequiredFieldDecoration();
 		ControlDecoration cd = (ControlDecoration) smartField.decImpl;
 		if (show) {
-			cd.setDecoration(dec);
+			cd.setImage(dec.getImage());
+			cd.setDescriptionText(dec.getDescription());
 			cd.setShowOnlyOnFocus(false);
 			cd.show();
 		} else {
@@ -224,7 +227,8 @@ public class ControlDecorationTestDialog extends FieldAssistTestDialog {
 		FieldDecoration dec = getCueDecoration();
 		ControlDecoration cd = (ControlDecoration) smartField.decImpl;
 		if (show) {
-			cd.setDecoration(dec);
+			cd.setImage(dec.getImage());
+			cd.setDescriptionText(dec.getDescription());
 			cd.setShowOnlyOnFocus(true);
 			cd.show();
 		} else {

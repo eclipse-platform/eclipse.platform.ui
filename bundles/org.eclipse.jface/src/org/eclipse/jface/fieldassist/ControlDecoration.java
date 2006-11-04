@@ -33,28 +33,27 @@ import org.eclipse.swt.widgets.Widget;
 
 /**
  * ControlDecoration renders an image decoration near a control. It allows
- * clients to specify an image decoration and a position for the decoration
- * relative to the control. Decorations may be assigned descriptions, which can
- * optionally be shown when the user hovers over the decoration. Clients can
- * decorate any kind of control.
+ * clients to specify an image and a position for the image relative to the
+ * control. A ControlDecoration may be assigned description text, which can
+ * optionally be shown when the user hovers over the image. Clients can decorate
+ * any kind of control.
  * <p>
- * Decorations always appear on the left or right side of the field, never above
- * or below it. Decorations can be positioned at the top, center, or bottom of
- * either side of the control. Future implementations may provide additional
- * positioning options for decorations.
+ * Decoration images always appear on the left or right side of the field, never
+ * above or below it. Decorations can be positioned at the top, center, or
+ * bottom of either side of the control. Future implementations may provide
+ * additional positioning options for decorations.
  * <p>
  * ControlDecoration is used in a manner similar to {@link DecoratedField}. The
  * primary difference between these mechanisms is that {@link DecoratedField}
  * ensures adequate space is allocated for any field decorations by creating a
  * composite that parents the decorations and fields, and reserving space for
  * any decorations added to the field. ControlDecoration simply renders the
- * decoration adjacent to the specified (already created) control, with no
- * guarantee that the decoration won't be clipped or otherwise obscured or
- * overlapped by adjacent controls, including another ControlDecoration placed
- * in the same location. The tradeoff is one of guaranteed placement (via
- * {@link DecoratedField}) vs. more flexibility in creating the control, using
- * ControlDecoration, along with less concern for aligning decorated and
- * non-decorated fields.
+ * image adjacent to the specified (already created) control, with no guarantee
+ * that it won't be clipped or otherwise obscured or overlapped by adjacent
+ * controls, including another ControlDecoration placed in the same location.
+ * The tradeoff is one of guaranteed placement (via {@link DecoratedField}) vs.
+ * more flexibility in creating the control, using ControlDecoration, along with
+ * less concern for aligning decorated and non-decorated fields.
  * <p>
  * Clients using ControlDecoration should typically ensure that enough margin
  * space is reserved for a decoration by altering the layout data margins,
@@ -92,10 +91,14 @@ public class ControlDecoration {
 	private Control control;
 
 	/**
-	 * The associated decoration.
+	 * The associated image.
 	 */
-	private FieldDecoration decoration;
+	private Image image;
 
+	/**
+	 * The associated description text.
+	 */
+	private String descriptionText;
 	/**
 	 * The position of the decoration.
 	 */
@@ -363,44 +366,6 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Construct a ControlDecoration for the specified control, with the
-	 * specified decoration and position.
-	 * <p>
-	 * SWT constants are used to specify the position of the decoration relative
-	 * to the control. The position should include style bits describing both
-	 * the vertical and horizontal orientation. <code>SWT.LEFT</code> and
-	 * <code>SWT.RIGHT</code> describe the horizontal placement of the
-	 * decoration relative to the control, and the constants
-	 * <code>SWT.TOP</code>, <code>SWT.CENTER</code>, and
-	 * <code>SWT.BOTTOM</code> describe the vertical alignment of the
-	 * decoration relative to the control. Decorations always appear on either
-	 * the left or right side of the control, never above or below it. For
-	 * example, a decoration appearing on the left side of the field, at the
-	 * top, is specified as SWT.LEFT | SWT.TOP. If no position style bits are
-	 * specified, the control decoration will be positioned to the left and
-	 * center of the control (<code>SWT.LEFT | SWT.CENTER</code>).
-	 * </p>
-	 * 
-	 * @param control
-	 *            the control to be decorated
-	 * @param decoration
-	 *            the decoration specifying the image and description to be
-	 *            shown adjacent to the control.
-	 * @param position
-	 *            bit-wise or of position constants (<code>SWT.TOP</code>,
-	 *            <code>SWT.BOTTOM</code>, <code>SWT.LEFT</code>,
-	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
-	 */
-	public ControlDecoration(Control control, FieldDecoration decoration,
-			int position) {
-		this.position = position;
-		this.decoration = decoration;
-		this.control = control;
-
-		addControlListeners();
-	}
-
-	/**
 	 * Construct a ControlDecoration for decorating the specified control at the
 	 * specified position. The decoration to be displayed will be specified at a
 	 * later time.
@@ -430,7 +395,11 @@ public class ControlDecoration {
 	 * @see #setDecoration(FieldDecoration)
 	 */
 	public ControlDecoration(Control control, int position) {
-		this(control, null, position);
+		this.position = position;
+		this.control = control;
+
+		addControlListeners();
+
 	}
 
 	/**
@@ -642,14 +611,48 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Set the decoration for this control decoration to the specified
-	 * decoration. Update any visuals appropriate for the new decoration.
+	 * Get the description text that may be shown in a hover for this
+	 * decoration.
 	 * 
-	 * @param decoration
-	 *            the decoration to be shown adjacent to the control
+	 * @return the text to be shown as a description for the decoration, or
+	 *         <code>null</code> if none has been set.
 	 */
-	public void setDecoration(FieldDecoration decoration) {
-		this.decoration = decoration;
+	public String getDescriptionText() {
+		return descriptionText;
+	}
+
+	/**
+	 * Set the image shown in this control decoration. Update the rendered
+	 * decoration.
+	 * 
+	 * @param text
+	 *            the text to be shown as a description for the decoration, or
+	 *            <code>null</code> if none has been set.
+	 */
+	public void setDescriptionText(String text) {
+		this.descriptionText = text;
+		update();
+	}
+
+	/**
+	 * Get the image shown in this control decoration.
+	 * 
+	 * @return the image to be shown adjacent to the control, or
+	 *         <code>null</code> if one has not been set.
+	 */
+	public Image getImage() {
+		return image;
+	}
+
+	/**
+	 * Set the image shown in this control decoration. Update the rendered
+	 * decoration.
+	 * 
+	 * @param image
+	 *            the image to be shown adjacent to the control
+	 */
+	public void setImage(Image image) {
+		this.image = image;
 		update();
 	}
 
@@ -915,25 +918,5 @@ public class ControlDecoration {
 			System.out
 					.println("Removed listener>>>" + listenerType + " from>>>" + widget); //$NON-NLS-1$//$NON-NLS-2$
 		}
-	}
-
-	/*
-	 * Get the image that should be shown. May be null.
-	 */
-	private Image getImage() {
-		if (decoration == null) {
-			return null;
-		}
-		return decoration.getImage();
-	}
-
-	/*
-	 * Get the description text that should be shown. May be null.
-	 */
-	private String getDescriptionText() {
-		if (decoration == null) {
-			return null;
-		}
-		return decoration.getDescription();
 	}
 }
