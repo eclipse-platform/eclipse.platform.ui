@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 // TODO djo: copyright
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
+import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
 import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;

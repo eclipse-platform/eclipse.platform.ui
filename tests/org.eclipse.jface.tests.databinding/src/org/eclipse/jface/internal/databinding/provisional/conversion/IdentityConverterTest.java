@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.internal.databinding.provisional.BindingException;
+import org.eclipse.jface.databinding.BindingException;
 
 /**
  * @since 3.2
