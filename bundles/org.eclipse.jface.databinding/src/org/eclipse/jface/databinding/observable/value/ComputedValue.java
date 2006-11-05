@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding.observable.value;
 
@@ -117,8 +118,8 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	public final Object doGetValue() {
 		if (dirty) {
 			// This line will do the following:
-			// - Run the computeValue method
-			// - While doing so, add any updatable that is touched to the
+			// - Run the calculate method
+			// - While doing so, add any observable that is touched to the
 			// dependencies list
 			IObservable[] newDependencies = ObservableTracker.runAndMonitor(
 					privateInterface, privateInterface, null);

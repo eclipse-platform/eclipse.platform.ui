@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -85,7 +86,7 @@ public class DataBindingContext {
     /**
      * Unmodifiable version of {@link #bindings} for exposure publicly.
      */
-    private IObservableList unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
+    private IObservableList unmodifiableBindings;
 
 	private List bindSupportFactories;
 
@@ -137,7 +138,7 @@ public class DataBindingContext {
 	 */
 	public DataBindingContext(DataBindingContext parent, Realm validationRealm, BindSupportFactory[] factories) {
 		Assert.isNotNull(validationRealm);
-		Assert.isNotNull(bindSupportFactories);
+		Assert.isNotNull(factories);
 		this.parent = parent;
 		if (parent != null) {
 			parent.addChild(this);
@@ -145,6 +146,8 @@ public class DataBindingContext {
 		this.validationRealm = validationRealm;
 		this.bindSupportFactories = new ArrayList(Arrays.asList(factories));
 		bindings = new WritableList(validationRealm);
+        
+        unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
 		partialValidationError = new ComputedValue(validationRealm) {
 			protected Object calculate() {
 				int size = partialValidationErrors.size();

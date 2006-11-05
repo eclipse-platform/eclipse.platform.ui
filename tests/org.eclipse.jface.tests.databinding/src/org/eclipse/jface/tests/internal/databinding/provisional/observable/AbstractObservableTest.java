@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.provisional.observable;
@@ -17,6 +18,9 @@ import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.IStaleListener;
+import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Tests for AbstractObservable.
@@ -27,7 +31,8 @@ public class AbstractObservableTest extends TestCase {
 	private ObservableStub stub;
 	
 	protected void setUp() throws Exception {
-		stub = new ObservableStub();
+        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		stub = new ObservableStub(Realm.getDefault());
 	}
 	
 	public void testStaleListener() throws Exception {
@@ -178,7 +183,14 @@ public class AbstractObservableTest extends TestCase {
 	}
 	
 	private static class ObservableStub extends AbstractObservable {
-		private boolean firstListenerAdded;
+		/**
+         * @param realm
+         */
+        public ObservableStub(Realm realm) {
+            super(realm);
+        }
+
+        private boolean firstListenerAdded;
 		private boolean lastListenerRemoved;
 		
 		protected Object doGetValue() {

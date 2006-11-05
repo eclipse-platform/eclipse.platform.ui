@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds (bug 135316)
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -64,8 +65,7 @@ public class BindSpec {
 	 * @param domainValidator
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
-	 * @param targetUpdatePolicy
-	 * @param lazyInsertDeleteProvider 
+	 * @param targetUpdatePolicy 
 	 * 
 	 */
 	protected BindSpec(IConverter[] modelToTargetConverter,

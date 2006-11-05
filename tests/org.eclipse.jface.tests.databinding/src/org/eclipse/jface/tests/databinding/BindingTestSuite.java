@@ -16,7 +16,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.examples.databinding.compositetable.radiogroup.RadioGroupTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
@@ -51,13 +50,6 @@ public class BindingTestSuite extends TestSuite {
     }
 
     public BindingTestSuite() {
-        //org.eclipse.jface.examples.databinding.compositetable.radiogroup
-        addTestSuite(RadioGroupTest.class);
-        
-        //org.eclipse.jface.examples.databinding.compositetable.timeeditor.test
-//FIXME        addTestSuite(CalendarControlTestSuite.class);
-        //The files in this package are in the above test suite
-        
         // org.eclipse.jface.internal.databinding.provisional.conversion
         addTestSuite(IdentityConverterTest.class);
 
