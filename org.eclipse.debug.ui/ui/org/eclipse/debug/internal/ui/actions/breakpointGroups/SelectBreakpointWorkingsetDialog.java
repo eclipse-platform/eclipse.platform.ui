@@ -98,12 +98,16 @@ public class SelectBreakpointWorkingsetDialog extends SelectionDialog {
 		fViewer.setContentProvider(new WorkingsetContent());
 		fViewer.setInput(new AdaptableList(PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets()));
 		fViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-		fViewer.setChecked(fInitialSelection, true);
+		if(fInitialSelection != null) {
+			fViewer.setChecked(fInitialSelection, true);
+		}
 		fViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				Object o = event.getElement();
 				fViewer.setAllChecked(false);
-				fViewer.setChecked(o, true);
+				if(o != null) {
+					fViewer.setChecked(o, true);
+				}
 			}
 			
 		});
