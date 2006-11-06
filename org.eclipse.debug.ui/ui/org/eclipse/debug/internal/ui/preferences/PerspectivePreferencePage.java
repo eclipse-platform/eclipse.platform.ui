@@ -46,7 +46,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -376,15 +375,6 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 			}
 		}
 		fPerspectiveComp.layout(new Control[] {fComboPlaceHolder});
-		resizeShell();
-	}
-
-	private void resizeShell() {
-		Point pnt = this.getShell().getSize();
-		Point p = this.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		if(pnt.x < p.x) {
-			this.getShell().setSize(p);
-		}
 	}
 
 	/**
