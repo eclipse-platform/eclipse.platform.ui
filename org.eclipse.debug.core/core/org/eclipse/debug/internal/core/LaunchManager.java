@@ -802,17 +802,34 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 								value += line;
 							}
 						}
+						line = reader.readLine();
 					}
 					else {
 						int separator = line.indexOf('=');
 						if (separator > 0) {
 							key = line.substring(0, separator);
 							value = line.substring(separator + 1);
-							
+							line = reader.readLine();
+							if(line != null) {
+								//this line has a '=' read ahead to check next line for '=', might be broken on more than one line
+								separator = line.indexOf('=');
+								while(separator < 0) {
+									value += line.trim();
+									line = reader.readLine();
+									if(line == null) {
+										//if next line read is the end of the file quit the loop
+										break;
+									}
+									separator = line.indexOf('=');
+								}
+							}
 						}
 					}
-					cache.put(key, value);
-					line = reader.readLine();
+					if(key != null) {
+						cache.put(key, value);
+						key = null;
+						value = null;
+					}
 				}
 				reader.close();
 			}
