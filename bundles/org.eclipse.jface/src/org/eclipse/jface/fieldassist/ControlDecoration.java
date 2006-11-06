@@ -403,13 +403,11 @@ public class ControlDecoration {
 	}
 
 	/**
-	 * Detach this ControlDecoration from its control. This method is intended
-	 * to be used when the control outlives the need for its decoration. Once a
-	 * ControlDecoration has been detached from its control, it is no longer
-	 * useful. This method has no effect if the receiver is already detached
-	 * from its control.
+	 * Dispose this ControlDecoration. Unhook any listeners that have been
+	 * installed on the target control. This method has no effect if the
+	 * receiver is already disposed.
 	 */
-	public void detach() {
+	public void dispose() {
 		if (control == null) {
 			return;
 		}
@@ -437,7 +435,7 @@ public class ControlDecoration {
 	private void addControlListeners() {
 		disposeListener = new DisposeListener() {
 			public void widgetDisposed(DisposeEvent event) {
-				detach();
+				dispose();
 			}
 		};
 		printAddListener(control, "DISPOSE"); //$NON-NLS-1$
