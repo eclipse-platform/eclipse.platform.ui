@@ -176,6 +176,9 @@ without consulting with the Platform/Debug team.
          <appInfo>
             <meta.element deprecated="true"/>
          </appInfo>
+         <documentation>
+            This element is no longer used. Instead, use the &lt;code&gt;org.eclipse.debug.ui.launchShortcuts&lt;/code&gt; extension point.
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="extension" type="string" use="required">
