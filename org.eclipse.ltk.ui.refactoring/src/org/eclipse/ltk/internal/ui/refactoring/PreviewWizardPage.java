@@ -87,7 +87,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	protected static final String PREVIOUS_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.previousChange"; //$NON-NLS-1$
 	protected static final String NEXT_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.nextChange"; //$NON-NLS-1$
-
 	private static class NullPreviewer implements IChangePreviewViewer {
 		private Label fLabel;
 		public void createControl(Composite parent) {
@@ -204,14 +203,18 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					} else {
 						removeFilter();
 					}
+					updateTreeViewerPaneTitle();
 				}
 			});
 		}
 		private void addFilter() {
 			fTreeViewer.addFilter(fDerivedFilter);
+			fDerivedFilterActive= true;
+			
 		}
 		private void removeFilter() {
 			fTreeViewer.removeFilter(fDerivedFilter);
+			fDerivedFilterActive= false;
 		}
 	}
 	private class FilterDropDownAction extends Action implements IMenuCreator {
@@ -289,6 +292,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	protected Change fChange;
 	private List/*<GroupCategory>*/ fActiveGroupCategories;
+	private boolean fDerivedFilterActive;
 	protected CompositeChange fTreeViewerInputChange;
 	private PreviewNode fCurrentSelection;
 	private PageBook fPageContainer;
@@ -427,7 +431,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		SashForm sashForm= new SashForm(result, SWT.VERTICAL);
 		
 		fTreeViewerPane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
-		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
+		updateTreeViewerPaneTitle(); 
 		ToolBarManager tbm= fTreeViewerPane.getToolBarManager();
 		fNextAction= new NextChange();
 		tbm.add(fNextAction);
@@ -666,15 +670,51 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 		fActiveGroupCategories.add(category);
 		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(fActiveGroupCategories);
-		fTreeViewerPane.setText(Messages.format(
-			RefactoringUIMessages.PreviewWizardPage_changes_filtered, 
-			category.getName()));
+		updateTreeViewerPaneTitle();
+	}
+
+	private void updateTreeViewerPaneTitle() {
+		String derivedMessage= null;
+		String groupFilterMessage= null;
+		
+		if (fDerivedFilterActive) {
+			if (fTreeViewer != null && fTreeViewer.getInput() instanceof PreviewNode) {
+				if (((PreviewNode) fTreeViewer.getInput()).hasDerived()) {
+					derivedMessage= RefactoringUIMessages.PreviewWizardPage_changes_filter_derived;
+				}
+			}
+		}
+		if (fActiveGroupCategories != null && fActiveGroupCategories.size() > 0) {
+			GroupCategory groupCategory= (GroupCategory) fActiveGroupCategories.get(0);
+			groupFilterMessage= Messages.format(RefactoringUIMessages.PreviewWizardPage_changes_filter_category, groupCategory.getName());
+		}
+		
+		String title;
+		if (groupFilterMessage == null && derivedMessage == null) {
+			title= RefactoringUIMessages.PreviewWizardPage_changes;
+			
+		} else if (groupFilterMessage != null && derivedMessage != null) {
+			title= Messages.format(
+					RefactoringUIMessages.PreviewWizardPage_changes_filtered2,
+					new Object[] { groupFilterMessage, derivedMessage });
+			
+		} else if (groupFilterMessage != null) {
+			title= Messages.format(
+					RefactoringUIMessages.PreviewWizardPage_changes_filtered,
+					groupFilterMessage);
+		} else {
+			title= Messages.format(
+					RefactoringUIMessages.PreviewWizardPage_changes_filtered,
+					derivedMessage);
+		}
+		
+		fTreeViewerPane.setText(title);
 	}
 	
 	private void clearGroupCategories() {
 		fActiveGroupCategories= null;
 		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(null);
-		fTreeViewerPane.setText(RefactoringUIMessages.PreviewWizardPage_changes); 
+		updateTreeViewerPaneTitle(); 
 	}
 
 	public Change getChange() {

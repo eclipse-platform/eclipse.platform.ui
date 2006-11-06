@@ -72,7 +72,13 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String PreviewWizardPage_changes;
 
+	public static String PreviewWizardPage_changes_filter_category;
+
+	public static String PreviewWizardPage_changes_filter_derived;
+
 	public static String PreviewWizardPage_changes_filtered;
+
+	public static String PreviewWizardPage_changes_filtered2;
 
 	public static String PreviewWizardPage_description;
 
