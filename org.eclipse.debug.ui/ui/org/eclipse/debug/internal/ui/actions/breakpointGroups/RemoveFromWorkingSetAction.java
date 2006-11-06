@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 
-import java.util.Iterator;
-
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory;
+import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Item;
 
 /**
  * Removes a breakpoint from a breakpoint working set.
  */
 public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
-        
+	
     /**
      * Constructs action to remove breakpoints from a category.
      * 
@@ -37,19 +36,18 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
      * @see org.eclipse.jface.action.IAction#run()
      */
     public void run() {
-        Iterator iterator = getStructuredSelection().iterator();
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
-            if (object instanceof IBreakpoint) {
-                IBreakpoint breakpoint = (IBreakpoint) object;
-                BreakpointContainer[] containers = getBreakpointsView().getMovedFromContainers(breakpoint);
-                if (containers != null) {
-                    for (int i = 0; i < containers.length; i++) {
-                        BreakpointContainer container = containers[i];
-                        container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
-                    }
-                }
-            }
+        BreakpointsViewer viewer = (BreakpointsViewer) getBreakpointsView().getViewer();
+        Item[] items = viewer.getSelectedItems();
+        IBreakpoint breakpoint = null;
+        BreakpointContainer container = null;
+        for(int i = 0; i < items.length; i++) {
+        	if(items[i].getData() instanceof IBreakpoint) {
+        		breakpoint = (IBreakpoint) items[i].getData();
+        		container = viewer.getRemovableContainer(items[i]);
+        		if(container != null) {
+        			container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
+        		}
+        	}
         }
     }
     
@@ -57,33 +55,10 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
      * @see org.eclipse.ui.actions.BaseSelectionListenerAction#updateSelection(org.eclipse.jface.viewers.IStructuredSelection)
      */
     protected boolean updateSelection(IStructuredSelection selection) {
-        if (selection.isEmpty() || !getBreakpointsView().isShowingGroups()) {
-            return false;
+        Object element = selection.getFirstElement();
+        if(element instanceof BreakpointContainer) {
+        	return ((BreakpointContainer) element).getCategory().equals(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
         }
-        Iterator iterator = selection.iterator();
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
-            if (object instanceof IBreakpoint) {
-                IBreakpoint breakpoint = (IBreakpoint) object;
-                BreakpointContainer[] containers = getBreakpointsView().getMovedFromContainers(breakpoint);
-                if (containers == null || containers.length == 0) {
-                    return false;
-                }
-                for (int i = 0; i < containers.length; i++) {
-                    BreakpointContainer container = containers[i];
-                    if (container.getCategory() instanceof WorkingSetCategory) {
-                        WorkingSetCategory category = (WorkingSetCategory) container.getCategory();
-                        if (!IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(category.getWorkingSet().getId())) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-            } else {
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
 }

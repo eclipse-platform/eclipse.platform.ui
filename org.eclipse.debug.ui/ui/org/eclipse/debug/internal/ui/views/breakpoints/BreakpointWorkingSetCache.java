@@ -46,7 +46,7 @@ public class BreakpointWorkingSetCache {
 	 */
 	public BreakpointWorkingSetCache() {
 		fCache = new HashMap(15);
-	}//end constructor
+	}
 	
 	/**
 	 * Adds an entry into the cache
@@ -59,13 +59,13 @@ public class BreakpointWorkingSetCache {
 			list = new Vector();
 			list.addElement(entry);
 			fCache.put(marker, list);
-		}//end if
+		}
 		else {
 			if(!list.contains(entry)) {
 				list.addElement(entry);
-			}//end if
-		}//end else
-	}//end addEntry
+			}
+		}
+	}
 	
 	/**
 	 * Removes an item from the list contained under the marker key, not the marker entry
@@ -76,8 +76,8 @@ public class BreakpointWorkingSetCache {
 		Vector list = (Vector)fCache.get(marker);
 		if(list != null) {
 			list.remove(entry);
-		}//end if
-	}//end removeMappedEntry
+		}
+	}
 	
 	/**
 	 * Flushes the cache of only the sepcified marker
@@ -95,14 +95,14 @@ public class BreakpointWorkingSetCache {
 				if(ws != null) {
 					names += name+IImportExportConstants.DELIMITER;
 					ids += ws.getId()+IImportExportConstants.DELIMITER;
-				}//end if
-			}//end for
+				}
+			}
 			try {
 				marker.setAttribute(IInternalDebugUIConstants.WORKING_SET_NAME, names);
 				marker.setAttribute(IInternalDebugUIConstants.WORKING_SET_ID, ids);
-			}//end try
+			}
 			catch(CoreException e) {DebugPlugin.log(e);}
-		}//end if
+		}
 	}
 	
-}//end class
+}

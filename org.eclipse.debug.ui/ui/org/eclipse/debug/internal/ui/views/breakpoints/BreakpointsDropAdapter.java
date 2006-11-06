@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,38 +10,47 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
-import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * BreakpointsDropAdapter
  */
 public class BreakpointsDropAdapter extends ViewerDropAdapter {
-    
-    private BreakpointsView fView;
 
+	private Item fTarget = null;
+	
     /**
      * @param viewer
      */
-    protected BreakpointsDropAdapter(BreakpointsView view, Viewer viewer) {
+    protected BreakpointsDropAdapter(BreakpointsViewer viewer) {
         super(viewer);
-        fView = view;
+        setFeedbackEnabled(false);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#performDrop(java.lang.Object)
      */
     public boolean performDrop(Object data) {
-        return fView.performPaste(getCurrentTarget(), LocalSelectionTransfer.getInstance().getSelection());
+    	return ((BreakpointsViewer)getViewer()).performDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection());
     }
 
-    /* (non-Javadoc)
+	/**
+	 * @see org.eclipse.jface.viewers.ViewerDropAdapter#determineTarget(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	protected Object determineTarget(DropTargetEvent event) {
+		fTarget = (Item) event.item;
+		return fTarget;
+	}
+	
+    /**
      * @see org.eclipse.jface.viewers.ViewerDropAdapter#validateDrop(java.lang.Object, int, org.eclipse.swt.dnd.TransferData)
      */
     public boolean validateDrop(Object target, int operation, TransferData transferType) {
-        return fView.canPaste(target, LocalSelectionTransfer.getInstance().getSelection());
+    	return ((BreakpointsViewer)getViewer()).canDrop(fTarget, (IStructuredSelection) LocalSelectionTransfer.getInstance().getSelection());
     }
-
 }

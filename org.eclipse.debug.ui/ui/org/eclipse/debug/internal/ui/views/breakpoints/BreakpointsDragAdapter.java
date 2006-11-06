@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,23 +13,31 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.TransferDragSourceListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
+/**
+ * A drag adapter for the breakpoints viewer
+ */
 public class BreakpointsDragAdapter extends DragSourceAdapter implements TransferDragSourceListener {
     
-    private ISelectionProvider fProvider;
-    private BreakpointsView fView;
-    private BreakpointContainer[] fContainers;
+    /**
+     * the associated viewer for the adapter
+     */
+    private BreakpointsViewer fViewer;
+    private Item[] fItems = null;
     
-    public BreakpointsDragAdapter(BreakpointsView view, ISelectionProvider provider) {
-        Assert.isNotNull(provider);
-        fProvider= provider;
-        fView = view;
+    /**
+     * Constructor
+     * @param view the associiated view, which acts as the selection provider and therefore <b>must</b> implement <code>ISelectionProvider</code>
+     */
+    public BreakpointsDragAdapter(BreakpointsViewer viewer) {
+        Assert.isNotNull(viewer);
+        fViewer = viewer;
     }
 
     /**
@@ -43,29 +51,13 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
      * @see org.eclipse.swt.dnd.DragSourceListener#dragStart
      */
     public void dragStart(DragSourceEvent event) {
-        ISelection selection= fProvider.getSelection();
+        ISelection selection = fViewer.getSelection();
         LocalSelectionTransfer.getInstance().setSelection(selection);
         LocalSelectionTransfer.getInstance().setSelectionSetTime(event.time & 0xFFFFFFFFL);
-        event.doit= isDragable(selection);
+        event.doit = fViewer.canDrag(fViewer.getSelectedItems());
+        fItems = fViewer.getSelectedItems();
     }
-    
-    /**
-     * Checks if the elements contained in the given selection can
-     * be dragged.
-     * <p>
-     * Subclasses may override.
-     * 
-     * @param selection containing the elements to be dragged
-     */
-    protected boolean isDragable(ISelection selection) {
-        if (fView.canMove(selection)) {
-            fContainers = fView.getMovedFromContainers(selection);
-            return true;
-        }
-        return false;
-    }
-
-
+   
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragSetData
      */     
@@ -73,9 +65,8 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         // For consistency set the data to the selection even though
         // the selection is provided by the LocalSelectionTransfer
         // to the drop target adapter.
-        event.data= LocalSelectionTransfer.getInstance().getSelection();
+        event.data = LocalSelectionTransfer.getInstance().getSelection();
     }
-
 
     /* non Java-doc
      * @see org.eclipse.swt.dnd.DragSourceListener#dragFinished
@@ -83,8 +74,9 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     public void dragFinished(DragSourceEvent event) {
         if (event.detail == DND.DROP_MOVE) {
             // remove from source on move operation
-            fView.performRemove(fContainers, LocalSelectionTransfer.getInstance().getSelection());
+        	fViewer.performDrag(fItems);
         }
+        fItems = null;
         LocalSelectionTransfer.getInstance().setSelection(null);
         LocalSelectionTransfer.getInstance().setSelectionSetTime(0);
     }   

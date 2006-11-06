@@ -63,10 +63,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IMemento;
@@ -97,7 +95,12 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     private BreakpointsViewEventHandler fEventHandler;
 	private ICheckStateListener fCheckListener= new ICheckStateListener() {
 		public void checkStateChanged(CheckStateChangedEvent event) {
-			handleCheckStateChanged(event);
+			Object source = event.getElement();
+			if (source instanceof BreakpointContainer) {
+				handleContainerChecked(event, (BreakpointContainer) source);
+			} else if (source instanceof IBreakpoint) {
+				handleBreakpointChecked(event, (IBreakpoint) source);
+			}
 		}
 	};
 	private boolean fIsTrackingSelection= false;
@@ -132,6 +135,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		fContentProvider= new BreakpointsContentProvider();
 		CheckboxTreeViewer viewer = new BreakpointsViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
         setViewer(viewer);
+        viewer.setUseHashlookup(true);
 		viewer.setContentProvider(fContentProvider);
 		viewer.setComparator(new BreakpointsComparator());
 		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
@@ -144,7 +148,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 			}
 		});
 	    viewer.setLabelProvider(new BreakpointsLabelProvider());
-		
 		// Necessary so that the PropertySheetView hears about selections in this view
 		getSite().setSelectionProvider(viewer);
 		initIsTrackingSelection();
@@ -154,20 +157,16 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		return viewer;
 	}
     
+    /**
+     * Initializes drag and drop for the breakpoints viewer
+     */
     private void initDragAndDrop() {
-        StructuredViewer viewer = (StructuredViewer)getViewer();
-        int ops= DND.DROP_MOVE | DND.DROP_COPY;
+        BreakpointsViewer viewer = (BreakpointsViewer) getViewer();
+        int ops = DND.DROP_MOVE | DND.DROP_COPY;
         // drop
-        Transfer[] dropTransfers= new Transfer[] {
-            LocalSelectionTransfer.getInstance()
-        };
-        viewer.addDropSupport(ops, dropTransfers, new BreakpointsDropAdapter(this, viewer));
-        
+        viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer));
         // Drag 
-        Transfer[] dragTransfers= new Transfer[] {
-            LocalSelectionTransfer.getInstance()
-        };
-        viewer.addDragSupport(ops, dragTransfers, new BreakpointsDragAdapter(this, viewer));
+        viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer));
     }    
 	
 	/**
@@ -186,6 +185,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		setTrackSelection(false);
 	}
 	
+	/**
+	 * Initializes the persisted breakpoints organizers
+	 */
 	private void initBreakpointOrganizers() {
 		IMemento memento = getMemento();
 		if (memento != null) {
@@ -246,20 +248,6 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	}
 
 	/**
-	 * Responds to the user checking and unchecking breakpoints by enabling
-	 * and disabling them.
-	 * 
-	 * @param event the check state change event
-	 */
-	private void handleCheckStateChanged(CheckStateChangedEvent event) {
-		Object source= event.getElement();
-		if (source instanceof BreakpointContainer) {
-			handleContainerChecked(event, (BreakpointContainer) source);
-		} else if (source instanceof IBreakpoint) {
-			handleBreakpointChecked(event, (IBreakpoint) source);
-		}
-	}
-	/**
 	 * A breakpoint has been checked/unchecked. Update the group
 	 * element's checked/grayed state as appropriate.
 	 */
@@ -312,9 +300,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
         try {
             progressService.busyCursorWhile(runnable);
-        } catch (InvocationTargetException e) {
-        } catch (InterruptedException e) {
-        }
+        } 
+        catch (InvocationTargetException e) {} 
+        catch (InterruptedException e) {}
 	}
 
 	/**
@@ -535,7 +523,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		node.putString(KEY_VALUE, String.valueOf(fIsTrackingSelection));
 		
 		StringBuffer buffer= new StringBuffer();
-		IBreakpointOrganizer[] organizers = getBreakpointOrganizers();
+		IBreakpointOrganizer[] organizers = fContentProvider.getOrganizers();
         if (organizers != null) {
             for (int i = 0; i < organizers.length; i++) {
                 IBreakpointOrganizer organizer = organizers[i];
@@ -589,6 +577,10 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		viewer.setSelection(selection);
 	}
 	
+	/**
+	 * returns the complete listing of breakpoints organizers
+	 * @return the complete listing of breakpoint organizers
+	 */
 	public IBreakpointOrganizer[] getBreakpointOrganizers() {
 		return fContentProvider.getOrganizers();
 	}
@@ -642,101 +634,99 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
     }    
     
     /**
-     * Checks if the elements contained in the given selection can
-     * be moved.
-     * 
-     * @param selection containing the elements to be moved
-     */
-    public boolean canMove(ISelection selection) {
-        if (selection.isEmpty() || !fContentProvider.isShowingGroups()) {
-            return false;
-        }
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
-            Object[] objects = ss.toArray();
-            for (int i = 0; i < objects.length; i++) {
-                Object object = objects[i];
-                if (object instanceof IBreakpoint) {
-                    IBreakpoint breakpoint = (IBreakpoint) object;
-                    BreakpointContainer[] containers = getMovedFromContainers(breakpoint);
-                    if (containers == null || containers.length == 0) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }   
+	 * This method is used solely to preserve the selection state of the viewer in the event that the current selection is to be removed
+	 * @param selection the selection to be removed
+	 * 
+	 * @since 3.3
+	 */
+	public void preserveSelection(IStructuredSelection selection) {
+		if(selection != null && !selection.isEmpty()) {
+	    	TreeItem item = (TreeItem) ((BreakpointsViewer)getCheckboxViewer()).searchItem(selection.getFirstElement());
+	    	Object toselect = null;
+	    	if(item != null) {
+	    		TreeItem parent = item.getParentItem();
+	    		if(parent != null) {
+	    			int idx = 0;
+	    			if(parent.getItemCount() == 1) {
+	    				toselect = parent.getData();
+	    			}
+	    			idx = parent.indexOf(item);
+	    			if(idx == 0) {
+	    				if(parent.getItemCount() > 1) {
+	    					toselect = parent.getItem(1).getData();
+	    				}
+	    				else {
+	    					toselect = parent.getItem(0).getData();
+	    				}
+	    			}
+	    			if(idx > 0) {
+	    				toselect = parent.getItem(idx-1).getData();
+	    			}
+	    		}
+	    		else {
+	    			Tree tree = item.getParent();
+	    			TreeItem[] items = tree.getItems();
+	    			for(int i = 0; i < items.length; i++) {
+	    				if(item.equals(items[i])) {
+	    					if(i - 1 < 0 && items.length > 1) {
+	    						toselect = items[i+1];
+	    						break;
+	    					}
+	    					else if(items.length > 1){
+	    						toselect = items[i-1].getData();
+	    						break;
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
+	    	if(toselect != null) {
+	    		getViewer().setSelection(new StructuredSelection(toselect), true);
+	    	}
+		}
+    }
     
     /**
      * Returns whether the given selection can be pasted into the given target.
+     * <p>
+     * Scheme:
+     * <ul>
+     * <li>Breakpoints can only be pasted into allowable containers (i..e. like workings sets)</li>
+     * <li>Breakpoints can only be pasted into containers that they do not already reside in</li>
+     * <li>Breakpoints can only be pasted into containers, not other breakpoints</li>
+     * </ul>
+     * </p>
      * 
      * @param target target of the paste
      * @param selection the selection to paste
      * @return whether the given selection can be pasted into the given target
+     * 
+     * TODO Remove in favour of using <code>TreeItem</code>s and <code>TreePath</code>s to determine paste targets
      */
     public boolean canPaste(Object target, ISelection selection) {
-        if (target instanceof BreakpointContainer) {
-            BreakpointContainer container = (BreakpointContainer) target;
-            if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
-                Object[] objects = ((IStructuredSelection)selection).toArray();
-                for (int i = 0; i < objects.length; i++) {
-                    if (objects[i] instanceof IBreakpoint) {
-                        IBreakpoint breakpoint = (IBreakpoint)objects[i];
-                        if (container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
-                            return false;
-                        }
-                    } else {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }            
-        if(target instanceof IBreakpoint){
-        	IBreakpoint bp = (IBreakpoint)target;
-        	BreakpointContainer cont = getBreakpointContainer(bp);
-        	if(cont!=null){
-        		return canPaste(cont,selection);	
-        	}
-        }
-        return false;
-    }   
-    
-    /**
-     * Returns the BreakpointContainer which holds the 
-     * given breakpoint, or null if such a container cannot be found.
-     * @param breakpoint the breakpoint whose container is to be returned
-     * @return the container of the given breakpoint.
-     * @since 3.2
-     */
-    private BreakpointContainer getBreakpointContainer(IBreakpoint breakpoint) {
-    	BreakpointContainer[] containers = fContentProvider.getContainers(breakpoint);
-    	if (containers != null && containers.length > 0) {
-    		return containers[0];
+    	if(!(target instanceof BreakpointContainer)) {
+    		return false;
     	}
-		return null;
-	}
-
-	public void performRemove(BreakpointContainer[] containers, ISelection ss) {
-        if (ss instanceof IStructuredSelection) {
-            // remove from source on move operation
-            IStructuredSelection selection = (IStructuredSelection) ss;
-            Object[] breakpoints = selection.toArray();
-            for (int i = 0; i < breakpoints.length; i++) {
-                IBreakpoint breakpoint = (IBreakpoint) breakpoints[i];
-                for (int j = 0; j < containers.length; j++) {
-                    BreakpointContainer container = containers[j];
-                    container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
-                }
+    	if(selection.isEmpty()) {
+    		return false;
+    	}
+    	IStructuredSelection ss = (IStructuredSelection) selection;
+    	BreakpointContainer container = (BreakpointContainer) target;
+    	IBreakpoint breakpoint = null;
+    	Object element = null;
+    	for(Iterator iter = ss.iterator(); iter.hasNext();) {
+    		element = iter.next();
+    		if(!(element instanceof IBreakpoint)) {
+    			return false;
+    		}
+    		breakpoint = (IBreakpoint) element;
+    		if (container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+                return false;
             }
-        }
-    }
-    
+    	}
+        return true;
+    }   
+	
     /** 
      * Pastes the selection into the given target
      * 
@@ -744,6 +734,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      * or a Breakpoint within a BreakpointContainer
      * @param selection breakpoints
      * @return whehther successful
+     * 
+     * TODO remove in favour of using <code>TreeItem</code> as paste target 
      */
     public boolean performPaste(Object target, ISelection selection) {
         if (target instanceof BreakpointContainer && selection instanceof IStructuredSelection) {
@@ -754,169 +746,14 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             }
             return true;
         }
-        if(target instanceof IBreakpoint){
-        	return performPaste(getBreakpointContainer((IBreakpoint)target),selection);
-        }
         return false;
-    }      
+    }        
     
-    public BreakpointContainer[] getMovedFromContainers(ISelection selection) {
-        List list = new ArrayList();
-        if (selection instanceof IStructuredSelection) {
-            IStructuredSelection ss = (IStructuredSelection) selection;
-            Object[] objects = ss.toArray();
-            for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof IBreakpoint) {
-                    IBreakpoint breakpoint = (IBreakpoint) objects[i];
-                    BreakpointContainer[] containers = getMovedFromContainers(breakpoint);
-                    for (int j = 0; j < containers.length; j++) {
-                        list.add(containers[j]);
-                    }
-                }
-                
-            }
-        }
-        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
-    }
     /**
-     * Returns the parent of the given breakpoint that allows the breakpoint
-     * to be removed. Only parents of selected breakpoints are considered.
-     * 
-     * @param breakpoint candidate for removal
-     * @return containers that the breakpoint should be removed from
+     * Returns if the breakpoints view is currently showing groups or not
+     * @return true of the breakpoints view showing groups, false otherwise
      */
-    public BreakpointContainer[] getMovedFromContainers(IBreakpoint breakpoint) {
-        BreakpointsViewer viewer = (BreakpointsViewer) getViewer();
-        Item[] items = viewer.getSelectedItems();    
-        List list = new ArrayList();
-        for (int i = 0; i < items.length; i++) {
-            TreeItem item = (TreeItem) items[i];
-            if (breakpoint.equals(item.getData())) {
-                BreakpointContainer parent = getRemoveableParent(item, breakpoint);
-                if (parent != null) {
-                    list.add(parent);
-                }
-            }
-        }
-        return (BreakpointContainer[]) list.toArray(new BreakpointContainer[list.size()]);
-    }
-        
-    private BreakpointContainer getRemoveableParent(TreeItem item, IBreakpoint breakpoint) {
-        TreeItem parentItem = item.getParentItem();
-        if (parentItem != null) {
-            Object data = parentItem.getData();
-            if (data instanceof BreakpointContainer) {
-                BreakpointContainer container = (BreakpointContainer) data;
-                if (container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
-                    return container;
-                }
-            }
-            return getRemoveableParent(parentItem, breakpoint);
-        }
-        return null;
-    }    
-    
     public boolean isShowingGroups() {
         return fContentProvider.isShowingGroups();
     }
-    
-	/**
-	 * Returns a list containing a point indicating the breakpoint to attempt to
-	 * select a list of groups to select, or <code>null</code> if none.
-	 * 
-	 * @return
-	 */
-	public List getSelectionState() {
-		Tree tree = ((BreakpointsViewer)getViewer()).getTree();
-		TreeItem[] selection = tree.getSelection();
-		if (selection.length > 0) {
-			List list = new ArrayList();
-			TreeItem[] roots = tree.getItems();
-			TreeItem first = getFirstSelectedItem(roots, selection);
-			if (first.getData() instanceof IBreakpoint) {
-				TreeItem parentItem = first.getParentItem();
-				if (parentItem == null) {
-					list.add(new Point(0, indexOf(roots, first)));
-				} else {
-					int breakpointIndex = indexOf(parentItem.getItems(),first);
-					while (parentItem.getParentItem() != null) {
-						parentItem = parentItem.getParentItem();
-					}
-					int groupIndex = indexOf(roots, parentItem);
-					list.add(new Point(groupIndex, breakpointIndex));
-				}
-			} else {
-				for (int i = 0; i < selection.length; i++) {
-					TreeItem item = selection[i];
-					list.add(item.getData());
-				}
-			}
-			return list;
-		}
-		return null;
-	}
-	
-	private TreeItem getFirstSelectedItem(TreeItem[] items, TreeItem[] selection) {
-		for (int i = 0; i < items.length; i++) {
-			TreeItem item = items[i];
-			if (indexOf(selection, item) >= 0) {
-				return item;
-			}
-			TreeItem first = getFirstSelectedItem(item.getItems(), selection);
-			if (first != null) {
-				return first;
-			}
-		}
-		return null;
-	}
-	
-	private int indexOf(Object[] list, Object object) {
-		for (int i = 0; i < list.length; i++) {
-			if (object.equals(list[i])) {
-				return i;
-			}
-		}
-		return -1;
-	}
-    
-	public void preserveSelectionState(List state) {
-		if (state != null) {
-			if (state.get(0) instanceof Point) {
-				Point p = (Point) state.get(0);
-				int groupIndex = p.x;
-				int bpIndex = p.y;
-				Tree tree = ((BreakpointsViewer)getViewer()).getTree();
-				TreeItem[] roots = tree.getItems();
-				TreeItem selection = null;
-				if (roots.length > 0 && groupIndex < roots.length) {
-					TreeItem group = roots[groupIndex];
-					if (group.getData() instanceof IBreakpoint) {
-						if (bpIndex < roots.length) {
-							selection = roots[bpIndex];
-						} else {
-							selection = roots[roots.length -1];
-						}
-					} else {
-						TreeItem[] bps = group.getItems();
-						while (bps.length > 0 && !(bps[0].getData() instanceof IBreakpoint)) {
-							group = bps[0];
-							bps = group.getItems();
-						}
-						if (bpIndex < bps.length) {
-							selection = bps[bpIndex];
-						} else if (bps.length > 0) {
-							selection = bps[bps.length - 1];
-						} else {
-							selection = group;
-						}
-					}
-				}
-				if (selection != null) {
-					((BreakpointsViewer)getViewer()).setSelection(selection);
-				}
-			} else {
-				getViewer().setSelection(new StructuredSelection(state));
-			}
-		}
-	}
 }

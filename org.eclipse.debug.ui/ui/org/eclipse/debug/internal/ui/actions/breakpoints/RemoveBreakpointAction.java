@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -51,7 +50,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 		if (selection.isEmpty()) {
 			return;
 		}
-		final List state = ((BreakpointsView)getView()).getSelectionState();
 		final Iterator itr= selection.iterator();
 		final CoreException[] exception= new CoreException[1];
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
@@ -118,6 +116,9 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 				}
 				final IBreakpoint[] breakpoints = (IBreakpoint[]) breakpointsToDelete.toArray(new IBreakpoint[0]);
 				final IWorkingSet[] sets = (IWorkingSet[])groupsToDelete.toArray(new IWorkingSet[groupsToDelete.size()]);
+				if(breakpoints.length > 0) {
+					((BreakpointsView)getView()).preserveSelection(getSelection());
+				}
 				new Job(ActionMessages.RemoveBreakpointAction_2) { 
                     protected IStatus run(IProgressMonitor pmonitor) {
                         try {
@@ -125,14 +126,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
                             for (int i = 0; i < sets.length; i++) {
                             	PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(sets[i]);
 							}
-                            if (state != null) {
-                            	Runnable r = new Runnable() {
-									public void run() {
-										((BreakpointsView) getView()).preserveSelectionState(state);
-									}
-								};
-								DebugUIPlugin.getStandardDisplay().asyncExec(r);
-                            }
                             return Status.OK_STATUS;
                         } catch (CoreException e) {
                             DebugUIPlugin.log(e);

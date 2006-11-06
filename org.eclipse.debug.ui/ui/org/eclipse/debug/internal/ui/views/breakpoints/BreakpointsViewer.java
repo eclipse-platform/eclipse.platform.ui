@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -19,7 +20,9 @@ import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -29,7 +32,7 @@ import org.eclipse.swt.widgets.Widget;
  * Breakpoints viewer.
  */
 public class BreakpointsViewer extends CheckboxTreeViewer {
-
+	
     /**
      * Constructs a new breakpoints viewer with the given tree.
      * 
@@ -115,8 +118,185 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	getTree().setSelection(new TreeItem[]{item});
     	updateSelection(getSelection());
     }
+
+	/**
+     * Returns the container from within the specified path that is the container the breakpoint can be removed from
+     * @param breakpoint the breakpoint to get the container for
+     * @return the first found container that includes the breakpoint that allows removal, or <code>null</code> if none found
+     * @since 3.3
+     */
+    public BreakpointContainer getRemovableContainer(Item item) {
+    	if(item == null) {
+    		return null;
+    	}
+    	if(item.getData() instanceof IBreakpoint) {
+	    	TreePath path = getTreePathFromItem(item);
+	    	if(path != null) {
+		    	IBreakpoint breakpoint = (IBreakpoint) path.getLastSegment();
+		    	BreakpointContainer container = null;
+		    	for(int i = path.getSegmentCount()-2; i > -1; i--) {
+		    		container = (BreakpointContainer) path.getSegment(i);
+		    		if(container.contains(breakpoint) && container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
+		    			return container;
+		    		}
+		    	}
+	    	}
+    	}
+    	return null;
+    }
+	
+    /**
+     * Returns the addable breakpoint container of the specified breakpoint
+     * @param breakpoint the breakpoint to get the container for
+     * @return the first found addable container for the specified breakpoint or <code>null</code> if none found
+     * @since 3.3
+     */
+    public BreakpointContainer getAddableContainer(Item item) {
+    	TreePath path = getTreePathFromItem(item);
+    	if(path != null) {
+	    	Object element = path.getLastSegment();
+	    	if(element instanceof IBreakpoint) {
+		    	BreakpointContainer container = null;
+		    	IBreakpoint breakpoint = (IBreakpoint) element;
+		    	for(int i = path.getSegmentCount()-2; i > -1; i--) {
+		    		container = (BreakpointContainer) path.getSegment(i);
+		    		if(container.contains(breakpoint) && container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+		    			return container;
+		    		}
+		    	}
+	    	}
+    	}
+    	return null;
+    }
     
+    /**
+     * Returns if the selected item in the tree can be dragged
+     * <p>
+     * Scheme:
+     * <ul>
+     * <li>breakpoint containers cannot be dragged</li>
+     * <li>breakpoints can be dragged iff the container they reside in supports the removal of breakpoints</li>
+     * </ul>
+     * </p>
+     * @param element the element to test if it can be dragged
+     * @return true if the selected element can be dragged, false otherwise
+     * @since 3.3
+     */
+    public boolean canDrag(Item[] items) {
+    	if(items == null) {
+    		return false;
+    	}
+    	if(items.length == 0) {
+    		return false;
+    	}
+    	for(int i = 0; i < items.length; i++) {
+    		if(getRemovableContainer(items[i]) == null) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
     
+    /**
+     * Performs the actual removal of breakpoints from their respective (removable) containers on a successful drag operation
+     * @param selection the selection of breakpoints involved in the drag
+     * @since 3.3
+     */
+    public void performDrag(Item[] items) {
+    	if(items == null) {
+    		return;
+    	}
+    	BreakpointContainer container = null;
+    	IBreakpoint breakpoint = null;
+    	for(int i = 0; i < items.length; i++) {
+    		if(!items[i].isDisposed()) {
+	    		breakpoint = (IBreakpoint)items[i].getData();
+	    		container = getRemovableContainer(items[i]);
+	    		if(container != null) {
+	    			container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
+	    		}
+    		}
+    	}
+    }
+    
+    /**
+     * Determines if the specified element can be dropped into the specified target
+     * <p>
+     * Scheme:
+     * <ul>
+     * <li>Breakpoints can be dropped into working sets</li>
+     * <li>Breakpoints can be dropped into breakpoints, provided there is a droppable parent of the target breakpoint</li>
+     * </ul>
+     * </p>
+     * @param target the target foor the drop
+     * @param element the element we want to drop
+     * @return true if the specified element can be dropped into the specified target, false otherwise
+     * @since 3.3
+     */
+    public boolean canDrop(Item target, IStructuredSelection selection) {
+    	if(selection == null  || target == null) {
+    		return false;
+    	}
+    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+    		if(!checkAddableParentContainers(target, (IBreakpoint) iter.next())) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+
+	/**
+	 * This method is used to determine if there is an addable parent container available for the specified drop target.
+	 * <p>
+	 * A drop target can be either a <code>BreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire heirarchy
+	 * of the tree path for the specified target in the event one of the parent element does not support dropping. 
+	 * </p>
+	 * @param target
+	 * @param breakpoint
+	 * @return
+	 */
+	private boolean checkAddableParentContainers(Item target, IBreakpoint breakpoint) {
+		BreakpointContainer container = null;
+		TreePath path = getTreePathFromItem(target);
+		if(path != null) {
+			Object element = null;
+			for(int i = path.getSegmentCount()-1; i > -1; i--) {
+				element = path.getSegment(i);
+				if(element instanceof BreakpointContainer) {
+					container = (BreakpointContainer) element;
+					if(container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+		    			return false;
+		    		}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+     * Performs the actual addition of the selected breakpoints to the specified target
+     * @param target the target to add the selection of breakpoints to
+     * @param selection the selection of breakpoints
+     * @return true if the drop occurred, false otherwise
+     * @since 3.3
+     */
+    public boolean performDrop(Item target, IStructuredSelection selection) {
+		if(target == null || selection == null) {
+    		return false;
+    	}
+    	IBreakpoint breakpoint = null;
+    	Object element = target.getData();
+    	BreakpointContainer container = (element instanceof BreakpointContainer ? (BreakpointContainer)element : getAddableContainer(target));
+    	if(container == null) {
+			return false;
+		}
+    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+    		breakpoint = (IBreakpoint) iter.next();
+			container.getOrganizer().addBreakpoint(breakpoint, container.getCategory());
+    	}
+    	expandToLevel(target.getData(), ALL_LEVELS);
+    	return true;
+    }
     
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
@@ -161,7 +341,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
         TreeItem[] items = getTree().getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);
-        }//end for
+        }
         return (Widget[]) list.toArray(new Widget[0]);
     }
     
@@ -174,7 +354,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     private void findAllOccurrences(TreeItem item, Object element, ArrayList list) {
         if (element.equals(item.getData())) {
                 list.add(item);
-        }//end if
+        }
         TreeItem[] items = item.getItems();
         for (int i = 0; i < items.length; i++) {
         	findAllOccurrences(items[i], element, list);

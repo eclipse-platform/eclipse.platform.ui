@@ -110,10 +110,10 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		Object newValue = event.getNewValue();
 		if (newValue instanceof IWorkingSet) {
 			set = (IWorkingSet) newValue;
-		}//end if 
+		}
 		else if (event.getOldValue() instanceof IWorkingSet) {
 			set = (IWorkingSet) event.getOldValue();
-		}//end else if
+		}
 		String property = event.getProperty();
 		//fix for bug 103731
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
@@ -133,9 +133,9 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 					IMarker marker = ((IBreakpoint)breakpoints[i]).getMarker();
 					fCache.addEntry(marker, set.getName());
 					fCache.flushMarkerCache(marker);
-				}// end if
-			}//end for
-		}//end if
+				}
+			}
+		}
 		if (set != null	&& IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
 			fireCategoryChanged(new WorkingSetCategory(set));
 		}
@@ -168,11 +168,11 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 					// if we cannot find the one we want, try to get the default
 					if (set == null) {
 						set = getDefaultWorkingSet();
-					}// end if
+					}
 					addBreakpointToSet(breakpoints[i], set);
-				}// end for
+				}
 			}
-		}// end for
+		}
 	}
 
 	/**
@@ -188,8 +188,8 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			for(int i = 0; i < elements.length; i++) {
 				if(elements[i].equals(breakpoint)) {
 					return;
-				}//end if
-			}//end for
+				}
+			}
 			fCache.addEntry(breakpoint.getMarker(), set.getName());			//fix for bug 103731
 			fCache.flushMarkerCache(breakpoint.getMarker());
 			IAdaptable[] newElements = new IAdaptable[elements.length + 1];
@@ -213,9 +213,9 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			set = workingSets[i];
 			if (IInternalDebugUIConstants.ID_BREAKPOINT_WORKINGSET.equals(set.getId())) {
 				clean(set);
-			}// end if
-		}// end for
-	}//end breakpointsRemoved
+			}
+		}
+	}
 
 	/**
 	 * Removes deleted breakpoints from the given working set.
@@ -330,7 +330,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		if (category instanceof WorkingSetCategory) {
 			IWorkingSet set = ((WorkingSetCategory) category).getWorkingSet();
 			addBreakpointToSet(breakpoint, set);
-		}//end if
+		}
 	}
 	
 	/**
@@ -347,8 +347,8 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			String name = (String) marker.getAttribute(type);
 			if (name != null) {
 				return name.split("\\" + IImportExportConstants.DELIMITER); //$NON-NLS-1$
-			}// end if
-		}// end try
+			}
+		}
 		catch (CoreException e) {DebugPlugin.log(e);}
 		return new String[] {};
 	}
@@ -368,8 +368,8 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 				IAdaptable adaptable = elements[i];
 				if (!adaptable.equals(breakpoint)) {
 					list.add(adaptable);
-				}//end if
-			}//end for
+				}
+			}
 			fCache.removeMappedEntry(breakpoint.getMarker(), set.getName());
 			fCache.flushMarkerCache(breakpoint.getMarker());
 			set.setElements((IAdaptable[]) list.toArray(new IAdaptable[list.size()]));
