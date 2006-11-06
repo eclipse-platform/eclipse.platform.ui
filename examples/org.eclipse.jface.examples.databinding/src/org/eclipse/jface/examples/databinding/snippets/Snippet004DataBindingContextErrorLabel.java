@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.jface.databinding.BindSpec;
 import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
@@ -35,6 +37,7 @@ public class Snippet004DataBindingContextErrorLabel {
     public static void main(String[] args) {
         Shell shell = new Shell();
         Display display = shell.getDisplay();
+        Realm.setDefault(SWTObservables.getRealm(display));
         shell.setLayout(new GridLayout(2, false));
 
         new Label(shell, SWT.NONE).setText("Enter '5' to be valid:");

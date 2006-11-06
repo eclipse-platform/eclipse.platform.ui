@@ -32,6 +32,7 @@ import org.eclipse.jface.tests.databinding.observable.ThreadRealmTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
+import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
 import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
@@ -39,6 +40,7 @@ import org.eclipse.jface.tests.internal.databinding.internal.observable.Unmodifi
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.ObservablesTest;
+import org.eclipse.jface.tests.internal.databinding.provisional.viewers.SelectionObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
 
@@ -103,6 +105,9 @@ public class BindingTestSuite extends TestSuite {
 //FIXME        addTestSuite(TableViewerObservableCollectionTest.class);
         addTestSuite(TextObservableValueTests.class);
         
+        //org.eclipse.jface.tests.databinding.views
+        addTestSuite(ObservableSetContentProviderTest.class);
+        
         //org.eclipse.jface.tests.examples.model
         addTestSuite(PersonTests.class);
         
@@ -120,6 +125,9 @@ public class BindingTestSuite extends TestSuite {
         //org.eclipse.jface.tests.internal.databinding.provisional.observable
         addTestSuite(AbstractObservableTest.class);
         addTestSuite(ObservablesTest.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.provisional.viewers
+        addTestSuite(SelectionObservableValueTest.class);
     }
 
     /**

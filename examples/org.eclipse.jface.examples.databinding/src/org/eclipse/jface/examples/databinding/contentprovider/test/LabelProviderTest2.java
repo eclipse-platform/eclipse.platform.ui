@@ -7,16 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ListeningLabelProvider;
@@ -89,7 +92,7 @@ public class LabelProviderTest2 {
 			listOfRenamables = new WritableList();
 
 			list = new ListViewer(shell);
-			ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+			ObservableListContentProvider contentProvider = new ObservableListContentProvider(SWTObservables.getRealm(shell.getDisplay()));
 			list.setContentProvider(contentProvider);
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider
 					.getKnownElements()) {
@@ -186,6 +189,7 @@ public class LabelProviderTest2 {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
+        Realm.setDefault(SWTObservables.getRealm(display));
 		LabelProviderTest2 test = new LabelProviderTest2();
 		Shell s = test.getShell();
 		s.pack();

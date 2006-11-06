@@ -29,51 +29,51 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class BindingScenariosTestSuite extends TestSuite {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
-	private static Display display;
+    private static Display display;
 
-	private static Shell shell;
+    private static Shell shell;
 
-	public static Test suite() {
-		return new TestSetup(new BindingScenariosTestSuite()) {
-			protected void setUp() throws Exception {
-				Display d = Display.getDefault();
-				shell = new Shell(d, SWT.SHELL_TRIM);
-				shell.setLayout(new FillLayout());
-			}
+    public static Test suite() {
+        return new TestSetup(new BindingScenariosTestSuite()) {
+            protected void setUp() throws Exception {
+                Display d = Display.getDefault();
+                shell = new Shell(d, SWT.SHELL_TRIM);
+                shell.setLayout(new FillLayout());
+            }
 
-			protected void tearDown() throws Exception {
-				shell.close();
-				shell.dispose();
-				if (display != null) {
-					display.dispose();
-				}
-			}
-		};
-	}
+            protected void tearDown() throws Exception {
+                shell.close();
+                shell.dispose();
+                if (display != null) {
+                    display.dispose();
+                }
+            }
+        };
+    }
 
-	public BindingScenariosTestSuite() {
+    public BindingScenariosTestSuite() {
         addTestSuite(ButtonControlScenario.class);
-//FIXME        addTestSuite(ComboScenarios.class);
+        addTestSuite(ComboScenarios.class);
         addTestSuite(ComboUpdatingTest.class);
-//FIXME        addTestSuite(ComboViewerScenario.class);
+        addTestSuite(ComboViewerScenario.class);
         addTestSuite(CustomConverterScenarios.class);
         addTestSuite(CustomScenarios.class);
-//FIXME        addTestSuite(ListViewerScenario.class);
-//FIXME        addTestSuite(MasterDetailScenarios.class);
+        addTestSuite(ListViewerScenario.class);
+        // FIXME addTestSuite(MasterDetailScenarios.class);
         addTestSuite(NewTableScenarios.class);
         addTestSuite(NPETestScenario.class);
         addTestSuite(PropertyScenarios.class);
         addTestSuite(SpinnerControlScenario.class);
-//FIXME        addTestSuite(TableScenarios.class);
+        addTestSuite(TableScenarios.class);
         addTestSuite(TextControlScenario.class);
-	}
+    }
 
-	public static Shell getShell() {
-		return shell;
-	}
+    public static Shell getShell() {
+        return shell;
+    }
 
 }

@@ -7,24 +7,35 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import java.util.Date;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.util.List;
 
+import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
-import org.eclipse.jface.examples.databinding.model.SimpleModel;
-import org.eclipse.jface.internal.databinding.provisional.BindSpec;
-import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
+import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
@@ -40,185 +51,244 @@ import org.eclipse.swt.widgets.Text;
  * 
  */
 public class TestMasterDetail {
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		new TestMasterDetail().run();
-	}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        new TestMasterDetail().run();
+    }
 
-	private Shell shell = null; // @jve:decl-index=0:visual-constraint="10,10"
+    private Shell shell = null; // @jve:decl-index=0:visual-constraint="10,10"
 
-	private Table personsTable = null;
+    private Table personsTable = null;
 
-	private Label label1 = null;
+    private Label label1 = null;
 
-	private Text name = null;
+    private Text name = null;
 
-	private Label label2 = null;
+    private Label label2 = null;
 
-	private Text address = null;
+    private Text address = null;
 
-	private Label label3 = null;
+    private Label label3 = null;
 
-	private Text city = null;
+    private Text city = null;
 
-	private Label label4 = null;
+    private Label label4 = null;
 
-	private Text state = null;
+    private Text state = null;
 
-	private Table ordersTable = null;
+    private Table ordersTable = null;
 
-	private Label label5;
+    /**
+     * This method initializes table
+     * 
+     */
+    private void createTable() {
+        GridData gridData = new org.eclipse.swt.layout.GridData();
+        gridData.grabExcessHorizontalSpace = true;
+        gridData.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData.horizontalSpan = 2;
+        gridData.grabExcessVerticalSpace = true;
+        gridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        personsTable = new Table(shell, SWT.FULL_SELECTION);
+        personsTable.setHeaderVisible(true);
+        personsTable.setLayoutData(gridData);
+        personsTable.setLinesVisible(true);
+        TableColumn tableColumn = new TableColumn(personsTable, SWT.NONE);
+        tableColumn.setWidth(60);
+        tableColumn.setText("Name");
+        TableColumn tableColumn1 = new TableColumn(personsTable, SWT.NONE);
+        tableColumn1.setWidth(60);
+        tableColumn1.setText("State");
+    }
 
-	private Text orderDate;
+    /**
+     * This method initializes table1
+     * 
+     */
+    private void createTable1() {
+        GridData gridData5 = new org.eclipse.swt.layout.GridData();
+        gridData5.horizontalSpan = 2;
+        gridData5.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData5.grabExcessHorizontalSpace = true;
+        gridData5.grabExcessVerticalSpace = true;
+        gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        ordersTable = new Table(shell, SWT.FULL_SELECTION);
+        ordersTable.setHeaderVisible(true);
+        ordersTable.setLayoutData(gridData5);
+        ordersTable.setLinesVisible(true);
+        TableColumn tableColumn2 = new TableColumn(ordersTable, SWT.NONE);
+        tableColumn2.setWidth(60);
+        tableColumn2.setText("Order No");
+        TableColumn tableColumn3 = new TableColumn(ordersTable, SWT.NONE);
+        tableColumn3.setWidth(60);
+        tableColumn3.setText("Date");
+    }
 
-	private Label validationError;
+    /**
+     * This method initializes sShell
+     */
+    private void createShell() {
+        GridData gridData5 = new org.eclipse.swt.layout.GridData();
+        gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData5.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
+        GridData gridData4 = new org.eclipse.swt.layout.GridData();
+        gridData4.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData4.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
+        GridData gridData3 = new org.eclipse.swt.layout.GridData();
+        gridData3.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData3.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
+        GridData gridData2 = new org.eclipse.swt.layout.GridData();
+        gridData2.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData2.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
+        GridData gridData1 = new org.eclipse.swt.layout.GridData();
+        gridData1.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
+        gridData1.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 2;
+        shell = new Shell();
+        shell.setText("Shell");
+        createTable();
+        shell.setLayout(gridLayout);
+        shell.setSize(new org.eclipse.swt.graphics.Point(495, 357));
+        label1 = new Label(shell, SWT.NONE);
+        label1.setText("Name");
+        name = new Text(shell, SWT.BORDER);
+        name.setLayoutData(gridData1);
+        label2 = new Label(shell, SWT.NONE);
+        label2.setText("Address");
+        address = new Text(shell, SWT.BORDER);
+        address.setLayoutData(gridData2);
+        label3 = new Label(shell, SWT.NONE);
+        label3.setText("City");
+        city = new Text(shell, SWT.BORDER);
+        city.setLayoutData(gridData4);
+        label4 = new Label(shell, SWT.NONE);
+        label4.setText("State");
+        state = new Text(shell, SWT.BORDER);
+        state.setLayoutData(gridData3);
+        createTable1();
+    }
 
-	/**
-	 * This method initializes table
-	 * 
-	 */
-	private void createTable() {
-		GridData gridData = new org.eclipse.swt.layout.GridData();
-		gridData.grabExcessHorizontalSpace = true;
-		gridData.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData.horizontalSpan = 2;
-		gridData.grabExcessVerticalSpace = true;
-		gridData.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		personsTable = new Table(shell, SWT.FULL_SELECTION);
-		personsTable.setHeaderVisible(true);
-		personsTable.setLayoutData(gridData);
-		personsTable.setLinesVisible(true);
-		TableColumn tableColumn = new TableColumn(personsTable, SWT.NONE);
-		tableColumn.setWidth(60);
-		tableColumn.setText("Name");
-		TableColumn tableColumn1 = new TableColumn(personsTable, SWT.NONE);
-		tableColumn1.setWidth(60);
-		tableColumn1.setText("State");
-	}
+    private void run() {
+        Display display = new Display();
 
-	/**
-	 * This method initializes table1
-	 * 
-	 */
-	private void createTable1() {
-		GridData gridData5 = new org.eclipse.swt.layout.GridData();
-		gridData5.horizontalSpan = 2;
-		gridData5.verticalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData5.grabExcessHorizontalSpace = true;
-		gridData5.grabExcessVerticalSpace = true;
-		gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		ordersTable = new Table(shell, SWT.FULL_SELECTION);
-		ordersTable.setHeaderVisible(true);
-		ordersTable.setLayoutData(gridData5);
-		ordersTable.setLinesVisible(true);
-		TableColumn tableColumn2 = new TableColumn(ordersTable, SWT.NONE);
-		tableColumn2.setWidth(60);
-		tableColumn2.setText("Order No");
-		TableColumn tableColumn3 = new TableColumn(ordersTable, SWT.NONE);
-		tableColumn3.setWidth(60);
-		tableColumn3.setText("Date");
-	}
+        createShell();
+        bind(shell);
 
-	/**
-	 * This method initializes sShell
-	 */
-	private void createShell() {
-		GridData gridData5 = new org.eclipse.swt.layout.GridData();
-		gridData5.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData5.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		GridData gridData4 = new org.eclipse.swt.layout.GridData();
-		gridData4.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData4.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		GridData gridData3 = new org.eclipse.swt.layout.GridData();
-		gridData3.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData3.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		GridData gridData2 = new org.eclipse.swt.layout.GridData();
-		gridData2.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData2.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		GridData gridData1 = new org.eclipse.swt.layout.GridData();
-		gridData1.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
-		gridData1.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
-		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
-		shell = new Shell();
-		shell.setText("Shell");
-		createTable();
-		shell.setLayout(gridLayout);
-		shell.setSize(new org.eclipse.swt.graphics.Point(495, 357));
-		label1 = new Label(shell, SWT.NONE);
-		label1.setText("Name");
-		name = new Text(shell, SWT.BORDER);
-		name.setLayoutData(gridData1);
-		label2 = new Label(shell, SWT.NONE);
-		label2.setText("Address");
-		address = new Text(shell, SWT.BORDER);
-		address.setLayoutData(gridData2);
-		label3 = new Label(shell, SWT.NONE);
-		label3.setText("City");
-		city = new Text(shell, SWT.BORDER);
-		city.setLayoutData(gridData4);
-		label4 = new Label(shell, SWT.NONE);
-		label4.setText("State");
-		state = new Text(shell, SWT.BORDER);
-		state.setLayoutData(gridData3);
-		createTable1();
-		label5 = new Label(shell, SWT.NONE);
-		label5.setText("Order Date");
-		orderDate = new Text(shell, SWT.BORDER);
-		orderDate.setLayoutData(gridData5);
-		validationError = new Label(shell, SWT.NONE);
-		validationError.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,2,1));
-	}
+        shell.setSize(600, 600);
+        shell.open();
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch())
+                display.sleep();
+        }
+        display.dispose();
+    }
 
-	private void run() {
-		Display display = new Display();
+    SimpleModel model = new SimpleModel();
 
-		createShell();
-		bind(shell);
+    private void bind(Control parent) {
+        Realm.setDefault(SWTObservables.getRealm(parent.getDisplay()));
 
-		shell.setSize(600, 600);
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		display.dispose();
-	}
+        TableViewer peopleViewer = new TableViewer(personsTable);
+        peopleViewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        peopleViewer.setLabelProvider(new PersonLabelProvider());
+        peopleViewer.setInput(new WritableList(Realm.getDefault(), model.getPersonList(), SimpleModel.class));
 
-	SimpleModel model = new SimpleModel();
+        IObservableValue selectedPerson = new SelectionObservableValue(peopleViewer);
 
-	private void bind(Control parent) {
-		DataBindingContext dbc = BindingFactory.createContext(parent);
-		TableViewer peopleViewer = new TableViewer(personsTable);
-		dbc.bind(peopleViewer, new TableModelDescription(new Property(model,
-				"personList", SimplePerson.class, Boolean.TRUE), new Object[] {
-				"name", "state" }), null);
+        DataBindingContext dbc = new DataBindingContext();
+        dbc.bindValue(SWTObservables.getText(name, SWT.Modify), MasterDetailObservables.getDetailValue(selectedPerson,
+                getDetailFactory("name"),
+                String.class), null);
 
-		IObservable selectedPerson = dbc.createObservable(new Property(
-				peopleViewer, ViewersProperties.SINGLE_SELECTION));
+        dbc.bindValue(SWTObservables.getText(address, SWT.Modify),
+                MasterDetailObservables.getDetailValue(selectedPerson, getDetailFactory("address"), String.class),
+                null);
 
-		dbc.bind(name, new Property(selectedPerson, "name", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(address, new Property(selectedPerson, "address", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(city, new Property(selectedPerson, "city", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(state, new Property(selectedPerson, "state", String.class,
-				Boolean.FALSE), null);
+        dbc.bindValue(SWTObservables.getText(city, SWT.Modify), MasterDetailObservables.getDetailValue(selectedPerson,
+                getDetailFactory("city"),
+                String.class), null);
 
-		TableViewer ordersViewer = new TableViewer(ordersTable);
-		dbc.bind(ordersViewer, new TableModelDescription(new Property(
-				selectedPerson, "orders", SimpleOrder.class, Boolean.TRUE),
-				new Object[] { "orderNumber", "date" }), null);
-		
-		IObservable selectedOrder = dbc.createObservable(new Property(ordersViewer, ViewersProperties.SINGLE_SELECTION));
-		
-		Binding b = dbc.bind(orderDate, new Property(selectedOrder, "date", Date.class,
-				Boolean.FALSE), null);
-		dbc.bind(validationError, b.getValidationError(),
-				new BindSpec().setUpdateModel(false));
+        dbc.bindValue(SWTObservables.getText(state, SWT.Modify), MasterDetailObservables.getDetailValue(selectedPerson,
+                getDetailFactory("state"),
+                String.class), null);
 
-	}
+        TableViewer ordersViewer = new TableViewer(ordersTable);
+        ordersViewer.setLabelProvider(new OrdersLabelProvider());
+        ordersViewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+
+        IObservableList orders = MasterDetailObservables.getDetailList(selectedPerson,
+                getOrdersDetailFactory(),
+                List.class);
+        ordersViewer.setInput(orders);
+    }
+
+    private static IObservableFactory getDetailFactory(final String propertyName) {
+        return new IObservableFactory() {
+            public IObservable createObservable(Object target) {
+                return BeansObservables.getAttribute(target, propertyName);
+            }
+        };
+    }
+
+    private static IObservableFactory getOrdersDetailFactory() {
+        return new IObservableFactory() {
+            public IObservable createObservable(Object target) {
+                SimplePerson person = (SimplePerson) target;
+                WritableList list = new WritableList(List.class);
+                list.addAll(person.getOrders());
+                return list;
+            }
+        };
+    }
+
+    private static class OrdersLabelProvider extends LabelProvider implements ITableLabelProvider {
+        DateFormat dateFormat = DateFormat.getInstance();
+
+        NumberFormat numberFormat = NumberFormat.getInstance();
+
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+            String result = null;
+            SimpleOrder order = (SimpleOrder) element;
+
+            switch (columnIndex) {
+                case 0:
+                    result = numberFormat.format(order.getOrderNumber());
+                    break;
+                case 1:
+                    result = dateFormat.format(order.getDate());
+                    break;
+            }
+
+            return result;
+        }
+    }
+
+    private static class PersonLabelProvider extends LabelProvider implements ITableLabelProvider {
+        public Image getColumnImage(Object element, int columnIndex) {
+            return null;
+        }
+
+        public String getColumnText(Object element, int columnIndex) {
+            String result = null;
+            SimplePerson person = (SimplePerson) element;
+
+            switch (columnIndex) {
+                case 0:
+                    result = person.getName();
+                    break;
+                case 1:
+                    result = person.getState();
+                    break;
+            }
+
+            return result;
+        }
+    }
 }
