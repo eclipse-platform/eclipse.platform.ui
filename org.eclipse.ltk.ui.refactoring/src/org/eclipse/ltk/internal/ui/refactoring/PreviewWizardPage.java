@@ -258,7 +258,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fMenu= new Menu(parent);
 			if (fFilterActions.length != 0) {
 				new ActionContributionItem(fShowAllAction).fill(fMenu, -1);
-				new MenuItem(fMenu, SWT.SEPARATOR);
 				for (int i= 0; i < fFilterActions.length; i++) {
 					new ActionContributionItem(fFilterActions[i]).fill(fMenu, -1);
 				}
