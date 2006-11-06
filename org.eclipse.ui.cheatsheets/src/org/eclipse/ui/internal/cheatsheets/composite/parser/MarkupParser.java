@@ -40,7 +40,7 @@ public class MarkupParser {
 		return text.toString();
 	}
 
-	private static String escapeText(String input) {
+	public static String escapeText(String input) {
 		StringBuffer result = new StringBuffer(input.length() + 10);
 		for (int i = 0; i < input.length(); ++i)
 			appendEscapedChar(result, input.charAt(i));

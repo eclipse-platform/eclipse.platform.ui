@@ -33,6 +33,7 @@ import org.eclipse.ui.internal.cheatsheets.composite.model.AbstractTask;
 import org.eclipse.ui.internal.cheatsheets.composite.model.SuccesorTaskFinder;
 import org.eclipse.ui.internal.cheatsheets.composite.model.TaskStateUtilities;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
+import org.eclipse.ui.internal.cheatsheets.composite.parser.MarkupParser;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.IEditableTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
@@ -120,7 +121,7 @@ public class DescriptionPanel {
 		StringBuffer upperMessage = new StringBuffer();
 		upperMessage.append("<form>"); //$NON-NLS-1$
 		upperMessage.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
-		upperMessage.append(task.getName());
+		upperMessage.append(MarkupParser.escapeText(task.getName()));
 		upperMessage.append("</span></p>"); //$NON-NLS-1$		
 		upperMessage.append(createParagraph(task.getDescription(), null));
 		upperMessage.append("</form>"); //$NON-NLS-1$
@@ -141,12 +142,14 @@ public class DescriptionPanel {
 			isSkippable = false;
 		} else if (TaskStateUtilities.findSkippedAncestor(task) != null) {
 			ICompositeCheatSheetTask skipped = TaskStateUtilities.findSkippedAncestor(task);
-			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED, (new Object[] {skipped.getName()}));	
+			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED, 
+				(new Object[] {MarkupParser.escapeText((skipped.getName()))}));	
 			buf.append(createParagraph(skipParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findCompletedAncestor(task) != null) {
 			ICompositeCheatSheetTask completed = TaskStateUtilities.findCompletedAncestor(task);
-			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED, (new Object[] {completed.getName()}));	
+			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED, 
+			   (new Object[] {MarkupParser.escapeText(completed.getName())}));	
 			buf.append(createParagraph(completedParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (!task.requiredTasksCompleted()) {
@@ -155,7 +158,8 @@ public class DescriptionPanel {
 		} else if (TaskStateUtilities.findBlockedAncestor(task) != null) {
 			isBlocked = true;
 			ICompositeCheatSheetTask blockedAncestor = TaskStateUtilities.findBlockedAncestor(task);
-			String blockingAncestorMsg = NLS.bind(Messages.PARENT_BLOCKED, (new Object[] {blockedAncestor.getName()}));	
+			String blockingAncestorMsg = NLS.bind(Messages.PARENT_BLOCKED, 
+					(new Object[] {MarkupParser.escapeText(blockedAncestor.getName())}));	
 			showBlockingTasks(blockingAncestorMsg , blockedAncestor, buf);
 		} else {
 			startable = task instanceof IEditableTask && task.getState() == ICompositeCheatSheetTask.NOT_STARTED;
@@ -254,7 +258,8 @@ public class DescriptionPanel {
 			buf.append(CompositeCheatSheetPage.GOTO_TASK_TAG);
 			buf.append(task.getId());
 			buf.append("\">"); //$NON-NLS-1$	
-			buf.append(NLS.bind(Messages.COMPOSITE_PAGE_TASK_NOT_COMPLETE, (new Object[] {task.getName()})));	
+			buf.append(NLS.bind(Messages.COMPOSITE_PAGE_TASK_NOT_COMPLETE, (new Object[] 
+			    {MarkupParser.escapeText(task.getName())})));	
 			buf.append("</a>"); //$NON-NLS-1$	
 			buf.append("</li>"); //$NON-NLS-1$
 	    }
@@ -265,7 +270,8 @@ public class DescriptionPanel {
 		ICompositeCheatSheetTask[] successorTasks = new SuccesorTaskFinder(task).getRecommendedSuccessors();
 		for (int i = 0; i < successorTasks.length; i++) {
 			ICompositeCheatSheetTask successor = successorTasks[i];
-			String message = NLS.bind(Messages.COMPOSITE_PAGE_GOTO_TASK, (new Object[] {successor.getName()}));
+			String message = NLS.bind(Messages.COMPOSITE_PAGE_GOTO_TASK, (new Object[] 
+			     {MarkupParser.escapeText(successor.getName())}));
 			addHyperlink(buf, CompositeCheatSheetPage.GOTO_TASK_TAG + successor.getId(), GOTO_IMAGE, message);
 		}
 	}
