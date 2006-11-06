@@ -7,12 +7,14 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation - 163558 Dynamic content support for all UA
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
@@ -74,31 +76,35 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
 			if (element instanceof IIndexEntry) {
-				return isNotFiltered((IIndexEntry) element);
+				return isEnabled((IIndexEntry) element);
 			} else if (element instanceof IHelpResource) {
-				return isNotFiltered((IHelpResource) element);
+				return isEnabled((IHelpResource) element);
 			}
 			return false;
 		}
 
-		private boolean isNotFiltered(IIndexEntry entry) {
-			IHelpResource[] topics = entry.getTopics();
-			for (int i = 0; i < topics.length; i++) {
-				if (isNotFiltered(topics[i]))
-					return true;
+		private boolean isEnabled(IIndexEntry entry) {
+			if (!UAContentFilter.isFiltered(entry)) {
+				IHelpResource[] topics = entry.getTopics();
+				for (int i = 0; i < topics.length; i++) {
+					if (isEnabled(topics[i]))
+						return true;
+				}
+				IIndexEntry[] subentries = entry.getSubentries();
+				for (int i = 0; i < subentries.length; i++) {
+					if (isEnabled(subentries[i]))
+						return true;
+				}
 			}
-
-			IIndexEntry[] subentries = entry.getSubentries();
-			for (int i = 0; i < subentries.length; i++) {
-				if (isNotFiltered(subentries[i]))
-					return true;
-			}
-
 			return false;
 		}
 
-		private boolean isNotFiltered(IHelpResource topic) {
-			return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+		private boolean isEnabled(Object obj) {
+			return !UAContentFilter.isFiltered(obj);
+		}
+
+		private boolean isEnabled(IHelpResource topic) {
+			return isEnabled((Object)topic) && HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
 		}
 	}
 

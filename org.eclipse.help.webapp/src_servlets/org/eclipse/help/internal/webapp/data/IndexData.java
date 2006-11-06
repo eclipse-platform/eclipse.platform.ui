@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
+ *                       163558 Dynamic content support for all UA
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -25,6 +26,7 @@ import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.Node;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.index.Index;
@@ -401,34 +403,40 @@ public class IndexData extends ActivitiesData {
 	 * @return
 	 */
 	private IndexEntry extractEnabled(IIndexEntry entry) {
-		List enabledChildren = new ArrayList();
-		ITopic[] topics = entry.getTopics();
-		for (int i=0;i<topics.length;++i) {
-			if (isEnabled(topics[i])) {
-				enabledChildren.add(topics[i]);
+		if (isEnabled(entry)) {
+			List enabledChildren = new ArrayList();
+			ITopic[] topics = entry.getTopics();
+			for (int i=0;i<topics.length;++i) {
+				if (isEnabled(topics[i])) {
+					enabledChildren.add(topics[i]);
+				}
 			}
-		}
-		IIndexEntry[] subentries = entry.getSubentries();
-		for (int i=0;i<subentries.length;++i) {
-			IIndexEntry subentry = extractEnabled(subentries[i]); 
-			if (subentry != null) {
-				enabledChildren.add(subentry);
+			IIndexEntry[] subentries = entry.getSubentries();
+			for (int i=0;i<subentries.length;++i) {
+				IIndexEntry subentry = extractEnabled(subentries[i]); 
+				if (subentry != null) {
+					enabledChildren.add(subentry);
+				}
 			}
-		}
-
-		if (!enabledChildren.isEmpty()) {
-			IndexEntry newEntry = new IndexEntry();
-			newEntry.setKeyword(entry.getKeyword());
-			Iterator iter = enabledChildren.iterator();
-			while (iter.hasNext()) {
-				newEntry.appendChild((Node)iter.next());
+	
+			if (!enabledChildren.isEmpty()) {
+				IndexEntry newEntry = new IndexEntry();
+				newEntry.setKeyword(entry.getKeyword());
+				Iterator iter = enabledChildren.iterator();
+				while (iter.hasNext()) {
+					newEntry.appendChild((Node)iter.next());
+				}
+				return newEntry;
 			}
-			return newEntry;
 		}
 		return null;
 	}
 
 	private boolean isEnabled(ITopic topic) {
-		return HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+		return isEnabled((Object)topic) && HelpBasePlugin.getActivitySupport().isEnabled(topic.getHref());
+	}
+	
+	private boolean isEnabled(Object obj) {
+		return !UAContentFilter.isFiltered(obj);
 	}
 }

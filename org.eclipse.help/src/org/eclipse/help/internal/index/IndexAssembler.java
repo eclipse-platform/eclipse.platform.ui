@@ -19,14 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IndexContribution;
 import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
-import org.eclipse.help.internal.toc.TocManager;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeProcessor;
+import org.eclipse.help.internal.toc.HrefUtil;
 
 /*
  * Assembles individual keyword index contributions into a complete, fully
@@ -34,33 +37,33 @@ import org.eclipse.help.internal.toc.TocManager;
  */
 public class IndexAssembler {
 
-	private List contributions;
-	private Index index;
-    private TocManager tocManager = HelpPlugin.getTocManager();
-    private IToc[] tocs = HelpSystem.getTocs();
+	private NodeProcessor processor;
+	private Comparator comparator;
+	private String locale;
 
 	/*
 	 * Assembles the given index contributions into a complete, sorted index.
 	 * The originals are not modified.
 	 */
-	public Index assemble(List contributions) {
-		this.contributions = contributions;
-		processMerge();
-		processTopics();
-		processOrder();
+	public Index assemble(List contributions, String locale) {
+		this.locale = locale;
+		process(contributions);
+		Index index = merge(contributions);
+		sort(index);
 		return index;
 	}
 	
 	/*
-	 * Merge all indexes into one large index, not sorted.
+	 * Merge all index contributions into one large index, not sorted.
 	 */
-	private void processMerge() {
-		index = new Index();
+	private Index merge(List contributions) {
+		Index index = new Index();
 		Iterator iter = contributions.iterator();
 		while (iter.hasNext()) {
 			IndexContribution contribution = (IndexContribution)iter.next();
 			mergeChildren(index, contribution.getIndex());
 		}
+		return index;
 	}
 	
 	/*
@@ -111,142 +114,185 @@ public class IndexAssembler {
 		}
 	}
 	
-	/*
-	 * Sort the master index by keyword and topic label at all levels of
-	 * the keyword index.
-	 */
-	private void processOrder() {
-		Comparator c = new Comparator() {
-			public int compare(Object o1, Object o2) {
-				/*
-				 * First separate the objects into different groups by type;
-				 * topics first, then entries, etc. Then within each
-				 * group, sort alphabetically.
-				 */
-				int c1 = getCategory((Node)o1);
-				int c2 = getCategory((Node)o2);
-				if (c1 == c2) {
-					// same type of object; compare alphabetically
-					String s1 = getLabel((Node)o1).toLowerCase();
-					String s2 = getLabel((Node)o2).toLowerCase();
-					return s1.compareTo(s2);
-				}
-				else {
-					// different types; compare by type
-					return c1 - c2;
-				}
-			}
-		};
-		sort(index, c);
-	}
-	
-	/*
-	 * Returns the category of the node. The order is:
-	 * 1. topics
-	 * 2. entries starting with non-alphanumeric
-	 * 3. entries starting with digit
-	 * 4. entries starting with alpha
-	 * 5. other
-	 */
-	private static int getCategory(Node node) {
-		if (Topic.NAME.equals(node.getName())) {
-			return 0;
+	private void process(List contributions) {
+		if (processor == null) {
+			processor = new NodeProcessor(new NodeHandler[] {
+				new IgnoreHandler(),
+				new LabelHandler(),
+				new NormalizeHandler(),
+				new IncludeHandler(locale),
+				new ExtensionHandler(locale),
+			});
 		}
-		else if (IndexEntry.NAME.equals(node.getName())) {
-			String keyword = node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
-			if (keyword != null && keyword.length() > 0) {
-				char c = keyword.charAt(0);
-				if (Character.isDigit(c)) {
-					return 2;
-				}
-				else if (Character.isLetter(c)) {
-					return 3;
-				}
-				return 1;
-			}
-			return 4;
-		}
-		else {
-			return 5;
+		Iterator iter = contributions.iterator();
+		while (iter.hasNext()) {
+			IndexContribution contribution = (IndexContribution)iter.next();
+			processor.process(contribution.getIndex(), contribution.getId());
 		}
 	}
-	
+
 	/*
-	 * Returns the string that will be displayed for the given object,
-	 * used for sorting.
+	 * Sort the given node's descendants recursively.
 	 */
-	private static String getLabel(Node node) {
-		if (Topic.NAME.equals(node.getName())) {
-			return node.getAttribute(Topic.ATTRIBUTE_LABEL);
+	private void sort(Node node) {
+		if (comparator == null) {
+			comparator = new IndexComparator();
 		}
-		else if (IndexEntry.NAME.equals(node.getName())) {
-			return node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
-		}
-		else {
-			return node.getName();
-		}
-	}
-	
-	/*
-	 * Fills in missing topic labels and removes topics that only exist in
-	 * ignored tocs.
-	 */
-	private void processTopics() {
-		processTopics(index.getChildren());
-	}
-	
-	/*
-	 * Fills in missing topic labels and removes topics that only exist in
-	 * ignored tocs, starting with the given nodes.
-	 */
-	private void processTopics(Node[] nodes) {
-		for (int i=0;i<nodes.length;++i) {
-			if (Topic.NAME.equals(nodes[i].getName())) {
-				Topic topic = nodes[i] instanceof Topic ? (Topic)nodes[i] : new Topic(nodes[i]);
-				String label = topic.getLabel();
-				String href = topic.getHref();
-				boolean isLabelEmpty = (label == null || label.length() == 0);
-		        if (isLabelEmpty) {
-					for (int j=0;j<tocs.length;j++) {
-			            ITopic t = tocs[j].getTopic(href);
-			            if (t != null) {
-							if(isLabelEmpty) {
-								topic.setLabel(t.getLabel());
-								isLabelEmpty = false;
-							}
-			            }
-			        }
-		        }
-				if(isLabelEmpty) {
-					topic.setLabel(""); //$NON-NLS-1$
-				}
-				if (tocManager.isTopicIgnored(href)) {
-					topic.getParent().removeChild(nodes[i]);
-				}
-			}
-			Node[] children = nodes[i].getChildren();
-			processTopics(children);
-		}
+		sort(node, comparator);
 	}
 	
 	/*
 	 * Sort the given node's descendants recursively using the given
 	 * Comparator.
 	 */
-	private void sort(Node node, Comparator c) {
+	private void sort(Node node, Comparator comparator) {
 		// sort children
 		Node[] children = node.getChildren();
 		for (int i=0;i<children.length;++i) {
 			node.removeChild(children[i]);
 		}
-		Arrays.sort(children, c);
+		Arrays.sort(children, comparator);
 		for (int i=0;i<children.length;++i) {
 			node.appendChild(children[i]);
 		}
-		
 		// sort children's children
 		for (int i=0;i<children.length;++i) {
-			sort(children[i], c);
+			sort(children[i], comparator);
 		}
 	}
+
+	/*
+	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
+	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
+	 */
+	private class NormalizeHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (Topic.NAME.equals(node.getName())) {
+				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+				if (href != null) {
+					int index = id.indexOf('/', 1);
+					if (index != -1) {
+						String pluginId = id.substring(1, index);
+						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+					}
+				}
+				return HANDLED_CONTINUE;
+			}
+			return UNHANDLED;
+		}
+	}
+
+	private class IgnoreHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (Topic.NAME.equals(node.getName())) {
+				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
+				String href = topic.getHref();
+				if (HelpPlugin.getTocManager().isTopicIgnored(href)) {
+					Node parent = topic.getParent();
+					if (parent != null) {
+						parent.removeChild(node);
+					}
+				}
+			}
+			return UNHANDLED;
+		}
+	}
+
+	private class LabelHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (Topic.NAME.equals(node.getName())) {
+				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
+				String label = topic.getLabel();
+				String href = topic.getHref();
+				boolean isLabelEmpty = (label == null || label.length() == 0);
+		        if (isLabelEmpty) {
+		        	IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
+					for (int j=0;j<tocs.length;j++) {
+			            ITopic t = tocs[j].getTopic(href);
+			            if (t != null) {
+							topic.setLabel(t.getLabel());
+							isLabelEmpty = false;
+							break;
+			            }
+			        }
+		        }
+				if(isLabelEmpty) {
+					Node parent = node.getParent();
+					if (parent != null) {
+						parent.removeChild(node);
+					}
+				}
+			}
+			return UNHANDLED;
+		}
+	}
+
+	private static class IndexComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			/*
+			 * First separate the objects into different groups by type;
+			 * topics first, then entries, etc. Then within each
+			 * group, sort alphabetically.
+			 */
+			int c1 = getCategory((Node)o1);
+			int c2 = getCategory((Node)o2);
+			if (c1 == c2) {
+				// same type of object; compare alphabetically
+				String s1 = getLabel((Node)o1).toLowerCase();
+				String s2 = getLabel((Node)o2).toLowerCase();
+				return s1.compareTo(s2);
+			}
+			else {
+				// different types; compare by type
+				return c1 - c2;
+			}
+		}
+
+		/*
+		 * Returns the category of the node. The order is:
+		 * 1. topics
+		 * 2. entries starting with non-alphanumeric
+		 * 3. entries starting with digit
+		 * 4. entries starting with alpha
+		 * 5. other
+		 */
+		private static int getCategory(Node node) {
+			if (Topic.NAME.equals(node.getName())) {
+				return 0;
+			}
+			else if (IndexEntry.NAME.equals(node.getName())) {
+				String keyword = node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
+				if (keyword != null && keyword.length() > 0) {
+					char c = keyword.charAt(0);
+					if (Character.isDigit(c)) {
+						return 2;
+					}
+					else if (Character.isLetter(c)) {
+						return 3;
+					}
+					return 1;
+				}
+				return 4;
+			}
+			else {
+				return 5;
+			}
+		}
+		
+		/*
+		 * Returns the string that will be displayed for the given object,
+		 * used for sorting.
+		 */
+		private static String getLabel(Node node) {
+			if (Topic.NAME.equals(node.getName())) {
+				return node.getAttribute(Topic.ATTRIBUTE_LABEL);
+			}
+			else if (IndexEntry.NAME.equals(node.getName())) {
+				return node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
+			}
+			else {
+				return node.getName();
+			}
+		}
+	};
 }

@@ -18,6 +18,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IndexContribution;
 import org.eclipse.help.Node;
 import org.eclipse.help.internal.dynamic.NodeWriter;
@@ -45,7 +46,7 @@ public class IndexAssemblerTest extends TestCase {
 		
 		IndexAssembler assembler = new IndexAssembler();
 		List contributions = new ArrayList(Arrays.asList(new Object[] { a, b, c }));
-		Index assembled = assembler.assemble(contributions);
+		Index assembled = assembler.assemble(contributions, Platform.getNL());
 		
 		String expected = serialize(result_a_b_c.getIndex());
 		String actual = serialize(assembled);

@@ -8,6 +8,7 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
+ *                       163558 Dynamic content support for all UA
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -48,7 +49,7 @@ public class IndexManager {
 			List contributions = Arrays.asList(getIndexContributions(locale));
 			filterIndexContributions(contributions);
 			IndexAssembler assembler = new IndexAssembler();
-			index = assembler.assemble(contributions);
+			index = assembler.assemble(contributions, locale);
 			indexesByLocale.put(locale, index);
 		}
 		return index;
