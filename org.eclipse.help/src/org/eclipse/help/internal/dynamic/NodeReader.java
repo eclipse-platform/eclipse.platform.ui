@@ -28,7 +28,8 @@ public class NodeReader extends DefaultHandler {
 	private SAXParser parser;
 	private Stack stack;
 	private Node root;
-
+	private boolean ignoreWhitespaceNodes;
+	
 	public Node read(InputStream in) throws ParserConfigurationException, SAXException, IOException {
 		root = null;
 		if (parser == null) {
@@ -77,12 +78,16 @@ public class NodeReader extends DefaultHandler {
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		if (!stack.isEmpty()) {
 			String text = new String(ch, start, length);
-			if (text.trim().length() > 0) {
+			if (!ignoreWhitespaceNodes || text.trim().length() > 0) {
 				Node node = new Node();
 				node.setValue(text);
 				Node parent = (Node)stack.peek();
 				parent.appendChild(node);
 			}
 		}
+	}
+
+	public void setIgnoreWhitespaceNodes(boolean ignoreWhitespaceNodes) {
+		this.ignoreWhitespaceNodes = ignoreWhitespaceNodes;
 	}
 }

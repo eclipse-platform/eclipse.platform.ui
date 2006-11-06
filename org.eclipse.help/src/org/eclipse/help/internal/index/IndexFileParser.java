@@ -33,6 +33,7 @@ public class IndexFileParser extends DefaultHandler {
     public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
     	if (reader == null) {
     		reader = new NodeReader();
+    		reader.setIgnoreWhitespaceNodes(true);
     	}
     	Node node = reader.read(indexFile.getInputStream());
     	if (processor == null) {

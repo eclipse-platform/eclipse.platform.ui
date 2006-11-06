@@ -17,10 +17,11 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
@@ -38,9 +39,10 @@ public class XMLProcessorTest extends TestCase {
 	}
 	
 	public void testXMLProcessor() throws Exception {
+		NodeReader reader = new NodeReader();
 		NodeHandler[] handlers = new NodeHandler[] {
-				new IncludeHandler(Platform.getNL()),
-				new ExtensionHandler(Platform.getNL()),
+				new IncludeHandler(reader, Platform.getNL()),
+				new ExtensionHandler(reader, Platform.getNL()),
 				new FilterHandler(),
 		};
 		XMLProcessor processor = new XMLProcessor(handlers);

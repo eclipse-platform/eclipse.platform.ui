@@ -17,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.Node;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /*
@@ -29,15 +28,16 @@ public class IncludeResolver {
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
 	private NodeProcessor processor;
-	private DocumentReader reader;
+	private NodeReader reader;
 	private String locale;
 	
 	/*
 	 * Creates the resolver. It must have a DOMProcessor for processing the
 	 * included content, and must know the locale of the content to include.
 	 */
-	public IncludeResolver(NodeProcessor processor, String locale) {
+	public IncludeResolver(NodeProcessor processor, NodeReader reader, String locale) {
 		this.processor = processor;
+		this.reader = reader;
 		this.locale = locale;
 	}
 	
@@ -64,11 +64,7 @@ public class IncludeResolver {
 	 * Finds the specified node from the given XML input stream.
 	 */
 	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
-		if (reader == null) {
-			reader = new DocumentReader();
-		}
-		Document document = reader.read(in);
-		DocumentNode node = new DocumentNode(document);
+		Node node = reader.read(in);
 		return findNode(node, nodeId);
 	}
 	

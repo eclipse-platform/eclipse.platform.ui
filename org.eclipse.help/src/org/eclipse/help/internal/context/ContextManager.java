@@ -80,7 +80,7 @@ public class ContextManager {
 				try {
 					Node node = provider.getContext(contextId, locale);
 					if (node != null) {
-						return new Context(node);
+						return node instanceof Context ? (Context)node : new Context(node);
 					}
 				}
 				catch (Throwable t) {

@@ -100,13 +100,16 @@ public class ContentExtensionManager {
 			ContentExtension[] extensions;
 			try {
 				Node[] nodes = contentExtensionProviders[i].getContentExtensions(locale);
-				extensions = new ContentExtension[nodes.length];
+				List list = new ArrayList();
 				for (int j=0;j<nodes.length;++j) {
 					ContentExtension ext = new ContentExtension(nodes[j]);
-					ext.setContent(normalizePath(ext.getContent()));
-					ext.setPath(normalizePath(ext.getPath()));
-					extensions[j] = ext;
+					if (ext.getContent() != null && ext.getPath() != null) {
+						ext.setContent(normalizePath(ext.getContent()));
+						ext.setPath(normalizePath(ext.getPath()));
+						list.add(ext);
+					}
 				}
+				extensions = (ContentExtension[])list.toArray(new ContentExtension[list.size()]);
 			}
 			catch (Throwable t) {
 				String msg = "An error occured while querying one of the user assistance content extension providers (" + contentExtensionProviders[i] + ')'; //$NON-NLS-1$

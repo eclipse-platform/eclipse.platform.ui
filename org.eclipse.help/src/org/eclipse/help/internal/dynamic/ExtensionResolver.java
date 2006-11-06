@@ -22,7 +22,6 @@ import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /*
@@ -36,7 +35,7 @@ public class ExtensionResolver {
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	
 	private NodeProcessor processor;
-	private DocumentReader reader;
+	private NodeReader reader;
 	private String locale;
 	private ContentExtensionManager manager;
 	
@@ -44,8 +43,9 @@ public class ExtensionResolver {
 	 * Creates the resolver. The processor is needed to process the extension
 	 * content, and locale because we're pulling in content from other documents.
 	 */
-	public ExtensionResolver(NodeProcessor processor, String locale) {
+	public ExtensionResolver(NodeProcessor processor, NodeReader reader, String locale) {
 		this.processor = processor;
+		this.reader = reader;
 		this.locale = locale;
 	}
 	
@@ -152,11 +152,7 @@ public class ExtensionResolver {
 	 * stream, or null if not found.
 	 */
 	private Node findNode(InputStream in, String nodeId) throws IOException, SAXException, ParserConfigurationException {
-		if (reader == null) {
-			reader = new DocumentReader();
-		}
-		Document document = reader.read(in);
-		Node node = new DocumentNode(document);
+		Node node = reader.read(in);
 		return findNode(node, nodeId);
 	}
 	
@@ -184,11 +180,7 @@ public class ExtensionResolver {
 	 * the body node itself) in the given XML input stream.
 	 */
 	private Node[] findBody(InputStream in) throws IOException, SAXException, ParserConfigurationException {
-		if (reader == null) {
-			reader = new DocumentReader();
-		}
-		Document document = reader.read(in);
-		Node node = new DocumentNode(document);
+		Node node = reader.read(in);
 		return findBody(node);
 	}
 	

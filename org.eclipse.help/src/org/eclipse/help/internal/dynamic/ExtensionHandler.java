@@ -23,13 +23,15 @@ public class ExtensionHandler extends NodeHandler {
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
 	private ExtensionResolver resolver;
+	private NodeReader reader;
 	private String locale;
 	
 	/*
 	 * This handler must know the locale since it's pulling content
 	 * in from other documents.
 	 */
-	public ExtensionHandler(String locale) {
+	public ExtensionHandler(NodeReader reader, String locale) {
+		this.reader = reader;
 		this.locale = locale;
 	}
 	
@@ -51,7 +53,7 @@ public class ExtensionHandler extends NodeHandler {
 		String id = node.getAttribute(ATTRIBUTE_ID);
 		if (id != null && id.length() > 0) {
 			if (resolver == null) {
-				resolver = new ExtensionResolver(getProcessor(), locale);
+				resolver = new ExtensionResolver(getProcessor(), reader, locale);
 			}
 			// get the nodes to insert/replace with
 			Node[] nodes = resolver.resolveExtension(path + '#' + id, type);

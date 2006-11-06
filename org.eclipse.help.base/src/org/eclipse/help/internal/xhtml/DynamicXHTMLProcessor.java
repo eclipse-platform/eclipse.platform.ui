@@ -19,10 +19,11 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.content.IContentDescriber;
-import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.xml.sax.SAXException;
 
@@ -47,9 +48,10 @@ public class DynamicXHTMLProcessor {
 		if (isXHTML) {
 			if (filter) {
 				if (xmlProcessor == null) {
+					NodeReader reader = new NodeReader();
 					xmlProcessor = new XMLProcessor(new NodeHandler[] {
-							new IncludeHandler(locale),
-							new ExtensionHandler(locale),
+							new IncludeHandler(reader, locale),
+							new ExtensionHandler(reader, locale),
 							new XHTMLCharsetHandler(),
 							new FilterHandler()
 					});
@@ -57,9 +59,10 @@ public class DynamicXHTMLProcessor {
 				return xmlProcessor.process(buf, href);
 			}
 			if (xmlProcessorNoFilter == null) {
+				NodeReader reader = new NodeReader();
 				xmlProcessorNoFilter = new XMLProcessor(new NodeHandler[] {
-						new IncludeHandler(locale),
-						new ExtensionHandler(locale),
+						new IncludeHandler(reader, locale),
+						new ExtensionHandler(reader, locale),
 						new XHTMLCharsetHandler()
 				});
 			}

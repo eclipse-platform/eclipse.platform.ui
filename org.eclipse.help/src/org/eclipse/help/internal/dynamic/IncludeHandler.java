@@ -22,13 +22,15 @@ public class IncludeHandler extends NodeHandler {
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
 	
 	private IncludeResolver resolver;
+	private NodeReader reader;
 	private String locale;
 	
 	/*
 	 * Creates the handler. It needs to know which locale the current document
 	 * is in in order to pull content from the correct locale.
 	 */
-	public IncludeHandler(String locale) {
+	public IncludeHandler(NodeReader reader, String locale) {
+		this.reader = reader;
 		this.locale = locale;
 	}
 	
@@ -61,7 +63,7 @@ public class IncludeHandler extends NodeHandler {
 	 */
 	private void resolveInclude(String bundleId, String relativePath, String elementId, Node node, String locale) {
 		if (resolver == null) {
-			resolver = new IncludeResolver(getProcessor(), locale);
+			resolver = new IncludeResolver(getProcessor(), reader, locale);
 		}
 		Node parent = node.getParent();
 		if (parent != null) {

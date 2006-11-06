@@ -29,6 +29,7 @@ import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
+import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.toc.HrefUtil;
 
 /*
@@ -116,12 +117,14 @@ public class IndexAssembler {
 	
 	private void process(List contributions) {
 		if (processor == null) {
+			NodeReader reader = new NodeReader();
+			reader.setIgnoreWhitespaceNodes(true);
 			processor = new NodeProcessor(new NodeHandler[] {
 				new IgnoreHandler(),
 				new LabelHandler(),
 				new NormalizeHandler(),
-				new IncludeHandler(locale),
-				new ExtensionHandler(locale),
+				new IncludeHandler(reader, locale),
+				new ExtensionHandler(reader, locale),
 			});
 		}
 		Iterator iter = contributions.iterator();

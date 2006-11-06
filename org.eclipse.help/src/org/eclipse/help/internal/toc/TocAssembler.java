@@ -26,6 +26,7 @@ import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
+import org.eclipse.help.internal.dynamic.NodeReader;
 
 /*
  * Assembles toc contributions (toc fragments) into complete, linked, and
@@ -179,12 +180,14 @@ public class TocAssembler {
 				processor = new NodeProcessor();
 			}
 			if (handlers == null) {
+				NodeReader reader = new NodeReader();
+				reader.setIgnoreWhitespaceNodes(true);
 				handlers = new NodeHandler[] {
 					new NormalizeHandler(),
 					new LinkHandler(),
 					new AnchorHandler(),
-					new IncludeHandler(contribution.getLocale()),
-					new ExtensionHandler(contribution.getLocale()),
+					new IncludeHandler(reader, contribution.getLocale()),
+					new ExtensionHandler(reader, contribution.getLocale()),
 				};
 			}
 			processor.setHandlers(handlers);

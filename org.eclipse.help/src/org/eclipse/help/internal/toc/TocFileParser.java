@@ -30,6 +30,7 @@ public class TocFileParser extends DefaultHandler {
     public TocContribution parse(TocFile tocFile) throws IOException, SAXException, ParserConfigurationException {
     	if (reader == null) {
     		reader = new NodeReader();
+    		reader.setIgnoreWhitespaceNodes(true);
     	}
 		Node node = reader.read(tocFile.getInputStream());
 		TocContribution contribution = new TocContribution();

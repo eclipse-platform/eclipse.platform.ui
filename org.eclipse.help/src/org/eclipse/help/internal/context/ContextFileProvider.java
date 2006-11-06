@@ -21,8 +21,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.Node;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.NodeWriter;
+import org.eclipse.help.internal.toc.HrefUtil;
 import org.eclipse.help.internal.util.ResourceLocator;
 
 /*
@@ -46,6 +52,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	// locale -> Map(ContextFile -> Map(shortContextId -> Context))
 	private Map contextFilesByLocale;
 	
+	private NodeProcessor processor;
 	private NodeReader reader;
 	private NodeWriter writer;
 	
@@ -172,17 +179,30 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 */
 	private Map loadContexts(ContextFile descriptor, String locale) {
 		try {
+			// load the file
 			InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale);
 			if (reader == null) {
 				reader = new NodeReader();
+				reader.setIgnoreWhitespaceNodes(true);
 			}
 			Node root = reader.read(in);
+			
+			// process dynamic content
+			if (processor == null) {
+				processor = new NodeProcessor(new NodeHandler[] {
+					new NormalizeHandler(),
+					new IncludeHandler(reader, locale),
+					new ExtensionHandler(reader, locale)
+				});
+			}
+			processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
+			
+			// build map
 			Node[] children = root.getChildren();
 			Map contexts = new HashMap();
 			for (int i=0;i<children.length;++i) {
 				if (ELEMENT_CONTEXT.equals(children[i].getName())) {
 					Context context = children[i] instanceof Context ? (Context)children[i] : new Context(children[i]);
-					normalizeDescription(context);
 					String id = context.getId();
 					if (id != null) {
 						contexts.put(id, context);
@@ -198,20 +218,43 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 	}
 	
-	private void normalizeDescription(Context context) {
-		Node[] children = context.getChildren();
-		if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(children[0].getName())) {
-			Node description = children[0];
-			Node[] descriptionChildren = description.getChildren();
-			if (writer == null) {
-				writer = new NodeWriter();
+	/*
+	 * Handler that normalizes:
+	 * 1. Descriptions - any child elements like bold tags are serialized and inserted into the
+	 *    text node under the description element.
+	 * 2. Related topic hrefs - convert from relative (e.g. "path/file.html") to absolute hrefs
+	 *    (e.g. "/plugin.id/path/file.html"). 
+	 */
+	private class NormalizeHandler extends NodeHandler {
+		public short handle(Node node, String id) {
+			if (Context.NAME.equals(node.getName())) {
+				Context context = node instanceof Context ? (Context)node : new Context(node);
+				Node[] children = context.getChildren();
+				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+					Node description = children[0];
+					Node[] descriptionChildren = description.getChildren();
+					if (writer == null) {
+						writer = new NodeWriter();
+					}
+					StringBuffer buf = new StringBuffer();
+					for (int i=0;i<descriptionChildren.length;++i) {
+						writer.write(descriptionChildren[i], buf, false, null, false);
+					}
+					context.setText(buf.toString());
+				}
 			}
-			
-			StringBuffer buf = new StringBuffer();
-			for (int i=0;i<descriptionChildren.length;++i) {
-				writer.write(descriptionChildren[i], buf, false, null, false);
+			else if (Topic.NAME.equals(node.getName())) {
+				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
+				if (href != null) {
+					int index = id.indexOf('/', 1);
+					if (index != -1) {
+						String pluginId = id.substring(1, index);
+						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
+					}
+				}
 			}
-			context.setText(buf.toString());
+			// give other handlers an opportunity to process
+			return UNHANDLED;
 		}
 	}
 }

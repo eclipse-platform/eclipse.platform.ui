@@ -35,6 +35,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
     public Node[] parse(Bundle bundle, String path) throws IOException, SAXException, ParserConfigurationException {
     	if (reader == null) {
     		reader = new NodeReader();
+    		reader.setIgnoreWhitespaceNodes(true);
     	}
 		URL url = bundle.getEntry(path);
 		if (url != null) {
