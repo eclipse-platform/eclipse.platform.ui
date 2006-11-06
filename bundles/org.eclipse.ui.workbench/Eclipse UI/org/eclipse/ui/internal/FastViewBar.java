@@ -938,6 +938,21 @@ public class FastViewBar implements IWindowTrim {
         }
     }
 
+	/**
+	 * @return The list of all view references in the stack
+	 */
+	public List getViewRefs() {
+		List refs = new ArrayList(fastViewBar.getControl().getItemCount());
+		ToolItem[] items = fastViewBar.getControl().getItems();
+		for (int i = 0; i < items.length; i++) {
+			Object data = items[i].getData(ShowFastViewContribution.FAST_VIEW);
+			if (data != null) 
+				refs.add(data);
+		}
+		
+		return refs;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.IWindowTrim#isCloseable()
 	 */

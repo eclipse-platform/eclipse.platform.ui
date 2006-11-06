@@ -324,8 +324,16 @@ public class Perspective {
      * Returns the docked views.
      */
     public IViewReference[] getFastViews() {
-        IViewReference array[] = new IViewReference[fastViews.size()];
-        fastViews.toArray(array);
+    	ArrayList trueFVBRefs = new ArrayList();
+    	for (Iterator fvs = fastViews.iterator(); fvs.hasNext();) {
+			IViewReference ref = (IViewReference) fvs.next();
+			
+			// Only return 'real' fast views
+			if (getTrimPartForRef(ref) == null)
+				trueFVBRefs.add(ref);
+		}
+        IViewReference array[] = new IViewReference[trueFVBRefs.size()];
+        trueFVBRefs.toArray(array);
         return array;
     }
 
@@ -831,12 +839,6 @@ public class Perspective {
         IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
         boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
     	if (useNewMinMax) {
-			// We 'stall' the creation of trim elements until the first activation
-			createInitialTrim();
-			
-			// Show Trim parts -after- activation
-			presentation.getLayout().setTrimVisible(true);
-			
 			// The editor area's trim stack's visibility is the inverse
 			// Of the actual editor area
 			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
@@ -844,10 +846,8 @@ public class Perspective {
 			IWindowTrim eaTrim = tbm.getTrim(editorArea.getID());
 			if (eaTrim != null) {
 				tbm.setTrimVisible(eaTrim, !isEditorAreaVisible());
+				tbm.forceLayout();
 			}
-	
-			// if we're done then force an update...optimize out if possible
-			tbm.forceLayout();
     	}
 
 		if (shouldHideEditorsOnActivate) {
@@ -856,26 +856,6 @@ public class Perspective {
 			// before it is hidden. See bug 20166.
 			hideEditorArea();
 			shouldHideEditorsOnActivate = false;
-		}
-	}
-
-    /**
-	 * Create any trim necessary to support the current
-	 * layout state 
-	 */
-	private void createInitialTrim() {
-		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		ITrimManager tbm = wbw.getTrimManager();
-
-		LayoutPart[] children = presentation.getLayout().getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i].getTrimState() == LayoutPart.TRIMSTATE_IN_TRIM
-					|| children[i].getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM) {
-				IWindowTrim partTrim = tbm.getTrim(children[i].getID());
-				if (partTrim == null) {
-					children[i].createInitialTrim();
-				}
-			}
 		}
 	}
 
@@ -897,15 +877,6 @@ public class Perspective {
 				}
 			}
 		}
-
-		// Trim Stack Support
-        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-    	if (useNewMinMax) {
-			// OK, adjust the trim to hide any view stacks that
-			// are -currently- showing in the trim
-			presentation.getLayout().setTrimVisible(false);
-    	}
 	}
 
     /**
@@ -1488,10 +1459,13 @@ public class Perspective {
                     .getKey(ref));
         }
 
-        if (fastViews.size() > 0) {
+        // Persist only the fast views from the 'real' FVB
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		FastViewBar fvb = wbw.getFastViewBar();
+        if (fvb != null && fvb.getViewRefs().size() > 0) {
             IMemento childMem = memento
                     .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-            itr = fastViews.iterator();
+            itr = fvb.getViewRefs().iterator();
             while (itr.hasNext()) {
                 IViewReference ref = (IViewReference) itr.next();
                 IMemento viewMemento = childMem
@@ -1644,7 +1618,7 @@ public class Perspective {
      */
     private void setFastViewIconSelection(IViewReference ref, boolean selected) {
 		// First, is it in a Trim Stack?
-		ViewStackTrimPart ts = getTrimStackForRef(ref);
+		ViewStackTrimPart ts = getTrimPartForRef(ref);
 		if (ts != null) {
 			ts.setIconSelection(ref, selected);
 			return;
@@ -1709,7 +1683,7 @@ public class Perspective {
         editorHolder = null;
     }
 
-	private ViewStackTrimPart getTrimStackForRef(IViewReference ref) {
+	private ViewStackTrimPart getTrimPartForRef(IViewReference ref) {
 		// Is it in a minimized stack?
 		List trimParts = presentation.getLayout().getTrimForParts();
 		for (Iterator trimIter = trimParts.iterator(); trimIter.hasNext();) {
@@ -1743,7 +1717,7 @@ public class Perspective {
 
 		// Determine the display orientation
 		int side;
-		ViewStackTrimPart ts = getTrimStackForRef(ref);
+		ViewStackTrimPart ts = getTrimPartForRef(ref);
 		if (ts != null) {
 			side = ts.getViewSide();
 		} else {
@@ -1994,24 +1968,6 @@ public class Perspective {
 	}
 
 	// Trim Stack Support
-
-	/**
-	 * Hack to get around 'addFastView' issues
-	 * 
-	 * @param ref
-	 */
-	public void addFastViewHack(IViewReference ref) {
-		//addFastView(ref, false);
-	}
-
-	/**
-	 * Hack to get around 'addFastView' issues
-	 * 
-	 * @param ref
-	 */
-	public void removeFastViewHack(IViewReference ref) {
-		//removeFastView(ref, false);
-	}
 
 	/**
 	 * Moves any parts that support trim representation into the trim

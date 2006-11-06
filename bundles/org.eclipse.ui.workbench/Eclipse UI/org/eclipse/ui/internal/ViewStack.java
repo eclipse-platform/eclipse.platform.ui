@@ -214,7 +214,7 @@ public class ViewStack extends PartStack {
         		for (Iterator refIter = refs.iterator(); refIter
 						.hasNext();) {
 					IViewReference ref = (IViewReference) refIter.next();
-					persp.addFastViewHack(ref);
+					persp.addFastView(ref, false);
 				}
         	}
     		tbm.setTrimVisible(viewStackTrim, true);
@@ -231,7 +231,7 @@ public class ViewStack extends PartStack {
         		for (Iterator refIter = refs.iterator(); refIter
 						.hasNext();) {
 					IViewReference ref = (IViewReference) refIter.next();
-					persp.removeFastViewHack(ref);
+					persp.removeFastView(ref, false);
 				}
         	}
     		

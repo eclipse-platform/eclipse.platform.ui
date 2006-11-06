@@ -35,7 +35,10 @@ import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
 import org.eclipse.ui.internal.dnd.IDragOverListener;
 import org.eclipse.ui.internal.dnd.IDropTarget;
+import org.eclipse.ui.internal.layout.ITrimManager;
+import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * A perspective presentation is a collection of parts with a layout. Each part
@@ -252,10 +255,46 @@ public class PerspectiveHelper {
 
         enableAllDrag();
 
+		// Trim Stack Support
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
+			// We 'stall' the creation of trim elements until the first activation
+			createInitialTrim();
+			
+			// Show Trim part
+			getLayout().setTrimVisible(true);
+	
+			// if we're done then force an update...optimize out if possible
+			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+			ITrimManager tbm = wbw.getTrimManager();
+			tbm.forceLayout();
+    	}
+
         active = true;
     }
 
     /**
+	 * Create any trim necessary to support the current
+	 * layout state 
+	 */
+	private void createInitialTrim() {
+		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+		ITrimManager tbm = wbw.getTrimManager();
+
+		LayoutPart[] children = getLayout().getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getTrimState() == LayoutPart.TRIMSTATE_IN_TRIM
+					|| children[i].getTrimState() == LayoutPart.TRIMSTATE_ZOOMEDTOTRIM) {
+				IWindowTrim partTrim = tbm.getTrim(children[i].getID());
+				if (partTrim == null) {
+					children[i].createInitialTrim();
+				}
+			}
+		}
+	}
+
+	/**
      * Adds a part to the presentation. If a placeholder exists for the part
      * then swap the part in. Otherwise, add the part in the bottom right
      * corner of the presentation.
@@ -589,6 +628,15 @@ public class PerspectiveHelper {
             DetachedWindow window = (DetachedWindow) detachedWindowList.get(i);
             window.close();
         }
+
+		// Trim Stack Support
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (useNewMinMax) {
+			// OK, adjust the trim to hide any view stacks that
+			// are -currently- showing in the trim
+			getLayout().setTrimVisible(false);
+    	}
         
         active = false;
     }
