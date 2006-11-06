@@ -107,20 +107,32 @@ public class Utilities {
 		firePropertyChange(listenerList, event);
 	}
 	
-	public static void firePropertyChange(ListenerList listenerList, final PropertyChangeEvent event) {
-		if (listenerList != null) {
-			Object[] listeners= listenerList.getListeners();
-			for (int i= 0; i < listeners.length; i++) {
-				final IPropertyChangeListener listener= (IPropertyChangeListener) listeners[i];
-				SafeRunner.run(new ISafeRunnable() {
-					public void run() throws Exception {
-						listener.propertyChange(event);
+	public static void firePropertyChange(final ListenerList listenerList, final PropertyChangeEvent event) {
+		if (listenerList == null || listenerList.isEmpty())
+			return;
+		// Legacy listeners may expect to get notified in the UI thread
+		Runnable runnable = new Runnable() {
+			public void run() {
+				if (listenerList != null) {
+					Object[] listeners= listenerList.getListeners();
+					for (int i= 0; i < listeners.length; i++) {
+						final IPropertyChangeListener listener= (IPropertyChangeListener) listeners[i];
+						SafeRunner.run(new ISafeRunnable() {
+							public void run() throws Exception {
+								listener.propertyChange(event);
+							}
+							public void handleException(Throwable exception) {
+								// Logged by SafeRunner
+							}
+						});
 					}
-					public void handleException(Throwable exception) {
-						// Logged by SafeRunner
-					}
-				});
+				}
 			}
+		};
+		if (Display.getCurrent() == null) {
+			Display.getDefault().syncExec(runnable);
+		} else {
+			runnable.run();
 		}
 	}
 

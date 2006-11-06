@@ -11,9 +11,9 @@
 package org.eclipse.compare;
 
 import java.io.*;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Abstract implementation for a buffered <code>IStreamContentAccessor</code>.
@@ -120,10 +120,30 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 	 * Notifies all registered <code>IContentChangeListener</code>s of a content change.
 	 */
 	protected void fireContentChanged() {
-		if (fListenerList != null) {
-			Object[] listeners= fListenerList.getListeners();
-			for (int i= 0; i < listeners.length; i++)
-				((IContentChangeListener)listeners[i]).contentChanged(this);
+		if (fListenerList == null || fListenerList.isEmpty()) {
+			return;
+		}
+		// Legacy listeners may expect to be notified in the UI thread.
+		Runnable runnable = new Runnable() {
+			public void run() {
+				Object[] listeners= fListenerList.getListeners();
+				for (int i= 0; i < listeners.length; i++) {
+					final IContentChangeListener contentChangeListener = (IContentChangeListener)listeners[i];
+					SafeRunner.run(new ISafeRunnable() {
+						public void run() throws Exception {
+							(contentChangeListener).contentChanged(BufferedContent.this);
+						}
+						public void handleException(Throwable exception) {
+							// Logged by safe runner
+						}
+					});
+				}
+			}
+		};
+		if (Display.getCurrent() == null) {
+			Display.getDefault().syncExec(runnable);
+		} else {
+			runnable.run();
 		}
 	}
 }

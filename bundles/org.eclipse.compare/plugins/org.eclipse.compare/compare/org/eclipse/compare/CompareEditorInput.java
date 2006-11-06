@@ -196,8 +196,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Object getAdapter(Class adapter) {
 		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
 			if (fNavigator == null)
-				fNavigator= new org.eclipse.compare.internal.CompareNavigator(
-					new CompareViewerPane[] {
+				fNavigator= new CompareNavigator(
+					new Object[] {
 						fStructureInputPane,
 						fStructurePane1,
 						fStructurePane2,
@@ -822,15 +822,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * This implementation tries to flush changes in all viewers by
 	 * calling <code>ISavable.save</code> on them.
 	 *
-	 * @param pm an <code>IProgressMonitor</code> that the implementation of save may use to show progress
+	 * @param monitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
 	 * @throws CoreException
 	 * @since 2.0
 	 */
-	public void saveChanges(IProgressMonitor pm) throws CoreException {
+	public void saveChanges(IProgressMonitor monitor) throws CoreException {
 		
-		flushViewers(pm);
+		flushViewers(monitor);
 
-		save(pm);
+		save(monitor);
 	}
 
 	/**

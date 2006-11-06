@@ -19,21 +19,24 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * This is a dialog that can host a {@link CompareEditorInput}.
+ * This is a dialog that can host a {@link CompareEditorInput}. Clients should instantiate
+ * the dialog and then call {@link #prepareAndOpen()} to prepare the compare editor input
+ * and open the dialog if there is a compare result to show.
  * <p>
  * This class can be used as is or can be subclassed.
  * 
@@ -41,9 +44,13 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class CompareDialog extends TrayDialog implements IPropertyChangeListener, ICompareContainer {
 	
+	/**
+	 * Constant returned from {@link #prepareAndOpen()} if the compare result
+	 * was not OK.
+	 */
 	public static final int NO_COMPARE_RESULT = 100;
 	
-	private CompareEditorInput fCompareEditorInput;
+	private final CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
 	private Label statusLabel;
 	boolean hasSettings = true;
@@ -53,7 +60,7 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @param shell a shell
 	 * @param input the dialog input
 	 */
-	CompareDialog(Shell shell, CompareEditorInput input) {
+	public CompareDialog(Shell shell, CompareEditorInput input) {
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.MAX);
 		Assert.isNotNull(input);
@@ -77,7 +84,7 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		if (isInputEditable()) {
-			fCommitButton= createButton(parent, IDialogConstants.OK_ID, Utilities.getString("CompareDialog.commitAction.label"), true); //$NON-NLS-1$
+			fCommitButton= createButton(parent, IDialogConstants.OK_ID, CompareMessages.CompareDialog_commit_button, true);
 			fCommitButton.setEnabled(false);
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		} else {
@@ -142,39 +149,47 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	public int open() {
-		
 		// Before opening, set the container of the input and listen
 		// for changes to the input
 		fCompareEditorInput.addPropertyChangeListener(this);
 		fCompareEditorInput.setContainer(this);
-		
-		int rc= super.open();
-		
-		if (rc == OK && fCompareEditorInput.isSaveNeeded()) {
-						
-			WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
-				public void execute(IProgressMonitor pm) throws CoreException {
-					fCompareEditorInput.saveChanges(pm);
-				}
-			};
-						
-			Shell shell= getParentShell();
-			ProgressMonitorDialog pmd= new ProgressMonitorDialog(shell);				
-			try {
-				operation.run(pmd.getProgressMonitor());				
-				
-			} catch (InterruptedException x) {
-				// NeedWork
-			} catch (OperationCanceledException x) {
-				// NeedWork
-			} catch (InvocationTargetException x) {
-				String title= Utilities.getString("CompareDialog.saveErrorTitle"); //$NON-NLS-1$
-				String msg= Utilities.getString("CompareDialog.saveErrorMessage"); //$NON-NLS-1$
-				MessageDialog.openError(shell, title, msg + x.getTargetException().getMessage());
-			}
+		return super.open();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
+	 */
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == OK && fCompareEditorInput.isSaveNeeded()) {
+			if (!saveChanges())
+				return;
 		}
-		
-		return rc;
+		super.buttonPressed(buttonId);
+	}
+
+	private boolean saveChanges() {
+		try {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						fCompareEditorInput.saveChanges(monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			
+			});
+			return true;
+		} catch (InterruptedException x) {
+			// Ignore
+		} catch (OperationCanceledException x) {
+			// Ignore
+		} catch (InvocationTargetException x) {
+			ErrorDialog.openError(getParentShell(), CompareMessages.CompareDialog_error_title, null, 
+				new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, 
+					NLS.bind(CompareMessages.CompareDialog_error_message, x.getTargetException().getMessage()), x.getTargetException()));
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
@@ -322,6 +337,14 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 			return open();
 		}
 		return NO_COMPARE_RESULT;
+	}
+
+	/**
+	 * Return the compare editor input for this dialog.
+	 * @return the compare editor input for this dialog
+	 */
+	protected final CompareEditorInput getInput() {
+		return fCompareEditorInput;
 	}
 
 }

@@ -13,6 +13,7 @@ package org.eclipse.team.ui;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
@@ -35,9 +36,10 @@ import org.eclipse.ui.progress.IProgressService;
  * 
  * @since 3.3
  */
-public abstract class PageCompareEditorInput extends CompareEditorInput {
+public abstract class PageCompareEditorInput extends CompareEditorInput implements IContentChangeListener {
 
 	private CompareViewerPane pagePane;
+	private ICompareInput hookedInput;
 
 	/**
 	 * Create a page compare editor input.
@@ -45,6 +47,8 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 	 */
 	protected PageCompareEditorInput(CompareConfiguration configuration) {
 		super(configuration);
+		// TODO: Need to acccess compare internals
+		configuration.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 	}
 	
 	/* (non-Javadoc)
@@ -135,6 +139,7 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 	protected void handleDispose() {
 		super.handleDispose();
 		cleanupListeners();
+		unhookContentChangeListener();
 	}
 	
 	private void hookupListeners() {
@@ -159,6 +164,34 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 		}
 	}
 	
+	private void hookContentChangeListener(ICompareInput node) {
+		if (hookedInput == node)
+			return;
+		unhookContentChangeListener();
+		hookedInput = node;
+		ITypedElement left = node.getLeft();
+		if(left instanceof IContentChangeNotifier) {
+			((IContentChangeNotifier)left).addContentChangeListener(this);
+		}
+		ITypedElement right = node.getRight();
+		if(right instanceof IContentChangeNotifier) {
+			((IContentChangeNotifier)right).addContentChangeListener(this);
+		}
+	}
+	
+	private void unhookContentChangeListener() {
+		if (hookedInput != null) {
+			ITypedElement left = hookedInput.getLeft();
+			if(left instanceof IContentChangeNotifier) {
+				((IContentChangeNotifier)left).addContentChangeListener(this);
+			}
+			ITypedElement right = hookedInput.getRight();
+			if(right instanceof IContentChangeNotifier) {
+				((IContentChangeNotifier)right).addContentChangeListener(this);
+			}
+		}
+	}
+
 	/**
 	 * Return a compare input that represents the selection.
 	 * This input is used to feed the structure and content
@@ -186,7 +219,7 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 	 * with a progress monitor.
 	 * @param input the compare input to be prepared
 	 */
-	protected void prepareCompareInput(final ICompareInput input) {
+	protected final void prepareCompareInput(final ICompareInput input) {
 		if (input == null)
 			return;
 		// Don't allow the use of shared documents with PageSaveableParts
@@ -201,6 +234,7 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 			manager.busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 			        prepareInput(input, getCompareConfiguration(), monitor);
+			        hookContentChangeListener(input);
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -208,6 +242,13 @@ public abstract class PageCompareEditorInput extends CompareEditorInput {
 		} catch (InterruptedException e) {
 			// Ignore
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IContentChangeListener#contentChanged(org.eclipse.compare.IContentChangeNotifier)
+	 */
+	public void contentChanged(IContentChangeNotifier source) {
+		setDirty(true);
 	}
 	
 	/**

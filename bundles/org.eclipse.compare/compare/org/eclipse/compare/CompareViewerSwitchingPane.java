@@ -319,9 +319,11 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 		}
 		if (adapter == IFlushable.class) {
 			Viewer v= getViewer();
-			IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
-			if (flushable != null)
-				return flushable;
+			if (v != null) {
+				IFlushable flushable = (IFlushable)Utilities.getAdapter(v, IFlushable.class);
+				if (flushable != null)
+					return flushable;
+			}
 		}
 		return super.getAdapter(adapter);
 	}

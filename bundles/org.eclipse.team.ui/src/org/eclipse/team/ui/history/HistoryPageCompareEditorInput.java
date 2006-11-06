@@ -118,4 +118,13 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 		}
 	}
 
+	/**
+	 * Return the history page for this input or <code>null</code> if the
+	 * page hasn't been created yet.
+	 * @return the history page for this input
+	 */
+	public final IHistoryPage getHistoryPage() {
+		return historyPage;
+	}
+	
 }

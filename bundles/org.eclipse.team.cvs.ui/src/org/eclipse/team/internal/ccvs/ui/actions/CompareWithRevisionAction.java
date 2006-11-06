@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -59,9 +60,14 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		IHistoryPageSource pageSource = HistoryPageSource.getHistoryPageSource(object);
 		if (pageSource != null && pageSource.canShowHistoryFor(object)) {
 			CompareConfiguration cc = new CompareConfiguration();
-			cc.setLeftEditable(false);
+			cc.setLeftEditable(true);
 			cc.setRightEditable(false);
-			HistoryPageCompareEditorInput input = new HistoryPageCompareEditorInput(cc, pageSource, object);
+			HistoryPageCompareEditorInput input = new HistoryPageCompareEditorInput(cc, pageSource, object) {
+				public void saveChanges(IProgressMonitor monitor) throws CoreException {
+					super.saveChanges(monitor);
+					((CVSHistoryPage)getHistoryPage()).saveChanges(monitor);
+				}
+			};
 			CompareUI.openCompareDialog(input);
 		}
 	}

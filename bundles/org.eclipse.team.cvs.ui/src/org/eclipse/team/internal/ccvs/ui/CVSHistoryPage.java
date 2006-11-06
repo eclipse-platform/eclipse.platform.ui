@@ -60,6 +60,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
 import org.eclipse.team.internal.ui.history.*;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
@@ -76,16 +77,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	/* private */ ICVSFile file;
 	/* private */ ICVSFile previousFile;
 	/* private */ IFileRevision currentFileRevision;
+	private ITypedElement fileElement;
 	
 	// cached for efficiency
 	/* private */ CVSFileHistory cvsFileHistory;
 	/* private */IFileRevision[] entries;
 
-	protected CVSHistoryTableProvider historyTableProvider;
+	/* private */CVSHistoryTableProvider historyTableProvider;
 
 	/* private */TreeViewer treeViewer;
-	protected TextViewer textViewer;
-	protected TableViewer tagViewer;
+	/* private */TextViewer textViewer;
+	/* private */TableViewer tagViewer;
 
 	/* private */CompareRevisionAction compareAction;
 	/* private */OpenRevisionAction openAction;
@@ -119,12 +121,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	protected IFileRevision currentSelection;
 
-	protected RefreshCVSFileHistory  refreshCVSFileHistoryJob;
+	/* private */RefreshCVSFileHistory  refreshCVSFileHistoryJob;
 
 	/* private */boolean shutdown = false;
 
-	boolean localFilteredOut = false;
-	boolean remoteFilteredOut = false;
+	/* private */boolean localFilteredOut = false;
+	/* private */boolean remoteFilteredOut = false;
 	
 	private HistoryResourceListener resourceListener;
 	
@@ -1576,9 +1578,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				Object o = ss.getFirstElement();
 				if (o instanceof IFileRevision){
 					IFileRevision selectedFileRevision = (IFileRevision)o;
-					ITypedElement left = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
+					if (fileElement == null)
+						fileElement = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
 					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
-					DiffNode node = new DiffNode(left,right);
+					DiffNode node = new DiffNode(fileElement, right);
 					return node;
 				}
 			}
@@ -1665,6 +1668,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		
 		this.file = cvsFile;
+		fileElement = null;
 
 		if (refreshCVSFileHistoryJob == null)
 			refreshCVSFileHistoryJob = new RefreshCVSFileHistory(this);
@@ -1863,5 +1867,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		//refetch revisions, not a select only job
 		refreshHistory(true, false, CVSFileHistory.REFRESH_LOCAL | CVSFileHistory.REFRESH_REMOTE);
+	}
+
+	/**
+	 * Save any changes that are buffered in the pages typed element.
+	 * @param monitor a progress monitor.
+	 * @throws CoreException 
+	 */
+	public void saveChanges(IProgressMonitor monitor) throws CoreException {
+		if (fileElement instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement element = (LocalResourceTypedElement) fileElement;
+			element.commit(monitor);
+		}
 	}
 }

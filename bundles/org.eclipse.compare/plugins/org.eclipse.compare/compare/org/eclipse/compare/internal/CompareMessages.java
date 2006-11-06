@@ -20,6 +20,9 @@ public final class CompareMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String CompareDialog_commit_button;
+	public static String CompareDialog_error_message;
+	public static String CompareDialog_error_title;
 	public static String ComparePlugin_internal_error;
 	public static String ContentMergeViewer_resource_changed_description;
 	public static String ContentMergeViewer_resource_changed_title;
