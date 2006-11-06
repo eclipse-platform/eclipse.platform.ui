@@ -14,11 +14,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 
-import org.eclipse.core.resources.IResource;
 
-import org.eclipse.ltk.core.refactoring.Change;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 
@@ -173,25 +170,4 @@ public abstract class PreviewNode {
 	 * @return whether the change node contains a derived resource
 	 */
 	abstract boolean hasDerived();
-
-	/**
-	 * Returns <code>true</code> iff the change node contains a derived
-	 * resource.
-	 * 
-	 * @param change the change
-	 * @return whether the change contains a derived resource
-	 */
-	static boolean hasDerivedResourceChange(Change change) {
-		Object modifiedElement= change.getModifiedElement();
-		if (modifiedElement instanceof IResource) {
-			return ((IResource) modifiedElement).isDerived();
-		} else if (modifiedElement instanceof IAdaptable) {
-			IAdaptable adaptable= (IAdaptable) modifiedElement;
-			IResource resource= (IResource) adaptable.getAdapter(IResource.class);
-			if (resource != null) {
-				return resource.isDerived();
-			}
-		}
-		return false;
-	}
 }
