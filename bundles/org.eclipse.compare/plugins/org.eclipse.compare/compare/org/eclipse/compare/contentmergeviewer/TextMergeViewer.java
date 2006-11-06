@@ -234,7 +234,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private static final int LW= 1;
 	/** Selects between smartTokenDiff and mergingTokenDiff */
 	private static final boolean USE_MERGING_TOKEN_DIFF= false;
-	protected static final String STEP_INTO_PROPERTY = null;
+	/* private */ static final String STEP_INTO_PROPERTY = "StepInto"; //$NON-NLS-1$
 		
 	// determines whether a change between left and right is considered incoming or outgoing
 	private boolean fLeftIsLocal;
