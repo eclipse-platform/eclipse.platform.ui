@@ -33,13 +33,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 
 /**
- * The DetailedProgressViewer is a viewer that shows the details of all in
- * progress job or jobs that are finished awaiting user input.
+ * The VirtualProgressViewer is a viewer that shows the details of all in
+ * progress job or jobs that are finished awaiting user input. It only updates
+ * those items that are currently visible.
  * 
- * @since 3.2
+ * @since 3.3
  * 
  */
-public class DetailedProgressViewer extends AbstractProgressViewer {
+public class VirtualProgressViewer extends AbstractProgressViewer {
 
 	Composite control;
 
@@ -54,7 +55,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * @param parent
 	 * @param style
 	 */
-	public DetailedProgressViewer(Composite parent, int style) {
+	public VirtualProgressViewer(Composite parent, int style) {
 		scrolled = new ScrolledComposite(parent, SWT.V_SCROLL | style);
 		int height = JFaceResources.getDefaultFont().getFontData()[0]
 				.getHeight();
@@ -63,22 +64,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		scrolled.setExpandVertical(true);
 
 		control = new Composite(scrolled, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		control.setLayout(layout);
-		control.setBackground(parent.getDisplay().getSystemColor(
-				SWT.COLOR_LIST_BACKGROUND));
-		
-		control.addFocusListener(new FocusAdapter(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
-			 */
-			public void focusGained(FocusEvent e) {
-				setFocus();
-			}
-		});
-		
+
 		control.addControlListener(new ControlListener() {
 			/*
 			 * (non-Javadoc)
@@ -97,9 +83,27 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			 */
 			public void controlResized(ControlEvent e) {
 				updateVisibleItems();
+
 			}
 		});
-		
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		control.setLayout(layout);
+		control.setBackground(parent.getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
+
+		control.addFocusListener(new FocusAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
+			 */
+			public void focusGained(FocusEvent e) {
+				setFocus();
+			}
+		});
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
@@ -150,11 +154,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		// Update with the new elements to prevent flash
 		for (int i = 0; i < existingChildren.length; i++) {
-			((ProgressInfoItem) existingChildren[i]).dispose();
+			((VirtualInfoItem) existingChildren[i]).dispose();
 		}
 
 		for (int i = 0; i < newItems.size(); i++) {
-			ProgressInfoItem item = createNewItem(infos[i]);
+			VirtualInfoItem item = createNewItem(infos[i]);
 			item.setColor(i);
 		}
 
@@ -177,43 +181,43 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * Create a new item for info.
 	 * 
 	 * @param info
-	 * @return ProgressInfoItem
+	 * @return VirtualInfoItem
 	 */
-	private ProgressInfoItem createNewItem(JobTreeElement info) {
-		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE,
+	private VirtualInfoItem createNewItem(JobTreeElement info) {
+		final VirtualInfoItem item = new VirtualInfoItem(control, SWT.NONE,
 				info);
 
-		item.setIndexListener(new ProgressInfoItem.IndexListener() {
+		item.setIndexListener(new VirtualInfoItem.IndexListener() {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#selectNext()
+			 * @see org.eclipse.ui.internal.progress.VirtualInfoItem.IndexListener#selectNext()
 			 */
 			public void selectNext() {
-				DetailedProgressViewer.this.selectNext(item);
+				VirtualProgressViewer.this.selectNext(item);
 
 			}
 
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#selectPrevious()
+			 * @see org.eclipse.ui.internal.progress.VirtualInfoItem.IndexListener#selectPrevious()
 			 */
 			public void selectPrevious() {
-				DetailedProgressViewer.this.selectPrevious(item);
+				VirtualProgressViewer.this.selectPrevious(item);
 
 			}
 
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.ui.internal.progress.ProgressInfoItem.IndexListener#select()
+			 * @see org.eclipse.ui.internal.progress.VirtualInfoItem.IndexListener#select()
 			 */
 			public void select() {
 
 				Control[] children = control.getChildren();
 				for (int i = 0; i < children.length; i++) {
-					ProgressInfoItem child = (ProgressInfoItem) children[i];
+					VirtualInfoItem child = (VirtualInfoItem) children[i];
 					if (!item.equals(child)) {
 						child.selectWidgets(false);
 					}
@@ -233,16 +237,16 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * 
 	 * @param item
 	 */
-	protected void selectPrevious(ProgressInfoItem item) {
+	protected void selectPrevious(VirtualInfoItem item) {
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			ProgressInfoItem child = (ProgressInfoItem) children[i];
+			VirtualInfoItem child = (VirtualInfoItem) children[i];
 			if (item.equals(child)) {
-				ProgressInfoItem previous;
+				VirtualInfoItem previous;
 				if (i == 0) {
-					previous = (ProgressInfoItem) children[children.length - 1];
+					previous = (VirtualInfoItem) children[children.length - 1];
 				} else {
-					previous = (ProgressInfoItem) children[i - 1];
+					previous = (VirtualInfoItem) children[i - 1];
 				}
 
 				item.selectWidgets(false);
@@ -257,16 +261,16 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * 
 	 * @param item
 	 */
-	protected void selectNext(ProgressInfoItem item) {
+	protected void selectNext(VirtualInfoItem item) {
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			ProgressInfoItem child = (ProgressInfoItem) children[i];
+			VirtualInfoItem child = (VirtualInfoItem) children[i];
 			if (item.equals(child)) {
-				ProgressInfoItem next;
+				VirtualInfoItem next;
 				if (i == children.length - 1) {
-					next = (ProgressInfoItem) children[0];
+					next = (VirtualInfoItem) children[0];
 				} else {
-					next = (ProgressInfoItem) children[i + 1];
+					next = (VirtualInfoItem) children[i + 1];
 				}
 				item.selectWidgets(false);
 				next.selectWidgets(true);
@@ -368,9 +372,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			add(new Object[] { element });
 			return;
 		}
-		((ProgressInfoItem) widget).refresh();
+		((VirtualInfoItem) widget).refresh();
 
-		//Update the minimum size
+		// Update the minimum size
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += IDialogConstants.HORIZONTAL_SPACING;
 		size.y += IDialogConstants.VERTICAL_SPACING;
@@ -393,7 +397,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 							(JobInfo) elements[i])) {
 				Widget item = doFindItem(elements[i]);
 				if (item != null) {
-					((ProgressInfoItem) item).refresh();
+					((VirtualInfoItem) item).refresh();
 				}
 
 			} else {
@@ -407,7 +411,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		Control[] existingChildren = control.getChildren();
 		for (int i = 0; i < existingChildren.length; i++) {
-			ProgressInfoItem item = (ProgressInfoItem) existingChildren[i];
+			VirtualInfoItem item = (VirtualInfoItem) existingChildren[i];
 			item.setColor(i);
 		}
 		control.layout(true);
@@ -449,7 +453,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Control[] children = control.getChildren();
 		if (children.length > 0) {
 			for (int i = 0; i < children.length; i++) {
-				ProgressInfoItem item = (ProgressInfoItem) children[i];
+				VirtualInfoItem item = (VirtualInfoItem) children[i];
 				item.setButtonFocus();
 				return;
 			}
@@ -471,7 +475,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 		// Create new ones if required
 		for (int i = 0; i < infos.length; i++) {
-			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
+			VirtualInfoItem item = createNewItem((JobTreeElement) infos[i]);
 			item.setColor(i);
 		}
 
@@ -479,7 +483,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		updateForShowingProgress();
 
 	}
-	
+
 	/**
 	 * Set the virtual items to be visible or not depending on the displayed
 	 * area.
@@ -489,12 +493,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		int top = scrolled.getOrigin().y;
 		int bottom = top + scrolled.getParent().getBounds().height;
 		for (int i = 0; i < children.length; i++) {
-			ProgressInfoItem item = (ProgressInfoItem) children[i];
+			VirtualInfoItem item = (VirtualInfoItem) children[i];
 			item.setDisplayed(top, bottom);
 
 		}
 	}
-	
-	
 
 }

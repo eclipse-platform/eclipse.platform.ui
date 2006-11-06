@@ -11,7 +11,6 @@ package org.eclipse.ui.internal.progress;
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 import java.net.URL;
-import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -37,6 +36,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -50,13 +50,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
 
+import com.ibm.icu.text.DateFormat;
+
 /**
- * ProgressInfoItem is the item used to show jobs.
+ * VirtualInfoItem is the item used to show jobs which only displays when it is
+ * visible.
  * 
  * @since 3.1
  * 
  */
-class ProgressInfoItem extends Composite {
+class VirtualInfoItem extends Canvas {
 
 	static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP"; //$NON-NLS-1$
 
@@ -181,7 +184,7 @@ class ProgressInfoItem extends Composite {
 	 * @param style
 	 * @param progressInfo
 	 */
-	public ProgressInfoItem(Composite parent, int style,
+	public VirtualInfoItem(Composite parent, int style,
 			JobTreeElement progressInfo) {
 		super(parent, style);
 		info = progressInfo;
