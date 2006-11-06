@@ -98,6 +98,8 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage_SelectProject;
 	public static String PreviewPatchPage_Target;
 	public static String PreviewPatchLabelDecorator_ProjectDoesNotExist;
+	public static String PreviewPatchPage2_CalculateReverse;
+	public static String PreviewPatchPage2_IgnoreWhitespace;
 	public static String PreviewPatchPage2_IgnoreWSAction;
 	public static String PreviewPatchPage2_IgnoreWSTooltip;
 	public static String PreviewPatchPage2_IncludeElement;

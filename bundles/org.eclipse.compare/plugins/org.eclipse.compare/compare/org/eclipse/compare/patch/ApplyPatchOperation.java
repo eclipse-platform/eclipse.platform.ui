@@ -112,6 +112,7 @@ public class ApplyPatchOperation implements Runnable {
 		
 		PatchWizardDialog dialog = new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
 		wizard.setDialog(dialog);
+		wizard.setNeedsProgressMonitor(true);
 		dialog.open();
 	}
 	

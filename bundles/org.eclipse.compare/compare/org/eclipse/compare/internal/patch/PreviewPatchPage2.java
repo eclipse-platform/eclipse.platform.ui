@@ -451,10 +451,13 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			public void run() {
 				ISelection selection = patcherCompareEditorInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
-					Object obj = ((TreeSelection) selection).getFirstElement();
-					if (obj instanceof PatcherDiffNode){
-						PatcherDiffNode node = ((PatcherDiffNode) obj);
-						node.setIncludeElement(!node.getIncludeElement());
+					Iterator iter = ((TreeSelection) selection).iterator();
+					while (iter.hasNext()){
+						Object obj = iter.next();
+						if (obj instanceof PatcherDiffNode){
+							PatcherDiffNode node = ((PatcherDiffNode) obj);
+							node.setIncludeElement(!node.getIncludeElement());
+						} 
 					}
 				}
 				patcherCompareEditorInput.getViewer().refresh();
@@ -466,9 +469,19 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		
 		fIgnoreWhiteSpace = new Action(PatchMessages.PreviewPatchPage2_IgnoreWSAction, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_ENABLED)){
 			public void run(){
-				fIgnoreWhiteSpace.setChecked(isChecked());
-				if (fPatchWizard.getPatcher().setIgnoreWhitespace(fIgnoreWhiteSpace.isChecked())){
-					fillTree();
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							monitor.beginTask(PatchMessages.PreviewPatchPage2_IgnoreWhitespace, IProgressMonitor.UNKNOWN);
+							fIgnoreWhiteSpace.setChecked(isChecked());
+							if (fPatchWizard.getPatcher().setIgnoreWhitespace(fIgnoreWhiteSpace.isChecked())){
+								fillTree();
+							}
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) { //ignore
+				} catch (InterruptedException e) { //ignore
 				}
 			}
 		};
@@ -479,11 +492,23 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		
 		fReversePatch = new Action(PatchMessages.PreviewPatchPage_ReversePatch_text, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REVERSE_PATCH_ENABLED)){
 			public void run(){
-				fReversePatch.setChecked(isChecked());
-				if (fPatchWizard.getPatcher().setReversed(isChecked())){
-					fillTree();
+				try {
+					getContainer().run(true, true, new IRunnableWithProgress() {
+						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							monitor.beginTask(PatchMessages.PreviewPatchPage2_CalculateReverse, IProgressMonitor.UNKNOWN);
+							fReversePatch.setChecked(isChecked());
+							if (fPatchWizard.getPatcher().setReversed(isChecked())){
+								fillTree();
+							}
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) { //ignore
+				} catch (InterruptedException e) { //ignore
 				}
+				
 			}
+			
 		};
 		fReversePatch.setChecked(false);
 		fReversePatch.setToolTipText(PatchMessages.PreviewPatchPage_ReversePatch_text);

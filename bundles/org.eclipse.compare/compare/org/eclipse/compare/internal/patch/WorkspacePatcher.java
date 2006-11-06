@@ -111,7 +111,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 
 		// Test for our format
 		line= lr.readLine();
-		if (line.startsWith(MULTIPROJECTPATCH_HEADER)) {
+		if (line != null && line.startsWith(MULTIPROJECTPATCH_HEADER)) {
 			fIsWorkspacePatch= true;
 		} else {
 			parse(lr, line);
