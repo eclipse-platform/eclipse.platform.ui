@@ -48,6 +48,7 @@ public final class ComboViewer extends AbstractListViewer {
      * <code>null</code>.
      * 
      * @see #ComboViewer(CCombo)
+     * @since 3.3
      */
     private CCombo ccombo;
 
@@ -93,6 +94,7 @@ public final class ComboViewer extends AbstractListViewer {
      * no sorter, and no filters.
      *
      * @param list the CCombo control
+     * @since 3.3
      */
     public ComboViewer(CCombo list) {
         this.ccombo = list;
@@ -171,6 +173,7 @@ public final class ComboViewer extends AbstractListViewer {
 	 * a CCombo control, some kind of unchecked exception is thrown.
 	 * 
 	 * @return the list control
+     * @since 3.3
 	 */
     public CCombo getCCombo() {
         Assert.isNotNull(ccombo);
