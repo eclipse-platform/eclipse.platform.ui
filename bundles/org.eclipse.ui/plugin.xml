@@ -39,6 +39,7 @@
    <extension-point id="presentationFactories" name="%ExtPoint.presentationFactories" schema="schema/presentationFactories.exsd"/>
    <extension-point id="propertyPages" name="%ExtPoint.propertyPages" schema="schema/propertyPages.exsd"/>
    <extension-point id="startup" name="%ExtPoint.startup" schema="schema/startup.exsd"/>
+   <extension-point id="statusHandler" name="%ExtPoint.StatusHandler" schema="schema/statusHandler.exsd"/>
    <extension-point id="systemSummarySections" name="%ExtPoint.systemSummarySections" schema="schema/systemSummarySections.exsd"/>
    <extension-point id="themes" name="%ExtPoint.themes" schema="schema/themes.exsd"/>
    <extension-point id="viewActions" name="%ExtPoint.viewActions" schema="schema/viewActions.exsd"/>

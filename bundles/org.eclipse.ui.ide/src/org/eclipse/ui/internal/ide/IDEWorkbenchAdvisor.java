@@ -60,6 +60,7 @@ import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.statushandling.AbstractStatusHandler;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
@@ -86,11 +87,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
 
 	private static IDEWorkbenchAdvisor workbenchAdvisor = null;
-
-	/**
-	 * Event loop exception handler for the advisor.
-	 */
-	private IDEExceptionHandler exceptionHandler = null;
 
 	/**
 	 * Contains the workspace location if the -showlocation command line
@@ -131,6 +127,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private WorkspaceUndoMonitor workspaceUndoMonitor;
 
 	/**
+	 * The IDE workbench error handler.
+	 */
+	private AbstractStatusHandler ideWorkbenchErrorHandler;
+
+	/**
 	 * Creates a new workbench advisor instance.
 	 */
 	public IDEWorkbenchAdvisor() {
@@ -150,9 +151,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 
 		// make sure we always save and restore workspace state
 		configurer.setSaveAndRestore(true);
-
-		// setup the event loop exception handler
-		exceptionHandler = new IDEExceptionHandler(configurer);
 
 		// register workspace adapters
 		WorkbenchAdapterBuilder.registerAdapters();
@@ -199,7 +197,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						Dialog.DLG_IMG_HELP,
 						IDEInternalWorkbenchImages
 								.getImageDescriptor(IDEInternalWorkbenchImages.IMG_LCL_LINKTO_HELP));
-		
+
 		Policy.setComparator(Collator.getInstance());
 	}
 
@@ -250,14 +248,16 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private void initializeSettingsChangeListener() {
 		settingsChangeListener = new Listener() {
-			
-			boolean currentHighContrast = Display.getCurrent().getHighContrast();
+
+			boolean currentHighContrast = Display.getCurrent()
+					.getHighContrast();
+
 			public void handleEvent(org.eclipse.swt.widgets.Event event) {
-				if(Display.getCurrent().getHighContrast() == currentHighContrast)
+				if (Display.getCurrent().getHighContrast() == currentHighContrast)
 					return;
-				
+
 				currentHighContrast = !currentHighContrast;
-				
+
 				// make sure they really want to do this
 				if (new MessageDialog(null,
 						IDEWorkbenchMessages.SystemSettingsChange_title, null,
@@ -305,22 +305,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		Display.getCurrent().removeListener(SWT.Settings,
 				settingsChangeListener);
 		return super.preShutdown();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopException
-	 */
-	public void eventLoopException(Throwable exception) {
-		super.eventLoopException(exception);
-		if (exceptionHandler != null) {
-			exceptionHandler.handleException(exception);
-		} else {
-			if (getWorkbenchConfigurer() != null) {
-				getWorkbenchConfigurer().emergencyClose();
-			}
-		}
 	}
 
 	/*
@@ -547,12 +531,26 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private void declareWorkbenchImages() {
 
 		final String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
-		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled  toolbar icons.//$NON-NLS-1$
-		final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled  toolbar icons.//$NON-NLS-1$
-		final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar icons.//$NON-NLS-1$
-		final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar icons.//$NON-NLS-1$
-		final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object icons//$NON-NLS-1$
-		final String PATH_WIZBAN = ICONS_PATH + "wizban/"; // Wizard icons//$NON-NLS-1$
+		final String PATH_ELOCALTOOL = ICONS_PATH + "elcl16/"; // Enabled //$NON-NLS-1$
+
+		// toolbar
+		// icons.
+		final String PATH_DLOCALTOOL = ICONS_PATH + "dlcl16/"; // Disabled //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// toolbar
+		// icons.
+		final String PATH_ETOOL = ICONS_PATH + "etool16/"; // Enabled toolbar //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// icons.
+		final String PATH_DTOOL = ICONS_PATH + "dtool16/"; // Disabled toolbar //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// icons.
+		final String PATH_OBJECT = ICONS_PATH + "obj16/"; // Model object //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// icons
+		final String PATH_WIZBAN = ICONS_PATH + "wizban/"; // Wizard //$NON-NLS-1$
+		// //$NON-NLS-1$
+		// icons
 
 		Bundle ideBundle = Platform.getBundle(IDEWorkbenchPlugin.IDE_WORKBENCH);
 
@@ -615,7 +613,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN
 						+ "saveas_wiz.png", false); //$NON-NLS-1$
-		
+
 		declareWorkbenchImage(ideBundle,
 				IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG, PATH_WIZBAN
 						+ "quick_fix.png", false); //$NON-NLS-1$
@@ -627,11 +625,13 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 						+ "cprj_obj.gif", true); //$NON-NLS-1$
 		declareWorkbenchImage(ideBundle, IDE.SharedImages.IMG_OPEN_MARKER,
 				PATH_ELOCALTOOL + "gotoobj_tsk.gif", true); //$NON-NLS-1$
-		
-		declareWorkbenchImage(ideBundle, IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
+
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED,
 				PATH_ELOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
-		
-		declareWorkbenchImage(ideBundle, IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
+
+		declareWorkbenchImage(ideBundle,
+				IDEInternalWorkbenchImages.IMG_DLCL_QUICK_FIX_DISABLED,
 				PATH_DLOCALTOOL + "smartmode_co.gif", true); //$NON-NLS-1$
 
 		// task objects
@@ -759,5 +759,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			}
 		}
 		return welcomePerspectiveInfos;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getWorkbenchErrorHandler()
+	 */
+	public AbstractStatusHandler getWorkbenchErrorHandler() {
+		if (ideWorkbenchErrorHandler == null) {
+			ideWorkbenchErrorHandler = new IDEWorkbenchErrorHandler(
+					getWorkbenchConfigurer());
+		}
+		return ideWorkbenchErrorHandler;
 	}
 }
