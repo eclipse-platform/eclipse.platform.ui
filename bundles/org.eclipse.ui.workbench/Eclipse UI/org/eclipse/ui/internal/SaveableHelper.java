@@ -24,7 +24,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.window.ApplicationWindow;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
@@ -34,7 +34,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
-import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 
 /**
  * Helper class for prompting to save dirty views or editors.
@@ -239,13 +238,19 @@ public class SaveableHelper {
 	 * Runs a progress monitor operation.
 	 * Returns true if success, false if cancelled.
 	 */
-	static boolean runProgressMonitorOperation(String opName, final IRunnableWithProgress progressOp,IWorkbenchWindow window) {
-		IRunnableContext ctx;
-		if (window instanceof ApplicationWindow) {
-			ctx = window;
-		} else {
-			ctx = new ProgressMonitorJobsDialog(window.getShell());
-		}
+	static boolean runProgressMonitorOperation(String opName,
+			IRunnableWithProgress progressOp, IWorkbenchWindow window) {
+		return runProgressMonitorOperation(opName, progressOp, window,
+				(WorkbenchWindow) window);
+	}
+	
+	/**
+	 * Runs a progress monitor operation.
+	 * Returns true if success, false if cancelled.
+	 */
+	static boolean runProgressMonitorOperation(String opName,
+			final IRunnableWithProgress progressOp,
+			final IRunnableContext runnableContext, final IShellProvider shellProvider) {
 		final boolean[] wasCanceled = new boolean[1];
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -255,12 +260,12 @@ public class SaveableHelper {
 		};
 
 		try {
-			ctx.run(false, true, runnable);
+			runnableContext.run(false, true, runnable);
 		} catch (InvocationTargetException e) {
 			String title = NLS.bind(WorkbenchMessages.EditorManager_operationFailed, opName ); 
 			Throwable targetExc = e.getTargetException();
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
-			MessageDialog.openError(window.getShell(), WorkbenchMessages.Error, title + ':' + targetExc.getMessage());
+			MessageDialog.openError(shellProvider.getShell(), WorkbenchMessages.Error, title + ':' + targetExc.getMessage());
 		} catch (InterruptedException e) {
 			// Ignore.  The user pressed cancel.
 			wasCanceled[0] = true;

@@ -59,12 +59,15 @@ import org.eclipse.jface.bindings.IBindingManagerListener;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
 import org.eclipse.osgi.util.NLS;
@@ -764,14 +767,27 @@ public final class Workbench extends EventManager implements IWorkbench {
 						}
 					}
 				}
+				IShellProvider shellProvider;
+				IRunnableContext runnableContext;
 				IWorkbenchWindow w = getActiveWorkbenchWindow();
-				if (w == null) {
+				if (w == null && windows.length > 0) {
 					w = windows[0];
+				}
+				if (w != null) {
+					shellProvider = (WorkbenchWindow)w;
+					runnableContext = w;
+				} else {
+					shellProvider = new IShellProvider() {
+						public Shell getShell() {
+							return null;
+						}
+					};
+					runnableContext = new ProgressMonitorDialog(null);
 				}
 				// The fourth parameter is true to also save saveables from
 				// non-part sources, see bug 139004.
 				result[0] = EditorManager.saveAll(dirtyParts, finalConfirm,
-						false, true, w);
+						false, true, runnableContext, shellProvider);
 			}
 		});
 		return result[0];
