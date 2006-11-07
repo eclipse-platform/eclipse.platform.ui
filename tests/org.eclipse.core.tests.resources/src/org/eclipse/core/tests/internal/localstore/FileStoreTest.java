@@ -125,6 +125,22 @@ public class FileStoreTest extends LocalStoreTest {
 		copyOfTarget.delete(EFS.NONE, null);
 	}
 
+	public void testCopyDirectoryParentMissing() throws Throwable {
+		IFileStore parent = getTempStore();
+		IFileStore child = parent.getChild("child");
+		IFileStore existing = getTempStore();
+		createFile(existing, getRandomString());
+		//try to copy when parent of destination does not exist
+		try {
+			existing.copy(child, EFS.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		//destination should not exist
+		assertTrue("1.1", !child.fetchInfo().exists());
+	}
+
 	public void testCopyFile() throws Throwable {
 		/* build scenario */
 		IFileStore temp = createDir(getWorkspace().getRoot().getLocation().append("temp").toString(), true);
@@ -393,6 +409,22 @@ public class FileStoreTest extends LocalStoreTest {
 		/* remove trash */
 		target.delete(EFS.NONE, null);
 		tree.delete(EFS.NONE, null);
+	}
+
+	public void testMoveDirectoryParentMissing() throws Throwable {
+		IFileStore parent = getTempStore();
+		IFileStore child = parent.getChild("child");
+		IFileStore existing = getTempStore();
+		createFile(existing, getRandomString());
+		//try to move when parent of destination does not exist
+		try {
+			existing.move(child, EFS.NONE, getMonitor());
+			fail("1.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+		//destination should not exist
+		assertTrue("1.1", !child.fetchInfo().exists());
 	}
 
 	public void testReadOnly() throws CoreException {
