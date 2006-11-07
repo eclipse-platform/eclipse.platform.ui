@@ -391,8 +391,6 @@ public class ControlDecoration {
 	 *            bit-wise or of position constants (<code>SWT.TOP</code>,
 	 *            <code>SWT.BOTTOM</code>, <code>SWT.LEFT</code>,
 	 *            <code>SWT.RIGHT</code>, and <code>SWT.CENTER</code>).
-	 * 
-	 * @see #setDecoration(FieldDecoration)
 	 */
 	public ControlDecoration(Control control, int position) {
 		this.position = position;
