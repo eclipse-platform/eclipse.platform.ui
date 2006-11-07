@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.core.resources;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * A data structure returned by <code>addSaveParticipant</code>
+ * A data structure returned by {@link IWorkspace#addSaveParticipant(org.eclipse.core.runtime.Plugin, ISaveParticipant)}
  * containing a save number and an optional resource delta.
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
  */
 public interface ISavedState {
 	/**
-	 * Returns the files mapped with the <code>ISaveContext.map</code>
+	 * Returns the files mapped with the {@link ISaveContext#map(IPath, IPath)}
 	 * facility. Returns an empty array if there are no mapped files.
 	 *
 	 * @return the files currently mapped by the participant
@@ -55,17 +55,16 @@ public interface ISavedState {
 
 	/**
 	 * Used to receive notification of changes that might have happened
-	 * while this plug-in was not active.
-	 * The listener receives notifications of changes to the workspace 
-	 * resource tree since the time this state was saved.
-	 * After this method is run, the delta is forgotten. Subsequent calls to this method
+	 * while this plug-in was not active. The listener receives notifications of changes to 
+	 * the workspace resource tree since the time this state was saved.  After this 
+	 * method is run, the delta is forgotten. Subsequent calls to this method
 	 * will have no effect.
 	 * <p>
 	 * No notification is received in the following cases:
 	 * <ul>
-	 * <li>if a saved state was never recorded (<code>ISaveContext.needDelta</code> 
+	 * <li>if a saved state was never recorded ({@link ISaveContext#needDelta()}</code> 
 	 * 		was not called) </li>
-	 * <li>a saved state has since been forgotten (using <code>IWorkspace.forgetSavedTree</code>) </li>
+	 * <li>a saved state has since been forgotten (using {@link IWorkspace#forgetSavedTree(String)}) </li>
 	 * <li>a saved state has been deemed too old or has become invalid</li>
 	 * </ul>
 	 * <p>
@@ -75,7 +74,7 @@ public interface ISavedState {
 	 * current state of the workspace to work from).
 	 * </p>
 	 * <p>
-	 * The supplied event is of type <code>IResourceChangeEvent.POST_AUTO_BUILD</code>
+	 * The supplied event is of type {@link IResourceChangeEvent#POST_BUILD}
 	 * and contains the delta detailing changes since this plug-in last participated
 	 * in a save. This event object (and the resource delta within it) is valid only
 	 * for the duration of the invocation of this method.
