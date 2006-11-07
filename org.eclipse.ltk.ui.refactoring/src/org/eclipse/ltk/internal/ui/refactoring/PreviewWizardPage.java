@@ -203,18 +203,18 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 					} else {
 						removeFilter();
 					}
-					updateTreeViewerPaneTitle();
 				}
 			});
 		}
 		private void addFilter() {
 			fTreeViewer.addFilter(fDerivedFilter);
 			fDerivedFilterActive= true;
-			
+			updateTreeViewerPaneTitle();
 		}
 		private void removeFilter() {
 			fTreeViewer.removeFilter(fDerivedFilter);
 			fDerivedFilterActive= false;
+			updateTreeViewerPaneTitle();
 		}
 	}
 	private class FilterDropDownAction extends Action implements IMenuCreator {
