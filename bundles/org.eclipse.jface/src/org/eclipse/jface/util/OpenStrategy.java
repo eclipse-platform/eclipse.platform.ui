@@ -379,6 +379,7 @@ public class OpenStrategy {
 						selectionPendent = event;
 					}
                     count[0]++;
+                    final int id = count[0];
                     // In the case of arrowUp/arrowDown when in the arrowKeysOpen mode, we
                     // want to delay any selection until the last arrowDown/Up occurs.  This
                     // handles the case where the user presses arrowDown/Up successively.
@@ -387,7 +388,6 @@ public class OpenStrategy {
                         public void run() {
                             if (arrowKeyDown) {
                                 display.timerExec(TIME, new Runnable() {
-                                    int id = count[0];
 
                                     public void run() {
                                         if (id == count[0]) {
