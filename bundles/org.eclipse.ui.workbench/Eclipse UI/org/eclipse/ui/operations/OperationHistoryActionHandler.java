@@ -403,14 +403,17 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		String text = getCommandString();
 		String tooltipText;
 		if (enabled) {
-			tooltipText = NLS.bind(
+			tooltipText = Action.removeMnemonics(NLS.bind(
 					WorkbenchMessages.Operations_undoRedoCommand, text,
-					getOperation().getLabel());
+					getOperation().getLabel()));
 			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
 					shortenText(getOperation().getLabel()));
 		} else {
-			tooltipText = NLS.bind(
-					WorkbenchMessages.Operations_undoRedoCommandDisabled, text);
+			tooltipText = Action
+					.removeMnemonics(NLS
+							.bind(
+									WorkbenchMessages.Operations_undoRedoCommandDisabled,
+									text));
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.
@@ -459,8 +462,8 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 		// Log the problem and then show an error dialog
 		WorkbenchPlugin.log(exceptionMessage, status);
-		ErrorDialog.openError(getWorkbenchWindow().getShell(), title,
-				null, status);
+		ErrorDialog.openError(getWorkbenchWindow().getShell(), title, null,
+				status);
 	}
 
 	/*
