@@ -231,17 +231,21 @@ final class ActivityPersistanceHelper {
         for (Iterator i = activityIdsToProcess.iterator(); i
                 .hasNext();) {
             String activityId = (String) i.next();
-            try {
+            String preferenceKey = createPreferenceKey(activityId);
+			try {
                 IActivity activity = activityManager.getActivity(activityId);
-                if (activity.isDefaultEnabled()) {
-					store.setDefault(createPreferenceKey(activityId), true);
+				if (store.isDefault(preferenceKey)
+						&& !store.contains(preferenceKey)) {
+					store
+							.setDefault(preferenceKey, activity
+									.isDefaultEnabled());
 				}
 
             } catch (NotDefinedException e) {
                 // can't happen - we're iterating over defined activities
             }
 
-            if (store.getBoolean(createPreferenceKey(activityId))) {
+            if (store.getBoolean(preferenceKey)) {
 				enabledActivities.add(activityId);
 			} else {
 				enabledActivities.remove(activityId);
