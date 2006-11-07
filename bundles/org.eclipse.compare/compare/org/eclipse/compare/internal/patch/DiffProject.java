@@ -149,4 +149,11 @@ public class DiffProject implements IWorkbenchAdapter, IAdaptable, ITypedElement
 			diff.setEnabled(include);
 		}
 	}
+
+	public void reverse() {
+		for (Iterator iter= fDiffs.iterator(); iter.hasNext();) {
+			Diff diff= (Diff) iter.next();
+			diff.reverse();
+		}
+	}
 }

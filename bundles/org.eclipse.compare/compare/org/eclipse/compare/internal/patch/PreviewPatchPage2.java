@@ -498,7 +498,16 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 							monitor.beginTask(PatchMessages.PreviewPatchPage2_CalculateReverse, IProgressMonitor.UNKNOWN);
 							fReversePatch.setChecked(isChecked());
 							if (fPatchWizard.getPatcher().setReversed(isChecked())){
-								fillTree();
+								final Control ctrl = getControl();
+								if (ctrl != null && !ctrl.isDisposed()){
+									ctrl.getDisplay().syncExec(new Runnable() {
+										public void run() {
+											if (!ctrl.isDisposed()) {
+												fillTree();
+											}
+										}
+									});
+								}
 							}
 							monitor.done();
 						}

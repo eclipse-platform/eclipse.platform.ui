@@ -325,7 +325,23 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 			}
 		}
 		fDiffProjects = temp;
+	}	
+	
+	/*
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	public boolean setReversed(boolean reverse) {
+		if (fReverse != reverse) {
+			fReverse= reverse;
+			
+			for (int i= 0; i < fDiffProjects.length; i++){
+				fDiffProjects[i].reverse();
+				fDiffProjects[i].reset(this, getStripPrefixSegments(), getFuzz());
+			}
+			return true;
+		}
+		return false;
 	}
 
-
+    
 }

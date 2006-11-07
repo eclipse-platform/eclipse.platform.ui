@@ -83,7 +83,7 @@ public class Patcher {
 	private boolean fIgnoreWhitespace= false;
 	private boolean fIgnoreLineDelimiter= true;
 	private boolean fPreserveLineDelimiters= false;
-	private boolean fReverse= false;
+	protected boolean fReverse= false;
 	private boolean fAdjustShift= true;
 	protected boolean fGenerateRejectFile = true;
 	
@@ -140,6 +140,10 @@ public class Patcher {
 			return true;
 		}
 		return false;
+	}
+	
+	int getFuzz(){
+		return fFuzz;
 	}
 	
 	/*

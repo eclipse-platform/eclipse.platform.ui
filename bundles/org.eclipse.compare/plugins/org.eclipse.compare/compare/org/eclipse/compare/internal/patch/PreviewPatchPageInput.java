@@ -126,9 +126,9 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 
 	private void processDiff(Diff diff, IFile tempFile, DiffNode rootNode) {
 		byte[] bytes;
-		try {
+		try {			
 			bytes = quickPatch(tempFile, workspacePatcher, diff);
-
+					
 			int differencer = Differencer.CHANGE;
 			if (failedHunks.size() != 0) {
 				differencer += Differencer.CONFLICTING;
@@ -160,6 +160,10 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 			for (int j = 0; j < hunks.length; j++) {
 				processHunk(hunks[j], diff, diffNode, tempFile, tempNode, patchedNode);
 			}
+			
+			//update differencer
+			diffNode.setKind(diff.getDiffType());
+			
 		} catch (CoreException e) {//ignore
 		}
 	}

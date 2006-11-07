@@ -83,6 +83,13 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		fOldLength= fNewLength;
 		fNewLength= t;
 		
+		//reverse hunk type
+		if (hunkType == ADDED){
+			hunkType = DELETED;
+		} else if (hunkType == DELETED){
+			hunkType = ADDED;
+		}
+		
 		for (int i= 0; i < fLines.length; i++) {
 			String line= fLines[i];
 			char c= line.charAt(0);
