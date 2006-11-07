@@ -106,6 +106,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
         fTextWidget.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 validateInput();
+                fValue = fTextWidget.getText();
             }
         });
         fErrorTextWidget = new Text(composite, SWT.READ_ONLY);
@@ -125,6 +126,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 		try {
 			int max = Integer.parseInt(text);
 			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, max);
+			DebugUIPlugin.getDefault().savePluginPreferences();
 		} 
 		catch (NumberFormatException e) {
 			DebugUIPlugin.log(e);
