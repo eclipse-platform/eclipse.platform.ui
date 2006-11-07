@@ -58,7 +58,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -67,7 +66,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerComparator;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
@@ -85,8 +84,10 @@ import org.eclipse.ltk.ui.refactoring.RefactoringWizardPage;
  */
 public class PreviewWizardPage extends RefactoringWizardPage implements IPreviewWizardPage {
 
+	private static final String PREVIEW_WIZARD_PAGE_HIDE_DERIVED= "PreviewWizardPage.hide.derived"; //$NON-NLS-1$
 	protected static final String PREVIOUS_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.previousChange"; //$NON-NLS-1$
 	protected static final String NEXT_CHANGE_ID= "org.eclipse.ltk.ui.refactoring.nextChange"; //$NON-NLS-1$
+	
 	private static class NullPreviewer implements IChangePreviewViewer {
 		private Label fLabel;
 		public void createControl(Composite parent) {
@@ -102,12 +103,6 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 	}
 	
-	private static class DerivedFilter extends ViewerFilter {
-		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			return ! ((PreviewNode) element).hasDerived();
-		}
-	}
-	
 	private class NextChange extends Action {
 		public NextChange() {
 			setId(NEXT_CHANGE_ID);
@@ -118,7 +113,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.NEXT_CHANGE_ACTION);			
 		}
 		public void run() {
-			((ChangeElementTreeViewer) fTreeViewer).revealNext();	
+			fTreeViewer.revealNext();	
 		}
 	}
 	
@@ -132,7 +127,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IRefactoringHelpContextIds.PREVIOUS_CHANGE_ACTION);			
 		}	
 		public void run() {
-			((ChangeElementTreeViewer) fTreeViewer).revealPrevious();
+			fTreeViewer.revealPrevious();
 		}
 	}
 	
@@ -182,39 +177,18 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 	}
 	private class HideDerivedAction extends Action {
-		private static final String PREVIEW_WIZARD_PAGE_HIDE_DERIVED= "PreviewWizardPage.hide.derived"; //$NON-NLS-1$
-		private final DerivedFilter fDerivedFilter;
 		public HideDerivedAction() {
 			super(RefactoringUIMessages.PreviewWizardPage_hideDerived_text, IAction.AS_CHECK_BOX);
-			fDerivedFilter= new DerivedFilter();
-			boolean hideDerived= getRefactoringSettings().getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
-			setChecked(hideDerived);
-			if (hideDerived) {
-				addFilter();
-			}
+			setChecked(fDerivedFilterActive);
 		}
 		public void run() {
 			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 				public final void run() {
 					boolean hideDerived= isChecked();
 					getRefactoringSettings().put(PREVIEW_WIZARD_PAGE_HIDE_DERIVED, hideDerived);
-					if (hideDerived) {
-						addFilter();
-					} else {
-						removeFilter();
-					}
+					setHideDerived(hideDerived);
 				}
 			});
-		}
-		private void addFilter() {
-			fTreeViewer.addFilter(fDerivedFilter);
-			fDerivedFilterActive= true;
-			updateTreeViewerPaneTitle();
-		}
-		private void removeFilter() {
-			fTreeViewer.removeFilter(fDerivedFilter);
-			fDerivedFilterActive= false;
-			updateTreeViewerPaneTitle();
 		}
 	}
 	private class FilterDropDownAction extends Action implements IMenuCreator {
@@ -302,7 +276,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	protected Action fNextAction;
 	protected Action fPreviousAction;
 	protected ViewerPane fTreeViewerPane;
-	protected CheckboxTreeViewer fTreeViewer;
+	protected ChangeElementTreeViewer fTreeViewer;
 	private PageBook fPreviewContainer;
 	private ChangePreviewViewerDescriptor fCurrentDescriptor;
 	private IChangePreviewViewer fCurrentPreviewViewer;
@@ -380,6 +354,28 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		return new ChangeElementLabelProvider();
 	}
 	
+	protected ViewerComparator createTreeComparator() {
+		return new ViewerComparator() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				PreviewNode node1= (PreviewNode) e1;
+				PreviewNode node2= (PreviewNode) e2;
+				if (node1.hasDerived()) {
+					if (node2.hasDerived()) {
+						return 0;
+					} else {
+						return +1;
+					}
+				} else {
+					if (node2.hasDerived()) {
+						return -1;
+					} else {
+						return 0;
+					}
+				}
+			}
+		};
+	}
+	
 	/* (non-JavaDoc)
 	 * Method defined in RefactoringWizardPage
 	 */
@@ -431,25 +427,27 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		SashForm sashForm= new SashForm(result, SWT.VERTICAL);
 		
 		fTreeViewerPane= new ViewerPane(sashForm, SWT.BORDER | SWT.FLAT);
-		updateTreeViewerPaneTitle(); 
 		ToolBarManager tbm= fTreeViewerPane.getToolBarManager();
 		fNextAction= new NextChange();
 		tbm.add(fNextAction);
 		fPreviousAction= new PreviousChange();
 		tbm.add(fPreviousAction);
 		tbm.add(new Separator());
+		fDerivedFilterActive= getRefactoringSettings().getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
 		fFilterDropDownAction= new FilterDropDownAction();
 		tbm.add(fFilterDropDownAction);
-		
 		tbm.update(true);
 		
 		fTreeViewer= createTreeViewer(fTreeViewerPane);
 		fTreeViewer.setContentProvider(createTreeContentProvider());
 		fTreeViewer.setLabelProvider(createTreeLabelProvider());
+		fTreeViewer.setComparator(createTreeComparator());
 		fTreeViewer.addSelectionChangedListener(createSelectionChangedListener());
 		fTreeViewer.addCheckStateListener(createCheckStateListener());
 		fTreeViewerPane.setContent(fTreeViewer.getControl());
+		setHideDerived(fDerivedFilterActive);
 		setTreeViewerInput();
+		updateTreeViewerPaneTitle(); 
 		
 		fPreviewContainer= new PageBook(sashForm, SWT.NONE);
 		fNullPreviewer= new NullPreviewer();
@@ -492,11 +490,13 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 				IStructuredSelection selection= (IStructuredSelection)fTreeViewer.getSelection();
 				if (selection.isEmpty()) {
 					ITreeContentProvider provider= (ITreeContentProvider)fTreeViewer.getContentProvider();
-					PreviewNode element= getFirstNonCompositeChange(provider, treeViewerInput);
+					ViewerComparator comparator= fTreeViewer.getComparator();
+					PreviewNode element= getFirstNonCompositeChange(provider, comparator, treeViewerInput);
 					if (element != null) {
 						if (refactoringWizard != null && refactoringWizard.internalGetExpandFirstNode(InternalAPI.INSTANCE)) {
 							Object[] subElements= provider.getElements(element);
 							if (subElements != null && subElements.length > 0) {
+								comparator.sort(fTreeViewer, subElements);
 								fTreeViewer.expandToLevel(element, 999);
 							}
 						}
@@ -515,13 +515,14 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			refactoringWizard.internalSetPreviewShown(InternalAPI.INSTANCE, visible);
 	}
 	
-	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, AbstractChangeNode input) {
+	private PreviewNode getFirstNonCompositeChange(ITreeContentProvider provider, ViewerComparator comparator, AbstractChangeNode input) {
 		PreviewNode focus= input;
 		Change change= input.getChange();
 		while (change != null && change instanceof CompositeChange) {
 			PreviewNode[] children= (PreviewNode[])provider.getElements(focus);
 			if (children == null || children.length == 0)
 				return null;
+			comparator.sort(fTreeViewer, children);
 			focus= children[0];
 			change= (focus instanceof AbstractChangeNode)
 				? ((AbstractChangeNode)focus).getChange()
@@ -669,7 +670,7 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fActiveGroupCategories.clear();
 		}
 		fActiveGroupCategories.add(category);
-		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(fActiveGroupCategories);
+		fTreeViewer.setGroupCategory(fActiveGroupCategories);
 		updateTreeViewerPaneTitle();
 	}
 
@@ -713,8 +714,14 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	
 	private void clearGroupCategories() {
 		fActiveGroupCategories= null;
-		((ChangeElementTreeViewer) fTreeViewer).setGroupCategory(null);
+		fTreeViewer.setGroupCategory(null);
 		updateTreeViewerPaneTitle(); 
+	}
+	
+	private void setHideDerived(boolean hide) {
+		fDerivedFilterActive= hide;
+		fTreeViewer.setHideDerived(hide);
+		updateTreeViewerPaneTitle();
 	}
 
 	public Change getChange() {

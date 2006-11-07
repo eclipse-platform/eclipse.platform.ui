@@ -43,6 +43,15 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		}
 	}
 	
+	private static class DerivedFilter extends ViewerFilter {
+		public boolean select(Viewer viewer, Object parentElement, Object element) {
+			return ! ((PreviewNode) element).hasDerived();
+		}
+	}
+	
+	private static final DerivedFilter DERIVED_FILTER= new DerivedFilter();
+
+	
 	// Workaround for http://bugs.eclipse.org/bugs/show_bug.cgi?id=9390
 	private List fDeferredTreeItemUpdates;
 	
@@ -75,6 +84,14 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		refresh();
 	}
 	
+	public void setHideDerived(boolean hide) {
+		if (hide) {
+			addFilter(DERIVED_FILTER);
+		} else {
+			removeFilter(DERIVED_FILTER);
+		}
+	}
+
 	public void refresh() {
 		try {
 			fDeferredTreeItemUpdates= new ArrayList();
@@ -183,10 +200,10 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	
 	private PreviewNode getLeaf(PreviewNode element, boolean first) {
 		PreviewNode result= null;
-		PreviewNode[] children= getFilteredChildrenAsPreviewNodes(element); 
+		PreviewNode[] children= getSortedChildrenAsPreviewNodes(element); 
 		while(children != null && children.length > 0) {
 			result= children[first ? 0 : children.length - 1];
-			children= getFilteredChildrenAsPreviewNodes(result);
+			children= getSortedChildrenAsPreviewNodes(result);
 		}
 		return result;
 	}
@@ -197,7 +214,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 			if (parent == null)
 				return null;
 			PreviewNode candidate= getSibling(
-				getFilteredChildrenAsPreviewNodes(parent),
+				getSortedChildrenAsPreviewNodes(parent),
 				element, next);
 			if (candidate != null)
 				return candidate;
@@ -223,11 +240,11 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 		return null;
 	}
 	
-	private PreviewNode[] getFilteredChildrenAsPreviewNodes(PreviewNode parent) {
-		Object[] filtered= getFilteredChildren(parent);
-		PreviewNode[] result= new PreviewNode[filtered.length];
+	private PreviewNode[] getSortedChildrenAsPreviewNodes(PreviewNode parent) {
+		Object[] sorted= getSortedChildren(parent);
+		PreviewNode[] result= new PreviewNode[sorted.length];
 		for (int i= 0; i < result.length; i++) {
-			result[i]= (PreviewNode)filtered[i];
+			result[i]= (PreviewNode)sorted[i];
 		}
 		return result;
 	}
