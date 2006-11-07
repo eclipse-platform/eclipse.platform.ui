@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
@@ -146,7 +145,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         cviewer.setLabelProvider(lodgingLabelProvider);
         // Bind the ComboViewer's content to the available lodging
-        cviewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        cviewer.setContentProvider(new ObservableListContentProvider());
         cviewer.setLabelProvider(new LabelProvider() {
             public String getText(Object element) {
                 return ((Lodging) element).getName();
@@ -163,7 +162,7 @@ public class ComboScenarios extends ScenariosTestCase {
         assertEquals(getColumn(catalog.getLodgings(), "name"), getComboContent());
 
         getDbc().bindValue(new SelectionObservableValue(cviewer),
-                BeansObservables.getAttribute(skiAdventure, "defaultLodging"),
+                BeansObservables.observeValue(skiAdventure, "defaultLodging"),
                 null);
 
         // Check to see that the initial selection is the currentDefault Lodging
@@ -206,11 +205,11 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // column binding
         // Bind the ComboViewer's content to the available lodging
-        IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(catalog, "lodgings"),
+        IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
 
-        cviewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        cviewer.setContentProvider(new ObservableListContentProvider());
         cviewer.setInput(list);
 
         // Ensure that cv's content now has the catalog's lodgings
@@ -378,10 +377,10 @@ public class ComboScenarios extends ScenariosTestCase {
         cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
         // column binding
         // Bind the ComboViewer's content to the available lodging
-        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(catalog,
+        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog,
                 "lodgings"), getLodgingsDetailFactory(Lodging.class), Lodging.class);
 
-        cviewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        cviewer.setContentProvider(new ObservableListContentProvider());
         cviewer.setInput(lodgings);
 
         // Ensure that cv's content now has the catalog's lodgings
@@ -392,11 +391,11 @@ public class ComboScenarios extends ScenariosTestCase {
 
         ComboViewer otherViewer = new ComboViewer(getComposite(), SWT.NONE);
         otherViewer.setLabelProvider(lodgingLabelProvider);
-        lodgings = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(catalog, "lodgings"),
+        lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
 
-        otherViewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        otherViewer.setContentProvider(new ObservableListContentProvider());
         otherViewer.setInput(lodgings);
 
         // getDbc().bind(otherViewer, new ListModelDescription(new
@@ -406,10 +405,10 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // Bind both selections to the same thing
         IObservableValue selection = new SelectionObservableValue(cviewer);
-        getDbc().bindValue(selection, BeansObservables.getAttribute(skiAdventure, "defaultLodging"), null);
+        getDbc().bindValue(selection, BeansObservables.observeValue(skiAdventure, "defaultLodging"), null);
 
         IObservableValue otherSelection = new SelectionObservableValue(otherViewer);
-        getDbc().bindValue(otherSelection, BeansObservables.getAttribute(skiAdventure, "defaultLodging"), null);
+        getDbc().bindValue(otherSelection, BeansObservables.observeValue(skiAdventure, "defaultLodging"), null);
 
         Lodging lodging = catalog.getLodgings()[0];
 
@@ -449,7 +448,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // simple Combo's selection bound to the Account's country property
         IObservableValue comboSelection = SWTObservables.getSelection(ccombo);
-        getDbc().bindValue(comboSelection, BeansObservables.getAttribute(account, "country"), null);
+        getDbc().bindValue(comboSelection, BeansObservables.observeValue(account, "country"), null);
 
         // Drive the combo selection
         String selection = (String) list.get(2);
@@ -482,7 +481,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // simple Combo's selection bound to the Account's country property
         IObservableValue comboSelection = SWTObservables.getSelection(ccombo);
-        getDbc().bindValue(comboSelection, BeansObservables.getAttribute(account, "country"), null);
+        getDbc().bindValue(comboSelection, BeansObservables.observeValue(account, "country"), null);
 
         // Drive the combo selection
         String selection = (String) list.get(2);
@@ -525,7 +524,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // simple Combo's selection bound to the Account's country property
         IObservableValue listSelection = SWTObservables.getSelection(swtlist);
-        getDbc().bindValue(listSelection, BeansObservables.getAttribute(account, "country"), null);
+        getDbc().bindValue(listSelection, BeansObservables.observeValue(account, "country"), null);
 
         String selection = (String) list.get(2);
         swtlist.select(2); // this should drive the selection

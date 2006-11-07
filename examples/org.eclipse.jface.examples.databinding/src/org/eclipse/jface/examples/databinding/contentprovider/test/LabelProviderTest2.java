@@ -20,9 +20,9 @@ import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ListeningLabelProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -92,7 +92,7 @@ public class LabelProviderTest2 {
 			listOfRenamables = new WritableList();
 
 			list = new ListViewer(shell);
-			ObservableListContentProvider contentProvider = new ObservableListContentProvider(SWTObservables.getRealm(shell.getDisplay()));
+			ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 			list.setContentProvider(contentProvider);
 			list.setLabelProvider(new ListeningLabelProvider(contentProvider
 					.getKnownElements()) {

@@ -37,7 +37,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
     }
 
     public void testStringToFloatPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "floatPrimitiveVal"), null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);
@@ -62,7 +62,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
     }
 
     public void testFloatToFloatPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "floatVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "floatVal"), BeansObservables.observeValue(dataObject,
                 "floatPrimitiveVal"), null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);
@@ -82,7 +82,7 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
     }
 
     public void testObjectToFloatPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "floatPrimitiveVal"), null);
 
         dataObject.setFloatPrimitiveVal((float) 789.5);

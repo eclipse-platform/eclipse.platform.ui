@@ -103,7 +103,7 @@ public class Snippet000HelloWorld {
 
 			Person person = viewModel.getPerson();
 			bindingContext.bindValue(SWTObservables.getText(name, SWT.Modify),
-					BeansObservables.getAttribute(person, "name"), null);
+					BeansObservables.observeValue(person, "name"), null);
 
 			// Open and return the Shell
 			shell.pack();

@@ -37,7 +37,7 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
     }
 
     public void testStringToBooleanPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "booleanPrimitiveVal"), null);
 
         dataObject.setBooleanPrimitiveVal(true);
@@ -62,8 +62,8 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
     }
 
     public void testBooleanToBooleanPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "booleanVal"),
-                BeansObservables.getAttribute(dataObject, "booleanPrimitiveVal"),
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "booleanVal"),
+                BeansObservables.observeValue(dataObject, "booleanPrimitiveVal"),
                 null);
 
         dataObject.setBooleanPrimitiveVal(true);
@@ -83,7 +83,7 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
     }
 
     public void testObjectToBooleanPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "booleanPrimitiveVal"), null);
 
         dataObject.setBooleanPrimitiveVal(true);

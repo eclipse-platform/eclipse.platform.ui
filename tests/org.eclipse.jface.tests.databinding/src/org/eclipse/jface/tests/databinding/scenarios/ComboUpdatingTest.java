@@ -103,7 +103,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	
 	private static final String NEXT = "Next";
 	public void testBindText() throws Exception {
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.getAttribute(this, "text"), null);
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, "text"), null);
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 		comboEditable.setText(NEXT);
@@ -117,7 +117,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		}
 		text = "Apple";
         
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.getAttribute(this, PROP_TEXT), null);
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
         
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
@@ -168,7 +168,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			return;
 		}
         
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.getAttribute(this, PROP_TEXT), null);
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());

@@ -36,7 +36,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 	
 	public void testStringToIntConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject, "intVal"), null);
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
@@ -60,7 +60,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 
 	public void testIntegerToIntConverter() {
-	    ctx.bindValue(BeansObservables.getAttribute(dataObject, "integerVal"), BeansObservables.getAttribute(dataObject, "intVal"), null);
+	    ctx.bindValue(BeansObservables.observeValue(dataObject, "integerVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
@@ -79,7 +79,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 	
 	public void testObjectToIntegerConverter() {
-	    ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject, "intVal"), null);
+	    ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());

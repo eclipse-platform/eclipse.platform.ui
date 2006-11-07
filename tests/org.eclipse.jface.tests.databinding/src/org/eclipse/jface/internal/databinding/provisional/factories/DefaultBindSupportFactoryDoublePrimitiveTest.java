@@ -37,7 +37,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
     }
 
     public void testStringToDoublePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "doublePrimitiveVal"), null);
 
         dataObject.setDoublePrimitiveVal(789.5);
@@ -62,7 +62,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
     }
 
     public void testDoubleToDoublePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "doubleVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "doubleVal"), BeansObservables.observeValue(dataObject,
                 "doublePrimitiveVal"), null);
         // ctx.bind(new Property(dataObject, "doubleVal"), new
         // Property(dataObject, "doublePrimitiveVal"), null);
@@ -84,7 +84,7 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
     }
 
     public void testObjectToDoublePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "doublePrimitiveVal"), null);
 
         dataObject.setDoublePrimitiveVal(789.5);

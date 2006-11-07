@@ -11,10 +11,12 @@
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import org.eclipse.jface.databinding.observable.Observables;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.observable.set.UnionSet;
 import org.eclipse.jface.databinding.observable.set.WritableSet;
-import org.eclipse.jface.databinding.viewers.IUnorderedTreeProvider;
+import org.eclipse.jface.databinding.observable.tree.IUnorderedTreeProvider;
+import org.eclipse.jface.databinding.observable.tree.TreePath;
 import org.eclipse.jface.databinding.viewers.UnorderedTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -111,10 +113,10 @@ public class TreeContentProviderTest {
 		// SimpleNodes as top-level nodes, and sets of randomly generated Doubles below each
 		// SimpleNode.
 		IUnorderedTreeProvider treeProvider = new IUnorderedTreeProvider() {
-			public IObservableSet createChildSet(Object element) {
+			public IObservableSet createChildSet(TreePath treePath) {
 				// If the parent is the root node, return the union of some randomly-generated
 				// nodes and some hardcoded nodes
-				if (element == tree.getInput()) {
+				if (treePath.getSegmentCount()==0 || treePath.getLastSegment() == tree.getInput()) {
 					// Set of hardcoded nodes
 					WritableSet topElements = new WritableSet();
 					topElements.add(new SimpleNode("Random Set 1", set1));
@@ -126,6 +128,7 @@ public class TreeContentProviderTest {
 				
 				// If the parent is a RandomChildrenNode, return a randomly-generated
 				// set of Doubles for its children
+				Object element = treePath.getLastSegment();
 				if (element instanceof SimpleNode) {
 					// We return a new DelegatingObservableSet in order to prevent the 
 					// original from being disposed.
@@ -133,6 +136,11 @@ public class TreeContentProviderTest {
 				}
 				
 				// Otherwise the node is a Double, which will have no children  
+				return null;
+			}
+
+			public Realm getRealm() {
+				// TODO Auto-generated method stub
 				return null;
 			}
 		};

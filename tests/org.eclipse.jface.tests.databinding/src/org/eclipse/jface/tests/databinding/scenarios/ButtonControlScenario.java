@@ -46,7 +46,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
     public void testScenario01() {
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.getSelection(button),
-                BeansObservables.getAttribute(adventure, "petsAllowed"),
+                BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
         // Check the model and GUI are in the same state
@@ -75,7 +75,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         button = new Button(getComposite(), SWT.TOGGLE);
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.getSelection(button),
-                BeansObservables.getAttribute(adventure, "petsAllowed"),
+                BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
         // Check the model and GUI are in the same state
@@ -99,7 +99,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
         // Bind the button's selection to the adventure "isPetsAllowed"
         getDbc().bindValue(SWTObservables.getSelection(button),
-                BeansObservables.getAttribute(adventure, "petsAllowed"),
+                BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
         // Check the model and GUI are in the same state

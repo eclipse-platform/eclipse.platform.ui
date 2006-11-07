@@ -47,8 +47,8 @@ public class CustomScenarios extends ScenariosTestCase {
         Adventure adventure = SampleData.WINTER_HOLIDAY;
         Text text = new Text(getComposite(), SWT.BORDER);
 
-        IObservableValue descriptionObservable = BeansObservables.getAttribute(adventure, "description");
-        IObservableValue nameObservable = BeansObservables.getAttribute(adventure, "name");
+        IObservableValue descriptionObservable = BeansObservables.observeValue(adventure, "description");
+        IObservableValue nameObservable = BeansObservables.observeValue(adventure, "name");
         AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
                 descriptionObservable, nameObservable }, ",");
 

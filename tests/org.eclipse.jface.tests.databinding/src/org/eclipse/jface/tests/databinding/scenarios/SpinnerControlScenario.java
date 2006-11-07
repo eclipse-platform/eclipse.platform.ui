@@ -46,7 +46,7 @@ public class SpinnerControlScenario extends ScenariosTestCase {
         // Change the model and verify the UI changes
         Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
         getDbc().bindValue(SWTObservables.getSelection(spinner),
-                BeansObservables.getAttribute(adventure, "maxNumberOfPeople"),
+                BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
                 null);
 
         assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());

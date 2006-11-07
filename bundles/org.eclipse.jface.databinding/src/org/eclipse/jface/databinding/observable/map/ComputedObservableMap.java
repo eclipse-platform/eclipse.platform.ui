@@ -28,7 +28,7 @@ import org.eclipse.jface.databinding.observable.set.SetDiff;
  * Maps objects to one of their attributes. Tracks changes to the underlying
  * observable set of objects (keys), as well as changes to attribute values.
  */
-public abstract class AttributeMap extends AbstractObservableMap {
+public abstract class ComputedObservableMap extends AbstractObservableMap {
 
 	private final IObservableSet keySet;
 
@@ -104,7 +104,7 @@ public abstract class AttributeMap extends AbstractObservableMap {
 	 * @param keySet
 	 * @param wrappedMap
 	 */
-	public AttributeMap(IObservableSet keySet) {
+	public ComputedObservableMap(IObservableSet keySet) {
 		super(keySet.getRealm());
 		this.keySet = keySet;
 		this.keySet.addSetChangeListener(setChangeListener);

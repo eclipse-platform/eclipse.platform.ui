@@ -15,7 +15,6 @@ import java.util.Arrays;
 
 import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
@@ -65,10 +64,10 @@ public class ComboViewerScenario extends ScenariosTestCase {
 
     public void testScenario01() {
         // Bind the catalog's lodgings to the combo
-        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(catalog, "lodgings"),
+        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
-        comboViewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+        comboViewer.setContentProvider(new ObservableListContentProvider());
         comboViewer.setLabelProvider(new LabelProvider() {
             public String getText(Object element) {
                 return ((Lodging) element).getName();
@@ -95,7 +94,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
         // of an adventure
         final Adventure adventure = SampleData.WINTER_HOLIDAY;
         IObservableValue selection = new SelectionObservableValue(comboViewer);
-        getDbc().bindValue(selection, BeansObservables.getAttribute(adventure, "defaultLodging"), null);
+        getDbc().bindValue(selection, BeansObservables.observeValue(adventure, "defaultLodging"), null);
 
         // Verify that the combo selection is the default lodging
         assertEquals(((IStructuredSelection) comboViewer.getSelection()).getFirstElement(),

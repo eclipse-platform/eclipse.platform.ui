@@ -63,7 +63,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 null);
 
         assertEquals(adventure.getName(), text.getText());
@@ -85,7 +85,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(transportation, "price"),
+                BeansObservables.observeValue(transportation, "price"),
                 null);
 
         assertEquals(Double.toString(transportation.getPrice()), text.getText());
@@ -102,7 +102,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // the updatePolicy for this test is TIME_LATE so it occurs when focus
         // is lost from the Text control
         getDbc().bindValue(SWTObservables.getText(text, SWT.FocusOut),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 null);
 
         String currentText = text.getText();
@@ -139,7 +139,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // the updatePolicy for this test is TIME_EARLY so it occurs when each
         // keystroke occurs
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 null);
 
         String originalName = adventure.getName();
@@ -258,7 +258,7 @@ public class TextControlScenario extends ScenariosTestCase {
                 Realm.getDefault(),
                 new BindSupportFactory[] { new CustomBeanBindSupportFactory(parentDbc) });
         
-        childDbc.bindValue(SWTObservables.getText(text, SWT.Modify), BeansObservables.getAttribute(adventure, "maxNumberOfPeople"), null);
+        childDbc.bindValue(SWTObservables.getText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), null);
 
         // make sure we can set a value inside the validator's range
         text.setText("4");

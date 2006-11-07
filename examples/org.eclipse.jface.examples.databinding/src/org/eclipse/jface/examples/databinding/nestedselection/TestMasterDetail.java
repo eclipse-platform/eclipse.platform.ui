@@ -12,16 +12,12 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import java.util.List;
-
 import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.map.IObservableMap;
-import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -189,10 +185,9 @@ public class TestMasterDetail {
 		Realm realm = SWTObservables.getRealm(parent.getDisplay());
 
 		TableViewer peopleViewer = new TableViewer(personsTable);
-		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider(
-				realm);
+		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider();
 		peopleViewer.setContentProvider(peopleViewerContent);
-		IObservableMap[] attributeMaps = BeansObservables.getAttributeMaps(peopleViewerContent
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(peopleViewerContent
 				.getKnownElements(), SimplePerson.class, new String[] {
 				"name", "state" });
 		peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
@@ -206,54 +201,34 @@ public class TestMasterDetail {
 		DataBindingContext dbc = new DataBindingContext(realm);
 		dbc.bindValue(SWTObservables.getText(name, SWT.Modify),
 				MasterDetailObservables.getDetailValue(selectedPerson,
-						getDetailFactory(realm, "name"), String.class), null);
+						BeansObservables.observeDetailValue(realm, "name"), String.class), null);
 
 		dbc
 				.bindValue(SWTObservables.getText(address, SWT.Modify),
 						MasterDetailObservables.getDetailValue(selectedPerson,
-								getDetailFactory(realm, "address"),
+								BeansObservables.observeDetailValue(realm, "address"),
 								String.class), null);
 
 		dbc.bindValue(SWTObservables.getText(city, SWT.Modify),
 				MasterDetailObservables.getDetailValue(selectedPerson,
-						getDetailFactory(realm, "city"), String.class), null);
+						BeansObservables.observeDetailValue(realm, "city"), String.class), null);
 
 		dbc.bindValue(SWTObservables.getText(state, SWT.Modify),
 				MasterDetailObservables.getDetailValue(selectedPerson,
-						getDetailFactory(realm, "state"), String.class), null);
+						BeansObservables.observeDetailValue(realm, "state"), String.class), null);
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
-		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider(
-				realm);
+		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
 		ordersViewer.setContentProvider(ordersViewerContent);
 		ordersViewer.setLabelProvider(new ObservableMapLabelProvider(
-				BeansObservables.getAttributeMaps(ordersViewerContent
+				BeansObservables.observeMaps(ordersViewerContent
 						.getKnownElements(), SimpleOrder.class, new String[] {
 						"orderNumber", "date" })));
 
 		IObservableList orders = MasterDetailObservables.getDetailList(
-				selectedPerson, getOrdersDetailFactory(realm), List.class);
+				selectedPerson, BeansObservables.observeDetailList(realm,
+						"orders"), SimpleOrder.class);
 		ordersViewer.setInput(orders);
 	}
 
-	private static IObservableFactory getDetailFactory(final Realm realm,
-			final String propertyName) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				return BeansObservables.getAttribute(realm, target,
-						propertyName);
-			}
-		};
-	}
-
-	private static IObservableFactory getOrdersDetailFactory(final Realm realm) {
-		return new IObservableFactory() {
-			public IObservable createObservable(Object target) {
-				SimplePerson person = (SimplePerson) target;
-				WritableList list = new WritableList(realm, List.class);
-				list.addAll(person.getOrders());
-				return list;
-			}
-		};
-	}
 }

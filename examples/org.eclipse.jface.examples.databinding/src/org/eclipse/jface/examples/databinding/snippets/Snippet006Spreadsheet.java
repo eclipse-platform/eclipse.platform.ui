@@ -10,7 +10,7 @@
  *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
-package org.eclipse.jface.examples.databinding.spreadsheet;
+package org.eclipse.jface.examples.databinding.snippets;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  * @since 1.1
  * 
  */
-public class Spreadsheet {
+public class Snippet006Spreadsheet {
 
 	private static final int COUNTER_UPDATE_DELAY = 1000;
 

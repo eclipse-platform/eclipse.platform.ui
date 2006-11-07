@@ -156,11 +156,11 @@ public class Snippet002UpdateComboRetainSelection {
 
             DataBindingContext dbc = new DataBindingContext();
             
-            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(viewModel, "choices"),
+            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(viewModel, "choices"),
                     getListDetailFactory(),
                     String.class);
             dbc.bindList(SWTObservables.getItems(combo), list, null); 
-            dbc.bindValue(SWTObservables.getText(combo), BeansObservables.getAttribute(viewModel, "text"), null);
+            dbc.bindValue(SWTObservables.getText(combo), BeansObservables.observeValue(viewModel, "text"), null);
             
             // Open and return the Shell
             shell.pack();

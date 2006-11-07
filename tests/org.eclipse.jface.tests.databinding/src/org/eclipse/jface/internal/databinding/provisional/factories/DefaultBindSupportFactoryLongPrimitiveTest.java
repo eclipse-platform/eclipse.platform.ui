@@ -36,7 +36,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
     }
 
     public void testStringToLongPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
         dataObject.setLongPrimitiveVal((long) 110);
@@ -61,7 +61,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
     }
 
     public void testLongToLongPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "longVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "longVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
         dataObject.setLongPrimitiveVal((long) 110);
@@ -81,7 +81,7 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
     }
 
     public void testObjectToLongPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
         dataObject.setLongPrimitiveVal((long) 110);

@@ -57,12 +57,12 @@ public class DefaultBindSupportFactoryTest extends TestCase {
         TestDataObject dataObject = new TestDataObject();
         dataObject.setIntegerStringVal("123");
         dataObject.setIntStringVal("456");
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "intStringVal"),
-                BeansObservables.getAttribute(dataObject, "intVal"),
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "intStringVal"),
+                BeansObservables.observeValue(dataObject, "intVal"),
                 null);
 
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "integerStringVal"),
-                BeansObservables.getAttribute(dataObject, "integerVal"),
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "integerStringVal"),
+                BeansObservables.observeValue(dataObject, "integerVal"),
                 null);
 
         dataObject.setIntegerStringVal("789");

@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
+import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.jface.databinding.observable.map.ComputedObservableMap;
+import org.eclipse.jface.databinding.observable.map.MapDiff;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
-import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.mapping.ObservableMappingWithDomain;
 
 /**
  * Simple function that performs one of three operations on Doubles:
@@ -26,7 +27,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.mapping.Obs
  * 
  * @since 1.0
  */
-public class SomeMathFunction extends ObservableMappingWithDomain {
+public class SomeMathFunction extends ComputedObservableMap {
 
 	/**
 	 * 
@@ -49,8 +50,8 @@ public class SomeMathFunction extends ObservableMappingWithDomain {
 	 * @param domain
 	 */
 	public SomeMathFunction(IObservableSet domain) {
-		super();
-		initDomain(domain);
+		super(domain);
+		init();
 	}
 
 	/**
@@ -68,28 +69,28 @@ public class SomeMathFunction extends ObservableMappingWithDomain {
 		// would include
 		// the subset of affected elements rather than using
 		// domain.toCollection()
-		final int[] indices = new int[] { 0 };
-		fireMappingValueChange(new MappingDiff() {
-			public Set getElements() {
-				return getDomain();
+		fireMapChange(new MapDiff() {
+
+			public Set getAddedKeys() {
+				return Collections.EMPTY_SET;
 			}
 
-			public int[] getAffectedIndices() {
-				return indices;
+			public Set getChangedKeys() {
+				return keySet();
 			}
 
-			public Object[] getOldMappingValues(Object element, int[] indices) {
-				return new Object[] { doComputeResult(element, oldOp) };
+			public Object getNewValue(Object key) {
+				return doComputeResult(key, operation);
 			}
 
-			public Object[] getNewMappingValues(Object element, int[] indices) {
-				return new Object[] { doComputeResult(element, operation) };
+			public Object getOldValue(Object key) {
+				return doComputeResult(key, oldOp);
+			}
+
+			public Set getRemovedKeys() {
+				return Collections.EMPTY_SET;
 			}
 		});
-	}
-
-	protected Object doGetMappingValue(Object element) {
-		return doComputeResult(element, this.op);
 	}
 
 	private Object doComputeResult(Object element, int op) {
@@ -104,16 +105,20 @@ public class SomeMathFunction extends ObservableMappingWithDomain {
 		return element;
 	}
 
-	protected void addListenerTo(Object domainElement) {
+	protected Object doGet(Object key) {
+		return doComputeResult(key, this.op);
+	}
+
+	protected Object doPut(Object key, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	protected void hookListener(Object addedKey) {
 		// ignore, no need to listen to immutable Double objects
 	}
 
-	protected void removeListenerFrom(Object domainElement) {
+	protected void unhookListener(Object removedKey) {
 		// ignore, no need to listen to immutable Double objects
-	}
-
-	public Object getValueType() {
-		return Double.class;
 	}
 
 }

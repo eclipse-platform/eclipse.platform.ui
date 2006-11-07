@@ -85,7 +85,7 @@ public class PropertyScenarios extends ScenariosTestCase {
     public void testScenario01() {
         Text text = new Text(getComposite(), SWT.BORDER);
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 null);
 
         // getDbc().bind(text, new Property(adventure, "name"), null);
@@ -109,7 +109,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Text text = new Text(getComposite(), SWT.READ_ONLY);
 
         getDbc().bindValue(SWTObservables.getText(text, SWT.None),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 null);
         assertEquals(adventure.getName(), text.getText());
     }
@@ -125,7 +125,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Text text = new Text(getComposite(), SWT.BORDER);
 
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(cart, "lodgingDays"),
+                BeansObservables.observeValue(cart, "lodgingDays"),
                 null);
 
         assertEquals(new Integer(cart.getLodgingDays()).toString(), text.getText());
@@ -143,7 +143,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         // scenario to the master/detail section? I'm assuming the latter for
         // now.
 
-        IObservableValue defaultLodging = MasterDetailObservables.getDetailValue(BeansObservables.getAttribute(adventure,
+        IObservableValue defaultLodging = MasterDetailObservables.getDetailValue(BeansObservables.observeValue(adventure,
                 "defaultLodging"),
                 getBeanObservableFactory("description"),
                 String.class);
@@ -176,7 +176,7 @@ public class PropertyScenarios extends ScenariosTestCase {
     private IObservableFactory getBeanObservableFactory(final String property) {
         return new IObservableFactory() {
             public IObservable createObservable(Object target) {
-                return BeansObservables.getAttribute(target, property);
+                return BeansObservables.observeValue(target, property);
             }
         };
     }
@@ -225,7 +225,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         BindSpec bindSpec = new BindSpec().setModelToTargetConverter(converter1).setTargetToModelConverter(converter2);
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 bindSpec);
 
         // spinEventLoop(1);
@@ -268,7 +268,7 @@ public class PropertyScenarios extends ScenariosTestCase {
                 .setValidator(validator);
 
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "name"),
+                BeansObservables.observeValue(adventure, "name"),
                 bindSpec);
 
         // no validation message
@@ -315,7 +315,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         };
 
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "price"),
+                BeansObservables.observeValue(adventure, "price"),
                 new BindSpec().setValidator(validator));
 
         assertEquals("5.0", text.getText());
@@ -387,7 +387,7 @@ public class PropertyScenarios extends ScenariosTestCase {
                 .setTargetToModelConverter(toDouble)
                 .setValidator(validator);
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
-                BeansObservables.getAttribute(adventure, "price"),
+                BeansObservables.observeValue(adventure, "price"),
                 bindSpec);
 
         assertEquals("$5.00", text.getText());
@@ -416,7 +416,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         adventure.setPetsAllowed(true);
 
         getDbc().bindValue(SWTObservables.getSelection(checkbox),
-                BeansObservables.getAttribute(adventure, "petsAllowed"),
+                BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
         assertEquals(true, checkbox.getSelection());
@@ -504,7 +504,7 @@ public class PropertyScenarios extends ScenariosTestCase {
     public void testScenario13() {
         Text text = new Text(getComposite(), SWT.BORDER);
         
-        getDbc().bindValue(SWTObservables.getText(text, SWT.FocusOut), BeansObservables.getAttribute(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.getText(text, SWT.FocusOut), BeansObservables.observeValue(adventure, "name"), null);
 
         // uncomment the following line to see what's happening
         // happening
@@ -525,12 +525,12 @@ public class PropertyScenarios extends ScenariosTestCase {
         Text t1 = new Text(getComposite(), SWT.BORDER);
         Text t2 = new Text(getComposite(), SWT.BORDER);
   
-        getDbc().bindValue(SWTObservables.getText(t1, SWT.Modify), BeansObservables.getAttribute(adventure, "name"), null);
-        getDbc().bindValue(SWTObservables.getText(t2, SWT.Modify), BeansObservables.getAttribute(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.getText(t1, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.getText(t2, SWT.Modify), BeansObservables.observeValue(adventure, "name"), null);
         
         final int[] counter = { 0 };
         
-        IObservableValue uv = BeansObservables.getAttribute(adventure, "name");
+        IObservableValue uv = BeansObservables.observeValue(adventure, "name");
         
         uv.addChangeListener(new IChangeListener() {
             public void handleChange(IObservable source) {
@@ -557,7 +557,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Account account = new Account();
         account.setExpiryDate(new Date());
         
-        Binding b = getDbc().bindValue(SWTObservables.getText(text, SWT.Modify), BeansObservables.getAttribute(account, "expiryDate"), null);
+        Binding b = getDbc().bindValue(SWTObservables.getText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"), null);
         Text errorText = new Text(getComposite(), SWT.NONE);
         
         getDbc().bindValue(SWTObservables.getText(errorText, SWT.Modify), b.getValidationError(), new BindSpec().setUpdateModel(false));

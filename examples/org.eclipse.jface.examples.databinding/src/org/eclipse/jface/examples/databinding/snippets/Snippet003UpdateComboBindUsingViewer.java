@@ -153,12 +153,12 @@ public class Snippet003UpdateComboBindUsingViewer {
             System.out.println(viewModel.getText());
 
             DataBindingContext dbc = new DataBindingContext();
-            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.getAttribute(viewModel,
+            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(viewModel,
                     "choices"), getListDetailFactory(), String.class);
-            viewer.setContentProvider(new ObservableListContentProvider(Realm.getDefault()));
+            viewer.setContentProvider(new ObservableListContentProvider());
             viewer.setInput(list);
             
-            dbc.bindValue(new SelectionObservableValue(viewer), BeansObservables.getAttribute(viewModel, "text"), null);
+            dbc.bindValue(new SelectionObservableValue(viewer), BeansObservables.observeValue(viewModel, "text"), null);
 
             // Open and return the Shell
             shell.pack();

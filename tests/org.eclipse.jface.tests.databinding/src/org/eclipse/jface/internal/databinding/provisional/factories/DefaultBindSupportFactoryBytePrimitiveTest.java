@@ -37,7 +37,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
     }
 
     public void testStringToBytePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "bytePrimitiveVal"), null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
@@ -62,7 +62,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
     }
 
     public void testByteToBytePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "byteVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "byteVal"), BeansObservables.observeValue(dataObject,
                 "bytePrimitiveVal"), null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
@@ -82,7 +82,7 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
     }
 
     public void testObjectToBytePrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "bytePrimitiveVal"), null);
 
         dataObject.setBytePrimitiveVal((byte) 110);

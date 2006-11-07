@@ -37,7 +37,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
     }
 
     public void testStringToShortPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "stringVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "shortPrimitiveVal"), null);
 
         dataObject.setShortPrimitiveVal((short) 110);
@@ -62,7 +62,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
     }
 
     public void testShortToShortPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "shortVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "shortVal"), BeansObservables.observeValue(dataObject,
                 "shortPrimitiveVal"), null);
 
         dataObject.setShortPrimitiveVal((short) 110);
@@ -82,7 +82,7 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
     }
 
     public void testObjectToShortPrimitiveConverter() {
-        ctx.bindValue(BeansObservables.getAttribute(dataObject, "objectVal"), BeansObservables.getAttribute(dataObject,
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "shortPrimitiveVal"), null);
 
         dataObject.setShortPrimitiveVal((short) 110);
