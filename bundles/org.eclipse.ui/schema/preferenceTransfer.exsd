@@ -128,7 +128,7 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
          <attribute name="node" type="string">
             <annotation>
                <documentation>
-                  an attribute specifing the preference node within the given scope to be transferred
+                  an attribute specifing the preference node within the given scope to be transferred. This preference node will correspond to the bundle id of the plug-in that defines the preference.
                </documentation>
             </annotation>
          </attribute>
