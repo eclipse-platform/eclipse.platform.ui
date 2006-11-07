@@ -124,7 +124,7 @@ public interface IFileStore extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This store does not exist.</li>
-	 * <li> The parent of the destination project does not exist.</li>
+	 * <li> The parent of the destination file store does not exist.</li>
 	 * <li> The <code>OVERWRITE</code> flag is not specified and a file of the
 	 * same name already exists at the copy destination.</li>
 	 * </ul>
@@ -203,7 +203,7 @@ public interface IFileStore extends IAdaptable {
 	 * @return A child file store.
 	 */
 	public IFileStore getChild(IPath path);
-	
+
 	/**
 	 * Returns a child store with the provided name whose parent is
 	 * this store.  This is a handle-only method; a child is provided regardless
@@ -316,6 +316,7 @@ public interface IFileStore extends IAdaptable {
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> This store does not exist.</li>
+	 * <li> The parent of the destination file store does not exist.</li>
 	 * <li> The {@link EFS#OVERWRITE} flag is not specified and a file of the
 	 * same name already exists at the destination.</li>
 	 * </ul>
