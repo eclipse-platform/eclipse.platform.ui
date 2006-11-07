@@ -42,18 +42,7 @@ import org.eclipse.ui.views.IViewDescriptor;
  * The ProgressUtil is a class that contains static utility methods used for the
  * progress API.
  */
-/**
- * @since 3.2
- *
- */
-/**
- * @since 3.2
- *
- */
-/**
- * @since 3.2
- *
- */
+
 public class ProgressManagerUtil {
 	/**
 	 * A constant used by the progress support to determine if an operation is
