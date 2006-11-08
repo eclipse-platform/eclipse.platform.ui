@@ -43,6 +43,10 @@ public interface ISelectionService {
      * When the part is disposed, the listener is passed a <code>null</code> selection,
      * but only if the listener implements <code>INullSelectionListener</code>.
      * </p>
+     * <p>
+     * Note: This will not correctly track editor parts as each editor does 
+     * not have a unique partId.
+     * </p>
      *
      * @param partId the id of the part to track
      * @param listener a selection listener
@@ -70,6 +74,10 @@ public interface ISelectionService {
      * When the part is created, the listener is passed the part's initial selection.
      * When the part is disposed, the listener is passed a <code>null</code> selection,
      * but only if the listener implements <code>INullSelectionListener</code>.
+     * </p>
+     * <p>
+     * Note: This will not correctly track editor parts as each editor does 
+     * not have a unique partId.
      * </p>
      *
      * @param partId the id of the part to track
