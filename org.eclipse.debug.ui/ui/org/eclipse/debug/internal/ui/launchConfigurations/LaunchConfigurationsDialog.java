@@ -59,8 +59,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -80,7 +78,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -125,7 +122,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.56f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.60f;
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
@@ -1458,16 +1455,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		WorkbenchJob job = new WorkbenchJob(EMPTY_STRING) {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-				TreeSelection sel = (TreeSelection)viewer.getSelection();
-				TreePath path = null;
-				int pidx = -1, cidx = -1;
-				if(!sel.isEmpty()) {
-					path = sel.getPaths()[0];
-					pidx = findIndexOfParent(path.getFirstSegment());
-					if(path.getSegmentCount() == 2) {
-						cidx = findIndexOfChild(pidx, path.getLastSegment());
-					}
-				}
 				boolean newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
 				if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_CLOSED)) {
 					updateFilter(newvalue, fClosedProjectFilter);
@@ -1483,17 +1470,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				}
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
 					if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
-						viewer.removeFilter(fLCTFilter);
-						viewer.addFilter(fLCTFilter);
+						viewer.refresh();
 					}
-				}
-				if(viewer.getSelection().isEmpty()) {
-					updateSelection(path, pidx, cidx);
 				}
 				return Status.OK_STATUS;
 			}
 		};
-		
 		job.runInUIThread(new NullProgressMonitor());
 	}
 
@@ -1510,114 +1492,5 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		else {
 			viewer.removeFilter(filter);
 		}
-	}
-	
-	/**
-	 * updates the selection after a filtering has taken place
-	 * @param path the <code>TreePath</code> to the last selected item
-	 * @param pidx the original index of the parent item
-	 * @param cidx the original index of the child item
-	 * @since 3.2
-	 */
-	private void updateSelection(TreePath path, int pidx, int cidx) {
-		TreeViewer viewer = fLaunchConfigurationView.getTreeViewer();
-		Tree tree = viewer.getTree();
-		int pcount = tree.getItemCount();
-		if(tree.getItemCount() == 0) {
-			setErrorMessage(null);
-			setMessage(LaunchConfigurationsMessages.LaunchConfigurationsDialog_7);
-			updateButtons();
-		}
-		else if(path != null) {
-			Object sel = path.getLastSegment();
-			int pidex = findIndexOfParent(path.getFirstSegment());
-			if(path.getSegmentCount() == 1) {
-				if(pidex == -1) {
-					if(pidx > pcount) {
-						pidx = pcount-1;
-					}
-					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
-				}
-				else {
-					sel = tree.getItem(pidex).getData();
-				}
-			}
-			else {
-				if(pidex == -1) {
-					if(pidx > pcount) {
-						pidx = pcount-1;
-					}
-					sel = (pidx == 0 ? tree.getItem(pidx).getData() : tree.getItem(pidx-1).getData());
-				}
-				else {
-					int cidex = findIndexOfChild(findIndexOfParent(path.getFirstSegment()), path.getLastSegment());
-					TreeItem parent = tree.getItem(pidex);
-					int ccount = parent.getItemCount();
-					if(cidex == -1) {
-						if(parent.getItemCount() == 0) {
-							sel = parent.getData();
-						}
-						else {
-							if(cidx > ccount) {
-								cidx = ccount-1;
-							}
-							sel = (cidx == 0 ? parent.getItem(cidx).getData() : parent.getItem(cidx-1).getData());
-						}
-					}
-					else {
-						sel = parent.getItem(cidex).getData();
-					}
-				}
-			}
-			viewer.setSelection(new StructuredSelection(sel));
-			updateButtons();
-			updateMessage();
-		}
-		else {
-			setErrorMessage(null);
-			setMessage(LaunchConfigurationsMessages.LaunchConfigurationDialog_Ready_to_launch_2);
-		}
-	}
-	
-	/**
-	 * finds the given parent item in the viewer, in this case the parent item will always be an
-	 * <code>ILaunchConfigurationType</code>
-	 * @param parent the parent item to find
-	 * @return the index of the parent item or -1 if not found
-	 * @since 3.2
-	 */
-	private int findIndexOfParent(Object parent) {
-		Tree tree = fLaunchConfigurationView.getTreeViewer().getTree();
-		TreeItem[] roots = tree.getItems();
-		for(int i = 0; i < roots.length; i++) {
-			if(roots[i].getData().equals(parent)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	/**
-	 * Finds the index of a child item in the entire tree using the parent node and the child node
-	 * derived from a <code>TreePath</code>
-	 * @param parent the parent, in this case always an <code>ILaunchConfigurationType</code>
-	 * @param child the child to find within the parent, in this case always an <code>ILaunchConfiguration,</code>
-	 * @return the index of the child or -1 if not found
-	 * @since 3.2
-	 */
-	private int findIndexOfChild(int pidx, Object child) {
-		Tree tree = fLaunchConfigurationView.getTreeViewer().getTree();
-		if(pidx != -1) {
-			TreeItem root = tree.getItem(pidx);
-			TreeItem[] children = root.getItems();
-			Object data = null;
-			for(int j = 0; j < children.length; j++) {
-				data = children[j].getData();
-				if(data != null && data.equals(child)) {
-					return j;
-				}
-			}
-		}
-		return -1;
 	}
 }

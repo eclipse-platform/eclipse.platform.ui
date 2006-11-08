@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -21,7 +20,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.help.HelpSystem;
@@ -30,7 +28,6 @@ import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
@@ -38,8 +35,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -47,9 +42,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
  * A tree view of launch configurations
@@ -57,16 +50,11 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 public class LaunchConfigurationView extends AbstractDebugView implements ILaunchConfigurationListener {
 	
 	/**
-	 * the viewer from the view
-	 */
-	private Viewer fViewer;
-	
-	/**
 	 * the filtering tree viewer
 	 * 
 	 * @since 3.2
 	 */
-	private FilteredTree fTree;
+	private LaunchConfigurationFilteredTree fTree;
 	
 	/**
 	 * a handle to the launch manager
@@ -132,41 +120,10 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		fTree = new FilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter());
-		fTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		TreeViewer treeViewer = fTree.getViewer();
-		treeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
-		treeViewer.setComparator(new WorkbenchViewerComparator());
-		treeViewer.setContentProvider(new LaunchConfigurationTreeContentProvider(fLaunchGroup.getMode(), parent.getShell()));
-		if(fFilters != null) {
-			for (int i = 0; i < fFilters.length; i++) {
-				treeViewer.addFilter(fFilters[i]);
-			}
-		}
-		treeViewer.addFilter(new LaunchGroupFilter(getLaunchGroup()));
-		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
-		treeViewer.getControl().addHelpListener(new HelpListener() {
-			public void helpRequested(HelpEvent evt) {
-				handleHelpRequest(evt);
-			}
-		});
+		fTree = new LaunchConfigurationFilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), fLaunchGroup, fFilters);
+		fTree.createViewControl();
 		getLaunchManager().addLaunchConfigurationListener(this);
-		return treeViewer;
-	}
-	
-	/**
-	 * Handle help events locally rather than deferring to WorkbenchHelp.  This
-	 * allows help specific to the selected config type to be presented.
-	 * 
-	 * @since 2.1
-	 */
-	protected void handleHelpRequest(HelpEvent evt) {
-		if (getTreeViewer().getTree() != evt.getSource()) {
-			return;
-		}
-		String id = computeContextId();
-		if (id!=null)
-			PlatformUI.getWorkbench().getHelpSystem().displayHelp(id);
+		return fTree.getLaunchConfigurationViewer();
 	}
 	
 	/*
@@ -181,7 +138,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				}
 
 				public IContext getContext(Object target) {
-					String id = computeContextId();
+					String id = fTree.computeContextId();
 					if (id!=null)
 						return HelpSystem.getContext(id);
 					return null;
@@ -203,35 +160,6 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	public Text getFilteringTextControl() {
 		return fTree.getFilterControl();
-	}
-	
-	/**
-	 * Computes the context id for this viewer
-	 * @return the context id
-	 */
-	private String computeContextId() {
-		try {
-			ISelection selection = getViewer().getSelection();
-			if (!selection.isEmpty() && selection instanceof IStructuredSelection ) {
-				IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-				Object firstSelected = structuredSelection.getFirstElement();
-				ILaunchConfigurationType configType = null;
-				if (firstSelected instanceof ILaunchConfigurationType) {
-					configType = (ILaunchConfigurationType) firstSelected;
-				} 
-				else if (firstSelected instanceof ILaunchConfiguration) {
-					configType = ((ILaunchConfiguration) firstSelected).getType();
-				}
-				if (configType != null) {
-					String helpContextId = LaunchConfigurationPresentationManager.getDefault().getHelpContext(configType, getLaunchGroup().getMode());
-					if (helpContextId != null) {
-						return helpContextId;
-					}
-				}
-			}
-		} 
-		catch (CoreException ce) {DebugUIPlugin.log(ce);}
-		return null;
 	}
 
 	/**
@@ -275,8 +203,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
 	 */
-	protected void configureToolBar(IToolBarManager tbm) {
-	}
+	protected void configureToolBar(IToolBarManager tbm) {}
 	
 	/**
 	 * Returns this view's tree viewer
@@ -284,7 +211,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @return this view's tree viewer 
 	 */
 	protected TreeViewer getTreeViewer() {
-		return (TreeViewer)getViewer();
+		return fTree.getLaunchConfigurationViewer();
 	}
 
 	/**
@@ -432,7 +359,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * usual initialzation (toolbars, etc).
 	 */
 	public void createLaunchDialogControl(Composite parent) {
-		fViewer = createViewer(parent);
+		createViewer(parent);
 		createActions();
 		createContextMenu(getViewer().getControl());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, getHelpContextId());
@@ -450,7 +377,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @see org.eclipse.debug.ui.IDebugView#getViewer()
 	 */
 	public Viewer getViewer() {
-		return fViewer;
+		return fTree.getLaunchConfigurationViewer();
 	}
 	
 	/**
