@@ -241,6 +241,11 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the string describing the command.
 	 */
 	abstract String getCommandString();
+	
+	/*
+	 * Return the string describing the command for a tooltip.
+	 */
+	abstract String getCommandTooltip();
 
 	/*
 	 * Return the operation history we are using.
@@ -401,19 +406,19 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 		boolean enabled = shouldBeEnabled();
 		String text = getCommandString();
+		String tooltipCommand = getCommandTooltip();
 		String tooltipText;
 		if (enabled) {
-			tooltipText = Action.removeMnemonics(NLS.bind(
-					WorkbenchMessages.Operations_undoRedoCommand, text,
-					getOperation().getLabel()));
+			tooltipText = NLS.bind(
+					WorkbenchMessages.Operations_undoRedoCommand, tooltipCommand,
+					getOperation().getLabel());
 			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
 					shortenText(getOperation().getLabel()));
 		} else {
-			tooltipText = Action
-					.removeMnemonics(NLS
+			tooltipText = NLS
 							.bind(
 									WorkbenchMessages.Operations_undoRedoCommandDisabled,
-									text));
+									tooltipCommand);
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.

@@ -56,6 +56,10 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	String getCommandString() {
 		return WorkbenchMessages.Workbench_undo;
 	}
+	
+	String getCommandTooltip() {
+		return WorkbenchMessages.Workbench_undoToolTip;		
+	}
 
 	IUndoableOperation getOperation() {
 		return getHistory().getUndoOperation(undoContext);
