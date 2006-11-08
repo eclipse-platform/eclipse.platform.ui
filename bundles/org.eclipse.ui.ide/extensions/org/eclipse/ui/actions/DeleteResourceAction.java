@@ -425,11 +425,9 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			protected IStatus run(IProgressMonitor monitor) {
-				IResource[] resourcesToDelete = getResourcesToDelete(resources);
-
-				if (resourcesToDelete.length == 0)
+				if (resources.length == 0)
 					return Status.CANCEL_STATUS;
-				scheduleDeleteJob(resourcesToDelete);
+				scheduleDeleteJob(resources);
 				return Status.OK_STATUS;
 			}
 			
@@ -493,28 +491,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 		};
 		deleteJob.setUser(true);
 		deleteJob.schedule();
-	}
-
-	/**
-	 * Returns the resources to delete based on the selection and their
-	 * read-only status.
-	 * 
-	 * @param resources
-	 *            the selected resources
-	 * @return the resources to delete
-	 */
-	private IResource[] getResourcesToDelete(IResource[] resources) {
-
-		if (containsOnlyProjects(resources) && !deleteContent) {
-			// We can just return the selection
-			return resources;
-		}
-
-		ReadOnlyStateChecker checker = new ReadOnlyStateChecker(this.shell,
-				IDEWorkbenchMessages.DeleteResourceAction_title1,
-				IDEWorkbenchMessages.DeleteResourceAction_readOnlyQuestion);
-		checker.setIgnoreLinkedResources(true);
-		return checker.checkReadOnlyResources(resources);
 	}
 
 	/**

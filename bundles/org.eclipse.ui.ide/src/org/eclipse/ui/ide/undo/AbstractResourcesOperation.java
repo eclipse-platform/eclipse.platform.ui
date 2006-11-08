@@ -19,6 +19,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
@@ -154,7 +156,8 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 			if (!resourceDescriptions[i].isValid()) {
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_InvalidRestoreInfo);
-			} else if (!allowOverwrite && resourceDescriptions[i].verifyExistence(false)) {
+			} else if (!allowOverwrite
+					&& resourceDescriptions[i].verifyExistence(false)) {
 				// overwrites are not allowed and the resource already exists
 				markInvalid();
 				return getErrorStatus(UndoMessages.AbstractResourcesOperation_ResourcesAlreadyExist);
@@ -187,6 +190,23 @@ abstract class AbstractResourcesOperation extends AbstractWorkspaceOperation {
 		if (!resourcesExist()) {
 			markInvalid();
 			return getErrorStatus(UndoMessages.AbstractResourcesOperation_ResourcesDoNotExist);
+		}
+		// Check read only status if we are permitted
+		// to consult the user.
+		if (!quietCompute) {
+			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+					getShell(null),
+					IDEWorkbenchMessages.DeleteResourceAction_title1,
+					IDEWorkbenchMessages.DeleteResourceAction_readOnlyQuestion);
+			checker.setIgnoreLinkedResources(true);
+			IResource[] approvedResources = checker
+					.checkReadOnlyResources(resources);
+			if (approvedResources.length == 0) {
+				// Consider this a cancelled redo.
+				return Status.CANCEL_STATUS;
+			}
+			// Redefine the redo to only include the approved ones.
+			setTargetResources(approvedResources);
 		}
 		return Status.OK_STATUS;
 	}
