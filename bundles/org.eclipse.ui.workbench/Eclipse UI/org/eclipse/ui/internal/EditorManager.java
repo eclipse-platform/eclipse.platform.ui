@@ -40,6 +40,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -49,6 +50,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.program.Program;
@@ -1078,6 +1080,32 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
 			boolean addNonPartSources, final IWorkbenchWindow window) {
+		return saveAll(dirtyParts, confirm, closing, addNonPartSources, window, (WorkbenchWindow) window);
+	}
+	
+	/**
+	 * Saves the given dirty editors and views, optionally prompting the user.
+	 * 
+	 * @param dirtyParts
+	 *            the dirty views and editors
+	 * @param confirm
+	 *            <code>true</code> to prompt whether to save,
+	 *            <code>false</code> to save without prompting
+	 * @param closing
+	 *            <code>true</code> if the parts are being closed,
+	 *            <code>false</code> if just being saved without closing
+	 * @param addNonPartSources
+	 *            true if non-part sources should be saved too
+	 * @param runnableContext
+	 *            the context in which to run long-running operations
+	 * @param shellProvider
+	 *            providing the shell to use as the parent for the dialog that
+	 *            prompts to save multiple dirty editors and views
+	 * @return <code>true</code> on success, <code>false</code> if the user
+	 *         canceled the save
+	 */
+	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
+				boolean addNonPartSources, final IRunnableContext runnableContext, final IShellProvider shellProvider) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
     	List modelsToSave;
@@ -1183,7 +1211,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
 				MessageDialog d = new MessageDialog(
-					window.getShell(), WorkbenchMessages.Save_Resource,
+					shellProvider.getShell(), WorkbenchMessages.Save_Resource,
 					null, message, MessageDialog.QUESTION, buttons, 0);
 				
 				int choice = SaveableHelper.testGetAutomatedResponse();
@@ -1206,7 +1234,7 @@ public class EditorManager implements IExtensionChangeHandler {
             }
             else {
 	            ListSelectionDialog dlg = new ListSelectionDialog(
-	                    window.getShell(), modelsToSave,
+	                    shellProvider.getShell(), modelsToSave,
 	                    new ArrayContentProvider(),
 	                    new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
 	            dlg.setInitialSelections(modelsToSave.toArray());
@@ -1250,7 +1278,7 @@ public class EditorManager implements IExtensionChangeHandler {
 					try {
 						model.doSave(new SubProgressMonitor(monitorWrap, 1));
 					} catch (CoreException e) {
-						ErrorDialog.openError(window.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
+						ErrorDialog.openError(shellProvider.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
 					}
 					if (monitorWrap.isCanceled()) {
 						break;
@@ -1262,7 +1290,7 @@ public class EditorManager implements IExtensionChangeHandler {
 
 		// Do the save.
 		return SaveableHelper.runProgressMonitorOperation(
-				WorkbenchMessages.Save_All, progressOp, window);
+				WorkbenchMessages.Save_All, progressOp, runnableContext, shellProvider);
 	}
 
     /**
