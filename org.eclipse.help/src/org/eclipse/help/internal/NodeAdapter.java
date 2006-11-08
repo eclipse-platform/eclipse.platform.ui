@@ -80,7 +80,7 @@ public abstract class NodeAdapter extends Node {
 	 * It is assumed that the adapter has a one-arg constructor that takes in
 	 * a node to be adapted.
 	 */
-	public Object getChildren(String name, Class clazz) {
+	public Object getChildNodes(String name, Class clazz) {
 		Node[] children = getChildNodes();
 		if (children.length > 0) {
 			List list = new ArrayList();
@@ -116,17 +116,17 @@ public abstract class NodeAdapter extends Node {
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.help.Node#getNodeValue()
+	 */
+	public String getNodeValue() {
+		return node.getNodeValue();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.help.Node#getParentNode()
 	 */
 	public Node getParentNode() {
 		return node.getParentNode();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getValue()
-	 */
-	public String getValue() {
-		return node.getValue();
 	}
 	
 	/* (non-Javadoc)

@@ -43,6 +43,6 @@ public class Index extends NodeAdapter implements IIndex {
 	 * @see org.eclipse.help.IIndex#getEntries()
 	 */
 	public IIndexEntry[] getEntries() {
-		return (IndexEntry[])getChildren(IndexEntry.NAME, IndexEntry.class);
+		return (IndexEntry[])getChildNodes(IndexEntry.NAME, IndexEntry.class);
 	}
 }

@@ -56,7 +56,7 @@ public class Topic extends NodeAdapter implements ITopic {
 	 * @see org.eclipse.help.ITopic#getSubtopics()
 	 */
 	public ITopic[] getSubtopics() {
-		return (Topic[])getChildren(NAME, Topic.class);
+		return (Topic[])getChildNodes(NAME, Topic.class);
 	}
 	
 	/*

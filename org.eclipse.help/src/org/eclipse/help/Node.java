@@ -92,21 +92,21 @@ public class Node {
 	}
 
 	/**
+	 * Returns the value of the node.
+	 * 
+	 * @return value of the node or <code>null</code> if not set.
+	 */
+	public String getNodeValue() {
+		return value;
+	}
+
+	/**
 	 * Returns the node's parent.
 	 * 
 	 * @return the parent node, or <code>null</code> if this is the root node
 	 */
 	public Node getParentNode() {
 		return parent;
-	}
-
-	/**
-	 * Returns the value of the node.
-	 * 
-	 * @return value of the node or <code>null</code> if not set.
-	 */
-	public String getValue() {
-		return value;
 	}
 	
 	/**

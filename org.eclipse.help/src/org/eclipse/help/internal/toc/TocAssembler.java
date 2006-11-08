@@ -88,7 +88,7 @@ public class TocAssembler {
 		// copy node
 		Node copy = node instanceof TocContribution ? new TocContribution() : new Node();
 		copy.setNodeName(node.getNodeName());
-		copy.setNodeValue(node.getValue());
+		copy.setNodeValue(node.getNodeValue());
 		Iterator iter = node.getAttributes().iterator();
 		while (iter.hasNext()) {
 			String name = (String)iter.next();

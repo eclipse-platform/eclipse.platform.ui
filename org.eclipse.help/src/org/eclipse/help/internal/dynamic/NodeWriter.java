@@ -60,7 +60,7 @@ public class NodeWriter {
 			if (format) {
 				buf.append(indent);
 			}
-			buf.append(escape ? xmlEscape(node.getValue()) : node.getValue());
+			buf.append(escape ? xmlEscape(node.getNodeValue()) : node.getNodeValue());
 		}
 	}
 	

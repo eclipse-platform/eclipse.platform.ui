@@ -52,14 +52,14 @@ public class IndexEntry extends NodeAdapter implements IIndexEntry {
 	 * @see org.eclipse.help.IIndexEntry#getSubentries()
 	 */
 	public IIndexEntry[] getSubentries() {
-		return (IIndexEntry[])getChildren(NAME, IndexEntry.class);
+		return (IIndexEntry[])getChildNodes(NAME, IndexEntry.class);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.IIndexEntry#getTopics()
 	 */
 	public ITopic[] getTopics() {
-		return (ITopic[])getChildren(Topic.NAME, Topic.class);
+		return (ITopic[])getChildNodes(Topic.NAME, Topic.class);
 	}
 	
 	/*

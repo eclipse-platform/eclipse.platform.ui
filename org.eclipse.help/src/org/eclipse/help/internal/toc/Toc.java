@@ -160,7 +160,7 @@ public class Toc extends NodeAdapter implements IToc {
 	 * @see org.eclipse.help.IToc#getTopics()
 	 */
 	public ITopic[] getTopics() {
-		return (Topic[])getChildren(Topic.NAME, Topic.class);
+		return (Topic[])getChildNodes(Topic.NAME, Topic.class);
 	}
 	
 	/*

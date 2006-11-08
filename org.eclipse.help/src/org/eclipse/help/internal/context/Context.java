@@ -46,7 +46,7 @@ public class Context extends NodeAdapter implements IContext {
 	 * @see org.eclipse.help.IContext#getRelatedTopics()
 	 */
 	public IHelpResource[] getRelatedTopics() {
-		return (Topic[])getChildren(Topic.NAME, Topic.class);
+		return (Topic[])getChildNodes(Topic.NAME, Topic.class);
 	}
 	
 	/*
@@ -65,7 +65,7 @@ public class Context extends NodeAdapter implements IContext {
 			Node description = children[0];
 			Node[] descriptionChildren = description.getChildNodes();
 			if (descriptionChildren.length > 0) {
-				return descriptionChildren[0].getValue();
+				return descriptionChildren[0].getNodeValue();
 			}
 		}
 		return null;

@@ -168,11 +168,11 @@ public class DocumentNode extends org.eclipse.help.Node {
 		// copy the node itself
 		Document dom = node.getOwnerDocument();
 		Node newNode;
-		if (nodeToCopy.getValue() == null) {
+		if (nodeToCopy.getNodeValue() == null) {
 			newNode = dom.createElement(nodeToCopy.getNodeName());
 		}
 		else {
-			newNode = dom.createTextNode(nodeToCopy.getValue());
+			newNode = dom.createTextNode(nodeToCopy.getNodeValue());
 		}
 		if (newNode.getNodeType() == Node.ELEMENT_NODE) {
 			Element element = (Element)newNode;
