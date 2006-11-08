@@ -24,6 +24,10 @@ import org.eclipse.swt.graphics.Point;
  * description of the content. The specification of what is required from an
  * input object is left to the implementers of this interface.
  * <p>
+ * <em>If this information control is used by a {@link AbstractHoverInformationControlManager}
+ * then that manager will own this control and override any properties that
+ * may have been set before by any other client.</em></p>
+ * <p>
  * The information control may not grab focus when made visible using
  * <code>setVisible(true)</code>.
  *
