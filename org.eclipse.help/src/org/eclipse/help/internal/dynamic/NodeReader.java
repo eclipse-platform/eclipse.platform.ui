@@ -52,7 +52,7 @@ public class NodeReader extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String name, Attributes attributes) throws SAXException {
 		Node node = new Node();
-		node.setName(name);
+		node.setNodeName(name);
 		int len = attributes.getLength();
 		for (int i=0;i<len;++i) {
 			node.setAttribute(attributes.getQName(i), attributes.getValue(i));
@@ -82,7 +82,7 @@ public class NodeReader extends DefaultHandler {
 			String text = new String(ch, start, length);
 			if (!ignoreWhitespaceNodes || text.trim().length() > 0) {
 				Node node = new Node();
-				node.setValue(text);
+				node.setNodeValue(text);
 				Node parent = (Node)stack.peek();
 				parent.appendChild(node);
 			}

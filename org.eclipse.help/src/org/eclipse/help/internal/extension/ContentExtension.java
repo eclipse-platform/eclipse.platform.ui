@@ -36,7 +36,7 @@ public class ContentExtension extends NodeAdapter {
 	 */
 	public ContentExtension() {
 		super();
-		setName(NAME_CONTRIBUTION);
+		setNodeName(NAME_CONTRIBUTION);
 	}
 	
 	/*
@@ -64,7 +64,7 @@ public class ContentExtension extends NodeAdapter {
 	 * Returns the extension type (either a contribution or replace).
 	 */
 	public int getType() {
-		return (getName().equals(NAME_CONTRIBUTION)) ? CONTRIBUTION : REPLACE;
+		return (getNodeName().equals(NAME_CONTRIBUTION)) ? CONTRIBUTION : REPLACE;
 	}
 	
 	/*
@@ -85,6 +85,6 @@ public class ContentExtension extends NodeAdapter {
 	 * Sets the extension type.
 	 */
 	public void setType(int type) {
-		setName(type == CONTRIBUTION ? NAME_CONTRIBUTION : NAME_REPLACE);
+		setNodeName(type == CONTRIBUTION ? NAME_CONTRIBUTION : NAME_REPLACE);
 	}
 }

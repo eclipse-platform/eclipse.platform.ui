@@ -31,7 +31,7 @@ public class IndexEntry extends NodeAdapter implements IIndexEntry {
 	 */
 	public IndexEntry() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 
 	/*

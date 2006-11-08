@@ -87,8 +87,8 @@ public class TocAssembler {
 	private Node copy(Node node) {
 		// copy node
 		Node copy = node instanceof TocContribution ? new TocContribution() : new Node();
-		copy.setName(node.getName());
-		copy.setValue(node.getValue());
+		copy.setNodeName(node.getNodeName());
+		copy.setNodeValue(node.getValue());
 		Iterator iter = node.getAttributes().iterator();
 		while (iter.hasNext()) {
 			String name = (String)iter.next();
@@ -97,7 +97,7 @@ public class TocAssembler {
 		}
 		
 		// copy children
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			copy.appendChild(copy(children[i]));
 		}
@@ -139,7 +139,7 @@ public class TocAssembler {
 		NodeHandler[] linkFinder = new NodeHandler[] {
 			new NodeHandler() {
 				public short handle(Node node, String id) {
-					if (ELEMENT_LINK.equals(node.getName())) {
+					if (ELEMENT_LINK.equals(node.getNodeName())) {
 						String toc = node.getAttribute(ATTRIBUTE_TOC);
 						if (toc != null) {
 							TocContribution srcContribution = getContribution(id);
@@ -272,8 +272,8 @@ public class TocAssembler {
 	 */
 	private class LinkHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (ELEMENT_LINK.equals(node.getName())) {
-				Node parent = node.getParent();
+			if (ELEMENT_LINK.equals(node.getNodeName())) {
+				Node parent = node.getParentNode();
 				if (parent != null) {
 					String toc = node.getAttribute(ATTRIBUTE_TOC);
 					if (toc != null) {
@@ -281,7 +281,7 @@ public class TocAssembler {
 						TocContribution srcContribution = getContribution(HrefUtil.normalizeHref(destContribution.getContributorId(), toc));
 						if (srcContribution != null) {
 							process(srcContribution);
-							Node[] children = srcContribution.getToc().getChildren();
+							Node[] children = srcContribution.getToc().getChildNodes();
 							for (int i=0;i<children.length;++i) {
 								parent.insertBefore(copy(children[i]), node);
 							}
@@ -302,8 +302,8 @@ public class TocAssembler {
 	 */
 	private class AnchorHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (ELEMENT_ANCHOR.equals(node.getName())) {
-				Node parent = node.getParent();
+			if (ELEMENT_ANCHOR.equals(node.getNodeName())) {
+				Node parent = node.getParentNode();
 				if (parent != null) {
 					String anchorId = node.getAttribute(ATTRIBUTE_ID);
 					if (anchorId != null) {
@@ -312,7 +312,7 @@ public class TocAssembler {
 							TocContribution[] srcContributions = getAnchorContributions(destContribution.getId() + '#' +  anchorId);
 							for (int i=0;i<srcContributions.length;++i) {
 								process(srcContributions[i]);
-								Node[] children = srcContributions[i].getToc().getChildren();
+								Node[] children = srcContributions[i].getToc().getChildNodes();
 								for (int j=0;j<children.length;++j) {
 									parent.insertBefore(copy(children[j]), node);
 								}
@@ -333,7 +333,7 @@ public class TocAssembler {
 	 */
 	private class NormalizeHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (href != null) {
 					TocContribution contribution = getContribution(id);

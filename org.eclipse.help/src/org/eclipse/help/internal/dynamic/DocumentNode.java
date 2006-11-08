@@ -77,9 +77,9 @@ public class DocumentNode extends org.eclipse.help.Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getChildren()
+	 * @see org.eclipse.help.Node#getChildNodes()
 	 */
-	public org.eclipse.help.Node[] getChildren() {
+	public org.eclipse.help.Node[] getChildNodes() {
 		if (node.hasChildNodes()) {
 			List children = new ArrayList();
 			NodeList list = node.getChildNodes();
@@ -95,23 +95,23 @@ public class DocumentNode extends org.eclipse.help.Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getName()
+	 * @see org.eclipse.help.Node#getNodeName()
 	 */
-	public String getName() {
+	public String getNodeName() {
 		return node.getNodeName();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getParent()
+	 * @see org.eclipse.help.Node#getParentNode()
 	 */
-	public org.eclipse.help.Node getParent() {
+	public org.eclipse.help.Node getParentNode() {
 		return new DocumentNode(node.getParentNode());
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getValue()
+	 * @see org.eclipse.help.Node#getNodeValue()
 	 */
-	public String getValue() {
+	public String getNodeValue() {
 		return node.getNodeValue();
 	}
 	
@@ -155,9 +155,9 @@ public class DocumentNode extends org.eclipse.help.Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#setValue(java.lang.String)
+	 * @see org.eclipse.help.Node#setNodeValue(java.lang.String)
 	 */
-	public void setValue(String value) {
+	public void setNodeValue(String value) {
 		node.setNodeValue(value);
 	}
 	
@@ -169,7 +169,7 @@ public class DocumentNode extends org.eclipse.help.Node {
 		Document dom = node.getOwnerDocument();
 		Node newNode;
 		if (nodeToCopy.getValue() == null) {
-			newNode = dom.createElement(nodeToCopy.getName());
+			newNode = dom.createElement(nodeToCopy.getNodeName());
 		}
 		else {
 			newNode = dom.createTextNode(nodeToCopy.getValue());
@@ -185,7 +185,7 @@ public class DocumentNode extends org.eclipse.help.Node {
 		
 		// copy children
 		DocumentNode copy = new DocumentNode(newNode);
-		org.eclipse.help.Node[] children = nodeToCopy.getChildren();
+		org.eclipse.help.Node[] children = nodeToCopy.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			copy.appendChild(children[i]);
 		}

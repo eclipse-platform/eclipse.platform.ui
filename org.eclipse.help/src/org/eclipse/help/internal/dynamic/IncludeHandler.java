@@ -38,7 +38,7 @@ public class IncludeHandler extends NodeHandler {
 	 * @see org.eclipse.help.internal.dynamic.DocumentProcessorHandler#handle(org.eclipse.help.Node, java.lang.String)
 	 */
 	public short handle(Node node, String id) {
-		if (ELEMENT_INCLUDE.equals(node.getName())) {
+		if (ELEMENT_INCLUDE.equals(node.getNodeName())) {
 			String path = node.getAttribute(ATTRIBUTE_PATH);
 			if (path != null && path.length() > 0) {
 				String bundleId = getBundleId(path);
@@ -50,7 +50,7 @@ public class IncludeHandler extends NodeHandler {
 			}
 			else {
 				// remove invalid includes
-				node.getParent().removeChild(node);
+				node.getParentNode().removeChild(node);
 			}
 			return HANDLED_SKIP;
 		}
@@ -65,7 +65,7 @@ public class IncludeHandler extends NodeHandler {
 		if (resolver == null) {
 			resolver = new IncludeResolver(getProcessor(), reader, locale);
 		}
-		Node parent = node.getParent();
+		Node parent = node.getParentNode();
 		if (parent != null) {
 			try {
 				Node nodeToInclude = resolver.resolve(bundleId, relativePath, elementId);

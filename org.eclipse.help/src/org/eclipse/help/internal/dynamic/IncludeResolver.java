@@ -76,7 +76,7 @@ public class IncludeResolver {
 		if (id != null && id.equals(nodeId)) {
 			return node;
 		}
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			Node result = findNode(children[i], nodeId);
 			if (result != null) {

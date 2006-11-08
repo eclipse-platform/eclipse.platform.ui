@@ -198,10 +198,10 @@ public class ContextFileProvider extends AbstractContextProvider {
 			processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
 			
 			// build map
-			Node[] children = root.getChildren();
+			Node[] children = root.getChildNodes();
 			Map contexts = new HashMap();
 			for (int i=0;i<children.length;++i) {
-				if (ELEMENT_CONTEXT.equals(children[i].getName())) {
+				if (ELEMENT_CONTEXT.equals(children[i].getNodeName())) {
 					Context context = children[i] instanceof Context ? (Context)children[i] : new Context(children[i]);
 					String id = context.getId();
 					if (id != null) {
@@ -227,12 +227,12 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 */
 	private class NormalizeHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Context.NAME.equals(node.getName())) {
+			if (Context.NAME.equals(node.getNodeName())) {
 				Context context = node instanceof Context ? (Context)node : new Context(node);
-				Node[] children = context.getChildren();
-				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+				Node[] children = context.getChildNodes();
+				if (children.length > 0 && Context.ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
 					Node description = children[0];
-					Node[] descriptionChildren = description.getChildren();
+					Node[] descriptionChildren = description.getChildNodes();
 					if (writer == null) {
 						writer = new NodeWriter();
 					}
@@ -243,7 +243,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 					context.setText(buf.toString());
 				}
 			}
-			else if (Topic.NAME.equals(node.getName())) {
+			else if (Topic.NAME.equals(node.getNodeName())) {
 				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (href != null) {
 					int index = id.indexOf('/', 1);

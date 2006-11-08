@@ -49,9 +49,9 @@ public class UAContentFilter {
 			if (node.getAttribute(ATTRIBUTE_FILTER) != null) {
 				return handleFilterAttribute(node);
 			}
-			Node[] children = node.getChildren();
+			Node[] children = node.getChildNodes();
 			for (int i=0;i<children.length;++i) {
-				if (ELEMENT_FILTER.equals(children[i].getName())) {
+				if (ELEMENT_FILTER.equals(children[i].getNodeName())) {
 					return handleFilterNodes(node);
 				}
 			}
@@ -72,11 +72,11 @@ public class UAContentFilter {
 	 */
 	private static boolean handleFilterNodes(Node node) {
 		boolean hasFilteredYet = false;
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			Node child = children[i];
 			// is it a filter node?
-			if (ELEMENT_FILTER.equals(child.getName())) {
+			if (ELEMENT_FILTER.equals(child.getNodeName())) {
 				// if it already filtered, don't bother evaluating the rest
 				if (!hasFilteredYet) {
 					String name = child.getAttribute(ATTRIBUTE_NAME);

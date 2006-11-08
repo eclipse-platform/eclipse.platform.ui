@@ -45,7 +45,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 					reader = new NodeReader();
 				}
 				Node node = reader.read(in);
-				return node.getChildren();
+				return node.getChildNodes();
 			}
 			catch (IOException e) {
 				String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$

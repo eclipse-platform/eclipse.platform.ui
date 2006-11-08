@@ -32,7 +32,7 @@ public class Context extends NodeAdapter implements IContext {
 	 */
 	public Context() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 
 	/*
@@ -60,10 +60,10 @@ public class Context extends NodeAdapter implements IContext {
 	 * @see org.eclipse.help.IContext#getText()
 	 */
 	public String getText() {
-		Node[] children = getChildren();
-		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+		Node[] children = getChildNodes();
+		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
 			Node description = children[0];
-			Node[] descriptionChildren = description.getChildren();
+			Node[] descriptionChildren = description.getChildNodes();
 			if (descriptionChildren.length > 0) {
 				return descriptionChildren[0].getValue();
 			}
@@ -82,15 +82,15 @@ public class Context extends NodeAdapter implements IContext {
 	 * Sets the Context's description text.
 	 */
 	public void setText(String text) {
-		Node[] children = getChildren();
-		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getName())) {
+		Node[] children = getChildNodes();
+		if (children.length > 0 && ELEMENT_DESCRIPTION.equals(children[0].getNodeName())) {
 			Node description = children[0];
-			Node[] descriptionChildren = description.getChildren();
+			Node[] descriptionChildren = description.getChildNodes();
 			for (int i=0;i<descriptionChildren.length;++i) {
 				description.removeChild(descriptionChildren[i]);
 			}
 			Node textNode = new Node();
-			textNode.setValue(text);
+			textNode.setNodeValue(text);
 			description.appendChild(textNode);
 		}
 	}

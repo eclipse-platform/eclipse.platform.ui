@@ -35,7 +35,7 @@ public class TocContribution extends Node {
 	 */
 	public TocContribution() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 	
 	/**
@@ -65,9 +65,9 @@ public class TocContribution extends Node {
 	 * @return any extra documents associated with the TOC
 	 */
 	public String[] getExtraDocuments() {
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		if (children.length > 0) {
-			boolean hasToc = Toc.NAME.equals(children[0].getName());
+			boolean hasToc = Toc.NAME.equals(children[0].getNodeName());
 			String[] extraDocuments = new String[hasToc ? children.length - 1 : children.length];
 			for (int i=0;i<extraDocuments.length;++i) {
 				extraDocuments[i] = children[hasToc ? i + 1 : i].getAttribute(ATTRIBUTE_HREF);
@@ -103,8 +103,8 @@ public class TocContribution extends Node {
 	 * @return the TOC data for this contribution
 	 */
 	public Node getToc() {
-		Node[] children = getChildren();
-		if (children.length > 0 && Toc.NAME.equals(children[0].getName())) {
+		Node[] children = getChildNodes();
+		if (children.length > 0 && Toc.NAME.equals(children[0].getNodeName())) {
 			return children[0];
 		}
 		return null;
@@ -147,9 +147,9 @@ public class TocContribution extends Node {
 	 */
 	public void setExtraDocuments(String[] extraDocuments) {
 		// remove existing extra documents, if exists
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		if (children.length > 0) {
-			boolean hasToc = Toc.NAME.equals(children[0].getName());
+			boolean hasToc = Toc.NAME.equals(children[0].getNodeName());
 			for (int i=hasToc?1:0;i<children.length;++i) {
 				removeChild(children[i]);
 			}
@@ -157,7 +157,7 @@ public class TocContribution extends Node {
 		// add new nodes
 		for (int i=0;i<extraDocuments.length;++i) {
 			Node extraDoc = new Node();
-			extraDoc.setName(ELEMENT_EXTRA_DOC);
+			extraDoc.setNodeName(ELEMENT_EXTRA_DOC);
 			extraDoc.setAttribute(ATTRIBUTE_HREF, extraDocuments[i]);
 			appendChild(extraDoc);
 		}
@@ -198,10 +198,10 @@ public class TocContribution extends Node {
 	 * @param toc the TOC data for this contribution
 	 */
 	public void setToc(Node toc) {
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		if (children.length > 0) {
 			insertBefore(toc, children[0]);
-			if (Toc.NAME.equals(children[0].getName())) {
+			if (Toc.NAME.equals(children[0].getNodeName())) {
 				removeChild(children[0]);
 			}
 		}

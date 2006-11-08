@@ -28,7 +28,7 @@ public class IndexContribution extends Node {
 	 */
 	public IndexContribution() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public class IndexContribution extends Node {
 	 * @return the index data for this contribution
 	 */
 	public Node getIndex() {
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		if (children.length > 0) {
 			return children[0];
 		}
@@ -81,7 +81,7 @@ public class IndexContribution extends Node {
 	 * @param index the index data for this contribution
 	 */
 	public void setIndex(Node index) {
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			removeChild(children[i]);
 		}

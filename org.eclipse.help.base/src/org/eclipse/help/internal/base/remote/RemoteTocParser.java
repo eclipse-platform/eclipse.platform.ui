@@ -29,11 +29,11 @@ public class RemoteTocParser {
 			reader = new NodeReader();
 		}
 		Node root = reader.read(in);
-		Node[] children = root.getChildren();
+		Node[] children = root.getChildNodes();
 		TocContribution[] contributions = new TocContribution[children.length];
 		for (int i=0;i<children.length;++i) {
 			Node node = children[i];
-			Node[] contribChildren = node.getChildren();
+			Node[] contribChildren = node.getChildNodes();
 			String[] extraDocuments = new String[contribChildren.length - 1];
 			for (int j=0;j<extraDocuments.length;++j) {
 				extraDocuments[j] = contribChildren[j + 1].getAttribute("href"); //$NON-NLS-1$

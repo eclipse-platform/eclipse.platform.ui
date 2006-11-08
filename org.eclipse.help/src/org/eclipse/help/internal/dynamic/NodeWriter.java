@@ -10,12 +10,12 @@ public class NodeWriter {
 	private static final String ESCAPED_CHARS[] = { "&amp;", "&gt;", "&lt;", "&quot;", "&apos;" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 
 	public void write(Node node, StringBuffer buf, boolean format, String indent, boolean escape) {
-		if (node.getName() != null) {
+		if (node.getNodeName() != null) {
 			if (format) {
 				buf.append(indent);
 			}
 			buf.append('<');
-			buf.append(node.getName());
+			buf.append(node.getNodeName());
 			
 			Iterator iter = node.getAttributes().iterator();
 			while (iter.hasNext()) {
@@ -29,7 +29,7 @@ public class NodeWriter {
 				buf.append('"');
 			}
 			
-			Node[] children = node.getChildren();
+			Node[] children = node.getChildNodes();
 			boolean hasChildren = children.length > 0;
 			if (hasChildren) {
 				buf.append('>');
@@ -45,7 +45,7 @@ public class NodeWriter {
 				}
 				buf.append('<');
 				buf.append('/');
-				buf.append(node.getName());
+				buf.append(node.getNodeName());
 				buf.append('>');
 			}
 			else {

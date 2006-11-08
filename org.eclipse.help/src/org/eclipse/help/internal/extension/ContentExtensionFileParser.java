@@ -41,7 +41,7 @@ public class ContentExtensionFileParser extends DefaultHandler {
 		if (url != null) {
 			InputStream in = url.openStream();
 	    	Node node = reader.read(in);
-	    	return node.getChildren();
+	    	return node.getChildNodes();
 		}
 		return new Node[0];
     }

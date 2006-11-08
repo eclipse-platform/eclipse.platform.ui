@@ -75,7 +75,7 @@ public class Node {
 	 * 
 	 * @return the child nodes, or an empty array if there are no children
 	 */
-	public Node[] getChildren() {
+	public Node[] getChildNodes() {
 		if (children == null) {
 			return new Node[0];
 		}
@@ -87,7 +87,7 @@ public class Node {
 	 * 
 	 * @return the node's name
 	 */
-	public String getName() {
+	public String getNodeName() {
 		return name;
 	}
 
@@ -96,7 +96,7 @@ public class Node {
 	 * 
 	 * @return the parent node, or <code>null</code> if this is the root node
 	 */
-	public Node getParent() {
+	public Node getParentNode() {
 		return parent;
 	}
 
@@ -172,7 +172,7 @@ public class Node {
 	 * 
 	 * @param name the name of the node
 	 */
-	public void setName(String name) {
+	public void setNodeName(String name) {
 		this.name = name;
 	}
 	
@@ -181,7 +181,7 @@ public class Node {
 	 * 
 	 * @param value the value of this node
 	 */
-	public void setValue(String value) {
+	public void setNodeValue(String value) {
 		this.value = value;
 	}
 }

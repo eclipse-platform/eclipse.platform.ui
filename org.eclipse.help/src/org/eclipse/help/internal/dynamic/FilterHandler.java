@@ -25,7 +25,7 @@ public class FilterHandler extends NodeHandler {
 	 */
 	public short handle(Node node, String id) {
 		if (UAContentFilter.isFiltered(node)) {
-			Node parent = node.getParent();
+			Node parent = node.getParentNode();
 			if (parent != null) {
 				parent.removeChild(node);
 			}

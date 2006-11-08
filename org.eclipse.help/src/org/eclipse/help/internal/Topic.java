@@ -28,7 +28,7 @@ public class Topic extends NodeAdapter implements ITopic {
 	 */
 	public Topic() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 
 	/*

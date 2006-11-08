@@ -165,7 +165,7 @@ public class ExtensionResolver {
 		if (id != null && id.equals(nodeId)) {
 			return node;
 		}
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			Node result = findNode(children[i], nodeId);
 			if (result != null) {
@@ -189,10 +189,10 @@ public class ExtensionResolver {
 	 * given node (excluding the body node itself).
 	 */
 	private Node[] findBody(Node node) {
-		if (ELEMENT_BODY.equals(node.getName())) {
-			return node.getChildren();
+		if (ELEMENT_BODY.equals(node.getNodeName())) {
+			return node.getChildNodes();
 		}
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			Node[] result = findBody(children[i]);
 			if (result != null) {

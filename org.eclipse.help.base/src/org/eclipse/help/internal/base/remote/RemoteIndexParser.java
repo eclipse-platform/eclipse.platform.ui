@@ -38,13 +38,13 @@ public class RemoteIndexParser extends DefaultHandler {
 			reader = new NodeReader();
 		}
 		Node root = reader.read(in);
-		Node[] children = root.getChildren();
+		Node[] children = root.getChildNodes();
 		IndexContribution[] contributions = new IndexContribution[children.length];
 		for (int i=0;i<children.length;++i) {
 			IndexContribution contribution = new IndexContribution();
 			contribution.setId(children[i].getAttribute("id")); //$NON-NLS-1$
 			contribution.setLocale(children[i].getAttribute("locale")); //$NON-NLS-1$
-			contribution.setIndex(children[i].getChildren()[0]);
+			contribution.setIndex(children[i].getChildNodes()[0]);
 			contributions[i] = contribution;
 		}		
 		return contributions;

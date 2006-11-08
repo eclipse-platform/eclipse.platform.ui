@@ -29,7 +29,7 @@ public class XHTMLCharsetHandler extends NodeHandler {
 	 * @see org.eclipse.help.internal.dynamic.DocumentProcessorHandler#handle(org.eclipse.help.Node, java.lang.String)
 	 */
 	public short handle(Node node, String id) {
-		if (ELEMENT_META.equals(node.getName())) {
+		if (ELEMENT_META.equals(node.getNodeName())) {
 			String content = node.getAttribute(ATTRIBUTE_CONTENT);
 			if (content != null && content.startsWith(PREFIX_CHARSET)) {
 				node.setAttribute(ATTRIBUTE_CONTENT, PREFIX_CHARSET + ENCODING_UTF8);

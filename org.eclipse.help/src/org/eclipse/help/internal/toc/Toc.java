@@ -41,7 +41,7 @@ public class Toc extends NodeAdapter implements IToc {
 	 */
 	public Toc() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 
 	/*
@@ -86,7 +86,7 @@ public class Toc extends NodeAdapter implements IToc {
 	 * @see org.eclipse.help.IHelpResource#getHref()
 	 */
 	public String getHref() {
-		Node parent = node.getParent();
+		Node parent = node.getParentNode();
 		if (parent != null) {
 			return parent.getAttribute(ATTRIBUTE_ID);
 		}
@@ -121,7 +121,7 @@ public class Toc extends NodeAdapter implements IToc {
 	 * @see org.eclipse.help.IToc#getTocContribution()
 	 */
 	public TocContribution getTocContribution() {
-		return (TocContribution)node.getParent();
+		return (TocContribution)node.getParentNode();
 	}
 	
 	/*

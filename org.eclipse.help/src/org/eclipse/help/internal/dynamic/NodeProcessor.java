@@ -51,7 +51,7 @@ public class NodeProcessor {
 			}
 		}
 		// process each child
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			process(children[i], id);
 		}

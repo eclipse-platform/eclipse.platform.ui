@@ -77,22 +77,22 @@ public class IndexAssembler {
 		// create data structures for fast lookup
 		Map entriesByKeyword = new HashMap();
 		Set topicHrefs = new HashSet();
-		Node[] childrenA = a.getChildren();
+		Node[] childrenA = a.getChildNodes();
 		for (int i=0;i<childrenA.length;++i) {
 			Node childA = childrenA[i];
-			if (IndexEntry.NAME.equals(childA.getName())) {
+			if (IndexEntry.NAME.equals(childA.getNodeName())) {
 				entriesByKeyword.put(childA.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD), childA);
 			}
-			else if (Topic.NAME.equals(childA.getName())) {
+			else if (Topic.NAME.equals(childA.getNodeName())) {
 				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
 			}
 		}
 		
 		// now do the merge
-		Node[] childrenB = b.getChildren();
+		Node[] childrenB = b.getChildNodes();
 		for (int i=0;i<childrenB.length;++i) {
 			Node childB = childrenB[i];
-			if (IndexEntry.NAME.equals(childB.getName())) {
+			if (IndexEntry.NAME.equals(childB.getNodeName())) {
 				String keyword = childB.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 				if (entriesByKeyword.containsKey(keyword)) {
 					// duplicate keyword; merge children
@@ -104,7 +104,7 @@ public class IndexAssembler {
 					entriesByKeyword.put(keyword, childB);
 				}
 			}
-			else if (Topic.NAME.equals(childB.getName())) {
+			else if (Topic.NAME.equals(childB.getNodeName())) {
 				String href = childB.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (!topicHrefs.contains(href)) {
 					// add topic only if href doesn't exist yet
@@ -150,7 +150,7 @@ public class IndexAssembler {
 	 */
 	private void sort(Node node, Comparator comparator) {
 		// sort children
-		Node[] children = node.getChildren();
+		Node[] children = node.getChildNodes();
 		for (int i=0;i<children.length;++i) {
 			node.removeChild(children[i]);
 		}
@@ -170,7 +170,7 @@ public class IndexAssembler {
 	 */
 	private class NormalizeHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (href != null) {
 					int index = id.indexOf('/', 1);
@@ -187,11 +187,11 @@ public class IndexAssembler {
 
 	private class IgnoreHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
 				String href = topic.getHref();
 				if (HelpPlugin.getTocManager().isTopicIgnored(href)) {
-					Node parent = topic.getParent();
+					Node parent = topic.getParentNode();
 					if (parent != null) {
 						parent.removeChild(node);
 					}
@@ -203,7 +203,7 @@ public class IndexAssembler {
 
 	private class LabelHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
 				String label = topic.getLabel();
 				String href = topic.getHref();
@@ -220,7 +220,7 @@ public class IndexAssembler {
 			        }
 		        }
 				if(isLabelEmpty) {
-					Node parent = node.getParent();
+					Node parent = node.getParentNode();
 					if (parent != null) {
 						parent.removeChild(node);
 					}
@@ -260,10 +260,10 @@ public class IndexAssembler {
 		 * 5. other
 		 */
 		private static int getCategory(Node node) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				return 0;
 			}
-			else if (IndexEntry.NAME.equals(node.getName())) {
+			else if (IndexEntry.NAME.equals(node.getNodeName())) {
 				String keyword = node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 				if (keyword != null && keyword.length() > 0) {
 					char c = keyword.charAt(0);
@@ -287,14 +287,14 @@ public class IndexAssembler {
 		 * used for sorting.
 		 */
 		private static String getLabel(Node node) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				return node.getAttribute(Topic.ATTRIBUTE_LABEL);
 			}
-			else if (IndexEntry.NAME.equals(node.getName())) {
+			else if (IndexEntry.NAME.equals(node.getNodeName())) {
 				return node.getAttribute(IndexEntry.ATTRIBUTE_KEYWORD);
 			}
 			else {
-				return node.getName();
+				return node.getNodeName();
 			}
 		}
 	};

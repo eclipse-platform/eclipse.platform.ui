@@ -65,10 +65,10 @@ public abstract class NodeAdapter extends Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getChildren()
+	 * @see org.eclipse.help.Node#getChildNodes()
 	 */
-	public Node[] getChildren() {
-		return node.getChildren();
+	public Node[] getChildNodes() {
+		return node.getChildNodes();
 	}
 	
 	/*
@@ -81,11 +81,11 @@ public abstract class NodeAdapter extends Node {
 	 * a node to be adapted.
 	 */
 	public Object getChildren(String name, Class clazz) {
-		Node[] children = getChildren();
+		Node[] children = getChildNodes();
 		if (children.length > 0) {
 			List list = new ArrayList();
 			for (int i=0;i<children.length;++i) {
-				if (name.equals(children[i].getName())) {
+				if (name.equals(children[i].getNodeName())) {
 					try {
 						PARAMETER[0] = children[i];
 						NodeAdapter typedNode = (NodeAdapter)clazz.getConstructor(PARAMETER_TYPES).newInstance(PARAMETER);
@@ -109,17 +109,17 @@ public abstract class NodeAdapter extends Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getName()
+	 * @see org.eclipse.help.Node#getNodeName()
 	 */
-	public String getName() {
-		return node.getName();
+	public String getNodeName() {
+		return node.getNodeName();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#getParent()
+	 * @see org.eclipse.help.Node#getParentNode()
 	 */
-	public Node getParent() {
-		return node.getParent();
+	public Node getParentNode() {
+		return node.getParentNode();
 	}
 	
 	/* (non-Javadoc)
@@ -158,16 +158,16 @@ public abstract class NodeAdapter extends Node {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#setName(java.lang.String)
+	 * @see org.eclipse.help.Node#setNodeName(java.lang.String)
 	 */
-	public void setName(String name) {
-		node.setName(name);
+	public void setNodeName(String name) {
+		node.setNodeName(name);
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.help.Node#setValue(java.lang.String)
+	 * @see org.eclipse.help.Node#setNodeValue(java.lang.String)
 	 */
-	public void setValue(String value) {
-		node.setValue(value);
+	public void setNodeValue(String value) {
+		node.setNodeValue(value);
 	}
 }

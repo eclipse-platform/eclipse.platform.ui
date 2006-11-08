@@ -55,7 +55,7 @@ public class IndexFileParser extends DefaultHandler {
 	 */
 	private class NormalizeHandler extends NodeHandler {
 		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getName())) {
+			if (Topic.NAME.equals(node.getNodeName())) {
 				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (href != null) {
 					node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(id, href));

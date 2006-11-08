@@ -36,7 +36,7 @@ public class ExtensionHandler extends NodeHandler {
 	}
 	
 	public short handle(Node node, String path) {
-		if (ELEMENT_ANCHOR.equals(node.getName())) {
+		if (ELEMENT_ANCHOR.equals(node.getNodeName())) {
 			return handleExtension(node, path, ContentExtension.CONTRIBUTION);
 		}
 		if (node.getAttribute(ATTRIBUTE_ID) != null) {
@@ -58,7 +58,7 @@ public class ExtensionHandler extends NodeHandler {
 			// get the nodes to insert/replace with
 			Node[] nodes = resolver.resolveExtension(path + '#' + id, type);
 			if (nodes != null && nodes.length > 0) {
-				Node parent = node.getParent();
+				Node parent = node.getParentNode();
 				for (int i=0;i<nodes.length;++i) {
 					parent.insertBefore(nodes[i], node);
 				}
@@ -68,7 +68,7 @@ public class ExtensionHandler extends NodeHandler {
 		}
 		// always remove anchors, even invalid ones
 		if (type == ContentExtension.CONTRIBUTION) {
-			node.getParent().removeChild(node);
+			node.getParentNode().removeChild(node);
 			return HANDLED_SKIP;
 		}
 		// it was an element with id, but no replacements

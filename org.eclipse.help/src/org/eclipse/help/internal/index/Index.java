@@ -29,7 +29,7 @@ public class Index extends NodeAdapter implements IIndex {
 	 */
 	public Index() {
 		super();
-		setName(NAME);
+		setNodeName(NAME);
 	}
 	
 	/*
