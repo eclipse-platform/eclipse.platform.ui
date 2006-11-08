@@ -52,7 +52,6 @@ public class UndoMessages extends NLS {
 	
 	public static String AbstractCopyOrMoveResourcesOperation_SameNameOrLocation;
 	public static String AbstractCopyOrMoveResourcesOperation_ResourceDoesNotExist;
-	public static String AbstractCopyOrMoveResourcesOperation_ReadOnly;
 	public static String AbstractCopyOrMoveResourcesOperation_copyProjectProgress;
 	public static String AbstractCopyOrMoveResourcesOperation_moveProjectProgress;
 	

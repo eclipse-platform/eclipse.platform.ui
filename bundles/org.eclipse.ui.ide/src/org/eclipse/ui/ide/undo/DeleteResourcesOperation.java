@@ -17,7 +17,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.ui.actions.ReadOnlyStateChecker;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
@@ -172,7 +175,8 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * Map redo status to resource deletion status.
+	 * Map redo status to resource deletion status. Add a check for read-only
+	 * state.
 	 * 
 	 * @see org.eclipse.ui.ide.undo.AbstractWorkspaceOperation#computeRedoableStatus(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -180,6 +184,24 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		IStatus status = super.computeRedoableStatus(monitor);
 		if (status.isOK()) {
 			status = computeDeleteStatus();
+		}
+		// Check read only status but only if we are permitted
+		// to consult the user.
+		if (!quietCompute && status.isOK()) {
+			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+					getShell(null),
+					IDEWorkbenchMessages.DeleteResourceAction_title1,
+					IDEWorkbenchMessages.DeleteResourceAction_readOnlyQuestion);
+			checker.setIgnoreLinkedResources(true);
+			IResource[] approvedResources = checker
+					.checkReadOnlyResources(resources);
+			if (approvedResources.length == 0) {
+				// Consider this a cancelled redo.
+				return Status.CANCEL_STATUS;
+			}
+			// Redefine the redo to only include the approved ones,
+			// status remains OK.
+			setTargetResources(approvedResources);
 		}
 		return status;
 	}
