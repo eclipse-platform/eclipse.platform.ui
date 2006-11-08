@@ -21,11 +21,11 @@ import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -64,7 +64,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 
 	public void testScenario01() {
 		// Bind the catalog's lodgings to the combo
-        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
+        IObservableList lodgings = MasterDetailObservables.detailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
         listViewer.setContentProvider(new ObservableListContentProvider());
@@ -95,7 +95,7 @@ public class ListViewerScenario extends ScenariosTestCase {
 		// of an adventure
 		final Adventure adventure = SampleData.WINTER_HOLIDAY;
         
-        IObservableValue selection = new SelectionObservableValue(listViewer);
+        IObservableValue selection = ViewersObservables.observeSingleSelection(listViewer);
         getDbc().bindValue(selection, BeansObservables.observeValue(adventure, "defaultLodging"), null);
 
 		// Verify that the list selection is the default lodging

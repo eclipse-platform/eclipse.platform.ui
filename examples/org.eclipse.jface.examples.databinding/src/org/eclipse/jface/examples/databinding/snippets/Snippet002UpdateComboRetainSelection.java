@@ -156,7 +156,7 @@ public class Snippet002UpdateComboRetainSelection {
 
             DataBindingContext dbc = new DataBindingContext();
             
-            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(viewModel, "choices"),
+            IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel, "choices"),
                     getListDetailFactory(),
                     String.class);
             dbc.bindList(SWTObservables.getItems(combo), list, null); 

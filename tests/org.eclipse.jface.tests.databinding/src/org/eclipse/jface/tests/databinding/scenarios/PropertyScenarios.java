@@ -21,8 +21,6 @@ import org.eclipse.jface.databinding.Binding;
 import org.eclipse.jface.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
@@ -143,10 +141,8 @@ public class PropertyScenarios extends ScenariosTestCase {
         // scenario to the master/detail section? I'm assuming the latter for
         // now.
 
-        IObservableValue defaultLodging = MasterDetailObservables.getDetailValue(BeansObservables.observeValue(adventure,
-                "defaultLodging"),
-                getBeanObservableFactory("description"),
-                String.class);
+        IObservableValue defaultLodging =BeansObservables.observeDetailValue(realm, BeansObservables.observeValue(adventure,
+        "defaultLodging"), "description", String.class); 
 
         getDbc().bindValue(SWTObservables.getText(text, SWT.Modify), defaultLodging, null);
 
@@ -171,14 +167,6 @@ public class PropertyScenarios extends ScenariosTestCase {
         adventure.getDefaultLodging().setDescription("barf");
         assertEquals(adventure.getDefaultLodging().getDescription(), text.getText());
 
-    }
-
-    private IObservableFactory getBeanObservableFactory(final String property) {
-        return new IObservableFactory() {
-            public IObservable createObservable(Object target) {
-                return BeansObservables.observeValue(target, property);
-            }
-        };
     }
 
     public void testScenario05() {

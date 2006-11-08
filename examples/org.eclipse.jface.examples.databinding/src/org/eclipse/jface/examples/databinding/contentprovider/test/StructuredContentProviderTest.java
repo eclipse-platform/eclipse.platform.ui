@@ -23,8 +23,8 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -298,8 +298,7 @@ public class StructuredContentProviderTest {
 			listOfInts.setLabelProvider(new ViewerLabelProvider());
 			listOfInts.setInput(inputSet);
 
-			final IObservableValue selectedInt = new SelectionObservableValue(
-					listOfInts);
+			final IObservableValue selectedInt = ViewersObservables.observeSingleSelection(listOfInts);
 
 			GridData listData = new GridData(GridData.FILL_BOTH);
 			listData.minimumHeight = 1;

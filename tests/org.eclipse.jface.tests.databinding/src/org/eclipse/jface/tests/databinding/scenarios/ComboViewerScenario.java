@@ -11,21 +11,14 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.util.Arrays;
-
 import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.list.IObservableList;
-import org.eclipse.jface.databinding.observable.list.WritableList;
-import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
-import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -64,16 +57,13 @@ public class ComboViewerScenario extends ScenariosTestCase {
 
     public void testScenario01() {
         // Bind the catalog's lodgings to the combo
-        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
-                getLodgingsDetailFactory(Lodging.class),
-                Lodging.class);
         comboViewer.setContentProvider(new ObservableListContentProvider());
         comboViewer.setLabelProvider(new LabelProvider() {
             public String getText(Object element) {
                 return ((Lodging) element).getName();
             }
         });
-        comboViewer.setInput(lodgings);
+        comboViewer.setInput(BeansObservables.observeList(realm, catalog, "lodgings"));
 
         // Verify that the combo's items are the lodgings
         for (int i = 0; i < catalog.getLodgings().length; i++) {
@@ -93,7 +83,7 @@ public class ComboViewerScenario extends ScenariosTestCase {
         // Now bind the selection of the combo to the "defaultLodging" property
         // of an adventure
         final Adventure adventure = SampleData.WINTER_HOLIDAY;
-        IObservableValue selection = new SelectionObservableValue(comboViewer);
+        IObservableValue selection = ViewersObservables.observeSingleSelection(comboViewer);
         getDbc().bindValue(selection, BeansObservables.observeValue(adventure, "defaultLodging"), null);
 
         // Verify that the combo selection is the default lodging
@@ -117,14 +107,4 @@ public class ComboViewerScenario extends ScenariosTestCase {
                 adventure.getDefaultLodging());
     }
 
-    private static IObservableFactory getLodgingsDetailFactory(final Class clazz) {
-        return new IObservableFactory() {
-            public IObservable createObservable(Object target) {
-                Lodging[] lodgings = (Lodging[]) target;
-                WritableList list = new WritableList(clazz);
-                list.addAll(Arrays.asList(lodgings));
-                return list;
-            }
-        };
-    }
 }

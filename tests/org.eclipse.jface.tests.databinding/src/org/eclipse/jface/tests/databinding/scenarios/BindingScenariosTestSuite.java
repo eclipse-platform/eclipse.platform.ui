@@ -63,7 +63,7 @@ public class BindingScenariosTestSuite extends TestSuite {
         addTestSuite(CustomConverterScenarios.class);
         addTestSuite(CustomScenarios.class);
         addTestSuite(ListViewerScenario.class);
-        // FIXME addTestSuite(MasterDetailScenarios.class);
+        addTestSuite(MasterDetailScenarios.class);
         addTestSuite(NewTableScenarios.class);
         addTestSuite(NPETestScenario.class);
         addTestSuite(PropertyScenarios.class);

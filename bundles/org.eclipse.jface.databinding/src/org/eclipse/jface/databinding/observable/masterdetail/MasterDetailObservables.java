@@ -38,7 +38,7 @@ public class MasterDetailObservables {
 	 *         value of the given master value, behaves like the observable
 	 *         value created by the factory for that current value.
 	 */
-	public static IObservableValue getDetailValue(IObservableValue master,
+	public static IObservableValue detailValue(IObservableValue master,
 			IObservableFactory detailFactory, Object detailType) {
 		return new DetailObservableValue(detailFactory, master, detailType);
 	}
@@ -60,7 +60,7 @@ public class MasterDetailObservables {
 	 *         current value of the given master value, behaves like the
 	 *         observable list created by the factory for that current value.
 	 */
-	public static IObservableList getDetailList(IObservableValue master,
+	public static IObservableList detailList(IObservableValue master,
 			IObservableFactory detailFactory, Object detailElementType) {
 		return new DetailObservableList(detailFactory, master,
 				detailElementType);
@@ -83,7 +83,7 @@ public class MasterDetailObservables {
 	 *         current value of the given master value, behaves like the
 	 *         observable set created by the factory for that current value.
 	 */
-	public static IObservableSet getDetailSet(IObservableValue master,
+	public static IObservableSet detailSet(IObservableValue master,
 			IObservableFactory detailFactory, Object detailElementType) {
 		return new DetailObservableSet(detailFactory, master, detailElementType);
 	}

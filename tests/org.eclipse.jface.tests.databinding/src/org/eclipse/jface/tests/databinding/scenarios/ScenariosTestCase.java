@@ -38,6 +38,7 @@ abstract public class ScenariosTestCase extends TestCase {
 	private boolean disposeDisplay = false;
 	protected Shell shell;
 	protected Text dummyText;
+	protected Realm realm;
 
 	protected Composite getComposite() {
 		return composite;
@@ -105,7 +106,8 @@ abstract public class ScenariosTestCase extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		realm = SWTObservables.getRealm(Display.getDefault());
+		Realm.setDefault(realm);
         
 		composite = new Composite(getShell(), SWT.NONE);
 		composite.setLayout(new FillLayout());
@@ -117,6 +119,7 @@ abstract public class ScenariosTestCase extends TestCase {
 	}
 
 	protected void tearDown() throws Exception {
+		realm = null;
 		getShell().setVisible(false); // same Shell may be reUsed across tests
 		composite.dispose();
 		composite = null;

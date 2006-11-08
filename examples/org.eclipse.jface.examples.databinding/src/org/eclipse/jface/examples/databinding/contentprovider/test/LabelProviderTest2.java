@@ -22,8 +22,8 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.ListViewer;
@@ -130,7 +130,7 @@ public class LabelProviderTest2 {
 			});
 			list.setInput(listOfRenamables);
 
-			selectedRenamable = new SelectionObservableValue(list);
+			selectedRenamable = ViewersObservables.observeSingleSelection(list);
 
 			Composite buttonBar = new Composite(shell, SWT.NONE);
 			{ // Initialize buttonBar

@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -33,7 +33,7 @@ public class SelectionObservableValueTest extends TestCase {
         viewer.setContentProvider(new ArrayContentProvider());
         viewer.setInput(items);
         
-        IObservableValue observable = new SelectionObservableValue(viewer);
+        IObservableValue observable = ViewersObservables.observeSingleSelection(viewer);
         ValueChangeListener listener = new ValueChangeListener();
         observable.addValueChangeListener(listener);
         

@@ -23,10 +23,10 @@ import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -187,35 +187,33 @@ public class TestMasterDetail {
 		TableViewer peopleViewer = new TableViewer(personsTable);
 		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider();
 		peopleViewer.setContentProvider(peopleViewerContent);
-		IObservableMap[] attributeMaps = BeansObservables.observeMaps(peopleViewerContent
-				.getKnownElements(), SimplePerson.class, new String[] {
-				"name", "state" });
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
+				peopleViewerContent.getKnownElements(), SimplePerson.class,
+				new String[] { "name", "state" });
 		peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
 				attributeMaps));
 		peopleViewer.setInput(new WritableList(realm, model.getPersonList(),
 				SimpleModel.class));
 
-		IObservableValue selectedPerson = new SelectionObservableValue(
-				peopleViewer);
+		IObservableValue selectedPerson = ViewersObservables
+				.observeSingleSelection(peopleViewer);
 
 		DataBindingContext dbc = new DataBindingContext(realm);
 		dbc.bindValue(SWTObservables.getText(name, SWT.Modify),
-				MasterDetailObservables.getDetailValue(selectedPerson,
-						BeansObservables.observeDetailValue(realm, "name"), String.class), null);
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"name", String.class), null);
 
-		dbc
-				.bindValue(SWTObservables.getText(address, SWT.Modify),
-						MasterDetailObservables.getDetailValue(selectedPerson,
-								BeansObservables.observeDetailValue(realm, "address"),
-								String.class), null);
+		dbc.bindValue(SWTObservables.getText(address, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"address", String.class), null);
 
 		dbc.bindValue(SWTObservables.getText(city, SWT.Modify),
-				MasterDetailObservables.getDetailValue(selectedPerson,
-						BeansObservables.observeDetailValue(realm, "city"), String.class), null);
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"city", String.class), null);
 
 		dbc.bindValue(SWTObservables.getText(state, SWT.Modify),
-				MasterDetailObservables.getDetailValue(selectedPerson,
-						BeansObservables.observeDetailValue(realm, "state"), String.class), null);
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"state", String.class), null);
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
 		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
@@ -225,9 +223,9 @@ public class TestMasterDetail {
 						.getKnownElements(), SimpleOrder.class, new String[] {
 						"orderNumber", "date" })));
 
-		IObservableList orders = MasterDetailObservables.getDetailList(
-				selectedPerson, BeansObservables.observeDetailList(realm,
-						"orders"), SimpleOrder.class);
+		IObservableList orders = MasterDetailObservables.detailList(
+				selectedPerson, BeansObservables.listFactory(realm, "orders"),
+				SimpleOrder.class);
 		ordersViewer.setInput(orders);
 	}
 

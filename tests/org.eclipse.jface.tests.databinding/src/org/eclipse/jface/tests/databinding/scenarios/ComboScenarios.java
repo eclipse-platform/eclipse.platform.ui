@@ -27,12 +27,12 @@ import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObserva
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -161,7 +161,7 @@ public class ComboScenarios extends ScenariosTestCase {
         // Ensure that the cv's labels are the same as the lodging descriptions
         assertEquals(getColumn(catalog.getLodgings(), "name"), getComboContent());
 
-        getDbc().bindValue(new SelectionObservableValue(cviewer),
+        getDbc().bindValue(ViewersObservables.observeSingleSelection(cviewer),
                 BeansObservables.observeValue(skiAdventure, "defaultLodging"),
                 null);
 
@@ -205,7 +205,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         // column binding
         // Bind the ComboViewer's content to the available lodging
-        IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
+        IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
 
@@ -377,7 +377,7 @@ public class ComboScenarios extends ScenariosTestCase {
         cviewer.setLabelProvider(lodgingLabelProvider); // TODO: need to resolve
         // column binding
         // Bind the ComboViewer's content to the available lodging
-        IObservableList lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog,
+        IObservableList lodgings = MasterDetailObservables.detailList(BeansObservables.observeValue(catalog,
                 "lodgings"), getLodgingsDetailFactory(Lodging.class), Lodging.class);
 
         cviewer.setContentProvider(new ObservableListContentProvider());
@@ -391,7 +391,7 @@ public class ComboScenarios extends ScenariosTestCase {
 
         ComboViewer otherViewer = new ComboViewer(getComposite(), SWT.NONE);
         otherViewer.setLabelProvider(lodgingLabelProvider);
-        lodgings = MasterDetailObservables.getDetailList(BeansObservables.observeValue(catalog, "lodgings"),
+        lodgings = MasterDetailObservables.detailList(BeansObservables.observeValue(catalog, "lodgings"),
                 getLodgingsDetailFactory(Lodging.class),
                 Lodging.class);
 
@@ -404,10 +404,10 @@ public class ComboScenarios extends ScenariosTestCase {
         assertArrayEquals(catalog.getLodgings(), getViewerContent(otherViewer).toArray());
 
         // Bind both selections to the same thing
-        IObservableValue selection = new SelectionObservableValue(cviewer);
+        IObservableValue selection = ViewersObservables.observeSingleSelection(cviewer);
         getDbc().bindValue(selection, BeansObservables.observeValue(skiAdventure, "defaultLodging"), null);
 
-        IObservableValue otherSelection = new SelectionObservableValue(otherViewer);
+        IObservableValue otherSelection = ViewersObservables.observeSingleSelection(otherViewer);
         getDbc().bindValue(otherSelection, BeansObservables.observeValue(skiAdventure, "defaultLodging"), null);
 
         Lodging lodging = catalog.getLodgings()[0];

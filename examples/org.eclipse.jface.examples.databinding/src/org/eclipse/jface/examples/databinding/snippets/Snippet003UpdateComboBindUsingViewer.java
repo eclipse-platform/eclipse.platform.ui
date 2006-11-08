@@ -28,7 +28,7 @@ import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -153,12 +153,12 @@ public class Snippet003UpdateComboBindUsingViewer {
             System.out.println(viewModel.getText());
 
             DataBindingContext dbc = new DataBindingContext();
-            IObservableList list = MasterDetailObservables.getDetailList(BeansObservables.observeValue(viewModel,
+            IObservableList list = MasterDetailObservables.detailList(BeansObservables.observeValue(viewModel,
                     "choices"), getListDetailFactory(), String.class);
             viewer.setContentProvider(new ObservableListContentProvider());
             viewer.setInput(list);
             
-            dbc.bindValue(new SelectionObservableValue(viewer), BeansObservables.observeValue(viewModel, "text"), null);
+            dbc.bindValue(ViewersObservables.observeSingleSelection(viewer), BeansObservables.observeValue(viewModel, "text"), null);
 
             // Open and return the Shell
             shell.pack();

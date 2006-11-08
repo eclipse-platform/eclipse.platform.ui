@@ -115,7 +115,7 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	private Object valueType;
 
-	public final Object doGetValue() {
+	protected final Object doGetValue() {
 		if (dirty) {
 			// This line will do the following:
 			// - Run the calculate method
