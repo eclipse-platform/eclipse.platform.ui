@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 
@@ -78,4 +79,19 @@ public class IPerspectiveRegistryTest extends TestCase {
         for (int i = 0; i < pers.length; i++)
             assertNotNull(pers[i]);
     }
+    
+    public void testDeleteClonedPerspective() {
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		String perspId = page.getPerspective().getId() + ".1";
+		IPerspectiveDescriptor desc = fReg.clonePerspective(perspId, perspId, page.getPerspective());
+		page.setPerspective(desc);
+		
+		assertNotNull(fReg.findPerspectiveWithId(perspId));
+		
+		page.closePerspective(desc, false, false);
+		fReg.deletePerspective(desc);
+		
+		assertNull(fReg.findPerspectiveWithId(perspId));
+	}
 }
