@@ -45,7 +45,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected static final int SAVING = 2;
 	protected ElementTree lastSnap;
 	protected Properties masterTable;
-	
+
 	/**
 	 * A flag indicating that a save operation is occurring.  This is a signal
 	 * that snapshot should not be scheduled if a nested operation occurs during
@@ -107,11 +107,11 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				try {
 					// thread safety: (we need to guarantee that the tree is immutable when computing deltas)
 					// so, the tree inside the saved state needs to be immutable
-					workspace.prepareOperation(workspace.getRoot(), null);
+					workspace.prepareOperation(null, null);
 					workspace.beginOperation(true);
 					state.newTree = workspace.getElementTree();
 				} finally {
-					workspace.endOperation(workspace.getRoot(), false, null);
+					workspace.endOperation(null, false, null);
 				}
 				return state;
 			}
@@ -382,10 +382,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			String endMessage = null;
 			switch (kind) {
 				case ISaveContext.FULL_SAVE :
-					endMessage = DEBUG_FULL_SAVE; 
+					endMessage = DEBUG_FULL_SAVE;
 					break;
 				case ISaveContext.SNAPSHOT :
-					endMessage = DEBUG_SNAPSHOT; 
+					endMessage = DEBUG_SNAPSHOT;
 					break;
 				case ISaveContext.PROJECT_SAVE :
 					endMessage = DEBUG_PROJECT_SAVE + project.getFullPath() + ": "; //$NON-NLS-1$
@@ -406,7 +406,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (Policy.DEBUG_SAVE) {
 			switch (kind) {
 				case ISaveContext.FULL_SAVE :
-					System.out.println(DEBUG_FULL_SAVE + DEBUG_START );
+					System.out.println(DEBUG_FULL_SAVE + DEBUG_START);
 					break;
 				case ISaveContext.SNAPSHOT :
 					System.out.println(DEBUG_SNAPSHOT + DEBUG_START);
