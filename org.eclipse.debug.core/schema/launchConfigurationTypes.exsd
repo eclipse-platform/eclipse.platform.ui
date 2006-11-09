@@ -168,6 +168,13 @@ without consulting with the Platform/Debug team.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="delegateDescription" type="string">
+            <annotation>
+               <documentation>
+                  This attribute provides a description of the associated launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release. EXPERIMENTAL.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -203,7 +210,9 @@ without consulting with the Platform/Debug team.
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a launch configuration type extension point:
+         &lt;p&gt;
+The following is an example of a launch configuration type extension point:
+&lt;/p&gt;
 
 &lt;p&gt;
 &lt;pre&gt;
@@ -213,16 +222,20 @@ without consulting with the Platform/Debug team.
    delegate=&quot;com.example.ExampleLaunchConfigurationDelegate&quot;
    modes=&quot;run,debug&quot;
    name=&quot;Example Application&quot;
-   delegateName=&quot;Example Application Launch Tooling&quot;&gt;
-   &lt;fileExtension extension=&quot;txt&quot; default=&quot;true&quot;/&gt;
-   &lt;fileExtension extension=&quot;gif&quot; default=&quot;false&quot;/&gt;
+   migrationDelegate=&quot;com.example.migrationDelegate&quot;
+   sourceLocatorId=&quot;com.example.sourceLookupDirector&quot;
+   sourcePathComputerId=&quot;com.example.sourcePathComputer&quot;
+   delegateName=&quot;Example Application Launch Tooling&quot;
+   delegateDescription=&quot;This example tooling will run or debug example code.&quot;&gt;
   &lt;/launchConfigurationType&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
+&lt;p&gt;
 In the example above, the specified type of launch configuration supports both run and debug modes. 
-The launch configuration is applicable to .txt and .gif files, and is the default launch configuration for .txt files.
+The specified type also has an associated migration delegate, a source locator id, a source path computer, and launch delegate name and description.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -231,7 +244,11 @@ The launch configuration is applicable to .txt and .gif files, and is the defaul
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;.
+         &lt;p&gt;
+Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;. 
+
+The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully qualified name of a Java class that implements &lt;b&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/b&gt;.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
