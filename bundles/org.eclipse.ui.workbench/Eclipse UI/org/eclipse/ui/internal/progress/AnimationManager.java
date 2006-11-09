@@ -60,9 +60,6 @@ public class AnimationManager {
 
         animationProcessor = new ProgressAnimationProcessor(this);
 
-        listener = getProgressListener();
-        ProgressManager.getInstance().addListener(listener);
-
         animationUpdateJob = new WorkbenchJob(ProgressMessages.AnimationManager_AnimationStart) {
 
             /*
@@ -81,6 +78,10 @@ public class AnimationManager {
             }
         };
         animationUpdateJob.setSystem(true);
+        
+        listener = getProgressListener();
+        ProgressManager.getInstance().addListener(listener);
+
 
     }
 
