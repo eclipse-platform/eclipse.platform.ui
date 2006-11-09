@@ -928,7 +928,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			IDocumentProviderExtension extension= (IDocumentProviderExtension)getDocumentProvider();
 			IStatus status= extension.getStatus(getEditorInput());
 			String pluginId= status.getPlugin();
-			if (status.getCode() != IFileBufferStatusCodes.DERIVED_FILE || (FileBuffers.PLUGIN_ID.equals(pluginId) && EditorsUI.PLUGIN_ID.equals(pluginId)))
+			boolean isDerivedStatus= status.getCode() == IFileBufferStatusCodes.DERIVED_FILE && (FileBuffers.PLUGIN_ID.equals(pluginId) || EditorsUI.PLUGIN_ID.equals(pluginId));
+			if (!isDerivedStatus)
 				return true;
 		}
 
