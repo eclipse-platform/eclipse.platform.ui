@@ -274,7 +274,13 @@ Only one (or neither) of &lt;code&gt;value&lt;/code&gt; or &lt;code&gt;defaultsT
    <element name="colorOverride">
       <annotation>
          <documentation>
-            Allows overriding of colors defined in &lt;code&gt;colorDefinition&lt;/code&gt; elements.  These colors will be applied when the theme is in use.
+            Allows overriding of colors defined in &lt;code&gt;colorDefinition&lt;/code&gt; elements.  These colors will be applied when the theme is in use. The colors that are defined by workbench are:
+
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.jface.preference.JFacePreference.ERROR_COLOR
+&lt;li&gt;org.eclipse.jface.preference.JFacePreference.HYPERLINK_COLOR
+&lt;li&gt;org.eclipse.jface.preference.JFacePreference.ACTIVE_HYPERLINK_COLOR
+&lt;/ul&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -318,7 +324,14 @@ Unlike a &lt;code&gt;colorDefinition&lt;/code&gt;, you may not supply a &lt;code
    <element name="fontOverride">
       <annotation>
          <documentation>
-            Allows overriding of fonts defined in &lt;code&gt;fontDefinition&lt;/code&gt; elements.  These fonts will be applied when the theme is in use.
+            Allows overriding of fonts defined in &lt;code&gt;fontDefinition&lt;/code&gt; elements.  These fonts will be applied when the theme is in use. The fonts that are defined by workbench are:
+
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.jface.resource.JFaceResources.BANNER_FONT
+&lt;li&gt;org.eclipse.jface.resource.JFaceResources.DIALOG_FONT
+&lt;li&gt;org.eclipse.jface.resource.JFaceResources.HEADER_FONT
+&lt;li&gt;org.eclipse.jface.resource.JFaceResources.TEXT_FONT
+&lt;/ul&gt;
          </documentation>
       </annotation>
       <complexType>
