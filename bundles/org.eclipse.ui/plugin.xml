@@ -808,6 +808,12 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.closePerspective" />
       <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.handlers.ClosePartHandler"
+            description="%command.closePart.description"
+            id="org.eclipse.ui.file.closePart"
+            name="%command.closePart.name"/>
+      <command
             name="%command.customizePerspective.name"
             description="%command.customizePerspective.description"
             categoryId="org.eclipse.ui.category.window"
