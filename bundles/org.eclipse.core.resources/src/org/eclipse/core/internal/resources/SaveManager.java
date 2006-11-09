@@ -66,11 +66,21 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected long persistMarkers = 0l;
 	protected long persistSyncInfo = 0l;
 
-	/** in-memory representation of plugins saved state */
-	protected HashMap savedStates;
+	/** 
+	 * In-memory representation of plugins saved state. Maps String (plugin id)-> SavedState.
+	 * This map is accessed from API that is not synchronized, so it requires
+	 * independent synchronization. This is accomplished using a synchronized
+	 * wrapper map.
+	 */
+	protected Map savedStates;
 
-	/** plugins that participate on a workspace save */
-	protected HashMap saveParticipants;
+	/**
+	 * Plugins that participate on a workspace save. Maps (Plugin -> ISaveParticipant).
+	 * This map is accessed from API that is not synchronized, so it requires
+	 * independent synchronization. This is accomplished using a synchronized
+	 * wrapper map.
+	 */
+	protected Map saveParticipants;
 
 	protected final DelayedSnapshotJob snapshotJob;
 
@@ -87,15 +97,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		this.workspace = workspace;
 		this.snapshotJob = new DelayedSnapshotJob(this);
 		snapshotRequested = false;
-		saveParticipants = new HashMap(10);
+		saveParticipants = Collections.synchronizedMap(new HashMap(10));
 	}
 
 	public ISavedState addParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
-		synchronized (saveParticipants) {
-			// If the plugin was already registered as a save participant we return null
-			if (saveParticipants.put(plugin, participant) != null)
-				return null;
-		}
+		// If the plugin was already registered as a save participant we return null
+		if (saveParticipants.put(plugin, participant) != null)
+			return null;
 		String id = plugin.getBundle().getSymbolicName();
 		SavedState state = (SavedState) savedStates.get(id);
 		if (state != null) {
@@ -218,10 +226,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 		//trees for plugin saved states
 		ArrayList trees = new ArrayList();
-		for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
-			SavedState state = (SavedState) i.next();
-			if (state.oldTree != null) {
-				trees.add(state.oldTree);
+		synchronized (savedStates) {
+			for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
+				SavedState state = (SavedState) i.next();
+				if (state.oldTree != null) {
+					trees.add(state.oldTree);
+				}
 			}
 		}
 
@@ -295,11 +305,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * saved states to be written out.
 	 */
 	protected Map computeStatesToSave(Map contexts, ElementTree current) {
-		HashMap result = new HashMap(savedStates.size());
-		for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
-			SavedState state = (SavedState) i.next();
-			if (state.oldTree != null)
-				result.put(state.pluginId, state.oldTree);
+		HashMap result = new HashMap(savedStates.size() * 2);
+		synchronized (savedStates) {
+			for (Iterator i = savedStates.values().iterator(); i.hasNext();) {
+				SavedState state = (SavedState) i.next();
+				if (state.oldTree != null)
+					result.put(state.pluginId, state.oldTree);
+			}
 		}
 		for (Iterator i = contexts.values().iterator(); i.hasNext();) {
 			SaveContext context = (SaveContext) i.next();
@@ -339,8 +351,10 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 
 	public void forgetSavedTree(String pluginId) {
 		if (pluginId == null) {
-			for (Iterator i = savedStates.values().iterator(); i.hasNext();)
-				((SavedState) i.next()).forgetTrees();
+			synchronized (savedStates) {
+				for (Iterator i = savedStates.values().iterator(); i.hasNext();)
+					((SavedState) i.next()).forgetTrees();
+			}
 		} else {
 			SavedState state = (SavedState) savedStates.get(pluginId);
 			if (state != null)
@@ -510,9 +524,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	}
 
 	public void removeParticipant(Plugin plugin) {
-		synchronized (saveParticipants) {
-			saveParticipants.remove(plugin);
-		}
+		saveParticipants.remove(plugin);
 	}
 
 	protected void removeUnusedSafeTables() {
@@ -882,7 +894,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
-			savedStates = new HashMap(10);
+			savedStates = Collections.synchronizedMap(new HashMap(10));
 			return;
 		}
 		try {
@@ -1140,7 +1152,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Should only be used for read purposes.
 	 */
 	void setPluginsSavedState(HashMap savedStates) {
-		this.savedStates = savedStates;
+		this.savedStates = Collections.synchronizedMap(savedStates);
 	}
 
 	protected void setSaveNumber(String pluginId, int number) {
