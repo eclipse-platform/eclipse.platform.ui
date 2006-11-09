@@ -733,11 +733,8 @@ public class OverviewRuler implements IOverviewRuler {
 			if (d != null) {
 				d.asyncExec(new Runnable() {
 					public void run() {
-						long start= System.currentTimeMillis();
 						redraw();
 						updateHeader();
-						long end= System.currentTimeMillis();
-						System.out.println(end-start);
 					}
 				});
 			}
