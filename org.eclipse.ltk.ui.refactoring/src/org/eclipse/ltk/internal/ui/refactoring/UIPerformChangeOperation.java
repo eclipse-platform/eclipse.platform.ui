@@ -15,10 +15,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -72,7 +72,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					} catch(CoreException e) {
 						exception[0]= e;
 					} finally {
-						Platform.getJobManager().transferRule(rule, callerThread);
+						Job.getJobManager().transferRule(rule, callerThread);
 					}
 				}
 				public void handleException(Throwable e) {
@@ -84,7 +84,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 					SafeRunner.run(safeRunnable);
 				}
 			};
-			Platform.getJobManager().transferRule(rule, fDisplay.getThread());
+			Job.getJobManager().transferRule(rule, fDisplay.getThread());
 			fDisplay.syncExec(r);
 			if (exception[0] != null) {
 				if (exception[0] instanceof CoreException) {

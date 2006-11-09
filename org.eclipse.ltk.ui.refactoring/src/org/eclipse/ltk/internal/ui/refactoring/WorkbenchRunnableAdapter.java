@@ -16,8 +16,8 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -76,7 +76,7 @@ public class WorkbenchRunnableAdapter implements IRunnableWithProgress, IThreadL
 	 */
 	public void threadChange(Thread thread) {
 		if (fTransfer)
-			Platform.getJobManager().transferRule(fRule, thread);
+			Job.getJobManager().transferRule(fRule, thread);
 	}
 
 	/*

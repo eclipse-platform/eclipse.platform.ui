@@ -14,10 +14,18 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.IJobManager;
+import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
+import org.eclipse.ltk.core.refactoring.Refactoring;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
@@ -28,14 +36,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
-
-import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
-import org.eclipse.ltk.core.refactoring.Refactoring;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import org.eclipse.ltk.internal.ui.refactoring.ExceptionHandler;
-import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
-import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
 
 /**
  * A helper class to open a refactoring wizard dialog. The class first checks
@@ -110,7 +110,7 @@ public class RefactoringWizardOpenOperation {
 	public int run(final Shell parent, final String dialogTitle) throws InterruptedException {
 		Assert.isNotNull(dialogTitle);
 		final Refactoring refactoring= fWizard.getRefactoring();
-		final IJobManager manager= Platform.getJobManager();
+		final IJobManager manager= Job.getJobManager();
 		final int[] result= new int[1];
 		final InterruptedException[] canceled= new InterruptedException[1];
 		Runnable r= new Runnable() {
