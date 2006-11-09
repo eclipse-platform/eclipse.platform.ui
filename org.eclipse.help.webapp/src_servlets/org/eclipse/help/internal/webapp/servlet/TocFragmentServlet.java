@@ -1,0 +1,219 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.help.internal.webapp.servlet;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.eclipse.help.IToc;
+import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.webapp.data.TocData;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
+
+/*
+ * Creates xml representing selected parts of one or more TOCs  depending on the parameters
+ * With no paramters the head of each toc is included
+ * With parameter "href" the node and all its ancestors and siblings is included, corresponds to show in toc 
+ * With parameter "toc" and optionally "path" the node, its ancestors and children are included
+ */
+public class TocFragmentServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
+	private static Map locale2Response = new WeakHashMap();
+
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		String locale = UrlUtil.getLocale(req, resp);
+		String parent = req.getParameter("parent"); //$NON-NLS-1$
+		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+		TocData data = new TocData(this.getServletContext(), req, resp);	
+		Serializer serializer = new Serializer(data);
+		String response = serializer.generateTreeXml(locale, parent);
+		locale2Response.put(locale, response);
+		resp.getWriter().write(response);
+	}
+	
+	/*
+	 * Class which creates teh xml file based upon the request parameters
+	 */
+	private class Serializer {
+		
+		private TocData tocData;
+		private StringBuffer buf;
+		private int requestKind;
+		private static final int REQUEST_SHOW_IN_TOC = 1;      // Show an element based on its href
+		private static final int REQUEST_SHOW_TOCS = 2;        // Show all the tocs but not their children
+		private static final int REQUEST_SHOW_CHILDREN = 3;    // Show the children of a node
+
+		public Serializer(TocData data) {
+			tocData = data;
+			buf = new StringBuffer();
+			if (tocData.getTopicPath() != null) {
+				requestKind = REQUEST_SHOW_IN_TOC;
+			} else if (tocData.getSelectedToc() == -1) {
+				requestKind = REQUEST_SHOW_TOCS;
+			} else {
+				requestKind = REQUEST_SHOW_CHILDREN;
+			}
+		}
+			
+		public String generateTreeXml(String locale, String parent) {
+			buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
+			buf.append("<tree_data>\n"); //$NON-NLS-1$
+			
+			ITopic[] topicPath = tocData.getTopicPath();
+	
+			int selectedToc = tocData.getSelectedToc();
+			// Iterate over all tocs - if there is a selected toc only generate that
+			// toc, otherwise generate the root of every toc.
+			for (int toc=0; toc< tocData.getTocCount(); toc++) {
+				boolean shouldLoad = requestKind == REQUEST_SHOW_TOCS || toc == selectedToc;
+				if(!tocData.isEnabled(toc)){
+					shouldLoad = false;
+				} 
+	            if (shouldLoad) {
+	            	boolean isSelected = false; // Should this node be selected in the tree
+	            	if (requestKind == REQUEST_SHOW_TOCS) {
+	            		isSelected = toc == 0;
+	            	} else if (requestKind == REQUEST_SHOW_CHILDREN) {
+	            		isSelected = tocData.getRootPath() == null;
+	            	}
+					serializeToc(tocData.getTocs()[toc], topicPath, isSelected);
+				}
+			}
+			buf.append("</tree_data>\n"); //$NON-NLS-1$
+			return buf.toString();
+		}
+	
+		private void serializeToc(IToc toc, ITopic[] topicPath, boolean isSelected) {
+			ITopic[] topics = tocData.getEnabledSubtopics(toc);
+			if (topics.length <= 0) {
+				// do not generate toc when there are no leaf topics
+				return;
+			}
+			
+			if (requestKind == REQUEST_SHOW_CHILDREN) {
+				topicPath = getTopicPathFromRootPath(toc);
+			}
+			
+			buf.append("<node"); //$NON-NLS-1$
+			if (toc.getLabel() != null) { 
+				buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(toc.getLabel()) + '"'); //$NON-NLS-1$
+			}
+			buf.append('\n' + "      id=\"" + XMLGenerator.xmlEscape(toc.getHref()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+	
+			buf.append('\n' + "      image=\"images/toc_closed.gif\""); //$NON-NLS-1$
+			
+			if (isSelected) {
+				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
+			}
+			
+			buf.append(">\n"); //$NON-NLS-1$
+			
+			if (requestKind != REQUEST_SHOW_TOCS) { 
+				serializeChildTopics(topics, topicPath, "", isSelected); //$NON-NLS-1$
+			}
+			buf.append("</node>\n"); //$NON-NLS-1$
+			
+		}
+
+		private ITopic[] getTopicPathFromRootPath(IToc toc) {
+			ITopic[] topicPath;
+			// Determine the topicPath from the path passed in as a parameter
+			int[] rootPath = tocData.getRootPath();
+			if (rootPath == null) {
+				return null;
+			}
+			int pathLength = rootPath.length;
+			topicPath = new ITopic[pathLength];
+			ITopic[] children = toc.getTopics();
+			for (int i = 0; i < pathLength; i++) {
+				int index = rootPath[i];
+				if (index < children.length) {
+					topicPath[i] = children[index];
+					children = children[index].getSubtopics();
+				} else {
+					return null;  // Mismatch between expexted and actual children
+				}
+			}
+			return topicPath;
+		}
+	
+		private void serializeTopic(ITopic topic, ITopic[] topicPath, boolean isSelected, String parentPath)  {
+		    ITopic[] subtopics = topic.getSubtopics();
+		    buf.append("<node"); //$NON-NLS-1$
+			if (topic.getLabel() != null) { 
+				buf.append('\n'	+ "      title=\"" + XMLGenerator.xmlEscape(topic.getLabel()) + '"'); //$NON-NLS-1$
+			}
+	
+			buf.append('\n' + "      id=\"" + parentPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			if (topic.getHref() != null) {
+				buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape( //$NON-NLS-1$
+						UrlUtil.getHelpURL(topic.getHref())) + '"');
+			}
+			if (subtopics.length == 0 ) {
+				buf.append('\n' + "      is_leaf=\"true\"" ); //$NON-NLS-1$
+			}
+			if (isSelected) {
+				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
+			}
+			String icon; 
+			if (subtopics.length == 0) {
+				icon = "topic.gif"; //$NON-NLS-1$
+			} else {
+				icon = "container_obj.gif"; //$NON-NLS-1$
+			}
+			buf.append('\n' + "      image=\"images/" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			buf.append(">\n"); //$NON-NLS-1$
+			serializeChildTopics(subtopics, topicPath, parentPath, isSelected);
+			buf.append("</node>\n"); //$NON-NLS-1$	
+		}
+	
+		private void serializeChildTopics(ITopic[] childTopics, ITopic[] topicPath, String parentPath, boolean parentIsSelected) {
+			if (parentIsSelected && requestKind == REQUEST_SHOW_CHILDREN) {
+				// Show the children of this node
+				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
+					serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+				}
+			} else if (topicPath != null) {
+				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
+					if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
+						ITopic[] newPath = null;
+						if (topicPath.length > 1) {
+							newPath = new ITopic[topicPath.length - 1];
+							System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
+						}
+				        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
+					} else {
+						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+					}
+				}
+			} 
+		}
+
+		private String addSuffix(String parentPath, int subtopic) {
+			if (parentPath.length() == 0) {
+				return parentPath + subtopic;
+			} 
+			return parentPath + '_' + subtopic;
+		}
+	}
+
+}

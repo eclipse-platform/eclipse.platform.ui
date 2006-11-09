@@ -174,6 +174,8 @@ public final class Messages extends NLS {
 	public static String HelpPreferencePage_olabel;
 	public static String HelpPreferencePage_openInPlace;
 	public static String HelpPreferencePage_openInEditor;
+	public static String HelpPreferencePage_useNewTocView;
+	
 	public static String ReusableHelpPart_internalBrowserTitle;
 	public static String ReusableHelpPart_internalWebBrowserError;
 	public static String ScopeSet_errorLoading;

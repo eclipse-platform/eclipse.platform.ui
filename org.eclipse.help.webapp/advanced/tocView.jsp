@@ -11,8 +11,13 @@
 <%@ include file="header.jsp"%>
 
 <% 
+    RequestData requestData = new RequestData(application,request, response);
+	WebappPreferences prefs = requestData.getPrefs(); 
+	if (prefs.useNewTocView()) {
+		request.getRequestDispatcher("lazyTocView.jsp").forward(request, response);
+		return;
+	}
 	TocData data = new TocData(application,request, response);
-	WebappPreferences prefs = data.getPrefs();
 %>
 
 <html>

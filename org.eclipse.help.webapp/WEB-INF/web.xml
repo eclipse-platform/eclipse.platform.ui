@@ -26,6 +26,11 @@
         <servlet-name>toc</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.TocServlet</servlet-class>
     </servlet>
+    
+    <servlet>
+        <servlet-name>tocfragment</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.TocFragmentServlet</servlet-class>
+    </servlet>
 
     <servlet>
         <servlet-name>index</servlet-name>
@@ -87,6 +92,11 @@
     <servlet-mapping>
         <servlet-name>toc</servlet-name>
         <url-pattern>/toc/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>tocfragment</servlet-name>
+        <url-pattern>/tocfragment/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

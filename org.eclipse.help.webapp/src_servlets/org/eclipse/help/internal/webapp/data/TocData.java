@@ -195,7 +195,7 @@ public class TocData extends ActivitiesData {
 	 * to that topic in reverse order (from the topic up).
 	 */
 	private static List getTopicPathInToc(ITopic topicToFind, ITopic topic) {
-		if (topic == topicToFind) {
+		if (topic.getLabel().equals(topicToFind.getLabel())) {
 			// found it. start the list to be created recursively
 			List path = new ArrayList();
 			path.add(topic);
@@ -586,7 +586,7 @@ public class TocData extends ActivitiesData {
 	 * @param element ITopic or IToc
 	 * @return ITopic[]
 	 */
-	private ITopic[] getEnabledSubtopics(Object element) {
+	public ITopic[] getEnabledSubtopics(Object element) {
 		List topics = getEnabledSubtopicList(element);
 		return (ITopic[])topics.toArray(new ITopic[topics.size()]);
 	}
@@ -672,5 +672,13 @@ public class TocData extends ActivitiesData {
             }
         }
 
+    }
+    
+    public ITopic[] getTopicPath() {
+    	return topicPath;
+    }
+    
+    public int[] getRootPath() {
+    	return rootPath;
     }
 }

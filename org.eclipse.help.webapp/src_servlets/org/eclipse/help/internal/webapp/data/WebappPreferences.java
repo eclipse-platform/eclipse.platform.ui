@@ -135,4 +135,8 @@ public class WebappPreferences {
 	public void setHighlightDefault(boolean highlight) {
 		prefs.setValue("default_highlight", highlight); //$NON-NLS-1$
 	}
+	
+	public boolean useNewTocView() {
+        return prefs.getBoolean("newTocView"); //$NON-NLS-1$
+	}
 }
