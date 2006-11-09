@@ -35,6 +35,9 @@ public class ProgressMonitorWrapperTest extends RuntimeTest {
 		return new TestSuite(ProgressMonitorWrapperTest.class);
 	}
 
+	/**
+	 * @deprecated to suppress deprecation warnings
+	 */
 	public void testProgressMonitorWrapper() {
 		NullProgressMonitor nullMonitor = new NullProgressMonitor();
 		SubProgressMonitor wrapped = new SubProgressMonitor(nullMonitor, 10);

@@ -33,6 +33,9 @@ public class AllTests extends TestCase {
 		suite.addTest(PreferenceExportTest.suite());
 		suite.addTest(PreferenceForwarderTest.suite());
 		suite.addTest(PreferencesTest.suite());
+		suite.addTestSuite(SubMonitorTest.class);
+		suite.addTestSuite(SubProgressTest.class);
+		suite.addTestSuite(SubMonitorSmallTicksTest.class);
 		suite.addTest(ProgressMonitorWrapperTest.suite());
 		suite.addTest(QualifiedNameTest.suite());
 		suite.addTest(StatusTest.suite());

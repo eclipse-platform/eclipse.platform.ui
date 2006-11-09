@@ -1,0 +1,494 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.runtime;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
+
+/**
+ * 
+ */
+public class SubMonitorTest extends TestCase {
+
+	private long startTime;
+	/**
+	 * <p>Number of calls to worked() within each test. This was chosen to be significantly larger 
+	 * than 1000 to test how well the monitor can optimize unnecessary resolution
+	 * in reported progress, but small enough that the test completes in a reasonable
+	 * amount of time.</p>
+	 * 
+	 * <p>Note: changing this constant will invalidate comparisons with old performance data.</p>
+	 */
+	public static final int PROGRESS_SIZE = SubProgressTest.PROGRESS_SIZE;
+	/**
+	 * <p>Depth of the chain chain of progress monitors. In all of the tests, we create
+	 * a nested chain of progress monitors rathar than a single monitor, to test its
+	 * scalability under recursion. We pick a number representing a moderately deep
+	 * recursion, but is still small enough that it could correspond to a real call stack
+	 * without causing overflow.</p>
+	 * 
+	 * <p>Note: changing this constant will invalidate comparisons with old performance data.</p>
+	 */
+	public static final int CHAIN_DEPTH = SubProgressTest.CHAIN_DEPTH;
+
+	public SubMonitorTest() {
+		super();
+	}
+
+	public SubMonitorTest(String name) {
+		super(name);
+	}
+
+	protected void setUp() throws Exception {
+		startTime = System.currentTimeMillis();
+		super.setUp();
+	}
+
+	protected void tearDown() throws Exception {
+		long endTime = System.currentTimeMillis();
+		reportPerformance(getClass().getName(), getName(), startTime, endTime);
+		super.tearDown();
+	}
+
+	/** 
+	 * Reports progress by iterating over a loop of the given size, reporting 1 progress 
+	 * at each iteration. Simulates the progress of worked(int) in loops.
+	 * 
+	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
+	 * @param loopSize size of the loop
+	 */
+	private static void reportWorkInLoop(IProgressMonitor monitor, int loopSize) {
+		monitor.beginTask("", loopSize);
+		for (int i = 0; i < loopSize; i++) {
+			monitor.worked(1);
+		}
+	}
+
+	/** 
+	 * Reports progress by iterating over a loop of the given size, reporting 1 progress 
+	 * at each iteration. Simulates the progress of internalWorked(double) in loops.
+	 * 
+	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
+	 * @param loopSize size of the loop
+	 */
+	private static void reportFloatingPointWorkInLoop(IProgressMonitor monitor, int loopSize) {
+		monitor.beginTask("", loopSize);
+		for (int i = 0; i < loopSize; i++) {
+			monitor.internalWorked(1.0d);
+		}
+	}
+
+	/**
+	 * Ensures that we don't lose any progress when calling setWorkRemaining  
+	 */
+	public void testSetWorkRemaining() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitor mon = SubMonitor.convert(monitor, 0);
+
+		for (int i = 1000; i >= 0; i--) {
+			mon.setWorkRemaining(i);
+			mon.internalWorked(0.5);
+
+			mon.setWorkRemaining(i);
+			mon.internalWorked(0.5);
+		}
+
+		monitor.done();
+		monitor.assertOptimal();
+	}
+
+	/**
+	 * Tests that SubMonitor.done() will clean up after an unconsumed child
+	 * that was created with the explicit constructor
+	 */
+	public void testCleanupConstructedChildren() {
+		TestProgressMonitor top = new TestProgressMonitor();
+
+		SubMonitor monitor = SubMonitor.convert(top, 1000);
+		monitor.beginTask("", 1000);
+
+		monitor.newChild(500);
+		SubMonitor child2 = monitor.newChild(100);
+
+		child2.done();
+
+		Assert.assertEquals("Ensure that done() reports unconsumed progress, even if beginTask wasn't called", 600.0, top.getTotalWork(), 0.01d);
+
+		SubMonitor child3 = monitor.newChild(100);
+
+		monitor.done();
+
+		Assert.assertEquals("Ensure that done() cleans up after unconsumed children that were created by their constructor", 1000.0, top.getTotalWork(), 0.01d);
+
+		child3.worked(100);
+
+		Assert.assertEquals("Ensure that children can't report any progress if their parent has completed", 1000.0, top.getTotalWork(), 0.01d);
+	}
+
+	/**
+	 * Tests SubMonitor under typical usage. This is the same
+	 * as the performance test as the same name, but it verifies correctness
+	 * rather than performance.
+	 */
+	public void testTypicalUsage() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitorTest.runTestTypicalUsage(monitor);
+		monitor.assertOptimal();
+	}
+
+	/**
+	 * Tests creating a tree of SubMonitors. This is the same
+	 * as the performance test as the same name, but it verifies correctness
+	 * rather than performance. 
+	 */
+	public void testCreateTree() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitorTest.runTestCreateTree(monitor);
+		monitor.assertOptimal();
+	}
+
+	/**
+	 * Ensures that SubMonitor won't report more than 100% progress
+	 * when a child is created with more than the amount of available progress.
+	 */
+	public void testChildOverflow() {
+		TestProgressMonitor top = new TestProgressMonitor();
+
+		SubMonitor mon1 = SubMonitor.convert(top, 1000);
+		Assert.assertEquals(0.0, top.getTotalWork(), 0.1d);
+
+		SubMonitor child2 = mon1.newChild(700);
+		child2.done();
+
+		Assert.assertEquals(700.0, top.getTotalWork(), 0.1d);
+
+		SubMonitor child3 = mon1.newChild(700);
+		child3.done();
+
+		Assert.assertEquals("The reported work should not exceed 1000", 1000.0, top.getTotalWork(), 0.1d);
+
+		mon1.done();
+
+		top.done();
+	}
+
+	/**
+	 * Ensures that SubMonitor doesn't propogate redundant progress to its parent.
+	 */
+	public void testRedundantWork() {
+		TestProgressMonitor top = new TestProgressMonitor();
+
+		SubMonitor monitor = SubMonitor.convert(top, 10000);
+		for (int i = 0; i < 10000; i++) {
+			monitor.setTaskName("Task name");
+			monitor.subTask("Subtask");
+			monitor.worked(0);
+			monitor.internalWorked(0.0);
+
+			// Report some real work
+			monitor.worked(1);
+		}
+
+		top.done();
+		top.assertOptimal();
+	}
+
+	public void testCancellation() {
+		TestProgressMonitor root = new TestProgressMonitor();
+
+		SubMonitor spm = SubMonitor.convert(root, 1000);
+
+		// Test that changes at the root propogate to the child
+		root.setCanceled(true);
+		Assert.assertTrue(spm.isCanceled());
+		root.setCanceled(false);
+		Assert.assertFalse(spm.isCanceled());
+
+		// Test that changes to the child propogate to the root
+		spm.setCanceled(true);
+		Assert.assertTrue(root.isCanceled());
+		spm.setCanceled(false);
+		Assert.assertFalse(root.isCanceled());
+
+		// Test a chain of depth 2
+
+		SubMonitor spm2 = spm.newChild(1000);
+
+		// Test that changes at the root propogate to the child
+		root.setCanceled(true);
+		Assert.assertTrue(spm2.isCanceled());
+		root.setCanceled(false);
+		Assert.assertFalse(spm2.isCanceled());
+
+		// Test that changes to the child propogate to the root
+		spm2.setCanceled(true);
+		Assert.assertTrue(root.isCanceled());
+		spm2.setCanceled(false);
+		Assert.assertFalse(root.isCanceled());
+	}
+
+	public void testNullParent() {
+		// Touch everything in the public API to ensure we don't throw an NPE
+		SubMonitor mon = SubMonitor.convert(null, 1000);
+		mon.setWorkRemaining(500);
+		mon.worked(250);
+		mon.newChild(200);
+
+		mon.internalWorked(50.0);
+		Assert.assertFalse(mon.isCanceled());
+		mon.setCanceled(true);
+		Assert.assertTrue(mon.isCanceled());
+		mon.subTask("subtask");
+		mon.setTaskName("taskname");
+		mon.done();
+	}
+
+	/**
+	 * Tests the automatic cleanup when progress monitors are created via their constructor
+	 */
+	public void testNewChild() {
+		TestProgressMonitor top = new TestProgressMonitor();
+		SubMonitor mon = SubMonitor.convert(top, 1000);
+
+		Assert.assertEquals("Ensure no work has been reported yet", 0.0, top.getTotalWork(), 0.01d);
+
+		mon.newChild(100);
+
+		Assert.assertEquals("Ensure no work has been reported yet", 0.0, top.getTotalWork(), 0.01d);
+
+		mon.newChild(200);
+
+		Assert.assertEquals("Ensure monitor1 was collected", 100.0, top.getTotalWork(), 0.01d);
+
+		// The following behavior is necessary to make it possible to pass multiple progress monitors as
+		// arguments to the same method.
+		Assert.assertEquals("Monitor2 should not have been collected yet (when the public constructor is used, collection should happen when beginTask() or setWorkRemaining() is called.", 100.0, top.getTotalWork(), 0.01d);
+
+		SubMonitor monitor4 = mon.newChild(300);
+
+		Assert.assertEquals("Now monitor2 should be collected", 300.0, top.getTotalWork(), 0.01d);
+
+		monitor4.done();
+
+		Assert.assertEquals("Now monitor4 should be collected", 600.0, top.getTotalWork(), 0.01d);
+
+		mon.newChild(10);
+
+		Assert.assertEquals("Creating a child when there are no active children should not report any work", 600.0, top.getTotalWork(), 0.01d);
+
+		mon.worked(20);
+
+		// Note: the following behavior is somewhat arbitrary... but we test it to make sure we're consistent
+		Assert.assertEquals("Reporting work should not cause the active child to be destroyed", 620.0, top.getTotalWork(), 0.01d);
+
+		mon.newChild(10);
+
+		Assert.assertEquals("monitor5 should have been cleaned up", 630.0, top.getTotalWork(), 0.01d);
+
+		mon.internalWorked(60);
+
+		Assert.assertEquals("Calling internalWorked should not clean up active children", 690.0, top.getTotalWork(), 0.01d);
+
+		// Now create a chain of undisposed children
+		SubMonitor monitor7 = mon.newChild(100);
+
+		SubMonitor monitor8 = monitor7.newChild(40);
+
+		monitor8.newChild(10);
+
+		mon.done();
+
+		Assert.assertEquals("Calling done should clean up unused work", 1000.0, top.getTotalWork(), 0.01d);
+	}
+
+	/**
+	 * Tests creating progress monitors under a custom progress monitor
+	 * parent. This is the same as the performance test as the same name, 
+	 * but it verifies correctness rather than performance.
+	 */
+	public void testCreateChildrenUnderCustomParent() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		createChildrenUnderParent(monitor, SubMonitorTest.PROGRESS_SIZE);
+
+		// We don't actually expect the progress to be optimal in this case since the progress monitor wouldn't
+		// know what it was rooted under and would have had to report more progress than necessary... but we
+		// should be able to check that there was no redundancy.
+
+		Assert.assertTrue(monitor.getRedundantWorkCalls() == 0);
+		Assert.assertTrue(monitor.getWorkCalls() >= 100);
+	}
+
+	/**
+	 * Creates a chain of n nested progress monitors. Calls beginTask on all monitors
+	 * except for the innermost one.
+	 * 
+	 * @param parent
+	 * @param depth
+	 * @return the innermost SubMonitor
+	 */
+	public static SubMonitor createSubProgressChain(SubMonitor parent, int depth) {
+		depth--;
+		parent.beginTask("", 100);
+		SubMonitor current = parent;
+		while (depth > 0) {
+			current.setWorkRemaining(100);
+			current = current.newChild(100);
+			depth--;
+		}
+		return current;
+	}
+
+	/**
+	 * Creates a balanced binary tree of progress monitors, without calling worked. Tests
+	 * progress monitor creation and cleanup time, and ensures that excess progress is
+	 * being collected when IProgressMonitor.done() is called.
+	 * 
+	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
+	 * @param loopSize total size of the recursion tree
+	 */
+	public static void createBalancedTree(IProgressMonitor parent, int loopSize) {
+		SubMonitor monitor = SubMonitor.convert(parent, 100);
+		int leftBranch = loopSize / 2;
+		int rightBranch = loopSize - leftBranch;
+
+		if (leftBranch > 1) {
+			createBalancedTree(monitor.newChild(50), leftBranch);
+		}
+
+		if (rightBranch > 1) {
+			createBalancedTree(monitor.newChild(50), rightBranch);
+		}
+	}
+
+	/**
+	 * <p>The innermost loop for the create tree test. We make this a static method so
+	 * that it can be used both in this performance test and in the correctness test.</p>
+	 * 
+	 * <p>The performance test ensures that it is fast to create a lot of progress monitors.</p>
+	 * 
+	 * <p>The correctness test ensures that creating and destroying SubMonitors
+	 * is enough to report progress, even if worked(int) and worked(double) are never called</p>
+	 */
+	public static void runTestCreateTree(IProgressMonitor monitor) {
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		SubMonitor nestedMonitor = SubMonitorTest.createSubProgressChain(progress, SubMonitorTest.CHAIN_DEPTH);
+
+		SubMonitorTest.createBalancedTree(nestedMonitor, SubMonitorTest.PROGRESS_SIZE);
+
+		progress.done();
+		monitor.done();
+	}
+
+	/**
+	 * Reports progress by creating a balanced binary tree of progress monitors. Simulates 
+	 * mixed usage of IProgressMonitor in a typical usage. Calls isCanceled once each time work 
+	 * is reported. Half of the work is reported using internalWorked and half is reported using worked,
+	 * to simulate mixed usage of the progress monitor.
+	 * 
+	 * @param monitor progress monitor (callers are responsible for calling done() if necessary)
+	 * @param loopSize total size of the recursion tree
+	 */
+	public static void reportWorkInBalancedTree(IProgressMonitor parent, int loopSize) {
+		SubMonitor monitor = SubMonitor.convert(parent, 100);
+		int leftBranch = loopSize / 2;
+		int rightBranch = loopSize - leftBranch;
+
+		if (leftBranch > 1) {
+			reportWorkInBalancedTree(monitor.newChild(50), leftBranch);
+		} else {
+			monitor.worked(25);
+			monitor.internalWorked(25.0);
+			monitor.isCanceled();
+		}
+
+		if (rightBranch > 1) {
+			reportWorkInBalancedTree(monitor.newChild(50), rightBranch);
+		} else {
+			monitor.worked(25);
+			monitor.internalWorked(25.0);
+			monitor.isCanceled();
+		}
+	}
+
+	/**
+	 * The innermost loop for the recursion test. We make this a static method so
+	 * that it can be used both in this performance test and in the correctness test.
+	 */
+	public static void runTestTypicalUsage(IProgressMonitor monitor) {
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		SubMonitor nestedMonitor = SubMonitorTest.createSubProgressChain(progress, SubMonitorTest.CHAIN_DEPTH);
+
+		SubMonitorTest.reportWorkInBalancedTree(nestedMonitor, SubMonitorTest.PROGRESS_SIZE);
+
+		progress.done();
+		monitor.done();
+	}
+
+	/**
+	 * Tests SubMonitor.worked. This is the same
+	 * as the performance test as the same name, but it verifies correctness
+	 * rather than performance.
+	 */
+	public void testWorked() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		SubMonitor nestedMonitor = createSubProgressChain(progress, SubProgressTest.CHAIN_DEPTH);
+
+		reportWorkInLoop(nestedMonitor, SubProgressTest.PROGRESS_SIZE);
+
+		progress.done();
+		monitor.done();
+
+		monitor.assertOptimal();
+	}
+
+	/**
+	 * Tests SubMonitor.worked. This is the same
+	 * as the performance test as the same name, but it verifies correctness
+	 * rather than performance.
+	 */
+	public void testInternalWorked() {
+		TestProgressMonitor monitor = new TestProgressMonitor();
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		SubMonitor nestedMonitor = createSubProgressChain(progress, SubProgressTest.CHAIN_DEPTH);
+
+		reportFloatingPointWorkInLoop(nestedMonitor, SubProgressTest.PROGRESS_SIZE);
+
+		progress.done();
+		monitor.done();
+
+		monitor.assertOptimal();
+	}
+
+	/**
+	 * Creates and destroys the given number of child progress monitors under the given parent.
+	 * 
+	 * @param monitor monitor to create children under. The caller must call done on this monitor
+	 * if necessary. 
+	 * @param progressSize total number of children to create.
+	 */
+	private static void createChildrenUnderParent(IProgressMonitor parent, int progressSize) {
+		SubMonitor monitor = SubMonitor.convert(parent, progressSize);
+
+		for (int count = 0; count < progressSize; count++) {
+			SubMonitor mon = monitor.newChild(1);
+			mon.beginTask("", 100);
+		}
+	}
+
+	static public void reportPerformance(String className, String methodName, long startTime, long endTime) {
+		if (false) // enable to see performance results for the progress monitors
+			System.out.println(className + "#" + methodName + " elapsed time: " + (endTime - startTime) / 1000.0d + "s");
+	}
+
+}
