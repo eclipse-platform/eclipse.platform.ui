@@ -38,11 +38,13 @@ public class InfiniteProgress extends ProgressMonitorWrapper {
 	protected InfiniteProgress(IProgressMonitor monitor) {
 		super(monitor);
 	}
+
 	public void beginTask(String name, int work) {
 		super.beginTask(name, work);
 		this.totalWork = work;
 		this.halfWay = totalWork / 2;
 	}
+
 	public void worked(int work) {
 		if (--nextProgress <= 0) {
 			//we have exhausted the current increment, so report progress

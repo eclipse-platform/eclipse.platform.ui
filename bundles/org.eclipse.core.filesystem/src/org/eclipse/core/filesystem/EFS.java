@@ -57,7 +57,7 @@ public class EFS {
 	 * @see IFileStore#openOutputStream(int, IProgressMonitor)
 	 */
 	public static final int APPEND = 1 << 0;
-	
+
 	/**
 	 * Option flag constant (value 1 &lt;&lt;1) indicating that existing
 	 * files may be overwritten.
@@ -66,7 +66,7 @@ public class EFS {
 	 * @see IFileStore#move(IFileStore, int, IProgressMonitor)
 	 */
 	public static final int OVERWRITE = 1 << 1;
-	
+
 	/**
 	 * Option flag constant (value 1 &lt;&lt;2) indicating that an
 	 * operation acts on a single file or directory, and not its parents
@@ -122,7 +122,7 @@ public class EFS {
 	 * @see IFileInfo#setAttribute(int, boolean)
 	 */
 	public static final int ATTRIBUTE_EXECUTABLE = 1 << 2;
-	
+
 	/**
 	 * Attribute constant (value 1 &lt;&lt;3) indicating that a
 	 * file is an archive.
@@ -151,7 +151,6 @@ public class EFS {
 	 */
 	public static final String SCHEME_FILE = "file"; //$NON-NLS-1$
 
-	
 	/**
 	 * Scheme constant (value "null") indicating the null file system scheme.
 	 * @see EFS#getNullFileSystem()
@@ -162,7 +161,6 @@ public class EFS {
 	 * Status code definitions
 	 */
 	// Errors [266-298]
-
 	/** Status code constant (value 268) indicating a store unexpectedly 
 	 * exists on the file system.
 	 * Severity: error. Category: file system.
@@ -255,7 +253,7 @@ public class EFS {
 	public static IFileSystem getFileSystem(String scheme) throws CoreException {
 		return InternalFileSystemCore.getInstance().getFileSystem(scheme);
 	}
-	
+
 	/**
 	 * Returns the local file system.
 	 * 
@@ -264,7 +262,7 @@ public class EFS {
 	public static IFileSystem getLocalFileSystem() {
 		return InternalFileSystemCore.getInstance().getLocalFileSystem();
 	}
-	
+
 	/**
 	 * Returns the null file system.  The null file system can be used
 	 * to represent a non-existent or unresolved file system. An example
@@ -279,7 +277,7 @@ public class EFS {
 	public static IFileSystem getNullFileSystem() {
 		return InternalFileSystemCore.getInstance().getNullFileSystem();
 	}
-	
+
 	/**
 	 * Returns the file store corresponding to the provided URI.
 	 * 

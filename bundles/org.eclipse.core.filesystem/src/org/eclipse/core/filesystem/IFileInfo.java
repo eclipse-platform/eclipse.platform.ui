@@ -56,7 +56,7 @@ public interface IFileInfo extends Comparable, Cloneable {
 	 * <p>
 	 * The time is represented as the number of Universal Time (UT) 
 	 * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
-     * </p>
+	 * </p>
 	 * 
 	 * @return the last modified time for this file, or {@link EFS#NONE}
 	 */

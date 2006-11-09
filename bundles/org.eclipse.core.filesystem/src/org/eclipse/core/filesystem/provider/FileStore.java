@@ -242,7 +242,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	public void delete(int options, IProgressMonitor monitor) throws CoreException {
 		Policy.error(EFS.ERROR_DELETE, NLS.bind(Messages.noImplDelete, toString()));
 	}
-	
+
 	/**
 	 * This implementation of {@link Object#equals(Object)} defines
 	 * equality based on the file store's URI.  Subclasses should override
@@ -262,7 +262,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 			return true;
 		if (!(obj instanceof FileStore))
 			return false;
-		return toURI().equals(((FileStore)obj).toURI());
+		return toURI().equals(((FileStore) obj).toURI());
 	}
 
 	/**
@@ -321,7 +321,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * @see org.eclipse.core.filesystem.IFileStore#getParent()
 	 */
 	public abstract IFileStore getParent();
-	
+
 	/**
 	 * This implementation of {@link Object#hashCode()} uses a definition
 	 * of equality based on equality of the file store's URI.  Subclasses that

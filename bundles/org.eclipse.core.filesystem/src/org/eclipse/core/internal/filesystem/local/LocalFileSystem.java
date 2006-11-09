@@ -51,7 +51,7 @@ public class LocalFileSystem extends FileSystem {
 	public static IFileSystem getInstance() {
 		return instance;
 	}
-	
+
 	/**
 	 * Returns the current OS.  This is equivalent to Platform.getOS(), but
 	 * is tolerant of the platform runtime not being present.

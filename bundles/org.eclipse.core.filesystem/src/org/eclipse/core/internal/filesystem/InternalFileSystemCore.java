@@ -48,7 +48,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		super();
 		RegistryFactory.getRegistry().addRegistryChangeListener(this);
 	}
-	
+
 	/**
 	 * Implements the method EFS#getFileSystem(String)
 	 * 
@@ -64,9 +64,9 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 		if (result == null)
 			Policy.error(EFS.ERROR_INTERNAL, NLS.bind(Messages.noFileSystem, scheme));
 		if (result instanceof IFileSystem)
-			return (IFileSystem)result;
+			return (IFileSystem) result;
 		try {
-			IConfigurationElement element = (IConfigurationElement)result;
+			IConfigurationElement element = (IConfigurationElement) result;
 			FileSystem fs = (FileSystem) element.createExecutableExtension("run"); //$NON-NLS-1$
 			fs.initialize(scheme);
 			//store the file system instance so we don't have to keep recreating it
@@ -121,7 +121,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 				for (int j = 0; j < elements.length; j++) {
 					if ("filesystem".equals(elements[j].getName())) { //$NON-NLS-1$
 						String scheme = elements[j].getAttribute("scheme"); //$NON-NLS-1$
-						if (scheme != null) 
+						if (scheme != null)
 							fileSystems.put(scheme, elements[j]);
 					}
 				}

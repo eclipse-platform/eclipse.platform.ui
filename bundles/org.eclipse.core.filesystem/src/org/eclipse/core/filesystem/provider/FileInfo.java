@@ -26,7 +26,7 @@ public class FileInfo implements IFileInfo {
 	 * Internal attribute indicating if the file is a directory
 	 */
 	private static final int ATTRIBUTE_DIRECTORY = 1 << 0;
-	
+
 	/**
 	 * Internal attribute indicating if the file exists.
 	 */
@@ -41,12 +41,12 @@ public class FileInfo implements IFileInfo {
 	 * The last modified time.
 	 */
 	private long lastModified = EFS.NONE;
-	
+
 	/**
 	 * The file length.
 	 */
 	private long length = EFS.NONE;
-	
+
 	/**
 	 * The file name.
 	 */
@@ -78,7 +78,7 @@ public class FileInfo implements IFileInfo {
 	private void clear(int mask) {
 		attributes &= ~mask;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Object#clone()
@@ -156,7 +156,7 @@ public class FileInfo implements IFileInfo {
 		else
 			clear(attribute);
 	}
-	
+
 	/**
 	 * Sets whether this is a file or directory.
 	 * 
@@ -169,7 +169,6 @@ public class FileInfo implements IFileInfo {
 		else
 			clear(ATTRIBUTE_DIRECTORY);
 	}
-	
 
 	/**
 	 * Sets whether this file or directory exists.

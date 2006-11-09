@@ -62,7 +62,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	public boolean canDelete() {
 		return false;
 	}
-	
+
 	/**
 	 * This is the default implementation of {@link IFileSystem#canWrite()}.  
 	 * This implementation always returns <code>false</code>.
@@ -123,10 +123,10 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * that can efficiently provide an {@link IFileTree} rooted at the given file store 
 	 * should override.
 	 */
-	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor){
+	public IFileTree fetchFileTree(IFileStore root, IProgressMonitor monitor) {
 		return null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 * <p>
@@ -135,9 +135,9 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * files to an IFileStore in their file system.
 	 */
 	public IFileStore fromLocalFile(java.io.File file) {
-	   return null;
+		return null;
 	}
-	
+
 	/**
 	 * Initializes this file system instance with the provided scheme.
 	 * <p>

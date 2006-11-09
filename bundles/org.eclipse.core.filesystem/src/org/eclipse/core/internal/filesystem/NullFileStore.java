@@ -34,7 +34,7 @@ public class NullFileStore extends FileStore {
 	public NullFileStore(IPath path) {
 		this.path = path;
 	}
-	
+
 	public IFileInfo[] childInfos(int options, IProgressMonitor monitor) throws CoreException {
 		return EMPTY_FILE_INFO_ARRAY;
 	}
