@@ -17,10 +17,12 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ITaskParseStrategy;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheet;
 import org.eclipse.ui.internal.provisional.cheatsheets.ICompositeCheatSheetTask;
 import org.eclipse.ui.internal.provisional.cheatsheets.ITaskGroup;
+import org.osgi.framework.Bundle;
 
 /**
  * A single task within a composite cheatsheet. This class encapsulates the
@@ -167,8 +169,22 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 		model.stateChanged(this);
 	}
 
+	/*
+	 * Resolves the given path to a URL. The path can either be fully qualified with
+	 * the plugin id, e.g. "/plugin_id/path/file.xml" or relative to the composite cheat
+	 * sheet file, e.g. "tasks/task1.xml".
+	 */
 	public URL getInputUrl(String path) throws MalformedURLException {
-		return new URL(model.getContentUrl(), path);
+		int index = path.indexOf('/', 1);
+		String bundleName = path.substring(1, index);
+		String relativePath = path.substring(index + 1);
+		Bundle bundle = Platform.getBundle(bundleName);
+		if (bundle != null) {
+			return bundle.getEntry(relativePath);
+		}
+		else {
+			return new URL(model.getContentUrl(), path);
+		}
 	}
 
 	public ICompositeCheatSheet getCompositeCheatSheet() {

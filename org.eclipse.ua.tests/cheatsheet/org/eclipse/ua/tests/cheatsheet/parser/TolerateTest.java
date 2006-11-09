@@ -44,7 +44,7 @@ public class TolerateTest extends TestCase {
 		Assert.assertTrue("Unable to find sample cheat sheets to test parser", urls.length > 0);
 		for (int i=0;i<urls.length;++i) {
 			CheatSheetParser parser = new CheatSheetParser();
-			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], CheatSheetParser.SIMPLE_ONLY);
+			CheatSheet sheet = (CheatSheet)parser.parse(urls[i], UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
 			Assert.assertEquals("Warning not generated: " + urls[i], IStatus.WARNING, parser.getStatus().getSeverity());
 			Assert.assertNotNull("Tried parsing a tolerable cheat sheet but parser returned null: " + urls[i], sheet);
 		}

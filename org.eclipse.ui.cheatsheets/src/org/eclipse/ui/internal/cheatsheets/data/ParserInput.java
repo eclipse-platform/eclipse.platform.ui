@@ -22,6 +22,7 @@ import java.net.URL;
 public class ParserInput {
 	private URL url;
 	private String xml;
+	private String pluginId;
 	
 	public ParserInput() {
 		url = null;
@@ -40,9 +41,10 @@ public class ParserInput {
 		}
 	}
 	
-	public ParserInput(URL url) {
+	public ParserInput(URL url, String pluginId) {
 		this.url = url;
 		this.xml = null;
+		this.pluginId = pluginId;
 	}
 	
 	public URL getUrl() {
@@ -52,5 +54,9 @@ public class ParserInput {
 	public String getXml() {
 		return xml;
 	}
-	
+
+	public String getPluginId() {
+		return pluginId;
+	}
+
 }

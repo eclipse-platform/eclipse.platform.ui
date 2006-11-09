@@ -10,23 +10,43 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.help.internal.dynamic.DocumentNode;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.FilterHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeProcessor;
+import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
-import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
+import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.composite.model.CompositeCheatSheetModel;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.CompositeCheatSheetParser;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.IStatusContainer;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
-import org.w3c.dom.*;
-import org.xml.sax.*;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetItemExtensionElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Parser for the cheatsheet content files.
@@ -44,6 +64,7 @@ public class CheatSheetParser implements IStatusContainer {
 	private static final String TRUE_STRING = "true"; //$NON-NLS-1$
 
 	private DocumentBuilder documentBuilder;
+	private NodeProcessor processor;
 	private ArrayList itemExtensionContainerList;
 	
 	// Cheatsheet kinds that can be parsed
@@ -827,8 +848,8 @@ public class CheatSheetParser implements IStatusContainer {
 		return (AbstractItemExtensionElement[])al.toArray(new AbstractItemExtensionElement[al.size()]);
 	}
 
-	public ICheatSheet parse(URL url, int cheatSheetKind) {
-		return parse(new ParserInput(url), cheatSheetKind);
+	public ICheatSheet parse(URL url, String pluginId, int cheatSheetKind) {
+		return parse(new ParserInput(url, pluginId), cheatSheetKind);
 	}
 	
 	public ICheatSheet parse(ParserInput input, int cheatSheetKind) {
@@ -890,6 +911,22 @@ public class CheatSheetParser implements IStatusContainer {
 			} catch (Exception e) {
 			}
 		}
+
+		// process dynamic content, normalize paths
+		if (processor == null) {
+			NodeReader reader = new NodeReader();
+			processor = new NodeProcessor(new NodeHandler[] {
+				new FilterHandler(),
+				new NormalizeHandler(),
+				new IncludeHandler(reader, Platform.getNL()),
+				new ExtensionHandler(reader, Platform.getNL())
+			});
+		}
+		String documentPath = null;
+		if (input.getPluginId() != null) {
+			documentPath = '/' + input.getPluginId() + input.getUrl().getPath();
+		}
+		processor.process(new DocumentNode(document), documentPath);
 		
 		if ( cheatSheetKind == COMPOSITE_ONLY  ||  (cheatSheetKind == ANY && isComposite(document))) {
 			CompositeCheatSheetParser compositeParser = new CompositeCheatSheetParser();
@@ -978,36 +1015,39 @@ public class CheatSheetParser implements IStatusContainer {
 		throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);
 	}
 
-/*
-	private String getNormalizedText(String text) {
-		int [] spaceCounter = new int[1];
-		StringBuffer buf = new StringBuffer();
+	/*
+	 * Normalizes composite cheat sheet-relative paths to simple cheat sheets into fully
+	 * qualified paths, e.g. for the path "tasks/mySimpleCheatSheet.xml" in composite cheat
+	 * sheet "/my.plugin/cheatsheets/myCompositeCheatSheet.xml", this normalizes to
+	 * "/my.plugin/cheatsheets/tasks/mySimpleCheatSheet.xml".
+	 * 
+	 * This is necessary because with dynamic content we are pulling in tasks from other
+	 * plug-ins and those tasks have relative paths. It also only applies for cheat sheets
+	 * located in running plug-ins.
+	 */
+	private class NormalizeHandler extends NodeHandler {
 		
-		if (text==null) return null;
-
-
-		for (int j=0; j<text.length(); j++) {
-			char c = text.charAt(j);
-			if (c==' ' || c=='\t') {
-				// space
-				if (++spaceCounter[0] == 1) {
-					buf.append(c);
+		private static final String ELEMENT_PARAM = "param"; //$NON-NLS-1$
+		private static final String ATTRIBUTE_NAME = "name"; //$NON-NLS-1$
+		private static final String ATTRIBUTE_VALUE = "value"; //$NON-NLS-1$
+		private static final String NAME_PATH = "path"; //$NON-NLS-1$
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.help.internal.dynamic.NodeHandler#handle(org.eclipse.help.Node, java.lang.String)
+		 */
+		public short handle(org.eclipse.help.Node node, String id) {
+			if (id != null && ELEMENT_PARAM.equals(node.getNodeName())) {
+				String name = node.getAttribute(ATTRIBUTE_NAME);
+				if (NAME_PATH.equals(name)) {
+					String value = node.getAttribute(ATTRIBUTE_VALUE);
+					if (value != null) {
+						int index = id.lastIndexOf('/');
+						node.setAttribute(ATTRIBUTE_VALUE, id.substring(0, index + 1) + value);
+					}
 				}
+				return HANDLED_CONTINUE;
 			}
-			else if (c=='\n' || c=='\r' || c=='\f') {
-				// new line
-				if (++spaceCounter[0]==1) {
-					buf.append(' ');
-				}
-			}
-			else {
-				// other characters
-				spaceCounter[0]=0;
-				buf.append(c);
-			}
+			return UNHANDLED;
 		}
-
-		return buf.toString();
 	}
-*/
 }

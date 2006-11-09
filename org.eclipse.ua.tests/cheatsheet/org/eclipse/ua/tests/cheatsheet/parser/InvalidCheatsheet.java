@@ -34,12 +34,12 @@ public class InvalidCheatsheet extends TestCase {
 	private ICheatSheet parseTestFile(String path) {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(), 
 					       INVALID_CHEATSHEET_FOLDER + path);
-		return parser.parse(testURL, CheatSheetParser.SIMPLE_ONLY);
+		return parser.parse(testURL, UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY);
 	}
 	
 	public void testBadURL() {
 		try {
-			assertNull(parser.parse(new URL("file:/nonexistent"), CheatSheetParser.SIMPLE_ONLY));
+			assertNull(parser.parse(new URL("file:/nonexistent"), UserAssistanceTestPlugin.getPluginId(), CheatSheetParser.SIMPLE_ONLY));
 		} catch (MalformedURLException e) {
 			fail("Exception thrown");
 		}

@@ -31,12 +31,10 @@ public interface IEditableTask extends ICompositeCheatSheetTask {
 	
 	/**
 	 * Gets a URL which can be used to open the content file for this 
-	 * task if the content file can be specified by a path relative to
-	 * the content file for the composite cheat sheet which contains it.
-	 * @param path a relative path
+	 * task if the content file is specified by a path.
+	 * @param path the path to the content file
 	 * @throws MalformedURLException 
-	 * @return a URL which represents a location relative to the
-	 * location of the content file for the composite cheat sheet.
+	 * @return a URL to the content file
 	 */
 	public URL getInputUrl(String path) throws MalformedURLException;
 

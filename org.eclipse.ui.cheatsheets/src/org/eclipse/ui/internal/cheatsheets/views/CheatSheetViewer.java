@@ -1141,7 +1141,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			} catch (MalformedURLException mue) {
 			}
 		}
-		parserInput = new ParserInput(contentURL);
+		parserInput = new ParserInput(contentURL, bundle != null ? bundle.getSymbolicName() : null);
 	}
 	
 	

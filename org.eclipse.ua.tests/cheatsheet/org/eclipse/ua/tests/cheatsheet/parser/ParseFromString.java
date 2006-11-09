@@ -63,7 +63,7 @@ public class ParseFromString extends TestCase {
 	public void testUrlParserInput() {
 		URL testURL = ResourceFinder.findFile(UserAssistanceTestPlugin.getDefault(), 
 			       "data/cheatsheet/valid/HelloWorld.xml");
-		ParserInput input = new ParserInput(testURL);
+		ParserInput input = new ParserInput(testURL, UserAssistanceTestPlugin.getPluginId());
 		assertNull(input.getXml());
 		assertTrue(testURL.equals(input.getUrl()));
 	}
