@@ -77,31 +77,38 @@ public class FileLink implements IConsoleHyperlink {
 			if (page != null) {
 				try {
 					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , false);
-					if (fFileLineNumber > 0 && editorPart instanceof ITextEditor) {
-						ITextEditor textEditor = (ITextEditor)editorPart;
-						IEditorInput input = editorPart.getEditorInput();
-						if (fFileOffset < 0) {
-							IDocumentProvider provider = textEditor.getDocumentProvider();
-							try {
-								provider.connect(input);
-							} catch (CoreException e) {
-								// unable to link
-								DebugUIPlugin.log(e);
-								return;
-							}
-							IDocument document = provider.getDocument(input);
-							try {
-                                IRegion region= document.getLineInformation(fFileLineNumber - 1);
-								fFileOffset = region.getOffset();
-								fFileLength = region.getLength();
-							} catch (BadLocationException e) {
-								// unable to link
-								DebugUIPlugin.log(e);
-							}
-							provider.disconnect(input);
+					if (fFileLineNumber > 0) {
+						ITextEditor textEditor = null;
+						if (editorPart instanceof ITextEditor) {
+							textEditor = (ITextEditor) editorPart;
+						} else {
+							textEditor = (ITextEditor) editorPart.getAdapter(ITextEditor.class);
 						}
-						if (fFileOffset >= 0 && fFileLength >=0) {
-							textEditor.selectAndReveal(fFileOffset, fFileLength);
+						if (textEditor != null) {
+							IEditorInput input = editorPart.getEditorInput();
+							if (fFileOffset < 0) {
+								IDocumentProvider provider = textEditor.getDocumentProvider();
+								try {
+									provider.connect(input);
+								} catch (CoreException e) {
+									// unable to link
+									DebugUIPlugin.log(e);
+									return;
+								}
+								IDocument document = provider.getDocument(input);
+								try {
+	                                IRegion region= document.getLineInformation(fFileLineNumber - 1);
+									fFileOffset = region.getOffset();
+									fFileLength = region.getLength();
+								} catch (BadLocationException e) {
+									// unable to link
+									DebugUIPlugin.log(e);
+								}
+								provider.disconnect(input);
+							}
+							if (fFileOffset >= 0 && fFileLength >=0) {
+								textEditor.selectAndReveal(fFileOffset, fFileLength);
+							}
 						}
 					}
 				} catch (PartInitException e) {
