@@ -512,7 +512,7 @@ class ProgressInfoItem extends Composite {
 				}
 
 				if (subTaskString != null) {
-					if (taskString == null) {
+					if (taskString == null || taskString.length() == 0) {
 						taskString = subTaskString;
 					} else {
 						taskString = NLS.bind(
