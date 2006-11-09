@@ -515,13 +515,20 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		// Check to see if this is a retargettable action.
 		final boolean retarget = readBoolean(element, ATT_RETARGET, false);
 
+		final boolean classAvailable = (element.getAttribute(ATT_CLASS) != null)
+				|| (element.getChildren(TAG_CLASS).length != 0);
 		// Read the class attribute.
-		final String classString = readOptional(element, ATT_CLASS);
+		String classString = readOptional(element, ATT_CLASS);
+		if (classAvailable && classString == null) {
+			classString = readOptional(element.getChildren(TAG_CLASS)[0],
+					ATT_CLASS);
+		}
+
 		if (retarget) {
-			if ((classString != null) && (!isPulldown(element))) {
+			if (classAvailable && !isPulldown(element)) {
 				addWarning(warningsToLog,
 						"The class was not null but retarget was set to true", //$NON-NLS-1$
-						element, actionId, "class", classString); //$NON-NLS-1$
+						element, actionId, ATT_CLASS, classString);
 			}
 
 			// Add a mapping from this action id to the command id.
@@ -539,7 +546,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 			return; // This is nothing more to be done.
 
-		} else if (classString == null) {
+		} else if (!classAvailable) {
 			addWarning(
 					warningsToLog,
 					"There was no class provided, and the action is not retargettable", //$NON-NLS-1$

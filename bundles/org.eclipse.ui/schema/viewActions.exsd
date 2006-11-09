@@ -85,10 +85,13 @@ by clicking on the top right triangle button. Other plug-ins can contribute subm
          </documentation>
       </annotation>
       <complexType>
-         <choice>
-            <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
-         </choice>
+         <sequence>
+            <choice>
+               <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+            </choice>
+            <element ref="class" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -262,6 +265,53 @@ The following attribute formats are supported:
       &lt;/tr&gt;
     &lt;/table&gt;
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <annotation>
+         <documentation>
+            A parameter element to be used within an IExecutableExtension element.  This will be passed as initialization data to the instantiated class.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the parameter name
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the parameter value
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="class">
+      <annotation>
+         <documentation>
+            The element version of the &lt;code&gt;class&lt;/code&gt; attribute.  This is used when the class implements &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt; and there is parameterized data that you wish used in its initialization.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A class that implements &lt;code&gt;org.eclipse.ui.IViewActionDelegate&lt;/code&gt;.  It may also implement &lt;code&gt;org.eclipse.core.runtime.IExecutableExtension&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

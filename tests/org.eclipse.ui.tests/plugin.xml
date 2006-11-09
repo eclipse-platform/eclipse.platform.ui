@@ -714,7 +714,53 @@
                toolbarPath="Normal/Presentation"
                tooltip="MultiEditorActionThing"/>
       </actionSet>
-      
+      <actionSet
+            id="org.eclipse.ui.tests.actionSet1"
+            label="Test Parameterized Action"
+            visible="false">
+         <action
+               id="org.eclipse.ui.tests.parm.hideEditorArea"
+               label="Hide File Editor Area"
+               menubarPath="file/additions"
+               style="push">
+            <class
+                  class="org.eclipse.ui.tests.api.GenericCommandActionDelegate">
+               <parameter
+                     name="commandId"
+                     value="org.eclipse.ui.window.hideShowEditors">
+               </parameter>
+            </class>
+         </action>
+         <action
+               class="org.eclipse.ui.tests.api.GenericCommandActionDelegate"
+               id="org.eclipse.ui.tests.parm.noClassAttrParm"
+               label="Hide No Class Attr"
+               menubarPath="file/additions"
+               style="push">
+         </action>
+         <action
+               id="org.eclipse.ui.tests.parm.noClassElParm"
+               label="Hide No Class Parm"
+               menubarPath="file/additions"
+               style="push">
+            <class
+                  class="org.eclipse.ui.tests.api.GenericCommandActionDelegate">
+            </class>
+         </action>
+         <action
+               id="org.eclipse.ui.tests.parm.incorrectClassElParm"
+               label="Hide Bad Class Parm"
+               menubarPath="file/additions"
+               style="push">
+            <class
+                  class="org.eclipse.ui.tests.api.GenericCommandActionDelegate">
+               <parameter
+                     name="commandIdWhat"
+                     value="org.eclipse.ui.window.hideShowEditors">
+               </parameter>
+            </class>
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
