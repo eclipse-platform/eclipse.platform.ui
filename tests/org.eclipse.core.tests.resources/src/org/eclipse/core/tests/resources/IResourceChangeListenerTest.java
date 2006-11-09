@@ -627,6 +627,27 @@ public class IResourceChangeListenerTest extends ResourceTest {
 		}
 	}
 
+	public void testCopyFile() {
+		try {
+			verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);
+			verifier.addExpectedChange(file3, IResourceDelta.ADDED, 0, null, null);
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor m) throws CoreException {
+					m.beginTask("Creating and moving", 100);
+					try {
+						folder2.create(true, true, new SubProgressMonitor(m, 50));
+						file1.copy(file3.getFullPath(), true, new SubProgressMonitor(m, 50));
+					} finally {
+						m.done();
+					}
+				}
+			}, getMonitor());
+			assertDelta();
+		} catch (CoreException e) {
+			handleCoreException(e);
+		}
+	}
+
 	public void testCloseOpenReplaceFile() {
 		try {
 			// FIXME: how to do this?
