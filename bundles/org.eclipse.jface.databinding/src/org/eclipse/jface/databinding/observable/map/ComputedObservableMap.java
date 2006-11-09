@@ -125,6 +125,10 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	public Set entrySet() {
 		return entrySet;
 	}
+	
+	public Set keySet() {
+		return keySet;
+	}
 
 	final public Object get(Object key) {
 		return doGet(key);
