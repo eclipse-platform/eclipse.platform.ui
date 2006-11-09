@@ -250,12 +250,13 @@ public interface IFileStore extends IAdaptable {
 	 * Returns whether this store is a parent of the provided store.  This
 	 * is equivalent to, but typically more efficient than, the following:
 	 * <code>
-	 * while (other != null) {
-	 *    if (this.equals(other))
-	 *       return true;
-	 *    other = other.getParent();
+	 * while (true) {
+	 * 	other = other.getParent();
+	 * 	if (other == null)
+	 * 		return false;
+	 * 	if (this.equals(other))
+	 * 		return true;
 	 * }
-	 * return false;
 	 * </code>
 	 * <p>
 	 * This is a handle only method; this test works regardless of whether
