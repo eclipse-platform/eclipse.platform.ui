@@ -123,7 +123,7 @@ With new API changes for 3.3M3 the sourceLocatorId id should be contributed via 
          <attribute name="migrationDelegate" type="string">
             <annotation>
                <documentation>
-                  Optional delegate used to migrate launch configurations of this type to be compatible with current tooling, since 3.2
+                  specifies the fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/code&gt;. Optional delegate used to migrate launch configurations of this type to be compatible with current tooling, since 3.2
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate"/>
@@ -245,9 +245,10 @@ The specified type also has an associated migration delegate, a source locator i
       </appInfo>
       <documentation>
          &lt;p&gt;
-Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;. 
-
-The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully qualified name of a Java class that implements &lt;b&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/b&gt;.
+Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;code&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/code&gt;. 
+&lt;/p&gt;
+&lt;p&gt;
+The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/code&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
