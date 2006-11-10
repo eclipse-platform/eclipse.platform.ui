@@ -56,12 +56,20 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	 * @see org.eclipse.jface.text.AbstractLineTracker#nextDelimiterInfo(java.lang.String, int)
 	 */
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
-		int[] info= TextUtilities.indexOf(fDelimiters, text, offset);
-		if (info[0] == -1)
-			return null;
+		if (fDelimiters.length > 1) {
+			int[] info= TextUtilities.indexOf(fDelimiters, text, offset);
+			if (info[0] == -1)
+				return null;
+			fDelimiterInfo.delimiterIndex= info[0];
+			fDelimiterInfo.delimiter= fDelimiters[info[1]];
+		} else {
+			int index= text.indexOf(fDelimiters[0], offset);
+			if (index == -1)
+				return null;
+			fDelimiterInfo.delimiterIndex= index;
+			fDelimiterInfo.delimiter= fDelimiters[0];
+		}
 
-		fDelimiterInfo.delimiterIndex= info[0];
-		fDelimiterInfo.delimiter= fDelimiters[info[1]];
 		fDelimiterInfo.delimiterLength= fDelimiterInfo.delimiter.length();
 		return fDelimiterInfo;
 	}
