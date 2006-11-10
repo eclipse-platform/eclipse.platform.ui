@@ -258,7 +258,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 					new EvaluationContext(null, object)).equals(
 					EvaluationResult.FALSE);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log(e.getStatus());
+			WorkbenchPlugin.log(e);
 			return false;
 		}
 	}
@@ -280,7 +280,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			enablementExpression = ExpressionConverter.getDefault().perform(
 					enablement[0]);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log(e.getStatus());
+			WorkbenchPlugin.log(e);
 		}
 
 	}

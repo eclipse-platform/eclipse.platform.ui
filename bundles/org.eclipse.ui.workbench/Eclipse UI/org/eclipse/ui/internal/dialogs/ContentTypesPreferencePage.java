@@ -470,7 +470,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 							}
 						} catch (CoreException ex) {
 							ErrorDialog.openError(shell, null, null, ex.getStatus());
-							WorkbenchPlugin.log(ex.getStatus());
+							WorkbenchPlugin.log(ex);
 						}
 						finally {
 							fileAssociationViewer.setInput(selectedContentType);

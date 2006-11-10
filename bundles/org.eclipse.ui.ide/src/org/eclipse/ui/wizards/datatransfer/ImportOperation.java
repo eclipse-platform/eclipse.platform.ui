@@ -580,7 +580,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
     }
 
     /**
-     * Reuse the file atttributes set in the import.
+     * Reuse the file attributes set in the import.
      * @param targetResource
      * @param fileObject
      */
@@ -591,7 +591,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				targetResource.setResourceAttributes(ResourceAttributes.fromFile((File) fileObject));
 			} catch (CoreException e) {
 				//Inform the log that the attributes reading failed
-				IDEWorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+				IDEWorkbenchPlugin.log(e.getStatus().getMessage(), e);
 			}
 		}
 		

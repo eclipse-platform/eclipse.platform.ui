@@ -325,7 +325,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
             try {
                 enablement = ExpressionConverter.getDefault().perform(element);
             } catch (CoreException e) {
-                WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+                WorkbenchPlugin.log(e);
             }
         }
 
@@ -361,7 +361,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements
 					}
                 } catch (CoreException e) {
                     enablement = null;
-                    WorkbenchPlugin.getDefault().getLog().log(e.getStatus());
+                    WorkbenchPlugin.log(e);
                     result = false;
                 }
             }

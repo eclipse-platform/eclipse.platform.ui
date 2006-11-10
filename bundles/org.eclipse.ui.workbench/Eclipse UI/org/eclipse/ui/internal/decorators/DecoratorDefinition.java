@@ -242,7 +242,7 @@ public abstract class DecoratorDefinition {
     protected void handleCoreException(CoreException exception) {
 
         //If there is an error then reset the enabling to false
-        WorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
+        WorkbenchPlugin.log(exception);
         crashDisable();
     }
 
