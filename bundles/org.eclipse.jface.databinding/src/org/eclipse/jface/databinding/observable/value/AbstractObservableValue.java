@@ -16,6 +16,7 @@ import java.util.Collection;
 
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 1.0
@@ -24,6 +25,20 @@ import org.eclipse.jface.databinding.observable.ObservableTracker;
 abstract public class AbstractObservableValue extends AbstractObservable
 		implements IObservableValue {
 
+	/**
+	 * @param realm
+	 */
+	public AbstractObservableValue() {
+		this(Realm.getDefault());
+	}
+
+	/**
+	 * @param realm
+	 */
+	public AbstractObservableValue(Realm realm) {
+		super(realm);
+	}
+	
 	private Collection valueChangeListeners = null;
 
 	public void addValueChangeListener(IValueChangeListener listener) {
@@ -80,9 +95,6 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		return false;
 	}
 
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || valueChangeListeners != null;
 	}

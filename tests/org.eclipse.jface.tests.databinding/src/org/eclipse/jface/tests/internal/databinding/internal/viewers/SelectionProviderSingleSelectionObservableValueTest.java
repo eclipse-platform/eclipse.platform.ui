@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    Brad Reynolds - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 
@@ -16,6 +17,7 @@ import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -23,119 +25,123 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * Tests for SelectionProviderSingleSelectionObservableValue. 
+ * Tests for SelectionProviderSingleSelectionObservableValue.
  * 
  * @since 1.1
  */
 public class SelectionProviderSingleSelectionObservableValueTest extends TestCase {
-	private ISelectionProvider selectionProvider;
-	private TableViewer viewer;
-	private static String[] model = new String[] { "0", "1" };
+    private ISelectionProvider selectionProvider;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	protected void setUp() throws Exception {
-		Shell shell = new Shell();
-		viewer = new TableViewer(shell, SWT.NONE);
-		viewer.setContentProvider(new ContentProvider());
-		viewer.setInput(model);
-		selectionProvider = viewer;
-	}
+    private TableViewer viewer;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
-		Shell shell = viewer.getTable().getShell();
-		if (!shell.isDisposed())
-			shell.dispose();
-	}
+    private static String[] model = new String[] { "0", "1" };
 
-	public void testConstructorIllegalArgumentException() {
-		try {
-			new SelectionProviderSingleSelectionObservableValue(null);
-			fail();
-		} catch (IllegalArgumentException e) {
-		}
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#setUp()
+     */
+    protected void setUp() throws Exception {
+        Shell shell = new Shell();
+        viewer = new TableViewer(shell, SWT.NONE);
+        viewer.setContentProvider(new ContentProvider());
+        viewer.setInput(model);
+        selectionProvider = viewer;
+    }
 
-	/**
-	 * Asserts that when a selection is set on the viewer:
-	 * <ul>
-	 * <li>the selection is available in the observable</li>
-	 * <li>Value change events are fired with appropriate diff values</li>
-	 * </ul>
-	 */
-	public void testGetSetValue() {
-		SelectionProviderSingleSelectionObservableValue observable = new SelectionProviderSingleSelectionObservableValue(
-				selectionProvider);
-		ChangeListener listener = new ChangeListener();
-		observable.addValueChangeListener(listener);
-		assertNull(observable.getValue());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see junit.framework.TestCase#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        Shell shell = viewer.getTable().getShell();
+        if (!shell.isDisposed())
+            shell.dispose();
+    }
 
-		selectionProvider.setSelection(new StructuredSelection(model[0]));
-		assertEquals(1, listener.count);
-		assertNull(listener.diff.getOldValue());
-		assertEquals(model[0], listener.diff.getNewValue());
-		assertEquals(observable, listener.source);
-		assertEquals(model[0], observable.getValue());
+    public void testConstructorIllegalArgumentException() {
+        try {
+            new SelectionProviderSingleSelectionObservableValue(SWTObservables.getRealm(Display.getDefault()), null);
+            fail();
+        } catch (IllegalArgumentException e) {
+        }
+    }
 
-		selectionProvider.setSelection(new StructuredSelection(model[1]));
-		assertEquals(2, listener.count);
-		assertEquals(model[0], listener.diff.getOldValue());
-		assertEquals(model[1], listener.diff.getNewValue());
-		assertEquals(observable, listener.source);
-		assertEquals(model[1], observable.getValue());
+    /**
+     * Asserts that when a selection is set on the viewer:
+     * <ul>
+     * <li>the selection is available in the observable</li>
+     * <li>Value change events are fired with appropriate diff values</li>
+     * </ul>
+     */
+    public void testGetSetValue() {
+        SelectionProviderSingleSelectionObservableValue observable = new SelectionProviderSingleSelectionObservableValue(
+                SWTObservables.getRealm(Display.getDefault()),
+                selectionProvider);
+        ChangeListener listener = new ChangeListener();
+        observable.addValueChangeListener(listener);
+        assertNull(observable.getValue());
 
-		selectionProvider.setSelection(StructuredSelection.EMPTY);
-		assertEquals(3, listener.count);
-		assertEquals(model[1], listener.diff.getOldValue());
-		assertNull(listener.diff.getNewValue());
-		assertEquals(observable, listener.source);
-		assertEquals(null, observable.getValue());
-	}
+        selectionProvider.setSelection(new StructuredSelection(model[0]));
+        assertEquals(1, listener.count);
+        assertNull(listener.diff.getOldValue());
+        assertEquals(model[0], listener.diff.getNewValue());
+        assertEquals(observable, listener.source);
+        assertEquals(model[0], observable.getValue());
 
-	private class ChangeListener implements IValueChangeListener {
-		int count = 0;
+        selectionProvider.setSelection(new StructuredSelection(model[1]));
+        assertEquals(2, listener.count);
+        assertEquals(model[0], listener.diff.getOldValue());
+        assertEquals(model[1], listener.diff.getNewValue());
+        assertEquals(observable, listener.source);
+        assertEquals(model[1], observable.getValue());
 
-		IObservable source;
+        selectionProvider.setSelection(StructuredSelection.EMPTY);
+        assertEquals(3, listener.count);
+        assertEquals(model[1], listener.diff.getOldValue());
+        assertNull(listener.diff.getNewValue());
+        assertEquals(observable, listener.source);
+        assertEquals(null, observable.getValue());
+    }
 
-		ValueDiff diff;
+    private class ChangeListener implements IValueChangeListener {
+        int count = 0;
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.databinding.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.databinding.observable.value.IObservableValue,
-		 *      org.eclipse.jface.databinding.observable.value.ValueDiff)
-		 */
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
-			count++;
-			this.source = source;
-			this.diff = diff;
-		}
-	}
+        IObservable source;
 
-	private class ContentProvider implements IStructuredContentProvider {
-		public void dispose() {
-			// TODO Auto-generated method stub
+        ValueDiff diff;
 
-		}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.databinding.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.databinding.observable.value.IObservableValue,
+         *      org.eclipse.jface.databinding.observable.value.ValueDiff)
+         */
+        public void handleValueChange(IObservableValue source, ValueDiff diff) {
+            count++;
+            this.source = source;
+            this.diff = diff;
+        }
+    }
 
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			// TODO Auto-generated method stub
+    private class ContentProvider implements IStructuredContentProvider {
+        public void dispose() {
+            // TODO Auto-generated method stub
 
-		}
+        }
 
-		public Object[] getElements(Object inputElement) {
-			return (String[]) inputElement;
-		}
-	}
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+            // TODO Auto-generated method stub
+
+        }
+
+        public Object[] getElements(Object inputElement) {
+            return (String[]) inputElement;
+        }
+    }
 }

@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.Diffs;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 1.0
@@ -26,33 +27,71 @@ import org.eclipse.jface.databinding.observable.Diffs;
 public class WritableSet extends ObservableSet {
 
 	/**
+	 * @param realm 
 	 * @param wrappedSet
 	 */
 	public WritableSet() {
-		this(Object.class);
+		this(Realm.getDefault(), Object.class);
 	}
 
 	/**
+	 * @param realm 
 	 * @param c
 	 */
 	public WritableSet(Collection c) {
-		this(c, Object.class);
+		this(Realm.getDefault(), c, Object.class);
 	}
 
 	/**
+	 * @param realm 
 	 * @param c
 	 * @param elementType 
 	 */
 	public WritableSet(Collection c, Object elementType) {
-		super(new HashSet(c), elementType);
-		this.elementType = elementType;
+		this(Realm.getDefault(), new HashSet(c), elementType);
 	}
 
+	
 	/**
+	 * @param realm 
 	 * @param elementType
 	 */
 	public WritableSet(Object elementType) {
-		super(new HashSet(), elementType);
+		this(Realm.getDefault(), new HashSet(), elementType);
+	}
+
+	/**
+	 * @param realm 
+	 * @param wrappedSet
+	 */
+	public WritableSet(Realm realm) {
+		this(realm, Object.class);
+	}
+	
+	/**
+	 * @param realm 
+	 * @param c
+	 */
+	public WritableSet(Realm realm, Collection c) {
+		this(realm, c, Object.class);
+	}
+	
+	/**
+	 * @param realm 
+	 * @param c
+	 * @param elementType 
+	 */
+	public WritableSet(Realm realm, Collection c, Object elementType) {
+		super(realm, new HashSet(c), elementType);
+		this.elementType = elementType;
+	}
+	
+	/**
+	 * @param realm 
+	 * @param elementType
+	 */
+	public WritableSet(Realm realm, Object elementType) {
+		super(realm, new HashSet(), elementType);
 	}
 
 	public boolean add(Object o) {

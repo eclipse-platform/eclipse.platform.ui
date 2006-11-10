@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 137877, 152543, 152540
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -26,81 +27,126 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryTest;
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
+import org.eclipse.jface.tests.databinding.mask.EditMaskParserTest;
+import org.eclipse.jface.tests.databinding.observable.ThreadRealmTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
-import org.eclipse.jface.tests.databinding.util.MocksTest;
+import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
+import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
+import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
 import org.eclipse.jface.tests.internal.databinding.internal.observable.UnmodifiableObservableListTest;
-import org.eclipse.jface.tests.internal.databinding.internal.viewers.SVOCWLTest;
 import org.eclipse.jface.tests.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.AbstractObservableTest;
 import org.eclipse.jface.tests.internal.databinding.provisional.observable.ObservablesTest;
-import org.eclipse.jface.tests.internal.databinding.provisional.viewers.ViewersObservableFactoryTest;
+import org.eclipse.jface.tests.internal.databinding.provisional.viewers.SelectionObservableValueTest;
 
 public class BindingTestSuite extends TestSuite {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
-	public static Test suite() {
-		return new BindingTestSuite();
-	}
+    public static Test suite() {
+        return new BindingTestSuite();
+    }
 
-	public BindingTestSuite() {
-		addTestSuite(ObservableTest.class);
-		addTestSuite(JavaBeansScalarObservableValueFactoryTest.class);
-		addTestSuite(DatabindingContextTest.class);
-		addTestSuite(DefaultBindSupportFactoryTest.class);
-		addTestSuite(IDiffsTest.class);
-		addTestSuite(BindSpecTests.class);
-		// addTestSuite(ObservableCollectionTest.class);
-		addTestSuite(SelectionAwareObservableCollectionTest.class);
-		addTest(BindingScenariosTestSuite.suite());
-		addTestSuite(DefaultBindSupportFactoryIntTest.class);
-		addTestSuite(DefaultBindSupportFactoryDoublePrimitiveTest.class);
-		addTestSuite(DefaultBindSupportFactoryBytePrimitiveTest.class);
-		addTestSuite(DefaultBindSupportFactoryLongPrimitiveTest.class);
-		addTestSuite(DefaultBindSupportFactoryShortPrimitiveTest.class);
-		addTestSuite(DefaultBindSupportFactoryBooleanPrimitiveTest.class);
-		addTestSuite(DefaultBindSupportFactoryFloatPrimitiveTest.class);
-		addTestSuite(ObjectToPrimitiveValidatorTest.class);
-		addTestSuite(IdentityConverterTest.class);
-		addTestSuite(LazyListBindingTest.class);
-		addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
-		addTestSuite(EditMaskLexerAndTokenTest.class);
-		addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
-		addTestSuite(SVOCWLTest.class);
-		addTestSuite(ViewersObservableFactoryTest.class);
-		addTestSuite(AbstractObservableTest.class);
-		addTestSuite(MocksTest.class);
-		addTestSuite(PersonTests.class);
-		addTestSuite(WritableValueTest.class);
-		addTestSuite(ValueBindingTest.class);
-		addTestSuite(UnmodifiableObservableListTest.class);
-		addTestSuite(ObservablesTest.class);
-	}
+    public BindingTestSuite() {
+        // org.eclipse.jface.internal.databinding.provisional.conversion
+        addTestSuite(IdentityConverterTest.class);
 
-	/**
-	 * @param testCase
-	 *            TODO
-	 * @return true if the given test is temporarily disabled
-	 */
-	public static boolean failingTestsDisabled(TestCase testCase) {
-		System.out.println("Ignoring disabled test: "
-				+ testCase.getClass().getName() + "." + testCase.getName());
-		return true;
-	}
+        // org.eclipse.jface.internal.databinding.provisional.factories
+        addTestSuite(DefaultBindSupportFactoryBooleanPrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryBytePrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryDoublePrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryFloatPrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryIntTest.class);
+        addTestSuite(DefaultBindSupportFactoryLongPrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryShortPrimitiveTest.class);
+        addTestSuite(DefaultBindSupportFactoryTest.class);
 
-	/**
-	 * @param testSuite
-	 *            TODO
-	 * @return true if the given test is temporarily disabled
-	 */
-	public static boolean failingTestsDisabled(TestSuite testSuite) {
-		System.out.println("Ignoring disabled test: "
-				+ testSuite.getClass().getName() + "." + testSuite.getName());
-		return true;
-	}
+        // org.eclipse.jface.internal.databinding.provisional.validation
+        addTestSuite(ObjectToPrimitiveValidatorTest.class);
+
+        // org.eclipse.jface.tests.databinding
+        addTestSuite(BindSpecTests.class);
+        addTestSuite(ComputedValueTest.class);
+        addTestSuite(DatabindingContextTest.class);
+//FIXME        addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
+        addTestSuite(IDiffsTest.class);
+//FIXME        addTestSuite(LazyDataRequestor.class);
+//FIXME        addTestSuite(LazyListBindingTest.class);
+        addTestSuite(ObservableTest.class);
+        addTestSuite(RandomAccessListIteratorTest.class);
+//FIXME        addTestSuite(SelectionAwareObservableCollectionTest.class);
+        addTestSuite(ThreadRealmTest.class);
+        
+        // org.eclipse.jface.tests.databinding.mask
+        addTestSuite(EditMaskLexerAndTokenTest.class);
+        addTestSuite(EditMaskParserTest.class);
+
+        // org.eclipse.jface.tests.databinding.observable.value
+        addTestSuite(WritableValueTest.class);
+
+        //org.eclipse.jface.tests.databinding.scenarios
+        addTest(BindingScenariosTestSuite.suite());
+        //The files in this package are in the above test suite
+        
+        //org.eclipse.jface.tests.databinding.swt
+//FIXME        addTestSuite(AbstractGetAndSetSelectionObservableCollectionTest.class);
+//FIXME        addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class); 
+//FIXME        addTestSuite(AutoSelectTableViewerCollectionTest.class);
+//FIXME        addTestSuite(CComboObservableCollectionTest.class);
+//FIXME        addTestSuite(ComboObservableCollectionTest.class);
+//FIXME        addTestSuite(CopyOfAutoSelectTableViewerCollectionExtendedTest.class);
+//FIXME        addTestSuite(ListObservableCollectionTest.class);
+//FIXME        addTestSuite(ObservableCollectionViewerTest.class);
+//FIXME        addTestSuite(TableViewerObservableCollectionTest.class);
+        addTestSuite(TextObservableValueTests.class);
+        
+        //org.eclipse.jface.tests.databinding.views
+        addTestSuite(ObservableSetContentProviderTest.class);
+        
+        //org.eclipse.jface.tests.examples.model
+        addTestSuite(PersonTests.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.internal
+        addTestSuite(ListBindingTest.class);
+        addTestSuite(ValueBindingTest.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.internal.observable
+        addTestSuite(UnmodifiableObservableListTest.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.internal.viewers
+        addTestSuite(SelectionProviderSingleSelectionObservableValueTest.class);
+//FIXME        addTestSuite(SVOCWLTest.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.provisional.observable
+        addTestSuite(AbstractObservableTest.class);
+        addTestSuite(ObservablesTest.class);
+        
+        //org.eclipse.jface.tests.internal.databinding.provisional.viewers
+        addTestSuite(SelectionObservableValueTest.class);
+    }
+
+    /**
+     * @param testCase
+     *            TODO
+     * @return true if the given test is temporarily disabled
+     */
+    public static boolean failingTestsDisabled(TestCase testCase) {
+        System.out.println("Ignoring disabled test: " + testCase.getClass().getName() + "." + testCase.getName());
+        return true;
+    }
+
+    /**
+     * @param testSuite
+     *            TODO
+     * @return true if the given test is temporarily disabled
+     */
+    public static boolean failingTestsDisabled(TestSuite testSuite) {
+        System.out.println("Ignoring disabled test: " + testSuite.getClass().getName() + "." + testSuite.getName());
+        return true;
+    }
 }

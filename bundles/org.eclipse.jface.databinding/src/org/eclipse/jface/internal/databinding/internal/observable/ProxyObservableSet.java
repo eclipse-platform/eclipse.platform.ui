@@ -39,10 +39,12 @@ public final class ProxyObservableSet extends AbstractObservableSet {
 	
 	/**
 	 * Constructs a DelegatingObservableSet that tracks the state of the given set.
+	 * @param realm 
 	 * 
 	 * @param toDelegate
 	 */
 	public ProxyObservableSet(IObservableSet toDelegate) {
+		super(toDelegate.getRealm());
 		this.toDelegateTo = toDelegate;
 		toDelegate.addSetChangeListener(listener);
 	}

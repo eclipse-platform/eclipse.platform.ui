@@ -19,16 +19,11 @@ import java.util.Set;
 
 import org.eclipse.jface.databinding.observable.AbstractObservable;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * 
  * Abstract implementation of {@link IObservableSet}. 
- * 
- * TODO: Boris - refactor this to merge whatever happens to be useful into
- * ObservableSet, then delete this class. AFAIK, the only major innovation
- * here is that you return the wrapped set from a getter rather than passing
- * it into the constructor, so it is not necessary for it to be initialized at
- * construction-time.
  * 
  * @since 1.0
  * 
@@ -41,8 +36,13 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	private Object setChangeListeners;
 
 	protected AbstractObservableSet() {
+		this(Realm.getDefault());
 	}
 
+	protected AbstractObservableSet(Realm realm) {
+		super(realm);
+	}
+	
 	public void addSetChangeListener(ISetChangeListener listener) {
 		if (setChangeListeners == null) {
 			boolean hadListeners = hasListeners();
@@ -97,9 +97,6 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 
 	protected abstract Set getWrappedSet();
 	
-	/**
-	 * @return
-	 */
 	protected boolean hasListeners() {
 		return super.hasListeners() || setChangeListeners!=null;
 	}

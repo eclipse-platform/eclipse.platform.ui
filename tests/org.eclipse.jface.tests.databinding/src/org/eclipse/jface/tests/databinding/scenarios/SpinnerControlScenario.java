@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Spinner;
 
@@ -25,36 +27,37 @@ import org.eclipse.swt.widgets.Spinner;
 
 public class SpinnerControlScenario extends ScenariosTestCase {
 
-	private Adventure adventure;
+    private Adventure adventure;
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		// do any setup work here
-		adventure = SampleData.WINTER_HOLIDAY;
-	}
+    protected void setUp() throws Exception {
+        super.setUp();
+        // do any setup work here
+        adventure = SampleData.WINTER_HOLIDAY;
+    }
 
-	protected void tearDown() throws Exception {
-		// do any teardown work here
-		super.tearDown();
-	}
+    protected void tearDown() throws Exception {
+        // do any teardown work here
+        super.tearDown();
+    }
 
-	public void testScenario01() {
+    public void testScenario01() {
+        // Bind the adventure "maxNumberOfPeople" property to a spinner
+        // Change the UI and verify the model changes
+        // Change the model and verify the UI changes
+        Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
+        getDbc().bindValue(SWTObservables.getSelection(spinner),
+                BeansObservables.observeValue(adventure, "maxNumberOfPeople"),
+                null);
 
-		// Bind the adventure "maxNumberOfPeople" property to a spinner
-		// Change the UI and verify the model changes
-		// Change the model and verify the UI changes
-		Spinner spinner = new Spinner(getComposite(), SWT.BORDER);
-		getDbc().bind(spinner, new Property(adventure, "maxNumberOfPeople"),
-				null);
-		assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
-		// Verify the model is updated when the GUI is changed
-		spinner.setSelection(5);
-		assertEquals(5, adventure.getMaxNumberOfPeople());
-		// Verify the GUI is updated when the model changes
-		adventure.setMaxNumberOfPeople(7);
-		assertEquals(7, spinner.getSelection());
-		adventure.setMaxNumberOfPeople(11);
-		spinEventLoop(0);
-		assertEquals(11, spinner.getSelection());
-	}
+        assertEquals(adventure.getMaxNumberOfPeople(), spinner.getSelection());
+        // Verify the model is updated when the GUI is changed
+        spinner.setSelection(5);
+        assertEquals(5, adventure.getMaxNumberOfPeople());
+        // Verify the GUI is updated when the model changes
+        adventure.setMaxNumberOfPeople(7);
+        assertEquals(7, spinner.getSelection());
+        adventure.setMaxNumberOfPeople(11);
+        spinEventLoop(0);
+        assertEquals(11, spinner.getSelection());
+    }
 }

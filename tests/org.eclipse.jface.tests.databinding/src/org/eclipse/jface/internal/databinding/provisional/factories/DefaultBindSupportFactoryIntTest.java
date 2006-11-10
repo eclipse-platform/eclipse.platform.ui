@@ -7,27 +7,28 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.Display;
 
 public class DefaultBindSupportFactoryIntTest extends TestCase {
 	private DataBindingContext ctx;
 	private TestDataObject dataObject;
 
 	public void setUp() {
-		ctx = getDatabindingContext();
+        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		ctx = new DataBindingContext();
+        
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
 		dataObject.setIntVal(0);
@@ -35,7 +36,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 	
 	public void testStringToIntConverter() {
-		ctx.bind(new Property(dataObject, "stringVal"), new Property(dataObject, "intVal"), null);
+        ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
@@ -59,7 +60,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 
 	public void testIntegerToIntConverter() {
-		ctx.bind(new Property(dataObject, "integerVal"), new Property(dataObject, "intVal"), null);
+	    ctx.bindValue(BeansObservables.observeValue(dataObject, "integerVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
@@ -78,7 +79,7 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 	}
 	
 	public void testObjectToIntegerConverter() {
-		ctx.bind(new Property(dataObject, "objectVal"), new Property(dataObject, "intVal"), null);
+	    ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject, "intVal"), null);
 		
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
@@ -144,22 +145,5 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 			firePropertyChange("objectVal", oldVal, this.objectVal);
 		}
 	}
-	
-	/**
-	 * @param aControl
-	 * @return
-	 */
-	public static DataBindingContext getDatabindingContext() {
-		final DataBindingContext context = new DataBindingContext();
-		context.addObservableFactory(new DefaultObservableFactory(context));
-		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
-		context.addObservableFactory(new NestedObservableFactory(context));
-		context.addObservableFactory(new SWTObservableFactory());
-		context.addObservableFactory(new ViewersObservableFactory());
-		context.addBindingFactory(new DefaultBindingFactory());
-		context.addBindingFactory(new ViewersBindingFactory());
-		context.addBindSupportFactory(new DefaultBindSupportFactory());
-		return context;
-	}	
 }
 	

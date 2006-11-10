@@ -17,6 +17,8 @@ import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
@@ -28,7 +30,7 @@ public class WritableValueTest extends TestCase {
      * @throws Exception
      */
     public void testValueChangeOnlyFiresOnChange() throws Exception {
-        WritableValue writableValue = new WritableValue(null);
+        WritableValue writableValue = new WritableValue(SWTObservables.getRealm(Display.getDefault()), null);
         ValueChangeCounter counter = new ValueChangeCounter();
         writableValue.addValueChangeListener(counter);
         

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding.observable.value;
 
@@ -14,6 +15,7 @@ import org.eclipse.jface.databinding.observable.IChangeListener;
 import org.eclipse.jface.databinding.observable.IObservable;
 import org.eclipse.jface.databinding.observable.IStaleListener;
 import org.eclipse.jface.databinding.observable.ObservableTracker;
+import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * A Lazily calculated value that automatically computes and registers listeners
@@ -38,19 +40,38 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	private IObservable[] dependencies = new IObservable[0];
 
 	/**
+	 * @param realm 
 	 * 
 	 */
 	public ComputedValue() {
-		this(Object.class);
+		this(Realm.getDefault(), Object.class);
 	}
 
 	/**
+	 * @param realm 
 	 * @param valueType
 	 */
 	public ComputedValue(Object valueType) {
-		this.valueType = valueType;
+		this(Realm.getDefault(), valueType);
 	}
 
+	/**
+	 * @param realm 
+	 * 
+	 */
+	public ComputedValue(Realm realm) {
+		this(realm, Object.class);
+	}
+	
+	/**
+	 * @param realm 
+	 * @param valueType
+	 */
+	public ComputedValue(Realm realm, Object valueType) {
+		super(realm);
+		this.valueType = valueType;
+	}
+	
 	/**
 	 * Inner class that implements interfaces that we don't want to expose as
 	 * public API. Each interface could have been implemented using a separate
@@ -94,11 +115,11 @@ public abstract class ComputedValue extends AbstractObservableValue {
 
 	private Object valueType;
 
-	public final Object doGetValue() {
+	protected final Object doGetValue() {
 		if (dirty) {
 			// This line will do the following:
-			// - Run the computeValue method
-			// - While doing so, add any updatable that is touched to the
+			// - Run the calculate method
+			// - While doing so, add any observable that is touched to the
 			// dependencies list
 			IObservable[] newDependencies = ObservableTracker.runAndMonitor(
 					privateInterface, privateInterface, null);

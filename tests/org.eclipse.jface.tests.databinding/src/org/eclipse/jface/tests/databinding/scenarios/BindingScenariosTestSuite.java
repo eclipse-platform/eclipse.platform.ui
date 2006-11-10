@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -14,15 +15,6 @@ import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.jface.tests.databinding.BindingTestSuite;
-import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionExtendedTest;
-import org.eclipse.jface.tests.databinding.swt.AutoSelectTableViewerCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.CComboObservableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.ComboObservableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.ListObservableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.ObservableCollectionViewerTest;
-import org.eclipse.jface.tests.databinding.swt.TableViewerObservableCollectionTest;
-import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
@@ -37,69 +29,51 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class BindingScenariosTestSuite extends TestSuite {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
 
-	private static Display display;
+    private static Display display;
 
-	private static Shell shell;
+    private static Shell shell;
 
-	public static Test suite() {
-		return new TestSetup(new BindingScenariosTestSuite()) {
-			protected void setUp() throws Exception {
-				Display d = Display.getDefault();
-				if (d == null) {
-					display = new Display();
-					d = display;
-				}
-				shell = new Shell(d, SWT.SHELL_TRIM);
-				shell.setLayout(new FillLayout());
-			}
+    public static Test suite() {
+        return new TestSetup(new BindingScenariosTestSuite()) {
+            protected void setUp() throws Exception {
+                Display d = Display.getDefault();
+                shell = new Shell(d, SWT.SHELL_TRIM);
+                shell.setLayout(new FillLayout());
+            }
 
-			protected void tearDown() throws Exception {
-				shell.close();
-				shell.dispose();
-				if (display != null) {
-					display.dispose();
-				}
-			}
-		};
-	}
+            protected void tearDown() throws Exception {
+                shell.close();
+                shell.dispose();
+                if (display != null) {
+                    display.dispose();
+                }
+            }
+        };
+    }
 
-	public BindingScenariosTestSuite() {
-		addTestSuite(ObservableFactoriesTest.class);
-		addTestSuite(PropertyScenarios.class);
-		addTestSuite(CustomScenarios.class);
-		addTestSuite(CustomConverterScenarios.class);
-		addTestSuite(MasterDetailScenarios.class);
-		addTestSuite(ComboScenarios.class);
-		addTestSuite(TableScenarios.class);
-		addTestSuite(NewTableScenarios.class);
-		addTestSuite(NPETestScenario.class);
+    public BindingScenariosTestSuite() {
+        addTestSuite(ButtonControlScenario.class);
+        addTestSuite(ComboScenarios.class);
+        addTestSuite(ComboUpdatingTest.class);
+        addTestSuite(ComboViewerScenario.class);
+        addTestSuite(CustomConverterScenarios.class);
+        addTestSuite(CustomScenarios.class);
+        addTestSuite(ListViewerScenario.class);
+        addTestSuite(MasterDetailScenarios.class);
+        addTestSuite(NewTableScenarios.class);
+        addTestSuite(NPETestScenario.class);
+        addTestSuite(PropertyScenarios.class);
+        addTestSuite(SpinnerControlScenario.class);
+        addTestSuite(TableScenarios.class);
+        addTestSuite(TextControlScenario.class);
+    }
 
-		// Test each of the basic SWT controls
-		addTestSuite(TextControlScenario.class);
-		addTestSuite(SpinnerControlScenario.class);
-		addTestSuite(ButtonControlScenario.class);
-		// Test each of the basic JFace controls
-		addTestSuite(ComboViewerScenario.class);
-		addTestSuite(ComboUpdatingTest.class);
-		addTestSuite(ListViewerScenario.class);
-		addTestSuite(TextObservableValueTests.class);
-		if (BindingTestSuite.failingTestsDisabled(this))
-			return;
-		addTestSuite(CComboObservableCollectionTest.class);
-		addTestSuite(ComboObservableCollectionTest.class);
-		addTestSuite(TableViewerObservableCollectionTest.class);
-		addTestSuite(ListObservableCollectionTest.class);
-		addTestSuite(ObservableCollectionViewerTest.class);
-		addTestSuite(AutoSelectTableViewerCollectionTest.class);
-		addTestSuite(AutoSelectTableViewerCollectionExtendedTest.class);
-	}
-
-	public static Shell getShell() {
-		return shell;
-	}
+    public static Shell getShell() {
+        return shell;
+    }
 
 }

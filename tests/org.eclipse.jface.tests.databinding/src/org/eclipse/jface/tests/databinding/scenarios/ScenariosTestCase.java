@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -14,9 +15,10 @@ import java.util.Arrays;
 
 import junit.framework.TestCase;
 
+import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
@@ -36,8 +38,7 @@ abstract public class ScenariosTestCase extends TestCase {
 	private boolean disposeDisplay = false;
 	protected Shell shell;
 	protected Text dummyText;
-
-	private SWTObservableFactory swtObservableFactory;
+	protected Realm realm;
 
 	protected Composite getComposite() {
 		return composite;
@@ -45,10 +46,6 @@ abstract public class ScenariosTestCase extends TestCase {
 
 	protected DataBindingContext getDbc() {
 		return dbc;
-	}
-
-	protected SWTObservableFactory getSWTObservableFactory() {
-		return swtObservableFactory;
 	}
 
 	public Shell getShell() {
@@ -109,17 +106,20 @@ abstract public class ScenariosTestCase extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
+		realm = SWTObservables.getRealm(Display.getDefault());
+		Realm.setDefault(realm);
+        
 		composite = new Composite(getShell(), SWT.NONE);
 		composite.setLayout(new FillLayout());
 		SampleData.initializeData(); // test may manipulate the data... let
 		// all start from fresh
-		dbc = SampleData.getDatabindingContext(composite);
-		swtObservableFactory = SampleData.getSWTObservableFactory();
+		dbc = new DataBindingContext();
 		dummyText = new Text(getComposite(), SWT.NONE);
 		dummyText.setText("dummy");
 	}
 
 	protected void tearDown() throws Exception {
+		realm = null;
 		getShell().setVisible(false); // same Shell may be reUsed across tests
 		composite.dispose();
 		composite = null;

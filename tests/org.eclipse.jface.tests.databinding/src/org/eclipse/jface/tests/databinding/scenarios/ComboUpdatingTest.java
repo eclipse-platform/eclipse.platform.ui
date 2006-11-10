@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.scenarios;
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.internal.swt.ComboObservableValue;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
+import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.BindingTestSuite;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -100,7 +103,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	
 	private static final String NEXT = "Next";
 	public void testBindText() throws Exception {
-		getDbc().bind(new Property(comboEditable, PROP_TEXT), new Property(this, PROP_TEXT), null);
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, "text"), null);
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 		comboEditable.setText(NEXT);
@@ -113,12 +116,15 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			return;
 		}
 		text = "Apple";
-		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboEditable, PROP_TEXT));
-		getDbc().bind(value, new Property(this, PROP_TEXT), null);
+        
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
+        
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
-		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
-//		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
+        
+        IObservableList list = new WritableList(getChoices());
+        getDbc().bindList(SWTObservables.getItems(comboEditable), list, null);
+
 		spinEventLoop(0);
 		int position = 0;
 		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {
@@ -161,12 +167,16 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		if (BindingTestSuite.failingTestsDisabled(this)) {
 			return;
 		}
-		ComboObservableValue value = (ComboObservableValue) getDbc().createObservable(new Property(comboEditable, PROP_TEXT));
-		getDbc().bind(value, new Property(this, PROP_TEXT), null);
+        
+        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
+
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
-		getDbc().bind(value.getItems(), new Property(this, PROP_CHOICES), null);
-//		getDbc().bind(combo, new Property(this, PROP_CHOICES, String.class, Boolean.TRUE), null);
+        
+        IObservableList list = new WritableList(String.class);
+        list.addAll(getChoices());
+        getDbc().bindList(SWTObservables.getItems(comboEditable), list, null);
+        
 		spinEventLoop(0);
 		int position = 0;
 		for (Iterator choicesIter = choices.iterator(); choicesIter.hasNext();) {

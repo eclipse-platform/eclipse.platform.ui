@@ -7,16 +7,27 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
+import java.util.Arrays;
+
+import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.observable.masterdetail.IObservableFactory;
+import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
+import org.eclipse.jface.examples.databinding.model.Lodging;
 import org.eclipse.jface.examples.databinding.model.SampleData;
-import org.eclipse.jface.internal.databinding.provisional.description.ListModelDescription;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.List;
@@ -52,12 +63,18 @@ public class ListViewerScenario extends ScenariosTestCase {
 	}
 
 	public void testScenario01() {
-
 		// Bind the catalog's lodgings to the combo
-		getDbc().bind(
-				listViewer,
-				new ListModelDescription(new Property(catalog, "lodgings"),
-						"name"), null);
+        IObservableList lodgings = MasterDetailObservables.detailList(BeansObservables.observeValue(catalog, "lodgings"),
+                getLodgingsDetailFactory(Lodging.class),
+                Lodging.class);
+        listViewer.setContentProvider(new ObservableListContentProvider());
+        listViewer.setLabelProvider(new LabelProvider() {
+            public String getText(Object element) {
+                return ((Lodging) element).getName();
+            }
+        });
+        listViewer.setInput(lodgings);
+        
 		// Verify that the combo's items are the lodgings
 		for (int i = 0; i < catalog.getLodgings().length; i++) {
 			assertEquals(catalog.getLodgings()[i], listViewer.getElementAt(i));
@@ -77,9 +94,9 @@ public class ListViewerScenario extends ScenariosTestCase {
 		// Now bind the selection of the combo to the "defaultLodging" property
 		// of an adventure
 		final Adventure adventure = SampleData.WINTER_HOLIDAY;
-		getDbc().bind(
-				new Property(listViewer, ViewersProperties.SINGLE_SELECTION),
-				new Property(adventure, "defaultLodging"), null);
+        
+        IObservableValue selection = ViewersObservables.observeSingleSelection(listViewer);
+        getDbc().bindValue(selection, BeansObservables.observeValue(adventure, "defaultLodging"), null);
 
 		// Verify that the list selection is the default lodging
 		assertEquals(((IStructuredSelection) listViewer.getSelection())
@@ -102,5 +119,15 @@ public class ListViewerScenario extends ScenariosTestCase {
 				.getFirstElement(), adventure.getDefaultLodging());
 
 	}
-
+    
+    private static IObservableFactory getLodgingsDetailFactory(final Class clazz) {
+        return new IObservableFactory() {
+            public IObservable createObservable(Object target) {
+                Lodging[] lodgings = (Lodging[]) target;
+                WritableList list = new WritableList(clazz);
+                list.addAll(Arrays.asList(lodgings));
+                return list;
+            }
+        };
+    }
 }

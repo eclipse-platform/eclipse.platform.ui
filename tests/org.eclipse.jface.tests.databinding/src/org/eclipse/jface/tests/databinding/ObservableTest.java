@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -14,8 +15,11 @@ import junit.framework.TestCase;
 
 import org.eclipse.jface.databinding.observable.Diffs;
 import org.eclipse.jface.databinding.observable.IChangeListener;
+import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
-import org.eclipse.jface.tests.databinding.util.Mocks;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.Display;
 
 public class ObservableTest extends TestCase {
 
@@ -30,13 +34,14 @@ public class ObservableTest extends TestCase {
 		public void fireChange(Object oldValue, Object newValue) {
 			fireValueChange(Diffs.createValueDiff(oldValue, newValue));
 		}
-
 	}
 
 	private MyObservable observable;
 
 	protected void setUp() throws Exception {
 		super.setUp();
+        
+        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		observable = new MyObservable(null);
 	}
 
@@ -52,40 +57,30 @@ public class ObservableTest extends TestCase {
 		super.tearDown();
 	}
 
+    private static class ChangeListener implements IChangeListener {
+        int count;
+        IObservable source;
+        
+        /* (non-Javadoc)
+         * @see org.eclipse.jface.databinding.observable.IChangeListener#handleChange(org.eclipse.jface.databinding.observable.IObservable)
+         */
+        public void handleChange(IObservable source) {
+            count++;
+            this.source = source;
+        }        
+    }
+    
 	/*
 	 * Test method for
 	 * 'org.eclipse.jface.databinding.Observable.addChangeListener(IChangeListener)'
 	 */
-	public void testAddChangeListener() {
-		IChangeListener changeListenerMock = (IChangeListener) Mocks
-				.createOrderedMock(IChangeListener.class);
-
-		// testing that no methods on the observable are called when adding the
-		// change listener
-		Mocks.startChecking(changeListenerMock);
-		observable.addChangeListener(changeListenerMock);
-
-		// testing that handleChange is actually called
-		Mocks.reset(changeListenerMock);
-		changeListenerMock.handleChange(null);
-		changeListenerMock.handleChange(null);
-		Mocks.startChecking(changeListenerMock);
-		observable.fireChange(null, null);
-		observable.fireChange(null, null);
-		Mocks.verify(changeListenerMock);
-
-		// testing that handleChange is called just once
-		Mocks.reset(changeListenerMock);
-		changeListenerMock.handleChange(null);
-		Mocks.startChecking(changeListenerMock);
-		observable.fireChange(null, null);
-		Mocks.verify(changeListenerMock);
-
-		// dispose() will call another handleChange. Prevent this from causing a
-		// test failure
-		Mocks.reset(changeListenerMock);
-		changeListenerMock.handleChange(null);
-		Mocks.startChecking(changeListenerMock);
+	public void testFireChangeListener() {
+        ChangeListener listener = new ChangeListener();
+        observable.addChangeListener(listener);
+        assertEquals("listener should not have been invoked", 0, listener.count);
+        
+        observable.fireChange(null, null);
+        assertEquals("listener should have been invoked", 1, listener.count);
 	}
 
 	/*
@@ -93,70 +88,11 @@ public class ObservableTest extends TestCase {
 	 * 'org.eclipse.jface.databinding.Observable.removeChangeListener(IChangeListener)'
 	 */
 	public void testRemoveChangeListener() {
-		IChangeListener changeListenerMock = (IChangeListener) Mocks
-				.createOrderedMock(IChangeListener.class);
-
-		// testing that no methods on the observable are called when removing
-		// the
-		// change listener
-		Mocks.startChecking(changeListenerMock);
-		observable.removeChangeListener(changeListenerMock);
-
-		// testing that no methods on the observable are called after adding and
-		// removing the change listener
-		observable.addChangeListener(changeListenerMock);
-		observable.removeChangeListener(changeListenerMock);
-
-		observable.fireChange(null, null);
+        ChangeListener listener = new ChangeListener();
+        observable.addChangeListener(listener);
+        
+        observable.removeChangeListener(listener);
+        observable.fireChange(null, null);        
+        assertEquals("the listener should have been removed", 0, listener.count);
 	}
-
-	/*
-	 * Test method for
-	 * 'org.eclipse.jface.databinding.Observable.fireChangeEvent(int, Object,
-	 * Object)'
-	 */
-	public void testFireChangeEvent() {
-		// IChangeListener changeListenerMock = (IChangeListener) Mocks
-		// .createMock(IChangeListener.class,
-		// new Mocks.EqualityComparator() {
-		// public boolean equals(Object o1, Object o2) {
-		// ChangeEvent changeEvent1 = (ChangeEvent) o1;
-		// ChangeEvent changeEvent2 = (ChangeEvent) o2;
-		// return changeEvent1.getChangeType() == changeEvent2
-		// .getChangeType()
-		// && changeEvent1.getPosition() == changeEvent2
-		// .getPosition()
-		// && changeEvent1.getOldValue() == changeEvent2
-		// .getOldValue()
-		// && changeEvent1.getNewValue() == changeEvent2
-		// .getNewValue();
-		// }
-		// });
-		// observable.addChangeListener(changeListenerMock);
-		//
-		// Object o1 = new Object();
-		// Object o2 = new Object();
-		//
-		// changeListenerMock.handleChange(new ChangeEvent(observable, 0, null,
-		// null, ChangeEvent.POSITION_UNKNOWN));
-		// changeListenerMock.handleChange(new ChangeEvent(observable, 0, null,
-		// null, 1));
-		// changeListenerMock.handleChange(new ChangeEvent(observable,
-		// ChangeEvent.CHANGE, o1, o2, ChangeEvent.POSITION_UNKNOWN));
-		// changeListenerMock.handleChange(new ChangeEvent(observable,
-		// ChangeEvent.CHANGE, o1, o2, 42));
-		// Mocks.startChecking(changeListenerMock);
-		// observable.fireChange(0, null, null);
-		// observable.fireChange(0, null, null, 1);
-		// observable.fireChange(ChangeEvent.CHANGE, o1, o2);
-		// observable.fireChange(ChangeEvent.CHANGE, o1, o2, 42);
-		// Mocks.verify(changeListenerMock);
-		//
-		// // dispose() will call another handleChange. Prevent this from
-		// causing a test failure
-		// Mocks.reset(changeListenerMock);
-		// changeListenerMock.handleChange(null);
-		// Mocks.startChecking(changeListenerMock);
-	}
-
 }
