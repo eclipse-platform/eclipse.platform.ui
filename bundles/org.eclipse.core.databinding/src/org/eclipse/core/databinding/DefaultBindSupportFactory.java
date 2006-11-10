@@ -11,7 +11,6 @@
 
 package org.eclipse.core.databinding;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,6 @@ import org.eclipse.core.databinding.validation.IDomainValidator;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
 import org.eclipse.core.databinding.validation.ReadOnlyValidator;
-import org.eclipse.core.databinding.validation.String2BigDecimalValidator;
 import org.eclipse.core.databinding.validation.String2BytePrimitiveValidator;
 import org.eclipse.core.databinding.validation.String2ByteValidator;
 import org.eclipse.core.databinding.validation.String2DateValidator;
@@ -495,7 +493,7 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			if (fromClass.isPrimitive()) {
 				fromClass = autoboxed(fromClass);
 			}
-			return Boolean.valueOf((toClass).isAssignableFrom(fromClass));
+			return toClass.isAssignableFrom(fromClass) ? Boolean.TRUE : Boolean.FALSE;
 		}
 		return null;
 	}
@@ -593,10 +591,6 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 			associate(String.class, Float.class, new String2FloatValidator());
 			associate(String.class, Double.class, new String2DoubleValidator());
 			associate(String.class, Date.class, new String2DateValidator());
-
-			associate(String.class, BigDecimal.class,
-					new String2BigDecimalValidator());
-
 
 			associate(Integer.class, Integer.TYPE, new ObjectToPrimitiveValidator(Integer.TYPE));
 			associate(Byte.class, Byte.TYPE, new ObjectToPrimitiveValidator(Byte.TYPE));
