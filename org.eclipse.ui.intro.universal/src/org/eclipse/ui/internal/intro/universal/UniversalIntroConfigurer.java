@@ -481,8 +481,13 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		IPath ipath = new Path(path);
 		String pageId = ipath.segment(0);
 		String s2 = ipath.segment(1);
-		if (!s2.equals("@")) //$NON-NLS-1$
+		// if it's "@extension_id" then target that extension instead
+		if (s2.startsWith("@") && s2.length() > 1) { //$NON-NLS-1$
+			extensionId = s2.substring(1);
+		}
+		if (!s2.equals("@")) { //$NON-NLS-1$
 			extensionRelativePath = true;
+		}
 		if (introData.size() > 0) {
 			// TODO getting the active product one only
 			// Eventually we should consult the data from all the products

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,46 +11,31 @@
 
 package org.eclipse.ui.internal.intro.impl.model;
 
-import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 
 /**
  * An intro config component that can have a single Text element as a child. In
  * case there is more than one text child, the text is retrieved from the first
  * text child element.
  */
-public abstract class AbstractTextElement extends AbstractBaseIntroElement {
-
-    private IntroText introText;
+public abstract class AbstractTextElement extends AbstractIntroContainer {
 
     AbstractTextElement(Element element, Bundle bundle) {
         super(element, bundle);
-        // description will be null if there is no description element.
-        introText = getTextElement(element);
     }
 
     /**
      * Retruns the intro text element embedded in this element.
      */
-    private IntroText getTextElement(Element element) {
-        try {
-            // There should only be one text element.
-            // Since elements where obtained by name, no point validating name.
-            NodeList textElements = element
-                .getElementsByTagName(IntroText.TAG_TEXT);
-            if (textElements.getLength() == 0)
-                // no contributions. done.
-                return null;
-            IntroText text = new IntroText((Element) textElements.item(0),
-                getBundle());
-            text.setParent(this);
-            return text;
-        } catch (Exception e) {
-            Log.error(e.getMessage(), e);
-            return null;
-        }
+    public IntroText getIntroText() {
+    	AbstractIntroElement[] children = getChildren();
+    	for (int i=0;i<children.length;++i) {
+    		if (children[i] instanceof IntroText) {
+    			return (IntroText)children[i];
+    		}
+    	}
+    	return null;
     }
 
     /**
@@ -58,19 +43,11 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
      */
     public String getText() {
         // intro text may be null if there is no child Text element.
-        if (introText != null)
-            return introText.getText();
+    	IntroText text = getIntroText();
+        if (text != null) {
+            return text.getText();
+        }
         return null;
-    }
-
-    /**
-     * Returns the intro text representing the child text of this element. May
-     * return null if there is no text child.
-     * 
-     * @return Returns the introText.
-     */
-    public IntroText getIntroText() {
-        return introText;
     }
 
     /*
@@ -81,18 +58,4 @@ public abstract class AbstractTextElement extends AbstractBaseIntroElement {
     public int getType() {
         return AbstractIntroElement.ABSTRACT_TEXT;
     }
-
-    /**
-     * Deep copy since class has mutable objects.
-     */
-    public Object clone() throws CloneNotSupportedException {
-        AbstractTextElement clone = (AbstractTextElement) super.clone();
-        if (introText != null) {
-            IntroText cloneIntroText = (IntroText) introText.clone();
-            cloneIntroText.setParent(clone);
-            clone.introText = cloneIntroText;
-        }
-        return clone;
-    }
-
 }

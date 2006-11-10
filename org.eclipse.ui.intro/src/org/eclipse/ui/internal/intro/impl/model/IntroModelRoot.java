@@ -16,7 +16,9 @@ import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
@@ -460,6 +462,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         Element[] extensionContents = ModelUtil.getElementsByTagName(dom,
             IntroExtensionContent.TAG_CONTAINER_EXTENSION);
+        if (extensionContents.length == 0) {
+        	extensionContents = ModelUtil.getElementsByTagName(dom,
+        			IntroExtensionContent.TAG_CONTAINER_REPLACE);
+        }
+
         // INTRO: change this. we may need to load more than one extension
         // content here.
         // There should only be one container extension. (ver3.0)
@@ -510,14 +517,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // target could not be found. Signal failure.
             return false;
 
-        // extensions are only for anchors. Insert all children of this
-        // extension before the target anchor. Anchors need to stay in DOM ,
-        // even after all extensions have been resolved, to enable other
+        // Insert all children of this extension before the target element. Anchors need
+        // to stay in DOM, even after all extensions have been resolved, to enable other
         // plugins to contribute. Find the target node.
         Document pageDom = targetPage.getDocument();
-        Element targetAnchor = targetPage.findDomChild(pathSegments[1],
-            IntroAnchor.TAG_ANCHOR);
-        if (targetAnchor == null)
+        Element targetElement = targetPage.findDomChild(pathSegments[1], "*"); //$NON-NLS-1$
+        if (targetElement == null)
             return false;
 
         // get extension content
@@ -530,9 +535,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
             ModelUtil.updateResourceAttributes((Element) targetNode,
                 extensionContent);
-            targetAnchor.getParentNode().insertBefore(targetNode, targetAnchor);
+            targetElement.getParentNode().insertBefore(targetNode, targetElement);
         }
 
+        if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACE) {
+            targetElement.getParentNode().removeChild(targetElement);
+        }
+        
         // now handle style inheritance.
         // Update the parent page styles. skip style if it is null;
         String[] styles = extensionContent.getStyles();
@@ -553,37 +562,32 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * @param extensionContent
      * @return
      */
-    private boolean load3_0ExtensionContent(
-            IntroExtensionContent extensionContent) {
+    private boolean load3_0ExtensionContent(IntroExtensionContent extensionContent) {
         String path = extensionContent.getPath();
+        int type = extensionContent.getExtensionType();
         AbstractIntroElement target = findTarget(this, path, extensionContent.getId());
-        if (target == null || !target.isOfType(AbstractIntroElement.ANCHOR))
-            // target could not be found. Signal failure.
-            return false;
-
-        // extensions are only for anchors. Insert all children of this
-        // extension before this anchor. Anchors need to stay as model
-        // children, even after all extensions have been
-        // resolved, to enable other plugins to contribute.
-        IntroAnchor targetAnchor = (IntroAnchor) target;
-        insertAnchorChildren(targetAnchor, extensionContent, extensionContent
-            .getBundle(), extensionContent.getBase());
-        handleExtensionStyleInheritence(targetAnchor, extensionContent);
-
-        return true;
-
+        if (target != null && target.isOfType(AbstractIntroElement.ANCHOR) == (type == IntroExtensionContent.TYPE_CONTRIBUTION)) {
+        	// insert all children of this extension before the target element/anchor.
+	        insertExtensionChildren(target, extensionContent, extensionContent.getBundle(), extensionContent.getBase());
+	        // anchors need to stay around to receive other contributions
+	        if (type == IntroExtensionContent.TYPE_REPLACE) {
+	        	AbstractIntroContainer parent = (AbstractIntroContainer)target.getParent();
+	        	parent.removeChild(target);
+	        }
+	        handleExtensionStyleInheritence(target, extensionContent);
+	        return true;
+        }
+        // appropriate target could not be found. Signal failure.
+        return false;
     }
 
-
-    private void insertAnchorChildren(IntroAnchor anchor,
+    private void insertExtensionChildren(AbstractIntroElement target,
             IntroExtensionContent extensionContent, Bundle bundle, String base) {
-        AbstractIntroContainer anchorParent = (AbstractIntroContainer) anchor
-            .getParent();
-        // insert the elements of the extension before the anchor.
+        AbstractIntroContainer parent = (AbstractIntroContainer)target.getParent();
+        // insert the elements of the extension before the target
         String mixinStyle = getMixinStyle(extensionContent);
         Element [] children = extensionContent.getChildren();
-        anchorParent.insertElementsBefore(children,
-            bundle, base, anchor, mixinStyle);
+        parent.insertElementsBefore(children, bundle, base, target, mixinStyle);
     }
     
     private String getMixinStyle(IntroExtensionContent extensionContent) {
@@ -597,24 +601,32 @@ public class IntroModelRoot extends AbstractIntroContainer {
     	IntroConfigurer configurer = modelRoot.getConfigurer();
     	if (configurer==null)
     		return null;
-   		return configurer.getMixinStyle(pageId, extensionContent.getId());
+    	String extensionId = extensionContent.getId();
+    	// if this is a replace, take the mixin style as what is being replaced
+    	if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACE) {
+    		IPath ipath = new Path(extensionContent.getPath());
+    		String s2 = ipath.segment(1);
+    		if (s2 != null && s2.startsWith("@") && s2.length() > 1) { //$NON-NLS-1$
+    			extensionId = s2.substring(1);
+    		}
+    	}
+   		return configurer.getMixinStyle(pageId, extensionId);
     }
 
 
     /**
      * Updates the inherited styles based on the style attribtes defined in the
-     * confgiExtension. If we are extending a shared group do nothing. For
+     * configExtension. If we are extending a shared group do nothing. For
      * inherited alt-styles, we have to cache the bundle from which we inherited
      * the styles to be able to access resources in that plugin.
      * 
      * @param include
      * @param target
      */
-    private void handleExtensionStyleInheritence(IntroAnchor anchor,
+    private void handleExtensionStyleInheritence(AbstractIntroElement target,
             IntroExtensionContent extension) {
 
-        AbstractIntroContainer targetContainer = (AbstractIntroContainer) anchor
-            .getParent();
+        AbstractIntroContainer targetContainer = (AbstractIntroContainer)target.getParent();
         if (targetContainer.getType() == AbstractIntroElement.GROUP
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
             // if we are extending a shared group, defined under a config, we
@@ -630,10 +642,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         Hashtable altStyles = extension.getAltStyles();
         if (altStyles != null)
             targetContainer.getParentPage().addAltStyles(altStyles);
-
     }
-
-
 
     /**
      * Sets the model state based on all the model classes. Dynamic nature of

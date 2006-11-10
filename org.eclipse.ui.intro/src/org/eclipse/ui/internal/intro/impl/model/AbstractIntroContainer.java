@@ -421,9 +421,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
         // found parent segment. now find each child segment.
         for (int i = 1; i < pathSegments.length; i++) {
-            if (!target.isOfType(AbstractIntroElement.ABSTRACT_CONTAINER))
+        	if (!(target instanceof AbstractIntroContainer)) {
                 // parent is not a container, so no point going on.
-                return null;
+        		return null;
+        	}
             String pathSegment = pathSegments[i];
             target = ((AbstractIntroContainer) target).findChild(pathSegment);
             if (target == null)
@@ -647,6 +648,10 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      */
     public void addChild(AbstractIntroElement child) {
         children.add(child);
+    }
+    
+    public void removeChild(AbstractIntroElement child) {
+    	children.remove(child);
     }
 
 	public String getBackgroundImage() {
