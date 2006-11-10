@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -168,12 +169,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	public void createControl(Composite parent) {
 		initializeDialogUnits(parent);
-		Font wizardFont = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL
 				| GridData.HORIZONTAL_ALIGN_FILL));
-		composite.setFont(wizardFont);
+		
 
 		createTransferArea(composite);
 
@@ -190,6 +190,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		setControl(composite);
 
 		giveFocusToDestination();
+		Dialog.applyDialogFont(composite);
 	}
 
 	/**
@@ -285,14 +286,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected void createTransfersList(Composite composite) {
 
-		Font parentFont = composite.getFont();
 		allButton = new Button(composite, SWT.RADIO);
 		allButton.setText(getAllButtonText());
-		allButton.setFont(parentFont);
 		
 		chooseImportsButton = new Button(composite, SWT.RADIO);
 		chooseImportsButton.setText(getChooseButtonText());
-		chooseImportsButton.setFont(parentFont);
 		
 		group = new Group(composite, SWT.NONE);
 		group.setText(PreferencesMessages.WizardPreferencesExportPage1_preferences);
@@ -302,21 +300,17 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
-		group.setFont(parentFont);
 		
 		transfersTable = new Table(group, SWT.CHECK | SWT.BORDER);
 		transfersTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		transfersTable.setFont(parentFont);
 		
 		Label description = new Label(group, SWT.NONE);
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.setText(PreferencesMessages.WizardPreferences_description);
-		description.setFont(parentFont);
 		
 		text = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
 				| SWT.BORDER | SWT.WRAP);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
-		text.setFont(parentFont);
 		
 		SelectionListener selection = new SelectionListener() {
 
@@ -427,18 +421,15 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected void createDestinationGroup(Composite parent) {
 		// destination specification group
-		Font parentFont = parent.getFont();
 		Composite destinationSelectionGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		destinationSelectionGroup.setLayout(layout);
 		destinationSelectionGroup.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_FILL));
-		destinationSelectionGroup.setFont(parentFont);
 		
 		Label dest = new Label(destinationSelectionGroup, SWT.NONE);
 		dest.setText(getDestinationLabel());
-		dest.setFont(parentFont);
 		
 		// destination name entry field
 		destinationNameField = new Combo(destinationSelectionGroup, SWT.SINGLE
@@ -448,7 +439,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL);
 		destinationNameField.setLayoutData(data);
-		destinationNameField.setFont(parentFont);
 		
 		// destination browse button
 		destinationBrowseButton = new Button(destinationSelectionGroup,
@@ -458,7 +448,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		destinationBrowseButton.setLayoutData(new GridData(
 				GridData.HORIZONTAL_ALIGN_FILL));
 		destinationBrowseButton.addListener(SWT.Selection, this);
-		destinationBrowseButton.setFont(parentFont);
 		
 		new Label(parent, SWT.NONE); // vertical spacer
 	}
@@ -471,22 +460,19 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected void createOptionsGroup(Composite parent) {
 		// options group
-		Font parentFont = parent.getFont();
-		
+	
 		Composite optionsGroup = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		optionsGroup.setLayout(layout);
 		optionsGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
 				| GridData.GRAB_HORIZONTAL));
-		optionsGroup.setFont(parentFont);
 	
 		// overwrite... checkbox
 		overwriteExistingFilesCheckbox = new Button(optionsGroup, SWT.CHECK
 				| SWT.LEFT);
 		overwriteExistingFilesCheckbox
 				.setText(PreferencesMessages.ExportFile_overwriteExisting);
-		overwriteExistingFilesCheckbox.setFont(parentFont);
 		
 	}
 
