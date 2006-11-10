@@ -10,97 +10,69 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class DiffProject implements IWorkbenchAdapter, IAdaptable, ITypedElement {
+/**
+ * A diff project represents a project that was read from a workspace patch.
+ * It contains the set of file diffs that were associated with the project
+ * in the patch file.
+ */
+public class DiffProject {
 
-	List fDiffs= new ArrayList();
-	IProject fProject;
+	private IProject fProject;
+	private Set fDiffs= new HashSet();
 
-	//used for patch retargeting
-	String fOriginalProjectName= null;
-
-	DiffProject(IProject project) {
+	/**
+	 * Create a diff project for the given workspace project.
+	 * @param project a workspace project
+	 */
+	public DiffProject(IProject project) {
 		this.fProject= project;
-		this.fOriginalProjectName= project.getName();
 	}
 
-	void addDiff(Diff diff) {
+	/**
+	 * Add the file diff to this project.
+	 * @param diff the file diff.
+	 */
+	void add(FileDiff diff) {
 		fDiffs.add(diff);
+		if (diff.getProject() != this)
+			diff.setProject(this);
 	}
 
-	void addDiffs(Diff[] diffs) {
-		for (int i= 0; i<diffs.length; i++) {
-			fDiffs.add(diffs[i]);
-		}
-	}
-
-	IProject getProject() {
+	
+	/**
+	 * Return the workspace project associated with this diff project.
+	 * @return the workspace project associated with this project
+	 */
+	public IProject getProject() {
 		return this.fProject;
 	}
 
+	/**
+	 * Return the name of this project.
+	 * @return the name of this project
+	 */
 	public String getName() {
 		return fProject.getName();
 	}
 
-	void setProject(IProject project) {
-		this.fProject= project;
-	}
-
 	/**
-	 * Resets all of the diffs contained by this project
-	 * @param patcher
-	 * @param strip
-	 * @param fuzzfactor
-	 * @return a list of which hunks need to be checked
+	 * Return the file at the given path relative to this project.
+	 * @param path the relative path
+	 * @return the file at the given path relative to this project
 	 */
-	ArrayList reset(WorkspacePatcher patcher, int strip, int fuzzfactor) {
-		ArrayList hunksToCheck= new ArrayList();
-		for (Iterator iter= fDiffs.iterator(); iter.hasNext();) {
-			Diff diff= (Diff) iter.next();
-			hunksToCheck.addAll(diff.reset(patcher, strip, fuzzfactor));
-		}
-		return hunksToCheck;
-	}
-
 	public IFile getFile(IPath path) {
 		return fProject.getFile(path);
 	}
 
-	/**
-	 * Returns the target files of all the Diffs contained by this 
-	 * DiffProject.
-	 * @return An array of IFiles that are targeted by the Diffs
-	 */
-	public IFile[] getTargetFiles() {
-		List files= new ArrayList();
-		for (Iterator iter= fDiffs.iterator(); iter.hasNext();) {
-			Diff diff= (Diff) iter.next();
-			if (diff.isEnabled()) {
-				files.add(diff.getTargetFile());
-			}
-		}
-		return (IFile[]) files.toArray(new IFile[files.size()]);
-	}
-
-	//IWorkbenchAdapter methods
-	public Object[] getChildren(Object o) {
-		return fDiffs.toArray();
-	}
-
-	public ImageDescriptor getImageDescriptor(Object object) {
+	public ImageDescriptor getImageDescriptor() {
 		Object o= fProject.getAdapter(IWorkbenchAdapter.class);
 		if (o instanceof IWorkbenchAdapter) {
 			ImageDescriptor id= ((IWorkbenchAdapter) o).getImageDescriptor(fProject);
@@ -109,51 +81,28 @@ public class DiffProject implements IWorkbenchAdapter, IAdaptable, ITypedElement
 		return null;
 	}
 
-	public String getLabel(Object o) {
-		return getName();
+	/**
+	 * Remove the file diff from this project.
+	 * @param diff the diff to be removed
+	 */
+	public void remove(FileDiff diff) {
+		fDiffs.remove(diff);
 	}
 
-	public Object getParent(Object o) {
-		return null;
+	/**
+	 * Return whether this project contains the given diff.
+	 * @param diff a file diff
+	 * @return whether this project contains the given diff
+	 */
+	public boolean contains(FileDiff diff) {
+		return fDiffs.contains(diff);
 	}
 
-	//IAdaptable methods
-	public Object getAdapter(Class adapter) {
-		if (adapter==IWorkbenchAdapter.class) {
-			return this;
-		}
-		return null;
-	}
-
-	public String getOriginalProjectName() {
-		return fOriginalProjectName;
-	}
-
-	public Image getImage() {
-		return CompareUI.getImage(fProject);
-	}
-
-	public String getType() {
-		return ITypedElement.FOLDER_TYPE;
-	}
-
-	public void remove(Diff tempDiff) {
-		fDiffs.remove(tempDiff);
-	}
-
-	public void setEnabled(boolean include) {
-		//set all diffs to the passed in enablement
-		Iterator iter = fDiffs.iterator();
-		while (iter.hasNext()){
-			Diff diff = (Diff) iter.next();
-			diff.setEnabled(include);
-		}
-	}
-
-	public void reverse() {
-		for (Iterator iter= fDiffs.iterator(); iter.hasNext();) {
-			Diff diff= (Diff) iter.next();
-			diff.reverse();
-		}
+	/**
+	 * Return the file diffs associated with this project.
+	 * @return the file diffs associated with this project
+	 */
+	public FileDiff[] getFileDiffs() {
+		return (FileDiff[]) fDiffs.toArray(new FileDiff[fDiffs.size()]);
 	}
 }

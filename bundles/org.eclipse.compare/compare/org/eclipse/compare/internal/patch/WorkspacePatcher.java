@@ -10,35 +10,15 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResourceRuleFactory;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A Patcher 
@@ -46,43 +26,26 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
  * - holds onto the parsed data and the options to use when applying the patches,
  * - knows how to apply the patches to files and folders.
  */
-public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchAdapter {
+public class WorkspacePatcher extends Patcher {
 
 	private DiffProject[] fDiffProjects;
-
 	private boolean fIsWorkspacePatch= false;
+	private final Map retargetedDiffs = new HashMap();
 
-	// API for writing new multi-project patch format
-	public static final String MULTIPROJECTPATCH_HEADER= "### Eclipse Workspace Patch"; //$NON-NLS-1$
-	public static final String MULTIPROJECTPATCH_VERSION= "1.0"; //$NON-NLS-1$
-	public static final String MULTIPROJECTPATCH_PROJECT= "#P"; //$NON-NLS-1$
-
-	/**
-	 * Appends the multiproject header and version number to the passed in stream. Users
-	 * should call this first during the patch creation process if they want their patches
-	 * to be applied across the workspace.  
-	 *  
-	 * @param stream
-	 */
-	public static void writeMultiProjectPatchHeader(PrintStream stream) {
-		stream.println(MULTIPROJECTPATCH_HEADER+" "+MULTIPROJECTPATCH_VERSION); //$NON-NLS-1$
-	}
-
-	/**
-	 * Appends the header for a multiproject patch project to the passed in stream. This should
-	 * be called before adding any additional patch content for the passed in project in order to 
-	 * allow the patch to be properly rooted across the workspace.  
-	 * @param stream
-	 * @param project
-	 */
-	public static void addMultiProjectPatchProject(PrintStream stream, IProject project) {
-		stream.println(MULTIPROJECTPATCH_PROJECT+" "+project.getName()); //$NON-NLS-1$
-	}
-	
 	public WorkspacePatcher() {
 		// nothing to do
 	}
 
+	public WorkspacePatcher(IResource target) {
+		setTarget(target);
+	}
+	
+	protected void patchParsed(PatchReader patchReader) {
+		super.patchParsed(patchReader);
+		fDiffProjects = patchReader.getDiffProjects();
+		fIsWorkspacePatch = patchReader.isWorkspacePatch();
+	}
+	
 	public DiffProject[] getDiffProjects() {
 		return fDiffProjects;
 	}
@@ -92,92 +55,6 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 	}
 
 	//---- parsing patch files
-
-	public void parse(BufferedReader reader) throws IOException {
-		List diffs= new ArrayList();
-		HashMap diffProjects= new HashMap(4);
-		String line= null;
-		boolean reread= false;
-		String diffArgs= null;
-		String fileName= null;
-		// no project means this is a single patch,create a placeholder project for now
-		// which will be replaced by the target selected by the user in the preview pane
-		String project= ""; //$NON-NLS-1$
-		fIsWorkspacePatch= false;
-
-		LineReader lr= new LineReader(reader);
-		if (!"carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
-			lr.ignoreSingleCR();
-
-		// Test for our format
-		line= lr.readLine();
-		if (line != null && line.startsWith(MULTIPROJECTPATCH_HEADER)) {
-			fIsWorkspacePatch= true;
-		} else {
-			parse(lr, line);
-			return;
-		}
-
-		// read leading garbage
-		while (true) {
-			if (!reread)
-				line= lr.readLine();
-			reread= false;
-			if (line == null)
-				break;
-			if (line.length() < 4)
-				continue; // too short
-
-			if (line.startsWith(MULTIPROJECTPATCH_PROJECT)) {
-				project= line.substring(2).trim();
-				continue;
-			}
-
-			if (line.startsWith("Index: ")) { //$NON-NLS-1$
-				fileName= line.substring(7).trim();
-				continue;
-			}
-			if (line.startsWith("diff")) { //$NON-NLS-1$
-				diffArgs= line.substring(4).trim();
-				continue;
-			}
-
-			if (line.startsWith("--- ")) { //$NON-NLS-1$
-				// if there is no current project or
-				// the current project doesn't equal the newly parsed project
-				// reset the current project to the newly parsed one, create a new DiffProject
-				// and add it to the array
-				DiffProject diffProject;
-				if (!diffProjects.containsKey(project)) {
-					IProject iproject= ResourcesPlugin.getWorkspace().getRoot().getProject(project);
-					diffProject= new DiffProject(iproject);
-					diffProjects.put(project, diffProject);
-				} else {
-					diffProject= (DiffProject) diffProjects.get(project);
-				}
-
-				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName, diffProject);
-				diffArgs= fileName= null;
-				reread= true;
-			}
-		}
-
-		lr.close();
-
-		fDiffs= (Diff[]) diffs.toArray(new Diff[diffs.size()]);
-		fDiffProjects= (DiffProject[]) diffProjects.values().toArray(new DiffProject[diffProjects.size()]);
-	}
-
-	private String readUnifiedDiff(List diffs, LineReader lr, String line, String diffArgs, String fileName, DiffProject diffProject) throws IOException {
-		List newDiffs= new ArrayList();
-		String nextLine= readUnifiedDiff(newDiffs, lr, line, diffArgs, fileName);
-		for (Iterator iter= newDiffs.iterator(); iter.hasNext();) {
-			Diff diff= (Diff) iter.next();
-			diff.setProject(diffProject);
-			diffs.add(diff);
-		}
-		return nextLine;
-	}
 
 	public void applyAll(IProgressMonitor pm, Shell shell, String title) throws CoreException {
 		if (!fIsWorkspacePatch) {
@@ -189,24 +66,25 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 			List list= new ArrayList();
 			for (int j= 0; j < fDiffProjects.length; j++) {
 				DiffProject diffProject= fDiffProjects[j];
-				list.addAll(Arrays.asList(diffProject.getTargetFiles()));
+				list.addAll(Arrays.asList(getTargetFiles(diffProject)));
 			}
 			// validate the files for editing
 			if (!Utilities.validateResources(list, shell, title))
 				return;
 
+			FileDiff[] diffs = getDiffs();
 			if (pm != null) {
 				String message= PatchMessages.Patcher_Task_message;
-				pm.beginTask(message, fDiffs.length * WORK_UNIT);
+				pm.beginTask(message, diffs.length * WORK_UNIT);
 			}
 
-			for (int i= 0; i < fDiffs.length; i++) {
+			for (int i= 0; i < diffs.length; i++) {
 
 				int workTicks= WORK_UNIT;
 
-				Diff diff= fDiffs[i];
-				if (diff.isEnabled()) {
-					IFile file= diff.getTargetFile();
+				FileDiff diff= diffs[i];
+				if (isEnabled(diff)) {
+					IFile file= getTargetFile(diff);
 					IPath path= file.getProjectRelativePath();
 					if (pm != null)
 						pm.subTask(path.toString());
@@ -215,7 +93,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 					List failed= new ArrayList();
 					List result= null;
 
-					int type= diff.getDiffType();
+					int type= diff.getDiffType(isReversed());
 					switch (type) {
 						case Differencer.ADDITION :
 							// patch it and collect rejected hunks
@@ -235,7 +113,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 							break;
 					}
 
-					if (fGenerateRejectFile && failed.size() > 0) {
+					if (isGenerateRejectFile() && failed.size() > 0) {
 						IPath pp= null;
 						if (path.segmentCount() > 1) {
 							pp= path.removeLastSegments(1);
@@ -265,6 +143,31 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 			}
 		}
 	}
+	
+	/**
+	 * Returns the target files of all the Diffs contained by this 
+	 * DiffProject.
+	 * @return An array of IFiles that are targeted by the Diffs
+	 */
+	public IFile[] getTargetFiles(DiffProject project) {
+		List files= new ArrayList();
+		FileDiff[] diffs = project.getFileDiffs();
+		for (int i = 0; i < diffs.length; i++) {
+			FileDiff diff = diffs[i];
+			if (isEnabled(diff)) {
+				files.add(getTargetFile(diff));
+			}
+		}
+		return (IFile[]) files.toArray(new IFile[files.size()]);
+	}
+
+	protected IFile getTargetFile(FileDiff diff) {
+		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
+		DiffProject project = getProject(diff);
+		if (project != null)
+			return project.getFile(path);
+		return super.getTargetFile(diff);
+	}
 
 	public ISchedulingRule[] getTargetProjects() {
 		List projects= new ArrayList();
@@ -272,7 +175,7 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		// Determine the appropriate scheduling rules 
 		for (int i= 0; i < fDiffProjects.length; i++) {
 			IProject tempProject= fDiffProjects[i].getProject();
-			// The goal here is to lock as little of the workspace as neccessary
+			// The goal here is to lock as little of the workspace as necessary
 			// but still allow the patcher to obtain the locks it needs.
 			// As such, we need to get the modify rules from the rule factory for the .project file. A pessimistic
 			// rule factory will return the root, while others might return just the project. Combining
@@ -283,32 +186,6 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		}
 	
 		return (ISchedulingRule[]) projects.toArray(new ISchedulingRule[projects.size()]);
-	}
-
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class)
-			return this;
-		return null;
-	}
-
-	public Object[] getChildren(Object o) {
-		if (fIsWorkspacePatch)
-			return fDiffProjects;
-		if (fDiffs != null)
-			return fDiffs;
-		return new Object[0];
-	}
-
-	public ImageDescriptor getImageDescriptor(Object object) {
-		return null;
-	}
-
-	public String getLabel(Object o) {
-		return null;
-	}
-
-	public Object getParent(Object o) {
-		return null;
 	}
 
 	public void setDiffProjects(DiffProject[] newProjectArray) {
@@ -327,21 +204,124 @@ public class WorkspacePatcher extends Patcher implements IAdaptable, IWorkbenchA
 		fDiffProjects = temp;
 	}	
 	
-	/*
-	 * Returns <code>true</code> if new value differs from old.
-	 */
-	public boolean setReversed(boolean reverse) {
-		if (fReverse != reverse) {
-			fReverse= reverse;
-			
-			for (int i= 0; i < fDiffProjects.length; i++){
-				fDiffProjects[i].reverse();
-				fDiffProjects[i].reset(this, getStripPrefixSegments(), getFuzz());
+	protected Object getElementParent(Object element) {
+		if (element instanceof FileDiff) {
+			FileDiff diff = (FileDiff) element;
+			for (int i = 0; i < fDiffProjects.length; i++) {
+				DiffProject project = fDiffProjects[i];
+				if (project.contains(diff))
+					return project;
 			}
-			return true;
 		}
-		return false;
+		return null;
 	}
 
+	public boolean isRetargeted(Object object) {
+		return retargetedDiffs.containsKey(object);
+	}
+	
+	public IPath getOriginalPath(Object object) {
+		return (IPath)retargetedDiffs.get(object);
+	}
+
+	public void retargetDiff(FileDiff diff, IFile file) {
+		retargetedDiffs.put(diff, diff.getPath(false));
+		Hunk[] hunks = diff.getHunks();
+		
+		if (isWorkspacePatch()){
+			//since the diff has no more hunks to apply, remove it from the parent and the patcher
+			diff.getProject().remove(diff);
+		}
+		removeDiff(diff);
+		FileDiff newDiff = getDiffForFile(file);
+		for (int i = 0; i < hunks.length; i++) {
+			Hunk hunk = hunks[i];
+			newDiff.add(hunk);
+		}
+	}
+
+	private FileDiff getDiffForFile(IFile file) {
+		DiffProject diffProject = null;
+		FileDiff[] diffsToCheck;
+		if (isWorkspacePatch()){
+			//see if the project already exists
+			IProject project = file.getProject();
+			DiffProject[] diffProjects = getDiffProjects();
+			for (int i = 0; i < diffProjects.length; i++) {
+				if (diffProjects[i].getProject().equals(project)){
+					diffProject = diffProjects[i];
+					break;
+				}
+			}
+			if (diffProject == null){
+				//create a new diff project
+				diffProject = new DiffProject(project);
+				//add the diffProject to the array
+				DiffProject[] newProjectArray = new DiffProject[diffProjects.length + 1];
+				System.arraycopy(diffProjects, 0, newProjectArray, 0, diffProjects.length);
+				//add the new project to the end
+				newProjectArray[diffProjects.length] = diffProject;
+				setDiffProjects(newProjectArray);
+			}
+			diffsToCheck = diffProject.getFileDiffs();
+		} else {
+			diffsToCheck = getDiffs();
+		}
+		for (int i = 0; i < diffsToCheck.length; i++) {
+			FileDiff fileDiff = diffsToCheck[i];
+			if (getTargetFile(fileDiff).equals(file)) {
+				return fileDiff;
+			}
+		}
+		
+		//Create a new diff
+		FileDiff newDiff = new FileDiff(file.getProjectRelativePath(), 0, file.getProjectRelativePath(), 0);
+		if (diffProject != null){
+			diffProject.add(newDiff);
+		}
+		addDiff(newDiff);
+		return newDiff;
+	}
+
+	public void retargetHunk(Hunk hunk, IFile file) {
+		FileDiff newDiff = getDiffForFile(file);
+		newDiff.add(hunk);
+	}
+
+	public void retargetProject(DiffProject project, IProject targetProject) {
+		retargetedDiffs.put(project, project.getProject().getFullPath());
+		FileDiff[] diffs = project.getFileDiffs();
+		DiffProject selectedProject = getDiffProject(targetProject);
+		// Copy over the diffs to the new project
+		for (int i = 0; i < diffs.length; i++) {
+			selectedProject.add(diffs[i]);
+		}
+		// Since the project has been retargeted, remove it from the patcher
+		removeProject(project);
+	}
+	
+	private DiffProject getDiffProject(IProject project) {
+		DiffProject[] projects = getDiffProjects();
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i].getProject().equals(project))
+				return projects[i];
+		}
+		// Create a new diff project
+		DiffProject newProject = new DiffProject(project);
+		// Add the diffProject to the array
+		DiffProject[] newProjectArray = new DiffProject[projects.length + 1];
+		System.arraycopy(projects, 0, newProjectArray, 0, projects.length);
+		// Add the new project to the end
+		newProjectArray[projects.length] = newProject;
+		setDiffProjects(newProjectArray);
+		return newProject;
+	}
+	
+	int getStripPrefixSegments() {
+		// Segments are never stripped from a workspace patch
+		if (isWorkspacePatch())
+			return 0;
+		return super.getStripPrefixSegments();
+	}
     
 }

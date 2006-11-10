@@ -11,39 +11,16 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
+import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * A Patcher 
@@ -52,10 +29,6 @@ import com.ibm.icu.text.SimpleDateFormat;
  * - knows how to apply the patches to files and folders.
  */
 public class Patcher {
-	
-	private static final boolean DEBUG= false;
-	
-	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 
 	static protected final String REJECT_FILE_EXTENSION= ".rej"; //$NON-NLS-1$
 
@@ -66,16 +39,9 @@ public class Patcher {
 	//	private static final int ED= 1;
 	//	private static final int NORMAL= 2;
 	//	private static final int UNIFIED= 3;
-
-	// we recognize the following date/time formats
-	private static DateFormat[] DATE_FORMATS= new DateFormat[] {
-		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy"), //$NON-NLS-1$
-		new SimpleDateFormat("yyyy/MM/dd kk:mm:ss"), //$NON-NLS-1$
-		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US) //$NON-NLS-1$
-	};
 		
 	private String fName;
-	protected Diff[] fDiffs;
+	private FileDiff[] fDiffs;
 	private IResource fTarget;
 	// patch options
 	private int fStripPrefixSegments;
@@ -83,9 +49,13 @@ public class Patcher {
 	private boolean fIgnoreWhitespace= false;
 	private boolean fIgnoreLineDelimiter= true;
 	private boolean fPreserveLineDelimiters= false;
-	protected boolean fReverse= false;
+	private boolean fReverse= false;
 	private boolean fAdjustShift= true;
-	protected boolean fGenerateRejectFile = true;
+	private boolean fGenerateRejectFile = true;
+	private Set disabledElements = new HashSet();
+	private Map diffResults = new HashMap();
+	private final Map contentCache = new HashMap();
+	private final Map properties = new HashMap();
 	
 	public Patcher() {
 		// nothing to do
@@ -105,15 +75,14 @@ public class Patcher {
 	 * Returns an array of Diffs after a sucessfull call to <code>parse</code>.
 	 * If <code>parse</code> hasn't been called returns <code>null</code>.
 	 */
-	public Diff[] getDiffs() {
+	public FileDiff[] getDiffs() {
+		if (fDiffs == null)
+			return new FileDiff[0];
 		return fDiffs;
 	}
 	
-	IPath getPath(Diff diff) {
-		IPath path= diff.getPath();
-		if (fStripPrefixSegments > 0 && fStripPrefixSegments < path.segmentCount())
-			path= path.removeFirstSegments(fStripPrefixSegments);
-		return path;
+	public IPath getPath(FileDiff diff) {
+		return diff.getStrippedPath(getStripPrefixSegments(), isReversed());
 	}
 
 	/*
@@ -145,21 +114,6 @@ public class Patcher {
 	int getFuzz(){
 		return fFuzz;
 	}
-	
-	/*
-	 * Returns <code>true</code> if new value differs from old.
-	 */
-	public boolean setReversed(boolean reverse) {
-		if (fReverse != reverse) {
-			fReverse= reverse;
-			
-			for (int i= 0; i < fDiffs.length; i++)
-				fDiffs[i].reverse();
-						
-			return true;
-		}
-		return false;
-	}
 		
 	/*
 	 * Returns <code>true</code> if new value differs from old.
@@ -174,621 +128,17 @@ public class Patcher {
 		
 	//---- parsing patch files
 
-	public void parse(LineReader lr, String line) throws IOException {
-		List diffs= new ArrayList();
-		boolean reread= false;
-		String diffArgs= null;
-		String fileName= null;
-
-		// read leading garbage
-		reread= line!=null;
-		while (true) {
-			if (!reread)
-				line= lr.readLine();
-			reread= false;
-			if (line == null)
-				break;
-			if (line.length() < 4)
-				continue;	// too short
-								
-			// remember some infos
-			if (line.startsWith("Index: ")) { //$NON-NLS-1$
-				fileName= line.substring(7).trim();
-				continue;
-			}
-			if (line.startsWith("diff")) { //$NON-NLS-1$
-				diffArgs= line.substring(4).trim();
-				continue;
-			}
-
-			if (line.startsWith("--- ")) { //$NON-NLS-1$
-				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
-				diffArgs= fileName= null;
-				reread= true;
-			} else if (line.startsWith("*** ")) { //$NON-NLS-1$
-				line= readContextDiff(diffs, lr, line, diffArgs, fileName);
-				diffArgs= fileName= null;
-				reread= true;
-			}
-		}
-		
-		lr.close();
-		
-		fDiffs= (Diff[]) diffs.toArray(new Diff[diffs.size()]);
+	public void parse(BufferedReader reader) throws IOException {
+		PatchReader patchReader= new PatchReader();
+		patchReader.parse(reader);
+		patchParsed(patchReader);
 	}
 
-	/*
-	 * Returns the next line that does not belong to this diff
-	 */
-	protected String readUnifiedDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
-
-		String[] oldArgs= split(line.substring(4));
-
-		// read info about new file
-		line= reader.readLine();
-		if (line == null || !line.startsWith("+++ ")) //$NON-NLS-1$
-			return line;
-			
-		String[] newArgs= split(line.substring(4));
-	
-		Diff diff= new Diff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
-		diffs.add(diff);
-				   
-		int[] oldRange= new int[2];
-		int[] newRange= new int[2];
-		List lines= new ArrayList();
-
-		boolean encounteredPlus = false;
-		boolean encounteredMinus = false;
-		boolean encounteredSpace = false;
-		
-		try {
-			// read lines of hunk
-			while (true) {
-				
-				line= reader.readLine();
-				if (line == null)
-					return null;
-					
-				if (reader.lineContentLength(line) == 0) {
-					//System.out.println("Warning: found empty line in hunk; ignored");
-					//lines.add(' ' + line);
-					continue;
-				}
-				
-				char c= line.charAt(0);
-				switch (c) {
-				case '@':
-					if (line.startsWith("@@ ")) { //$NON-NLS-1$
-						// flush old hunk
-						if (lines.size() > 0) {
-							new Hunk(diff, oldRange, newRange, lines,encounteredPlus, encounteredMinus, encounteredSpace);
-							lines.clear();
-						}
-								
-						// format: @@ -oldStart,oldLength +newStart,newLength @@
-						extractPair(line, '-', oldRange);
-						extractPair(line, '+', newRange);
-						continue;
-					}
-					break;
-				case ' ':
-					encounteredSpace = true;
-					lines.add(line);
-					continue;
-				case '+':
-					encounteredPlus = true;
-					lines.add(line);
-					continue;
-				case '-':
-					encounteredMinus = true;
-					lines.add(line);
-					continue;
-				case '\\':
-					if (line.indexOf("newline at end") > 0) { //$NON-NLS-1$
-						int lastIndex= lines.size();
-						if (lastIndex > 0) {
-							line= (String) lines.get(lastIndex-1);
-							int end= line.length()-1;
-							char lc= line.charAt(end);
-							if (lc == '\n') {
-								end--;
-								if (end > 0 && line.charAt(end-1) == '\r')
-									end--;
-							} else if (lc == '\r') {
-								end--;
-							}
-							line= line.substring(0, end+1);
-							lines.set(lastIndex-1, line);
-						}
-						continue;
-					}
-					break;
-				default:
-					if (DEBUG) {
-						int a1= c, a2= 0;
-						if (line.length() > 1)
-							a2= line.charAt(1);
-						System.out.println("char: " + a1 + " " + a2); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					break;
-				}
-				return line;
-			}
-		} finally {
-			if (lines.size() > 0)
-				new Hunk(diff, oldRange, newRange, lines, encounteredPlus, encounteredMinus, encounteredSpace);
-			diff.finish();
-		}
-	}
-	
-	/*
-	 * Returns the next line that does not belong to this diff
-	 */
-	private String readContextDiff(List diffs, LineReader reader, String line, String args, String fileName) throws IOException {
-		
-		String[] oldArgs= split(line.substring(4));
-		
-		// read info about new file
-		line= reader.readLine();
-		if (line == null || !line.startsWith("--- ")) //$NON-NLS-1$
-			return line;
-		
-		String[] newArgs= split(line.substring(4));
-						
-		Diff diff= new Diff(extractPath(oldArgs, 0, fileName), extractDate(oldArgs, 1),
-				   			extractPath(newArgs, 0, fileName), extractDate(newArgs, 1));
-		diffs.add(diff);
-				   
-		int[] oldRange= new int[2];
-		int[] newRange= new int[2];
-		List oldLines= new ArrayList();
-		List newLines= new ArrayList();
-		List lines= oldLines;
-		
-
-		boolean encounteredPlus = false;
-		boolean encounteredMinus = false;
-		boolean encounteredSpace = false;
-		
-		try {
-			// read lines of hunk
-			while (true) {
-				
-				line= reader.readLine();
-				if (line == null)
-					return line;
-				
-				int l= line.length();
-				if (l == 0)
-					continue;
-				if (l > 1) {
-					switch (line.charAt(0)) {
-					case '*':	
-						if (line.startsWith("***************")) {	// new hunk //$NON-NLS-1$
-							// flush old hunk
-							if (oldLines.size() > 0 || newLines.size() > 0) {
-								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
-								oldLines.clear();
-								newLines.clear();
-							}
-							continue;
-						}
-						if (line.startsWith("*** ")) {	// old range //$NON-NLS-1$
-							// format: *** oldStart,oldEnd ***
-							extractPair(line, ' ', oldRange);
-							oldRange[1]= oldRange[1]-oldRange[0]+1;
-							lines= oldLines;
-							continue;
-						}
-						break;
-					case ' ':	// context line
-						if (line.charAt(1) == ' ') {
-							lines.add(line);
-							continue;
-						}
-						break;
-					case '+':	// addition
-						if (line.charAt(1) == ' ') {
-							encounteredPlus = true;
-							lines.add(line);
-							continue;
-						}
-						break;
-					case '!':	// change
-						if (line.charAt(1) == ' ') {
-							encounteredSpace = true;
-							lines.add(line);
-							continue;
-						}
-						break;
-					case '-':
-						if (line.charAt(1) == ' ') {	// deletion
-							encounteredMinus = true;
-							lines.add(line);
-							continue;
-						}
-						if (line.startsWith("--- ")) {	// new range //$NON-NLS-1$
-							// format: *** newStart,newEnd ***
-							extractPair(line, ' ', newRange);
-							newRange[1]= newRange[1]-newRange[0]+1;
-							lines= newLines;
-							continue;
-						}
-						break;
-					default:
-						break;
-					}
-				}
-				return line;
-			}
-		} finally {
-			// flush last hunk
-			if (oldLines.size() > 0 || newLines.size() > 0)
-				new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines), encounteredPlus, encounteredMinus, encounteredSpace);
-			diff.finish();
-		}
-	}
-	
-	/*
-	 * Creates a List of lines in the unified format from
-	 * two Lists of lines in the 'classic' format.
-	 */
-	private List unifyLines(List oldLines, List newLines) {
-		List result= new ArrayList();
-
-		String[] ol= (String[]) oldLines.toArray(new String[oldLines.size()]);
-		String[] nl= (String[]) newLines.toArray(new String[newLines.size()]);
-		
-		int oi= 0, ni= 0;
-		
-		while (true) {
-			
-			char oc= 0;
-			String o= null;
-			if (oi < ol.length) {
-				o= ol[oi];
-				oc= o.charAt(0);
-			}
-			
-			char nc= 0;
-			String n= null;
-			if (ni < nl.length) {
-				n= nl[ni];
-				nc= n.charAt(0);
-			}
-			
-			// EOF
-			if (oc == 0 && nc == 0)
-				break;
-				
-			// deletion in old
-			if (oc == '-') {
-				do {
-					result.add('-' + o.substring(2));
-					oi++;
-					if (oi >= ol.length)
-						break;
-					o= ol[oi];
-				} while (o.charAt(0) == '-');
-				continue;
-			}
-			
-			// addition in new
-			if (nc == '+') {
-				do {
-					result.add('+' + n.substring(2));
-					ni++;
-					if (ni >= nl.length)
-						break;
-					n= nl[ni];
-				} while (n.charAt(0) == '+');
-				continue;
-			}
-			
-			// differing lines on both sides
-			if (oc == '!' && nc == '!') {
-				// remove old
-				do {
-					result.add('-' + o.substring(2));
-					oi++;
-					if (oi >= ol.length)
-						break;
-					o= ol[oi];
-				} while (o.charAt(0) == '!');
-				
-				// add new
-				do {
-					result.add('+' + n.substring(2));
-					ni++;
-					if (ni >= nl.length)
-						break;
-					n= nl[ni];
-				} while (n.charAt(0) == '!');
-				
-				continue;
-			}
-			
-			// context lines
-			if (oc == ' ' && nc == ' ') {
-				do {
-					Assert.isTrue(o.equals(n), "non matching context lines"); //$NON-NLS-1$
-					result.add(' ' + o.substring(2));
-					oi++;
-					ni++;
-					if (oi >= ol.length || ni >= nl.length)
-						break;
-					o= ol[oi];
-					n= nl[ni];
-				} while (o.charAt(0) == ' ' && n.charAt(0) == ' ');
-				continue;
-			}
-			
-			if (oc == ' ') {
-				do {
-					result.add(' ' + o.substring(2));
-					oi++;
-					if (oi >= ol.length)
-						break;
-					o= ol[oi];
-				} while (o.charAt(0) == ' ');
-				continue;
-			}
-
-			if (nc == ' ') {
-				do {
-					result.add(' ' + n.substring(2));
-					ni++;
-					if (ni >= nl.length)
-						break;
-					n= nl[ni];
-				} while (n.charAt(0) == ' ');
-				continue;
-			}
-			
-			Assert.isTrue(false, "unexpected char <" + oc + "> <" + nc + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		}
-		
-		return result;
-	}
-	
-	/*
-	 * Breaks the given string into tab separated substrings.
-	 * Leading and trailing whitespace is removed from each token.
-	 */ 
-	private String[] split(String line) {
-		List l= new ArrayList();
-		StringTokenizer st= new StringTokenizer(line, "\t"); //$NON-NLS-1$
-		while (st.hasMoreElements()) {
-			String token= st.nextToken().trim();
-			if (token.length() > 0)
- 				l.add(token);
-		}
-		return (String[]) l.toArray(new String[l.size()]);
-	}
-	
-	/*
-	 * @return the parsed time/date in milliseconds or -1 on error
-	 */
-	private long extractDate(String[] args, int n) {
-		if (n < args.length) {
-			String line= args[n];
-			for (int i= 0; i < DATE_FORMATS.length; i++) {
-				DATE_FORMATS[i].setLenient(true);
-				try {
-					Date date= DATE_FORMATS[i].parse(line);
-					return date.getTime();		
-				} catch (ParseException ex) {
-					// silently ignored
-				}
-			}
-			// System.err.println("can't parse date: <" + line + ">");
-		}
-		return -1;
-	}
-	
-	/*
-	 * Returns null if file name is "/dev/null".
-	 */
-	private IPath extractPath(String[] args, int n, String path2) {
-		if (n < args.length) {
-			String path= args[n];
-			if (DEV_NULL.equals(path))
-				return null;
-			int pos= path.lastIndexOf(':');
-			if (pos >= 0)
-				path= path.substring(0, pos);
-			if (path2 != null && !path2.equals(path)) {
-				if (DEBUG) System.out.println("path mismatch: " + path2); //$NON-NLS-1$
-				path= path2;
-			}
-			return new Path(path);
-		}
-		return null;
-	}
-	
-	/*
-	 * Tries to extract two integers separated by a comma.
-	 * The parsing of the line starts at the position after
-	 * the first occurrence of the given character start an ends
-	 * at the first blank (or the end of the line).
-	 * If only a single number is found this is assumed to be the start of a one line range.
-	 * If an error occurs the range -1,-1 is returned.
-	 */
-	private void extractPair(String line, char start, int[] pair) {
-		pair[0]= pair[1]= -1;
-		int startPos= line.indexOf(start);
-		if (startPos < 0) {
-			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find \'" + start + "\'"); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		line= line.substring(startPos+1);
-		int endPos= line.indexOf(' ');
-		if (endPos < 0) {
-			if (DEBUG) System.out.println("parsing error in extractPair: couldn't find end blank"); //$NON-NLS-1$
-			return;
-		}
-		line= line.substring(0, endPos);
-		int comma= line.indexOf(',');
-		if (comma >= 0) {
-			pair[0]= Integer.parseInt(line.substring(0, comma));
-			pair[1]= Integer.parseInt(line.substring(comma+1));
-		} else {	// abbreviated form for one line patch
-			pair[0]= Integer.parseInt(line);
-			pair[1]= 1;
-		}
+	protected void patchParsed(PatchReader patchReader) {
+		fDiffs = patchReader.getDiffs();
 	}
 	
 	//---- applying a patch file
-	
-	/*
-	 * Tries to patch the given lines with the specified Diff.
-	 * Any hunk that couldn't be applied is returned in the list failedHunks.
-	 */
-	public void patch(Diff diff, List lines, List failedHunks) {
-		
-		int shift= 0;
-		Iterator iter= diff.fHunks.iterator();
-		while (iter.hasNext()) {
-			Hunk hunk= (Hunk) iter.next();
-			hunk.fMatches= false;
-			shift= patch(hunk, lines, shift, failedHunks);
-		}
-	}
-
-	/*
-	 * Tries to apply the specified hunk to the given lines.
-	 * If the hunk cannot be applied at the original position
-	 * the methods tries Fuzz lines before and after.
-	 * If this fails the Hunk is added to the given list of failed hunks.
-	 */
-	private int patch(Hunk hunk, List lines, int shift, List failedHunks) {
-		if (tryPatch(hunk, lines, shift)) {
-			if (hunk.isEnabled())
-				shift+= doPatch(hunk, lines, shift);
-		} else {
-			boolean found= false;
-			int oldShift= shift;
-						
-			for (int i= 1; i <= fFuzz; i++) {
-				if (tryPatch(hunk, lines, shift-i)) {
-					if (fAdjustShift)
-						shift-= i;
-					found= true;
-					break;
-				}
-			}
-			
-			if (! found) {
-				for (int i= 1; i <= fFuzz; i++) {
-					if (tryPatch(hunk, lines, shift+i)) {
-						if (fAdjustShift)
-							shift+= i;
-						found= true;
-						break;
-					}
-				}
-			}
-			
-			if (found) {
-				if (DEBUG) System.out.println("patched hunk at offset: " + (shift-oldShift)); //$NON-NLS-1$
-				shift+= doPatch(hunk, lines, shift);
-			} else {
-				if (failedHunks != null) {
-					if (DEBUG) System.out.println("failed hunk"); //$NON-NLS-1$
-					failedHunks.add(hunk);
-				}
-			}
-		}
-		return shift;
-	}
-	
-	/*
-	 * Tries to apply the given hunk on the specified lines.
-	 * The parameter shift is added to the line numbers given
-	 * in the hunk.
-	 */
-	private boolean tryPatch(Hunk hunk, List lines, int shift) {
-		int pos= hunk.fOldStart + shift;
-		int deleteMatches= 0;
-		for (int i= 0; i < hunk.fLines.length; i++) {
-			String s= hunk.fLines[i];
-			Assert.isTrue(s.length() > 0);
-			String line= s.substring(1);
-			char controlChar= s.charAt(0);
-			if (controlChar == ' ') {	// context lines
-				while (true) {
-					if (pos < 0 || pos >= lines.size())
-						return false;
-					if (linesMatch(line, (String) lines.get(pos))) {
-						pos++;
-						break;
-					}
-					return false;
-				}
-			} else if (controlChar == '-') {
-				// deleted lines
-				while (true) {
-					if (pos < 0 || pos >= lines.size())
-						return false;
-					if (linesMatch(line, (String) lines.get(pos))) {
-						deleteMatches++;
-						pos++;
-						break;
-					}
-					if (deleteMatches <= 0)
-						return false;
-					pos++;
-				}
-			} else if (controlChar == '+') {
-				// added lines
-				// we don't have to do anything for a 'try'
-			} else
-				Assert.isTrue(false, "tryPatch: unknown control character: " + controlChar); //$NON-NLS-1$
-		}
-		return true;
-	}
-	
-	private int doPatch(Hunk hunk, List lines, int shift) {
-		int pos= hunk.fOldStart + shift;
-		for (int i= 0; i < hunk.fLines.length; i++) {
-			String s= hunk.fLines[i];
-			Assert.isTrue(s.length() > 0);
-			String line= s.substring(1);
-			char controlChar= s.charAt(0);
-			if (controlChar == ' ') {	// context lines
-				while (true) {
-					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in context"); //$NON-NLS-1$
-					if (linesMatch(line, (String) lines.get(pos))) {
-						pos++;
-						break;
-					}
-					pos++;
-				}
-			} else if (controlChar == '-') {
-				// deleted lines				
-				while (true) {
-					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
-					if (linesMatch(line, (String) lines.get(pos))) {
-						break;
-					}
-					pos++;
-				}
-				lines.remove(pos);
-			} else if (controlChar == '+') {
-				// added lines
-				if (hunk.fOldLength == 0 && pos+1 < lines.size())
-					lines.add(pos+1, line);
-				else
-					lines.add(pos, line);
-				pos++;
-			} else
-				Assert.isTrue(false, "doPatch: unknown control character: " + controlChar); //$NON-NLS-1$
-		}
-		hunk.fMatches= true;
-		return hunk.fNewLength - hunk.fOldLength;
-	}
 
 	public void applyAll(IProgressMonitor pm, Shell shell, String title) throws CoreException {
 
@@ -813,9 +163,9 @@ public class Patcher {
 			list.add(singleFile);
 		else {
 			for (i= 0; i < fDiffs.length; i++) {
-				Diff diff= fDiffs[i];
-				if (diff.isEnabled()) {
-					switch (diff.getDiffType()) {
+				FileDiff diff= fDiffs[i];
+				if (isEnabled(diff)) {
+					switch (diff.getDiffType(isReversed())) {
 					case Differencer.CHANGE:
 						list.add(createPath(container, getPath(diff)));
 						break;
@@ -835,8 +185,8 @@ public class Patcher {
 			
 			int workTicks= WORK_UNIT;
 			
-			Diff diff= fDiffs[i];
-			if (diff.isEnabled()) {
+			FileDiff diff= fDiffs[i];
+			if (isEnabled(diff)) {
 				
 				IPath path= getPath(diff);
 				if (pm != null)
@@ -849,7 +199,7 @@ public class Patcher {
 				List failed= new ArrayList();
 				List result= null;
 				
-				int type= diff.getDiffType();
+				int type= diff.getDiffType(isReversed());
 				switch (type) {
 				case Differencer.ADDITION:
 					// patch it and collect rejected hunks
@@ -907,25 +257,24 @@ public class Patcher {
 		List lines= null;
 		if (!create && file != null) {
 			// read current contents
+			String charset = Utilities.getCharset(file);
 			InputStream is= null;
 			try {
 				is= file.getContents();
 				
 				Reader streamReader= null;
 				try {
-					streamReader= new InputStreamReader(is, Utilities.getCharset(file));
+					streamReader= new InputStreamReader(is, charset);
 				} catch (UnsupportedEncodingException x) {
 					// use default encoding
 					streamReader= new InputStreamReader(is);
 				}
 				
 				BufferedReader reader= new BufferedReader(streamReader);
-				LineReader lr= new LineReader(reader);
-				if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
-					lr.ignoreSingleCR();
-				lines= lr.readLines();
+				lines = readLines(reader);
 			} catch(CoreException ex) {
-				// NeedWork
+				// TODO
+				CompareUIPlugin.log(ex);
 			} finally {
 				if (is != null)
 					try {
@@ -940,10 +289,20 @@ public class Patcher {
 			lines= new ArrayList();
 		return lines;
 	}
+
+	private List readLines(BufferedReader reader) {
+		List lines;
+		LineReader lr= new LineReader(reader);
+		if (!"carbon".equals(SWT.getPlatform()))	//$NON-NLS-1$
+			lr.ignoreSingleCR();
+		lines= lr.readLines();
+		return lines;
+	}
 	
-	List apply(Diff diff, IFile file, boolean create, List failedHunks) {
-		List lines= load(file, create);
-		patch(diff, lines, failedHunks);
+	List apply(FileDiff diff, IFile file, boolean create, List failedHunks) {
+		FileDiffResult result = getDiffResult(diff);
+		List lines = result.apply(file, create);
+		failedHunks.addAll(result.getFailedHunks());
 		return lines;
 	}
 	
@@ -1038,41 +397,9 @@ public class Patcher {
 		// a leaf
 		return container.getFile(path);
 	}
-
-	/*
-	 * Returns the given string with all whitespace characters removed.
-	 * Whitespace is defined by <code>Character.isWhitespace(...)</code>.
-	 */
-	private static String stripWhiteSpace(String s) {
-		StringBuffer sb= new StringBuffer();
-		int l= s.length();
-		for (int i= 0; i < l; i++) {
-			char c= s.charAt(i);
-			if (!Character.isWhitespace(c))
-				sb.append(c);
-		}
-		return sb.toString();
-	}
 	
 	/*
-	 * Compares two strings.
-	 * If fIgnoreWhitespace is true whitespace is ignored.
-	 */
-	private boolean linesMatch(String line1, String line2) {
-		if (fIgnoreWhitespace)
-			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
-		if (fIgnoreLineDelimiter) {
-			int l1= length(line1);
-			int l2= length(line2);
-			if (l1 != l2)
-				return false;
-			return line1.regionMatches(0, line2, 0, l1);
-		}
-		return line1.equals(line2);
-	}
-	
-	/*
-	 * Returns the length (exluding a line delimiter CR, LF, CR/LF)
+	 * Returns the length (excluding a line delimiter CR, LF, CR/LF)
 	 * of the given string.
 	 */
 	/* package */ static int length(String s) {
@@ -1090,53 +417,6 @@ public class Patcher {
 		return l;
 	}
 
-	int calculateFuzz(Hunk hunk, List lines, int shift, IProgressMonitor pm, int[] fuzz) {
-		
-		hunk.fMatches= false;
-		if (tryPatch(hunk, lines, shift)) {
-			shift+= doPatch(hunk, lines, shift);
-			fuzz[0]= 0;
-		} else {
-			boolean found= false;
-			int hugeFuzz= lines.size();	// the maximum we need for this file
-			fuzz[0]= -2;	// not found
-			
-			for (int i= 1; i <= hugeFuzz; i++) {
-				if (pm.isCanceled()) {
-					fuzz[0]= -1;
-					return 0;
-				}
-				if (tryPatch(hunk, lines, shift-i)) {
-					fuzz[0]= i;
-					if (fAdjustShift)
-						shift-= i;
-					found= true;
-					break;
-				}
-			}
-			
-			if (! found) {
-				for (int i= 1; i <= hugeFuzz; i++) {
-					if (pm.isCanceled()) {
-						fuzz[0]= -1;
-						return 0;
-					}
-					if (tryPatch(hunk, lines, shift+i)) {
-						fuzz[0]= i;
-						if (fAdjustShift)
-							shift+= i;
-						found= true;
-						break;
-					}
-				}
-			}
-			
-			if (found)
-				shift+= doPatch(hunk, lines, shift);
-		}
-		return shift;
-	}
-
 	public IResource getTarget() {
 		return fTarget;
 	}
@@ -1146,6 +426,11 @@ public class Patcher {
 	}
 	
 
+	protected IFile getTargetFile(FileDiff diff) {
+		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
+		return existsInTarget(path);
+	}
+	
 	/**
 	 * Iterates through all of the resources contained in the Patch Wizard target
 	 * and looks to for a match to the passed in file 
@@ -1185,11 +470,8 @@ public class Patcher {
 		int length= 99;
 		if (fDiffs!=null)
 			for (int i= 0; i<fDiffs.length; i++) {
-				Diff diff= fDiffs[i];
-				if (diff.fOldPath!=null)
-					length= Math.min(length, diff.fOldPath.segmentCount());
-				if (diff.fNewPath!=null)
-					length= Math.min(length, diff.fNewPath.segmentCount());
+				FileDiff diff= fDiffs[i];
+				length= Math.min(length, diff.segmentCount());
 			}
 		return length;
 	}
@@ -1198,15 +480,15 @@ public class Patcher {
 		this.fGenerateRejectFile = generateRejects;
 	}
 	
-	public void addDiff(Diff newDiff){
-		Diff[] temp = new Diff[fDiffs.length + 1];
+	public void addDiff(FileDiff newDiff){
+		FileDiff[] temp = new FileDiff[fDiffs.length + 1];
 		System.arraycopy(fDiffs,0, temp, 0, fDiffs.length);
 		temp[fDiffs.length] = newDiff;
 		fDiffs = temp;
 	}
 	
-	public void removeDiff(Diff diffToRemove){
-		Diff[] temp = new Diff[fDiffs.length - 1];
+	public void removeDiff(FileDiff diffToRemove){
+		FileDiff[] temp = new FileDiff[fDiffs.length - 1];
 		int counter = 0;
 		for (int i = 0; i < fDiffs.length; i++) {
 			if (fDiffs[i] != diffToRemove){
@@ -1214,5 +496,200 @@ public class Patcher {
 			}
 		}
 		fDiffs = temp;
+	}
+	
+	public void setEnabled(Object element, boolean enabled) {
+		if (enabled) {
+			disabledElements.remove(element);
+		} else {
+			disabledElements.add(element);
+		}
+	}
+
+	public boolean isEnabled(Object element) {
+		if (disabledElements.contains(element)) 
+			return false;
+		if (element instanceof DiffProject) {
+			DiffProject project = (DiffProject) element;
+			if (!project.getProject().isAccessible())
+				return false;
+		}
+		Object parent = getElementParent(element);
+		if (parent == null)
+			return true;
+		return isEnabled(parent);
+	}
+
+	protected Object getElementParent(Object element) {
+		if (element instanceof Hunk) {
+			Hunk hunk = (Hunk) element;
+			return hunk.getParent();
+		}
+		return null;
+	}
+
+	public boolean isGenerateRejectFile() {
+		return fGenerateRejectFile;
+	}
+	
+	/**
+	 * Calculate the fuzz factor that will allow the most hunks to be matched.
+	 * @param monitor a progress monitor
+	 * @return the fuzz factor or <code>-1</code> if no hunks could be matched
+	 */
+	public int guessFuzzFactor(IProgressMonitor monitor) {
+		try {
+			monitor.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, IProgressMonitor.UNKNOWN);
+			FileDiff[] diffs= getDiffs();
+			if (diffs==null||diffs.length<=0)
+				return -1;
+			int fuzz= -1;
+			for (int i= 0; i<diffs.length; i++) {
+				FileDiff d= diffs[i];
+				IFile file= getTargetFile(d);
+				if (file != null) {
+					List lines= load(file, false);
+					FileDiffResult result = getDiffResult(d);
+					int f = result.calculateFuzz(lines, monitor);
+					if (f > fuzz)
+						fuzz = f;
+				}
+			}
+			return fuzz;
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	public void refresh() {
+		diffResults.clear();
+		refresh(getDiffs());
+	}
+	
+	protected void refresh(FileDiff[] diffs) {
+		for (int i = 0; i < diffs.length; i++) {
+			FileDiff diff = diffs[i];
+			FileDiffResult result = getDiffResult(diff);
+			result.refresh();
+		}
+	}
+	
+	public FileDiffResult getDiffResult(FileDiff diff) {
+		FileDiffResult result = (FileDiffResult)diffResults.get(diff);
+		if (result == null) {
+			result = new FileDiffResult(diff, this);
+			diffResults.put(diff, result);
+		}
+		return result;
+	}
+
+	public boolean isAdjustShift() {
+		return fAdjustShift;
+	}
+
+	/**
+	 * Return the project that contains this diff or <code>null</code>
+	 * if the patch is not a workspace patch.
+	 * @param diff the diff
+	 * @return the project that contains the diff
+	 */
+	public DiffProject getProject(FileDiff diff) {
+		return diff.getProject();
+	}
+
+	/*
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	public boolean setReversed(boolean reverse) {
+		if (fReverse != reverse) {
+			fReverse= reverse;
+			refresh();
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isReversed() {
+		return fReverse;
+	}
+
+	public boolean isIgnoreWhitespace() {
+		return fIgnoreWhitespace;
+	}
+
+	public boolean isIgnoreLineDelimiter() {
+		return fIgnoreLineDelimiter;
+	}
+	
+	/**
+	 * Cache the contents for the given file diff. These contents
+	 * will be used for the diff when the patch is applied. When the
+	 * patch is applied, it is assumed that the provided contents 
+	 * already have all relevant hunks applied.
+	 * @param diff the file diff
+	 * @param contents the contents for the file diff
+	 */
+	public void cacheContents(FileDiff diff, byte[] contents) {
+		contentCache.put(diff, contents);
+	}
+	
+	/**
+	 * Return whether contents have been cached for the 
+	 * given file diff.
+	 * @param diff the file diff
+	 * @return whether contents have been cached for the file diff
+	 * @see #cacheContents(FileDiff, byte[])
+	 */
+	public boolean hasCachedContents(FileDiff diff) {
+		return contentCache.containsKey(diff);
+	}
+
+	/**
+	 * Return the content lines that are cached for the given 
+	 * file diff.
+	 * @param diff the file diff
+	 * @return the content lines that are cached for the file diff
+	 */
+	public List getCachedLines(FileDiff diff) {
+		byte[] contents = (byte[])contentCache.get(diff);
+		if (contents != null) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(contents)));
+			return readLines(reader);
+		}
+		return null;
+	}
+
+	/**
+	 * Return the contents that are cached for the given diff or
+	 * <code>null</code> if there is no contents cached.
+	 * @param diff the diff
+	 * @return the contents that are cached for the given diff or
+	 * <code>null</code>
+	 */
+	public byte[] getCachedContents(FileDiff diff) {
+		return (byte[])contentCache.get(diff);
+	}
+	
+	/**
+	 * Return whether the patcher has any cached contents.
+	 * @return whether the patcher has any cached contents
+	 */
+	public boolean hasCachedContents() {
+		return !contentCache.isEmpty();
+	}
+
+	/**
+	 * Clear any cached contents.
+	 */
+	public void clearCachedContents() {
+		contentCache.clear();
+	}
+	
+	public void setProperty(String key, Object value) {
+		properties.put(key, value);
+	}
+	
+	public Object getProperty(String key) {
+		return properties.get(key);
 	}
 }

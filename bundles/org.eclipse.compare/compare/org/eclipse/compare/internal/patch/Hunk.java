@@ -12,31 +12,25 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.core.runtime.Assert;
 
 /**
  * A Hunk describes a range of changed lines and some context lines.
  */
-/* package */ class Hunk implements IWorkbenchAdapter, IAdaptable {
+public class Hunk {
 	
-	static final int ADDED = 0x1;
-	static final int DELETED = 0x2;
-	static final int CHANGED = 0x4;
-	static final int UNKNOWN = 0x8;
+	public static final int ADDED = 0x1;
+	public static final int DELETED = 0x2;
+	public static final int CHANGED = 0x4;
+	public static final int UNKNOWN = 0x8;
 	
-	Diff fParent;
-	int fOldStart, fOldLength;
-	int fNewStart, fNewLength;
-	String[] fLines;
-	boolean fMatches= false;
-	private boolean fIsEnabled= true;
-	boolean fHunkProblem= false;
-	int hunkType;
+	private FileDiff fParent;
+	private int fOldStart, fOldLength;
+	private int fNewStart, fNewLength;
+	private String[] fLines;
+	private int hunkType;
 	
-	/* package */ Hunk(Diff parent, int[] oldRange, int[] newRange, List lines, boolean encounteredPlus, boolean encounteredMinus, boolean encounteredSpace) {
+	public Hunk(FileDiff parent, int[] oldRange, int[] newRange, List lines, boolean encounteredPlus, boolean encounteredMinus, boolean encounteredSpace) {
 		
 		fParent= parent;
 		if (fParent != null)
@@ -63,46 +57,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 			hunkType = DELETED;
 		} else {
 			hunkType = UNKNOWN;
-		}
-	}
-		
-	boolean isEnabled() {
-		return fIsEnabled;
-	}
-	
-	void setEnabled(boolean enable) {
-		fIsEnabled= enable;
-	}
-	
-	void reverse() {
-		int t= fOldStart;
-		fOldStart= fNewStart;
-		fNewStart= t;
-		
-		t= fOldLength;
-		fOldLength= fNewLength;
-		fNewLength= t;
-		
-		//reverse hunk type
-		if (hunkType == ADDED){
-			hunkType = DELETED;
-		} else if (hunkType == DELETED){
-			hunkType = ADDED;
-		}
-		
-		for (int i= 0; i < fLines.length; i++) {
-			String line= fLines[i];
-			char c= line.charAt(0);
-			switch (c) {
-			case '+':
-				fLines[i]= '-' + line.substring(1);
-				break;
-			case '-':
-				fLines[i]= '+' + line.substring(1);
-				break;
-			default:
-				break;
-			}
 		}
 	}
 
@@ -157,43 +111,14 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		sb.append(" @@"); //$NON-NLS-1$
 		return sb.toString();
 	}
-
-	void reset(boolean problemEncountered) {
-		fHunkProblem= problemEncountered;
-	}
-
-	//IWorkbenchAdapter methods
-	public Object[] getChildren(Object o) {
-		return new Object[0];
-	}
-
-	public ImageDescriptor getImageDescriptor(Object object) {
-		return null;
-	}
-
-	public String getLabel(Object o) {
-		String label= getDescription();
-		if (this.fHunkProblem)
-			return NLS.bind(PatchMessages.Diff_2Args, new String[] {label, PatchMessages.PreviewPatchPage_NoMatch_error});
-		return label;
-	}
-
-	public Object getParent(Object o) {
-		return fParent;
-	}
-
-	//IAdaptable methods
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class)
-			return this;
-		return null;
-	}
 	
-	protected boolean getHunkProblem() {
-		return fHunkProblem;
-	}
-
-	int getHunkType() {
+	int getHunkType(boolean reverse) {
+		if (reverse) {
+			if (hunkType == ADDED)
+				return DELETED;
+			if (hunkType == DELETED)
+				return ADDED;
+		}
 		return hunkType;
 	}
 
@@ -205,8 +130,185 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 		return fLines;
 	}
 
-	public void setParent(Diff diff) {
-		this.fParent = diff;
-		
+	/**
+	 * Set the parent of this hunk. This method
+	 * should only be invoked from {@link FileDiff#add(Hunk)}
+	 * @param diff the parent of this hunk
+	 */
+	void setParent(FileDiff diff) {
+		if (fParent == diff)
+			return;
+		if (fParent != null)
+			fParent.remove(this);
+		fParent = diff;	
+	}
+
+	public FileDiff getParent() {
+		return fParent;
+	}
+	
+	/*
+	 * Tries to apply the given hunk on the specified lines.
+	 * The parameter shift is added to the line numbers given
+	 * in the hunk.
+	 */
+	public boolean tryPatch(Patcher patcher, List lines, int shift) {
+		boolean reverse = patcher.isReversed();
+		int pos= getStart(reverse) + shift;
+		int deleteMatches= 0;
+		for (int i= 0; i < fLines.length; i++) {
+			String s= fLines[i];
+			Assert.isTrue(s.length() > 0);
+			String line= s.substring(1);
+			char controlChar= s.charAt(0);
+			if (controlChar == ' ') {	// context lines
+				while (true) {
+					if (pos < 0 || pos >= lines.size())
+						return false;
+					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+						pos++;
+						break;
+					}
+					return false;
+				}
+			} else if (isDeletedDelimeter(controlChar, reverse)) {
+				// deleted lines
+				while (true) {
+					if (pos < 0 || pos >= lines.size())
+						return false;
+					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+						deleteMatches++;
+						pos++;
+						break;
+					}
+					if (deleteMatches <= 0)
+						return false;
+					pos++;
+				}
+			} else if (isAddedDelimeter(controlChar, reverse)) {
+				// added lines
+				// we don't have to do anything for a 'try'
+			} else
+				Assert.isTrue(false, "tryPatch: unknown control character: " + controlChar); //$NON-NLS-1$
+		}
+		return true;
+	}
+	
+	private int getStart(boolean reverse) {
+		if (reverse) {
+			return fNewStart;
+		}
+		return fOldStart;
+	}
+	
+	private int getLength(boolean reverse) {
+		if (reverse) {
+			return fNewLength;
+		}
+		return fOldLength;
+	}
+	
+	private int getShift(boolean reverse) {
+		if (reverse) {
+			return fOldLength - fNewLength;
+		}
+		return fNewLength - fOldLength;
+	}
+	
+	int doPatch(Patcher patcher, List lines, int shift) {
+		boolean reverse = patcher.isReversed();
+		int pos = getStart(reverse) + shift;
+		for (int i= 0; i < fLines.length; i++) {
+			String s= fLines[i];
+			Assert.isTrue(s.length() > 0);
+			String line= s.substring(1);
+			char controlChar= s.charAt(0);
+			if (controlChar == ' ') {	// context lines
+				while (true) {
+					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in context"); //$NON-NLS-1$
+					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+						pos++;
+						break;
+					}
+					pos++;
+				}
+			} else if (isDeletedDelimeter(controlChar, reverse)) {
+				// deleted lines				
+				while (true) {
+					Assert.isTrue(pos < lines.size(), "doPatch: inconsistency in deleted lines"); //$NON-NLS-1$
+					if (linesMatch(patcher, line, (String) lines.get(pos))) {
+						break;
+					}
+					pos++;
+				}
+				lines.remove(pos);
+			} else if (isAddedDelimeter(controlChar, reverse)) {
+				// added lines
+				if (getLength(reverse) == 0 && pos+1 < lines.size())
+					lines.add(pos+1, line);
+				else
+					lines.add(pos, line);
+				pos++;
+			} else
+				Assert.isTrue(false, "doPatch: unknown control character: " + controlChar); //$NON-NLS-1$
+		}
+		return getShift(reverse);
+	}
+
+	private boolean isDeletedDelimeter(char controlChar, boolean reverse) {
+		return (!reverse && controlChar == '-') || (reverse && controlChar == '+');
+	}
+	
+	private boolean isAddedDelimeter(char controlChar, boolean reverse) {
+		return (reverse && controlChar == '-') || (!reverse && controlChar == '+');
+	}
+	
+	/*
+	 * Compares two strings.
+	 * If fIgnoreWhitespace is true whitespace is ignored.
+	 */
+	private boolean linesMatch(Patcher patcher, String line1, String line2) {
+		if (patcher.isIgnoreWhitespace())
+			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
+		if (patcher.isIgnoreLineDelimiter()) {
+			int l1= Patcher.length(line1);
+			int l2= Patcher.length(line2);
+			if (l1 != l2)
+				return false;
+			return line1.regionMatches(0, line2, 0, l1);
+		}
+		return line1.equals(line2);
+	}
+	
+	/*
+	 * Returns the given string with all whitespace characters removed.
+	 * Whitespace is defined by <code>Character.isWhitespace(...)</code>.
+	 */
+	private String stripWhiteSpace(String s) {
+		StringBuffer sb= new StringBuffer();
+		int l= s.length();
+		for (int i= 0; i < l; i++) {
+			char c= s.charAt(i);
+			if (!Character.isWhitespace(c))
+				sb.append(c);
+		}
+		return sb.toString();
+	}
+	
+	public String getContents(boolean isAfterState, boolean reverse) {
+		StringBuffer result= new StringBuffer();
+		for (int i= 0; i<fLines.length; i++) {
+			String line= fLines[i];
+			String rest= line.substring(1);
+			char c = line.charAt(0);
+			if (c == ' ') {
+				result.append(rest);
+			} else if (isDeletedDelimeter(c, reverse) && !isAfterState) {
+				result.append(rest);	
+			} else if (isAddedDelimeter(c, reverse) && isAfterState) {
+				result.append(rest);
+			}
+		}
+		return result.toString();
 	}
 }

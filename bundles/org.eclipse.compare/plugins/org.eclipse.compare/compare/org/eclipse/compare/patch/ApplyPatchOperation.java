@@ -2,12 +2,9 @@ package org.eclipse.compare.patch;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.patch.PatchWizard;
 import org.eclipse.compare.internal.patch.PatchWizardDialog;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
@@ -27,15 +24,12 @@ import org.eclipse.ui.ide.IDE;
  */
 public class ApplyPatchOperation implements Runnable {
 
-	IWorkbenchPart part;
+	private IWorkbenchPart part;
 	
-	/*
-	 * The configurations to use for Compare UI elements
-	 */
 	/**
 	 * Used for the Preview Patch page.
 	 */
-	private CompareConfiguration previewPatchConfiguration;
+	private CompareConfiguration configuration;
 	
 	/**
 	 * The patch to use as an input into the Apply Patch wizard
@@ -78,26 +72,27 @@ public class ApplyPatchOperation implements Runnable {
 	 * @param part 	an IWorkbenchPart 
 	 * @param patch		an IStorage containing a patch in unified diff format or <code>null</code>
 	 * @param target	an IResource which the patch is to be applied to or <code>null</code>
-	 * @param previewPatchConfiguration	a CompareConfiguration supplying the labels and images for the preview patch page or <code>null</code>
+	 * @param configuration	a CompareConfiguration supplying the labels and images for the preview patch page
 	 */
-	public ApplyPatchOperation(IWorkbenchPart part, IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration) {
+	public ApplyPatchOperation(IWorkbenchPart part, IStorage patch, IResource target, CompareConfiguration configuration) {
 		Assert.isNotNull(part);
+		Assert.isNotNull(configuration);
 		this.part = part;
 		this.patch = patch;
 		this.target = target;
-		this.previewPatchConfiguration = previewPatchConfiguration;
+		this.configuration = configuration;
 	}
 	
 	/**
 	 * Create an operation for the given part and resource. This method is a convenience
 	 * method that calls {@link #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration)}
-	 * with null for the other parameters.
+	 * with appropriate defaults for the other parameters.
 	 * @param targetPart an IResource which the patch is to be applied to or <code>null</code>
 	 * @param resource an IResource which the patch is to be applied to or <code>null</code>
 	 * @see #ApplyPatchOperation(IWorkbenchPart, IStorage, IResource, CompareConfiguration)
 	 */
 	public ApplyPatchOperation(IWorkbenchPart targetPart, IResource resource) {
-		this(targetPart, null, resource, null);
+		this(targetPart, null, resource, new CompareConfiguration());
 	}
 
 	/**
@@ -108,11 +103,15 @@ public class ApplyPatchOperation implements Runnable {
 		
 		saveAllEditors();
 		
-		PatchWizard wizard = new PatchWizard(patch, target, previewPatchConfiguration, patchWizardTitle, patchWizardImage);
-		
-		PatchWizardDialog dialog = new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
-		wizard.setDialog(dialog);
+		PatchWizard wizard = new PatchWizard(patch, target, configuration);
+		if (patchWizardImage != null)
+			wizard.setDefaultPageImageDescriptor(patchWizardImage);
+		if (patchWizardTitle != null)
+			wizard.setWindowTitle(patchWizardTitle);
 		wizard.setNeedsProgressMonitor(true);
+		
+		PatchWizardDialog dialog = new PatchWizardDialog(part.getSite().getShell(), wizard);
+		wizard.setDialog(dialog);
 		dialog.open();
 	}
 	

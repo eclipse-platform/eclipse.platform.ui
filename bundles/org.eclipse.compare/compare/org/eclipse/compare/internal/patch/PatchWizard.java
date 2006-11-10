@@ -10,40 +10,23 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
-import org.eclipse.compare.internal.Utilities;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-	public class PatchWizard extends Wizard {
+public class PatchWizard extends Wizard {
 
 	// dialog store id constants
 	private final static String DIALOG_SETTINGS_KEY= "PatchWizard"; //$NON-NLS-1$
@@ -54,30 +37,26 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	private PatchTargetPage fPatchTargetPage;
 	private PreviewPatchPage2 fPreviewPage2;
 	
-	private WorkspacePatcher fPatcher;
+	private final WorkspacePatcher fPatcher;
 	private PatchWizardDialog fDialog;
 	
-	private CompareConfiguration previewPatchPageConfiguration;
+	private CompareConfiguration fConfiguration;
 	private IStorage patch;
 
-	private boolean patchReadIn;
-	private boolean useNewPage;
-	
-	private HashSet modDiffs;
-	private HashMap modFiles;
-	
-	/*
-	 * Creates a wizard for applying a patch file to the workspace.
-	 */
-	public PatchWizard(ISelection selection) {
+	private boolean patchReadIn = false;
 
-		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png")); //$NON-NLS-1$
+	public PatchWizard(IStorage patch, IResource target, CompareConfiguration configuration) {
+		Assert.isNotNull(configuration);
+		this.fConfiguration = configuration;
+		setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png"));
 		setWindowTitle(PatchMessages.PatchWizard_title);
-
-		fPatcher= new WorkspacePatcher();
-		patchReadIn = false;
-		setTarget(Utilities.getFirstResource(selection));
-
+		initializeDialogSettings();
+		fPatcher= new WorkspacePatcher(target);
+		if (patch != null)
+			readPatch(patch);
+	}
+	
+	private void initializeDialogSettings() {
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
 		if (section == null) {
@@ -88,35 +67,14 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		}
 	}
 
-
-	public PatchWizard(IStorage patch, IResource target, CompareConfiguration previewPatchConfiguration, String patchWizardTitle, ImageDescriptor patchWizardImage) {
-		
-		if (patchWizardImage != null)
-			setDefaultPageImageDescriptor(patchWizardImage);
-		else
-			setDefaultPageImageDescriptor(CompareUIPlugin.getImageDescriptor("wizban/applypatch_wizban.png")); //$NON-NLS-1$
-		
-			
-		if (patchWizardTitle != null)
-			setWindowTitle(patchWizardTitle);
-		else
-			setWindowTitle(PatchMessages.PatchWizard_title);
-
-		this.patch = patch;
-		this.previewPatchPageConfiguration = previewPatchConfiguration;
-		
-		fPatcher= new WorkspacePatcher();
-		patchReadIn = false;
-		setTarget(target);
-		
+	private void readPatch(IStorage thePatch) {
 		//make sure that the reader always get closed
+		this.patch = thePatch;
 		Reader reader = null;
 		try{
-			if (patch != null){
-				reader = createPatchReader(patch);
-				if (reader != null){
-					readInPatch(reader);
-				}
+			reader = createPatchReader(patch);
+			if (reader != null){
+				readInPatch(reader);
 			}
 		} finally {
 			if (reader != null){
@@ -125,18 +83,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 				} catch (IOException e) { //ignored
 				}
 			}
-			IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY);
-			if (section == null) {
-				fHasNewDialogSettings= true;
-			} else {
-				fHasNewDialogSettings= false;
-				setDialogSettings(section);
-			}
 		}
 	}
-
-	protected void readInPatch(Reader reader) {
+	
+	private void readInPatch(Reader reader) {
 		if (reader != null) {
 			try {
 				fPatcher.parse(new BufferedReader(reader));
@@ -148,7 +98,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			}
 		}
 	}
-
 
 	private Reader createPatchReader(IStorage file) {
 		String patchFilePath= file.getFullPath().toString();
@@ -166,17 +115,12 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 		return reader;
 	}
 
-
 	WorkspacePatcher getPatcher() {
 		return fPatcher;
 	}
 	
 	IResource getTarget() {
 		return fPatcher.getTarget();
-	}
-
-	void setTarget(IResource target) {
-		fPatcher.setTarget(target);
 	}
 	
 	
@@ -186,64 +130,21 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	public void addPages() {
 		addPage(fPatchWizardPage = new InputPatchPage(this));
 		addPage(fPatchTargetPage = new PatchTargetPage(this));
-		
-		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
-		boolean preference = store.getBoolean(ComparePreferencePage.USE_OLDAPPLYPATCH);
-		if (System.getProperty("oldPatch") != null || preference){ //$NON-NLS-1${
-			addPage(new PreviewPatchPage(this));
-			useNewPage = false;
-		}else {
-			if (previewPatchPageConfiguration != null)
-				fPreviewPage2 = new PreviewPatchPage2(this,
-						previewPatchPageConfiguration);
-			else
-				fPreviewPage2 = new PreviewPatchPage2(this);
-			addPage(fPreviewPage2);
-			useNewPage = true;
-		}
+		fPreviewPage2 = new PreviewPatchPage2(fPatcher, fConfiguration);
+		addPage(fPreviewPage2);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IWizard.
-	 */
-	public boolean needsProgressMonitor() {
-		return true;
-	}
-
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
 	public boolean performFinish() {
 		
-		//Before applying all of the enabled diffs you have to go through and disable the diffs
-		//that have been merged by hand - this only applies if the current page is the hunk merge page
 		IWizardPage currentPage = fDialog.getCurrentPage();
-		ISchedulingRule[] retargetedFiles = new ISchedulingRule[0];
-		
-		
-		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME) && useNewPage){
-			Diff[] diffs = fPatcher.getDiffs();
+		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
 			PreviewPatchPage2 previewPage = (PreviewPatchPage2) currentPage;
-			
 			previewPage.ensureContentsSaved();
-			
-			modDiffs = previewPage.getModifiedDiffs();
-			modFiles = previewPage.getMergedFileContents();
-			
-			ArrayList retargetedFilesSchedulingRules = new ArrayList();
-			for (int i = 0; i < diffs.length; i++) {
-				//if this diff has been modified by hand, mark it as disabled to prevent
-				//the patcher from modifying it later
-				if (modDiffs.contains(diffs[i])){
-					diffs[i].setEnabled(false);
-				}
-				
-				if (diffs[i].isRetargeted())
-					retargetedFilesSchedulingRules.add(diffs[i].getTargetFile());
-			}
-			retargetedFiles = (ISchedulingRule[]) retargetedFilesSchedulingRules.toArray(new ISchedulingRule[retargetedFilesSchedulingRules.size()]);
 		}
-	
+		
 		if (fPatchWizardPage != null){
 			fPatcher.setName(fPatchWizardPage.getPatchName());
 			// make sure that the patch has been read
@@ -264,10 +165,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			if (fPatcher.isWorkspacePatch()) {
 				// workspace patch 
 				ISchedulingRule[] projectRules = fPatcher.getTargetProjects();
-				ISchedulingRule[] allSchedulingRules = new ISchedulingRule[projectRules.length + retargetedFiles.length];
-				System.arraycopy(projectRules, 0, allSchedulingRules, 0, projectRules.length);
-				System.arraycopy(retargetedFiles, 0, allSchedulingRules, projectRules.length, retargetedFiles.length);
-				scheduleRule = new MultiRule(allSchedulingRules);
+				scheduleRule = new MultiRule(projectRules);
 			} else {
 				// single patch
 				IResource resource = getTarget();
@@ -278,7 +176,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 				protected void execute(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
 						fPatcher.applyAll(monitor, getShell(), PatchMessages.PatchWizard_title);
-						writePatchedFiles(monitor);
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
 					}
@@ -305,17 +202,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 			fPatchWizardPage.saveWidgetValues();
 			//fPreviewPatchPage.saveWidgetValues();
 		return true;
-	}
-
-	private void writePatchedFiles(IProgressMonitor monitor) throws CoreException{
-		if (modDiffs != null){
-			Iterator iter = modDiffs.iterator();
-			while (iter.hasNext()){
-				Diff diff = (Diff) iter.next();
-				PatchedFileNode patchedFile = (PatchedFileNode) modFiles.get(diff);
-				fPatcher.store(patchedFile.getBytes(), diff.getTargetFile(), monitor);
-			}
-		}
 	}
 
 	public void setDialog(PatchWizardDialog dialog) {
@@ -348,6 +234,10 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 	 */
 	protected void patchReadIn() {
 		patchReadIn = true;
+	}
+
+	public CompareConfiguration getCompareConfiguration() {
+		return fConfiguration;
 	}
 	
 }

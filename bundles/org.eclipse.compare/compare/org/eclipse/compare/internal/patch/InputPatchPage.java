@@ -188,7 +188,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		// Read in the patch
 		readInPatch();
 		
-		Diff[] diffs= patcher.getDiffs();
+		FileDiff[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0) {
 			String format= PatchMessages.InputPatchPage_NoDiffsFound_format;	
 			String message= MessageFormat.format(format, new String[] { fPatchSource });
@@ -205,7 +205,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 		// all of the projects that make up the patch and continue on to final preview page 
 		// else go on to target selection page
 		if (patcher.isWorkspacePatch()) {
-			return fPatchWizard.getPage(PreviewPatchPage.PREVIEWPATCHPAGE_NAME);
+			return fPatchWizard.getPage(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME);
 		}
 
 		return super.getNextPage();
@@ -783,7 +783,7 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			return false;
 		}
 
-		Diff[] diffs= patcher.getDiffs();
+		FileDiff[] diffs= patcher.getDiffs();
 		if (diffs == null || diffs.length == 0)
 			return false;
 		return true;

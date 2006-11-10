@@ -1,75 +1,41 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.IContentChangeListener;
-import org.eclipse.compare.IContentChangeNotifier;
+import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.Differencer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
-
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 
-public class PreviewPatchPage2 extends WizardPage implements IContentChangeListener {
+public class PreviewPatchPage2 extends WizardPage {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
-	private PatchWizard fPatchWizard;
-	private PreviewPatchPageInput patcherCompareEditorInput;
-	private CompareConfiguration previewPatchPageConfiguration;
+	
+	private final WorkspacePatcher fPatcher;
+	private final CompareConfiguration fConfiguration;
+	private PreviewPatchPageInput fInput;
 	
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
@@ -90,21 +56,15 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 	private static final int PROJECTDIFF_NODE = 1;
 	
 	protected boolean pageRecalculate= true;
-	//tracks which diffs actually get edited
-	private HashSet alteredDiffs = new HashSet();
-
-	// maps diffs to merged file contents
-	private HashMap alteredFiles = new HashMap();
-	
 	
 	class RetargetPatchDialog extends Dialog {
 
-		protected TreeViewer rpTreeViewer;
-		protected DiffNode rpSelectedNode;
-		protected DiffProject rpSelectedProject;
+		private TreeViewer rpTreeViewer;
+		private DiffNode rpSelectedNode;
+		private DiffProject rpSelectedProject;
 		private IResource rpTargetResource;
+		private int mode;
 		
-		protected int mode;
 		public RetargetPatchDialog(Shell shell, ISelection selection) {
 			super(shell);
 			setShellStyle(getShellStyle()|SWT.RESIZE);
@@ -115,10 +75,8 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 
 		protected Control createButtonBar(Composite parent) {
 			Control control = super.createButtonBar(parent);
-			
 			Button okButton = this.getButton(IDialogConstants.OK_ID);
 			okButton.setEnabled(false);
-			
 			return control;
 		}
 		
@@ -150,34 +108,24 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			rpTreeViewer.getTree().setLayoutData(gd);
 
 			//determine what type of selection this is, project or diff/hunk
-			if (rpSelectedNode instanceof PatcherDiffNode){
-				//either a diff or a hunk
+			if (rpSelectedNode instanceof PatchFileDiffNode) {
+				PatchFileDiffNode node = (PatchFileDiffNode) rpSelectedNode;
+				rpTreeViewer.setSelection(new StructuredSelection(getPatcher().getTargetFile(node.getDiffResult().getDiff())));
 				mode = DIFF_NODE;
-				switch(((PatcherDiffNode) rpSelectedNode).getPatchNodeType()){
-				
-				case PatcherDiffNode.HUNK:
-					Diff diff = (Diff) ((PatcherDiffNode) rpSelectedNode).getHunk().getParent(rpSelectedNode);
-					//set the selection to the diff resource
-					rpTreeViewer.setSelection(new StructuredSelection(diff.getTargetFile()));
-					break;
-					
-				case PatcherDiffNode.DIFF:
-					diff = ((PatcherDiffNode) rpSelectedNode).getDiff();
-					//set the selection to the diff resource
-					rpTreeViewer.setSelection(new StructuredSelection(diff.getTargetFile()));
-					break;
-					
-				case PatcherDiffNode.PROJECT:
-					rpSelectedProject = ((PatcherDiffNode) rpSelectedNode).getDiffProject();
-					rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
-					mode = PROJECTDIFF_NODE;
-					break;
-				}
+			} else if (rpSelectedNode instanceof HunkDiffNode) {
+				HunkDiffNode node = (HunkDiffNode) rpSelectedNode;
+				rpTreeViewer.setSelection(new StructuredSelection(getPatcher().getTargetFile(node.getHunkResult().getDiffResult().getDiff())));
+				mode = DIFF_NODE;
+			} else if (rpSelectedNode instanceof PatchProjectDiffNode) {
+				PatchProjectDiffNode node = (PatchProjectDiffNode) rpSelectedNode;
+				rpSelectedProject = node.getDiffProject();
+				rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
+				mode = PROJECTDIFF_NODE;
 			}
 			
 			rpTreeViewer.setContentProvider(new RetargetPatchContentProvider(mode));
 			rpTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-			rpTreeViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+			rpTreeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 			rpTreeViewer.setInput(ResourcesPlugin.getWorkspace());
 			
 			setupListeners();
@@ -188,103 +136,42 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		}
 
 		protected void okPressed() {
-			if (rpSelectedNode != null && rpSelectedNode instanceof PatcherDiffNode && rpTargetResource != null){
-					PatcherDiffNode patchedNode =(PatcherDiffNode) rpSelectedNode;
-					switch(patchedNode.getPatchNodeType()){
-						
-					case PatcherDiffNode.PROJECT:
-						DiffProject project = patchedNode.getDiffProject();
-						Object[] diffs = project.getChildren(project);
-						
-						DiffProject selectedProject = getSelectedDiffProject();
-						
-						//copy over the diffs to the new project
-						for (int i = 0; i < diffs.length; i++) {
-							((Diff)diffs[i]).setProject(selectedProject);
-						}
-						
-						//since the project has been retargeted, remove it from the patcher
-						fPatchWizard.getPatcher().removeProject(project);
-						break;
-						
-					case PatcherDiffNode.DIFF:
-						//copy over all hunks to new target resource
-						Diff tempDiff = patchedNode.getDiff();
-						Hunk[] tempHunks = tempDiff.getHunks();
-						for (int i = 0; i < tempHunks.length; i++) {
-							tempDiff.remove(tempHunks[i]);
-						}
-						
-						if (fPatchWizard.getPatcher().isWorkspacePatch()){
-							//since the diff has no more hunks to apply, remove it from the parent and the patcher
-							tempDiff.getProject().remove(tempDiff);
-							fPatchWizard.getPatcher().removeDiff(tempDiff);
-						} else {
-							//since the diff has no more hunks to apply, remove it from the patcher
-							fPatchWizard.getPatcher().removeDiff(tempDiff);
-						}
-						
-						patcherCompareEditorInput.addHunksToFile(rpTargetResource, tempHunks);
-						break;
-						
-					case PatcherDiffNode.HUNK:
-						//copy hunk over to new target resource
-						tempDiff = (Diff) patchedNode.getHunk().getParent(patchedNode);
-						tempDiff.remove(patchedNode.getHunk());
-						patcherCompareEditorInput.addHunksToFile(rpTargetResource, new Hunk[]{patchedNode.getHunk()});
-						break;
-					}
-				
+			if (rpSelectedNode != null){
+				if (rpSelectedNode instanceof PatchProjectDiffNode && rpTargetResource instanceof IProject) {
+					PatchProjectDiffNode node = (PatchProjectDiffNode) rpSelectedNode;
+					DiffProject project = node.getDiffProject();
+					getPatcher().retargetProject(project, (IProject)rpTargetResource);
+				} else if (rpSelectedNode instanceof PatchFileDiffNode && rpTargetResource instanceof IFile) {
+					PatchFileDiffNode node = (PatchFileDiffNode) rpSelectedNode;
+					//copy over all hunks to new target resource
+					FileDiff diff = node.getDiffResult().getDiff();
+					fPatcher.retargetDiff(diff, (IFile)rpTargetResource);
+				} else if (rpSelectedNode instanceof HunkDiffNode && rpTargetResource instanceof IFile) {
+					HunkDiffNode node = (HunkDiffNode) rpSelectedNode;
+					fPatcher.retargetHunk(node.getHunkResult().getHunk(), (IFile)rpTargetResource);
+				}
 			}
 			super.okPressed();	
-		}
-		
-		
-		private DiffProject getSelectedDiffProject() {
-			WorkspacePatcher patcher = fPatchWizard.getPatcher();
-			DiffProject[] projects = patcher.getDiffProjects();
-			for (int i = 0; i < projects.length; i++) {
-				if (projects[i].getProject().equals(rpTargetResource))
-					return projects[i];
-			}
-			
-			//Create a new diff project
-			DiffProject newProject = new DiffProject((IProject)rpTargetResource);
-			//add the diffProject to the array
-			DiffProject[] newProjectArray = new DiffProject[projects.length + 1];
-			System.arraycopy(projects, 0, newProjectArray, 0, projects.length);
-			//add the new project to the end
-			newProjectArray[projects.length] = newProject;
-			patcher.setDiffProjects(newProjectArray);
-			
-			return newProject;
 		}
 
 		void setupListeners() {
 			rpTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			
-
 				public void selectionChanged(SelectionChangedEvent event) {
 					IStructuredSelection s= (IStructuredSelection) event.getSelection();
 					Object obj= s.getFirstElement();
 					if (obj instanceof IResource){
 						rpTargetResource = (IResource) obj;
-						PatcherDiffNode patchedNode =(PatcherDiffNode) rpSelectedNode;
-						switch(patchedNode.getPatchNodeType()){
-							case PatcherDiffNode.DIFF:
-							case PatcherDiffNode.HUNK:
-								if (rpTargetResource instanceof IFile){
-									Button okButton = getButton(IDialogConstants.OK_ID);
-									okButton.setEnabled(true);
-								}
-								break;
-							
-							case PatcherDiffNode.PROJECT:
-								if (rpTargetResource instanceof IProject){
-									Button okButton = getButton(IDialogConstants.OK_ID);
-									okButton.setEnabled(true);
-								}
-								break;
+						if (rpSelectedNode instanceof PatchProjectDiffNode) {
+							if (rpTargetResource instanceof IProject){
+								Button okButton = getButton(IDialogConstants.OK_ID);
+								okButton.setEnabled(true);
+							}
+						} else if (rpSelectedNode instanceof PatchFileDiffNode
+								|| rpSelectedNode instanceof HunkDiffNode) {
+							if (rpTargetResource instanceof IFile){
+								Button okButton = getButton(IDialogConstants.OK_ID);
+								okButton.setEnabled(true);
+							}
 						}
 					}
 				}
@@ -344,16 +231,13 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			return super.getChildren(element);
 		}
 	}
-
-	public PreviewPatchPage2(PatchWizard pw) {
+		
+	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
-		
-		fPatchWizard= pw;		
-	}
-		
-	public PreviewPatchPage2(PatchWizard wizard, CompareConfiguration previewPatchPageConfiguration) {
-		this(wizard);
-		this.previewPatchPageConfiguration = previewPatchPageConfiguration;
+		Assert.isNotNull(patcher);
+		Assert.isNotNull(configuration);
+		this.fPatcher = patcher;
+		this.fConfiguration = configuration;
 	}
 
 	public void createControl(Composite parent) {
@@ -363,82 +247,45 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		//if a compare configuration has been passed make sure 
-		if (previewPatchPageConfiguration != null){
-			patcherCompareEditorInput = new PreviewPatchPageInput(previewPatchPageConfiguration);
-		} else {
-			patcherCompareEditorInput = new PreviewPatchPageInput();
-		}
+		fInput = new PreviewPatchPageInput(getPatcher(), getCompareConfiguration());
 			
 		initializeDialogUnits(parent);
 		
 		buildPatchOptionsGroup(composite);
 		
+		// Initialize the input
 		try {
-			patcherCompareEditorInput.run(null);
+			fInput.run(null);
 		} catch (InterruptedException e) {//ignore
 		} catch (InvocationTargetException e) {//ignore
 		}
 	
-		
-		Control c = patcherCompareEditorInput.createContents(composite);
-		patcherCompareEditorInput.contributeDiffViewerToolbarItems(getContributedActions(), fPatchWizard.getPatcher().isWorkspacePatch());
-		patcherCompareEditorInput.setPreviewPatchPage(this);
-		patcherCompareEditorInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-
+		Control c = fInput.createContents(composite);
+		fInput.contributeDiffViewerToolbarItems(getContributedActions(), getPatcher().isWorkspacePatch());
+		fInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
 				Object obj= sel.getFirstElement();
-				
-				if (obj instanceof PatcherDiffNode){
-					switch(((PatcherDiffNode) obj).getPatchNodeType()){
-						case PatcherDiffNode.PROJECT:
-							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetProject);
-							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, true);
-							break;
-						
-						case PatcherDiffNode.DIFF:
-							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetDiff);
-							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, ((PatcherDiffNode) obj).getDiff().containsProblems());
-							break;
-							
-						case PatcherDiffNode.HUNK:
-							patcherCompareEditorInput.setContributedActionName(retargetDiffID, PatchMessages.PreviewPatchPage2_RetargetHunk);
-							patcherCompareEditorInput.setContributedActionEnablement(retargetDiffID, true);
-							break;
-					}
-				} 
-			}
-
-		});
-		
-		patcherCompareEditorInput.getViewer().addDoubleClickListener(new IDoubleClickListener() {
-			
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
-				Object obj= sel.getFirstElement();
-				
-				//make sure anu unsaved changes are saved before switching editablity
-				ensureContentsSaved();
-				
-				if (obj instanceof PatcherDiffNode){
-					switch (((PatcherDiffNode)obj).getPatchNodeType()){
-						case PatcherDiffNode.HUNK:
-							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(true);
-							patcherCompareEditorInput.getCompareConfiguration().setLeftLabel(PatchMessages.PreviewPatchPage2_PatchedLocalFile);
-							patcherCompareEditorInput.getCompareConfiguration().setRightLabel(PatchMessages.PreviewPatchPage2_OrphanedHunk);
-							break;
-						
-						default:
-							patcherCompareEditorInput.getCompareConfiguration().setLeftEditable(false);
-							patcherCompareEditorInput.getCompareConfiguration().setLeftLabel(PatchMessages.PatcherCompareEditorInput_LocalCopy);
-							patcherCompareEditorInput.getCompareConfiguration().setRightLabel(PatchMessages.PatcherCompareEditorInput_AfterPatch);
-							break;
-					}
+				String name = null;
+				boolean enable = false;
+				if (obj instanceof PatchProjectDiffNode) {
+					name = PatchMessages.PreviewPatchPage2_RetargetProject;
+					enable = true;
+				} else if (obj instanceof PatchFileDiffNode) {
+					PatchFileDiffNode node = (PatchFileDiffNode) obj;
+					name = PatchMessages.PreviewPatchPage2_RetargetDiff;
+					enable = node.getDiffResult().getDiffProblem();
+				} else if (obj instanceof HunkDiffNode) {
+					name = PatchMessages.PreviewPatchPage2_RetargetHunk;
+					enable = true;
 				}
+				if (name != null) {
+					fRetargetResource.setText(name);
+				}
+				fRetargetResource.setEnabled(enable);
 			}
-
 		});
-		patcherCompareEditorInput.contributeDiffViewerMenuItems(getMenuActions());
+		fInput.contributeDiffViewerMenuItems(getMenuActions());
 
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
@@ -446,21 +293,33 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		
 	}
 	
+	/**
+	 * Makes sure that at least one hunk is checked off in the tree before
+	 * allowing the patch to be applied.
+	 */
+	private void updateEnablements() {
+		boolean atLeastOneIsEnabled = false;
+		if (fInput != null)
+			atLeastOneIsEnabled = fInput.hasResultToApply();
+		setPageComplete(atLeastOneIsEnabled);
+	}
+	
 	private Action[] getContributedActions() {
 		fIncludeToggle= new Action(PatchMessages.PreviewPatchPage2_IncludeElement, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
 			public void run() {
-				ISelection selection = patcherCompareEditorInput.getViewer().getSelection();
+				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
 					Iterator iter = ((TreeSelection) selection).iterator();
 					while (iter.hasNext()){
 						Object obj = iter.next();
-						if (obj instanceof PatcherDiffNode){
-							PatcherDiffNode node = ((PatcherDiffNode) obj);
-							node.setIncludeElement(!node.getIncludeElement());
+						if (obj instanceof PatchDiffNode){
+							PatchDiffNode node = ((PatchDiffNode) obj);
+							node.setEnabled(!node.isEnabled());
+							// TODO: This may require a rebuild if matched hunks are shown
 						} 
 					}
 				}
-				patcherCompareEditorInput.getViewer().refresh();
+				fInput.getViewer().refresh();
 			}
 		};
 		fIncludeToggle.setToolTipText(PatchMessages.PreviewPatchPage2_IncludeElementText);
@@ -473,9 +332,14 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 					getContainer().run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask(PatchMessages.PreviewPatchPage2_IgnoreWhitespace, IProgressMonitor.UNKNOWN);
-							fIgnoreWhiteSpace.setChecked(isChecked());
-							if (fPatchWizard.getPatcher().setIgnoreWhitespace(fIgnoreWhiteSpace.isChecked())){
-								fillTree();
+							if (isChecked() != getPatcher().isIgnoreWhitespace()) {
+								if (promptToRebuild("Performing this operation will require that your manual changes be discarded.")) {
+									if (getPatcher().setIgnoreWhitespace(isChecked())){
+										rebuildTree();
+									}
+								} else {
+									fIgnoreWhiteSpace.setChecked(!isChecked());
+								}
 							}
 							monitor.done();
 						}
@@ -496,17 +360,13 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 					getContainer().run(true, true, new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask(PatchMessages.PreviewPatchPage2_CalculateReverse, IProgressMonitor.UNKNOWN);
-							fReversePatch.setChecked(isChecked());
-							if (fPatchWizard.getPatcher().setReversed(isChecked())){
-								final Control ctrl = getControl();
-								if (ctrl != null && !ctrl.isDisposed()){
-									ctrl.getDisplay().syncExec(new Runnable() {
-										public void run() {
-											if (!ctrl.isDisposed()) {
-												fillTree();
-											}
-										}
-									});
+							if (isChecked() != getPatcher().isReversed()) {
+								if (promptToRebuild("Reversing the patch will require that your manual changes be discarded.")) {
+									if (getPatcher().setReversed(isChecked())){
+										rebuildTree();
+									}
+								} else {
+									fReversePatch.setChecked(!isChecked());
 								}
 							}
 							monitor.done();
@@ -526,18 +386,18 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		return new Action[]{fIncludeToggle, fIgnoreWhiteSpace, fReversePatch};
 	}
 
-		private Action[] getMenuActions() {
-			fRetargetResource = new Action(PatchMessages.PreviewPatchPage2_RetargetDiff, CompareUIPlugin
-				.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
+	private Action[] getMenuActions() {
+		fRetargetResource = new Action(PatchMessages.PreviewPatchPage2_RetargetDiff,
+				CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
 			public void run() {
 				Shell shell = getShell();
-				ISelection selection = patcherCompareEditorInput.getViewer()
-						.getSelection();
-				final RetargetPatchDialog dialog = new RetargetPatchDialog(shell, selection);
+				ISelection selection = fInput.getViewer().getSelection();
+				final RetargetPatchDialog dialog = new RetargetPatchDialog(
+						shell, selection);
 				int returnCode = dialog.open();
-				if (returnCode == Window.OK){
-					patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());
-					patcherCompareEditorInput.getViewer().refresh();
+				if (returnCode == Window.OK) {
+					// TODO: This could be a problem. We should only rebuild the affected nodes
+					rebuildTree();
 				}
 			}
 		};
@@ -548,28 +408,75 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 
 		return new Action[] { fIncludeToggle, fRetargetResource };
 	}
+	
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		//Need to handle input and rebuild tree only when becoming visible
-		if(visible){
-			fillTree();
+		if (visible){
+			fillSegmentCombo();
+			// TODO: We should only do this if the tree needs to be rebuilt
+			rebuildTree();
 		}
 	}
 	
-	private void fillTree(){
-		//Update prefix count - go through all of the diffs and find the smallest
-		//path segment contained in all diffs.
-		int length= 99;
-		if (fStripPrefixSegments!=null&& pageRecalculate) {
-			length= fPatchWizard.getPatcher().calculatePrefixSegmentCount();
-			if (length!=99) {
-				for (int k= 1; k<length; k++)
-					fStripPrefixSegments.add(Integer.toString(k));
-				pageRecalculate= false;
+	private boolean promptToRebuild(final String promptToConfirm){
+		final Control ctrl = getControl();
+		final boolean[] result = new boolean[] { false };
+		if (ctrl != null && !ctrl.isDisposed()){
+			Runnable runnable = new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						// flush any viewers before prompting
+						try {
+							fInput.saveChanges(null);
+						} catch (CoreException e) {
+							CompareUIPlugin.log(e);
+						}
+						result[0] = fInput.confirmRebuild(promptToConfirm);
+					}
+				}
+			};
+			if (Display.getCurrent() == null)
+				ctrl.getDisplay().syncExec(runnable);
+			else
+				runnable.run();
+		}
+		return result[0];
+	}
+	
+	private void rebuildTree(){
+		final Control ctrl = getControl();
+		if (ctrl != null && !ctrl.isDisposed()){
+			Runnable runnable = new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						fInput.buildTree();
+						updateEnablements();
+					}
+				}
+			};
+			if (Display.getCurrent() == null)
+				ctrl.getDisplay().syncExec(runnable);
+			else
+				runnable.run();
+		}
+	}
+
+	private void fillSegmentCombo() {
+		if (getPatcher().isWorkspacePatch()) {
+			fStripPrefixSegments.setEnabled(false);
+		} else {
+			fStripPrefixSegments.setEnabled(true);
+			int length= 99;
+			if (fStripPrefixSegments!=null && pageRecalculate) {
+				length= getPatcher().calculatePrefixSegmentCount();
+				if (length!=99) {
+					for (int k= 1; k<length; k++)
+						fStripPrefixSegments.add(Integer.toString(k));
+					pageRecalculate= false;
+				}
 			}
 		}
-		
-		patcherCompareEditorInput.updateInput(fPatchWizard.getPatcher());	
 	}
 	/*
 	 *	Create the group for setting various patch options
@@ -580,7 +487,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		GridData gd;
 		Label l;
 
-		final WorkspacePatcher patcher= fPatchWizard.getPatcher();
+		final WorkspacePatcher patcher= getPatcher();
 
 		Group group= new Group(parent, SWT.NONE);
 		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
@@ -619,7 +526,7 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 				| GridData.GRAB_HORIZONTAL);
 		generateRejects.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				fPatchWizard.getPatcher().setGenerateRejects(
+				getPatcher().setGenerateRejects(
 						generateRejects.getSelection());
 			}
 		});
@@ -648,13 +555,14 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 
 		Button b= new Button(pair, SWT.PUSH);
 		b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);
-			b.addSelectionListener(
-				new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				int fuzz= guessFuzzFactor(patcher);
-				if (fuzz>=0)
-					fFuzzField.setText(Integer.toString(fuzz));
-			}
+			b.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
+							int fuzz= guessFuzzFactor(patcher);
+							if (fuzz>=0)
+								fFuzzField.setText(Integer.toString(fuzz));
+						}
+					}
 				}
 			);
 		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
@@ -669,9 +577,13 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 			fStripPrefixSegments.addSelectionListener(
 				new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
-						patcherCompareEditorInput.updateInput(patcher);
-				}
+					if (patcher.getStripPrefixSegments() != getStripPrefixSegments()) {
+						if (promptToRebuild("Performing this operation will require that your manual changes be discarded.")) {
+							if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
+								rebuildTree();
+							}
+						}
+					}
 				}
 			);
 	
@@ -679,8 +591,14 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 		fFuzzField.addModifyListener(
 			new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				if (patcher.setFuzz(getFuzzFactor()))
-					patcherCompareEditorInput.updateInput(patcher);
+				if (patcher.getFuzz() != getFuzzFactor()) {
+					if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
+						if (patcher.setFuzz(getFuzzFactor()))
+							rebuildTree();
+					} else {
+						fFuzzField.setText(Integer.toString(patcher.getFuzz()));
+					}
+				}
 			}
 		});
 	}
@@ -719,157 +637,37 @@ public class PreviewPatchPage2 extends WizardPage implements IContentChangeListe
 	}
 	
 	private int guessFuzzFactor(final WorkspacePatcher patcher) {
-		final int strip= getStripPrefixSegments();
-		final int[] result= new int[1];
+		final int[] result= new int[] { -1 };
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, true,
-			//TimeoutContext.run(true, GUESS_TIMEOUT, getControl().getShell(),
 					new IRunnableWithProgress() {
 						public void run(IProgressMonitor monitor) {
-							result[0]= guess(patcher, monitor, strip);
+							result[0]= patcher.guessFuzzFactor(monitor);
 						}
 				}
 			);
-			return result[0];
 		} catch (InvocationTargetException ex) {
 			// NeedWork
 		} catch (InterruptedException ex) {
 			// NeedWork
 		}
-		return -1;
-	}
-	
-	private int guess(WorkspacePatcher patcher, IProgressMonitor pm, int strip) {
-
-		Diff[] diffs= patcher.getDiffs();
-		if (diffs==null||diffs.length<=0)
-			return -1;
-
-		// now collect files and determine "work"
-		IFile[] files= new IFile[diffs.length];
-		int work= 0;
-		for (int i= 0; i<diffs.length; i++) {
-			Diff diff= diffs[i];
-			if (diff==null)
-				continue;
-			if (diff.getDiffType()!=Differencer.ADDITION) {
-				IPath p= diff.fOldPath;
-				if (strip>0&&strip<p.segmentCount())
-					p= p.removeFirstSegments(strip);
-				IFile file= existsInSelection(p);
-				if (file!=null) {
-					files[i]= file;
-					work+= diff.fHunks.size();
-				}
-			}
-		}
-
-		// do the "work"
-		int[] fuzzRef= new int[1];
-		String format= PatchMessages.PreviewPatchPage_GuessFuzzProgress_format;
-		pm.beginTask(PatchMessages.PreviewPatchPage_GuessFuzzProgress_text, work);
-		try {
-			int fuzz= 0;
-			for (int i= 0; i<diffs.length; i++) {
-				Diff d= diffs[i];
-				IFile file= files[i];
-				if (d!=null&&file!=null) {
-					List lines= patcher.load(file, false);
-					String name= d.getPath().lastSegment();
-					Iterator iter= d.fHunks.iterator();
-					int shift= 0;
-					for (int hcnt= 1; iter.hasNext(); hcnt++) {
-						pm.subTask(MessageFormat.format(format, new String[] {name, Integer.toString(hcnt)}));
-						Hunk h= (Hunk) iter.next();
-						shift= patcher.calculateFuzz(h, lines, shift, pm, fuzzRef);
-						int f= fuzzRef[0];
-						if (f==-1) // cancel
-							return -1;
-						if (f>fuzz)
-							fuzz= f;
-						pm.worked(1);
-					}
-				}
-			}
-			return fuzz;
-		} finally {
-			pm.done();
-		}
-	}
-	
-	private IFile existsInSelection(IPath path) {
-		return fPatchWizard.getPatcher().existsInTarget(path);
-	}
-
-	public void contentChanged(IContentChangeNotifier source) {
-		if (source instanceof PatchedFileWrapper) {
-			PatcherDiffNode parentNode = ((PatchedFileWrapper) source).getParent();
-			
-			//the only content that can be altered are hunks - make sure this is true
-			Assert.isTrue(parentNode.getPatchNodeType() == PatcherDiffNode.HUNK);
-			
-			//since it has been changed, it is now included in the patch by default
-			parentNode.setIncludeElement(true);
-			
-			//update the hunk node name
-			String name = parentNode.getName();
-			int index = name
-					.lastIndexOf(PatchMessages.PreviewPatchPage_NoMatch_error);
-			if (index != -1) {
-				parentNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {name.substring(0, index), PatchMessages.HunkMergePage_Merged}));
-			} else {
-				//make sure we add one merged to the label
-				index = name.lastIndexOf(PatchMessages.HunkMergePage_Merged);
-				if (index == -1) 
-					parentNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {name, PatchMessages.HunkMergePage_Merged}));
-			}
-			
-			//update the diff node name 
-			PatcherDiffNode diffNode= (PatcherDiffNode) parentNode.getParent();
-			Assert.isTrue(diffNode.getPatchNodeType() == PatcherDiffNode.DIFF);
-			index = diffNode.getName().lastIndexOf(PatchMessages.HunkMergePage_Merged);
-			if (index == -1)
-				diffNode.setName(NLS.bind(PatchMessages.Diff_2Args, new String[] {diffNode.getName(), PatchMessages.HunkMergePage_Merged}));
-	
-			patcherCompareEditorInput.getViewer().update(diffNode, null);
-			patcherCompareEditorInput.getViewer().refresh();
-			patcherCompareEditorInput.updateTree();
-			
-			Hunk tempHunk = parentNode.getHunk();
-			Assert.isNotNull(tempHunk);
-			Diff tempDiff = (Diff) tempHunk.getParent(tempHunk);
-			Assert.isNotNull(tempDiff);
-			alteredDiffs.add(tempDiff);
-
-			alteredFiles.put(tempDiff, ((PatchedFileWrapper) source).getPatchedFilNode());
-			
-			// now that one hunk has been changed this page can be considered complete
-			setPageComplete(true);
-		}
-	}
-	
-	public HashMap getMergedFileContents() {
-		return alteredFiles;
-	}
-
-	public void setMergedFile(Diff tempDiff, PatchedFileNode node) {
-		alteredFiles.put(tempDiff, node);
-	}
-
-	public HashSet getModifiedDiffs() {
-		return alteredDiffs;
-	}
-
-	public void setAlteredDiff(Diff tempDiff){
-		alteredDiffs.add(tempDiff);
+		return result[0];
 	}
 	
 	public void ensureContentsSaved() {
 		try {
-			patcherCompareEditorInput.saveChanges(new NullProgressMonitor());
+			fInput.saveChanges(new NullProgressMonitor());
 		} catch (CoreException e) {
 			//ignore
 		}
+	}
+
+	public WorkspacePatcher getPatcher() {
+		return fPatcher;
+	}
+
+	public CompareConfiguration getCompareConfiguration() {
+		return fConfiguration;
 	}
 	
 

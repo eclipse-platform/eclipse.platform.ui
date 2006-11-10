@@ -11,6 +11,8 @@ public interface ICompareUIConstants {
 	public static final String DTOOL_PREV= "dlcl16/prev_nav.gif";	//$NON-NLS-1$
 	public static final String ETOOL_PREV= "elcl16/prev_nav.gif";	//$NON-NLS-1$
 	public static final String CTOOL_PREV= ETOOL_PREV;
+	
+	public static final String ERROR_OVERLAY= "ovr16/error_ov.gif"; //$NON-NLS-1$
 
 	public static final String RETARGET_PROJECT= "eview16/compare_view.gif";	//$NON-NLS-1$
 	

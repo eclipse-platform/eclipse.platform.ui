@@ -156,7 +156,7 @@ public class PatchTargetPage extends WizardPage {
 		// register listeners
 		fPatchTargets.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				fPatchWizard.setTarget(Utilities.getFirstResource(event.getSelection()));
+				fPatchWizard.getPatcher().setTarget(Utilities.getFirstResource(event.getSelection()));
 				updateWidgetEnablements();
 			}
 		});

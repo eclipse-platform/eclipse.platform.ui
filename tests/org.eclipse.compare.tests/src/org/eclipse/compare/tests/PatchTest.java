@@ -10,19 +10,13 @@
  *******************************************************************************/
 package org.eclipse.compare.tests;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-import org.eclipse.compare.internal.patch.Diff;
-import org.eclipse.compare.internal.patch.LineReader;
-import org.eclipse.compare.internal.patch.WorkspacePatcher;
+import org.eclipse.compare.internal.patch.*;
 
 public class PatchTest extends TestCase {
 
@@ -114,11 +108,11 @@ public class PatchTest extends TestCase {
 			e.printStackTrace();
 		}
 		
-		Diff[] diffs= patcher.getDiffs();
+		FileDiff[] diffs= patcher.getDiffs();
 		Assert.assertEquals(diffs.length, 1);
 		
-		List failedHunks= new ArrayList();
-		patcher.patch(diffs[0], inLines, failedHunks);
+		FileDiffResult diffResult = patcher.getDiffResult(diffs[0]);
+		diffResult.patch(inLines);
 		
 		LineReader expectedContents= new LineReader(getReader(expt));
 		List expectedLines= expectedContents.readLines();
@@ -154,7 +148,7 @@ public class PatchTest extends TestCase {
 		}
 		
 		//Sort the diffs by project 
-		Diff[] diffs= patcher.getDiffs();
+		FileDiff[] diffs= patcher.getDiffs();
 		
 		//Iterate through all of the original files, apply the diffs that belong to the file and compare
 		//with the corresponding outcome file
@@ -163,8 +157,8 @@ public class PatchTest extends TestCase {
 			List inLines= lr.readLines();
 			
 		
-			List failedHunks= new ArrayList();
-			patcher.patch(diffs[i], inLines, failedHunks);
+			FileDiffResult diffResult = patcher.getDiffResult(diffs[i]);
+			diffResult.patch(inLines);
 			
 			LineReader expectedContents= new LineReader(getReader(expectedOutcomeFiles[i]));
 			List expectedLines= expectedContents.readLines();

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.patch;
 
-import org.eclipse.compare.internal.patch.WorkspacePatcher;
+import org.eclipse.compare.internal.patch.PatchReader;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -37,7 +37,7 @@ public class WorkspacePatcherUI {
 	 * @since 3.2
 	 */
 	public static String getWorkspacePatchHeader() {
-		return WorkspacePatcher.MULTIPROJECTPATCH_HEADER+" "+WorkspacePatcher.MULTIPROJECTPATCH_VERSION; //$NON-NLS-1$
+		return PatchReader.MULTIPROJECTPATCH_HEADER+" "+PatchReader.MULTIPROJECTPATCH_VERSION; //$NON-NLS-1$
 	}
 
 	/**
@@ -50,6 +50,6 @@ public class WorkspacePatcherUI {
 	 * @since 3.2
 	 */
 	public static String getWorkspacePatchProjectHeader(IProject project) {
-		return WorkspacePatcher.MULTIPROJECTPATCH_PROJECT+" "+ project.getName(); //$NON-NLS-1$
+		return PatchReader.MULTIPROJECTPATCH_PROJECT+" "+ project.getName(); //$NON-NLS-1$
 	}
 }
