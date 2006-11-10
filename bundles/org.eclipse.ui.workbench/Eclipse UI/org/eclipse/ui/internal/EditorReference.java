@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorPersistable;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
@@ -54,6 +55,8 @@ public class EditorReference extends WorkbenchPartReference implements
     private final EditorManager manager;
 
     private IMemento editorMemento;
+
+	private IMemento editorState;
 
     /**
      * Flag that lets us detect malfunctioning editors that don't fire PROP_INPUT events.
@@ -100,6 +103,7 @@ public class EditorReference extends WorkbenchPartReference implements
         this.manager = manager;
         initListenersAndHandlers();
         this.editorMemento = memento;
+        editorState = editorMemento.getChild(IWorkbenchConstants.TAG_EDITOR_STATE);
         String id = memento.getString(IWorkbenchConstants.TAG_ID);
         String title = memento.getString(IWorkbenchConstants.TAG_TITLE);
         String tooltip = Util.safeString(memento
@@ -217,6 +221,7 @@ public class EditorReference extends WorkbenchPartReference implements
     protected void releaseReferences() {
         super.releaseReferences();
         editorMemento = null;
+        editorState = null;
         name = null;
         factoryId = null;
         restoredInput = null;
@@ -255,6 +260,7 @@ public class EditorReference extends WorkbenchPartReference implements
 
         super.doDisposePart();
         editorMemento = null;
+        editorState = null;
         restoredInput = new NullEditorInput();
     }
 
@@ -581,6 +587,11 @@ public class EditorReference extends WorkbenchPartReference implements
             // Link everything up to the part reference (the part reference itself should not have
             // been modified until this point)
             site = manager.createSite(this, part, desc, editorInput);
+            
+            // if there is saved state that's appropriate, pass it on
+            if (part instanceof IEditorPersistable && editorState != null) {
+				((IEditorPersistable) part).restoreState(editorState);
+			}
             
             // Remember the site and the action bars (now that we've created them, we'll need to dispose
             // them if an exception occurs)

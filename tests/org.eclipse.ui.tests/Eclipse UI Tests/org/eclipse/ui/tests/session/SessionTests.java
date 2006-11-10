@@ -41,6 +41,8 @@ public class SessionTests extends TestSuite {
 	private void addEditorTests() {
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				Bug95357Test.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				EditorWithStateTest.class));
 	}
 
 	/**

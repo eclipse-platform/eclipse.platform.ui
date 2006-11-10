@@ -90,6 +90,8 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 
+    public static final String TAG_EDITOR_STATE = "editorState"; //$NON-NLS-1$
+
     public static final String TAG_TITLE = "title"; //$NON-NLS-1$
 
     public static final String TAG_X = "x"; //$NON-NLS-1$

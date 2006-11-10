@@ -19,54 +19,65 @@ import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 
 /**
- * This is a test for IEditorPart.  Since IEditorPart is an
- * interface this test verifies the IEditorPart lifecycle rather
- * than the implementation.
+ * This is a test for IEditorPart. Since IEditorPart is an interface this test
+ * verifies the IEditorPart lifecycle rather than the implementation.
  */
 public class IEditorPartTest extends IWorkbenchPartTest {
 
-    /**
-     * Constructor for IEditorPartTest
-     */
-    public IEditorPartTest(String testName) {
-        super(testName);
-    }
+	/**
+	 * Constructor for IEditorPartTest
+	 */
+	public IEditorPartTest(String testName) {
+		super(testName);
+	}
 
-    /**
-     * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
-     */
-    protected MockPart openPart(IWorkbenchPage page) throws Throwable {
-        IProject proj = FileUtil.createProject("IEditorPartTest");
-        IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
-        return (MockWorkbenchPart) page.openEditor(new FileEditorInput(file),
-                MockEditorPart.ID1);
-    }
+	/**
+	 * @see IWorkbenchPartTest#openPart(IWorkbenchPage)
+	 */
+	protected MockPart openPart(IWorkbenchPage page) throws Throwable {
+		IProject proj = FileUtil.createProject("IEditorPartTest");
+		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
+		return (MockWorkbenchPart) page.openEditor(new FileEditorInput(file),
+				MockEditorPart.ID1);
+	}
 
-    /**
-     * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
-     */
-    protected void closePart(IWorkbenchPage page, MockPart part)
-            throws Throwable {
-        page.closeEditor((IEditorPart) part, true);
-    }
-    
-    /**
-     * Tests that the editor is closed without saving if isSaveOnCloseNeeded()
-     * returns false.
-     * @see ISaveablePart#isSaveOnCloseNeeded()
-     */
-    public void testOpenAndCloseSaveNotNeeded() throws Throwable {
-        // Open a part.
-        MockEditorPart part = (MockEditorPart) openPart(fPage);
-        part.setDirty(true);
-        part.setSaveNeeded(false);
-        closePart(fPage, part);
-        
-        CallHistory history = part.getCallHistory();
-        assertTrue(history.verifyOrder(new String[] { "setInitializationData", "init",
-                "createPartControl", "setFocus", "isSaveOnCloseNeeded", "widgetDisposed", "dispose" }));
-        assertFalse(history.contains("doSave"));
-    }
-    
+	/**
+	 * @see IWorkbenchPartTest#closePart(IWorkbenchPage, MockWorkbenchPart)
+	 */
+	protected void closePart(IWorkbenchPage page, MockPart part)
+			throws Throwable {
+		page.closeEditor((IEditorPart) part, true);
+	}
+
+	/**
+	 * Tests that the editor is closed without saving if isSaveOnCloseNeeded()
+	 * returns false.
+	 * 
+	 * @see ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public void testOpenAndCloseSaveNotNeeded() throws Throwable {
+		// Open a part.
+		MockEditorPart part = (MockEditorPart) openPart(fPage);
+		part.setDirty(true);
+		part.setSaveNeeded(false);
+		closePart(fPage, part);
+
+		CallHistory history = part.getCallHistory();
+		assertTrue(history.verifyOrder(new String[] { "setInitializationData",
+				"init", "createPartControl", "setFocus", "isSaveOnCloseNeeded",
+				"widgetDisposed", "dispose" }));
+		assertFalse(history.contains("doSave"));
+	}
+
+	public void testOpenAndCloseWithNoMemento() throws Throwable {
+		IProject proj = FileUtil.createProject("IEditorPartTest");
+		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
+		MockEditorWithState editor = (MockEditorWithState) fPage.openEditor(
+				new FileEditorInput(file), MockEditorWithState.ID);
+		closePart(fPage, editor);
+		
+		CallHistory history = editor.getCallHistory();
+		assertFalse(history.contains("saveState"));
+		assertFalse(history.contains("restoreState"));
+	}
 }
-
