@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<component xmlns="http://eclipse.org/component"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://eclipse.org/component ../component.xsd "
+   name="JFace Data Binding">
+ <plugin id="org.eclipse.core.databinding" />
+
+ <package name="org.eclipse.jface.internal.provisional.databinding" >
+   <type name="BindingException" subclass="false"/>
+   <type name="BindSpec"/>
+   <type name="ChangeEvent" subclass="false"/>
+   <type name="ConditionalUpdatableValue"/>
+   <type name="Converter"/>
+   <type name="DataBinding" subclass="false"/>
+   <type name="DefaultCellModifier" subclass="false"/>
+   <type name="IBindSpec" implement="false"/>
+   <type name="IBindSupportFactory"/>
+   <type name="IChangeEvent" implement="false"/>
+   <type name="IChangeListener"/>
+   <type name="IConverter"/>
+   <type name="IDataBindingContext" implement="false"/>
+   <type name="IdentityConverter" subclass="false"/>
+   <type name="IUpdatable" implement="false"/>
+   <type name="IUpdatableCollection"/>
+   <type name="IUpdatableFactory"/>
+   <type name="IUpdatableValue"/>
+   <type name="IValidationContext" implement="false"/>
+   <type name="IValidator"/>
+   <type name="PropertyDescription" subclass="false"/>
+   <type name="SettableValue"/>
+   <type name="TableViewerDescription" subclass="false"/>
+   <type name="Updatable"/>
+   <type name="UpdatableValue"/>
+ </package>
+
+ <component-depends unrestricted="true"/>
+
+</component>
