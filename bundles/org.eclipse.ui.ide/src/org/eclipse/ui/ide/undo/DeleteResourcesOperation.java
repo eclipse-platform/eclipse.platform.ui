@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**
  * A DeleteResourcesOperation represents an undoable operation for deleting one
@@ -138,15 +137,6 @@ public class DeleteResourcesOperation extends AbstractResourcesOperation {
 		IStatus status = super.computeExecutionStatus(monitor);
 		if (status.isOK()) {
 			status = computeDeleteStatus();
-		}
-		if (status.isOK()) {
-			// If the resources to be deleted include projects whose content
-			// is to be deleted, return a warning status describing the problem.
-			if (deleteContent && resourcesIncludesProjects()) {
-				status = getWarningStatus(
-						UndoMessages.DeleteResourcesOperation_DeletingProjectContentWarning,
-						0);
-			}
 		}
 		return status;
 	}

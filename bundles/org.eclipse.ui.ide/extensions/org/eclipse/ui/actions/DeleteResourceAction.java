@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -29,10 +30,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.DeleteResourcesOperation;
@@ -126,6 +131,21 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			}
 			radio1.setText(text1);
 			radio1.setFont(parent.getFont());
+			
+			// Add explanatory label that the action cannot be undone
+			Label detailsLabel = new Label(composite, SWT.LEFT);
+			detailsLabel.setText(IDEWorkbenchMessages.DeleteResourceAction_deleteContentsDetails);
+			detailsLabel.setFont(parent.getFont());
+			// indent the explanatory label
+			GC gc = new GC(detailsLabel);
+			gc.setFont(detailsLabel.getParent().getFont());
+			FontMetrics fontMetrics = gc.getFontMetrics();
+			gc.dispose();
+			GridData data = new GridData();
+			data.horizontalIndent = Dialog.convertHorizontalDLUsToPixels(fontMetrics, IDialogConstants.INDENT);
+			detailsLabel.setLayoutData(data);
+			// Add a spacer label
+			new Label(composite, SWT.LEFT);
 
 			radio2 = new Button(composite, SWT.RADIO);
 			radio2.addSelectionListener(selectionListener);

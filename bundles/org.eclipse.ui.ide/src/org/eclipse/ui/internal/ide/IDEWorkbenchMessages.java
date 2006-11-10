@@ -200,6 +200,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String DeleteResourceAction_confirmProjectN;
 	public static String DeleteResourceAction_deleteContents1;
 	public static String DeleteResourceAction_deleteContentsN;
+	public static String DeleteResourceAction_deleteContentsDetails;
 	public static String DeleteResourceAction_doNotDeleteContents;
 	public static String DeleteResourceAction_confirmLinkedResource1;
 	public static String DeleteResourceAction_confirmLinkedResourceN;
