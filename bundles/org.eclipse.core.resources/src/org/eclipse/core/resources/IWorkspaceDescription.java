@@ -102,10 +102,7 @@ public interface IWorkspaceDescription {
 	 * Records whether this workspace performs autobuilds.
 	 * <p>
 	 * When autobuild is on, any changes made to a project and its
-	 * resources automatically triggers an incremental build of that
-	 * project. If resources in several projects are changed within the
-	 * scope of a workspace runnable, the affected projects are auto-built
-	 * in no particular order.
+	 * resources automatically triggers an incremental build of the workspace.
 	 * </p>
 	 * <p>
 	 * Users must call <code>IWorkspace.setDescription</code> before changes 
