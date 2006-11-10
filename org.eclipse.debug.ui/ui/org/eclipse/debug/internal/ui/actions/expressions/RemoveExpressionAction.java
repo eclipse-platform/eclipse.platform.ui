@@ -34,7 +34,7 @@ public class RemoveExpressionAction extends AbstractRemoveActionDelegate {
 		List expressions = new ArrayList();
 		for (int i = paths.length-1; i >=0; i--) {
 			TreePath path = paths[i];
-			Object segment = path.getSegment(1);
+			Object segment = path.getFirstSegment();
 			if (segment instanceof IExpression) {
 				expressions.add(segment);
 			}

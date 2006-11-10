@@ -46,7 +46,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	
     /**
      * Creates a new ChangeVariableValueAction for the given variables view
-     * @param view the varibles view in which this action will appear
+     * @param view the variables view in which this action will appear
      */
 	public ChangeVariableValueAction(VariablesView view) {
 		super(view.getViewer(), ActionMessages.ChangeVariableValue_title); 
@@ -61,7 +61,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	}
 	
 	/**
-	 * Edit the variable value with an inline text editor.  
+	 * Edit the variable value with an in-line text editor.  
 	 */
 	protected void doActionPerformed(final IVariable variable) {
 	    Shell shell = fView.getViewSite().getShell();

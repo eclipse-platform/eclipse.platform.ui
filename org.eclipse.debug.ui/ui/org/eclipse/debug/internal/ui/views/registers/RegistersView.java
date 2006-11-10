@@ -51,5 +51,12 @@ public class RegistersView extends VariablesView {
 	protected String getToggleActionLabel() {
 		return RegistersViewMessages.RegistersView_0; 
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
+	 */
+	protected String getPresentationContextId() {
+		return IDebugUIConstants.ID_REGISTER_VIEW;
+	}	
 
 }

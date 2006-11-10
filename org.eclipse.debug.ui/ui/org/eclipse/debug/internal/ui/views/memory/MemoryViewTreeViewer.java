@@ -16,9 +16,9 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.PartPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.TreeUpdatePolicy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -53,7 +53,7 @@ public class MemoryViewTreeViewer extends AsynchronousTreeViewer {
 	               {
 		        	   if ((flags & IModelDelta.SELECT) != 0)
 		        	   {
-		        		   IPresentationContext context = getViewer().getPresentationContext();
+		        		   PartPresentationContext context = (PartPresentationContext) getViewer().getPresentationContext();
 		        		   if (context.getPart() instanceof MemoryView)
 		        		   {
 		        			   MemoryView view = (MemoryView)context.getPart();
@@ -97,7 +97,7 @@ public class MemoryViewTreeViewer extends AsynchronousTreeViewer {
 	            if ((flags & IModelDelta.REPLACED) != 0) {
 	            }
 
-	            updateNodes(node.getNodes());
+	            updateNodes(node.getChildDeltas());
 	        }
 		}
 	}

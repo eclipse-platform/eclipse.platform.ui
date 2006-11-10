@@ -489,10 +489,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fProvider.activate(event.getSelection());
 		updateObjects();
 	}
-	
-	protected void possibleContextChange(Object element, int type) {
-		// TODO: remove
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
@@ -611,12 +607,12 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     }
 	
 	/**
-	 * Updates the enablement of the given action based on the selection
-	 * and addes to the menu iff enabled.
+	 * Updates the enabled state of the given action based on the selection
+	 * and adds to the menu if enabled.
 	 * 
 	 * @param menu menu to add the action to
 	 * @param action action to add if enabled
-	 * @param selection selection to update enablement
+	 * @param selection selection to update enabled state for
 	 */
 	private void updateAndAdd(IMenuManager menu, SelectionListenerAction action, IStructuredSelection selection) {
 		action.selectionChanged(selection);

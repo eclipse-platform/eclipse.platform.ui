@@ -21,8 +21,9 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.TableUpdatePolicy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.ui.progress.UIJob;
 
@@ -34,7 +35,7 @@ import org.eclipse.ui.progress.UIJob;
  */
 public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 {
-	public void modelChanged(IModelDelta node) {
+	public void modelChanged(IModelDelta node, IModelProxy proxy) {
 		
 		// clear current cache as it becomes invalid when the memory block is changed
 		AbstractVirtualContentTableModel model = getTableViewer().getVirtualContentModel();
@@ -67,7 +68,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 				// update policy figured out what's changed in the memory block
 				// and will tell rendering to update accordinly.
 				// Updating the rendering indirectly update the table viewer
-				notifyRendering(node);
+				notifyRendering(node, proxy);
 				handleMemoryBlockChanged((IMemoryBlock)node.getElement(), node);
 				return;
 				
@@ -81,7 +82,7 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 			}				
 		}
 		
-		super.modelChanged(node);
+		super.modelChanged(node, proxy);
 	}
 
 	/**
@@ -92,12 +93,12 @@ public class AsyncTableRenderingUpdatePolicy extends TableUpdatePolicy
 			computer.clearCache();
 	}
 
-	private void notifyRendering(IModelDelta node) {
+	private void notifyRendering(IModelDelta node, IModelProxy proxy) {
 		if (getTableViewer() != null)
 		{
 			IModelChangedListener listener = (IModelChangedListener)getTableViewer().getRendering().getAdapter(IModelChangedListener.class);
 			if (listener != null)
-				listener.modelChanged(node);
+				listener.modelChanged(node, proxy);
 		}
 	}
 	

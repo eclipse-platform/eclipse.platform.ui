@@ -15,11 +15,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.AbstractViewerState;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
-import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -29,7 +27,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
  
 /**
@@ -37,8 +34,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * area.
  */
 public class ExpressionView extends VariablesView {
-	
-	private AbstractViewerState fState;
 	
 	/**
 	 * @see AbstractDebugView#getHelpContextId()
@@ -75,7 +70,8 @@ public class ExpressionView extends VariablesView {
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		menu.add(getAction(FIND_ELEMENT));
+		// TODO:
+		//menu.add(getAction(FIND_ELEMENT));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		IAction action = new AvailableLogicalStructuresAction(this);
         if (action.isEnabled()) {
@@ -84,7 +80,7 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
-	
+
 	protected void contextActivated(ISelection selection) {
 		if (!isVisible()) {
 			return;
@@ -127,53 +123,26 @@ public class ExpressionView extends VariablesView {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
-	 */
-	protected void createActions() {
-		super.createActions();
-		setInitialContent();
-	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#restoreState()
-     */
-    protected void restoreState() {
-    	if (fState != null) {
-    		fState.restoreState(getVariablesViewer());
-    	}
-    }
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#dispose()
-	 */
-	public void dispose() {
-		super.dispose();
-		fState = null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#becomesHidden()
-	 */
-	protected void becomesHidden() {
-		fState = getViewerState();
-		super.becomesHidden();
-		getViewer().setInput(null);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#becomesVisible()
 	 */
 	protected void becomesVisible() {
-		super.becomesVisible();
 		setInitialContent();
-		restoreState();
+		super.becomesVisible();
 	}
     
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createVariablesViewer(org.eclipse.swt.widgets.Composite)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getViewerStyle()
 	 */
-	protected VariablesViewer createVariablesViewer(Composite parent) {
-		return new VariablesViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL, this);
+	protected int getViewerStyle() {
+		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
+	 */
+	protected String getPresentationContextId() {
+		return IDebugUIConstants.ID_EXPRESSION_VIEW;
 	}	
     
+	
 }

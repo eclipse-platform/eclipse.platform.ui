@@ -1027,7 +1027,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getModel()
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getModel()
 	 */
 	public AsynchronousModel getModel() {
 		return super.getModel();

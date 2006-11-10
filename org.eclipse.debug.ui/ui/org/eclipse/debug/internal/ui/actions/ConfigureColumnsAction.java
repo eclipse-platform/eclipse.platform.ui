@@ -18,8 +18,8 @@ import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -38,7 +38,7 @@ import org.eclipse.ui.texteditor.IUpdate;
  */
 public class ConfigureColumnsAction extends Action implements IUpdate {
 	
-	private AsynchronousTreeViewer fViewer;
+	private TreeModelViewer fViewer;
 	
 	class ColumnContentProvider implements IStructuredContentProvider {
 
@@ -98,7 +98,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 		
 	}
 
-	public ConfigureColumnsAction(AsynchronousTreeViewer viewer) {
+	public ConfigureColumnsAction(TreeModelViewer viewer) {
 		setText(ActionMessages.ConfigureColumnsAction_0);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".ConfigureColumnsAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONFIGURE_COLUMNS_ACTION);
