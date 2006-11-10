@@ -151,7 +151,7 @@ ON_ANY_IN_SAME_CONTAINER: on any item with the same top level container as the s
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
+         <sequence minOccurs="1" maxOccurs="unbounded">
             <element ref="markerTypeReference"/>
          </sequence>
          <attribute name="name" type="string" use="required">
