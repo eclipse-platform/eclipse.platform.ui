@@ -834,10 +834,14 @@ public class ControlDecoration {
 		}
 	}
 
-	/*
+	/**
 	 * Return the rectangle in which the decoration should be rendered, in
 	 * coordinates relative to the specified control. If the specified control
 	 * is null, return the rectangle in display coordinates.
+	 * 
+	 * @param targetControl
+	 *            the control whose coordinates should be used
+	 * @return the rectangle in which the decoration should be rendered
 	 */
 	protected Rectangle getDecorationRectangle(Control targetControl) {
 		if (getImage() == null || control == null) {
