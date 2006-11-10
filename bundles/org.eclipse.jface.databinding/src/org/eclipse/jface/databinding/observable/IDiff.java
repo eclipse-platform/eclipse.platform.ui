@@ -12,9 +12,9 @@
 package org.eclipse.jface.databinding.observable;
 
 import org.eclipse.jface.databinding.observable.list.ListDiff;
+import org.eclipse.jface.databinding.observable.map.MapDiff;
 import org.eclipse.jface.databinding.observable.set.SetDiff;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
-import org.eclipse.jface.internal.databinding.provisional.observable.mapping.MappingDiff;
 
 /**
  * A diff represents a state change of an observable object.
@@ -22,7 +22,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.mapping.Map
  * @see ValueDiff
  * @see ListDiff
  * @see SetDiff
- * @see MappingDiff
+ * @see MapDiff
  * 
  * @since 1.0
  * 

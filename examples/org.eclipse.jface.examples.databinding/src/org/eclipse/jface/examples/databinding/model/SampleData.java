@@ -7,22 +7,10 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.beans.BeanObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.DefaultObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.factories.NestedObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.swt.SWTObservableFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersBindingFactory;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersObservableFactory;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Widget;
 
 public class SampleData {
 
@@ -67,10 +55,6 @@ public class SampleData {
 	public static Signon SIGNON_ADMINISTRATOR;
 
 	public static Signon SIGNON_JOEBLOGGS;
-
-	private static SWTObservableFactory swtObservableFactory = new SWTObservableFactory();
-
-	private static ViewersObservableFactory viewersObservableFactory = new ViewersObservableFactory();
 
 	static {
 		initializeData();
@@ -185,35 +169,4 @@ public class SampleData {
 
 		// initTrees();
 	}
-
-	/**
-	 * @param aControl
-	 * @return
-	 */
-	public static DataBindingContext getDatabindingContext(Control aControl) {
-		final DataBindingContext context = new DataBindingContext();
-		context.addObservableFactory(new DefaultObservableFactory(context));
-		context.addObservableFactory(new BeanObservableFactory(context, null, new Class[]{Widget.class}));
-		context.addObservableFactory(new NestedObservableFactory(context));
-		context.addObservableFactory(swtObservableFactory);
-		context.addObservableFactory(viewersObservableFactory);
-		context.addBindingFactory(new DefaultBindingFactory());
-		context.addBindingFactory(new ViewersBindingFactory());
-		context.addBindSupportFactory(new DefaultBindSupportFactory());
-		aControl.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				context.dispose();
-			}
-		});
-		return context;
-	}
-
-	public static SWTObservableFactory getSWTObservableFactory() {
-		return swtObservableFactory;
-	}
-
-	public static ViewersObservableFactory getViewersObservableFactory() {
-		return viewersObservableFactory;
-	}
-
 }

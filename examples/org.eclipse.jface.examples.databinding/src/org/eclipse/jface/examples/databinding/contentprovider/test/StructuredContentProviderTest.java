@@ -13,6 +13,7 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 import java.util.Iterator;
 import java.util.Random;
 
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.set.MappedSet;
 import org.eclipse.jface.databinding.observable.set.WritableSet;
 import org.eclipse.jface.databinding.observable.value.ComputedValue;
@@ -20,9 +21,10 @@ import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.swt.SWT;
@@ -60,6 +62,8 @@ import org.eclipse.swt.widgets.Shell;
  * @since 1.0
  */
 public class StructuredContentProviderTest {
+
+	private static Realm realm;
 
 	/**
 	 * Top-level shell for the dialog
@@ -186,13 +190,13 @@ public class StructuredContentProviderTest {
 		// inputSet will be a writable set of doubles. The user will add and
 		// remove entries from this set
 		// through the UI.
-		inputSet = new WritableSet();
+		inputSet = new WritableSet(realm);
 
 		// currentFunction holds the ID currently selected function to apply to
 		// elements in the inputSet.
 		// We will allow the user to change the current function through a set
 		// of radio buttons
-		currentFunction = new WritableValue(new Integer(
+		currentFunction = new WritableValue(realm, new Integer(
 				SomeMathFunction.OP_MULTIPLY));
 
 		// mathFunction implements the selected function
@@ -215,7 +219,7 @@ public class StructuredContentProviderTest {
 
 		// sumOfOutputSet stores the current sum of the the Doubles in the
 		// output set
-		sumOfOutputSet = new ComputedValue() {
+		sumOfOutputSet = new ComputedValue(realm) {
 			protected Object calculate() {
 				double sum = 0.0;
 				for (Iterator iter = outputSet.iterator(); iter.hasNext();) {
@@ -294,8 +298,7 @@ public class StructuredContentProviderTest {
 			listOfInts.setLabelProvider(new ViewerLabelProvider());
 			listOfInts.setInput(inputSet);
 
-			final IObservableValue selectedInt = new SelectionObservableValue(
-					listOfInts);
+			final IObservableValue selectedInt = ViewersObservables.observeSingleSelection(listOfInts);
 
 			GridData listData = new GridData(GridData.FILL_BOTH);
 			listData.minimumHeight = 1;
@@ -374,6 +377,7 @@ public class StructuredContentProviderTest {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
+		realm = SWTObservables.getRealm(display);
 		StructuredContentProviderTest test = new StructuredContentProviderTest();
 		Shell s = test.getShell();
 		s.pack();

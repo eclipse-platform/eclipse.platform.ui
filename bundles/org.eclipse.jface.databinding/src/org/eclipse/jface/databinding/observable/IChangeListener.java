@@ -12,9 +12,9 @@
 package org.eclipse.jface.databinding.observable;
 
 import org.eclipse.jface.databinding.observable.list.IListChangeListener;
+import org.eclipse.jface.databinding.observable.map.IMapChangeListener;
 import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
-import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMappingChangeListener;
 
 /**
  * Listener for generic change events. Note that the change events do not carry information about
@@ -24,7 +24,7 @@ import org.eclipse.jface.internal.databinding.provisional.observable.mapping.IMa
  *  @see IValueChangeListener
  *  @see IListChangeListener
  *  @see ISetChangeListener
- *  @see IMappingChangeListener
+ *  @see IMapChangeListener
  * 
  * @since 1.0
  */

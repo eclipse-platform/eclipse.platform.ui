@@ -14,6 +14,8 @@ package org.eclipse.jface.databinding.observable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * @since 1.0
  * 
@@ -31,6 +33,16 @@ public abstract class AbstractObservable implements IObservable {
 	 * IChangeListener
 	 */
 	private Object staleListeners = null;
+	
+	private Realm realm;
+
+	/**
+	 * @param realm
+	 */
+	public AbstractObservable(Realm realm) {
+		Assert.isNotNull(realm);
+		this.realm = realm;
+	}
 
 	public void addChangeListener(IChangeListener listener) {
 		if (changeListeners == null) {
@@ -185,6 +197,13 @@ public abstract class AbstractObservable implements IObservable {
 	public void dispose() {
 		changeListeners = null;
 		staleListeners = null;
+	}
+
+	/**
+	 * @return Returns the realm.
+	 */
+	public Realm getRealm() {
+		return realm;
 	}
 
 }

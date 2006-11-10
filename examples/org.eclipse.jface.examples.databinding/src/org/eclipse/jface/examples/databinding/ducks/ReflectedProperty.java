@@ -9,7 +9,7 @@
  *     The Pampered Chef - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.examples.databinding.compositetable.reflect;
+package org.eclipse.jface.examples.databinding.ducks;
 
 /**
  * Encapsulates a single JavaBeans-style property

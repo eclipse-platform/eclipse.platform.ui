@@ -10,6 +10,7 @@
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
@@ -18,7 +19,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.databinding.observable.Observables;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.IObservableList;
 import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.list.WritableList;
@@ -78,62 +81,89 @@ public class DataBindingContext {
 
 	private List bindingEventListeners = new ArrayList();
 
-	private WritableList bindings = new WritableList();
+	private WritableList bindings;
     
     /**
      * Unmodifiable version of {@link #bindings} for exposure publicly.
      */
-    private IObservableList unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
+    private IObservableList unmodifiableBindings;
 
 	private List bindSupportFactories;
 
 	protected DataBindingContext parent;
 
-	private ComputedValue partialValidationError = new ComputedValue() {
-		protected Object calculate() {
-			int size = partialValidationErrors.size();
-			return size == 0 ? null : partialValidationErrors.get(size - 1);
-		}
-	};
+	private ComputedValue partialValidationError;
 
-	private ObservableList partialValidationErrors = new ValidationErrorList(
-			bindings, true);
+	private ObservableList partialValidationErrors;
 
-	private ComputedValue validationError = new ComputedValue() {
-		protected Object calculate() {
-			int size = validationErrors.size();
-			return size == 0 ? null : validationErrors.get(size - 1);
-		}
-	};
+	private ComputedValue validationError;
 
-	private ObservableList validationErrors = new ValidationErrorList(bindings,
-			false);
+	private ObservableList validationErrors;
 
 	private List childContexts = new ArrayList();
+
+	private Realm validationRealm;
+
+	/**
+	 * Creates a data binding context, using the current default realm for the
+	 * validation observables, and set up with a
+	 * {@link DefaultBindSupportFactory}, supplying converters and validators
+	 * for common data types.
+	 */
+	public DataBindingContext() {
+		this(null, Realm.getDefault(),
+				new BindSupportFactory[] { new DefaultBindSupportFactory() });
+	}
 
 	/**
 	 * Creates a data binding context set up with a
 	 * {@link DefaultBindSupportFactory}, supplying converters and validators
 	 * for common data types.
+	 * 
+	 * @param validationRealm
+	 *            the realm to be used for the validation observables
 	 */
-	public DataBindingContext() {
-		this(null, new BindSupportFactory[]{new DefaultBindSupportFactory()});
+	public DataBindingContext(Realm validationRealm) {
+		this(null, validationRealm, new BindSupportFactory[]{new DefaultBindSupportFactory()});
 	}
-
+	
 	/**
-	 * @param parent 
+	 * @param parent
 	 *            may be null
+	 * @param validationRealm
+	 *            the realm to be used for the validation observables
 	 * @param factories
 	 *            an array of bind support factories that will be consulted in
 	 *            the given order when creating converters and validators.
 	 */
-	public DataBindingContext(DataBindingContext parent,
-			BindSupportFactory[] factories) {
+	public DataBindingContext(DataBindingContext parent, Realm validationRealm, BindSupportFactory[] factories) {
+		Assert.isNotNull(validationRealm);
+		Assert.isNotNull(factories);
 		this.parent = parent;
 		if (parent != null) {
 			parent.addChild(this);
 		}
-		bindSupportFactories = new ArrayList(Arrays.asList(factories));
+		this.validationRealm = validationRealm;
+		this.bindSupportFactories = new ArrayList(Arrays.asList(factories));
+		bindings = new WritableList(validationRealm);
+        
+        unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
+		partialValidationError = new ComputedValue(validationRealm) {
+			protected Object calculate() {
+				int size = partialValidationErrors.size();
+				return size == 0 ? null : partialValidationErrors.get(size - 1);
+			}
+		};
+		partialValidationErrors = new ValidationErrorList(validationRealm,
+				bindings, true);
+		validationError = new ComputedValue(validationRealm) {
+			protected Object calculate() {
+				int size = validationErrors.size();
+				return size == 0 ? null : validationErrors.get(size - 1);
+			}
+		};
+		validationErrors = new ValidationErrorList(validationRealm, bindings,
+				false);
 	}
 
 	protected void addChild(DataBindingContext context) {
@@ -150,18 +180,6 @@ public class DataBindingContext {
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
 		bindingEventListeners.add(listener);
-	}
-
-	/**
-	 * Adds a factory that can create converters and validators. The list of
-	 * bind support factories is used for creating converters and validators
-	 * when binding without specifying a converter or validator.
-	 * 
-	 * @param factory
-	 *            the factory to add.
-	 */
-	protected void addBindSupportFactory(BindSupportFactory factory) {
-		bindSupportFactories.add(factory);
 	}
 
 	/**
@@ -496,4 +514,11 @@ public class DataBindingContext {
 
         return bindings.remove(binding);
     }
+
+	/**
+	 * @return the realm for the validation observables
+	 */
+	public Realm getValidationRealm() {
+		return validationRealm;
+	}
 }

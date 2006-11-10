@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     The Pampered Chef, Inc. - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
@@ -91,6 +93,7 @@ public class Snippet000HelloWorld {
 		public Shell createShell() {
 			// Build a UI
 			Shell shell = new Shell(Display.getCurrent());
+            Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
 			Text name = new Text(shell, SWT.BORDER);
@@ -100,7 +103,7 @@ public class Snippet000HelloWorld {
 
 			Person person = viewModel.getPerson();
 			bindingContext.bindValue(SWTObservables.getText(name, SWT.Modify),
-					BeansObservables.getAttribute(person, "name"), null);
+					BeansObservables.observeValue(person, "name"), null);
 
 			// Open and return the Shell
 			shell.pack();

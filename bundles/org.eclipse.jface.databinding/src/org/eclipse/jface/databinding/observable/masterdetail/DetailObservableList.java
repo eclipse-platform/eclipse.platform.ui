@@ -49,6 +49,7 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 	private IObservableValue outerObservableValue;
 
 	/**
+	 * @param realm 
 	 * @param factory
 	 * @param outerObservableValue
 	 * @param feature
@@ -56,7 +57,7 @@ import org.eclipse.jface.databinding.observable.value.ValueDiff;
 	 */
 	public DetailObservableList(IObservableFactory factory,
 			IObservableValue outerObservableValue, Object detailType) {
-		super(new ArrayList(), detailType);
+		super(outerObservableValue.getRealm(), new ArrayList(), detailType);
 		this.factory = factory;
 		this.outerObservableValue = outerObservableValue;
 		updateInnerObservableValue(outerObservableValue);

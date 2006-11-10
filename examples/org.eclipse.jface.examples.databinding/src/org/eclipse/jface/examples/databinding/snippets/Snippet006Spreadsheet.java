@@ -7,16 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
-package org.eclipse.jface.examples.databinding.spreadsheet;
+package org.eclipse.jface.examples.databinding.snippets;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.value.ComputedValue;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.TableUpdater;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -37,7 +40,7 @@ import org.eclipse.swt.widgets.Text;
  * @since 1.1
  * 
  */
-public class Spreadsheet {
+public class Snippet006Spreadsheet {
 
 	private static final int COUNTER_UPDATE_DELAY = 1000;
 
@@ -142,6 +145,7 @@ public class Spreadsheet {
 
 		final Display display = new Display();
 		Shell shell = new Shell(display);
+        Realm.setDefault(SWTObservables.getRealm(display));
 
 		final Table table = new Table(shell, SWT.BORDER | SWT.MULTI
 				| SWT.FULL_SELECTION | SWT.VIRTUAL);

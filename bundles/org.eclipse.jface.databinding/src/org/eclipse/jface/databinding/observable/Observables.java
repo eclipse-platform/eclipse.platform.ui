@@ -20,6 +20,8 @@ import org.eclipse.jface.databinding.observable.list.ObservableList;
 import org.eclipse.jface.databinding.observable.set.IObservableSet;
 import org.eclipse.jface.databinding.observable.set.ISetChangeListener;
 import org.eclipse.jface.databinding.observable.set.ObservableSet;
+import org.eclipse.jface.internal.databinding.internal.observable.EmptyObservableList;
+import org.eclipse.jface.internal.databinding.internal.observable.EmptyObservableSet;
 import org.eclipse.jface.internal.databinding.internal.observable.ProxyObservableSet;
 import org.eclipse.jface.internal.databinding.internal.observable.UnmodifiableObservableList;
 
@@ -46,11 +48,73 @@ public class Observables {
 	}
 
 	/**
+	 * Returns an empty observable list. The returned list continues to work
+	 * after it has been disposed of and can be disposed of multiple times.
+	 * 
+	 * @return an empty observable list.
+	 */
+	public static IObservableList emptyObservableList() {
+		return new EmptyObservableList(Realm.getDefault());
+	}
+
+	/**
+	 * Returns an empty observable list. The returned list continues to work
+	 * after it has been disposed of and can be disposed of multiple times.
+	 * 
+	 * @param realm
+	 * @return an empty observable list.
+	 */
+	public static IObservableList emptyObservableList(Realm realm) {
+		return new EmptyObservableList(realm);
+	}
+
+	/**
+	 * Returns an empty observable set. The returned set continues to work after
+	 * it has been disposed of and can be disposed of multiple times.
+	 * 
+	 * @param realm
+	 * @return an empty observable set.
+	 */
+	public static IObservableSet emptyObservableSet() {
+		return new EmptyObservableSet(Realm.getDefault());
+	}
+
+	/**
+	 * Returns an empty observable set. The returned set continues to work after
+	 * it has been disposed of and can be disposed of multiple times.
+	 * 
+	 * @param realm
+	 * @return an empty observable set.
+	 */
+	public static IObservableSet emptyObservableSet(Realm realm) {
+		return new EmptyObservableSet(realm);
+	}
+
+	/**
+	 * @param realm
 	 * @param set
 	 * @return Returns an observableSet backed by the given set
 	 */
 	public static IObservableSet staticObservableSet(Set set) {
-		return new ObservableSet(set, Object.class) {
+		return new ObservableSet(Realm.getDefault(), set, Object.class) {
+			public void addChangeListener(IChangeListener listener) {
+			}
+
+			public void addStaleListener(IStaleListener listener) {
+			}
+
+			public void addSetChangeListener(ISetChangeListener listener) {
+			}
+		};
+	}
+
+	/**
+	 * @param realm
+	 * @param set
+	 * @return Returns an observableSet backed by the given set
+	 */
+	public static IObservableSet staticObservableSet(Realm realm, Set set) {
+		return new ObservableSet(realm, set, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
 
@@ -76,11 +140,21 @@ public class Observables {
 	}
 
 	/**
+	 * @param realm
 	 * @param list
-	 * @return
+	 * @return an observable list that never fires events
 	 */
 	public static IObservableList staticObservableList(List list) {
-		return new ObservableList(list, Object.class) {
+		return staticObservableList(Realm.getDefault(), list);
+	}
+
+	/**
+	 * @param realm
+	 * @param list
+	 * @return an observable list that never fires events
+	 */
+	public static IObservableList staticObservableList(Realm realm, List list) {
+		return new ObservableList(realm, list, Object.class) {
 			public void addChangeListener(IChangeListener listener) {
 			}
 

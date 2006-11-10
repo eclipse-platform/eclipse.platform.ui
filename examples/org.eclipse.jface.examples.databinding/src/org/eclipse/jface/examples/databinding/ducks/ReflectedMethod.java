@@ -9,7 +9,7 @@
  * Contributors:
  *     db4objects - Initial API and implementation
  */
-package org.eclipse.jface.examples.databinding.compositetable.reflect;
+package org.eclipse.jface.examples.databinding.ducks;
 
 import java.lang.reflect.Method;
 

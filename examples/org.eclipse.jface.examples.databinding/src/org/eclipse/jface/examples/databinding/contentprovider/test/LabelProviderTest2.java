@@ -7,20 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
+import org.eclipse.jface.databinding.observable.Realm;
 import org.eclipse.jface.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ListeningLabelProvider;
-import org.eclipse.jface.internal.databinding.provisional.viewers.SelectionObservableValue;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.ListViewer;
@@ -127,7 +130,7 @@ public class LabelProviderTest2 {
 			});
 			list.setInput(listOfRenamables);
 
-			selectedRenamable = new SelectionObservableValue(list);
+			selectedRenamable = ViewersObservables.observeSingleSelection(list);
 
 			Composite buttonBar = new Composite(shell, SWT.NONE);
 			{ // Initialize buttonBar
@@ -186,6 +189,7 @@ public class LabelProviderTest2 {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
+        Realm.setDefault(SWTObservables.getRealm(display));
 		LabelProviderTest2 test = new LabelProviderTest2();
 		Shell s = test.getShell();
 		s.pack();

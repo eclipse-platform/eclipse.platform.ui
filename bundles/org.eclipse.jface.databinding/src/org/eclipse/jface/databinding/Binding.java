@@ -45,7 +45,9 @@ public abstract class Binding {
 	 *            The listener to add.
 	 */
 	public void addBindingEventListener(IBindingListener listener) {
-		bindingEventListeners.add(listener);
+		synchronized (bindingEventListeners) {
+			bindingEventListeners.add(listener);
+		}
 	}
 
 	/**
@@ -59,8 +61,11 @@ public abstract class Binding {
 	 */
 	protected ValidationError fireBindingEvent(BindingEvent event) {
 		ValidationError result = null;
-		IBindingListener[] listeners = (IBindingListener[]) bindingEventListeners
-				.toArray(new IBindingListener[bindingEventListeners.size()]);
+		IBindingListener[] listeners;
+		synchronized (bindingEventListeners) {
+			listeners = (IBindingListener[]) bindingEventListeners
+					.toArray(new IBindingListener[bindingEventListeners.size()]);
+		}
 		for (int i = 0; i < listeners.length; i++) {
 			IBindingListener listener = listeners[i];
 			result = listener.bindingEvent(event);
@@ -93,16 +98,22 @@ public abstract class Binding {
 	 *            The listener to remove.
 	 */
 	public void removeBindingEventListener(IBindingListener listener) {
-		bindingEventListeners.remove(listener);
+		synchronized (bindingEventListeners) {
+			bindingEventListeners.remove(listener);
+		}
 	}
 
 	/**
-	 * 
+	 * Updates the model's state from the target's state at the next reasonable
+	 * opportunity. There is no guarantee that the state will have been updated
+	 * by the time this call returns.
 	 */
 	public abstract void updateModelFromTarget();
 
 	/**
-	 * 
+	 * Updates the target's state from the model's state at the next reasonable
+	 * opportunity. There is no guarantee that the state will have been updated
+	 * by the time this call returns.
 	 */
 	public abstract void updateTargetFromModel();
 	
@@ -127,7 +138,7 @@ public abstract class Binding {
 	/**
 	 * @param context
 	 */
-	public void setDataBindingContext(DataBindingContext context) {
+	/* package */ void setDataBindingContext(DataBindingContext context) {
 		this.context = context;
 	}
 

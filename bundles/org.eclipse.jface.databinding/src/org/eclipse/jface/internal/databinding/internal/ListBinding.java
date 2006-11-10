@@ -11,6 +11,7 @@
 package org.eclipse.jface.internal.databinding.internal;
 
 import org.eclipse.jface.databinding.BindSpec;
+import org.eclipse.jface.databinding.Binding;
 import org.eclipse.jface.databinding.BindingEvent;
 import org.eclipse.jface.databinding.DataBindingContext;
 import org.eclipse.jface.databinding.observable.list.IListChangeListener;
@@ -23,9 +24,8 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ValidationE
 
 /**
  * 
- * implementation note: this class extends a deprecated class for backwards compatibility.
  */
-public class ListBinding extends org.eclipse.jface.internal.databinding.provisional.Binding {
+public class ListBinding extends Binding {
 
 	private boolean updating = false;
 
@@ -46,6 +46,10 @@ public class ListBinding extends org.eclipse.jface.internal.databinding.provisio
 		super(context);
 		this.targetList = targetList;
 		this.modelList = modelList;
+		partialValidationErrorObservable = new WritableValue(context
+				.getValidationRealm(), null);
+		validationErrorObservable = new WritableValue(context
+				.getValidationRealm(), null);
 		// TODO validation/conversion as specified by the bindSpec
 		targetList.addListChangeListener(targetChangeListener);
 		modelList.addListChangeListener(modelChangeListener);
@@ -133,10 +137,9 @@ public class ListBinding extends org.eclipse.jface.internal.databinding.provisio
 		}
 	};
 
-	private WritableValue partialValidationErrorObservable = new WritableValue(
-			null);
+	private WritableValue partialValidationErrorObservable;
 
-	private WritableValue validationErrorObservable = new WritableValue(null);
+	private WritableValue validationErrorObservable;
 
 	private ValidationError errMsg(ValidationError validationError) {
 		partialValidationErrorObservable.setValue(null);

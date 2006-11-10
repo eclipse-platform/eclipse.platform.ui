@@ -9,21 +9,20 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.jface.internal.databinding.provisional;
-
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
+package org.eclipse.jface.databinding.observable.map;
 
 
 /**
- * A default implementation for an IBindingListener event handler.
- * 
- * @since 1.0
- * @deprecated use {@link org.eclipse.jface.databinding.BindingAdapter} instead
+ * @since 1.1
+ *
  */
-public class BindingAdapter implements IBindingListener {
+public interface IMapChangeListener {
 
-	public ValidationError bindingEvent(BindingEvent e) {
-		return null;
-	}
+	/**
+	 * @param source
+	 * @param diff
+	 */
+	void handleMapChange(IObservableMap source,
+			MapDiff diff);
 
 }

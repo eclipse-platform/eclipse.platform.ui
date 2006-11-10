@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds (bug 135316)
+ *     Brad Reynolds - bug 116920
  *******************************************************************************/
 package org.eclipse.jface.databinding;
 
 import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.provisional.observable.LazyInsertDeleteProvider;
 import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
 import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
 
@@ -33,8 +33,6 @@ public class BindSpec {
 
 	private IValidator[] targetValidators;
 	
-	private LazyInsertDeleteProvider lazyInsertDeleteProvider = new LazyInsertDeleteProvider();
-
 	private IDomainValidator domainValidator;
 
 	private Integer modelUpdatePolicy;
@@ -67,15 +65,13 @@ public class BindSpec {
 	 * @param domainValidator
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
-	 * @param targetUpdatePolicy
-	 * @param lazyInsertDeleteProvider 
+	 * @param targetUpdatePolicy 
 	 * 
 	 */
 	protected BindSpec(IConverter[] modelToTargetConverter,
 			IConverter[] targetToModelConverter, IValidator[] targetValidator,
 			IDomainValidator domainValidator, Integer modelUpdatePolicy,
-			Integer validatePolicy, Integer targetUpdatePolicy,
-			LazyInsertDeleteProvider lazyInsertDeleteProvider) {
+			Integer validatePolicy, Integer targetUpdatePolicy) {
 		
 		this.modelToTargetConverters = modelToTargetConverter;
 		this.targetToModelConverters = targetToModelConverter;
@@ -84,7 +80,6 @@ public class BindSpec {
 		this.modelUpdatePolicy = modelUpdatePolicy;
 		this.validatePolicy = validatePolicy;
 		this.targetUpdatePolicy = targetUpdatePolicy;
-		this.lazyInsertDeleteProvider = lazyInsertDeleteProvider;
 	}
 
 	/**
@@ -339,25 +334,6 @@ public class BindSpec {
 	 */
 	public BindSpec setValidatePolicy(Integer validatePolicy) {
 		this.validatePolicy = validatePolicy;
-		return this;
-	}
-
-	
-	/**
-	 * @return Returns the lazyInsertDeleteProvider.
-	 */
-	public LazyInsertDeleteProvider getLazyInsertDeleteProvider() {
-		return lazyInsertDeleteProvider;
-	}
-	
-
-	/**
-	 * @param lazyInsertDeleteProvider The lazyInsertDeleteProvider to set.
-	 * @return this BindSpec, to enable chaining of method calls
-	 */
-	public BindSpec setLazyInsertDeleteProvider(
-			LazyInsertDeleteProvider lazyInsertDeleteProvider) {
-		this.lazyInsertDeleteProvider = lazyInsertDeleteProvider;
 		return this;
 	}
 

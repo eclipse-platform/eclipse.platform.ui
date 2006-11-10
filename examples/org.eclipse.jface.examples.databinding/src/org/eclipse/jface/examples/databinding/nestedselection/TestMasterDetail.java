@@ -7,22 +7,25 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 116920
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import java.util.Date;
-
-import org.eclipse.jface.databinding.observable.IObservable;
+import org.eclipse.jface.databinding.DataBindingContext;
+import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.jface.databinding.observable.list.IObservableList;
+import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.jface.databinding.observable.map.IObservableMap;
+import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.examples.databinding.model.SimpleModel;
 import org.eclipse.jface.examples.databinding.model.SimpleOrder;
 import org.eclipse.jface.examples.databinding.model.SimplePerson;
-import org.eclipse.jface.examples.databinding.model.SimpleModel;
-import org.eclipse.jface.internal.databinding.provisional.BindSpec;
-import org.eclipse.jface.internal.databinding.provisional.Binding;
-import org.eclipse.jface.internal.databinding.provisional.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.description.Property;
-import org.eclipse.jface.internal.databinding.provisional.description.TableModelDescription;
-import org.eclipse.jface.internal.databinding.provisional.viewers.ViewersProperties;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -68,12 +71,6 @@ public class TestMasterDetail {
 	private Text state = null;
 
 	private Table ordersTable = null;
-
-	private Label label5;
-
-	private Text orderDate;
-
-	private Label validationError;
 
 	/**
 	 * This method initializes table
@@ -164,12 +161,6 @@ public class TestMasterDetail {
 		state = new Text(shell, SWT.BORDER);
 		state.setLayoutData(gridData3);
 		createTable1();
-		label5 = new Label(shell, SWT.NONE);
-		label5.setText("Order Date");
-		orderDate = new Text(shell, SWT.BORDER);
-		orderDate.setLayoutData(gridData5);
-		validationError = new Label(shell, SWT.NONE);
-		validationError.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,2,1));
 	}
 
 	private void run() {
@@ -190,35 +181,50 @@ public class TestMasterDetail {
 	SimpleModel model = new SimpleModel();
 
 	private void bind(Control parent) {
-		DataBindingContext dbc = BindingFactory.createContext(parent);
+		Realm realm = SWTObservables.getRealm(parent.getDisplay());
+
 		TableViewer peopleViewer = new TableViewer(personsTable);
-		dbc.bind(peopleViewer, new TableModelDescription(new Property(model,
-				"personList", SimplePerson.class, Boolean.TRUE), new Object[] {
-				"name", "state" }), null);
+		ObservableListContentProvider peopleViewerContent = new ObservableListContentProvider();
+		peopleViewer.setContentProvider(peopleViewerContent);
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
+				peopleViewerContent.getKnownElements(), SimplePerson.class,
+				new String[] { "name", "state" });
+		peopleViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributeMaps));
+		peopleViewer.setInput(new WritableList(realm, model.getPersonList(),
+				SimpleModel.class));
 
-		IObservable selectedPerson = dbc.createObservable(new Property(
-				peopleViewer, ViewersProperties.SINGLE_SELECTION));
+		IObservableValue selectedPerson = ViewersObservables
+				.observeSingleSelection(peopleViewer);
 
-		dbc.bind(name, new Property(selectedPerson, "name", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(address, new Property(selectedPerson, "address", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(city, new Property(selectedPerson, "city", String.class,
-				Boolean.FALSE), null);
-		dbc.bind(state, new Property(selectedPerson, "state", String.class,
-				Boolean.FALSE), null);
+		DataBindingContext dbc = new DataBindingContext(realm);
+		dbc.bindValue(SWTObservables.getText(name, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"name", String.class), null);
+
+		dbc.bindValue(SWTObservables.getText(address, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"address", String.class), null);
+
+		dbc.bindValue(SWTObservables.getText(city, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"city", String.class), null);
+
+		dbc.bindValue(SWTObservables.getText(state, SWT.Modify),
+				BeansObservables.observeDetailValue(realm, selectedPerson,
+						"state", String.class), null);
 
 		TableViewer ordersViewer = new TableViewer(ordersTable);
-		dbc.bind(ordersViewer, new TableModelDescription(new Property(
-				selectedPerson, "orders", SimpleOrder.class, Boolean.TRUE),
-				new Object[] { "orderNumber", "date" }), null);
-		
-		IObservable selectedOrder = dbc.createObservable(new Property(ordersViewer, ViewersProperties.SINGLE_SELECTION));
-		
-		Binding b = dbc.bind(orderDate, new Property(selectedOrder, "date", Date.class,
-				Boolean.FALSE), null);
-		dbc.bind(validationError, b.getValidationError(),
-				new BindSpec().setUpdateModel(false));
+		ObservableListContentProvider ordersViewerContent = new ObservableListContentProvider();
+		ordersViewer.setContentProvider(ordersViewerContent);
+		ordersViewer.setLabelProvider(new ObservableMapLabelProvider(
+				BeansObservables.observeMaps(ordersViewerContent
+						.getKnownElements(), SimpleOrder.class, new String[] {
+						"orderNumber", "date" })));
 
+		IObservableList orders = BeansObservables.observeDetailList(realm,
+				selectedPerson, "orders", SimpleOrder.class);
+		ordersViewer.setInput(orders);
 	}
+
 }
