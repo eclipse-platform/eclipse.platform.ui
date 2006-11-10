@@ -13,7 +13,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -411,21 +410,20 @@ public abstract class TableView extends ViewPart {
 	/**
 	 * Build a comparator from the default settings.
 	 * 
-	 * @return TableSorter
+	 * @return ViewerComparator
 	 */
 	protected ViewerComparator buildComparator() {
 
-		IField[] sortingFields = getSortingFields();
-		int[] priorities = new int[sortingFields.length];
-		int[] directions = new int[sortingFields.length];
-		for (int i = 0; i < sortingFields.length; i++) {
-			priorities[i] = i;
-		}
-		Arrays.fill(directions, TableComparator.ASCENDING);
-		TableComparator sorter = new TableComparator(sortingFields, priorities,
-				directions);
-		sorter.restoreState(getDialogSettings());
+		return createTableComparator();
+	}
 
+	/**
+	 * Create a TableComparator for the receiver.
+	 * @return TableComparator
+	 */
+	TableComparator createTableComparator() {
+		TableComparator sorter = TableComparator.createTableSorter(getSortingFields());
+		sorter.restoreState(getDialogSettings());
 		return sorter;
 	}
 

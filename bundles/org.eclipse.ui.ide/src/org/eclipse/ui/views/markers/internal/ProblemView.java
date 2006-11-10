@@ -496,15 +496,13 @@ public class ProblemView extends MarkerView {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.views.markers.internal.TableView#buildSorter()
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.views.markers.internal.TableView#buildComparator()
 	 */
 	protected ViewerComparator buildComparator() {
 
-		TableComparator sorter = TableComparator.createTableSorter(getSortingFields());
-		sorter.restoreState(getDialogSettings());
+		TableComparator sorter = createTableComparator();
 		CategoryComparator category = new CategoryComparator(sorter);
 		category.restoreState(getDialogSettings(), this);
 		return category;
