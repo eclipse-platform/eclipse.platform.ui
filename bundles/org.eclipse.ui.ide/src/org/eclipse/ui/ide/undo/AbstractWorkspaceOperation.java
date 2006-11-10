@@ -209,7 +209,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, uiInfo);
 				}
-			}, getExecuteSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
+			}, getExecuteSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (final CoreException e) {
 			throw new ExecutionException(NLS.bind(
 					UndoMessages.AbstractWorkspaceOperation_ExecuteErrorTitle,
@@ -249,7 +249,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doExecute(monitor, uiInfo);
 				}
-			}, getRedoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
+			}, getRedoSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (final CoreException e) {
 			throw new ExecutionException(NLS.bind(
 					UndoMessages.AbstractWorkspaceOperation_RedoErrorTitle,
@@ -290,7 +290,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 				public void run(IProgressMonitor monitor) throws CoreException {
 					doUndo(monitor, uiInfo);
 				}
-			}, getUndoSchedulingRule(), IWorkspace.AVOID_UPDATE, null);
+			}, getUndoSchedulingRule(), IWorkspace.AVOID_UPDATE, monitor);
 		} catch (final CoreException e) {
 			throw new ExecutionException(NLS.bind(
 					UndoMessages.AbstractWorkspaceOperation_UndoErrorTitle,
@@ -758,5 +758,13 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 			}
 		}
 		return PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
+	 */
+	public boolean runInBackground() {
+		return true;
 	}
 }

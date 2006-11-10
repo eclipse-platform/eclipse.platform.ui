@@ -128,7 +128,7 @@ public abstract class ResourceDescription {
 			throws CoreException {
 		IResource resource = createResourceHandle();
 		createExistentResourceFromHandle(resource, monitor);
-		restoreResourceAttributes(resource, monitor);
+		restoreResourceAttributes(resource);
 		return resource;
 	}
 
@@ -176,12 +176,9 @@ public abstract class ResourceDescription {
 	 * 
 	 * @param resource
 	 *            the newly created resource
-	 * @param monitor
-	 *            the progress monitor to use to report progress
 	 * @throws CoreException
 	 */
-	protected void restoreResourceAttributes(IResource resource,
-			IProgressMonitor monitor) throws CoreException {
+	protected void restoreResourceAttributes(IResource resource) throws CoreException {
 		if (modificationStamp != IResource.NULL_STAMP) {
 			resource.revertModificationStamp(modificationStamp);
 		}

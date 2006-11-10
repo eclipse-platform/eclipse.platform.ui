@@ -166,7 +166,8 @@ public class FileDescription extends ResourceDescription {
 			return;
 		}
 		IFile fileHandle = (IFile) resource;
-		monitor.beginTask(UndoMessages.FileDescription_NewFileProgress, 200);
+		monitor.beginTask("", 200); //$NON-NLS-1$
+		monitor.setTaskName(UndoMessages.FileDescription_NewFileProgress);
 		try {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();

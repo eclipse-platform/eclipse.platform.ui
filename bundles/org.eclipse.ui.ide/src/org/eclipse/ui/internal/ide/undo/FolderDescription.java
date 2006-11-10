@@ -65,6 +65,7 @@ public class FolderDescription extends ContainerDescription {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ContainerDescription#createResourceHandle()
 	 */
 	public IResource createResourceHandle() {
@@ -75,7 +76,9 @@ public class FolderDescription extends ContainerDescription {
 
 	/*
 	 * (non-Javadoc)
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource, org.eclipse.core.runtime.IProgressMonitor)
+	 * 
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#createExistentResourceFromHandle(org.eclipse.core.resources.IResource,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException {
@@ -86,8 +89,8 @@ public class FolderDescription extends ContainerDescription {
 		}
 		IFolder folderHandle = (IFolder) resource;
 		try {
-			monitor.beginTask(UndoMessages.FolderDescription_NewFolderProgress,
-					200);
+			monitor.beginTask("", 200); //$NON-NLS-1$
+			monitor.setTaskName(UndoMessages.FolderDescription_NewFolderProgress);
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}

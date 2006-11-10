@@ -13,6 +13,7 @@ package org.eclipse.ui.operations;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IAdvancedUndoableOperation2;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
@@ -241,7 +242,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	 * Return the string describing the command.
 	 */
 	abstract String getCommandString();
-	
+
 	/*
 	 * Return the string describing the command for a tooltip.
 	 */
@@ -292,7 +293,12 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 		};
 		try {
-			progressDialog.run(false, true, runnable);
+			boolean runInBackground = false;
+			if (getOperation() instanceof IAdvancedUndoableOperation2) {
+				runInBackground = ((IAdvancedUndoableOperation2) getOperation())
+						.runInBackground();
+			}
+			progressDialog.run(runInBackground, true, runnable);
 		} catch (InvocationTargetException e) {
 			Throwable t = e.getCause();
 			if (t == null) {
@@ -410,15 +416,14 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		String tooltipText;
 		if (enabled) {
 			tooltipText = NLS.bind(
-					WorkbenchMessages.Operations_undoRedoCommand, tooltipCommand,
-					getOperation().getLabel());
+					WorkbenchMessages.Operations_undoRedoCommand,
+					tooltipCommand, getOperation().getLabel());
 			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
 					shortenText(getOperation().getLabel()));
 		} else {
-			tooltipText = NLS
-							.bind(
-									WorkbenchMessages.Operations_undoRedoCommandDisabled,
-									tooltipCommand);
+			tooltipText = NLS.bind(
+					WorkbenchMessages.Operations_undoRedoCommandDisabled,
+					tooltipCommand);
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.

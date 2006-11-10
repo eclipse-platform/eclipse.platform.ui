@@ -1653,11 +1653,12 @@ public class CopyFilesAndFoldersOperation {
 		if (copyResources.length > 0) {
 			if (copyWithAutoRename) {
 				performCopyWithAutoRename(copyResources, destinationPath,
-						monitor);
+						new SubProgressMonitor(monitor, 90));
 			} else {
-				performCopy(copyResources, destinationPath, monitor);
+				performCopy(copyResources, destinationPath, new SubProgressMonitor(monitor, 90));
 			}
 		}
+		monitor.done();
 		copiedResources[0] = copyResources;
 	}
 

@@ -341,6 +341,7 @@ public class WorkspaceUndoUtil {
 				}
 			}
 		}
+		monitor.done();
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
 
@@ -489,6 +490,7 @@ public class WorkspaceUndoUtil {
 				}
 			}
 		}
+		monitor.done();
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
 

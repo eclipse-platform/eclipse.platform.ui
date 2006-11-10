@@ -175,8 +175,8 @@ public abstract class ContainerDescription extends ResourceDescription {
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#recordStateFromHistory(org.eclipse.core.resources.IResource,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void recordStateFromHistory(IResource resource, IProgressMonitor monitor)
-			throws CoreException {
+	public void recordStateFromHistory(IResource resource,
+			IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(
 				UndoMessages.FolderDescription_SavingUndoInfoProgress, 100);
 		for (int i = 0; i < members.length; i++) {
@@ -251,16 +251,15 @@ public abstract class ContainerDescription extends ResourceDescription {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#restoreResourceAttributes(org.eclipse.core.resources.IResource)
 	 */
-	protected void restoreResourceAttributes(IResource resource,
-			IProgressMonitor monitor) throws CoreException {
-		super.restoreResourceAttributes(resource, monitor);
+	protected void restoreResourceAttributes(IResource resource)
+			throws CoreException {
+		super.restoreResourceAttributes(resource);
 		Assert.isLegal(resource instanceof IContainer);
 		IContainer container = (IContainer) resource;
 		if (defaultCharSet != null) {
-			container.setDefaultCharset(defaultCharSet, monitor);
+			container.setDefaultCharset(defaultCharSet, null);
 		}
 	}
 
@@ -273,9 +272,10 @@ public abstract class ContainerDescription extends ResourceDescription {
 	public void setLocation(URI location) {
 		this.location = location;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.ide.undo.ResourceDescription#verifyExistence(boolean)
 	 */
 	public boolean verifyExistence(boolean checkMembers) {

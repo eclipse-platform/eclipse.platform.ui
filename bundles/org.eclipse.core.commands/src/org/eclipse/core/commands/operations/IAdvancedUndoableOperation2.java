@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.IStatus;
  * IAdvancedUndoableOperation2 defines a method for computing the validity of
  * executing an operation before attempting to execute it. It also defines a way
  * for clients to specify that computing status should be done quietly, without
- * consulting the user. This interface is useful when implementing This
- * interface is useful when implementing {@link IOperationApprover},
+ * consulting the user. This interface is useful when implementing
  * {@link IOperationApprover2}, or any other object that performs validation of
- * the undo history.
+ * the undo history. It also allows operations to specify whether they should be
+ * run in the UI thread.
  * </p>
  * 
  * @since 3.3
@@ -86,4 +86,13 @@ public interface IAdvancedUndoableOperation2 {
 	 * @see IAdvancedUndoableOperation#computeRedoableStatus(IProgressMonitor)
 	 */
 	public void setQuietCompute(boolean quiet);
+
+	/**
+	 * Return a boolean that instructs whether the operation should be executed,
+	 * undone, or redone in a background thread.
+	 * 
+	 * @return <code>true</code> if the operation should be run in the
+	 *         background, <code>false</code> if it should not.
+	 */
+	public boolean runInBackground();
 }
