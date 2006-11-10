@@ -303,11 +303,22 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Position fCurrentHighlightAnnotationRange= null;
 	/**
-	 * The range in which all add, removed and changed highlight
+	 * The range in which all added, removed and changed highlight
 	 * annotations can be found since the last world change.
 	 * @since 3.0
 	 */
 	private Position fTotalHighlightAnnotationRange= null;
+	/**
+	 * The range in which the currently drawn annotations can be found.
+	 * @since 3.3
+	 */
+	private Position fCurrentDrawRange= null;
+	/**
+	 * The range in which all added, removed and changed drawn 
+	 * annotations can be found since the last world change.
+	 * @since 3.3
+	 */
+	private Position fTotalDrawRange= null;
 	/**
 	 * The text input listener.
 	 * @since 3.0
@@ -329,7 +340,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private Map fRegisteredDrawingStrategies= new HashMap();
 
-
+	/**
+	 * Reuse this region for performance reasons.
+	 * @since 3.3
+	 */
+	private ReusableRegion fReusableRegion= new ReusableRegion();
+	
 	/**
 	 * Creates a new annotation painter for the given source viewer and with the
 	 * given annotation access. The painter is not initialized, i.e. no
@@ -420,8 +436,14 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				return;
 		}
 
+		IRegion clippingRegion= computeClippingRegion(null, true);
+		IDocument document= fSourceViewer.getDocument();
+
 		int highlightAnnotationRangeStart= Integer.MAX_VALUE;
 		int highlightAnnotationRangeEnd= -1;
+		
+		int drawRangeStart= Integer.MAX_VALUE;
+		int drawRangeEnd= -1;
 
 		if (fModel != null) {
 
@@ -445,7 +467,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				if (DEBUG && event == null)
 					System.out.println("AP: INTERNAL CHANGE"); //$NON-NLS-1$
 
+				Iterator iter= decorationsMap.entrySet().iterator();
+				while (iter.hasNext()) {
+					Map.Entry entry= (Map.Entry)iter.next(); 
+					Annotation annotation= (Annotation)entry.getKey();
+					Decoration decoration= (Decoration)entry.getValue();
+					drawDecoration(decoration, null, annotation, clippingRegion, document);
+				}
+				
 				decorationsMap.clear();
+				
 				highlightedDecorationsMap.clear();
 
 				e= fModel.getAnnotationIterator();
@@ -465,7 +496,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
 						}
 					}
-					decorationsMap.remove(annotation);
+					decoration= (Decoration)decorationsMap.remove(annotation);
+					if (decoration != null) {
+						drawDecoration(decoration, null, annotation, clippingRegion, document);
+						Position position= decoration.fPosition;
+						if (position != null) {
+							drawRangeStart= Math.min(drawRangeStart, position.offset);
+							drawRangeEnd= Math.max(drawRangeEnd, position.offset + position.length);
+						}
+					}
+					
 				}
 
 				// Update existing annotations
@@ -475,17 +515,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 					Object annotationType= annotation.getType();
 					boolean isHighlighting=  shouldBeHighlighted(annotationType);
-					boolean isDrawingSquiggles= shouldBeDrawn(annotationType);
+					boolean usesDrawingStrategy= shouldBeDrawn(annotationType);
 
 					Decoration decoration= (Decoration)highlightedDecorationsMap.get(annotation);
 
 					if (decoration != null) {
 						// The call below updates the decoration - no need to create new decoration
-						decoration= getDecoration(annotation, decoration, isDrawingSquiggles, isHighlighting);
+						decoration= getDecoration(annotation, decoration, usesDrawingStrategy, isHighlighting);
 						if (decoration == null)
 							highlightedDecorationsMap.remove(annotation);
 					} else {
-						decoration= getDecoration(annotation, decoration, isDrawingSquiggles, isHighlighting);
+						decoration= getDecoration(annotation, decoration, usesDrawingStrategy, isHighlighting);
 						if (decoration != null && isHighlighting)
 							highlightedDecorationsMap.put(annotation, decoration);
 					}
@@ -497,17 +537,29 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						position= decoration.fPosition;
 
 					if (position != null && !position.isDeleted()) {
-						highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
-						highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
+						if (isHighlighting) {
+							highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, position.offset);
+							highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, position.offset + position.length);
+						}
+						if (usesDrawingStrategy) {
+							drawRangeStart= Math.min(drawRangeStart, position.offset);
+							drawRangeEnd= Math.max(drawRangeEnd, position.offset + position.length);
+						}
 					} else {
 						highlightedDecorationsMap.remove(annotation);
 					}
 
-					Decoration oldDecoration= (Decoration)decorationsMap.get(annotation);
-					if (decoration != null && isDrawingSquiggles)
-						decorationsMap.put(annotation, decoration);
-					else if (oldDecoration != null)
-						decorationsMap.remove(annotation);
+					if (usesDrawingStrategy) {
+						Decoration oldDecoration= (Decoration)decorationsMap.get(annotation);
+						if (oldDecoration != null) {
+							drawDecoration(oldDecoration, null, annotation, clippingRegion, document);
+						
+						if (decoration != null)
+							decorationsMap.put(annotation, decoration);
+						else if (oldDecoration != null)
+							decorationsMap.remove(annotation);
+						}
+					}
 				}
 
 				e= Arrays.asList(event.getAddedAnnotations()).iterator();
@@ -519,25 +571,29 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 				Object annotationType= annotation.getType();
 				boolean isHighlighting=  shouldBeHighlighted(annotationType);
-				boolean isDrawingSquiggles= shouldBeDrawn(annotationType);
+				boolean usesDrawingStrategy= shouldBeDrawn(annotationType);
 
-				Decoration pp= getDecoration(annotation, null, isDrawingSquiggles, isHighlighting);
-
+				Decoration pp= getDecoration(annotation, null, usesDrawingStrategy, isHighlighting);
 				if (pp != null) {
 
-					if (isDrawingSquiggles)
+					if (usesDrawingStrategy) {
 						decorationsMap.put(annotation, pp);
+						drawRangeStart= Math.min(drawRangeStart, pp.fPosition.offset);
+						drawRangeEnd= Math.max(drawRangeEnd, pp.fPosition.offset + pp.fPosition.length);
+					}
 
 					if (isHighlighting) {
 						highlightedDecorationsMap.put(annotation, pp);
 						highlightAnnotationRangeStart= Math.min(highlightAnnotationRangeStart, pp.fPosition.offset);
 						highlightAnnotationRangeEnd= Math.max(highlightAnnotationRangeEnd, pp.fPosition.offset + pp.fPosition.length);
 					}
+					
 				}
 			}
 
 			synchronized (fDecorationMapLock) {
 				fDecorationsMap= decorationsMap;
+				updateDrawRanges(drawRangeStart, drawRangeEnd, isWorldChange);
 			}
 
 			synchronized (fHighlightedDecorationsMapLock) {
@@ -601,6 +657,54 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		adaptToDocumentLength(fCurrentHighlightAnnotationRange);
 		adaptToDocumentLength(fTotalHighlightAnnotationRange);
+	}
+	
+	/**
+	 * Updates the remembered decoration ranges.
+	 *
+	 * @param drawRangeStart	the start of the range
+	 * @param drawRangeEnd		the end of the range
+	 * @param isWorldChange		tells whether the range belongs to a annotation model event reporting a world change
+	 * @since 3.0
+	 */
+	private void updateDrawRanges(int drawRangeStart, int drawRangeEnd, boolean isWorldChange) {
+		if (drawRangeStart != Integer.MAX_VALUE) {
+			
+			int maxRangeStart= drawRangeStart;
+			int maxRangeEnd= drawRangeEnd;
+			
+			if (fTotalDrawRange != null) {
+				maxRangeStart= Math.min(maxRangeStart, fTotalDrawRange.offset);
+				maxRangeEnd= Math.max(maxRangeEnd, fTotalDrawRange.offset + fTotalDrawRange.length);
+			}
+			
+			if (fTotalDrawRange == null)
+				fTotalDrawRange= new Position(0);
+			if (fCurrentDrawRange == null)
+				fCurrentDrawRange= new Position(0);
+			
+			if (isWorldChange) {
+				fTotalDrawRange.offset= drawRangeStart;
+				fTotalDrawRange.length= drawRangeEnd - drawRangeStart;
+				fCurrentDrawRange.offset= maxRangeStart;
+				fCurrentDrawRange.length= maxRangeEnd - maxRangeStart;
+			} else {
+				fTotalDrawRange.offset= maxRangeStart;
+				fTotalDrawRange.length= maxRangeEnd - maxRangeStart;
+				fCurrentDrawRange.offset=drawRangeStart;
+				fCurrentDrawRange.length= drawRangeEnd - drawRangeStart;
+			}
+		} else {
+			if (isWorldChange) {
+				fCurrentDrawRange= fTotalDrawRange;
+				fTotalDrawRange= null;
+			} else {
+				fCurrentDrawRange= null;
+			}
+		}
+		
+		adaptToDocumentLength(fCurrentDrawRange);
+		adaptToDocumentLength(fTotalDrawRange);
 	}
 
 	/**
@@ -794,7 +898,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @since 3.0
 	 */
 	private void updatePainting(AnnotationModelEvent event) {
-		disablePainting(true);
+		disablePainting(event == null);
 
 		catchupWithModel(event);
 
@@ -1170,7 +1274,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			return;
 		}
 
-		IRegion clippingRegion= computeClippingRegion(event);
+		IRegion clippingRegion= computeClippingRegion(event, false);
 		if (clippingRegion == null)
 			return;
 		
@@ -1204,44 +1308,48 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 				((List) toBeDrawn.get(pp.fLayer)).add(entry);
 			}
 		}
-		
-		ReusableRegion range= new ReusableRegion();
+		IDocument document= fSourceViewer.getDocument();
 		for (Iterator it= toBeDrawn.iterator(); it.hasNext();) {
 			List layer= (List) it.next();
-
 			for (Iterator e = layer.iterator(); e.hasNext();) {
 				Map.Entry entry= (Map.Entry)e.next();
-
+				Annotation a= (Annotation)entry.getKey();
 				Decoration pp = (Decoration)entry.getValue();
-				Position p= pp.fPosition;
-				IDocument document= fSourceViewer.getDocument();
-				try {
+				drawDecoration(pp, gc, a, clippingRegion, document);
+			}
+		}
+	}
+	
+	private void drawDecoration(Decoration pp, GC gc, Annotation annotation, IRegion clippingRegion, IDocument document) {
+		if (clippingRegion == null || pp.fPainter == fgNullDrawer)
+			return;
 
-					int startLine= document.getLineOfOffset(p.getOffset());
-					int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
-					int endLine= document.getLineOfOffset(lastInclusive);
+		int clippingOffset= clippingRegion.getOffset();
+		int clippingLength= clippingRegion.getLength();
 
-					for (int i= startLine; i <= endLine; i++) {
-						int lineOffset= document.getLineOffset(i);
-						int paintStart= Math.max(lineOffset, p.getOffset());
-						String lineDelimiter= document.getLineDelimiter(i);
-						int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
-						int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
-						if (paintLength >= 0 && overlapsWith(paintStart, paintLength, vOffset, vLength)) {
-							// otherwise inside a line delimiter
-							range.setOffset(paintStart);
-							range.setLength(paintLength);
-							IRegion widgetRange= getWidgetRange(range);
-							if (widgetRange != null) {
-								Annotation a= (Annotation)entry.getKey();
-								pp.fPainter.draw(a, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
-							}
-						}
+		Position p= pp.fPosition;
+		try {
+
+			int startLine= document.getLineOfOffset(p.getOffset());
+			int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
+			int endLine= document.getLineOfOffset(lastInclusive);
+
+			for (int i= startLine; i <= endLine; i++) {
+				int lineOffset= document.getLineOffset(i);
+				int paintStart= Math.max(lineOffset, p.getOffset());
+				String lineDelimiter= document.getLineDelimiter(i);
+				int delimiterLength= lineDelimiter != null ? lineDelimiter.length() : 0;
+				int paintLength= Math.min(lineOffset + document.getLineLength(i) - delimiterLength, p.getOffset() + p.getLength()) - paintStart;
+				if (paintLength >= 0 && overlapsWith(paintStart, paintLength, clippingOffset, clippingLength)) {
+					// otherwise inside a line delimiter
+					IRegion widgetRange= getWidgetRange(paintStart, paintLength);
+					if (widgetRange != null) {
+						pp.fPainter.draw(annotation, gc, fTextWidget, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 					}
-
-				} catch (BadLocationException x) {
 				}
 			}
+
+		} catch (BadLocationException x) {
 		}
 	}
 	
@@ -1251,12 +1359,17 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * area (viewport) is returned.
 	 * 
 	 * @param event the paint event or <code>null</code> to use the entire viewport
+	 * @param isClearing tells whether the clipping is need for clearing an annotation
 	 * @return the model region comprised by either the paint event's clipping region or the
 	 *         viewport
 	 * @since 3.2
 	 */
-	private IRegion computeClippingRegion(PaintEvent event) {
+	private IRegion computeClippingRegion(PaintEvent event, boolean isClearing) {
 		if (event == null) {
+			
+			if (!isClearing && fCurrentDrawRange != null)
+				return new Region(fCurrentDrawRange.offset, fCurrentDrawRange.length);
+			
 			// trigger a repaint of the entire viewport
 			int vOffset= getInclusiveTopIndexStartOffset();
 			if (vOffset == -1)
@@ -1274,7 +1387,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
 			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
 		} catch (IllegalArgumentException x) {
-			widgetOffset= getInclusiveTopIndexStartOffset();
+			int firstVisibleLine= JFaceTextUtil.getPartialTopIndex(fTextWidget);
+			widgetOffset= fTextWidget.getOffsetAtLine(firstVisibleLine);
 		}
 		
 		int widgetEndOffset;
@@ -1284,8 +1398,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
 		} catch (IllegalArgumentException x) {
 			// happens if the editor is not "full", e.g. the last line of the document is visible in the editor
-			// in that case, simply use the last character
-			widgetEndOffset= getExclusiveBottomIndexEndOffset();
+			int lastVisibleLine= JFaceTextUtil.getPartialBottomIndex(fTextWidget);
+			if (lastVisibleLine == fTextWidget.getLineCount() - 1)
+				// last line
+				widgetEndOffset= fTextWidget.getCharCount();
+			else
+				widgetEndOffset= fTextWidget.getOffsetAtLine(lastVisibleLine + 1) - 1;
 		}
 		
 		IRegion clippingRegion= getModelRange(widgetOffset, widgetEndOffset - widgetOffset);
@@ -1306,28 +1424,32 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	}
 
 	/**
-	 * Returns the widget region that corresponds to the given region in the
-	 * viewer's document.
-	 *
-	 * @param p the region in the viewer's document
+	 * Returns the widget region that corresponds to the
+	 * given offset and length in the viewer's document.
+	 * 
+	 * @param modelOffset the model offset
+	 * @param modelLength the model length
 	 * @return the corresponding widget region
 	 */
-	private IRegion getWidgetRange(IRegion p) {
-		if (p == null || p.getOffset() == Integer.MAX_VALUE)
+	private IRegion getWidgetRange(int modelOffset, int modelLength) {
+		fReusableRegion.setOffset(modelOffset);
+		fReusableRegion.setLength(modelLength);
+
+		if (fReusableRegion == null || fReusableRegion.getOffset() == Integer.MAX_VALUE)
 			return null;
 
 		if (fSourceViewer instanceof ITextViewerExtension5) {
 			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-			return extension.modelRange2WidgetRange(p);
+			return extension.modelRange2WidgetRange(fReusableRegion);
 		}
 
 		IRegion region= fSourceViewer.getVisibleRegion();
 		int offset= region.getOffset();
 		int length= region.getLength();
 
-		if (overlapsWith(p, region)) {
-			int p1= Math.max(offset, p.getOffset());
-			int p2= Math.min(offset + length, p.getOffset() + p.getLength());
+		if (overlapsWith(fReusableRegion, region)) {
+			int p1= Math.max(offset, fReusableRegion.getOffset());
+			int p2= Math.min(offset + length, fReusableRegion.getOffset() + fReusableRegion.getLength());
 			return new Region(p1 - offset, p2 - p1);
 		}
 		return null;
