@@ -52,6 +52,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECTS = 20;
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
 
+	/**
+	 * Singleton sax parser
+	 */
+	private static SAXParser singletonParser;
+
 	protected final StringBuffer charBuffer = new StringBuffer();
 
 	protected Stack objectStack;
@@ -544,15 +549,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		objectStack = new Stack();
 		state = S_INITIAL;
 		try {
-			SAXParserFactory factory = SAXParserFactory.newInstance();
-			factory.setNamespaceAware(true);
-			try {
-				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
-			} catch (SAXException e) {
-				// In case support for this feature is removed
-			}
-			SAXParser parser = factory.newSAXParser();
-			parser.parse(input, this);
+			createParser().parse(input, this);
 		} catch (ParserConfigurationException e) {
 			log(e);
 		} catch (IOException e) {
@@ -571,6 +568,23 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			default :
 				return projectDescription;
 		}
+	}
+
+	/**
+	 * Returns the SAXParser to use when parsing project description files.
+	 */
+	private static synchronized SAXParser createParser() throws ParserConfigurationException, SAXException {
+		if (singletonParser == null) {
+			SAXParserFactory factory = SAXParserFactory.newInstance();
+			factory.setNamespaceAware(true);
+			try {
+				factory.setFeature("http://xml.org/sax/features/string-interning", true); //$NON-NLS-1$
+			} catch (SAXException e) {
+				// In case support for this feature is removed
+			}
+			singletonParser = factory.newSAXParser();
+		}
+		return singletonParser;
 	}
 
 	/**
