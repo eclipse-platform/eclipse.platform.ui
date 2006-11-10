@@ -357,6 +357,30 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @since 3.0
 	 */
 	private List fCachedAnnotations= new ArrayList();
+	
+	/**
+	 * Redraw runnable lock
+	 * @since 3.3
+	 */
+	private Object fRunnableLock= new Object();
+	/**
+	 * Redraw runnable state
+	 * @since 3.3
+	 */
+	private boolean fIsRunnablePosted= false;
+	/**
+	 * Redraw runnable
+	 * @since 3.3
+	 */
+	private Runnable fRunnable= new Runnable() {	
+		public void run() {
+			synchronized (fRunnableLock) {
+				fIsRunnablePosted= false;
+			}
+			redraw();
+			updateHeader();
+		}
+	};
 
 
 	/**
@@ -731,12 +755,12 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(new Runnable() {
-					public void run() {
-						redraw();
-						updateHeader();
-					}
-				});
+				synchronized (fRunnableLock) {
+					if (fIsRunnablePosted)
+						return;
+					fIsRunnablePosted= true;
+				}
+				d.asyncExec(fRunnable);
 			}
 		}
 	}
