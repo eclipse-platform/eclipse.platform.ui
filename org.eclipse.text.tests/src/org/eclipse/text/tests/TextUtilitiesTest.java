@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.text.tests;
+package org.eclipse.text.tests;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -272,6 +272,17 @@ public class TextUtilitiesTest extends TestCase {
 	
 	private static void check(IDocument reference, IDocument testee) throws BadLocationException {
 		Assert.assertEquals(reference.get(), testee.get());
+	}
+	
+	public void testIndexOf() {
+		int[] result;
+		result= TextUtilities.indexOf(new String[] {"a", "ab", "abc"}, "xxxxxxxxxx", 0);
+		assertEquals(-1, result[0]);
+		assertEquals(-1, result[1]);
+		
+		result= TextUtilities.indexOf(new String[] {"a", "ab", "abc"}, "foobarabcd", 0);
+		assertEquals(4, result[0]);
+		assertEquals(0, result[1]);
 	}
 
 }

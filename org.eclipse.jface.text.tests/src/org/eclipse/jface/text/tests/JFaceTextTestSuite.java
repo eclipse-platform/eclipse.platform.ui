@@ -29,7 +29,6 @@ public class JFaceTextTestSuite extends TestSuite {
 		suite.addTest(HTML2TextReaderTester.suite());
 		suite.addTest(TextHoverPopupTest.suite());
 		suite.addTest(TextPresentationTest.suite());
-		suite.addTest(TextUtilitiesTest.suite());
 		suite.addTest(DefaultUndoManagerTest.suite());
 		suite.addTest(TextViewerUndoManagerTest.suite());
 		suite.addTest(RulesTestSuite.suite());

@@ -42,6 +42,7 @@ public class EclipseTextTestSuite {
 		suite.addTest(ProjectionTestSuite.suite());
 		suite.addTest(LinkTestSuite.suite());
 		suite.addTest(CopyOnWriteTextStoreTest.suite());
+		suite.addTest(TextUtilitiesTest.suite());
 		//$JUnit-END$
 		
 		return suite;
