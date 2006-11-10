@@ -345,8 +345,8 @@ public class TextCellEditor extends CellEditor {
     }
 
     /**
-     * The <code>TextCellEditor</code>  implementation of this 
-     * <code>CellEditor</code> method always returns <code>true</code>.
+     * Check if save all is enabled
+     * @return true if it is 
      */
     public boolean isSaveAllEnabled() {
         if (text == null || text.isDisposed()) {

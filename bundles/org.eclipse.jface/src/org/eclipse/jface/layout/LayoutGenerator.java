@@ -46,8 +46,6 @@ import org.eclipse.swt.widgets.Scrollable;
      * 
      * @param toGenerate
      *            composite to generate a layout for
-     * @param columns
-     *            number of columns for the layout
      */
     public static void generateLayout(Composite toGenerate) {
         Control[] children = toGenerate.getChildren();
@@ -68,6 +66,16 @@ import org.eclipse.swt.widgets.Scrollable;
     	defaultsFor(control).applyTo(control);
     }
     
+    /**
+     * Creates default factory for this control types:
+     * <ul>
+     * 	<li>{@link Button} with {@link SWT#CHECK}</li>
+     * 	<li>{@link Button}</li>
+     * 	<li>{@link Composite}</li>
+     * </ul>
+     * @param control the control the factory is search for
+     * @return a default factory for the control
+     */
     public static GridDataFactory defaultsFor(Control control) {
         if (control instanceof Button) {
             Button button = (Button) control;
@@ -83,7 +91,7 @@ import org.eclipse.swt.widgets.Scrollable;
             Scrollable scrollable = (Scrollable) control;
 
             if (scrollable instanceof Composite) {
-                Composite composite = (Composite) scrollable;
+                Composite composite = (Composite) control;
 
                 Layout theLayout = composite.getLayout();
                 if (theLayout instanceof GridLayout) {

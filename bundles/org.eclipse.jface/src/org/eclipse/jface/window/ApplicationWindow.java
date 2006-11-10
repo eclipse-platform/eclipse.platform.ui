@@ -262,6 +262,9 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Configures this window to have a tool bar.
      * Does nothing if it already has one.
      * This method must be called before this window's shell is created.
+     * @param style swt style bits used to create the Toolbar
+     * @see ToolBarManager#ToolBarManager(int)
+     * @see ToolBar for style bits
      */
     protected void addToolBar(int style) {
         if ((getShell() == null) && (toolBarManager == null)
@@ -420,7 +423,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * <p>
      * Subclasses may override this method to customize the tool bar manager.
      * </p>
+     * @param style swt style bits used to create the Toolbar
+     * 
      * @return a tool bar manager
+     * @see ToolBarManager#ToolBarManager(int)
+     * @see ToolBar for style bits
      */
     protected ToolBarManager createToolBarManager(int style) {
         return new ToolBarManager(style);
@@ -440,9 +447,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
-     * 
+     * @param style swt style bits used to create the Toolbar
+     *  
      * @return a tool bar manager
      * @since 3.2
+     * @see #createToolBarManager(int)
      */
     protected IToolBarManager createToolBarManager2(int style) {
         return createToolBarManager(style);
@@ -454,8 +463,12 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * Subclasses may override this method to customize the cool bar manager.
      * </p>
      * 
+     * @param style swt style bits used to create the Coolbar
+     * 
      * @return a cool bar manager
      * @since 3.0
+     * @see CoolBarManager#CoolBarManager(int)
+     * @see CoolBar for style bits
      */
     protected CoolBarManager createCoolBarManager(int style) {
         return new CoolBarManager(style);
@@ -475,9 +488,11 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 	 * work nor that it will remain the same. Please do not use this API without
 	 * consulting with the Platform/UI team.
 	 * </p>
+	 * @param style swt style bits used to create the Coolbar
      * 
      * @return a cool bar manager
      * @since 3.2
+     * @see #createCoolBarManager(int)
      */
     protected ICoolBarManager createCoolBarManager2(int style) {
         return createCoolBarManager(style);
@@ -488,6 +503,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * <p>
      * Subclasses may override this method to customize the tool bar manager.
      * </p>
+     * @param parent the parent used for the control
      * @return a Control
      */
     protected Control createToolBarControl(Composite parent) {
@@ -507,6 +523,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
      * <p>
      * Subclasses may override this method to customize the cool bar manager.
      * </p>
+     * @param composite the parent used for the control
      * 
      * @return an instance of <code>CoolBar</code>
      * @since 3.0

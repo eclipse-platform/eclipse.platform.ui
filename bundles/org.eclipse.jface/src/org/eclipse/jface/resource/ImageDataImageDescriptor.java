@@ -31,7 +31,6 @@ class ImageDataImageDescriptor extends ImageDescriptor {
      * Creates an image descriptor, given an image and the device it was created on.
      * 
      * @param originalImage
-     * @param originalDevice
      */
     ImageDataImageDescriptor(Image originalImage) {
         this(originalImage.getImageData());

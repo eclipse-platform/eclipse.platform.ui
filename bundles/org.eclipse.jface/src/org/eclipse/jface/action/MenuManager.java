@@ -296,7 +296,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      *
      * @param manager the menu manager
      *
-     * @see IMenuListener#menuAboutToHide
      */
     private void fireAboutToHide(IMenuManager manager) {
         final Object[] listeners = this.listeners.getListeners();
@@ -458,6 +457,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
     }
 
     /**
+     * Check if the contribution is item is a subsitute for ourselves
+     * 
+     * @param item the contribution item
+     * @return <code>true</code> if give item is a substitution for ourselves 
      * @deprecated this method is no longer a part of the 
      *   {@link org.eclipse.jface.action.IContributionItem} API.
      */

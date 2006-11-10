@@ -138,7 +138,11 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 */
 	public static final String PREF_DLG_TITLE_IMG = "preference_dialog_title_image"; //$NON-NLS-1$
 
+	/**
+	 * Return code used when dialog failed
+	 */
 	protected static final int FAILED = 2;
+	
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 		reg.put(PREF_DLG_TITLE_IMG, ImageDescriptor.createFromFile(PreferenceDialog.class,

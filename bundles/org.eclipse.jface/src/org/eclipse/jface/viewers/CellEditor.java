@@ -482,6 +482,7 @@ public abstract class CellEditor {
     /**
      * Returns whether the given value is valid for this cell editor.
      * This cell editor's validator (if any) makes the actual determination.
+     * @param value the value to check for
      *
      * @return <code>true</code> if the value is valid, and <code>false</code>
      *  if invalid

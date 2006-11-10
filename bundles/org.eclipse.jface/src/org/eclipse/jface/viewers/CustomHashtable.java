@@ -165,9 +165,8 @@ import java.util.NoSuchElementException;
      * Constructs a new hash table with enough capacity to hold all keys in the
      * given hash table, then adds all key/value pairs in the given hash table
      * to the new one, using the given element comparer.
+     * @param table the original hash table to copy from
      * 
-     * @param capacity the maximum number of elements that can be added without
-     *   rehashing
      * @param comparer the element comparer to use to compare keys and obtain
      *   hash codes for keys, or <code>null</code>  to use the normal 
      *   <code>equals</code> and <code>hashCode</code> methods

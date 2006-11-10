@@ -52,7 +52,6 @@ import org.eclipse.swt.widgets.Widget;
  * </p>
  * 
  * @see TreeViewer
- * @see TableTreeViewer
  */
 public abstract class AbstractTreeViewer extends ColumnViewer {
 
@@ -167,7 +166,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * 
 	 * @param path
 	 *            the path
-	 * @return the item at that path TODO could probably do better than this
+	 * @return {@link Widget} the item at that path 
 	 */
 	private Widget internalFindItem(TreePath path) {
 		Widget[] widgets = findItems(path.getLastSegment());
@@ -408,8 +407,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * 
 	 * @param items
 	 *            the items to search
-	 * @param sorter
-	 *            The sorter to use.
+	 * @param comparator
+	 *            The comparator to use.
 	 * @param lastInsertion
 	 *            the start index to start search for position from this allows
 	 *            optimising search for multiple elements that are sorted
@@ -526,7 +525,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * 
 	 * @param parent
 	 *            the parent widget
-	 * @param sorter
+	 * @param comparator
 	 *            the sorter
 	 * @return the tree path that should be used as the parent path for the
 	 *         given widget and sorter
@@ -550,7 +549,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * the tree path is null and the sorter is a tree path sorter, then the
 	 * elements are root elements
 	 * 
-	 * @param sorter
+	 * @param comparator
 	 *            the sorter
 	 * @param parentPath
 	 *            the path of the elements' parent
@@ -1796,6 +1795,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Removes the given elements from this viewer, whenever those elements
 	 * appear as children of the given parent.
 	 * 
+	 * @param parent the parent element
 	 * @param elements
 	 *            the elements to remove
 	 * @since 3.1
@@ -2653,6 +2653,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the tree path for the given item.
+	 * @param item
+	 * @return {@link TreePath}
 	 * 
 	 * @since 3.2
 	 */

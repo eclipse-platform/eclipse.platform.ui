@@ -100,6 +100,9 @@ public class OpenStrategy {
 
     private ListenerList postSelectionEventListeners = new ListenerList();
 
+    /**
+     * @param control the control the strategy is applied to
+     */
     public OpenStrategy(Control control) {
         initializeHandler(control.getDisplay());
         addListener(control);
@@ -107,6 +110,7 @@ public class OpenStrategy {
 
     /**
      * Adds an IOpenEventListener to the collection of openEventListeners
+     * @param listener the listener to add
      */
     public void addOpenListener(IOpenEventListener listener) {
         openEventListeners.add(listener);
@@ -114,6 +118,7 @@ public class OpenStrategy {
 
     /**
      * Removes an IOpenEventListener to the collection of openEventListeners
+     * @param listener the listener to remove
      */
     public void removeOpenListener(IOpenEventListener listener) {
         openEventListeners.remove(listener);
@@ -121,6 +126,7 @@ public class OpenStrategy {
 
     /**
      * Adds an SelectionListener to the collection of selectionEventListeners
+     * @param listener the listener to add
      */
     public void addSelectionListener(SelectionListener listener) {
         selectionEventListeners.add(listener);
@@ -128,6 +134,7 @@ public class OpenStrategy {
 
     /**
      * Removes an SelectionListener to the collection of selectionEventListeners
+     * @param listener the listener to remove
      */
     public void removeSelectionListener(SelectionListener listener) {
         selectionEventListeners.remove(listener);
@@ -135,6 +142,7 @@ public class OpenStrategy {
 
     /**
      * Adds an SelectionListener to the collection of selectionEventListeners
+     * @param listener the listener to add
      */
     public void addPostSelectionListener(SelectionListener listener) {
         postSelectionEventListeners.add(listener);
@@ -142,16 +150,18 @@ public class OpenStrategy {
 
     /**
      * Removes an SelectionListener to the collection of selectionEventListeners
+     * @param listener the listener to remove
      */
     public void removePostSelectionListener(SelectionListener listener) {
         postSelectionEventListeners.remove(listener);
     }
 
     /**
-     * Returns the current used single/double-click method
-     * 
      * This method is internal to the framework; it should not be implemented outside
      * the framework.
+     * @return the current used single/double-click method
+     * 
+     * @see OpenStrategy#CURRENT_METHOD
      */
     public static int getOpenMethod() {
         return CURRENT_METHOD;
@@ -162,6 +172,11 @@ public class OpenStrategy {
      * 
      * This method is internal to the framework; it should not be implemented outside
      * the framework.
+     * @param method the method to be used
+     * @see OpenStrategy#DOUBLE_CLICK
+     * @see OpenStrategy#SINGLE_CLICK
+     * @see OpenStrategy#SELECT_ON_HOVER
+     * @see OpenStrategy#ARROW_KEYS_OPEN
      */
     public static void setOpenMethod(int method) {
         if (method == DOUBLE_CLICK) {
@@ -178,7 +193,7 @@ public class OpenStrategy {
     }
 
     /**
-     * Return true if editors should be activated when opened.
+     * @return true if editors should be activated when opened. 
      */
     public static boolean activateOnOpen() {
         return getOpenMethod() == DOUBLE_CLICK;

@@ -131,7 +131,6 @@ public interface IPreferenceStore {
      * @see #setValue(String, int)
      * @see #setValue(String, long)
      * @see #setValue(String, String)
-     * @see org.osgi.service.prefs.Preferences
      */
     public void addPropertyChangeListener(IPropertyChangeListener listener);
 

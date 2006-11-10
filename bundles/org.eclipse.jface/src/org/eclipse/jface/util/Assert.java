@@ -56,6 +56,7 @@ public final class Assert {
 
         /**
          * Constructs a new exception with the given message.
+         * @param detail the detail message
          */
         public AssertionFailedException(String detail) {
             super(detail);
@@ -117,7 +118,7 @@ public final class Assert {
      * </p>
      * 
      * @param object the value to test
-     * @exception Throwable an unspecified unchecked exception if the object
+     * @exception AssertionFailedException an unspecified unchecked exception if the object
      *   is <code>null</code>
      */
     public static void isNotNull(Object object) {
@@ -144,7 +145,7 @@ public final class Assert {
      * 
      * @param object the value to test
      * @param message the message to include in the exception
-     * @exception Throwable an unspecified unchecked exception if the object
+     * @exception AssertionFailedException an unspecified unchecked exception if the object
      *   is <code>null</code>
      */
     public static void isNotNull(Object object, String message) {

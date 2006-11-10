@@ -214,6 +214,8 @@ public abstract class Viewer implements IInputSelectionProvider {
      * Handles a help request from the underlying SWT control.
      * The default behavior is to fire a help request,
      * with the event's data modified to hold this viewer.
+     * @param event the event
+     * 
      */
     protected void handleHelpRequest(HelpEvent event) {
         Object oldData = event.data;
@@ -277,6 +279,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      *
      * @param x horizontal coordinate
      * @param y vertical coordinate
+     * @return the item scrolled down to
      */
     public Item scrollDown(int x, int y) {
         return null;
@@ -290,6 +293,7 @@ public abstract class Viewer implements IInputSelectionProvider {
      *
      * @param x horizontal coordinate
      * @param y vertical coordinate
+     * @return the item scrolled up to
      */
     public Item scrollUp(int x, int y) {
         return null;

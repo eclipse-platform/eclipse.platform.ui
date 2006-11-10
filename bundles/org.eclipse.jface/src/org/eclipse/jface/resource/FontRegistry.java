@@ -119,8 +119,11 @@ public class FontRegistry extends ResourceRegistry {
         /**
          * Get a version of the base font data with the specified 
          * style.
-         * @param style
-         * @return
+         * @param style the new style
+         * @return the font data with the style {@link FontData#FontData(String, int, int)}
+         * @see SWT#ITALIC
+         * @see SWT#NORMAL
+         * @see SWT#BOLD
          * @todo Generated comment
          */
         private FontData[] getModifiedFontData(int style) {
@@ -281,6 +284,8 @@ public class FontRegistry extends ResourceRegistry {
     /**
      * Load the FontRegistry using the ClassLoader from the PlatformUI
      * plug-in
+     * @param location the location to read the resource bundle from
+     * @throws MissingResourceException Thrown if a resource is missing
      */
     public FontRegistry(String location) throws MissingResourceException {
         // FIXE:
@@ -356,7 +361,11 @@ public class FontRegistry extends ResourceRegistry {
     /**
 	 * Find the first valid fontData in the provided list. If none are valid
 	 * return the first one regardless. If the list is empty return null. Return
-	 * null if one cannot be found.
+	 * <code>null</code> if one cannot be found.
+	 * 
+     * @param fonts the font list
+     * @param display the display used 
+     * @return the font data of the like describe above
 	 * 
 	 * @deprecated use bestDataArray in order to support Motif multiple entry
 	 *             fonts.
@@ -393,7 +402,11 @@ public class FontRegistry extends ResourceRegistry {
     /**
      * Find the first valid fontData in the provided list. 
      * If none are valid return the first one regardless.
-     * If the list is empty return null.
+     * If the list is empty return <code>null</code>.
+     * 
+     * @param fonts list of fonts
+     * @param display the display
+     * @return font data like described above
      * @deprecated use filterData in order to preserve 
      * multiple entry fonts on Motif
      */
@@ -661,7 +674,7 @@ public class FontRegistry extends ResourceRegistry {
 
     /**
      * Dispose of all of the fonts in this iterator.
-     * @param Iterator over Collection of Font
+     * @param iterator over Collection of Font
      */
     private void disposeFonts(Iterator iterator) {
         while (iterator.hasNext()) {

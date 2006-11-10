@@ -189,7 +189,8 @@ public abstract class DialogCellEditor extends CellEditor {
      * should also reimplement <code>updateContents</code>.
      * </p>
      *
-     * @param cell the control for this cell editor
+     * @param cell the control for this cell editor 
+     * @return the underlying control
      */
     protected Control createContents(Composite cell) {
         defaultLabel = new Label(cell, SWT.LEFT);

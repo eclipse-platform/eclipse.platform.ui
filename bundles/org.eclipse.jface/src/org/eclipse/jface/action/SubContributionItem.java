@@ -36,6 +36,7 @@ public class SubContributionItem implements IContributionItem {
 
     /**
      * Creates a new <code>SubContributionItem</code>.
+     * @param item the contribution item to be wrapped
      */
     public SubContributionItem(IContributionItem item) {
         innerItem = item;

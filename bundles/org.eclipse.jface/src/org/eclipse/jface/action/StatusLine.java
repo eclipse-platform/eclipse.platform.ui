@@ -56,40 +56,54 @@ import org.eclipse.swt.widgets.ToolItem;
     /** Progress bar creation is delayed by this ms */
     public static final int DELAY_PROGRESS = 500;
 
-    // state
+    /** visibility state of the progressbar */
     protected boolean fProgressIsVisible = false;
 
+    /** visibility state of the cancle button */
     protected boolean fCancelButtonIsVisible = false;
 
+    /** enablement state of the cancle button */
     protected boolean fCancelEnabled = false;
 
+    /** name of the task */
     protected String fTaskName;
 
+    /** is the task is cancled */
     protected boolean fIsCanceled;
 
+    /** the start time of the task */
     protected long fStartTime;
 
     private Cursor fStopButtonCursor;
 
+    /** the message text */
     protected String fMessageText;
 
+    /** the message image */
     protected Image fMessageImage;
 
+    /** the error text */
     protected String fErrorText;
 
+    /** the error image */
     protected Image fErrorImage;
 
-    // SWT widgets
+    /** the message label */
     protected CLabel fMessageLabel;
 
+    /** the composite parent of the progress bar */
     protected Composite fProgressBarComposite;
 
+    /** the progress bar */
     protected ProgressIndicator fProgressBar;
 
+    /** the toolbar */
     protected ToolBar fToolBar;
 
+    /** the cancle button */
     protected ToolItem fCancelButton;
 
+    /** stop image descriptor */
     protected static ImageDescriptor fgStopImage = ImageDescriptor
             .createFromFile(StatusLine.class, "images/stop.gif");//$NON-NLS-1$
     static {

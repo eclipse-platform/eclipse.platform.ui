@@ -64,6 +64,8 @@ public abstract class SafeRunnable implements ISafeRunnable {
 
     /**
      * Flag to avoid interactive error dialogs during automated testing.
+     * @param flag  
+     * @return true if errors should be ignored
      * @deprecated use getIgnoreErrors()
      */
     public static boolean getIgnoreErrors(boolean flag) {
@@ -72,6 +74,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 
     /**
      * Flag to avoid interactive error dialogs during automated testing.
+     * @return true if errors should be ignored
      * 
      * @since 3.0
      */
@@ -81,6 +84,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 
     /**
      * Flag to avoid interactive error dialogs during automated testing.
+     * @param flag set to true if errors should be ignored
      */
     public static void setIgnoreErrors(boolean flag) {
         ignoreErrors = flag;

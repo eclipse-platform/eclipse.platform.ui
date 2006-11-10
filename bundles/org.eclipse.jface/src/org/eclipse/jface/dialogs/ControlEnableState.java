@@ -37,8 +37,10 @@ public class ControlEnableState {
      * control.
      */
     private class ItemState {
+    	/** the control */
         protected Control item;
 
+        /** the state */
         protected boolean state;
 
         /**

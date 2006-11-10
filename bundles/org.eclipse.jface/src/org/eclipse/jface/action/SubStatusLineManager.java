@@ -52,8 +52,8 @@ public class SubStatusLineManager extends SubContributionManager implements
     }
 
     /**
-     * Returns the parent status line manager that this sub-manager contributes
-     * to.
+     * @return the parent status line manager that this sub-manager contributes
+     * to 
      */
     protected final IStatusLineManager getParentStatusLineManager() {
         // Cast is ok because that's the only

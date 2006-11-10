@@ -120,10 +120,11 @@ public class ToolBarManager2 extends ToolBarManager implements IToolBarManager2 
 		}
 	}
 	
-	/*
-	 * Returns the listeners attached to this event manager.
+	/**
+	 * @return the listeners attached to this event manager.
 	 * The listeners currently attached; may be empty, but never
 	 * null.
+	 * 
 	 */
 	protected final Object[] getListeners() {
 		final ListenerList list = listenerList;

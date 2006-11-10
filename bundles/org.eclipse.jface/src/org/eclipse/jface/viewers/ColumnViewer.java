@@ -53,8 +53,6 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @param point
 	 *            the point in the viewer where you need to corresponding cell
 	 *            from
-	 * @param onlyInSelection
-	 *            search only in selection
 	 * @return the cell or if no cell is found at this point
 	 */
 	ViewerCell getCell(Point point) {
@@ -83,6 +81,11 @@ abstract class ColumnViewer extends StructuredViewer {
 		return null;
 	}
 
+	/**
+	 * Get the ViewerRow associated with the Widget.
+	 * @param item
+	 * @return ViewerRow
+	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
 		return (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 	}
@@ -233,7 +236,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	/**
 	 * Update the cached cell with the row and column.
 	 * 
-	 * @param rowPartFromItem
+	 * @param rowItem
 	 * @param column
 	 * @return ViewerCell
 	 */

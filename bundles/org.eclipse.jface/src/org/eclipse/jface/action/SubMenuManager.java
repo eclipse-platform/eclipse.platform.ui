@@ -233,7 +233,7 @@ public class SubMenuManager extends SubContributionManager implements
     }
 
     /**
-     * Returns the parent menu manager that this sub-manager contributes to.
+     * @return the parent menu manager that this sub-manager contributes to. 
      */
     protected final IMenuManager getParentMenuManager() {
         // Cast is ok because that's the only
@@ -255,6 +255,7 @@ public class SubMenuManager extends SubContributionManager implements
      * monitor additions and removals.  If the visibility of this menu is modified
      * the visibility of the sub menus is also modified.
      * <p>
+     * @param mgr the menu manager to be wrapped
      *
      * @return the menu wrapper
      */
@@ -396,6 +397,8 @@ public class SubMenuManager extends SubContributionManager implements
 
     /**
      * Wraps a menu manager in a sub menu manager, and returns the new wrapper.
+     * @param menu the menu manager to wrap
+     * @return the new wrapped menu manager
      */
     protected SubMenuManager wrapMenu(IMenuManager menu) {
         SubMenuManager mgr = new SubMenuManager(menu);

@@ -41,7 +41,6 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	/**
 	 * Create a ViewerLabelProvider for the column at index
 	 * 
-	 * @param columnIndex
 	 * @param labelProvider
 	 *            The labelProvider to convert
 	 * @return ViewerLabelProvider

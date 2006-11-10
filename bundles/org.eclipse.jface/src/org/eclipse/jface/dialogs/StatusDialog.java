@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * An abstract base class for dialogs with a status bar and OK/CANCEL buttons.
- * The status message is specified in an IStatus which can be of severity
- * ERROR, WARNING, INFO or OK. The OK button is enabled or disabled depending on
- * the status.
+ * The status message is specified in an IStatus which can be of severity ERROR,
+ * WARNING, INFO or OK. The OK button is enabled or disabled depending on the
+ * status.
  * 
  * @since 3.1
  */
@@ -58,6 +58,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 		/**
 		 * Creates a new message line as a child of the given parent.
+		 * 
 		 * @param parent
 		 */
 		public MessageLine(Composite parent) {
@@ -67,6 +68,7 @@ public abstract class StatusDialog extends TrayDialog {
 		/**
 		 * Creates a new message line as a child of the parent and with the
 		 * given SWT stylebits.
+		 * 
 		 * @param parent
 		 * @param style
 		 */
@@ -77,6 +79,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 		/**
 		 * Find an image assocated with the status.
+		 * 
 		 * @param status
 		 * @return Image
 		 */
@@ -94,16 +97,19 @@ public abstract class StatusDialog extends TrayDialog {
 		}
 
 		/**
-		 * Sets the message and image to the given status. 
-		 * @param status IStatus or <code>null</code>.
-		 * <code>null</code> will set the empty text and no image.
+		 * Sets the message and image to the given status.
+		 * 
+		 * @param status
+		 *            IStatus or <code>null</code>. <code>null</code> will
+		 *            set the empty text and no image.
 		 */
 		public void setErrorStatus(IStatus status) {
 			if (status != null && !status.isOK()) {
 				String message = status.getMessage();
 				if (message != null && message.length() > 0) {
 					setText(message);
-					// unqualified call of setImage is too ambiguous for Foundation 1.0 compiler
+					// unqualified call of setImage is too ambiguous for
+					// Foundation 1.0 compiler
 					// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
 					MessageLine.this.setImage(findImage(status));
 					setBackground(JFaceColors.getErrorBackground(getDisplay()));
@@ -111,7 +117,8 @@ public abstract class StatusDialog extends TrayDialog {
 				}
 			}
 			setText(""); //$NON-NLS-1$	
-			// unqualified call of setImage is too ambiguous for Foundation 1.0 compiler
+			// unqualified call of setImage is too ambiguous for Foundation 1.0
+			// compiler
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=140576
 			MessageLine.this.setImage(null);
 			setBackground(fNormalMsgAreaBackground);
@@ -120,12 +127,14 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Creates an instance of a status dialog.
-	 * @param parent 
-	 * 			the parent Shell of the dialog
+	 * 
+	 * @param parent
+	 *            the parent Shell of the dialog
 	 */
 	public StatusDialog(Shell parent) {
 		super(parent);
-		fLastStatus = new Status(IStatus.OK,Policy.JFACE,IStatus.OK,Util.ZERO_LENGTH_STRING,null);
+		fLastStatus = new Status(IStatus.OK, Policy.JFACE, IStatus.OK,
+				Util.ZERO_LENGTH_STRING, null);
 	}
 
 	/**
@@ -143,6 +152,9 @@ public abstract class StatusDialog extends TrayDialog {
 	/**
 	 * Update the dialog's status line to reflect the given status. It is safe
 	 * to call this method before the dialog has been opened.
+	 * 
+	 * @param status
+	 *            the status to set
 	 */
 	protected void updateStatus(IStatus status) {
 		fLastStatus = status;
@@ -154,6 +166,7 @@ public abstract class StatusDialog extends TrayDialog {
 
 	/**
 	 * Returns the last status.
+	 * 
 	 * @return IStatus
 	 */
 	public IStatus getStatus() {
@@ -224,28 +237,28 @@ public abstract class StatusDialog extends TrayDialog {
 		}
 
 		layout.marginHeight = 0;
-        layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-        layout.marginWidth = 0;
+		layout.marginLeft = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginWidth = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        if (!fStatusLineAboveButtons && isHelpAvailable()) {
-        	createHelpControl(composite);
-        }
+		if (!fStatusLineAboveButtons && isHelpAvailable()) {
+			createHelpControl(composite);
+		}
 		fStatusLine = new MessageLine(composite);
 		fStatusLine.setAlignment(SWT.LEFT);
-        GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
+		GridData statusData = new GridData(GridData.FILL_HORIZONTAL);
 		fStatusLine.setErrorStatus(null);
-        if (fStatusLineAboveButtons && isHelpAvailable()) {
-        	statusData.horizontalSpan = 2;
-        	createHelpControl(composite);
-        }
+		if (fStatusLineAboveButtons && isHelpAvailable()) {
+			statusData.horizontalSpan = 2;
+			createHelpControl(composite);
+		}
 		fStatusLine.setLayoutData(statusData);
 		applyDialogFont(composite);
-		
+
 		/*
-		 * Create the rest of the button bar, but tell it not to
-		 * create a help button (we've already created it).
+		 * Create the rest of the button bar, but tell it not to create a help
+		 * button (we've already created it).
 		 */
 		boolean helpAvailable = isHelpAvailable();
 		setHelpAvailable(false);

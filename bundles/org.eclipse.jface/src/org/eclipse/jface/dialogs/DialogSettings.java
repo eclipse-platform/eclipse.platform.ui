@@ -419,23 +419,37 @@ public class DialogSettings implements IDialogSettings {
      * compilation against JCL Foundation (bug 80059). 
      */
     private static class XMLWriter extends PrintWriter {
+    	/** current number of tabs to use for ident */
     	protected int tab;
 
-    	/* constants */
+    	/** the xml header */
     	protected static final String XML_VERSION = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"; //$NON-NLS-1$
 
+    	/**
+    	 * Create a new XMLWriter 
+    	 * @param output the stream to write the output to
+    	 * @throws UnsupportedEncodingException thrown if charset is not supported
+    	 */
     	public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
     		super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
     		tab = 0;
     		println(XML_VERSION);
     	}
 
+    	/**
+    	 * Create a new XMLWriter 
+    	 * @param output the write to used when writing to
+    	 */
     	public XMLWriter(Writer output) {
     		super(output);
     		tab = 0;
     		println(XML_VERSION);
     	}
 
+    	/**
+    	 * write the intended end tag
+    	 * @param name the name of the tag to end
+    	 */
     	public void endTag(String name) {
     		tab--;
     		printTag("/" + name, null, false); //$NON-NLS-1$
@@ -447,6 +461,12 @@ public class DialogSettings implements IDialogSettings {
 			}
     	}
 
+    	/**
+    	 * write the tag to the stream and format it by itending it and add new line after the tag
+    	 * @param name the name of the tag
+    	 * @param parameters map of parameters
+    	 * @param close should the tag be ended automatically (=> empty tag)
+    	 */
     	public void printTag(String name, HashMap parameters, boolean close) {
     		printTag(name, parameters, true, true, close);
     	}
@@ -479,6 +499,11 @@ public class DialogSettings implements IDialogSettings {
 			}
     	}
 
+    	/**
+    	 * start the tag
+    	 * @param name the name of the tag
+    	 * @param parameters map of parameters
+    	 */
     	public void startTag(String name, HashMap parameters) {
     		startTag(name, parameters, true);
     		tab++;

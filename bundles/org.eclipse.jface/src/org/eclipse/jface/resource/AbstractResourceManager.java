@@ -50,6 +50,7 @@ abstract class AbstractResourceManager extends ResourceManager {
      *
      * @param descriptor identifier for the resource to allocate
      * @return the newly allocated resource
+     * @throws DeviceResourceException Thrown when allocation of an SWT device resource fails 
      */
     protected abstract Object allocate(DeviceResourceDescriptor descriptor) throws DeviceResourceException;
 

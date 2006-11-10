@@ -324,7 +324,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
     }
 
     /**
-     * Returns the viewer to which this drop support has been added.
+     * @return the viewer to which this drop support has been added.
      */
     protected Viewer getViewer() {
         return viewer;

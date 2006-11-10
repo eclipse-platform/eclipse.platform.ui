@@ -30,7 +30,7 @@ public class SubToolBarManager extends SubContributionManager implements
     }
 
     /**
-     * Returns the parent toolbar manager that this sub-manager contributes to.
+     * @return the parent toolbar manager that this sub-manager contributes to
      */
     protected final IToolBarManager getParentToolBarManager() {
         // Cast is ok because that's the only

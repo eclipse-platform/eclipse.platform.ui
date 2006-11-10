@@ -233,6 +233,7 @@ public abstract class SubContributionManager implements IContributionManager {
     }
 
     /**
+     * @return fetch all enumeration of wrappers for the item
      * @deprecated Use getItems(String value) instead.
      */
     public Enumeration items() {
@@ -334,6 +335,8 @@ public abstract class SubContributionManager implements IContributionManager {
 
     /**
      * Wraps a contribution item in a sub contribution item, and returns the new wrapper.
+     * @param item the contribution item to be wrapped
+     * @return the wrapped item
      */
     protected SubContributionItem wrap(IContributionItem item) {
         return new SubContributionItem(item);

@@ -88,6 +88,7 @@ public class StringConverter {
      *
      * @param value the string to be converted
      * @return the list of words
+     * @throws DataFormatException thrown if request string could not seperated
      */
     public static String[] asArray(String value) throws DataFormatException {
         ArrayList list = new ArrayList();

@@ -40,8 +40,6 @@ class TableColumnViewerLabelProvider extends WrappedViewerLabelProvider {
 	 * 
 	 * @param labelProvider
 	 *            instance of a table based label provider
-	 * @param columnIndex
-	 *            the index into the table for this column
 	 * @see ITableLabelProvider
 	 * @see ITableColorProvider
 	 * @see ITableFontProvider

@@ -148,7 +148,8 @@ public final class GridLayoutFactory {
      * @param hSpacing horizontal spacing (pixels)
      * @param vSpacing vertical spacing (pixels)
      * @return this
-     * @see #margins
+     * @see #margins(Point)
+     * @see #margins(int, int)
      */
     public GridLayoutFactory spacing(int hSpacing, int vSpacing) {
         l.horizontalSpacing = hSpacing;
@@ -162,7 +163,8 @@ public final class GridLayoutFactory {
      * 
      * @param spacing space between controls in the layout (pixels)
      * @return this
-     * @see #margins
+     * @see #margins(Point)
+     * @see #margins(int, int)
      */
     public GridLayoutFactory spacing(Point spacing) {
         l.horizontalSpacing = spacing.x;
@@ -176,7 +178,8 @@ public final class GridLayoutFactory {
      * 
      * @param margins margin size (pixels)
      * @return this
-     * @see #spacing
+     * @see #spacing(Point)
+     * @see #spacing(int, int)
      */
     public GridLayoutFactory margins(Point margins) {
         l.marginWidth = margins.x;
@@ -196,7 +199,8 @@ public final class GridLayoutFactory {
 	 * @param height
 	 *            margin height (pixels)
 	 * @return this
-	 * @see #spacing
+	 * @see #spacing(Point)
+	 * * @see #spacing(int, int)
 	 */
     public GridLayoutFactory margins(int width, int height) {
         l.marginWidth = width;
@@ -220,7 +224,8 @@ public final class GridLayoutFactory {
 	 * @param bottom
 	 *            bottom margin size (pixels)
 	 * @return this
-	 * @see #spacing
+	 * @see #spacing(Point)
+	 * @see #spacing(int, int)
 	 * 
 	 * @since 3.3
 	 */
@@ -254,7 +259,8 @@ public final class GridLayoutFactory {
 	 *        The width and height correspond to the relative size of the bounds
 	 *        of the layout with respect to the client area, and should be positive. 
 	 * @return this
-	 * @see #spacing
+	 * @see #spacing(Point)
+	 * @see #spacing(int, int)
 	 * 
 	 * @since 3.3
 	 */

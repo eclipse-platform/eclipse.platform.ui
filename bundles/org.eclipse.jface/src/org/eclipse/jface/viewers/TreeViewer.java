@@ -866,7 +866,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * 
 	 * @param widget
 	 * @param element
-	 * @param updateLabels
 	 */
 	private void virtualRefreshChildCounts(Widget widget, Object element) {
 		if (widget instanceof Tree || ((TreeItem) widget).getExpanded()) {
@@ -1094,8 +1093,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	/**
+	 * Update the widget at index.
 	 * @param widget
-	 * @param i
+	 * @param index
 	 */
 	private void virtualLazyUpdateWidget(Widget widget, int index) {
 		if (contentProviderIsTreeBased) {
@@ -1114,8 +1114,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	/**
+	 * Update the child count
 	 * @param widget
-	 * @param i
+	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateChildCount(Widget widget, int currentChildCount) {
 		if (contentProviderIsTreeBased) {
@@ -1133,8 +1134,9 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 	
 	/**
-	 * @param widget
-	 * @param i
+	 * Update the item with the current child count.
+	 * @param item
+	 * @param currentChildCount
 	 */
 	private void virtualLazyUpdateHasChildren(Item item, int currentChildCount) {
 		if (contentProviderIsTreeBased) {

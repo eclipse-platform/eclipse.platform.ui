@@ -132,6 +132,7 @@ public class PreferenceManager {
      * below the top at the given path.
      *
      * @param path the path
+     * @param top top at the given path
      * @return the node, or <code>null</code> if none
      * 
      * @since 3.1

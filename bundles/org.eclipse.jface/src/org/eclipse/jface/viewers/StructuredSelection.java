@@ -68,7 +68,8 @@ public class StructuredSelection implements IStructuredSelection {
     }
 
     /**
-     * Creates a structured selection from the given <code>List</code>.
+     * Creates a structured selection from the given <code>List</code>. 
+     * @param elements list of selected elements
      */
     public StructuredSelection(List elements) {
         Assert.isNotNull(elements);

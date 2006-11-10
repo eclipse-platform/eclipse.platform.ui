@@ -154,8 +154,14 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 
         private boolean fIsCanceled;
 
+        /**
+         * is the process forked
+         */
         protected boolean forked = false;
 
+        /**
+         * is locked
+         */
         protected boolean locked = false;
 
         public void beginTask(String name, int totalWork) {

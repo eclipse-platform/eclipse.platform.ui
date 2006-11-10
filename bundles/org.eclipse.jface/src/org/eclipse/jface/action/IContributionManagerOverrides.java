@@ -30,13 +30,15 @@ public interface IContributionManagerOverrides {
     public final static String P_ENABLED = "enabled"; //$NON-NLS-1$
 
     /**
-     * Returns <code>Boolean.TRUE</code> if the given contribution item should 
-     * be enabled, <code>Boolean.FALSE</code> if the item should be disabled, and
-     * <code>null</code> if the item may determine its own enablement.
-     * 
+     * Find out the enablement of the item
      * @param item the contribution item for which the enable override value is 
      * determined
-     * @since 2.0
+     * @return <ul>
+     * 				<li><code>Boolean.TRUE</code> if the given contribution item should be enabled</li>
+     * 				<li><code>Boolean.FALSE</code> if the item should be disabled</li>
+     * 				<li><code>null</code> if the item may determine its own enablement</li>
+     * 			</ul>
+     * @since 2.0 
      */
     public Boolean getEnabled(IContributionItem item);
 
@@ -44,7 +46,9 @@ public interface IContributionManagerOverrides {
      * This is not intended to be called outside of the workbench. This method
      * is intended to be deprecated in 3.1.
      * 
-     * TODO deprecate for 3.1
+     * TODO deprecate for 3.1 
+     * @param item the contribution item for which the accelerator value is determined
+     * @return the accelerator
      */
     public Integer getAccelerator(IContributionItem item);
 
@@ -53,6 +57,8 @@ public interface IContributionManagerOverrides {
      * is intended to be deprecated in 3.1.
      * 
      * TODO deprecate for 3.1
+     * @param item the contribution item for which the accelerator text is determined
+     * @return the text for the accelerator
      */
     public String getAcceleratorText(IContributionItem item);
 
@@ -61,6 +67,8 @@ public interface IContributionManagerOverrides {
      * is intended to be deprecated in 3.1.
      * 
      * TODO deprecate for 3.1
+     * @param item the contribution item for which the text is determined
+     * @return the text
      */
     public String getText(IContributionItem item);
 }

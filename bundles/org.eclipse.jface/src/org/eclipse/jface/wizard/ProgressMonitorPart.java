@@ -39,20 +39,28 @@ import org.eclipse.swt.widgets.Listener;
 public class ProgressMonitorPart extends Composite implements
         IProgressMonitorWithBlocking {
 
+	/** the label */
     protected Label fLabel;
 
+    /** the current task name */
     protected String fTaskName;
 
+    /** the current sub task name */
     protected String fSubTaskName;
 
+    /** the progress indicator */
     protected ProgressIndicator fProgressIndicator;
 
+    /** the cancel component */
     protected Control fCancelComponent;
 
+    /** true if cancled */
     protected boolean fIsCanceled;
 
+    /** current blocked status */
     protected IStatus blockedStatus;
 
+    /** the cancle lister attached to the cancle component */
     protected Listener fCancelListener = new Listener() {
         public void handleEvent(Event e) {
             setCanceled(true);

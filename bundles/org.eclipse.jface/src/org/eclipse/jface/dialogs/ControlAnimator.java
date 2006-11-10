@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 
 
 public class ControlAnimator {
-	
+	/** the control that will be displayed or hidden */
 	protected Control control;	
 	
 	/**

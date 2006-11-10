@@ -31,7 +31,8 @@ public interface ISafeRunnableRunner {
 	/**
 	 * Runs the runnable.  All <code>ISafeRunnableRunners</code> must catch any exception
 	 * thrown by the <code>ISafeRunnable</code> and pass the exception to 
-	 * <code>ISafeRunnable.handleException()</code>.
+	 * <code>ISafeRunnable.handleException()</code>. 
+	 * @param code the code executed as a save runnable
 	 *
 	 * @see SafeRunnable#run(ISafeRunnable)
 	 */

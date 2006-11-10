@@ -68,6 +68,10 @@ public class TableTreeViewer extends AbstractTreeViewer {
      * Private implementation class.
      */
     class TableTreeViewerImpl extends TableEditorImpl {
+    	
+        /**
+         * @param viewer the tabletree viewer working for
+         */
         public TableTreeViewerImpl(TableTreeViewer viewer) {
             super(viewer);
         }
