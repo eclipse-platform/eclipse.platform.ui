@@ -8,10 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.provisional;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Context in which an asynchronous request has been made.
@@ -28,15 +27,6 @@ public interface IPresentationContext {
 	 * in a presentation context change.
 	 */
 	public static final String PROPERTY_COLUMNS = "PROPERTY_COLUMNS"; //$NON-NLS-1$
-    
-    /**
-     * Returns the part for which a request is being made
-     * or <code>null</code> if none. 
-     * 
-     * @return the part for which a request is being made
-     * or <code>null</code>
-     */
-    public IWorkbenchPart getPart();
     
     /**
      * Returns identifiers of the visible columns in the order
@@ -72,5 +62,28 @@ public interface IPresentationContext {
      * @since 3.3
      */
     public String getId();
+    
+    /**
+     * Sets the specified property and notifies listeners of changes.
+     * 
+     * @param property property name
+     * @param value property value
+     */
+    public void setProperty(String property, Object value);
+    
+    /**
+     * Returns the property with the specified name or <code>null</code>
+     * if none.
+     * 
+     * @param property property name
+     * @return property value or <code>null</code>
+     */
+    public Object getProperty(String property);
+    
+    /**
+     * Disposes this presentation context. Called by the framework
+     * when the associated viewer is disposed.
+     */
+    public void dispose();
     
 }

@@ -12,8 +12,9 @@ package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 
@@ -28,7 +29,7 @@ public class TreeUpdatePolicy extends AbstractUpdatePolicy implements IModelChan
 	private TreePath fTreePath;
 	private IModelDelta fNode;
 
-    public void modelChanged(IModelDelta delta) {
+    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         updateNodes(new IModelDelta[] { delta });
         fTreePath = null;
         fNode = null;
@@ -69,7 +70,7 @@ public class TreeUpdatePolicy extends AbstractUpdatePolicy implements IModelChan
                 // TODO
             }
 
-            updateNodes(node.getNodes());
+            updateNodes(node.getChildDeltas());
         }
     }
 
@@ -101,8 +102,8 @@ public class TreeUpdatePolicy extends AbstractUpdatePolicy implements IModelChan
     	if (node != fNode) {
             ArrayList list = new ArrayList();
             list.add(0, node.getElement());
-            while (node.getParent() != null) {
-                node = node.getParent();
+            while (node.getParentDelta() != null) {
+                node = node.getParentDelta();
                 list.add(0, node.getElement());
             }
 

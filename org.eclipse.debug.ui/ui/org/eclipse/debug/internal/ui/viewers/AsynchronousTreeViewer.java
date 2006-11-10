@@ -23,11 +23,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactoryAdapter;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditor;
 import org.eclipse.debug.internal.ui.viewers.provisional.IColumnEditorFactoryAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentation;
-import org.eclipse.debug.internal.ui.viewers.provisional.IColumnPresentationFactoryAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -806,7 +807,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
      */
     protected void setItemCount(Widget widget, int itemCount) {
         if (widget == fTree) {
@@ -817,7 +818,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
      */
     protected Widget getChildWidget(Widget parent, int index) {
 		if (parent instanceof Tree) {
@@ -879,7 +880,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
      */
     protected void clear(Widget widget) {
         if (DEBUG_VIEWER) {
@@ -974,7 +975,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode)
      */
     protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
@@ -1251,7 +1252,7 @@ public class AsynchronousTreeViewer extends AsynchronousViewer {
     }    
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
 	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new TreeUpdatePolicy();

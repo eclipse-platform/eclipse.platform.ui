@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+
 
 /**
  * Common function for a column editor.

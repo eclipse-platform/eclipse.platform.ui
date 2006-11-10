@@ -10,18 +10,29 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
+import org.eclipse.jface.viewers.Viewer;
 
 public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesListener2 {
 
 	private ILaunchManager fLaunchManager;
+	/**
+	 * Map of each launch to its previous children. When a child is added,
+	 * its model proxy is installed.
+	 */
+	private Map fPrevChildren = new HashMap(); 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
@@ -33,14 +44,12 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
-	public void installed() {
+	public void installed(Viewer viewer) {
 		// expand existing launches
 		ILaunch[] launches = fLaunchManager.getLaunches();
-		if (launches.length > 0) {
-			fireDelta(launches, IModelDelta.EXPAND);
-		}
+		launchesAdded(launches);
 	}
 
 	/* (non-Javadoc)
@@ -64,6 +73,10 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.REMOVED);
+		// clear the children cache
+		for (int i = 0; i < launches.length; i++) {
+			fPrevChildren.remove(launches[i]);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -71,6 +84,12 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 */
 	public void launchesAdded(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.ADDED | IModelDelta.EXPAND);
+		// install model proxies
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			fPrevChildren.put(launch, new HashSet());
+		}
+		installModelProxies(launches);
 	}
 
 	/* (non-Javadoc)
@@ -78,6 +97,44 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 */
 	public void launchesChanged(ILaunch[] launches) {
 		fireDelta(launches, IModelDelta.STATE | IModelDelta.CONTENT);
+		// install model proxies for new children
+		installModelProxies(launches);	
+	}
+	
+	/**
+	 * Installs model proxies for any new children in the given launches.
+	 * 
+	 * @param launches
+	 */
+	protected void installModelProxies(ILaunch[] launches) {
+		boolean changes = false;
+		ILaunch[] allLaunches = fLaunchManager.getLaunches();
+		ModelDelta root = new ModelDelta(fLaunchManager, 0, IModelDelta.NO_CHANGE, allLaunches.length);
+		for (int i = 0; i < launches.length; i++) {
+			ILaunch launch = launches[i];
+			Object[] children = launch.getChildren();
+			ModelDelta launchDelta = root.addNode(launch, indexOf(launch, allLaunches), IModelDelta.EXPAND | IModelDelta.NO_CHANGE, children.length);
+			Set set = (Set) fPrevChildren.get(launch);
+			for (int j = 0; j < children.length; j++) {
+				Object child = children[j];
+				if (set.add(child)) {
+					changes = true;
+					launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
+				}
+			}
+		}
+		if (changes) {
+			fireModelChanged(root);
+		}
+	}
+	
+	protected int indexOf(Object element, Object[] list) {
+		for (int i = 0; i < list.length; i++) {
+			if (element == list[i]) {
+				return i;
+			}
+		}
+		return -1;
 	}
 	
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {

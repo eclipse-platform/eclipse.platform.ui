@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.swt.graphics.RGB;
 
 public class ExpressionLabelAdapter extends VariableLabelAdapter {

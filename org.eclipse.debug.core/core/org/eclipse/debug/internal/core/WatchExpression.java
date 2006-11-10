@@ -127,7 +127,15 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	public void setResult(IWatchExpressionResult result) {
 		fResult= result;
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {new DebugEvent(this, DebugEvent.CHANGE)});
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT));
+	}
+
+	/**
+	 * Fires the given debug event
+	 * @param event
+	 */
+	protected void fireEvent(DebugEvent event) {
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	}
 	
 	/**
@@ -241,7 +249,7 @@ public class WatchExpression implements IWatchExpression {
 	 */
 	protected void setPending(boolean pending) {
 		fPending= pending;
-		watchExpressionChanged(false);
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.STATE));
 	}
 
 	/* (non-Javadoc)

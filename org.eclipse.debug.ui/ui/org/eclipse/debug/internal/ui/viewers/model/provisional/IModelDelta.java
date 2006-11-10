@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.provisional;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
+
 
 
 /**
@@ -84,13 +85,26 @@ public interface IModelDelta {
 	 * Suggests that the element should be selected, as described by its path.
 	 */
 	public static int SELECT = 1 << 21;
+	
+	/**
+	 * Indicates a model proxy should be installed for the given element
+	 * @since 3.3
+	 */
+	public static int INSTALL = 1 << 22;
+	
+	/**
+	 * Indicates a model proxy should be uninstalled for the given element
+	 * @since 3.3
+	 */
+	public static int UNINSTALL = 1 << 23;
+	
 	/**
 	 * Returns the parent of this node, or <code>null</code> if this is
 	 * a root node.
 	 * 
 	 * @return parent node or <code>null</code> if this is a root node
 	 */
-	public IModelDelta getParent();
+	public IModelDelta getParentDelta();
 	
 	/**
 	 * Returns the model element this node describes.
@@ -112,7 +126,7 @@ public interface IModelDelta {
 	 *  
 	 * @return changed children, possibly empty
 	 */
-	public ModelDelta[] getNodes();
+	public ModelDelta[] getChildDeltas();
 	
 	/**
 	 * When a node indicates the <code>IModelDelta.REPLACED</code> flag, this method
@@ -123,12 +137,35 @@ public interface IModelDelta {
 	public Object getReplacementElement();
 	
 	/**
+	 * Returns this node's index in its parents child collection or -1 if unknown.
+	 * This attribute is required when expanding or selecting an element.
+	 * <p>
 	 * When a node indicates the <code>IModelDelta.INSERTED</code> flag, this method
 	 * returns the index that the new element should be inserted at relative to its
 	 * parents children, otherwise -1.
-	 * 
+	 * </p>
 	 * @return insertion index or -1
 	 */
 	public int getIndex();
+	
+	/**
+	 * Returns the total number of children this element has, or -1 if unknown. Note
+	 * that this number may be greater than the number of child delta nodes for this
+	 * node, since not all children may be reporting deltas.
+	 * <p>
+	 * This attribute is required when expanding or selecting an element.
+	 * </p>
+	 * 
+	 * @return total number of child elements this element has
+	 */
+	public int getChildCount();
+	
+	/**
+	 * Accepts the given visitor.
+	 * 
+	 * @param visitor
+	 * @since 3.3
+	 */
+	public void accept(IModelDeltaVisitor visitor);
 	
 }

@@ -33,7 +33,6 @@ import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
-import org.eclipse.debug.internal.ui.actions.FindElementAction;
 import org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
@@ -50,11 +49,15 @@ import org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersAction;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugEditorPresentation;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
@@ -129,26 +132,48 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	private boolean fIsActive = true; 	
 		
 	/**
-	 * Editor presentation or <code>null</code> if none
+	 * Model presentation or <code>null</code> if none
 	 */
-	private IDebugEditorPresentation fEditorPresentation = null;
+	private IDebugModelPresentation fPresentation = null;
 	
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	private AddToFavoritesAction fAddToFavoritesAction = null;
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
 
-	class ContextProvider extends AbstractDebugContextProvider {
+	class ContextProvider extends AbstractDebugContextProvider implements IModelChangedListener {
 		
-		public ContextProvider() {
-			super(LaunchView.this);
-			// TODO Auto-generated constructor stub
-		}
-
 		private ISelection fContext = null;
+		private TreeModelViewer fViewer = null;
+		private Visitor fVisitor = new Visitor();
+		
+		class Visitor implements IModelDeltaVisitor {
+			public boolean visit(IModelDelta delta, int depth) {
+				Object element = delta.getElement();
+				if ((delta.getFlags() & IModelDelta.STATE) > 0) {
+					if ((delta.getFlags() & (IModelDelta.CONTENT | IModelDelta.SELECT)) == 0) {
+						// state change without content/select - possible state change of active context
+						possibleChange(element, DebugContextEvent.STATE);
+					}
+				} else if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
+					if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
+						// content change without select > possible activation
+						possibleChange(element, DebugContextEvent.ACTIVATED);
+					}
+				}
+				return true;
+			}	
+		}
+		
+		public ContextProvider(TreeModelViewer viewer) {
+			super(LaunchView.this);
+			fViewer = viewer;
+			fViewer.addModelChangedListener(this);
+		}
 		
 		protected void dispose() { 
 			fContext = null;
+			fViewer.removeModelChangedListener(this);
 		}
 		
 		/* (non-Javadoc)
@@ -165,7 +190,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			fire(new DebugContextEvent(this, selection, DebugContextEvent.ACTIVATED));
 		}
 		
-		protected void possibleContextChange(Object element, int type) {
+		protected void possibleChange(Object element, int type) {
 			synchronized (this) {
 				if (fContext instanceof IStructuredSelection) {
 					IStructuredSelection ss = (IStructuredSelection) fContext;
@@ -176,7 +201,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 					return;
 				}
 			}
-			DebugContextEvent event = new DebugContextEvent(ContextProvider.this, fContext, type);
+			DebugContextEvent event = new DebugContextEvent(this, fContext, type);
 			if (getControl().getDisplay().getThread() == Thread.currentThread()) {
 				fire(event);
 			} else {
@@ -186,11 +211,17 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 						fire(finalEvent);
 						return Status.OK_STATUS;
 					}
-				
-				}; 
+				};
 				job.setSystem(true);
 				job.schedule();
 			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta)
+		 */
+		public void modelChanged(IModelDelta delta, IModelProxy proxy) {
+			delta.accept(fVisitor);
 		}
 		
 	}
@@ -198,7 +229,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	/**
 	 * Context provider
 	 */
-	private ContextProvider fProvider = new ContextProvider();
+	private ContextProvider fProvider;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
@@ -216,7 +247,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
-		setAction(FIND_ACTION, new FindElementAction(this, (AsynchronousTreeViewer) getViewer()));
+		//setAction(FIND_ACTION, new FindElementAction(this, (AsynchronousTreeViewer) getViewer())); // TODO:
         
         addCapabilityAction(new TerminateCommandAction(), TERMINATE);
         addCapabilityAction(new DisconnectCommandAction(), DISCONNECT);
@@ -258,8 +289,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Viewer createViewer(Composite parent) {
-		AsynchronousTreeViewer viewer = new LaunchViewer(parent, this);
-		viewer.setContext(new PresentationContext(this));
+		fPresentation = new DelegatingModelPresentation();
+		TreeModelViewer viewer = new TreeModelViewer(parent,
+				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.VIRTUAL,
+				new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, fPresentation));
         
         viewer.addSelectionChangedListener(this);
         viewer.getControl().addKeyListener(new KeyAdapter() {
@@ -269,12 +302,11 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         		}
         	}
         });
-        final DelegatingModelPresentation presentation = new DelegatingModelPresentation();
-        fEditorPresentation = presentation;
         // add my viewer as a selection provider, so selective re-launch works
 		getSite().setSelectionProvider(viewer);
 		viewer.setInput(DebugPlugin.getDefault().getLaunchManager());
 		//setEventHandler(new LaunchViewEventHandler(this));
+		fProvider = new ContextProvider(viewer);
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextProvider(fProvider);
 		return viewer;
 	}
@@ -459,7 +491,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	}
 	
 	protected void possibleContextChange(Object element, int type) {
-		fProvider.possibleContextChange(element, type);
+		// TODO: remove
 	}
 
 	/* (non-Javadoc)
@@ -526,7 +558,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		return ((DelegatingModelPresentation)fEditorPresentation).getPresentation(id);
+		return ((DelegatingModelPresentation)fPresentation).getPresentation(id);
 	}
 	
 	/* (non-Javadoc)
@@ -536,7 +568,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
-		menu.add(getAction(FIND_ACTION));
+		//menu.add(getAction(FIND_ACTION)); TODO:
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));

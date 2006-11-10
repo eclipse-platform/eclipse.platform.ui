@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 
 /**
  * Scheduling rule factory for asycn operations.
@@ -97,15 +96,4 @@ public class AsynchronousSchedulingRuleFactory {
 		return new SerialPerObjectRule(lock);
 	}
 	
-	/**
-	 * Returns a scheduling rule that allows all jobs with an instance of
-	 * the rule to run one at a time per part associated with the given
-	 * presentation context.
-	 * 
-	 * @param context presentation context
-	 * @return scheduling rule
-	 */
-	public ISchedulingRule newSerialPerPartRule(IPresentationContext context) {
-		return newSerialPerObjectRule(context.getPart());
-	}
 }

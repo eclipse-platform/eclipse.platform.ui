@@ -18,12 +18,14 @@ import java.util.Set;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 
 /**
  * @since 3.2
@@ -162,12 +164,36 @@ public class ThreadEventHandler extends DebugEventHandler {
 	}
 	
 	protected ModelDelta buildRootDelta() {
-		return new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+		return new ModelDelta(getLaunchManager(), IModelDelta.NO_CHANGE);
+	}
+
+	/**
+	 * Returns the launch manager.
+	 * 
+	 * @return the launch manager
+	 */
+	protected ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
+	/**
+	 * Adds nodes into the delta up to but not including the given thread.
+	 * 
+	 * @param delta root delta for the view (includes viewer input)
+	 * @param thread thread for which path is requested
+	 * @return
+	 */
 	protected ModelDelta addPathToThread(ModelDelta delta, IThread thread) {
-		delta = delta.addNode(thread.getLaunch(), IModelDelta.NO_CHANGE);
-		return delta.addNode(thread.getDebugTarget(), IModelDelta.NO_CHANGE);
+		ILaunch launch = thread.getLaunch();
+		Object[] children = launch.getChildren();
+		delta = delta.addNode(launch, indexOf(getLaunchManager().getLaunches(), launch), IModelDelta.NO_CHANGE, children.length);
+		IDebugTarget debugTarget = thread.getDebugTarget();
+		int numThreads = -1;
+		try {
+			numThreads = debugTarget.getThreads().length;
+		} catch (DebugException e) {
+		}
+		return delta.addNode(debugTarget, indexOf(children, debugTarget), IModelDelta.NO_CHANGE, numThreads);
 	}
 
 	private void fireDeltaAndClearTopFrame(IThread thread, int flags) {
@@ -192,20 +218,22 @@ public class ThreadEventHandler extends DebugEventHandler {
 			 frame = thread.getTopStackFrame();
 		} catch (DebugException e) {
 		}
+		int threadIndex = indexOf(thread);
+		int childCount = childCount(thread);
     	if (isEqual(frame, prev)) {
     		if (frame == null) {
     			if (thread.isSuspended()) {
 	    			// no frames, but suspended - update & select
-	    			node = node.addNode(thread, flags | IModelDelta.STATE | IModelDelta.SELECT);
+	    			node = node.addNode(thread, threadIndex, flags | IModelDelta.STATE | IModelDelta.SELECT, childCount);
     			}
     		} else {
-    			node = node.addNode(thread, flags);
+    			node = node.addNode(thread, threadIndex, flags, childCount);
     		}
     	} else {
-			node = node.addNode(thread, flags | IModelDelta.CONTENT);
+			node = node.addNode(thread, threadIndex, flags | IModelDelta.CONTENT, childCount);
     	}
     	if (frame != null) {
-            node.addNode(frame, IModelDelta.STATE | IModelDelta.SELECT);
+            node.addNode(frame, indexOf(frame), IModelDelta.STATE | IModelDelta.SELECT, childCount(frame));
         }
     	synchronized (this) {
     		if (!isDisposed()) {
@@ -213,6 +241,54 @@ public class ThreadEventHandler extends DebugEventHandler {
     		}
 		}
     	fireDelta(delta);
+	}
+	
+	/**
+	 * Returns the index of the given thread, relative to its parent in the view.
+	 * 
+	 * @param thread thread
+	 * @return index of the thread, relative to its parent
+	 */
+	protected int indexOf(IThread thread) {
+		try {
+			return indexOf(thread.getDebugTarget().getThreads(), thread);
+		} catch (DebugException e) {
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns the index of the given frame, relative to its parent in the view.
+	 * 
+	 * @param frame frame
+	 * @return index of the frame, relative to its thread
+	 */
+	protected int indexOf(IStackFrame frame) {
+		return 0;
+	}
+	
+	/**
+	 * Returns the number of children the given thread has in the view.
+	 * 
+	 * @param thread thread
+	 * @return number of children
+	 */
+	protected int childCount(IThread thread) {
+		try {
+			return thread.getStackFrames().length;
+		} catch (DebugException e) {
+		}
+		return -1;
+	}
+	
+	/**
+	 * Returns the number of children the given frame has in the view.
+	 * 
+	 * @param frame frame
+	 * @return child count
+	 */
+	protected int childCount(IStackFrame frame) {
+		return 0;
 	}
 	
 	private void fireDeltaUpdatingThread(IThread thread, int flags) {

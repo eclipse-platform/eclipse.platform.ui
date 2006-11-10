@@ -15,8 +15,9 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.Viewer;
 
 public class ProcessProxy extends EventHandlerModelProxy {
 
@@ -28,18 +29,7 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
 
 		protected void handleChange(DebugEvent event) {
-			ModelDelta delta = null;
-        	synchronized (ProcessProxy.this) {
-        		if (!isDisposed()) {
-                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-                    ModelDelta node = delta;
-                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
-                    node.addNode(fProcess, IModelDelta.STATE);        			
-        		}
-			}
-        	if (delta != null && !isDisposed()) {
-        		fireModelChanged(delta);
-        	}
+			fireDelta(IModelDelta.STATE);        			
         }
 
         protected void handleCreate(DebugEvent event) {
@@ -47,10 +37,23 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
 
 		protected void handleTerminate(DebugEvent event) {
-			handleChange(event);
+			fireDelta(IModelDelta.STATE | IModelDelta.UNINSTALL);
 		}
         
-        
+        private void fireDelta(int flags) {
+			ModelDelta delta = null;
+        	synchronized (ProcessProxy.this) {
+        		if (!isDisposed()) {
+                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+                    ModelDelta node = delta;
+                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
+                    node.addNode(fProcess, flags);        			
+        		}
+			}
+        	if (delta != null && !isDisposed()) {
+        		fireModelChanged(delta);
+        	}        	
+        }
         
     };
 
@@ -77,7 +80,8 @@ public class ProcessProxy extends EventHandlerModelProxy {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
 	 */
-	public void installed() {
+	public void installed(Viewer viewer) {
+		super.installed(viewer);
 		// select process if in run mode
 		IProcess process = fProcess;
 		if (process != null) {

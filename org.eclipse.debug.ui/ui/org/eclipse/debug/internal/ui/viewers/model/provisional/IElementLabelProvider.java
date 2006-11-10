@@ -1,30 +1,28 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.provisional;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
- * A model changed listener is notified of changes in a model. A model
- * is represented by an {@link IModelProxy}.
- *
- * @since 3.2
- * @see IModelProxy
- * @see IModelDeltaNode
+ * Provides context sensitive labels. Can be registered as an adapter for an element,
+ * or implemented directly.
+ * 
+ * @since 3.3
  */
-public interface IModelChangedListener {
+public interface IElementLabelProvider {
 	
 	/**
-	 * Notification a model has changed as described by the given delta.
+	 * Updates the specified label.
 	 * 
-	 * @param delta model delta
+	 * @param update specifies the element and context for which a label is requested and
+	 *  stores updated label attributes
 	 */
-	public void modelChanged(IModelDelta delta);
-
+	public void update(ILabelUpdate update);
 }

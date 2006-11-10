@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers;
 
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
@@ -21,7 +22,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
  */
 public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy implements IModelChangedListener {
 
-    public void modelChanged(IModelDelta delta) {
+    public void modelChanged(IModelDelta delta, IModelProxy proxy) {
         updateNodes(new IModelDelta[] {delta});
     }
 
@@ -75,7 +76,7 @@ public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.Abs
                 handleInsert(node);
             }
 
-            IModelDelta[] childNodes = node.getNodes();
+            IModelDelta[] childNodes = node.getChildDeltas();
             updateNodes(childNodes);
         }
     }

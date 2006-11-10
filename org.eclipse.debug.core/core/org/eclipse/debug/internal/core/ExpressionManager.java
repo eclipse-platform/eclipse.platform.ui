@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.core;
 
  
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,9 +33,7 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.IExpressionsListener;
@@ -48,14 +45,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The expression manager manages all registered expressions
- * for the debug plugin. It is instantiated by the debug plugin
+ * for the debug plug-in. It is instantiated by the debug plug-in
  * at startup.
  *
  * @see IExpressionManager
  */
-public class ExpressionManager extends PlatformObject implements IExpressionManager, IDebugEventSetListener {
+public class ExpressionManager extends PlatformObject implements IExpressionManager {
 	
 	/**
 	 * Collection of registered expressions.
@@ -68,7 +67,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	private ListenerList fListeners = null;
 	
 	/**
-	 * List of (multi) expressions listeners
+	 * List of expressions listeners (plural)
 	 */
 	private ListenerList fExpressionsListeners = null;
 	
@@ -166,7 +165,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			return;
 		}
 		NodeList list= root.getChildNodes();
-		boolean expressionsAdded= false;
 		for (int i= 0, numItems= list.getLength(); i < numItems; i++) {
 			Node node= list.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -183,14 +181,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 						fExpressions= new Vector(list.getLength());
 					}
 					fExpressions.add(expression);
-					expressionsAdded= true;
 				} else {
 					DebugPlugin.logMessage("Invalid expression entry encountered while loading watch expressions. Expression text is empty.", null); //$NON-NLS-1$
 				}
 			}
-		}
-		if (expressionsAdded) {
-			DebugPlugin.getDefault().addDebugEventListener(this);
 		}
 	}
 	
@@ -275,7 +269,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			fExpressions = new Vector(expressions.length);
 		}
 		boolean addedWatchExpression= false;
-		boolean wasEmpty = fExpressions.isEmpty();
 		List added = new ArrayList(expressions.length);
 		for (int i = 0; i < expressions.length; i++) {
 			IExpression expression = expressions[i];
@@ -286,9 +279,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 					addedWatchExpression= true;
 				}
 			}				
-		}
-		if (wasEmpty) {
-			DebugPlugin.getDefault().addDebugEventListener(this);	
 		}
 		if (!added.isEmpty()) {
 			fireUpdate((IExpression[])added.toArray(new IExpression[added.size()]), ADDED);
@@ -351,9 +341,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				expression.dispose();
 			}				
 		}
-		if (fExpressions.isEmpty()) {
-			DebugPlugin.getDefault().removeDebugEventListener(this);
-		}
 		if (!removed.isEmpty()) {
 			fireUpdate((IExpression[])removed.toArray(new IExpression[removed.size()]), REMOVED);
 			storeWatchExpressions();
@@ -378,32 +365,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			return;
 		}
 		fListeners.remove(listener);
-	}
-	
-	/**
-	 * @see IDebugEventSetListener#handleDebugEvent(DebugEvent)
-	 */
-	public void handleDebugEvents(DebugEvent[] events) {
-		List changed = null;
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
-			if (event.getSource() instanceof IExpression) {
-				switch (event.getKind()) {
-					case DebugEvent.CHANGE:
-						if (changed == null) {
-							changed = new ArrayList(1);
-						}
-						changed.add(event.getSource());
-						break;
-					default:
-						break;
-				}
-			} 
-		}
-		if (changed != null) {
-			IExpression[] array = (IExpression[])changed.toArray(new IExpression[changed.size()]);
-			fireUpdate(array, CHANGED);
-		}
 	}
 	
 	/**

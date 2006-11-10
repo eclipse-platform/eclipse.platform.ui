@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+
 /**
  * Provides labels for elements. Note that implementations
  * are must provide labels asynchronously. 

@@ -17,8 +17,9 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * Default model proxy for a debug target.
@@ -66,9 +67,9 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#installed()
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
-	public void installed() {
+	public void installed(Viewer viewer) {
 		// select any thread that is already suspended after installation
 		IDebugTarget target = fDebugTarget;
 		if (target != null) {
@@ -80,10 +81,10 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 						IStackFrame frame = thread.getTopStackFrame();
 						if (frame != null) {
 							ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-							ModelDelta node = delta.addNode(target.getLaunch(), IModelDelta.NO_CHANGE);
-							node = node.addNode(target, IModelDelta.NO_CHANGE);
-							node = node.addNode(thread, IModelDelta.NO_CHANGE | IModelDelta.EXPAND);
-							node = node.addNode(frame, IModelDelta.NO_CHANGE | IModelDelta.SELECT);
+							ModelDelta node = delta.addNode(target.getLaunch(), -1, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+							node = node.addNode(target, 0, IModelDelta.NO_CHANGE, threads.length);
+							node = node.addNode(thread, i, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, thread.getStackFrames().length);
+							node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
 							fireModelChanged(delta);
 							return;
 						}
@@ -91,8 +92,8 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 				}
 				// expand the target if no suspended thread
 				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-				ModelDelta node = delta.addNode(target.getLaunch(), IModelDelta.NO_CHANGE);
-				node = node.addNode(target, IModelDelta.EXPAND | IModelDelta.SELECT);
+				ModelDelta node = delta.addNode(target.getLaunch(), -1, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+				node = node.addNode(target, 0, IModelDelta.EXPAND | IModelDelta.SELECT, threads.length);
 				fireModelChanged(delta);
 			} catch (DebugException e) {
 			}

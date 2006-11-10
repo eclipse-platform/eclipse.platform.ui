@@ -59,5 +59,5 @@ public class DefaultVariableViewModelProxy extends EventHandlerModelProxy {
 		}
         return false;
     }
-
+	
 }

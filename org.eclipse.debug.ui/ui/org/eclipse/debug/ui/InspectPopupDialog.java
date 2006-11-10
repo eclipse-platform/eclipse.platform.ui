@@ -11,11 +11,10 @@
 
 package org.eclipse.debug.ui;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
@@ -23,16 +22,15 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.model.elements.ElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
-import org.eclipse.debug.internal.ui.views.variables.VariablesViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -72,7 +70,7 @@ public class InspectPopupDialog extends DebugPopup {
 
     private static final int MIN_HEIGHT = 200;
 
-    private VariablesViewer fVariablesViewer;
+    private TreeModelViewer fViewer;
 
     private IDebugModelPresentation fModelPresentation;
 
@@ -112,23 +110,18 @@ public class InspectPopupDialog extends DebugPopup {
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         VariablesView view = getViewToEmulate();
-
-        fVariablesViewer = new VariablesViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, null);
-        
         IPresentationContext context;
         if (view == null) {
         	context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
         } else {
-        	context = new PresentationContext(view);
+        	context = ((TreeModelViewer)view.getViewer()).getPresentationContext();
         }
-        fVariablesViewer.setContext(context);
+        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.VIRTUAL, context);
         fModelPresentation = new VariablesViewModelPresentation();
-        fVariablesViewer.setLabelProvider(fModelPresentation);
-
         fValueDisplay = new StyledText(fSashForm, SWT.NO_TRIM | SWT.WRAP | SWT.V_SCROLL);
         fValueDisplay.setEditable(false);
 
-        fTree = fVariablesViewer.getTree();
+        fTree = fViewer.getTree();
         fTree.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 try {
@@ -165,41 +158,44 @@ public class InspectPopupDialog extends DebugPopup {
         // sashForm.setWeights(getInitialSashWeights());
         fSashForm.setWeights(DEFAULT_SASH_WEIGHTS);
 
-        fVariablesViewer.getContentProvider();
+        fViewer.getContentProvider();
         if (view != null) {
             StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
             if (structuredViewer != null) {
                 ViewerFilter[] filters = structuredViewer.getFilters();
                 for (int i = 0; i < filters.length; i++) {
-                    fVariablesViewer.addFilter(filters[i]);
+                    fViewer.addFilter(filters[i]);
                 }
-            }
-
-            Map map = view.getPresentationAttributes(fExpression.getModelIdentifier());
-            Iterator iterator = map.keySet().iterator();
-            while (iterator.hasNext()) {
-                String key = (String) iterator.next();
-                fModelPresentation.setAttribute(key, map.get(key));
             }
         }
 
         TreeRoot treeRoot = new TreeRoot();
-        fVariablesViewer.setInput(treeRoot);
-        fVariablesViewer.expand(new TreeSelection(new TreePath(new Object[] {treeRoot, fExpression})));
+        fViewer.setInput(treeRoot);
+        fViewer.expandToLevel(new TreePath(new Object[] {fExpression}), 1);
 
         return fTree;
     }
 
-    private class TreeRoot extends AsynchronousContentAdapter {
-        protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
-            return new Object[] { fExpression };
-        }
-        protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
-            return true;
-        }
-        protected boolean supportsPartId(String id) {
-            return true;
-        }
+    private class TreeRoot extends ElementContentProvider {
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+		 */
+		protected int getChildCount(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+			return 1;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
+		 */
+		protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+			return new Object[] { fExpression };
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#supportsContextId(java.lang.String)
+		 */
+		protected boolean supportsContextId(String id) {
+			return true;
+		}
     }
     
     private void updateValueDisplay(IValue val) {
@@ -242,9 +238,6 @@ public class InspectPopupDialog extends DebugPopup {
      * @see org.eclipse.debug.ui.DebugPopup#close()
      */
     public boolean close() {
-    	if(fVariablesViewer != null) {
-    		fVariablesViewer.dispose();
-    	}
     	if(fModelPresentation != null) {
     		fModelPresentation.dispose();
     	}

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.provisional;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * A model proxy factory creates model proxies for elements based on 

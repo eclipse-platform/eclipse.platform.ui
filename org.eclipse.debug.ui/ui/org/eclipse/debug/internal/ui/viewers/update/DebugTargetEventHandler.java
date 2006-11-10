@@ -13,9 +13,9 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.provisional.ModelDelta;
 
 
 /**
@@ -60,7 +60,7 @@ public class DebugTargetEventHandler extends DebugEventHandler {
 	}
 
 	protected void handleTerminate(DebugEvent event) {
-		fireDelta((IDebugTarget) event.getSource(), IModelDelta.STATE);
+		fireDelta((IDebugTarget) event.getSource(), IModelDelta.STATE | IModelDelta.UNINSTALL);
 	}
 
 	private void fireDelta(IDebugTarget target, int flags) {

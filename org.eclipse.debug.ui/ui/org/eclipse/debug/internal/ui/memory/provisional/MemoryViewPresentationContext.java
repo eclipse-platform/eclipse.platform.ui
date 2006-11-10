@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.memory.provisional;
 
-import org.eclipse.debug.internal.ui.viewers.PresentationContext;
+import org.eclipse.debug.internal.ui.viewers.PartPresentationContext;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
@@ -24,7 +24,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
  * @since 3.2
  *
  */
-public class MemoryViewPresentationContext extends PresentationContext  {
+public class MemoryViewPresentationContext extends PartPresentationContext  {
 
 	private IMemoryRenderingContainer fContainer;	
 	private IMemoryRendering fRendering;			

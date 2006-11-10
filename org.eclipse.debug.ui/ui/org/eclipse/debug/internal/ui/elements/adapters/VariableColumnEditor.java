@@ -43,7 +43,7 @@ public class VariableColumnEditor extends AbstractColumnEditor {
 	 */
 	public ICellModifier getCellModifier() {
 		if (fCellModifier == null) {
-			fCellModifier = new DefaultVariableCellModifier(getPresentationContext());
+			fCellModifier = new DefaultVariableCellModifier();
 		}
 		return fCellModifier;
 	}

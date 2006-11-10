@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.FontData;
@@ -66,7 +67,7 @@ public abstract class AsynchronousLabelAdapter implements IAsynchronousLabelAdap
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getLabelRule(Object element, IPresentationContext context) {
-    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
 	
 	/**

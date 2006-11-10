@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
  * Abstract implementation of an asynchronous content adapter.
@@ -56,7 +57,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getRetrieveChildrenRule(Object parent, IPresentationContext context) {
-    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
     
 
@@ -86,7 +87,7 @@ public abstract class AsynchronousContentAdapter implements IAsynchronousContent
      * @return scheduling rule or <code>null</code>
      */
     protected ISchedulingRule getIsContainerRule(Object parent, IPresentationContext context) {
-    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerPartRule(context);
+    	return AsynchronousSchedulingRuleFactory.getDefault().newSerialPerObjectRule(context);
     }
     
     /**

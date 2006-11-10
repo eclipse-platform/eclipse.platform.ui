@@ -14,7 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -61,6 +64,18 @@ public class DebugElementHelper {
         Image image = getPresentation().getImage(object);
         return getImageDescriptor(image);
     }
+    
+    /**
+     * Returns an image descriptor for the given debug element.
+     *
+     * @param presentation presentation to obtain image from
+     * @param object object for which an image descriptor is required
+     * @since 3.3
+     */
+    public static ImageDescriptor getImageDescriptor(Object object, IDebugModelPresentation presentation) {
+    	Image image = presentation.getImage(object);
+        return getImageDescriptor(image);
+    }    
     
     public static ImageDescriptor getImageDescriptor(Image image)
     {
@@ -111,6 +126,30 @@ public class DebugElementHelper {
         }
         return null;
     }
+    
+    /**
+     * Returns the RGB of the foreground color for the given element, or
+     * <code>null</code> if none.
+     * 
+     * @param element object for which a foreground color is required
+     * @param presentation presentation to obtain color from
+     * @return the RGB of the foreground color for the given element, or
+     * <code>null</code> if none
+     * @since 3.3
+     */
+    public static RGB getForeground(Object element, IDebugModelPresentation presentation) {
+    	Color color = null;
+    	if (presentation instanceof IColorProvider) {
+			IColorProvider colorProvider = (IColorProvider) presentation;
+			color = colorProvider.getForeground(element);
+		} else {
+			color = getPresentation().getForeground(element);
+		}
+        if (color != null) {
+            return color.getRGB();
+        }
+        return null;
+    }    
 
     /**
      * Returns the RGB of the background color for the given element, or
@@ -127,6 +166,30 @@ public class DebugElementHelper {
         }
         return null;
     }
+    
+    /**
+     * Returns the RGB of the background color for the given element, or
+     * <code>null</code> if none.
+     * 
+     * @param element object for which a background color is required
+     * @param presentation presentation to use to retrieve color
+     * @return the RGB of the background color for the given element, or
+     * <code>null</code> if none
+     * @since 3.3
+     */
+    public static RGB getBackground(Object element, IDebugModelPresentation presentation) {
+    	Color color = null;
+    	if (presentation instanceof IColorProvider) {
+			IColorProvider colorProvider = (IColorProvider) presentation;
+			color = colorProvider.getBackground(element);
+		} else {
+			color = getPresentation().getBackground(element);
+		}
+        if (color != null) {
+            return color.getRGB();
+        }
+        return null;
+    }    
 
     /**
      * Returns the font data for the given element, or
@@ -143,4 +206,28 @@ public class DebugElementHelper {
         }
         return null;
     }
+    
+    /**
+     * Returns the font data for the given element, or
+     * <code>null</code> if none.
+     * 
+     * @param element object for which font data is required
+     * @param presentation presentation to obtain font from
+     * @return the font data for the given element, or
+     * <code>null</code> if none
+     * @since 3.3
+     */
+    public static FontData getFont(Object element, IDebugModelPresentation presentation) {
+    	Font font = null;
+    	if (presentation instanceof IFontProvider) {
+    		IFontProvider provider = (IFontProvider) presentation;
+    		font = provider.getFont(element);
+    	} else {
+    		font = getPresentation().getFont(element);
+    	}
+        if (font != null) {
+            return font.getFontData()[0];
+        }
+        return null;
+    }    
 }

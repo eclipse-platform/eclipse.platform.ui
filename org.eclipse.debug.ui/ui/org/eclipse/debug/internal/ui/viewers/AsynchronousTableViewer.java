@@ -161,7 +161,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.model.viewers.ModelNode)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#internalRefresh(org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelNode)
      */
     protected void internalRefresh(ModelNode node) {
         super.internalRefresh(node);
@@ -429,14 +429,14 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createModel()
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createModel()
 	 */
 	protected AsynchronousModel createModel() {
 		return new AsynchronousTableModel(this);
 	}
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#setItemCount(org.eclipse.swt.widgets.Widget, int)
      */
     protected void setItemCount(Widget parent, int itemCount) {
 		fTable.setItemCount(itemCount);
@@ -448,14 +448,14 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
     }   
 
     /* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#createUpdatePolicy()
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#createUpdatePolicy()
 	 */
 	public AbstractUpdatePolicy createUpdatePolicy() {
 		return new TableUpdatePolicy();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getParentWidget(org.eclipse.swt.widgets.Widget)
 	 */
 	protected Widget getParentWidget(Widget widget) {
 		if (widget instanceof TableItem) {
@@ -465,7 +465,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#getChildWidget(org.eclipse.swt.widgets.Widget, int)
 	 */
 	protected Widget getChildWidget(Widget parent, int index) {
 		if (index < fTable.getItemCount()) {
@@ -475,7 +475,7 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.model.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.AsynchronousViewer#clear(org.eclipse.swt.widgets.Widget)
 	 */
 	protected void clear(Widget item) {
 		if (item instanceof TableItem) {

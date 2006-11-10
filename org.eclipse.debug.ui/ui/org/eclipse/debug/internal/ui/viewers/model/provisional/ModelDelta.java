@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers.provisional;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
+
 
 
 
@@ -27,7 +28,8 @@ public class ModelDelta implements IModelDelta {
 	private int fFlags;
 	private ModelDelta[] fNodes = EMPTY_NODES;
 	private Object fReplacement;
-	private int fIndex;
+	private int fIndex = -1;
+	private int fChildCount = -1;
 	private static final ModelDelta[] EMPTY_NODES = new ModelDelta[0];
 
 	/**
@@ -67,6 +69,22 @@ public class ModelDelta implements IModelDelta {
         fElement = element;
         fIndex = index;
         fFlags = flags;
+    }
+    
+	/**
+	 * Constructs a new delta for the given element at the specified index
+	 * relative to its parent with the given number of children.
+	 * 
+	 * @param element model element
+	 * @param index insertion position
+	 * @param flags change flags
+	 * @param childCount number of children this node has
+	 */
+    public ModelDelta(Object element, int index, int flags, int childCount) {
+        fElement = element;
+        fIndex = index;
+        fFlags = flags;
+        fChildCount = childCount;
     }
 
     /* (non-Javadoc)
@@ -132,6 +150,23 @@ public class ModelDelta implements IModelDelta {
     }
     
     /**
+     * Adds a child delta to this delta at the specified index with the
+     * given number of children, and returns the newly created child delta.
+     * 
+     * @param element child element in insert
+     * @param index index of the element relative to parent
+     * @param flags change flags
+     * @param numChildren the number of children the element has
+     * @return newly created child delta
+     */
+    public ModelDelta addNode(Object element, int index, int flags, int numChildren) {
+        ModelDelta node = new ModelDelta(element, index, flags, numChildren);
+        node.setParent(this);
+        addDelta(node);
+        return node;
+    }
+    
+    /**
      * Sets the parent delta of this delta
      * 
      * @param node parent delta
@@ -143,7 +178,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getParent()
 	 */
-	public IModelDelta getParent() {
+	public IModelDelta getParentDelta() {
 		return fParent;
 	}
 
@@ -164,7 +199,7 @@ public class ModelDelta implements IModelDelta {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getNodes()
 	 */
-	public ModelDelta[] getNodes() {
+	public ModelDelta[] getChildDeltas() {
 		return fNodes;
 	}
 	
@@ -220,11 +255,63 @@ public class ModelDelta implements IModelDelta {
 			if ((flags & IModelDelta.STATE) > 0) {
 				buf.append("STATE | "); //$NON-NLS-1$
 			}
+			if ((flags & IModelDelta.INSTALL) > 0) {
+				buf.append("INSTALL | "); //$NON-NLS-1$
+			}
+			if ((flags & IModelDelta.UNINSTALL) > 0) {
+				buf.append("UNINSTALL | "); //$NON-NLS-1$
+			}
 		}
 		buf.append('\n');
-		ModelDelta[] nodes = delta.getNodes();
+		buf.append("\t\tIndex: "); //$NON-NLS-1$
+		buf.append(delta.fIndex);
+		buf.append(" Child Count: "); //$NON-NLS-1$
+		buf.append(delta.fChildCount);
+		buf.append('\n');
+		ModelDelta[] nodes = delta.getChildDeltas();
 		for (int i = 0; i < nodes.length; i++) {
 			appendDetail(buf, nodes[i]);
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#getChildCount()
+	 */
+	public int getChildCount() {
+		return fChildCount;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta#accept(org.eclipse.debug.internal.ui.viewers.provisional.IModelDeltaVisitor)
+	 */
+	public void accept(IModelDeltaVisitor visitor) {
+		doAccept(visitor, 0);
+	}
+	
+	protected void doAccept(IModelDeltaVisitor visitor, int depth) {
+		if (visitor.visit(this, depth)) {
+			ModelDelta[] childDeltas = getChildDeltas();
+			for (int i = 0; i < childDeltas.length; i++) {
+				childDeltas[i].doAccept(visitor, depth+1);
+			}
+		}
+	}
+	
+	/**
+	 * Sets this delta's element
+	 * 
+	 * @param element
+	 */
+	public void setElement(Object element) {
+		fElement = element;
+	}
+	
+	/**
+	 * Sets this delta's flags.
+	 * 
+	 * @param flags
+	 */
+	public void setFlags(int flags) {
+		fFlags = flags;
 	}
 }

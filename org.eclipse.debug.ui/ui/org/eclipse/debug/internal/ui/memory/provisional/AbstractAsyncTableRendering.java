@@ -34,8 +34,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelChangedListener;
-import org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractVirtualContentTableModel;
@@ -419,7 +420,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	};
 	
 	private IModelChangedListener fModelChangedListener = new IModelChangedListener() {
-		public void modelChanged(IModelDelta delta) {
+		public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 			if (delta.getElement() == getMemoryBlock())
 			{
 				showTable();

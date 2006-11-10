@@ -22,12 +22,11 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.ui.IWorkbenchPart;
 
 public class VariableContentAdapter extends AsynchronousContentAdapter {
 
@@ -175,11 +174,8 @@ public class VariableContentAdapter extends AsynchronousContentAdapter {
      * in the specified context
      */
     protected boolean isShowLogicalStructure(IPresentationContext context) {
-    	IWorkbenchPart part = context.getPart();
-    	if (part instanceof VariablesView) {
-			return ((VariablesView) part).isShowLogicalStructure();
-		}
-        return false;
+    	Boolean show = (Boolean) context.getProperty(VariablesView.PRESENTATION_SHOW_LOGICAL_STRUCTURES);
+    	return show != null && show.booleanValue();
     }
 
     /**

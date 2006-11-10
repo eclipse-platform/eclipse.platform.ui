@@ -15,11 +15,8 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.VariableValueEditorManager;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
 import org.eclipse.jface.viewers.ICellModifier;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * @since 3.2
@@ -27,12 +24,6 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class DefaultVariableCellModifier implements ICellModifier {
 	
-	private IPresentationContext fContext;
-	
-	public DefaultVariableCellModifier(IPresentationContext context) {
-		fContext = context;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#canModify(java.lang.Object, java.lang.String)
 	 */
@@ -72,36 +63,22 @@ public class DefaultVariableCellModifier implements ICellModifier {
 				if (element instanceof IVariable) {
 					IVariable variable = (IVariable) element;
 					IVariableValueEditor editor = VariableValueEditorManager.getDefault().getVariableValueEditor(variable.getModelIdentifier());
-					Shell shell = null;
-					IWorkbenchPart part = fContext.getPart();
-					if (part != null) {
-						shell = part.getSite().getShell();
-					}
 					if (value instanceof String) {
 						value = DefaultLabelProvider.encodeEsacpedChars((String)value);
 					}
 					if (editor != null) {
-						if  (editor.saveVariable(variable, (String) value, shell)) {
+						if  (editor.saveVariable(variable, (String) value, DebugUIPlugin.getShell())) {
 							return;
 						}
 					}
 					try {
 						variable.setValue((String) value);
 					} catch (DebugException e) {
-						DebugUIPlugin.errorDialog(shell, Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
+						DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), Messages.VariableColumnPresentation_4, Messages.VariableColumnPresentation_5, e.getStatus());
 					}
 				}
 	        }
 		}
-	}
-	
-	/**
-	 * Returns the context in which this cell modifier is being used.
-	 * 
-	 * @return presentation context
-	 */
-	protected IPresentationContext getPresentationContext() {
-		return fContext;
 	}
 
 }

@@ -8,15 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.viewers;
+package org.eclipse.debug.internal.ui.viewers.model.provisional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Presentation context.
@@ -27,22 +28,9 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public class PresentationContext implements IPresentationContext {
     
-    private IWorkbenchPart fPart;
     private String fId;
-    private String[] fColumns;
     private ListenerList fListeners = new ListenerList();
-    
-    /**
-     * Constructs a presentation context for the given part.
-     * 
-     * @param part workbench part
-     */
-    public PresentationContext(IWorkbenchPart part) {
-        fPart = part;
-        if (part != null) {
-        	fId = part.getSite().getId();
-        }
-    }
+    private Map fProperties = new HashMap();
     
     /**
      * Constructs a presentation context for the given id.
@@ -53,18 +41,11 @@ public class PresentationContext implements IPresentationContext {
     	fId = id;
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.viewers.IPresentationContext#getPart()
-     */
-    public IWorkbenchPart getPart() {
-        return fPart;
-    }
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getColumns()
 	 */
 	public String[] getColumns() {
-		return fColumns;
+		return (String[]) getProperty(IPresentationContext.PROPERTY_COLUMNS);
 	}
 	
 	/**
@@ -94,18 +75,17 @@ public class PresentationContext implements IPresentationContext {
 	 * 
 	 * @param ids column identifiers
 	 */
-	protected void setColumns(String[] ids) {
-		String[] oldValue = fColumns;
-		fColumns = ids;
-		firePropertyChange(IPresentationContext.PROPERTY_COLUMNS, oldValue, ids);
+	public void setColumns(String[] ids) {
+		setProperty(IPresentationContext.PROPERTY_COLUMNS, ids);
 	}
 	
-	/**
-	 * Disposes this presentation context.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#dispose()
 	 */
-	protected void dispose() {
+	public void dispose() {
 		fListeners.clear();
-		fPart = null;
+		fProperties.clear();
 	}
 
 	/* (non-Javadoc)
@@ -128,5 +108,35 @@ public class PresentationContext implements IPresentationContext {
 	public String getId() {
 		return fId;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#getProperty(java.lang.String)
+	 */
+	public Object getProperty(String property) {
+		synchronized (fProperties) {
+			return fProperties.get(property);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext#setProperty(java.lang.String, java.lang.Object)
+	 */
+	public void setProperty(String property, Object value) {
+		synchronized (fProperties) {
+			Object oldValue = fProperties.get(property);
+			if (!isEqual(oldValue, value)) {
+				fProperties.put(property, value);
+				firePropertyChange(property, oldValue, value);
+			}
+		}
+	}
+	
+	private boolean isEqual(Object a, Object b) {
+		if (a == null) {
+			return b == null;
+		}
+		return a.equals(b);
+	}
+	
 
 }
