@@ -62,14 +62,14 @@ public class TextUtilities {
 	}
 
 	/**
-	 * Returns the starting position and the index of the longest matching search string
-	 * in the given text that is greater than the given offset. Returns <code>[-1, -1]</code>
-	 * if no match can be found.
+	 * Returns the starting position and the index of the first matching search string
+	 * in the given text that is greater than the given offset. If more than one search
+	 * string matches with the same starting position then the longest one is returned.
 	 *
 	 * @param searchStrings the strings to search for
 	 * @param text the text to be searched
 	 * @param offset the offset at which to start the search
-	 * @return an <code>int[]</code> with two elements" the first is the starting offset, the second the index of the found
+	 * @return an <code>int[]</code> with two elements where the first is the starting offset, the second the index of the found
 	 * 		search string in the given <code>searchStrings</code> array, returns <code>[-1, -1]</code> if no match exists
 	 */
 	public static int[] indexOf(String[] searchStrings, String text, int offset) {
