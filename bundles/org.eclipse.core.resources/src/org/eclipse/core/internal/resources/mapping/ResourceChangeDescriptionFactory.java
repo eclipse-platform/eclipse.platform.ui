@@ -62,7 +62,9 @@ public class ResourceChangeDescriptionFactory implements IResourceChangeDescript
 		if (delta.getKind() == 0)
 			delta.setKind(IResourceDelta.CHANGED);
 		//the CONTENT flag only applies to the changed and moved from cases
-		if (delta.getKind() == IResourceDelta.CHANGED || (delta.getFlags() & IResourceDelta.MOVED_FROM) != 0)
+		if (delta.getKind() == IResourceDelta.CHANGED 
+				|| (delta.getFlags() & IResourceDelta.MOVED_FROM) != 0
+				|| (delta.getFlags() & IResourceDelta.COPIED_FROM) != 0)
 			delta.addFlags(IResourceDelta.CONTENT);
 	}
 
