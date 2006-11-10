@@ -14,9 +14,10 @@ package org.eclipse.jface.internal.databinding.provisional.factories;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.DefaultBindSupportFactory;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
 import org.eclipse.swt.widgets.Display;

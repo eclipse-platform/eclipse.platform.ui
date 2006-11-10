@@ -7,12 +7,12 @@ Bundle-ClassPath: jfacebindingtests.jar
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Eclipse-LazyStart: true
-Require-Bundle: org.eclipse.jface.databinding,
+Require-Bundle: org.eclipse.core.databinding,
  org.junit,
  org.eclipse.swt,
  org.eclipse.jface,
  org.eclipse.core.runtime,
  org.eclipse.jface.examples.databinding,
- org.eclipse.jface.databinding.beans,
- org.eclipse.jface.databinding.ui
+ org.eclipse.core.databinding.beans,
+ org.eclipse.jface.databinding
 

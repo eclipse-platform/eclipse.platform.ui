@@ -13,6 +13,9 @@ package org.eclipse.jface.internal.databinding.provisional.validation;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
+import org.eclipse.core.databinding.validation.ValidationError;
+
 /**
  * @since 3.2
  *

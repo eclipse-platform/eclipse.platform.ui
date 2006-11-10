@@ -18,9 +18,9 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.value.ComputedValue;
-import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 

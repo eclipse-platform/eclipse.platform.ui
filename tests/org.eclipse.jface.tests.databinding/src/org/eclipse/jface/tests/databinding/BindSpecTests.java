@@ -14,11 +14,11 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.IValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
+import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.validation.IDomainValidator;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationError;
 
 /**
  * Unit tests for the BindSpec class.

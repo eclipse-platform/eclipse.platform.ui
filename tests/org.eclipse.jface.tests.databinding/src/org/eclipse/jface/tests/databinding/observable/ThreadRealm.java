@@ -2,7 +2,7 @@ package org.eclipse.jface.tests.databinding.observable;
 
 import java.util.LinkedList;
 
-import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.util.Assert;
 
 /**

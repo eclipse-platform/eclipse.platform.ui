@@ -7,10 +7,10 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.jface,
- org.eclipse.jface.databinding,
+ org.eclipse.core.databinding,
  org.eclipse.core.runtime,
- org.eclipse.jface.databinding.beans,
- org.eclipse.jface.databinding.ui
+ org.eclipse.core.databinding.beans,
+ org.eclipse.jface.databinding
 Eclipse-LazyStart: true
 Export-Package: org.eclipse.jface.examples.databinding;x-internal:=false,
  org.eclipse.jface.examples.databinding.mask;x-internal:=false,

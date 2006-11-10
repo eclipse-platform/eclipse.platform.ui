@@ -15,10 +15,10 @@ package org.eclipse.jface.examples.databinding.snippets;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.value.ComputedValue;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.TableUpdater;
 import org.eclipse.jface.layout.GridLayoutFactory;

@@ -13,11 +13,11 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.Diffs;
-import org.eclipse.jface.databinding.observable.IChangeListener;
-import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 

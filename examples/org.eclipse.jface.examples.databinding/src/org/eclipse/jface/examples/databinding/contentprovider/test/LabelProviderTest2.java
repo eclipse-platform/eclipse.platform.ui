@@ -14,11 +14,11 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 
 import java.util.Collections;
 
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.list.WritableList;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
-import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;

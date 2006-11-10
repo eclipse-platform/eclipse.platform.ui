@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.contentprovider.test;
 
-import org.eclipse.jface.databinding.observable.Observables;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.set.IObservableSet;
-import org.eclipse.jface.databinding.observable.set.UnionSet;
-import org.eclipse.jface.databinding.observable.set.WritableSet;
-import org.eclipse.jface.databinding.observable.tree.IUnorderedTreeProvider;
-import org.eclipse.jface.databinding.observable.tree.TreePath;
+import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.set.UnionSet;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.databinding.observable.tree.IUnorderedTreeProvider;
+import org.eclipse.core.databinding.observable.tree.TreePath;
 import org.eclipse.jface.databinding.viewers.UnorderedTreeContentProvider;
 import org.eclipse.jface.internal.databinding.provisional.viewers.ViewerLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;

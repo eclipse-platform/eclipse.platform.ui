@@ -12,13 +12,13 @@
 
 package org.eclipse.jface.examples.databinding.nestedselection;
 
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.list.IObservableList;
-import org.eclipse.jface.databinding.observable.list.WritableList;
-import org.eclipse.jface.databinding.observable.map.IObservableMap;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;

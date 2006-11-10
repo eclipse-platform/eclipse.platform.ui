@@ -14,8 +14,8 @@ package org.eclipse.jface.examples.databinding.snippets;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.provisional.swt.MenuUpdater;
 import org.eclipse.swt.SWT;

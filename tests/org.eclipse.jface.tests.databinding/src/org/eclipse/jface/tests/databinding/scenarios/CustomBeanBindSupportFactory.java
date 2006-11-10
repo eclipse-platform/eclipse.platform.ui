@@ -14,10 +14,10 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.Method;
 
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.internal.databinding.provisional.conversion.IConverter;
-import org.eclipse.jface.internal.databinding.provisional.factories.BindSupportFactory;
-import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
+import org.eclipse.core.databinding.BindSupportFactory;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.validation.IDomainValidator;
 
 /**
  * A BindSupportFactory that will automatically grab validators from an object's

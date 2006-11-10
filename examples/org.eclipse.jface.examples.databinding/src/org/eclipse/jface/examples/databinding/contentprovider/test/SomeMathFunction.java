@@ -13,9 +13,9 @@ package org.eclipse.jface.examples.databinding.contentprovider.test;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.jface.databinding.observable.map.ComputedObservableMap;
-import org.eclipse.jface.databinding.observable.map.MapDiff;
-import org.eclipse.jface.databinding.observable.set.IObservableSet;
+import org.eclipse.core.databinding.observable.map.ComputedObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
+import org.eclipse.core.databinding.observable.set.IObservableSet;
 
 /**
  * Simple function that performs one of three operations on Doubles:

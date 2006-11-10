@@ -14,17 +14,17 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.Binding;
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.IBindingListener;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
-import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.BindingEvent;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.IBindingListener;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.internal.ValueBinding;
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -132,7 +132,7 @@ public class ValueBindingTest extends TestCase {
         // Now test forcing an error from the event handler...
         binding.addBindingEventListener(new IBindingListener() {
             public ValidationError bindingEvent(BindingEvent e) {
-                if (e.pipelinePosition == org.eclipse.jface.databinding.BindingEvent.PIPELINE_AFTER_CONVERT) {
+                if (e.pipelinePosition == BindingEvent.PIPELINE_AFTER_CONVERT) {
                     return ValidationError.error("error");
                 }
                 return null;

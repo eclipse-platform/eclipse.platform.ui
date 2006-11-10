@@ -15,10 +15,10 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.list.ListDiff;
-import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
-import org.eclipse.jface.databinding.observable.set.SetDiff;
-import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 
 /**
  * @since 3.2

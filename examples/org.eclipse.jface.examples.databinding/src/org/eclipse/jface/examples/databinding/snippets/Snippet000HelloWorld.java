@@ -12,9 +12,9 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.Realm;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;

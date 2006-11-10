@@ -16,16 +16,16 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.Diffs;
-import org.eclipse.jface.databinding.observable.IChangeListener;
-import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.IStaleListener;
-import org.eclipse.jface.databinding.observable.Observables;
-import org.eclipse.jface.databinding.observable.list.IListChangeListener;
-import org.eclipse.jface.databinding.observable.list.IObservableList;
-import org.eclipse.jface.databinding.observable.list.ListDiff;
-import org.eclipse.jface.databinding.observable.list.ListDiffEntry;
-import org.eclipse.jface.databinding.observable.list.ObservableList;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.list.IListChangeListener;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListDiffEntry;
+import org.eclipse.core.databinding.observable.list.ObservableList;
 
 public class UnmodifiableObservableListTest extends TestCase {
 	ObservableList unmodifiable;

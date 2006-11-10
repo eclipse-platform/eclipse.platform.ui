@@ -14,7 +14,8 @@ package org.eclipse.jface.internal.databinding.provisional.conversion;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.BindingException;
+import org.eclipse.core.databinding.BindingException;
+import org.eclipse.core.databinding.conversion.IdentityConverter;
 
 /**
  * @since 3.2

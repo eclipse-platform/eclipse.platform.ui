@@ -13,11 +13,11 @@ package org.eclipse.jface.tests.databinding.scenarios;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.jface.databinding.beans.BeansObservables;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.masterdetail.MasterDetailObservables;
-import org.eclipse.jface.databinding.observable.value.ComputedValue;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;

@@ -13,12 +13,12 @@ package org.eclipse.jface.tests.databinding.observable;
 
 import java.util.LinkedList;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.databinding.observable.Realm;
 
 /**
  * @since 3.2

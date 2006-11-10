@@ -12,7 +12,7 @@
 
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.jface.databinding.beans.BeansObservables;
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Text;

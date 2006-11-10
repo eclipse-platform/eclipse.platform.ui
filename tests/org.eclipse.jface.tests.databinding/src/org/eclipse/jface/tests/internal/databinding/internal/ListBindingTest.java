@@ -14,14 +14,14 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.Binding;
-import org.eclipse.jface.databinding.BindingEvent;
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.IBindingListener;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.BindingEvent;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.IBindingListener;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.validation.ValidationError;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.swt.widgets.Display;
 
 /**

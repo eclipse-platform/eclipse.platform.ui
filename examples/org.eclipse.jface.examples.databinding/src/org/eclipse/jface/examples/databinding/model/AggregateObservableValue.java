@@ -12,11 +12,11 @@ package org.eclipse.jface.examples.databinding.model;
 
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.databinding.observable.Diffs;
-import org.eclipse.jface.databinding.observable.value.AbstractObservableValue;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
-import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 
 /**
  * @since 3.2

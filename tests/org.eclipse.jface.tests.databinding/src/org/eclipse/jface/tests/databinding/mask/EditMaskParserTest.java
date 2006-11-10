@@ -11,10 +11,10 @@
 
 package org.eclipse.jface.tests.databinding.mask;
 
+import junit.framework.TestCase;
+
 import org.eclipse.jface.examples.databinding.mask.EditMaskParseException;
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
-
-import junit.framework.TestCase;
 
 /**
  * @since 3.2

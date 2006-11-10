@@ -18,8 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.jface.databinding.observable.Diffs;
-import org.eclipse.jface.databinding.observable.set.ObservableSet;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.set.ObservableSet;
 import org.eclipse.swt.widgets.Display;
 
 /**

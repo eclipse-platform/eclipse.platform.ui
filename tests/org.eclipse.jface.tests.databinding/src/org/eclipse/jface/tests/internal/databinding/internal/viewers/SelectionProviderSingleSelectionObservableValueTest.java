@@ -13,10 +13,10 @@ package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.IObservable;
-import org.eclipse.jface.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.observable.value.IValueChangeListener;
-import org.eclipse.jface.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
 import org.eclipse.jface.viewers.ISelectionProvider;

@@ -17,11 +17,11 @@ import java.beans.PropertyDescriptor;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jface.databinding.observable.map.IMapChangeListener;
-import org.eclipse.jface.databinding.observable.map.IObservableMap;
-import org.eclipse.jface.databinding.observable.map.MapDiff;
-import org.eclipse.jface.databinding.observable.set.WritableSet;
-import org.eclipse.jface.internal.databinding.internal.beans.JavaBeanObservableMap;
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapDiff;
+import org.eclipse.core.databinding.observable.set.WritableSet;
+import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableMap;
 import org.eclipse.jface.tests.databinding.observable.ThreadRealm;
 
 /**

@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.examples.databinding.ModelObject;
 

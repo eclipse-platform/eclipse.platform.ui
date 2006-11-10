@@ -12,13 +12,13 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.jface.databinding.BindSpec;
-import org.eclipse.jface.databinding.DataBindingContext;
-import org.eclipse.jface.databinding.observable.Realm;
-import org.eclipse.jface.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IDomainValidator;
+import org.eclipse.core.databinding.validation.ValidationError;
 import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;

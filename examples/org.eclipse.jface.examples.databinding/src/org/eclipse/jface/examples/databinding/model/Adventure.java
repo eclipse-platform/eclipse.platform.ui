@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
+import org.eclipse.core.databinding.validation.IDomainValidator;
+import org.eclipse.core.databinding.validation.ValidationError;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.jface.internal.databinding.provisional.validation.IDomainValidator;
-import org.eclipse.jface.internal.databinding.provisional.validation.ValidationError;
 
 public class Adventure extends ModelObject {
 

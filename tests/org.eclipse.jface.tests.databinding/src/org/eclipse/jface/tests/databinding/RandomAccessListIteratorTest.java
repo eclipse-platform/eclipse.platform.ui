@@ -3,9 +3,9 @@ package org.eclipse.jface.tests.databinding;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.internal.RandomAccessListIterator;
-
 import junit.framework.TestCase;
+
+import org.eclipse.core.internal.databinding.RandomAccessListIterator;
 
 public class RandomAccessListIteratorTest extends TestCase {
 
