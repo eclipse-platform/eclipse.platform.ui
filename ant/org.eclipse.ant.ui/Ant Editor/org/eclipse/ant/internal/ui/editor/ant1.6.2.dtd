@@ -4029,7 +4029,8 @@
 <!ATTLIST condition
           id ID #IMPLIED
           value CDATA #IMPLIED
-          property CDATA #IMPLIED>
+          property CDATA #IMPLIED
+          else CDATA #IMPLIED>
 
 <!ELEMENT tempfile EMPTY>
 <!ATTLIST tempfile

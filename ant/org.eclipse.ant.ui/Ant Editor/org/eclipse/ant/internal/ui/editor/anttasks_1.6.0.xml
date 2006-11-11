@@ -1324,6 +1324,11 @@
  Defaults to "true".
         </description>
         </attribute>
+		<attribute name="else" required="no">
+          <description>
+          The value to set the property to if the condition evaluates to false. By default the property will remain unset. Since Ant 1.6.3.
+        </description>
+        </attribute>
       </attributes>
     
       <elements>
