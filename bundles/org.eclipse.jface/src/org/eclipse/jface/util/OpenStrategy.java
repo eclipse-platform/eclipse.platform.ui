@@ -161,7 +161,6 @@ public class OpenStrategy {
      * the framework.
      * @return the current used single/double-click method
      * 
-     * @see OpenStrategy#CURRENT_METHOD
      */
     public static int getOpenMethod() {
         return CURRENT_METHOD;
