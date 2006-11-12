@@ -53,12 +53,21 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	String getCommandString() {
+		return WorkbenchMessages.Operations_redoCommand;
+	}
+	
+	String getTooltipString() {
+		return WorkbenchMessages.Operations_redoTooltipCommand;
+	}
+	
+	String getSimpleCommandString() {
 		return WorkbenchMessages.Workbench_redo;
 	}
 	
-	String getCommandTooltip() {
+	String getSimpleTooltipString() {
 		return WorkbenchMessages.Workbench_redoToolTip;
 	}
+
 
 	IUndoableOperation getOperation() {
 		return getHistory().getRedoOperation(undoContext);

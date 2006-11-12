@@ -239,14 +239,28 @@ public abstract class OperationHistoryActionHandler extends Action implements
 	abstract void flush();
 
 	/*
-	 * Return the string describing the command.
+	 * Return the string describing the command, including the binding for the
+	 * operation label.
 	 */
 	abstract String getCommandString();
 
 	/*
-	 * Return the string describing the command for a tooltip.
+	 * Return the string describing the command for a tooltip, including the
+	 * binding for the operation label.
 	 */
-	abstract String getCommandTooltip();
+	abstract String getTooltipString();
+
+	/*
+	 * Return the simple string describing the command, with no binding to any
+	 * operation.
+	 */
+	abstract String getSimpleCommandString();
+
+	/*
+	 * Return the simple string describing the tooltip, with no binding to any
+	 * operation.
+	 */
+	abstract String getSimpleTooltipString();
 
 	/*
 	 * Return the operation history we are using.
@@ -411,19 +425,17 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		}
 
 		boolean enabled = shouldBeEnabled();
-		String text = getCommandString();
-		String tooltipCommand = getCommandTooltip();
-		String tooltipText;
+		String text, tooltipText;
 		if (enabled) {
-			tooltipText = NLS.bind(
-					WorkbenchMessages.Operations_undoRedoCommand,
-					tooltipCommand, getOperation().getLabel());
-			text = NLS.bind(WorkbenchMessages.Operations_undoRedoCommand, text,
-					shortenText(getOperation().getLabel()));
+			tooltipText = NLS.bind(getTooltipString(), getOperation()
+					.getLabel());
+			text = NLS.bind(getCommandString(), shortenText(getOperation()
+					.getLabel()));
 		} else {
 			tooltipText = NLS.bind(
 					WorkbenchMessages.Operations_undoRedoCommandDisabled,
-					tooltipCommand);
+					getSimpleTooltipString());
+			text = getSimpleCommandString();
 			/*
 			 * if there is nothing to do and we are pruning the history, flush
 			 * the history of this context.
