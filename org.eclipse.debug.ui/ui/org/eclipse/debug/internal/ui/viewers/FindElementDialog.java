@@ -19,21 +19,21 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 
 /**
- * A dialog used to navigate to an element in an asynchronous
- * tree viewer. Must be created on corresponding label provider.
+ * A dialog used to select elements from a list.
  * 
- * @since 3.2
+ * @since 3.3
  *
  */
-public class AsynchronousTreeNavigationDialog extends ElementListSelectionDialog {
+public class FindElementDialog extends ElementListSelectionDialog {
 	
 	/**
 	 * Constructs a dialog to navigate to an element in the given viewer.
 	 * 
-	 * @param viewer
-	 * @param provider
+	 * @param shell shell to open on
+	 * @param provider label provider
+	 * @param elements elements to choose from
 	 */
-	public AsynchronousTreeNavigationDialog(Shell shell, ILabelProvider provider, Object[] elements) {
+	public FindElementDialog(Shell shell, ILabelProvider provider, Object[] elements) {
 		super(shell, provider);
 		setElements(elements);
 		setMultipleSelection(false);

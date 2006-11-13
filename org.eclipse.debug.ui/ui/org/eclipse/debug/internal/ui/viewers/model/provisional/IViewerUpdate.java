@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -19,7 +18,7 @@ import org.eclipse.jface.viewers.TreePath;
  * 
  * @since 3.3
  */
-public interface IViewerUpdate extends IProgressMonitor {
+public interface IViewerUpdate extends IStatusMonitor {
 
 	/**
 	 * Returns the context this update was requested in.
@@ -27,22 +26,6 @@ public interface IViewerUpdate extends IProgressMonitor {
 	 * @return context this update was requested in
 	 */
 	public IPresentationContext getPresentationContext();
-	
-    /**
-     * Sets the status of this request, possibly <code>null</code>.
-     * When a request fails, the status indicates why the request failed.
-     * A <code>null</code> status is considered to be successful.
-     * 
-     * @param status request status
-     */
-    public void setStatus(IStatus status);
-    
-    /**
-     * Returns the status of this request, or <code>null</code>.
-     * 
-     * @return request status or <code>null</code>
-     */
-    public IStatus getStatus();	
     
     /**
      * Returns the model element corresponding to the given tree path.

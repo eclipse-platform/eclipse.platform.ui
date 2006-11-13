@@ -60,6 +60,7 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 			fNumColumns = columnIds.length;
 		}
 		fLabels = new String[fNumColumns];
+		fProvider.updateStarted(this);
 	}
 
 	/* (non-Javadoc)
@@ -214,6 +215,7 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 				}
 			}
 		}
+		fProvider.updateComplete(this);
 	}
 
 	/* (non-Javadoc)

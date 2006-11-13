@@ -29,6 +29,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ICellModifier;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -129,7 +130,7 @@ public class InternalTreeModelViewer extends TreeViewer {
 	private boolean fInserting = false;
 	
 	/**
-	 * Whether to notify the content provider of an un-map operation
+	 * Whether to notify the content provider when an element is unmapped
 	 */
 	private boolean fNotifyUnmap = true;
 	
@@ -273,7 +274,8 @@ public class InternalTreeModelViewer extends TreeViewer {
 	
 	/* (non-Javadoc)
 	 * 
-	 * TODO: workaround for bug 159461
+	 * Workaround for bug 159461: when an item is cleared it's label is cleared. To avoid
+	 * flashing, restore its label to its previous value.
 	 * 
 	 * @see org.eclipse.jface.viewers.TreeViewer#hookControl(org.eclipse.swt.widgets.Control)
 	 */
@@ -286,7 +288,9 @@ public class InternalTreeModelViewer extends TreeViewer {
 				Object[] labels = (Object[]) item.getData(LabelUpdate.PREV_LABEL_KEY);
 				if (labels != null) {
 					for (int i = 0; i < labels.length; i++) {
-						item.setText(i, (String)labels[i]);
+						if (labels[i] != null) {
+							item.setText(i, (String)labels[i]);
+						}
 					}
 				}
 				Object[] images = (Object[]) item.getData(LabelUpdate.PREV_IMAGE_KEY);
@@ -575,7 +579,7 @@ public class InternalTreeModelViewer extends TreeViewer {
     /**
      * Creates new columns for the given presentation.
      * 
-     * TODO: does this need to be async?
+     * TODO: does this need to be asynchronous?
      * 
      * @param presentation
      */
@@ -945,4 +949,38 @@ public class InternalTreeModelViewer extends TreeViewer {
 		}
 	}
 	
+	/**
+	 * Forces unmapped virtual items to populate 
+	 */
+	boolean populateVitrualItems() {
+		Tree tree = getTree();
+		return populateVitrualItems(TreePath.EMPTY, tree.getItems());
+	}
+
+	/**
+	 * @param items
+	 */
+	private boolean populateVitrualItems(TreePath parentPath, TreeItem[] items) {
+		boolean queued = false;
+		for (int i = 0; i < items.length; i++) {
+			TreeItem treeItem = items[i];
+			if (treeItem.getData() == null) {
+				queued = true;
+				((ILazyTreePathContentProvider)getContentProvider()).updateElement(parentPath, i);
+			}
+			if (treeItem.getExpanded()) {
+				queued = populateVitrualItems(parentPath.createChildPath(treeItem.getData()), treeItem.getItems()) | queued;
+			}
+		}
+		return queued;
+	}
+	
+	void addLabelUpdateListener(ILabelUpdateListener listener) {
+		((TreeModelLabelProvider)getLabelProvider()).addLabelUpdateListener(listener);
+	}
+	
+	void removeLabelUpdateListener(ILabelUpdateListener listener) {
+		((TreeModelLabelProvider)getLabelProvider()).removeLabelUpdateListener(listener);
+	}
+
 }

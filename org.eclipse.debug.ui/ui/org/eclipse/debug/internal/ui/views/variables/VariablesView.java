@@ -48,6 +48,7 @@ import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction
 import org.eclipse.debug.internal.ui.actions.variables.ShowTypesAction;
 import org.eclipse.debug.internal.ui.actions.variables.ToggleDetailPaneAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.VirtualFindAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
@@ -215,7 +216,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 	
 	/**
-	 * Retargets the find action to the details area or tree viewer.
+	 * Re-targets the find action to the details area or tree viewer.
 	 * 
 	 * @since 3.2
 	 */
@@ -738,7 +739,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	}
 
 	/**
-	 * @return the pref key for the variables view details pane
+	 * @return the preference key for the variables view details pane
 	 */
 	protected String getDetailPanePreferenceKey() {
 		return IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION;
@@ -1006,9 +1007,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
-		//TODO:
-		//action= new FindElementAction(this, getVariablesViewer());
-		//setAction(FIND_ELEMENT, action);
+		action= new VirtualFindAction(getVariablesViewer());
+		setAction(FIND_ELEMENT, action);
 		
 		// TODO: Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
@@ -1146,8 +1146,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		// TODO:
-		//menu.add(getAction(FIND_ELEMENT));
+		menu.add(getAction(FIND_ELEMENT));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		IAction action = new AvailableLogicalStructuresAction(this);
 		if (action.isEnabled()) {

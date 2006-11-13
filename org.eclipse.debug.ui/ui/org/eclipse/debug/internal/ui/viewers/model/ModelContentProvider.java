@@ -134,10 +134,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	/**
 	 * Update type constants
 	 */
-	private static final int UPDATE_SEQUENCE_BEGINS = 0;
-	private static final int UPDATE_SEQUENCE_COMPLETE = 1;
-	private static final int UPDATE_BEGINS = 2;
-	private static final int UPDATE_COMPLETE = 3;
+	static final int UPDATE_SEQUENCE_BEGINS = 0;
+	static final int UPDATE_SEQUENCE_COMPLETE = 1;
+	static final int UPDATE_BEGINS = 2;
+	static final int UPDATE_COMPLETE = 3;
 	
 	/**
 	 * Constant for an empty tree path.

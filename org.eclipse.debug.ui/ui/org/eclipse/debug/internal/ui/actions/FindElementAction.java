@@ -19,7 +19,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeNavigationDialog;
+import org.eclipse.debug.internal.ui.viewers.FindElementDialog;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.ILabelResult;
 import org.eclipse.jface.action.Action;
@@ -114,7 +114,7 @@ public class FindElementAction extends Action implements IUpdate {
 	}
 
 	protected void performFind() {
-		AsynchronousTreeNavigationDialog dialog = new AsynchronousTreeNavigationDialog(fView.getSite().getShell(), new FindLabelProvider(), fElementToResult.keySet().toArray()); 
+		FindElementDialog dialog = new FindElementDialog(fView.getSite().getShell(), new FindLabelProvider(), fElementToResult.keySet().toArray()); 
 		dialog.setTitle(ActionMessages.FindDialog_3);
 		dialog.setMessage(ActionMessages.FindDialog_1);
 		if (dialog.open() == Window.OK) {

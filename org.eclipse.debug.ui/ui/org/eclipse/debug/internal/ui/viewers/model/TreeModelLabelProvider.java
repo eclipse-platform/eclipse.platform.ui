@@ -18,8 +18,12 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -64,6 +68,16 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 	 * RGB values. The colors are disposed with this label provider.
 	 */
 	private Map fColorCache = new HashMap();
+	
+	/**
+	 * Label listeners
+	 */
+	private ListenerList fLabelListeners = new ListenerList();
+	
+	/**
+	 * List of updates in progress
+	 */
+	private List fUpdatesInProgress = new ArrayList();
 	
 	/**
 	 * Constructs a new label provider on the given display
@@ -236,5 +250,77 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 		}
 		fComplete.add(update);
     }
+    
+	void addLabelUpdateListener(ILabelUpdateListener listener) {
+		fLabelListeners.add(listener);
+	}
+	
+	void removeLabelUpdateListener(ILabelUpdateListener listener) {
+		fLabelListeners.remove(listener);
+	}
+	
+	/**
+	 * Notification an update request has started
+	 * 
+	 * @param update
+	 */
+	void updateStarted(ILabelUpdate update) {
+		boolean begin = false;
+		synchronized (fUpdatesInProgress) {
+			begin = fUpdatesInProgress.isEmpty();
+			fUpdatesInProgress.add(update);
+		}
+		if (begin) {
+			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
+		}
+		notifyUpdate(ModelContentProvider.UPDATE_BEGINS, update);
+	}
+	
+	/**
+	 * Notification an update request has completed
+	 * 
+	 * @param update
+	 */
+	void updateComplete(ILabelUpdate update) {
+		boolean end = false;
+		synchronized (fUpdatesInProgress) {
+			fUpdatesInProgress.remove(update);
+			end = fUpdatesInProgress.isEmpty();
+		}
+		notifyUpdate(ModelContentProvider.UPDATE_COMPLETE, update);
+		if (end) {
+			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
+		}
+	}
+	
+	protected void notifyUpdate(final int type, final ILabelUpdate update) {
+		if (!fLabelListeners.isEmpty()) {
+			Object[] listeners = fLabelListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				final ILabelUpdateListener listener = (ILabelUpdateListener) listeners[i];
+				SafeRunner.run(new ISafeRunnable() {
+					public void run() throws Exception {
+						switch (type) {
+							case ModelContentProvider.UPDATE_SEQUENCE_BEGINS:
+								listener.labelUpdatesBegin();
+								break;
+							case ModelContentProvider.UPDATE_SEQUENCE_COMPLETE:
+								listener.labelUpdatesComplete();
+								break;
+							case ModelContentProvider.UPDATE_BEGINS:
+								listener.labelUpdateStarted(update);
+								break;
+							case ModelContentProvider.UPDATE_COMPLETE:
+								listener.labelUpdateComplete(update);
+								break;
+						}
+					}
+					public void handleException(Throwable exception) {
+						DebugUIPlugin.log(exception);
+					}
+				});
+			}
+		}
+	}
 
 }

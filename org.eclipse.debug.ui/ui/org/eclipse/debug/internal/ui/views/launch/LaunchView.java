@@ -49,6 +49,8 @@ import org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersAction;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
+import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.VirtualFindAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
@@ -247,7 +249,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fAddToFavoritesAction = new AddToFavoritesAction();
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
-		//setAction(FIND_ACTION, new FindElementAction(this, (AsynchronousTreeViewer) getViewer())); // TODO:
+		setAction(FIND_ACTION, new VirtualFindAction((InternalTreeModelViewer) getViewer())); 
         
         addCapabilityAction(new TerminateCommandAction(), TERMINATE);
         addCapabilityAction(new DisconnectCommandAction(), DISCONNECT);
@@ -564,7 +566,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
-		//menu.add(getAction(FIND_ACTION)); TODO:
+		menu.add(getAction(FIND_ACTION));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));

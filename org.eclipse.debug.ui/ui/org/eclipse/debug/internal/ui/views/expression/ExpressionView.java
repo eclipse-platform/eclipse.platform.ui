@@ -70,8 +70,7 @@ public class ExpressionView extends VariablesView {
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		// TODO:
-		//menu.add(getAction(FIND_ELEMENT));
+		menu.add(getAction(FIND_ELEMENT));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
 		IAction action = new AvailableLogicalStructuresAction(this);
         if (action.isEnabled()) {
@@ -87,6 +86,8 @@ public class ExpressionView extends VariablesView {
 		}
 		// update actions
 		updateAction("ContentAssist"); //$NON-NLS-1$
+		updateAction(FIND_ELEMENT);
+		updateAction(FIND_ACTION);
 	}
 
 	/* (non-Javadoc)
