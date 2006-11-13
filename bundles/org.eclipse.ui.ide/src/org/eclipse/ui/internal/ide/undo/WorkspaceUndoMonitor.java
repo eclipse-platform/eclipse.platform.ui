@@ -150,6 +150,12 @@ public class WorkspaceUndoMonitor {
 			 * @see org.eclipse.core.commands.operations.IOperationHistoryListener#historyNotification(org.eclipse.core.commands.operations.OperationHistoryEvent)
 			 */
 			public void historyNotification(OperationHistoryEvent event) {
+				// We only care about events that have the workspace undo
+				// context.
+				if (!event.getOperation().hasContext(
+						WorkspaceUndoUtil.getWorkspaceUndoContext())) {
+					return;
+				}
 				switch (event.getEventType()) {
 				case OperationHistoryEvent.ABOUT_TO_EXECUTE:
 				case OperationHistoryEvent.ABOUT_TO_UNDO:
