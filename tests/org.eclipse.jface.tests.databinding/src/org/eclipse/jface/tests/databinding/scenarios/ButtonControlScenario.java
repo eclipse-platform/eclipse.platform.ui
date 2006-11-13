@@ -45,7 +45,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
 
     public void testScenario01() {
         // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.getSelection(button),
+        getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
@@ -74,7 +74,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         button.dispose();
         button = new Button(getComposite(), SWT.TOGGLE);
         // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.getSelection(button),
+        getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 
@@ -98,7 +98,7 @@ public class ButtonControlScenario extends ScenariosTestCase {
         button = new Button(getComposite(), SWT.RADIO);
 
         // Bind the button's selection to the adventure "isPetsAllowed"
-        getDbc().bindValue(SWTObservables.getSelection(button),
+        getDbc().bindValue(SWTObservables.observeSelection(button),
                 BeansObservables.observeValue(adventure, "petsAllowed"),
                 null);
 

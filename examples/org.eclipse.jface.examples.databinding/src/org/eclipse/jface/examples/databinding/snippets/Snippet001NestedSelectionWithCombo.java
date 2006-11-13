@@ -191,7 +191,7 @@ public class Snippet001NestedSelectionWithCombo {
 			DataBindingContext dbc = new DataBindingContext(realm);
 			IObservableValue selectedPerson = ViewersObservables
 					.observeSingleSelection(peopleListViewer);
-			dbc.bindValue(SWTObservables.getText(name, SWT.Modify),
+			dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
 					BeansObservables.observeDetailValue(realm, selectedPerson,
 							"name", String.class), null);
 

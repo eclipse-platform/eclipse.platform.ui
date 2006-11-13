@@ -102,7 +102,7 @@ public class Snippet000HelloWorld {
 			DataBindingContext bindingContext = new DataBindingContext();
 
 			Person person = viewModel.getPerson();
-			bindingContext.bindValue(SWTObservables.getText(name, SWT.Modify),
+			bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
 					BeansObservables.observeValue(person, "name"), null);
 
 			// Open and return the Shell

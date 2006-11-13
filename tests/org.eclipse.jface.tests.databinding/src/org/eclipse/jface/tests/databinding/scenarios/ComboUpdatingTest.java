@@ -103,7 +103,7 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 	
 	private static final String NEXT = "Next";
 	public void testBindText() throws Exception {
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, "text"), null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, "text"), null);
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
 		comboEditable.setText(NEXT);
@@ -117,13 +117,13 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 		}
 		text = "Apple";
         
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
         
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
         IObservableList list = new WritableList(getChoices());
-        getDbc().bindList(SWTObservables.getItems(comboEditable), list, null);
+        getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null);
 
 		spinEventLoop(0);
 		int position = 0;
@@ -168,14 +168,14 @@ public class ComboUpdatingTest extends ScenariosTestCase {
 			return;
 		}
         
-        getDbc().bindValue(SWTObservables.getText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
+        getDbc().bindValue(SWTObservables.observeText(comboEditable), BeansObservables.observeValue(this, PROP_TEXT), null);
 
 		spinEventLoop(0);
 		assertEquals("Should find value of text", text, comboEditable.getText());
         
         IObservableList list = new WritableList(String.class);
         list.addAll(getChoices());
-        getDbc().bindList(SWTObservables.getItems(comboEditable), list, null);
+        getDbc().bindList(SWTObservables.observeItems(comboEditable), list, null);
         
 		spinEventLoop(0);
 		int position = 0;

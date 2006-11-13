@@ -62,7 +62,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Bind the adventure "name" property to a text field
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
                 null);
 
@@ -84,7 +84,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // occurs
         // Change the UI and verify the model changes
         // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(transportation, "price"),
                 null);
 
@@ -101,7 +101,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // the value will revert
         // the updatePolicy for this test is TIME_LATE so it occurs when focus
         // is lost from the Text control
-        getDbc().bindValue(SWTObservables.getText(text, SWT.FocusOut),
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut),
                 BeansObservables.observeValue(adventure, "name"),
                 null);
 
@@ -138,7 +138,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // the value will revert
         // the updatePolicy for this test is TIME_EARLY so it occurs when each
         // keystroke occurs
-        getDbc().bindValue(SWTObservables.getText(text, SWT.Modify),
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
                 null);
 
@@ -258,7 +258,7 @@ public class TextControlScenario extends ScenariosTestCase {
                 Realm.getDefault(),
                 new BindSupportFactory[] { new CustomBeanBindSupportFactory(parentDbc) });
         
-        childDbc.bindValue(SWTObservables.getText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), null);
+        childDbc.bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), null);
 
         // make sure we can set a value inside the validator's range
         text.setText("4");
@@ -273,7 +273,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696        
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.getText(text, SWT.FocusOut), SWTObservables.getText(label), null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.FocusOut), SWTObservables.observeText(label), null);
 
         // Change the text
         text.setText("Frog");
@@ -289,7 +289,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Verify direct binding between a Text and Label following bugzilla
         // 118696 with TIME_EARLY
         Label label = new Label(getComposite(), SWT.NONE);
-        getDbc().bindValue(SWTObservables.getText(text, SWT.Modify), SWTObservables.getText(label), null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), SWTObservables.observeText(label), null);
 
         // Change the text
         String newTextValue = "Frog";

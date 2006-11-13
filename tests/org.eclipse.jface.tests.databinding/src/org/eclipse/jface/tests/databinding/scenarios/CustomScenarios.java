@@ -52,7 +52,7 @@ public class CustomScenarios extends ScenariosTestCase {
         AggregateObservableValue customObservable_comma = new AggregateObservableValue(new IObservableValue[] {
                 descriptionObservable, nameObservable }, ",");
 
-        getDbc().bindValue(SWTObservables.getText(text, SWT.Modify), customObservable_comma, null);
+        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), customObservable_comma, null);
         // spinEventLoop(1);
         // Make sure that the description on the model match the widget
         assertEquals(adventure.getDescription() + "," + adventure.getName(), text.getText());

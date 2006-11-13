@@ -198,19 +198,19 @@ public class TestMasterDetail {
 				.observeSingleSelection(peopleViewer);
 
 		DataBindingContext dbc = new DataBindingContext(realm);
-		dbc.bindValue(SWTObservables.getText(name, SWT.Modify),
+		dbc.bindValue(SWTObservables.observeText(name, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
 						"name", String.class), null);
 
-		dbc.bindValue(SWTObservables.getText(address, SWT.Modify),
+		dbc.bindValue(SWTObservables.observeText(address, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
 						"address", String.class), null);
 
-		dbc.bindValue(SWTObservables.getText(city, SWT.Modify),
+		dbc.bindValue(SWTObservables.observeText(city, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
 						"city", String.class), null);
 
-		dbc.bindValue(SWTObservables.getText(state, SWT.Modify),
+		dbc.bindValue(SWTObservables.observeText(state, SWT.Modify),
 				BeansObservables.observeDetailValue(realm, selectedPerson,
 						"state", String.class), null);
 

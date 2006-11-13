@@ -72,7 +72,7 @@ public class SWTObservables {
 	 * @param control
 	 * @return
 	 */
-	public static ISWTObservableValue getEnabled(Control control) {
+	public static ISWTObservableValue observeEnabled(Control control) {
 		return new ControlObservableValue(control, SWTProperties.ENABLED);
 	}
 
@@ -80,7 +80,7 @@ public class SWTObservables {
 	 * @param control
 	 * @return
 	 */
-	public static ISWTObservableValue getVisible(Control control) {
+	public static ISWTObservableValue observeVisible(Control control) {
 		return new ControlObservableValue(control, SWTProperties.VISIBLE);
 	}
 
@@ -88,7 +88,7 @@ public class SWTObservables {
 	 * @param spinner
 	 * @return
 	 */
-	public static ISWTObservableValue getSelection(Spinner spinner) {
+	public static ISWTObservableValue observeSelection(Spinner spinner) {
 		return new SpinnerObservableValue(spinner, SWTProperties.SELECTION);
 	}
 
@@ -96,7 +96,7 @@ public class SWTObservables {
 	 * @param spinner
 	 * @return
 	 */
-	public static ISWTObservableValue getMin(Spinner spinner) {
+	public static ISWTObservableValue observeMin(Spinner spinner) {
 		return new SpinnerObservableValue(spinner, SWTProperties.MIN);
 	}
 
@@ -104,7 +104,7 @@ public class SWTObservables {
 	 * @param spinner
 	 * @return
 	 */
-	public static ISWTObservableValue getMax(Spinner spinner) {
+	public static ISWTObservableValue observeMax(Spinner spinner) {
 		return new SpinnerObservableValue(spinner, SWTProperties.MAX);
 	}
 
@@ -113,7 +113,7 @@ public class SWTObservables {
 	 * @param event
 	 * @return
 	 */
-	public static ISWTObservableValue getText(Text text, int event) {
+	public static ISWTObservableValue observeText(Text text, int event) {
 		return new TextObservableValue(text, event);
 	}
 
@@ -121,7 +121,7 @@ public class SWTObservables {
 	 * @param label
 	 * @return
 	 */
-	public static ISWTObservableValue getText(Label label) {
+	public static ISWTObservableValue observeText(Label label) {
 		return new LabelObservableValue(label);
 	}
 
@@ -129,7 +129,7 @@ public class SWTObservables {
 	 * @param cLabel
 	 * @return
 	 */
-	public static ISWTObservableValue getText(CLabel cLabel) {
+	public static ISWTObservableValue observeText(CLabel cLabel) {
 		return new CLabelObservableValue(cLabel);
 	}
 
@@ -137,7 +137,7 @@ public class SWTObservables {
 	 * @param button
 	 * @return
 	 */
-	public static ISWTObservableValue getSelection(Button button) {
+	public static ISWTObservableValue observeSelection(Button button) {
 		return new ButtonObservableValue(button);
 	}
 
@@ -146,7 +146,7 @@ public class SWTObservables {
 	 * @param event
 	 * @return
 	 */
-	public static ISWTObservableValue getText(Combo combo) {
+	public static ISWTObservableValue observeText(Combo combo) {
 		return new ComboObservableValue(combo, SWTProperties.TEXT);
 	}
 
@@ -154,7 +154,7 @@ public class SWTObservables {
 	 * @param combo
 	 * @return
 	 */
-	public static ISWTObservableValue getSelection(Combo combo) {
+	public static ISWTObservableValue observeSelection(Combo combo) {
 		return new ComboObservableValue(combo, SWTProperties.SELECTION);
 	}
 
@@ -162,7 +162,7 @@ public class SWTObservables {
 	 * @param combo
 	 * @return
 	 */
-	public static IObservableList getItems(Combo combo) {
+	public static IObservableList observeItems(Combo combo) {
 		return new ComboObservableList(combo);
 	}
 
@@ -171,7 +171,7 @@ public class SWTObservables {
 	 * @param event
 	 * @return
 	 */
-	public static ISWTObservableValue getText(CCombo combo) {
+	public static ISWTObservableValue observeText(CCombo combo) {
 		return new CComboObservableValue(combo, SWTProperties.TEXT);
 	}
 
@@ -179,7 +179,7 @@ public class SWTObservables {
 	 * @param combo
 	 * @return
 	 */
-	public static ISWTObservableValue getSelection(CCombo combo) {
+	public static ISWTObservableValue observeSelection(CCombo combo) {
 		return new CComboObservableValue(combo, SWTProperties.SELECTION);
 	}
 
@@ -187,7 +187,7 @@ public class SWTObservables {
 	 * @param combo
 	 * @return
 	 */
-	public static IObservableList getItems(CCombo combo) {
+	public static IObservableList observeItems(CCombo combo) {
 		return new CComboObservableList(combo);
 	}
 
@@ -195,7 +195,7 @@ public class SWTObservables {
 	 * @param list
 	 * @return
 	 */
-	public static ISWTObservableValue getSelection(List list) {
+	public static ISWTObservableValue observeSelection(List list) {
 		return new ListObservableValue(list);
 	}
 
@@ -203,7 +203,7 @@ public class SWTObservables {
 	 * @param list
 	 * @return
 	 */
-	public static IObservableList getItems(List list) {
+	public static IObservableList observeItems(List list) {
 		return new ListObservableList(list);
 	}
 
@@ -211,7 +211,7 @@ public class SWTObservables {
 	 * @param table
 	 * @return
 	 */
-	public static ISWTObservableValue getSingleSelectionIndex(Table table) {
+	public static ISWTObservableValue observeSingleSelectionIndex(Table table) {
 		return new TableObservableValue(table, SWTProperties.SELECTION);
 	}
 

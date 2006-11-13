@@ -49,7 +49,7 @@ public class LabelControlScenario extends ScenariosTestCase {
         // Bind the adventure "name" property to a label control
         // Change the UI and verify the model and UI are the same value
         // Change the model and verify the UI changes
-        getDbc().bindValue(SWTObservables.getText(label), BeansObservables.observeValue(adventure, "name"), null);
+        getDbc().bindValue(SWTObservables.observeText(label), BeansObservables.observeValue(adventure, "name"), null);
 
         assertEquals(adventure.getName(), label.getText());
         adventure.setName("France");

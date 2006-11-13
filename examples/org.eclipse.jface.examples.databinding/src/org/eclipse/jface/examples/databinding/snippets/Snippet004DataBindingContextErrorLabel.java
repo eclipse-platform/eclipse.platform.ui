@@ -53,12 +53,12 @@ public class Snippet004DataBindingContextErrorLabel {
         DataBindingContext dbc = new DataBindingContext();
 
         // Bind the text to the value.
-        dbc.bindValue(SWTObservables.getText(text, SWT.Modify),
+        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
                 value,
                 new BindSpec().setDomainValidator(new FiveValidator()));
 
         // Bind the error label to the validation error on the dbc.
-        dbc.bindValue(SWTObservables.getText(errorLabel), dbc.getValidationError(), null);
+        dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationError(), null);
 
         shell.pack();
         shell.open();

@@ -441,13 +441,13 @@ public class ComboScenarios extends ScenariosTestCase {
         CCombo ccombo = new CCombo(getComposite(), SWT.READ_ONLY | SWT.DROP_DOWN);
 
         // Bind the combo's content to that of the String based list
-        getDbc().bindList(SWTObservables.getItems(ccombo), list, null);
+        getDbc().bindList(SWTObservables.observeItems(ccombo), list, null);
         assertEquals(Arrays.asList(ccombo.getItems()), list);
 
         Account account = catalog.getAccounts()[0];
 
         // simple Combo's selection bound to the Account's country property
-        IObservableValue comboSelection = SWTObservables.getSelection(ccombo);
+        IObservableValue comboSelection = SWTObservables.observeSelection(ccombo);
         getDbc().bindValue(comboSelection, BeansObservables.observeValue(account, "country"), null);
 
         // Drive the combo selection
@@ -474,13 +474,13 @@ public class ComboScenarios extends ScenariosTestCase {
         CCombo ccombo = new CCombo(getComposite(), SWT.READ_ONLY | SWT.DROP_DOWN);
 
         // Bind the combo's content to that of the String based list
-        getDbc().bindList(SWTObservables.getItems(ccombo), list, null);
+        getDbc().bindList(SWTObservables.observeItems(ccombo), list, null);
         assertEquals(Arrays.asList(ccombo.getItems()), list);
 
         Account account = catalog.getAccounts()[0];
 
         // simple Combo's selection bound to the Account's country property
-        IObservableValue comboSelection = SWTObservables.getSelection(ccombo);
+        IObservableValue comboSelection = SWTObservables.observeSelection(ccombo);
         getDbc().bindValue(comboSelection, BeansObservables.observeValue(account, "country"), null);
 
         // Drive the combo selection
@@ -517,13 +517,13 @@ public class ComboScenarios extends ScenariosTestCase {
                 | SWT.SINGLE);
 
         // Bind the combo's content to that of the String based list
-        getDbc().bindList(SWTObservables.getItems(swtlist), list, null);
+        getDbc().bindList(SWTObservables.observeItems(swtlist), list, null);
         assertEquals(Arrays.asList(swtlist.getItems()), list);
 
         Account account = catalog.getAccounts()[0];
 
         // simple Combo's selection bound to the Account's country property
-        IObservableValue listSelection = SWTObservables.getSelection(swtlist);
+        IObservableValue listSelection = SWTObservables.observeSelection(swtlist);
         getDbc().bindValue(listSelection, BeansObservables.observeValue(account, "country"), null);
 
         String selection = (String) list.get(2);

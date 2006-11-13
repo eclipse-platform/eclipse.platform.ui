@@ -112,7 +112,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		Text txtName = new Text(getComposite(), SWT.BORDER);
 
 		getDbc().bindValue(
-				SWTObservables.getText(txtName, SWT.Modify),
+				SWTObservables.observeText(txtName, SWT.Modify),
 				MasterDetailObservables.detailValue(selectedLodging,
 						BeansObservables.valueFactory(realm, "name"),
 						String.class), null);
@@ -190,10 +190,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bindValue(SWTObservables.getEnabled(txtName),
+		getDbc().bindValue(SWTObservables.observeEnabled(txtName),
 				selectionExistsObservable, null);
 		getDbc().bindValue(
-				SWTObservables.getText(txtName, SWT.Modify),
+				SWTObservables.observeText(txtName, SWT.Modify),
 				MasterDetailObservables.detailValue(
 						selectedLodgingObservable, BeansObservables
 								.valueFactory(realm, "name"),
@@ -204,10 +204,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bindValue(SWTObservables.getEnabled(txtDescription),
+		getDbc().bindValue(SWTObservables.observeEnabled(txtDescription),
 				selectionExistsObservable, null);
 		getDbc().bindValue(
-				SWTObservables.getText(txtDescription, SWT.Modify),
+				SWTObservables.observeText(txtDescription, SWT.Modify),
 				MasterDetailObservables.detailValue(
 						selectedLodgingObservable, BeansObservables
 								.valueFactory(realm, "description"),
@@ -328,7 +328,7 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		};
 
 		getDbc().bindValue(
-				SWTObservables.getEnabled(adventureListViewer.getList()),
+				SWTObservables.observeEnabled(adventureListViewer.getList()),
 				categorySelectionExistsObservable, null);
 
 		final IObservableValue selectedAdventureObservable = ViewersObservables
@@ -343,10 +343,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtName = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bindValue(SWTObservables.getEnabled(txtName),
+		getDbc().bindValue(SWTObservables.observeEnabled(txtName),
 				adventureSelectionExistsObservable, null);
 		getDbc().bindValue(
-				SWTObservables.getText(txtName, SWT.Modify),
+				SWTObservables.observeText(txtName, SWT.Modify),
 				MasterDetailObservables.detailValue(
 						selectedAdventureObservable, BeansObservables
 								.valueFactory(realm, "name"),
@@ -357,10 +357,10 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		final Text txtDescription = new Text(getComposite(), SWT.BORDER);
 
-		getDbc().bindValue(SWTObservables.getEnabled(txtDescription),
+		getDbc().bindValue(SWTObservables.observeEnabled(txtDescription),
 				adventureSelectionExistsObservable, null);
 		getDbc().bindValue(
-				SWTObservables.getText(txtDescription, SWT.Modify),
+				SWTObservables.observeText(txtDescription, SWT.Modify),
 				MasterDetailObservables.detailValue(
 						selectedAdventureObservable, BeansObservables
 								.valueFactory(realm, "description"),
