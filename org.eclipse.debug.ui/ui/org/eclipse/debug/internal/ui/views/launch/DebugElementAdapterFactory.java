@@ -51,6 +51,7 @@ import org.eclipse.debug.internal.ui.model.elements.ExpressionManagerContentProv
 import org.eclipse.debug.internal.ui.model.elements.LaunchContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchManagerContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.RegisterGroupLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ThreadContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.VariableContentProvider;
@@ -93,6 +94,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementLabelProvider fgLPDebugElement = new DebugElementLabelProvider();
     private static IElementLabelProvider fgLPVariable = new VariableLabelProvider();
     private static IElementLabelProvider fgLPExpression = new ExpressionLabelProvider();
+    private static IElementLabelProvider fgLPRegisterGroup = new RegisterGroupLabelProvider();
     
     private static IElementEditor fgEEVariable = new VariableEditor();
     
@@ -225,6 +227,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         	if (adaptableObject instanceof IExpression) {
         		return fgLPExpression;
+        	}
+        	if (adaptableObject instanceof IRegisterGroup) {
+        		return fgLPRegisterGroup;
         	}
         	return fgLPDebugElement;
         }        
