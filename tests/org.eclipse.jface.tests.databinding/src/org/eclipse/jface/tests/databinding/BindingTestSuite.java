@@ -17,6 +17,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
 import org.eclipse.jface.internal.databinding.provisional.conversion.IdentityConverterTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBooleanPrimitiveTest;
 import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindSupportFactoryBytePrimitiveTest;
@@ -55,6 +56,9 @@ public class BindingTestSuite extends TestSuite {
     }
 
     public BindingTestSuite() {
+    	//org.eclipse.core.tests.databinding.beans
+    	addTestSuite(BeansObservablesTest.class);
+    	
         // org.eclipse.jface.internal.databinding.provisional.conversion
         addTestSuite(IdentityConverterTest.class);
 

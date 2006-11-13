@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164268
  *******************************************************************************/
 package org.eclipse.core.databinding.beans;
 
@@ -119,13 +120,32 @@ final public class BeansObservables {
 	 */
 	public static IObservableList observeList(Realm realm, Object bean,
 			String attributeName) {
+		return observeList(realm, bean, attributeName, null);
+	}
+
+	/**
+	 * @param realm
+	 * @param bean
+	 * @param attributeName
+	 * @param elementType
+	 *            type of the elements in the list. If <code>null</code> and the
+	 *            attribute is an array the type will be inferred. If
+	 *            <code>null</code> and the attribute type cannot be inferred
+	 *            element type will be of type <code>Object.class</code>.
+	 * @return observable list
+	 */
+	public static IObservableList observeList(Realm realm, Object bean,
+			String attributeName, Class elementType) {
 		PropertyDescriptor propertyDescriptor = getPropertyDescriptor(bean
 				.getClass(), attributeName);
 		Class propertyType = propertyDescriptor.getPropertyType();
-		Class componentType = propertyType.isArray() ? propertyType
-				.getComponentType() : Object.class;
+
+		if (elementType == null) {
+			elementType = propertyType.isArray() ? propertyType.getComponentType()
+					: Object.class;
+		}
 		return new JavaBeanObservableList(realm, bean, propertyDescriptor,
-				componentType);
+				elementType);
 	}
 
 	/**
@@ -162,13 +182,14 @@ final public class BeansObservables {
 	/**
 	 * @param realm
 	 * @param propertyName
+	 * @param elementType
 	 * @return
 	 */
 	public static IObservableFactory listFactory(final Realm realm,
-			final String propertyName) {
+			final String propertyName, final Class elementType) {
 		return new IObservableFactory() {
 			public IObservable createObservable(Object target) {
-				return observeList(realm, target, propertyName);
+				return observeList(realm, target, propertyName, elementType);
 			}
 		};
 	}
@@ -209,7 +230,7 @@ final public class BeansObservables {
 	/**
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailList(master, listFactory(realm,
-	 attributeName), attributeType)</code>
+	 attributeName, attributeType), attributeType)</code>
 	 * 
 	 * @param realm
 	 * @param master
@@ -222,7 +243,7 @@ final public class BeansObservables {
 	public static IObservableList observeDetailList(Realm realm,
 			IObservableValue master, String attributeName, Class attributeType) {
 		return MasterDetailObservables.detailList(master, listFactory(realm,
-				attributeName), attributeType);
+				attributeName, attributeType), attributeType);
 	}
 
 	/**
