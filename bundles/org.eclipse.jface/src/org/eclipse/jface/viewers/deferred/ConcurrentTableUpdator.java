@@ -86,6 +86,10 @@ package org.eclipse.jface.viewers.deferred;
         int start = 0;
         int length = 0;
         
+        /**
+         * @param s
+         * @param l
+         */
         public Range(int s, int l) {
             start = s;
             length = l;

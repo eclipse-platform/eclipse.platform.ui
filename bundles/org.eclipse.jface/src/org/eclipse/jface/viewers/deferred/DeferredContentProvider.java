@@ -50,6 +50,9 @@ public class DeferredContentProvider implements ILazyContentProvider {
 		
 		private TableViewer viewer;
 		
+		/**
+		 * @param viewer
+		 */
 		public TableViewerAdapter(TableViewer viewer) {
 			this.viewer = viewer;
 		}

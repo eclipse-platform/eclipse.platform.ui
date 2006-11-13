@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Control;
  * a new type of animator factory can be plugged into JFace.
  * 
  * @since 3.2
- * 
+ * @deprecated as of 3.3, this class is no longer used.
  */
 public class AnimatorFactory {
 	/**
