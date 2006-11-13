@@ -724,4 +724,30 @@ public final class Util {
 		return windowToParentOn == null ? null : activeWindow.getShell();
 	}
 	
+	/**
+	 * Splits a string at the first occurance of the delimiting char.
+	 * If the source string is null then so is the result. If the source
+	 * string is badly formatted then it is returned in the first array
+	 * entry and the second entry is an empty string.
+	 * 
+	 * @param src The string to be split
+	 * @param delim The character to split on
+	 * @return A two entry string array containing the left/right pair.
+	 */
+	public static String[] split(String src, char delim) {
+		if (src == null)
+			return null;
+		
+		String[] splitStr = new String[2];
+		int delimIndex = src.indexOf(delim);
+		if (delimIndex == -1 || delimIndex == 0 || delimIndex == src.length()-1) {
+			splitStr[0] = src;
+			splitStr[1] = ZERO_LENGTH_STRING;
+		}
+		
+		splitStr[0] = src.substring(0, delimIndex-1);
+		splitStr[1] = src.substring(delimIndex+1);
+		
+		return splitStr;
+	}
 }

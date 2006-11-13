@@ -46,6 +46,7 @@
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
    <extension-point id="browserSupport" name="%ExtPoint.browserSupport" schema="schema/browserSupport.exsd"/>
+   <extension-point id="menus2" name="%ExtPoint.menus2" schema="schema/menus2.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">

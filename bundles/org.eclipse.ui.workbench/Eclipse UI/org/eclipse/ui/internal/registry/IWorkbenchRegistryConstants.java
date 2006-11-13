@@ -635,6 +635,13 @@ public interface IWorkbenchRegistryConstants {
 	 */
 	public static String PL_MENUS = "menus"; //$NON-NLS-1$
 
+	/**
+	 * The extension point (3.3 and later) for specifying menu contributions.
+	 * 
+	 * @since 3.3
+	 */
+	public static String PL_MENU_ADDITION = "menuAddition"; //$NON-NLS-1$
+
 	public static String PL_NEW = "newWizards"; //$NON-NLS-1$
 
 	public static String PL_PERSPECTIVE_EXTENSIONS = "perspectiveExtensions"; //$NON-NLS-1$
@@ -730,6 +737,12 @@ public interface IWorkbenchRegistryConstants {
 	 */
 	public static String EXTENSION_MENUS = PlatformUI.PLUGIN_ID + '.'
 			+ PL_MENUS;
+
+	/**
+	 * The name of the <code>org.eclipse.ui.menus2</code> extension point.
+	 */
+	public static String COMMON_MENU_ADDITIONS = PlatformUI.PLUGIN_ID + '.'
+			+ PL_MENUS + '2';
 
 	/**
 	 * The name of the <code>org.eclipse.ui.popupMenus</code> extension point.
@@ -1035,6 +1048,14 @@ public interface IWorkbenchRegistryConstants {
 	 * The name of the element storing a location.
 	 */
 	public static String TAG_LOCATION = "location"; //$NON-NLS-1$
+
+	/**
+	 * The name of the element defining the insertion point for menu
+	 * additions.
+	 * 
+	 * @since 3.3
+	 */
+	public static String TAG_LOCATION_URI = "locationURI"; //$NON-NLS-1$
 
 	/**
 	 * The name of the element storing trim layout info for a widget.

@@ -1015,6 +1015,9 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
+		
+		// HACK!! read the new menu contributions
+		CommonMenuService.readAdditions();
 
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -1028,6 +1031,7 @@ final class MenuPersistence extends RegistryPersistence {
 		// Sort the commands extension point based on element name.
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(EXTENSION_MENUS);
+		
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
 			final IConfigurationElement configurationElement = menusExtensionPoint[i];
 			final String name = configurationElement.getName();
