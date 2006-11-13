@@ -50,7 +50,7 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	void flush() {
-		getHistory().dispose(undoContext, true, false, false);
+		getHistory().dispose(getUndoContext(), true, false, false);
 	}
 
 	String getCommandString() {
@@ -70,19 +70,15 @@ public final class UndoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	IUndoableOperation getOperation() {
-		return getHistory().getUndoOperation(undoContext);
+		return getHistory().getUndoOperation(getUndoContext());
 
 	}
 
 	IStatus runCommand(IProgressMonitor pm) throws ExecutionException  {
-		return getHistory().undo(undoContext, pm, this);
+		return getHistory().undo(getUndoContext(), pm, this);
 	}
 
 	boolean shouldBeEnabled() {
-		// if a context was not supplied, do not enable.
-		if (undoContext == null) {
-			return false;
-		}
-		return getHistory().canUndo(undoContext);
+		return getHistory().canUndo(getUndoContext());
 	}
 }

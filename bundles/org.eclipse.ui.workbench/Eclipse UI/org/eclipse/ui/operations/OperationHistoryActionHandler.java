@@ -47,7 +47,9 @@ import org.eclipse.ui.part.MultiPageEditorSite;
  * <p>
  * OperationHistoryActionHandler implements common behavior for the undo and
  * redo actions. It supports filtering of undo or redo on a particular undo
- * context. (A null undo context will cause undo and redo to be disabled.)
+ * context. If an undo context is not specified, or there has been no history
+ * available for the specified undo context, then the workbench undo context
+ * will be used.
  * </p>
  * <p>
  * OperationHistoryActionHandler provides an adapter in the info parameter of
@@ -127,6 +129,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.REDONE:
 				if (display != null
 						&& event.getOperation().hasContext(undoContext)) {
+					contextActive = true;
 					display.asyncExec(new Runnable() {
 						public void run() {
 							update();
@@ -137,6 +140,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			case OperationHistoryEvent.OPERATION_NOT_OK:
 				if (display != null
 						&& event.getOperation().hasContext(undoContext)) {
+					contextActive = true;
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (pruning) {
@@ -161,6 +165,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				}
 				break;
 			case OperationHistoryEvent.OPERATION_CHANGED:
+				if (event.getOperation().hasContext(undoContext)) {
+					contextActive = true;
+				}
 				if (display != null && event.getOperation() == getOperation()) {
 					display.asyncExec(new Runnable() {
 						public void run() {
@@ -169,9 +176,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 					});
 				}
 				break;
+			default:
+				if (event.getOperation().hasContext(undoContext)) {
+					contextActive = true;
+				}
+				break;
 			}
 		}
 	}
+
+	private boolean contextActive = false;
 
 	private boolean pruning = false;
 
@@ -181,7 +195,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 
 	private TimeTriggeredProgressMonitorDialog progressDialog;
 
-	IUndoContext undoContext = null;
+	private IUndoContext undoContext = null;
 
 	IWorkbenchPartSite site;
 
@@ -496,4 +510,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		return undoContext == null || site == null;
 	}
 
+	/*
+	 * Get the undo context that should be used.
+	 */
+	final IUndoContext getUndoContext() {
+		// If no context was specified, or the specified one is not
+		// in use, use the workbench context.
+		if (undoContext == null || !contextActive) {
+			return PlatformUI.getWorkbench().getOperationSupport()
+					.getUndoContext();
+		}
+		return undoContext;
+	}
 }

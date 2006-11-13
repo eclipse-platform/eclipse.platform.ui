@@ -49,7 +49,7 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 	}
 
 	void flush() {
-		getHistory().dispose(undoContext, false, true, false);
+		getHistory().dispose(getUndoContext(), false, true, false);
 	}
 
 	String getCommandString() {
@@ -70,19 +70,14 @@ public final class RedoActionHandler extends OperationHistoryActionHandler {
 
 
 	IUndoableOperation getOperation() {
-		return getHistory().getRedoOperation(undoContext);
+		return getHistory().getRedoOperation(getUndoContext());
 	}
 
 	IStatus runCommand(IProgressMonitor pm) throws ExecutionException {
-		return getHistory().redo(undoContext, pm, this);
+		return getHistory().redo(getUndoContext(), pm, this);
 	}
 
 	boolean shouldBeEnabled() {
-		// make sure a context is set. If a part doesn't provide
-		// a context, then we should not enable.
-		if (undoContext == null) {
-			return false;
-		}
-		return getHistory().canRedo(undoContext);
+		return getHistory().canRedo(getUndoContext());
 	}
 }
