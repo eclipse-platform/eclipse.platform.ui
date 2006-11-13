@@ -19,8 +19,9 @@ import org.eclipse.help.internal.NodeAdapter;
  */
 public class ContentExtension extends NodeAdapter {
 	
-	private static final String NAME_CONTRIBUTION = "topicExtension"; //$NON-NLS-1$
-	private static final String NAME_REPLACE = "topicReplace"; //$NON-NLS-1$
+	private static final String NAME_CONTRIBUTION = "contribution"; //$NON-NLS-1$
+	private static final String NAME_REPLACEMENT = "replacement"; //$NON-NLS-1$
+	private static final String NAME_CONTRIBUTION_LEGACY = "topicExtension"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
 	
@@ -28,7 +29,7 @@ public class ContentExtension extends NodeAdapter {
 	public static final int CONTRIBUTION = 0;
 	
 	// type for element replacement
-	public static final int REPLACE = 1;
+	public static final int REPLACEMENT = 1;
 	
 	/*
 	 * Constructs a new content extension adapter for an empty extension node.
@@ -64,7 +65,8 @@ public class ContentExtension extends NodeAdapter {
 	 * Returns the extension type (either a contribution or replace).
 	 */
 	public int getType() {
-		return (getNodeName().equals(NAME_CONTRIBUTION)) ? CONTRIBUTION : REPLACE;
+		String name = getNodeName();
+		return (NAME_CONTRIBUTION.equals(name) || NAME_CONTRIBUTION_LEGACY.equals(name)) ? CONTRIBUTION : REPLACEMENT;
 	}
 	
 	/*
@@ -85,6 +87,6 @@ public class ContentExtension extends NodeAdapter {
 	 * Sets the extension type.
 	 */
 	public void setType(int type) {
-		setNodeName(type == CONTRIBUTION ? NAME_CONTRIBUTION : NAME_REPLACE);
+		setNodeName(type == CONTRIBUTION ? NAME_CONTRIBUTION : NAME_REPLACEMENT);
 	}
 }

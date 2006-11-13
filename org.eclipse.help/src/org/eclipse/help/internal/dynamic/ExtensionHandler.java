@@ -40,7 +40,7 @@ public class ExtensionHandler extends NodeHandler {
 			return handleExtension(node, path, ContentExtension.CONTRIBUTION);
 		}
 		if (node.getAttribute(ATTRIBUTE_ID) != null) {
-			return handleExtension(node, path, ContentExtension.REPLACE);
+			return handleExtension(node, path, ContentExtension.REPLACEMENT);
 		}
 		return UNHANDLED;
 	}
