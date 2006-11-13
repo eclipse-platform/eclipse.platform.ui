@@ -13,7 +13,7 @@
    <element name="introContent">
       <annotation>
          <documentation>
-            The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, and extensions to anchor points defined in other configurations.
+            The introContent element defines the body of the intro content file.  The content file is made up of pages, shared groups that can be included in multiple pages, extensions to anchor points defined in other configurations, or replacements of existing elements.
          </documentation>
       </annotation>
       <complexType>
@@ -21,6 +21,7 @@
             <element ref="page"/>
             <element ref="group"/>
             <element ref="extensionContent"/>
+            <element ref="replacementContent"/>
          </choice>
       </complexType>
    </element>
@@ -641,7 +642,7 @@ Inclusion allows for including an html snippet directly from a file into the dyn
    <element name="extensionContent">
       <annotation>
          <documentation>
-            The content to be added to the target anchor. Only one extensionContent is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target anchor element could not be found) then the pages and/or groups in the extension need to be ingnored.
+            The content to be added to the target anchor. Only one &lt;code&gt;extensionContent&lt;/code&gt; or &lt;code&gt;replacementContent&lt;/code&gt; is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target anchor could not be found) then the pages and/or groups in the extension need to be ingnored.
          </documentation>
       </annotation>
       <complexType>
@@ -695,6 +696,55 @@ Since 3.1, styles can also be a comma separated list of styles. These styles wil
             <annotation>
                <documentation>
                   (since 3.2) a translatable name of this extension required when used in conjunction with intro configurer
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="replacementContent">
+      <annotation>
+         <documentation>
+            (since 3.3) The content to replace the target element. Only one &lt;code&gt;extensionContent&lt;/code&gt; or &lt;code&gt;replacementContent&lt;/code&gt; is allowed in a given configExtension because if this extension could not be resolved (if the config could not be found, or the target element could not be found) then the pages and/or groups in the extension need to be ignored.
+         </documentation>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="text"/>
+            <element ref="group"/>
+            <element ref="link"/>
+            <element ref="html"/>
+            <element ref="include"/>
+         </choice>
+         <attribute name="path" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the path that uniquely represents the path to the element to be replaced. (e.g. page/group1/group2/elementId) within the target configuration to be extended. To replace content contributed from an &lt;code&gt;extensionContent&lt;/code&gt;, you may use a path of the form &lt;code&gt;pageId/@extension_id/path_in_extension&lt;/code&gt; and it will be resolved to the specified extension.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="style" type="string">
+            <annotation>
+               <documentation>
+                  A relative path to a CSS file which is applied to the page only when using the Web based presentation. The path is relative to the location of this xml content file. &lt;br&gt;
+
+Since 3.1, styles can also be a comma separated list of styles. These styles will be injected into the HTML HEAD element in the order in which they are listed in the style attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="alt-style" type="string">
+            <annotation>
+               <documentation>
+                  A relative path to a SWT presentation properies file which is applied to the page only when using the SWT based presentation. The path is relative to the location of this xml content file. &lt;br&gt;
+
+Since 3.1, styles can also be a comma separated list of styles. These styles will be used when creating the SWT presentation of the welcome page.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="content" type="string">
+            <annotation>
+               <documentation>
+                  if content is defined, it is assumed that the extension content is defined in an external XHTML file. In that case the resource pointed to by this content attribute is loaded and the path attribute is now resolved in this external file. since 3.1
                </documentation>
             </annotation>
          </attribute>
