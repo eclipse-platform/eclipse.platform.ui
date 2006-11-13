@@ -1088,7 +1088,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	}
 	
 	/**
-	 * Method from the internal {@link ISavable} interface
+	 * Method from the old internal <code>ISavable</code> interface
 	 * Save the viewers's content.
 	 * Note: this method is for internal use only. Clients should not call this method. 
 	 * @param monitor a progress monitor
