@@ -45,6 +45,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	AutoBuildJob(Workspace workspace) {
 		super(Messages.events_building_0);
 		setRule(workspace.getRoot());
+		setPriority(BUILD);
 		isAutoBuilding = workspace.isAutoBuilding();
 		this.workspace = workspace;
 		this.preferences.addPropertyChangeListener(this);
