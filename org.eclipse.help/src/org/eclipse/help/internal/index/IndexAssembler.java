@@ -120,7 +120,6 @@ public class IndexAssembler {
 			NodeReader reader = new NodeReader();
 			reader.setIgnoreWhitespaceNodes(true);
 			processor = new NodeProcessor(new NodeHandler[] {
-				new IgnoreHandler(),
 				new LabelHandler(),
 				new NormalizeHandler(),
 				new IncludeHandler(reader, locale),
@@ -180,22 +179,6 @@ public class IndexAssembler {
 					}
 				}
 				return HANDLED_CONTINUE;
-			}
-			return UNHANDLED;
-		}
-	}
-
-	private class IgnoreHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				Topic topic = node instanceof Topic ? (Topic)node : new Topic(node);
-				String href = topic.getHref();
-				if (HelpPlugin.getTocManager().isTopicIgnored(href)) {
-					Node parent = topic.getParentNode();
-					if (parent != null) {
-						parent.removeChild(node);
-					}
-				}
 			}
 			return UNHANDLED;
 		}

@@ -47,8 +47,6 @@ public class TocManager {
 	private Map tocsById = new HashMap();
 	private Map tocsByTopic;
 	
-	private Set ignoredTopicHrefs;
-
 	/*
 	 * Returns all toc entries (complete books) for the given locale.
 	 */
@@ -145,7 +143,6 @@ public class TocManager {
 		tocsByLocale.clear();
 		tocsById.clear();
 		tocsByTopic = null;
-		ignoredTopicHrefs = null;
 	}
 
 	/*
@@ -170,13 +167,6 @@ public class TocManager {
 				ignoredHrefs.addAll(hrefs);
 			}
 		}
-		/*
-		 * Retain only the hrefs of topics that only exist in ignored tocs.
-		 * This is needed to ignore keyword index entries accordingly (see
-		 * isTopicIgnored()).
-		 */
-		ignoredTopicHrefs = ignoredHrefs;
-		ignoredTopicHrefs.removeAll(notIgnoredHrefs);
 		return (TocContribution[])filtered.toArray(new TocContribution[filtered.size()]);
 	}
 
@@ -341,16 +331,6 @@ public class TocManager {
 		return expanded;
 	}
 
-	/**
-	 * Returns whether or not the given topic exists only in ignored toc(s).
-	 * 
-	 * @param href the topic's href, e.g. "/my.plugin.id/path/file.html"
-	 * @return whether or not the topic is ignored
-	 */
-	public boolean isTopicIgnored(String href) {
-		return ignoredTopicHrefs.contains(href);
-	}
-	
 	/*
 	 * Returns whether or not the toc for the given locale has been completely
 	 * loaded yet or not.

@@ -46,7 +46,7 @@ public class IndexManager {
 	public synchronized IIndex getIndex(String locale) {
 		Index index = (Index)indexesByLocale.get(locale);
 		if (index == null) {
-			List contributions = Arrays.asList(getIndexContributions(locale));
+			List contributions = new ArrayList(Arrays.asList(getIndexContributions(locale)));
 			filterIndexContributions(contributions);
 			IndexAssembler assembler = new IndexAssembler();
 			index = assembler.assemble(contributions, locale);
