@@ -31,7 +31,7 @@ public class MenuSeparatorContribution extends CommonMenuAddition {
 	
 	public boolean isVisible() {
 		String val = element.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-		return Boolean.parseBoolean(val);
+		return Boolean.valueOf(val).booleanValue();
 	}
 
 	/* (non-Javadoc)
