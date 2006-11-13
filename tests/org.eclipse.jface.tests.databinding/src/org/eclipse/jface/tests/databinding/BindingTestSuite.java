@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 137877, 152543, 152540
  *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 164247
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -32,6 +33,7 @@ import org.eclipse.jface.tests.databinding.observable.ThreadRealmTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
+import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
 import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
@@ -73,23 +75,21 @@ public class BindingTestSuite extends TestSuite {
         addTestSuite(BindSpecTests.class);
         addTestSuite(ComputedValueTest.class);
         addTestSuite(DatabindingContextTest.class);
-//FIXME        addTestSuite(EventEditorObservableLazyDataRequestorTest.class);
         addTestSuite(IDiffsTest.class);
-//FIXME        addTestSuite(LazyDataRequestor.class);
-//FIXME        addTestSuite(LazyListBindingTest.class);
         addTestSuite(ObservableTest.class);
         addTestSuite(RandomAccessListIteratorTest.class);
-//FIXME        addTestSuite(SelectionAwareObservableCollectionTest.class);
-        addTestSuite(ThreadRealmTest.class);
         
         // org.eclipse.jface.tests.databinding.mask
         addTestSuite(EditMaskLexerAndTokenTest.class);
         addTestSuite(EditMaskParserTest.class);
 
+        //org.eclipse.jface.tests.databinding.observable
+        addTestSuite(ThreadRealmTest.class);
+        
         // org.eclipse.jface.tests.databinding.observable.value
         addTestSuite(WritableValueTest.class);
 
-        //org.eclipse.jface.tests.databinding.scenarios
+        // org.eclipse.jface.tests.databinding.scenarios
         addTest(BindingScenariosTestSuite.suite());
         //The files in this package are in the above test suite
         
@@ -106,6 +106,7 @@ public class BindingTestSuite extends TestSuite {
         addTestSuite(TextObservableValueTests.class);
         
         //org.eclipse.jface.tests.databinding.views
+        addTestSuite(ObservableMapLabelProviderTest.class);
         addTestSuite(ObservableSetContentProviderTest.class);
         
         //org.eclipse.jface.tests.examples.model

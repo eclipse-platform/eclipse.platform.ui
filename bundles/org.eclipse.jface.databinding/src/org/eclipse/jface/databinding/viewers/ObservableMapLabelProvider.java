@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164247
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -79,7 +80,8 @@ public class ObservableMapLabelProvider extends BaseLabelProvider
 
 	public String getColumnText(Object element, int columnIndex) {
 		if (columnIndex < attributeMaps.length) {
-			return attributeMaps[columnIndex].get(element).toString();
+			Object result = attributeMaps[columnIndex].get(element);
+			return result == null ? "" : result.toString(); //$NON-NLS-1$
 		}
 		return null;
 	}
