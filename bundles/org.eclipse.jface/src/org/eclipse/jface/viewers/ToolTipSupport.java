@@ -13,205 +13,166 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.Timer;
-
+import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
 /**
- * The TooltipSupport is the class that provides tooltips for
- * ColumnViewers.
- * @since 3.3
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as
- * part of a work in progress. This API may change at any given time. Please 
- * do not use this API without consulting with the Platform/UI team.
- *
+ * The TooltipSupport is the class that provides tooltips for ColumnViewers.
+ * 
+ * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
+ *        added as part of a work in progress. This API may change at any given
+ *        time. Please do not use this API without consulting with the
+ *        Platform/UI team.
+ * 
  */
-class ToolTipSupport {
+class ToolTipSupport extends DefaultToolTip {
 	private ColumnViewer viewer;
-	private Listener listener = new MouseListener();
+
+	private static final String LABEL_PROVIDER_KEY = Policy.JFACE
+			+ "_LABEL_PROVIDER"; //$NON-NLS-1$
+
+	private static final String ELEMENT_KEY = Policy.JFACE + "_ELEMENT_KEY"; //$NON-NLS-1$
+
 	private static final int DEFAULT_SHIFT_X = 10;
+
 	private static final int DEFAULT_SHIFT_Y = 0;
+
+	private Color bgColor;
+
+	private Color fgColor;
 	
+	private int style;
+	
+	private Font font;
+	
+	private Image fgImage;
+	
+	private String text;
+
 	ToolTipSupport(ColumnViewer viewer) {
+		super(viewer.getControl());
 		this.viewer = viewer;
 	}
-	
-	/**
-	 * activate tooltip support for this viewer
-	 */
-	public void activate() {
-		deactivate();
-		viewer.getControl().addListener(SWT.Dispose, listener);
-		viewer.getControl().addListener(SWT.MouseHover, listener);
-		viewer.getControl().addListener(SWT.MouseMove, listener);
-		viewer.getControl().addListener(SWT.MouseExit, listener);
-		viewer.getControl().addListener(SWT.MouseDown, listener);
-	}
-	
-	/**
-	 * deactivate tooltip support for this viewer
-	 */
-	public void deactivate() {
-		viewer.getControl().removeListener(SWT.Dispose, listener);
-		viewer.getControl().removeListener(SWT.MouseHover, listener);
-		viewer.getControl().removeListener(SWT.MouseMove, listener);
-		viewer.getControl().removeListener(SWT.MouseExit, listener);
-		viewer.getControl().removeListener(SWT.MouseDown, listener);
-	}
-	
-	private class MouseListener implements Listener {
-		private Shell tip;
-		private TooltipHideListener hideListener = new TooltipHideListener();
-		private Timer timer = new Timer(true);
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
-		public void handleEvent(Event event) {
-			switch (event.type) {
-			case SWT.Dispose:
-				if( timer != null ) {
-					timer.cancel();
-				}
-			case SWT.KeyDown:
-			case SWT.MouseMove:
-			case SWT.MouseDown:
-				disposeTooltip(tip);
-				break;
-			case SWT.MouseHover:
-                if (!(event.widget instanceof Control))
-                  break;
-                // map receiver-relative coordinates to display-relative coordinates
-                ViewerRow row = viewer.getViewerRow(((Control) event.widget).toDisplay(
-                    event.x, event.y));
-                viewer.getControl().setToolTipText(""); //$NON-NLS-1$
 
-                if (row != null)
-                {
-                  // use receiver-relative coordinates
-                  popupTooltip(row, new Point(event.x, event.y));
-                }
-                break;
-			}
-		}
-		
-		/**
-		 * Popup a tooltip for the row at Point p.
-		 * @param row
-		 * @param p
-		 */
-		private void popupTooltip(ViewerRow row, Point p) {
-			Object element = row.getItem().getData();
-			disposeTooltip(tip);
+	protected boolean shouldCreateToolTip(Event event) {
+		boolean rv = false;
+		if (event.widget instanceof Control) {
+			ViewerRow row = viewer.getViewerRow(((Control) event.widget)
+					.toDisplay(event.x, event.y));
+			viewer.getControl().setToolTipText(""); //$NON-NLS-1$
+			Point point = new Point(event.x, event.y);
 
-			ViewerColumn viewPart = viewer.getViewerColumn(row.getColumnIndex(p));
-			
-			if( viewPart == null ) {
-				return;
-			}
-			
-			CellLabelProvider labelProvider = viewPart.getLabelProvider();
-			
-			String text = labelProvider.getToolTipText(element);
-			
-			if( text != null ) {
-				
-				if( labelProvider.useNativeToolTip(element) ) {
-					viewer.getControl().setToolTipText(text);
-					return;
+			if (row != null) {
+				Object element = row.getItem().getData();
+
+				ViewerColumn viewPart = viewer.getViewerColumn(row
+						.getColumnIndex(point));
+
+				if (viewPart == null) {
+					return false;
 				}
-				
-				tip = new Shell(viewer.getControl().getShell(), SWT.ON_TOP | SWT.TOOL);
-				tip.setLayout(new FillLayout());
-				CLabel label = new CLabel(tip, labelProvider.getToolTipStyle(element));
-				label.setText(text);
-				label.addListener(SWT.MouseExit, hideListener);
-				label.addListener(SWT.MouseDown, hideListener);
-				
-				Image img =  labelProvider.getToolTipImage(element);
-				
-				if( img != null) {
-					label.setImage(img);
-				}
-				
-				Color color = labelProvider.getToolTipForegroundColor(element);
-				if( color == null ) {
-					color = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
-				}
-				label.setForeground(color);
-				
-				color = labelProvider.getToolTipBackgroundColor(element);
-				if( color == null ) {
-					color = viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
-				}
-				label.setBackground(color);
-				
-				Font font = labelProvider.getToolTipFont(element);
-				
-				if( font != null ) {
-					label.setFont(font);
-				}
-				
-				Point pt = viewer.getControl().toDisplay(p);
-				Point shift = labelProvider.getToolTipShift(element);
-				
-				if( shift == null ) {
-					pt.x += DEFAULT_SHIFT_X;
-					pt.y += DEFAULT_SHIFT_Y;
+
+				CellLabelProvider labelProvider = viewPart.getLabelProvider();
+
+				if (labelProvider.useNativeToolTip(element)) {
+					String text = labelProvider.getToolTipText(element);
+					if (text != null) {
+						viewer.getControl().setToolTipText(text);
+					}
+					rv = false;
 				} else {
-					pt.x += shift.x;
-					pt.y += shift.y;
+					setPopupDelay(labelProvider.getToolTipDisplayDelayTime(element));
+					setHideDelay(labelProvider.getToolTipTimeDisplayed(element));
+					
+					Point shift = labelProvider.getToolTipShift(element);
+
+					if (shift == null) {
+						setShift(new Point(DEFAULT_SHIFT_X, DEFAULT_SHIFT_Y));
+					} else {
+						setShift(new Point(shift.x, shift.y));
+					}
+					setData(LABEL_PROVIDER_KEY, labelProvider);
+					setData(ELEMENT_KEY, element);
+					rv = true;
 				}
-				
-				tip.pack();
-				tip.setLocation(pt);
-				tip.setVisible(true);
 			}
+		}
+
+		return rv;
+	}
+
+	private void updateData() {
+		CellLabelProvider labelProvider = (CellLabelProvider) getData(LABEL_PROVIDER_KEY);
+		Object element = getData(ELEMENT_KEY);
+
+		text    = labelProvider.getToolTipText(element);
+		style   = labelProvider.getToolTipStyle(element);
+		fgColor = labelProvider.getToolTipForegroundColor(element);
+		bgColor = labelProvider.getToolTipBackgroundColor(element);
+		font    = labelProvider.getToolTipFont(element);
+	}
+
+	protected Color getBackgroundColor(Event event) {
+		if( bgColor != null ) {
+			return bgColor;
+		}
+		return super.getBackgroundColor(event);
+	}
+
+	protected Color getForegroundColor(Event event) {
+		if( fgColor != null ) {
+			return fgColor;
 		}
 		
-		/**
-		 * Dispose the tooltip.
-		 * @param tip
-		 */
-		private void disposeTooltip(Shell tip) {
-			if (tip != null && !tip.isDisposed()) {
-				tip.dispose();
-			}
+		return super.getForegroundColor(event);
+	}
 
-			tip = null;
+	protected Image getImage(Event event) {
+		if( fgImage != null ) {
+			return fgImage;
 		}
+		return super.getImage(event);
+	}
+
+	protected int getStyle(Event event) {
+		return style;
+	}
+
+	protected String getText(Event event) {
+		if( text != null ) {
+			return text;
+		}
+		
+		return super.getText(event);
+	}
+
+	protected Font getFont(Event event) {
+		if( font != null ) {
+			return font;
+		}
+		
+		return super.getFont(event);
 	}
 	
-	/**
-	 * TooltipHideListener is a listener for tooltip removal.
-	 * @since 3.3
-	 *
-	 */
-	private class TooltipHideListener implements Listener {
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-		 */
-		public void handleEvent(Event event) {
-			CLabel label = (CLabel) event.widget;
-			Shell shell = label.getShell();
-			switch (event.type) {
-			case SWT.MouseDown:
+	protected Composite createToolTipContentArea(Event event, Composite parent) {
+		updateData();
+		return super.createToolTipContentArea(event, parent);
+	}
+
+	protected void afterHideToolTip(Event event) {
+		if( event != null && event.widget != viewer.getControl() ) {
+			if( event.type == SWT.MouseDown ) {
 				viewer.setSelection(new StructuredSelection());
-				// fall through
-			case SWT.MouseExit:
+			} else {
 				viewer.getControl().setFocus();
-				shell.dispose();
-				break;
 			}
 		}
 	}

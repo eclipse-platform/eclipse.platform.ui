@@ -40,7 +40,6 @@ abstract class ColumnViewer extends StructuredViewer {
 	 */
 	public ColumnViewer() {
 		super();
-		tooltipSupport = new ToolTipSupport(this);
 	}
 
 	/**
@@ -223,14 +222,20 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * Activate the tooltip support.
 	 */
 	public void activateCustomTooltips() {
-		tooltipSupport.activate();
+		if( tooltipSupport == null ) {
+			tooltipSupport = new ToolTipSupport(this);
+		} else {
+			tooltipSupport.activate();
+		}
 	}
 
 	/**
 	 * Deactivate the tooltip support.
 	 */
 	public void deactivateCustomTooltips() {
-		tooltipSupport.deactivate();
+		if( tooltipSupport != null ) {
+			tooltipSupport.deactivate();
+		}
 	}
 
 	/**
