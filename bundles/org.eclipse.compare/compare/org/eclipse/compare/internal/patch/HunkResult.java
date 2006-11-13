@@ -213,4 +213,8 @@ public class HunkResult {
 		}
 		return getHunk().getContents(afterState, getPatcher().isReversed());
 	}
+
+	public void setMatches(boolean matches) {
+		fMatches = matches;
+	}
 }

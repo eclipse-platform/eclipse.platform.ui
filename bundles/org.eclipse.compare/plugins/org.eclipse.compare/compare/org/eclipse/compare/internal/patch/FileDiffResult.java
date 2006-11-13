@@ -75,9 +75,21 @@ public class FileDiffResult {
 			}
 		}
 
-		//If this diff  has no problems discovered so far, try applying the patch
-		if (!fDiffProblem)
+		if (fDiffProblem) {
+			// We couldn't find the target file but we need to 
+			// initialize the hunk results for display
+			fBeforeLines = new ArrayList();
+			fAfterLines = new ArrayList();
+			Hunk[] hunks = fDiff.getHunks();
+			for (int i = 0; i < hunks.length; i++) {
+				Hunk hunk = hunks[i];
+				HunkResult result = getHunkResult(hunk);
+				result.setMatches(false);
+			}
+		} else {
+			// If this diff has no problems discovered so far, try applying the patch
 			apply(file, create);
+		}
 
 		if (containsProblems()) {
 			fRejected= fPatcher.getRejected(getFailedHunks());

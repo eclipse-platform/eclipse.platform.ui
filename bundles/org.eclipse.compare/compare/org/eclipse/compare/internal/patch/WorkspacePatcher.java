@@ -205,7 +205,7 @@ public class WorkspacePatcher extends Patcher {
 	}	
 	
 	protected Object getElementParent(Object element) {
-		if (element instanceof FileDiff) {
+		if (element instanceof FileDiff && fDiffProjects != null) {
 			FileDiff diff = (FileDiff) element;
 			for (int i = 0; i < fDiffProjects.length; i++) {
 				DiffProject project = fDiffProjects[i];
