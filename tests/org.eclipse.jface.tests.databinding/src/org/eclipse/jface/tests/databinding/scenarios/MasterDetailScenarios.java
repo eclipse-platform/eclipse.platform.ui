@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 160000
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -15,11 +16,14 @@ import java.util.List;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.examples.databinding.model.Adventure;
 import org.eclipse.jface.examples.databinding.model.Catalog;
@@ -29,7 +33,6 @@ import org.eclipse.jface.examples.databinding.model.SampleData;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
@@ -91,14 +94,16 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new GridData(SWT.FILL, SWT.FILL, false, false));
 		Catalog catalog = SampleData.CATALOG_2005;
 
-		listViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				return ((Lodging) element).getName();
-			}
-		});
-		listViewer.setContentProvider(new ObservableListContentProvider());
-		listViewer.setInput(BeansObservables.observeList(realm, catalog,
-				"lodgings"));
+		IObservableList lodgings = BeansObservables.observeList(realm, catalog,
+				"lodgings");
+		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
+				contentProvider.getKnownElements(), Lodging.class,
+				new String[] { "name" });
+		listViewer.setContentProvider(contentProvider);
+		listViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributeMaps));
+		listViewer.setInput(lodgings);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer)
 				.toArray());
@@ -113,9 +118,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 
 		getDbc().bindValue(
 				SWTObservables.observeText(txtName, SWT.Modify),
-				MasterDetailObservables.detailValue(selectedLodging,
-						BeansObservables.valueFactory(realm, "name"),
-						String.class), null);
+				BeansObservables.observeDetailValue(realm, selectedLodging,
+						"name", String.class), null);
 
 		assertEquals(txtName.getText(), SampleData.CAMP_GROUND.getName());
 		enterText(txtName, "foobar");
@@ -160,14 +164,16 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				new GridData(SWT.FILL, SWT.FILL, false, false));
 		final Catalog catalog = SampleData.CATALOG_2005;
 
-		listViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				return ((Lodging) element).getName();
-			}
-		});
-		listViewer.setContentProvider(new ObservableListContentProvider());
-		listViewer.setInput(BeansObservables.observeList(realm, catalog,
-				"lodgings"));
+		IObservableList lodgings = BeansObservables.observeList(realm, catalog,
+				"lodgings");
+		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
+				contentProvider.getKnownElements(), Lodging.class,
+				new String[] { "name" });
+		listViewer.setContentProvider(contentProvider);
+		listViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributeMaps));
+		listViewer.setInput(lodgings);
 
 		assertArrayEquals(catalog.getLodgings(), getViewerContent(listViewer)
 				.toArray());
@@ -194,10 +200,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				selectionExistsObservable, null);
 		getDbc().bindValue(
 				SWTObservables.observeText(txtName, SWT.Modify),
-				MasterDetailObservables.detailValue(
-						selectedLodgingObservable, BeansObservables
-								.valueFactory(realm, "name"),
-						String.class), null);
+				BeansObservables.observeDetailValue(realm,
+						selectedLodgingObservable, "name", String.class), null);
 
 		assertEquals(txtName.getText(), "");
 		assertFalse(txtName.getEnabled());
@@ -288,15 +292,17 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				SWT.BORDER);
 		categoryListViewer.getList().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, false, false));
-		categoryListViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				return ((Category) element).getName();
-			}
-		});
-		categoryListViewer
-				.setContentProvider(new ObservableListContentProvider());
-		categoryListViewer.setInput(BeansObservables.observeList(realm,
-				catalog, "categories"));
+
+		IObservableList categories = BeansObservables.observeList(realm,
+				catalog, "categories");
+		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+		IObservableMap[] attributeMaps = BeansObservables.observeMaps(
+				contentProvider.getKnownElements(), Category.class,
+				new String[] { "name" });
+		categoryListViewer.setContentProvider(contentProvider);
+		categoryListViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributeMaps));
+		categoryListViewer.setInput(categories);
 
 		assertArrayEquals(catalog.getCategories(), getViewerContent(
 				categoryListViewer).toArray());
@@ -308,17 +314,16 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				SWT.BORDER);
 		adventureListViewer.getList().setLayoutData(
 				new GridData(SWT.FILL, SWT.FILL, false, false));
-		adventureListViewer.setLabelProvider(new LabelProvider() {
-			public String getText(Object element) {
-				return ((Adventure) element).getName();
-			}
-		});
 
-		adventureListViewer
-				.setContentProvider(new ObservableListContentProvider());
-		adventureListViewer.setInput(MasterDetailObservables.detailList(
-				selectedCategoryObservable, BeansObservables.listFactory(
-						realm, "adventures"), Adventure.class));
+		IObservableList adventures = BeansObservables.observeDetailList(realm,
+				selectedCategoryObservable, "adventures", Adventure.class);
+		contentProvider = new ObservableListContentProvider();
+		attributeMaps = BeansObservables.observeMaps(contentProvider
+				.getKnownElements(), Adventure.class, new String[] { "name" });
+		adventureListViewer.setContentProvider(contentProvider);
+		adventureListViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributeMaps));
+		adventureListViewer.setInput(adventures);
 
 		ComputedValue categorySelectionExistsObservable = new ComputedValue() {
 			protected Object calculate() {
@@ -347,10 +352,9 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				adventureSelectionExistsObservable, null);
 		getDbc().bindValue(
 				SWTObservables.observeText(txtName, SWT.Modify),
-				MasterDetailObservables.detailValue(
-						selectedAdventureObservable, BeansObservables
-								.valueFactory(realm, "name"),
-						String.class), null);
+				BeansObservables.observeDetailValue(realm,
+						selectedAdventureObservable, "name", String.class),
+				null);
 
 		assertEquals(txtName.getText(), "");
 		assertFalse(txtName.getEnabled());
@@ -361,9 +365,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 				adventureSelectionExistsObservable, null);
 		getDbc().bindValue(
 				SWTObservables.observeText(txtDescription, SWT.Modify),
-				MasterDetailObservables.detailValue(
-						selectedAdventureObservable, BeansObservables
-								.valueFactory(realm, "description"),
+				BeansObservables.observeDetailValue(realm,
+						selectedAdventureObservable, "description",
 						String.class), null);
 
 		assertFalse(adventureListViewer.getList().isEnabled());
@@ -373,7 +376,8 @@ public class MasterDetailScenarios extends ScenariosTestCase {
 		assertFalse(txtName.getEnabled());
 		adventureListViewer.setSelection(new StructuredSelection(
 				SampleData.RAFTING_HOLIDAY));
-		assertEquals(Boolean.TRUE, adventureSelectionExistsObservable.getValue());
+		assertEquals(Boolean.TRUE, adventureSelectionExistsObservable
+				.getValue());
 		assertTrue(txtName.getEnabled());
 		assertEquals(SampleData.RAFTING_HOLIDAY.getName(), txtName.getText());
 		categoryListViewer.setSelection(new StructuredSelection(
