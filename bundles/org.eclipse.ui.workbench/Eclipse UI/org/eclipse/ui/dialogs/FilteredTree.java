@@ -413,14 +413,17 @@ public class FilteredTree extends Composite {
 							|| (!visible && System.currentTimeMillis() > cancelTime)) {
 						canceled = true;
 					} else {
-						if (!item.getExpanded()) {
-							// do the expansion through the viewer so that it can refresh children appropriately.
-							treeViewer.setExpandedState(item.getData(), true);
-						}
-						TreeItem[] children = item.getItems();
-						if (items.length > 0) {
-							canceled = recursiveExpand(children,
-									monitor, cancelTime, numItemsLeft);
+						Object itemData = item.getData();
+						if (itemData != null) {
+							if (!item.getExpanded()) {
+								// do the expansion through the viewer so that it can refresh children appropriately.
+								treeViewer.setExpandedState(itemData, true);
+							}
+							TreeItem[] children = item.getItems();
+							if (items.length > 0) {
+								canceled = recursiveExpand(children,
+										monitor, cancelTime, numItemsLeft);
+							}
 						}
 					}
 				}
