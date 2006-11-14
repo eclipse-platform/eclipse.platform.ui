@@ -71,11 +71,13 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	 */
 	synchronized void build(boolean needsBuild) {
 		buildNeeded |= needsBuild;
-		interrupted = false;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		int state = getState();
 		if (Policy.DEBUG_NEEDS_BUILD)
 			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		//don't mess with the interrupt flag if the job is still running
+		if (state != Job.RUNNING)
+			interrupted = false;
 		switch (state) {
 			case Job.SLEEPING :
 				wakeUp(delay);
@@ -99,6 +101,12 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private synchronized IStatus canceled() {
 		//regardless of the form of cancelation, the build state is not happy
 		buildNeeded = true;
+		//schedule a rebuild immediately if build was implicitly canceled
+		if (interrupted) {
+			System.out.println("Scheduling build in AutoBuildJob.cancel()"); //$NON-NLS-1$
+			interrupted = false;
+			schedule();
+		}
 		return Status.CANCEL_STATUS;
 	}
 
