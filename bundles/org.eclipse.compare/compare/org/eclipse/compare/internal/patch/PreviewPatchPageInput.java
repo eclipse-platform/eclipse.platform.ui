@@ -4,7 +4,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 
-public class PreviewPatchPageInput extends PatcherCompareEditorInput {
+public abstract class PreviewPatchPageInput extends PatcherCompareEditorInput {
 	
 	private boolean containsHunkErrors = false;
 	
@@ -13,7 +13,7 @@ public class PreviewPatchPageInput extends PatcherCompareEditorInput {
 	}
 	
 	protected void updateTree() {
-		if (getViewer() != null)
+		if (getViewer() != null && !getViewer().getControl().isDisposed())
 			getViewer().refresh(true);
 	}
 	

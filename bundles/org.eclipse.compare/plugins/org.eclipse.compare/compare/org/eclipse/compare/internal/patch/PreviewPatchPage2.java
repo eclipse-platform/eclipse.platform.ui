@@ -1,15 +1,16 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -40,17 +41,11 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
 	
-	private Action fIncludeToggle;
-	private static final String toggleInclusionID = "PreviewPatchPage_toggleInclusion"; //$NON-NLS-1$
-	
+	private Action fExcludeAction;
+	private Action fIncludeAction;
 	private Action fIgnoreWhiteSpace;
-	private static final String ignoreWSID = "PreviewPatchPage_ignoreWhiteSpace"; //$NON-NLS-1$
-	
 	private Action fReversePatch;
-	private static final String reversePatchID = "PreviewPatchPage_reversePatch"; //$NON-NLS-1$
-	
-	private Action fRetargetResource;
-	private static final String  retargetDiffID = "PreviewPatchPage_retargetDiffIDSelection"; //$NON-NLS-1$
+	private Action fMoveAction;
 	
 	private static final int DIFF_NODE = 0;
 	private static final int PROJECTDIFF_NODE = 1;
@@ -241,15 +236,21 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
-		//if a compare configuration has been passed make sure 
-		fInput = new PreviewPatchPageInput(getPatcher(), getCompareConfiguration());
-			
 		initializeDialogUnits(parent);
+		
+		fInput = new PreviewPatchPageInput(getPatcher(), getCompareConfiguration()) {
+			protected void fillContextMenu(IMenuManager manager) {
+				if (isShowAll()) {
+					manager.add(fIncludeAction);
+				}
+				manager.add(fExcludeAction);
+				manager.add(new Separator());
+				manager.add(fMoveAction);
+			}
+		};
 		
 		buildPatchOptionsGroup(composite);
 		
@@ -261,31 +262,8 @@ public class PreviewPatchPage2 extends WizardPage {
 		}
 	
 		Control c = fInput.createContents(composite);
+		initializeActions();
 		fInput.contributeDiffViewerToolbarItems(getContributedActions(), getPatcher().isWorkspacePatch());
-		fInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
-				Object obj= sel.getFirstElement();
-				String name = null;
-				boolean enable = false;
-				if (obj instanceof PatchProjectDiffNode) {
-					name = PatchMessages.PreviewPatchPage2_RetargetProject;
-					enable = true;
-				} else if (obj instanceof PatchFileDiffNode) {
-					PatchFileDiffNode node = (PatchFileDiffNode) obj;
-					name = PatchMessages.PreviewPatchPage2_RetargetDiff;
-					enable = node.getDiffResult().getDiffProblem();
-				} else if (obj instanceof HunkDiffNode) {
-					name = PatchMessages.PreviewPatchPage2_RetargetHunk;
-					enable = true;
-				}
-				if (name != null) {
-					fRetargetResource.setText(name);
-				}
-				fRetargetResource.setEnabled(enable);
-			}
-		});
-		fInput.contributeDiffViewerMenuItems(getMenuActions());
 
 		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
@@ -305,7 +283,43 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 	
 	private Action[] getContributedActions() {
-		fIncludeToggle= new Action(PatchMessages.PreviewPatchPage2_IncludeElement, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
+		return new Action[]{ fIgnoreWhiteSpace };
+	}
+
+	private void initializeActions() {
+		
+		fMoveAction = new Action(PatchMessages.PreviewPatchPage2_RetargetAction, null) {
+			public void run() {
+				Shell shell = getShell();
+				ISelection selection = fInput.getViewer().getSelection();
+				final RetargetPatchDialog dialog = new RetargetPatchDialog(shell, selection);
+				int returnCode = dialog.open();
+				if (returnCode == Window.OK) {
+					// TODO: This could be a problem. We should only rebuild the affected nodes
+					rebuildTree();
+				}
+			}
+		};
+		fMoveAction .setToolTipText(PatchMessages.PreviewPatchPage2_RetargetTooltip);
+		fMoveAction.setEnabled(true);
+		fInput.getViewer().addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
+				Object obj= sel.getFirstElement();
+				boolean enable = false;
+				if (obj instanceof PatchProjectDiffNode) {
+					enable = true;
+				} else if (obj instanceof PatchFileDiffNode) {
+					PatchFileDiffNode node = (PatchFileDiffNode) obj;
+					enable = node.getDiffResult().getDiffProblem();
+				} else if (obj instanceof HunkDiffNode) {
+					enable = true;
+				}
+				fMoveAction.setEnabled(enable);
+			}
+		});
+		
+		fExcludeAction = new Action("&Exclude") {
 			public void run() {
 				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
@@ -314,7 +328,7 @@ public class PreviewPatchPage2 extends WizardPage {
 						Object obj = iter.next();
 						if (obj instanceof PatchDiffNode){
 							PatchDiffNode node = ((PatchDiffNode) obj);
-							node.setEnabled(!node.isEnabled());
+							node.setEnabled(false);
 							// TODO: This may require a rebuild if matched hunks are shown
 						} 
 					}
@@ -322,9 +336,26 @@ public class PreviewPatchPage2 extends WizardPage {
 				fInput.getViewer().refresh();
 			}
 		};
-		fIncludeToggle.setToolTipText(PatchMessages.PreviewPatchPage2_IncludeElementText);
-		fIncludeToggle.setEnabled(true);
-		fIncludeToggle.setId(toggleInclusionID);
+		fExcludeAction.setEnabled(true);
+		
+		fIncludeAction = new Action("&Include") {
+			public void run() {
+				ISelection selection = fInput.getViewer().getSelection();
+				if (selection instanceof TreeSelection){
+					Iterator iter = ((TreeSelection) selection).iterator();
+					while (iter.hasNext()){
+						Object obj = iter.next();
+						if (obj instanceof PatchDiffNode){
+							PatchDiffNode node = ((PatchDiffNode) obj);
+							node.setEnabled(true);
+							// TODO: This may require a rebuild if matched hunks are shown
+						} 
+					}
+				}
+				fInput.getViewer().refresh();
+			}
+		};
+		fIncludeAction.setEnabled(true);
 		
 		fIgnoreWhiteSpace = new Action(PatchMessages.PreviewPatchPage2_IgnoreWSAction, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_ENABLED)){
 			public void run(){
@@ -352,7 +383,6 @@ public class PreviewPatchPage2 extends WizardPage {
 		fIgnoreWhiteSpace.setChecked(false);
 		fIgnoreWhiteSpace.setToolTipText(PatchMessages.PreviewPatchPage2_IgnoreWSTooltip);
 		fIgnoreWhiteSpace.setDisabledImageDescriptor(CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_DISABLED));
-		fIgnoreWhiteSpace.setId(ignoreWSID);
 		
 		fReversePatch = new Action(PatchMessages.PreviewPatchPage_ReversePatch_text, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REVERSE_PATCH_ENABLED)){
 			public void run(){
@@ -381,32 +411,6 @@ public class PreviewPatchPage2 extends WizardPage {
 		};
 		fReversePatch.setChecked(false);
 		fReversePatch.setToolTipText(PatchMessages.PreviewPatchPage_ReversePatch_text);
-		fReversePatch.setId(reversePatchID);
-		
-		return new Action[]{fIncludeToggle, fIgnoreWhiteSpace, fReversePatch};
-	}
-
-	private Action[] getMenuActions() {
-		fRetargetResource = new Action(PatchMessages.PreviewPatchPage2_RetargetDiff,
-				CompareUIPlugin.getImageDescriptor(ICompareUIConstants.RETARGET_PROJECT)) {
-			public void run() {
-				Shell shell = getShell();
-				ISelection selection = fInput.getViewer().getSelection();
-				final RetargetPatchDialog dialog = new RetargetPatchDialog(
-						shell, selection);
-				int returnCode = dialog.open();
-				if (returnCode == Window.OK) {
-					// TODO: This could be a problem. We should only rebuild the affected nodes
-					rebuildTree();
-				}
-			}
-		};
-		fRetargetResource
-				.setToolTipText(PatchMessages.PreviewPatchPage2_RetargetTooltip);
-		fRetargetResource.setEnabled(true);
-		fRetargetResource.setId(retargetDiffID);
-
-		return new Action[] { fIncludeToggle, fRetargetResource };
 	}
 	
 	public void setVisible(boolean visible) {
@@ -482,97 +486,24 @@ public class PreviewPatchPage2 extends WizardPage {
 	 *	Create the group for setting various patch options
 	 */
 	private void buildPatchOptionsGroup(Composite parent) {
-		
-		GridLayout gl;
-		GridData gd;
-		Label l;
-
-		final WorkspacePatcher patcher= getPatcher();
-
 		Group group= new Group(parent, SWT.NONE);
 		group.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
-		gl= new GridLayout(); gl.numColumns= 4;
+		GridLayout gl= new GridLayout(); gl.numColumns= 3;
 		group.setLayout(gl);
 		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
 
 		// 1st row
-
-		Composite pair= new Composite(group, SWT.NONE);
-		gl= new GridLayout(); gl.numColumns= 2; gl.marginHeight= gl.marginWidth= 0;
-		pair.setLayout(gl);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		pair.setLayoutData(gd);
-
-		l= new Label(pair, SWT.NONE);
-		l.setText(PatchMessages.PreviewPatchPage_IgnoreSegments_text);
-		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING|GridData.GRAB_HORIZONTAL);
-		l.setLayoutData(gd);
-
-		fStripPrefixSegments= new Combo(pair, SWT.DROP_DOWN|SWT.READ_ONLY|SWT.SIMPLE);
-		int prefixCnt= patcher.getStripPrefixSegments();
-		String prefix= Integer.toString(prefixCnt);
-		fStripPrefixSegments.add(prefix);
-		fStripPrefixSegments.setText(prefix);
-		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_END);
-		fStripPrefixSegments.setLayoutData(gd);
-
+		createStripSegmentCombo(group);
 		addSpacer(group);
+		createFuzzFactorChooser(group);
 		
-		//
-		final Button generateRejects = new Button(pair, SWT.CHECK);
-		generateRejects.setText(PatchMessages.HunkMergePage_GenerateRejectFile);
-		gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
-				| GridData.HORIZONTAL_ALIGN_BEGINNING
-				| GridData.GRAB_HORIZONTAL);
-		generateRejects.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				getPatcher().setGenerateRejects(
-						generateRejects.getSelection());
-			}
-		});
-		generateRejects.setSelection(true);
-		generateRejects.setLayoutData(gd);
-		//
-		
-		addSpacer(group);
 		// 2nd row
-		pair= new Composite(group, SWT.NONE);
-		gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
-		pair.setLayout(gl);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		pair.setLayoutData(gd);
-
-		l= new Label(pair, SWT.NONE);
-		l.setText(PatchMessages.PreviewPatchPage_FuzzFactor_text);
-		l.setToolTipText(PatchMessages.PreviewPatchPage_FuzzFactor_tooltip);
-		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING|GridData.GRAB_HORIZONTAL);
-		l.setLayoutData(gd);
-
-		fFuzzField= new Text(pair, SWT.BORDER);
-		fFuzzField.setText("2"); //$NON-NLS-1$
-			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END); gd.widthHint= 30;
-		fFuzzField.setLayoutData(gd);
-
-		Button b= new Button(pair, SWT.PUSH);
-		b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);
-			b.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
-							int fuzz= guessFuzzFactor(patcher);
-							if (fuzz>=0)
-								fFuzzField.setText(Integer.toString(fuzz));
-						}
-					}
-				}
-			);
-		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		Point minSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		gd.widthHint = Math.max(widthHint, minSize.x);		
-		b.setLayoutData(gd);
+		createReversePatchToggle(group);
+		createShowRemovedToggle(group);
+		createGenerateRejectsToggle(group);
 		
 		// register listeners
-
+		final WorkspacePatcher patcher= getPatcher();
 		if (fStripPrefixSegments!=null)
 			fStripPrefixSegments.addSelectionListener(
 				new SelectionAdapter() {
@@ -601,6 +532,120 @@ public class PreviewPatchPage2 extends WizardPage {
 				}
 			}
 		});
+	}
+
+	private void createFuzzFactorChooser(Group group) {
+		final WorkspacePatcher patcher= getPatcher();
+		Composite pair= new Composite(group, SWT.NONE);
+		GridLayout gl= new GridLayout(); gl.numColumns= 3; gl.marginHeight= gl.marginWidth= 0;
+		pair.setLayout(gl);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		pair.setLayoutData(gd);
+
+		Label l= new Label(pair, SWT.NONE);
+		l.setText(PatchMessages.PreviewPatchPage_FuzzFactor_text);
+		l.setToolTipText(PatchMessages.PreviewPatchPage_FuzzFactor_tooltip);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING|GridData.GRAB_HORIZONTAL);
+		l.setLayoutData(gd);
+
+		fFuzzField= new Text(pair, SWT.BORDER);
+		fFuzzField.setText("2"); //$NON-NLS-1$
+			gd= new GridData(GridData.VERTICAL_ALIGN_CENTER | GridData.HORIZONTAL_ALIGN_END); gd.widthHint= 30;
+		fFuzzField.setLayoutData(gd);
+
+		Button b= new Button(pair, SWT.PUSH);
+		b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);
+			b.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
+							int fuzz= guessFuzzFactor(patcher);
+							if (fuzz>=0)
+								fFuzzField.setText(Integer.toString(fuzz));
+						}
+					}
+				}
+			);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		Point minSize = b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		gd.widthHint = Math.max(widthHint, minSize.x);		
+		b.setLayoutData(gd);
+	}
+
+	private void createGenerateRejectsToggle(Composite pair) {
+		final Button generateRejects = new Button(pair, SWT.CHECK);
+		generateRejects.setText(PatchMessages.HunkMergePage_GenerateRejectFile);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.GRAB_HORIZONTAL);
+		generateRejects.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				getPatcher().setGenerateRejects(
+						generateRejects.getSelection());
+			}
+		});
+		generateRejects.setSelection(true);
+		generateRejects.setLayoutData(gd);
+	}
+	
+	private void createShowRemovedToggle(Composite pair) {
+		final Button showRemoved = new Button(pair, SWT.CHECK);
+		showRemoved.setText("Show Excluded");
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.GRAB_HORIZONTAL);
+		showRemoved.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				fInput.setShowAll(showRemoved.getSelection());
+				fInput.updateTree();
+			}
+		});
+		showRemoved.setSelection(fInput.isShowAll());
+		showRemoved.setLayoutData(gd);
+	}
+	
+	private void createReversePatchToggle(Composite pair) {
+		final Button reversePatch = new Button(pair, SWT.CHECK);
+		reversePatch.setText(PatchMessages.PreviewPatchPage_ReversePatch_text);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
+				| GridData.HORIZONTAL_ALIGN_BEGINNING
+				| GridData.GRAB_HORIZONTAL);
+		reversePatch.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (fReversePatch != null) {
+					fReversePatch.setChecked(reversePatch.getSelection());
+					fReversePatch.run();
+					if (fReversePatch.isChecked() != reversePatch.getSelection()) {
+						reversePatch.setSelection(fReversePatch.isChecked());
+					}
+				}
+			}
+		});
+		reversePatch.setSelection(getPatcher().isReversed());
+		reversePatch.setLayoutData(gd);
+	}
+
+	private void createStripSegmentCombo(Group group) {
+		final WorkspacePatcher patcher= getPatcher();
+		
+		Composite pair= new Composite(group, SWT.NONE);
+		GridLayout gl= new GridLayout(); gl.numColumns= 2; gl.marginHeight= gl.marginWidth= 0;
+		pair.setLayout(gl);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		pair.setLayoutData(gd);
+
+		Label l= new Label(pair, SWT.NONE);
+		l.setText(PatchMessages.PreviewPatchPage_IgnoreSegments_text);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING);
+		l.setLayoutData(gd);
+
+		fStripPrefixSegments= new Combo(pair, SWT.DROP_DOWN|SWT.READ_ONLY|SWT.SIMPLE);
+		int prefixCnt= patcher.getStripPrefixSegments();
+		String prefix= Integer.toString(prefixCnt);
+		fStripPrefixSegments.add(prefix);
+		fStripPrefixSegments.setText(prefix);
+		gd= new GridData(GridData.VERTICAL_ALIGN_CENTER|GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.GRAB_HORIZONTAL);
+		fStripPrefixSegments.setLayoutData(gd);
 	}
 	
 	private void addSpacer(Composite parent) {

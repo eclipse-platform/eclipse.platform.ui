@@ -13,6 +13,8 @@ public interface ICompareUIConstants {
 	public static final String CTOOL_PREV= ETOOL_PREV;
 	
 	public static final String ERROR_OVERLAY= "ovr16/error_ov.gif"; //$NON-NLS-1$
+	public static final String IS_MERGED_OVERLAY= "ovr16/merged_ov.gif"; //$NON-NLS-1$
+	public static final String REMOVED_OVERLAY= "ovr16/removed_ov.gif"; //$NON-NLS-1$
 
 	public static final String RETARGET_PROJECT= "eview16/compare_view.gif";	//$NON-NLS-1$
 	
@@ -25,4 +27,6 @@ public interface ICompareUIConstants {
 	public static final String PROP_IGNORE_ANCESTOR = PREFIX + "IgnoreAncestor"; //$NON-NLS-1$
 	public static final String PROP_TITLE = PREFIX + "Title"; //$NON-NLS-1$
 	public static final String PROP_TITLE_IMAGE = "TitleImage"; //$NON-NLS-1$
+	
+	public static final int COMPARE_IMAGE_WIDTH= 22;
 }

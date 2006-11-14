@@ -56,6 +56,7 @@ public class Patcher {
 	private Map diffResults = new HashMap();
 	private final Map contentCache = new HashMap();
 	private final Map properties = new HashMap();
+	private Set mergedHunks = new HashSet();
 	
 	public Patcher() {
 		// nothing to do
@@ -683,6 +684,7 @@ public class Patcher {
 	 */
 	public void clearCachedContents() {
 		contentCache.clear();
+		mergedHunks.clear();
 	}
 	
 	public void setProperty(String key, Object value) {
@@ -691,5 +693,16 @@ public class Patcher {
 	
 	public Object getProperty(String key) {
 		return properties.get(key);
+	}
+
+	public boolean isManuallyMerged(Hunk hunk) {
+		return mergedHunks.contains(hunk);
+	}
+
+	public void setManuallyMerged(Hunk hunk, boolean merged) {
+		if (merged)
+			mergedHunks.add(hunk);
+		else 
+			mergedHunks.remove(hunk);
 	}
 }

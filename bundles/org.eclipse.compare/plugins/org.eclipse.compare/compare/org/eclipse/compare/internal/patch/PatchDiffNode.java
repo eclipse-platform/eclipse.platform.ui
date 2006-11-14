@@ -41,5 +41,17 @@ public abstract class PatchDiffNode extends DiffNode {
 	}
 
 	protected abstract Patcher getPatcher();
+	
+	public boolean equals(Object other) {
+		if (other instanceof PatchDiffNode) {
+			PatchDiffNode node = (PatchDiffNode) other;
+			return (node.getPatchElement().equals(getPatchElement()));
+		}
+		return super.equals(other);
+	}
+	
+	public int hashCode() {
+		return getPatchElement().hashCode();
+	}
 
 }

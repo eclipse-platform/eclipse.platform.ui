@@ -1,7 +1,6 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -14,11 +13,23 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 
 	private static final String IMAGE_CACHE_KEY = "IMAGE_CACHE"; //$NON-NLS-1$
+	
+	public static ImageDescriptor createOverlay(Image baseImage, ImageDescriptor overlayImage, int quadrant) {
+		return new DecoratorOverlayIcon(baseImage, createArrayFrom(overlayImage, quadrant), new Point(Math.max(baseImage.getBounds().width, 16), Math.max(baseImage.getBounds().height, 16)));
+	}
+	
+	private static ImageDescriptor[] createArrayFrom(
+			ImageDescriptor overlayImage, int quadrant) {
+		ImageDescriptor[] descs = new ImageDescriptor[] { null, null, null, null, null };
+		descs[quadrant] = overlayImage;
+		return descs;
+	}
 	
 	class PatcherCompareEditorLabelProvider extends LabelProvider {
 		private ILabelProvider wrappedProvider;
@@ -60,16 +71,29 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	
 		public Image getImage(Object element) {
 			Image image = wrappedProvider.getImage(element);
+			if (element instanceof PatchDiffNode){
+				PatchDiffNode node = (PatchDiffNode) element;
+				if (!node.isEnabled() && image != null) {
+					LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(getPatcher());
+					return imageCache.createImage(createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REMOVED_OVERLAY), IDecoration.TOP_LEFT));
+				}
+			}
+			if (element instanceof HunkDiffNode) {
+				HunkDiffNode node = (HunkDiffNode) element;
+				if (node.isManuallyMerged()) {
+					LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(getPatcher());
+					return imageCache.createImage(PatcherCompareEditorInput.createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IS_MERGED_OVERLAY), IDecoration.TOP_LEFT));
+				}
+			}
 			return image;
 		}
 	}
 	
 	private DiffNode root;
 	private TreeViewer viewer;
-	private HashMap contributedActions;
 	
 	private final WorkspacePatcher patcher;
-	private Action[] fContributedMenuActions;
+	private boolean fShowAll;
 	
 	/**
 	 * Creates a new PatchCompareEditorInput and makes use of the passed in CompareConfiguration
@@ -130,15 +154,10 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	 */
 	public Viewer createDiffViewer(Composite parent) {
 		viewer =  new DiffTreeViewer(parent, getCompareConfiguration()){
-				protected void fillContextMenu(IMenuManager manager) {
-					int actionLength = fContributedMenuActions.length;
-					if (actionLength > 0){
-						for (int i = 0; i < actionLength; i++) {
-							manager.add(fContributedMenuActions[i]);
-						}
-					}
-				}
-			};
+			protected void fillContextMenu(IMenuManager manager) {
+				PatcherCompareEditorInput.this.fillContextMenu(manager);
+			}
+		};
 			
 		viewer.setLabelProvider(new PatcherCompareEditorLabelProvider((ILabelProvider)viewer.getLabelProvider()));
 		viewer.getTree().setData(CompareUI.COMPARE_VIEWER_TITLE, PatchMessages.PatcherCompareEditorInput_PatchContents);
@@ -156,20 +175,39 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 			}
 		
 		});
+		viewer.setFilters(getFilters());
 		viewer.setInput(root);
 		return viewer;
 	}
 	
+	private ViewerFilter[] getFilters() {
+		return new ViewerFilter[] { new ViewerFilter() {
+			public boolean select(Viewer v, Object parentElement, Object element) {
+				if (element instanceof PatchDiffNode) {
+					PatchDiffNode node = (PatchDiffNode) element;
+					return node.isEnabled() || isShowAll();
+				}
+				return false;
+			}
+		} };
+	}
+
+	protected boolean isShowAll() {
+		return fShowAll;
+	}
+	
+	protected void setShowAll(boolean show) {
+		fShowAll = show;
+	}
+
 	public void contributeDiffViewerToolbarItems(Action[] actions, boolean workspacePatch){
 		ToolBarManager tbm= CompareViewerPane.getToolBarManager(viewer.getControl().getParent());
-		contributedActions = new HashMap();
 		if (tbm != null) {
 			tbm.removeAll();
 			
 			tbm.add(new Separator("contributed")); //$NON-NLS-1$
 			
 			for (int i = 0; i < actions.length; i++) {
-				contributedActions.put(actions[i].getId(), actions[i]);
 				tbm.appendToGroup("contributed", actions[i]); //$NON-NLS-1$
 			}
 			
@@ -179,29 +217,6 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	
 	public TreeViewer getViewer() {
 		return viewer;
-	}
-	
-	public void setContributedActionEnablement(String actionID, boolean enabled){
-		Object obj = contributedActions.get(actionID);
-		if (obj != null && obj instanceof Action){
-			((Action) obj).setEnabled(enabled);
-		}
-	}
-	
-	public void setContributedActionName(String actionID, String name){
-		Object obj = contributedActions.get(actionID);
-		if (obj != null && obj instanceof Action){
-			((Action) obj).setText(name);
-		}
-	}
-	
-	public void contributeDiffViewerMenuItems(Action[] menuActions) {
-		fContributedMenuActions = new Action[menuActions.length];
-		System.arraycopy(menuActions, 0, fContributedMenuActions, 0, fContributedMenuActions.length);
-		//also add actions to the enablement listener
-		contributedActions = new HashMap();
-		for (int i = 0; i < menuActions.length; i++) 
-				contributedActions.put(menuActions[i].getId(), menuActions[i]);
 	}
 	
 	public DiffNode getRoot() {
@@ -234,4 +249,6 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	private boolean promptToDiscardCachedChanges(String message) {
 		return MessageDialog.openConfirm(viewer.getControl().getShell(), "Discard Changes?", message);
 	}
+
+	protected abstract void fillContextMenu(IMenuManager manager);
 }

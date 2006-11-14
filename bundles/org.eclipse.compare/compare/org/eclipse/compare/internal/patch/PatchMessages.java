@@ -107,8 +107,5 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage2_OrphanedHunk;
 	public static String PreviewPatchPage2_PatchedLocalFile;
 	public static String PreviewPatchPage2_RetargetAction;
-	public static String PreviewPatchPage2_RetargetDiff;
-	public static String PreviewPatchPage2_RetargetHunk;
-	public static String PreviewPatchPage2_RetargetProject;
 	public static String PreviewPatchPage2_RetargetTooltip;
 }

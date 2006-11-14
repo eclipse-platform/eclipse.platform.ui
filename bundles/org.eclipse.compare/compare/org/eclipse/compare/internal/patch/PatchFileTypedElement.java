@@ -17,6 +17,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
 public class PatchFileTypedElement implements ITypedElement, IEncodedStreamContentAccessor {
@@ -46,10 +47,15 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 				}
 			}
 		}
+		Image image = null;
 		if (file != null) {
-			return CompareUI.getImage(file);
+			image = CompareUI.getImage(file);
 		}
-		return null;
+		if (result.containsProblems()) {
+			LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(result.getPatcher());
+			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
+		}
+		return image;
 	}
 
 	/* (non-Javadoc)

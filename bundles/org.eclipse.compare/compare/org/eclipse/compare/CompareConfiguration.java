@@ -61,8 +61,6 @@ public class CompareConfiguration {
 	 */
 	public static final String USE_OUTLINE_VIEW= "USE_OUTLINE_VIEW"; //$NON-NLS-1$
 	
-	private static final int WIDTH= 22;
-	
 	private static ImageDescriptor[] fgImages= new ImageDescriptor[16];
 	private static Object fgDummy= new Object();
 	private static HashMap fgMap= new HashMap(20);
@@ -301,7 +299,7 @@ public class CompareConfiguration {
 		}
 		Image b= a[kind];
 		if (b == null) {
-			b= new DiffImage(base, fgImages[kind], WIDTH, !fLeftIsLocal).createImage();
+			b= new DiffImage(base, fgImages[kind], ICompareUIConstants.COMPARE_IMAGE_WIDTH, !fLeftIsLocal).createImage();
 			CompareUI.disposeOnShutdown(b);
 			a[kind]= b;
 		}

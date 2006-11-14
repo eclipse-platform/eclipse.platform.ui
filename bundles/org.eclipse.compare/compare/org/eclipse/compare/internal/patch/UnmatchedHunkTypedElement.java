@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.CoreException;
 public class UnmatchedHunkTypedElement extends HunkTypedElement implements IContentChangeNotifier, IEditableContent {
 
 	private ContentChangeNotifier changeNotifier;
-	private boolean fManuallyMerged;
 	
 	public UnmatchedHunkTypedElement(HunkResult result) {
 		// An unmatched hunk element is always used for the before state and is full context
@@ -64,7 +63,7 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 	 * @see org.eclipse.compare.IEditableContent#setContent(byte[])
 	 */
 	public void setContent(byte[] newContent) {
-		fManuallyMerged = true;
+		getHunkResult().getDiffResult().getPatcher().setManuallyMerged(getHunkResult().getHunk(), true);
 		getPatcher().cacheContents(getDiff(), newContent);
 		if (changeNotifier != null)
 			changeNotifier.fireContentChanged();
@@ -99,9 +98,4 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 			bytes = content.getBytes();
 		return new ByteArrayInputStream(bytes);
 	}
-
-	public boolean isManuallyMerged() {
-		return fManuallyMerged;
-	}
-
 }

@@ -14,9 +14,9 @@ import java.io.*;
 
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.ICompareUIConstants;
+import org.eclipse.compare.internal.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
@@ -38,9 +38,19 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	public Image getImage() {
 		if (!fHunkResult.isOK()) {
 			LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getPatcher());
-			return imageCache.createImage(CompareUIPlugin.getImageDescriptor(ICompareUIConstants.ERROR_OVERLAY));
+			return getHunkErrorImage(null, imageCache, false);
 		} 
 		return null;
+	}
+
+	public static Image getHunkErrorImage(Image baseImage, LocalResourceManager imageCache, boolean onLeft) {
+		ImageDescriptor desc = new DiffImage(baseImage, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.ERROR_OVERLAY), ICompareUIConstants.COMPARE_IMAGE_WIDTH, onLeft);
+		Image image = imageCache.createImage(desc);
+		return image;
+	}
+
+	public boolean isManuallyMerged() {
+		return getHunkResult().getDiffResult().getPatcher().isManuallyMerged(getHunkResult().getHunk());
 	}
 
 	/* (non-Javadoc)
