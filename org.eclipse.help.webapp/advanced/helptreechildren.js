@@ -44,6 +44,10 @@ function mergeChildren(treeItem, nodes) {
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
             if (node.tagName == "node") {
+                if (placeholderDiv && placeholderDiv.className == "unopened") {
+                    treeItem.removeChild(placeholderDiv);
+                    placeholderDiv = null;
+                }
                 var title = node.getAttribute("title");
                 var isLeaf = node.getAttribute("is_leaf");
                 var href = node.getAttribute("href");
@@ -64,9 +68,6 @@ function mergeChildren(treeItem, nodes) {
 
      if (childAdded) {
          changeExpanderImage(treeItem, true); 
-         if (placeholderDiv && placeholderDiv.className == "unopened") {
-             treeItem.removeChild(placeholderDiv);
-         }
      }
     
 }
@@ -120,6 +121,7 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     } else {
         anchor.href = href;
     }
+    anchor.title = name;
     
     anchor.appendChild(topicImage);
     anchor.appendChild(topicName);
