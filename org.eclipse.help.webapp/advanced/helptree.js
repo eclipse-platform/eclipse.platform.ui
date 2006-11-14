@@ -13,6 +13,8 @@
 // of nodes in a tree.
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
+var oldActive;
+var oldActiveClass;
 
 /**
  * Returns the target node of an event
@@ -58,17 +60,24 @@ function keyDownHandler(e)
 
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 		
-	if ( key <37 || key > 40) {
+	if ( key <35 || key > 40) {
 		return true;
 	}
+	
+	
+  	if (key == 35) { // End - go to last visible child
+  	    goToEnd();
+  	} else if (key == 36) { // Home - go to first element
+  	    goHome();
+  	}
 		
 	var clickedNode = getTarget(e);
 	var treeItem = getTreeItem(clickedNode);
-    if (!treeItem) { return true; }
+    if (!treeItem && key >= 37) { return true; }
 	
   	if (isIE) {
   		window.event.cancelBubble = true;
@@ -87,6 +96,23 @@ function keyDownHandler(e)
   	}
   				
   	return true;
+}
+
+// Handle a HOME key event
+function goHome() {   
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot === null) { 
+        return; 
+    }
+    focusOnItem(findChild(treeRoot, "DIV"));
+}
+
+function goToEnd() {    
+    var treeRoot = document.getElementById("tree_root");
+    if (treeRoot === null) { 
+        return; 
+    }
+    focusOnDeepestVisibleChild(treeRoot);
 }
 
 // Handle a left arrow key event
@@ -142,7 +168,7 @@ function goDown(treeItem) {
 function focusOnDeepestVisibleChild(treeItem) { 
         var childDiv = findLastChild(treeItem, "DIV");
         if (childDiv) {  
-            if (childDiv.className == "visible") {        
+            if (childDiv.className == "visible" || childDiv.className == "root" ) {        
                 focusOnDeepestVisibleChild(childDiv);
                 return;
             }
@@ -158,6 +184,12 @@ function focusOnItem(treeItem) {
     if (!anchorContainer) { anchorContainer = treeItem; }
     var anchor = findChild(anchorContainer, "A");
     if (anchor) {
+  	  	if (oldActive) {
+  	  		oldActive.className = oldActiveClass;
+        }
+  		oldActive = anchor;
+  		oldActiveClass = anchor.className;
+  		anchor.className = "active";
         anchor.focus();
     }
 }
@@ -287,13 +319,13 @@ function changeExpanderImage(treeItem, isExpanded) {
     var expander = getExpander(treeItem);   
     if (expander) {
         if (isExpanded) {
-            expander.src = "images/minus.gif";
+            setImage(expander, "minus");
         } else {
-            expander.src = "images/plus.gif";
+            setImage(expander, "plus");
         }
     }
     if (icon) {
-        setImage(icon, isExpanded);
+        updateImage(icon, isExpanded);
     }
 }
 

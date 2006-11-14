@@ -103,13 +103,13 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     }
    
     var topicImage = document.createElement("IMG");
-    topicImage.src = image;  
+    setImage(topicImage, image);
     var topicName=document.createTextNode(name);
     
     if (!isLeaf) {
         var plusMinusImage= document.createElement("IMG");
-        plusMinusImage.src = "images/plus.gif"; 
         plusMinusImage.className = "expander";
+        setImage(plusMinusImage, "plus");
         container.appendChild(plusMinusImage);
     }
       
@@ -121,8 +121,6 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
         anchor.href = href;
     }
     
-    anchor.alt = "";
-    
     anchor.appendChild(topicImage);
     anchor.appendChild(topicName);
     container.appendChild(anchor);
@@ -133,4 +131,12 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
         childItem.appendChild(innerDiv);
     }
     return childItem;
+}
+
+function setLoadingMessage(treeItem, message) {   
+    var placeholderDiv = findChild(treeItem, "DIV");
+    if (placeholderDiv !== null && placeholderDiv.childNodes.length == 0) {      
+        var msg = document.createTextNode(message);
+        placeholderDiv.appendChild(msg);
+    }
 }

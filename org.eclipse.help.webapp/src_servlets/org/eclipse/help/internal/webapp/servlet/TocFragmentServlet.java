@@ -117,7 +117,7 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			buf.append('\n' + "      id=\"" + XMLGenerator.xmlEscape(toc.getHref()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	
-			buf.append('\n' + "      image=\"images/toc_closed.gif\""); //$NON-NLS-1$
+			buf.append('\n' + "      image=\"toc_closed\""); //$NON-NLS-1$
 			
 			if (isSelected) {
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
@@ -175,11 +175,13 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 			String icon; 
 			if (subtopics.length == 0) {
-				icon = "topic.gif"; //$NON-NLS-1$
+				icon = "topic"; //$NON-NLS-1$
+			} else if (topic.getHref() == null) {
+				icon = "container_obj"; //$NON-NLS-1$
 			} else {
-				icon = "container_obj.gif"; //$NON-NLS-1$
+				icon = "container_topic"; //$NON-NLS-1$
 			}
-			buf.append('\n' + "      image=\"images/" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+			buf.append('\n' + "      image=\"" + icon + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			buf.append(">\n"); //$NON-NLS-1$
 			serializeChildTopics(subtopics, topicPath, parentPath, isSelected);

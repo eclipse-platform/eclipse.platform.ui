@@ -47,10 +47,17 @@ folder_img = new Image();
 folder_img.src = imagesDirectory + "/container_obj.gif";
 topic_img = new Image();
 topic_img.src = imagesDirectory + "/topic.gif";
-altTopicClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicClosed", request))%>";
-altTopicOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicOpen", request))%>";
-altBookClosed="<%=ServletResources.getString("bookClosed", request)%>";
-altBookOpen="<%=ServletResources.getString("bookOpen", request)%>";
+
+altTopic = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("altTopic", request))%>";
+altContainer = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("altContainer", request))%>";
+altContainerTopic = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("altContainerTopic", request))%>";
+altBookClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
+altBookOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
+altPlus = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("expandTopicTitles", request))%>";
+altMinus = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("collapseTopicTitles", request))%>";
+loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Loading", request))%>";
+
+var loadingMessage = 'Loading ...';
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 

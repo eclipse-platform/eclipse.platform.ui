@@ -1,7 +1,7 @@
 BODY {
 	background-color: <%=prefs.getViewBackground()%>;
 	font: <%=prefs.getViewFont()%>;
-	margin-top:5px;
+	margin-top:2px;
 	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;
 	border:0;
@@ -12,13 +12,22 @@ BODY {
 	margin-<%=isRTL?"right":"left"%>:0px;
 }
 
-DIV.visible { 
+DIV.root {
+    font-weight:bold;
+}
+
+DIV.visible, DIV.unopened { 
 	border-width:0; 
 	margin-<%=isRTL?"right":"left"%>:1.5em; 
+	font-weight:normal;
 }
   
 DIV.hidden {
 	display:none; 
+}
+
+DIV.visible, DIV.root {  
+    margin-top:3px; 
 }
 
 SPAN.item{

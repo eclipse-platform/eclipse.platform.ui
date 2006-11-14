@@ -31,15 +31,38 @@ function selectTopicById(topic) {
     return true;
 }
 
-function setImage(imageNode, isExpanded) {
+
+function setImage(imageNode, image) {
+    var imageFile = imagesDirectory + "/" + image + ".gif";
+    imageNode.src = imageFile;
+    if (image == "plus") {
+        imageNode.alt = altPlus;       
+    } else if (image == "minus") {
+        imageNode.alt = altMinus;     
+    } else if (image == "toc_open") {
+        imageNode.alt = altBookOpen;    
+    } else if (image == "toc_closed") {
+        imageNode.alt = altBookClosed;  
+    } else if (image == "container_obj") {
+        imageNode.alt = altContainer;  
+    } else if (image == "container_topic") {
+        imageNode.alt = altContainerTopic;  
+    } else if (image == "topic") {
+        imageNode.alt = altTopic;
+    } else {
+        imageNode.alt = "";
+    }
+}
+
+function updateImage(imageNode, isExpanded) {
     var src = imageNode.src;
     if (isExpanded) {   
         if (src.match( /toc_closed.gif$/)) {
-            imageNode.src = imagesDirectory + "/toc_open.gif";  
+            setImage(imageNode, "toc_open");
         }
     } else {
-        if (src.match(/toc_open.gif$/)) {
-            imageNode.src = imagesDirectory + "/toc_closed.gif";  
+        if (src.match( /toc_open.gif$/)) {           
+            setImage(imageNode, "toc_closed");
         }
     }
 }
@@ -47,6 +70,7 @@ function setImage(imageNode, isExpanded) {
 function loadChildren(treeItem) { 
     var parameters = "";
     if (treeItem !== null  && treeItem.nodeid !== null) {
+        setLoadingMessage(treeItem, loadingMessage);
         var topAncestor = getTopAncestor(treeItem);
         parameters += "?toc=";
         parameters += topAncestor.nodeid;
