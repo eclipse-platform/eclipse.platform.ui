@@ -26,6 +26,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
+import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -57,6 +58,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
@@ -95,6 +97,22 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		public void memoryBlocksRemoved(IMemoryBlock[] memory)
 		{
 		}
+	};
+	
+	private IMemoryRenderingBindingsListener fBindingListener = new IMemoryRenderingBindingsListener()
+	{
+		public void memoryRenderingBindingsChanged() {
+			UIJob job = new UIJob("refresh"){ //$NON-NLS-1$
+			
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					fViewer.refresh();
+					return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule();
+		}
+		
 	};
 
 	class MemoryRenderingLabelProvider implements ILabelProvider
@@ -181,6 +199,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		memoryBlock.removeSelectionListener(fSelectionListener);
 		addNew.removeSelectionListener(fAddNewSelectionAdapter);
 		DebugPlugin.getDefault().getMemoryBlockManager().removeListener(fMemoryBlockListener);
+		DebugUITools.getMemoryRenderingManager().removeListener(fBindingListener);
 		
 		return super.close();
 	}
@@ -360,6 +379,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		fViewer.addSelectionChangedListener(fSelectionChangedListener);
 		
 		DebugPlugin.getDefault().getMemoryBlockManager().addListener(fMemoryBlockListener);
+		DebugUITools.getMemoryRenderingManager().addListener(fBindingListener);
 		
 		return composite;
 	}
