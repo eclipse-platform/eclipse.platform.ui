@@ -177,33 +177,29 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 			}
 			if (adapter != null) {
 				int line = fRulerInfo.getLineOfLastMouseButtonActivity();
-				
-				// Test if line is valid 
-				if (line > 0) {
-					/*
-					 * XXX: remove once the following bug is fixed:
-					 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
-					 */ 
-					if (line < document.getNumberOfLines()) {
-						try {
-							IRegion region = document.getLineInformation(line);
-							ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
-							if (adapter instanceof IToggleBreakpointsTargetExtension) {
-								IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
-								if (extension.canToggleBreakpoints(fPart, selection)) {
-									setEnabled(true);
-									return;
-								}
+				/*
+				 * XXX: remove once the following bug is fixed:
+				 * 		https://bugs.eclipse.org/bugs/show_bug.cgi?id=99234
+				 */ 
+				if (line > -1 & line < document.getNumberOfLines()) {
+					try {
+						IRegion region = document.getLineInformation(line);
+						ITextSelection selection = new TextSelection(document, region.getOffset(), 0);
+						if (adapter instanceof IToggleBreakpointsTargetExtension) {
+							IToggleBreakpointsTargetExtension extension = (IToggleBreakpointsTargetExtension) adapter;
+							if (extension.canToggleBreakpoints(fPart, selection)) {
+								setEnabled(true);
+								return;
 							}
-							if (adapter.canToggleLineBreakpoints(fPart, selection) |
-								adapter.canToggleWatchpoints(fPart, selection) |
-								adapter.canToggleMethodBreakpoints(fPart, selection)) {
-									setEnabled(true);
-									return;
-							}
-						} catch (BadLocationException e) {
-							reportException(e);
 						}
+						if (adapter.canToggleLineBreakpoints(fPart, selection) |
+							adapter.canToggleWatchpoints(fPart, selection) |
+							adapter.canToggleMethodBreakpoints(fPart, selection)) {
+								setEnabled(true);
+								return;
+						}
+					} catch (BadLocationException e) {
+						reportException(e);
 					}
 				}
 			}
