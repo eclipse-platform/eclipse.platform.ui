@@ -515,6 +515,9 @@ public class InternalTreeModelViewer extends TreeViewer {
 	 * @param ids visible columns
 	 */
 	public void setVisibleColumns(String[] ids) {
+		if (ids != null && ids.length == 0) {
+			ids = null;
+		}
 		IColumnPresentation presentation = getColumnPresentation();
 		if (presentation != null) {
 			fColumnOrder.remove(presentation.getId());

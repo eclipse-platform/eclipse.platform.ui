@@ -132,10 +132,14 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 		dialog.setInitialElementSelections(initialSelection);
 		if (dialog.open() == Window.OK) {
 			Object[] result = dialog.getResult();
-			String[] ids = new String[result.length];
-			System.arraycopy(result, 0, ids, 0, result.length);
-			fViewer.resetColumnSizes(ids);
-			fViewer.setVisibleColumns(ids);
+			if (result.length == 0) {
+				fViewer.setShowColumns(false);
+			} else {
+				String[] ids = new String[result.length];
+				System.arraycopy(result, 0, ids, 0, result.length);
+				fViewer.resetColumnSizes(ids);
+				fViewer.setVisibleColumns(ids);
+			}
 		}
 			
 	}

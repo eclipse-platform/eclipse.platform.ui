@@ -138,6 +138,8 @@ public final class TreeModelViewer extends InternalTreeModelViewer {
 	
 	/**
 	 * Resets any persisted column size for the given columns
+	 * 
+	 * @param columnIds array of column identifiers
 	 */
 	public void resetColumnSizes(String[] columnIds) {
 		super.resetColumnSizes(columnIds);
@@ -155,9 +157,9 @@ public final class TreeModelViewer extends InternalTreeModelViewer {
 	
 	/**
 	 * Sets the visible columns for this viewer. Id's correspond to 
-	 * column identifiers from a column presentation. Use <code>null</code> to
-	 * display default columns for the current column presentation.
-	 * Only effects the current column presentation.
+	 * column identifiers from a column presentation. Use <code>null</code>
+	 * or an empty collection to display default columns for the current
+	 * column presentation. Only effects the current column presentation.
 	 * 
 	 * @param ids column identifiers or <code>null</code>
 	 */
