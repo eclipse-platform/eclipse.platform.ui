@@ -718,6 +718,19 @@ public class ExpandableComposite extends Canvas {
 		if (toggle != null)
 			toggle.setFont(font);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
+	 */
+	
+	public void setEnabled(boolean enabled) {
+		if (textLabel!=null)
+			textLabel.setEnabled(enabled);
+		if (toggle!=null)
+			toggle.setEnabled(enabled);
+		super.setEnabled(enabled);
+	}
 
 	/**
 	 * Sets the client of this expandable composite. The client must not be
