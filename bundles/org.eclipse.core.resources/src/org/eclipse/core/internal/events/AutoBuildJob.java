@@ -103,7 +103,8 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		buildNeeded = true;
 		//schedule a rebuild immediately if build was implicitly canceled
 		if (interrupted) {
-			System.out.println("Scheduling build in AutoBuildJob.cancel()"); //$NON-NLS-1$
+			if (Policy.DEBUG_BUILD_INTERRUPT)
+				System.out.println("Scheduling rebuild due to interruption"); //$NON-NLS-1$
 			interrupted = false;
 			schedule();
 		}
