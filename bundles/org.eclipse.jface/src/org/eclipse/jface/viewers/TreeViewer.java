@@ -1084,6 +1084,13 @@ public class TreeViewer extends AbstractTreeViewer {
 				} else {
 					if (!item.getExpanded()) {
 						item.setItemCount(1);
+						TreeItem child = item.getItem(0);
+						if (child.getData() != null) {
+							// avoid causing a callback for the child:
+							child.setText(""); //$NON-NLS-1$
+							disassociate(child);
+							item.clear(0, true);
+						}
 					}
 				}
 		}
