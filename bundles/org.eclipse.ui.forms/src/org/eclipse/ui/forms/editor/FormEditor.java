@@ -443,14 +443,14 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 */
 	protected void pageChange(int newPageIndex) {
 		// fix for windows handles
-		int oldPage = getCurrentPage();
-		if (oldPage != -1 && pages.size() > oldPage
-				&& pages.get(oldPage) instanceof IFormPage
-				&& oldPage != newPageIndex) {
+		int oldPageIndex = getCurrentPage();
+		if (oldPageIndex != -1 && pages.size() > oldPageIndex
+				&& pages.get(oldPageIndex) instanceof IFormPage
+				&& oldPageIndex != newPageIndex) {
 			// Check the old page
-			IFormPage oldFormPage = (IFormPage) pages.get(oldPage);
+			IFormPage oldFormPage = (IFormPage) pages.get(oldPageIndex);
 			if (oldFormPage.canLeaveThePage() == false) {
-				setActivePage(oldPage);
+				setActivePage(oldPageIndex);
 				return;
 			}
 		}
@@ -464,10 +464,10 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 				fpage.getPartControl().setMenu(getContainer().getMenu());
 			}
 		}
-		if (oldPage != -1 && pages.size() > oldPage
-				&& pages.get(oldPage) instanceof IFormPage) {
+		if (oldPageIndex != -1 && pages.size() > oldPageIndex
+				&& pages.get(oldPageIndex) instanceof IFormPage) {
 			// Commit old page before activating the new one
-			IFormPage oldFormPage = (IFormPage) pages.get(oldPage);
+			IFormPage oldFormPage = (IFormPage) pages.get(oldPageIndex);
 			IManagedForm mform = oldFormPage.getManagedForm();
 			if (mform != null)
 				mform.commit(false);
@@ -475,9 +475,10 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		if (pages.size() > newPageIndex
 				&& pages.get(newPageIndex) instanceof IFormPage)
 			((IFormPage) pages.get(newPageIndex)).setActive(true);
-		if (oldPage != -1 && pages.size() > oldPage
-				&& pages.get(oldPage) instanceof IFormPage)
-			((IFormPage) pages.get(oldPage)).setActive(false);
+		if (oldPageIndex != -1 && pages.size() > oldPageIndex
+				&& newPageIndex != oldPageIndex && 
+				pages.get(oldPageIndex) instanceof IFormPage)
+			((IFormPage) pages.get(oldPageIndex)).setActive(false);
 		// Call super - this will cause pages to switch
 		super.pageChange(newPageIndex);
 		this.currentPage = newPageIndex;
