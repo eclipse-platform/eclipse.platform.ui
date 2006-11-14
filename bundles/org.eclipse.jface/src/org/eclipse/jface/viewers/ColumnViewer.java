@@ -66,12 +66,14 @@ abstract class ColumnViewer extends StructuredViewer {
 	/**
 	 * Get the ViewerRow at point.
 	 * 
-	 * @param point 
-	 * 			the point <b>relative to the display</b> you are interested in
-	 * @return ViewerRow the row or <code>null</code>if no row is found at this point
+	 * @param point
+	 *            the point <b>relative to the display</b> you are interested
+	 *            in
+	 * @return ViewerRow the row or <code>null</code>if no row is found at
+	 *         this point
 	 */
 	protected ViewerRow getViewerRow(Point point) {
-		Item item = getItem(point.x, point.y);
+		Item item = getItemAt(point);
 
 		if (item != null) {
 			return getViewerRowFromItem(item);
@@ -82,6 +84,7 @@ abstract class ColumnViewer extends StructuredViewer {
 
 	/**
 	 * Get the ViewerRow associated with the Widget.
+	 * 
 	 * @param item
 	 * @return ViewerRow
 	 */
@@ -146,8 +149,8 @@ abstract class ColumnViewer extends StructuredViewer {
 					.createViewerLabelProvider(getLabelProvider()));
 			setupEditingSupport(columnIndex, viewer);
 		}
-		
-		if( viewer.getEditingSupport() == null && getCellModifier() != null ) {
+
+		if (viewer.getEditingSupport() == null && getCellModifier() != null) {
 			setupEditingSupport(columnIndex, viewer);
 		}
 
@@ -156,6 +159,7 @@ abstract class ColumnViewer extends StructuredViewer {
 
 	/**
 	 * Set the ViewerColumn at columnIndex
+	 * 
 	 * @param columnIndex
 	 * @param viewer
 	 */
@@ -222,7 +226,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * Activate the tooltip support.
 	 */
 	public void activateCustomTooltips() {
-		if( tooltipSupport == null ) {
+		if (tooltipSupport == null) {
 			tooltipSupport = new ToolTipSupport(this);
 		} else {
 			tooltipSupport.activate();
@@ -233,7 +237,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * Deactivate the tooltip support.
 	 */
 	public void deactivateCustomTooltips() {
-		if( tooltipSupport != null ) {
+		if (tooltipSupport != null) {
 			tooltipSupport.deactivate();
 		}
 	}
@@ -250,4 +254,21 @@ abstract class ColumnViewer extends StructuredViewer {
 		return cell;
 	}
 
+	/**
+	 * Find the {@link Item} relative to the widget coordinate system.
+	 * 
+	 * @param point
+	 *            the x/y coordinates relative to the widget
+	 * @return the {@link Item} at the coordinates or <code>null</code> if no item is
+	 *         located there
+	 */
+	protected abstract Item getItemAt(Point point);
+
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#getItem(int, int)
+	 */
+	protected Item getItem(int x, int y) {
+		return getItemAt(getControl().toControl(x, y));
+	}
 }

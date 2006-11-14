@@ -894,7 +894,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Returns the item at the given display-relative coordinates, or
-	 * <code>null</code> if there is no item at that location.
+	 * <code>null</code> if there is no item at that location or 
+	 * the underlying SWT-Control is not made up of {@link Item} 
+	 * (e.g {@link ListViewer}) 
 	 * <p>
 	 * The default implementation of this method returns <code>null</code>.
 	 * </p>
@@ -905,6 +907,10 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            vertical coordinate
 	 * @return the item, or <code>null</code> if there is no item at the given
 	 *         coordinates
+	 * @deprecated This method is deprecated in 3.3 in favor of {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}. 
+	 * Viewers who are not subclasses of {@link ColumnViewer} should consider using a
+	 * widget relative implementation like {@link ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)}.
+	 *  
 	 */
 	protected Item getItem(int x, int y) {
 		return null;

@@ -335,6 +335,13 @@ public class TableTreeViewer extends AbstractTreeViewer {
         return getTableTree().getTable().getItem(
                 getTableTree().toControl(new Point(x, y)));
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
+     */
+    protected Item getItemAt(Point p) {
+    	return getTableTree().getTable().getItem(p);
+    }
 
     /* (non-Javadoc)
      * Method declared on AbstractTreeViewer.

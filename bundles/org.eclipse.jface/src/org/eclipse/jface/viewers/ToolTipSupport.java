@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 
 /**
@@ -48,13 +47,13 @@ class ToolTipSupport extends DefaultToolTip {
 	private Color bgColor;
 
 	private Color fgColor;
-	
+
 	private int style;
-	
+
 	private Font font;
-	
+
 	private Image fgImage;
-	
+
 	private String text;
 
 	ToolTipSupport(ColumnViewer viewer) {
@@ -64,45 +63,43 @@ class ToolTipSupport extends DefaultToolTip {
 
 	protected boolean shouldCreateToolTip(Event event) {
 		boolean rv = false;
-		if (event.widget instanceof Control) {
-			ViewerRow row = viewer.getViewerRow(((Control) event.widget)
-					.toDisplay(event.x, event.y));
-			viewer.getControl().setToolTipText(""); //$NON-NLS-1$
-			Point point = new Point(event.x, event.y);
+		ViewerRow row = viewer.getViewerRow(new Point(event.x, event.y));
 
-			if (row != null) {
-				Object element = row.getItem().getData();
+		viewer.getControl().setToolTipText(""); //$NON-NLS-1$
+		Point point = new Point(event.x, event.y);
 
-				ViewerColumn viewPart = viewer.getViewerColumn(row
-						.getColumnIndex(point));
+		if (row != null) {
+			Object element = row.getItem().getData();
 
-				if (viewPart == null) {
-					return false;
+			ViewerColumn viewPart = viewer.getViewerColumn(row
+					.getColumnIndex(point));
+
+			if (viewPart == null) {
+				return false;
+			}
+
+			CellLabelProvider labelProvider = viewPart.getLabelProvider();
+
+			if (labelProvider.useNativeToolTip(element)) {
+				String text = labelProvider.getToolTipText(element);
+				if (text != null) {
+					viewer.getControl().setToolTipText(text);
 				}
+				rv = false;
+			} else {
+				setPopupDelay(labelProvider.getToolTipDisplayDelayTime(element));
+				setHideDelay(labelProvider.getToolTipTimeDisplayed(element));
 
-				CellLabelProvider labelProvider = viewPart.getLabelProvider();
+				Point shift = labelProvider.getToolTipShift(element);
 
-				if (labelProvider.useNativeToolTip(element)) {
-					String text = labelProvider.getToolTipText(element);
-					if (text != null) {
-						viewer.getControl().setToolTipText(text);
-					}
-					rv = false;
+				if (shift == null) {
+					setShift(new Point(DEFAULT_SHIFT_X, DEFAULT_SHIFT_Y));
 				} else {
-					setPopupDelay(labelProvider.getToolTipDisplayDelayTime(element));
-					setHideDelay(labelProvider.getToolTipTimeDisplayed(element));
-					
-					Point shift = labelProvider.getToolTipShift(element);
-
-					if (shift == null) {
-						setShift(new Point(DEFAULT_SHIFT_X, DEFAULT_SHIFT_Y));
-					} else {
-						setShift(new Point(shift.x, shift.y));
-					}
-					setData(LABEL_PROVIDER_KEY, labelProvider);
-					setData(ELEMENT_KEY, element);
-					rv = true;
+					setShift(new Point(shift.x, shift.y));
 				}
+				setData(LABEL_PROVIDER_KEY, labelProvider);
+				setData(ELEMENT_KEY, element);
+				rv = true;
 			}
 		}
 
@@ -113,30 +110,30 @@ class ToolTipSupport extends DefaultToolTip {
 		CellLabelProvider labelProvider = (CellLabelProvider) getData(LABEL_PROVIDER_KEY);
 		Object element = getData(ELEMENT_KEY);
 
-		text    = labelProvider.getToolTipText(element);
-		style   = labelProvider.getToolTipStyle(element);
+		text = labelProvider.getToolTipText(element);
+		style = labelProvider.getToolTipStyle(element);
 		fgColor = labelProvider.getToolTipForegroundColor(element);
 		bgColor = labelProvider.getToolTipBackgroundColor(element);
-		font    = labelProvider.getToolTipFont(element);
+		font = labelProvider.getToolTipFont(element);
 	}
 
 	protected Color getBackgroundColor(Event event) {
-		if( bgColor != null ) {
+		if (bgColor != null) {
 			return bgColor;
 		}
 		return super.getBackgroundColor(event);
 	}
 
 	protected Color getForegroundColor(Event event) {
-		if( fgColor != null ) {
+		if (fgColor != null) {
 			return fgColor;
 		}
-		
+
 		return super.getForegroundColor(event);
 	}
 
 	protected Image getImage(Event event) {
-		if( fgImage != null ) {
+		if (fgImage != null) {
 			return fgImage;
 		}
 		return super.getImage(event);
@@ -147,29 +144,29 @@ class ToolTipSupport extends DefaultToolTip {
 	}
 
 	protected String getText(Event event) {
-		if( text != null ) {
+		if (text != null) {
 			return text;
 		}
-		
+
 		return super.getText(event);
 	}
 
 	protected Font getFont(Event event) {
-		if( font != null ) {
+		if (font != null) {
 			return font;
 		}
-		
+
 		return super.getFont(event);
 	}
-	
+
 	protected Composite createToolTipContentArea(Event event, Composite parent) {
 		updateData();
 		return super.createToolTipContentArea(event, parent);
 	}
 
 	protected void afterHideToolTip(Event event) {
-		if( event != null && event.widget != viewer.getControl() ) {
-			if( event.type == SWT.MouseDown ) {
+		if (event != null && event.widget != viewer.getControl()) {
+			if (event.type == SWT.MouseDown) {
 				viewer.setSelection(new StructuredSelection());
 			} else {
 				viewer.getControl().setFocus();

@@ -284,24 +284,21 @@ public class TreeViewer extends AbstractTreeViewer {
 		return ((TreeItem) item).getExpanded();
 	}
 
-	/**
-	 * Returns the item at the given display-relative coordinates, or
-	 * <code>null</code> if there is no item at that location.
-	 * <p>
-	 * The default implementation of this method returns <code>null</code>.
-	 * </p>
-	 * 
-	 * @param x
-	 *            horizontal coordinate
-	 * @param y
-	 *            vertical coordinate
-	 * @return the item, or <code>null</code> if there is no item at the given
-	 *         coordinates
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getItem(int, int)
 	 */
 	protected Item getItem(int x, int y) {
 		return getTree().getItem(getTree().toControl(new Point(x, y)));
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
+	 */
+	protected Item getItemAt(Point p) {
+		return getTree().getItem(p);
+	}
+	
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
