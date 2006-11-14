@@ -1087,10 +1087,10 @@ public class TreeViewer extends AbstractTreeViewer {
 						TreeItem child = item.getItem(0);
 						if (child.getData() != null) {
 							// avoid causing a callback for the child:
-							child.setText(""); //$NON-NLS-1$
+							child.setText(" "); //$NON-NLS-1$
 							disassociate(child);
-							item.clear(0, true);
 						}
+						item.clear(0, true);
 					}
 				}
 		}
