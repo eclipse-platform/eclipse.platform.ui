@@ -30,6 +30,10 @@ import com.ibm.icu.text.MessageFormat;
  * handled statuses are checked against severity and logged using logging
  * facility (by superclass).
  * 
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
  * @since 3.3
  */
 public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {

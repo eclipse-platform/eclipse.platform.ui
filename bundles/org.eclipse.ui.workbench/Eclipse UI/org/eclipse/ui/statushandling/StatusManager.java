@@ -68,6 +68,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * doesn't have to be added as "statusHandler" extension.
  * </p>
  * 
+ * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
+ * of a work in progress. This API may change at any given time. Please do not
+ * use this API without consulting with the Platform/UI team.
+ * 
  * @since 3.3
  */
 public class StatusManager {
@@ -166,7 +170,7 @@ public class StatusManager {
 
 		IExtension[] extensions = Platform
 				.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.ui.workbench.statusHandler").getExtensions(); //$NON-NLS-1$
+				.getExtensionPoint("org.eclipse.ui.statusHandler").getExtensions(); //$NON-NLS-1$
 
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i]

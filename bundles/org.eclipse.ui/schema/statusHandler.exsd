@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.workbench">
+<schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui.workbench" id="statusHandler" name="Status handler"/>
+         <meta.schema plugin="org.eclipse.ui" id="statusHandler" name="Status handler"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -13,7 +13,7 @@ Each problem is handled by status manager which uses handlers due to the policy.
 &lt;/p&gt;
 
 &lt;p&gt;
-So far there is one default policy and it can&apos;t be overriden.
+There is one default policy and it can&apos;t be overriden.
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -198,9 +198,9 @@ The following is an example of the definition for handler with prefix parameter.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.workbench.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
  &lt;statusHandler
- class=&quot;org.eclipse.ui.errors.SampleStatusHandler&quot;
+ class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
   &lt;parameter
   name=&quot;prefix&quot;
@@ -217,9 +217,9 @@ The handler defined in the example will be default for product with id &quot;pro
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.workbench.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
  &lt;statusHandler
- class=&quot;org.eclipse.ui.errors.SampleStatusHandler&quot;
+ class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
  &lt;/statusHandler&gt;
  &lt;statusHandlerProductBinding
@@ -236,7 +236,7 @@ The handler can be defined in other plugin.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.workbench.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
  &lt;statusHandlerProductBinding
  handlerId=&quot;sampleStatusHandler&quot;
  productId=&quot;productId&quot;&gt;
@@ -260,7 +260,7 @@ how status handler should handle a status but this is only a suggestion.
 &lt;/p&gt;
 
 &lt;p&gt;
- Handling modes
+ Handling hints
  &lt;ul&gt;
     &lt;li&gt;IGNORE - status should be ignored&lt;/li&gt;
     &lt;li&gt;LOG - the status should be logged&lt;/li&gt;
@@ -276,7 +276,7 @@ which keeps the status handling policy and chooses handlers due to it.
 
 &lt;p&gt;
 One point of entry for all problems to report is &lt;code&gt;StatusManager.getManager().handle(IStatus)&lt;/code&gt;
-method or &lt;code&gt;StatusManager.getManager().handle(IStatus, HandlingMode) if we want to suggest handling mode for the status.
+method or &lt;code&gt;StatusManager.getManager().handle(IStatus, HandlingMode)&lt;/code&gt; if we want to suggest handling mode for the status.
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -293,7 +293,7 @@ new &quot;statusHandler&quot; extension.
       <documentation>
          &lt;p&gt;
 The platform supplies basic implementations of 
-&lt;code&gt;org.eclipse.ui.errors.AbstractStatusHandler&lt;/code&gt;.
+&lt;code&gt;org.eclipse.ui.statushandling.AbstractStatusHandler&lt;/code&gt;.
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -302,7 +302,7 @@ a proxy which passes all handling calls to handler assigned to current applicati
 &lt;/p&gt;
 
 &lt;p&gt;
-There are two other implementation of handlers  &lt;code&gt;org.eclipse.ui.application.WorkbenchErrorHandler&lt;/code&gt; which is assigned to &lt;code&gt;WorkbenchAdvisor&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler&lt;/code&gt; assigned to
+There are two other implementation of handlers  &lt;code&gt;org.eclipse.ui.statushandling.WorkbenchErrorHandler&lt;/code&gt; which is assigned to &lt;code&gt;WorkbenchAdvisor&lt;/code&gt; and &lt;code&gt;org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler&lt;/code&gt; assigned to
 &lt;code&gt;IDEWorkbenchAdvisor&lt;/code&gt;. Due to advisor which is actually used 
 &lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; handler 
 delegates handling to one of them. 
