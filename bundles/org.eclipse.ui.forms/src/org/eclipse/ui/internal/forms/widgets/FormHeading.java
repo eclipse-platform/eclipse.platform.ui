@@ -690,7 +690,7 @@ public class FormHeading extends Canvas {
 				busyLabel = null;
 			}
 		}
-		busyLabel.setImage(image);
+		if (busyLabel!=null) busyLabel.setImage(image);
 		layout();
 	}
 
