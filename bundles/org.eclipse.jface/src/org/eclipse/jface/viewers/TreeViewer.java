@@ -1003,7 +1003,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void remove(final Object parentOrTreePath, final int index) {
 		preservingSelection(new Runnable() {
 			public void run() {
-				if (parentOrTreePath.equals(getInput())) {
+				if (internalIsInputOrEmptyPath(parentOrTreePath)) {
 					Tree tree = (Tree) getControl();
 					if (index < tree.getItemCount()) {
 						TreeItem item = tree.getItem(index);
