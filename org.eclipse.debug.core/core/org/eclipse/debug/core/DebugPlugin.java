@@ -15,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +28,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -60,6 +61,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * There is one instance of the debug plug-in available from
@@ -602,6 +605,25 @@ public class DebugPlugin extends Plugin {
 		}
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.Plugin#start(org.osgi.framework.BundleContext)
+	 */
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
+				new ISaveParticipant() {
+					public void saving(ISaveContext context) throws CoreException {
+						savePluginPreferences();
+					}				
+					public void rollback(ISaveContext context) {				
+					}
+					public void prepareToSave(ISaveContext context) throws CoreException {
+					}
+					public void doneSaving(ISaveContext context) {
+					}
+				});
+	}
+
 	/**
 	 * Creates and returns a new process representing the given
 	 * <code>java.lang.Process</code>. A streams proxy is created

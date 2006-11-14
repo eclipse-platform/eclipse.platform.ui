@@ -218,7 +218,6 @@ public class LogicalStructureManager {
         fStructureTypeSelections.put(combo, integer);
         storeStructureTypeSelections();
         storeStructureTypeIds();
-        DebugPlugin.getDefault().savePluginPreferences();
     }
     
     /**

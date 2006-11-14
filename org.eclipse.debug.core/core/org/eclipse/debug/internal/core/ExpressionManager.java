@@ -224,7 +224,6 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			DebugPlugin.log(e);
 		}
 		prefs.setValue(PREF_WATCH_EXPRESSIONS, expressionString);
-		DebugPlugin.getDefault().savePluginPreferences();
 	}
 
 	/**

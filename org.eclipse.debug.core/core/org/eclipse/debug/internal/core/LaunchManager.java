@@ -2219,9 +2219,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if(pref != null) {
 				prefs.setValue(PREF_PREFERRED_DELEGATES, pref);
 			}
-			if(prefs.needsSaving()) {
-				DebugPlugin.getDefault().savePluginPreferences();
-			}
 		} 
 		catch (CoreException e) {DebugPlugin.log(e);}
 		catch (IOException ioe) {DebugPlugin.log(ioe);}
