@@ -17,6 +17,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.harness.TestJob;
 
 /**
  * This class tests public API related to building and to build specifications.
@@ -27,10 +30,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class BuilderTest extends AbstractBuilderTest {
 	public static Test suite() {
-		//		return new TestSuite(BuilderTest.class);
-		TestSuite suite = new TestSuite();
-		suite.addTest(new BuilderTest("testPreBuildEvent"));
-		return suite;
+		return new TestSuite(BuilderTest.class);
+		//		TestSuite suite = new TestSuite();
+		//		suite.addTest(new BuilderTest("testInterruptAutobuild"));
+		//		return suite;
 	}
 
 	public BuilderTest() {
@@ -379,6 +382,10 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 	}
 
+	/**
+	 * Tests that a pre_build listener is not called if there have been no changes
+	 * since the last build of any kind occurred.  See https://bugs.eclipse.org/bugs/show_bug.cgi?id=154880.
+	 */
 	public void testPreBuildEvent() {
 		IWorkspace workspace = getWorkspace();
 		// Create some resource handles
@@ -897,6 +904,77 @@ public class BuilderTest extends AbstractBuilderTest {
 			project.delete(false, getMonitor());
 		} catch (CoreException e) {
 			fail("99.99", e);
+		}
+	}
+
+	/**
+	 * Tests that autobuild is interrupted by a background scheduled job, but eventually completes.
+	 */
+	public void testInterruptAutobuild() {
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		final IFile file = project.getFile("File.txt");
+		try {
+			setAutoBuilding(true);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
+			IProjectDescription desc = project.getDescription();
+			ICommand command = desc.newCommand();
+			command.setBuilderName(SortBuilder.BUILDER_NAME);
+			desc.setBuildSpec(new ICommand[] {command});
+			project.setDescription(desc, getMonitor());
+			file.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		waitForBuild();
+
+		// Set up a plug-in lifecycle verifier for testing purposes
+		TestBuilder verifier = SortBuilder.getInstance();
+		verifier.reset();
+
+		final TestJob blockedJob = new TestJob("Interrupt build", 3, 1000);
+		blockedJob.setRule(getWorkspace().getRoot());
+		//use a barrier to ensure the blocking job starts
+		final TestBarrier barrier = new TestBarrier();
+		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
+		//install a listener that will cause autobuild to be interrupted
+		IResourceChangeListener listener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				blockedJob.schedule();
+				//wait for autobuild to become blocking
+				while (!Job.getJobManager().currentJob().isBlocking()) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						//ignore
+					}
+				}
+				//allow the test main method to continue
+				barrier.setStatus(TestBarrier.STATUS_RUNNING);
+			}
+		};
+		try {
+			getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_BUILD);
+			// Now change a file. The build should not complete until the job triggered by the listener completes
+			file.setContents(getRandomContents(), IResource.NONE, getMonitor());
+			//wait for job to be scheduled
+			barrier.waitForStatus(TestBarrier.STATUS_RUNNING);
+			//wait for test job to complete
+			try {
+				blockedJob.join();
+			} catch (InterruptedException e) {
+				fail("1.99", e);
+			}
+			//autobuild should now run after the blocking job is finished
+			waitForBuild();
+			verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
+			verifier.assertLifecycleEvents("2.0");
+		} catch (CoreException e) {
+			fail("2.99", e);
+		} finally {
+			getWorkspace().removeResourceChangeListener(listener);
 		}
 	}
 
