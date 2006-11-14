@@ -47,6 +47,11 @@ public interface IConfigurationElementConstants {
 	public static final String PLACEMENT = "placement"; //$NON-NLS-1$
 	
 	/**
+	 * the associated launch delegate node name for s configuration element
+	 */
+	public static final String ASSOCIATED_DELEGATE = "associatedDelegate"; //$NON-NLS-1$
+	
+	/**
 	 * the label node name for a configuration element
 	 */
 	public static final String LABEL = "label"; //$NON-NLS-1$
@@ -125,6 +130,11 @@ public interface IConfigurationElementConstants {
 	 * the sourcePathComputerId node name for a configuration element
 	 */
 	public static final String SOURCE_PATH_COMPUTER = "sourcePathComputerId"; //$NON-NLS-1$
+	
+	/**
+	 * the delegateDescription node name for a configuraiton element
+	 */
+	public static final String DELEGATE_DESCRIPTION = "delegateDescription"; //$NON-NLS-1$
 	
 	/**
 	 * the sourceLocatorId node name for a configuration element

@@ -16,14 +16,19 @@ import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 
@@ -66,6 +71,8 @@ public class SelectLaunchDelegatesDialog extends SelectionDialog {
 	private CheckboxTableViewer fTableViewer = null;
 	private Table fTable  = null;
 	private ILaunchDelegate[] fDelegates = null;
+	private Text fDescriptionText = null;
+	private final String EMPTY_STRING = ""; //$NON-NLS-1$
 	
 	/**
 	 * Constructor
@@ -102,6 +109,20 @@ public class SelectLaunchDelegatesDialog extends SelectionDialog {
 				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 		});
+		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				if(ss != null && !ss.isEmpty()) {
+					fDescriptionText.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
+				}
+				else {
+					fDescriptionText.setText(EMPTY_STRING);
+				}
+			}
+		});
+		Group group = SWTUtil.createGroup(comp, LaunchConfigurationsMessages.SelectLaunchDelegatesDialog_3, 1, 1, GridData.FILL_BOTH);
+		fDescriptionText = SWTUtil.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		fDescriptionText.setBackground(group.getBackground());
 		Dialog.applyDialogFont(comp);		
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_DELEGATES_DIALOG);
 		return comp;

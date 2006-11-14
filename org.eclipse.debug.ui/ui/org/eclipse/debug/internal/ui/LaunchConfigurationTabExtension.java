@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
@@ -32,6 +35,7 @@ public final class LaunchConfigurationTabExtension {
 	 * The configuration element backing this proxy
 	 */
 	IConfigurationElement fElement = null;
+	private Set fDelegates = null;
 	
 	/**
 	 * Constructor
@@ -42,7 +46,7 @@ public final class LaunchConfigurationTabExtension {
 	}
 	
 	/**
-	 * Returns the unique id ofthe tab
+	 * Returns the unique id of the tab
 	 * @return the unique id of the tab
 	 */
 	public String getIdentifier() {
@@ -83,9 +87,6 @@ public final class LaunchConfigurationTabExtension {
 	 * This method returns the id of the tab that this tab should be placed immediately after.
 	 * @return the id of the relative tab or <code>null</code> if one has not been specified
 	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
 	 */
 	public String getRelativeTabId() {
 		IConfigurationElement[] elems = fElement.getChildren(IConfigurationElementConstants.PLACEMENT);
@@ -94,5 +95,31 @@ public final class LaunchConfigurationTabExtension {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Returns the id of the plugin that contributed this tab extension
+	 * @return the id of the plugin tat contirbuted this tab
+	 */
+	public String getPluginIdentifier() {
+		return fElement.getContributor().getName();
+	}
+	
+	/**
+	 * Returns a set of strings of the launch delegates that this tab contribution is associated with
+	 * @return the set of strings of the associated launch delegates, which can be an empty collection, never <code>null</code>.
+	 */
+	public Set getDelegateSet() {
+		if(fDelegates == null) {
+			fDelegates = new HashSet();
+			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.ASSOCIATED_DELEGATE);
+			String id = null;
+			for(int i = 0; i < children.length; i++) {
+				id = children[i].getAttribute(IConfigurationElementConstants.DELEGATE);
+				if(id != null) {
+					fDelegates.add(id);
+				}
+			}
+		}
+		return fDelegates;
+	}
 }

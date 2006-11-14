@@ -92,7 +92,10 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
                   A comma-separated list of the launch modes this delegate supports.
 
 &lt;p&gt;
-New in 3.3: the comma seperated list of modes provided here, instead of via the modeCombination sub elements, will result in a set being created for each mode individually with no other combinations.
+New in 3.3: the comma seperated list of modes provided here, instead of via the modeCombination sub elements, will result in a set being created for each mode individually with no other combinations. For example specifying: &apos;run,debug&apos; will result in a set of two elements [[run], [debug]] (where run and debug are each in their own set).
+&lt;/p&gt;
+&lt;p&gt;
+This attribute can be used in conjunction with modeCombination contributions. It is however, desirable to provide one or the other and not both (either a comma seperated listing in the modes attribute, or modeCombinations). Specifying &apos;run,debug&apos; in the modes attribute is analogous to specifying two modeCombination contributions, one for &apos;run&apos; and another for &apos;debug&apos;.
 &lt;/p&gt;
                </documentation>
             </annotation>
@@ -118,6 +121,13 @@ New in 3.3: the comma seperated list of modes provided here, instead of via the 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="delegateDescription" type="string">
+            <annotation>
+               <documentation>
+                  This attribute provides a description of this launch delegate i.e. what it does and what tooling it is assciated with. This attribute was added in the 3.3 release. EXPERIMENTAL.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -132,6 +142,10 @@ New in 3.3: the comma seperated list of modes provided here, instead of via the 
             <annotation>
                <documentation>
                   a comma seperated list specifying a combination of modes the associated delegate can launch. This attribute was added in the 3.3 release. EXPERIMENTAL.
+
+&lt;p&gt;
+Unlike the modes attribute of the main definition, this comma seperated listing is taken to be one set inclusively. For example: a modeCombination of &apos;profile,debug&apos; would result in a single set of modes [[profile, debug]] and not a set with two distinct entries for each of profile and debug [[profile], [debug]] (unlike the other modes attribute from the main definition). 
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>

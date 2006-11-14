@@ -196,6 +196,7 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 		fTreeViewer.setContentProvider(new TreeProvider());
 		fTreeViewer.setLabelProvider(new LabelProvider());
 		fTreeViewer.setInput(fDuplicates);
+		fTreeViewer.expandToLevel(2);
 		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object obj = ((IStructuredSelection) event.getSelection()).getFirstElement();

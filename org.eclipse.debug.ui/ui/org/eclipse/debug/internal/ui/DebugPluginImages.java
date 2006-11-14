@@ -14,16 +14,12 @@ package org.eclipse.debug.internal.ui;
 
 
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -236,36 +232,20 @@ public class DebugPluginImages {
 		
 		// launch configuration types
 		//try to get the images from the config types themselves, cache those that could not be found
-		ILaunchConfigurationType[] types = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		String path = null;
-		Set missing = new HashSet();
-		ImageDescriptor descriptor = null;
-		for (int i = 0; i < types.length; i++) {
-			path = types[i].getImageDescriptorPath();
-			if(path == null) {
-				missing.add(types[i].getIdentifier());
+		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
+		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
+		for (int i = 0; i < configElements.length; i++) {
+			IConfigurationElement configElement = configElements[i];
+			ImageDescriptor descriptor = DebugUIPlugin.getImageDescriptor(configElement, ATTR_LAUNCH_CONFIG_TYPE_ICON);
+			if (descriptor == null) {
+				descriptor = ImageDescriptor.getMissingImageDescriptor();
 			}
-			else {
-				descriptor = DebugUIPlugin.getImageDescriptor(types[i].getContributorName(), path);
-				imageRegistry.put(types[i].getIdentifier(), (descriptor == null ? ImageDescriptor.getMissingImageDescriptor() : descriptor));
-			}
-		}
-		if(missing.size() > 0) {
-			//if we are missing some images try to find them in the deprecated extension point
-			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
-			IConfigurationElement[] configElements = extensionPoint.getConfigurationElements();
-			String configTypeID = null;
-			for (int i = 0; i < configElements.length; i++) {
-				configTypeID = configElements[i].getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);
-				if (configTypeID == null) {
-					// bug 12652
-					configTypeID = configElements[i].getAttribute(IConfigurationElementConstants.TYPE);
-				}
-				if(missing.contains(configTypeID)) {
-					descriptor = DebugUIPlugin.getImageDescriptor(configElements[i], ATTR_LAUNCH_CONFIG_TYPE_ICON);		
-					imageRegistry.put(configTypeID, (descriptor == null ? ImageDescriptor.getMissingImageDescriptor() : descriptor));
-				}
-			}
+			String configTypeID = configElement.getAttribute(ATTR_LAUNCH_CONFIG_TYPE_ID);
+			if (configTypeID == null) {
+				// bug 12652
+				configTypeID = configElement.getAttribute(IConfigurationElementConstants.TYPE);
+			}			
+			imageRegistry.put(configTypeID, descriptor);				
 		}
 	}
 

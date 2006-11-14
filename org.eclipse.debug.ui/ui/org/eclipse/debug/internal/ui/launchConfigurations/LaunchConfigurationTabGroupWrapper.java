@@ -3,9 +3,11 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -29,14 +31,18 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	private ILaunchConfigurationTabGroup fGroup = null;
 	private String fGroupId = null;
 	private List fTabs = null;
+	private String fMode = null;
+	private ILaunchConfiguration fConfig = null;
 	
 	/**
 	 * Constructor
 	 * @param group the existing group to wrapper
+	 * @param groupId the string id of the associated tab group
 	 */
-	public LaunchConfigurationTabGroupWrapper(ILaunchConfigurationTabGroup group, String groupId) {
+	public LaunchConfigurationTabGroupWrapper(ILaunchConfigurationTabGroup group, String groupId, ILaunchConfiguration config) {
 		fGroup = group;
 		fGroupId = groupId;
+		fConfig = config;
 	}
 	
 	/**
@@ -45,6 +51,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		if(fGroup != null) {
 			fGroup.createTabs(dialog, mode);
+			fMode = mode;
 		}
 	}
 
@@ -57,6 +64,7 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 			for(int i = 0; i < tabs.length; i++) {
 				tabs[i].dispose();
 			}
+			fTabs = null;
 		}
 	}
 
@@ -65,49 +73,52 @@ public class LaunchConfigurationTabGroupWrapper implements ILaunchConfigurationT
 	 */
 	public ILaunchConfigurationTab[] getTabs() {
 		if(fTabs == null) {
-			fTabs = new ArrayList();
-			ILaunchConfigurationTab[] tmp = fGroup.getTabs();
-			for(int i = 0; i < tmp.length; i++) {
-				fTabs.add(tmp[i]);
-			}
-			LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId);
-			//copy contributed into correct postion or end if no id or id is not found
-			AbstractLaunchConfigurationTab alct = null;
-			String id = null;
-			List item = null;
-			for(int i = 0; i < ext.length; i++) {
-				id = ext[i].getRelativeTabId();
-				if(id != null) {
-					//position specified, try to find it
-					boolean found = false;
-					for(int j = 0; j < tmp.length; j++) {
-						if(tmp[j] instanceof AbstractLaunchConfigurationTab) {
-							alct = (AbstractLaunchConfigurationTab) tmp[j];
-							if(id.equals(alct.getId())) {
-								if(j != tmp.length-1) {
-									item = new ArrayList();
-									item.add(ext[i].getTab());
-									fTabs.addAll(j+1, item);
-									found = true;
-									break;
+			try {
+				fTabs = new ArrayList();
+				ILaunchConfigurationTab[] tmp = fGroup.getTabs();
+				for(int i = 0; i < tmp.length; i++) {
+					fTabs.add(tmp[i]);
+				}
+				LaunchConfigurationTabExtension[] ext = LaunchConfigurationPresentationManager.getDefault().getTabExtensions(fGroupId, fConfig, fMode);
+				//copy contributed into correct position or end if no id or id is not found
+				AbstractLaunchConfigurationTab alct = null;
+				String id = null;
+				List item = null;
+				for(int i = 0; i < ext.length; i++) {
+					id = ext[i].getRelativeTabId();
+					if(id != null) {
+						//position specified, try to find it
+						boolean found = false;
+						for(int j = 0; j < tmp.length; j++) {
+							if(tmp[j] instanceof AbstractLaunchConfigurationTab) {
+								alct = (AbstractLaunchConfigurationTab) tmp[j];
+								if(id.equals(alct.getId())) {
+									if(j != tmp.length-1) {
+										item = new ArrayList();
+										item.add(ext[i].getTab());
+										fTabs.addAll(j+1, item);
+										found = true;
+										break;
+									}
 								}
 							}
 						}
+						if(!found) {
+							//id did not match any tabs, add it to the end
+							fTabs.add(ext[i].getTab());
+						}
 					}
-					if(!found) {
-						//id did not match any tabs, add it to the end
+					else {
+						//no position specified, add it to the end
 						fTabs.add(ext[i].getTab());
 					}
 				}
-				else {
-					//no position specified, add it to the end
-					fTabs.add(ext[i].getTab());
-				}
 			}
+			catch (CoreException ce) {DebugUIPlugin.log(ce);}
 		}
 		return (ILaunchConfigurationTab[]) fTabs.toArray(new ILaunchConfigurationTab[fTabs.size()]);
 	}
-
+	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */

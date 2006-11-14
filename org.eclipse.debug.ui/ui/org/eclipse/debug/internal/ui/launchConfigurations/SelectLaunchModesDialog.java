@@ -23,6 +23,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -116,11 +117,20 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fTableViewer.setAllChecked(false);
 				fTableViewer.setChecked(event.getElement(), true);
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 		});
 		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG);
 		return comp;
+	}
+	
+	/**
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 
 	/**

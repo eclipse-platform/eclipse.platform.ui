@@ -492,13 +492,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public String getContributorName() {
 		return fElement.getContributor().getName();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getImageDescriptorId()
-	 */
-	public String getImageDescriptorPath() {
-		return fElement.getAttribute(IConfigurationElementConstants.ICON);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#supportsModeCombination(java.util.Set)

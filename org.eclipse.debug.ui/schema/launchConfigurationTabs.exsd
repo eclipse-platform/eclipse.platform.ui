@@ -38,8 +38,9 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
-         <sequence minOccurs="0" maxOccurs="1">
-            <element ref="placement"/>
+         <sequence>
+            <element ref="placement" minOccurs="0" maxOccurs="1"/>
+            <element ref="associatedDelegate" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -86,6 +87,23 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
             <annotation>
                <documentation>
                   This attribute describes the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="associatedDelegate">
+      <annotation>
+         <documentation>
+            This attribute is used to map a contrinbuted tab to one or more launch delegates. This allows tabs to be filtered from the launch dialog based on what launch delegate/tooling is selected as the current default.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="delegate" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the &lt;code&gt;launchDelegate&lt;/code&gt; that this tab is associated with. The association allows the tab to be filtered based on the modesets supported by the delegates. since 3.3 EXPERIMENTAL
                </documentation>
             </annotation>
          </attribute>

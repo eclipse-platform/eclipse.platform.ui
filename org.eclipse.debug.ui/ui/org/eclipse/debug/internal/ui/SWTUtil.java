@@ -166,6 +166,24 @@ public class SWTUtil {
 	}
 	
 	/**
+	 * Creates a wrapping label
+	 * @param parent the parent composite to add this label to
+	 * @param text the text to be displayed in the label
+	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @return a new label that wraps at a specified width
+	 * @since 3.3
+	 */
+	public static Label createWrapLabel(Composite parent, String text, int hspan) {
+		Label l = new Label(parent, SWT.NONE | SWT.WRAP);
+		l.setFont(parent.getFont());
+		l.setText(text);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		l.setLayoutData(gd);
+		return l;
+	}
+	
+	/**
 	 * Creates a new text widget 
 	 * @param parent the parent composite to add this text widget to
 	 * @param hspan the horizontal span to take up on the parent composite
@@ -177,6 +195,24 @@ public class SWTUtil {
     	Text t = new Text(parent, SWT.SINGLE | SWT.BORDER);
     	t.setFont(parent.getFont());
     	GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+    	gd.horizontalSpan = hspan;
+    	t.setLayoutData(gd);
+    	return t;
+    }
+	
+	/**
+	 * Creates a new text widget 
+	 * @param parent the parent composite to add this text widget to
+	 * @param style the style bits for the text widget
+	 * @param hspan the horizontal span to take up on the parent composite
+	 * @param fill the fill for the grid layout
+	 * @return the new text widget
+	 * @since 3.3
+	 */
+	public static Text createText(Composite parent, int style, int hspan, int fill) {
+    	Text t = new Text(parent, style);
+    	t.setFont(parent.getFont());
+    	GridData gd = new GridData(fill);
     	gd.horizontalSpan = hspan;
     	t.setLayoutData(gd);
     	return t;

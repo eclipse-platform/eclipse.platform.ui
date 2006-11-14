@@ -41,6 +41,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
@@ -202,7 +203,34 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		}
 		return (ILaunchConfiguration[]) filteredConfigs.toArray(new ILaunchConfiguration[filteredConfigs.size()]);
 	}
+
+	/**
+	 * Returns a listing of <code>IlaunchDeleagtes</code> that does not contain any delegates from disabled activities
+	 * @param delegates the raw listing of delegates to filter
+	 * @return the filtered listing of <code>ILaunchDelegate</code>s or an empty array, nevere <code>null</code>.
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public static ILaunchDelegate[] filterLaunchDelegates(ILaunchConfigurationType type, Set modes) throws CoreException {
+		IWorkbenchActivitySupport as = PlatformUI.getWorkbench().getActivitySupport();
+		ILaunchDelegate[] delegates = type.getDelegates(modes);
+		if(as == null) {
+			return delegates;
+		}
+		HashSet set = new HashSet();
+		for(int i = 0; i < delegates.length; i++) {
+			//filter by capabilities
+			if(!WorkbenchActivityHelper.filterItem(new LaunchDelegateContribution(delegates[i]))) {
+				set.add(delegates[i]);
+			}
+		}
+		return (ILaunchDelegate[]) set.toArray(new ILaunchDelegate[set.size()]);
+	}
 	
+	/**
+	 * Performs cleanup operations when the manager is being disposed of. 
+	 */
 	public void shutdown() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
@@ -218,15 +246,12 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	/**
 	 * @see ILaunchListener#launchRemoved(ILaunch)
 	 */
-	public void launchRemoved(ILaunch launch) {
-	}
+	public void launchRemoved(ILaunch launch) {}
 	
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
-	public void launchChanged(ILaunch launch) {	
-
-	}
+	public void launchChanged(ILaunch launch) {}
 
 	/**
 	 * Must not assume that will only be called from the UI thread.
@@ -237,6 +262,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		removeTerminatedLaunches(launch);
 	}
 	
+	/**
+	 * Removes terminated launches from the launch view, leaving the specified launch in the view
+	 * @param newLaunch the newly added launch to leave in the view
+	 */
 	protected void removeTerminatedLaunches(ILaunch newLaunch) {
 	    if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
 	        ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();

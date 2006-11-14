@@ -188,4 +188,22 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	public String getSourcePathComputerId() {
 		return fElement.getAttribute(IConfigurationElementConstants.SOURCE_PATH_COMPUTER);
 	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchDelegate#getDescription()
+	 */
+	public String getDescription() {
+		String desc = fElement.getAttribute(IConfigurationElementConstants.DELEGATE_DESCRIPTION);
+		if(desc == null) {
+			return DebugCoreMessages.LaunchDelegate_0;
+		}
+		return desc;
+	}
+	
+	/**
+	 * @see org.eclipse.debug.core.ILaunchDelegate#getPluginIdentifier()
+	 */
+	public String getPluginIdentifier() {
+		return fElement.getContributor().getName();
+	}
 }

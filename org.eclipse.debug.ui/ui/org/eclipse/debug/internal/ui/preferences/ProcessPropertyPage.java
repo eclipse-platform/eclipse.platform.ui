@@ -54,6 +54,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_RUN_AT);
 		text.setText(getTimeText(proc));
+		text.setBackground(parent.getBackground());
 		SWTUtil.createVerticalSpacer(parent, 2);
 		
 	//create the path name section
@@ -61,6 +62,7 @@ public class ProcessPropertyPage extends PropertyPage {
 		text = SWTUtil.createText(parent, SWT.WRAP | SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		text.setText(getPathText(proc));
+		text.setBackground(parent.getBackground());
 		SWTUtil.createVerticalSpacer(parent, 2);
 		
 	//create commandline section
@@ -71,6 +73,7 @@ public class ProcessPropertyPage extends PropertyPage {
 				convertWidthInCharsToPixels(80),
 				convertHeightInCharsToPixels(15),
 				GridData.FILL_BOTH);
+		text.setBackground(parent.getBackground());
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		String commandLineText = getCommandLineText(proc);
 		if (commandLineText != null) {

@@ -67,6 +67,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -322,8 +323,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 							Object[] res = sld.getResult();
 							if(res != null) {
 								fTabType.setPreferredDelegate(modes, (ILaunchDelegate) res[0]);
-								refresh();
-								refreshStatus();
+								disposeExistingTabs();
+								displayInstanceTabs();
 							}
 						}
 					}
@@ -552,6 +553,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				fOptionsLink.setText(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_15);
 			}
 			fOptionsLink.setVisible(!canLaunchWithModes() || hasDuplicateDelegates());
+			fOptionsLink.getParent().layout();
 		}
 	}
 
@@ -830,7 +832,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			public void run() {
 				ILaunchConfigurationTabGroup tabGroup = null;
 				try {
-					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(configType, getLaunchConfigurationDialog().getMode());
+					tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(getWorkingCopy(), getLaunchConfigurationDialog().getMode());
 					finalArray[0] = tabGroup;
 				} catch (CoreException ce) {
 					finalArray[1] = ce;
@@ -1080,8 +1082,15 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if(config != null) {
 				Set modes = config.getModes();
 				modes.add(getLaunchConfigurationDialog().getMode());
-				if(fTabType.getDelegates(modes).length > 1) {
-					return fTabType.getPreferredDelegate(modes) == null;
+				ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(fTabType, modes);
+				if(delegates.length > 1) {
+					ILaunchDelegate preferred = fTabType.getPreferredDelegate(modes);
+					if(preferred == null) {
+						return true;
+					}
+					else if(WorkbenchActivityHelper.filterItem(new LaunchDelegateContribution(preferred))) {
+						return true;
+					}
 				}
 			}
 		}

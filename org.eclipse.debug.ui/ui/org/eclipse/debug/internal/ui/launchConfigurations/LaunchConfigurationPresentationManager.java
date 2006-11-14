@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +27,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
@@ -34,6 +37,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -165,24 +171,97 @@ public class LaunchConfigurationPresentationManager {
 			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null);  
 			 throw new CoreException(status);
 		} 
-		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier());		
+		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), null);		
+	}
+	
+	/**
+	 * Returns the tab group for the given launch configutation, its type and the mode the dialog opened in
+	 * @param type the type of the configuration
+	 * @param config
+	 * @param mode
+	 * @return
+	 * @throws CoreException
+	 */
+	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfiguration config, String mode) throws CoreException {
+		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), mode);
+		if (ext == null) {
+			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
+			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {config.getType().getIdentifier()})), null);  
+			 throw new CoreException(status);
+		} 
+		return new LaunchConfigurationTabGroupWrapper(ext.newTabGroup(), ext.getIdentifier(), config);
 	}
 	
 	/**
 	 * Returns the proxy elements for all contributed tabs for the specified tab group id
 	 * @param groupid the id of the tab group
+	 * @param type the type the tab group is opened on
+	 * @param mode the mode the associated launch dialog is opened on
 	 * @return the listing of all of the tab extensions or an empty array, never <code>null</code>
 	 * 
 	 * @since 3.3
 	 * 
 	 * EXPERIMENTAL
 	 */
-	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid) {
+	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid, ILaunchConfiguration config, String mode) throws CoreException {
 		Hashtable tabs = (Hashtable) fContributedTabs.get(groupid);
 		if(tabs != null) {
-			return (LaunchConfigurationTabExtension[]) tabs.values().toArray(new LaunchConfigurationTabExtension[tabs.size()]);
+			return filterLaunchTabExtensions((LaunchConfigurationTabExtension[]) tabs.values().toArray(new LaunchConfigurationTabExtension[tabs.size()]), config, mode);
 		}
 		return new LaunchConfigurationTabExtension[0];
+	}
+	
+	/**
+	 * Returns a listing of <code>LaunchConfiguraitonTabExtension</code>s that does not contain any tabs
+	 * from disabled activities
+	 * <p>
+	 * There are thre ways that tabs can be filtered form the launch dialog:
+	 * <ol>
+	 * <li>The tabs can belong to tooling that is contributed via a specific type of workbench activity, and is therefore filtered with capabilities</li>
+	 * <li>The tabs can be filtered via the associatedDelegate extension point, if a tab is said to apply only to certain tooling, only show it in the instance when that tooling is used</li>
+	 * <li>A tab is not part of a workbench activity, nor specifies an associated launch delegate -- show the tab</li>
+	 * </ol>
+	 * </p>
+	 * @param tabs the raw listing of tabs to filter
+	 * @return the listing of filtered <code>LaunchConfigurationTabExtension</code>s or an empty array, never <code>null</code>
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	protected LaunchConfigurationTabExtension[] filterLaunchTabExtensions(LaunchConfigurationTabExtension[] tabs, ILaunchConfiguration config, String mode) throws CoreException {
+		IWorkbenchActivitySupport as = PlatformUI.getWorkbench().getActivitySupport();
+		if(as == null || config == null) {
+			return tabs;
+		}
+		HashSet set = new HashSet();
+		for(int i = 0; i < tabs.length; i ++) {
+		//filter capabilities
+			if(!WorkbenchActivityHelper.filterItem(new LaunchTabContribution(tabs[i]))) {
+			//filter to preferred delegate (if there is one)
+				HashSet modes = (HashSet) config.getModes();
+				modes.add(mode);
+				ILaunchDelegate delegate = config.getType().getPreferredDelegate(modes);
+				if(delegate != null) {
+					if(tabs[i].getDelegateSet().contains(delegate.getId())) {
+						set.add(tabs[i]);
+					}
+				}
+				else {
+					//otherwise filter based on the collection of delegates for the modes
+					ILaunchDelegate[] delegates = config.getType().getDelegates(modes);
+					Set delegateset = null;
+					for(int j = 0; j < delegates.length; j++) {
+						delegateset = tabs[i].getDelegateSet();
+						if(delegateset.size() == 0 || delegateset.contains(delegates[j].getId())) {
+							//associated with all modes and tab groups or only specific ones if indicated
+							set.add(tabs[i]);
+						}
+					}
+				}
+			}
+		}
+		return (LaunchConfigurationTabExtension[]) set.toArray(new LaunchConfigurationTabExtension[set.size()]);
 	}
 	
 	/**

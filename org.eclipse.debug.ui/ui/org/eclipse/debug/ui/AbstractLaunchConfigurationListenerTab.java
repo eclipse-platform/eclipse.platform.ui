@@ -12,11 +12,9 @@ package org.eclipse.debug.ui;
 
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -34,7 +32,7 @@ import org.eclipse.swt.widgets.Composite;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public abstract class AbstractLaunchModeConfigurationTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
+public abstract class AbstractLaunchConfigurationListenerTab extends AbstractLaunchConfigurationTab implements ILaunchConfigurationListener {
 	
 	/**
 	 * Returns the set of the modes this tab modifies.
@@ -42,15 +40,6 @@ public abstract class AbstractLaunchModeConfigurationTab extends AbstractLaunchC
 	 * @return set of the modes this tab modifies
 	 */
 	public abstract Set getModes();
-	
-	/**
-	 * Updates the controls associated with this tab's launch modes.
-	 * Called when a launch configuration has changed, which can occur when a tab 
-	 * is de-activated. Launch modes may have been modified outside of this tab's control.
-	 * 
-	 * @param modes the current set of modes specified by the working copy being edited
-	 */
-	public abstract void updateLaunchModeControls(Set modes);
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -76,15 +65,5 @@ public abstract class AbstractLaunchModeConfigurationTab extends AbstractLaunchC
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {}
-	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-		try {
-			updateLaunchModeControls(configuration.getModes());
-		} 
-		catch (CoreException e) {DebugUIPlugin.log(e);}
-	}
 
 }

@@ -46,6 +46,13 @@ public interface ILaunchDelegate {
 	public String getName();
 	
 	/**
+	 * Returns a description of this launch delegate, or 
+	 * <code>null</code> if one has not been provided
+	 * @return the description of the launch delegate
+	 */
+	public String getDescription();
+	
+	/**
 	 * Returns the name of the plug-in that contributed this delegate.
 	 * 
 	 * @return contributor name
@@ -68,5 +75,11 @@ public interface ILaunchDelegate {
 	 * of sets
 	 */
 	public List getModes();
+	
+	/**
+	 * Returns the id of the plugin that contributed this launch delegate
+	 * @return the id of the plugin that contributed this launch delegate
+	 */
+	public String getPluginIdentifier();
 	
 }

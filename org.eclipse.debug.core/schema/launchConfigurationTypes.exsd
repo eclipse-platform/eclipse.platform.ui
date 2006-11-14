@@ -130,25 +130,6 @@ With new API changes for 3.3M3 the sourceLocatorId id should be contributed via 
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string">
-            <annotation>
-               <documentation>
-                  The id of the icon for this launch configuraiton type.
-
-since 3.3
-
-&lt;p&gt;
-&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;. This element has been added as
-part of a work in progress. There is no guarantee that this API will
-remain unchanged during the 3.3 release cycle. Please do not use this API
-without consulting with the Platform/Debug team.
-&lt;/p&gt;
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="resource"/>
-               </appInfo>
-            </annotation>
-         </attribute>
          <attribute name="delegateName" type="string">
             <annotation>
                <documentation>
@@ -245,10 +226,9 @@ The specified type also has an associated migration delegate, a source locator i
       </appInfo>
       <documentation>
          &lt;p&gt;
-Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;code&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/code&gt;. 
-&lt;/p&gt;
-&lt;p&gt;
-The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully qualified name of a Java class that implements &lt;code&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/code&gt;.
+Value of the attribute &lt;b&gt;delegate&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.core.model.ILaunchConfigurationDelegate&lt;/b&gt;. 
+
+The value of the attribute &lt;b&gt;migrationDelegate&lt;/b&gt; must be a fully qualified name of a Java class that implements &lt;b&gt;org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate&lt;/b&gt;.
 &lt;/p&gt;
       </documentation>
    </annotation>
