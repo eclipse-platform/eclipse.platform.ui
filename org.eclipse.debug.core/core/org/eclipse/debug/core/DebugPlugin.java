@@ -577,7 +577,7 @@ public class DebugPlugin extends Plugin {
 	public void stop(BundleContext context) throws Exception {
 		try {
 			setShuttingDown(true);
-		
+			
 			if (fAsynchJob != null) {
 				fAsynchJob.cancel();
 			}
@@ -596,10 +596,10 @@ public class DebugPlugin extends Plugin {
             if (fEventFilters != null) {
                 fEventFilters = null;
             }
-            
 			SourceLookupUtils.shutdown();
 			setDefault(null);
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			savePluginPreferences();
 		} finally {
 			super.stop(context);
 		}
