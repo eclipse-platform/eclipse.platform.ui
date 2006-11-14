@@ -247,7 +247,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	}
 
 	private boolean promptToDiscardCachedChanges(String message) {
-		return MessageDialog.openConfirm(viewer.getControl().getShell(), "Discard Changes?", message);
+		return MessageDialog.openConfirm(viewer.getControl().getShell(), PatchMessages.PatcherCompareEditorInput_0, message);
 	}
 
 	protected abstract void fillContextMenu(IMenuManager manager);

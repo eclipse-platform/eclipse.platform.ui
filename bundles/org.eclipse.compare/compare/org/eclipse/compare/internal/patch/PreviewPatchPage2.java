@@ -319,7 +319,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			}
 		});
 		
-		fExcludeAction = new Action("&Exclude") {
+		fExcludeAction = new Action(PatchMessages.PreviewPatchPage2_0) {
 			public void run() {
 				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
@@ -338,7 +338,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		};
 		fExcludeAction.setEnabled(true);
 		
-		fIncludeAction = new Action("&Include") {
+		fIncludeAction = new Action(PatchMessages.PreviewPatchPage2_1) {
 			public void run() {
 				ISelection selection = fInput.getViewer().getSelection();
 				if (selection instanceof TreeSelection){
@@ -364,7 +364,7 @@ public class PreviewPatchPage2 extends WizardPage {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask(PatchMessages.PreviewPatchPage2_IgnoreWhitespace, IProgressMonitor.UNKNOWN);
 							if (isChecked() != getPatcher().isIgnoreWhitespace()) {
-								if (promptToRebuild("Performing this operation will require that your manual changes be discarded.")) {
+								if (promptToRebuild(PatchMessages.PreviewPatchPage2_2)) {
 									if (getPatcher().setIgnoreWhitespace(isChecked())){
 										rebuildTree();
 									}
@@ -391,7 +391,7 @@ public class PreviewPatchPage2 extends WizardPage {
 						public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 							monitor.beginTask(PatchMessages.PreviewPatchPage2_CalculateReverse, IProgressMonitor.UNKNOWN);
 							if (isChecked() != getPatcher().isReversed()) {
-								if (promptToRebuild("Reversing the patch will require that your manual changes be discarded.")) {
+								if (promptToRebuild(PatchMessages.PreviewPatchPage2_3)) {
 									if (getPatcher().setReversed(isChecked())){
 										rebuildTree();
 									}
@@ -509,7 +509,7 @@ public class PreviewPatchPage2 extends WizardPage {
 				new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (patcher.getStripPrefixSegments() != getStripPrefixSegments()) {
-						if (promptToRebuild("Performing this operation will require that your manual changes be discarded.")) {
+						if (promptToRebuild(PatchMessages.PreviewPatchPage2_4)) {
 							if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
 								rebuildTree();
 							}
@@ -523,7 +523,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (patcher.getFuzz() != getFuzzFactor()) {
-					if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
+					if (promptToRebuild(PatchMessages.PreviewPatchPage2_5)) {
 						if (patcher.setFuzz(getFuzzFactor()))
 							rebuildTree();
 					} else {
@@ -557,7 +557,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		b.setText(PatchMessages.PreviewPatchPage_GuessFuzz_text);
 			b.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e) {
-						if (promptToRebuild("Changing the fuzz factor will require that your manual changes be discarded.")) {
+						if (promptToRebuild(PatchMessages.PreviewPatchPage2_6)) {
 							int fuzz= guessFuzzFactor(patcher);
 							if (fuzz>=0)
 								fFuzzField.setText(Integer.toString(fuzz));
@@ -590,7 +590,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	
 	private void createShowRemovedToggle(Composite pair) {
 		final Button showRemoved = new Button(pair, SWT.CHECK);
-		showRemoved.setText("Show Excluded");
+		showRemoved.setText(PatchMessages.PreviewPatchPage2_7);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_CENTER
 				| GridData.HORIZONTAL_ALIGN_BEGINNING
 				| GridData.GRAB_HORIZONTAL);

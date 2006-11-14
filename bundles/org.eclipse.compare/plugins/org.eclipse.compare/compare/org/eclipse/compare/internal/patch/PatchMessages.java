@@ -21,19 +21,9 @@ public final class PatchMessages extends NLS {
 	}
 
 	public static String HunkMergePage_GenerateRejectFile;
-	public static String HunkMergePage_Info;
 	public static String HunkMergePage_Merged;
-	public static String HunkMergePage_PageTitle;
-	public static String HunkMergePageInput_OrphanedHunk;
-	public static String HunkMergePageInput_WorkspaceCopy;
-	public static String PatchAction_ExceptionTitle;
-	public static String PatchAction_Exception;
-	public static String PatchAction_SavingDirtyEditorsTask;
-	public static String PatchAction_AlwaysSaveQuestion;
-	public static String PatchAction_SaveAllQuestion;
-	public static String PatchAction_SaveAllDescription;
+	public static String PatcherCompareEditorInput_0;
 	public static String PatcherCompareEditorInput_AfterPatch;
-	public static String PatcherCompareEditorInput_FileNotFound;
 	public static String PatcherCompareEditorInput_LocalCopy;
 	public static String PatcherCompareEditorInput_NotIncluded;
 	public static String PatcherCompareEditorInput_PatchContents;
@@ -44,7 +34,6 @@ public final class PatchMessages extends NLS {
 	public static String InputPatchPage_Clipboard;
 	public static String InputPatchPage_SelectInput;
 	public static String InputPatchPage_PatchErrorDialog_title;
-	public static String InputPatchPage_SelectPatch_title;
 	public static String InputPatchPage_FileButton_text;
 	public static String InputPatchPage_ChooseFileButton_text;
 	public static String InputPatchPage_UseClipboardButton_text;
@@ -68,20 +57,13 @@ public final class PatchMessages extends NLS {
 	public static String PatchTargetPage_title;
 	public static String PatchTargetPage_message;
 	public static String PreviewPatchPage_title;
-	public static String PreviewPatchPage_message;
-	public static String PreviewPatchPage_Left_title;
-	public static String PreviewPatchPage_Right_title;
 	public static String PreviewPatchPage_PatchOptions_title;
 	public static String PreviewPatchPage_IgnoreSegments_text;
 	public static String PreviewPatchPage_ReversePatch_text;
 	public static String PreviewPatchPage_FuzzFactor_text;
 	public static String PreviewPatchPage_FuzzFactor_tooltip;
-	public static String PreviewPatchPage_IgnoreWhitespace_text;
-	public static String PreviewPatchPage_NoName_text;
 	public static String PreviewPatchPage_FileExists_error;
 	public static String PreviewPatchPage_FileDoesNotExist_error;
-	public static String PreviewPatchPage_NoMatch_error;
-	public static String PreviewPatchPage_FileIsReadOnly_error;
 	public static String PreviewPatchPage_GuessFuzz_text;
 	public static String PreviewPatchPage_GuessFuzzProgress_text;
 	public static String PreviewPatchPage_GuessFuzzProgress_format;
@@ -93,17 +75,22 @@ public final class PatchMessages extends NLS {
 	}
 
 	public static String Diff_2Args;
-	public static String PreviewPatchPage_MatchProjects;
 	public static String PreviewPatchPage_RetargetPatch;
 	public static String PreviewPatchPage_SelectProject;
 	public static String PreviewPatchPage_Target;
 	public static String PreviewPatchLabelDecorator_ProjectDoesNotExist;
+	public static String PreviewPatchPage2_0;
+	public static String PreviewPatchPage2_1;
+	public static String PreviewPatchPage2_2;
+	public static String PreviewPatchPage2_3;
+	public static String PreviewPatchPage2_4;
+	public static String PreviewPatchPage2_5;
+	public static String PreviewPatchPage2_6;
+	public static String PreviewPatchPage2_7;
 	public static String PreviewPatchPage2_CalculateReverse;
 	public static String PreviewPatchPage2_IgnoreWhitespace;
 	public static String PreviewPatchPage2_IgnoreWSAction;
 	public static String PreviewPatchPage2_IgnoreWSTooltip;
-	public static String PreviewPatchPage2_IncludeElement;
-	public static String PreviewPatchPage2_IncludeElementText;
 	public static String PreviewPatchPage2_OrphanedHunk;
 	public static String PreviewPatchPage2_PatchedLocalFile;
 	public static String PreviewPatchPage2_RetargetAction;
