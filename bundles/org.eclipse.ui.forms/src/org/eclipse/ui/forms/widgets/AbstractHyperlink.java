@@ -289,4 +289,14 @@ public abstract class AbstractHyperlink extends Canvas {
 			return;
 		handleActivate(e);
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
+	 */
+
+	public void setEnabled (boolean enabled) {
+		super.setEnabled(enabled);
+		redraw();
+	}
 }
