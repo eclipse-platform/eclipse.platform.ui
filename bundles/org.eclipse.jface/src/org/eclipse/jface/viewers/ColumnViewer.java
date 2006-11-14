@@ -262,7 +262,9 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @return the {@link Item} at the coordinates or <code>null</code> if no item is
 	 *         located there
 	 */
-	protected abstract Item getItemAt(Point point);
+	protected Item getItemAt(Point point){
+		return null;//Return null by default
+	}
 
 	
 	/* (non-Javadoc)
