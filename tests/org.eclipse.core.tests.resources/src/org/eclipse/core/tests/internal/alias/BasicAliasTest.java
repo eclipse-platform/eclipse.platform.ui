@@ -191,16 +191,16 @@ public class BasicAliasTest extends ResourceTest {
 			Workspace.clear(location.toFile());
 		}
 	}
-	
+
 	/**
 	 * Regression test for bug 156082.  A project has aliases to multiple
 	 * other projects, but the other projects don't overlap each other.  I.e.,
 	 * Project Top overlaps Sub1 and Sub2, but Sub1 and Sub2 do not overlap each other.
 	 */
 	public void testBug156082() {
-		IProject top  = getWorkspace().getRoot().getProject("Bug156082_Top");
-		IProject sub1  = getWorkspace().getRoot().getProject("Bug156082_Sub1");
-		IProject sub2  = getWorkspace().getRoot().getProject("Bug156082_Sub2");
+		IProject top = getWorkspace().getRoot().getProject("Bug156082_Top");
+		IProject sub1 = getWorkspace().getRoot().getProject("Bug156082_Sub1");
+		IProject sub2 = getWorkspace().getRoot().getProject("Bug156082_Sub2");
 		ensureExistsInWorkspace(top, true);
 		IProjectDescription desc1 = getWorkspace().newProjectDescription(sub1.getName());
 		desc1.setLocation(top.getLocation().append(sub1.getName()));
@@ -540,7 +540,6 @@ public class BasicAliasTest extends ResourceTest {
 			try {
 				getWorkspace().getRoot().delete(IResource.NONE, getMonitor());
 			} catch (CoreException e) {
-				e.printStackTrace();
 				//failure expected here because it is out of sync
 			}
 
