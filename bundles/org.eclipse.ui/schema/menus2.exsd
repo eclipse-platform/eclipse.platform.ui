@@ -126,16 +126,6 @@ Query: The query format is &lt;placement&gt;=&lt;id&gt; where:
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="AbstractDynamicMenu"/>
-               </appInfo>
-            </annotation>
-         </attribute>
       </complexType>
    </element>
 
@@ -194,6 +184,16 @@ Query: The query format is &lt;placement&gt;=&lt;id&gt; where:
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="AbstractDynamicMenuItem"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

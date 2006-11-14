@@ -33,6 +33,12 @@ public class MenuSeparatorContribution extends CommonMenuAddition {
 		String val = element.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
 		return Boolean.valueOf(val).booleanValue();
 	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.CommonMenuAddition#isSeparator()
+	 */
+	public boolean isSeparator() {
+		return true;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.CommonMenuAddition#fill(org.eclipse.swt.widgets.Menu, int)

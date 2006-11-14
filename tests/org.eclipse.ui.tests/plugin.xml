@@ -424,6 +424,11 @@
             icon="icons/view.gif"
             id="org.eclipse.ui.tests.contexts.MockPageView"
             name="Service PageBookView"/>
+      <view
+            class="org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness"
+            id="org.eclipse.ui.tests.api.MenuTestHarness"
+            name="Menu Test Harness">
+      </view>
 
    </extension>
    <extension
@@ -2927,5 +2932,68 @@
       <initializer
             class="org.eclipse.ui.tests.preferences.TestPreferenceInitializer">
       </initializer>
+   </extension>
+  
+   <extension
+         point="org.eclipse.ui.menus2">
+      <menuAddition
+            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness">
+         <item
+               commandId="MenuTest.BasicCmd"
+               icon="icons/anything.gif"
+               id="MenuTest.popup.BasicCmdItem"
+               label="Basic Cmd"
+               mnemonic="B">
+         </item>
+         <widget
+               class="BasicWidget"
+               id="MenuTest.popup.BasicWidgetItem">
+         </widget>
+         <menu
+               icon="icons/binary_co.gif"
+               id="MenuTest.popup.MasicMenuItem"
+               label="Basic Menu">
+            <item
+                  commandId="MenuTest.SubItem"
+                  label="Sub Item">
+            </item>
+         </menu>
+         <separator
+               id="MenuTest.Advanced"
+               visible="true">
+         </separator>
+         <item
+               commandId="MenuTest.ParamCmd"
+               label="Parameter Cmd"
+               mnemonic="C">
+            <parameter
+                  id="Greeting"
+                  value="Hi There!">
+            </parameter>
+         </item>
+         <item
+               commandId="MenuTest.ObjectCmd"
+               icon="icons/mockeditorpart1.gif"
+               label="Foo Cmd"
+               mnemonic="F">
+            <visibleWhen
+                  checkEnabled="false">
+            </visibleWhen>
+            <enabledWhen
+                  checkEnabled="false">
+            </enabledWhen>
+         </item>
+         <menu
+               icon="icons/dynamic.gif"
+               id="MenuTest.popup.dynamicMenu"
+               label="Dynamic Menu">
+            <item
+               commandId="Huh, why?"
+               class="DynamicItemFiller"
+               id="MenuText.popup.DynamicItem"
+                label="Dynamic Item">
+            </item>
+         </menu>
+      </menuAddition>
    </extension>
 </plugin>            

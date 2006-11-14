@@ -1015,9 +1015,6 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	protected final void read() {
 		super.read();
-		
-		// HACK!! read the new menu contributions
-		CommonMenuService.readAdditions();
 
 		// Create the extension registry mementos.
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();

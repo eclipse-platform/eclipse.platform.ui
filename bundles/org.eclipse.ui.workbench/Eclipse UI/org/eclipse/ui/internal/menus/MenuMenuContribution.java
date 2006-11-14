@@ -12,20 +12,25 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.3
  *
  */
-public class MenuMenuContribution extends CommonMenuAddition {
+public class MenuMenuContribution extends MenuManager {
+
+	protected IConfigurationElement element;
 
 	private boolean iconDefined = false;
 	private Image icon = null;
 
 	public MenuMenuContribution(IConfigurationElement element) {
-		super(element);
+		super();
+		this.element = element;
 	}
 	
 	public String getMnemonic() {
@@ -64,5 +69,33 @@ public class MenuMenuContribution extends CommonMenuAddition {
 	
 	public String toString() {
 		return getClass().getName() + "(" + getLabel() + ":" + getTooltip() + ") " + getIconPath();   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.MenuManager#getMenuText()
+	 */
+	public String getMenuText() {
+		return getLabel();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.MenuManager#isVisible()
+	 */
+	public boolean isVisible() {
+		return true;
+	}
+
+/* (non-Javadoc)
+ * @see org.eclipse.jface.action.MenuManager#isEnabled()
+ */
+public boolean isEnabled() {
+	return true;
+}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.MenuManager#fill(org.eclipse.swt.widgets.Menu, int)
+	 */
+	public void fill(Menu parent, int index) {
+		super.fill(parent, index);
 	}
 }

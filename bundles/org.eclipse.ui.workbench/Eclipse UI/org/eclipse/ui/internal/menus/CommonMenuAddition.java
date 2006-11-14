@@ -107,7 +107,7 @@ public class CommonMenuAddition implements IContributionItem {
 	 * @see org.eclipse.jface.action.IContributionItem#isVisible()
 	 */
 	public boolean isVisible() {
-		return false;
+		return true;
 	}
 
 	/* (non-Javadoc)

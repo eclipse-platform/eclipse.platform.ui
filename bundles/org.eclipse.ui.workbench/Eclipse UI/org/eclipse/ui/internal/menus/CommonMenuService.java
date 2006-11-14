@@ -30,6 +30,11 @@ import org.eclipse.ui.internal.util.Util;
 
 
 /**
+ * Test harness for new menu story.
+ * 
+ * <b>NOTE:</b> This is -NOT- meant to be production code but is just a testing
+ * scaffold...
+ * 
  * @since 3.3
  *
  */
@@ -62,36 +67,66 @@ public class CommonMenuService extends RegistryPersistence {
 	private static void readMenuAddition(IConfigurationElement addition) {
 		// Determine the insertio location by parsing the URI
 		String locationURI = addition.getAttribute(TAG_LOCATION_URI);
-		try {
-			URI uri = new URI(locationURI);
+		URI uri = createURI(locationURI);
 		
+		if (uri != null) {
 			ContributionManager mgr = getManagerForURI(uri);
-			int insertionIndex = getInsertionIndexForURI(mgr, uri);
-			
-			IConfigurationElement[] items = addition.getChildren();
-			for (int i = 0; i < items.length; i++) {
-				String itemType = items[i].getName();
-				System.out.println("Type: " + itemType); //$NON-NLS-1$
-				
-				if (TAG_ITEM.equals(itemType)) {
-					mgr.insert(insertionIndex++, new MenuItemContribution(items[i]));
-				}
-				else if (TAG_WIDGET.equals(itemType)) {
-					mgr.insert(insertionIndex++, new MenuWidgetContribution(items[i]));
-				}
-				else if (TAG_MENU.equals(itemType)) {
-					mgr.insert(insertionIndex++, new MenuMenuContribution(items[i]));
-				}
-				else if (TAG_SEPARATOR.equals(itemType)) {
-					mgr.insert(insertionIndex++, new MenuSeparatorContribution(items[i]));
-				}
-			}
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			int insertionIndex = getInsertionIndexForURI(mgr, uri);			
+
+			// Read teh child additions
+			readAdditions(mgr, addition, insertionIndex);
 		}
 	}
 
+	/**
+	 * @param configurationElement
+	 */
+	private static void readAdditions(ContributionManager mgr, IConfigurationElement addition, 
+			int insertionIndex) {
+		IConfigurationElement[] items = addition.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			String itemType = items[i].getName();
+			System.out.println("Type: " + itemType); //$NON-NLS-1$
+			
+			if (TAG_ITEM.equals(itemType)) {
+				mgr.insert(insertionIndex++, new MenuItemContribution(items[i]));
+			}
+			else if (TAG_WIDGET.equals(itemType)) {
+				mgr.insert(insertionIndex++, new MenuWidgetContribution(items[i]));
+			}
+			else if (TAG_MENU.equals(itemType)) {
+				MenuMenuContribution subMenu = new MenuMenuContribution(items[i]);
+				mgr.insert(insertionIndex++, new MenuMenuContribution(items[i]));
+
+				// Read the sub-structure
+				readAdditions(subMenu, items[i], 0);
+			}
+			else if (TAG_SEPARATOR.equals(itemType)) {
+				mgr.insert(insertionIndex++, new MenuSeparatorContribution(items[i]));
+			}
+		}
+	}
+
+	/**
+	 * Wraps a URI constructor in a standard exception handler.
+	 * 
+	 * @param uriDef The string to create the URI from
+	 * @return The URI or <code>null</code> if the string is
+	 * badly formed.
+	 */
+	public static URI createURI(String uriDef) {
+		URI uri = null;
+		try {
+			uri = new URI(uriDef);
+		} catch (URISyntaxException e) {
+			// [TBD] Log it
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return uri;
+	}
+	
 	/**
 	 * @param mgr 
 	 * @param uri
@@ -119,7 +154,10 @@ public class CommonMenuService extends RegistryPersistence {
 	 * @param uri
 	 * @return
 	 */
-	private static ContributionManager getManagerForURI(URI uri) {
+	public static ContributionManager getManagerForURI(URI uri) {
+		if (uri == null)
+			return null;
+		
 		String mgrId = uri.getScheme() + ":" + uri.getHost(); //$NON-NLS-1$
 		ContributionManager mgr = (ContributionManager) URIToManager.get(mgrId);
 		if (mgr == null) {
@@ -130,6 +168,9 @@ public class CommonMenuService extends RegistryPersistence {
 		return mgr;
 	}
 
+	public static ContributionManager getManagerForURI(String uriDef) {
+		return getManagerForURI(createURI(uriDef));
+	}
 	/**
 	 * @param locationURI
 	 * @return
