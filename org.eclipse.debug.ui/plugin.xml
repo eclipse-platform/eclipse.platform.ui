@@ -155,8 +155,85 @@
          </keywordReference>
       </page>
    </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
+   <extension point="org.eclipse.ui.actionSets">
+   		<actionSet
+            label="%BreakpointActionSet.label"
+            visible="false"
+            id="org.eclipse.debug.ui.breakpointActionSet">
+         <menu
+               label="%RunMenu.label"
+               path="additions"
+               id="org.eclipse.ui.run">
+            <separator
+                  name="breakpointGroup">
+            </separator>
+            <groupMarker
+                  name="lineBreakpointGroup">
+            </groupMarker>
+            <groupMarker
+                  name="emptyBreakpointGroup">
+            </groupMarker>
+         </menu>
+         <action
+               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
+               label="%RemoveAllBreakpointsAction.label"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
+               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+               definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
+               style="push"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"/>
+          <action
+               definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
+               label="%SkipAllBreakpointsAction.label"
+               icon="$nl$/icons/full/elcl16/skip_brkp.gif"
+               helpContextId="skip_all_breakpoints_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               style="toggle"
+               id="org.eclipse.debug.ui.actions.SkipAllBreakpoints">
+         </action>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
+               label="%ToggleWatchpointAction.label"
+               icon="$nl$/icons/full/obj16/readwrite_obj.gif"
+               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.gif"
+               helpContextId="toggle_watchpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
+         </action>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
+               label="%ToggleMethodBreakpointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.gif"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_method_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetMethodBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
+         </action>
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
+               label="%ToggleLineBreakpointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.gif"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_line_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleLineBreakpoint">
+         </action>         
+         <action
+               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
+               label="%ToggleBreakpointAction.label"
+               icon="$nl$/icons/full/obj16/brkp_obj.gif"
+               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
+               helpContextId="toggle_breakpoint_action_context"
+               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
+               menubarPath="org.eclipse.ui.run/breakpointGroup"
+               id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
+         </action>         
+      </actionSet>
       <actionSet
             label="%DebugActionSet.label"
             visible="false"
@@ -271,9 +348,6 @@
                menubarPath="org.eclipse.ui.run/stepGroup">
          </action>
       </actionSet>
-   </extension>         
-   <extension
-         point="org.eclipse.ui.actionSets">
       <actionSet
             label="%LaunchActionSet.label"
             visible="false"
@@ -296,12 +370,15 @@
             </separator>
          </menu>
          <action
-               definitionId="org.eclipse.debug.ui.commands.OpenRunConfigurations"
-               label="%OpenRunConfigurations.label"
-               helpContextId="open_run_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenRunConfigurations"
-               menubarPath="org.eclipse.ui.run/runGroup"
-               id="org.eclipse.debug.ui.actions.OpenRunConfigurations">
+               definitionId="org.eclipse.debug.ui.commands.OpenRunConfigurations"
+               disabledIcon="$nl$/icons/full/dtool16/run_exc.gif"
+               helpContextId="open_run_configurations_action_context"
+               hoverIcon="$nl$/icons/full/etool16/run_exc.gif"
+               icon="$nl$/icons/full/etool16/run_exc.gif"
+               id="org.eclipse.debug.ui.actions.OpenRunConfigurations"
+               label="%OpenRunConfigurations.label"
+               menubarPath="org.eclipse.ui.run/runGroup">
          </action>
          <action
                label="%RunWithConfigurationAction.label"
@@ -353,12 +430,15 @@
                style="pulldown">
          </action>
          <action
-               definitionId="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
-               label="%OpenDebugConfigurations.label"
-               helpContextId="open_debug_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenDebugConfigurations"
-               menubarPath="org.eclipse.ui.run/debugGroup"
-               id="org.eclipse.debug.ui.actions.OpenDebugConfigurations">
+               definitionId="org.eclipse.debug.ui.commands.OpenDebugConfigurations"
+               disabledIcon="$nl$/icons/full/dtool16/debug_exc.gif"
+               helpContextId="open_debug_configurations_action_context"
+               hoverIcon="$nl$/icons/full/etool16/debug_exc.gif"
+               icon="$nl$/icons/full/etool16/debug_exc.gif"
+               id="org.eclipse.debug.ui.actions.OpenDebugConfigurations"
+               label="%OpenDebugConfigurations.label"
+               menubarPath="org.eclipse.ui.run/debugGroup">
          </action>
          <action
                label="%DebugWithConfigurationAction.label"
@@ -388,90 +468,6 @@
                style="pulldown">
          </action>
       </actionSet>
-   </extension>
-   <extension
-         point="org.eclipse.ui.actionSets">
-      <actionSet
-            label="%BreakpointActionSet.label"
-            visible="false"
-            id="org.eclipse.debug.ui.breakpointActionSet">
-         <menu
-               label="%RunMenu.label"
-               path="additions"
-               id="org.eclipse.ui.run">
-            <separator
-                  name="breakpointGroup">
-            </separator>
-            <groupMarker
-                  name="lineBreakpointGroup">
-            </groupMarker>
-            <groupMarker
-                  name="emptyBreakpointGroup">
-            </groupMarker>
-         </menu>
-         <action
-               disabledIcon="$nl$/icons/full/dlcl16/rem_all_co.gif"
-               label="%RemoveAllBreakpointsAction.label"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveAllBreakpointsAction"
-               icon="$nl$/icons/full/elcl16/rem_all_co.gif"
-               definitionId="org.eclipse.debug.ui.commands.RemoveAllBreakpoints"
-               style="push"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.RemoveAllBreakpoints"/>
-          <action
-               definitionId="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
-               label="%SkipAllBreakpointsAction.label"
-               icon="$nl$/icons/full/elcl16/skip_brkp.gif"
-               helpContextId="skip_all_breakpoints_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               style="toggle"
-               id="org.eclipse.debug.ui.actions.SkipAllBreakpoints">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleWatchpoint"
-               label="%ToggleWatchpointAction.label"
-               icon="$nl$/icons/full/obj16/readwrite_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/readwrite_obj_disabled.gif"
-               helpContextId="toggle_watchpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetWatchpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleWatchpoint">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
-               label="%ToggleMethodBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
-               helpContextId="toggle_method_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetMethodBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleMethodBreakpoint">
-         </action>
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleLineBreakpoint"
-               label="%ToggleLineBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
-               helpContextId="toggle_line_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleLineBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleLineBreakpoint">
-         </action>         
-         <action
-               definitionId="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-               label="%ToggleBreakpointAction.label"
-               icon="$nl$/icons/full/obj16/brkp_obj.gif"
-               disabledIcon="$nl$/icons/full/obj16/brkpd_obj.gif"
-               helpContextId="toggle_breakpoint_action_context"
-               class="org.eclipse.debug.internal.ui.actions.breakpoints.RetargetToggleBreakpointAction"
-               menubarPath="org.eclipse.ui.run/breakpointGroup"
-               id="org.eclipse.debug.ui.actions.ToggleBreakpoint">
-         </action>         
-      </actionSet>
-   </extension>   
-   <extension
-         point="org.eclipse.ui.actionSets">
       <actionSet
             label="%ProfileActionSet.label"
             visible="false"
@@ -499,12 +495,15 @@
                style="pulldown">
          </action>
          <action
-               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
-               label="%OpenProfileConfigurations.label"
-               helpContextId="open_profile_configurations_action_context"
                class="org.eclipse.debug.internal.ui.actions.OpenProfileConfigurations"
-               menubarPath="org.eclipse.ui.run/profileGroup"
-               id="org.eclipse.debug.ui.actions.OpenProfileConfigurations">
+               definitionId="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
+               disabledIcon="$nl$/icons/full/dtool16/profile_exc.gif"
+               helpContextId="open_profile_configurations_action_context"
+               hoverIcon="$nl$/icons/full/etool16/profile_exc.gif"
+               icon="$nl$/icons/full/etool16/profile_exc.gif"
+               id="org.eclipse.debug.ui.actions.OpenProfileConfigurations"
+               label="%OpenProfileConfigurations.label"
+               menubarPath="org.eclipse.ui.run/profileGroup">
          </action>
          <action
                label="%ProfileWithConfigurationAction.label"
@@ -534,7 +533,7 @@
                menubarPath="org.eclipse.ui.run/relaunchGroup">
          </action>
       </actionSet>
-   </extension>
+   </extension>         
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
@@ -828,6 +827,164 @@
    </extension>
    <extension
          point="org.eclipse.ui.popupMenus">
+         
+   <!-- memory view contributions -->
+   <objectContribution
+            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractIntegerRendering"
+            id="org.eclipse.debug.ui.memory">
+         <menu
+               label="%Endianess"
+               path="additions"
+               id="org.eclipse.debug.ui.memory.rendering.setendianess">
+            <separator name="setEndianessGroup"/>
+            <groupMarker name="defaultEndianessGroup"/>
+         </menu>
+          <action
+                helpContextId="LittleEndianAction_context"
+                enablesFor="1"
+                label="%LittleEndianActionName"
+                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
+                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
+         </action>            
+         <action
+               helpContextId="BigEndianAction_context"
+               enablesFor="1"
+               label="%BigEndianActionName"
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.BigEndianAction"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
+               id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
+         </action>
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.renderings.DefaultEndianessAction"
+               enablesFor="1"
+               helpContextId="RestoreDefEndianessAction_context"
+               id="org.eclipse.debug.ui.memory.rendering.DefaultEndianAction"
+               label="%RestoreDefEndianessActionName"
+               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/defaultEndianessGroup"/>
+      </objectContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.1">
+         <menu
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin"
+               id="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
+         </menu>
+         <action
+               helpContextId="RemoveRenderingContextAction_context"
+               label="%RemoveRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"/>
+         <action
+               helpContextId="AddRenderingContextAction_context"
+               label="%AddRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"
+            id="org.eclipse.debug.ui.memory.renderingviewpane.2">
+         <menu
+               label="%AddRemoveRenderingMenu.name"
+               path="popUpBegin"
+               id="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"/>
+         <action
+               helpContextId="RemoveRenderingContextAction_context"
+               label="%RemoveRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
+               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"/>
+         <action
+               helpContextId="AddRenderingContextAction_context"
+               label="%AddRenderingAction.name"
+               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
+               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
+               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
+               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"/>
+      </viewerContribution>   
+      <viewerContribution
+            id="org.eclipse.debug.ui.memory.memoryBlockTreeViewPane"
+            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
+         <action
+               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
+               helpContextId="resetMemoryMonitor_context"
+               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
+               id="org.eclipse.debug.ui.resetMemoryBlock"
+               label="%resetMemoryMonitorAction.label"
+               menubarPath="additions"/>
+      </viewerContribution>
+   <!-- contextual launch -->
+      <objectContribution
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.profile">
+        <action
+               label="%ProfileContextMenu.label"
+               style="pulldown"
+               class="org.eclipse.debug.internal.ui.actions.ProfileContextualLaunchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
+        </action>    
+        <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
+        </enablement>        
+      </objectContribution>
+      <objectContribution
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.debug">
+        <action
+               label="%DebugContextMenu.label"
+               style="pulldown"
+               class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
+         </action>
+         <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+         </enablement>     
+       </objectContribution>    
+       <objectContribution
+            objectClass="java.lang.Object"
+            id="org.eclipse.debug.ui.contextualLaunch.run">
+         <action
+               label="%RunContextMenu.label"
+               style="pulldown"
+               class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
+         </action>                  
+         <enablement>
+         	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+         </enablement>
+      </objectContribution>
+   <!-- console additions -->
+      <viewerContribution
+             targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu"
+             id="org.eclipse.debug.ui.processConsoleContextMenu">
+          <action
+                label="%RemoveAllTerminatedAction.label"
+                tooltip="%RemoveAllTerminatedAction.tooltip"
+                icon="$nl$/icons/full/elcl16/rem_all_co.gif"
+                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
+                menubarPath="additions"
+                id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
+				helpContextId="console_remove_all_terminated_context"/>
+          <action
+                label="%ConsolePreferencesAction.label"
+                tooltip="%ConsolePreferencesAction.tooltip"
+                class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
+                menubarPath="preferences"
+                id="org.eclipse.debug.ui.consolePreferencesAction"
+                helpContextId="console_show_preferences_action_context"/>                
+       </viewerContribution>
 <!-- Watch expression actions -->
       <objectContribution
             objectClass="org.eclipse.debug.core.model.IExpression"
@@ -1162,101 +1319,7 @@
                id="org.eclipse.debug.ui.actions.SelectAllVariablesAction">
          </action>
       </viewerContribution>
-   </extension>
-<!-- Contribution to Memory View, integer renderings -->
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="org.eclipse.debug.internal.ui.views.memory.renderings.AbstractIntegerRendering"
-            id="org.eclipse.debug.ui.memory">
-         <menu
-               label="%Endianess"
-               path="additions"
-               id="org.eclipse.debug.ui.memory.rendering.setendianess">
-            <separator name="setEndianessGroup"/>
-            <groupMarker name="defaultEndianessGroup"/>
-         </menu>
-          <action
-                helpContextId="LittleEndianAction_context"
-                enablesFor="1"
-                label="%LittleEndianActionName"
-                class="org.eclipse.debug.internal.ui.views.memory.renderings.LittleEndianAction"
-                menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-                id="org.eclipse.debug.ui.memory.rendering.LittleEndianAction"> 
-         </action>            
-         <action
-               helpContextId="BigEndianAction_context"
-               enablesFor="1"
-               label="%BigEndianActionName"
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.BigEndianAction"
-               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/setEndianessGroup"
-               id="org.eclipse.debug.ui.memory.rendering.BigEndianAction"> 
-         </action>
-         <action
-               class="org.eclipse.debug.internal.ui.views.memory.renderings.DefaultEndianessAction"
-               enablesFor="1"
-               helpContextId="RestoreDefEndianessAction_context"
-               id="org.eclipse.debug.ui.memory.rendering.DefaultEndianAction"
-               label="%RestoreDefEndianessActionName"
-               menubarPath="org.eclipse.debug.ui.memory.rendering.setendianess/defaultEndianessGroup"/>
-      </objectContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1"
-            id="org.eclipse.debug.ui.memory.renderingviewpane.1">
-         <menu
-               label="%AddRemoveRenderingMenu.name"
-               path="popUpBegin"
-               id="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove">
-         </menu>
-         <action
-               helpContextId="RemoveRenderingContextAction_context"
-               label="%RemoveRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.remove"/>
-         <action
-               helpContextId="AddRenderingContextAction_context"
-               label="%AddRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.1.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.1.add"/>
-      </viewerContribution>
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2"
-            id="org.eclipse.debug.ui.memory.renderingviewpane.2">
-         <menu
-               label="%AddRemoveRenderingMenu.name"
-               path="popUpBegin"
-               id="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"/>
-         <action
-               helpContextId="RemoveRenderingContextAction_context"
-               label="%RemoveRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.RemoveRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/removememory_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.remove"/>
-         <action
-               helpContextId="AddRenderingContextAction_context"
-               label="%AddRenderingAction.name"
-               class="org.eclipse.debug.internal.ui.views.memory.AddMemoryRenderingContextAction"
-               icon="$nl$/icons/full/elcl16/monitorexpression_tsk.gif"
-               menubarPath="org.eclipse.debug.ui.memory.renderingviewpane.2.addremove"
-               id="org.eclipse.debug.ui.MemoryView.RenderingViewPane.2.add"/>
-      </viewerContribution>   
-      <viewerContribution
-            id="org.eclipse.debug.ui.memory.memoryBlockTreeViewPane"
-            targetID="org.eclipse.debug.ui.MemoryView.MemoryBlocksTreeViewPane">
-         <action
-               class="org.eclipse.debug.internal.ui.views.memory.ResetMemoryBlockAction"
-               helpContextId="resetMemoryMonitor_context"
-               icon="$nl$/icons/full/elcl16/memoryreset_tsk.gif"
-               id="org.eclipse.debug.ui.resetMemoryBlock"
-               label="%resetMemoryMonitorAction.label"
-               menubarPath="additions"/>
-      </viewerContribution>   
-   </extension>   
+   </extension>  
    <extension
          point="org.eclipse.ui.elementFactories">
       <factory
@@ -1267,16 +1330,9 @@
             class="org.eclipse.debug.internal.ui.launchConfigurations.PersistableLaunchConfigurationTypeFactory"
             id="org.eclipse.debug.ui.PersistableLaunchConfigurationTypeFactory">
       </factory>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            name="%NoSourceFoundEditor.name"
-            icon="$nl$/icons/full/obj16/stckframe_obj.gif"
-            class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
-            contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
-            id="org.eclipse.debug.ui.NoSourceFoundEditor">
-      </editor>
+      <factory
+          class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFactory"
+          id="org.eclipse.debug.ui.elementFactory.breakpoints"/>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">
@@ -1887,6 +1943,13 @@ M4 = Platform-specific fourth key
             class="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor"
             id="org.eclipse.debug.ui.sourcelookup.CommonSourceNotFoundEditor">
       </editor>
+      <editor
+            name="%NoSourceFoundEditor.name"
+            icon="$nl$/icons/full/obj16/stckframe_obj.gif"
+            class="org.eclipse.debug.internal.ui.views.launch.SourceNotFoundEditor"
+            contributorClass="org.eclipse.ui.part.EditorActionBarContributor"
+            id="org.eclipse.debug.ui.NoSourceFoundEditor">
+      </editor>
    </extension>
 <!-- ==================================================================== -->
 <!--  Implementation of the Working set source container type			 -->
@@ -1990,59 +2053,33 @@ M4 = Platform-specific fourth key
             class="" 
             adaptableType="org.eclipse.ui.part.FileEditorInput">
             <adapter type="org.eclipse.debug.ui.actions.ILaunchable"/>
-         </factory>                   
+         </factory>
+         <factory 
+            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+         </factory>
+         <factory 
+            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+            adaptableType="org.eclipse.debug.ui.BreakpointTypeCategory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+         </factory>
+         <factory
+               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+               adaptableType="org.eclipse.debug.core.model.IBreakpoint">
+            <adapter type="org.eclipse.ui.IPersistableElement"/>
+         </factory>
+         <factory
+               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
+               adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory">
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
+            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
+         </factory>                            
     </extension>
 <!-- ========================================= -->
 <!-- Contextual Launch                         -->
 <!-- ========================================= -->
-   <extension
-         point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.profile">
-        <action
-               label="%ProfileContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.ProfileContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
-        </action>    
-        <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
-        </enablement>        
-      </objectContribution>
-      <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.debug">
-        <action
-               label="%DebugContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.DebugContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
-         </action>
-         <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
-         </enablement>     
-       </objectContribution>    
-       <objectContribution
-            objectClass="java.lang.Object"
-            id="org.eclipse.debug.ui.contextualLaunch.run">
-         <action
-               label="%RunContextMenu.label"
-               style="pulldown"
-               class="org.eclipse.debug.internal.ui.actions.RunContextualLaunchAction"
-               menubarPath="additions"
-               enablesFor="+"
-               id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
-         </action>                  
-         <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="run"/>
-         </enablement>
-      </objectContribution>
-    </extension>  
    <extension point="org.eclipse.core.expressions.propertyTesters">
       <propertyTester
       		namespace="org.eclipse.debug.ui"
@@ -2195,69 +2232,6 @@ M4 = Platform-specific fourth key
                 icon="$nl$/icons/full/obj16/brkp_grp.gif"
                 id="org.eclipse.debug.ui.breakpointWorkingSetOrganizer"/>
     </extension>    
-	<extension point="org.eclipse.core.runtime.adapters">
-         <factory 
-            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
-         </factory>
-         <factory 
-            class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-            adaptableType="org.eclipse.debug.ui.BreakpointTypeCategory">
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-         </factory>
-         <factory
-               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-               adaptableType="org.eclipse.debug.core.model.IBreakpoint">
-            <adapter type="org.eclipse.ui.IPersistableElement"/>
-         </factory>
-         <factory
-               class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-               adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.WorkingSetCategory">
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
-            <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
-         </factory>         
-    </extension>
- <extension
-       point="org.eclipse.ui.elementFactories">
-    <factory
-          class="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointFactory"
-          id="org.eclipse.debug.ui.elementFactory.breakpoints"/>
- </extension>    
-    <extension
-          point="org.eclipse.ui.popupMenus">
-       <viewerContribution
-             targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu"
-             id="org.eclipse.debug.ui.processConsoleContextMenu">
-          <action
-                label="%RemoveAllTerminatedAction.label"
-                tooltip="%RemoveAllTerminatedAction.tooltip"
-                icon="$nl$/icons/full/elcl16/rem_all_co.gif"
-                class="org.eclipse.debug.internal.ui.actions.RemoveAllTerminatedAction"
-                menubarPath="additions"
-                id="org.eclipse.debug.ui.consoleRemoveAllTerminatedAction"
-				helpContextId="console_remove_all_terminated_context"/>
-          <action
-                label="%ConsolePreferencesAction.label"
-                tooltip="%ConsolePreferencesAction.tooltip"
-                class="org.eclipse.debug.internal.ui.views.console.ConsoleShowPreferencesAction"
-                menubarPath="preferences"
-                id="org.eclipse.debug.ui.consolePreferencesAction"
-                helpContextId="console_show_preferences_action_context"/>                
-       </viewerContribution>
-    </extension>
-    <extension
-          point="org.eclipse.ui.workingSets">
-       <workingSet
-             icon="$nl$/icons/full/obj16/brkp_grp.gif"
-             name="%BreakpointWorkingSet.name"
-             pageClass="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointWorkingSetPage"
-             id="org.eclipse.debug.ui.breakpointWorkingSet"/>
-    </extension>
-    
-    <!-- Console action contributions -->
-    
    <extension
           point="org.eclipse.debug.ui.memoryRenderings">
        <renderingType
