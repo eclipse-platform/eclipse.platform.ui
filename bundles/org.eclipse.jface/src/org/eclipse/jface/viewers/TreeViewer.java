@@ -1086,8 +1086,6 @@ public class TreeViewer extends AbstractTreeViewer {
 						item.setItemCount(1);
 						TreeItem child = item.getItem(0);
 						if (child.getData() != null) {
-							// avoid causing a callback for the child:
-							child.setText(" "); //$NON-NLS-1$
 							disassociate(child);
 						}
 						item.clear(0, true);
@@ -1165,6 +1163,14 @@ public class TreeViewer extends AbstractTreeViewer {
 		if (!(elementOrTreePath instanceof TreePath))
 			return false;
 		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
+	}
+	
+	protected void disassociate(Item item) {
+		if (contentProviderIsLazy) {
+			// avoid causing a callback:
+			item.setText(" "); //$NON-NLS-1$
+		}
+		super.disassociate(item);
 	}
 
 }
