@@ -262,10 +262,7 @@ abstract class ColumnViewer extends StructuredViewer {
 	 * @return the {@link Item} at the coordinates or <code>null</code> if no item is
 	 *         located there
 	 */
-	protected Item getItemAt(Point point){
-		return null;//Return null by default
-	}
-
+	protected abstract Item getItemAt(Point point);
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getItem(int, int)

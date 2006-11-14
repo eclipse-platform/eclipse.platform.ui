@@ -27,6 +27,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -2825,5 +2826,15 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	public Object[] getColumnProperties() {
 		return new Object[0];
+	}
+	
+	/**
+	 * This implementation of {@link #getItemAt(Point)} returns null to ensure
+	 * API backwards compatibility. Subclasses should override.
+	 * 
+	 * @since 3.3
+	 */
+	protected Item getItemAt(Point point) {
+		return null;
 	}
 }
