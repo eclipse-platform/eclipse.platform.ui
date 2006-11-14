@@ -16,17 +16,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.help.Node;
 import org.eclipse.help.TocContribution;
+import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ValidationHandler;
 
 /*
  * Assembles toc contributions (toc fragments) into complete, linked, and
@@ -47,6 +50,7 @@ public class TocAssembler {
 	private Map contributionsById;
 	private Map contributionsByLinkTo;
 	private Set processedContributions;
+	private Map requiredAttributes;
 	
 	/*
 	 * Assembles the given toc contributions into complete, linked
@@ -137,6 +141,7 @@ public class TocAssembler {
 		}
 		final Set linkedContributionIds = new HashSet();
 		NodeHandler[] linkFinder = new NodeHandler[] {
+			new ValidationHandler(getRequiredAttributes()),
 			new NodeHandler() {
 				public short handle(Node node, String id) {
 					if (ELEMENT_LINK.equals(node.getNodeName())) {
@@ -151,10 +156,17 @@ public class TocAssembler {
 			}
 		};
 		processor.setHandlers(linkFinder);
-		Iterator iter = contributions.iterator();
+		ListIterator iter = contributions.listIterator();
 		while (iter.hasNext()) {
 			TocContribution contrib = (TocContribution)iter.next();
-			processor.process(contrib.getToc(), contrib.getId());
+			try {
+				processor.process(contrib.getToc(), contrib.getId());
+			}
+			catch (Throwable t) {
+				iter.remove();
+				String msg = "Error processing help table of contents: " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+				HelpPlugin.logError(msg, t);
+			}
 		}
 		return linkedContributionIds;
 	}
@@ -244,6 +256,18 @@ public class TocAssembler {
 			contributions = new TocContribution[0];
 		}
 		return contributions;
+	}
+	
+	private Map getRequiredAttributes() {
+		if (requiredAttributes == null) {
+			requiredAttributes = new HashMap();
+			requiredAttributes.put(Toc.NAME, new String[] { Toc.ATTRIBUTE_LABEL });
+			requiredAttributes.put(Topic.NAME, new String[] { Topic.ATTRIBUTE_LABEL });
+			requiredAttributes.put("anchor", new String[] { "id" }); //$NON-NLS-1$ //$NON-NLS-2$
+			requiredAttributes.put("include", new String[] { "path" }); //$NON-NLS-1$ //$NON-NLS-2$
+			requiredAttributes.put("link", new String[] { "toc" }); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return requiredAttributes;
 	}
 	
 	/*

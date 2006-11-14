@@ -37,10 +37,10 @@ import org.w3c.dom.NodeList;
 public class IntroExtensionContent extends AbstractIntroElement {
 
     protected static final String TAG_CONTAINER_EXTENSION = "extensionContent"; //$NON-NLS-1$
-    protected static final String TAG_CONTAINER_REPLACE = "replaceContent"; //$NON-NLS-1$
+    protected static final String TAG_CONTAINER_REPLACE = "replacementContent"; //$NON-NLS-1$
 
     public static final int TYPE_CONTRIBUTION = 0;
-    public static final int TYPE_REPLACE = 1;
+    public static final int TYPE_REPLACEMENT = 1;
    
     protected static final String ATT_PATH = "path"; //$NON-NLS-1$
     protected static final String ATT_ID = "id"; //$NON-NLS-1$
@@ -153,7 +153,7 @@ public class IntroExtensionContent extends AbstractIntroElement {
      * of an element.
      */
     public int getExtensionType() {
-    	return TAG_CONTAINER_REPLACE.equals(element.getNodeName()) ? TYPE_REPLACE : TYPE_CONTRIBUTION;
+    	return TAG_CONTAINER_REPLACE.equals(element.getNodeName()) ? TYPE_REPLACEMENT : TYPE_CONTRIBUTION;
     }
 
     /**

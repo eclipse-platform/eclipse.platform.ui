@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <contentExtension>
-   <topicReplace
+   <replacement
          content="data/help/search/test3.xhtml" 
          path="org.eclipse.ua.tests/data/help/search/test6.xhtml/test6_paragraph_to_replace"/>
 </contentExtension>

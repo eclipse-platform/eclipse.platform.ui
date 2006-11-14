@@ -23,7 +23,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
@@ -115,15 +114,26 @@ public class TocManager {
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + TocContribution.class.getName() + " from " + AbstractTocProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting help table of contents data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
 				
-				// check for nulls
+				// check for nulls and root element
 				for (int j=0;j<contrib.length;++j) {
-					// null means no contribution
-					if (contrib[j] != null) {
+					if (contrib[j] == null) {
+						String msg = "Help table of contents provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+						HelpPlugin.logError(msg);
+					}
+					else if (contrib[j].getToc() == null) {
+						String msg = "Help table of contents provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Toc.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+					}
+					else if (!Toc.NAME.equals(contrib[j].getToc().getNodeName())) {
+						String msg = "Required root element \"" + Toc.NAME + "\" missing from help table of contents \"" + contrib[j].getId() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+					}
+					else {
 						contributions.add(contrib[j]);
 					}
 				}
@@ -201,40 +211,16 @@ public class TocManager {
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
 			for (int i=0;i<elements.length;++i) {
 				IConfigurationElement elem = elements[i];
-				try {
-					if (elem.getName().equals(ELEMENT_NAME_TOC_PROVIDER)) {
-						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
-						if (className != null) {
-							try {
-								AbstractTocProvider provider = (AbstractTocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
-								providers.add(provider);
-							}
-							catch (CoreException e) {
-								// log and skip
-								String msg = "Error instantiating " + ELEMENT_NAME_TOC_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
-								HelpPlugin.logError(msg, e);
-							}
-							catch (ClassCastException e) {
-								// log and skip
-								String msg = ELEMENT_NAME_TOC_PROVIDER + " class must implement " + AbstractTocProvider.class.getName(); //$NON-NLS-1$
-								HelpPlugin.logError(msg, e);
-							}
-						}
-						else {
-							// log the missing class attribute and skip
-							String msg = ELEMENT_NAME_TOC_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_TOC + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							try {
-								msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							catch (InvalidRegistryObjectException e) {
-								// skip the declaring plugin part
-							}
-							HelpPlugin.logError(msg, null);
-						}
+				if (elem.getName().equals(ELEMENT_NAME_TOC_PROVIDER)) {
+					try {
+						AbstractTocProvider provider = (AbstractTocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+						providers.add(provider);
 					}
-				}
-				catch (InvalidRegistryObjectException e) {
-					// no longer valid; skip it
+					catch (CoreException e) {
+						// log and skip
+						String msg = "Error instantiating help table of contents provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
+						HelpPlugin.logError(msg, e);
+					}
 				}
 			}
 			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);

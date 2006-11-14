@@ -20,7 +20,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
 import org.eclipse.help.Node;
@@ -145,40 +144,16 @@ public class ContentExtensionManager {
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTENT_EXTENSION);
 			for (int i=0;i<elements.length;++i) {
 				IConfigurationElement elem = elements[i];
-				try {
-					if (elem.getName().equals(ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER)) {
-						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
-						if (className != null) {
-							try {
-								AbstractContentExtensionProvider provider = (AbstractContentExtensionProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
-								providers.add(provider);
-							}
-							catch (CoreException e) {
-								// log and skip
-								String msg = "Error instantiating " + ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
-								HelpPlugin.logError(msg, e);
-							}
-							catch (ClassCastException e) {
-								// log and skip
-								String msg = ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER + " class must implement " + AbstractContentExtensionProvider.class.getName(); //$NON-NLS-1$
-								HelpPlugin.logError(msg, e);
-							}
-						}
-						else {
-							// log the missing class attribute and skip
-							String msg = ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_CONTENT_EXTENSION + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							try {
-								msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							catch (InvalidRegistryObjectException e) {
-								// skip the declaring plugin part
-							}
-							HelpPlugin.logError(msg, null);
-						}
+				if (elem.getName().equals(ELEMENT_NAME_CONTENT_EXTENSION_PROVIDER)) {
+					try {
+						AbstractContentExtensionProvider provider = (AbstractContentExtensionProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+						providers.add(provider);
 					}
-				}
-				catch (InvalidRegistryObjectException e) {
-					// no longer valid; skip it
+					catch (CoreException e) {
+						// log and skip
+						String msg = "Error instantiating user assistance content extension provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
+						HelpPlugin.logError(msg, e);
+					}
 				}
 			}
 			contentExtensionProviders = (AbstractContentExtensionProvider[])providers.toArray(new AbstractContentExtensionProvider[providers.size()]);

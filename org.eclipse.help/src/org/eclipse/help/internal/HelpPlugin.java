@@ -39,21 +39,26 @@ public class HelpPlugin extends Plugin {
 	private ContentExtensionManager contentExtensionManager;
 	private IndexManager indexManager;
 	private IHelpProvider helpProvider;
-	
-	/**
-	 * Logs an Error message with an exception.
-	 */
-	public static synchronized void logError(String message, Throwable ex) {
-		if (message == null)
+
+	public static void logWarning(String message) {
+		Status errorStatus = new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null);
+		logStatus(errorStatus);
+	}
+
+	public static void logError(String message) {
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, null);
+		logStatus(errorStatus);
+	}
+
+	public static void logError(String message, Throwable ex) {
+		if (message == null) {
 			message = ""; //$NON-NLS-1$
+		}
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		logStatus(errorStatus);
 	}
 
-	/**
-	 * Logs an IStatus
-	 */
-	private static void logStatus(IStatus errorStatus) {
+	private static synchronized void logStatus(IStatus errorStatus) {
 		HelpPlugin.getDefault().getLog().log(errorStatus);
 	}
 

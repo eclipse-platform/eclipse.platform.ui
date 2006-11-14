@@ -319,13 +319,12 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 					"DocumentBuilder implementation could not be loaded.", pce); //$NON-NLS-1$
 			return false;
 		} catch (TransformerException e) {
-			HelpPlugin.logError("Problems occurred while saving working sets.", //$NON-NLS-1$
-					null);
+			HelpPlugin.logError("Problems occurred while saving working sets."); //$NON-NLS-1$
 			return false;
 		} catch (IOException e) {
 			stateFile.delete();
-			HelpBasePlugin.logError(
-					"Problems occurred while saving working set file.", null); //$NON-NLS-1$
+			HelpPlugin.logError(
+					"Problems occurred while saving working set file."); //$NON-NLS-1$
 			return false;
 		}
 	}

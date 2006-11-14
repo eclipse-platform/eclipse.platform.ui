@@ -11,58 +11,38 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.help.IndexContribution;
 import org.eclipse.help.Node;
-import org.eclipse.help.internal.Topic;
-import org.eclipse.help.internal.dynamic.NodeHandler;
-import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
-import org.eclipse.help.internal.toc.HrefUtil;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class IndexFileParser extends DefaultHandler {
 
 	private NodeReader reader;
-	private NodeProcessor processor;
 	
     public IndexContribution parse(IndexFile indexFile) throws IOException, SAXException, ParserConfigurationException {
     	if (reader == null) {
     		reader = new NodeReader();
     		reader.setIgnoreWhitespaceNodes(true);
     	}
-    	Node node = reader.read(indexFile.getInputStream());
-    	if (processor == null) {
-    		processor = new NodeProcessor(new NodeHandler[] {
-    			new NormalizeHandler()
-    		});
+    	InputStream in = indexFile.getInputStream();
+    	if (in != null) {
+	    	Node node = reader.read(indexFile.getInputStream());
+	    	IndexContribution contribution = new IndexContribution();
+	    	contribution.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
+	    	contribution.setIndex(node);
+	    	contribution.setLocale(indexFile.getLocale());
+	    	return contribution;
     	}
-    	processor.process(node, indexFile.getPluginId());
-    	IndexContribution contribution = new IndexContribution();
-    	contribution.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
-    	contribution.setIndex(node);
-    	contribution.setLocale(indexFile.getLocale());
-    	return contribution;
+    	else {
+    		throw new FileNotFoundException();
+    	}
     }
-    
-	/*
-	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
-	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"
-	 */
-	private class NormalizeHandler extends NodeHandler {
-		public short handle(Node node, String id) {
-			if (Topic.NAME.equals(node.getNodeName())) {
-				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
-				if (href != null) {
-					node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(id, href));
-				}
-				return HANDLED_CONTINUE;
-			}
-			return UNHANDLED;
-		}
-	}
 }

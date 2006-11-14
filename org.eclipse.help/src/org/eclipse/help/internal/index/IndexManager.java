@@ -25,7 +25,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractIndexProvider;
@@ -71,15 +70,26 @@ public class IndexManager {
 				}
 				catch (Throwable t) {
 					// log, and skip the offending provider
-					String msg = "Error getting " + IndexContribution.class.getName() + " from " + AbstractIndexProvider.class.getName() + ": " + providers[i].getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String msg = "Error getting help keyword index data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
 					HelpPlugin.logError(msg, t);
 					continue;
 				}
 				
-				// check for nulls
+				// check for nulls and root element
 				for (int j=0;j<contrib.length;++j) {
-					// null means no contribution
-					if (contrib[j] != null) {
+					if (contrib[j] == null) {
+						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+						HelpPlugin.logError(msg);
+					}
+					else if (contrib[j].getIndex() == null) {
+						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+					}
+					else if (!Index.NAME.equals(contrib[j].getIndex().getNodeName())) {
+						String msg = "Required root element \"" + Index.NAME + "\" missing from help keyword index \"" + contrib[j].getId() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						HelpPlugin.logError(msg);
+					}
+					else {
 						contributions.add(contrib[j]);
 					}
 				}
@@ -109,40 +119,16 @@ public class IndexManager {
 			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_INDEX);
 			for (int i=0;i<elements.length;++i) {
 				IConfigurationElement elem = elements[i];
-				try {
-					if (elem.getName().equals(ELEMENT_NAME_INDEX_PROVIDER)) {
-						String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
-						if (className != null) {
-							try {
-								AbstractIndexProvider provider = (AbstractIndexProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
-								providers.add(provider);
-							}
-							catch (CoreException e) {
-								// log and skip
-								String msg = "Error instantiating " + ELEMENT_NAME_INDEX_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
-								HelpPlugin.logError(msg, e);
-							}
-							catch (ClassCastException e) {
-								// log and skip
-								String msg = ELEMENT_NAME_INDEX_PROVIDER + " class must implement " + AbstractIndexProvider.class.getName(); //$NON-NLS-1$
-								HelpPlugin.logError(msg, e);
-							}
-						}
-						else {
-							// log the missing class attribute and skip
-							String msg = ELEMENT_NAME_INDEX_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_INDEX + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							try {
-								msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-							}
-							catch (InvalidRegistryObjectException e) {
-								// skip the declaring plugin part
-							}
-							HelpPlugin.logError(msg, null);
-						}
+				if (elem.getName().equals(ELEMENT_NAME_INDEX_PROVIDER)) {
+					try {
+						AbstractIndexProvider provider = (AbstractIndexProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+						providers.add(provider);
 					}
-				}
-				catch (InvalidRegistryObjectException e) {
-					// no longer valid; skip it
+					catch (CoreException e) {
+						// log and skip
+						String msg = "Error instantiating help keyword index provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
+						HelpPlugin.logError(msg, e);
+					}
 				}
 			}
 			indexProviders = (AbstractIndexProvider[])providers.toArray(new AbstractIndexProvider[providers.size()]);

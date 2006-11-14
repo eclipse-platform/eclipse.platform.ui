@@ -104,7 +104,7 @@ public class TocContribution extends Node {
 	 */
 	public Node getToc() {
 		Node[] children = getChildNodes();
-		if (children.length > 0 && Toc.NAME.equals(children[0].getNodeName())) {
+		if (children.length > 0) {
 			return children[0];
 		}
 		return null;

@@ -30,6 +30,7 @@ import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.ValidationHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 
 /*
@@ -41,6 +42,7 @@ public class IndexAssembler {
 	private NodeProcessor processor;
 	private Comparator comparator;
 	private String locale;
+	private Map requiredAttributes;
 
 	/*
 	 * Assembles the given index contributions into a complete, sorted index.
@@ -120,8 +122,9 @@ public class IndexAssembler {
 			NodeReader reader = new NodeReader();
 			reader.setIgnoreWhitespaceNodes(true);
 			processor = new NodeProcessor(new NodeHandler[] {
-				new LabelHandler(),
+				new ValidationHandler(getRequiredAttributes()),
 				new NormalizeHandler(),
+				new LabelHandler(),
 				new IncludeHandler(reader, locale),
 				new ExtensionHandler(reader, locale),
 			});
@@ -163,6 +166,17 @@ public class IndexAssembler {
 		}
 	}
 
+	private Map getRequiredAttributes() {
+		if (requiredAttributes == null) {
+			requiredAttributes = new HashMap();
+			requiredAttributes.put(IndexEntry.NAME, new String[] { IndexEntry.ATTRIBUTE_KEYWORD });
+			requiredAttributes.put(Topic.NAME, new String[] { Topic.ATTRIBUTE_HREF });
+			requiredAttributes.put("anchor", new String[] { "id" }); //$NON-NLS-1$ //$NON-NLS-2$
+			requiredAttributes.put("include", new String[] { "path" }); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return requiredAttributes;
+	}
+	
 	/*
 	 * Normalizes topic hrefs, by prepending the plug-in id to form an href.
 	 * e.g. "path/myfile.html" -> "/my.plugin/path/myfile.html"

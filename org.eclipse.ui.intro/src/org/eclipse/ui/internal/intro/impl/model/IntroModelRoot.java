@@ -538,7 +538,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             targetElement.getParentNode().insertBefore(targetNode, targetElement);
         }
 
-        if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACE) {
+        if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACEMENT) {
             targetElement.getParentNode().removeChild(targetElement);
         }
         
@@ -570,7 +570,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         	// insert all children of this extension before the target element/anchor.
 	        insertExtensionChildren(target, extensionContent, extensionContent.getBundle(), extensionContent.getBase());
 	        // anchors need to stay around to receive other contributions
-	        if (type == IntroExtensionContent.TYPE_REPLACE) {
+	        if (type == IntroExtensionContent.TYPE_REPLACEMENT) {
 	        	AbstractIntroContainer parent = (AbstractIntroContainer)target.getParent();
 	        	parent.removeChild(target);
 	        }
@@ -603,7 +603,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     		return null;
     	String extensionId = extensionContent.getId();
     	// if this is a replace, take the mixin style as what is being replaced
-    	if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACE) {
+    	if (extensionContent.getExtensionType() == IntroExtensionContent.TYPE_REPLACEMENT) {
     		IPath ipath = new Path(extensionContent.getPath());
     		String s2 = ipath.segment(1);
     		if (s2 != null && s2.startsWith("@") && s2.length() > 1) { //$NON-NLS-1$

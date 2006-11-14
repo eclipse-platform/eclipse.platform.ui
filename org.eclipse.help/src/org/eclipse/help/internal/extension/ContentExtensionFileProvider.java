@@ -45,21 +45,19 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 				String file = elements[i].getAttribute(ATTRIBUTE_FILE);
 				String bundleId = elements[i].getContributor().getName();
 				Bundle bundle = Platform.getBundle(bundleId);
-				if (bundle != null) {
-					try {
-						Node[] ext = parser.parse(bundle, file);
-						for (int j=0;j<ext.length;++j) {
-							String content = ext[j].getAttribute(ATTRIBUTE_CONTENT);
-							if (content != null) {
-								ext[j].setAttribute(ATTRIBUTE_CONTENT, '/' + bundleId + '/' + content);
-							}
-							extensions.add(ext[j]);
+				try {
+					Node[] ext = parser.parse(bundle, file);
+					for (int j=0;j<ext.length;++j) {
+						String content = ext[j].getAttribute(ATTRIBUTE_CONTENT);
+						if (content != null) {
+							ext[j].setAttribute(ATTRIBUTE_CONTENT, '/' + bundleId + '/' + content);
 						}
+						extensions.add(ext[j]);
 					}
-					catch (Throwable t) {
-						String msg = "Unable to load user assistance content extension " + file + " from plug-in " + bundleId; //$NON-NLS-1$ //$NON-NLS-2$
-						HelpPlugin.logError(msg, t);
-					}
+				}
+				catch (Throwable t) {
+					String msg = "Error reading user assistance content extension file /\"" + bundleId + '/' + file + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
+					HelpPlugin.logError(msg, t);
 				}
 			}
 		}

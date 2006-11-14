@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,15 +34,21 @@ public class TocFileParser extends DefaultHandler {
     		reader = new NodeReader();
     		reader.setIgnoreWhitespaceNodes(true);
     	}
-		Node node = reader.read(tocFile.getInputStream());
-		TocContribution contribution = new TocContribution();
-		contribution.setCategoryId(tocFile.getCategory());
-		contribution.setContributorId(tocFile.getPluginId());
-		contribution.setExtraDocuments(DocumentFinder.collectExtraDocuments(tocFile));
-		contribution.setId(HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile()));
-		contribution.setLocale(tocFile.getLocale());
-		contribution.setPrimary(tocFile.isPrimary());
-		contribution.setToc(node);
-    	return contribution;
+    	InputStream in = tocFile.getInputStream();
+    	if (in != null) {
+			Node node = reader.read(in);
+			TocContribution contribution = new TocContribution();
+			contribution.setCategoryId(tocFile.getCategory());
+			contribution.setContributorId(tocFile.getPluginId());
+			contribution.setExtraDocuments(DocumentFinder.collectExtraDocuments(tocFile));
+			contribution.setId(HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile()));
+			contribution.setLocale(tocFile.getLocale());
+			contribution.setPrimary(tocFile.isPrimary());
+			contribution.setToc(node);
+	    	return contribution;
+    	}
+    	else {
+    		throw new FileNotFoundException();
+    	}
     }
 }

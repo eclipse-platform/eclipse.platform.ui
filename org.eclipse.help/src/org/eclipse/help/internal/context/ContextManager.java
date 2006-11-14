@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.IContext;
@@ -121,53 +120,29 @@ public class ContextManager {
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_CONTEXT);
 		for (int i=0;i<elements.length;++i) {
 			IConfigurationElement elem = elements[i];
-			try {
-				if (elem.getName().equals(ELEMENT_NAME_CONTEXT_PROVIDER)) {
-					String className = elem.getAttribute(ATTRIBUTE_NAME_CLASS);
-					if (className != null) {
-						try {
-							AbstractContextProvider provider = (AbstractContextProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
-							String[] plugins = provider.getPlugins();
-							if (plugins != null) {
-								for (int j=0;j<plugins.length;++j) {
-									List list = (List)providersByPluginId.get(plugins[j]);
-									if (list == null) {
-										list = new ArrayList();
-										providersByPluginId.put(plugins[j], list);
-									}
-									list.add(provider);
-								}
+			if (elem.getName().equals(ELEMENT_NAME_CONTEXT_PROVIDER)) {
+				try {
+					AbstractContextProvider provider = (AbstractContextProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+					String[] plugins = provider.getPlugins();
+					if (plugins != null) {
+						for (int j=0;j<plugins.length;++j) {
+							List list = (List)providersByPluginId.get(plugins[j]);
+							if (list == null) {
+								list = new ArrayList();
+								providersByPluginId.put(plugins[j], list);
 							}
-							else {
-								globalProviders.add(provider);
-							}
-						}
-						catch (CoreException e) {
-							// log and skip
-							String msg = "Error instantiating " + ELEMENT_NAME_CONTEXT_PROVIDER + " class"; //$NON-NLS-1$ //$NON-NLS-2$
-							HelpPlugin.logError(msg, e);
-						}
-						catch (ClassCastException e) {
-							// log and skip
-							String msg = ELEMENT_NAME_CONTEXT_PROVIDER + " class must implement " + AbstractContextProvider.class.getName(); //$NON-NLS-1$
-							HelpPlugin.logError(msg, e);
+							list.add(provider);
 						}
 					}
 					else {
-						// log the missing class attribute and skip
-						String msg = ELEMENT_NAME_CONTEXT_PROVIDER + " element of extension point " + EXTENSION_POINT_ID_CONTEXT + " must specify a " + ATTRIBUTE_NAME_CLASS + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						try {
-							msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						catch (InvalidRegistryObjectException e) {
-							// skip the declaring plugin part
-						}
-						HelpPlugin.logError(msg, null);
+						globalProviders.add(provider);
 					}
 				}
-			}
-			catch (InvalidRegistryObjectException e) {
-				// no longer valid; skip it
+				catch (CoreException e) {
+					// log and skip
+					String msg = "Error instantiating context-sensitive help provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
+					HelpPlugin.logError(msg, e);
+				}
 			}
 		}
 	}

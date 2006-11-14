@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.NodeWriter;
+import org.eclipse.help.internal.dynamic.ValidationHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 import org.eclipse.help.internal.util.ResourceLocator;
 
@@ -55,6 +57,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	private NodeProcessor processor;
 	private NodeReader reader;
 	private NodeWriter writer;
+	private Map requiredAttributes;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.AbstractContextProvider#getContext(java.lang.String, java.lang.String)
@@ -106,26 +109,20 @@ public class ContextFileProvider extends AbstractContextProvider {
 				if (ELEMENT_CONTEXTS.equals(elements[i].getName())) {
 					String declaringPluginId = elements[i].getDeclaringExtension().getContributor().getName();
 					String file = elements[i].getAttribute(ATTRIBUTE_FILE);
-					if (file != null) {
-						String plugin = elements[i].getAttribute(ATTRIBUTE_PLUGIN);
-						String targetPluginId = (plugin == null ? declaringPluginId : plugin);
-						ContextFile descriptor = new ContextFile(declaringPluginId, file);
-						ContextFile[] descriptors = (ContextFile[])descriptorsByPluginId.get(targetPluginId);
-						if (descriptors == null) {
-							descriptors = new ContextFile[] { descriptor };
-						}
-						else {
-							ContextFile[] temp = new ContextFile[descriptors.length + 1];
-							System.arraycopy(descriptors, 0, temp, 0, descriptors.length);
-							temp[descriptors.length] = descriptor;
-							descriptors = temp;
-						}
-						descriptorsByPluginId.put(targetPluginId, descriptors);
+					String plugin = elements[i].getAttribute(ATTRIBUTE_PLUGIN);
+					String targetPluginId = (plugin == null ? declaringPluginId : plugin);
+					ContextFile descriptor = new ContextFile(declaringPluginId, file);
+					ContextFile[] descriptors = (ContextFile[])descriptorsByPluginId.get(targetPluginId);
+					if (descriptors == null) {
+						descriptors = new ContextFile[] { descriptor };
 					}
 					else {
-						String msg = "Required attribute \"" + ATTRIBUTE_FILE + "\" missing from element \"" + ELEMENT_CONTEXTS + "\" of extension for extension point \"" + EXTENSION_POINT_CONTEXTS + "\" in plug-in \"" + declaringPluginId + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						HelpPlugin.logError(msg, null);
+						ContextFile[] temp = new ContextFile[descriptors.length + 1];
+						System.arraycopy(descriptors, 0, temp, 0, descriptors.length);
+						temp[descriptors.length] = descriptor;
+						descriptors = temp;
 					}
+					descriptorsByPluginId.put(targetPluginId, descriptors);
 				}
 			}
 		}
@@ -181,41 +178,63 @@ public class ContextFileProvider extends AbstractContextProvider {
 		try {
 			// load the file
 			InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale);
-			if (reader == null) {
-				reader = new NodeReader();
-				reader.setIgnoreWhitespaceNodes(true);
-			}
-			Node root = reader.read(in);
-			
-			// process dynamic content
-			if (processor == null) {
-				processor = new NodeProcessor(new NodeHandler[] {
-					new NormalizeHandler(),
-					new IncludeHandler(reader, locale),
-					new ExtensionHandler(reader, locale)
-				});
-			}
-			processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
-			
-			// build map
-			Node[] children = root.getChildNodes();
-			Map contexts = new HashMap();
-			for (int i=0;i<children.length;++i) {
-				if (ELEMENT_CONTEXT.equals(children[i].getNodeName())) {
-					Context context = children[i] instanceof Context ? (Context)children[i] : new Context(children[i]);
-					String id = context.getId();
-					if (id != null) {
-						contexts.put(id, context);
-					}
+	    	if (in != null) {
+				if (reader == null) {
+					reader = new NodeReader();
+					reader.setIgnoreWhitespaceNodes(true);
 				}
-			}
-			return contexts;
+				Node root = reader.read(in);
+				if ("contexts".equals(root.getNodeName())) { //$NON-NLS-1$
+					// process dynamic content
+					if (processor == null) {
+						processor = new NodeProcessor(new NodeHandler[] {
+							new ValidationHandler(getRequiredAttributes()),
+							new NormalizeHandler(),
+							new IncludeHandler(reader, locale),
+							new ExtensionHandler(reader, locale)
+						});
+					}
+					processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
+					
+					// build map
+					Node[] children = root.getChildNodes();
+					Map contexts = new HashMap();
+					for (int i=0;i<children.length;++i) {
+						if (ELEMENT_CONTEXT.equals(children[i].getNodeName())) {
+							Context context = children[i] instanceof Context ? (Context)children[i] : new Context(children[i]);
+							String id = context.getId();
+							if (id != null) {
+								contexts.put(id, context);
+							}
+						}
+					}
+					return contexts;
+				}
+				else {
+					String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + descriptor.getBundleId() + '/' + descriptor.getFile() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+					HelpPlugin.logError(msg);
+				}
+	    	}
+	    	else {
+	    		throw new FileNotFoundException();
+	    	}
 		}
 		catch (Throwable t) {
-			String msg = "Error loading context-sensitive help file \"" + descriptor.getFile() + "\" in plug-in \"" + descriptor.getBundleId() + "\""; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String msg = "Error reading context-sensitive help file /\"" + descriptor.getBundleId() + '/' + descriptor.getFile() + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, t);
-			return null;
 		}
+		return null;
+	}
+	
+	private Map getRequiredAttributes() {
+		if (requiredAttributes == null) {
+			requiredAttributes = new HashMap();
+			requiredAttributes.put(Context.NAME, new String[] { Context.ATTRIBUTE_ID });
+			requiredAttributes.put(Topic.NAME, new String[] { Topic.ATTRIBUTE_LABEL, Topic.ATTRIBUTE_HREF });
+			requiredAttributes.put("anchor", new String[] { "id" }); //$NON-NLS-1$ //$NON-NLS-2$
+			requiredAttributes.put("include", new String[] { "path" }); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		return requiredAttributes;
 	}
 	
 	/*

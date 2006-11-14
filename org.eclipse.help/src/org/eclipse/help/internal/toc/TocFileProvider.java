@@ -46,7 +46,7 @@ public class TocFileProvider extends AbstractTocProvider {
 				contributions.add(toc);
 			}
 			catch (Throwable t) {
-				String msg = "Error reading toc file \"" + tocFiles[i].getFile() + "\" in extension specified in plug-in: " + tocFiles[i].getPluginId(); //$NON-NLS-1$ //$NON-NLS-2$
+				String msg = "Error reading help table of contents file /\"" + tocFiles[i].getPluginId() + '/' + tocFiles[i].getFile() + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 				HelpPlugin.logError(msg, t);
 			}
 		}
@@ -76,20 +76,6 @@ public class TocFileProvider extends AbstractTocProvider {
 				boolean primary = Boolean.toString(true).equals(elem.getAttribute(ATTRIBUTE_NAME_PRIMARY));
 				String extradir = elem.getAttribute(ATTRIBUTE_NAME_EXTRADIR);
 				String category = elem.getAttribute(ATTRIBUTE_NAME_CATEGORY);
-				
-				if (file == null) {
-					// log and skip
-					String msg = ELEMENT_NAME_TOC + " element for extension point " + EXTENSION_POINT_ID_TOC + " must specify a " + ATTRIBUTE_NAME_FILE + " attribute"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					try {
-						msg += " (declared from plug-in " + elem.getNamespaceIdentifier() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-					}
-					catch (InvalidRegistryObjectException e) {
-						// skip the declaring plugin part
-					}
-					HelpPlugin.logError(msg, null);
-					continue;
-				}
-				
 				TocFile tocFile = new TocFile(pluginId, file, primary, locale, extradir, category);
 				tocFiles.add(tocFile);
 			}

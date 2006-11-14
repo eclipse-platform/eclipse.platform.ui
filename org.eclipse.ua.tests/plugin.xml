@@ -248,7 +248,6 @@
        <toc file="data/help/search/toc3.xml" extradir="data/help/search/extraDir2"/>
        <toc file="data/help/search/toc4.xml" extradir="data/help/search/extraDir3"/>
        <toc file="data/help/index/toc.xml"/>
-       <toc file="data/help/index/tocIgnored.xml"/>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 

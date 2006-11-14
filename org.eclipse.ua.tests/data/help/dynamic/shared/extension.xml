@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <contentExtension>
-   <topicExtension
+   <contribution
          content="data/help/dynamic/shared/doc2.xml#element.1"
          path="/org.eclipse.ua.tests/data/help/dynamic/shared/doc1.xml#anchor.2">
-   </topicExtension>
-   <topicExtension
+   </contribution>
+   <contribution
          content="data/help/dynamic/shared/doc2.xml#element.2"
          path="/org.eclipse.ua.tests/data/help/dynamic/shared/doc1.xml#anchor.3">
-   </topicExtension>
-   <topicExtension
+   </contribution>
+   <contribution
          content="data/help/dynamic/shared/doc2.xml#element.3"
          path="/org.eclipse.ua.tests/data/help/dynamic/shared/doc1.xml#anchor.3">
-   </topicExtension>
-   <topicReplace
+   </contribution>
+   <replacement
          content="data/help/dynamic/shared/doc2.xml#element.1"
          path="/org.eclipse.ua.tests/data/help/dynamic/shared/doc1.xml#element.2">
-   </topicReplace>
+   </replacement>
 </contentExtension>

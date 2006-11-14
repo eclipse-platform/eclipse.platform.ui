@@ -19,11 +19,12 @@ import org.eclipse.help.internal.NodeAdapter;
  */
 public class ContentExtension extends NodeAdapter {
 	
-	private static final String NAME_CONTRIBUTION = "contribution"; //$NON-NLS-1$
-	private static final String NAME_REPLACEMENT = "replacement"; //$NON-NLS-1$
-	private static final String NAME_CONTRIBUTION_LEGACY = "topicExtension"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
-	private static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
+	public static final String NAME_CONTRIBUTION = "contribution"; //$NON-NLS-1$
+	public static final String NAME_CONTRIBUTION_LEGACY = "topicExtension"; //$NON-NLS-1$
+	public static final String NAME_REPLACEMENT = "replacement"; //$NON-NLS-1$
+	public static final String NAME_REPLACEMENT_LEGACY = "topicReplace"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_CONTENT = "content"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_PATH = "path"; //$NON-NLS-1$
 	
 	// type for contribution into anchor
 	public static final int CONTRIBUTION = 0;

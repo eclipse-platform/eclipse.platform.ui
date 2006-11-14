@@ -72,8 +72,7 @@ public class HelpProperties extends Properties {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError("File " + file.getName() + " cannot be read.", //$NON-NLS-1$ //$NON-NLS-2$
-					null);
+			HelpPlugin.logError("File " + file.getName() + " cannot be read."); //$NON-NLS-1$ //$NON-NLS-2$
 		} finally {
 			if (in != null)
 				try {
