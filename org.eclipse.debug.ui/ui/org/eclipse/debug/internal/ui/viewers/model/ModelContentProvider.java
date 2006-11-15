@@ -196,8 +196,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	protected void restoreViewerState(final Object input) {
 		fPendingState = null;
-		final IElementMementoProvider stateProvider = getViewerStateAdapter(input);
-		if (stateProvider != null) {
+		final IElementMementoProvider defaultProvider = getViewerStateAdapter(input);
+		if (defaultProvider != null) {
 			// build a model delta representing expansion and selection state
 			final ModelDelta delta = new ModelDelta(input, IModelDelta.NO_CHANGE);
 			final XMLMemento inputMemento = XMLMemento.createWriteRoot("VIEWER_INPUT_MEMENTO"); //$NON-NLS-1$
@@ -244,7 +244,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#processReqeusts()
 				 */
 				public void processReqeusts() {
-					stateProvider.encodeElement(fRequest);
+					defaultProvider.encodeElement(fRequest);
 				}
 			
 				/* (non-Javadoc)
@@ -280,6 +280,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		if (fPendingState == null) { 
 			return;
 		}
+		final IElementMementoProvider defaultProvider = getViewerStateAdapter(getViewer().getInput());
 		IModelDeltaVisitor visitor = new IModelDeltaVisitor() {
 			public boolean visit(IModelDelta delta, int depth) {
 				if (delta.getParentDelta() == null) {
@@ -288,7 +289,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				Object element = delta.getElement();
 				Object potentialMatch = path.getSegment(depth - 1);
 				if (element instanceof IMemento) {
-					IElementMementoProvider provider = getViewerStateAdapter(getViewer().getInput());
+					IElementMementoProvider provider = getViewerStateAdapter(element);
+					if (provider == null) {
+						provider = defaultProvider;
+					}
 					if (provider != null) {
 						provider.compareElement(
 								new ElementCompareRequest(ModelContentProvider.this,
@@ -330,7 +334,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @param delta
 	 * @param stateProvider
 	 */
-	protected void encodeDelta(final ModelDelta rootDelta, final IElementMementoProvider stateProvider) {
+	protected void encodeDelta(final ModelDelta rootDelta, final IElementMementoProvider defaultProvider) {
 		final XMLMemento inputMemento = XMLMemento.createWriteRoot("VIEWER_INPUT_MEMENTO"); //$NON-NLS-1$
 		final XMLMemento childrenMemento = XMLMemento.createWriteRoot("CHILDREN_MEMENTO"); //$NON-NLS-1$
 		final IMementoManager manager = new IMementoManager() {
@@ -373,7 +377,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			public void processReqeusts() {
 				IElementMementoRequest[] req = (IElementMementoRequest[]) requests.toArray(new IElementMementoRequest[requests.size()]);
 				for (int i = 0; i < req.length; i++) {
-					stateProvider.encodeElement(req[i]);
+					IElementMementoProvider provider = getViewerStateAdapter(req[i].getElement());
+					if (provider == null) {
+						provider = defaultProvider;
+					}
+					provider.encodeElement(req[i]);
 				}
 			}
 		
