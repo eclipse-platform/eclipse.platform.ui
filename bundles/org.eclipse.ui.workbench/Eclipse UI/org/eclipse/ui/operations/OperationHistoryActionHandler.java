@@ -328,7 +328,7 @@ public abstract class OperationHistoryActionHandler extends Action implements
 			}
 			progressDialog.run(runInBackground, true, runnable);
 		} catch (InvocationTargetException e) {
-			Throwable t = e.getCause();
+			Throwable t = e.getTargetException();
 			if (t == null) {
 				reportException(e);
 			} else {
