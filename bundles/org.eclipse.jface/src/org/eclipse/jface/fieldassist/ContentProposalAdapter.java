@@ -347,8 +347,9 @@ public class ContentProposalAdapter {
 					Object p = getSelectedProposal();
 					if (p != null) {
 						acceptCurrentProposal();
+					} else {
+						close();
 					}
-					close();
 					break;
 
 				case SWT.TAB:
@@ -877,7 +878,9 @@ public class ContentProposalAdapter {
 			if (infoPopup != null) {
 				infoPopup.close();
 			}
-			return super.close();
+			boolean ret = super.close();
+			notifyPopupClosed();
+			return ret;
 		}
 
 		/*
@@ -1167,10 +1170,14 @@ public class ContentProposalAdapter {
 	private Listener controlListener;
 
 	/*
-	 * The list of listeners who wish to be notified when something significant
-	 * happens with the proposals.
+	 * The list of IContentProposalListener listeners.
 	 */
 	private ListenerList proposalListeners = new ListenerList();
+
+	/*
+	 * The list of IContentProposalListener2 listeners.
+	 */
+	private ListenerList proposalListeners2 = new ListenerList();
 
 	/*
 	 * Flag that indicates whether the adapter is enabled. In some cases,
@@ -1556,6 +1563,58 @@ public class ContentProposalAdapter {
 		proposalListeners.add(listener);
 	}
 
+	/**
+	 * Removes the specified listener from the list of content proposal
+	 * listeners that are notified when content proposals are chosen.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the IContentProposalListener to be removed as a listener. Must
+	 *            not be <code>null</code>. If the listener has not already
+	 *            been registered, this method has no effect.
+	 * 
+	 * @since 3.3
+	 * @see org.eclipse.jface.fieldassist.IContentProposalListener
+	 */
+	public void removeContentProposalListener(IContentProposalListener listener) {
+		proposalListeners.remove(listener);
+	}
+
+	/**
+	 * Add the specified listener to the list of content proposal listeners that
+	 * are notified when a content proposal popup is opened or closed.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the IContentProposalListener2 to be added as a listener. Must
+	 *            not be <code>null</code>. If an attempt is made to register
+	 *            an instance which is already registered with this instance,
+	 *            this method has no effect.
+	 * 
+	 * @since 3.3
+	 * @see org.eclipse.jface.fieldassist.IContentProposalListener2
+	 */
+	public void addContentProposalListener(IContentProposalListener2 listener) {
+		proposalListeners2.add(listener);
+	}
+
+	/**
+	 * Remove the specified listener from the list of content proposal listeners
+	 * that are notified when a content proposal popup is opened or closed.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            the IContentProposalListener2 to be removed as a listener.
+	 *            Must not be <code>null</code>. If the listener has not
+	 *            already been registered, this method has no effect.
+	 * 
+	 * @since 3.3
+	 * @see org.eclipse.jface.fieldassist.IContentProposalListener2
+	 */
+	public void removeContentProposalListener(IContentProposalListener2 listener) {
+		proposalListeners2.remove(listener);
+	}
+
 	/*
 	 * Add our listener to the control. Debug information to be left in until
 	 * this support is stable on all platforms.
@@ -1737,6 +1796,7 @@ public class ContentProposalAdapter {
 							popup = null;
 						}
 					});
+					notifyPopupOpened();
 				} else if (!autoActivated) {
 					getControl().getDisplay().beep();
 				}
@@ -1792,11 +1852,7 @@ public class ContentProposalAdapter {
 		}
 
 		// In all cases, notify listeners of an accepted proposal.
-		final Object[] listenerArray = proposalListeners.getListeners();
-		for (int i = 0; i < listenerArray.length; i++) {
-			((IContentProposalListener) listenerArray[i])
-					.proposalAccepted(proposal);
-		}
+		notifyProposalAccepted(proposal);
 	}
 
 	/*
@@ -1906,6 +1962,48 @@ public class ContentProposalAdapter {
 					}
 				}
 			});
+		}
+	}
+
+	/*
+	 * A proposal has been accepted. Notify interested listeners.
+	 */
+	private void notifyProposalAccepted(IContentProposal proposal) {
+		if (DEBUG) {
+			System.out.println("Notify listeners - proposal accepted."); //$NON-NLS-1$
+		}
+		final Object[] listenerArray = proposalListeners.getListeners();
+		for (int i = 0; i < listenerArray.length; i++) {
+			((IContentProposalListener) listenerArray[i])
+					.proposalAccepted(proposal);
+		}
+	}
+
+	/*
+	 * The proposal popup has opened. Notify interested listeners.
+	 */
+	private void notifyPopupOpened() {
+		if (DEBUG) {
+			System.out.println("Notify listeners - popup opened."); //$NON-NLS-1$
+		}
+		final Object[] listenerArray = proposalListeners2.getListeners();
+		for (int i = 0; i < listenerArray.length; i++) {
+			((IContentProposalListener2) listenerArray[i])
+					.proposalPopupOpened(this);
+		}
+	}
+
+	/*
+	 * The proposal popup has closed. Notify interested listeners.
+	 */
+	private void notifyPopupClosed() {
+		if (DEBUG) {
+			System.out.println("Notify listeners - popup closed."); //$NON-NLS-1$
+		}
+		final Object[] listenerArray = proposalListeners2.getListeners();
+		for (int i = 0; i < listenerArray.length; i++) {
+			((IContentProposalListener2) listenerArray[i])
+					.proposalPopupClosed(this);
 		}
 	}
 }
