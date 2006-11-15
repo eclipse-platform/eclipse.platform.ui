@@ -49,7 +49,6 @@ public class ContentChangeNotifier implements IContentChangeNotifier {
 	
 	/**
 	 * Notifies all registered <code>IContentChangeListener</code>s of a content change.
-	 * @param changed the actual object whose contents have changed
 	 */
 	public void fireContentChanged() {
 		if (fListenerList == null || fListenerList.isEmpty()) {
