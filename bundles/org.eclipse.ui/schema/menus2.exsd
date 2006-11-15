@@ -192,7 +192,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="AbstractDynamicMenuItem"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractDynamicMenuItem"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -210,7 +210,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="AbstractWorkbenchWidget"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractWorkbenchWidget"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -250,7 +250,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <choice minOccurs="0" maxOccurs="1">
             <element ref="not"/>
             <element ref="or"/>
             <element ref="and"/>
@@ -281,7 +281,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <choice minOccurs="0" maxOccurs="1">
             <element ref="not"/>
             <element ref="or"/>
             <element ref="and"/>
