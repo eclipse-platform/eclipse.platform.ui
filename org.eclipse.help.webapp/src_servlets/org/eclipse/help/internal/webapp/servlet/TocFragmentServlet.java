@@ -79,7 +79,11 @@ public class TocFragmentServlet extends HttpServlet {
 			buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 			buf.append("<tree_data>\n"); //$NON-NLS-1$
 			
-			
+
+		    if (tocData.isRemoteHelpError()) {
+		    	addError(WebappResources.getString("remoteHelpErrorMessage", locale)); //$NON-NLS-1$			
+		    }
+					
 			// Return an error for show in toc if topic was not found in toc
 			if (requestKind == REQUEST_SHOW_IN_TOC && tocData.getTopicPath() == null) {
 				addError(WebappResources.getString("topicNotInToc", locale)); //$NON-NLS-1$
