@@ -173,7 +173,12 @@ public abstract class ToolTip {
 	private void toolTipShow(Shell tip, Event event) {
 		if (!tip.isDisposed()) {
 			createToolTipContentArea(event, tip);
-			toolTipHookRecursively(tip, true);
+			if( isHideOnMouseDown() ) {
+				toolTipHookBothRecursively(tip);
+			} else {
+				toolTipHookByTypeRecursively(tip,true,SWT.MouseExit);
+			}
+			
 			tip.pack();
 			tip.setVisible(true);
 		}
@@ -181,7 +186,6 @@ public abstract class ToolTip {
 
 	private void toolTipHide(Shell tip, Event event) {
 		if (tip != null && !tip.isDisposed()) {
-			toolTipHookRecursively(tip, false);
 			tip.dispose();
 			CURRENT_TOOLTIP = null;
 			afterHideToolTip(event);
@@ -217,22 +221,31 @@ public abstract class ToolTip {
 		}
 	}
 
-	private void toolTipHookRecursively(Control c, boolean add) {
-		if (add) {
-			c.addListener(SWT.MouseDown, hideListener);
-			c.addListener(SWT.MouseExit, hideListener);
+	private void toolTipHookByTypeRecursively(Control c, boolean add, int type) {
+		if( add ) {
+			c.addListener(type, hideListener);
 		} else {
-			c.removeListener(SWT.MouseDown, hideListener);
-			c.removeListener(SWT.MouseExit, hideListener);
+			c.removeListener(type, hideListener);
 		}
 
 		if (c instanceof Composite) {
 			Control[] children = ((Composite) c).getChildren();
 			for (int i = 0; i < children.length; i++) {
-				toolTipHookRecursively(children[i], add);
+				toolTipHookByTypeRecursively(children[i],add,type);
 			}
 		}
-
+	}
+	
+	private void toolTipHookBothRecursively(Control c) {
+		c.addListener(SWT.MouseDown, hideListener);
+		c.addListener(SWT.MouseExit, hideListener);
+		
+		if (c instanceof Composite) {
+			Control[] children = ((Composite) c).getChildren();
+			for (int i = 0; i < children.length; i++) {
+				toolTipHookBothRecursively(children[i]);
+			}
+		}
 	}
 
 	/**
@@ -302,7 +315,23 @@ public abstract class ToolTip {
 	 *            flag to indicate of tooltip is hidden automatically on mouse
 	 *            down inside the tool tip
 	 */
-	public void setHideOnMouseDown(boolean hideOnMouseDown) {
+	public void setHideOnMouseDown(final boolean hideOnMouseDown) {
+		// Only needed if there's currently a tooltip active
+		if( CURRENT_TOOLTIP != null && ! CURRENT_TOOLTIP.isDisposed() ) {
+			// Only change if value really changed
+			if( hideOnMouseDown != this.hideOnMouseDown ) {
+				control.getDisplay().syncExec(new Runnable() {
+
+					public void run() {
+						if( CURRENT_TOOLTIP != null && CURRENT_TOOLTIP.isDisposed() ) {
+							toolTipHookByTypeRecursively(CURRENT_TOOLTIP, hideOnMouseDown, SWT.MouseDown);
+						}
+					}
+					
+				});
+			}
+		}
+		
 		this.hideOnMouseDown = hideOnMouseDown;
 	}
 
