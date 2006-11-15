@@ -1911,6 +1911,9 @@ public class ContentProposalAdapter {
 		if (proposalProvider == null || !isValid()) {
 			return null;
 		}
+		if (DEBUG) {
+			System.out.println(">>> obtaining proposals from provider"); //$NON-NLS-1$
+		}
 		int position = insertionPos;
 		if (position == -1) {
 			position = getControlContentAdapter().getCursorPosition(
