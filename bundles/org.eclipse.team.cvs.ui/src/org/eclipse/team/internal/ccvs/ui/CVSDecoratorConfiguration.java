@@ -55,8 +55,8 @@ public class CVSDecoratorConfiguration {
 	public static final String IGNORED_FONT = "org.eclipse.team.cvs.ui.fontsandcolors.ignored_resource_font"; //$NON-NLS-1$
 	
 	public static void decorate(CVSDecoration decoration, String format, Map bindings) {
-		StringBuffer prefix = new StringBuffer(80);
-		StringBuffer suffix = new StringBuffer(80);
+		StringBuffer prefix = new StringBuffer();
+		StringBuffer suffix = new StringBuffer();
 		StringBuffer output = prefix;
 		
 		int length = format.length();
