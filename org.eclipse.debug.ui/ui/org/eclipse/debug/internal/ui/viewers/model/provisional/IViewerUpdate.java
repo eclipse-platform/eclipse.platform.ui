@@ -28,11 +28,12 @@ public interface IViewerUpdate extends IStatusMonitor {
 	public IPresentationContext getPresentationContext();
     
     /**
-     * Returns the model element corresponding to the given tree path.
-     * Returns the root element for the empty path.
+     * Returns the model element corresponding to the given tree path
+     * or <code>null</code> if none. An empty path corresponds to the
+     * root element.
      * 
      * @param path viewer tree path
-     * @return corresponding model element
+     * @return corresponding model element or <code>null</code>
      */
     public Object getElement(TreePath path);
 }

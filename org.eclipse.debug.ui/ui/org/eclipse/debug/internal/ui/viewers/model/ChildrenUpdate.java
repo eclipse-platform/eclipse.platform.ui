@@ -68,21 +68,12 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
 								System.out.println("insert(" + fParentPath.getLastSegment() + ", modelIndex: " + modelIndex + " insertIndex: " + insertIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
-							if (fParentPath.getSegmentCount() == 0) {
-								// TODO: does empty path work in viewer?
-								viewer.insert(getElement(fParentPath), element, insertIndex);
-							} else {
-								viewer.insert(fParentPath, element, insertIndex);
-							}
+							viewer.insert(fParentPath, element, insertIndex);
 						} else {
 							if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
 								System.out.println("replace(" + getElement(fParentPath) + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 							}
-							if (fParentPath.getSegmentCount() > 0) {
-								viewer.replace(fParentPath, viewIndex, element);
-							} else {
-								viewer.replace(getElement(fParentPath), viewIndex, element);
-							}
+							viewer.replace(fParentPath, viewIndex, element);
 						}
 						TreePath childPath = fParentPath.createChildPath(element);
 						provider.updateHasChildren(childPath);

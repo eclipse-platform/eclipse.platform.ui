@@ -226,9 +226,13 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				if (supportsContext(context)) {
 					for (int i = 0; i < elements.length; i++) {
 						Object element = update.getElement(elements[i]);
-						boolean hasChildren = hasChildren(element, context, update);
-						if (!update.isCanceled()) {
-							update.setHasChilren(elements[i], hasChildren);
+						if (element == null) {
+							update.setCanceled(true);
+						} else {
+							boolean hasChildren = hasChildren(element, context, update);
+							if (!update.isCanceled()) {
+								update.setHasChilren(elements[i], hasChildren);
+							}
 						}
 					}
 				} else {
