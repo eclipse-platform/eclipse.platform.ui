@@ -16,9 +16,6 @@ package org.eclipse.jface.viewers;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -43,18 +40,6 @@ class ToolTipSupport extends DefaultToolTip {
 	private static final int DEFAULT_SHIFT_X = 10;
 
 	private static final int DEFAULT_SHIFT_Y = 0;
-
-	private Color bgColor;
-
-	private Color fgColor;
-
-	private int style;
-
-	private Font font;
-
-	private Image fgImage;
-
-	private String text;
 
 	ToolTipSupport(ColumnViewer viewer) {
 		super(viewer.getControl());
@@ -110,54 +95,13 @@ class ToolTipSupport extends DefaultToolTip {
 		CellLabelProvider labelProvider = (CellLabelProvider) getData(LABEL_PROVIDER_KEY);
 		Object element = getData(ELEMENT_KEY);
 
-		text = labelProvider.getToolTipText(element);
-		style = labelProvider.getToolTipStyle(element);
-		fgColor = labelProvider.getToolTipForegroundColor(element);
-		bgColor = labelProvider.getToolTipBackgroundColor(element);
-		font = labelProvider.getToolTipFont(element);
+		setText(labelProvider.getToolTipText(element));
+		setStyle(labelProvider.getToolTipStyle(element));
+		setForegroundColor(labelProvider.getToolTipForegroundColor(element));
+		setBackgroundColor(labelProvider.getToolTipBackgroundColor(element));
+		setFont(labelProvider.getToolTipFont(element));
 	}
 
-	protected Color getBackgroundColor(Event event) {
-		if (bgColor != null) {
-			return bgColor;
-		}
-		return super.getBackgroundColor(event);
-	}
-
-	protected Color getForegroundColor(Event event) {
-		if (fgColor != null) {
-			return fgColor;
-		}
-
-		return super.getForegroundColor(event);
-	}
-
-	protected Image getImage(Event event) {
-		if (fgImage != null) {
-			return fgImage;
-		}
-		return super.getImage(event);
-	}
-
-	protected int getStyle(Event event) {
-		return style;
-	}
-
-	protected String getText(Event event) {
-		if (text != null) {
-			return text;
-		}
-
-		return super.getText(event);
-	}
-
-	protected Font getFont(Event event) {
-		if (font != null) {
-			return font;
-		}
-
-		return super.getFont(event);
-	}
 
 	protected Composite createToolTipContentArea(Event event, Composite parent) {
 		updateData();

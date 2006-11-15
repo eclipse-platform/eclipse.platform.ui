@@ -30,6 +30,19 @@ import org.eclipse.swt.widgets.Event;
  *        Platform/UI team.
  */
 public abstract class DefaultToolTip extends ToolTip {
+	private String text;
+
+	private Color backgroundColor;
+
+	private Font font;
+
+	private Image backgroundImage;
+
+	private Color foregroundColor;
+
+	private Image image;
+
+	private int style = SWT.SHADOW_NONE;
 
 	/**
 	 * @param control
@@ -102,7 +115,7 @@ public abstract class DefaultToolTip extends ToolTip {
 	 * @return the style
 	 */
 	protected int getStyle(Event event) {
-		return SWT.SHADOW_NONE;
+		return style;
 	}
 
 	/**
@@ -115,7 +128,7 @@ public abstract class DefaultToolTip extends ToolTip {
 	 *         displayed
 	 */
 	protected Image getImage(Event event) {
-		return null;
+		return image;
 	}
 
 	/**
@@ -128,8 +141,8 @@ public abstract class DefaultToolTip extends ToolTip {
 	 *         color should be used
 	 */
 	protected Color getForegroundColor(Event event) {
-		return event.widget.getDisplay().getSystemColor(
-				SWT.COLOR_INFO_FOREGROUND);
+		return (foregroundColor == null) ? event.widget.getDisplay()
+				.getSystemColor(SWT.COLOR_INFO_FOREGROUND) : foregroundColor;
 	}
 
 	/**
@@ -142,8 +155,8 @@ public abstract class DefaultToolTip extends ToolTip {
 	 *         color should be used
 	 */
 	protected Color getBackgroundColor(Event event) {
-		return event.widget.getDisplay().getSystemColor(
-				SWT.COLOR_INFO_BACKGROUND);
+		return (backgroundColor == null) ? event.widget.getDisplay()
+				.getSystemColor(SWT.COLOR_INFO_BACKGROUND) : backgroundColor;
 	}
 
 	/**
@@ -156,7 +169,7 @@ public abstract class DefaultToolTip extends ToolTip {
 	 *         displayed in the background
 	 */
 	protected Image getBackgroundImage(Event event) {
-		return null;
+		return backgroundImage;
 	}
 
 	/**
@@ -168,7 +181,7 @@ public abstract class DefaultToolTip extends ToolTip {
 	 *         should be used
 	 */
 	protected Font getFont(Event event) {
-		return null;
+		return font;
 	}
 
 	/**
@@ -179,6 +192,86 @@ public abstract class DefaultToolTip extends ToolTip {
 	 * @return the text or <code>null</code> if no text has to be displayed
 	 */
 	protected String getText(Event event) {
-		return null;
+		return text;
 	}
+
+	/**
+	 * The background {@link Image} used by {@link CLabel} in the default
+	 * implementation
+	 * 
+	 * @param backgroundColor
+	 *            the {@link Color} or <code>null</code> if default background
+	 *            color ({@link SWT#COLOR_INFO_BACKGROUND}) should be used
+	 */
+	public void setBackgroundColor(Color backgroundColor) {
+		this.backgroundColor = backgroundColor;
+	}
+
+	/**
+	 * The background {@link Image} used by {@link CLabel} in the default
+	 * implementation
+	 * 
+	 * @param backgroundImage
+	 *            the {@link Image} or <code>null</code> if no image should be
+	 *            displayed in the background
+	 */
+	public void setBackgroundImage(Image backgroundImage) {
+		this.backgroundImage = backgroundImage;
+	}
+
+	/**
+	 * The {@link Font} used by {@link CLabel} in the default implementation
+	 * 
+	 * @param font
+	 *            the {@link Font} or <code>null</code> if the default font
+	 *            should be used
+	 */
+	public void setFont(Font font) {
+		this.font = font;
+	}
+
+	/**
+	 * The foreground {@link Color} used by {@link CLabel} in the default
+	 * implementation
+	 * 
+	 * @param foregroundColor
+	 *            the {@link Color} or <code>null</code> if default foreground
+	 *            color should be used
+	 */
+	public void setForegroundColor(Color foregroundColor) {
+		this.foregroundColor = foregroundColor;
+	}
+
+	/**
+	 * The {@link Image} displayed in the {@link CLabel} in the default
+	 * implementation implementation
+	 * 
+	 * @param image
+	 *            the {@link Image} or <code>null</code> if no image should be
+	 *            displayed
+	 */
+	public void setImage(Image image) {
+		this.image = image;
+	}
+
+	/**
+	 * The style used to create the {@link CLabel} in the default implementation
+	 * 
+	 * @param style
+	 *            the event triggered the popup of the tooltip
+	 */
+	public void setStyle(int style) {
+		this.style = style;
+	}
+
+	/**
+	 * The text displayed in the {@link CLabel} in the default implementation
+	 * 
+	 * @param text
+	 *            the text or <code>null</code> if no text has to be displayed
+	 */
+	public void setText(String text) {
+		this.text = text;
+	}
+
 }
