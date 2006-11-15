@@ -93,7 +93,19 @@ public class FileDiffResult {
 
 		if (containsProblems()) {
 			fRejected= fPatcher.getRejected(getFailedHunks());
-			fMatches = false;
+			if (fMatches) {
+				// Check to see if we have at least one hunk that matches
+				fMatches = false;
+				Hunk[] hunks = fDiff.getHunks();
+				for (int i = 0; i < hunks.length; i++) {
+					Hunk hunk = hunks[i];
+					HunkResult result = getHunkResult(hunk);
+					if (result.isOK()) {
+						fMatches = true;
+						break;
+					}
+				}
+			}
 		}
 	}
 	

@@ -37,7 +37,7 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 	 */
 	public Image getImage() {
 		if (!fHunkResult.isOK()) {
-			LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getPatcher());
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(fHunkResult.getDiffResult().getPatcher());
 			return getHunkErrorImage(null, imageCache, false);
 		} 
 		return null;

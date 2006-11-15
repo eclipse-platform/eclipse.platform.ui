@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
-public abstract class PatcherCompareEditorInput extends CompareEditorInput {
+public abstract class PatchCompareEditorInput extends CompareEditorInput {
 
 	private static final String IMAGE_CACHE_KEY = "IMAGE_CACHE"; //$NON-NLS-1$
 	
@@ -74,25 +74,24 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 			if (element instanceof PatchDiffNode){
 				PatchDiffNode node = (PatchDiffNode) element;
 				if (!node.isEnabled() && image != null) {
-					LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(getPatcher());
+					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
 					return imageCache.createImage(createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REMOVED_OVERLAY), IDecoration.TOP_LEFT));
 				}
 			}
 			if (element instanceof HunkDiffNode) {
 				HunkDiffNode node = (HunkDiffNode) element;
 				if (node.isManuallyMerged()) {
-					LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(getPatcher());
-					return imageCache.createImage(PatcherCompareEditorInput.createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IS_MERGED_OVERLAY), IDecoration.TOP_LEFT));
+					LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
+					return imageCache.createImage(PatchCompareEditorInput.createOverlay(image, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IS_MERGED_OVERLAY), IDecoration.TOP_LEFT));
 				}
 			}
 			return image;
 		}
 	}
 	
-	private DiffNode root;
-	private TreeViewer viewer;
-	
+	private final DiffNode root;
 	private final WorkspacePatcher patcher;
+	private TreeViewer viewer;
 	private boolean fShowAll;
 	
 	/**
@@ -101,7 +100,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	 * @param patcher 
 	 * @param configuration
 	 */
-	public PatcherCompareEditorInput(WorkspacePatcher patcher, CompareConfiguration configuration) {
+	public PatchCompareEditorInput(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(configuration);
 		Assert.isNotNull(patcher);
 		this.patcher = patcher;
@@ -138,16 +137,87 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 		// set left editable so that unmatched hunks can be edited
 		cc.setLeftEditable(true);
 		cc.setRightEditable(false);
-		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
+		//cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 		cc.setLeftLabel(getCompareConfiguration().getLeftLabel(root));
 		cc.setLeftImage(getCompareConfiguration().getLeftImage(root));
 		cc.setRightLabel(getCompareConfiguration().getRightLabel(root));
 		cc.setRightImage(getCompareConfiguration().getRightImage(root));
 	}
 
-	abstract protected void updateTree();
+	/**
+	 * Update the presentation of the diff tree.
+	 */
+	protected void updateTree() {
+		if (getViewer() != null && !getViewer().getControl().isDisposed())
+			getViewer().refresh(true);
+	}
 	
-	abstract protected void buildTree(); 
+	/**
+	 * Build the diff tree.
+	 */
+	protected void buildTree(){
+		
+		// Reset the input node so it is empty
+		if (getRoot().hasChildren()) {
+			resetRoot();
+		}
+		// Reset the input of the viewer so the old state is no longer used
+		getViewer().setInput(getRoot());
+		
+		// Refresh the patcher state
+		getPatcher().refresh();
+		
+		// Build the diff tree
+		if (getPatcher().isWorkspacePatch()){
+			processProjects(getPatcher().getDiffProjects());
+		} else {
+			processDiffs(getPatcher().getDiffs());
+		}
+		
+		// Refresh the viewer
+		getViewer().refresh();
+	}
+	
+	private void processDiffs(FileDiff[] diffs) { 
+		for (int i = 0; i < diffs.length; i++) {
+			processDiff(diffs[i], getRoot());
+		}
+	}
+
+	private void processProjects(DiffProject[] diffProjects) {
+		//create diffProject nodes
+		for (int i = 0; i < diffProjects.length; i++) {
+			PatchProjectDiffNode projectNode = new PatchProjectDiffNode(getRoot(), diffProjects[i], getPatcher());
+			FileDiff[] diffs = diffProjects[i].getFileDiffs();
+			for (int j = 0; j < diffs.length; j++) {
+				FileDiff fileDiff = diffs[j];
+				processDiff(fileDiff, projectNode);
+			}
+		}
+	}
+
+	private void processDiff(FileDiff diff, DiffNode parent) {
+		FileDiffResult diffResult = getPatcher().getDiffResult(diff);
+		PatchFileDiffNode node = PatchFileDiffNode.createDiffNode(parent, diffResult);
+		HunkResult[] hunkResults = diffResult.getHunkResults();
+		for (int i = 0; i < hunkResults.length; i++) {
+			HunkResult hunkResult = hunkResults[i];
+			if (!hunkResult.isOK()) {
+				HunkDiffNode hunkNode = HunkDiffNode.createDiffNode(node, hunkResult, true);
+				Object left = hunkNode.getLeft();
+				if (left instanceof UnmatchedHunkTypedElement) {
+					UnmatchedHunkTypedElement element = (UnmatchedHunkTypedElement) left;
+					element.addContentChangeListener(new IContentChangeListener() {
+						public void contentChanged(IContentChangeNotifier source) {
+							if (getViewer() == null || getViewer().getControl().isDisposed())
+								return;
+							getViewer().refresh(true);
+						}
+					});
+				}
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#createDiffViewer(org.eclipse.swt.widgets.Composite)
@@ -155,7 +225,7 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 	public Viewer createDiffViewer(Composite parent) {
 		viewer =  new DiffTreeViewer(parent, getCompareConfiguration()){
 			protected void fillContextMenu(IMenuManager manager) {
-				PatcherCompareEditorInput.this.fillContextMenu(manager);
+				PatchCompareEditorInput.this.fillContextMenu(manager);
 			}
 		};
 			
@@ -250,5 +320,33 @@ public abstract class PatcherCompareEditorInput extends CompareEditorInput {
 		return MessageDialog.openConfirm(viewer.getControl().getShell(), PatchMessages.PatcherCompareEditorInput_0, message);
 	}
 
+	/**
+	 * Return whether this input has a result to apply. The input
+	 * has a result to apply if at least one hunk is selected for inclusion.
+	 * @return whether this input has a result to apply
+	 */
+	public boolean hasResultToApply() {
+		boolean atLeastOneIsEnabled = false;
+		if (getViewer() != null) {
+			IDiffElement[] elements = getRoot().getChildren();
+			for (int i = 0; i < elements.length; i++) {
+				IDiffElement element = elements[i];
+				if (isEnabled(element)) {
+					atLeastOneIsEnabled = true;
+					break;
+				}
+			}
+		}
+		return atLeastOneIsEnabled;
+	}
+
+	private boolean isEnabled(IDiffElement element) {
+		if (element instanceof PatchDiffNode) {
+			PatchDiffNode node = (PatchDiffNode) element;
+			return node.isEnabled();
+		}
+		return false;
+	}
+	
 	protected abstract void fillContextMenu(IMenuManager manager);
 }

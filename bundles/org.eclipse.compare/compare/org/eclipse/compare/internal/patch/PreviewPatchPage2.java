@@ -36,7 +36,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	
 	private final WorkspacePatcher fPatcher;
 	private final CompareConfiguration fConfiguration;
-	private PreviewPatchPageInput fInput;
+	private PatchCompareEditorInput fInput;
 	
 	private Combo fStripPrefixSegments;
 	private Text fFuzzField;
@@ -198,7 +198,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	class RetargetPatchContentProvider extends BaseWorkbenchContentProvider {
 		//Never show closed projects
 		boolean showClosedProjects= false;
-		//Used to limit providers to just projects for retargeting projects
+		//Used to indicate what is being retargetted
 		int mode;
 		public RetargetPatchContentProvider(int mode) {
 			 this.mode = mode;
@@ -229,6 +229,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
+		setDescription(PatchMessages.PreviewPatchPage2_8);
 		Assert.isNotNull(patcher);
 		Assert.isNotNull(configuration);
 		this.fPatcher = patcher;
@@ -241,7 +242,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		initializeDialogUnits(parent);
 		
-		fInput = new PreviewPatchPageInput(getPatcher(), getCompareConfiguration()) {
+		fInput = new PatchCompareEditorInput(getPatcher(), getCompareConfiguration()) {
 			protected void fillContextMenu(IMenuManager manager) {
 				if (isShowAll()) {
 					manager.add(fIncludeAction);

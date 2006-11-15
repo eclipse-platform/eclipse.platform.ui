@@ -52,7 +52,7 @@ public class PatchFileTypedElement implements ITypedElement, IEncodedStreamConte
 			image = CompareUI.getImage(file);
 		}
 		if (result.containsProblems()) {
-			LocalResourceManager imageCache = PatcherCompareEditorInput.getImageCache(result.getPatcher());
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(result.getPatcher());
 			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
 		}
 		return image;
