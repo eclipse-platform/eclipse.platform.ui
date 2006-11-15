@@ -11,6 +11,7 @@
 package org.eclipse.ui.forms.widgets;
 
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -524,7 +525,7 @@ public class Form extends Composite {
 	 * <p>
 	 * The valid message types are one of <code>NONE</code>,
 	 * <code>INFORMATION</code>,<code>WARNING</code>, or
-	 * <code>ERROR</code>.
+	 * <code>ERROR</code> defined in IMessageProvider interface.
 	 * </p>
 	 * <p>
 	 * 
@@ -532,6 +533,7 @@ public class Form extends Composite {
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
 	 *            the message type
+	 * @see org.eclipse.jface.dialogs.IMessageProvider
 	 * @since 3.2
 	 */
 
