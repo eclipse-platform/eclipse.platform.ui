@@ -14,22 +14,25 @@
 
 var selectedNode;
 
-function updateTree(xml) {
+function updateTree(xml) { 
+    var tocData = xml.documentElement;  
     var treeRoot = document.getElementById("tree_root");
-    var children = xml.getElementsByTagName ("tree_data");
+    if (tocData.tagName != "tree_data") {
+        return;
+    }
+    var errorTags = xml.getElementsByTagName ("error");
     
-    if (treeRoot === null) { 
-        return; 
-    }
-    if (children === null) { 
-        return; 
-    }
-    if (children.length != 1) {
-        return; 
+    for (var i = 0; i < errorTags.length; i++) {
+         var nextError = errorTags[i];
+         var errorChildren = nextError.childNodes;
+         // Is the next node a text node
+         if (errorChildren.length > 0 && errorChildren[0].nodeType == 3) { 
+             var message = errorChildren[0].data;
+             alert(message);
+         }
     }
     
-    var tocdata = children[0];
-    var nodes = tocdata.childNodes;
+    var nodes = tocData.childNodes;
     selectedNode = null;
     mergeChildren(treeRoot, nodes);
     if (selectedNode != null) {

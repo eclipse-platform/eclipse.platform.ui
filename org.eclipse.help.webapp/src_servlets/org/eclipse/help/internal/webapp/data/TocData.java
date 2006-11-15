@@ -43,7 +43,7 @@ public class TocData extends ActivitiesData {
 	private static int honorLevelsLimit;
 
 	// Request parameters
-	private String tocHref;
+	private String tocParameter;
 	private String topicHref;
 
 	// help form of selected topic href
@@ -81,10 +81,10 @@ public class TocData extends ActivitiesData {
 			honorLevelsLimit = loadBookAtOnceLimit / 4;
 		}
 
-		this.tocHref = request.getParameter("toc"); //$NON-NLS-1$
+		this.tocParameter = request.getParameter("toc"); //$NON-NLS-1$
 		this.topicHref = request.getParameter("topic"); //$NON-NLS-1$
-		if (tocHref != null && tocHref.length() == 0)
-			tocHref = null;
+		if (tocParameter != null && tocParameter.length() == 0)
+			tocParameter = null;
 		if (topicHref != null && topicHref.length() == 0)
 			topicHref = null;
 		
@@ -286,10 +286,10 @@ public class TocData extends ActivitiesData {
 		tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 		// Find the requested TOC
 		selectedToc = -1;
-		if (tocHref != null && tocHref.length() > 0) {
+		if (tocParameter != null && tocParameter.length() > 0) {
 			tocs = getTocs();
 			for (int i = 0; selectedToc == -1 && i < tocs.length; i++) {
-				if (tocHref.equals(tocs[i].getHref())) {
+				if (tocParameter.equals(tocs[i].getHref())) {
 					selectedToc = i;
 				}
 			}
@@ -677,8 +677,12 @@ public class TocData extends ActivitiesData {
     public ITopic[] getTopicPath() {
     	return topicPath;
     }
-    
+
     public int[] getRootPath() {
     	return rootPath;
+    }
+    
+    public String getTopicHref() {
+    	return topicHref;
     }
 }

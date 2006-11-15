@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -38,12 +40,11 @@ public class TocFragmentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		String locale = UrlUtil.getLocale(req, resp);
-		String parent = req.getParameter("parent"); //$NON-NLS-1$
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		TocData data = new TocData(this.getServletContext(), req, resp);	
-		Serializer serializer = new Serializer(data);
-		String response = serializer.generateTreeXml(locale, parent);
+		Serializer serializer = new Serializer(data, req.getLocale());
+		String response = serializer.generateTreeXml();
 		locale2Response.put(locale, response);
 		resp.getWriter().write(response);
 	}
@@ -56,14 +57,16 @@ public class TocFragmentServlet extends HttpServlet {
 		private TocData tocData;
 		private StringBuffer buf;
 		private int requestKind;
+		private Locale locale;
 		private static final int REQUEST_SHOW_IN_TOC = 1;      // Show an element based on its href
 		private static final int REQUEST_SHOW_TOCS = 2;        // Show all the tocs but not their children
 		private static final int REQUEST_SHOW_CHILDREN = 3;    // Show the children of a node
 
-		public Serializer(TocData data) {
+		public Serializer(TocData data, Locale locale) {
 			tocData = data;
 			buf = new StringBuffer();
-			if (tocData.getTopicPath() != null) {
+			this.locale = locale;
+			if (tocData.getTopicHref() != null) {
 				requestKind = REQUEST_SHOW_IN_TOC;
 			} else if (tocData.getSelectedToc() == -1) {
 				requestKind = REQUEST_SHOW_TOCS;
@@ -72,10 +75,28 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 		}
 			
-		public String generateTreeXml(String locale, String parent) {
+		public String generateTreeXml() {
 			buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 			buf.append("<tree_data>\n"); //$NON-NLS-1$
 			
+			
+			// Return an error for show in toc if topic was not found in toc
+			if (requestKind == REQUEST_SHOW_IN_TOC && tocData.getTopicPath() == null) {
+				addError(WebappResources.getString("topicNotInToc", locale)); //$NON-NLS-1$
+			} else {
+			    serializeTocs();
+			}
+			buf.append("</tree_data>\n"); //$NON-NLS-1$
+			return buf.toString();
+		}
+
+		private void addError(String message) {
+			buf.append("<error>"); //$NON-NLS-1$
+			buf.append(XMLGenerator.xmlEscape(message));
+			buf.append("</error>"); //$NON-NLS-1$			
+		}
+
+		private void serializeTocs() {
 			ITopic[] topicPath = tocData.getTopicPath();
 	
 			int selectedToc = tocData.getSelectedToc();
@@ -96,8 +117,6 @@ public class TocFragmentServlet extends HttpServlet {
 					serializeToc(tocData.getTocs()[toc], topicPath, isSelected);
 				}
 			}
-			buf.append("</tree_data>\n"); //$NON-NLS-1$
-			return buf.toString();
 		}
 	
 		private void serializeToc(IToc toc, ITopic[] topicPath, boolean isSelected) {
