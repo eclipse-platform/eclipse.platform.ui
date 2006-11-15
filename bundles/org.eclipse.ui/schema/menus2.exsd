@@ -66,9 +66,9 @@ The format for the URI is comprised of three basic parts:
 
 Sheme: One of &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar. Indicates the type of the manager used to handle the contributions
 Id: This is either the id of an existing menu, a view id or the id of the editor &apos;type&apos;
-Query: The query format is &lt;placement&gt;=&lt;id&gt; where:
- &lt;placement&gt; is one of: &quot;before&quot;, &quot;after&quot;, &quot;start&quot; or &quot;end&quot;
- &lt;id&gt; is the id of an existing menu item
+Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
+ &amp;lt;placement&amp;gt; is one of: &quot;before&quot;, &quot;after&quot;, &quot;start&quot; or &quot;end&quot;
+ &amp;lt;id&amp;gt; is the id of an existing menu item
                </documentation>
             </annotation>
          </attribute>
