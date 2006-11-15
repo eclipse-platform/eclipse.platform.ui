@@ -626,8 +626,8 @@ public class ContentProposalAdapter {
 				proposalTable = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 			}
 
-			// compute the proposals to force population of the table.
-			recomputeProposals(filterText);
+			// set the proposals to force population of the table.
+			setProposals(filterProposals(proposals, filterText));
 
 			proposalTable.setHeaderVisible(false);
 			proposalTable.addSelectionListener(new SelectionListener() {
