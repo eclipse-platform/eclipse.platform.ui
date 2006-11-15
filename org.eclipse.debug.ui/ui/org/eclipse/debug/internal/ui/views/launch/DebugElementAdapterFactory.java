@@ -48,6 +48,7 @@ import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionManagerContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.ExpressionsViewMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchManagerContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupContentProvider;
@@ -122,6 +123,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementContentProvider fgCPRegisterGroup = new RegisterGroupContentProvider();
     
     private static IElementMementoProvider fgMPFrame = new VariablesViewElementMementoProvider();
+    private static IElementMementoProvider fgMPExpressions = new ExpressionsViewMementoProvider();
     
     private static IColumnPresentationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
@@ -270,6 +272,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         if (adapterType.equals(IElementMementoProvider.class)) {
         	if (adaptableObject instanceof IStackFrame) {
         		return fgMPFrame;
+        	}
+        	if (adaptableObject instanceof IExpressionManager) {
+        		return fgMPExpressions;
         	}
         }
         
