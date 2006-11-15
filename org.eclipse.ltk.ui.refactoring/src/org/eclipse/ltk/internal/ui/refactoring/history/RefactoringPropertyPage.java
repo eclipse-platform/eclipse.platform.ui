@@ -81,7 +81,7 @@ import org.osgi.service.prefs.BackingStoreException;
 public final class RefactoringPropertyPage extends PropertyPage {
 
 	/** The dialog settings key */
-	private static String DIALOG_SETTINGS_KEY= "RefactoringPropertyPage"; //$NON-NLS-1$
+	private static final String DIALOG_SETTINGS_KEY= "RefactoringPropertyPage"; //$NON-NLS-1$
 
 	/** The empty descriptors constant */
 	static final RefactoringDescriptorProxy[] EMPTY_DESCRIPTORS= new RefactoringDescriptorProxy[0];
