@@ -385,7 +385,7 @@ public class PreviewPatchPage2 extends WizardPage {
 		fIgnoreWhiteSpace.setToolTipText(PatchMessages.PreviewPatchPage2_IgnoreWSTooltip);
 		fIgnoreWhiteSpace.setDisabledImageDescriptor(CompareUIPlugin.getImageDescriptor(ICompareUIConstants.IGNORE_WHITESPACE_DISABLED));
 		
-		fReversePatch = new Action(PatchMessages.PreviewPatchPage_ReversePatch_text, CompareUIPlugin.getImageDescriptor(ICompareUIConstants.REVERSE_PATCH_ENABLED)){
+		fReversePatch = new Action(PatchMessages.PreviewPatchPage_ReversePatch_text){
 			public void run(){
 				try {
 					getContainer().run(true, true, new IRunnableWithProgress() {
