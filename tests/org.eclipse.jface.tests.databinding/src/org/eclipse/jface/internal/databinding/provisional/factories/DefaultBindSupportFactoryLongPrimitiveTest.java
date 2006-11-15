@@ -31,15 +31,15 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
         ctx = new DataBindingContext();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
-        dataObject.setLongPrimitiveVal((long) 0);
-        dataObject.setLongVal(new Long((long) 0));
+        dataObject.setLongPrimitiveVal(0);
+        dataObject.setLongVal(new Long(0));
     }
 
     public void testStringToLongPrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "stringVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
-        dataObject.setLongPrimitiveVal((long) 110);
+        dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
         assertEquals("String value does not match", "110", dataObject.getStringVal());
         assertNull("No errors should be found.", ctx.getValidationError().getValue());
@@ -64,14 +64,14 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "longVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
-        dataObject.setLongPrimitiveVal((long) 110);
+        dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
-        assertEquals("Long value does not match", new Long((long) 110), dataObject.getLongVal());
+        assertEquals("Long value does not match", new Long(110), dataObject.getLongVal());
         assertNull("No errors should be found.", ctx.getValidationError().getValue());
 
-        dataObject.setLongVal(new Long((long) 70));
+        dataObject.setLongVal(new Long(70));
         assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
-        assertEquals("Long value does not match", new Long((long) 70), dataObject.getLongVal());
+        assertEquals("Long value does not match", new Long(70), dataObject.getLongVal());
         assertNull("No errors should be found.", ctx.getValidationError().getValue());
 
         dataObject.setLongVal(null);
@@ -84,14 +84,14 @@ public class DefaultBindSupportFactoryLongPrimitiveTest extends TestCase {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "objectVal"), BeansObservables.observeValue(dataObject,
                 "longPrimitiveVal"), null);
 
-        dataObject.setLongPrimitiveVal((long) 110);
+        dataObject.setLongPrimitiveVal(110);
         assertEquals("long value does not match", 110, dataObject.getLongPrimitiveVal(), .001);
-        assertEquals("Object value does not match", new Long((long) 110), dataObject.getObjectVal());
+        assertEquals("Object value does not match", new Long(110), dataObject.getObjectVal());
         assertNull("No errors should be found.", ctx.getValidationError().getValue());
 
-        dataObject.setObjectVal(new Long((long) 70));
+        dataObject.setObjectVal(new Long(70));
         assertEquals("long value does not match", 70, dataObject.getLongPrimitiveVal(), .001);
-        assertEquals("Object value does not match", new Long((long) 70), dataObject.getObjectVal());
+        assertEquals("Object value does not match", new Long(70), dataObject.getObjectVal());
         assertNull("No errors should be found.", ctx.getValidationError().getValue());
 
         dataObject.setObjectVal(null);
