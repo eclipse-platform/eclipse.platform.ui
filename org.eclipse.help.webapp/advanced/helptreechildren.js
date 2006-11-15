@@ -68,7 +68,13 @@ function mergeChildren(treeItem, nodes) {
 
      if (childAdded) {
          changeExpanderImage(treeItem, true); 
-     }
+     } 
+     
+    // Expand this node if it was collapsed         
+    var childClass = getChildClass(treeItem);
+    if (childClass == "hidden") {
+        toggleExpandState(treeItem);
+    }
     
 }
 
