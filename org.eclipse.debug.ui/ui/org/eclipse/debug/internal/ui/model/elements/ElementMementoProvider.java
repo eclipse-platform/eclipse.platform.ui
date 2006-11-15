@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -31,10 +32,8 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 	public void compareElement(final IElementCompareRequest request) {
 		Job job = new Job("compare element") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				Object element = request.getElement();
-				IMemento memento = request.getMemento();
 				try {
-					request.setEqual(isEqual(element, memento));
+					request.setEqual(isEqual(request.getElement(), request.getMemento(), request.getPresentationContext()));
 				} catch (CoreException e) {
 					request.setStatus(e.getStatus());
 				}
@@ -50,11 +49,12 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 	/**
 	 * Returns whether the memento represents the given element.
 	 * 
-	 * @param element
-	 * @param memento
+	 * @param element the element to compare to the memento
+	 * @param memento memento
+	 * @param context the context the compare is in
 	 * @return whether the memento represents the given element
 	 */
-	protected abstract boolean isEqual(Object element, IMemento memento) throws CoreException;
+	protected abstract boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElement(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest)
@@ -62,10 +62,8 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 	public void encodeElement(final IElementMementoRequest request) {
 		Job job = new Job("encode element") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				Object element = request.getElement();
-				IMemento memento = request.getMemento();
 				try {
-					if (!encodeElement(element, memento)) {
+					if (!encodeElement(request.getElement(), request.getMemento(), request.getPresentationContext())) {
 						request.setCanceled(true);
 					}
 				} catch (CoreException e) {
@@ -84,11 +82,12 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 	 * Encodes the specified element into the given memento.
 	 * Returns whether the element could be encoded
 	 * 
-	 * @param element
-	 * @param memento
+	 * @param element the element to encode
+	 * @param memento the memento to write to 
+	 * @param context presentation context
 	 * @return false if cancelled/not supported
 	 * @throws CoreException
 	 */
-	protected abstract boolean encodeElement(Object element, IMemento memento) throws CoreException;
+	protected abstract boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException;
 
 }

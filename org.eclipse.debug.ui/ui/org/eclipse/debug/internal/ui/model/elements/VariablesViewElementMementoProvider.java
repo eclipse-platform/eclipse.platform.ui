@@ -11,8 +11,11 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -25,35 +28,41 @@ public class VariablesViewElementMementoProvider extends ElementMementoProvider 
 	 */
 	private static final String ELEMENT_NAME = "ELEMENT_NAME"; //$NON-NLS-1$
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementMementoProvider#encodeElement(java.lang.Object, org.eclipse.ui.IMemento)
-	 */
-	protected boolean encodeElement(Object element, IMemento memento) throws CoreException {
+	protected boolean encodeElement(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		if (element instanceof IStackFrame) {
 			IStackFrame frame = (IStackFrame) element;
-			memento.putString(ELEMENT_NAME, frame.getName());
+			if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId())) {
+				// for registers view attempt to maintain expansion for target rather than each frame
+				memento.putString(ELEMENT_NAME, frame.getModelIdentifier());
+			} else {
+				memento.putString(ELEMENT_NAME, frame.getName());
+			}
 		} else if (element instanceof IVariable) {
-			IVariable variable = (IVariable) element;
-			memento.putString(ELEMENT_NAME, variable.getName());
+			memento.putString(ELEMENT_NAME, ((IVariable) element).getName());
+		} else if (element instanceof IRegisterGroup) {
+			memento.putString(ELEMENT_NAME, ((IRegisterGroup) element).getName());
 		} else {
 			return false;
 		}
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementMementoProvider#isEqual(java.lang.Object, org.eclipse.ui.IMemento)
-	 */
-	protected boolean isEqual(Object element, IMemento memento) throws CoreException {
+	protected boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException {
 		String mementoName = memento.getString(ELEMENT_NAME);
 		if (mementoName != null) {
 			String elementName = null;
 			if (element instanceof IStackFrame) {
 				IStackFrame frame = (IStackFrame) element;
-				elementName = frame.getName();
+				if (IDebugUIConstants.ID_REGISTER_VIEW.equals(context.getId())) {
+					// for registers view attempt to maintain expansion for target rather than each frame
+					elementName = frame.getModelIdentifier();
+				} else {
+					elementName = frame.getName();
+				}
 			} else if (element instanceof IVariable) {
-				IVariable variable = (IVariable) element;
-				elementName = variable.getName();
+				elementName = ((IVariable)element).getName();
+			} else if (element instanceof IRegisterGroup) {
+				elementName = ((IRegisterGroup)element).getName();
 			}
 			if (elementName != null) {
 				return elementName.equals(mementoName);
