@@ -133,11 +133,7 @@ public class FilterResolver {
 	 */
 	private boolean filterByPlugin(String bundleId) {
 		Bundle bundle = Platform.getBundle(bundleId);
-		if (bundle != null) {
-			int state = bundle.getState();
-			return (state == Bundle.INSTALLED && state == Bundle.UNINSTALLED);
-		}
-		return true;
+		return bundle == null;
 	}
 
 	/*
