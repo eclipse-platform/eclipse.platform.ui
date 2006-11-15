@@ -17,13 +17,14 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
+import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * A contributed breakpoint organizer.
  */
-public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
+public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBreakpointOrganizerDelegateExtension {
 	
 	private IConfigurationElement fElement;
 	private IBreakpointOrganizerDelegate fDelegate;
@@ -165,4 +166,33 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer {
     public IAdaptable[] getCategories() {
         return getOrganizer().getCategories();
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#addBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
+	 */
+	public void addBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
+		IBreakpointOrganizerDelegate organizer = getOrganizer();
+		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+			((IBreakpointOrganizerDelegateExtension)organizer).addBreakpoints(breakpoints, category);
+		} else {
+			for (int i = 0; i < breakpoints.length; i++) {
+				addBreakpoint(breakpoints[i], category);
+			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension#removeBreakpoints(org.eclipse.debug.core.model.IBreakpoint[], org.eclipse.core.runtime.IAdaptable)
+	 */
+	public void removeBreakpoints(IBreakpoint[] breakpoints, IAdaptable category) {
+		IBreakpointOrganizerDelegate organizer = getOrganizer();
+		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+			((IBreakpointOrganizerDelegateExtension)organizer).removeBreakpoints(breakpoints, category);
+		} else {
+			for (int i = 0; i < breakpoints.length; i++) {
+				removeBreakpoint(breakpoints[i], category);
+			}
+		}
+		
+	}
 }

@@ -53,7 +53,7 @@ Organizers with the specified name will be automatically created by the Debug Pl
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Implementation of &lt;code&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegate&lt;/code&gt; that performs categorization
+                  Implementation of &lt;code&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegate&lt;/code&gt; that performs categorization. Since 3.3, the class may optionally implement &lt;code&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -124,7 +124,7 @@ In the above example, the supplied factory will be included in the list of optio
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegate&lt;/b&gt;.
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegate&lt;/b&gt;. Since 3.3 the class may optionally implement &lt;b&gt;org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension&lt;/b&gt;.
       </documentation>
    </annotation>
 

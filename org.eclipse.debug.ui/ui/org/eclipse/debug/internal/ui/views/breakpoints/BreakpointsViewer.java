@@ -11,14 +11,18 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -206,16 +210,38 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	if(items == null) {
     		return;
     	}
-    	BreakpointContainer container = null;
+    	Map containersToBreakpoints = new HashMap();
+		BreakpointContainer container = null;
     	IBreakpoint breakpoint = null;
     	for(int i = 0; i < items.length; i++) {
     		if(!items[i].isDisposed()) {
 	    		breakpoint = (IBreakpoint)items[i].getData();
 	    		container = getRemovableContainer(items[i]);
 	    		if(container != null) {
-	    			container.getOrganizer().removeBreakpoint(breakpoint, container.getCategory());
+	    			List list = (List) containersToBreakpoints.get(container);
+	    			if (list == null) {
+	    				list = new ArrayList();
+	    				containersToBreakpoints.put(container, list);
+	    			}
+	    			list.add(breakpoint);
 	    		}
     		}
+    	}
+    	Iterator iterator = containersToBreakpoints.entrySet().iterator();
+    	while (iterator.hasNext()) {
+    		Entry entry = (Entry) iterator.next();
+    		container = (BreakpointContainer) entry.getKey();
+    		List list = (List) entry.getValue();
+    		IBreakpointOrganizer organizer = container.getOrganizer();
+    		IBreakpoint[] breakpoints = (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+    		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+				IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
+				extension.removeBreakpoints(breakpoints, container.getCategory());
+			} else {
+				for (int i = 0; i < breakpoints.length; i++) {
+					organizer.removeBreakpoint(breakpoints[i], container.getCategory());
+				}
+			}
     	}
     }
     
@@ -290,9 +316,18 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	if(container == null) {
 			return false;
 		}
-    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
-    		breakpoint = (IBreakpoint) iter.next();
-			container.getOrganizer().addBreakpoint(breakpoint, container.getCategory());
+    	IBreakpointOrganizer organizer = container.getOrganizer();
+    	if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+    		IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
+    		Object[] array = selection.toArray();
+    		IBreakpoint[] breakpoints = new IBreakpoint[array.length];
+    		System.arraycopy(array, 0, breakpoints, 0, array.length);
+    		extension.addBreakpoints(breakpoints, container.getCategory());
+    	} else {
+	    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+	    		breakpoint = (IBreakpoint) iter.next();
+				organizer.addBreakpoint(breakpoint, container.getCategory());
+	    	}
     	}
     	expandToLevel(target.getData(), ALL_LEVELS);
     	return true;
