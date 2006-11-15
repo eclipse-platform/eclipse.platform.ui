@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -381,7 +380,7 @@ public class CtrlEAction extends AbstractHandler {
 					List elements = PlatformUI.getWorkbench()
 							.getPreferenceManager().getElements(
 									PreferenceManager.PRE_ORDER);
-					Set uniqueElements = new LinkedHashSet(elements);
+					Set uniqueElements = new HashSet(elements);
 					return uniqueElements.toArray();
 				} else if (menusNode.equals(parentElement)) {
 					MenuManager menu = ((WorkbenchWindow) window)

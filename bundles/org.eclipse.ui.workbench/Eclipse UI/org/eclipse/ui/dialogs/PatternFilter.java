@@ -101,7 +101,7 @@ public class PatternFilter extends ViewerFilter {
 				Object element = elements[i];
 	    		elementFound = isElementVisible(viewer, element);
 			}
-    		foundAny = Boolean.valueOf(elementFound);
+    		foundAny = elementFound ? Boolean.TRUE : Boolean.FALSE;
     		foundAnyCache.put(parent, foundAny);
     	}
     	return foundAny.booleanValue();
