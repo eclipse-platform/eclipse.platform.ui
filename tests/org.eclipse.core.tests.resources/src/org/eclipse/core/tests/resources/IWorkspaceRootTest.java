@@ -14,8 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
@@ -37,6 +36,35 @@ public class IWorkspaceRootTest extends ResourceTest {
 	protected void tearDown() throws Exception {
 		IProject[] projects = getWorkspace().getRoot().getProjects();
 		getWorkspace().delete(projects, true, null);
+	}
+
+	/**
+	 * Tests findFilesForLocation when non-canonical paths are used (bug 155101).
+	 */
+	public void testFindFilesNonCanonicalPath() {
+		// this test is for windows only
+		if (!isWindows())
+			return;
+		IProject project = getWorkspace().getRoot().getProject("testFindFilesNonCanonicalPath");
+		ensureExistsInWorkspace(project, true);
+
+		IFile link = project.getFile("file.txt");
+		IFileStore fileStore = getTempStore();
+		createFileInFileSystem(fileStore);
+		assertEquals("0.1", EFS.SCHEME_FILE, fileStore.getFileSystem().getScheme());
+		IPath fileLocationLower = URIUtil.toPath(fileStore.toURI());
+		fileLocationLower = fileLocationLower.setDevice(fileLocationLower.getDevice().toLowerCase());
+		IPath fileLocationUpper = fileLocationLower.setDevice(fileLocationLower.getDevice().toUpperCase());
+		//create the link with lower case device
+		try {
+			link.createLink(fileLocationLower, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//try to find the file using the upper case device
+		IFile[] files = getWorkspace().getRoot().findFilesForLocation(fileLocationUpper);
+		assertEquals("1.0", 1, files.length);
+		assertEquals("1.1", link, files[0]);
 	}
 
 	/**
