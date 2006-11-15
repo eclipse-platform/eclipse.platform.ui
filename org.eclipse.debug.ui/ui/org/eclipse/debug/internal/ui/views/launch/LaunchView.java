@@ -75,6 +75,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -586,7 +587,15 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
 		PropertyDialogAction action = (PropertyDialogAction)getAction("Properties"); //$NON-NLS-1$
-		action.setEnabled(action.isApplicableForSelection());
+		/**
+		 * TODO hack to get around bug 148424, remove if UI ever fixes the PropertyDialogAction to respect enablesWhen conditions
+		 */
+		TreeSelection sel = (TreeSelection) fProvider.getActiveContext();
+		boolean enabled = true;
+		if(sel != null && sel.size() > 0) {
+			enabled = !(sel.getFirstElement() instanceof ILaunch);
+		}
+		action.setEnabled(action.isApplicableForSelection() && enabled);
 		menu.add(action);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         
