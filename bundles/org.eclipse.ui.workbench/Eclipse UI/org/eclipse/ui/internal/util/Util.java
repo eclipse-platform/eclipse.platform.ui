@@ -745,7 +745,7 @@ public final class Util {
 			splitStr[1] = ZERO_LENGTH_STRING;
 		}
 		
-		splitStr[0] = src.substring(0, delimIndex-1);
+		splitStr[0] = src.substring(0, delimIndex);
 		splitStr[1] = src.substring(delimIndex+1);
 		
 		return splitStr;
