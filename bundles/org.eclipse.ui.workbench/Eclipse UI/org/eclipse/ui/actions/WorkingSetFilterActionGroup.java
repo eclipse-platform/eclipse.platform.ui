@@ -258,8 +258,8 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 				workingSetName = workingSet.getName();
 			}
 		}
-		memento.putString(TAG_IS_WINDOW_WORKING_SET, Boolean
-				.toString(isWindowWorkingSet));
+		memento.putString(TAG_IS_WINDOW_WORKING_SET,
+				isWindowWorkingSet ? "true" : "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		memento.putString(TAG_WORKING_SET_NAME, workingSetName);
 	}
 
