@@ -30,11 +30,11 @@
             >
          <keywordReference id="org.eclipse.ltk.ui.refactoring.property.page"/>
          <enabledWhen>
-            <test
+         	<adapt type="org.eclipse.core.resources.IProject">
+            	<test property="org.eclipse.ltk.ui.refactoring.refactoringPropertiesEnabled"
                   forcePluginActivation="false"
-                  property="org.eclipse.ltk.ui.refactoring.refactoringPropertiesEnabled"
-                  value="true">
-            </test>
+                  value="true"/>
+            </adapt>
          </enabledWhen>
       </page>
    </extension>

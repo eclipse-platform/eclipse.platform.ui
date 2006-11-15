@@ -67,6 +67,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
+import org.eclipse.ui.preferences.WorkingCopyManager;
 
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
@@ -133,6 +134,8 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		final IPreferencePageContainer container= getContainer();
 		if (container instanceof IWorkbenchPreferenceContainer)
 			fManager= ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
+		else
+			fManager= new WorkingCopyManager();
 
 		final Composite composite= new Composite(parent, SWT.NONE);
 		final GridLayout layout= new GridLayout();
@@ -316,6 +319,10 @@ public final class RefactoringPropertyPage extends PropertyPage {
 	 * {@inheritDoc}
 	 */
 	public boolean performOk() {
+		final IProject project= getCurrentProject();
+		if (project == null || fManager == null)
+			return true; // not contributed on a project or no control created
+		
 		if (fNewSettings) {
 			final IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section= settings.getSection(DIALOG_SETTINGS_KEY);
@@ -323,33 +330,31 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			fSettings= section;
 		}
 		fSettings.put(SETTING_SORT, fHistoryControl.isSortByProjects());
-		final IProject project= getCurrentProject();
-		if (project != null)
-			setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistoryButton.getSelection()).toString());
-		if (fManager != null)
-			try {
-				fManager.applyChanges();
-				final boolean history= RefactoringHistoryService.hasSharedRefactoringHistory(project);
-				if (history != fHasProjectHistory && project != null) {
-					final Job job= new Job(history ? RefactoringUIMessages.RefactoringPropertyPage_sharing_refactoring_history : RefactoringUIMessages.RefactoringPropertyPage_unsharing_refactoring_history) {
 
-						public final IStatus run(final IProgressMonitor monitor) {
-							try {
-								RefactoringHistoryService.setSharedRefactoringHistory(project, history, monitor);
-							} catch (CoreException exception) {
-								RefactoringUIPlugin.log(exception);
-								return exception.getStatus();
-							}
-							return Status.OK_STATUS;
+		setPreference(fManager, new ProjectScope(project), RefactoringPreferenceConstants.PREFERENCE_SHARED_REFACTORING_HISTORY, Boolean.valueOf(fShareHistoryButton.getSelection()).toString());
+		try {
+			fManager.applyChanges();
+			final boolean history= RefactoringHistoryService.hasSharedRefactoringHistory(project);
+			if (history != fHasProjectHistory) {
+				final Job job= new Job(history ? RefactoringUIMessages.RefactoringPropertyPage_sharing_refactoring_history : RefactoringUIMessages.RefactoringPropertyPage_unsharing_refactoring_history) {
+
+					public final IStatus run(final IProgressMonitor monitor) {
+						try {
+							RefactoringHistoryService.setSharedRefactoringHistory(project, history, monitor);
+						} catch (CoreException exception) {
+							RefactoringUIPlugin.log(exception);
+							return exception.getStatus();
 						}
-					};
-					job.setRule(project);
-					job.setPriority(Job.SHORT);
-					job.schedule();
-				}
-			} catch (BackingStoreException exception) {
-				RefactoringUIPlugin.log(exception);
+						return Status.OK_STATUS;
+					}
+				};
+				job.setRule(project);
+				job.setPriority(Job.SHORT);
+				job.schedule();
 			}
+		} catch (BackingStoreException exception) {
+			RefactoringUIPlugin.log(exception);
+		}
 		return super.performOk();
 	}
 
