@@ -355,13 +355,12 @@ public class PluginDescriptor implements IPluginDescriptor {
 		// sanity checking
 		if ((bundleOsgi.getState() & (Bundle.RESOLVED | Bundle.STARTING | Bundle.ACTIVE)) == 0)
 			throw new IllegalArgumentException();
-		// plug-in hasn't been activated yet - start bundle
-		if (bundleOsgi.getState() == Bundle.RESOLVED)
-			try {
-				InternalPlatform.start(bundleOsgi);
-			} catch (BundleException e) {
-				throwException(NLS.bind(Messages.plugin_startupProblems, e), e);
-			}
+		try {
+			// ensure the bundle has been activated
+			InternalPlatform.start(bundleOsgi);
+		} catch (BundleException e) {
+			throwException(NLS.bind(Messages.plugin_startupProblems, e), e);
+		}
 		if (pluginObject != null)
 			return;
 		boolean errorExit = true;
