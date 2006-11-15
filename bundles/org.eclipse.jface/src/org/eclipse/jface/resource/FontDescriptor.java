@@ -104,17 +104,10 @@ public abstract class FontDescriptor extends DeviceResourceDescriptor {
      * @since 3.3
      */
     public FontData[] getFontData() {
-    	try {
-	    	Font tempFont = createFont(Display.getCurrent());
-	    	FontData[] result = tempFont.getFontData();
-	    	destroyFont(tempFont);
-	    	return result;
-    	} catch (DeviceResourceException e) {
-    		// This won't actually happen. The JFace implementation of FontDescriptor
-    		// won't throw this exception... and DRE is going to become a RuntimeException
-    		// soon anyway.
-    		throw new RuntimeException(e);
-    	}
+    	Font tempFont = createFont(Display.getCurrent());
+    	FontData[] result = tempFont.getFontData();
+    	destroyFont(tempFont);
+    	return result;
     }
     
     /**
