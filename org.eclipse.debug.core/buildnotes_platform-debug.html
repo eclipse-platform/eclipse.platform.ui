@@ -186,7 +186,14 @@ The launch framework has been enhanced to support the following:
     Allows the <b>Create Watch Expression</b> action to be dynamically enabled 
     based on the selected variables.</li>
 </ul>
-
+<h3>Breakpoints</h3>
+<ul>
+  <li>Added new optional interface for breakpoint organizer extensions. Breakpoint 
+    organizer delegates may optionally implement the <code>IBreakpointOrganizerDelegateExtension</code> 
+    interface. The new interfaces supports add and remove operations on collections 
+    of breakpoints to allow for more efficient drag and drop operations in the 
+    breakpoints view.</li>
+</ul>
 <h2>Nov 21, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=99709">99709</a>: [breakpoints] Breakpoints dropped to incorrect working set when moved using drag and drop<br>
