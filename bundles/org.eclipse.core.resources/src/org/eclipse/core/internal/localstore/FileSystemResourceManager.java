@@ -92,7 +92,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		return results;
 	}
-	
+
 	/** 
 	 * Tries to obtain a file URI for the given URI. Returns <code>null</code> if the file system associated
 	 * to the URI scheme does not map to the local file system. 
@@ -102,7 +102,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	private URI getFileURI(URI locationURI) {
 		try {
 			IFileStore testLocationStore = EFS.getStore(locationURI);
-			java.io.File storeAsFile =  testLocationStore.toLocalFile(EFS.NONE, null);
+			java.io.File storeAsFile = testLocationStore.toLocalFile(EFS.NONE, null);
 			if (storeAsFile != null)
 				return URIUtil.toURI(storeAsFile.getAbsolutePath());
 		} catch (CoreException e) {
@@ -189,7 +189,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	public void delete(IResource target, int flags, IProgressMonitor monitor) throws CoreException {
-	monitor = Policy.monitorFor(monitor);
+		monitor = Policy.monitorFor(monitor);
 		try {
 			Resource resource = (Resource) target;
 			final int deleteWork = resource.countResources(IResource.DEPTH_INFINITE, false) * 2;
@@ -568,11 +568,8 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	}
 
 	public void move(IResource source, IFileStore destination, int flags, IProgressMonitor monitor) throws CoreException {
-		IFileStore sourceStore = getStore(source);
-		int storeFlags = 0;
-		if ((flags & IResource.FORCE) != 0)
-			storeFlags &= EFS.OVERWRITE;
-		sourceStore.move(destination, storeFlags, monitor);
+		//TODO figure out correct semantics for case where destination exists on disk
+		getStore(source).move(destination, EFS.NONE, monitor);
 	}
 
 	/**

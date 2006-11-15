@@ -72,6 +72,16 @@ class ResourceTree implements IResourceTree {
 		}
 	}
 
+	private IFileStore computeDestinationStore(IProjectDescription destDescription) throws CoreException {
+		URI destLocation = destDescription.getLocationURI();
+		// Use the default area if necessary for the destination.
+		if (destLocation == null) {
+			IPath rootLocation = ResourcesPlugin.getWorkspace().getRoot().getLocation();
+			destLocation = rootLocation.append(destDescription.getName()).toFile().toURI();
+		}
+		return EFS.getStore(destLocation);
+	}
+
 	/**
 	 * @see IResourceTree#computeTimestamp(IFile)
 	 */
@@ -85,17 +95,6 @@ class ResourceTree implements IResourceTree {
 		} finally {
 			lock.release();
 		}
-	}
-
-	/**
-	 * Returns the local timestamp for a file.
-	 * 
-	 * @param file
-	 * @return The local file system timestamp
-	 */
-	private long internalComputeTimestamp(IFile file) {
-		IFileInfo fileInfo = localManager.getStore(file).fetchInfo();
-		return fileInfo.exists() ? fileInfo.getLastModified() : NULL_TIMESTAMP;
 	}
 
 	/**
@@ -179,6 +178,31 @@ class ResourceTree implements IResourceTree {
 	}
 
 	/**
+	 * Makes sure that the destination directory for a project move is unoccupied.
+	 * Returns true if successful, and false if the move should be aborted
+	 */
+	private boolean ensureDestinationEmpty(IProject source, IFileStore destinationStore, IProgressMonitor monitor) throws CoreException {
+		String message;
+		//Make sure the destination location is unoccupied
+		if (!destinationStore.fetchInfo().exists())
+			return true;
+		//check for existing children
+		if (destinationStore.childNames(EFS.NONE, Policy.subMonitorFor(monitor, 0)).length > 0) {
+			//allow case rename to proceed
+			if (((Resource) source).getStore().equals(destinationStore))
+				return true;
+			//fail because the destination is occupied
+			message = NLS.bind(Messages.localstore_resourceExists, destinationStore);
+			IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, null);
+			failed(status);
+			return false;
+		}
+		//delete the destination directory to allow for efficient renaming
+		destinationStore.delete(EFS.NONE, Policy.subMonitorFor(monitor, 0));
+		return true;
+	}
+
+	/**
 	 * This operation has failed for the given reason. Add it to this
 	 * resource tree's status.
 	 */
@@ -208,6 +232,17 @@ class ResourceTree implements IResourceTree {
 		} finally {
 			lock.release();
 		}
+	}
+
+	/**
+	 * Returns the local timestamp for a file.
+	 * 
+	 * @param file
+	 * @return The local file system timestamp
+	 */
+	private long internalComputeTimestamp(IFile file) {
+		IFileInfo fileInfo = localManager.getStore(file).fetchInfo();
+		return fileInfo.exists() ? fileInfo.getLastModified() : NULL_TIMESTAMP;
 	}
 
 	/**
@@ -422,6 +457,7 @@ class ResourceTree implements IResourceTree {
 		URI destLocation = destDescription.getLocationURI();
 		if (srcLocation == null || destLocation == null)
 			return true;
+		//don't use URIUtil because we want to treat case rename as a content change
 		return !srcLocation.equals(destLocation);
 	}
 
@@ -680,24 +716,15 @@ class ResourceTree implements IResourceTree {
 	 * Helper method for moving the project content. Determines the content location
 	 * based on the project description. (default location or user defined?)
 	 */
-	private void moveProjectContent(IProject source, IProjectDescription destDescription, int flags, IProgressMonitor monitor) throws CoreException {
+	private void moveProjectContent(IProject source, IFileStore destStore, int flags, IProgressMonitor monitor) throws CoreException {
 		try {
 			String message = NLS.bind(Messages.resources_moving, source.getFullPath());
 			monitor.beginTask(message, 10);
 			IProjectDescription srcDescription = source.getDescription();
 			URI srcLocation = srcDescription.getLocationURI();
-			URI destLocation = destDescription.getLocationURI();
 			// If the locations are the same (and non-default) then there is nothing to do.
-			if (srcLocation != null && srcLocation.equals(destLocation))
+			if (srcLocation != null && URIUtil.equals(srcLocation, destStore.toURI()))
 				return;
-
-			// Use the default area if necessary for the destination. The source project
-			// should already have a location assigned to it.
-			if (destLocation == null) {
-				IPath rootLocation = source.getWorkspace().getRoot().getLocation();
-				destLocation = rootLocation.append(destDescription.getName()).toFile().toURI();
-			}
-			IFileStore destStore = EFS.getStore(destLocation);
 
 			//If this is a replace, just make sure the destination location exists, and return
 			boolean replace = (flags & IResource.REPLACE) != 0;
@@ -1004,9 +1031,24 @@ class ResourceTree implements IResourceTree {
 				return;
 			}
 
+			IFileStore destinationStore;
+			try {
+				destinationStore = computeDestinationStore(description);
+				//destination can be non-empty on replace
+				if ((flags & IResource.REPLACE) == 0)
+					if (!ensureDestinationEmpty(source, destinationStore, monitor))
+						return;
+			} catch (CoreException e) {
+				//must fail if the destination location cannot be accessd (undefined file system)
+				message = NLS.bind(Messages.localstore_couldNotMove, source.getFullPath());
+				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
+				failed(status);
+				return;
+			}
+
 			// Move the project content in the local file system.
 			try {
-				moveProjectContent(source, description, flags, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
+				moveProjectContent(source, destinationStore, flags, Policy.subMonitorFor(monitor, Policy.totalWork * 3 / 4));
 			} catch (CoreException e) {
 				message = NLS.bind(Messages.localstore_couldNotMove, source.getFullPath());
 				IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
