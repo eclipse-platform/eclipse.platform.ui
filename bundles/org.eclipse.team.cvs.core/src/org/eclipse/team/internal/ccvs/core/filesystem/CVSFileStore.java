@@ -18,17 +18,10 @@ import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.variants.IResourceVariant;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 
 public class CVSFileStore extends FileStore {
 
@@ -86,7 +79,7 @@ public class CVSFileStore extends FileStore {
 		return new CVSFileStore(uri.append(info.getName()), info);
 	}
 
-	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) {
+	public IFileInfo fetchInfo(int options, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		ICVSRemoteFolder folder = uri.getParentFolder();
 		
@@ -97,22 +90,16 @@ public class CVSFileStore extends FileStore {
 			info.setName(uri.getRepositoryName());
 			info.setDirectory(true);
 		}
-		try {
-			ICVSResource[] children = folder.fetchChildren(monitor);
-			ICVSResource resource = null;
-			for (int i = 0; i < children.length; i++) {
-				ICVSResource child = children[i];
-				if (child.getName().equals(getName())) {
-					resource = child;
-					break;
-				}
+		ICVSResource[] children = folder.fetchChildren(monitor);
+		ICVSResource resource = null;
+		for (int i = 0; i < children.length; i++) {
+			ICVSResource child = children[i];
+			if (child.getName().equals(getName())) {
+				resource = child;
+				break;
 			}
-			return getFileInfo(resource, monitor);
-		} catch (CoreException e) {
-			// TODO Need to handle this somehow
-			CVSProviderPlugin.log(e);
-			return null;
 		}
+		return getFileInfo(resource, monitor);
 	}
 
 	private IFileInfo getFileInfo(ICVSResource resource, IProgressMonitor monitor) throws TeamException {

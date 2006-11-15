@@ -78,7 +78,8 @@ public class CVSFileRevision extends FileRevision implements IAdaptable {
 	}
 
 	public URI getURI() {
-		return null;//return entry.getRemoteFile().
+		ICVSRemoteFile file = entry.getRemoteFile();
+		return ((RemoteFile)file).toCVSURI().toURI();
 	}
 
 	public ITag[] getTags() {

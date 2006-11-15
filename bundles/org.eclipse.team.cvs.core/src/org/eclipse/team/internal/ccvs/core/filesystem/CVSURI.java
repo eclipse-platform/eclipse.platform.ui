@@ -26,6 +26,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+
+import com.ibm.icu.util.StringTokenizer;
 
 public class CVSURI {
 
@@ -33,13 +36,32 @@ public class CVSURI {
 	private final ICVSRepositoryLocation repository;
 	private final IPath path;
 	private final CVSTag tag;
+	private final String revision;
 
+	/**
+	 * Convert the given URI to a CVSURI. There are two supported formats: the
+	 * original opaque format and a newer hierarchical format.
+	 * <ul>
+	 * <li>cvs://[:]method:user[:password]@host:[port]/root/path#project/path[,tagName]</li>
+	 * <li>cvs://:method:user[:password]@host:[port]!root!path/project/path[?<version,branch,date,revision>=tagName]</li>
+	 * </ul>
+	 * @param uri the URI
+	 * @return a CVS URI
+	 */
 	public static CVSURI fromUri(URI uri) {
 		try {
 			ICVSRepositoryLocation repository = getRepository(uri);
-			IPath path = getPath(uri);
-			CVSTag tag = getTag(uri);
-			return new CVSURI(repository, path, tag);
+			if (repository != null) {
+				IPath path = new Path(null, uri.getPath());
+				CVSTag tag = getTag(uri);
+				String revision = getRevision(uri);
+				return new CVSURI(repository, path, tag, revision);
+			} else {
+				repository = getOldRepository(uri);
+				IPath path = getOldPath(uri);
+				CVSTag tag = getOldTag(uri);
+				return new CVSURI(repository, path, tag);
+			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 			throw new IllegalArgumentException(NLS.bind(CVSMessages.CVSURI_InvalidURI, new String[] {uri.toString(), e.getMessage()}));
@@ -47,16 +69,81 @@ public class CVSURI {
 	}
 
 	private static CVSTag getTag(URI uri) {
+		String query = uri.getQuery();
+		if (query == null)
+			return null;
+		StringTokenizer tokens = new StringTokenizer(query, ","); //$NON-NLS-1$
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken();
+			int index = token.indexOf('=');
+			if (index != -1) {
+				String type = token.substring(0, index);
+				String value = token.substring(index + 1);
+				if (value.length() > 0) {
+					int tagType = getTagType(type);
+					if (tagType != -1)
+						return new CVSTag(value, tagType);
+				}
+			}
+		}
+		return null;
+	}
+	
+	private static String getRevision(URI uri) {
+		String query = uri.getQuery();
+		if (query == null)
+			return null;
+		StringTokenizer tokens = new StringTokenizer(query, ","); //$NON-NLS-1$
+		while (tokens.hasMoreTokens()) {
+			String token = tokens.nextToken();
+			int index = token.indexOf('=');
+			if (index != -1) {
+				String type = token.substring(0, index);
+				String value = token.substring(index + 1);
+				if (type.equals("revision") && isValidRevision(value)) { //$NON-NLS-1$
+					return value;
+				}
+			}
+		}
+		return null;
+	}
+
+	private static boolean isValidRevision(String value) {
+		return value.matches("\\d+\\.\\d+(?:\\.\\d+)*"); //$NON-NLS-1$
+	}
+
+	private static int getTagType(String type) {
+		if (type.equalsIgnoreCase("version")) //$NON-NLS-1$
+			return CVSTag.VERSION;
+		if (type.equalsIgnoreCase("branch")) //$NON-NLS-1$
+			return CVSTag.BRANCH;
+		if (type.equalsIgnoreCase("date")) //$NON-NLS-1$
+			return CVSTag.DATE;
+		return -1;
+	}
+
+	private static ICVSRepositoryLocation getRepository(URI uri) throws CVSException {
+		String authority = uri.getAuthority();
+		if (authority.indexOf('/') != -1)
+			return null;
+		if (authority.indexOf('!') == -1)
+			return null;
+		authority = authority.replace('!', '/');
+		authority = authority.replaceAll("//", "!"); //$NON-NLS-1$ //$NON-NLS-2$
+		return CVSRepositoryLocation.fromString(authority);
+	}
+
+	private static CVSTag getOldTag(URI uri) {
 		String f = uri.getFragment();
 		int i = f.indexOf(',');
 		if (i == -1) {
 			return CVSTag.DEFAULT;
 		}
 		
-		return new CVSTag();//just use HEAD for now (name, CVSTag.BRANCH);
+		return CVSTag.DEFAULT;//just use HEAD for now (name, CVSTag.BRANCH);
 	}
 
-	private static IPath getPath(URI uri) {
+	private static IPath getOldPath(URI uri) {
 		String path = uri.getFragment();
 		int i = path.indexOf(',');
 		if (i != -1) {
@@ -65,7 +152,7 @@ public class CVSURI {
 		return new Path(path);
 	}
 
-	private static ICVSRepositoryLocation getRepository(URI uri) throws CVSException {
+	private static ICVSRepositoryLocation getOldRepository(URI uri) throws CVSException {
 		String ssp = uri.getSchemeSpecificPart();
 		if (!ssp.startsWith(":")) { //$NON-NLS-1$
 			ssp = ":" + ssp; //$NON-NLS-1$
@@ -74,11 +161,19 @@ public class CVSURI {
 	}
 	
 	public CVSURI(ICVSRepositoryLocation repository, IPath path, CVSTag tag) {
+		this(repository, path, tag, null);
+	}
+	
+	public CVSURI(ICVSRepositoryLocation repository, IPath path, CVSTag tag, String revision) {
 		this.repository = repository;
 		this.path = path;
 		this.tag = tag;
+		if (revision != null && !revision.equals(ResourceSyncInfo.ADDED_REVISION))
+			this.revision = revision;
+		else
+			this.revision = null;
 	}
-	
+
 	public CVSURI append(String name) {
 		return new CVSURI(repository, path.append(name), tag);
 	}
@@ -93,14 +188,41 @@ public class CVSURI {
 
 	public URI toURI() {
 		try {
-			String fragment = path.toString();
-			if (tag != null && tag.getType() != CVSTag.HEAD) {
-				fragment += ","+tag.getName(); //$NON-NLS-1$
+			String authority = repository.getLocation(false);
+			// Escape any existing !
+			authority = authority.replaceAll("!", "!!"); //$NON-NLS-1$ //$NON-NLS-2$
+			// Convert / to ! to avoid URI parsing part of the authority as the path
+			authority = authority.replace('/', '!');
+			String pathString = path.toString();
+			if (!pathString.startsWith("/")) { //$NON-NLS-1$
+				pathString = "/" + pathString; //$NON-NLS-1$
 			}
-			return new URI(SCHEME, repository.getLocation(false), fragment);
+			String query = null;
+			if (tag != null && tag.getType() != CVSTag.HEAD) {
+				query = getQueryType(tag) + "=" + tag.getName(); //$NON-NLS-1$
+			}
+			if (revision != null) {
+				String string = "revision=" + revision; //$NON-NLS-1$
+				if (query == null) {
+					query = string;
+				} else {
+					query = query + "," + string; //$NON-NLS-1$
+				}
+			}
+			return new URI(SCHEME, authority, pathString, query, null);
 		} catch (URISyntaxException e) {
 			throw new Error(e.getMessage());
 		}
+	}
+
+	private static String getQueryType(CVSTag tag) {
+		switch (tag.getType()) {
+		case CVSTag.BRANCH:
+			return "branch"; //$NON-NLS-1$
+		case CVSTag.DATE:
+			return "date"; //$NON-NLS-1$
+		}
+		return "version"; //$NON-NLS-1$
 	}
 
 	public boolean isRepositoryRoot() {
@@ -129,7 +251,7 @@ public class CVSURI {
 	
 	public ICVSRemoteFile toFile() {
 		// TODO: What about keyword mode?
-		return RemoteFile.create(path.toString(), repository);
+		return RemoteFile.create(path.toString(), repository, tag, revision);
 	}
 	
 	public String toString() {
@@ -149,5 +271,13 @@ public class CVSURI {
 
 	public ICVSRepositoryLocation getRepository() {
 		return repository;
+	}
+
+	public CVSTag getTag() {
+		return tag;
+	}
+
+	public String getRevision() {
+		return revision;
 	}
 }

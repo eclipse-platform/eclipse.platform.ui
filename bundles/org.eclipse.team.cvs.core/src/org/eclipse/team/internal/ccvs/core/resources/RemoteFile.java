@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.client.listeners.ILogEntryListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.filehistory.CVSResourceVariantFileRevision;
+import org.eclipse.team.internal.ccvs.core.filesystem.CVSURI;
 import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 
 /**
@@ -100,11 +101,19 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * given location.
 	 */
 	public static RemoteFile create(String filePath, ICVSRepositoryLocation location) {
+		return create(filePath, location, null, null);
+	}
+	
+	/**
+	 * Create a remote file handle for the given file path that is relative to the
+	 * given location.
+	 */
+	public static RemoteFile create(String filePath, ICVSRepositoryLocation location, CVSTag tag, String revision) {
 		Assert.isNotNull(filePath);
 		Assert.isNotNull(location);
 		IPath path = new Path(null, filePath);
-		RemoteFolder parent = new RemoteFolder(null /* parent */, location, path.removeLastSegments(1).toString(), null /* tag */);
-		RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, path.lastSegment(), null /* revision */, null /* keyword mode */, null /* tag */);
+		RemoteFolder parent = new RemoteFolder(null /* parent */, location, path.removeLastSegments(1).toString(), tag /* tag */);
+		RemoteFile file = new RemoteFile(parent, Update.STATE_NONE, path.lastSegment(), revision /* revision */, null /* keyword mode */, tag /* tag */);
 		parent.setChildren(new ICVSRemoteResource[] {file});
 		return file;
 	}
@@ -316,7 +325,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	 * Get a different revision of the remote file.
 	 * 
 	 * We must also create a new parent since the child is accessed through the parent from within CVS commands.
-	 * Therefore, we need a new parent so that we can fecth the contents of the remote file revision
+	 * Therefore, we need a new parent so that we can fetch the contents of the remote file revision
 	 */
 	public RemoteFile toRevision(String revision) {
 		RemoteFolder newParent = new RemoteFolder(null, parent.getRepository(), parent.getRepositoryRelativePath(), parent.getTag());
@@ -660,5 +669,10 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		if (adapter == IFileRevision.class)
 			return new CVSResourceVariantFileRevision(this);
 		return super.getAdapter(adapter);
+	}
+	
+	public CVSURI toCVSURI() {
+		ResourceSyncInfo info = getSyncInfo();
+		return new CVSURI(getRepository(), new Path(getRepositoryRelativePath()), info.getTag(), info.getRevision());
 	}
 }

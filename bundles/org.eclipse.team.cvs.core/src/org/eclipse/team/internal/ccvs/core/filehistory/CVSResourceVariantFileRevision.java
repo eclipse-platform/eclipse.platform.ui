@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.filehistory;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
 
 public class CVSResourceVariantFileRevision extends ResourceVariantFileRevision {
@@ -33,6 +36,10 @@ public class CVSResourceVariantFileRevision extends ResourceVariantFileRevision 
 
 	private ICVSRemoteFile getCVSRemoteFile() {
 		return (ICVSRemoteFile)getVariant();
+	}
+	
+	public URI getURI() {
+		return ((RemoteFile)getCVSRemoteFile()).toCVSURI().toURI();
 	}
 
 }
