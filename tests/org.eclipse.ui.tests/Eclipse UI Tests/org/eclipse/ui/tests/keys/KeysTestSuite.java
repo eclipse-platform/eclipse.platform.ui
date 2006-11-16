@@ -48,6 +48,7 @@ public class KeysTestSuite extends TestSuite {
         addTest(new TestSuite(Bug43597Test.class));
         addTest(new TestSuite(Bug43610Test.class));
         addTest(new TestSuite(Bug43800Test.class));
+        addTest(new TestSuite(KeysCsvTest.class));
         //		TODO disabled since it refers to the Java builder and nature,
         //      which are not available in an RCP build
         //		addTest(new TestSuite(Bug44460Test.class));

@@ -1384,8 +1384,9 @@ public final class KeysPreferencePage extends PreferencePage implements
 					for (int i = 0; i < items.length; i++) {
 						final TableItem item = items[i];
 						for (int j = 0; j < numColumns; j++) {
-							fileWriter.write('"' + item.getText(j).replaceAll(
-									"\"", "\"\"") + '"');  //$NON-NLS-1$//$NON-NLS-2$
+							String buf = Util.replaceAll(item.getText(j), "\"", //$NON-NLS-1$
+									"\"\""); //$NON-NLS-1$
+							fileWriter.write("\"" + buf + "\"");  //$NON-NLS-1$//$NON-NLS-2$
 							if (j < numColumns - 1) {
 								fileWriter.write(',');
 							}
@@ -1407,7 +1408,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 		};
 		SafeRunner.run(runnable);
 	}
-
+	
 	/**
 	 * Handles the selection event on the remove button. This removes all
 	 * user-defined bindings matching the given key sequence, scheme and
