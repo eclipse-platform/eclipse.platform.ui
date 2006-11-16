@@ -2232,11 +2232,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fLeft.setEditable(cc.isLeftEditable() && cp.isLeftEditable(input));
 		
 		//if the input is part of a patch hunk, toggle synchronized scrolling
-		if (isPatchHunk() && fSynchronizedScrolling){
-			toggleSynchMode();
+		if (isPatchHunk()){
+			setSyncScrolling(false);
 		} else {
-			//reset fSynchronizedScrolling to its original value
-			fSynchronizedScrolling= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			setSyncScrolling(fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING));
 		}
 		
 		update(false);
@@ -2737,8 +2736,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		DocLineComparator sright= new DocLineComparator(rDoc, toRegion(rRegion), ignoreWhiteSpace);
 		DocLineComparator sleft= new DocLineComparator(lDoc, toRegion(lRegion), ignoreWhiteSpace);
 		DocLineComparator sancestor= null;
-		if (aDoc != null)
+		boolean isRight = true;
+		if (aDoc != null) {
 			sancestor= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
+			if (isPatchHunk()) {
+				isRight = Utilities.getAdapter(((ICompareInput)getInput()).getRight(), IHunk.class) != null;
+				if (isRight) {
+					sleft= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
+				} else {
+					sright= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
+				}
+			}
+		}
 			
 		if (!fSubDoc && rRegion != null && lRegion != null) {
 			// we have to add a diff for the ignored lines
@@ -2825,6 +2834,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				int rightStart= sright.getTokenStart(es.rightStart());
 				int rightEnd= getTokenEnd2(sright, es.rightStart(), es.rightLength());
 				
+				if (isPatchHunk()) {
+					if (isRight)
+						leftStart = leftEnd = getHunkStart();
+					else
+						rightStart = rightEnd = getHunkStart();
+				}
+				
 				Diff diff= new Diff(null, kind,
 					aDoc, aRegion, ancestorStart, ancestorEnd,
 					lDoc, lRegion, leftStart, leftEnd,
@@ -2832,7 +2848,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				
 				fAllDiffs.add(diff);	// remember all range diffs for scrolling
 		
-				if (ignoreWhiteSpace) {
+				if (ignoreWhiteSpace && !isPatchHunk()) {
 					if (sancestor != null)
 						a= extract2(aDoc, sancestor, es.ancestorStart(), es.ancestorLength());
 					s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
@@ -2848,18 +2864,21 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					fChangeDiffs.add(diff);	// here we remember only the real diffs
 					updateDiffBackground(diff);
 		
-					if (s == null)
-						s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
-					if (d == null)
-						d= extract2(rDoc, sright, es.rightStart(), es.rightLength());
-					
-					if (s.length() > 0 && d.length() > 0) {
-						if (a == null && sancestor != null)
-							a= extract2(aDoc, sancestor, es.ancestorStart(), es.ancestorLength());
-						if (USE_MERGING_TOKEN_DIFF)
-							mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
-						else
-							simpleTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+					// Only do the token diff for non-hunks
+					if (!isPatchHunk()) {
+						if (s == null)
+							s= extract2(lDoc, sleft, es.leftStart(), es.leftLength());
+						if (d == null)
+							d= extract2(rDoc, sright, es.rightStart(), es.rightLength());
+						
+						if (s.length() > 0 && d.length() > 0) {
+							if (a == null && sancestor != null)
+								a= extract2(aDoc, sancestor, es.ancestorStart(), es.ancestorLength());
+							if (USE_MERGING_TOKEN_DIFF)
+								mergingTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+							else
+								simpleTokenDiff(diff, aDoc, a, rDoc, d, lDoc, s);
+						}
 					}
 				}
 			}
@@ -3563,10 +3582,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			invalidateLines();
 			
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
-			
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
-			if (b != fSynchronizedScrolling)
-				toggleSynchMode();
+			setSyncScrolling(b);
 		
 		} else if (key.equals(ComparePreferencePage.SHOW_MORE_INFO)) {
 			
@@ -3608,20 +3625,22 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	
 	
 	
-	private void toggleSynchMode() {
-		fSynchronizedScrolling= ! fSynchronizedScrolling;
-		
-		scrollVertical(0, 0, 0, null);
-		
-		// throw away central control (Sash or Canvas)
-		Control center= getCenterControl();
-		if (center != null && !center.isDisposed())
-			center.dispose();
-		
-		fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
-		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
-
-		fComposite.layout(true);
+	private void setSyncScrolling(boolean newMode) {
+		if (fSynchronizedScrolling != newMode) {
+			fSynchronizedScrolling= newMode;
+			
+			scrollVertical(0, 0, 0, null);
+			
+			// throw away central control (Sash or Canvas)
+			Control center= getCenterControl();
+			if (center != null && !center.isDisposed())
+				center.dispose();
+			
+			fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
+			fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
+	
+			fComposite.layout(true);
+		}
 	}
 					
 	protected void updateToolItems() {
@@ -4884,7 +4903,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
 		
-		if (!fHasErrors && !isPatchHunk())
+		if (!fHasErrors /*&& !isPatchHunk() */)
 			doDiff();
 		
 		if (includeControls)
