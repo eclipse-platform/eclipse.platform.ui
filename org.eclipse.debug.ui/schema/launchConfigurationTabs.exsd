@@ -52,7 +52,7 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          <attribute name="group" type="string" use="required">
             <annotation>
                <documentation>
-                  the string id of the &lt;code&gt;ILaunchConfigurationTabGroup&lt;/code&gt; that this tab should be contributed to
+                  the unique id of an existnig &lt;code&gt;ILaunchConfigurationTabGroup&lt;/code&gt; that this tab should be contributed to
                </documentation>
             </annotation>
          </attribute>
@@ -86,7 +86,7 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          <attribute name="after" type="string" use="required">
             <annotation>
                <documentation>
-                  This attribute describes the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs.
+                  specifies the id of the tab that this tab should appear immediately after in the left to right arrangement of tabs
                </documentation>
             </annotation>
          </attribute>
