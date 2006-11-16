@@ -18,6 +18,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
@@ -34,15 +36,17 @@ import org.eclipse.ui.*;
 /**
  * A saveable based compare editor input for compare inputs from a {@link ModelSynchronizeParticipant}.
  */
-public class ModelCompareEditorInput extends SaveableCompareEditorInput {
+public class ModelCompareEditorInput extends SaveableCompareEditorInput implements IPropertyChangeListener {
 
+	private static final String IGNORE_WHITSPACE_PAGE_PROPERTY = "org.eclipse.compare." + CompareConfiguration.IGNORE_WHITESPACE; //$NON-NLS-1$
+	
 	private final ModelSynchronizeParticipant participant;
 	private final ICompareInput input;
 	private final ICacheListener contextListener;
 	private final ISynchronizePageConfiguration synchronizeConfiguration;
 
 	public ModelCompareEditorInput(ModelSynchronizeParticipant participant, ICompareInput input, IWorkbenchPage page, ISynchronizePageConfiguration synchronizeConfiguration) {
-		super(new CompareConfiguration(), page);
+		super(createCompareConfiguration(synchronizeConfiguration), page);
 		this.synchronizeConfiguration = synchronizeConfiguration;
 		Assert.isNotNull(participant);
 		Assert.isNotNull(input);
@@ -53,6 +57,16 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput {
 				closeEditor(true);
 			}
 		};
+		getCompareConfiguration().addPropertyChangeListener(this);
+	}
+
+	private static CompareConfiguration createCompareConfiguration(ISynchronizePageConfiguration pageConfiguration) {
+		CompareConfiguration compareConfiguration = new CompareConfiguration();
+		Object o = pageConfiguration.getProperty(IGNORE_WHITSPACE_PAGE_PROPERTY);
+		if (o != null && (o.equals(Boolean.TRUE) || o.equals(Boolean.FALSE))) {
+			compareConfiguration.setProperty(CompareConfiguration.IGNORE_WHITESPACE, o);
+		}
+		return compareConfiguration;
 	}
 
 	/* (non-Javadoc)
@@ -69,6 +83,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput {
 	protected void handleDispose() {
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
+		getCompareConfiguration().removePropertyChangeListener(this);
 	}
 	
 	/* (non-Javadoc)
@@ -220,5 +235,11 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput {
 
 	protected ISynchronizePageConfiguration getSynchronizeConfiguration() {
 		return synchronizeConfiguration;
+	}
+
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty().equals(CompareConfiguration.IGNORE_WHITESPACE)) {
+			synchronizeConfiguration.setProperty(IGNORE_WHITSPACE_PAGE_PROPERTY, event.getNewValue());
+		}
 	}
 }
