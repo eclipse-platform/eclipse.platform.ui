@@ -33,7 +33,7 @@ public class AutoCompleteField {
 
 	/**
 	 * Construct an AutoComplete field on the specified control, whose
-	 * completions are characterized by the specified array of Strings. *
+	 * completions are characterized by the specified array of Strings.
 	 * 
 	 * @param control
 	 *            the control for which autocomplete is desired. May not be
@@ -55,7 +55,7 @@ public class AutoCompleteField {
 		adapter
 				.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
 	}
-	
+
 	/**
 	 * Set the Strings to be used as content proposals.
 	 * 
