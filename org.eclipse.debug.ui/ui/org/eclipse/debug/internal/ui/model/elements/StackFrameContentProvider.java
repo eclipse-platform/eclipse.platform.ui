@@ -36,14 +36,18 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	}
 	
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
-        String id = context.getId();
-        IStackFrame frame = (IStackFrame) parent;
-        if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
-            return frame.getVariables();
-        } else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
-            return frame.getRegisterGroups();
-        }
-        return EMPTY;		
+		if (parent instanceof IStackFrame) {
+	        String id = context.getId();
+	        IStackFrame frame = (IStackFrame) parent;
+	        if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {
+	            return frame.getVariables();
+	        } else if (id.equals(IDebugUIConstants.ID_REGISTER_VIEW)) {
+	            return frame.getRegisterGroups();
+	        }
+		} else {
+			monitor.setCanceled(true);
+		}
+	    return EMPTY;
 	}
 
 	/* (non-Javadoc)
@@ -64,6 +68,4 @@ public class StackFrameContentProvider extends ElementContentProvider {
         return false;
 	}
 	
-	
-
 }
