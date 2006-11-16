@@ -251,6 +251,13 @@ public abstract class PageCompareEditorInput extends CompareEditorInput implemen
 		setDirty(true);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#canRunInBackground()
+	 */
+	public boolean canRunInBackground() {
+		return true;
+	}
+	
 	/**
 	 * Prepare the compare input for display in a content viewer. This method is
 	 * called from {@link #prepareCompareInput(ICompareInput)} and may be called

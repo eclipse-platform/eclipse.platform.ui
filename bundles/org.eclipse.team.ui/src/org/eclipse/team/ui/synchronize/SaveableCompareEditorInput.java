@@ -357,4 +357,8 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		return newViewer;
 	}
 
+	public boolean canRunInBackground() {
+		return true;
+	}
+
 }

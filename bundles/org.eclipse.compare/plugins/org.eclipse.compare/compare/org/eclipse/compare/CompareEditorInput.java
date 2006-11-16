@@ -952,5 +952,18 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	protected void firePropertyChange(PropertyChangeEvent event) {
 		Utilities.firePropertyChange(fListenerList, event);
 	}
+	
+	/**
+	 * Return whether this compare editor input can be run in the background.
+	 * By default, <code>false</code> is returned since traditionally inputs
+	 * were prepared in the foreground (i.e the UI was blocked when the 
+	 * {@link #run(IProgressMonitor)} method (and indirectly the 
+	 * {@link #prepareInput(IProgressMonitor)} method) was invoked. Subclasses
+	 * may override.
+	 * @return whether this compare editor input can be run in the background
+	 */
+	public boolean canRunInBackground() {
+		return false;
+	}
 }
 

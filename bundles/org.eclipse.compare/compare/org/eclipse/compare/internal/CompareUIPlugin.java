@@ -14,12 +14,14 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -28,8 +30,7 @@ import org.eclipse.jface.util.*;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -156,6 +157,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	// content type
 	private static final IContentTypeManager fgContentTypeManager= Platform.getContentTypeManager();
+
+	private static final int NO_DIFFERENCE = 10000;
 
 	/**
 	 * The plugin singleton.
@@ -365,11 +368,11 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Returns the active workkbench page or <code>null</code> if
-	 * no active workkbench page can be determined.
+	 * Returns the active workbench page or <code>null</code> if
+	 * no active workbench page can be determined.
 	 *
-	 * @return the active workkbench page or <code>null</code> if
-	 * 	no active workkbench page can be determined
+	 * @return the active workbench page or <code>null</code> if
+	 * 	no active workbench page can be determined
 	 */
 	private static IWorkbenchPage getActivePage() {
 		IWorkbenchWindow window= getActiveWorkbenchWindow();
@@ -411,30 +414,58 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param editor if not null the input is opened in this editor
 	 * @see CompareEditorInput
 	 */
-	public void openCompareEditor(CompareEditorInput input, IWorkbenchPage page, IReusableEditor editor) {
-	    
-		if (compareResultOK(input, null)) {
-			
-			if (editor != null) {	// reuse the given editor
-				editor.setInput(input);
-				return;
-			}
-			
-			if (page == null)
-				page= getActivePage();
-			if (page != null) {
-				// open new CompareEditor on page
-				try {
-					page.openEditor(input, COMPARE_EDITOR);
-				} catch (PartInitException e) {
-					MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
-				}		
-			} else {
-				MessageDialog.openError(getShell(),
-						Utilities.getString("CompareUIPlugin.openEditorError"), //$NON-NLS-1$
-						Utilities.getString("CompareUIPlugin.noActiveWorkbenchPage")); //$NON-NLS-1$
+	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
+		if (input.canRunInBackground()) {
+			Job job = new Job("Opening Compare Editor") {
+				protected IStatus run(IProgressMonitor monitor) {
+					IStatus status = prepareInput(input, monitor);
+					if (status.isOK()) {
+						internalOpenEditor(input, page, editor);
+						return Status.OK_STATUS;
+					}
+					if (status.getCode() == NO_DIFFERENCE) {
+						MessageDialog.openInformation(getShell(), Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));  //$NON-NLS-1$//$NON-NLS-2$
+						return Status.OK_STATUS;
+					}
+					return status;
+				}
+			};
+			job.setUser(true);
+			job.schedule();
+		} else {
+			if (compareResultOK(input, null)) {
+				internalOpenEditor(input, page, editor);
 			}
 		}
+	}
+
+	private void internalOpenEditor(final CompareEditorInput input,
+			final IWorkbenchPage wp, final IReusableEditor editor) {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				if (editor != null && !editor.getSite().getShell().isDisposed()) {	// reuse the given editor
+					editor.setInput(input);
+					return;
+				}
+				
+				IWorkbenchPage page = wp;
+				if (page == null)
+					page= getActivePage();
+				if (page != null) {
+					// open new CompareEditor on page
+					try {
+						page.openEditor(input, COMPARE_EDITOR);
+					} catch (PartInitException e) {
+						MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
+					}		
+				} else {
+					MessageDialog.openError(getShell(),
+							Utilities.getString("CompareUIPlugin.openEditorError"), //$NON-NLS-1$
+							Utilities.getString("CompareUIPlugin.noActiveWorkbenchPage")); //$NON-NLS-1$
+				}
+			}
+		};
+		syncExec(runnable);
 	}
 
 	/**
@@ -445,10 +476,45 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @see CompareEditorInput
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
-				
-		if (compareResultOK(input, null)) {
-			CompareDialog dialog= new CompareDialog(getShell(), input);
-			dialog.open();
+		if (input.canRunInBackground()) {
+			Job job = new Job("Opening Compare Dialog") {
+				protected IStatus run(IProgressMonitor monitor) {
+					IStatus status = prepareInput(input, monitor);
+					if (status.isOK()) {
+						internalOpenDialog(input);
+						return Status.OK_STATUS;
+					}
+					if (status.getCode() == NO_DIFFERENCE) {
+						MessageDialog.openInformation(getShell(), Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));  //$NON-NLS-1$//$NON-NLS-2$
+						return Status.OK_STATUS;
+					}
+					return status;
+				}
+			};
+			job.setUser(true);
+			job.schedule();
+		} else {
+			if (compareResultOK(input, null)) {
+				internalOpenDialog(input);
+			}
+		}
+	}
+	
+	private IStatus prepareInput(CompareEditorInput input, IProgressMonitor monitor) {
+		try {
+			input.run(monitor);
+			String message= input.getMessage();
+			if (message != null) {
+				return new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, message, null);
+			}
+			if (input.getCompareResult() == null) {
+				return new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, NO_DIFFERENCE, Utilities.getString("CompareUIPlugin.noDifferences"), null); //$NON-NLS-1$
+			}
+			return Status.OK_STATUS;
+		} catch (InterruptedException e) {
+			throw new OperationCanceledException();
+		} catch (InvocationTargetException e) {
+			return new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, Utilities.getString("CompareUIPlugin.compareFailed"), e.getTargetException()); //$NON-NLS-1$
 		}
 	}
 	
@@ -519,7 +585,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * Returns a shared image for the given type, or a generic image if none
 	 * has been registered for the given type.
 	 * <p>
-	 * Note: Images returned from this method will be automitically disposed
+	 * Note: Images returned from this method will be automatically disposed
 	 * of when this plug-in shuts down. Callers must not dispose of these
 	 * images themselves.
 	 * </p>
@@ -569,7 +635,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * for its <code>IWorkbenchAdapter.getImageDescriptor</code>, which it
 	 * uses to create an image if it does not already have one.
 	 * <p>
-	 * Note: Images returned from this method will be automitically disposed
+	 * Note: Images returned from this method will be automatically disposed
 	 * of when this plug-in shuts down. Callers must not dispose of these
 	 * images themselves.
 	 * </p>
@@ -694,7 +760,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		}
 		
 		// we didn't found any viewer so far.
-		// now we try to find a structurecreator for the generic StructureDiffViewer
+		// now we try to find a structure creator for the generic StructureDiffViewer
 		
 		StructureCreatorDescriptor scc= null;
 		initializeRegistries();
@@ -879,7 +945,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	}
 	
 	/*
-	 * Returns true if the given types are homogenous.
+	 * Returns true if the given types are homogeneous.
 	 */
 	private static boolean isHomogenous(String[] types) {
 		switch (types.length) {
@@ -1016,7 +1082,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return s;
 	}
 	
-	//---- alias mgmt
+	//---- alias management
 	
 	private String getStructureViewerAlias(String type) {
 		return (String) getStructureViewerAliases().get(type);
@@ -1096,6 +1162,24 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			ps.addPropertyChangeListener(fPropertyChangeListener);
 	    }
 	    return fFilter.filter(name, isFolder, isArchive);
+	}
+	
+	private void internalOpenDialog(final CompareEditorInput input) {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				CompareDialog dialog= new CompareDialog(getShell(), input);
+				dialog.open();
+			}
+		};
+		syncExec(runnable);
+	}
+
+	private void syncExec(Runnable runnable) {
+		if (Display.getCurrent() == null) {
+			Display.getDefault().syncExec(runnable);
+		} else {
+			runnable.run();
+		}
 	}
 
 	//---- more utilities

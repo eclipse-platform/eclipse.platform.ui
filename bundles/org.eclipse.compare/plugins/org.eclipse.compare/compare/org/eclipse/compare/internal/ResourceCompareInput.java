@@ -428,5 +428,9 @@ class ResourceCompareInput extends CompareEditorInput {
 			return s.toUpperCase();
 		return s;
 	}
+	
+	public boolean canRunInBackground() {
+		return true;
+	}
 }
 

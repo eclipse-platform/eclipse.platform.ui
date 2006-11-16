@@ -233,4 +233,11 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	public SyncInfo getSyncInfo() {
 		return node.getSyncInfo();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#canRunInBackground()
+	 */
+	public boolean canRunInBackground() {
+		return true;
+	}
 }
