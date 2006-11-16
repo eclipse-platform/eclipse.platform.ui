@@ -64,7 +64,7 @@ As of 3.2 the types can also define a migration delegate that can be used to set
             <annotation>
                <documentation>
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
-Launch configuration instances of this type will delegate to instances of this class to perform launching. Launch delegates can also be contributed for a launch configuration type via the &lt;code&gt;launchDelegates&lt;/code&gt; extension.
+Launch configuration instances of this type will delegate to instances of this class to perform launching. Launch delegates can also be contributed for a launch configuration type via the &lt;code&gt;launchDelegates&lt;/code&gt; extension. The launch delegate specified by a &lt;code&gt;launchConfigurationType&lt;/code&gt; extension is responsible for launching in all modes specified by the same extension. To extend the launching capabilities of an existing configuration type, or when different delegates are required for different launch mode combinations, the &lt;code&gt;launchDelegates&lt;/code&gt; extension should be used to contribute a launch delegate.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
