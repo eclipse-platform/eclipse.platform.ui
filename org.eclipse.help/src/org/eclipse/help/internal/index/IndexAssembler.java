@@ -192,7 +192,6 @@ public class IndexAssembler {
 						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
 					}
 				}
-				return HANDLED_CONTINUE;
 			}
 			return UNHANDLED;
 		}
@@ -221,6 +220,8 @@ public class IndexAssembler {
 					if (parent != null) {
 						parent.removeChild(node);
 					}
+					String msg = "Unable to look up label for help keyword index topic \"" + href + "\" with missing \"" + Topic.ATTRIBUTE_LABEL + "\" attribute (topic does not exist in table of contents; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					HelpPlugin.logError(msg);
 				}
 			}
 			return UNHANDLED;
