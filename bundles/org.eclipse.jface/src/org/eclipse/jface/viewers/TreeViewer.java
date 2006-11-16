@@ -286,13 +286,6 @@ public class TreeViewer extends AbstractTreeViewer {
 
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getItem(int, int)
-	 */
-	protected Item getItem(int x, int y) {
-		return getTree().getItem(getTree().toControl(new Point(x, y)));
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
 	 */
 	protected Item getItemAt(Point p) {

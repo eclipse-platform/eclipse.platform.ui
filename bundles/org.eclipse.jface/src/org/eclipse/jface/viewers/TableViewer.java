@@ -1361,13 +1361,6 @@ public class TableViewer extends ColumnViewer {
 		return getViewerRowFromItem(item);
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getItem(int, int)
-	 */
-	protected Item getItem(int x, int y) {
-		return table.getItem(table.toControl(new Point(x, y)));
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)

@@ -327,14 +327,7 @@ public class TableTreeViewer extends AbstractTreeViewer {
         return ((TableTreeItem) item).getExpanded();
     }
 
-    /* (non-Javadoc)
-     * Method declared on StructuredViewer.
-     */
-    protected Item getItem(int x, int y) {
-        // XXX: Workaround for 1GBCSHG: SWT:WIN2000 - TableTree should have getItem(Point point)
-        return getTableTree().getTable().getItem(
-                getTableTree().toControl(new Point(x, y)));
-    }
+
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
