@@ -11,8 +11,6 @@
 package org.eclipse.ui.ide;
 
 import java.net.URI;
-
-import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -36,7 +34,7 @@ public class FileStoreEditorInput implements IURIEditorInput {
 	 *
 	 * @since 3.3
 	 */
-	private class WorkbenchAdapter implements IWorkbenchAdapter {
+	private static class WorkbenchAdapter implements IWorkbenchAdapter {
 		/*
 		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
 		 */
@@ -55,7 +53,7 @@ public class FileStoreEditorInput implements IURIEditorInput {
 		 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
 		 */
 		public String getLabel(Object o) {
-			return ((FileStoreEditorInput)o).getName();
+			return ((FileStoreEditorInput) o).getName();
 		}
 
 		/*
@@ -66,23 +64,23 @@ public class FileStoreEditorInput implements IURIEditorInput {
 		}
 	}
 
-	private IFileStore fFileStore;
-	private WorkbenchAdapter fWorkbenchAdapter= new WorkbenchAdapter();
-	
+	private IFileStore fileStore;
+	private WorkbenchAdapter workbenchAdapter = new WorkbenchAdapter();
+
 	/**
 	 * @param fileStore
 	 */
 	public FileStoreEditorInput(IFileStore fileStore) {
 		Assert.isNotNull(fileStore);
-		Assert.isTrue(EFS.SCHEME_FILE.equals(fileStore.getFileSystem().getScheme()));
-		fFileStore = fileStore;
-		fWorkbenchAdapter = new WorkbenchAdapter();
+		this.fileStore = fileStore;
+		workbenchAdapter = new WorkbenchAdapter();
 	}
+
 	/*
 	 * @see org.eclipse.ui.IEditorInput#exists()
 	 */
 	public boolean exists() {
-		return fFileStore.fetchInfo().exists();
+		return fileStore.fetchInfo().exists();
 	}
 
 	/*
@@ -96,7 +94,7 @@ public class FileStoreEditorInput implements IURIEditorInput {
 	 * @see org.eclipse.ui.IEditorInput#getName()
 	 */
 	public String getName() {
-		return fFileStore.getName();
+		return fileStore.getName();
 	}
 
 	/*
@@ -110,7 +108,7 @@ public class FileStoreEditorInput implements IURIEditorInput {
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return fFileStore.toString();
+		return fileStore.toString();
 	}
 
 	/*
@@ -118,7 +116,7 @@ public class FileStoreEditorInput implements IURIEditorInput {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (IWorkbenchAdapter.class.equals(adapter))
-			return fWorkbenchAdapter;
+			return workbenchAdapter;
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
@@ -130,8 +128,8 @@ public class FileStoreEditorInput implements IURIEditorInput {
 			return true;
 
 		if (o instanceof FileStoreEditorInput) {
-			FileStoreEditorInput input= (FileStoreEditorInput) o;
-			return fFileStore.equals(input.fFileStore);
+			FileStoreEditorInput input = (FileStoreEditorInput) o;
+			return fileStore.equals(input.fileStore);
 		}
 
 		return false;
@@ -141,15 +139,14 @@ public class FileStoreEditorInput implements IURIEditorInput {
 	 * @see java.lang.Object#hashCode()
 	 */
 	public int hashCode() {
-		return fFileStore.hashCode();
+		return fileStore.hashCode();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IURIEditorInput#getURI()
 	 */
 	public URI getURI() {
-		return fFileStore.toURI();
+		return fileStore.toURI();
 	}
-
 
 }
