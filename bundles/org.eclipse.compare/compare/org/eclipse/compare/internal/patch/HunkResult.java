@@ -12,10 +12,11 @@ package org.eclipse.compare.internal.patch;
 
 import java.util.List;
 
+import org.eclipse.compare.patch.AbstractHunk;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public class HunkResult {
+public class HunkResult extends AbstractHunk {
 
 	private static final boolean DEBUG= false;
 	
@@ -218,7 +219,7 @@ public class HunkResult {
 		fMatches = matches;
 	}
 
-	public int getAdjustedStartPosition() {
+	public int getStartPosition() {
 		return fHunk.getStart(getPatcher().isReversed()) + fShift;
 	}
 }

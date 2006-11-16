@@ -15,12 +15,13 @@ import java.io.*;
 import org.eclipse.compare.IEncodedStreamContentAccessor;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.internal.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.compare.patch.IHunk;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
-public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAccessor, IHunkDescriptor {
+public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAccessor, IAdaptable {
 
 	private final HunkResult fHunkResult;
 	private final boolean fIsAfterState;
@@ -96,8 +97,10 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 		return fHunkResult;
 	}
 
-	public int getStartPosition() {
-		return fHunkResult.getAdjustedStartPosition();
+	public Object getAdapter(Class adapter) {
+		if (adapter == IHunk.class)
+			return fHunkResult;
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 
 }

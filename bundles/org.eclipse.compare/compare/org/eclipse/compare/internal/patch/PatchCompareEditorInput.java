@@ -349,4 +349,11 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 	}
 	
 	protected abstract void fillContextMenu(IMenuManager manager);
+	
+	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input,
+			Composite parent) {
+		if (Utilities.isHunk(input))
+			return null;
+		return super.findStructureViewer(oldViewer, input, parent);
+	}
 }

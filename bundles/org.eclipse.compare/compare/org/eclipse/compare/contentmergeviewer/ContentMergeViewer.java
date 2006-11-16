@@ -16,7 +16,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
-import org.eclipse.compare.internal.patch.IHunkDescriptor;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
@@ -685,7 +684,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		if (content != null) {
 			Object ancestor= content.getAncestorContent(input);
 			boolean oldFlag = fIsThreeWay;
-			if (isHunk(input)) {
+			if (Utilities.isHunk(input)) {
 				fIsThreeWay = true;
 			} else if (input instanceof ICompareInput)	
 				fIsThreeWay= (((ICompareInput)input).getKind() & Differencer.DIRECTION_MASK) != 0;
@@ -1210,23 +1209,5 @@ public abstract class ContentMergeViewer extends ContentViewer
 			}
 		}
 		refresh();
-	}
-	
-	/**
-	 * Return whether either the left or right sides of the given input
-	 * represents a hunk. A hunk is a portion of a file.
-	 * @param input the compare input
-	 * @return whether the left or right side of the input represents a hunk
-	 */
-	protected boolean isHunk(Object input) {
-		if (input != null && input instanceof DiffNode){
-			ITypedElement element = ((DiffNode) input).getRight();
-			if (element instanceof IHunkDescriptor)
-				return true;
-			element = ((DiffNode) input).getLeft();
-			if (element instanceof IHunkDescriptor)
-				return true;
-		}
-		return false; 
 	}
 }

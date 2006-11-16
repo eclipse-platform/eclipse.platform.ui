@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.compare.patch.IHunk;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
@@ -728,5 +730,23 @@ public class Utilities {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Return whether either the left or right sides of the given input
+	 * represents a hunk. A hunk is a portion of a file.
+	 * @param input the compare input
+	 * @return whether the left or right side of the input represents a hunk
+	 */
+	public static boolean isHunk(Object input) {
+		if (input != null && input instanceof DiffNode){
+			Object element = Utilities.getAdapter(((DiffNode) input).getRight(), IHunk.class);
+			if (element instanceof IHunk)
+				return true;
+			element = Utilities.getAdapter(((DiffNode) input).getLeft(), IHunk.class);
+			if (element instanceof IHunk)
+				return true;
+		}
+		return false; 
 	}
 }
