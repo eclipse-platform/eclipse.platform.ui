@@ -300,9 +300,9 @@ public class SWTUtil {
 	
 	/**
 	 * Creates a composite that uses the parents' font and has a gridlayout
-	 * @param parent thep arent to add the composite to
+	 * @param parent the parent to add the composite to
 	 * @param columns the number of columns the composite should have
-	 * @param hspan the mhorizontal span the new composite should take up in the parent
+	 * @param hspan the horizontal span the new composite should take up in the parent
 	 * @param fill the fill style of the composite {@link GridData}
 	 * @return a new composite with a grid layout
 	 * 

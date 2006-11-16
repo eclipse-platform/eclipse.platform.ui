@@ -216,7 +216,10 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
      */
     private void createOutputCaptureComponent(Composite parent) {
         Group group = SWTUtil.createGroup(parent, LaunchConfigurationsMessages.CommonTab_4, 5, 2, GridData.FILL_HORIZONTAL);
-        Composite comp = SWTUtil.createComposite(group, parent.getFont(), 5, 5, GridData.FILL_BOTH, 0, 0);
+        Composite comp = SWTUtil.createComposite(group, 5, 5, GridData.FILL_BOTH);
+        GridLayout ld = (GridLayout)comp.getLayout();
+        ld.marginWidth = 1;
+        ld.marginHeight = 1;
         fConsoleOutput = createCheckButton(comp, LaunchConfigurationsMessages.CommonTab_5); 
         GridData gd = new GridData(SWT.BEGINNING, SWT.NORMAL, true, false);
         gd.horizontalSpan = 5;
@@ -238,9 +241,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
         fFileText = SWTUtil.createSingleText(comp, 4);
         fFileText.addModifyListener(fBasicModifyListener);
         
-        SWTUtil.createLabel(comp, EMPTY_STRING, 2);
-        
-        fWorkspaceBrowse = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_12, null); 
+        Composite bcomp = SWTUtil.createComposite(comp, 3, 5, GridData.HORIZONTAL_ALIGN_END);
+        ld = (GridLayout)bcomp.getLayout();
+        ld.marginHeight = 1;
+        ld.marginWidth = 0;
+        fWorkspaceBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_12, null); 
         fWorkspaceBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
@@ -256,7 +261,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        fFileBrowse = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_7, null);
+        fFileBrowse = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_7, null);
         fFileBrowse.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 String filePath = fFileText.getText();
@@ -267,7 +272,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 }
             }
         });
-        fVariables = createPushButton(comp, LaunchConfigurationsMessages.CommonTab_9, null); 
+        fVariables = createPushButton(bcomp, LaunchConfigurationsMessages.CommonTab_9, null); 
         fVariables.addSelectionListener(new SelectionListener() {
             public void widgetSelected(SelectionEvent e) {
                 StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
