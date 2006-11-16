@@ -15,14 +15,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.IModelProviderDescriptor;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
@@ -33,7 +32,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -334,20 +332,19 @@ public final class IDE {
 	 * 
 	 * @since 3.3
 	 */
-	public static IEditorPart openEditor(IWorkbenchPage page,
-			URI uri, String editorId, boolean activate)
-			throws PartInitException {
+	public static IEditorPart openEditor(IWorkbenchPage page, URI uri,
+			String editorId, boolean activate) throws PartInitException {
 		// sanity checks
 		if (page == null) {
 			throw new IllegalArgumentException();
 		}
-		
+
 		IFileStore fileStore;
 		try {
 			fileStore = EFS.getStore(uri);
 		} catch (CoreException e) {
 			throw new PartInitException(
-					IDEWorkbenchMessages.IDE_coreExceptionFileStore,e);
+					IDEWorkbenchMessages.IDE_coreExceptionFileStore, e);
 		}
 
 		IEditorInput input = getEditorInput(fileStore);
@@ -383,9 +380,8 @@ public final class IDE {
 	 *         <code>null</code> if not
 	 */
 	private static IFile getWorkspaceFile(IFileStore fileStore) {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IFile[] files = workspace.getRoot().findFilesForLocation(
-				new Path(fileStore.toURI().getPath()));
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IFile[] files = root.findFilesForLocationURI(fileStore.toURI());
 		files = filterNonExistentFiles(files);
 		if (files == null || files.length == 0)
 			return null;
