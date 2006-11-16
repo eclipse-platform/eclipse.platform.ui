@@ -96,7 +96,7 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
    <element name="associatedDelegate">
       <annotation>
          <documentation>
-            This attribute is used to map a contrinbuted tab to one or more launch delegates. This allows tabs to be filtered from the launch dialog based on what launch delegate/tooling is selected as the current default.
+            This attribute is used to map a contrinbuted tab to one or more launch delegates. This allows tabs to be filtered from the launch dialog based on what launch delegate is selected as the current default. For example, if two plug-ins contribute launch delegates and tabs for the same launch mode, only one set of tabs will be displayed to the user based on the enabled delegate chosen by the user.
          </documentation>
       </annotation>
       <complexType>
