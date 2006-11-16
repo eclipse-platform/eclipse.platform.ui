@@ -43,6 +43,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.SizeCache;
 import org.eclipse.ui.internal.forms.Messages;
 
@@ -380,20 +381,21 @@ public class FormHeading extends Canvas {
 				height = Math.max(height, iheight);
 			}
 			if (text != null) {
-				GC gc = new GC(composite);
-				gc.setFont(getFont());
-
+				Point wsize;
 				if (wHint != SWT.DEFAULT) {
-					int twHint = wHint - width;
-					Point wsize = FormUtil.computeWrapSize(gc, text, twHint);
-					width += wsize.x;
-					height = Math.max(wsize.y, height);
-				} else {
-					Point extent = gc.textExtent(text);
-					width += extent.x;
-					height = Math.max(extent.y, height);
+					int twHint = wHint -width;
+					wsize = titleCache.computeSize(twHint, SWT.DEFAULT);
+					Point minwsize = titleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+					// if the 'natural' width is smaller than 
+					// the hint, use the natural width
+					if (minwsize.x < wsize.x)
+						wsize = minwsize;
 				}
-				gc.dispose();
+				else {
+					wsize = titleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				}
+				width += wsize.x;
+				height = Math.max(wsize.y, height);
 			}
 			int secondRowHeight = 0;
 			if (headClient != null) {
@@ -470,10 +472,12 @@ public class FormHeading extends Canvas {
 			Point msize = null;
 			Point bsize = null;
 			int mx = 0;
-			if (messageArea != null && messageArea.isMinimized()) {
+			if (messageArea != null) {
 				msize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				iwidth = Math.max(msize.x, iwidth);
-				mx = tx;
+				if (messageArea.isMinimized()) {
+					iwidth = Math.max(msize.x, iwidth);
+					mx = tx;
+				}
 			}
 			if (busyLabel != null) {
 				bsize = busyLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
@@ -513,7 +517,7 @@ public class FormHeading extends Canvas {
 			if (headClient != null && clientRect != null)
 				clientCache.setBounds(clientRect);
 
-			if (msize != null) {
+			if (msize != null && messageArea.isMinimized()) {
 				messageArea.setBounds(mx, titleRect.y + titleRect.height / 2
 						- msize.y / 2, msize.x, msize.y);
 			}
@@ -522,14 +526,21 @@ public class FormHeading extends Canvas {
 						- bsize.y / 2, bsize.x, bsize.y);
 			}
 			if (headClient != null) {
+				int secondRowSize = 0;
+				height += TITLE_GAP;
 				if (tbsize != null) {
-					height += TITLE_GAP;
 					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
 							- tbsize.x, TITLE_VMARGIN + height, tbsize.x,
 							tbsize.y);
-					height += tbsize.y;
-					// height += TITLE_GAP;
+					secondRowSize = tbsize.y;
 				}
+				if (msize!=null) {
+					if (tbsize==null)
+						secondRowSize = msize.y;
+					else
+						secondRowSize = Math.max(tbsize.y, msize.y);
+				}
+				height += secondRowSize;
 			}
 			if (height > 0)
 				height += TITLE_VMARGIN * 2;
@@ -539,11 +550,9 @@ public class FormHeading extends Canvas {
 					&& !messageArea.isMinimized()
 					&& (messageArea.isAnimationStart() || !messageArea
 							.isInTransition()) && messageArea.isVisible()) {
-				Point masize = messageArea
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 				int may = messageArea.isAnimationStart()
 						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
-						: height - 1 - masize.y;
+						: height - 1 - msize.y;
 				if (isSeparatorVisible())
 					may -= SEPARATOR_HEIGHT;
 				if (headClient != null)
@@ -551,7 +560,7 @@ public class FormHeading extends Canvas {
 				int mawidth = carea.width - TITLE_HMARGIN - TITLE_HMARGIN;
 				if (tbsize != null)
 					mawidth -= tbsize.x + TITLE_GAP;
-				messageArea.setBounds(TITLE_HMARGIN, may, mawidth, masize.y);
+				messageArea.setBounds(TITLE_HMARGIN, may, mawidth, msize.y);
 				messageArea.setAnimationStart(false);
 			}
 		}
@@ -1015,17 +1024,21 @@ public class FormHeading extends Canvas {
 			if (messageArea != null)
 				setMessageAreaVisible(false);
 		} else {
-			if (messageArea == null) {
-				messageArea = new MessageArea(this, SWT.NULL);
-				messageArea.setBackground(baseBg);
-				messageArea
-						.setForeground(separatorColor != null ? separatorColor
-								: getForeground());
-			}
+			if (messageArea==null)
+				createMessageArea();
 			messageArea.setText(newMessage);
 			messageArea.setImage(newImage);
 			setMessageAreaVisible(true);
 		}
+	}
+	
+	private void createMessageArea() {
+		messageArea = new MessageArea(this, SWT.NULL);
+		messageArea.setBackground(baseBg);
+		messageArea
+				.setForeground(separatorColor != null ? separatorColor
+						: getForeground());
+		messageArea.setState(MessageArea.CLOSED);
 	}
 
 	private void setMessageAreaVisible(boolean visible) {
@@ -1076,7 +1089,7 @@ public class FormHeading extends Canvas {
 								else {
 									result[0] = true;
 									messageArea.setState(MessageArea.OPEN);
-									layout(true);
+									reflow();
 								}
 							} else {
 								// closing
@@ -1086,7 +1099,7 @@ public class FormHeading extends Canvas {
 								else {
 									result[0] = true;
 									messageArea.setState(MessageArea.CLOSED);
-									layout(true);
+									reflow();
 								}
 							}
 						}
@@ -1137,7 +1150,7 @@ public class FormHeading extends Canvas {
 		if (busy == busyLabel.isBusy())
 			return;
 		busyLabel.setBusy(busy);
-		layout();
+		reflow();
 	}
 
 	public Control getHeadClient() {
@@ -1147,6 +1160,13 @@ public class FormHeading extends Canvas {
 	public void setHeadClient(Control headClient) {
 		Assert.isTrue(headClient.getParent() == this);
 		this.headClient = headClient;
+		if (messageArea==null)
+			createMessageArea();
 		layout();
+		reflow();
+	}
+	private void reflow() {
+		if (getParent().getParent() instanceof ScrolledForm)
+			((ScrolledForm)getParent().getParent()).reflow(true);
 	}
 }
