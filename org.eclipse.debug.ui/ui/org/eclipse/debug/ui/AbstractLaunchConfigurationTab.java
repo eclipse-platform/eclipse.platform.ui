@@ -247,7 +247,9 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 
 	/**
-	 * Create some empty space.
+	 * Creates vertical space in the parent <code>Composite</code>
+	 * @param comp the parent to add the vertical space to
+	 * @param colSpan the number of line of vertical space to add
 	 */
 	protected void createVerticalSpacer(Composite comp, int colSpan) {
 		Label label = new Label(comp, SWT.NONE);

@@ -212,16 +212,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	}
 	
 	/**
-	 * Create some empty space 
-	 */
-	protected void createVerticalSpacer(Composite comp, int colSpan) {
-		Label label = new Label(comp, SWT.NONE);
-		GridData gd = new GridData();
-		gd.horizontalSpan = colSpan;
-		label.setLayoutData(gd);
-	}
-	
-	/**
 	 * Adds the given action to the action collection in this tab
 	 */
 	protected void addAction(SourceContainerAction action) {
@@ -258,7 +248,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			if (type == null) {
 				type = configuration.getType().getSourceLocatorId();
 			}
-		}catch(CoreException e){
+		} catch(CoreException e){
 			setErrorMessage(e.getMessage());
 			return;
 		}	
@@ -296,7 +286,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			setErrorMessage(e.getMessage());
 			return;
 		}	
-		
 		initializeFrom(fLocator);
 		if (migration && configuration.isWorkingCopy()) {
 			// ensure perform apply actual updates the config
@@ -310,8 +299,9 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * AbstractSourceLookupDirector
 	 */
 	public void initializeFrom(ISourceLookupDirector locator) {
-		if(fConfig == null)
+		if(fConfig == null) {
 			fConfig = locator.getLaunchConfiguration();
+		}
 		fPathViewer.setEntries(locator.getSourceContainers());		
 		fDuplicatesButton.setSelection(locator.isFindDuplicates());
 		fLocator = locator;
@@ -338,19 +328,22 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 				configuration.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 				return;
 			}
-			ILaunchConfigurationWorkingCopy workingCopy = null;			
+			ILaunchConfigurationWorkingCopy workingCopy = configuration;			
 			if(configuration == null) {
-				try{
-					workingCopy = fLocator.getLaunchConfiguration().getWorkingCopy();
-				}catch(CoreException e){ 
+				try {
+					ILaunchConfiguration config = fLocator.getLaunchConfiguration();
+					if(config != null) {
+						workingCopy = config.getWorkingCopy();
+					}
+				}
+				catch(CoreException e) { 
 					DebugUIPlugin.log(e);
 					setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
 					return;
 				}
 			}
-			else workingCopy = configuration;	
 			if(workingCopy == null) {
-				DebugUIPlugin.logErrorMessage("Error occurred - unable to apply source lookup path changes.");  //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage("Error occurred - a working copy could not be acquired, therefore source lookup path changes will not be applied.");  //$NON-NLS-1$
 				return;
 			}
 			//set new values in director so memento returned is correct
@@ -358,7 +351,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 			fLocator.setFindDuplicates(fDuplicatesButton.getSelection());
 						
 			//writing to the file will cause a change event and the listeners will be updated
-			try{			
+			try {			
 				if (isDefault(workingCopy)) {
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
@@ -366,10 +359,12 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
 				}
-				if(configuration == null) 
+				if(configuration == null) {
 					workingCopy.doSave(); 
+				}
 				setDirty(false);
-			}catch(CoreException e){
+			}
+			catch(CoreException e) {
 				DebugUIPlugin.log(e);
 				setErrorMessage(SourceLookupUIMessages.sourceLookupPanel_1); 
 			}
@@ -377,13 +372,14 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		}			
 	}
 	
+	/**
+	 * determines of the current source lokoup path is the default path
+	 * @param configuration
+	 * @return
+	 */
 	protected boolean isDefault(ILaunchConfiguration configuration) {
 		ISourceContainer[] current = getEntries();
-		return !isFindDuplicates() && current.length == 1 && current[0] instanceof DefaultSourceContainer;
-	}
-
-	private boolean isFindDuplicates() {
-		return fDuplicatesButton.getSelection();
+		return !fDuplicatesButton.getSelection() && current.length == 1 && current[0] instanceof DefaultSourceContainer;
 	}
 
 	/**
@@ -399,7 +395,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 		super.setDirty(dirty);
 		
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()

@@ -16,8 +16,16 @@ import org.eclipse.osgi.util.NLS;
 public class SourceLookupUIMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages";//$NON-NLS-1$
 
+	public static String CommonSourceNotFoundEditor_0;
+
+	public static String CommonSourceNotFoundEditor_1;
+
 	// Source search launch configuration tab/errors/dialogs
 	public static String EditContainerAction_0;
+
+	public static String SourceLookupDialog_0;
+
+	public static String SourceLookupDialog_1;
 	public static String sourceTab_lookupLabel;
 	public static String sourceTab_searchDuplicateLabel;
 	public static String sourceTab_upButton;

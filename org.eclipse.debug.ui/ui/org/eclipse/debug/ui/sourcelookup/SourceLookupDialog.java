@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.sourcelookup;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -85,6 +88,10 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		fPanel.createControl(composite);
 		fPanel.initializeFrom(fDirector);
 		Dialog.applyDialogFont(composite);
+		ILaunchConfiguration config = fDirector.getLaunchConfiguration();
+		if(config != null && config.isReadOnly()) {
+			setErrorMessage(SourceLookupUIMessages.SourceLookupDialog_0+config.getName()+SourceLookupUIMessages.SourceLookupDialog_1);
+		}
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite,  IDebugHelpContextIds.EDIT_SOURCELOOKUP_DIALOG);
 		
 		return composite;
@@ -94,7 +101,15 @@ public class SourceLookupDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
-		fPanel.performApply(null);
+		ILaunchConfiguration config = fDirector.getLaunchConfiguration();
+		ILaunchConfigurationWorkingCopy copy = null;
+		if(config != null) {
+			try {
+				copy = config.getWorkingCopy();
+			} 
+			catch (CoreException e) {DebugUIPlugin.log(e);}
+		}
+		fPanel.performApply(copy);
 		super.okPressed();
 	}
 	

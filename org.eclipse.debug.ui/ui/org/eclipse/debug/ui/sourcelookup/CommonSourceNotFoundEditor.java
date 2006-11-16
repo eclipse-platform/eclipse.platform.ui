@@ -24,6 +24,8 @@ import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupManager;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -163,9 +165,15 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 		ISourceLocator locator = null;		
 		ILaunch launch = null;		
 		IAdaptable selection = DebugUITools.getDebugContext();
-		
-		if(selection == null) return;
-		
+		if(selection == null) {
+			new MessageDialog(getSite().getShell(), 
+					SourceLookupUIMessages.CommonSourceNotFoundEditor_0,	
+					null, 
+					SourceLookupUIMessages.CommonSourceNotFoundEditor_1,
+					MessageDialog.INFORMATION,
+					new String[] {IDialogConstants.OK_LABEL}, 0).open();
+			return;
+		}
 		if (selection.getAdapter(ILaunch.class) != null ) {
 			launch = (ILaunch) selection.getAdapter(ILaunch.class);
 			locator = launch.getSourceLocator();			
@@ -174,15 +182,14 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 			launch = ((IDebugElement)selection.getAdapter(IDebugElement.class)).getLaunch();
 			locator = launch.getSourceLocator();					
 		}
-		else return;  //should not occur
-		if (locator == null || !(locator instanceof AbstractSourceLookupDirector))
+		else {
+			return;  //should not occur
+		}
+		if (locator == null || !(locator instanceof AbstractSourceLookupDirector)) {
 			return; 
-		
-		final SourceLookupDialog dialog =
-			new SourceLookupDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);
-		
-		int result = dialog.open();		
-		if(result == Window.OK) {
+		}
+		final SourceLookupDialog dialog = new SourceLookupDialog(DebugUIPlugin.getShell(),(AbstractSourceLookupDirector) locator);		
+		if(dialog.open() == Window.OK) {
 			IWorkbenchPage page = getEditorSite().getPage();
 			SourceLookupManager.getDefault().displaySource(getArtifact(), page, true);
 			closeEditor();
