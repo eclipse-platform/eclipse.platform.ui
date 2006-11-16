@@ -66,6 +66,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 				public void saveChanges(IProgressMonitor monitor) throws CoreException {
 					super.saveChanges(monitor);
 					((CVSHistoryPage)getHistoryPage()).saveChanges(monitor);
+					setDirty(false);
 				}
 			};
 			CompareUI.openCompareDialog(input);

@@ -762,22 +762,17 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @param dirty the dirty state for this compare input
 	 */
 	public void setDirty(boolean dirty) {
-
-		boolean confirmSave= true;
-		Object o= fCompareConfiguration.getProperty(CompareEditor.CONFIRM_SAVE_PROPERTY);
-		if (o instanceof Boolean)
-			confirmSave= ((Boolean)o).booleanValue();
-
-		if (!confirmSave) {
-			fDirty= dirty;
-			if (!fDirty)
-				fDirtyViewers.clear();
-		}
+		boolean oldDirty = fDirty || fDirtyViewers.size() > 0;
+		fDirty= dirty;
+		if (!fDirty)
+			fDirtyViewers.clear();
+		if (oldDirty != dirty)
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(dirty));
 	}
 	
 	private void setDirty(Object source, boolean dirty) {
 		Assert.isNotNull(source);
-		boolean oldDirty= fDirtyViewers.size() > 0;
+		boolean oldDirty= fDirty || fDirtyViewers.size() > 0;
 		if (dirty)
 			fDirtyViewers.add(source);
 		else

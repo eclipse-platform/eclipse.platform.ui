@@ -13,7 +13,6 @@ package org.eclipse.team.ui;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
@@ -47,8 +46,6 @@ public abstract class PageCompareEditorInput extends CompareEditorInput implemen
 	 */
 	protected PageCompareEditorInput(CompareConfiguration configuration) {
 		super(configuration);
-		// TODO: Need to acccess compare internals
-		configuration.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 	}
 	
 	/* (non-Javadoc)
