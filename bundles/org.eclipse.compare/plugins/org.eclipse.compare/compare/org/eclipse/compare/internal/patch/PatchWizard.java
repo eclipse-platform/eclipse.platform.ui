@@ -240,4 +240,12 @@ public class PatchWizard extends Wizard {
 		return fConfiguration;
 	}
 	
+	public boolean canFinish() {
+		IWizardPage currentPage = fDialog.getCurrentPage();
+		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
+			return currentPage.isPageComplete();
+		}
+		return super.canFinish();
+	}
+	
 }
