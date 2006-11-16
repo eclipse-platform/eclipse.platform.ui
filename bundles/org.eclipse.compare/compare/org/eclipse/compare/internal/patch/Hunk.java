@@ -194,7 +194,7 @@ public class Hunk {
 		return true;
 	}
 	
-	private int getStart(boolean reverse) {
+	int getStart(boolean reverse) {
 		if (reverse) {
 			return fNewStart;
 		}

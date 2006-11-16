@@ -33,12 +33,12 @@ public class HunkDiffNode extends PatchDiffNode {
 	}
 
 	private static ITypedElement getAncestorElement(HunkResult result, boolean fullContext) {
-		if (!fullContext || !result.isOK()) {
+		if (!fullContext) {
 			// Don't provide an ancestor if the hunk didn't match or we're not doing fullContext
 			return null;
 		}
 		// Make the ancestor the same as the left so we have an incoming change
-		return getLeftElement(result, fullContext);
+		return new HunkTypedElement(result, false /* before state */, result.isOK());
 	}
 
 	private HunkDiffNode(HunkResult result, PatchFileDiffNode parent, int kind, ITypedElement ancestor, ITypedElement left, ITypedElement right) {

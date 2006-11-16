@@ -7,5 +7,10 @@ package org.eclipse.compare.internal.patch;
  *
  */
 public interface IHunkDescriptor {
-	//stay tuned!
+	
+	/**
+	 * Return the start position of the hunk in the target file.
+	 * @return the start position of the hunk in the target file.
+	 */
+	int getStartPosition();
 }

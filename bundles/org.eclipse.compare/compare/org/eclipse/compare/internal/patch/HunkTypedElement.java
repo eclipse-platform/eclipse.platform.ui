@@ -96,4 +96,8 @@ public class HunkTypedElement implements ITypedElement, IEncodedStreamContentAcc
 		return fHunkResult;
 	}
 
+	public int getStartPosition() {
+		return fHunkResult.getAdjustedStartPosition();
+	}
+
 }

@@ -2241,7 +2241,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		update(false);
 		
-		if (!fHasErrors && !emptyInput && !fComposite.isDisposed() && !isPatchHunk()) {
+		if (!fHasErrors && !emptyInput && !fComposite.isDisposed()) {
 			if (isRefreshing()) {
 				fLeftContributor.updateSelection(fLeft, !fSynchronizedScrolling);
 				fRightContributor.updateSelection(fRight, !fSynchronizedScrolling);
@@ -2250,17 +2250,24 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					synchronizedScrollVertical(fSynchronziedScrollPosition);
 				}
 			} else {
-				Diff selectDiff= null;
-				if (FIX_47640) {
-					if (leftRange != null)
-					    selectDiff= findDiff(LEFT_CONTRIBUTOR, leftRange);
-					else if (rightRange != null)
-					    selectDiff= findDiff(RIGHT_CONTRIBUTOR, rightRange);
+				if (isPatchHunk()) {
+					if (right instanceof IHunkDescriptor)
+						fLeft.setTopIndex(getHunkStart());
+					else
+						fRight.setTopIndex(getHunkStart());
+				} else {
+					Diff selectDiff= null;
+					if (FIX_47640) {
+						if (leftRange != null)
+						    selectDiff= findDiff(LEFT_CONTRIBUTOR, leftRange);
+						else if (rightRange != null)
+						    selectDiff= findDiff(RIGHT_CONTRIBUTOR, rightRange);
+					}
+					if (selectDiff != null)
+						setCurrentDiff(selectDiff, true);
+					else
+						selectFirstDiff(true);
 				}
-				if (selectDiff != null)
-					setCurrentDiff(selectDiff, true);
-				else
-					selectFirstDiff(true);
 			}
 		}
 		
@@ -4888,12 +4895,23 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 
 	private boolean isPatchHunk() {
+		return isHunk(getInput());
+	}
+	
+	/**
+	 * Return the provided start position of the hunk in the target file.
+	 * @return the provided start position of the hunk in the target file
+	 */
+	private int getHunkStart() {
 		Object input = getInput();
 		if (input != null && input instanceof DiffNode){
 			ITypedElement element = ((DiffNode) input).getRight();
 			if (element instanceof IHunkDescriptor)
-				return true;
+				return ((IHunkDescriptor)element).getStartPosition();
+			element = ((DiffNode) input).getLeft();
+			if (element instanceof IHunkDescriptor)
+				return ((IHunkDescriptor)element).getStartPosition();
 		}
-		return false; 
+		return 0; 
 	}
 }

@@ -217,4 +217,8 @@ public class HunkResult {
 	public void setMatches(boolean matches) {
 		fMatches = matches;
 	}
+
+	public int getAdjustedStartPosition() {
+		return fHunk.getStart(getPatcher().isReversed()) + fShift;
+	}
 }
