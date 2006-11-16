@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 
 /**
- * A proxy to a launch configuration delegate. Represents a
+ * A proxy to an {@link ILaunchConfigurationDelegate}. Represents a
  * launch delegate contributed to the <code>org.eclipse.debug.core.launchDelegates</code>
  * extension point. 
  * 
@@ -47,8 +47,9 @@ public interface ILaunchDelegate {
 	
 	/**
 	 * Returns a description of this launch delegate, or 
-	 * <code>null</code> if one has not been provided
-	 * @return the description of the launch delegate
+	 * <code>null</code> if none.
+	 * 
+	 * @return description or <code>null</code>
 	 */
 	public String getDescription();
 	
@@ -60,25 +61,28 @@ public interface ILaunchDelegate {
 	public String getContributorName();
 	
 	/**
-	 * Returns the delegate that performs the actual launch.
+	 * Returns the underlying launch configuration.
 	 * Causes the delegate to be instantiated.
 	 * 
-	 * @return launch delegate
+	 * @return launch configuration delegate
 	 * @exception CoreException if unable to instantiate the delegate
 	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException;
 	
 	/**
-	 * Returns the complete set of launch modes as a list of sets.
-	 * If no modes are available an empty list is returned, never <code>null</code>
-	 * @return the complete set of launch modes for this delegate as a list
-	 * of sets
+	 * Returns the complete set of launch modes supported by this delegate as a list of sets.
+	 * Each set contains one of more launch mode identifiers. When a set contains more than
+	 * one launch mode, it indicates that a mixed launch mode is supported.
+	 * If no modes are available an empty list is returned.
+	 * 
+	 * @return the complete set of launch modes this delegate supports
 	 */
 	public List getModes();
 	
 	/**
-	 * Returns the id of the plugin that contributed this launch delegate
-	 * @return the id of the plugin that contributed this launch delegate
+	 * Returns the id of the plug-in that contributed this launch delegate.
+	 * 
+	 * @return the id of the plug-in that contributed this launch delegate
 	 */
 	public String getPluginIdentifier();
 	
