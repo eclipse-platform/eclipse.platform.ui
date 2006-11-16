@@ -79,7 +79,7 @@ without consulting with the Platform/Debug team.
             <annotation>
                <documentation>
                   specifies the fully qualified name of the Java class that implements &lt;code&gt;ILaunchConfigurationDelegate&lt;/code&gt;.
-Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching.
+Launch configuration instances of this delegate&apos;s type will delegate to instances of this class to perform launching in the modes this launch delegate supports - see the &lt;code&gt;modes&lt;/code&gt; attribute and the &lt;code&gt;modeCombination&lt;/code&gt; element.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.core.model.ILaunchConfigurationDelegate"/>
@@ -89,13 +89,12 @@ Launch configuration instances of this delegate&apos;s type will delegate to ins
          <attribute name="modes" type="string">
             <annotation>
                <documentation>
-                  A comma-separated list of the launch modes this delegate supports.
-
+                  A comma-separated list of the &lt;b&gt;individual&lt;/b&gt; launch modes this delegate supports.
 &lt;p&gt;
-New in 3.3: the comma seperated list of modes provided here, instead of via the modeCombination sub elements, will result in a set being created for each mode individually with no other combinations. For example specifying: &apos;run,debug&apos; will result in a set of two elements [[run], [debug]] (where run and debug are each in their own set).
+This attribute should be used when a launch delegate supports single launch modes - for example launching in run mode or debug mode. When a launch delegate supports launching in mixed mode (for example, debug and profile), the &lt;code&gt;modeCombination&lt;/code&gt; element should be used to specify supported launch mode combinations.
 &lt;/p&gt;
 &lt;p&gt;
-This attribute can be used in conjunction with modeCombination contributions. It is however, desirable to provide one or the other and not both (either a comma seperated listing in the modes attribute, or modeCombinations). Specifying &apos;run,debug&apos; in the modes attribute is analogous to specifying two modeCombination contributions, one for &apos;run&apos; and another for &apos;debug&apos;.
+This attribute can be used in conjunction with &lt;code&gt;modeCombination&lt;/code&gt; elements. It is suggested practice to provide one or the other (either a comma seperated listing in the &lt;code&gt;modes&lt;/code&gt; attribute, or &lt;code&gt;modeCombinations&lt;/code&gt;). Specifying &apos;run,debug&apos; in the modes attribute is analogous to specifying two &lt;code&gt;modeCombination&lt;/code&gt; contributions, one for &apos;run&apos; and another for &apos;debug&apos;.
 &lt;/p&gt;
                </documentation>
             </annotation>
@@ -134,17 +133,17 @@ This attribute can be used in conjunction with modeCombination contributions. It
    <element name="modeCombination">
       <annotation>
          <documentation>
-            This element represents a collection of mode combinations that this delegate can launch. Each modeCombination attribute is a comma seperated list specifying a combination of modes the delegate supports. For example, a delegate that supports debugging, profiling and code coverage might have a modeCombination of consisting of debug, profile, and coverage. This element was added in the 3.3 release. EXPERIMENTAL.
+            This element specifies a launch mode combination this delegate supports. Each &lt;code&gt;modeCombination&lt;/code&gt; element specifies a comma seperated list of modes specifying a supported mixed launch mode. For example, a delegate that supports debugging, profiling and code coverage at the same time would specify a &lt;code&gt;modes&lt;/code&gt; element of consisting of &apos;debug, profile, coverage&apos;. This element can also be used to specify single launch modes that are supported - for example a &lt;code&gt;modes&lt;/code&gt; attribute of &apos;debug&apos;. This element was added in the 3.3 release. EXPERIMENTAL.
          </documentation>
       </annotation>
       <complexType>
          <attribute name="modes" type="string" use="required">
             <annotation>
                <documentation>
-                  a comma seperated list specifying a combination of modes the associated delegate can launch. This attribute was added in the 3.3 release. EXPERIMENTAL.
+                  a comma seperated list specifying a combination of modes the associated delegate supportes. This attribute was added in the 3.3 release. EXPERIMENTAL.
 
 &lt;p&gt;
-Unlike the modes attribute of the main definition, this comma seperated listing is taken to be one set inclusively. For example: a modeCombination of &apos;profile,debug&apos; would result in a single set of modes [[profile, debug]] and not a set with two distinct entries for each of profile and debug [[profile], [debug]] (unlike the other modes attribute from the main definition). 
+Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; element definition, this comma seperated list represents a mixed launch mode rather than the single supported launch modes. For example: a &lt;code&gt;modeCombination&lt;/code&gt; element specifying &lt;code&gt;modes&lt;/code&gt; of &apos;profile,debug&apos; indicates the delegate can debug and profile at the same time. In contrast, if &apos;profile,debug&apos; was specified by the &lt;code&gt;modes&lt;/code&gt; attribute of the &lt;code&gt;launchDelegate&lt;/code&gt; element, it would indicate the delegate could debug or profile, but not at the same time.
 &lt;/p&gt;
                </documentation>
             </annotation>
