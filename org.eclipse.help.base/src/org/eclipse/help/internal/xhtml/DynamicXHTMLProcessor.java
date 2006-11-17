@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.xhtml;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,6 +26,7 @@ import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
+import org.eclipse.help.internal.search.HTMLDocParser;
 import org.xml.sax.SAXException;
 
 /*
@@ -42,10 +44,14 @@ public class DynamicXHTMLProcessor {
 	 */
 	public static InputStream process(String href, InputStream in, String locale, boolean filter) throws IOException, SAXException, ParserConfigurationException, TransformerConfigurationException, TransformerException {
 		BufferedInputStream buf = new BufferedInputStream(in, XHTMLContentDescriber.BUFFER_SIZE);
-		buf.mark(XHTMLContentDescriber.BUFFER_SIZE);
-		boolean isXHTML = isXHTML(buf);
+		int bufferSize = Math.max(XHTMLContentDescriber.BUFFER_SIZE, HTMLDocParser.MAX_OFFSET);
+		byte[] buffer = new byte[bufferSize];
+		buf.mark(Math.max(XHTMLContentDescriber.BUFFER_SIZE, HTMLDocParser.MAX_OFFSET));
+		buf.read(buffer);
 		buf.reset();
+		boolean isXHTML = isXHTML(new ByteArrayInputStream(buffer));
 		if (isXHTML) {
+			String charset = HTMLDocParser.getCharsetFromHTML(new ByteArrayInputStream(buffer));
 			if (filter) {
 				if (xmlProcessor == null) {
 					NodeReader reader = new NodeReader();
@@ -56,7 +62,7 @@ public class DynamicXHTMLProcessor {
 							new FilterHandler()
 					});
 				}
-				return xmlProcessor.process(buf, href);
+				return xmlProcessor.process(buf, href, charset);
 			}
 			if (xmlProcessorNoFilter == null) {
 				NodeReader reader = new NodeReader();
@@ -66,7 +72,7 @@ public class DynamicXHTMLProcessor {
 						new XHTMLCharsetHandler()
 				});
 			}
-			return xmlProcessorNoFilter.process(buf, href);
+			return xmlProcessorNoFilter.process(buf, href, charset);
 		}
 		return buf;
 	}

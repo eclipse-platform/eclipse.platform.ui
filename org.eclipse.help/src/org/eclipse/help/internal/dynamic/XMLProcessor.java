@@ -41,11 +41,11 @@ public class XMLProcessor {
 	 * Processes the given input stream with the supplied document id,
 	 * and returns a new processed input stream.
 	 */
-	public InputStream process(InputStream in, String id) throws IOException, SAXException, ParserConfigurationException, TransformerException, TransformerConfigurationException {
+	public InputStream process(InputStream in, String id, String charset) throws IOException, SAXException, ParserConfigurationException, TransformerException, TransformerConfigurationException {
 		if (reader == null) {
 			reader = new DocumentReader();
 		}
-		Document document = reader.read(in);
+		Document document = reader.read(in, charset);
 		DocumentNode node = new DocumentNode(document);
 		processor.process(node, id);
 		if (writer == null) {

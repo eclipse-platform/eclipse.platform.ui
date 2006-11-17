@@ -12,6 +12,7 @@ package org.eclipse.help.internal.dynamic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -34,7 +35,7 @@ public class DocumentReader {
 	/*
 	 * Converts the given input stream into a DOM.
 	 */
-	public Document read(InputStream in) throws IOException, SAXException, ParserConfigurationException {
+	public Document read(InputStream in, String charset) throws IOException, SAXException, ParserConfigurationException {
 		if (builder == null) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
@@ -46,6 +47,13 @@ public class DocumentReader {
 				}
 			});
 		}
-		return builder.parse(in);
+		InputSource input = null;
+		if (charset != null) {
+			input = new InputSource(new InputStreamReader(in, charset));
+		}
+		else {
+			input = new InputSource(in);
+		}
+		return builder.parse(input);
 	}
 }

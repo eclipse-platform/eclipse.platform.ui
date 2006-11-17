@@ -29,7 +29,7 @@ import org.apache.lucene.demo.html.HTMLParser;
 public class HTMLDocParser {
 	// maximum number of characters that will be searched
 	// from the beginning of HTML document to charset declaration
-	private static final int MAX_OFFSET = 2048;
+	public static final int MAX_OFFSET = 2048;
 
 	// elements, atributes and values contstants
 	final static String ELEMENT_META = "META"; //$NON-NLS-1$

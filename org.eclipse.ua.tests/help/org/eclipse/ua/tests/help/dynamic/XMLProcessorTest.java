@@ -50,7 +50,7 @@ public class XMLProcessorTest extends TestCase {
 		String[] paths = ResourceFinder.findFiles(bundle, "data/help/dynamic", ".xml");
 		for (int i=0;i<paths.length;++i) {
 			InputStream in = bundle.getEntry(FileUtil.getResultFile(paths[i])).openStream();
-			InputStream in2 = processor.process(bundle.getEntry(paths[i]).openStream(), '/' + bundle.getSymbolicName() + '/' + paths[i]);
+			InputStream in2 = processor.process(bundle.getEntry(paths[i]).openStream(), '/' + bundle.getSymbolicName() + '/' + paths[i], "UTF-8");
 			XMLUtil.assertXMLEquals("XML content was not processed correctly: " + paths[i], in, in2);
 		}
 	}
