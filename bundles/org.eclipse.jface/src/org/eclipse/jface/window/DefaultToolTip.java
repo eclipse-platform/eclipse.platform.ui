@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Event;
  *        time. Please do not use this API without consulting with the
  *        Platform/UI team.
  */
-public abstract class DefaultToolTip extends ToolTip {
+public class DefaultToolTip extends ToolTip {
 	private String text;
 
 	private Color backgroundColor;
