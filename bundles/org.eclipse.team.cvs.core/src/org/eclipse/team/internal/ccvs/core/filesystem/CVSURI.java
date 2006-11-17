@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.core.filesystem;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -21,8 +22,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-
-import com.ibm.icu.util.StringTokenizer;
 
 public class CVSURI {
 
