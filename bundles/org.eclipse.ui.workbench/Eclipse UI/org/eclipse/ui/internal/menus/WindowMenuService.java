@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.net.URI;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
 
@@ -153,5 +155,12 @@ public final class WindowMenuService implements IMenuService {
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		menuAuthority.removeSourceProvider(provider);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
+	 */
+	public ContributionManager getManagerForURI(URI uri) {
+		return parent.getManagerForURI(uri);
 	}
 }

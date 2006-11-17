@@ -127,6 +127,9 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
+import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.SMenuManager;
+import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -1277,6 +1280,12 @@ public final class Workbench extends EventManager implements IWorkbench {
 		commandImageService.readRegistry();
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
+		
+		serviceMenuManager = new SMenuManager();
+		IMenuService menuService = new WorkbenchMenuService(serviceMenuManager,
+				commandService);
+		menuService.readRegistry();
+		serviceLocator.registerService(IMenuService.class, menuService);
 
 		/*
 		 * Phase 2 of the initialization of commands. The source providers that
@@ -1291,34 +1300,34 @@ public final class Workbench extends EventManager implements IWorkbench {
 				this);
 		handlerService.addSourceProvider(activeShellSourceProvider);
 		contextService.addSourceProvider(activeShellSourceProvider);
-		// menuService.addSourceProvider(activeShellSourceProvider);
+		menuService.addSourceProvider(activeShellSourceProvider);
 		sourceProviderService.registerProvider(activeShellSourceProvider);
 		final ActivePartSourceProvider activePartSourceProvider = new ActivePartSourceProvider(
 				this);
 		handlerService.addSourceProvider(activePartSourceProvider);
 		contextService.addSourceProvider(activePartSourceProvider);
-		// menuService.addSourceProvider(activePartSourceProvider);
+		menuService.addSourceProvider(activePartSourceProvider);
 		sourceProviderService.registerProvider(activePartSourceProvider);
 		final ActiveContextSourceProvider activeContextSourceProvider = new ActiveContextSourceProvider(
 				contextService);
 		handlerService.addSourceProvider(activeContextSourceProvider);
-		// menuService.addSourceProvider(activeContextSourceProvider);
+		menuService.addSourceProvider(activeContextSourceProvider);
 		sourceProviderService.registerProvider(activeContextSourceProvider);
 		final CurrentSelectionSourceProvider currentSelectionSourceProvider = new CurrentSelectionSourceProvider(
 				this);
 		handlerService.addSourceProvider(currentSelectionSourceProvider);
 		contextService.addSourceProvider(currentSelectionSourceProvider);
-		// menuService.addSourceProvider(currentSelectionSourceProvider);
+		menuService.addSourceProvider(currentSelectionSourceProvider);
 		sourceProviderService.registerProvider(currentSelectionSourceProvider);
 		actionSetSourceProvider = new ActionSetSourceProvider();
 		handlerService.addSourceProvider(actionSetSourceProvider);
 		contextService.addSourceProvider(actionSetSourceProvider);
-		// menuService.addSourceProvider(actionSetSourceProvider);
+		menuService.addSourceProvider(actionSetSourceProvider);
 		sourceProviderService.registerProvider(actionSetSourceProvider);
 		menuSourceProvider = new MenuSourceProvider();
 		handlerService.addSourceProvider(menuSourceProvider);
 		contextService.addSourceProvider(menuSourceProvider);
-		// menuService.addSourceProvider(menuSourceProvider);
+		menuService.addSourceProvider(menuSourceProvider);
 		sourceProviderService.registerProvider(menuSourceProvider);
 
 		/*
@@ -2957,6 +2966,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * until {@link #initializeDefaultServices()} is called.
 	 */
 	private MenuSourceProvider menuSourceProvider;
+
+	private SMenuManager serviceMenuManager;
 
 	/**
 	 * Adds the ids of a menu that is now showing to the menu source provider.

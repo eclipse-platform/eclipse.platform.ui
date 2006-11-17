@@ -79,7 +79,6 @@ import org.eclipse.ui.IPersistable;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -116,9 +115,8 @@ import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
-import org.eclipse.ui.internal.menus.SMenuManager;
 import org.eclipse.ui.internal.menus.TrimBarManager;
-import org.eclipse.ui.internal.menus.WorkbenchMenuService;
+import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -130,7 +128,6 @@ import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
-import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
@@ -3589,20 +3586,21 @@ public class WorkbenchWindow extends ApplicationWindow implements
 				parentCommandService);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
-		final SMenuManager menuManager = new SMenuManager();
-		final IMenuService menuService = new WorkbenchMenuService(menuManager,
-				commandService);
-		menuService.readRegistry();
-
-		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
-				.getService(ISourceProviderService.class);
-		final ISourceProvider[] sourceProviders = sourceProviderService
-				.getSourceProviders();
-		for (int i = 0; i < sourceProviders.length; i++) {
-			final ISourceProvider provider = sourceProviders[i];
-			menuService.addSourceProvider(provider);
-		}
+		final IMenuService parentMenuService = (IMenuService) serviceLocator
+				.getService(IMenuService.class);
+		final IMenuService menuService = new WindowMenuService(
+				parentMenuService, this);
 		serviceLocator.registerService(IMenuService.class, menuService);
+
+//		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
+//				.getService(ISourceProviderService.class);
+//		final ISourceProvider[] sourceProviders = sourceProviderService
+//				.getSourceProviders();
+//		for (int i = 0; i < sourceProviders.length; i++) {
+//			final ISourceProvider provider = sourceProviders[i];
+//			menuService.addSourceProvider(provider);
+//		}
+//		serviceLocator.registerService(IMenuService.class, menuService);
 
 		final ActionCommandMappingService mappingService = new ActionCommandMappingService();
 		serviceLocator.registerService(IActionCommandMappingService.class,

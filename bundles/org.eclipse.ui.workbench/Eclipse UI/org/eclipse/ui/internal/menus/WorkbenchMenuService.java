@@ -11,10 +11,17 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.net.URI;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -149,5 +156,37 @@ public final class WorkbenchMenuService implements IMenuService {
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		menuAuthority.removeSourceProvider(provider);
+	}
+	
+	//
+	// 3.3 common menu service information
+	//
+	private Map uriToManager = new HashMap();
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
+	 */
+	public ContributionManager getManagerForURI(URI uri) {
+		if (uri == null)
+			return null;
+
+		String mgrId = uri.getScheme() + ":" + uri.getHost(); //$NON-NLS-1$
+		ContributionManager mgr = (ContributionManager) uriToManager.get(mgrId);
+		if (mgr == null) {
+			mgr = createContributionManager(uri);
+			uriToManager.put(mgrId, mgr);
+		}
+
+		return mgr;
+	}
+
+	private static ContributionManager createContributionManager(URI uri) {
+		String type = uri.getScheme();
+		if (type.equals("menu") || type.equals("popup")) { //$NON-NLS-1$ //$NON-NLS-2$
+			return new MenuManager(uri.getPath(), uri.getPath());
+		} else if (type.equals("toolbar")) { //$NON-NLS-1$
+			return new ToolBarManager2(SWT.HORIZONTAL);
+		}
+		return null;
 	}
 }

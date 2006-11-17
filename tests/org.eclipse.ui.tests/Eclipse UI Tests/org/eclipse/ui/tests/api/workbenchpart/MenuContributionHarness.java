@@ -1,6 +1,9 @@
 package org.eclipse.ui.tests.api.workbenchpart;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -25,7 +28,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.CommonMenuService;
+import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -95,7 +98,7 @@ public class MenuContributionHarness extends ViewPart {
 	 */
 	public void createPartControl(Composite parent) {
 		// Read the menu contributions
-		CommonMenuService.readAdditions();
+//		CommonMenuService.readAdditions();
 
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
@@ -110,8 +113,19 @@ public class MenuContributionHarness extends ViewPart {
 
 	private void hookContextMenu() {
 		//MenuManager menuMgr = new MenuManager("#PopupMenu");
-		MenuManager menuMgr = (MenuManager) CommonMenuService.
-			getManagerForURI("popup://" + VIEW_ID);
+		
+		// we would probably take care of registering this with the service
+		// in the getSite().registerContextMenu(*) method for the view.
+		IMenuService menus = (IMenuService) getSite().getService(
+				IMenuService.class);
+		URI uri = null;
+		try {
+			uri = new URI("popup://" + VIEW_ID);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		MenuManager menuMgr = (MenuManager) menus.getManagerForURI(uri);
 		
 		menuMgr.setRemoveAllWhenShown(false);
 		menuMgr.addMenuListener(new IMenuListener() {

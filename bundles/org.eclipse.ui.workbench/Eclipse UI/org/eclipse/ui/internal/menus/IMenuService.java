@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
+import java.net.URI;
 import java.util.Collection;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.ui.services.IServiceWithSources;
 
 /**
@@ -254,4 +256,19 @@ public interface IMenuService extends IServiceWithSources {
 	 *            collection must not be <code>null</code>.
 	 */
 	public void removeContributions(Collection contributions);
+	
+	//
+	// additions for 3.3 support
+	//
+	
+	/**
+	 * Transient - get the contribution manager for this URI.
+	 * 
+	 * @param uri
+	 *            The uri
+	 * @return a contribution manager
+	 * 
+	 * @since 3.3
+	 */
+	public ContributionManager getManagerForURI(URI uri);
 }

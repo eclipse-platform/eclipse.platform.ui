@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,11 +25,13 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -1067,5 +1071,105 @@ final class MenuPersistence extends RegistryPersistence {
 		readActionSetsFromRegistry(
 				indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount, menuService);
+		
+		readAdditions(menuService);
+	}
+	
+	public static void readAdditions(IMenuService menuService) {
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		final IConfigurationElement[] menusExtensionPoint = registry
+				.getConfigurationElementsFor(COMMON_MENU_ADDITIONS);
+
+		for (int i = 0; i < menusExtensionPoint.length; i++) {
+			System.out.println("EPH:" + menusExtensionPoint[i].getName()); //$NON-NLS-1$
+			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
+				readMenuAddition(menuService, menusExtensionPoint[i]);
+			}
+		}
+	}
+
+	private static void readMenuAddition(IMenuService menuService,
+			IConfigurationElement addition) {
+		// Determine the insertio location by parsing the URI
+		String locationURI = addition.getAttribute(TAG_LOCATION_URI);
+		URI uri = createURI(locationURI);
+
+		if (uri != null) {
+			ContributionManager mgr = menuService.getManagerForURI(uri);
+			int insertionIndex = getInsertionIndexForURI(mgr, uri);
+
+			// Read teh child additions
+			readAdditions(mgr, addition, insertionIndex);
+		}
+	}
+
+	private static void readAdditions(ContributionManager mgr,
+			IConfigurationElement addition, int insertionIndex) {
+		IConfigurationElement[] items = addition.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			String itemType = items[i].getName();
+			System.out.println("Type: " + itemType); //$NON-NLS-1$
+
+			if (TAG_ITEM.equals(itemType)) {
+				mgr
+						.insert(insertionIndex++, new MenuItemContribution(
+								items[i]));
+			} else if (TAG_WIDGET.equals(itemType)) {
+				mgr.insert(insertionIndex++, new MenuWidgetContribution(
+						items[i]));
+			} else if (TAG_MENU.equals(itemType)) {
+				MenuMenuContribution subMenu = new MenuMenuContribution(
+						items[i]);
+				mgr
+						.insert(insertionIndex++, new MenuMenuContribution(
+								items[i]));
+
+				// Read the sub-structure
+				readAdditions(subMenu, items[i], 0);
+			} else if (TAG_SEPARATOR.equals(itemType)) {
+				mgr.insert(insertionIndex++, new MenuSeparatorContribution(
+						items[i]));
+			}
+		}
+	}
+
+	
+	/**
+	 * Wraps a URI constructor in a standard exception handler.
+	 * 
+	 * @param uriDef The string to create the URI from
+	 * @return The URI or <code>null</code> if the string is
+	 * badly formed.
+	 */
+	public static URI createURI(String uriDef) {
+		URI uri = null;
+		try {
+			uri = new URI(uriDef);
+		} catch (URISyntaxException e) {
+			// [TBD] Log it
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return uri;
+	}
+	
+	private static int getInsertionIndexForURI(ContributionManager mgr, URI uri) {
+		String query = uri.getQuery();
+		if (query == null)
+			return 0;
+		
+		// Should be in the form "[before|after]=id"
+		String[] queryParts = Util.split(query, '=');
+		if (queryParts[1].length() > 0) {
+			int indexOfId = mgr.indexOf(queryParts[1]);
+			
+			// Increment if we're 'after' this id
+			if (queryParts[0].equals("after")) //$NON-NLS-1$
+				indexOfId++;
+//			return indexOfId;
+		}
+		
+		return 0;
 	}
 }
