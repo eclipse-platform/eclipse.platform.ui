@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -35,7 +34,6 @@ import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 
-
 /**
  * Reconcile strategy used for spell checking.
  * <p>
@@ -48,10 +46,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
  */
 public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
 
-	/** Text content type */
-	private static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-
-
+	
 	/**
 	 * Spelling problem collector.
 	 */
@@ -110,6 +105,10 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		}
 	}
 
+	
+	/** Text content type */
+	private static final IContentType TEXT_CONTENT_TYPE= Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+
 	/** The text editor to operate on. */
 	private ISourceViewer fViewer;
 
@@ -121,9 +120,12 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 
 	private SpellingService fSpellingService;
 	
-	private SpellingProblemCollector fSpellingProblemCollector;
+	private ISpellingProblemCollector fSpellingProblemCollector;
 	
-
+	/** The spelling context containing the Java source content type. */
+	private SpellingContext fSpellingContext;
+	
+	
 	/**
 	 * Creates a new comment reconcile strategy.
 	 * 
@@ -135,6 +137,9 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		Assert.isNotNull(spellingService);
 		fViewer= viewer;
 		fSpellingService= spellingService;
+		fSpellingContext= new SpellingContext();
+		fSpellingContext.setContentType(getContentType());
+
 	}
 
 	/*
@@ -155,16 +160,10 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
 	 */
 	public void reconcile(IRegion region) {
-		if (fViewer.getAnnotationModel() == null)
+		if (getAnnotationModel() == null || fSpellingProblemCollector == null)
 			return;
 
-		try {
-			SpellingContext context= new SpellingContext();
-			context.setContentType(getContentType());
-			fSpellingService.check(fDocument, context, fSpellingProblemCollector, fProgressMonitor);
-		} catch (CoreException x) {
-			// swallow exception
-		}
+		fSpellingService.check(fDocument, fSpellingContext, fSpellingProblemCollector, fProgressMonitor);
 	}
 
 	/**
@@ -172,16 +171,18 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 *
 	 * @return the content type of the underlying editor input or
 	 *         <code>null</code> if none could be determined
-	 * @throws CoreException if reading or accessing the underlying store fails
 	 */
-	private IContentType getContentType() throws CoreException {
-
-		// XXX: find a better way to get content type
-		
-//		IDocumentProvider documentProvider= fViewer.getDocumentProvider();
-//		if (documentProvider instanceof IDocumentProviderExtension4)
-//		return ((IDocumentProviderExtension4) documentProvider).getContentType(fViewer.getEditorInput());
+	protected IContentType getContentType() {
 		return TEXT_CONTENT_TYPE;
+	}
+	
+	/**
+	 * Returns the document which is spell checked.
+	 * 
+	 * @return the document
+	 */
+	protected final IDocument getDocument() {
+		return fDocument;
 	}
 
 	/*
@@ -189,14 +190,36 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 	 */
 	public void setDocument(IDocument document) {
 		fDocument= document;
-		fSpellingProblemCollector= new SpellingProblemCollector(fViewer.getAnnotationModel());
+		fSpellingProblemCollector= createSpellingProblemCollector();
+	}
+
+	/**
+	 * Creates a new spelling problem collector.
+	 * 
+	 * @return the collector or <code>null</code> if none is available
+	 */
+	protected ISpellingProblemCollector createSpellingProblemCollector() {
+		IAnnotationModel model= getAnnotationModel();
+		if (model == null)
+			return null;
+		return new SpellingProblemCollector(model);
 	}
 
 	/*
 	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public void setProgressMonitor(IProgressMonitor monitor) {
+	public final void setProgressMonitor(IProgressMonitor monitor) {
 		fProgressMonitor= monitor;
+	}
+	
+	/**
+	 * Returns the annotation model to be used by this reconcile strategy.
+	 *
+	 * @return the annotation model of the underlying editor input or
+	 *         <code>null</code> if none could be determined
+	 */
+	protected IAnnotationModel getAnnotationModel() {
+		return fViewer.getAnnotationModel();
 	}
 
 }
