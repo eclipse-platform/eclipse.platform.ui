@@ -55,6 +55,10 @@ public abstract class ToolTip {
 
 	private boolean hideOnMouseDown = true;
 
+	private boolean respectDisplayBounds = true;
+
+	private boolean respectMonitorBounds = false;
+
 	/**
 	 * Create new instance which add TooltipSupport to the widget
 	 * 
@@ -141,6 +145,53 @@ public abstract class ToolTip {
 	}
 
 	/**
+	 * Return whther the tooltip respects bounds of the display.
+	 * 
+	 * @return <code>true</code> if the tooltip respects bounds of the display
+	 */
+	public boolean isRespectDisplayBounds() {
+		return respectDisplayBounds;
+	}
+
+	/**
+	 * Set to <code>false</code> if display bounds should not be respected or
+	 * to <code>true</code> if the tooltip is should repositioned to not
+	 * overlap the display bounds.
+	 * <p>
+	 * Default is <code>true</code>
+	 * </p>
+	 * 
+	 * @param respectDisplayBounds
+	 */
+	public void setRespectDisplayBounds(boolean respectDisplayBounds) {
+		this.respectDisplayBounds = respectDisplayBounds;
+	}
+
+	/**
+	 * Return whther the tooltip respects bounds of the monitor.
+	 * 
+	 * @return <code>true</code> if tooltip respects the bounds of the monitor
+	 */
+	public boolean isRespectMonitorBounds() {
+		return respectMonitorBounds;
+	}
+
+	/**
+	 * Set to <code>false</code> if monitor bounds should not be respected or
+	 * to <code>true</code> if the tooltip is should repositioned to not
+	 * overlap the monitors bounds. The monitor the tooltip belongs to is the
+	 * same is control's monitor the tooltip is shown for.
+	 * <p>
+	 * Default is <code>false</code>
+	 * </p>
+	 * 
+	 * @param respectMonitorBounds
+	 */
+	public void setRespectMonitorBounds(boolean respectMonitorBounds) {
+		this.respectMonitorBounds = respectMonitorBounds;
+	}
+
+	/**
 	 * Should the tooltip displayed because of the given event.
 	 * <p>
 	 * <b>Subclasses may overwrite this to get custom behaviour</b>
@@ -159,8 +210,6 @@ public abstract class ToolTip {
 			Shell shell = new Shell(control.getShell(), SWT.ON_TOP | SWT.TOOL
 					| SWT.NO_FOCUS);
 			shell.setLayout(new FillLayout());
-			shell.setLocation(control.toDisplay(event.x + xShift, event.y
-					+ yShift));
 
 			toolTipOpen(shell, event);
 
@@ -173,15 +222,65 @@ public abstract class ToolTip {
 	private void toolTipShow(Shell tip, Event event) {
 		if (!tip.isDisposed()) {
 			createToolTipContentArea(event, tip);
-			if( isHideOnMouseDown() ) {
+			if (isHideOnMouseDown()) {
 				toolTipHookBothRecursively(tip);
 			} else {
-				toolTipHookByTypeRecursively(tip,true,SWT.MouseExit);
+				toolTipHookByTypeRecursively(tip, true, SWT.MouseExit);
 			}
-			
+
 			tip.pack();
+			tip.setLocation(fixupDisplayBounds(tip.getSize(), getLocation(tip
+					.getSize(), event)));
 			tip.setVisible(true);
 		}
+	}
+
+	private Point fixupDisplayBounds(Point tipSize, Point location) {
+		if (respectDisplayBounds || respectMonitorBounds) {
+			Rectangle bounds;
+			Point rightBounds = new Point(tipSize.x + location.x, tipSize.y
+					+ location.y);
+
+			if (respectMonitorBounds) {
+				bounds = control.getMonitor().getBounds();
+			} else {
+				bounds = control.getDisplay().getBounds();
+			}
+
+			if (!(bounds.contains(location) && bounds.contains(rightBounds))) {
+				if (rightBounds.x > bounds.width) {
+					location.x -= rightBounds.x - bounds.width;
+				}
+
+				if (rightBounds.y > bounds.height) {
+					location.y -= rightBounds.y - bounds.height;
+				}
+
+				if (location.x < bounds.x) {
+					location.x = bounds.x;
+				}
+
+				if (location.y < bounds.y) {
+					location.y = bounds.y;
+				}
+			}
+		}
+
+		return location;
+	}
+
+	/**
+	 * Get the display relative location where the tooltip is displayed.
+	 * Subclasses may overwrite to implement custom positioning.
+	 * 
+	 * @param tipSize
+	 *            the size of the tooltip to be shown
+	 * @param event
+	 *            the event triggered showing the tooltip
+	 * @return the absolute position on the display
+	 */
+	public Point getLocation(Point tipSize, Event event) {
+		return control.toDisplay(event.x + xShift, event.y + yShift);
 	}
 
 	private void toolTipHide(Shell tip, Event event) {
@@ -222,7 +321,7 @@ public abstract class ToolTip {
 	}
 
 	private void toolTipHookByTypeRecursively(Control c, boolean add, int type) {
-		if( add ) {
+		if (add) {
 			c.addListener(type, hideListener);
 		} else {
 			c.removeListener(type, hideListener);
@@ -231,15 +330,15 @@ public abstract class ToolTip {
 		if (c instanceof Composite) {
 			Control[] children = ((Composite) c).getChildren();
 			for (int i = 0; i < children.length; i++) {
-				toolTipHookByTypeRecursively(children[i],add,type);
+				toolTipHookByTypeRecursively(children[i], add, type);
 			}
 		}
 	}
-	
+
 	private void toolTipHookBothRecursively(Control c) {
 		c.addListener(SWT.MouseDown, hideListener);
 		c.addListener(SWT.MouseExit, hideListener);
-		
+
 		if (c instanceof Composite) {
 			Control[] children = ((Composite) c).getChildren();
 			for (int i = 0; i < children.length; i++) {
@@ -249,7 +348,7 @@ public abstract class ToolTip {
 	}
 
 	/**
-	 * Creates the content area of the the tooltip. 
+	 * Creates the content area of the the tooltip.
 	 * 
 	 * @param event
 	 *            the event that triggered the activation of the tooltip
@@ -257,9 +356,9 @@ public abstract class ToolTip {
 	 *            the parent of the content area
 	 * @return the content area created
 	 */
-	protected abstract Composite createToolTipContentArea(Event event, Composite parent);
+	protected abstract Composite createToolTipContentArea(Event event,
+			Composite parent);
 
-	
 	/**
 	 * This method is called after a Tooltip is hidden.
 	 * <p>
@@ -317,21 +416,23 @@ public abstract class ToolTip {
 	 */
 	public void setHideOnMouseDown(final boolean hideOnMouseDown) {
 		// Only needed if there's currently a tooltip active
-		if( CURRENT_TOOLTIP != null && ! CURRENT_TOOLTIP.isDisposed() ) {
+		if (CURRENT_TOOLTIP != null && !CURRENT_TOOLTIP.isDisposed()) {
 			// Only change if value really changed
-			if( hideOnMouseDown != this.hideOnMouseDown ) {
+			if (hideOnMouseDown != this.hideOnMouseDown) {
 				control.getDisplay().syncExec(new Runnable() {
 
 					public void run() {
-						if( CURRENT_TOOLTIP != null && CURRENT_TOOLTIP.isDisposed() ) {
-							toolTipHookByTypeRecursively(CURRENT_TOOLTIP, hideOnMouseDown, SWT.MouseDown);
+						if (CURRENT_TOOLTIP != null
+								&& CURRENT_TOOLTIP.isDisposed()) {
+							toolTipHookByTypeRecursively(CURRENT_TOOLTIP,
+									hideOnMouseDown, SWT.MouseDown);
 						}
 					}
-					
+
 				});
 			}
 		}
-		
+
 		this.hideOnMouseDown = hideOnMouseDown;
 	}
 
