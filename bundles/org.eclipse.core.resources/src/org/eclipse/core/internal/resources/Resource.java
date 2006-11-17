@@ -377,19 +377,19 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (isUnderLink() || dest.isUnderLink()) {
 			//make sure location is not null.  This can occur with linked resources relative to
 			//undefined path variables
-			IPath sourceLocation = getLocation();
+			URI sourceLocation = getLocationURI();
 			if (sourceLocation == null) {
 				message = NLS.bind(Messages.localstore_locationUndefined, getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 			}
-			IPath destLocation = dest.getLocation();
+			URI destLocation = dest.getLocationURI();
 			if (destLocation == null) {
 				message = NLS.bind(Messages.localstore_locationUndefined, dest.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
 			}
 			//make sure location of source is not a prefix of the location of the destination
-			//this can occur if the source or destination is a linked resource
-			if (sourceLocation.isPrefixOf(destLocation)) {
+			//this can occur if the source and/or destination is a linked resource
+			if (getStore().isParentOf(dest.getStore())) {
 				message = NLS.bind(Messages.resources_moveDestNotSub, getFullPath());
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 			}
