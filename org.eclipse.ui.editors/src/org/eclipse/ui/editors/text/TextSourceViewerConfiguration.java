@@ -13,13 +13,18 @@ package org.eclipse.ui.editors.text;
 import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.internal.text.html.HTMLTextPresenter;
 import org.eclipse.jface.preference.IPreferenceStore;
 
+import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextHover;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.IUndoManager;
@@ -27,6 +32,8 @@ import org.eclipse.jface.text.TextViewerUndoManager;
 import org.eclipse.jface.text.hyperlink.DefaultHyperlinkPresenter;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkPresenter;
+import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.reconciler.IReconcilingStrategy;
 import org.eclipse.jface.text.reconciler.MonoReconciler;
@@ -39,6 +46,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.ui.internal.editors.text.URLHyperlinkDetector;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 
 
@@ -316,11 +324,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
-		boolean RUN_PROVISIONAL_CODE= false;
-		if (!RUN_PROVISIONAL_CODE)
-			return super.getReconciler(sourceViewer);
-		
-		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService(), "org.eclipse.ui.workbench.texteditor.spelling"); //$NON-NLS-1$
+		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService()); 
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setIsIncrementalReconciler(false);
 		reconciler.setProgressMonitor(new NullProgressMonitor());
@@ -328,4 +332,29 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 		return reconciler;
 	}	
 
+	/*
+	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getQuickAssistAssistant(org.eclipse.jface.text.source.ISourceViewer)
+	 * @since 3.3
+	 */
+	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		IQuickAssistAssistant assistant= new QuickAssistAssistant();
+		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
+		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());
+		assistant.setProposalSelectorBackground(sourceViewer.getTextWidget().getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		return assistant;
+	}
+
+	/**
+	 * Returns the information control creator for the quick assist assistant.
+	 *
+	 * @return the information control creator
+	 * @since 3.3
+	 */
+	private IInformationControlCreator getQuickAssistAssistantInformationControlCreator() {
+		return new IInformationControlCreator() {
+			public IInformationControl createInformationControl(Shell parent) {
+				return new DefaultInformationControl(parent, SWT.NONE, new HTMLTextPresenter(true));
+			}
+		};
+	}
 }
