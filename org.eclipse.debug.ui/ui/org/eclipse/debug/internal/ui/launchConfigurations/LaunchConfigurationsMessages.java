@@ -208,17 +208,9 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CollapseAllLaunchConfigurationAction_1;
 	public static String CollapseAllLaunchConfigurationAction_2;
 
-	public static String SelectLaunchDelegateActionDialog_0;
-	public static String SelectLaunchDelegateActionDialog_1;
-	public static String SelectLaunchDelegateActionDialog_4;
-	public static String SelectLaunchDelegateActionDialog_5;
-	public static String SelectLaunchDelegateActionDialog_6;
-	public static String SelectLaunchDelegateActionDialog_7;
 	public static String SelectLaunchDelegatesDialog_0;
-
 	public static String SelectLaunchDelegatesDialog_1;
 	public static String SelectLaunchDelegatesDialog_2;
-
 	public static String SelectLaunchDelegatesDialog_3;
 	public static String SelectLaunchOptionsDialog_2;
 	public static String SelectLaunchOptionsDialog_3;

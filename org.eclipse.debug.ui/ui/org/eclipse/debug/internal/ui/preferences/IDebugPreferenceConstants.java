@@ -198,23 +198,6 @@ public interface IDebugPreferenceConstants {
 	public static final String PREF_TABLE_RENDERING_PAGE_SIZE = "org.eclispe.debug.ui.memory.pageSize"; //$NON-NLS-1$
 	
 	/**
-	 * If the user should be promted of not in the event dupliacte launch delegates are detected during launching
-	 * 
-	 * @since 3.3
-	 * EXPERIMENTAL
-	 */
-	public static final String PREF_PROMPT_FOR_DUPLICATE_DELEGATES = IDebugUIConstants.PLUGIN_ID + ".prompt_for_duplicate_delegates"; //$NON-NLS-1$
-	
-	/**
-	 * The default action to perform if the user has specified not to be prompted any more
-	 * The choices for this option are 'list', 'dialog', 'page'
-	 * 
-	 * @since 3.3
-	 * EXPERIMENTAL
-	 */
-	public static final String PREF_DEFAULT_DUPLICATE_DELEGATE_ACTION = IDebugUIConstants.PLUGIN_ID + ".default_duplicate_delegate_action"; //$NON-NLS-1$
-	
-	/**
 	 * Default page size when dynamic loading mode is off.  This preference is stored
 	 * in number of lines.
 	 * 

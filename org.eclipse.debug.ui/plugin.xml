@@ -2284,7 +2284,7 @@ M4 = Platform-specific fourth key
              label="%preferenceKeywords.launchConfigurations"/>
        <keyword
              id="org.eclipse.debug.ui.launchDelegatesKeywords"
-             label="launch delegate duplicate run debug profile mode configuration">
+             label="launch delegate duplicate run debug profile mode configuration launchers launcher modes">
        </keyword>
     </extension>
     <extension

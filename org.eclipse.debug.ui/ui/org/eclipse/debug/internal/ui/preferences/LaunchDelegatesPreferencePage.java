@@ -24,11 +24,9 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DefaultLabelProvider;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.preference.RadioGroupFieldEditor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -43,7 +41,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -143,8 +143,7 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 	private Map fDuplicates = null;
 	private Map fDupeSelections = null;
 	private boolean fDirty = false;
-	private RadioGroupFieldEditor fPromptOptions = null;
-	private BooleanFieldEditor2 fPromptOption = null;
+	private Text fDescription = null;
 	
 	/**
 	 * Constructor
@@ -169,21 +168,6 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 		SWTUtil.createWrapLabel(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_1, 2, 300);
 		
 		SWTUtil.createVerticalSpacer(comp, 1);
-		
-		Composite optioncomp = SWTUtil.createComposite(comp, 1, 2, GridData.FILL_HORIZONTAL);
-	// prompt option
-		fPromptOption = new BooleanFieldEditor2(IDebugPreferenceConstants.PREF_PROMPT_FOR_DUPLICATE_DELEGATES, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, SWT.CHECK, optioncomp);
-		fPromptOption.setPreferenceStore(getPreferenceStore());
-		fPromptOption.load();
-	// prompt options
-		fPromptOptions = new RadioGroupFieldEditor(IDebugPreferenceConstants.PREF_DEFAULT_DUPLICATE_DELEGATE_ACTION,
-				DebugPreferencesMessages.LaunchDelegatesPreferencePage_5,
-				2,
-				new String[][] {{DebugPreferencesMessages.LaunchDelegatesPreferencePage_6, IInternalDebugUIConstants.DELEGATE_ACTION_ID_DIALOG}, {DebugPreferencesMessages.LaunchDelegatesPreferencePage_10, IInternalDebugUIConstants.DELEGATE_ACTION_ID_LIST}}, 
-				optioncomp,
-				true);
-		fPromptOptions.setPreferenceStore(getPreferenceStore());
-		fPromptOptions.load();
 	//tree
 		Composite comp1 = SWTUtil.createComposite(comp, 1, 1, GridData.FILL_VERTICAL);
 		SWTUtil.createLabel(comp1, DebugPreferencesMessages.LaunchDelegatesPreferencePage_2, 1);
@@ -224,6 +208,17 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 		fTableViewer.setComparator(new WorkbenchViewerComparator());
 		fTableViewer.setLabelProvider(new LabelProvider());
 		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+				if(ss != null && !ss.isEmpty()) {
+					fDescription.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
+				}
+				else {
+					fDescription.setText(""); //$NON-NLS-1$
+				}
+			}
+		});
 		fTableViewer.addCheckStateListener(new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
 				fDirty = true;
@@ -244,6 +239,9 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 				}
 			}
 		});
+		Group group = SWTUtil.createGroup(comp, DebugPreferencesMessages.LaunchDelegatesPreferencePage_4, 1, 2, GridData.FILL_BOTH);
+		fDescription = SWTUtil.createText(group, SWT.WRAP | SWT.READ_ONLY, 1, GridData.FILL_BOTH);
+		fDescription.setBackground(group.getBackground());
 		return comp;
 	}
 
@@ -264,21 +262,10 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 				catch (CoreException e) {DebugUIPlugin.log(e);}
 			}
 		}
-		fPromptOption.store();
-		fPromptOptions.store();
 		if(getPreferenceStore().needsSaving()) {
 			DebugUIPlugin.getDefault().savePluginPreferences();
 		}
 		return super.performOk();
-	}
-
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
-	protected void performDefaults() {
-		fPromptOption.loadDefault();
-		fPromptOptions.loadDefault();
-		super.performDefaults();
 	}
 
 	/**
