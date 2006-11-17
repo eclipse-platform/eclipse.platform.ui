@@ -14,11 +14,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.ISourceViewerExtension2;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.spelling.SpellingProblem;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 
 /**
@@ -180,6 +186,29 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 		super.updatePropertyDependentActions();
 		if (fEncodingSupport != null)
 			fEncodingSupport.reset();
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
+	 * @since 3.3
+	 */
+	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
+		if (event.getProperty().equals(SpellingService.PREFERENCE_SPELLING_ENABLED)) {
+			ISourceViewer viewer= getSourceViewer();
+			
+			if (!(viewer instanceof ISourceViewerExtension2))
+				return; // cannot unconfigure - do nothing
+
+			// XXX: this is pretty heavy-weight
+			((ISourceViewerExtension2)viewer).unconfigure();
+			viewer.configure(getSourceViewerConfiguration());
+			
+			if (Boolean.FALSE.equals(event.getNewValue()))
+				SpellingProblem.removeAllInActiveEditor(this, null);
+			
+			return;
+		}
+		super.handlePreferenceStoreChanged(event);
 	}
 
 	/*

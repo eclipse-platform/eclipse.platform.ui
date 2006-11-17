@@ -48,6 +48,7 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 
 /**
@@ -324,6 +325,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
+		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+			return null;
+
 		IReconcilingStrategy strategy= new SpellingReconcileStrategy(sourceViewer, EditorsUI.getSpellingService()); 
 		MonoReconciler reconciler= new MonoReconciler(strategy, false);
 		reconciler.setIsIncrementalReconciler(false);
