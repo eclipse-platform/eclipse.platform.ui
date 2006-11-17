@@ -33,6 +33,7 @@ public abstract class BufferValidationState {
 	
 	protected IFile fFile;
 	protected boolean fExisted;
+	protected boolean fWasDirty;
 	protected String fEncoding;
 
 	protected static class ModificationStamp {
@@ -75,7 +76,7 @@ public abstract class BufferValidationState {
 				return new ModificationStampValidationState(file);
 			} else {
 				if (buffer.isDirty()) {
-					return new DirtyBufferValidationState(file);
+					return new NoStampValidationState(file);
 				} else {
 					return new ModificationStampValidationState(file);
 				}
@@ -83,7 +84,9 @@ public abstract class BufferValidationState {
 		}
 	}
 	
-	public abstract boolean wasDirty();
+	public boolean wasDirty() {
+		return fWasDirty;
+	}
 	
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		if (!fExisted) {
@@ -127,6 +130,7 @@ public abstract class BufferValidationState {
 	protected BufferValidationState(IFile file) {
 		fFile= file;
 		fExisted= file.exists();
+		fWasDirty= isDirty(fFile);
 		try {
 			fEncoding= file.getCharset(true);
 		} catch (CoreException e) {
@@ -171,19 +175,22 @@ public abstract class BufferValidationState {
 	}
 }
 
-class DirtyBufferValidationState extends BufferValidationState {
+/**
+ * Buffer validation state for dirty files whose document does not support
+ * modification stamps. 
+ */
+class NoStampValidationState extends BufferValidationState {
 	
 	private IDocumentListener fDocumentListener;
 	private FileBufferListener fFileBufferListener;
 	private boolean fChanged;
-	private boolean fWasDirty;
 	private long fContentStamp= IResource.NULL_STAMP;
 	
 	class DocumentChangedListener implements IDocumentListener {
 		public void documentAboutToBeChanged(DocumentEvent event) {
 		}
 		public void documentChanged(DocumentEvent event) {
-			DirtyBufferValidationState.this.documentChanged();
+			NoStampValidationState.this.documentChanged();
 		}
 	}
 	
@@ -228,14 +235,13 @@ class DirtyBufferValidationState extends BufferValidationState {
 		}
 	}
 	
-	public DirtyBufferValidationState(IFile file) {
+	public NoStampValidationState(IFile file) {
 		super(file);
 		fContentStamp= file.getModificationStamp();
 		fFileBufferListener= new FileBufferListener();
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fFileBufferListener);
 		fDocumentListener= new DocumentChangedListener();
 		getDocument().addDocumentListener(fDocumentListener);
-		fWasDirty= isDirty(fFile);
 	}
 
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
@@ -253,13 +259,6 @@ class DirtyBufferValidationState extends BufferValidationState {
 				)); 
 		}
 		return result;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.internal.core.refactoring.BufferValidationState#wasDirty()
-	 */
-	public boolean wasDirty() {
-		return fWasDirty;
 	}
 	
 	public void dispose() {
@@ -284,6 +283,9 @@ class DirtyBufferValidationState extends BufferValidationState {
 	}
 }
 
+/**
+ * Buffer validation state based on modification stamp.
+ */
 class ModificationStampValidationState extends BufferValidationState {
 	
 	private ModificationStamp fModificationStamp;
@@ -293,13 +295,6 @@ class ModificationStampValidationState extends BufferValidationState {
 		fModificationStamp= getModificationStamp();
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ltk.internal.core.refactoring.BufferValidationState#wasDirty()
-	 */
-	public boolean wasDirty() {
-		return false;
-	}
-
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		RefactoringStatus result= super.isValid(needsSaving);
 		if (result.hasFatalError())
