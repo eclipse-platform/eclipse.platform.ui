@@ -151,9 +151,10 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public ILaunchDelegate[] getDelegates(Set modes) throws CoreException;
 	
 	/**
-	 * Returns the preferred launch delegate for this type in the specified mode set
+	 * Returns the preferred launch delegate for this type in the specified mode combination.
+	 * 
 	 * @param modes the set of modes to support
-	 * @return the preferred delegate proxy or <code>null</code> if none
+	 * @return the preferred delegate or <code>null</code> if none
 	 * @throws CoreException
 	 * 
 	 * @since 3.3
@@ -163,8 +164,10 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException;
 	
 	/**
-	 * Allows the preferred launch delegate to be setfor this type with the specifie set of modes
-	 * @param delegate the delegate proxy to set as the default one
+	 * Sets the preferred launch delegate for this type in the specified mode combination.
+	 * 
+	 * @param modes launch mode combination
+	 * @param delegate preferred launch delegate
 	 * @throws CoreException
 	 * 
 	 * @since 3.3
@@ -254,13 +257,14 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @since 3.2
 	 * 
 	 * @deprecated Since 3.3 all modes are provided as sets and not individual strings. The method <code>getSupportedModeCombinations</code>
-	 * should be used instead to retrive the complete listing of supported modes and their allowable combinations.
+	 * should be used instead to retrieve the complete listing of supported modes and their allowable combinations.
 	 */
 	public Set getSupportedModes();
 	
 	/**
-	 * Returns a <code>java.util.Set</code> of <code>java.util.Set</code>s containing all of the supported mode combinations
-	 * for this type
+	 * Returns a <code>java.util.Set</code> of <code>java.util.Set</code>s containing all of the
+	 * supported launch mode combinations for this type.
+	 * 
 	 * @return a set of sets of all the supported mode combinations supported by this type
 	 * 
 	 * @since 3.3
