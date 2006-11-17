@@ -43,6 +43,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -62,9 +64,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 import com.ibm.icu.text.MessageFormat;
@@ -124,7 +126,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Tab folder
 	 */
-	private TabFolder fTabFolder;
+	private CTabFolder fTabFolder;
 	
 	/**
 	 * The current tab group being displayed
@@ -437,14 +439,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			Display display = getShell().getDisplay();
 			Color c1 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND),
 				  c2 = display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-			fTabFolder = new TabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
+			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			gd.horizontalSpan = 2;
-			//fTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
-			//fTabFolder.setSelectionForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
-			//fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+			fTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
+			fTabFolder.setSelectionForeground(getShell().getDisplay().getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
+			fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
 			fTabFolder.setLayoutData(gd);
-	        //fTabFolder.setBorderVisible(true);
+	        fTabFolder.setBorderVisible(true);
 			fTabFolder.setFont(parent.getFont());
 			fTabFolder.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
@@ -473,7 +475,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Sets the tab folder
 	 */
-	protected TabFolder getTabFolder() {
+	protected CTabFolder getTabFolder() {
 		return fTabFolder;
 	}
 	
@@ -536,7 +538,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			getActiveTab().performApply(getWorkingCopy());
 			updateButtons();
 			// update error ticks
-			TabItem item = null;
+			CTabItem item = null;
 			boolean error = false;
 			for (int i = 0; i < tabs.length; i++) {
 				tabs[i].isValid(getWorkingCopy());
@@ -568,7 +570,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 * Set the specified tab item's icon to an error icon if <code>error</code> is true,
 	 * or a transparent icon of the same size otherwise.
 	 */
-	private void setTabIcon(TabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
+	private void setTabIcon(CTabItem tabItem, boolean error, ILaunchConfigurationTab tab) {
 		Image image = null;
 		if (error) {
 			image = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getErrorTabImage(tab);
@@ -796,11 +798,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 
 		// Create the Control for each tab
 		ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-		TabItem tab = null;
+		CTabItem tab = null;
 		String name = EMPTY_STRING;
 		Control control = null;
 		for (int i = 0; i < tabs.length; i++) {
-			tab = new TabItem(fTabFolder, SWT.BORDER);
+			tab = new CTabItem(fTabFolder, SWT.BORDER);
 			name = tabs[i].getName();
 			if (name == null) {
 				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28; 
