@@ -25,16 +25,13 @@ import org.eclipse.debug.core.model.IWatchExpressionResult;
 
 /**
  * Base watch expression implementation.
- * <p>
- * Clients may extend this class.
- * </p>
+ * 
  * @since 3.0
  */
 public class WatchExpression implements IWatchExpression {
 	
 	protected String fExpressionText;
 	protected IWatchExpressionResult fResult;
-	protected IDebugTarget fDebugTarget;
 	protected IDebugElement fCurrentContext;
 	private boolean fEnabled= true;
 	private boolean fPending= false;
@@ -64,11 +61,10 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IWatchExpression#evaluate()
 	 */
 	public void evaluate() {
-		if (fCurrentContext == null) {
+		IDebugElement context= fCurrentContext;
+		if (context == null) {
 			return;
 		}
-		IDebugElement context= fCurrentContext;
-		fDebugTarget= context.getDebugTarget();
 			
 		IWatchExpressionListener listener= new IWatchExpressionListener() {
 			/* (non-Javadoc)
@@ -170,7 +166,11 @@ public class WatchExpression implements IWatchExpression {
 	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
 	 */
 	public IDebugTarget getDebugTarget() {
-		return fDebugTarget;
+		IDebugElement element = fCurrentContext;
+		if (element != null) {
+			return element.getDebugTarget();
+		}
+		return null;
 	}
 
 	/**
