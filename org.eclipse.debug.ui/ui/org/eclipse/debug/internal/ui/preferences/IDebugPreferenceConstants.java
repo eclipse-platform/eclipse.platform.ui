@@ -33,6 +33,7 @@ public interface IDebugPreferenceConstants {
 	public static final String CONSOLE_SYS_ERR_COLOR= "org.eclipse.debug.ui.errorColor"; //$NON-NLS-1$
 	public static final String CONSOLE_SYS_OUT_COLOR= "org.eclipse.debug.ui.outColor"; //$NON-NLS-1$
 	public static final String CONSOLE_SYS_IN_COLOR= "org.eclipse.debug.ui.inColor"; //$NON-NLS-1$
+	public static final String CONSOLE_BAKGROUND_COLOR= "org.eclipse.debug.ui.consoleBackground"; //$NON-NLS-1$
 	
 	/**
 	 * @deprecated use IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR instead

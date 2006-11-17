@@ -243,7 +243,9 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			    fViewer.setTabWidth(tabSize.intValue());
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 			    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
-			} 
+			} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
+				fViewer.getTextWidget().setBackground(fConsole.getBackground());
+			}
         }
 	}
 

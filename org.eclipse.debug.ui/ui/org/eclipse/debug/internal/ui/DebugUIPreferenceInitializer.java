@@ -17,6 +17,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 
 public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer {
@@ -68,6 +69,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, new RGB(0, 0, 0));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, new RGB(0, 200, 125));
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, new RGB(255, 0, 0));
+		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR, DebugUIPlugin.getStandardDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB());
 		
 		PreferenceConverter.setDefault(prefs, IInternalDebugUIConstants.PREF_CHANGED_VALUE_BACKGROUND, new RGB(255, 255, 0));
 		PreferenceConverter.setDefault(prefs, IDebugUIConstants.PREF_MEMORY_HISTORY_UNKNOWN_COLOR, new RGB(114, 119, 129));

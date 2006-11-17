@@ -22,6 +22,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.console.ConsoleDocument;
 import org.eclipse.ui.internal.console.ConsoleHyperlinkPosition;
@@ -56,6 +57,12 @@ public abstract class TextConsole extends AbstractConsole {
 	 * The font used by this console
 	 */
     private Font fFont;    
+    
+    /**
+     * The background color used by this console or <code>null</code> if default
+     */
+    private Color fBackground;
+    
     /**
      * The Console's regular expression pattern matcher
      */
@@ -235,6 +242,37 @@ public abstract class TextConsole extends AbstractConsole {
         }
     }
 	
+	/**
+	 * Sets the background color used by this console. Specify <code>null</code> to use
+	 * the default background color.
+	 * 
+	 * @param background background color or <code>null</code> for default
+	 * @since 3.3
+	 */
+    public void setBackgrond(Color background) {
+    	if (fBackground == null) {
+    		if (background == null) {
+    			return;
+    		}
+    	} else if (fBackground.equals(background)){
+    		return;
+    	}
+        Color old = fBackground;
+        fBackground = background;
+        firePropertyChange(this, IConsoleConstants.P_BACKGROUND_COLOR, old, fBackground);
+    }    
+    
+    /**
+     * Returns the background color to use for this console or <code>null</code> for the 
+     * default background color.
+     * 
+     * @return background color or <code>null</code> for default
+     * @since 3.3
+     */
+    public Color getBackground() {
+    	return fBackground;
+    }
+    
     /**
      * Clears the console.
      * <p>

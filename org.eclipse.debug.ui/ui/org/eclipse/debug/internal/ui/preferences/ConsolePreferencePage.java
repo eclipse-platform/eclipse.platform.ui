@@ -137,11 +137,13 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 
 		ColorFieldEditor sysout= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Out__2, getFieldEditorParent()); 
 		ColorFieldEditor syserr= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_Error__3, getFieldEditorParent()); 
-		ColorFieldEditor sysin= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_In__4, getFieldEditorParent()); 
+		ColorFieldEditor sysin= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_SYS_IN_COLOR, DebugPreferencesMessages.ConsolePreferencePage_Standard_In__4, getFieldEditorParent());
+		ColorFieldEditor background= new ColorFieldEditor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR, "Back&ground color:", getFieldEditorParent());
 		
 		addField(sysout);
 		addField(syserr);
 		addField(sysin);
+		addField(background);
 	}
 	
 	/**

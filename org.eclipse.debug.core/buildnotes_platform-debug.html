@@ -174,10 +174,12 @@ The launch framework has been enhanced to support the following:
 </ul>
 <h3>Console</h3>
 <ul>
-  <li>added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute 
+  <li>Added <code>DebugPlugin.ATTR_CONSOLE_ENCODING</code> - this launch attribute 
     specifies the encoding used by the console. When unspecified the default system 
     encoding is used. This constant replaces the now deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
-  <li>deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>Deprecated <code>IDebugUIConstants.ATTR_CONSOLE_ENCODING</code>.</li>
+  <li>Added support to set the background color to text consoles - see new methods 
+    <code>TextConsole.setBackground(Color)</code> and <code>getBackground()</code></li>
 </ul>
 <h3>Expressions</h3>
 <ul>

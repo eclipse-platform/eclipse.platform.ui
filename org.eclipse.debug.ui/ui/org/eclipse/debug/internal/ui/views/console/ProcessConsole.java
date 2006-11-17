@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +78,8 @@ import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A console for a system process
@@ -311,6 +312,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             }
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
             setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+        } else if (property.equals(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR)) {
+        	setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
         }
     }
 
@@ -416,6 +419,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
                 setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+                setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
             }
         });
     }
