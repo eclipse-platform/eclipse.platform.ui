@@ -25,7 +25,10 @@ final class SpellingMessages extends NLS {
 		// Do not instantiate
 	}
 
+	
 	public static String EmptySpellingPreferenceBlock_emptyCaption;
+	public static String NoCompletionsProposal_displayString;
+	
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, SpellingMessages.class);
