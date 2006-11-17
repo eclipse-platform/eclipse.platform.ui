@@ -17,6 +17,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.internal.filesystem.ram.MemoryFileSystem;
+import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
 
 /**
  * Tests behaviour of manipulating linked resources that are not linked into
@@ -70,6 +71,11 @@ public class NonLocalLinkedResourceTest extends ResourceTest {
 		return store;
 	}
 
+	protected void tearDown() throws Exception {
+		MemoryTree.TREE.deleteAll();
+		super.tearDown();
+	}
+
 	public void testCopyFile() {
 		IFileStore sourceStore = createFolderStore("source");
 		IFileStore destinationStore = createFolderStore("destination");
@@ -119,4 +125,61 @@ public class NonLocalLinkedResourceTest extends ResourceTest {
 			//should fail
 		}
 	}
+
+	public void testMoveFile() {
+		IFileStore sourceStore = createFolderStore("source");
+		IFileStore destinationStore = createFolderStore("destination");
+		IProject project = getWorkspace().getRoot().getProject("project");
+		IFolder source = project.getFolder("source");
+		IFolder destination = project.getFolder("destination");
+		IFile sourceFile = source.getFile("file.txt");
+		IFile destinationFile = destination.getFile(sourceFile.getName());
+		IFile localFile = project.getFile(sourceFile.getName());
+
+		//setup initial resources
+		ensureExistsInWorkspace(project, true);
+		try {
+			source.createLink(sourceStore.toURI(), IResource.NONE, getMonitor());
+			destination.createLink(destinationStore.toURI(), IResource.NONE, getMonitor());
+			sourceFile.create(getRandomContents(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+
+		//move to linked destination should succeed
+		try {
+			sourceFile.move(destinationFile.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+		//move back to source location
+		//move to linked destination should succeed
+		try {
+			destinationFile.move(sourceFile.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+
+		//move to local destination should succeed
+		try {
+			sourceFile.move(localFile.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.0", e);
+		}
+		//movefrom local to non local
+		try {
+			localFile.move(destinationFile.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("3.0", e);
+		}
+
+		//copy to self should fail 
+		try {
+			localFile.copy(localFile.getFullPath(), IResource.NONE, getMonitor());
+			fail("4.0");
+		} catch (CoreException e) {
+			//should fail
+		}
+	}
+
 }
