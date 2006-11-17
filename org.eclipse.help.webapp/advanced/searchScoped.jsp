@@ -175,7 +175,7 @@ function doSearch(query)
 		if (!searchWord || searchWord == "")
 			return;
 		query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits;
-		if (workingSet != '<%=ServletResources.getString("All", request)%>')
+		if (workingSet != '<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>')
 			query = query +"&scope="+encodeURIComponent(workingSet);
 	}
 		
@@ -231,7 +231,7 @@ function onloadHandler(e)
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td nowrap>
-					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("ScopeTooltip", request)%>' alt='<%=ServletResources.getString("ScopeTooltip", request)%>' onmouseover="window.status='<%=ServletResources.getString("ScopeTooltip", request)%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getLabel("Scope", request)%>:</a>
+					<a id="scopeLabel" href="javascript:openAdvanced();" title='<%=ServletResources.getString("ScopeTooltip", request)%>' alt='<%=ServletResources.getString("ScopeTooltip", request)%>' onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("ScopeTooltip", request))%>'; return true;" onmouseout="window.status='';"><%=ServletResources.getLabel("Scope", request)%>:</a>
 				</td>
 				<td nowrap>
 					<input type="hidden" name="workingSet" value='<%=data.getScope()%>'>

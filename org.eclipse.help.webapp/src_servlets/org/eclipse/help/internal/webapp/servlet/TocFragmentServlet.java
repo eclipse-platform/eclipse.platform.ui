@@ -86,7 +86,7 @@ public class TocFragmentServlet extends HttpServlet {
 					
 			// Return an error for show in toc if topic was not found in toc
 			if (requestKind == REQUEST_SHOW_IN_TOC && tocData.getTopicPath() == null) {
-				addError(WebappResources.getString("topicNotInToc", locale)); //$NON-NLS-1$
+				addError(WebappResources.getString("CannotSync", locale)); //$NON-NLS-1$
 			} else {
 			    serializeTocs();
 			}

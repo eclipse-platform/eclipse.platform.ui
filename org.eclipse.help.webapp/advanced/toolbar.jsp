@@ -160,7 +160,7 @@ function registerMaximizedChangedListener(){
 		p = p.parent;
 	
 	if (p!= null){
-		p.registerMaximizeListener('<%=data.getName()%>Toolbar', maximizedChanged);
+		p.registerMaximizeListener('<%=UrlUtil.JavaScriptEncode(data.getName())%>Toolbar', maximizedChanged);
 	}
 }
 registerMaximizedChangedListener();
@@ -191,7 +191,7 @@ function toggleFrame(){
 		p = p.parent;
 	
 	if (p!= null){
-		p.toggleFrame('<%=data.getTitle()%>');
+		p.toggleFrame('<%=UrlUtil.JavaScriptEncode(data.getTitle())%>');
 	}
 	document.selection.clear;	
 }
@@ -199,13 +199,17 @@ function toggleFrame(){
 function maximizedChanged(maximizedNotRestored){
 	if(maximizedNotRestored){
 		document.getElementById("maximize_restore").src="<%=data.getRestoreImage()%>";
-		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getRestoreTooltip()%>");
-		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getRestoreTooltip()%>");
+		document.getElementById("maximize_restore").setAttribute("title", 
+		    "<%=UrlUtil.JavaScriptEncode(data.getRestoreTooltip())%>");
+		document.getElementById("maximize_restore").setAttribute("alt", 
+		    "<%=UrlUtil.JavaScriptEncode(data.getRestoreTooltip())%>");
 		bRestore = true;
 	}else{
 		document.getElementById("maximize_restore").src="<%=data.getMaximizeImage()%>";
-		document.getElementById("maximize_restore").setAttribute("title", "<%=data.getMaximizeTooltip()%>");
-		document.getElementById("maximize_restore").setAttribute("alt", "<%=data.getMaximizeTooltip()%>");
+		document.getElementById("maximize_restore").setAttribute("title", 
+		    "<%=UrlUtil.JavaScriptEncode(data.getMaximizeTooltip())%>");
+		document.getElementById("maximize_restore").setAttribute("alt", 
+		    "<%=UrlUtil.JavaScriptEncode(data.getMaximizeTooltip())%>");
 		bRestore = false;
 	}
 }
@@ -234,12 +238,12 @@ function setWindowStatus(buttonName){
 		if (buttonName == "<%=name%>"){
 			if (buttonName == "maximize_restore"){
 				if (bRestore){
-					window.status = "<%=data.getRestoreTooltip()%>";
+					window.status = "<%=UrlUtil.JavaScriptEncode(data.getRestoreTooltip())%>";
 				}else{
-					window.status = "<%=data.getMaximizeTooltip()%>";
+					window.status = "<%=UrlUtil.JavaScriptEncode(data.getMaximizeTooltip())%>";
 				}
 			}else{
-				window.status = "<%=buttons[i].getTooltip()%>";
+				window.status = "<%=UrlUtil.JavaScriptEncode(buttons[i].getTooltip())%>";
 			}
 		}
 	<%	

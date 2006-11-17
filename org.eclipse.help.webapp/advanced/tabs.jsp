@@ -268,11 +268,11 @@ function getPreviousLink(currentLink){
 	     class="tab" 
 	     id="<%=views[i].getName()%>" 
 	     onclick="parent.showView('<%=views[i].getName()%>')" 
-	     onmouseover="window.status='<%=title%>';return true;" 
+	     onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(title)%>';return true;" 
 	     onmouseout="window.status='';">
 	     <a  href='javascript:parent.showView("<%=views[i].getName()%>");' 
 	         onclick='this.blur();return false;' 
-	         onmouseover="window.status='<%=title%>';return true;" 
+	         onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(title)%>';return true;" 
 	         onmouseout="window.status='';"
 	         id="link<%=views[i].getName()%>"
 	         <%=views[i].getKey()==View.NO_SHORTCUT?"":"ACCESSKEY=\""+views[i].getKey()+"\""%>>

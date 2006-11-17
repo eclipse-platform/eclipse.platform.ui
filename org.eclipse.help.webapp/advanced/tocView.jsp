@@ -48,8 +48,8 @@ topic_img = new Image();
 topic_img.src = "<%=prefs.getImagesDirectory()%>"+"/topic.gif";
 altTopicClosed = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicClosed", request))%>";
 altTopicOpen = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("topicOpen", request))%>";
-altBookClosed="<%=ServletResources.getString("bookClosed", request)%>";
-altBookOpen="<%=ServletResources.getString("bookOpen", request)%>";
+altBookClosed="<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookClosed", request))%>";
+altBookOpen="<%=UrlUtil.JavaScriptEncode(ServletResources.getString("bookOpen", request))%>";
 </script>
 
 <script language="JavaScript" src="toc.js"></script>

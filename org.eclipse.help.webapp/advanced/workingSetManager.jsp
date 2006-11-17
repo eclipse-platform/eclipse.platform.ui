@@ -171,8 +171,10 @@ function selectWorkingSet() {
 function removeWorkingSet() {
 	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+encodeURIComponent(getWorkingSet()));
 	if (getWorkingSet()==window.opener.document.getElementById("scope").firstChild.nodeValue){
-		window.opener.document.getElementById("scope").firstChild.nodeValue="<%=ServletResources.getString("All", request)%>";
-		window.opener.document.forms["searchForm"].workingSet.value="<%=ServletResources.getString("All", request)%>";
+		window.opener.document.getElementById("scope").firstChild.nodeValue=
+		    "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>";
+		window.opener.document.forms["searchForm"].workingSet.value=
+		    "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("All", request))%>";
 	}
 }
 

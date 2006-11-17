@@ -66,83 +66,8 @@ var tocId = "";
 	
 function onloadHandler()
 {
-<%--
-// TODO incorporate this check into ajax call to load children
-<%
-	if (tocData.isRemoteHelpError()) {
-%>
-		alert('<%=ServletResources.getString("remoteHelpErrorMessage", request)%>');
-<%
-	}
-%>
---%>
-
 	loadChildren(null);
 }
-
-<%--
-// TODO delete once determined this is not used
-function oldLoadActions() {	
-
-<%	   
-    TocData tocData = new TocData(application,request, response);
-	if (tocData.getSelectedToc() != -1)
-	{
-%>
-	tocTitle = '<%=UrlUtil.JavaScriptEncode(tocData.getTocLabel(tocData.getSelectedToc()))%>';
-	var tocTopic = "<%=tocData.getTocDescriptionTopic(tocData.getSelectedToc())%>";
-	
-	// set title on the content toolbar
-	parent.parent.parent.setContentToolbarTitle(tocTitle);	
-	var topicSelected=false;
-	// select specified topic, or else the book
-	var topic = "<%=tocData.getSelectedTopic()%>";
-	if (topic != "about:blank" && topic != tocTopic) {
-		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
-			// remove the .. from topic
-			topic = topic.substring(2);
-			// remove advanced/tocView.jsp from path to obtain contextPath
-			var contextPath = window.location.pathname;
-			var slash = contextPath.lastIndexOf('/');
-			if(slash > 0) {
-				slash = contextPath.lastIndexOf('/', slash-1);
-				if(slash >= 0) {
-					contextPath = contextPath.substr(0, slash);
-					topic = window.location.protocol + "//" +window.location.host + contextPath + topic;
-				}
-			}			
-		}
-		topicSelected = selectTopic(topic);
-	} else {
-		topicSelected = selectTopicById(tocId);
-	}
-<%
-	// if topic failed to be selected, but we know it exists in some book,
-	// offer to turn on "show all"
-	
-	// do not offer to show all just after it was manually turned off
-	if (null==request.getParameter("showAll")) {
-%>
-	if(!topicSelected){
-		if(parent.parent.activityFiltering){
-			askShowAll();
-		}
-	}
-<%
-	}
-%>
-<%
-	} else if ("yes".equals(request.getParameter("synch"))) {
-%>
-	var message='<%=UrlUtil.JavaScriptEncode(ServletResources.getString("CannotSync", request))%>';
-	// when we don't find the specified toc, we just restore navigation
-	parent.parent.parent.restoreNavigation(message);
-<%
-	}
-%>
-	// focusHandler("e");
-}
---%>
 
 var askShowAllDialog;
 var w = 470;

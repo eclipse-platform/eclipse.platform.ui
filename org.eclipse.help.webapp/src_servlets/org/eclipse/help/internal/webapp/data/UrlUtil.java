@@ -45,6 +45,7 @@ public class UrlUtil {
 	 * Encodes string for embedding in JavaScript source
 	 */
 	public static String JavaScriptEncode(String str) {
+		if (str == null) return null;
 		char[] wordChars = new char[str.length()];
 		str.getChars(0, str.length(), wordChars, 0);
 		StringBuffer jsEncoded = new StringBuffer();
