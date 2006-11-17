@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
-import org.eclipse.jface.internal.text.source.TextInvocationContext;
 
 import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.BadLocationException;

@@ -12,7 +12,6 @@ package org.eclipse.jface.text.quickassist;
 
 import org.eclipse.swt.graphics.Color;
 
-import org.eclipse.jface.internal.text.source.TextInvocationContext;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -25,6 +24,7 @@ import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.TextInvocationContext;
 
 
 /**
