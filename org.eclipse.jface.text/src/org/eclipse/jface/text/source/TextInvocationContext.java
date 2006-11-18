@@ -19,7 +19,7 @@ import org.eclipse.jface.text.quickassist.IQuickAssistInvocationContext;
  * Clients may extend this class to add additional context information.
  * </p>
  * 
- * @since3.3
+ * @since 3.3
  */
 public class TextInvocationContext implements IQuickAssistInvocationContext {
 
