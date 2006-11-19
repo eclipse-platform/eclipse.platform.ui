@@ -108,8 +108,6 @@ public final class InternalPlatform {
 
 	private static final String UPDATE = "-update"; //$NON-NLS-1$
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
-	private static final String HEADER_LAZY_START = "Eclipse-LazyStart"; //$NON-NLS-1$;
-	private static final String HEADER_AUTO_START = "Eclipse-AutoStart"; //$NON-NLS-1$;
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker configurationLocation = null;
 	private BundleContext context;
