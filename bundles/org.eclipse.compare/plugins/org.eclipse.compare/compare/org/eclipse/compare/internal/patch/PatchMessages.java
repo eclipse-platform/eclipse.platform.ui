@@ -22,6 +22,7 @@ public final class PatchMessages extends NLS {
 
 	public static String HunkMergePage_GenerateRejectFile;
 	public static String HunkMergePage_Merged;
+	public static String PatchCompareEditorInput_0;
 	public static String PatcherCompareEditorInput_0;
 	public static String PatcherCompareEditorInput_AfterPatch;
 	public static String PatcherCompareEditorInput_LocalCopy;

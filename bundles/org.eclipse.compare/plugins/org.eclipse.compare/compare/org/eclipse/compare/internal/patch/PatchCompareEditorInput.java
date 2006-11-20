@@ -54,6 +54,9 @@ public abstract class PatchCompareEditorInput extends CompareEditorInput {
 					if (getPatcher().hasCachedContents(fileNode.getDiffResult().getDiff())) {
 						text = NLS.bind(PatchMessages.Diff_2Args, new String[] {text, PatchMessages.HunkMergePage_Merged});
 					}
+					if (!fileNode.fileExists()) {
+						text = NLS.bind(PatchMessages.Diff_2Args, new String[] {text, PatchMessages.PatchCompareEditorInput_0});
+					}
 				}
 				if (node instanceof HunkDiffNode) {
 					HunkDiffNode hunkNode = (HunkDiffNode) node;

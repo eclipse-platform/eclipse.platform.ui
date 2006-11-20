@@ -928,6 +928,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			InterruptedException {
 		if (fContainer == null) {
 			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
+			return;
 		}
 		fContainer.run(fork, cancelable, runnable);
 	}

@@ -907,7 +907,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				try {
 					p= new Position(start, l);
 				} catch (RuntimeException ex) {
-					// silently ignored
+					p= new Position(0, 0);
 				}
 				
 				try {

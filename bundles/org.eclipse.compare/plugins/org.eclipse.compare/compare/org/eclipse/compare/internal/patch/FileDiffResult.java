@@ -51,12 +51,12 @@ public class FileDiffResult {
 	public void refresh() {
 		fMatches= false;
 		fDiffProblem= false;
-		IFile file= fPatcher.getTargetFile(fDiff);
+		IFile file= getTargetFile();
 		boolean create= false;
 		//If this diff is an addition, make sure that it doesn't already exist
 		if (fDiff.getDiffType(getPatcher().isReversed()) == Differencer.ADDITION) {
 			DiffProject project = fPatcher.getProject(fDiff);
-			if ((file == null || !file.exists()) && project != null && project.getProject().isAccessible()) {
+			if ((file == null || !file.exists() || isEmpty(file)) && project != null && project.getProject().isAccessible()) {
 				fMatches= true;
 			} else {
 				// file already exists
@@ -66,7 +66,7 @@ public class FileDiffResult {
 			create= true;
 		} else { //This diff is not an addition, try to find a match for it
 			//Ensure that the file described by the path exists and is modifiable
-			if (file != null) {
+			if (file != null & file.isAccessible()) {
 				fMatches= true;
 			} else {
 				// file doesn't exist
@@ -107,6 +107,16 @@ public class FileDiffResult {
 				}
 			}
 		}
+	}
+
+	private boolean isEmpty(IFile file) {
+		if (file == null || !file.exists())
+			return true;
+		return getPatcher().load(file, false).isEmpty();
+	}
+
+	protected IFile getTargetFile() {
+		return fPatcher.getTargetFile(fDiff);
 	}
 	
 	List apply(IFile file, boolean create) {

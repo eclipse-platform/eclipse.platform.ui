@@ -12,6 +12,7 @@ package org.eclipse.compare.internal.patch;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.resources.IFile;
 
 public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeListener {
 
@@ -82,6 +83,11 @@ public class PatchFileDiffNode extends PatchDiffNode implements IContentChangeLi
 			return Differencer.CHANGE | Differencer.RIGHT;
 		}
 		return kind;
+	}
+
+	public boolean fileExists() {
+		IFile file = getDiffResult().getTargetFile();
+		return file != null && file.isAccessible();
 	}
 
 }

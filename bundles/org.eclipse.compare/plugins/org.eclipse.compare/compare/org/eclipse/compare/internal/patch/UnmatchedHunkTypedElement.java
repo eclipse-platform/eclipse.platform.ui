@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ContentChangeNotifier;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
 public class UnmatchedHunkTypedElement extends HunkTypedElement implements IContentChangeNotifier, IEditableContent {
@@ -48,7 +49,8 @@ public class UnmatchedHunkTypedElement extends HunkTypedElement implements ICont
 	 * @see org.eclipse.compare.IEditableContent#isEditable()
 	 */
 	public boolean isEditable() {
-		return true;
+		IFile file = getHunkResult().getDiffResult().getTargetFile();
+		return file != null && file.isAccessible();
 	}
 
 	/* (non-Javadoc)
