@@ -368,9 +368,10 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Return a status indicating the projected outcome of executing the
 	 * receiver. This method is not called by the operation history, but instead
-	 * is used by clients (such as implementers of {@link IOperationApprover2})
-	 * who wish to perform advanced validation of an operation before attempting
-	 * to execute it.
+	 * is used by clients (such as implementers of
+	 * {@link org.eclipse.core.commands.operations.IOperationApprover2}) who
+	 * wish to perform advanced validation of an operation before attempting to
+	 * execute it.
 	 * 
 	 * If an ERROR status is returned, the operation will not proceed and the
 	 * user notified if deemed necessary by the caller. The validity flag on the
@@ -430,7 +431,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Return a status indicating the projected outcome of undoing the receiver.
 	 * This method is not called by the operation history, but instead is used
-	 * by clients (such as implementers of {@link IOperationApprover2}) who
+	 * by clients (such as implementers of
+	 * {@link org.eclipse.core.commands.operations.IOperationApprover2}) who
 	 * wish to perform advanced validation of an operation before attempting to
 	 * undo it.
 	 * 
@@ -491,7 +493,8 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 	/**
 	 * Return a status indicating the projected outcome of redoing the receiver.
 	 * This method is not called by the operation history, but instead is used
-	 * by clients (such as implementers of {@link IOperationApprover2}) who
+	 * by clients (such as implementers of
+	 * {@link org.eclipse.core.commands.operations.IOperationApprover2}) who
 	 * wish to perform advanced validation of an operation before attempting to
 	 * redo it.
 	 * 
@@ -705,6 +708,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#setQuietCompute(boolean)
 	 */
 	public void setQuietCompute(boolean quiet) {
@@ -762,6 +766,7 @@ public abstract class AbstractWorkspaceOperation extends AbstractOperation
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.core.commands.operations.IAdvancedUndoableOperation2#runInBackground()
 	 */
 	public boolean runInBackground() {

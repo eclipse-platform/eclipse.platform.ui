@@ -105,8 +105,10 @@ public class WorkspaceUndoUtil {
 
 	/**
 	 * Make an <code>IAdaptable</code> that adapts to the specified shell,
-	 * suitable for passing for passing to any {@link IUndoableOperation} or
-	 * {@link IOperationHistory} method that requires an {@link IAdaptable}
+	 * suitable for passing for passing to any
+	 * {@link org.eclipse.core.commands.operations.IUndoableOperation} or
+	 * {@link org.eclipse.core.commands.operations.IOperationHistory} method
+	 * that requires an {@link org.eclipse.core.runtime.IAdaptable}
 	 * <code>uiInfo</code> parameter.
 	 * 
 	 * @param shell
@@ -413,7 +415,7 @@ public class WorkspaceUndoUtil {
 					for (int j = 0; j < overwritten.length; j++) {
 						overwrittenResources.add(overwritten[j]);
 					}
-					// Delete the source.  No need to record it since it
+					// Delete the source. No need to record it since it
 					// will get moved back.
 					delete(source, monitor, uiInfo, false, false);
 				} else {
