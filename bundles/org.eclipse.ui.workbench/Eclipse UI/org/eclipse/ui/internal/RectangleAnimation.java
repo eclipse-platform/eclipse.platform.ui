@@ -15,6 +15,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -30,17 +32,60 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class RectangleAnimation extends Job {
 	private static class AnimationFeedbackFactory {
-		public static DefaultAnimationFeedback createAnimationRenderer() {
-//			 Revert to the old style until performance issues can be addressed
-//	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-//	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+		/**
+		 * Determines whether or not the system being used is
+		 * sufficiently fast to support image animations.
+		 * 
+		 * Assumes that a pixel is ~3 bytes
+		 * 
+		 * For now we use a base limitation of 50MB/sec as a
+		 * 'reverse blt' rate so that a 2MB size shell can be
+		 * captured in under 1/25th of a sec. 
+		 */
+		private static final int IMAGE_ANIMATION_THRESHOLD = 25; // Frame captures / Sec
+		private static final int IMAGE_ANIMATION_TEST_LOOP_COUNT = 20; // test the copy 'n' times
+	    
+		private static double framesPerSec = 0.0;
+		
+	    public static double getCaptureSpeed(Shell wb) {
+	    	// OK, capture
+	    	Rectangle bb = wb.getBounds();
+			Image backingStore = new Image(wb.getDisplay(), bb);
+			GC gc = new GC(wb);
+			
+			// Loop 'n' times to average the result
+	    	long startTime = System.currentTimeMillis();
+			for (int i = 0; i < IMAGE_ANIMATION_TEST_LOOP_COUNT; i++)
+				gc.copyArea(backingStore, bb.x, bb.y);			
+			gc.dispose();
+			long endTime = System.currentTimeMillis();
+			
+			// get Frames / Sec
+			double fps = IMAGE_ANIMATION_TEST_LOOP_COUNT / ((endTime-startTime) / 1000.0);
+			double pps = fps * (bb.width*bb.height*4); // 4 bytes/pixel
+			System.out.println("FPS: " + fps + " Bytes/sec: " + (long)pps); //$NON-NLS-1$ //$NON-NLS-2$
+	    	return fps;
+	    }
+		
+	    public boolean useImageAnimations(Shell wb) {
+	    	return getCaptureSpeed(wb) >= IMAGE_ANIMATION_THRESHOLD;
+	    }
+	    
+		public static DefaultAnimationFeedback createAnimationRenderer(Shell parentShell) {
+			// on the first call test the animation threshold to determine
+			// whether to use image animations or not...
+//			if (framesPerSec == 0.0)
+//				framesPerSec = getCaptureSpeed(parentShell);
+			
+	        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+	        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
 
-//			if (useNewMinMax)
-//				return new ImageAnimationFeedback();
+			if (useNewMinMax && framesPerSec >= IMAGE_ANIMATION_THRESHOLD) {
+				return new ImageAnimationFeedback();
+			}
 			
 			return new DefaultAnimationFeedback();
 		}
-		
 	}
 	
 	// Constants
@@ -135,7 +180,7 @@ public class RectangleAnimation extends Job {
         setSystem(true);
         
         // Pick the renderer (could be a preference...)
-        feedbackRenderer = AnimationFeedbackFactory.createAnimationRenderer();
+        feedbackRenderer = AnimationFeedbackFactory.createAnimationRenderer(parentShell);
         
         // Set it up
         feedbackRenderer.initialize(parentShell, start, end);
