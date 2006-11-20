@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -1092,7 +1090,7 @@ final class MenuPersistence extends RegistryPersistence {
 			IConfigurationElement addition) {
 		// Determine the insertio location by parsing the URI
 		String locationURI = addition.getAttribute(TAG_LOCATION_URI);
-		URI uri = createURI(locationURI);
+		MenuLocationURI uri = new MenuLocationURI(locationURI);
 
 		if (uri != null) {
 			ContributionManager mgr = menuService.getManagerForURI(uri);
@@ -1132,29 +1130,8 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 		}
 	}
-
 	
-	/**
-	 * Wraps a URI constructor in a standard exception handler.
-	 * 
-	 * @param uriDef The string to create the URI from
-	 * @return The URI or <code>null</code> if the string is
-	 * badly formed.
-	 */
-	public static URI createURI(String uriDef) {
-		URI uri = null;
-		try {
-			uri = new URI(uriDef);
-		} catch (URISyntaxException e) {
-			// [TBD] Log it
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return uri;
-	}
-	
-	private static int getInsertionIndexForURI(ContributionManager mgr, URI uri) {
+	private static int getInsertionIndexForURI(ContributionManager mgr, MenuLocationURI uri) {
 		String query = uri.getQuery();
 		if (query == null)
 			return 0;

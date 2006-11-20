@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
-import java.net.URI;
 import java.util.Collection;
 
 import org.eclipse.core.expressions.Expression;
@@ -270,5 +269,5 @@ public interface IMenuService extends IServiceWithSources {
 	 * 
 	 * @since 3.3
 	 */
-	public ContributionManager getManagerForURI(URI uri);
+	public ContributionManager getManagerForURI(MenuLocationURI uri);
 }

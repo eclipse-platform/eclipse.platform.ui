@@ -743,6 +743,7 @@ public final class Util {
 		if (delimIndex == -1 || delimIndex == 0 || delimIndex == src.length()-1) {
 			splitStr[0] = src;
 			splitStr[1] = ZERO_LENGTH_STRING;
+			return splitStr;
 		}
 		
 		splitStr[0] = src.substring(0, delimIndex);

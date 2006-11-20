@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -166,11 +165,11 @@ public final class WorkbenchMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
 	 */
-	public ContributionManager getManagerForURI(URI uri) {
+	public ContributionManager getManagerForURI(MenuLocationURI uri) {
 		if (uri == null)
 			return null;
 
-		String mgrId = uri.getScheme() + ":" + uri.getHost(); //$NON-NLS-1$
+		String mgrId = uri.getScheme() + ":" + uri.getPath(); //$NON-NLS-1$
 		ContributionManager mgr = (ContributionManager) uriToManager.get(mgrId);
 		if (mgr == null) {
 			mgr = createContributionManager(uri);
@@ -180,7 +179,7 @@ public final class WorkbenchMenuService implements IMenuService {
 		return mgr;
 	}
 
-	private static ContributionManager createContributionManager(URI uri) {
+	private static ContributionManager createContributionManager(MenuLocationURI uri) {
 		String type = uri.getScheme();
 		if (type.equals("menu") || type.equals("popup")) { //$NON-NLS-1$ //$NON-NLS-2$
 			return new MenuManager(uri.getPath(), uri.getPath());

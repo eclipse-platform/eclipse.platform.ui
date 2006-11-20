@@ -1,9 +1,6 @@
 package org.eclipse.ui.tests.api.workbenchpart;
 
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -29,6 +26,7 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -118,13 +116,7 @@ public class MenuContributionHarness extends ViewPart {
 		// in the getSite().registerContextMenu(*) method for the view.
 		IMenuService menus = (IMenuService) getSite().getService(
 				IMenuService.class);
-		URI uri = null;
-		try {
-			uri = new URI("popup://" + VIEW_ID);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		MenuLocationURI uri = new MenuLocationURI("popup://" + VIEW_ID);
 		MenuManager menuMgr = (MenuManager) menus.getManagerForURI(uri);
 		
 		menuMgr.setRemoveAllWhenShown(false);
