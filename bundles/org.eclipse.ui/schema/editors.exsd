@@ -260,8 +260,8 @@ be treated as an external program.  In this case the
 specified class must implement 
 &lt;samp&gt;org.eclipse.ui.IEditorLauncher&lt;/samp&gt;. 
 The launcher will be instantiated and then 
-&lt;samp&gt;open(IFile file)&lt;/samp&gt; will be invoked to 
-launch the editor. 
+&lt;samp&gt;open(IPath path)&lt;/samp&gt; will be invoked to 
+launch the editor on the provided local file system path. 
 &lt;p&gt;
 If the class attribute is used, the workbench will 
 assume that it is an internal editor and the specified 
