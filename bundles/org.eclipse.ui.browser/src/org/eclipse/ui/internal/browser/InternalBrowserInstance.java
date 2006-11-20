@@ -60,7 +60,7 @@ public abstract class InternalBrowserInstance extends AbstractWebBrowser {
 			}
 
 			public void partClosed(IWorkbenchPart part3) {
-				if (part.equals(InternalBrowserInstance.this.part)) {
+				if (part3.equals(InternalBrowserInstance.this.part)) {
 					InternalBrowserInstance.this.part = null;
 					page.removePartListener(listener);
 					DefaultBrowserSupport.getInstance().removeBrowser(
