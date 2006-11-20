@@ -29,7 +29,7 @@ its viewer id.
             <element ref="viewer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="viewerContentBinding" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="viewerActionBinding" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="dragAssistant"/>
+            <element ref="dragAssistant" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>

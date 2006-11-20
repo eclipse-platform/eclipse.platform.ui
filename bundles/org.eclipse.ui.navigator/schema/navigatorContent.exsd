@@ -29,10 +29,10 @@ expand to the right node.
       <complexType>
          <sequence>
             <choice>
-               <element ref="navigatorContent" minOccurs="0" maxOccurs="1"/>
-               <element ref="actionProvider" minOccurs="0" maxOccurs="1"/>
-               <element ref="commonWizard" minOccurs="0" maxOccurs="1"/>
-               <element ref="commonFilter" minOccurs="0" maxOccurs="1"/>
+               <element ref="navigatorContent" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="actionProvider" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="commonWizard" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="commonFilter" minOccurs="0" maxOccurs="unbounded"/>
             </choice>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -468,9 +468,9 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
       </annotation>
       <complexType>
          <sequence>
-            <element ref="parentExpression"/>
+            <element ref="parentExpression" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
                   The id is used to identify the sorter when debugging a viewer.
