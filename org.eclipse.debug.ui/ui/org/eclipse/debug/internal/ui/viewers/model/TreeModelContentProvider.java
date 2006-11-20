@@ -263,11 +263,21 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		int modelIndex = delta.getIndex();
 		TreeViewer treeViewer = getTreeViewer();
 		if (modelIndex >= 0) {
-			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
-			if (DEBUG_CONTENT_PROVIDER) {
-				System.out.println("[select] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			IModelDelta parentDelta = delta.getParentDelta();
+			TreePath parentPath = getViewerTreePath(parentDelta);
+			int viewIndex = modelToViewIndex(parentPath, modelIndex);
+			int modelCount = parentDelta.getChildCount();
+			if (modelCount > 0) {
+				int viewCount = modelToViewChildCount(parentPath, modelCount);
+				if (DEBUG_CONTENT_PROVIDER) {
+					System.out.println("[select] setChildCount(" + parentDelta.getElement() + ", (model) " + parentDelta.getChildCount() + " (view) " + viewCount ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				treeViewer.setChildCount(parentPath, viewCount);
 			}
-			treeViewer.replace(delta.getParentDelta().getElement(), viewIndex, delta.getElement());
+			if (DEBUG_CONTENT_PROVIDER) {
+				System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			}
+			treeViewer.replace(parentDelta.getElement(), viewIndex, delta.getElement());
 		}
 		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)));
 	}
