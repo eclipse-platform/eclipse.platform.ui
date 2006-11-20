@@ -27,4 +27,11 @@
 	<jsp:param name="action"   value="resynchNav"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value="off"/>
+	
+	<jsp:param name="name"     value="collapseall"/>
+	<jsp:param name="tooltip"  value='CollapseAll'/>
+	<jsp:param name="image"    value="collapseall.gif"/>
+	<jsp:param name="action"   value="collapseAll"/>
+	<jsp:param name="param"    value=""/>
+	<jsp:param name="state"    value='off'/>
 </jsp:include>

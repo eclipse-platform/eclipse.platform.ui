@@ -744,6 +744,11 @@ function keyDownHandler(e)
   	return true;
 }
 
+function collapseAll() {
+    window.location.replace("tocView.jsp");
+    return true;
+}
+
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('dblclick', mouseDblClickHandler, true);

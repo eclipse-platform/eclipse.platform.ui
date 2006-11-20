@@ -178,7 +178,7 @@ if (data.isIE()){
 	if (t-50 > 0) t = t-50;
 	
 	window.location="javascript://needModal";
-	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	confirmShowAllDialog = window.open("confirmShowAll.jsp", "confirmShowAllDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	confirmShowAllDialog.focus(); 
 }
 

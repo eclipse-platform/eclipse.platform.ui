@@ -27,10 +27,15 @@ function selectTopic(topic)
 }
 
 function selectTopicById(topic) {
-    alert("Select topic by ID: " + topic);
+    // TODO is this ever called?
+    // alert("Select topic by ID: " + topic);
     return true;
 }
 
+function collapseAll() {
+    window.location.replace("tocView.jsp");
+    return true;
+}
 
 function setImage(imageNode, image) {
     var imageFile = imagesDirectory + "/" + image + ".gif";
@@ -85,7 +90,9 @@ function loadChildren(treeItem) {
 function makeNodeRequest(parameters) {
     var href = "../tocfragment" + parameters;
     var callback = function(xml) { updateTree(xml);}; 
-    var errorCallback = function() { alert("ajax error"); };
+    var errorCallback = function() { 
+        // alert("ajax error"); 
+    };
     ajaxRequest(href, callback, errorCallback);
 }
 

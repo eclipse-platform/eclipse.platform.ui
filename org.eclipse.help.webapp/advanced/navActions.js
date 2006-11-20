@@ -48,3 +48,13 @@ function removeAllBookmarks(button){
 		document.getElementById(button).blur();
 	}
 }
+
+function collapseAll(button) {
+    try {
+		parent.tocViewFrame.collapseAll();
+	} catch(e){
+	}
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}

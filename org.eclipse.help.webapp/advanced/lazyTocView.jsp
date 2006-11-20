@@ -90,7 +90,7 @@ if (requestData.isIE()){
 	// move the dialog just a bit higher than the middle
 	if (t-50 > 0) t = t-50;
 	
-	askShowAllDialog = window.open("askShowAll.jsp", "askShowAllDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	askShowAllDialog = window.open("askShowAll.jsp", "askShowAllDialog", "resizable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	askShowAllDialog.focus(); 
 }
 

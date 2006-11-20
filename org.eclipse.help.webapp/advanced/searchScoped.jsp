@@ -145,7 +145,7 @@ if (data.isIE()){
 	if (t-50 > 0) t = t-50;
 	
 	window.location="javascript://needModal";
-	advancedDialog = window.open("workingSetManager.jsp?workingSet="+encodeURIComponent(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
+	advancedDialog = window.open("workingSetManager.jsp?workingSet="+encodeURIComponent(workingSet), "advancedDialog", "resizable=yes,height="+h+",width="+w+",left="+l+",top="+t );
 	advancedDialog.focus(); 
 }
 
