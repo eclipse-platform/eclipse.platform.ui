@@ -798,6 +798,9 @@
     <keyword
           id="org.eclipse.team.cvs.ui.cvs.annotate"
           label="%PreferenceKeywords.Annotate"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.compare"
+          label="%PreferenceKeywords.Compare"/>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -816,7 +819,7 @@
             category="org.eclipse.team.cvs.ui.CVSPreferences"
             class="org.eclipse.team.internal.ccvs.ui.ComparePreferencePage"
             id="org.eclipse.team.cvs.ui.ComparePreferences">
-            <keywordReference id="org.eclipse.team.cvs.ui.cvs"/>
+            <keywordReference id="org.eclipse.team.cvs.ui.cvs.compare"/>
       </page>
    </extension>
    <extension
