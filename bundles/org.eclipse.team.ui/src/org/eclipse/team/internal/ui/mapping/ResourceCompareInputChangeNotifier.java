@@ -191,7 +191,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 			}
 		}
 		if (!changedInputs.isEmpty())
-			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]));
+			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]), true);
 	}
 
 	/* (non-Javadoc)
@@ -222,7 +222,7 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 		}
 		
 		if (!changedInputs.isEmpty())
-			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]));
+			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]), false);
 	}
 	
 	private IResource getResource(ICompareInput input) {
@@ -261,19 +261,19 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 	 * Handle the input changes by notifying any listeners of the changed inputs.
 	 * @param inputs the changed inputs
 	 */
-	private void handleInputChanges(ICompareInput[] inputs) {
-		List realChanges = getRealChanges(inputs);
+	private void handleInputChanges(ICompareInput[] inputs, boolean force) {
+		List realChanges = getRealChanges(inputs, force);
 		if (! realChanges.isEmpty())
 			inputsChanged((ICompareInput[]) realChanges.toArray(new ICompareInput[realChanges.size()]));
 	}
 	
-	private List getRealChanges(ICompareInput[] inputs) {
+	private List getRealChanges(ICompareInput[] inputs, boolean force) {
 		List realChanges = new ArrayList();
 		for (int i = 0; i < inputs.length; i++) {
 			ICompareInput input = inputs[i];
 			if (input instanceof ResourceDiffCompareInput) {
 				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-				if (rdci.needsUpdate()) {
+				if (force || rdci.needsUpdate()) {
 					realChanges.add(rdci);
 				}
 			}

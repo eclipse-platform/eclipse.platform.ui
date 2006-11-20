@@ -44,6 +44,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private IDiffContainer fRoot;
 	private IContentChangeListener fContentChangedListener;
 	private CompareViewerSwitchingPane fParent;
+	private ICompareInputChangeListener fCompareInputChangeListener;
 	
 	/*
 	 * A helper class for holding the input and generated structure
@@ -53,9 +54,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		private ITypedElement fInput;
 		private IStructureComparator fStructureComparator;
 		
-		public boolean setInput(ITypedElement newInput) {
+		public boolean setInput(ITypedElement newInput, boolean force) {
 			boolean changed = false;
-			if (newInput != fInput) {
+			if (force || newInput != fInput) {
 				if (fInput instanceof IContentChangeNotifier)
 					((IContentChangeNotifier)fInput).removeContentChangeListener(fContentChangedListener);
 				fInput= newInput;
@@ -149,9 +150,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				StructureDiffViewer.this.contentChanged(changed);
 			}
 		};
-		new ICompareInputChangeListener() {
+		fCompareInputChangeListener = new ICompareInputChangeListener() {
 			public void compareInputChanged(ICompareInput input) {
-				StructureDiffViewer.this.compareInputChanged(input);
+				StructureDiffViewer.this.compareInputChanged(input, true);
 			}
 		};
 	}
@@ -209,8 +210,14 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * the value from <code>getInput</code> is not identical to <code>getRoot</code>.
 	 */
 	protected void inputChanged(Object input, Object oldInput) {
+		if (oldInput instanceof ICompareInput) {
+			ICompareInput old = (ICompareInput) oldInput;
+			old.removeCompareInputChangeListener(fCompareInputChangeListener);
+		}
 		if (input instanceof ICompareInput) {
-			compareInputChanged((ICompareInput) input);
+			ICompareInput ci = (ICompareInput) input;
+			ci.addCompareInputChangeListener(fCompareInputChangeListener);
+			compareInputChanged(ci);
 			if (input != oldInput)
 				initialSelection();
 		}
@@ -224,11 +231,13 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * Overridden to unregister all listeners.
 	 */
 	protected void handleDispose(DisposeEvent event) {
-		
+		Object input = getInput();
+		if (input instanceof ICompareInput) {
+			ICompareInput ci = (ICompareInput) input;
+			ci.removeCompareInputChangeListener(fCompareInputChangeListener);
+		}
 		compareInputChanged(null);
-		
 		fContentChangedListener= null;
-				
 		super.handleDispose(event);
 	}
 	
@@ -237,23 +246,27 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * @param input this viewer's new input
 	 */
 	protected void compareInputChanged(ICompareInput input) {
+		compareInputChanged(input, false);
+	}
+		
+	protected void compareInputChanged(ICompareInput input, boolean force) {
 		ITypedElement t= null;
 		boolean changed= false;
 		
 		if (input != null)
 			t= input.getAncestor();
 		fThreeWay= (t != null);
-		if (fAncestorStructure.setInput(t))
+		if (fAncestorStructure.setInput(t, force))
 			changed = true;
 		
 		if (input != null)
 			t= input.getLeft();
-		if (fLeftStructure.setInput(t))
+		if (fLeftStructure.setInput(t, force))
 			changed = true;
 		
 		if (input != null)
 			t= input.getRight();
-		if (fRightStructure.setInput(t))
+		if (fRightStructure.setInput(t, force))
 			changed = true;
 		
 		if (changed)

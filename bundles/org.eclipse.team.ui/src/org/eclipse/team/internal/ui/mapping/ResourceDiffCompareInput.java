@@ -340,8 +340,8 @@ public class ResourceDiffCompareInput implements ISynchronizationCompareInput, I
 				propogateAuthorIfSameRevision(ancestor, newAncestor);
 				ancestor = newAncestor;
 				propogateAuthorIfSameRevision(ancestor, right);
-				fireChange();
 			}
+			fireChange();
 		}
 	}
 
