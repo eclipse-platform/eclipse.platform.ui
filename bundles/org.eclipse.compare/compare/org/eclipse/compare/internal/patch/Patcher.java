@@ -510,11 +510,6 @@ public class Patcher {
 	public boolean isEnabled(Object element) {
 		if (disabledElements.contains(element)) 
 			return false;
-		if (element instanceof DiffProject) {
-			DiffProject project = (DiffProject) element;
-			if (!project.getProject().isAccessible())
-				return false;
-		}
 		Object parent = getElementParent(element);
 		if (parent == null)
 			return true;

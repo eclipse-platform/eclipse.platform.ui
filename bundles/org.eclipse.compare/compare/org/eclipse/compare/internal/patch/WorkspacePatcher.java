@@ -66,7 +66,8 @@ public class WorkspacePatcher extends Patcher {
 			List list= new ArrayList();
 			for (int j= 0; j < fDiffProjects.length; j++) {
 				DiffProject diffProject= fDiffProjects[j];
-				list.addAll(Arrays.asList(getTargetFiles(diffProject)));
+				if (diffProject.getProject().isAccessible())
+					list.addAll(Arrays.asList(getTargetFiles(diffProject)));
 			}
 			// validate the files for editing
 			if (!Utilities.validateResources(list, shell, title))
@@ -83,7 +84,7 @@ public class WorkspacePatcher extends Patcher {
 				int workTicks= WORK_UNIT;
 
 				FileDiff diff= diffs[i];
-				if (isEnabled(diff)) {
+				if (isAccessible(diff)) {
 					IFile file= getTargetFile(diff);
 					IPath path= file.getProjectRelativePath();
 					if (pm != null)
@@ -144,9 +145,14 @@ public class WorkspacePatcher extends Patcher {
 		}
 	}
 	
+	private boolean isAccessible(FileDiff diff) {
+		return isEnabled(diff) && diff.getProject().getProject().isAccessible();
+	}
+
 	/**
 	 * Returns the target files of all the Diffs contained by this 
 	 * DiffProject.
+	 * @param project 
 	 * @return An array of IFiles that are targeted by the Diffs
 	 */
 	public IFile[] getTargetFiles(DiffProject project) {

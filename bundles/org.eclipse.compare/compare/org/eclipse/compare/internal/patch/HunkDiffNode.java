@@ -18,7 +18,7 @@ public class HunkDiffNode extends PatchDiffNode {
 	private final HunkResult result;
 
 	public static HunkDiffNode createDiffNode(PatchFileDiffNode parent, HunkResult result, boolean fullContext) {
-		return new HunkDiffNode(result, parent, Differencer.NO_CHANGE, getAncestorElement(result, fullContext), getLeftElement(result, fullContext), getRightElement(result, fullContext));
+		return new HunkDiffNode(result, parent, Differencer.CHANGE, getAncestorElement(result, fullContext), getLeftElement(result, fullContext), getRightElement(result, fullContext));
 	}
 	
 	private static ITypedElement getRightElement(HunkResult result, boolean fullContext) {
