@@ -1375,6 +1375,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			IMenuManager revisionMenu= new MenuManager(TextEditorMessages.AbstractDecoratedTextEditor_revisions_menu);
 			menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, revisionMenu);
 			
+			IAction hideRevisionInfoAction= getAction(ITextEditorActionConstants.REVISION_HIDE_INFO);
+			revisionMenu.add(hideRevisionInfoAction);
+			revisionMenu.add(new Separator());
+			
 			String[] labels= { TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_date, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer, TextEditorMessages.AbstractDecoratedTextEditor_revision_colors_option_by_committer_and_date };
 			final RenderingMode[] modes= { IRevisionRulerColumnExtension.AGE, IRevisionRulerColumnExtension.COMMITTER, IRevisionRulerColumnExtension.COMMITTER_SHADED_BY_AGE};
 			final IPreferenceStore uiStore= EditorsUI.getPreferenceStore();
@@ -1395,11 +1399,6 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_AUTHOR_TOGGLE));
 			revisionMenu.add(getAction(ITextEditorActionConstants.REVISION_SHOW_ID_TOGGLE));
-
-			revisionMenu.add(new Separator());
-
-			IAction hideRevisionInfoAction= getAction(ITextEditorActionConstants.REVISION_HIDE_INFO);
-			revisionMenu.add(hideRevisionInfoAction);
 		}
 
 		IAction lineNumberAction= getAction(ITextEditorActionConstants.LINENUMBERS_TOGGLE);
