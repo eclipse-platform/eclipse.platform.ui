@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -28,6 +30,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IServiceLocator;
 
 import com.ibm.icu.text.DateFormat;
@@ -237,6 +240,11 @@ public class EditionSelectionDialog extends ResizableDialog {
 				public void addCompareInputChangeListener(ICompareInput input,
 						ICompareInputChangeListener listener) {
 					input.addCompareInputChangeListener(listener);
+				}
+				public void run(boolean fork, boolean cancelable,
+						IRunnableWithProgress runnable)
+						throws InvocationTargetException, InterruptedException {
+					PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 				}
 			
 			});

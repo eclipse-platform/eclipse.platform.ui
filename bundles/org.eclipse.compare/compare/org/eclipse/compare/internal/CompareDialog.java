@@ -347,4 +347,14 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		return fCompareEditorInput;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void run(boolean fork, boolean cancelable,
+			IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+		dialog.run(fork, cancelable, runnable);
+	}
+
 }

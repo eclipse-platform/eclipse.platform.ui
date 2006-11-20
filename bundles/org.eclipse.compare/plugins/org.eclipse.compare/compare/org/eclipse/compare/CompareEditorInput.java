@@ -920,6 +920,17 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		return fContainer.getServiceLocator();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+	 */
+	public void run(boolean fork, boolean cancelable,
+			IRunnableWithProgress runnable) throws InvocationTargetException,
+			InterruptedException {
+		if (fContainer == null) {
+			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
+		}
+		fContainer.run(fork, cancelable, runnable);
+	}
 	/**
 	 * Set the container of this input to the given container
 	 * @param container the container

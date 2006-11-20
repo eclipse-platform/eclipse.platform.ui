@@ -2791,16 +2791,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				monitor.done();
 			}
 		};
-		IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
 		
 		RangeDifference[] e= null;
 		try {
-			progressService.run(true, true, runnable);
+			getCompareConfiguration().getContainer().run(true, true, runnable);
 			e= (RangeDifference[]) result[0];
 		} catch (InvocationTargetException ex) {
 			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
 			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
-			String msg= MessageFormat.format(format, new Object[] { Integer.toString(progressService.getLongOperationTime()/1000) } );
+			String msg= MessageFormat.format(format, new Object[] { Integer.toString(PlatformUI.getWorkbench().getProgressService().getLongOperationTime()/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 			e= null;
 		} catch (InterruptedException ex) {

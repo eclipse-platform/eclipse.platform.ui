@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -25,6 +27,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -618,6 +621,11 @@ public class CompareConfiguration {
 				}
 				public IServiceLocator getServiceLocator() {
 					return null;
+				}
+				public void run(boolean fork, boolean cancelable,
+						IRunnableWithProgress runnable)
+						throws InvocationTargetException, InterruptedException {
+					PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 				}
 			};
 		}

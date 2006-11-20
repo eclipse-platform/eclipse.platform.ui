@@ -13,6 +13,7 @@ package org.eclipse.compare;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -30,7 +31,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * 
  * @since 3.3
  */
-public interface ICompareContainer {
+public interface ICompareContainer extends IRunnableContext{
 	
 	/**
 	 * Register for change events for the given compare input. Although clients can register
