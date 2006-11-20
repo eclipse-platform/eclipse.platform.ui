@@ -35,6 +35,14 @@ public class StackFrameContentProvider extends ElementContentProvider {
 		return getElements(getAllChildren(parent, context, monitor), index, length);
 	}
 	
+	/**
+	 * This method retrieves all of the children for the specified parent given the current context
+	 * @param parent the parent ot get the children for
+	 * @param context the context for which to get the children for
+	 * @param monitor the monitor for progress
+	 * @return the collection of children, or an empty collection, never <code>null</code>
+	 * @throws CoreException
+	 */
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
 		if (parent instanceof IStackFrame) {
 	        String id = context.getId();
@@ -57,6 +65,9 @@ public class StackFrameContentProvider extends ElementContentProvider {
 		return id.equals(IDebugUIConstants.ID_VARIABLE_VIEW) || id.equals(IDebugUIConstants.ID_REGISTER_VIEW);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
+	 */
 	protected boolean hasChildren(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
 		 String id = context.getId();
         IStackFrame frame = (IStackFrame) element;
