@@ -61,7 +61,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	private IEditorInput openEditor(Subscriber subscriber, Object element) {
 		IEditorInput input = OpenInCompareAction.openCompareEditor(((ModelParticipantSyncInfoSource)getSyncInfoSource()).getConfiguration(subscriber), element, false);
 		assertNotNull(input);
-		assertEditorOpen(input);
+		assertEditorOpen(input, subscriber);
 		return input;
 	}
 	
@@ -69,7 +69,8 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		return openEditor(getSubscriber(), element);
 	}
 	
-	private void assertEditorOpen(IEditorInput input) {
+	private void assertEditorOpen(IEditorInput input, Subscriber subscriber) {
+		waitForCollectors(subscriber);
 		while (Display.getCurrent().readAndDispatch()) {};
 		IEditorPart part = findOpenEditor(input);
 		assertNotNull("The editor is not open", part);
@@ -148,7 +149,11 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 	}
 	
 	private void waitForCollectors() throws TeamException {
-		((ModelParticipantSyncInfoSource)getSyncInfoSource()).waitForCollectionToFinish(getSubscriber());
+		waitForCollectors(getSubscriber());
+	}
+	
+	private void waitForCollectors(Subscriber subcriber) {
+		((ModelParticipantSyncInfoSource)getSyncInfoSource()).waitForCollectionToFinish(subcriber);
 	}
 
 	public void testCloseOnUpdate() throws CoreException {
@@ -295,7 +300,7 @@ public class CompareEditorTests extends CVSSyncSubscriberTest {
 		dirtyEditor(project.getFile("file1.txt"), input, contents);
 		Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE = true;
 		ModelParticipantSyncInfoSource.getParticipant(subscriber).dispose();
-		assertEditorOpen(input);
+		assertEditorOpen(input, subscriber);
 	}
 	
 	public void testUpdateOnRemoteChange() throws CoreException {

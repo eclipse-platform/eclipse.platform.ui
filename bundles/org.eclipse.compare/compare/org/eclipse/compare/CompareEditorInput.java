@@ -18,6 +18,7 @@ import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -949,16 +950,30 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	/**
-	 * Return whether this compare editor input can be run in the background.
+	 * Return whether this compare editor input can be run as a job.
 	 * By default, <code>false</code> is returned since traditionally inputs
 	 * were prepared in the foreground (i.e the UI was blocked when the 
 	 * {@link #run(IProgressMonitor)} method (and indirectly the 
 	 * {@link #prepareInput(IProgressMonitor)} method) was invoked. Subclasses
 	 * may override.
 	 * @return whether this compare editor input can be run in the background
+	 * @since 3.3
 	 */
-	public boolean canRunInBackground() {
+	public boolean canRunAsJob() {
 		return false;
+	}
+
+	/**
+	 * Return whether this input belongs to the given family
+	 * when it is run as a job.
+	 * @see #canRunAsJob()
+	 * @see Job#belongsTo(Object)
+	 * @param family the job family
+	 * @return whether this input belongs to the given family
+	 * @since 3.3
+	 */
+	public boolean belongsTo(Object family) {
+		return family == this;
 	}
 }
 

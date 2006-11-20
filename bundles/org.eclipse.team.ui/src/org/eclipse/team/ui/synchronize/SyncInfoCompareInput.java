@@ -237,7 +237,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#canRunInBackground()
 	 */
-	public boolean canRunInBackground() {
+	public boolean canRunAsJob() {
 		return true;
 	}
 }

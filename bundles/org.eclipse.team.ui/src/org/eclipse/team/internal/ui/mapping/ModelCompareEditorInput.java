@@ -242,4 +242,11 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 			synchronizeConfiguration.setProperty(IGNORE_WHITSPACE_PAGE_PROPERTY, event.getNewValue());
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#belongsTo(java.lang.Object)
+	 */
+	public boolean belongsTo(Object family) {
+		return super.belongsTo(family) || family == participant;
+	}
 }

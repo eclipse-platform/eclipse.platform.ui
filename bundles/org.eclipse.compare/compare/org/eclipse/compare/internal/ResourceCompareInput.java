@@ -429,7 +429,7 @@ class ResourceCompareInput extends CompareEditorInput {
 		return s;
 	}
 	
-	public boolean canRunInBackground() {
+	public boolean canRunAsJob() {
 		return true;
 	}
 }

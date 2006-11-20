@@ -415,7 +415,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @see CompareEditorInput
 	 */
 	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
-		if (input.canRunInBackground()) {
+		if (input.canRunAsJob()) {
 			Job job = new Job("Opening Compare Editor") {
 				protected IStatus run(IProgressMonitor monitor) {
 					IStatus status = prepareInput(input, monitor);
@@ -428,6 +428,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						return Status.OK_STATUS;
 					}
 					return status;
+				}
+				public boolean belongsTo(Object family) {
+					return input.belongsTo(family);
 				}
 			};
 			job.setUser(true);
@@ -476,7 +479,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @see CompareEditorInput
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
-		if (input.canRunInBackground()) {
+		if (input.canRunAsJob()) {
 			Job job = new Job("Opening Compare Dialog") {
 				protected IStatus run(IProgressMonitor monitor) {
 					IStatus status = prepareInput(input, monitor);
@@ -489,6 +492,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						return Status.OK_STATUS;
 					}
 					return status;
+				}
+				public boolean belongsTo(Object family) {
+					return input.belongsTo(family);
 				}
 			};
 			job.setUser(true);

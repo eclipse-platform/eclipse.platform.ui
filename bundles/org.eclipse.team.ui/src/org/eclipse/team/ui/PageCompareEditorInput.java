@@ -251,7 +251,7 @@ public abstract class PageCompareEditorInput extends CompareEditorInput implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#canRunInBackground()
 	 */
-	public boolean canRunInBackground() {
+	public boolean canRunAsJob() {
 		return true;
 	}
 	
