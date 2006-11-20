@@ -2250,7 +2250,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				}
 			} else {
 				if (isPatchHunk()) {
-					if (Utilities.getAdapter(right, IHunk.class) != null)
+					if (right != null && Utilities.getAdapter(right, IHunk.class) != null)
 						fLeft.setTopIndex(getHunkStart());
 					else
 						fRight.setTopIndex(getHunkStart());
@@ -2740,7 +2740,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		if (aDoc != null) {
 			sancestor= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
 			if (isPatchHunk()) {
-				isRight = Utilities.getAdapter(((ICompareInput)getInput()).getRight(), IHunk.class) != null;
+				ITypedElement right = ((ICompareInput)getInput()).getRight();
+				isRight = right != null && Utilities.getAdapter(right, IHunk.class) != null;
 				if (isRight) {
 					sleft= new DocLineComparator(aDoc, toRegion(aRegion), ignoreWhiteSpace);
 				} else {
@@ -4924,12 +4925,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private int getHunkStart() {
 		Object input = getInput();
 		if (input != null && input instanceof DiffNode){
-			Object element = Utilities.getAdapter(((DiffNode) input).getRight(), IHunk.class);
-			if (element instanceof IHunk)
-				return ((IHunk)element).getStartPosition();
-			element = Utilities.getAdapter(((DiffNode) input).getLeft(), IHunk.class);
-			if (element instanceof IHunk)
-				return ((IHunk)element).getStartPosition();
+			ITypedElement right = ((DiffNode) input).getRight();
+			if (right != null) {
+				Object element = Utilities.getAdapter(right, IHunk.class);
+				if (element instanceof IHunk)
+					return ((IHunk)element).getStartPosition();
+			}
+			ITypedElement left = ((DiffNode) input).getLeft();
+			if (left != null) {
+				Object element = Utilities.getAdapter(left, IHunk.class);
+				if (element instanceof IHunk)
+					return ((IHunk)element).getStartPosition();
+			}
 		}
 		return 0; 
 	}

@@ -740,12 +740,18 @@ public class Utilities {
 	 */
 	public static boolean isHunk(Object input) {
 		if (input != null && input instanceof DiffNode){
-			Object element = Utilities.getAdapter(((DiffNode) input).getRight(), IHunk.class);
-			if (element instanceof IHunk)
-				return true;
-			element = Utilities.getAdapter(((DiffNode) input).getLeft(), IHunk.class);
-			if (element instanceof IHunk)
-				return true;
+			ITypedElement right = ((DiffNode) input).getRight();
+			if (right != null) {
+				Object element = Utilities.getAdapter(right, IHunk.class);
+				if (element instanceof IHunk)
+					return true;
+			}
+			ITypedElement left = ((DiffNode) input).getLeft();
+			if (left != null) {
+				Object element = Utilities.getAdapter(left, IHunk.class);
+				if (element instanceof IHunk)
+					return true;
+			}
 		}
 		return false; 
 	}
