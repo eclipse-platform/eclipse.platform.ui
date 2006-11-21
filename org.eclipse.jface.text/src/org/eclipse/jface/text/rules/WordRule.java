@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.jface.text.rules;
 
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -29,19 +30,24 @@ import org.eclipse.core.runtime.Assert;
  */
 public class WordRule implements IRule {
 
-	/** Internal setting for the un-initialized column constraint */
+	/** Internal setting for the un-initialized column constraint. */
 	protected static final int UNDEFINED= -1;
 
-	/** The word detector used by this rule */
+	/** The word detector used by this rule. */
 	protected IWordDetector fDetector;
 	/** The default token to be returned on success and if nothing else has been specified. */
 	protected IToken fDefaultToken;
-	/** The column constraint */
+	/** The column constraint. */
 	protected int fColumn= UNDEFINED;
-	/** The table of predefined words and token for this rule */
+	/** The table of predefined words and token for this rule. */
 	protected Map fWords= new HashMap();
-	/** Buffer used for pattern detection */
+	/** Buffer used for pattern detection. */
 	private StringBuffer fBuffer= new StringBuffer();
+	/**
+	 * Tells whether this rule is case sensitive.
+	 * @since 3.3
+	 */
+	private boolean fIgnoreCase= false;
 
 	/**
 	 * Creates a rule which, with the help of an word detector, will return the token
@@ -50,11 +56,10 @@ public class WordRule implements IRule {
 	 * any subsequent rules to analyze the characters.
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
-	 *
 	 * @see #addWord(String, IToken)
 	 */
 	public WordRule(IWordDetector detector) {
-		this(detector, Token.UNDEFINED);
+		this(detector, Token.UNDEFINED, false);
 	}
 
 	/**
@@ -64,17 +69,32 @@ public class WordRule implements IRule {
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
 	 * @param defaultToken the default token to be returned on success
-	 *		if nothing else is specified, may not be <code>null</code>
-	 *
+	 *			if nothing else is specified, may not be <code>null</code>
 	 * @see #addWord(String, IToken)
 	 */
 	public WordRule(IWordDetector detector, IToken defaultToken) {
+		this(detector, defaultToken, false);
+	}
 
+	/**
+	 * Creates a rule which, with the help of a word detector, will return the token
+	 * associated with the detected word. If no token has been associated, the
+	 * specified default token will be returned.
+	 *
+	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
+	 * @param defaultToken the default token to be returned on success
+	 *			if nothing else is specified, may not be <code>null</code>
+	 * @param ignoreCase the case sensitivity associated with this rule
+	 * @see #addWord(String, IToken)
+	 * @since 3.3
+	 */
+	public WordRule(IWordDetector detector, IToken defaultToken, boolean ignoreCase) {
 		Assert.isNotNull(detector);
 		Assert.isNotNull(defaultToken);
 
 		fDetector= detector;
 		fDefaultToken= defaultToken;
+		fIgnoreCase= ignoreCase;
 	}
 
 	/**
@@ -119,7 +139,21 @@ public class WordRule implements IRule {
 				} while (c != ICharacterScanner.EOF && fDetector.isWordPart((char) c));
 				scanner.unread();
 
-				IToken token= (IToken) fWords.get(fBuffer.toString());
+				String buffer= fBuffer.toString();
+				IToken token= (IToken)fWords.get(buffer);
+				
+				if(fIgnoreCase) {
+					Iterator iter= fWords.keySet().iterator();
+					while (iter.hasNext()) {
+						String key= (String)iter.next();
+						if(buffer.equalsIgnoreCase(key)) {
+							token= (IToken)fWords.get(key);
+							break;
+						}
+					}
+				} else
+					token= (IToken)fWords.get(buffer);
+				
 				if (token != null)
 					return token;
 
@@ -143,4 +177,5 @@ public class WordRule implements IRule {
 		for (int i= fBuffer.length() - 1; i >= 0; i--)
 			scanner.unread();
 	}
+
 }
