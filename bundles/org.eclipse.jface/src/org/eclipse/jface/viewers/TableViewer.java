@@ -456,7 +456,7 @@ public class TableViewer extends ColumnViewer {
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
-		if (columnIndex < 0 || columnIndex > getTable().getColumnCount()) {
+		if (columnIndex < 0 || ( columnIndex > 0 && columnIndex >= getTable().getColumnCount() ) ) {
 			return null;
 		}
 
@@ -1053,53 +1053,6 @@ public class TableViewer extends ColumnViewer {
 	 */
 	public void setColumnProperties(String[] columnProperties) {
 		tableViewerImpl.setColumnProperties(columnProperties);
-	}
-
-	/**
-	 * The table viewer implementation of this <code>Viewer</code> framework
-	 * method ensures that the given label provider is an instance of either
-	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>.
-	 * <p>
-	 * If the label provider is an {@link ITableLabelProvider}, then it
-	 * provides a separate label text and image for each column. Implementers of
-	 * <code>ITableLabelProvider</code> may also implement
-	 * {@link ITableColorProvider} and/or {@link ITableFontProvider} to provide
-	 * colors and/or fonts.
-	 * </p>
-	 * <p>
-	 * If the label provider is an <code>ILabelProvider</code>, then it
-	 * provides only the label text and image for the first column, and any
-	 * remaining columns are blank. Implementers of <code>ILabelProvider</code>
-	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
-	 * provide colors and/or fonts.
-	 * </p>
-	 * <p>
-	 * If the label provider implements the mixin interface ITooltipProvider, it
-	 * can provide custom tooltips.
-	 * </p>
-	 */
-	public void setLabelProvider(IBaseLabelProvider labelProvider) {
-		Assert.isTrue(labelProvider instanceof ITableLabelProvider
-				|| labelProvider instanceof ILabelProvider
-				|| labelProvider instanceof CellLabelProvider);
-		clearColumnParts();// Clear before refresh
-		super.setLabelProvider(labelProvider);
-	}
-
-	/**
-	 * Clear the viewer parts for the columns
-	 */
-	private void clearColumnParts() {
-		TableColumn[] columns = getTable().getColumns();
-		if (columns.length == 0)
-			getTable().setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
-		else {
-			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
-
-			}
-		}
-
 	}
 
 	/**

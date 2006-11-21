@@ -15,7 +15,6 @@ package org.eclipse.jface.viewers;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
@@ -33,7 +32,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
@@ -184,7 +182,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
 	 */
 	protected Widget getColumnViewerOwner(int columnIndex) {
-		if (columnIndex < 0 || columnIndex > getTree().getColumnCount()) {
+		if (columnIndex < 0 || ( columnIndex > 0 && columnIndex >= getTree().getColumnCount() ) ) {
 			return null;
 		}
 
@@ -511,51 +509,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			// force repaints to happen
 			getControl().update();
 		}
-	}
-
-	/**
-	 * The tree viewer implementation of this <code>Viewer</code> framework
-	 * method ensures that the given label provider is an instance of either
-	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>.
-	 * <p>
-	 * If the label provider is an {@link ITableLabelProvider}, then it
-	 * provides a separate label text and image for each column. Implementers of
-	 * <code>ITableLabelProvider</code> may also implement
-	 * {@link ITableColorProvider} and/or {@link ITableFontProvider} to provide
-	 * colors and/or fonts. Note that the underlying {@link Tree} must be
-	 * configured with {@link TreeColumn} objects in this case.
-	 * </p>
-	 * <p>
-	 * If the label provider is an <code>ILabelProvider</code>, then it
-	 * provides only the label text and image for the first column, and any
-	 * remaining columns are blank. Implementers of <code>ILabelProvider</code>
-	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
-	 * provide colors and/or fonts.
-	 * </p>
-	 */
-	public void setLabelProvider(IBaseLabelProvider labelProvider) {
-		Assert.isTrue(labelProvider instanceof ITableLabelProvider
-				|| labelProvider instanceof ILabelProvider
-				|| labelProvider instanceof CellLabelProvider);
-		clearColumnParts();// Clear before refresh
-		super.setLabelProvider(labelProvider);
-
-	}
-
-	/**
-	 * Clear the viewer parts for the columns
-	 */
-	private void clearColumnParts() {
-		TreeColumn[] columns = getTree().getColumns();
-		if (columns.length == 0)
-			getTree().setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
-		else {
-			for (int i = 0; i < columns.length; i++) {
-				columns[i].setData(ViewerColumn.COLUMN_VIEWER_KEY, null);
-
-			}
-		}
-
 	}
 
 	/*

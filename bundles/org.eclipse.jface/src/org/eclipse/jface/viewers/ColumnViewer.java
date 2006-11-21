@@ -12,6 +12,7 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
@@ -269,5 +270,48 @@ abstract class ColumnViewer extends StructuredViewer {
 	 */
 	protected Item getItem(int x, int y) {
 		return getItemAt(getControl().toControl(x, y));
+	}
+	
+	/**
+	 * The table viewer implementation of this <code>Viewer</code> framework
+	 * method ensures that the given label provider is an instance of either
+	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>.
+	 * <p>
+	 * If the label provider is an {@link ITableLabelProvider}, then it
+	 * provides a separate label text and image for each column. Implementers of
+	 * <code>ITableLabelProvider</code> may also implement
+	 * {@link ITableColorProvider} and/or {@link ITableFontProvider} to provide
+	 * colors and/or fonts.
+	 * </p>
+	 * <p>
+	 * If the label provider is an <code>ILabelProvider</code>, then it
+	 * provides only the label text and image for the first column, and any
+	 * remaining columns are blank. Implementers of <code>ILabelProvider</code>
+	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
+	 * provide colors and/or fonts.
+	 * </p>
+	 * <p>
+	 * If the label provider implements the mixin interface ITooltipProvider, it
+	 * can provide custom tooltips.
+	 * </p>
+	 */
+	public void setLabelProvider(IBaseLabelProvider labelProvider) {
+		Assert.isTrue(labelProvider instanceof ITableLabelProvider
+				|| labelProvider instanceof ILabelProvider
+				|| labelProvider instanceof CellLabelProvider);
+		updateColumnParts(labelProvider);// Reset the label providers in the columns
+		super.setLabelProvider(labelProvider);
+	}
+
+	/**
+	 * Clear the viewer parts for the columns
+	 */
+	private void updateColumnParts(IBaseLabelProvider labelProvider) {
+		ViewerColumn column;
+		int i = 0;
+		
+		while( ( column = getViewerColumn(i++) ) != null) {
+			column.setLabelProvider(CellLabelProvider.createViewerLabelProvider(labelProvider));
+		}
 	}
 }

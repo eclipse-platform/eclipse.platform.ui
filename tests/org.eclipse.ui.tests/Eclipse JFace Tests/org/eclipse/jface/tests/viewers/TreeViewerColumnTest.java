@@ -71,7 +71,7 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
         fTreeViewer = viewer;
         return viewer;
     }
-
+    
     protected int getItemCount() {
         TestElement first = fRootElement.getFirstChild();
         TreeItem ti = (TreeItem) fViewer.testFindItem(first);
@@ -91,6 +91,13 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
         junit.textui.TestRunner.run(TreeViewerColumnTest.class);
     }
 
+    public void testViewerColumn() {
+    	assertNull(((TreeViewer)fViewer).getViewerColumn(-1));
+    	assertNotNull(((TreeViewer)fViewer).getViewerColumn(0));
+    	assertNotNull(((TreeViewer)fViewer).getViewerColumn(1));
+    	assertNull(((TreeViewer)fViewer).getViewerColumn(2));
+    }
+    
     public void testLabelProvider() {
         TreeViewer viewer = (TreeViewer) fViewer;
         TableTreeTestLabelProvider provider = (TableTreeTestLabelProvider) viewer

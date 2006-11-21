@@ -13,7 +13,6 @@ package org.eclipse.jface.viewers;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeEditor;
@@ -492,21 +491,6 @@ public class TableTreeViewer extends AbstractTreeViewer {
      */
     protected void setExpanded(Item node, boolean expand) {
         ((TableTreeItem) node).setExpanded(expand);
-    }
-
-    /**
-     * The table tree viewer implementation of this <code>Viewer</code> framework
-     * method ensures that the given label provider is an instance
-     * of either <code>ITableLabelProvider</code> or <code>ILabelProvider</code>.
-     * If it is an <code>ITableLabelProvider</code>, then it provides a
-     * separate label text and image for each column. If it is an 
-     * <code>ILabelProvider</code>, then it provides only the label text 
-     * and image for the first column, and any remaining columns are blank.
-     */
-    public void setLabelProvider(IBaseLabelProvider labelProvider) {
-        Assert.isTrue(labelProvider instanceof ITableLabelProvider
-                || labelProvider instanceof ILabelProvider);
-        super.setLabelProvider(labelProvider);
     }
 
     /* (non-Javadoc)

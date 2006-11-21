@@ -79,6 +79,13 @@ public class TableViewerTest extends StructuredItemViewerTest {
 		return viewer;
 	}
 
+	public void testViewerColumn() {
+    	assertNull(((TableViewer)fViewer).getViewerColumn(-1));
+    	assertNotNull(((TableViewer)fViewer).getViewerColumn(0));
+    	assertNotNull(((TableViewer)fViewer).getViewerColumn(1));
+    	assertNull(((TableViewer)fViewer).getViewerColumn(2));
+    }
+	
 	/**
 	 * Get the content provider for the viewer.
 	 * 
