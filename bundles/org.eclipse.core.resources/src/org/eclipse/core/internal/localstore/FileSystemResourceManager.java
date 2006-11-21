@@ -465,13 +465,14 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return false;
 		}
 		ByteArrayInputStream in = new ByteArrayInputStream(newContents);
-		if (descriptionFile.isReadOnly()) {
+		IFileInfo fileInfo = ((Resource) descriptionFile).getStore().fetchInfo();
+		if (fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 			IStatus result = getWorkspace().validateEdit(new IFile[] {descriptionFile}, null);
 			if (!result.isOK())
 				throw new ResourceException(result);
 		}
 		//write the project description file (don't use API because scheduling rule might not match)
-		write(descriptionFile, in, true, false, false, Policy.monitorFor(null));
+		write(descriptionFile, in, fileInfo, IResource.FORCE, false, Policy.monitorFor(null));
 		workspace.getAliasManager().updateAliases(descriptionFile, getStore(descriptionFile), IResource.DEPTH_ZERO, Policy.monitorFor(null));
 
 		//update the timestamp on the project as well so we know when it has
@@ -542,10 +543,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		return true;
 	}
 
-	public void link(Resource target, URI location) throws CoreException {
-		IFileStore store = initializeStore(target, location);
+	public void link(Resource target, URI location, IFileInfo fileInfo) throws CoreException {
+		initializeStore(target, location);
 		ResourceInfo info = target.getResourceInfo(false, true);
-		long lastModified = store.fetchInfo().getLastModified();
+		long lastModified = fileInfo == null ? 0 : fileInfo.getLastModified();
 		if (lastModified == 0)
 			info.clearModificationStamp();
 		updateLocalSync(info, lastModified);
@@ -857,17 +858,16 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	 * has NOT changed since last synchronization, otherwise a CoreException
 	 * is thrown.
 	 */
-	public void write(IFile target, InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+	public void write(IFile target, InputStream content, IFileInfo fileInfo, int updateFlags, boolean append, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(null);
 		try {
 			IFileStore store = getStore(target);
-			IFileInfo fileInfo = store.fetchInfo();
 			if (fileInfo.getAttribute(EFS.ATTRIBUTE_READ_ONLY)) {
 				String message = NLS.bind(Messages.localstore_couldNotWriteReadOnly, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 			}
 			long lastModified = fileInfo.getLastModified();
-			if (force) {
+			if (BitMask.isSet(updateFlags, IResource.FORCE)) {
 				if (append && !target.isLocal(IResource.DEPTH_ZERO) && !fileInfo.exists()) {
 					// force=true, local=false, existsInFileSystem=false
 					String message = NLS.bind(Messages.resources_mustBeLocal, target.getFullPath());
@@ -893,7 +893,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 			}
 			// add entry to History Store.
-			if (keepHistory && fileInfo.exists())
+			if (BitMask.isSet(updateFlags, IResource.KEEP_HISTORY) && fileInfo.exists())
 				//never move to the history store, because then the file is missing if write fails
 				getHistoryStore().addState(target.getFullPath(), store, fileInfo, false);
 			if (!fileInfo.exists())

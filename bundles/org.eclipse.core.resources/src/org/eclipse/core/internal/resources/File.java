@@ -13,8 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -32,8 +31,6 @@ public class File extends Resource implements IFile {
 	 * @see IFile#appendContents(InputStream, int, IProgressMonitor)
 	 */
 	public void appendContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		final boolean force = (updateFlags & IResource.FORCE) != 0;
-		final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
@@ -47,7 +44,8 @@ public class File extends Resource implements IFile {
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				internalSetContents(content, force, keepHistory, true, Policy.subMonitorFor(monitor, Policy.opWork));
+				IFileInfo fileInfo = getStore().fetchInfo();
+				internalSetContents(content, fileInfo, updateFlags, true, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -96,7 +94,6 @@ public class File extends Resource implements IFile {
 	 * @see IFile#create(InputStream, int, IProgressMonitor)
 	 */
 	public void create(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		final boolean force = (updateFlags & IResource.FORCE) != 0;
 		final boolean monitorNull = monitor == null;
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -114,7 +111,7 @@ public class File extends Resource implements IFile {
 				workspace.beginOperation(true);
 				IFileStore store = getStore();
 				IFileInfo localInfo = store.fetchInfo();
-				if (force) {
+				if (BitMask.isSet(updateFlags, IResource.FORCE)) {
 					if (!Workspace.caseSensitive) {
 						if (localInfo.exists()) {
 							String name = getLocalManager().getLocalName(store);
@@ -148,7 +145,7 @@ public class File extends Resource implements IFile {
 				boolean local = content != null;
 				if (local) {
 					try {
-						internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
+						internalSetContents(content, localInfo, updateFlags, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
 					} catch (CoreException e) {
 						// a problem happened creating the file on disk, so delete from the workspace and disk
 						workspace.deleteResource(this);
@@ -316,10 +313,10 @@ public class File extends Resource implements IFile {
 		return FILE;
 	}
 
-	protected void internalSetContents(InputStream content, boolean force, boolean keepHistory, boolean append, IProgressMonitor monitor) throws CoreException {
+	protected void internalSetContents(InputStream content, IFileInfo fileInfo, int updateFlags, boolean append, IProgressMonitor monitor) throws CoreException {
 		if (content == null)
 			content = new ByteArrayInputStream(new byte[0]);
-		getLocalManager().write(this, content, force, keepHistory, append, monitor);
+		getLocalManager().write(this, content, fileInfo, updateFlags, append, monitor);
 		updateMetadataFiles();
 		workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
 	}
@@ -345,8 +342,6 @@ public class File extends Resource implements IFile {
 	 * @see IFile#setContents(InputStream, int, IProgressMonitor)
 	 */
 	public void setContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		final boolean force = (updateFlags & IResource.FORCE) != 0;
-		final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
@@ -359,7 +354,8 @@ public class File extends Resource implements IFile {
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
-				internalSetContents(content, force, keepHistory, false, Policy.subMonitorFor(monitor, Policy.opWork));
+				IFileInfo fileInfo = getStore().fetchInfo();
+				internalSetContents(content, fileInfo, updateFlags, false, Policy.subMonitorFor(monitor, Policy.opWork));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;

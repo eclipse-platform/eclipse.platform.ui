@@ -13,6 +13,7 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
@@ -433,7 +434,9 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor pm) throws CoreException {
-				getLocalManager().write(file, contents, force, false, false, null);
+				int flags = force ? IResource.FORCE : IResource.NONE;
+				IFileInfo info = ((Resource) file).getStore().fetchInfo();
+				getLocalManager().write(file, contents, info, flags, false, null);
 			}
 		};
 		getWorkspace().run(operation, null);
