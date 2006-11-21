@@ -15,12 +15,17 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.internal.expressions.TestExpression;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
 /**
- * Tests various utility methods on WorkbenchActivityHelper.
+ * Tests various utility methods on WorkbenchActivityHelper as well as other misc. activities functionality.
  * 
  * @since 3.1
  */
@@ -248,6 +253,86 @@ public class UtilTest extends TestCase {
 		Set ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
 		assertTrue(ids.contains(ID5));
+	}
+	
+	/**
+	 * Test the activity property tester.  Test the isActivityEnabled property
+	 * 
+	 */
+	public void testPropertyTester1() {
+		enableAll();
+		EvaluationContext context = new EvaluationContext(null, new Object());
+
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+				.getWorkbench().getActivitySupport();
+		IActivityManager activityManager = workbenchActivitySupport
+				.getActivityManager();
+		
+		testPropertyTester1(context, activityManager);
+		Set set = new HashSet();
+		workbenchActivitySupport.setEnabledActivityIds(set);
+		
+		testPropertyTester1(context, activityManager);
+	}
+
+	/**
+	 * @param context
+	 * @param activityManager
+	 */
+	private void testPropertyTester1(EvaluationContext context,
+			IActivityManager activityManager) {
+		boolean result = activityManager
+				.getActivity(ID1).isEnabled();
+
+		TestExpression test = new TestExpression("org.eclipse.ui",
+				"isActivityEnabled", new Object[] { ID1 },
+				null);
+		
+		try {
+			assertEquals(result ? EvaluationResult.TRUE: EvaluationResult.FALSE, test.evaluate(context));
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
+	}
+	
+	/**
+	 * Test the activity property tester.  Test the isCategoryEnabled property
+	 * 
+	 */
+	public void testPropertyTester2() {
+		enableAll();
+		EvaluationContext context = new EvaluationContext(null, new Object());
+
+		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+				.getWorkbench().getActivitySupport();
+		IActivityManager activityManager = workbenchActivitySupport
+				.getActivityManager();
+		
+		testPropertyTester2(context, activityManager);
+		Set set = new HashSet();
+		workbenchActivitySupport.setEnabledActivityIds(set);
+		
+		testPropertyTester2(context, activityManager);
+	}
+	
+	/**
+	 * @param context
+	 * @param activityManager
+	 */
+	private void testPropertyTester2(EvaluationContext context,
+			IActivityManager activityManager) {
+		boolean result = WorkbenchActivityHelper.isEnabled(activityManager, ID1);
+
+
+		TestExpression test = new TestExpression("org.eclipse.ui",
+				"isCategoryEnabled", new Object[] { ID1 },
+				null);
+		
+		try {
+			assertEquals(result ? EvaluationResult.TRUE: EvaluationResult.FALSE, test.evaluate(context));
+		} catch (CoreException e) {
+			fail(e.getMessage());
+		}
 	}
 	
 	/**

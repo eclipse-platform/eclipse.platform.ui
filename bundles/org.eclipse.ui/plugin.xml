@@ -1314,4 +1314,15 @@
       </group>
    </extension>
    
+   <extension
+           point="org.eclipse.core.expressions.propertyTesters">
+        <propertyTester
+              class="org.eclipse.ui.internal.activities.ActivityPropertyTester"
+              id="org.eclipse.ui.activityPropertyTester"
+              namespace="org.eclipse.ui"
+              properties="isActivityEnabled,isCategoryEnabled"
+              type="java.lang.Object">
+        </propertyTester>
+     </extension>
+   
 </plugin>
