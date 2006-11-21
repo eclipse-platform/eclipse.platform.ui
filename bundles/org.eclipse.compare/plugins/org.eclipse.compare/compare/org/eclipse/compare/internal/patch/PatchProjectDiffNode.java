@@ -13,6 +13,7 @@ package org.eclipse.compare.internal.patch;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.graphics.Image;
 
 public class PatchProjectDiffNode extends PatchDiffNode {
@@ -37,7 +38,25 @@ public class PatchProjectDiffNode extends PatchDiffNode {
 	 * @see org.eclipse.compare.structuremergeviewer.DiffNode#getImage()
 	 */
 	public Image getImage() {
-		return CompareUI.getImage(project.getProject());
+		Image image = CompareUI.getImage(project.getProject());
+		if (containsProblems()) {
+			LocalResourceManager imageCache = PatchCompareEditorInput.getImageCache(getPatcher());
+			image = HunkTypedElement.getHunkErrorImage(image, imageCache, true);
+		}
+		return image;
+	}
+
+	private boolean containsProblems() {
+		IDiffElement[] elements = getChildren();
+		for (int i = 0; i < elements.length; i++) {
+			IDiffElement diffElement = elements[i];
+			if (diffElement instanceof PatchFileDiffNode) {
+				PatchFileDiffNode node = (PatchFileDiffNode) diffElement;
+				if (node.getDiffResult().containsProblems())
+					return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)
