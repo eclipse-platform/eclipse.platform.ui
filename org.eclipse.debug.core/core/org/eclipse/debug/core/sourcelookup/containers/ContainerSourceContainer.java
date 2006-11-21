@@ -11,11 +11,12 @@
  *******************************************************************************/
 package org.eclipse.debug.core.sourcelookup.containers;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -46,8 +47,8 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	private IContainer fContainer = null;
 	private boolean fSubfolders = false;
 	
-	private IPath fRootPath = null;
-	private File fRootFile = null;
+	private URI fRootURI = null;
+	private IFileStore fRootFile = null;
 	private IWorkspaceRoot fRoot = null;
 
 	/**
@@ -60,9 +61,12 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	public ContainerSourceContainer(IContainer container, boolean subfolders) {
 		fContainer = container;
 		fSubfolders = subfolders;
-		fRootPath = fContainer.getLocation();
-		if (fRootPath != null) {
-			fRootFile = fRootPath.toFile();
+		fRootURI = fContainer.getLocationURI();
+		if (fRootURI != null) {
+			try {
+				fRootFile = EFS.getStore(fRootURI);
+			} catch (CoreException e) {
+			}
 			fRoot = ResourcesPlugin.getWorkspace().getRoot();
 		}
 	}
@@ -82,9 +86,6 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	public Object[] findSourceElements(String name) throws CoreException {
-		if (fRootPath == null) {
-			return EMPTY;
-		}
 		ArrayList sources = new ArrayList();
 
 		// An IllegalArgumentException is thrown from the "getFile" method 
@@ -97,27 +98,23 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 			if (file.exists()) {
 				sources.add(file);
 			} else {
-				File osFile = new File(fRootFile, name);
-				if (osFile.exists()) {
-					try {
-						// 1. See bug 82627 - case insensitive source lookup
-						
-						// 2. We no longer have to account for bug 95832, so we just create a path
-						//    on the OS canonical path (fix to bug 95679 was removed).
-						
-						// 3. See bug 98090 - we need to handle relative path names
-						
-						IPath workspacePath = new Path(osFile.getCanonicalPath());
-						IFile[] files = fRoot.findFilesForLocation(workspacePath);
-						if (isFindDuplicates() && files.length > 1) {
-							for (int i = 0; i < files.length; i++) {
-								sources.add(files[i]);
-							}
-						} else if (files.length > 0) {
-							sources.add(files[0]);
-						}					
-					} catch (IOException e) {
-					}
+				// See bug 82627 - perform case insensitive source lookup
+				if (fRootURI == null) {
+					return EMPTY;
+				}
+				// See bug 98090 - we need to handle relative path names
+				IFileStore target = fRootFile.getChild(new Path(name));
+				if (target.fetchInfo().exists()) {
+					// We no longer have to account for bug 95832, and URIs take care
+					// of canonical paths (fix to bug 95679 was removed).
+					IFile[] files = fRoot.findFilesForLocationURI(target.toURI());
+					if (isFindDuplicates() && files.length > 1) {
+						for (int i = 0; i < files.length; i++) {
+							sources.add(files[i]);
+						}
+					} else if (files.length > 0) {
+						sources.add(files[0]);
+					}					
 				}
 			}
 		}
