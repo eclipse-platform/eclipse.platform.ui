@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentatio
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.RGB;
 
 /**
@@ -27,7 +28,8 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class VariableLabelProvider extends DebugElementLabelProvider {
 
-	protected RGB getBackground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (columnId != null) {
 	        if (element instanceof IVariable) {
 	        	IVariable variable = (IVariable) element;
@@ -36,10 +38,11 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 				}
 	        }
 		}
-		return super.getBackground(element, presentationContext, columnId);
+		return super.getBackground(elementPath, presentationContext, columnId);
 	}
 
-	protected RGB getForeground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (columnId == null) {
 	        if (element instanceof IVariable) {
 	        	IVariable variable = (IVariable) element;
@@ -48,21 +51,21 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 				}
 	        }
 		}
-	    return super.getForeground(element, presentationContext, columnId);
+	    return super.getForeground(elementPath, presentationContext, columnId);
 	}
 
-	protected ImageDescriptor getImageDescriptor(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
-			return super.getImageDescriptor(element, presentationContext, columnId);
+			return super.getImageDescriptor(elementPath, presentationContext, columnId);
 		}
 		return null;
 	}
 
-	protected String getLabel(Object element, IPresentationContext context, String columnId) throws CoreException {
+	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null) {
-			return escapeSpecialChars(super.getLabel(element, context, columnId));
+			return escapeSpecialChars(super.getLabel(elementPath, context, columnId));
 		} else {
-			IVariable variable = (IVariable) element;
+			IVariable variable = (IVariable) elementPath.getLastSegment();
 			IValue value = variable.getValue();		
 			return getColumnText(variable, value, context, columnId);
 		}

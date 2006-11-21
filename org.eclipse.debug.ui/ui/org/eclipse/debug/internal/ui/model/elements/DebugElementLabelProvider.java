@@ -15,6 +15,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.views.DebugModelPresentationContext;
 import org.eclipse.debug.internal.ui.views.launch.DebugElementHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -23,10 +24,8 @@ import org.eclipse.swt.graphics.RGB;
  */
 public class DebugElementLabelProvider extends ElementLabelProvider {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getLabel(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.String)
-	 */
-	protected String getLabel(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return debugContext.getModelPresentation().getText(element);
@@ -34,10 +33,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getLabel(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getBackground(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.String)
-	 */
-	protected RGB getBackground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return DebugElementHelper.getBackground(element, debugContext.getModelPresentation());
@@ -45,10 +42,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getBackground(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getFontDatas(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.String)
-	 */
-	protected FontData getFontData(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return DebugElementHelper.getFont(element, debugContext.getModelPresentation());
@@ -57,10 +52,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getFont(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getForeground(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.String)
-	 */
-	protected RGB getForeground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return DebugElementHelper.getForeground(element, debugContext.getModelPresentation());	
@@ -68,10 +61,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 		return DebugElementHelper.getForeground(element);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getImageDescriptor(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext, java.lang.String)
-	 */
-	protected ImageDescriptor getImageDescriptor(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
+		Object element = elementPath.getLastSegment();
 		if (presentationContext instanceof DebugModelPresentationContext) {
 			DebugModelPresentationContext debugContext = (DebugModelPresentationContext) presentationContext;
 			return DebugElementHelper.getImageDescriptor(element, debugContext.getModelPresentation());	

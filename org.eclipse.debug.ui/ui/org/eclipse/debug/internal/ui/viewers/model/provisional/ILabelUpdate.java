@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 
@@ -22,11 +23,11 @@ import org.eclipse.swt.graphics.RGB;
 public interface ILabelUpdate extends IViewerUpdate {
 	
 	/**
-	 * Returns the element the label update is for.
+	 * Returns a tree path for the element the label update is for.
 	 * 
-	 * @return associated element
+	 * @return associated element tree path
 	 */
-	public Object getElement();
+	public TreePath getElement();
 	
 	/**
 	 * Returns the id's of the visible columns in presentation order,

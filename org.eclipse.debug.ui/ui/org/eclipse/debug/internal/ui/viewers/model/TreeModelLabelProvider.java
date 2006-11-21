@@ -29,6 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.swt.graphics.Color;
@@ -184,11 +185,12 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 		// NOT USED - the viewer updates each row instead 
 	}	
 	
-	public synchronized void update(Object element, ViewerRow row) {
+	public synchronized void update(TreePath elementPath, ViewerRow row) {
 		String[] visibleColumns = fViewer.getVisibleColumns();
+		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = getLabelAdapter(element);
 		if (presentation != null) {
-			presentation.update(new LabelUpdate(element, (TreeItem) row.getItem(), this, visibleColumns));
+			presentation.update(new LabelUpdate(elementPath, (TreeItem) row.getItem(), this, visibleColumns));
 		} else if (element instanceof String) {
 			// for example, expression error messages
 			row.setText(0, (String)element);

@@ -942,8 +942,8 @@ public class InternalTreeModelViewer extends TreeViewer {
 			unmapElement(element, treeItem);
 			return;
 		}
-
-		((TreeModelLabelProvider)getLabelProvider()).update(element, getViewerRowFromItem(treeItem));
+		
+		((TreeModelLabelProvider)getLabelProvider()).update(getTreePathFromItem(item), getViewerRowFromItem(treeItem));
 
 		// As it is possible for user code to run the event
 		// loop check here.

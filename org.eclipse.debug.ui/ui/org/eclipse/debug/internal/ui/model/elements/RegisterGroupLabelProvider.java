@@ -14,22 +14,29 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 
 /**
  * @since 3.3
  */
 public class RegisterGroupLabelProvider extends DebugElementLabelProvider {
 
-	protected ImageDescriptor getImageDescriptor(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getImageDescriptor(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
-			return super.getImageDescriptor(element, presentationContext, columnId);
+			return super.getImageDescriptor(elementPath, presentationContext, columnId);
 		}
 		return null;
 	}
 
-	protected String getLabel(Object element, IPresentationContext context, String columnId) throws CoreException {
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider#getLabel(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String)
+	 */
+	protected String getLabel(TreePath elementPath, IPresentationContext context, String columnId) throws CoreException {
 		if (columnId == null || VariableColumnPresentation.COLUMN_VARIABLE_NAME.equals(columnId)) {
-			return super.getLabel(element, context, columnId);
+			return super.getLabel(elementPath, context, columnId);
 		} else {
 			return ""; //$NON-NLS-1$
 		}

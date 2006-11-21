@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 	
-	private Object fElement;
+	private TreePath fElementPath;
 	private String[] fColumnIds;
 	private RGB[] fBackgrounds;
 	private RGB[] fForegrounds;
@@ -50,8 +50,8 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 	 * @param provider label provider to callback to 
 	 * @param columnId column identifier or <code>null</code>
 	 */
-	public LabelUpdate(Object element, TreeItem item, TreeModelLabelProvider provider, String[] columnIds) {
-		fElement = element;
+	public LabelUpdate(TreePath elementPath, TreeItem item, TreeModelLabelProvider provider, String[] columnIds) {
+		fElementPath = elementPath;
 		fProvider = provider;
 		fColumnIds = columnIds;
 		fItem = item;
@@ -73,8 +73,8 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#getElement()
 	 */
-	public Object getElement() {
-		return fElement;
+	public TreePath getElement() {
+		return fElementPath;
 	}
 
 	/* (non-Javadoc)

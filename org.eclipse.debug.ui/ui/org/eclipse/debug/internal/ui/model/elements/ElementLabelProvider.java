@@ -22,6 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.progress.UIJob;
@@ -166,7 +167,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
 		String[] columnIds = update.getColumnIds();
 		IPresentationContext presentationContext = update.getPresentationContext();
-		Object element = update.getElement();
+		TreePath elementPath = update.getElement();
 		int numColumns = 1;
 		if (columnIds != null) {
 			numColumns = columnIds.length;
@@ -176,11 +177,11 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			if (columnIds != null) {
 				columnId = columnIds[i];
 			}
-			update.setLabel(getLabel(element, presentationContext, columnId), i);
-			update.setImageDescriptor(getImageDescriptor(element, presentationContext, columnId), i);
-			update.setBackground(getBackground(element, presentationContext, columnId), i);
-			update.setForeground(getForeground(element, presentationContext, columnId), i);
-			update.setFontData(getFontData(element, presentationContext, columnId), i);
+			update.setLabel(getLabel(elementPath, presentationContext, columnId), i);
+			update.setImageDescriptor(getImageDescriptor(elementPath, presentationContext, columnId), i);
+			update.setBackground(getBackground(elementPath, presentationContext, columnId), i);
+			update.setForeground(getForeground(elementPath, presentationContext, columnId), i);
+			update.setFontData(getFontData(elementPath, presentationContext, columnId), i);
 		}
 	}
 
@@ -190,7 +191,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return font information or <code>null</code>
 	 */
-	protected FontData getFontData(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
 
@@ -200,7 +201,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return color or <code>null</code>
 	 */
-	protected RGB getForeground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
 
@@ -210,7 +211,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return color or <code>null</code>
 	 */
-	protected RGB getBackground(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
 
@@ -220,7 +221,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return image descriptor or <code>null</code>
 	 */
-	protected ImageDescriptor getImageDescriptor(Object element, IPresentationContext presentationContext, String columnId) throws CoreException {
+	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
 	}
 
@@ -230,7 +231,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param columnId
 	 * @return label
 	 */
-	protected abstract String getLabel(Object element, IPresentationContext presentationContext, String columnId) throws CoreException;	
+	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;	
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#updateLabel(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
