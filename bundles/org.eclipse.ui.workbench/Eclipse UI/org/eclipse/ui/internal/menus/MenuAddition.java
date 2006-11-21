@@ -19,9 +19,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @since 3.3
@@ -32,7 +34,7 @@ public class MenuAddition extends AdditionBase {
 	// Cache sub-additions
 	private List additions = new ArrayList();
 	
-	private boolean iconDefined = false;
+	private ImageDescriptor imageDesc = null;
 	private Image icon = null;
 
 	public MenuAddition(IConfigurationElement element) {
@@ -71,25 +73,23 @@ public class MenuAddition extends AdditionBase {
 	}
 	
 	public Image getIcon() {
+        if (imageDesc == null) {
+        	String extendingPluginId = element.getDeclaringExtension()
+        							.getContributor().getName();
+		
+			imageDesc = AbstractUIPlugin
+		            .imageDescriptorFromPlugin(extendingPluginId, getIconPath());
+		}
+        
 		// Stall loading the icon until first access
-		if (!iconDefined) {
-			icon = loadIcon(getIconPath());			
-			iconDefined = true;
+		if (icon == null && imageDesc != null) {
+			icon = imageDesc.createImage(true, null);
 		}
 		return icon;
 	}
 	
 	private String getIconPath() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	}
-
-	/**
-	 * @param iconPath
-	 * @return
-	 */
-	private Image loadIcon(String iconPath) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public String toString() {

@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -23,6 +24,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Wrapper for a ConfigurationElement defining a Menu or
@@ -33,7 +35,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class ItemAddition extends AdditionBase {
 
-	private boolean iconDefined = false;
+	private ImageDescriptor imageDesc = null;
 	private Image icon = null;
 	
 	public ItemAddition(IConfigurationElement element) {
@@ -57,11 +59,17 @@ public class ItemAddition extends AdditionBase {
 	}
 	
 	public Image getIcon() {
+        if (imageDesc == null) {
+        	String extendingPluginId = element.getDeclaringExtension()
+        							.getContributor().getName();
+		
+			imageDesc = AbstractUIPlugin
+		            .imageDescriptorFromPlugin(extendingPluginId, getIconPath());
+		}
+        
 		// Stall loading the icon until first access
-		if (!iconDefined) {
-			String iconPath = getIconPath();
-			icon = loadIcon(iconPath);			
-			iconDefined = true;
+		if (icon == null && imageDesc != null) {
+			icon = imageDesc.createImage(true, null);
 		}
 		return icon;
 	}
@@ -74,15 +82,6 @@ public class ItemAddition extends AdditionBase {
 	
 	private String getIconPath() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	}
-	
-	/**
-	 * @param iconPath
-	 * @return
-	 */
-	private Image loadIcon(String iconPath) {
-		// TODO: Load the image
-		return null;
 	}
 
 	public boolean isVisible() {
@@ -107,7 +106,9 @@ public class ItemAddition extends AdditionBase {
 			public void fill(Menu parent, int index) {
 				MenuItem newItem = new MenuItem(parent, getStyle(), index);
 				newItem.setText(getLabel());
-				newItem.setImage(getIcon());
+				
+				if (getIconPath() != null)
+					newItem.setImage(getIcon());
 				newItem.addSelectionListener(new SelectionListener() {
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// Execute through the command service
