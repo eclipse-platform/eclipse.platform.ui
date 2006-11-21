@@ -316,8 +316,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * Saving the configuration will result in a change event, which will be picked up by the director 
 	 * and used to refresh its internal list.
 	 * 
-	 * @param containers the list of containers entered by the user
-	 * @param duplicates true if the user checked the duplicates check box, false otherwise
 	 * @param workingCopy the working copy of the configuration that these values should be stored in, may be null.
 	 * 	If null, will be written into a working copy of the configuration referenced by the director.
 	 */
@@ -352,17 +350,16 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 						
 			//writing to the file will cause a change event and the listeners will be updated
 			try {			
-				if (isDefault(workingCopy)) {
+				if (isDefault()) {
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, (String)null);
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, (String)null);
 				} else {
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
 				}
-				if(configuration == null) {
+				if(!workingCopy.isReadOnly()) {
 					workingCopy.doSave(); 
 				}
-				setDirty(false);
 			}
 			catch(CoreException e) {
 				DebugUIPlugin.log(e);
@@ -377,7 +374,7 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 	 * @param configuration
 	 * @return
 	 */
-	protected boolean isDefault(ILaunchConfiguration configuration) {
+	protected boolean isDefault() {
 		ISourceContainer[] current = getEntries();
 		return !fDuplicatesButton.getSelection() && current.length == 1 && current[0] instanceof DefaultSourceContainer;
 	}
