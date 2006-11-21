@@ -46,7 +46,7 @@ abstract class LocalFileNatives {
 	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
 		if (hasNatives)
 			// Note that support for copying last modified info is not implemented on Windows
-			return isUnicode ? internalCopyAttributesW(source.toCharArray(), destination.toCharArray(), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified);
+			return isUnicode ? internalCopyAttributesW(Convert.toPlatformChars(source), Convert.toPlatformChars(destination), copyLastModified) : internalCopyAttributes(Convert.toPlatformBytes(source), Convert.toPlatformBytes(destination), copyLastModified);
 		return false; // not supported
 	}
 
@@ -57,7 +57,7 @@ abstract class LocalFileNatives {
 	public static FileInfo fetchFileInfo(String fileName) {
 		FileInfo info = new FileInfo();
 		if (isUnicode)
-			internalGetFileInfoW(fileName.toCharArray(), info);
+			internalGetFileInfoW(Convert.toPlatformChars(fileName), info);
 		else
 			internalGetFileInfo(Convert.toPlatformBytes(fileName), info);
 		return info;
@@ -117,7 +117,7 @@ abstract class LocalFileNatives {
 	 */
 	public static void setFileInfo(String fileName, IFileInfo info, int options) {
 		if (isUnicode)
-			internalSetFileInfoW(fileName.toCharArray(), info, options);
+			internalSetFileInfoW(Convert.toPlatformChars(fileName), info, options);
 		else
 			internalSetFileInfo(Convert.toPlatformBytes(fileName), info);
 	}
