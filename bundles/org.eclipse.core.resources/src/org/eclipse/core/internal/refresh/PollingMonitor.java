@@ -38,8 +38,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 */
 	private static final long MAX_DURATION = 250;
 	/**
-	 * The amount of time that a changed root should remain
-	 * hot.
+	 * The amount of time that a changed root should remain hot.
 	 */
 	private static final long HOT_ROOT_DECAY = 90000;
 	/**
@@ -105,7 +104,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 					//ignore
 				}
 				//don't wait forever
-				if ((System.currentTimeMillis() -waitStart) > 90000)
+				if ((System.currentTimeMillis() - waitStart) > 90000)
 					break;
 			}
 		}
@@ -173,7 +172,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		if (resource.isSynchronized(IResource.DEPTH_INFINITE))
 			return;
 		//don't refresh links with no local content
-		if (resource.isLinked() && !((Resource)resource).getStore().fetchInfo().exists())
+		if (resource.isLinked() && !((Resource) resource).getStore().fetchInfo().exists())
 			return;
 		//submit refresh request
 		refreshManager.refresh(resource);
