@@ -18,7 +18,6 @@ import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -34,21 +33,13 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * This is a dialog that can host a {@link CompareEditorInput}. Clients should instantiate
- * the dialog and then call {@link #prepareAndOpen()} to prepare the compare editor input
- * and open the dialog if there is a compare result to show.
+ * This is a dialog that can host a {@link CompareEditorInput}.
  * <p>
  * This class can be used as is or can be subclassed.
  * 
  * @since 3.3
  */
 public class CompareDialog extends TrayDialog implements IPropertyChangeListener, ICompareContainer {
-	
-	/**
-	 * Constant returned from {@link #prepareAndOpen()} if the compare result
-	 * was not OK.
-	 */
-	public static final int NO_COMPARE_RESULT = 100;
 	
 	private final CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
@@ -204,7 +195,7 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @see org.eclipse.compare.ICompareContainer#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		// No action bas available
+		// No action bars available
 		return null;
 	}
 
@@ -309,34 +300,6 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		if (height < 500)
 			height= 500;
 		return new Point(width, height);
-	}
-	
-	/**
-	 * Initialize the compare editor input of this dialog by invoking the
-	 * {@link CompareEditorInput#run(IProgressMonitor)} using the provided
-	 * context. If no context is provided, a default context (most likely the
-	 * progress service) will be used.
-	 * @param context a runnable context or <code>null</code> if the default context is desired.
-	 * @return whether the compare editor input has a valid compare result 
-	 * 		(see {@link CompareEditorInput#getCompareResult()})
-	 */
-	protected boolean prepareInput(IRunnableContext context) {
-		return CompareUIPlugin.getDefault().compareResultOK(fCompareEditorInput, context);
-	}
-	
-	/**
-	 * Prepare the compare editor input of this dialog and then open the dialog
-	 * if the compare result was OK. If the compare result was not OK, then
-	 * {@link #NO_COMPARE_RESULT} is returned.
-	 * @return the result returned from the {@link #open()} method or
-	 * {@link #NO_COMPARE_RESULT} if there was no compare result and the 
-	 * dialog was not opened.
-	 */
-	public int prepareAndOpen() {
-		if (prepareInput(null)) {
-			return open();
-		}
-		return NO_COMPARE_RESULT;
 	}
 
 	/**

@@ -424,7 +424,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						return Status.OK_STATUS;
 					}
 					if (status.getCode() == NO_DIFFERENCE) {
-						MessageDialog.openInformation(getShell(), Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));  //$NON-NLS-1$//$NON-NLS-2$
+						handleNoDifference();
 						return Status.OK_STATUS;
 					}
 					return status;
@@ -488,7 +488,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						return Status.OK_STATUS;
 					}
 					if (status.getCode() == NO_DIFFERENCE) {
-						MessageDialog.openInformation(getShell(), Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));  //$NON-NLS-1$//$NON-NLS-2$
+						handleNoDifference();
 						return Status.OK_STATUS;
 					}
 					return status;
@@ -1190,6 +1190,15 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	//---- more utilities
 	
+	protected void handleNoDifference() {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				MessageDialog.openInformation(getShell(), Utilities.getString("CompareUIPlugin.dialogTitle"), Utilities.getString("CompareUIPlugin.noDifferences"));  //$NON-NLS-1$//$NON-NLS-2$
+			}
+		};
+		syncExec(runnable);
+	}
+
 	/**
 	 * Returns an array of all editors that have an unsaved content. If the identical content is 
 	 * presented in more than one editor, only one of those editor parts is part of the result.
