@@ -1079,7 +1079,6 @@ final class MenuPersistence extends RegistryPersistence {
 				.getConfigurationElementsFor(COMMON_MENU_ADDITIONS);
 
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
-			System.out.println("EPH:" + menusExtensionPoint[i].getName()); //$NON-NLS-1$
 			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
 				readMenuAddition(menuService, menusExtensionPoint[i]);
 			}
@@ -1106,7 +1105,6 @@ final class MenuPersistence extends RegistryPersistence {
 		IConfigurationElement[] items = addition.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
-			System.out.println("Type: " + itemType); //$NON-NLS-1$
 
 			if (TAG_ITEM.equals(itemType)) {
 				mgr

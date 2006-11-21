@@ -58,8 +58,6 @@ public class MenuItemContribution extends CommonMenuAddition {
 		// Stall loading the icon until first access
 		if (!iconDefined) {
 			String iconPath = getIconPath();
-			System.out.println("Icon path: " + iconPath); //$NON-NLS-1$
-			// TODO: Load the image
 			icon = loadIcon(iconPath);
 			
 			iconDefined = true;
