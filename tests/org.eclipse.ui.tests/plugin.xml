@@ -2973,7 +2973,7 @@
          </item>
          <item
                commandId="MenuTest.ObjectCmd"
-               icon="icons/mockeditorpart1.gif"
+               icon="icons/binary_co.gif"
                label="Foo Cmd"
                mnemonic="F">
             <visibleWhen
