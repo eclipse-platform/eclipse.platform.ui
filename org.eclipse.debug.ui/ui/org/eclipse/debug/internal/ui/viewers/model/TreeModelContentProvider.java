@@ -225,7 +225,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 			if (DEBUG_CONTENT_PROVIDER) {
 				System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
-			treeViewer.setChildCount(delta.getElement(), viewCount);
+			treeViewer.setChildCount(elementPath, viewCount);
 			if (!treeViewer.getExpandedState(elementPath)) {
 				treeViewer.expandToLevel(elementPath, 1);
 			}
