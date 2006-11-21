@@ -54,17 +54,33 @@ A:hover{
 }
 
 A.active{ 
-	background:Highlight;
 	color:HighlightText;
 	width:100%;
 }
 
 A.active:hover{
 	text-decoration:underline; 
-	background:Highlight;
-	color:HighlightText;
-	width:100%;
 }
+
+<%
+if (requestData.isSafari()){
+%>
+
+A.active{ 
+	background:DarkBlue;
+}
+
+<% 
+} else {
+%>
+
+A.active{ 
+	background:Highlight;
+}
+
+<%
+}
+%>
 
 A.nolink {
 	text-decoration:none; 
