@@ -212,15 +212,20 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		int childCount = delta.getChildCount();
 		int modelIndex = delta.getIndex();
 		TreeViewer treeViewer = getTreeViewer();
+		TreePath elementPath = getViewerTreePath(delta);
 		if (modelIndex >= 0) {
 			int viewIndex = modelToViewIndex(getViewerTreePath(delta.getParentDelta()), modelIndex);
 			if (DEBUG_CONTENT_PROVIDER) {
 				System.out.println("[expand] replace(" + delta.getParentDelta().getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
-			treeViewer.replace(delta.getParentDelta().getElement(), viewIndex, delta.getElement());
+			TreePath parentPath = elementPath.getParentPath();
+			// TODO: I think that getParentPath() should return empty for a 1 segment path
+			if (parentPath == null) {
+				parentPath = TreePath.EMPTY;
+			}
+			treeViewer.replace(parentPath, viewIndex, delta.getElement());
 		}
 		if (childCount > 0) {
-			TreePath elementPath = getViewerTreePath(delta);
 			int viewCount = modelToViewChildCount(elementPath, childCount);
 			if (DEBUG_CONTENT_PROVIDER) {
 				System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -253,7 +258,8 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleReplace(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleReplace(IModelDelta delta) {
-		getTreeViewer().replace(delta.getParentDelta().getElement(), delta.getIndex(), delta.getElement());
+		TreePath parentPath = getViewerTreePath(delta.getParentDelta());
+		getTreeViewer().replace(parentPath, delta.getIndex(), delta.getElement());
 	}
 
 	/* (non-Javadoc)
@@ -277,7 +283,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 			if (DEBUG_CONTENT_PROVIDER) {
 				System.out.println("[select] replace(" + parentDelta.getElement() + ", (model) " + modelIndex + " (view) " + viewIndex + ", " + delta.getElement()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
-			treeViewer.replace(parentDelta.getElement(), viewIndex, delta.getElement());
+			treeViewer.replace(parentPath, viewIndex, delta.getElement());
 		}
 		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)));
 	}
