@@ -23,6 +23,8 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -33,18 +35,23 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
@@ -83,7 +90,7 @@ public class FilteredResourcesSelectionDialog extends
 
 	private ResourceItemLabelProvider resourceItemLabelProvider;
 
-	private DecoratingLabelProvider detailsLabelProvider;
+	private ResourceItemDetailsLabelProvider resourceItemDetailsLabelProvider;
 
 	private WorkingSetFilterActionGroup workingSetFilterActionGroup;
 
@@ -113,6 +120,8 @@ public class FilteredResourcesSelectionDialog extends
 			IContainer container, int typesMask) {
 		super(shell, multi);
 
+		setSelectionHistory(new ResourceSelectionHistory());
+
 		setTitle(IDEWorkbenchMessages.OpenResourceDialog_title);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell,
 				IIDEHelpContextIds.OPEN_RESOURCE_DIALOG);
@@ -122,12 +131,10 @@ public class FilteredResourcesSelectionDialog extends
 
 		resourceItemLabelProvider = new ResourceItemLabelProvider();
 
-		detailsLabelProvider = new DecoratingLabelProvider(
-				new CustomWorkbenchLabelProvider(), PlatformUI.getWorkbench()
-						.getDecoratorManager().getLabelDecorator());
+		resourceItemDetailsLabelProvider = new ResourceItemDetailsLabelProvider();
 
 		setListLabelProvider(resourceItemLabelProvider);
-		setDetailsLabelProvider(detailsLabelProvider);
+		setDetailsLabelProvider(resourceItemDetailsLabelProvider);
 	}
 
 	/*
@@ -144,6 +151,7 @@ public class FilteredResourcesSelectionDialog extends
 	 * Adds or replaces subtitle of the dialog
 	 * 
 	 * @param text
+	 *            the new subtitle
 	 */
 	private void setSubtitle(String text) {
 		if (text == null || text.length() == 0) {
@@ -188,7 +196,7 @@ public class FilteredResourcesSelectionDialog extends
 			memento.save(writer);
 			settings.put(WORKINGS_SET_SETTINGS, writer.getBuffer().toString());
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("Problem while storing dialog settings", e); //$NON-NLS-1$
+			IDEWorkbenchPlugin.log("", e); //$NON-NLS-1$
 			// don't do anything. Simply don't store the settings
 		}
 	}
@@ -203,7 +211,7 @@ public class FilteredResourcesSelectionDialog extends
 
 		boolean showDerived = settings.getBoolean(SHOW_DERIVED);
 		showDerivedResourcesAction.setChecked(showDerived);
-		setShowDerived(showDerived);
+		this.isDerived = showDerived;
 
 		String setting = settings.get(WORKINGS_SET_SETTINGS);
 		if (setting != null) {
@@ -212,17 +220,18 @@ public class FilteredResourcesSelectionDialog extends
 						setting));
 				workingSetFilterActionGroup.restoreState(memento);
 			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log(
-						"Problem while restoring dialog settings", e); //$NON-NLS-1$
+				IDEWorkbenchPlugin.log("", e); //$NON-NLS-1$
 				// don't do anything. Simply don't restore the settings
 			}
 		}
 
-		IWorkingSet ws = workingSetFilterActionGroup.getWorkingSet();
-
-		setSubtitle(ws != null ? ws.getLabel() : null);
-		workingSetFilter.setWorkingSet(ws);
+		// IWorkingSet ws = workingSetFilterActionGroup.getWorkingSet();
+		//
+		// setSubtitle(ws != null ? ws.getLabel() : null);
+		// workingSetFilter.setWorkingSet(ws);
 		addListFilter(workingSetFilter);
+
+		applyFilter();
 	}
 
 	/*
@@ -243,14 +252,30 @@ public class FilteredResourcesSelectionDialog extends
 
 						if (WorkingSetFilterActionGroup.CHANGE_WORKING_SET
 								.equals(property)) {
-							Object newValue = event.getNewValue();
 
-							if (newValue instanceof IWorkingSet) {
-								workingSetFilter
-										.setWorkingSet((IWorkingSet) newValue);
-								setSubtitle(((IWorkingSet) newValue).getLabel());
-							} else if (newValue == null) {
-								workingSetFilter.setWorkingSet(null);
+							IWorkingSet workingSet = (IWorkingSet) event
+									.getNewValue();
+
+							if (workingSet != null) {
+								workingSetFilter.setWorkingSet(workingSet);
+								setSubtitle(workingSet.getLabel());
+							} else {
+								IWorkbenchWindow window = PlatformUI
+										.getWorkbench()
+										.getActiveWorkbenchWindow();
+
+								if (window != null) {
+									IWorkbenchPage page = window
+											.getActivePage();
+									workingSet = page.getAggregateWorkingSet();
+
+									if (workingSet.isAggregateWorkingSet()
+											&& workingSet.isEmpty()) {
+										workingSet = null;
+									}
+								}
+
+								workingSetFilter.setWorkingSet(workingSet);
 								setSubtitle(null);
 							}
 
@@ -261,6 +286,154 @@ public class FilteredResourcesSelectionDialog extends
 
 		menuManager.add(new Separator());
 		workingSetFilterActionGroup.fillContextMenu(menuManager);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createExtendedContentArea(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createExtendedContentArea(Composite parent) {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#refresh()
+	 */
+	public void refresh() {
+		resourceItemLabelProvider.reset();
+		resourceItemDetailsLabelProvider.reset();
+		super.refresh();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
+	 */
+	public Object[] getResult() {
+		Object[] result = super.getResult();
+
+		List resultToReturn = new ArrayList();
+
+		for (int i = 0; i < result.length; i++) {
+			if (result[i] instanceof ResourceItem) {
+				resultToReturn.add(((ResourceItem) result[i]).getResource());
+			}
+		}
+
+		return resultToReturn.toArray();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#open()
+	 */
+	public int open() {
+		if (getInitialPattern() == null) {
+			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			if (window != null) {
+				ISelection selection = window.getSelectionService()
+						.getSelection();
+				if (selection instanceof ITextSelection) {
+					String text = ((ITextSelection) selection).getText();
+					if (text != null) {
+						text = text.trim();
+						if (text.length() > 0) {
+							IWorkspace workspace = ResourcesPlugin.getWorkspace();
+							IStatus result = workspace.validateName(text, IResource.FILE);
+							if (result.isOK()) {
+								setInitialPattern(text);
+							}
+						}
+					}
+				}
+			}
+		}
+		return super.open();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
+	 */
+	protected IStatus validateItem(AbstractListItem item) {
+		return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter(java.lang.String)
+	 */
+	protected ItemsFilter createFilter() {
+		return new ResourceFilter(container, isDerived, typeMask);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#applyFilter()
+	 */
+	protected void applyFilter() {
+		super.applyFilter();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
+	 */
+	protected Comparator getItemsComparator() {
+		return new Comparator() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see java.util.Comparator#compare(java.lang.Object,
+			 *      java.lang.Object)
+			 */
+			public int compare(Object o1, Object o2) {
+				Collator collator = Collator.getInstance();
+				ResourceItem resourceDecorator1 = ((ResourceItem) o1);
+				ResourceItem resourceDecorator2 = ((ResourceItem) o2);
+				IResource resource1 = resourceDecorator1.getResource();
+				IResource resource2 = resourceDecorator2.getResource();
+				String s1 = resource1.getName();
+				String s2 = resource2.getName();
+				int comparability = collator.compare(s1, s2);
+				if (comparability == 0) {
+					s1 = resource1.getFullPath().toString();
+					s2 = resource2.getFullPath().toString();
+					comparability = collator.compare(s1, s2);
+				}
+
+				return comparability;
+			}
+		};
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractContentProvider,
+	 *      org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter,
+	 *      org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void fillContentProvider(AbstractContentProvider contentProvider,
+			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
+			throws CoreException {
+
+		container.accept(new ResourceProxyVisitor(contentProvider, itemsFilter,
+				progressMonitor), IResource.NONE);
+
+		if (progressMonitor != null)
+			progressMonitor.done();
+
 	}
 
 	/**
@@ -278,29 +451,15 @@ public class FilteredResourcesSelectionDialog extends
 		}
 
 		public void run() {
-			setShowDerived(isChecked());
+			FilteredResourcesSelectionDialog.this.isDerived = isChecked();
+			applyFilter();
 		}
-	}
-
-	/**
-	 * If derived flag set to true, the items list will show all resources no
-	 * matter what is the resource derived flag. If set to false the items list
-	 * will show only not derived resources.
-	 * 
-	 * @param isDerived
-	 *            derived flag
-	 */
-	private void setShowDerived(boolean isDerived) {
-		this.isDerived = isDerived;
-		setFilter(createFilter());
 	}
 
 	/**
 	 * A label provider for ResourceDecorator objects. It creates labels with a
 	 * resource full path for duplicates. It uses the Platform UI label
 	 * decorator for providing extra resource info.
-	 * 
-	 * @since 3.3
 	 */
 	private class ResourceItemLabelProvider extends LabelProvider implements
 			ILabelProviderListener {
@@ -439,27 +598,78 @@ public class FilteredResourcesSelectionDialog extends
 	}
 
 	/**
-	 * A label provider for IResource objects. It creates labels with a resource
-	 * full path.
+	 * A label provider for details of ResourceItem objects.
 	 */
-	private class CustomWorkbenchLabelProvider extends WorkbenchLabelProvider {
+	private class ResourceItemDetailsLabelProvider extends
+			ResourceItemLabelProvider {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
+		 */
+		public Image getImage(Object element) {
+			if (!(element instanceof ResourceItem)) {
+				return super.getImage(element);
+			}
+
+			IResource parent = ((ResourceItem) element).getResource()
+					.getParent();
+			super.map.put(parent, element);
+			Image img = provider.getImage(parent);
+
+			return decorator.decorateImage(img, parent);
+		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.model.WorkbenchLabelProvider#decorateText(java.lang.String,
-		 *      java.lang.Object)
+		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
-		protected String decorateText(String input, Object element) {
-			IResource resource = ((IResource) element);
-
-			if (resource.getType() == IResource.ROOT) {
-				// Get readable name for workspace root ("Workspace"), without
-				// duplicating language-specific string here.
-				return null;
+		public String getText(Object element) {
+			if (!(element instanceof ResourceItem)) {
+				return super.getText(element);
 			}
 
-			return resource.getFullPath().makeRelative().toString();
+			IResource parent = ((ResourceItem) element).getResource()
+					.getParent();
+			super.map.put(parent, element);
+
+			if (parent.getType() == IResource.ROOT) {
+				// Get readable name for workspace root ("Workspace"), without
+				// duplicating language-specific string here.
+				return super.decorator.decorateText(null, parent);
+			}
+
+			return super.decorator.decorateText(parent.getFullPath()
+					.makeRelative().toString(), parent);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+		 */
+		public void labelProviderChanged(LabelProviderChangedEvent event) {
+			Object[] elements = event.getElements();
+
+			ArrayList items = null;
+
+			if (elements != null) {
+				items = new ArrayList();
+				for (int i = 0; i < elements.length; i++) {
+					if (super.map.containsKey(elements[i])) {
+						items.add(super.map.get(elements[i]));
+					}
+				}
+			}
+
+			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
+					this, items != null ? items.toArray() : null);
+
+			Object[] l = super.listeners.getListeners();
+			for (int i = 0; i < super.listeners.size(); i++) {
+				((ILabelProviderListener) l[i]).labelProviderChanged(newEvent);
+			}
 		}
 	}
 
@@ -507,129 +717,6 @@ public class FilteredResourcesSelectionDialog extends
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#refresh()
-	 */
-	public void refresh() {
-		resourceItemLabelProvider.reset();
-		super.refresh();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
-	 */
-	protected IStatus validateItem(AbstractListItem item) {
-		return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter(java.lang.String)
-	 */
-	protected ItemsFilter createFilter() {
-		return new ResourceFilter(container, isDerived, typeMask);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemDetails(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
-	 */
-	protected Object getItemDetails(AbstractListItem item) {
-		return ((ResourceItem) item).getResource().getParent();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getItemsComparator()
-	 */
-	protected Comparator getItemsComparator() {
-		return new Comparator() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.util.Comparator#compare(java.lang.Object,
-			 *      java.lang.Object)
-			 */
-			public int compare(Object o1, Object o2) {
-				Collator collator = Collator.getInstance();
-				ResourceItem resourceDecorator1 = ((ResourceItem) o1);
-				ResourceItem resourceDecorator2 = ((ResourceItem) o2);
-				IResource resource1 = resourceDecorator1.getResource();
-				IResource resource2 = resourceDecorator2.getResource();
-				String s1 = resource1.getName();
-				String s2 = resource2.getName();
-				int comparability = collator.compare(s1, s2);
-				if (comparability == 0) {
-					resourceDecorator1.markAsDuplicate();
-					resourceDecorator2.markAsDuplicate();
-					s1 = resource1.getFullPath().toString();
-					s2 = resource2.getFullPath().toString();
-					comparability = collator.compare(s1, s2);
-				}
-
-				return comparability;
-			}
-		};
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getObjectToReturn(java.lang.Object)
-	 */
-	protected Object getObjectToReturn(Object item) {
-		ResourceItem resourceItem = (ResourceItem) item;
-		accessedHistory(resourceItem);
-		return resourceItem.getResource();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#fillContentProvider(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ContentProvider)
-	 */
-	protected void fillContentProvider(AbstractContentProvider contentProvider,
-			IProgressMonitor progressMonitor) throws CoreException {
-
-		container.accept(new ResourceProxyVisitor(contentProvider,
-				progressMonitor), IResource.NONE);
-
-		if (progressMonitor != null)
-			progressMonitor.done();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#restoreItemFromMemento(org.eclipse.ui.IMemento)
-	 */
-	protected AbstractListItem restoreItemFromMemento(IMemento element) {
-		IResource resource = null;
-		ResourceFactory resourceFactory = new ResourceFactory();
-		resource = (IResource) resourceFactory.createElement(element);
-		return new ResourceItem(resource, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#storeItemToMemento(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem,
-	 *      org.eclipse.ui.IMemento)
-	 */
-	protected void storeItemToMemento(AbstractListItem item, IMemento element) {
-		IResource resource = ((ResourceItem) item).getResource();
-		ResourceFactory resourceFactory = new ResourceFactory(resource);
-		resourceFactory.saveState(element);
-	}
-
 	/**
 	 * ResourceProxyVisitor to visit resource tree and get matched resources.
 	 * During visit resources it updates progress monitor and adds matched
@@ -639,6 +726,8 @@ public class FilteredResourcesSelectionDialog extends
 
 		private AbstractContentProvider contentProvider;
 
+		private ItemsFilter itemsFilter;
+
 		private IProgressMonitor progressMonitor;
 
 		private List projects;
@@ -647,13 +736,16 @@ public class FilteredResourcesSelectionDialog extends
 		 * Creates new ResourceProxyVisitor instance.
 		 * 
 		 * @param contentProvider
+		 * @param itemsFilter
 		 * @param progressMonitor
 		 * @throws CoreException
 		 */
 		public ResourceProxyVisitor(AbstractContentProvider contentProvider,
-				IProgressMonitor progressMonitor) throws CoreException {
+				ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
+				throws CoreException {
 			super();
 			this.contentProvider = contentProvider;
+			this.itemsFilter = itemsFilter;
 			this.progressMonitor = progressMonitor;
 			IResource[] resources = container.members();
 			this.projects = new ArrayList(Arrays.asList(resources));
@@ -680,7 +772,7 @@ public class FilteredResourcesSelectionDialog extends
 				progressMonitor.worked(1);
 			}
 
-			contentProvider.add(resourceItem);
+			contentProvider.add(resourceItem, itemsFilter);
 
 			if (res.getType() == IResource.FILE) {
 				return false;
@@ -694,7 +786,7 @@ public class FilteredResourcesSelectionDialog extends
 	 * Filters resources using pattern and showDerived flag. It overrides
 	 * ItemsFilter.
 	 */
-	private class ResourceFilter extends ItemsFilter {
+	protected class ResourceFilter extends ItemsFilter {
 
 		private boolean showDerived = false;
 
@@ -719,12 +811,22 @@ public class FilteredResourcesSelectionDialog extends
 			this.filterTypeMask = typeMask;
 		}
 
+		/**
+		 * Creates new ResourceFilter instance
+		 */
+		public ResourceFilter() {
+			super();
+			this.filterContainer = container;
+			this.showDerived = isDerived;
+			this.filterTypeMask = typeMask;
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#isItemConsistent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#getConsistentItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
 		 */
-		public boolean isItemConsistent(AbstractListItem item) {
+		public boolean isConsistentItem(AbstractListItem item) {
 			ResourceItem resourceItem = (ResourceItem) item;
 			IResource resource = resourceItem.getResource();
 			if (this.filterContainer.findMember(resource.getFullPath()) != null)
@@ -746,22 +848,6 @@ public class FilteredResourcesSelectionDialog extends
 			return matches(resource.getName());
 		}
 
-		/**
-		 * @return true if show derived flag is true false in other way
-		 */
-		public boolean isShowDerived() {
-			return showDerived;
-		}
-
-		/**
-		 * Returns the container.
-		 * 
-		 * @return container
-		 */
-		public IContainer getContainer() {
-			return container;
-		}
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -771,15 +857,15 @@ public class FilteredResourcesSelectionDialog extends
 			if (!super.isSubFilter(filter))
 				return false;
 			if (filter instanceof ResourceFilter)
-				if (this.showDerived == ((ResourceFilter) filter)
-						.isShowDerived())
+				if (this.showDerived == ((ResourceFilter) filter).showDerived)
 					return true;
 			return false;
 		}
+
 	}
 
 	/**
-	 * Decorator for IResource implementation
+	 * Decorator for objects implementing IResource
 	 */
 	private class ResourceItem extends AbstractListItem {
 
@@ -821,23 +907,56 @@ public class FilteredResourcesSelectionDialog extends
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem#getName()
 		 */
-		public boolean equals(Object obj) {
-			if (obj instanceof ResourceItem) {
-				ResourceItem resourceItem = (ResourceItem) obj;
-				return getResource().equals(resourceItem.getResource());
-			}
-			return super.equals(obj);
+		public String getName() {
+			return this.resource.getName();
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see java.lang.Object#hashCode()
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem#getObject()
 		 */
-		public int hashCode() {
-			return getResource().hashCode();
+		public Object getObject() {
+			return this.resource;
 		}
+
 	}
+
+	/**
+	 * <code>ResourceSelectionHistory</code> provides behavior specific to
+	 * resources - storing and restoring <code>IResource</code>s state to/from
+	 * XML (memento).
+	 */
+	private class ResourceSelectionHistory extends SelectionHistory {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#restoreItemFromMemento(org.eclipse.ui.IMemento)
+		 */
+		protected AbstractListItem restoreItemFromMemento(IMemento element) {
+
+			IResource resource = null;
+			ResourceFactory resourceFactory = new ResourceFactory();
+			resource = (IResource) resourceFactory.createElement(element);
+			return new ResourceItem(resource, true);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#storeItemToMemento(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem,
+		 *      org.eclipse.ui.IMemento)
+		 */
+		protected void storeItemToMemento(AbstractListItem item,
+				IMemento element) {
+			IResource resource = ((ResourceItem) item).getResource();
+			ResourceFactory resourceFactory = new ResourceFactory(resource);
+			resourceFactory.saveState(element);
+		}
+
+	}
+
 }
