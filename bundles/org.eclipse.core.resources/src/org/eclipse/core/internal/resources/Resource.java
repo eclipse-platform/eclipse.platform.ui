@@ -143,7 +143,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-	protected void assertLinkRequirements(URI localLocation, int updateFlags) throws CoreException {
+	/**
+	 * Throws an exception if the link preconditions are not met.  Returns the file info
+	 * for the file being linked to, or <code>null</code> if not available.
+	 * @throws CoreException
+	 */
+	protected IFileInfo assertLinkRequirements(URI localLocation, int updateFlags) throws CoreException {
 		boolean allowMissingLocal = (updateFlags & IResource.ALLOW_MISSING_LOCAL) != 0;
 		if ((updateFlags & IResource.REPLACE) == 0)
 			checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
@@ -157,7 +162,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
 		//if the variable is undefined we can't do any further checks
 		if (variableUndefined)
-			return;
+			return null;
 		//check if the file exists
 		URI resolved = workspace.getPathVariableManager().resolveURI(localLocation);
 		IFileStore store = EFS.getStore(resolved);
@@ -172,6 +177,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			String msg = NLS.bind(Messages.links_wrongLocalType, getFullPath());
 			throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
 		}
+		return fileInfo;
 	}
 
 	protected void assertMoveRequirements(IPath destination, int destinationType, int updateFlags) throws CoreException {
@@ -578,7 +584,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
-				assertLinkRequirements(localLocation, updateFlags);
+				IFileInfo fileInfo = assertLinkRequirements(localLocation, updateFlags);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
 				//replace existing resource, if applicable
@@ -590,7 +596,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				ResourceInfo info = workspace.createResource(this, false);
 				info.set(M_LINK);
 				localLocation = FileUtil.canonicalURI(localLocation);
-				getLocalManager().link(this, localLocation);
+				getLocalManager().link(this, localLocation, fileInfo);
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the location in the project description
 				Project project = (Project) getProject();
