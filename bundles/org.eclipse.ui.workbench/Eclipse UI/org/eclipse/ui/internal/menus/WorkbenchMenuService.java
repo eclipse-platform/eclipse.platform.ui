@@ -18,9 +18,6 @@ import java.util.Map;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.internal.provisional.action.ToolBarManager2;
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -34,6 +31,10 @@ import org.eclipse.ui.commands.ICommandService;
  * </p>
  * 
  * @since 3.2
+ */
+/**
+ * @since 3.3
+ *
  */
 public final class WorkbenchMenuService implements IMenuService {
 
@@ -161,31 +162,40 @@ public final class WorkbenchMenuService implements IMenuService {
 	// 3.3 common menu service information
 	//
 	private Map uriToManager = new HashMap();
+
+	/**
+	 * Construct an 'id' string from the given URI.
+	 * @param uri The URI to construct teh id from
+	 * @return The id
+	 */
+	private String getIdFromURI(MenuLocationURI uri) {
+		return uri.getScheme() + ":" + uri.getPath(); //$NON-NLS-1$;
+	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
-	public ContributionManager getManagerForURI(MenuLocationURI uri) {
+	public MenuAddition getManagerForURI(MenuLocationURI uri) {
 		if (uri == null)
 			return null;
 
-		String mgrId = uri.getScheme() + ":" + uri.getPath(); //$NON-NLS-1$
-		ContributionManager mgr = (ContributionManager) uriToManager.get(mgrId);
-		if (mgr == null) {
-			mgr = createContributionManager(uri);
-			uriToManager.put(mgrId, mgr);
-		}
-
+		MenuAddition mgr = (MenuAddition) uriToManager.get(getIdFromURI(uri));
 		return mgr;
 	}
 
-	private static ContributionManager createContributionManager(MenuLocationURI uri) {
-		String type = uri.getScheme();
-		if (type.equals("menu") || type.equals("popup")) { //$NON-NLS-1$ //$NON-NLS-2$
-			return new MenuManager(uri.getPath(), uri.getPath());
-		} else if (type.equals("toolbar")) { //$NON-NLS-1$
-			return new ToolBarManager2(SWT.HORIZONTAL);
-		}
-		return null;
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager, org.eclipse.ui.internal.menus.MenuLocationURI)
+	 */
+	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
+		MenuAddition additionCache = getManagerForURI(uri);
+		if (additionCache != null)
+			additionCache.populateMenuManager(mgr);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String, org.eclipse.ui.internal.menus.MenuAddition)
+	 */
+	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition) {
+		uriToManager.put(getIdFromURI(uri), addition);
 	}
 }

@@ -269,5 +269,27 @@ public interface IMenuService extends IServiceWithSources {
 	 * 
 	 * @since 3.3
 	 */
-	public ContributionManager getManagerForURI(MenuLocationURI uri);
+	public MenuAddition getManagerForURI(MenuLocationURI uri);
+
+	/**
+	 * Register a new menu addition cache with the service. This
+	 * entry represents the 'root' location of some id'd menu.
+	 * Submenus are explicitly registered here so that additions
+	 * can be made directly into sub-menus.
+	 * 
+	 * @param id The id representing the 'key' for the map
+	 * @param addition The cache element representing the 'value'
+	 * for the map.
+	 */
+	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition);
+	
+	/**
+	 * populate a <code>ContributionManager</code> with the
+	 * set of <code>IContributionElement</code>'s representing
+	 * the additions.
+	 * 
+	 * @param mgr The MenuManager to populate
+	 * @param uri The URI to use to locate the menu additions
+	 */
+	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
 }

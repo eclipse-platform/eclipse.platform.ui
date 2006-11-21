@@ -159,7 +159,21 @@ public final class WindowMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
 	 */
-	public ContributionManager getManagerForURI(MenuLocationURI uri) {
+	public MenuAddition getManagerForURI(MenuLocationURI uri) {
 		return parent.getManagerForURI(uri);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.MenuManager, org.eclipse.ui.internal.menus.MenuLocationURI)
+	 */
+	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
+		parent.populateMenu(mgr, uri);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String, org.eclipse.ui.internal.menus.MenuAddition)
+	 */
+	public void registerAdditionCache(MenuLocationURI  uri, MenuAddition addition) {
+		parent.registerAdditionCache(uri, addition);
 	}
 }

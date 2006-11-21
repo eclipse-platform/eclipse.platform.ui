@@ -2,6 +2,7 @@ package org.eclipse.ui.tests.api.workbenchpart;
 
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -95,9 +96,6 @@ public class MenuContributionHarness extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		// Read the menu contributions
-//		CommonMenuService.readAdditions();
-
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
@@ -110,16 +108,9 @@ public class MenuContributionHarness extends ViewPart {
 	}
 
 	private void hookContextMenu() {
-		//MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		
-		// we would probably take care of registering this with the service
-		// in the getSite().registerContextMenu(*) method for the view.
-		IMenuService menus = (IMenuService) getSite().getService(
-				IMenuService.class);
-		MenuLocationURI uri = new MenuLocationURI("popup://" + VIEW_ID);
-		MenuManager menuMgr = (MenuManager) menus.getManagerForURI(uri);
-		
-		menuMgr.setRemoveAllWhenShown(false);
+		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
 				MenuContributionHarness.this.fillContextMenu(manager);
@@ -142,8 +133,18 @@ public class MenuContributionHarness extends ViewPart {
 		manager.add(action2);
 	}
 
-	private void fillContextMenu(IMenuManager manager) {
-		manager.update(true);
+	private void fillContextMenu(IMenuManager manager) {		
+		// we would probably take care of registering this with the service
+		// in the getSite().registerContextMenu(*) method for the view.
+		IMenuService menus = (IMenuService) getSite().getService(
+				IMenuService.class);
+		MenuLocationURI uri = new MenuLocationURI("popup://" + VIEW_ID);
+		menus.populateMenu((ContributionManager) manager, uri);
+
+		// Add some local actions
+		manager.add(action1);
+		manager.add(new Separator());
+		manager.add(action2);
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {

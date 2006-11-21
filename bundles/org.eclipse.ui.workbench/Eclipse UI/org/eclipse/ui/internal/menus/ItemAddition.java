@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -29,12 +31,12 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * @since 3.3
  *
  */
-public class MenuItemContribution extends CommonMenuAddition {
+public class ItemAddition extends AdditionBase {
 
 	private boolean iconDefined = false;
 	private Image icon = null;
 	
-	public MenuItemContribution(IConfigurationElement element) {
+	public ItemAddition(IConfigurationElement element) {
 		super(element);
 	}
 	
@@ -58,8 +60,7 @@ public class MenuItemContribution extends CommonMenuAddition {
 		// Stall loading the icon until first access
 		if (!iconDefined) {
 			String iconPath = getIconPath();
-			icon = loadIcon(iconPath);
-			
+			icon = loadIcon(iconPath);			
 			iconDefined = true;
 		}
 		return icon;
@@ -80,7 +81,7 @@ public class MenuItemContribution extends CommonMenuAddition {
 	 * @return
 	 */
 	private Image loadIcon(String iconPath) {
-		// TODO Auto-generated method stub
+		// TODO: Load the image
 		return null;
 	}
 
@@ -94,49 +95,46 @@ public class MenuItemContribution extends CommonMenuAddition {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.CommonMenuAddition#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
-	public void fill(Menu parent, int index) {
-		super.fill(parent, index);
-		
-		MenuItem newItem = new MenuItem(parent, getStyle(), index);
-		newItem.setText(getLabel());
-		newItem.setImage(getIcon());
-		newItem.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Execute through the command service
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				// Execute through the command service
-			}
-		});
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.CommonMenuAddition#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
-	public void fill(ToolBar parent, int index) {
-		super.fill(parent, index);
-		
-		ToolItem newItem = new ToolItem(parent, getStyle(), index);
-		newItem.setText(getLabel());
-		newItem.setImage(getIcon());
-		newItem.setToolTipText(getTooltip());
-		
-		newItem.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Execute through the command service
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				// Execute through the command service
-			}
-		});
-	}
-	
 	public String toString() {
 		return getClass().getName() + "(" + getLabel() + ":" + getTooltip() + ") " + getIconPath();   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContribution()
+	 */
+	public IContributionItem getContributionItem() {
+		return new ContributionItem(getId()) {
+			public void fill(Menu parent, int index) {
+				MenuItem newItem = new MenuItem(parent, getStyle(), index);
+				newItem.setText(getLabel());
+				newItem.setImage(getIcon());
+				newItem.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// Execute through the command service
+					}
+
+					public void widgetSelected(SelectionEvent e) {
+						// Execute through the command service
+					}
+				});
+			}
+
+			public void fill(ToolBar parent, int index) {
+				ToolItem newItem = new ToolItem(parent, getStyle(), index);
+				newItem.setText(getLabel());
+				newItem.setImage(getIcon());
+				newItem.setToolTipText(getTooltip());
+				
+				newItem.addSelectionListener(new SelectionListener() {
+					public void widgetDefaultSelected(SelectionEvent e) {
+						// Execute through the command service
+					}
+
+					public void widgetSelected(SelectionEvent e) {
+						// Execute through the command service
+					}
+				});
+			}
+		};
 	}
 }

@@ -13,9 +13,12 @@ package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -24,11 +27,11 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  * @since 3.3
  *
  */
-public class MenuWidgetContribution extends CommonMenuAddition {
+public class WidgetAddition extends AdditionBase {
 
 	AbstractWorkbenchWidget widget = null;
 	
-	public MenuWidgetContribution(IConfigurationElement element) {
+	public WidgetAddition(IConfigurationElement element) {
 		super(element);
 	}
 	
@@ -61,24 +64,30 @@ public class MenuWidgetContribution extends CommonMenuAddition {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.CommonMenuAddition#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
-	public void fill(ToolBar parent, int index) {
-		super.fill(parent, index);
-		
-		if (getWidget() != null) {
-			Composite widgetContainer = new Composite(parent, SWT.NONE);
-			getWidget().fill(widgetContainer);
-			Point prefSize = getWidget().getPreferredSize();
-
-			ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR, index);
-			sepItem.setControl(widgetContainer);
-			sepItem.setWidth(prefSize.x);
-		}
-	}
-	
 	public String toString() {
 		return getClass().getName() + "() " + getClassSpec();   //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContributionItem()
+	 */
+	public IContributionItem getContributionItem() {
+		return new ContributionItem(getId()) {
+			public void dispose() {}
+			public void fill(Composite parent) {}
+			public void fill(Menu parent, int index) {}
+
+			public void fill(ToolBar parent, int index) {
+				if (getWidget() != null) {
+					Composite widgetContainer = new Composite(parent, SWT.NONE);
+					getWidget().fill(widgetContainer);
+					Point prefSize = getWidget().getPreferredSize();
+
+					ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR, index);
+					sepItem.setControl(widgetContainer);
+					sepItem.setWidth(prefSize.x);
+				}
+			}
+		};
 	}
 }

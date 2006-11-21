@@ -19,7 +19,10 @@ import org.eclipse.ui.internal.util.Util;
  * the actual <code>java.net.URI</code> class.
  * <p>
  * The expected format for URI Strings managed by this class is:
- * "[scheme]:[path]?[id1]=[val1]&[id2]=[val2]..."
+ * </p><p>
+ * "[scheme]:[path]?[query]" 
+ * </p><p>
+ *  with the 'query' format being "[id1]=[val1]&[id2]=[val2]..."
  * </p>
  * @since 3.3
  *

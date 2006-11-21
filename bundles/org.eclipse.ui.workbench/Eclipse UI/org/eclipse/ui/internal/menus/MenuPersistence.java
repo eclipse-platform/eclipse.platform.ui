@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -23,7 +24,6 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -1073,63 +1073,83 @@ final class MenuPersistence extends RegistryPersistence {
 		readAdditions(menuService);
 	}
 	
+	//
+	// 3.3 menu extension code
+	// 
+	
+	private static List retryList = null;
+
 	public static void readAdditions(IMenuService menuService) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(COMMON_MENU_ADDITIONS);
 
+		retryList = new ArrayList();
+		
+		// read the menu additions extensions...
+		// NOTE: if the 'locationURI' cannot be located the config
+		// element will be placed into the retry list for post processing
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
 			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
 				readMenuAddition(menuService, menusExtensionPoint[i]);
 			}
 		}
+		
+		// OK, iteratively loop through entries whose URI's could not
+		// be resolved until we either run out of entries or the list
+		// doesn't change size (indicating that the remaining entries
+		// can never be resolved).
+		boolean done = retryList.size() == 0;
+		while (!done) {
+			// Clone the retry list and clear it
+			List curRetry = new ArrayList(retryList);
+			int  retryCount = retryList.size();
+			retryList.clear();
+			
+			// Walk the current list seeing if any entries can now be resolved
+			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
+				IConfigurationElement addition = (IConfigurationElement) iterator.next();
+				readMenuAddition(menuService, addition);				
+			}
+			
+			// We're done if the retryList is now empty (everything done) or
+			// if the list hasn't changed at all (no hope)
+			done = (retryList.size() == 0) || (retryList.size() == retryCount);
+		}
 	}
 
 	private static void readMenuAddition(IMenuService menuService,
 			IConfigurationElement addition) {
-		// Determine the insertio location by parsing the URI
+		// Determine the insertion location by parsing the URI
 		String locationURI = addition.getAttribute(TAG_LOCATION_URI);
 		MenuLocationURI uri = new MenuLocationURI(locationURI);
 
 		if (uri != null) {
-			ContributionManager mgr = menuService.getManagerForURI(uri);
-			int insertionIndex = getInsertionIndexForURI(mgr, uri);
-
-			// Read teh child additions
-			readAdditions(mgr, addition, insertionIndex);
-		}
-	}
-
-	private static void readAdditions(ContributionManager mgr,
-			IConfigurationElement addition, int insertionIndex) {
-		IConfigurationElement[] items = addition.getChildren();
-		for (int i = 0; i < items.length; i++) {
-			String itemType = items[i].getName();
-
-			if (TAG_ITEM.equals(itemType)) {
-				mgr
-						.insert(insertionIndex++, new MenuItemContribution(
-								items[i]));
-			} else if (TAG_WIDGET.equals(itemType)) {
-				mgr.insert(insertionIndex++, new MenuWidgetContribution(
-						items[i]));
-			} else if (TAG_MENU.equals(itemType)) {
-				MenuMenuContribution subMenu = new MenuMenuContribution(
-						items[i]);
-				mgr
-						.insert(insertionIndex++, new MenuMenuContribution(
-								items[i]));
-
-				// Read the sub-structure
-				readAdditions(subMenu, items[i], 0);
-			} else if (TAG_SEPARATOR.equals(itemType)) {
-				mgr.insert(insertionIndex++, new MenuSeparatorContribution(
-						items[i]));
+			MenuAddition additionCache = menuService.getManagerForURI(uri);
+			
+			// if we don't have a manager yet it may be due to one of two
+			// reasons; it's the def of a 'root' menu (i.e. a new cache
+			// location) or it may be an addition to a menu that hasn't
+			// been defined yet.
+			if (additionCache == null) {
+				String p = uri.getQuery();
+				if (p.length() == 0) {
+					additionCache = new MenuAddition(addition);
+					menuService.registerAdditionCache(uri, additionCache);
+				}
+				else {
+					// place the addition onto the 'retry' stack
+					retryList.add(addition);
+				}
 			}
+			int insertionIndex = getInsertionIndexForURI(additionCache, uri);
+
+			// Read the child additions
+			additionCache.readAdditions(addition, insertionIndex);
 		}
 	}
 	
-	private static int getInsertionIndexForURI(ContributionManager mgr, MenuLocationURI uri) {
+	private static int getInsertionIndexForURI(MenuAddition mgr, MenuLocationURI uri) {
 		String query = uri.getQuery();
 		if (query == null)
 			return 0;
