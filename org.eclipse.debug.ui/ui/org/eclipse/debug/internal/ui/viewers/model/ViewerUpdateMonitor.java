@@ -33,6 +33,11 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
      */
     private boolean fDone = false;
     
+    /**
+     * Associated batch operation, or <code>null</code>
+     */
+    private BatchUpdate fBatchUpdate = null;
+    
     protected WorkbenchJob fViewerUpdateJob = new WorkbenchJob("Asynchronous viewer update") { //$NON-NLS-1$
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if viewer is disposed
@@ -86,9 +91,16 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
      */
     public final void done() {
     	synchronized (this) {
+    		if (isDone()) {
+    			return;
+    		}
     		fDone = true;
 		}
-		scheduleViewerUpdate(0L);
+    	if (fBatchUpdate != null) {
+    		fBatchUpdate.done(this);
+    	} else {
+    		scheduleViewerUpdate();
+    	}
 	}
     
     /**
@@ -100,9 +112,9 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
     	return fDone;
     }
 
-    protected void scheduleViewerUpdate(long ms) {
+    protected void scheduleViewerUpdate() {
         if(!isCanceled()) {
-            fViewerUpdateJob.schedule(ms);
+            fViewerUpdateJob.schedule();
         } else {
         	getContentProvider().updateComplete(this);
         }
@@ -132,5 +144,10 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
 	 * @return whether this update is rooted at or below the given path
 	 */
 	abstract boolean isContained(TreePath path);
+	
+	synchronized void setBatchUpdate(BatchUpdate batchUpdate) {
+		fBatchUpdate = batchUpdate;
+		batchUpdate.batch(this);
+	}
 	
 }

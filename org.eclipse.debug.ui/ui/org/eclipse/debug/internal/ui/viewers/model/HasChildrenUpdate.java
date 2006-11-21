@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -27,92 +19,47 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdate {
 
-	/**
-	 * Map of <code>TreePath</code>s to <code>Boolean</code>s.
-	 */
-	private Map fBooleans = new HashMap();
-	
-	/**
-	 * Set of <code>TreePath</code>s.
-	 */
-	private Set fElements = new HashSet();
-	
-	private boolean fStarted = false;
-	private IElementContentProvider fContentProvider;
+	private TreePath fElementPath;
+	private boolean fHasChildren = false;
 	
 	/**
 	 * @param contentProvider
 	 */
-	public HasChildrenUpdate(ModelContentProvider contentProvider, IElementContentProvider elementContentProvider) {
+	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath) {
 		super(contentProvider);
-		fContentProvider = elementContentProvider;
+		fElementPath = elementPath;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ViewerUpdateMonitor#performUpdate()
 	 */
 	protected void performUpdate() {
-		Iterator iterator = fBooleans.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
-			boolean hasChildren = ((Boolean)(entry.getValue())).booleanValue();
-			TreePath elementPath = (TreePath) entry.getKey();
-			ModelContentProvider contentProvider = getContentProvider();
-			if (!hasChildren) {
-				contentProvider.clearFilters(elementPath);
-			}
-			if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
-				System.out.println("setHasChildren(" + getElement(elementPath) + " >> " + hasChildren); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-			((TreeViewer)(contentProvider.getViewer())).setHasChildren(elementPath, hasChildren);
-			if (elementPath.getSegmentCount() > 0) {
-				contentProvider.doRestore(elementPath);
-			}
+		ModelContentProvider contentProvider = getContentProvider();
+		if (!fHasChildren) {
+			contentProvider.clearFilters(fElementPath);
+		}
+		if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+			System.out.println("setHasChildren(" + getElement(fElementPath) + " >> " + fHasChildren); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		((TreeViewer)(contentProvider.getViewer())).setHasChildren(fElementPath, fHasChildren);
+		if (fElementPath.getSegmentCount() > 0) {
+			contentProvider.doRestore(fElementPath);
 		}
 	}
 
-	/**
-	 * @param element
-	 * @return
-	 */
-	protected boolean coalesce(TreePath treePath) {
-		fElements.add(treePath);
-		return true;
+	public TreePath getElementPath() {
+		return fElementPath;
 	}
 
-	/**
-	 * 
-	 */
-	protected void start() {
-		synchronized (this) {
-			if (fStarted) {
-				return;
-			}
-			fStarted = true;
-		}
-		TreeModelContentProvider contentProvider = (TreeModelContentProvider)getContentProvider();
-		contentProvider.hasChildrenRequestStarted(fContentProvider);
-		if (!isCanceled()) {
-			fContentProvider.update(this);
-		} else {
-			done();
-		}
-	}
-
-	public TreePath[] getElements() {
-		return (TreePath[]) fElements.toArray(new TreePath[fElements.size()]);
-	}
-
-	public void setHasChilren(TreePath element, boolean hasChildren) {
-		fBooleans.put(element, Boolean.valueOf(hasChildren));
-		
+	public void setHasChilren(boolean hasChildren) {
+		fHasChildren = hasChildren;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#isContained(org.eclipse.jface.viewers.TreePath)
 	 */
 	boolean isContained(TreePath path) {
-		return ((TreePath)fElements.iterator().next()).startsWith(path, null);
+		return fElementPath.startsWith(path, null);
 	}
 
 }

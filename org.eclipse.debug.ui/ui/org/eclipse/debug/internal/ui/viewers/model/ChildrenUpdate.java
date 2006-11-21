@@ -121,7 +121,7 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 		TreeModelContentProvider contentProvider = (TreeModelContentProvider)getContentProvider();
 		contentProvider.childRequestStarted(this);
 		if (!isCanceled()) {
-			fContentProvider.update(this);
+			fContentProvider.update(new IChildrenUpdate[]{this});
 		} else {
 			done();
 		}
@@ -141,7 +141,7 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 		return fIndex;
 	}
 
-	public TreePath getParent() {
+	public TreePath getElementPath() {
 		return fParentPath;
 	}
 

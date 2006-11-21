@@ -167,7 +167,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	protected void retrieveLabel(ILabelUpdate update) throws CoreException {
 		String[] columnIds = update.getColumnIds();
 		IPresentationContext presentationContext = update.getPresentationContext();
-		TreePath elementPath = update.getElement();
+		TreePath elementPath = update.getElementPath();
 		int numColumns = 1;
 		if (columnIds != null) {
 			numColumns = columnIds.length;

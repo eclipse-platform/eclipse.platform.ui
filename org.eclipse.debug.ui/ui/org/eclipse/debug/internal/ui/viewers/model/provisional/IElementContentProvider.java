@@ -20,24 +20,26 @@ public interface IElementContentProvider {
 
 	/**
 	 * Updates the number of children for the given parent elements in the
-	 * specified request.
+	 * specified requests.
 	 * 
-	 * @param update specifies counts to update and stores result
+	 * @param updates each update specifies an element to update and provides
+	 *  a store for the result
 	 */
-	public void update(IChildrenCountUpdate update);
+	public void update(IChildrenCountUpdate[] updates);
 	
 	/**
-	 * Updates children as requested by the update.
+	 * Updates children as requested by the given updates.
 	 * 
-	 * @param update specifies children to update and stores result
+	 * @param updates each update specifies children to update and stores results
 	 */	
-	public void update(IChildrenUpdate update);
+	public void update(IChildrenUpdate[] updates);
 	
 	/**
 	 * Updates whether elements have children.
 	 * 
-	 * @param update specifies elements to update and stores result
+	 * @param updates each update specifies an element to update and provides
+	 *  a store for the result
 	 */
-	public void update(IHasChildrenUpdate update);
+	public void update(IHasChildrenUpdate[] updates);
 	
 }

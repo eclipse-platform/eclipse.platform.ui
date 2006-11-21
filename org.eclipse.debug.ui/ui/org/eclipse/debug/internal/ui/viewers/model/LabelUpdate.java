@@ -73,7 +73,7 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#getElement()
 	 */
-	public TreePath getElement() {
+	public TreePath getElementPath() {
 		return fElementPath;
 	}
 

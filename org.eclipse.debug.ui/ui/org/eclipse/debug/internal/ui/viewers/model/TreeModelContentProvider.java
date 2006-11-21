@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -82,20 +85,25 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			ChildrenCountUpdate request = (ChildrenCountUpdate) fPendingCountRequests.get(contentAdapter);
-			if (request != null) {
-				if (request.coalesce(path)) {
-					return;
-				} else {
-					request.start();
-				}
+			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path);
+			List requests = (List) fPendingCountRequests.get(contentAdapter);
+			if (requests != null) {
+				requests.add(request);
+				return;
 			}
-			final ChildrenCountUpdate newRequest = new ChildrenCountUpdate(this, contentAdapter);
-			newRequest.coalesce(path);
-			fPendingCountRequests.put(contentAdapter, newRequest);
+			requests = new ArrayList();
+			requests.add(request);
+			fPendingCountRequests.put(contentAdapter, requests);
+			final IElementContentProvider adapter = contentAdapter;
 			fTimer.schedule(new TimerTask() {
 				public void run() {
-					newRequest.start();
+					List updates = null;
+					synchronized (TreeModelContentProvider.this) {
+						updates = (List) fPendingCountRequests.remove(adapter);
+					}
+					ChildrenCountUpdate[] array = (ChildrenCountUpdate[]) updates.toArray(new ChildrenCountUpdate[updates.size()]);
+					batch(array);
+					adapter.update(array);
 				}
 			}, 10L);
 		}
@@ -127,37 +135,44 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			HasChildrenUpdate request = (HasChildrenUpdate) fPendingHasChildrenRequests.get(contentAdapter);
-			if (request != null) {
-				if (request.coalesce(path)) {
-					return;
-				} else {
-					request.start();
-				}
+			HasChildrenUpdate request = new HasChildrenUpdate(this, path);
+			List requests = (List) fPendingHasChildrenRequests.get(contentAdapter);
+			if (requests != null) {
+				requests.add(request);
+				return;
 			}
-			final HasChildrenUpdate newRequest = new HasChildrenUpdate(this, contentAdapter);
-			newRequest.coalesce(path);
-			fPendingHasChildrenRequests.put(contentAdapter, newRequest);
+			requests = new ArrayList();
+			requests.add(request);
+			fPendingHasChildrenRequests.put(contentAdapter, requests);
+			final IElementContentProvider adapter = contentAdapter;
 			fTimer.schedule(new TimerTask() {
 				public void run() {
-					newRequest.start();
+					List list = null;
+					synchronized (TreeModelContentProvider.this) {
+						list = (List) fPendingHasChildrenRequests.remove(adapter);
+					}
+					adapter.update((IHasChildrenUpdate[]) list.toArray(new IHasChildrenUpdate[list.size()]));
 				}
 			}, 10L);
 		}
 	}		
 	
+	/**
+	 * Batches the given update requests into one UI job on completion
+	 * 
+	 * @param updates updates to batch
+	 */
+	protected void batch(ViewerUpdateMonitor[] updates) {
+		BatchUpdate batch = new BatchUpdate();
+		for (int i = 0; i < updates.length; i++) {
+			updates[i].setBatchUpdate(batch);
+		}
+	}
+	
 	protected synchronized void childRequestStarted(IChildrenUpdate update) {
-		fPendingChildRequests.remove(update.getParent());
+		fPendingChildRequests.remove(update.getElementPath());
 	}
 	
-	protected synchronized void countRequestStarted(Object key) {
-		fPendingCountRequests.remove(key);
-	}
-	
-	protected synchronized void hasChildrenRequestStarted(Object key) {
-		fPendingHasChildrenRequests.remove(key);
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#getPresentationContext()
 	 */

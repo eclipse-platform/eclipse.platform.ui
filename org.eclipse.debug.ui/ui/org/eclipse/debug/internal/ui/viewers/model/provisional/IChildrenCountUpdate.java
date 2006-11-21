@@ -21,18 +21,17 @@ import org.eclipse.jface.viewers.TreePath;
 public interface IChildrenCountUpdate extends IViewerUpdate {
 	
 	/**
-	 * Returns the parent elements that children counts have been requested for
-	 * as tree paths. An empty path identifies the root element.
+	 * Returns the element that a child count has been requested for
+	 * as a tree path. An empty path identifies the root element.
 	 * 
-	 * @return parent elements as tree paths
+	 * @return element as a tree path
 	 */
-	public TreePath[] getParents();
+	public TreePath getElementPath();
 
 	/**
-	 * Sets the number of children for the given parent.
+	 * Sets the number of children for this update.
 	 * 
-	 * @param parent parent element or empty path for root element
 	 * @param numChildren number of children
 	 */
-	public void setChildCount(TreePath parentPath, int numChildren);
+	public void setChildCount(int numChildren);
 }

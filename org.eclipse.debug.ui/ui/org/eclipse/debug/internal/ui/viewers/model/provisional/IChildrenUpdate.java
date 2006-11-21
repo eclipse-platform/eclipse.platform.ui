@@ -21,12 +21,12 @@ import org.eclipse.jface.viewers.TreePath;
 public interface IChildrenUpdate extends IViewerUpdate {
 
 	/**
-	 * Returns the parent element that children are being requested for
+	 * Returns the element that children are being requested for
 	 * as a tree path. An empty path identifies the root element.
 	 * 
-	 * @return parent element as a tree path
+	 * @return element as a tree path
 	 */
-	public TreePath getParent();
+	public TreePath getElementPath();
 	
 	/**
 	 * Returns the offset at which children have been requested for. This is

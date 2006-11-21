@@ -10,15 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeViewer;
 
@@ -27,90 +19,46 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountUpdate {
 
-	/**
-	 * Map of <code>TreePath</code>s to <code>Integer</code>s.
-	 */
-	private Map fCounts = new HashMap();
-	
-	/**
-	 * Set of <code>TreePath</code>s.
-	 */
-	private Set fParents = new HashSet();
-	
-	private boolean fStarted = false;
-	private IElementContentProvider fContentProvider;
+	private TreePath fElementPath;
+	private int fCount = 0;
 	
 	/**
 	 * @param contentProvider
 	 */
-	public ChildrenCountUpdate(ModelContentProvider contentProvider, IElementContentProvider elementContentProvider) {
+	public ChildrenCountUpdate(ModelContentProvider contentProvider, TreePath elementPath) {
 		super(contentProvider);
-		fContentProvider = elementContentProvider;
+		fElementPath = elementPath;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ViewerUpdateMonitor#performUpdate()
 	 */
 	protected void performUpdate() {
-		Iterator iterator = fCounts.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
-			int count = ((Integer)(entry.getValue())).intValue();
-			TreePath parentPath = (TreePath) entry.getKey();
-			int viewCount = count;
-			if (count == 0) {
-				getContentProvider().clearFilters(parentPath);
-			} else {
-				viewCount = getContentProvider().modelToViewChildCount(parentPath, count);
-			}
-			if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
-				System.out.println("setChildCount(" + getElement(parentPath) + ", modelCount: " + count + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			}
-			((TreeViewer)(getContentProvider().getViewer())).setChildCount(parentPath, viewCount);
-		}
-	}
-
-	public void setChildCount(TreePath parentPath, int numChildren) {
-		fCounts.put(parentPath, new Integer(numChildren));
-	}
-
-	/**
-	 * @param element
-	 * @return
-	 */
-	protected boolean coalesce(TreePath treePath) {
-		fParents.add(treePath);
-		return true;
-	}
-
-	/**
-	 * 
-	 */
-	protected void start() {
-		synchronized (this) {
-			if (fStarted) {
-				return;
-			}
-			fStarted = true;
-		}
-		TreeModelContentProvider contentProvider = (TreeModelContentProvider)getContentProvider();
-		contentProvider.countRequestStarted(fContentProvider);
-		if (!isCanceled()) {
-			fContentProvider.update(this);
+		int viewCount = fCount;
+		if (viewCount == 0) {
+			getContentProvider().clearFilters(fElementPath);
 		} else {
-			done();
+			viewCount = getContentProvider().modelToViewChildCount(fElementPath, fCount);
 		}
+		if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
+			System.out.println("setChildCount(" + getElement(fElementPath) + ", modelCount: " + fCount + " viewCount: " + viewCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		}
+		((TreeViewer)(getContentProvider().getViewer())).setChildCount(fElementPath, viewCount);
 	}
 
-	public TreePath[] getParents() {
-		return (TreePath[]) fParents.toArray(new TreePath[fParents.size()]);
+	public void setChildCount(int numChildren) {
+		fCount = numChildren;
+	}
+
+	public TreePath getElementPath() {
+		return fElementPath;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#isContained(org.eclipse.jface.viewers.TreePath)
 	 */
 	boolean isContained(TreePath path) {
-		return ((TreePath)fParents.iterator().next()).startsWith(path, null);
+		return fElementPath.startsWith(path, null);
 	}
 
 }

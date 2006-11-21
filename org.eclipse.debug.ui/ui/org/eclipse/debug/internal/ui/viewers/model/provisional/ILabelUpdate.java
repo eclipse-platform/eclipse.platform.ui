@@ -27,7 +27,7 @@ public interface ILabelUpdate extends IViewerUpdate {
 	 * 
 	 * @return associated element tree path
 	 */
-	public TreePath getElement();
+	public TreePath getElementPath();
 	
 	/**
 	 * Returns the id's of the visible columns in presentation order,
