@@ -4,6 +4,7 @@ BODY {
 	margin-<%=isRTL?"right":"left"%>:5px;
 	padding:0;
 	border:0;
+	background-color: <%=prefs.getViewBackground()%>;
 }
 
 #root {
