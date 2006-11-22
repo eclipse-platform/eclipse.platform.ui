@@ -358,14 +358,14 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	public static final String EDITOR_SMART_HOME_END= AbstractTextEditor.PREFERENCE_NAVIGATION_SMART_HOME_END;
 
 	/**
-	 * A named preference that controls the display of invisible characters.
+	 * A named preference that controls the display of whitespace characters.
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
 	 *
 	 * @since 3.3
 	 */
-	public static final String EDITOR_SHOW_INVISIBLE_CHARACTERS= AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS;
+	public static final String EDITOR_SHOW_WHITESPACE_CHARACTERS= AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS;
 
 	/**
 	 * A named preference that controls the display of the range indicator.
@@ -497,7 +497,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(EDITOR_WARN_IF_INPUT_DERIVED, true);
 		store.setDefault(EDITOR_SMART_HOME_END, true);
-		store.setDefault(EDITOR_SHOW_INVISIBLE_CHARACTERS, false);
+		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}

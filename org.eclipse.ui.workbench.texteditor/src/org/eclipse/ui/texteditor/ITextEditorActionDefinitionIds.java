@@ -529,10 +529,18 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.3
 	 */
 	String REVISION_ID_TOGGLE= "org.eclipse.ui.editors.revisions.id.toggle"; //$NON-NLS-1$
+	
 	 /**
 	 * Command ID of the recenter command.
 	 * Value: <code>"org.eclipse.ui.edit.text.recenter"</code>).
 	 * @since 3.3
 	 */
 	String RECENTER= "org.eclipse.ui.edit.text.recenter"; //$NON-NLS-1$
+
+	 /**
+	 * Command ID of the command to toggle the display of whitespace characters.
+	 * Value: <code>"org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"</code>).
+	 * @since 3.3
+	 */
+	String SHOW_WHITESPACE_CHARACTERS = "org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"; //$NON-NLS-1$
 }

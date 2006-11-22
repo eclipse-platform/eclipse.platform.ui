@@ -179,14 +179,14 @@ public interface IAbstractTextEditorHelpContextIds {
 	 * Value: <code>"org.eclipse.ui.goto_next_annotation_action_context"</code>
 	 * @since 3.2
 	 */
-	String GOTO_NEXT_ANNOTATION_ACTION= PREFIX + "goto_next_annotation" + ACTION_POSTFIX;; //$NON-NLS-1$
+	String GOTO_NEXT_ANNOTATION_ACTION= PREFIX + "goto_next_annotation" + ACTION_POSTFIX; //$NON-NLS-1$
 	
 	/**
 	 * Help context id for the action.
 	 * Value: <code>"org.eclipse.ui.goto_previous_annotation_action_context"</code>
 	 * @since 3.2
 	 */
-	String GOTO_PREVIOUS_ANNOTATION_ACTION= PREFIX + "goto_previous_annotation" + ACTION_POSTFIX;;	 //$NON-NLS-1$
+	String GOTO_PREVIOUS_ANNOTATION_ACTION= PREFIX + "goto_previous_annotation" + ACTION_POSTFIX;	 //$NON-NLS-1$
 	
 	/**
 	 * Help context id for the action.
@@ -338,4 +338,11 @@ public interface IAbstractTextEditorHelpContextIds {
      * @since 3.3
      */
     String RECENTER_ACTION=PREFIX + "recenter" + ACTION_POSTFIX; //$NON-NLS-1$
+
+    /**
+     * Help context id for the show whitespace characters action.
+     * Value: <code>"show_whitespace_characters_action_context"</code>
+     * @since 3.3
+     */
+	String SHOW_WHITESPACE_CHARACTERS_ACTION=PREFIX + "show_whitepsace_characters" + ACTION_POSTFIX; //$NON-NLS-1$
 }

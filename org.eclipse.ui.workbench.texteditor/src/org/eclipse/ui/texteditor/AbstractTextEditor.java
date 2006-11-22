@@ -1788,6 +1788,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	public static final String PREFERENCE_RULER_CONTRIBUTIONS= "rulerContributions"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls the display of whitespace characters.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String PREFERENCE_SHOW_WHITESPACE_CHARACTERS= "showWhitespaceCharacters"; //$NON-NLS-1$
 
 
 	/** Menu id for the editor context menu. */
@@ -3706,6 +3715,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					support.setColumnVisible(desc, newState);
 				}
 			}
+			return;
+		}
+		
+		if (PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property)) {
+			IAction action= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
+			if (action instanceof IUpdate)
+				((IUpdate)action).update();
+			return;
 		}
 		
 	}
@@ -4876,6 +4893,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.RECENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.RECENTER);
 		setAction(ITextEditorActionConstants.RECENTER, action);
+		
+		action= new ShowWhitespaceCharactersAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShowWhitespaceCharacters.", this, getPreferenceStore()); //$NON-NLS-1$
+		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SHOW_WHITESPACE_CHARACTERS_ACTION);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS);
+		setAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS, action);
+		
 
 		PropertyDialogAction openProperties= new PropertyDialogAction(
 				new IShellProvider() {

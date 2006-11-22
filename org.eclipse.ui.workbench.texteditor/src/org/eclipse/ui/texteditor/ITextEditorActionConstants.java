@@ -610,4 +610,11 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.3
 	 */
 	String RECENTER= "Recenter"; //$NON-NLS-1$	
+
+	/**
+	 * Name of the action for toggling the display of whitespace characters.
+	 * Value: <code>"ShowWhitespaceCharacters"</code>
+	 * @since 3.3
+	 */
+	String SHOW_WHITESPACE_CHARACTERS = "ShowWhitespaceCharacters"; //$NON-NLS-1$
 }
