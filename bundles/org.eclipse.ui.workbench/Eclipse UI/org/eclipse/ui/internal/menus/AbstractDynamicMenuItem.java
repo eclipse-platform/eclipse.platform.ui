@@ -14,10 +14,21 @@ package org.eclipse.ui.internal.menus;
 import java.util.List;
 
 /**
- * Base class for dynamic menu item contributions
+ * Base class for dynamic menu item contributions.
+ * <p>
+ * The items in the returned List must be
+ * <code>IContributionItems</code>s.
+ * </p>
  * @since 3.3
  *
  */
 public abstract class AbstractDynamicMenuItem {
+	/**
+	 * Fill in the given list with the set of
+	 * <code>IContributionItem</code>s that will
+	 * replace the dynamic item in the menu.
+	 * 
+	 * @param items A list of <code>IContributionItem</code>s. 
+	 */
 	public abstract void fillItems(List items);
 }

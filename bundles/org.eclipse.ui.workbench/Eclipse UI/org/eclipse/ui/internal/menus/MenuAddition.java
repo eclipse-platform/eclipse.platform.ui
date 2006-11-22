@@ -22,6 +22,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -129,22 +130,48 @@ public class MenuAddition extends AdditionBase {
 			public void fill(Menu parent, int index) {
 				super.fill(parent, index);
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.MenuManager#fill(org.eclipse.swt.widgets.Menu, int)
+			 */
+			public void fill(ToolBar parent, int index) {
+				super.fill(parent, index);
+			}
 		};
 	}
 
 	public void populateMenuManager(ContributionManager mgr) {
 		for (Iterator additionIter = additions.iterator(); additionIter.hasNext();) {
-			Object o = (AdditionBase) additionIter.next();
-			AdditionBase addition = (AdditionBase) o;
-			IContributionItem ci = addition.getContributionItem();
+			AdditionBase addition = (AdditionBase) additionIter.next();
 			
-			// Populate the sub-items of menus 
-			if (addition instanceof MenuAddition) {
-				((MenuAddition)addition).populateMenuManager((MenuManager) ci);
+			// Is this a dynamic item?
+			if (addition instanceof ItemAddition &&
+					((ItemAddition)addition).isDynamic()) {
+				ItemAddition dynamicItem = (ItemAddition) addition;
+				
+				// Get the list of contribution items and
+				// add then into the menu manager.
+				List items = new ArrayList();
+				dynamicItem.getFiller().fillItems(items);
+				for (Iterator itemIter = items.iterator(); itemIter.hasNext();) {
+					IContributionItem item = (IContributionItem) itemIter.next();
+					mgr.add(item);
+				}
 			}
-			
-			// Add the item to the manager
-			mgr.add(ci);
+			else {
+				// normal item, just get the contribution
+				// Should we just change getContributionItem to return
+				// a list and move the logic into ItemAddition??
+				IContributionItem ci = addition.getContributionItem();
+				
+				// Populate the sub-items of menus 
+				if (addition instanceof MenuAddition) {
+					((MenuAddition)addition).populateMenuManager((MenuManager) ci);
+				}
+				
+				// Add the item to the manager
+				mgr.add(ci);
+			}
 		}
 	}
 	
@@ -153,6 +180,13 @@ public class MenuAddition extends AdditionBase {
 	 * @return the index of the given addition
 	 */
 	public int indexOf(String additionId) {
+		int index = 0;
+		for (Iterator iterator = additions.iterator(); iterator.hasNext();) {
+			AdditionBase addition = (AdditionBase) iterator.next();
+			if (additionId.equals(addition.getId()))
+				return index;
+			index++;
+		}
 		return 0;
 	}
 }

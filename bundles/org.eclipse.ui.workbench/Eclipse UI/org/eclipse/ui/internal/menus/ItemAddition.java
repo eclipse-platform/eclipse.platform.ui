@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.menus;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -35,8 +36,12 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class ItemAddition extends AdditionBase {
 
+	// Icon Support
 	private ImageDescriptor imageDesc = null;
 	private Image icon = null;
+	
+	// Dynamic Item support
+	private AbstractDynamicMenuItem filler;
 	
 	public ItemAddition(IConfigurationElement element) {
 		super(element);
@@ -80,7 +85,7 @@ public class ItemAddition extends AdditionBase {
 		return SWT.PUSH;
 	}
 	
-	private String getIconPath() {
+	public String getIconPath() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 	}
 
@@ -92,6 +97,37 @@ public class ItemAddition extends AdditionBase {
 	public boolean isEnabled() {
 		// TODO: evaluate the 'enabledWhen' expression
 		return true;
+	}
+
+	public String getClassSpec() {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+	}
+	
+	public boolean isDynamic() {
+		return getClassSpec() != null && getClassSpec().length() > 0;
+	}
+	
+	public AbstractDynamicMenuItem getFiller() {
+		if (filler == null) {
+			filler = loadFiller();
+		}
+		return filler;
+	}
+
+	/**
+	 * @return
+	 */
+	private AbstractDynamicMenuItem loadFiller() {
+		if (filler == null) {
+			try {
+				filler = (AbstractDynamicMenuItem) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return filler;
 	}
 
 	public String toString() {
@@ -109,6 +145,7 @@ public class ItemAddition extends AdditionBase {
 				
 				if (getIconPath() != null)
 					newItem.setImage(getIcon());
+				
 				newItem.addSelectionListener(new SelectionListener() {
 					public void widgetDefaultSelected(SelectionEvent e) {
 						// Execute through the command service
@@ -122,9 +159,16 @@ public class ItemAddition extends AdditionBase {
 
 			public void fill(ToolBar parent, int index) {
 				ToolItem newItem = new ToolItem(parent, getStyle(), index);
-				newItem.setText(getLabel());
-				newItem.setImage(getIcon());
-				newItem.setToolTipText(getTooltip());
+				
+				if (getIconPath() != null)
+					newItem.setImage(getIcon());
+				else if (getLabel() != null)
+					newItem.setText(getLabel());
+
+				if (getTooltip() != null)
+					newItem.setToolTipText(getTooltip());
+				else
+					newItem.setToolTipText(getLabel());
 				
 				newItem.addSelectionListener(new SelectionListener() {
 					public void widgetDefaultSelected(SelectionEvent e) {

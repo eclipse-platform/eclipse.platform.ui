@@ -47,8 +47,6 @@ public class WidgetAddition extends AdditionBase {
 	 */
 	private AbstractWorkbenchWidget loadWidget() {
 		if (widget == null) {
-			String classSpec = getClassSpec();
-			System.out.println("Widget class spec: " + classSpec); //$NON-NLS-1$
 			try {
 				widget = (AbstractWorkbenchWidget) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 			} catch (CoreException e) {

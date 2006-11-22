@@ -45,6 +45,7 @@ import org.eclipse.ui.part.ViewPart;
 
 public class MenuContributionHarness extends ViewPart {
 	public final static String VIEW_ID = "org.eclipse.ui.tests.api.MenuTestHarness";
+	IMenuService menuSvc;
 	
 	private TableViewer viewer;
 	private Action action1;
@@ -96,6 +97,9 @@ public class MenuContributionHarness extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
+		// Access the menu service
+		menuSvc = (IMenuService) getSite().getService(IMenuService.class);
+
 		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
@@ -125,21 +129,21 @@ public class MenuContributionHarness extends ViewPart {
 		IActionBars bars = getViewSite().getActionBars();
 		fillLocalPullDown(bars.getMenuManager());
 		fillLocalToolBar(bars.getToolBarManager());
+		
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
+		MenuLocationURI uri = new MenuLocationURI("menu://" + VIEW_ID);
+		menuSvc.populateMenu((ContributionManager) manager, uri);
+
 		manager.add(action1);
 		manager.add(new Separator());
 		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {		
-		// we would probably take care of registering this with the service
-		// in the getSite().registerContextMenu(*) method for the view.
-		IMenuService menus = (IMenuService) getSite().getService(
-				IMenuService.class);
 		MenuLocationURI uri = new MenuLocationURI("popup://" + VIEW_ID);
-		menus.populateMenu((ContributionManager) manager, uri);
+		menuSvc.populateMenu((ContributionManager) manager, uri);
 
 		// Add some local actions
 		manager.add(action1);
@@ -148,6 +152,9 @@ public class MenuContributionHarness extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
+		MenuLocationURI uri = new MenuLocationURI("toolbar://" + VIEW_ID);
+		menuSvc.populateMenu((ContributionManager) manager, uri);
+
 		manager.add(action1);
 		manager.add(action2);
 	}

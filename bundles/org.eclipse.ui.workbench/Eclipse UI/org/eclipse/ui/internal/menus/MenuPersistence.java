@@ -1140,6 +1140,7 @@ final class MenuPersistence extends RegistryPersistence {
 				else {
 					// place the addition onto the 'retry' stack
 					retryList.add(addition);
+					return;
 				}
 			}
 			int insertionIndex = getInsertionIndexForURI(additionCache, uri);
@@ -1151,7 +1152,7 @@ final class MenuPersistence extends RegistryPersistence {
 	
 	private static int getInsertionIndexForURI(MenuAddition mgr, MenuLocationURI uri) {
 		String query = uri.getQuery();
-		if (query == null)
+		if (query.length() == 0)
 			return 0;
 		
 		// Should be in the form "[before|after]=id"
@@ -1162,7 +1163,7 @@ final class MenuPersistence extends RegistryPersistence {
 			// Increment if we're 'after' this id
 			if (queryParts[0].equals("after")) //$NON-NLS-1$
 				indexOfId++;
-//			return indexOfId;
+			return indexOfId;
 		}
 		
 		return 0;

@@ -2935,8 +2935,27 @@
    </extension>
   
    <extension
-         id="menusX1"
          point="org.eclipse.ui.menus2">
+      <menuAddition
+            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
+         <item
+               commandId="MenuTest.InsertedBefore"
+               icon="icons/anything.gif"
+               id="MenuTest.popup.BasicCmdItem"
+               label="Inserted Before"
+               mnemonic="B">
+         </item>
+      </menuAddition>
+      <menuAddition
+            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness?after=MenuTest.Advanced">
+         <item
+               commandId="MenuTest.InsertedAfter"
+               icon="icons/anything.gif"
+               id="MenuTest.popup.BasicCmdItem"
+               label="Inserted After"
+               mnemonic="A">
+         </item>
+      </menuAddition>
       <menuAddition
             locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness">
          <item
@@ -2990,31 +3009,131 @@
                label="Dynamic Menu">
             <item
                commandId="Huh, why?"
-               class="DynamicItemFiller"
+               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
                id="MenuText.popup.DynamicItem"
                 label="Dynamic Item">
             </item>
          </menu>
       </menuAddition>
+
       <menuAddition
             locationURI="menu://org.eclipse.ui.tests.api.MenuTestHarness">
          <item
-               commandId="org.eclipse.ui.tests.bogusCmdId"
-               id="org.eclipse.ui.tests.menus.itemX1"
-               label="Menu Item X1">
+               commandId="MenuTest.BasicCmd"
+               icon="icons/anything.gif"
+               id="MenuTest.popup.BasicCmdItem"
+               label="Basic Cmd"
+               mnemonic="B">
+         </item>
+         <widget
+               class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
+               id="MenuTest.popup.BasicWidgetItem">
+         </widget>
+         <menu
+               icon="icons/binary_co.gif"
+               id="MenuTest.popup.MasicMenuItem"
+               label="Basic Menu">
+            <item
+                  commandId="MenuTest.SubItem"
+                  label="Sub Item">
+            </item>
+         </menu>
+         <separator
+               id="MenuTest.Advanced"
+               visible="true">
+         </separator>
+         <item
+               commandId="MenuTest.ParamCmd"
+               label="Parameter Cmd"
+               mnemonic="C">
+            <parameter
+                  id="Greeting"
+                  value="Hi There!">
+            </parameter>
+         </item>
+         <item
+               commandId="MenuTest.ObjectCmd"
+               icon="icons/binary_co.gif"
+               label="Foo Cmd"
+               mnemonic="F">
             <visibleWhen
                   checkEnabled="false">
-               <with
-                     variable="activeContexts">
-                  <iterate
-                        operator="or">
-                     <equals
-                           value="org.eclipse.ui.menus.contexts.test1">
-                     </equals>
-                  </iterate>
-               </with>
             </visibleWhen>
+            <enabledWhen
+                  checkEnabled="false">
+            </enabledWhen>
          </item>
+         <menu
+               icon="icons/dynamic.gif"
+               id="MenuTest.popup.dynamicMenu"
+               label="Dynamic Menu">
+            <item
+               commandId="Huh, why?"
+               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+               id="MenuText.popup.DynamicItem"
+                label="Dynamic Item">
+            </item>
+         </menu>
+      </menuAddition>
+      
+      <menuAddition
+            locationURI="toolbar://org.eclipse.ui.tests.api.MenuTestHarness">
+         <item
+               commandId="MenuTest.BasicCmd"
+               icon="icons/anything.gif"
+               id="MenuTest.popup.BasicCmdItem"
+               label="Basic Cmd"
+               mnemonic="B">
+         </item>
+         <widget
+               class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
+               id="MenuTest.popup.BasicWidgetItem">
+         </widget>
+         <menu
+               icon="icons/binary_co.gif"
+               id="MenuTest.popup.MasicMenuItem"
+               label="Basic Menu">
+            <item
+                  commandId="MenuTest.SubItem"
+                  label="Sub Item">
+            </item>
+         </menu>
+         <separator
+               id="MenuTest.Advanced"
+               visible="true">
+         </separator>
+         <item
+               commandId="MenuTest.ParamCmd"
+               label="Parameter Cmd"
+               mnemonic="C">
+            <parameter
+                  id="Greeting"
+                  value="Hi There!">
+            </parameter>
+         </item>
+         <item
+               commandId="MenuTest.ObjectCmd"
+               icon="icons/binary_co.gif"
+               label="Foo Cmd"
+               mnemonic="F">
+            <visibleWhen
+                  checkEnabled="false">
+            </visibleWhen>
+            <enabledWhen
+                  checkEnabled="false">
+            </enabledWhen>
+         </item>
+         <menu
+               icon="icons/dynamic.gif"
+               id="MenuTest.popup.dynamicMenu"
+               label="Dynamic Menu">
+            <item
+               commandId="Huh, why?"
+               id="MenuText.popup.DynamicItem"
+                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+                label="Dynamic Item">
+            </item>
+         </menu>
       </menuAddition>
    </extension>
 </plugin>            
