@@ -46,6 +46,7 @@ public class RemoteContextProvider extends AbstractContextProvider {
 					in = connection.getInputStream();
 					if (reader == null) {
 						reader = new NodeReader();
+						reader.setIgnoreWhitespaceNodes(true);
 					}
 					return reader.read(in);
 				}

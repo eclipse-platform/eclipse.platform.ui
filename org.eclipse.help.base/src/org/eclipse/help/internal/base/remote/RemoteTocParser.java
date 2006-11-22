@@ -27,6 +27,7 @@ public class RemoteTocParser {
 	public TocContribution[] parse(InputStream in) throws ParserConfigurationException, SAXException, IOException {
 		if (reader == null) {
 			reader = new NodeReader();
+			reader.setIgnoreWhitespaceNodes(true);
 		}
 		Node root = reader.read(in);
 		Node[] children = root.getChildNodes();

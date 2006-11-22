@@ -43,6 +43,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 				in = url.openStream();
 				if (reader == null) {
 					reader = new NodeReader();
+					reader.setIgnoreWhitespaceNodes(true);
 				}
 				Node node = reader.read(in);
 				return node.getChildNodes();
