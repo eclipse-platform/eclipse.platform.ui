@@ -124,6 +124,16 @@
             contentFile="data/cheatsheet/search/CompositeSearchTest.xml"
             id="org.eclipse.ua.tests.composite.searchTest"
             name="Composite cheat sheet search test"/>
+      <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            composite="false"
+            contentFile="data/cheatsheet/performance/HelloWorld.xml"
+            id="org.eclipse.ua.tests.cheatsheet.performance"
+            name="Performance Test Cheat Sheet">
+         <description>
+            This cheat sheet is used to measure cheat sheet view performance.
+         </description>
+      </cheatsheet>
    </extension>
 
    <!-- 
