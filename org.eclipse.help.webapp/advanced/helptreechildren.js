@@ -70,14 +70,16 @@ function mergeChildren(treeItem, nodes) {
      }
 
      if (childAdded) {
-         changeExpanderImage(treeItem, true); 
+         // Expand this node if it was collapsed and has children in the xml tree        
+        var childClass = getChildClass(treeItem);
+        if (childClass == "hidden") {
+            toggleExpandState(treeItem);
+        } else {
+            changeExpanderImage(treeItem, true); 
+        }
      } 
      
-    // Expand this node if it was collapsed         
-    var childClass = getChildClass(treeItem);
-    if (childClass == "hidden") {
-        toggleExpandState(treeItem);
-    }
+    
     
 }
 
