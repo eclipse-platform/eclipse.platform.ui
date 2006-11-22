@@ -47,5 +47,6 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(ResourceMappingMarkersTest.class));
         addTest(new TestSuite(MarkerSupportRegistryTests.class));
         addTest(Bug99858Test.suite());
+        addTest(new TestSuite(MenuAuthorityTest.class));
     }
 }

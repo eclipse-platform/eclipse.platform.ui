@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 
@@ -37,7 +38,7 @@ import org.eclipse.ui.internal.services.ExpressionAuthority;
  * 
  * @since 3.2
  */
-final class MenuAuthority extends ExpressionAuthority {
+final public class MenuAuthority extends ExpressionAuthority {
 
 	/**
 	 * This is a map of menu element contributions (<code>Collection</code>
@@ -72,7 +73,7 @@ final class MenuAuthority extends ExpressionAuthority {
 	 *            {@link MenuElement#setVisible(Window, boolean)}; may be
 	 *            <code>null</code>.
 	 */
-	MenuAuthority(final Window window) {
+	public MenuAuthority(final Window window) {
 		this.window = window;
 	}
 
@@ -178,6 +179,14 @@ final class MenuAuthority extends ExpressionAuthority {
 	 *            A bit mask of all the source priorities that have changed.
 	 */
 	protected final void sourceChanged(final int sourcePriority) {
+		oldSourceChanged(sourcePriority);
+		newSourceChanged(sourcePriority);
+	}
+
+	/**
+	 * @param sourcePriority
+	 */
+	private void oldSourceChanged(final int sourcePriority) {
 		/*
 		 * In this first phase, we cycle through all of the contributions that
 		 * could have potentially changed. Each such contribution is added to a
@@ -211,6 +220,114 @@ final class MenuAuthority extends ExpressionAuthority {
 			final boolean newVisible = evaluate(contribution);
 			if (newVisible != currentlyVisible) {
 				contribution.getMenuElement().setVisible(window, newVisible);
+			}
+		}
+	}
+
+	//
+	// version 3.3 methods
+	//
+
+	private Map activationsByItem = new HashMap();
+
+	private final Set[] activationsBySourcePriority = new Set[33];
+
+	/**
+	 * @param menuItem the activation
+	 */
+	public void addContribution(final IMenuActivation menuItem) {
+		IContributionItem item = menuItem.getContribution();
+		Object o = activationsByItem.get(item);
+		if (o != null) {
+			if (o != menuItem) {
+				// TODO log this error case
+			}
+			return;
+		}
+		activationsByItem.put(item, menuItem);
+
+		// Next we update the source priority bucket sort of activations.
+		final int sourcePriority = menuItem.getSourcePriority();
+		for (int i = 1; i <= 32; i++) {
+			if ((sourcePriority & (1 << i)) != 0) {
+				Set contributions = activationsBySourcePriority[i];
+				if (contributions == null) {
+					contributions = new HashSet(1);
+					activationsBySourcePriority[i] = contributions;
+				}
+				contributions.add(menuItem);
+			}
+		}
+	}
+
+	/**
+	 * @param menuItem the activation
+	 */
+	public void removeContribution(final IMenuActivation menuItem) {
+		Object o = activationsByItem.get(menuItem.getContribution());
+		if (o != menuItem) {
+			// TODO log this error case
+			return;
+		}
+		activationsByItem.remove(menuItem.getContribution());
+
+		final int sourcePriority = menuItem.getSourcePriority();
+		for (int i = 1; i <= 32; i++) {
+			if ((sourcePriority & (1 << i)) != 0) {
+				final Set contributions = activationsBySourcePriority[i];
+				if (contributions == null) {
+					continue;
+				}
+				contributions.remove(menuItem);
+				if (contributions.isEmpty()) {
+					activationsBySourcePriority[i] = null;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * @param sourcePriority
+	 */
+	private void newSourceChanged(final int sourcePriority) {
+		/*
+		 * In this first phase, we cycle through all of the contributions that
+		 * could have potentially changed. Each such contribution is added to a
+		 * set for future processing. We add it to a set so that we avoid
+		 * handling any individual contribution more than once.
+		 */
+		final Set contributionsToRecompute = new HashSet();
+		for (int i = 1; i <= 32; i++) {
+			if ((sourcePriority & (1 << i)) != 0) {
+				final Collection contributions = activationsBySourcePriority[i];
+				if (contributions != null) {
+					final Iterator contributionItr = contributions.iterator();
+					while (contributionItr.hasNext()) {
+						contributionsToRecompute.add(contributionItr.next());
+					}
+				}
+			}
+		}
+
+		/*
+		 * For every contribution, we recompute its state, and check whether it
+		 * has changed. If it has changed, then we take note of the menu element
+		 * so we can update the menu element later.
+		 */
+		final Iterator contributionItr = contributionsToRecompute.iterator();
+		while (contributionItr.hasNext()) {
+			final IMenuActivation contribution = (IMenuActivation) contributionItr
+					.next();
+			final boolean currentlyVisible = evaluate(contribution);
+			contribution.clearResult();
+			final boolean newVisible = evaluate(contribution);
+			if (newVisible != currentlyVisible) {
+				// should we be proactive about notifying that an
+				// IContributionItem is dirty?
+				
+				// old code
+				// contribution.getMenuElement().setVisible(window, newVisible);
+
 			}
 		}
 	}
