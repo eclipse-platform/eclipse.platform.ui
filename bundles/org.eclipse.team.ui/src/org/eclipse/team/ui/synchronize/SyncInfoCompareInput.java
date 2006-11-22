@@ -18,13 +18,14 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -51,6 +52,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	private IResource resource;
     private ISynchronizeParticipant participant;
 	private final LocalResourceSaveableComparison saveable;
+	private ISynchronizePageConfiguration synchronizeConfiguration;
 
 	/*
 	 * This class exists so that we can force the text merge viewers to update by
@@ -103,12 +105,26 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
         this.participant = participant;
     }
 	
-    /* (non-Javadoc)
+    public SyncInfoCompareInput(ISynchronizePageConfiguration configuration,
+			SyncInfo info) {
+		this(configuration.getParticipant(), info);
+		this.synchronizeConfiguration = configuration;
+	}
+
+	/* (non-Javadoc)
      * @see org.eclipse.compare.CompareEditorInput#handleDispose()
      */
     protected void handleDispose() {
     	super.handleDispose();
     	saveable.dispose();
+    	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
+    	if (navigator != null && navigator == super.getNavigator()) {
+    		synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, new CompareNavigator() {
+				protected INavigatable[] getNavigatables() {
+					return new INavigatable[0];
+				}
+			});
+    	}
     }
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
@@ -239,5 +255,32 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 */
 	public boolean canRunAsJob() {
 		return true;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getNavigator()
+	 */
+	public synchronized ICompareNavigator getNavigator() {
+		if (synchronizeConfiguration != null && isSelectedInSynchronizeView()) {
+			ICompareNavigator nav = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+			synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, super.getNavigator());
+			return nav;
+		}
+		return super.getNavigator();
+	}
+
+	private boolean isSelectedInSynchronizeView() {
+		if (synchronizeConfiguration != null) {
+			ISelection s = synchronizeConfiguration.getSite().getSelectionProvider().getSelection();
+			if (s instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) s;
+				Object element = ss.getFirstElement();
+				if (element instanceof SyncInfoModelElement) {
+					SyncInfoModelElement sime = (SyncInfoModelElement) element;
+					return sime.getSyncInfo().getLocal().equals(resource);
+				}
+			}
+		}
+		return false;
 	}
 }

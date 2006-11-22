@@ -203,7 +203,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	public synchronized ICompareNavigator getNavigator() {
 		if (fNavigator == null)
-			fNavigator= new CompareNavigator(
+			fNavigator= new CompareEditorInputNavigator(
 				new Object[] {
 					fStructureInputPane,
 					fStructurePane1,

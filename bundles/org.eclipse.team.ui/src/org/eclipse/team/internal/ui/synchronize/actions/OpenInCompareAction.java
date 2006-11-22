@@ -53,7 +53,7 @@ public class OpenInCompareAction extends Action {
 				SyncInfo info = ((SyncInfoModelElement) obj).getSyncInfo();
 				if (info != null) {
 				    // Use the open strategy to decide if the editor or the sync view should have focus
-					openCompareEditor(configuration.getParticipant(), info, !OpenStrategy.activateOnOpen(), configuration.getSite());
+					openCompareEditorOnSyncInfo(configuration, info, !OpenStrategy.activateOnOpen());
 				}
 			} else if (obj != null){
 				openCompareEditor(configuration, obj, !OpenStrategy.activateOnOpen());
@@ -69,7 +69,7 @@ public class OpenInCompareAction extends Action {
 		if (object instanceof SyncInfoModelElement) {
 			SyncInfo info = ((SyncInfoModelElement) object).getSyncInfo();
 			if (info != null)
-				return openCompareEditor(participant, info, keepFocus, site);
+				return openCompareEditorOnSyncInfo(configuration, info, keepFocus);
 		}
 		if (participant instanceof ModelSynchronizeParticipant) {
 			ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
@@ -107,12 +107,20 @@ public class OpenInCompareAction extends Action {
 		return true;
 	}
 
-	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, boolean keepFocus, ISynchronizePageSite site) {		
+	public static CompareEditorInput openCompareEditorOnSyncInfo(ISynchronizePageConfiguration configuration, SyncInfo info, boolean keepFocus) {		
+		Assert.isNotNull(info);
+		Assert.isNotNull(configuration);	
+		if(info.getLocal().getType() != IResource.FILE) return null;
+		SyncInfoCompareInput input = new SyncInfoCompareInput(configuration, info);
+		return openCompareEditor(getWorkbenchPage(configuration.getSite()), input, keepFocus, configuration.getSite());
+	}
+	
+	public static CompareEditorInput openCompareEditor(ISynchronizeParticipant participant, SyncInfo info, ISynchronizePageSite site) {
 		Assert.isNotNull(info);
 		Assert.isNotNull(participant);	
 		if(info.getLocal().getType() != IResource.FILE) return null;
 		SyncInfoCompareInput input = new SyncInfoCompareInput(participant, info);
-		return openCompareEditor(getWorkbenchPage(site), input, keepFocus, site);
+		return openCompareEditor(getWorkbenchPage(site), input, false, site);
 	}
 
 	private static CompareEditorInput openCompareEditor(
@@ -163,6 +171,8 @@ public class OpenInCompareAction extends Action {
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.
+	 * @param page 
+	 * @return the open editor
 	 */
 	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
 		IEditorReference[] editorRefs = page.getEditorReferences();	

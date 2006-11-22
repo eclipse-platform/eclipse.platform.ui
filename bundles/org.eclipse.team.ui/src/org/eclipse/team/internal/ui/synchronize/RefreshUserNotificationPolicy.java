@@ -123,7 +123,7 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 				IResource file = resources[0];
 				SyncInfo info = sp.getSubscriberSyncInfoCollector().getSyncInfoSet().getSyncInfo(file);
 				if(info != null) {
-					OpenInCompareAction.openCompareEditor(participant, info, false /* do not keep focus */, null);
+					OpenInCompareAction.openCompareEditor(participant, info, null);
 					prompt = false;
 				}
 			}

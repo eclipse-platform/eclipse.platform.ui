@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.compare.ICompareNavigator;
+import org.eclipse.compare.*;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.ui.*;
 
 /**
  * Abstract superclass for tree viewer advisors
@@ -23,6 +27,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implements IAdaptable {
 
 	private ICompareNavigator nav;
+	private INavigatable navigatable;
 	
 	/**
 	 * Interface used to implement navigation for tree viewers. This interface is used by
@@ -32,6 +37,90 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	public interface ITreeViewerAccessor {
 		public void createChildren(TreeItem item);
 		public void openSelection();
+	}
+	
+	private class TreeCompareNavigator extends CompareNavigator {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.CompareNavigator#getNavigatables()
+		 */
+		protected INavigatable[] getNavigatables() {
+			INavigatable navigatable = getNavigatable();
+			return new INavigatable[] { navigatable };
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.CompareNavigator#selectChange(boolean)
+		 */
+		public boolean selectChange(boolean next) {
+			if (getSubNavigator() != null) {
+				if (getSubNavigator().hasChange(next)) {
+					getSubNavigator().selectChange(next);
+					return false;
+				}
+			}
+			boolean noNextChange = super.selectChange(next);
+			if (!noNextChange) {
+				// TODO: Check to see if the selected element can be opened.
+				// If it can't, try the next one
+				Object selectedObject = AbstractTreeViewerAdvisor.this.getFirstElement((IStructuredSelection)getViewer().getSelection());
+				if (!hasCompareInput(selectedObject)) {
+					return selectChange(next);
+				}
+			}
+			return noNextChange;
+		}
+		
+		private boolean hasCompareInput(Object selectedObject) {
+			SyncInfo syncInfo = getSyncInfo(selectedObject);
+			if(syncInfo != null) {
+				return syncInfo.getLocal().getType() == IResource.FILE;
+			}
+			// TODO: need to look for model-based compare input
+			return true;
+		}
+
+		private SyncInfo getSyncInfo(Object obj) {
+			if (obj instanceof SyncInfoModelElement) {
+				return ((SyncInfoModelElement) obj).getSyncInfo();
+			} else {
+				return null;
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.CompareNavigator#hasChange(boolean)
+		 */
+		public boolean hasChange(boolean next) {
+			if (getSubNavigator() != null) {
+				if (getSubNavigator().hasChange(next)) {
+					return true;
+				}
+			}
+			return super.hasChange(next);
+		}
+
+		private CompareNavigator getSubNavigator() {
+			IWorkbenchSite ws = AbstractTreeViewerAdvisor.this.getConfiguration().getSite().getWorkbenchSite();
+			if (ws instanceof IWorkbenchPartSite) {
+				Object selectedObject = AbstractTreeViewerAdvisor.this.getFirstElement((IStructuredSelection)getViewer().getSelection());
+				IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, selectedObject, getConfiguration().getParticipant());
+				if(editor != null) {
+					// if an existing editor is open on the current selection, use it			 
+					CompareEditorInput input = (CompareEditorInput)editor.getEditorInput();
+					ICompareNavigator navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
+					if (navigator instanceof TreeCompareNavigator) {
+						navigator = (ICompareNavigator)AbstractTreeViewerAdvisor.this.getConfiguration().getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
+					}
+					if (navigator instanceof CompareNavigator) {
+						return (CompareNavigator) navigator;
+						
+					}
+				}
+			}
+			return null;
+		}
+		
 	}
 	
 	private static TreeItem findNextPrev(TreeViewer viewer, TreeItem item, boolean next) {
@@ -210,15 +299,49 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	public Object getAdapter(Class adapter) {
 		if(adapter == ICompareNavigator.class) {
 			if(nav == null) {
-				nav = new ICompareNavigator() {
-					public boolean selectChange(boolean next) {
-						return AbstractTreeViewerAdvisor.this.navigate(next);
-					}
-				};
+				nav = new TreeCompareNavigator();
 			}
 			return nav;
 		}
+		if(adapter == INavigatable.class) {
+			return getNavigatable();
+		}
 		return null;
+	}
+
+	private synchronized INavigatable getNavigatable() {
+		if(navigatable == null) {
+			navigatable = new INavigatable() {
+				public boolean selectChange(int flag) {
+					if (flag == INavigatable.FIRST_CHANGE) {
+						getViewer().setSelection(StructuredSelection.EMPTY);
+						flag = INavigatable.NEXT_CHANGE;
+					} else if (flag == INavigatable.LAST_CHANGE) {
+						getViewer().setSelection(StructuredSelection.EMPTY);
+						flag = INavigatable.PREVIOUS_CHANGE;
+					}
+					return navigate((TreeViewer)getViewer(), flag == INavigatable.NEXT_CHANGE, true, false);
+				}
+			
+				public boolean openSelectedChange() {
+					Viewer v = getViewer();
+					if (v instanceof ITreeViewerAccessor && !v.getControl().isDisposed()) {
+						ITreeViewerAccessor tva = (ITreeViewerAccessor) v;
+						tva.openSelection();
+						return true;
+					}
+					return false;
+				}
+				public boolean hasChange(int changeFlag) {
+					return AbstractTreeViewerAdvisor.this.hasChange(changeFlag == INavigatable.NEXT_CHANGE);
+				}
+				public Object getInput() {
+					return getViewer().getInput();
+				}
+			
+			};
+		}
+		return navigatable;
 	}
 
 	/**
@@ -250,6 +373,15 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 				return paths[0];
 		}
 		Object element = selection.getFirstElement();
+		return element;
+	}
+	
+	private Object getFirstElement(IStructuredSelection selection) {
+		Object element = getFirstElementOrPath(selection);
+		if (element instanceof TreePath) {
+			TreePath path = (TreePath) element;
+			element = path.getLastSegment();
+		}
 		return element;
 	}
 

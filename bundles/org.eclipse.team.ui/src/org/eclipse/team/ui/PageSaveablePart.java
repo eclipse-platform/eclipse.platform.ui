@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.CompareEditor;
+import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -313,7 +314,7 @@ public abstract class PageSaveablePart extends SaveablePartAdapter implements IC
 	 * outside of the framework.
 	 */
 	protected void setNavigator(ISynchronizePageConfiguration configuration) {
-			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new CompareNavigator(
+			configuration.setProperty(SynchronizePageConfiguration.P_NAVIGATOR, new CompareEditorInputNavigator(
 				new Object[] {
 					configuration.getProperty(SynchronizePageConfiguration.P_ADVISOR),
 					fStructuredComparePane,

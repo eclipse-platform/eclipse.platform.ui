@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.ICompareNavigator;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 
 /**
@@ -32,16 +27,12 @@ import org.eclipse.ui.actions.ActionFactory;
  */
 public class NavigateAction extends Action {
 	private final boolean next;
-	private ISynchronizePageSite site;
 	private ISynchronizePageConfiguration configuration;
-    private final ISynchronizeParticipant participant;
 	
-	public NavigateAction(ISynchronizePageSite site, ISynchronizeParticipant participant, ISynchronizePageConfiguration configuration, boolean next) {
-		this.site = site;
-        this.participant = participant;
+	public NavigateAction(ISynchronizePageConfiguration configuration, boolean next) {
 		this.configuration = configuration;
 		this.next = next;
-		IActionBars bars = site.getActionBars();
+		IActionBars bars = configuration.getSite().getActionBars();
 		if (next) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
 			if (bars != null)
@@ -58,83 +49,7 @@ public class NavigateAction extends Action {
 	 * and a compare editor and navigation simply using the configured navigator.
  	 */
 	public void run() {
-		IWorkbenchSite ws = site.getWorkbenchSite();
 		ICompareNavigator nav = (ICompareNavigator)configuration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
-		if (nav != null && ws != null && ws instanceof IViewSite) {
-			navigateInView(nav);
-		} else {
-			nav.selectChange(next);
-		}
-	}
-	
-	/*
-	 * Method that is invoked when the sync page is shown in a view.
-	 */
-	private void navigateInView(ICompareNavigator nav) {
-		Object selectedObject = getSelectedObject();
-		if(selectedObject == null) {
-			if(nav.selectChange(next)) {
-				return;
-			} else {
-				selectedObject = getSelectedObject();
-				if(selectedObject == null) return;
-			}
-		}
-		
-		// Optimization that avoids looking for an open compare editor for the selected 
-		// sync info if the resource is a folder
-		SyncInfo syncInfo = getSyncInfoFromSelection();
-		if(syncInfo != null && syncInfo.getLocal().getType() != IResource.FILE) {
-			if(! nav.selectChange(next)) {
-				selectedObject = getSelectedObject();
-				OpenInCompareAction.openCompareEditor(participant, syncInfo, true /* keep focus */, site);
-			}
-			return;
-		}
-		
-		IWorkbenchSite ws = site.getWorkbenchSite();
-		if (ws instanceof IWorkbenchPartSite) {
-			IEditorPart editor = OpenInCompareAction.findOpenCompareEditor((IWorkbenchPartSite)ws, selectedObject, participant);
-			if(editor != null) {
-				// if an existing editor is open on the current selection, use it			 
-				CompareEditorInput input = (CompareEditorInput)editor.getEditorInput();
-				ICompareNavigator navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
-				if(navigator != null) {
-					if(navigator.selectChange(next)) {
-						if(! nav.selectChange(next)) {
-							selectedObject = getSelectedObject();
-							OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
-						}
-					}				
-				}
-			} else {
-				// otherwise,try to open a compare editor on the object
-				IEditorInput input = OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
-				if (input == null) {
-					// We couldn't open a compare editor on the object so try the next change
-					if(! nav.selectChange(next)) {
-						selectedObject = getSelectedObject();
-						OpenInCompareAction.openCompareEditor(configuration, selectedObject, true /* keep focus */);
-					}
-				}
-			}
-		}
-	}
-
-	private SyncInfo getSyncInfoFromSelection() {
-		IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
-		if(selection == null) return null;
-		Object obj = selection.getFirstElement();
-		if (obj instanceof SyncInfoModelElement) {
-			return ((SyncInfoModelElement) obj).getSyncInfo();
-		} else {
-			return null;
-		}
-	}
-	
-	private Object getSelectedObject() {
-		IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
-		if(selection == null) return null;
-		return selection.getFirstElement();
+		nav.selectChange(next);
 	}
 }

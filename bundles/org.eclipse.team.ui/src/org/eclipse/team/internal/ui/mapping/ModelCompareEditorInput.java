@@ -12,7 +12,7 @@ package org.eclipse.team.internal.ui.mapping;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -20,14 +20,12 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
-import org.eclipse.team.internal.ui.synchronize.SynchronizeView;
+import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
 import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.team.ui.synchronize.*;
@@ -84,6 +82,14 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		super.handleDispose();
 		participant.getContext().getCache().removeCacheListener(contextListener);
 		getCompareConfiguration().removePropertyChangeListener(this);
+    	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
+    	if (navigator != null && navigator == super.getNavigator()) {
+    		synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, new CompareNavigator() {
+				protected INavigatable[] getNavigatables() {
+					return new INavigatable[0];
+				}
+			});
+    	}
 	}
 	
 	/* (non-Javadoc)
@@ -248,5 +254,24 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	 */
 	public boolean belongsTo(Object family) {
 		return super.belongsTo(family) || family == participant;
+	}
+	
+	public synchronized ICompareNavigator getNavigator() {
+		if (isSelectedInSynchronizeView()) {
+			ICompareNavigator nav = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+			synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, super.getNavigator());
+			return nav;
+		}
+		return super.getNavigator();
+	}
+
+	private boolean isSelectedInSynchronizeView() {
+		ISelection s = synchronizeConfiguration.getSite().getSelectionProvider().getSelection();
+		if (s instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) s;
+			Object element = ss.getFirstElement();
+			return matches(element, participant);
+		}
+		return false;
 	}
 }

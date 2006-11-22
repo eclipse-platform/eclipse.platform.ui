@@ -12,12 +12,16 @@ package org.eclipse.compare;
 
 /**
  * A <code>ICompareNavigator</code> is used to navigate through the individual
- * differences of a <code>CompareEditorInput</code>.
+ * differences of a <code>CompareEditorInput</code> or another type of Compare container.
  * <p>
  * You can retrieve an object implementing the <code>ICompareNavigator</code> from a
  * <code>CompareEditorInput</code> by calling <code>getAdapter(ICompareNavigator)</code>
  * on the <code>CompareEditorInput</code>.
  * </p>
+ * <p>
+ * Although it is legal for clients to implement this interface, it is better
+ * to subclass {@link CompareNavigator}.
+ * 
  * @since 3.0
  */
 public interface ICompareNavigator {
