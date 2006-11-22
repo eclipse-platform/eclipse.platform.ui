@@ -32,7 +32,6 @@ public final class Messages extends NLS {
 	public static String CustomBrowserPreferencePage_Program;
 	public static String CustomBrowserPreferencePage_Browse;
 	public static String CustomBrowserPreferencePage_Details;
-	public static String WW002;
 	public static String WE022;
 	public static String WE023;
 	public static String WE024;
@@ -67,6 +66,7 @@ public final class Messages extends NLS {
 	public static String SeeAlsoPart_index;
 	public static String ContextHelpPart_about;
 	public static String ContextHelpPart_aboutP;
+	public static String ContextHelpPart_noDescription;
 	public static String ContextHelpPart_dynamicHelp;
 	public static String ContextHelpPart_query_view;
 	public static String ContextHelpPart_query_perspective;

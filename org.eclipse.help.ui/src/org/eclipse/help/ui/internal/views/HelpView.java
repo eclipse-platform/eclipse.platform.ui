@@ -339,17 +339,27 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void displayContext(IContext context, IWorkbenchPart part,
 			Control control) {
 		if (reusableHelpPart != null) {
-			// Ensure that context help is currently showing
-			reusableHelpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
-			// check if there is a dynamic version
-			IContextProvider provider = null;
-			if (part!=null)
-					provider = (IContextProvider) part
-					.getAdapter(IContextProvider.class);
-			if (provider != null)
-				reusableHelpPart.update(provider, context, part, control);
-			else
-				reusableHelpPart.update(context, part, control);
+			/*
+			 * If the context help has no description text and exactly one
+			 * topic, go straight to the topic and skip context help.
+			 */
+			IHelpResource[] topics = context.getRelatedTopics();
+			if (context.getText() != null || topics.length != 1) {
+				// Ensure that context help is currently showing
+				reusableHelpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
+				// check if there is a dynamic version
+				IContextProvider provider = null;
+				if (part!=null)
+						provider = (IContextProvider) part
+						.getAdapter(IContextProvider.class);
+				if (provider != null)
+					reusableHelpPart.update(provider, context, part, control);
+				else
+					reusableHelpPart.update(context, part, control);
+			}
+			else {
+				reusableHelpPart.showURL(topics[0].getHref());
+			}
 		}
 	}
 

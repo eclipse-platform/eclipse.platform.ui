@@ -226,8 +226,9 @@ public class ContextHelpDialog {
 		} else {
 			styledText = context.getText();
 		}
-		if (styledText == null) // no description found in context objects.
-			styledText = Messages.WW002; 
+		if (styledText == null) { // no description found in context objects.
+			styledText = Messages.ContextHelpPart_noDescription;
+		}
 		Description text = new Description(parent, SWT.MULTI | SWT.READ_ONLY);
 		text.addTraverseListener(new TraverseListener() {
 			public void keyTraversed(TraverseEvent e) {

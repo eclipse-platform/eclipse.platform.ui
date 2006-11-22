@@ -14,6 +14,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IHelpResource;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -262,12 +263,23 @@ public class DefaultHelpUI extends AbstractHelpUI {
 					return;
 				}
 				try {
-					IWorkbenchPart activePart = page.getActivePart();
-					Control c = window.getShell().getDisplay().getFocusControl();
-					IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-					if (part != null) {
-						HelpView view = (HelpView) part;
-						view.displayContext(context, activePart, c);
+					/*
+					 * If the context help has no description text and exactly one
+					 * topic, go straight to the topic and skip context help.
+					 */
+					IHelpResource[] topics = context.getRelatedTopics();
+					boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+					if (context.getText() == null && topics.length == 1 && openInEditor) {
+						showInWorkbenchBrowser(topics[0].getHref(), true);
+					}
+					else {
+						IWorkbenchPart activePart = page.getActivePart();
+						Control c = window.getShell().getDisplay().getFocusControl();
+						IViewPart part = page.showView(HELP_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+						if (part != null) {
+							HelpView view = (HelpView) part;
+							view.displayContext(context, activePart, c);
+						}
 					}
 					return;
 				} catch (PartInitException e) {
@@ -315,12 +327,28 @@ public class DefaultHelpUI extends AbstractHelpUI {
 	}
 
 	private void displayContextAsInfopop(IContext context, int x, int y) {
-		if (f1Dialog != null)
+		if (f1Dialog != null) {
 			f1Dialog.close();
-		if (context == null)
-			return;
-		f1Dialog = new ContextHelpDialog(context, x, y);
-		f1Dialog.open();
+		}
+		if (context != null) {
+			/*
+			 * If the context help has no description text and exactly one
+			 * topic, go straight to the topic and skip context help.
+			 */
+			IHelpResource[] topics = context.getRelatedTopics();
+			if (context.getText() == null && topics.length == 1) {
+				try {
+					PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(topics[0].getHref());
+				}
+				catch (Exception e) {
+					// should never happen
+				}
+			}
+			else {
+				f1Dialog = new ContextHelpDialog(context, x, y);
+				f1Dialog.open();
+			}
+		}
 	}
 
 	private void displayContextAsHelpTray(Shell activeShell, IContext context) {
@@ -335,8 +363,15 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		if (tray instanceof HelpTray) {
 			ReusableHelpPart helpPart = ((HelpTray)tray).getHelpPart();
 			if (context != null) {
-				helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
-				helpPart.update(context, null, controlInFocus);
+				IHelpResource[] topics = context.getRelatedTopics();
+				if (context.getText() == null && topics.length == 1) {
+					helpPart.showURL(topics[0].getHref());
+					helpPart.update(context, null, controlInFocus);
+				}
+				else {
+					helpPart.showPage(IHelpUIConstants.HV_CONTEXT_HELP_PAGE);
+					helpPart.update(context, null, controlInFocus);
+				}
 			}
 			else {
 				helpPart.showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
@@ -388,6 +423,26 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			if ((activeShell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0)
 				return true;
 			activeShell = (Shell) activeShell.getParent();
+		}
+		return false;
+	}
+	
+	public static boolean showInWorkbenchBrowser(String url, boolean onlyInternal) {
+		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		if (!onlyInternal || support.isInternalWebBrowserAvailable()) {
+			try {
+				IWebBrowser browser = support
+						.createBrowser(
+								IWorkbenchBrowserSupport.AS_EDITOR
+										| IWorkbenchBrowserSupport.NAVIGATION_BAR
+										| IWorkbenchBrowserSupport.STATUS,
+								"org.eclipse.help.ui", Messages.ReusableHelpPart_internalBrowserTitle, url); //$NON-NLS-1$
+				browser.openURL(BaseHelpSystem.resolve(url, "/help/nftopic")); //$NON-NLS-1$
+				return true;
+			} catch (PartInitException e) {
+				HelpUIPlugin.logError(
+						Messages.ReusableHelpPart_internalWebBrowserError, e);
+			}
 		}
 		return false;
 	}

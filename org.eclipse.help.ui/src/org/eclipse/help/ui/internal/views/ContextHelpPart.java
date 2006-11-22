@@ -506,8 +506,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		} else {
 			styledText = context.getText();
 		}
-		if (styledText == null)
-			return ""; //$NON-NLS-1$
+		if (styledText == null) {
+			return Messages.ContextHelpPart_noDescription;
+		}
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = parent.escapeSpecialChars(decodedString, true);

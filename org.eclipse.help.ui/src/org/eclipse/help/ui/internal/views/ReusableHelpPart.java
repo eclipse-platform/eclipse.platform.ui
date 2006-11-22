@@ -36,6 +36,7 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.search.ISearchEngine2;
+import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
@@ -74,19 +75,17 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivityManagerListener;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -1166,37 +1165,19 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 	private boolean openInternalBrowser(String url) {
 		Preferences pref = HelpBasePlugin.getDefault().getPluginPreferences();
-		boolean openInEditor = pref
-				.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
-		if (openInEditor)
-			return showInWorkbenchBrowser(url, true);
+		boolean openInEditor = pref.getBoolean(IHelpBaseConstants.P_KEY_OPEN_IN_EDITOR);
+		Shell windowShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		Shell helpShell = mform.getForm().getShell();
+		boolean isDialog = (helpShell != windowShell);
+		if (!isDialog && openInEditor) {
+			return DefaultHelpUI.showInWorkbenchBrowser(url, true);
+		}
 		showPage(IHelpUIConstants.HV_BROWSER_PAGE);
 		BrowserPart bpart = (BrowserPart) findPart(IHelpUIConstants.HV_BROWSER);
 		if (bpart != null) {
 			bpart.showURL(BaseHelpSystem
 					.resolve(url, "/help/ntopic").toString()); //$NON-NLS-1$
 			return true;
-		}
-		return false;
-	}
-
-	private boolean showInWorkbenchBrowser(String url, boolean onlyInternal) {
-		IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
-				.getBrowserSupport();
-		if (!onlyInternal || support.isInternalWebBrowserAvailable()) {
-			try {
-				IWebBrowser browser = support
-						.createBrowser(
-								IWorkbenchBrowserSupport.AS_EDITOR
-										| IWorkbenchBrowserSupport.NAVIGATION_BAR
-										| IWorkbenchBrowserSupport.STATUS,
-								"org.eclipse.help.ui", Messages.ReusableHelpPart_internalBrowserTitle, url); //$NON-NLS-1$
-				browser.openURL(BaseHelpSystem.resolve(url, "/help/nftopic")); //$NON-NLS-1$
-				return true;
-			} catch (PartInitException e) {
-				HelpUIPlugin.logError(
-						Messages.ReusableHelpPart_internalWebBrowserError, e);
-			}
 		}
 		return false;
 	}
@@ -1209,7 +1190,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				String aurl = BaseHelpSystem.resolve(url, true).toString();
 				if (aurl.endsWith("&noframes=true") || aurl.endsWith("?noframes=true")) //$NON-NLS-1$ //$NON-NLS-2$
 					aurl = aurl.substring(0, aurl.length() - 14);
-				showInWorkbenchBrowser(aurl, false);
+				DefaultHelpUI.showInWorkbenchBrowser(aurl, false);
 			} catch (Exception e) {
 				HelpUIPlugin.logError("Error opening browser", e); //$NON-NLS-1$
 			}
