@@ -4129,7 +4129,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			if (isNotSynchronizedException(exception) && fErrorCorrectionOnSave == 1 && !isSynchronized) {
 				String title= EditorMessages.Editor_error_save_outofsync_title;
-				String msg= EditorMessages.Editor_error_save_outofsync_message;
+				String msg= NLSUtility.format(EditorMessages.Editor_error_save_outofsync_message, getEditorInput().getToolTipText());
 
 				if (MessageDialog.openQuestion(getSite().getShell(), title, msg))
 					performSave(true, progressMonitor);
