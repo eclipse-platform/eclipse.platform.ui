@@ -1103,6 +1103,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 		action.setId(ITextEditorActionConstants.CONTEXT_PREFERENCES);
 		setAction(ITextEditorActionConstants.CONTEXT_PREFERENCES, action);
+
+		IAction showWhitespaceCharactersAction= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
+		if (showWhitespaceCharactersAction instanceof ShowWhitespaceCharactersAction)
+			((ShowWhitespaceCharactersAction)showWhitespaceCharactersAction).setPreferenceStore(EditorsUI.getPreferenceStore());
 	}
 
 	public Object getAdapter(Class adapter) {

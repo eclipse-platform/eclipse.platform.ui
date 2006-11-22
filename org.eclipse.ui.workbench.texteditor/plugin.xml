@@ -409,6 +409,12 @@
             categoryId="org.eclipse.ui.category.textEditor"
             id="org.eclipse.ui.edit.text.recenter">
 	  </command>     
+	  <command
+	        name="%showWhitespaceCharacters.label"
+	        description="%showWhitespaceCharacters.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+	        id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters">
+	  </command>
 	</extension>
    
 	<extension
@@ -989,6 +995,20 @@
                retarget="true"
                tooltip="%onlyShowSelectedElement.tooltip">
          </action>
+         <action
+               allowLabelUpdate="true"
+               definitionId="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
+               disabledIcon="$nl$/icons/full/dtool16/show_invisible_chars.gif"
+               helpContextId="show_invisible_characters_action_context"
+               hoverIcon="$nl$/icons/full/ctool16/show_invisible_chars.gif"
+               icon="$nl$/icons/full/etool16/show_invisible_chars.gif"
+               id="org.eclipse.ui.edit.text.toggleShowWhitespaceCharacters"
+               label="%showWhitespaceCharacters.label"
+               retarget="true"
+               style="toggle"
+               toolbarPath="Normal/Presentation"
+               tooltip="%showWhitespaceCharacters.tooltip">
+        </action>
       </actionSet>
    </extension>
 </plugin>
