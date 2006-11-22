@@ -341,6 +341,9 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
+		if (!EditorsUI.getPreferenceStore().getBoolean(SpellingService.PREFERENCE_SPELLING_ENABLED))
+			return null;
+		
 		IQuickAssistAssistant assistant= new QuickAssistAssistant();
 		assistant.setQuickAssistProcessor(new SpellingCorrectionProcessor());
 		assistant.setInformationControlCreator(getQuickAssistAssistantInformationControlCreator());

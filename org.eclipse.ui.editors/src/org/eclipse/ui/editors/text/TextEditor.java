@@ -13,6 +13,7 @@ package org.eclipse.ui.editors.text;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
@@ -23,6 +24,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
@@ -205,6 +207,10 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 			
 			if (Boolean.FALSE.equals(event.getNewValue()))
 				SpellingProblem.removeAllInActiveEditor(this, null);
+			
+			IAction quickAssistAction= getAction(ITextEditorActionConstants.QUICK_ASSIST);
+			if (quickAssistAction instanceof IUpdate)
+				((IUpdate)quickAssistAction).update();
 			
 			return;
 		}
