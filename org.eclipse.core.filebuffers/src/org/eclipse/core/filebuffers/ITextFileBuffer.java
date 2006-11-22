@@ -39,7 +39,7 @@ public interface ITextFileBuffer extends IFileBuffer {
 	 * Returns the character encoding to be used for reading and writing the
 	 * buffer's underlying file.
 	 * <p>
-	 * <em>Note:</em>The encoding used to write the file might differ from
+	 * <strong>Note:</strong> The encoding used to write the file might differ from
 	 * the encoding returned by this method if no encoding has been explicitly
 	 * set and the content type of the file is derived from the content (e.g.
 	 * an XML file).
