@@ -246,7 +246,9 @@ public class EditionSelectionDialog extends ResizableDialog {
 						throws InvocationTargetException, InterruptedException {
 					PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 				}
-			
+				public ICompareNavigator getNavigator() {
+					return null;
+				}
 			});
 		}
 		return fCompareConfiguration;

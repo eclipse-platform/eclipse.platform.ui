@@ -80,5 +80,12 @@ public interface ICompareContainer extends IRunnableContext{
 	 * @return the service locator for the container or <code>null</code>
 	 */
 	public IServiceLocator getServiceLocator();
+
+	/**
+	 * Return the {@link ICompareNavigator} associated with this container or <code>null</code>
+	 * if the container does not have a global navigator.
+	 * @return the {@link ICompareNavigator} associated with this container or <code>null</code>
+	 */
+	public ICompareNavigator getNavigator();
 	
 }

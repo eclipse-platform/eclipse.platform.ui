@@ -76,10 +76,20 @@ public interface INavigatable {
 	boolean selectChange(int changeFlag);
 	
 	/**
+	 * Return whether a call to {@link #selectChange(int)} with the same parameter
+	 * would succeed.
+	 * @param changeFlag the change to be selected. One of <code>NEXT_CHANGE</code> or <code>PREVIOUS_CHANGE</code>
+	 * @return whether a call to {@link #selectChange(int)} with the same parameter
+	 * would succeed.
+	 */
+	boolean hasChange(int changeFlag);
+	
+	/**
 	 * Request that the currently selected change be opened. Return <code>true</code>
 	 * if the request resulted in the change being opened and <code>false/code> if the
 	 * currently selected change could not be opened.
 	 * @return whether the selected change was opened.
 	 */
 	boolean openSelectedChange();
+
 }

@@ -137,6 +137,16 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 		Tree tree = viewer.getTree();
 		if (tree == null)
 			return false;
+		TreeItem item = getNextItem(viewer, next);
+		if (item != null)
+			setSelection(viewer, item, fireOpen, expandOnly);
+		return item == null;
+	}
+		
+	private static TreeItem getNextItem(TreeViewer viewer, boolean next) {
+		Tree tree = viewer.getTree();
+		if (tree == null)
+			return null;
 		TreeItem item = null;
 		TreeItem children[] = tree.getSelection();
 		if (children != null && children.length > 0)
@@ -146,8 +156,7 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 			if (children != null && children.length > 0) {
 				item = children[0];
 				if (item != null && item.getItemCount() <= 0) {
-					setSelection(viewer, item, fireOpen, expandOnly); // Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-					return false;
+					return item;
 				}
 			}
 		}
@@ -159,10 +168,14 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 				break;
 		}
 		if (item != null) {
-			setSelection(viewer, item, fireOpen, expandOnly); // Fix for http://dev.eclipse.org/bugs/show_bug.cgi?id=20106
-			return false;
+			return item;
 		}
-		return true;
+		return null;
+	}
+	
+	private static boolean hasChange(TreeViewer viewer, boolean next) {
+		TreeItem item = getNextItem(viewer, next);
+		return item != null;
 	}
 
 	public AbstractTreeViewerAdvisor(ISynchronizePageConfiguration configuration) {
@@ -184,6 +197,10 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 	public boolean navigate(boolean next) {
 		return navigate((TreeViewer)getViewer(), next, false, false);
 	}
+	
+	protected boolean hasChange(boolean next) {
+		return hasChange((TreeViewer)getViewer(), next);
+	}
 
 	/* (non-Javadoc)
 	 * Allow adding an advisor to the PartNavigator and support coordinated
@@ -203,7 +220,7 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Handles a double-click event from the viewer. Expands or collapses a folder when double-clicked.
 	 * 

@@ -196,18 +196,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Object getAdapter(Class adapter) {
 		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
-			if (fNavigator == null)
-				fNavigator= new CompareNavigator(
-					new Object[] {
-						fStructureInputPane,
-						fStructurePane1,
-						fStructurePane2,
-						fContentInputPane
-					}
-				);
-			return fNavigator;
+			return getNavigator();
 		}
 		return null;
+	}
+
+	public synchronized ICompareNavigator getNavigator() {
+		if (fNavigator == null)
+			fNavigator= new CompareNavigator(
+				new Object[] {
+					fStructureInputPane,
+					fStructurePane1,
+					fStructurePane2,
+					fContentInputPane
+				}
+			);
+		return fNavigator;
 	}
 	
 	/* (non Javadoc)

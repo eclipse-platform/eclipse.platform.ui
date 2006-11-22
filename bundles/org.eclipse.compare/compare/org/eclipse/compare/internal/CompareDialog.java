@@ -320,4 +320,11 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		dialog.run(fork, cancelable, runnable);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getNavigator()
+	 */
+	public ICompareNavigator getNavigator() {
+		return null;
+	}
+
 }

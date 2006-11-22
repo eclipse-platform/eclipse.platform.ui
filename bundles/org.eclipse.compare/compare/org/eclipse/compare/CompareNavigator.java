@@ -127,5 +127,41 @@ public class CompareNavigator implements ICompareNavigator {
 		if (nav != null)
 			return nav.openSelectedChange();
 		return false;
+	}
+
+	/**
+	 * Return whether a call to {@link ICompareNavigator#selectChange(boolean)} with the same parameter
+	 * would succeed.
+	 * @param next if <code>true</code> the next change is selected, otherwise the previous change
+	 * @return whether a call to {@link ICompareNavigator#selectChange(boolean)} with the same parameter
+	 * would succeed.
+	 * @since 3.3
+	 */
+	public boolean hasChange(boolean next) {
+
+		// find most down stream CompareViewerPane
+		int n= 0;
+		INavigatable[] navigators= new INavigatable[4];
+		for (int i= 0; i < fPanes.length; i++) {
+			navigators[n]= getNavigator(fPanes[i]);
+			if (navigators[n] != null)
+				n++;
+		}
+		
+		Object downStreamInput = null;						
+		while (n > 0) {
+			n--;
+			if (navigators[n].getInput() == downStreamInput) {
+				// Skip to up stream pane if it has the same input
+				continue;
+			}
+			if (navigators[n].hasChange(next ? INavigatable.NEXT_CHANGE : INavigatable.PREVIOUS_CHANGE)) {
+				return true;
+			}
+			// at end of this navigator
+			downStreamInput = navigators[n].getInput();
+		}
+		
+		return false;
 	}	
 }

@@ -37,6 +37,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -186,7 +187,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	
 	private RGB RESOLVED;
 
-	private boolean fEndOfDocReached;
 	private IDocumentListener fDocumentListener;
 	
 	private IPreferenceStore fPreferenceStore;
@@ -1138,6 +1138,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			}
 			public boolean openSelectedChange() {
 				return false;
+			}
+			public boolean hasChange(int flag) {
+				return getNextVisibleDiff(flag == INavigatable.NEXT_CHANGE, false) != null;
 			}
 		};
 		fComposite.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
@@ -2180,7 +2183,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fCurrentDiff= null;
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
-		fEndOfDocReached= false;
 		fHasErrors= false; // start with no errors
 		
 		CompareConfiguration cc= getCompareConfiguration();
@@ -3252,11 +3254,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (fNextDiff != null) {
 			IAction a= fNextDiff.getAction();
-			a.setEnabled(enableNavigation);
+			a.setEnabled(enableNavigation || hasNextElement(true));
 		}
 		if (fPreviousDiff != null) {
 			IAction a= fPreviousDiff.getAction();
-			a.setEnabled(enableNavigation);
+			a.setEnabled(enableNavigation || hasNextElement(false));
 		}
 		if (fNextChange != null) {
 			IAction a= fNextChange.getAction();
@@ -3475,7 +3477,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		Action a= new Action() {
 			public void run() {
-				navigate(true, true, false);
+				if (navigate(true, false, false)) {
+					endOfDocumentReached(true);
+				}
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.NextDiff."); //$NON-NLS-1$
@@ -3485,7 +3489,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		a= new Action() {
 			public void run() {
-				navigate(false, true, false);
+				if (navigate(false, false, false)) {
+					endOfDocumentReached(false);
+				}
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.PrevDiff."); //$NON-NLS-1$
@@ -3495,7 +3501,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		a= new Action() {
 			public void run() {
-				navigate(true, true, true);
+				if (navigate(true, false, true)) {
+					endOfDocumentReached(true);
+				}
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.NextChange."); //$NON-NLS-1$
@@ -3505,7 +3513,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		a= new Action() {
 			public void run() {
-				navigate(false, true, true);
+				if (navigate(false, false, true)) {
+					endOfDocumentReached(false);
+				}
 			}
 		};
 		Utilities.initAction(a, getResourceBundle(), "action.PrevChange."); //$NON-NLS-1$
@@ -4077,78 +4087,167 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	
 	//---- Navigating and resolving Diffs
 	
+	private Diff getNextVisibleDiff(boolean down, boolean deep) {
+		Diff diff= null;
+		MergeSourceViewer part= getNavigationPart();
+		if (part == null)
+			return null;
+		Point s = part.getSelectedRange();
+		for (;;) {
+			diff = null;
+			diff = internalGetNextDiff(down, deep, part, s);
+			if (diff != null && diff.fDirection == RangeDifference.ANCESTOR
+					&& !isAncestorVisible()) {
+				Position position = diff.getPosition(part);
+				s = new Point(position.getOffset(), position.getLength());
+				diff= null;
+				continue;
+			}
+			break;
+		}
+		return diff;
+	}
+	
+	private Diff internalGetNextDiff(boolean down, boolean deep, MergeSourceViewer part, Point s) {
+		if (fChangeDiffs != null) {
+			if (down)
+				return findNext(part, fChangeDiffs, s.x, s.x+s.y, deep);
+			return findPrev(part, fChangeDiffs, s.x, s.x+s.y, deep);						
+		}
+		return null;
+	}
+	
+	private MergeSourceViewer getNavigationPart() {
+		MergeSourceViewer part= fFocusPart;
+		if (part == null)
+			part= fRight;
+		return part;
+	}
+
+	private Diff getWrappedDiff(Diff diff, boolean down) {
+		if (fChangeDiffs != null && fChangeDiffs.size() > 0) {
+			if (down)
+				return (Diff) fChangeDiffs.get(0);
+			return (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
+		}
+		return null;
+	}
+	
 	/*
 	 * Returns true if end (or beginning) of document reached.
 	 */
 	private boolean navigate(boolean down, boolean wrap, boolean deep) {
-
 		Diff diff= null;
-		
+		boolean wrapped = false;
 		for (;;) {
-			
-			if (fChangeDiffs != null) {
-				MergeSourceViewer part= fFocusPart;
-				if (part == null)
-					part= fRight;
-				
-				if (part != null) {
-					Point s= part.getSelectedRange();
-					if (down)
-						diff= findNext(part, fChangeDiffs, s.x, s.x+s.y, deep);
-					else
-						diff= findPrev(part, fChangeDiffs, s.x, s.x+s.y, deep);					
-				}		
+			diff = getNextVisibleDiff(down, deep);
+			if (diff == null && wrap) {
+				if (wrapped)
+					// We've already wrapped once so break out
+					break;
+				wrapped = true;
+				diff = getWrappedDiff(diff, down);
 			}
-		
-			if (diff == null) {	// at end or beginning
-				if (wrap) {
-					if (!fEndOfDocReached) {
-						fEndOfDocReached= true;
-						if (! endOfDocumentReached(down))
-							return true;
-					}
-					fEndOfDocReached= false;
-					if (fChangeDiffs != null && fChangeDiffs.size() > 0) {
-						if (down)
-							diff= (Diff) fChangeDiffs.get(0);
-						else
-							diff= (Diff) fChangeDiffs.get(fChangeDiffs.size()-1);
-					}
-				} else {
-					fEndOfDocReached= false;	
-					return true;
-				}
-			}
-			
-			setCurrentDiff(diff, true);
-			
+			if (diff != null)
+				setCurrentDiff(diff, true);
 			if (diff != null && diff.fDirection == RangeDifference.ANCESTOR
-									&& !isAncestorVisible())
+					&& !isAncestorVisible())
 				continue;
-				
 			break;
 		}
-
-		return false;
+		return diff == null;
 	}
 	
-	private boolean endOfDocumentReached(boolean down) {
+	private void endOfDocumentReached(boolean down) {
 		Control c= getControl();
 		if (Utilities.okToUse(c)) {
-			
-			c.getDisplay().beep();
-			
-			if (down)
-				return MessageDialog.openQuestion(c.getShell(),
-					CompareMessages.TextMergeViewer_atEnd_title,	
-					CompareMessages.TextMergeViewer_atEnd_message);	
-			return MessageDialog.openQuestion(c.getShell(),
-					CompareMessages.TextMergeViewer_atBeginning_title,	
-					CompareMessages.TextMergeViewer_atBeginning_message);	
+			handleEndOfDocumentReached(c.getShell(), down);
+		}
+	}
+	
+	private void handleEndOfDocumentReached(Shell shell, boolean next) {
+		boolean hasNextElement = hasNextElement(next);
+		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
+		String value = store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION);
+		if (!value.equals(ICompareUIConstants.PREF_VALUE_PROMPT)) {
+			// We only want to do the automatic thing if there is something to do
+			if (hasNextElement || store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION).equals(ICompareUIConstants.PREF_VALUE_LOOP)) {
+				performEndOfDocumentAction(shell, store, ICompareUIConstants.PREF_NAVIGATION_END_ACTION, next);
+				return;
+			}
+		}
+		shell.getDisplay().beep();
+		if (hasNextElement) {
+			String loopMessage;
+			String nextMessage;
+			String message;
+			String title;
+			if (next) {
+				title = CompareMessages.TextMergeViewer_0;
+				message = CompareMessages.TextMergeViewer_1;
+				loopMessage = CompareMessages.TextMergeViewer_2;
+				nextMessage = CompareMessages.TextMergeViewer_3;
+			} else {
+				title = CompareMessages.TextMergeViewer_4;
+				message = CompareMessages.TextMergeViewer_5;
+				loopMessage = CompareMessages.TextMergeViewer_6;
+				nextMessage = CompareMessages.TextMergeViewer_7;
+			}
+			String[] localLoopOption = new String[] { loopMessage, ICompareUIConstants.PREF_VALUE_LOOP };
+			String[] nextElementOption = new String[] { nextMessage, ICompareUIConstants.PREF_VALUE_NEXT};
+			NavigationEndDialog dialog = new NavigationEndDialog(shell, 
+					title, 
+					null, 
+					message,
+					new String[][] { 
+					localLoopOption,
+					nextElementOption,
+			});
+			int result = dialog.open();
+			if (result == Window.OK) {
+				performEndOfDocumentAction(shell, store, ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL, next);
+				if (dialog.getToggleState()) {
+					store.putValue(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL));
+				}
+			}
+		} else {
+			String message;
+			String title;
+			if (next) {
+				title = CompareMessages.TextMergeViewer_8;
+				message = CompareMessages.TextMergeViewer_9;
+			} else {
+				title = CompareMessages.TextMergeViewer_10;
+				message = CompareMessages.TextMergeViewer_11;
+			}
+			if (MessageDialog.openQuestion(shell, title, message)) {
+				selectFirstDiff(next);
+			}
+		}
+	}
+	
+	private void performEndOfDocumentAction(Shell shell, IPreferenceStore store, String key, boolean next) {
+		String value = store.getString(key);
+		if (value.equals(ICompareUIConstants.PREF_VALUE_NEXT)) {
+			ICompareNavigator navigator = getCompareConfiguration().getContainer().getNavigator();
+			if (hasNextElement(next))
+				navigator.selectChange(next);
+			else
+				shell.getDisplay().beep();
+		} else {
+			selectFirstDiff(next);
+		}
+	}
+	
+	private boolean hasNextElement(boolean down) {
+		ICompareNavigator navigator = getCompareConfiguration().getContainer().getNavigator();
+		if (navigator instanceof CompareNavigator) {
+			CompareNavigator n = (CompareNavigator) navigator;
+			return n.hasChange(down);
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Find the Diff that overlaps with the given TextPart's text range.
 	 * If the range doesn't overlap with any range <code>null</code>
@@ -4226,8 +4325,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 		if (fCenterButton != null && !fCenterButton.isDisposed())
 			fCenterButton.setVisible(false);
-						
-		fEndOfDocReached= false;	
 
 		Diff oldDiff= fCurrentDiff;
 					

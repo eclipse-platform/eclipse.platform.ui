@@ -24,7 +24,13 @@ public interface ICompareUIConstants {
 	public static final String PROP_ANCESTOR_VISIBLE = PREFIX + "AncestorVisible"; //$NON-NLS-1$
 	public static final String PROP_IGNORE_ANCESTOR = PREFIX + "IgnoreAncestor"; //$NON-NLS-1$
 	public static final String PROP_TITLE = PREFIX + "Title"; //$NON-NLS-1$
-	public static final String PROP_TITLE_IMAGE = "TitleImage"; //$NON-NLS-1$
+	public static final String PROP_TITLE_IMAGE = PREFIX + "TitleImage"; //$NON-NLS-1$
 	
 	public static final int COMPARE_IMAGE_WIDTH= 22;
+	
+	public static final String PREF_NAVIGATION_END_ACTION= PREFIX + "NavigationEndAction"; //$NON-NLS-1$
+	public static final String PREF_NAVIGATION_END_ACTION_LOCAL= PREFIX + "NavigationEndActionLocal"; //$NON-NLS-1$
+	public static final String PREF_VALUE_PROMPT = "prompt"; //$NON-NLS-1$
+	public static final String PREF_VALUE_LOOP = "loop"; //$NON-NLS-1$
+	public static final String PREF_VALUE_NEXT = "next"; //$NON-NLS-1$
 }

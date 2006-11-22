@@ -323,5 +323,11 @@
             contentViewerId="org.eclipse.compare.TextViewerCreator">
 	  </contentTypeBinding>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.compare.internal.ComparePreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>

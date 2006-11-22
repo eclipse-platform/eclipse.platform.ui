@@ -30,4 +30,5 @@ public interface ICompareNavigator {
 	 * @return returns <code>true</code> if end (beginning) is reached, <code>false</code> otherwise
 	 */
 	public boolean selectChange(boolean next);
+
 }

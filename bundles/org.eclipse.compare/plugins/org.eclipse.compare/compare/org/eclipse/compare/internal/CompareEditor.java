@@ -411,6 +411,13 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			InterruptedException {
 		PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getNavigator()
+	 */
+	public ICompareNavigator getNavigator() {
+		return null;
+	}
 	
 }
 

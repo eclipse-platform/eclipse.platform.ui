@@ -203,7 +203,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		ComparePreferencePage.initDefaults(getPreferenceStore());
 	}
 			
 	public void stop(BundleContext context) throws Exception {
@@ -416,7 +415,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
 		if (input.canRunAsJob()) {
-			Job job = new Job("Opening Compare Editor") {
+			Job job = new Job(CompareMessages.CompareUIPlugin_0) {
 				protected IStatus run(IProgressMonitor monitor) {
 					IStatus status = prepareInput(input, monitor);
 					if (status.isOK()) {
@@ -480,7 +479,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
 		if (input.canRunAsJob()) {
-			Job job = new Job("Opening Compare Dialog") {
+			Job job = new Job(CompareMessages.CompareUIPlugin_1) {
 				protected IStatus run(IProgressMonitor monitor) {
 					IStatus status = prepareInput(input, monitor);
 					if (status.isOK()) {
