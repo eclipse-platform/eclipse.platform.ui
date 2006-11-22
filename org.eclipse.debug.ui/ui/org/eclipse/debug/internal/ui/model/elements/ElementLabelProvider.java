@@ -36,12 +36,12 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	
 	interface ILabelJob {
 		/**
-		 * Returns whether the update was queued.
+		 * Returns whether the updates were queued.
 		 * 
-		 * @param update update
-		 * @return whether the update was queued
+		 * @param updates updates
+		 * @return whether the updates were queued
 		 */
-		public boolean queue(ILabelUpdate update);
+		public boolean queue(ILabelUpdate[] updates);
 	}
 	
 	class LabelJob extends Job implements ILabelJob {
@@ -64,8 +64,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 		 */
-		public boolean queue(ILabelUpdate update) {
-			return fUpdater.queue(update);
+		public boolean queue(ILabelUpdate[] updates) {
+			return fUpdater.queue(updates);
 		}
 
 		/* (non-Javadoc)
@@ -97,8 +97,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider.ILabelJob#queue(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
 		 */
-		public boolean queue(ILabelUpdate update) {
-			return fUpdater.queue(update);
+		public boolean queue(ILabelUpdate[] updates) {
+			return fUpdater.queue(updates);
 		}
 		
 		/* (non-Javadoc)
@@ -116,11 +116,13 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 		
 		LinkedList fQueue = new LinkedList();
 		
-		public synchronized boolean queue(ILabelUpdate update) {
+		public synchronized boolean queue(ILabelUpdate[] updates) {
 			if (fQueue == null) {
 				return false;
 			} else {
-				fQueue.addLast(update);
+				for (int i = 0; i < updates.length; i++) {
+					fQueue.addLast(updates[i]);
+				}
 				return true;
 			}
 		}
@@ -234,22 +236,22 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;	
 
     /* (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#updateLabel(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate)
+     * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */
-    public synchronized void update(ILabelUpdate update) {
+    public synchronized void update(ILabelUpdate[] updates) {
 		if (fLabelJob == null) {
-			fLabelJob = newLabelJob(update);
+			fLabelJob = newLabelJob(updates);
 		}
-		if (!((ILabelJob)fLabelJob).queue(update)) {
-			fLabelJob = newLabelJob(update);
-			((ILabelJob)fLabelJob).queue(update);
+		if (!((ILabelJob)fLabelJob).queue(updates)) {
+			fLabelJob = newLabelJob(updates);
+			((ILabelJob)fLabelJob).queue(updates);
 		}
 		// TODO: rule
 		fLabelJob.schedule();
 	}
     
-    private Job newLabelJob(ILabelUpdate update) {
-    	if (requiresUIJob(update)) {
+    private Job newLabelJob(ILabelUpdate[] updates) {
+    	if (requiresUIJob(updates)) {
 			return new UILabelJob();
 		} else {
 			return new LabelJob();
@@ -259,7 +261,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
     /** 
      * Returns whether a UI job should be used for updates versus a non-UI job.
      */
-    protected boolean requiresUIJob(ILabelUpdate update) {
+    protected boolean requiresUIJob(ILabelUpdate[] updates) {
     	return false;
     }
 	

@@ -27,6 +27,16 @@ import org.eclipse.ui.progress.WorkbenchJob;
 abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IViewerUpdate {
 
 	private ModelContentProvider fContentProvider;
+	
+	/**
+	 * Element's tree path
+	 */
+	private TreePath fElementPath;
+	
+	/**
+	 * Element
+	 */
+	private Object fElement;
     
     /**
      * Whether this request's 'done' method has been called.
@@ -59,9 +69,13 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
      * Constructs an update for the given content provider
      * 
      * @param contentProvider content provider
+     * @param elementPath path to associated model element - empty for root element
+     * @param element associated model element
      */
-    public ViewerUpdateMonitor(ModelContentProvider contentProvider) {
+    public ViewerUpdateMonitor(ModelContentProvider contentProvider, TreePath elementPath, Object element) {
         fContentProvider = contentProvider;
+        fElement = element;
+        fElementPath = elementPath;
         // serialize updates per viewer
         fViewerUpdateJob.setRule(getUpdateSchedulingRule());
         fViewerUpdateJob.setSystem(true);
@@ -133,8 +147,18 @@ abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IVi
 		return fContentProvider.getPresentationContext();
 	}
 
-	public Object getElement(TreePath path) {
-		return fContentProvider.getElement(path);
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElement()
+	 */
+	public Object getElement() {
+		return fElement;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
+	 */
+	public TreePath getElementPath() {
+		return fElementPath;
 	}
 	
 	/**

@@ -18,13 +18,6 @@ import org.eclipse.ui.IMemento;
  * @since 3.3
  */
 public interface IElementMementoRequest extends IViewerUpdate {
-
-	/**
-	 * Returns the element for which the memento has been requested.
-	 * 
-	 * @return element
-	 */
-	public Object getElement();
 	
 	/**
 	 * Returns the memento used to persist the element.

@@ -20,7 +20,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.jface.viewers.TreePath;
 
 /**
  * @since 3.3
@@ -83,15 +82,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				IPresentationContext context = update.getPresentationContext();
 				if (supportsContext(context)) {
 					int offset = update.getOffset();
-					Object parent = update.getElement(update.getElementPath());
-					if (parent == null) {
-						update.setCanceled(true);
-					} else {
-						Object[] children = getChildren(parent, offset, update.getLength(), context, update);
-						if (!update.isCanceled() && children != null) {
-							for (int i = 0; i < children.length; i++) {
-								update.setChild(children[i], offset + i);
-							}
+					Object[] children = getChildren(update.getElement(), offset, update.getLength(), context, update);
+					if (!update.isCanceled() && children != null) {
+						for (int i = 0; i < children.length; i++) {
+							update.setChild(children[i], offset + i);
 						}
 					}
 				}
@@ -114,17 +108,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			IStatus status = Status.OK_STATUS;
 			try {
 				IPresentationContext context = update.getPresentationContext();
-				TreePath elementPath = update.getElementPath();
 				if (supportsContext(context)) {
-					Object element = update.getElement(elementPath);
-					if (element == null) {
-						// viewer input changed to null
-						update.setCanceled(true);
-					} else {
-						int childCount = getChildCount(element, context, update);
-						if (!update.isCanceled()) {
-							update.setChildCount(childCount);
-						}
+					int childCount = getChildCount( update.getElement(), context, update);
+					if (!update.isCanceled()) {
+						update.setChildCount(childCount);
 					}
 				} else {
 					update.setChildCount(0);
@@ -225,17 +212,10 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 			IStatus status = Status.OK_STATUS;
 			try {
 				IPresentationContext context = update.getPresentationContext();
-				TreePath elementPath = update.getElementPath();
 				if (supportsContext(context)) {
-					Object element = update.getElement(elementPath);
-					if (element == null) {
-						// viewer input changed to null
-						update.setCanceled(true);
-					} else {
-						boolean hasChildren = hasChildren(element, context, update);
-						if (!update.isCanceled()) {
-							update.setHasChilren(hasChildren);
-						}
+					boolean hasChildren = hasChildren(update.getElement(), context, update);
+					if (!update.isCanceled()) {
+						update.setHasChilren(hasChildren);
 					}
 				} else {
 					update.setHasChilren(false);

@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -26,8 +27,8 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 	 * @param element
 	 * @param memento
 	 */
-	public ElementCompareRequest(ModelContentProvider provider, Object element, IMemento memento, ModelDelta delta) {
-		super(provider, provider.getPresentationContext(), element, memento);
+	public ElementCompareRequest(ModelContentProvider provider, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
+		super(provider, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
 		fDelta = delta;
 	}

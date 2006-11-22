@@ -23,6 +23,7 @@ abstract class MementoUpdate extends AbstractRequestMonitor implements IViewerUp
 	
 	private IPresentationContext fContext;
 	private Object fElement;
+	private TreePath fElementPath;
 	private IMemento fMemento;
 	protected ModelContentProvider fProvider;
 	
@@ -33,9 +34,10 @@ abstract class MementoUpdate extends AbstractRequestMonitor implements IViewerUp
 	 * @param element element
 	 * @param memento memento
 	 */
-	public MementoUpdate(ModelContentProvider provider, IPresentationContext context, Object element, IMemento memento) {
+	public MementoUpdate(ModelContentProvider provider, IPresentationContext context, Object element, TreePath elementPath, IMemento memento) {
 		fContext = context;
 		fElement = element;
+		fElementPath = elementPath;
 		fMemento = memento;
 		fProvider = provider;
 	}
@@ -49,6 +51,10 @@ abstract class MementoUpdate extends AbstractRequestMonitor implements IViewerUp
 	
 	public Object getElement() {
 		return fElement;
+	}
+	
+	public TreePath getElementPath() {
+		return fElementPath;
 	}
 	
 	public IMemento getMemento() {

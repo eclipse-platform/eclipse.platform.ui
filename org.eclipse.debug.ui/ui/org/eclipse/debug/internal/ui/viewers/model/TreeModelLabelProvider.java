@@ -190,7 +190,7 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 		Object element = elementPath.getLastSegment();
 		IElementLabelProvider presentation = getLabelAdapter(element);
 		if (presentation != null) {
-			presentation.update(new LabelUpdate(elementPath, (TreeItem) row.getItem(), this, visibleColumns));
+			presentation.update(new ILabelUpdate[]{new LabelUpdate(elementPath, (TreeItem) row.getItem(), this, visibleColumns)});
 		} else if (element instanceof String) {
 			// for example, expression error messages
 			row.setText(0, (String)element);

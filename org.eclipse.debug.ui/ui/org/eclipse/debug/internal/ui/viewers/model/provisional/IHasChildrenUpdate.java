@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Context sensitive update request for whether an element has children.
@@ -19,14 +18,6 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public interface IHasChildrenUpdate extends IViewerUpdate {
 
-	/**
-	 * The element this request is for specified as a tree path.
-	 * An empty path identifies the root element.
-	 * 
-	 * @return element as a tree path
-	 */
-	public TreePath getElementPath();
-	
 	/**
 	 * Sets whether there are children for this update.
 	 * 

@@ -85,7 +85,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path);
+			ChildrenCountUpdate request = new ChildrenCountUpdate(this, path, element);
 			List requests = (List) fPendingCountRequests.get(contentAdapter);
 			if (requests != null) {
 				requests.add(request);
@@ -121,7 +121,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		Object parent = getElement(parentPath);
 		IElementContentProvider contentAdapter = getContentAdapter(parent);
 		if (contentAdapter != null) {
-			final ChildrenUpdate newRequest = new ChildrenUpdate(this, parentPath, modelIndex, contentAdapter);
+			final ChildrenUpdate newRequest = new ChildrenUpdate(this, parentPath, parent, modelIndex, contentAdapter);
 			fPendingChildRequests.put(parentPath, newRequest);
 			fTimer.schedule(new TimerTask() {
 				public void run() {
@@ -135,7 +135,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		Object element = getElement(path);
 		IElementContentProvider contentAdapter = getContentAdapter(element);
 		if (contentAdapter != null) {
-			HasChildrenUpdate request = new HasChildrenUpdate(this, path);
+			HasChildrenUpdate request = new HasChildrenUpdate(this, path, element);
 			List requests = (List) fPendingHasChildrenRequests.get(contentAdapter);
 			if (requests != null) {
 				requests.add(request);

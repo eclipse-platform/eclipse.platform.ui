@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IMemento;
 
 /**
@@ -28,8 +29,8 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 	 * @param element
 	 * @param memento
 	 */
-	public ElementMementoRequest(ModelContentProvider provider, IMementoManager manager, IPresentationContext context, Object element, IMemento memento, ModelDelta delta) {
-		super(provider, context, element, memento);
+	public ElementMementoRequest(ModelContentProvider provider, IMementoManager manager, IPresentationContext context, Object element, TreePath elementPath, IMemento memento, ModelDelta delta) {
+		super(provider, context, element, elementPath, memento);
 		fManager = manager;
 		fDelta = delta;
 	}

@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
@@ -244,7 +245,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#processReqeusts()
 				 */
 				public void processReqeusts() {
-					defaultProvider.encodeElement(fRequest);
+					defaultProvider.encodeElements(new IElementMementoRequest[]{fRequest});
 				}
 			
 				/* (non-Javadoc)
@@ -256,7 +257,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			
 			};
 			manager.addRequest(new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
-									delta.getElement(), inputMemento, delta));
+									delta.getElement(), getViewerTreePath(delta), inputMemento, delta));
 			manager.processReqeusts();
 		}
 	}
@@ -294,9 +295,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						provider = defaultProvider;
 					}
 					if (provider != null) {
-						provider.compareElement(
+						provider.compareElements(new IElementCompareRequest[]{
 								new ElementCompareRequest(ModelContentProvider.this,
-										potentialMatch, (IMemento) element, (ModelDelta)delta));
+										potentialMatch, path, (IMemento) element, (ModelDelta)delta)});
 					}
 				} else {
 					if (element.equals(potentialMatch)) {
@@ -339,7 +340,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		final XMLMemento childrenMemento = XMLMemento.createWriteRoot("CHILDREN_MEMENTO"); //$NON-NLS-1$
 		final IMementoManager manager = new IMementoManager() {
 		
-			private Set requests = new HashSet();
+			/**
+			 * Maps element memento provider to list of memento requests
+			 */
+			private Map requestMap = new HashMap();
+			private Set allRequests = new HashSet();
 			private boolean abort = false; 
 			
 			/* (non-Javadoc)
@@ -348,8 +353,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			public synchronized void requestComplete(IElementMementoRequest request) {
 				if (!abort) {
 					if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
-						requests.remove(request);
-						if (requests.isEmpty()) {
+						allRequests.remove(request);
+						if (allRequests.isEmpty()) {
+							requestMap.clear();
 							XMLMemento keyMemento = (XMLMemento) rootDelta.getElement();
 							StringWriter writer = new StringWriter();
 							try {
@@ -361,12 +367,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						}
 					} else {
 						abort = true;
-						Iterator iterator = requests.iterator();
+						Iterator iterator = allRequests.iterator();
 						while (iterator.hasNext()) {
 							IElementMementoRequest req = (IElementMementoRequest) iterator.next();
 							req.setCanceled(true);
 						}
-						requests.clear();
+						requestMap.clear();
+						allRequests.clear();
 					}
 				}
 			}
@@ -375,13 +382,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#processReqeusts()
 			 */
 			public void processReqeusts() {
-				IElementMementoRequest[] req = (IElementMementoRequest[]) requests.toArray(new IElementMementoRequest[requests.size()]);
-				for (int i = 0; i < req.length; i++) {
-					IElementMementoProvider provider = getViewerStateAdapter(req[i].getElement());
-					if (provider == null) {
-						provider = defaultProvider;
-					}
-					provider.encodeElement(req[i]);
+				Iterator iterator = requestMap.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Entry entry = (Entry) iterator.next();
+					IElementMementoProvider provider = (IElementMementoProvider) entry.getKey();
+					List list = (List) entry.getValue();
+					provider.encodeElements((IElementMementoRequest[]) list.toArray(new IElementMementoRequest[list.size()]));
 				}
 			}
 		
@@ -389,7 +395,18 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.IMementoManager#addRequest(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest)
 			 */
 			public synchronized void addRequest(IElementMementoRequest request) {
-				requests.add(request);
+				if (allRequests.add(request)) {
+					IElementMementoProvider provider = getViewerStateAdapter(request.getElement());
+					if (provider == null) {
+						provider = defaultProvider;
+					}
+					List list = (List)requestMap.get(provider);
+					if (list == null) {
+						list = new ArrayList();
+						requestMap.put(provider, list);
+					}
+					list.add(request);
+				}
 			}
 		
 		};
@@ -398,11 +415,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				if (delta.getParentDelta() == null) {
 					manager.addRequest(
 						new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
-								delta.getElement(), inputMemento, (ModelDelta)delta));
+								delta.getElement(), getViewerTreePath(delta), inputMemento, (ModelDelta)delta));
 				} else {
 					manager.addRequest(
 						new ElementMementoRequest(ModelContentProvider.this, manager, getPresentationContext(),
-								delta.getElement(), childrenMemento.createChild("CHILD_ELEMENT"), (ModelDelta)delta)); //$NON-NLS-1$
+								delta.getElement(), getViewerTreePath(delta), childrenMemento.createChild("CHILD_ELEMENT"), (ModelDelta)delta)); //$NON-NLS-1$
 				}
 				return true;
 			}

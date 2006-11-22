@@ -26,18 +26,22 @@ import org.eclipse.ui.IMemento;
  */
 public abstract class ElementMementoProvider implements IElementMementoProvider {
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElement(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
 	 */
-	public void compareElement(final IElementCompareRequest request) {
+	public void compareElements(final IElementCompareRequest[] requests) {
 		Job job = new Job("compare element") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					request.setEqual(isEqual(request.getElement(), request.getMemento(), request.getPresentationContext()));
-				} catch (CoreException e) {
-					request.setStatus(e.getStatus());
+				for (int i = 0; i < requests.length; i++) {
+					IElementCompareRequest request = requests[i];
+					try {
+						request.setEqual(isEqual(request.getElement(), request.getMemento(), request.getPresentationContext()));
+					} catch (CoreException e) {
+						request.setStatus(e.getStatus());
+					}
+					request.done();
 				}
-				request.done();
 				return Status.OK_STATUS;
 			}
 		};
@@ -57,19 +61,22 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 	protected abstract boolean isEqual(Object element, IMemento memento, IPresentationContext context) throws CoreException;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElement(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
 	 */
-	public void encodeElement(final IElementMementoRequest request) {
+	public void encodeElements(final IElementMementoRequest[] requests) {
 		Job job = new Job("encode element") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					if (!encodeElement(request.getElement(), request.getMemento(), request.getPresentationContext())) {
-						request.setCanceled(true);
+				for (int i = 0; i < requests.length; i++) {
+					IElementMementoRequest request = requests[i];
+					try {
+						if (!encodeElement(request.getElement(), request.getMemento(), request.getPresentationContext())) {
+							request.setCanceled(true);
+						}
+					} catch (CoreException e) {
+						request.setStatus(e.getStatus());
 					}
-				} catch (CoreException e) {
-					request.setStatus(e.getStatus());
+					request.done();
 				}
-				request.done();
 				return Status.OK_STATUS;
 			}
 		};

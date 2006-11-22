@@ -25,19 +25,19 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 public interface IElementMementoProvider {
 	
 	/**
-	 * Creates and stores a memento for the element specified in the request.
-	 * The request should be cancelled if a memento is not supported for the
+	 * Creates and stores a mementos for the elements specified in the requests.
+	 * A request should be cancelled if a memento is not supported for the
 	 * specified element or context.
 	 * 
-	 * @param request specifies element and provides memento store
+	 * @param requests specifies elements and provides memento stores
 	 */
-	public void encodeElement(IElementMementoRequest request);
+	public void encodeElements(IElementMementoRequest[] requests);
 	
 	/**
-	 * Determines if a memento represents the element specified in the request.
+	 * Determines whether mementos represent associated elements specified in the requests.
 	 * 
-	 * @param request specifies element and previously created memento
+	 * @param requests specifies each element and previously created memento
 	 */
-	public void compareElement(IElementCompareRequest request);
+	public void compareElements(IElementCompareRequest[] requests);
 
 }

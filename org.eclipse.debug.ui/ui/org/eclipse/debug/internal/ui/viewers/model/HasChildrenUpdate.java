@@ -19,15 +19,13 @@ import org.eclipse.jface.viewers.TreeViewer;
  */
 class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdate {
 
-	private TreePath fElementPath;
 	private boolean fHasChildren = false;
 	
 	/**
 	 * @param contentProvider
 	 */
-	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath) {
-		super(contentProvider);
-		fElementPath = elementPath;
+	public HasChildrenUpdate(ModelContentProvider contentProvider, TreePath elementPath, Object element) {
+		super(contentProvider, elementPath, element);
 	}
 
 	/* (non-Javadoc)
@@ -35,20 +33,17 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	 */
 	protected void performUpdate() {
 		ModelContentProvider contentProvider = getContentProvider();
+		TreePath elementPath = getElementPath();
 		if (!fHasChildren) {
-			contentProvider.clearFilters(fElementPath);
+			contentProvider.clearFilters(elementPath);
 		}
 		if (ModelContentProvider.DEBUG_CONTENT_PROVIDER) {
-			System.out.println("setHasChildren(" + getElement(fElementPath) + " >> " + fHasChildren); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("setHasChildren(" + getElement() + " >> " + fHasChildren); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		((TreeViewer)(contentProvider.getViewer())).setHasChildren(fElementPath, fHasChildren);
-		if (fElementPath.getSegmentCount() > 0) {
-			contentProvider.doRestore(fElementPath);
+		((TreeViewer)(contentProvider.getViewer())).setHasChildren(elementPath, fHasChildren);
+		if (elementPath.getSegmentCount() > 0) {
+			contentProvider.doRestore(elementPath);
 		}
-	}
-
-	public TreePath getElementPath() {
-		return fElementPath;
 	}
 
 	public void setHasChilren(boolean hasChildren) {
@@ -59,7 +54,7 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#isContained(org.eclipse.jface.viewers.TreePath)
 	 */
 	boolean isContained(TreePath path) {
-		return fElementPath.startsWith(path, null);
+		return getElementPath().startsWith(path, null);
 	}
 
 }

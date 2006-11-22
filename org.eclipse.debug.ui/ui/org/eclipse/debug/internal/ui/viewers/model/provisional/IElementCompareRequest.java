@@ -10,28 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.ui.IMemento;
 
 /**
  * Request to compare an element to a previously created memento.
  * 
  * @since 3.3
  */
-public interface IElementCompareRequest extends IViewerUpdate {
-
-	/**
-	 * The element to compare against this request's memento.
-	 * 
-	 * @return element
-	 */
-	public Object getElement();
-	
-	/**
-	 * The memento to compare this request's element.
-	 * 
-	 * @return memento
-	 */
-	public IMemento getMemento();
+public interface IElementCompareRequest extends IElementMementoRequest {
 	
 	/**
 	 * Sets whether this request's memento represents this requests's element.

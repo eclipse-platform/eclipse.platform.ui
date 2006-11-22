@@ -19,10 +19,10 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 public interface IElementLabelProvider {
 	
 	/**
-	 * Updates the specified label.
+	 * Updates the specified labels.
 	 * 
-	 * @param update specifies the element and context for which a label is requested and
-	 *  stores updated label attributes
+	 * @param updates each update specifies the element and context for which a label is requested and
+	 *  stores label attributes
 	 */
-	public void update(ILabelUpdate update);
+	public void update(ILabelUpdate[] updates);
 }

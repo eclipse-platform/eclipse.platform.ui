@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.jface.viewers.TreePath;
 
 
 /**
@@ -19,14 +18,6 @@ import org.eclipse.jface.viewers.TreePath;
  * @since 3.3
  */
 public interface IChildrenCountUpdate extends IViewerUpdate {
-	
-	/**
-	 * Returns the element that a child count has been requested for
-	 * as a tree path. An empty path identifies the root element.
-	 * 
-	 * @return element as a tree path
-	 */
-	public TreePath getElementPath();
 
 	/**
 	 * Sets the number of children for this update.
