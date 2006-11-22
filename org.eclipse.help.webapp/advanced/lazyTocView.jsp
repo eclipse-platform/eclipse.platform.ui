@@ -124,8 +124,5 @@ if (requestData.isIE()){
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="onunloadHandler()">
    <DIV class = "root" id = "tree_root">
    </DIV>
-
-    <iframe name="dynLoadFrame" title="<%=ServletResources.getString("ignore", "dynLoadFrame", request)%>" style="visibility:hidden" tabindex="-1" frameborder="no" width="0" height="0" scrolling="no">
-    </iframe>
 </body>
 </html>
