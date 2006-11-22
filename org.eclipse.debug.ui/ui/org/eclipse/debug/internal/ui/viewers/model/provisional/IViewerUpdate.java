@@ -15,7 +15,9 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A context sensitive viewer update request.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.3
  */
 public interface IViewerUpdate extends IStatusMonitor {

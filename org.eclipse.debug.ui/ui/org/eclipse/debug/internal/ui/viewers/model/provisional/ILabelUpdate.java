@@ -16,7 +16,9 @@ import org.eclipse.swt.graphics.RGB;
 
 /**
  * Context sensitive label update request for an element.
- *  
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p> 
  * @since 3.3
  */
 public interface ILabelUpdate extends IViewerUpdate {

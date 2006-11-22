@@ -14,7 +14,9 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Request to store a memento for an element in a specific context.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.3
  */
 public interface IElementMementoRequest extends IViewerUpdate {

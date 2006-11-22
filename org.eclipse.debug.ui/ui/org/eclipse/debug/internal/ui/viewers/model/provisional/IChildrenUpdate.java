@@ -14,7 +14,9 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 /**
  * Context sensitive children update request for a parent and subrange of its
  * children.
- *  
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.3
  */
 public interface IChildrenUpdate extends IViewerUpdate {

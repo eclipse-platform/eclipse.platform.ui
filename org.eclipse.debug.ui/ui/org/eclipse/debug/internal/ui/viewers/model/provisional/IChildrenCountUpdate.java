@@ -14,7 +14,9 @@ package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
 /**
  * Request monitor used to collect the number of children for an element in a viewer.
- * 
+ * <p>
+ * Clients are not intended to implement this interface.
+ * </p>
  * @since 3.3
  */
 public interface IChildrenCountUpdate extends IViewerUpdate {
