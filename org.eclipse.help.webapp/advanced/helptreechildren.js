@@ -118,12 +118,14 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     setImage(topicImage, image);
     var topicName=document.createTextNode(name);
     
-    if (!isLeaf) {
-        var plusMinusImage= document.createElement("IMG");
-        plusMinusImage.className = "expander";
-        setImage(plusMinusImage, "plus");
-        container.appendChild(plusMinusImage);
+    var plusMinusImage= document.createElement("IMG");
+    plusMinusImage.className = "expander";
+    setImage(plusMinusImage, "plus");
+    if (isLeaf) {
+        plusMinusImage.className = "h";
+        plusMinusImage.alt = "";
     }
+    container.appendChild(plusMinusImage);
       
     var anchor = document.createElement("a");
     if (href === null) {
