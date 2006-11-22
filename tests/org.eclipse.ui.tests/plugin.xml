@@ -2935,6 +2935,7 @@
    </extension>
   
    <extension
+         id="menusX1"
          point="org.eclipse.ui.menus2">
       <menuAddition
             locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
@@ -3134,6 +3135,26 @@
                 label="Dynamic Item">
             </item>
          </menu>
+      </menuAddition>
+      <menuAddition
+            locationURI="menu://org.eclipse.ui.tests.api.MenuTestHarness">
+         <item
+               commandId="org.eclipse.ui.tests.bogusCmdId"
+               id="org.eclipse.ui.tests.menus.itemX1"
+               label="Menu Item X1">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        operator="or">
+                     <equals
+                           value="org.eclipse.ui.menus.contexts.test1">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </item>
       </menuAddition>
    </extension>
 </plugin>            
