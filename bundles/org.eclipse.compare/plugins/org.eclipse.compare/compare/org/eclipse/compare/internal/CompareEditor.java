@@ -16,6 +16,7 @@ import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -25,11 +26,13 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -42,12 +45,18 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
-	/** the SWT control */
+	
+	private PageBook fPageBook;
+	
+	/** the SWT control from the compare editor input*/
 	private Control fControl;
 	/** the outline page */
 	private CompareOutlinePage fOutlinePage;
 
 	private CompareSaveable fSaveable;
+
+	private Control initializingPage;
+	private Control noDiffFoundPage;
 	
 	/**
 	 * No-argument constructor required for extension points.
@@ -138,7 +147,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			
 		super.setInput(input);
 		
-		CompareEditorInput cei= (CompareEditorInput) input;
+		final CompareEditorInput cei= (CompareEditorInput) input;
 		cei.setContainer(this);
 
 		setTitleImage(cei.getTitleImage());
@@ -151,12 +160,53 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (oldInput != null) {
 			if (fControl != null && !fControl.isDisposed()) {
 				Point oldSize= fControl.getSize();
-				Composite parent= fControl.getParent();
 				fControl.dispose();
-				createPartControl(parent);
+				fControl = null;
+				createCompareControl();
 				if (fControl != null)
 					fControl.setSize(oldSize);
 			}
+		}
+		
+		if (cei.getCompareResult() == null) {
+			// Need to cancel any running jobs associated with the oldInput
+			Job.getJobManager().cancel(oldInput);
+			Job job = new Job(CompareMessages.CompareUIPlugin_0) {
+				protected IStatus run(IProgressMonitor monitor) {
+					IStatus status = CompareUIPlugin.getDefault().prepareInput(cei, monitor);
+					if (status.isOK()) {
+						// We need to update the saveables list
+						Saveable[] saveables = getSaveables();
+						if (saveables.length > 0) {
+							ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+							if (listener != null) {
+								listener.handleLifecycleEvent(
+										new SaveablesLifecycleEvent(CompareEditor.this, SaveablesLifecycleEvent.POST_OPEN, saveables, false));
+							}
+						}
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								createCompareControl();
+							}
+						});
+						return Status.OK_STATUS;
+					}
+					if (status.getCode() == CompareUIPlugin.NO_DIFFERENCE) {
+						Display.getDefault().asyncExec(new Runnable() {
+							public void run() {
+								handleNoDifference();
+							}
+						});
+						return Status.OK_STATUS;
+					}
+					return status;
+				}
+				public boolean belongsTo(Object family) {
+					return cei.belongsTo(family);
+				}
+			};
+			job.setUser(true);
+			Utilities.schedule(job, getSite());
 		}
         
         firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
@@ -166,7 +216,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
         		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
         }
 	}
-	
+
 	/*
 	 * Helper method used to find an action bars using the Utilities#findActionsBars(Control)
 	 */
@@ -186,12 +236,41 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 */
 	public void createPartControl(Composite parent) {
 		parent.setData(this);
-		
+		fPageBook = new PageBook(parent, SWT.NONE);
+		createCompareControl();
+	}
+
+	private void createCompareControl() {
+		if (fPageBook.isDisposed())
+			return;
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput) {
-			fControl= ((CompareEditorInput) input).createContents(parent);
-			PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
+			CompareEditorInput ci = (CompareEditorInput) input;
+			if (ci.getCompareResult() == null) {
+				if (initializingPage == null) {
+					Label label = new Label(fPageBook, SWT.NONE);
+					label.setText("Initializing...");
+					initializingPage = label;
+				}
+				fPageBook.showPage(initializingPage);
+			} else {
+				fControl= (ci).createContents(fPageBook);
+				fPageBook.showPage(fControl);
+				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
+			}
 		}
+	}
+	
+	protected void handleNoDifference() {
+		if (fPageBook.isDisposed())
+			return;
+		if (noDiffFoundPage == null) {
+			Label label = new Label(fPageBook, SWT.NONE);
+			label.setText(Utilities.getString("CompareUIPlugin.noDifferences")); //$NON-NLS-1$
+			noDiffFoundPage = label;
+		}
+		fPageBook.showPage(noDiffFoundPage);
+		
 	}
 	
 	/* (non-Javadoc)

@@ -21,7 +21,6 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -158,7 +157,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	// content type
 	private static final IContentTypeManager fgContentTypeManager= Platform.getContentTypeManager();
 
-	private static final int NO_DIFFERENCE = 10000;
+	public static final int NO_DIFFERENCE = 10000;
 
 	/**
 	 * The plugin singleton.
@@ -415,30 +414,17 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public void openCompareEditor(final CompareEditorInput input, final IWorkbenchPage page, final IReusableEditor editor) {
 		if (input.canRunAsJob()) {
-			Job job = new Job(CompareMessages.CompareUIPlugin_0) {
-				protected IStatus run(IProgressMonitor monitor) {
-					IStatus status = prepareInput(input, monitor);
-					if (status.isOK()) {
-						internalOpenEditor(input, page, editor);
-						return Status.OK_STATUS;
-					}
-					if (status.getCode() == NO_DIFFERENCE) {
-						handleNoDifference();
-						return Status.OK_STATUS;
-					}
-					return status;
-				}
-				public boolean belongsTo(Object family) {
-					return input.belongsTo(family);
-				}
-			};
-			job.setUser(true);
-			job.schedule();
+			openEditorInBackground(input, page, editor);
 		} else {
 			if (compareResultOK(input, null)) {
 				internalOpenEditor(input, page, editor);
 			}
 		}
+	}
+
+	private void openEditorInBackground(final CompareEditorInput input,
+			final IWorkbenchPage page, final IReusableEditor editor) {
+		internalOpenEditor(input, page, editor);
 	}
 
 	private void internalOpenEditor(final CompareEditorInput input,
@@ -478,34 +464,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @see CompareEditorInput
 	 */
 	public void openCompareDialog(final CompareEditorInput input) {
-		if (input.canRunAsJob()) {
-			Job job = new Job(CompareMessages.CompareUIPlugin_1) {
-				protected IStatus run(IProgressMonitor monitor) {
-					IStatus status = prepareInput(input, monitor);
-					if (status.isOK()) {
-						internalOpenDialog(input);
-						return Status.OK_STATUS;
-					}
-					if (status.getCode() == NO_DIFFERENCE) {
-						handleNoDifference();
-						return Status.OK_STATUS;
-					}
-					return status;
-				}
-				public boolean belongsTo(Object family) {
-					return input.belongsTo(family);
-				}
-			};
-			job.setUser(true);
-			job.schedule();
-		} else {
-			if (compareResultOK(input, null)) {
-				internalOpenDialog(input);
-			}
+		// We don't ever open dialogs in the background
+		if (compareResultOK(input, null)) {
+			internalOpenDialog(input);
 		}
 	}
 	
-	private IStatus prepareInput(CompareEditorInput input, IProgressMonitor monitor) {
+	public IStatus prepareInput(CompareEditorInput input, IProgressMonitor monitor) {
 		try {
 			input.run(monitor);
 			String message= input.getMessage();

@@ -22,6 +22,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
 import com.ibm.icu.text.MessageFormat;
@@ -754,5 +756,16 @@ public class Utilities {
 			}
 		}
 		return false; 
+	}
+	
+	public static void schedule(Job job, IWorkbenchSite site) {
+		if (site != null) {
+			IWorkbenchSiteProgressService siteProgress = (IWorkbenchSiteProgressService) site.getAdapter(IWorkbenchSiteProgressService.class);
+			if (siteProgress != null) {
+				siteProgress.schedule(job, 0, true /* use half-busy cursor */);
+				return;
+			}
+		}
+		job.schedule();
 	}
 }

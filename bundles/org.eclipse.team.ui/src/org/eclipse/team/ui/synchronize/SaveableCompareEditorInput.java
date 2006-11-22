@@ -134,7 +134,9 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 */
 	protected void handleDispose() {
 		super.handleDispose();
-		getCompareInput().removeCompareInputChangeListener(compareInputChangeListener);
+		ICompareInput compareInput = getCompareInput();
+		if (compareInput != null)
+			compareInput.removeCompareInputChangeListener(compareInputChangeListener);
 		if (saveable instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(propertyListener);
@@ -257,7 +259,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 */
 	protected Saveable createSaveable() {
 		Object compareResult = getCompareResult();
-		Assert.isNotNull(compareResult, "This method cannot be caled until after prepareInput is called"); //$NON-NLS-1$
+		Assert.isNotNull(compareResult, "This method cannot be called until after prepareInput is called"); //$NON-NLS-1$
 		return new InternalResourceSaveableComparison((ICompareInput)compareResult, this);
 	}
 
@@ -265,6 +267,8 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
 	 */
 	public Saveable[] getActiveSaveables() {
+		if (getCompareResult() == null)
+			return new Saveable[0]; 
 		return new Saveable[] { getSaveable() };
 	}
 
