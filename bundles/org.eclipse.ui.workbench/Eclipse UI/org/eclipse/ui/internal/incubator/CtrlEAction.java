@@ -1,41 +1,16 @@
 package org.eclipse.ui.internal.incubator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.NotEnabledException;
-import org.eclipse.core.commands.NotHandledException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.SubContributionItem;
-import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferencePage;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -51,26 +26,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
-import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
-import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
-import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.views.IViewDescriptor;
-import org.eclipse.ui.wizards.IWizardCategory;
-import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
  * Experimental Action for search-based navigation to UI elements such as
@@ -79,13 +41,13 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class CtrlEAction extends AbstractHandler {
 
-	private static final String DIRTY_MARK = "*"; //$NON-NLS-1$
-
 	private IWorkbenchWindow window;
 
 	protected String rememberedText;
-	
+
 	protected Map previousPicksMap = new HashMap();
+	
+	protected Map reverseMap = new HashMap();
 
 	private LinkedList previousPicksList = new LinkedList();
 
@@ -96,25 +58,20 @@ public class CtrlEAction extends AbstractHandler {
 	}
 
 	public Object execute(ExecutionEvent executionEvent) {
-		// need to get commands here because opening the popup changes which
-		// commands are "handled"
-		BindingService bindingService = (BindingService) PlatformUI
-				.getWorkbench().getService(IBindingService.class);
-		Binding[] bindings = bindingService.getBindings();
-		SortedSet commands = new TreeSet();
-		for (int i = 0; i < bindings.length; i++) {
-			Binding binding = bindings[i];
-			ParameterizedCommand command = binding.getParameterizedCommand();
-			if (command != null && command.getCommand().isHandled()) {
-				commands.add(command);
-			}
-		}
 
 		window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			return null;
 		}
-		FilteringInfoPopup popup = new MyInfoPopup(ProgressManagerUtil.getDefaultParent(), commands);
+		
+		AbstractProvider[] providers = { new PreviousPicksProvider(),
+				new EditorProvider(), new ViewProvider(),
+				new PerspectiveProvider(), new CommandProvider(),
+				new ActionProvider(), new WizardProvider(),
+				new PreferenceProvider() };
+		
+		FilteringInfoPopup popup = new MyInfoPopup(ProgressManagerUtil
+				.getDefaultParent(), providers);
 		popup.setInput(new Object());
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
 				.getItems();
@@ -128,10 +85,10 @@ public class CtrlEAction extends AbstractHandler {
 	private final static class QuickAccessTreeSorter extends
 			TreePathViewerSorter {
 		public int compare(Viewer viewer, Object e1, Object e2) {
-			ILabelProvider labelProvider = (ILabelProvider) ((TreeViewer) viewer)
-					.getLabelProvider();
-			String name1 = stripDirtyIndicator(labelProvider.getText(e1));
-			String name2 = stripDirtyIndicator(labelProvider.getText(e2));
+			AbstractElement element1 = (AbstractElement) e1;
+			AbstractElement element2 = (AbstractElement) e2;
+			String name1 = element1.getSortLabel();
+			String name2 = element2.getSortLabel();
 			return getComparator().compare(name1, name2);
 		}
 
@@ -140,10 +97,9 @@ public class CtrlEAction extends AbstractHandler {
 				return;
 			}
 			Object parent = parentPath.getLastSegment();
-			if (parent instanceof Node) {
-				Node node = (Node) parent;
-				// TODO replace with a proper check
-				if (node.name.equals(IncubatorMessages.CtrlEAction_Previous)) {
+			if (parent instanceof AbstractProvider) {
+				AbstractProvider provider = (AbstractProvider) parent;
+				if (provider instanceof PreviousPicksProvider) {
 					return;
 				}
 			}
@@ -156,18 +112,20 @@ public class CtrlEAction extends AbstractHandler {
 	 * 
 	 */
 	private final class MyInfoPopup extends FilteringInfoPopup {
-		private SortedSet commands;
 
+		AbstractProvider[] providers;
+		
 		/**
 		 * @param shell
-		 * @param commands
+		 * @param providers
 		 */
-		public MyInfoPopup(Shell shell, SortedSet commands) {
+		public MyInfoPopup(Shell shell, AbstractProvider[] providers) {
 			super(shell, SWT.RESIZE, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE,
 					false);
-			MyInfoPopup.this.commands = commands;
-			getTreeViewer().setContentProvider(
-					new MyContentProvider(MyInfoPopup.this.commands));
+			this.providers = providers;
+			restoreDialog();
+			getTreeViewer()
+					.setContentProvider(new MyContentProvider(providers));			
 		}
 
 		protected TreeViewer createTreeViewer(Composite parent, int style) {
@@ -176,7 +134,7 @@ public class CtrlEAction extends AbstractHandler {
 			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
 		}
-				
+
 		protected void selectFirstMatch() {
 			String text = getFilterText().getText();
 			Object element = previousPicksMap.get(text);
@@ -187,10 +145,16 @@ public class CtrlEAction extends AbstractHandler {
 			}
 			super.selectFirstMatch();
 		}
-		
+
 		protected String getMatchName(Object element) {
-			String name = ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(element);
-			return stripDirtyIndicator(name);
+			if (element instanceof AbstractProvider) {
+				AbstractProvider provider = (AbstractProvider) element;
+				return provider.getName();
+			} else if (element instanceof AbstractElement) {
+				AbstractElement abstractElement = (AbstractElement) element;
+				return abstractElement.getSortLabel();
+			}
+			return ""; //$NON-NLS-1$
 		}
 
 		protected Point getInitialSize() {
@@ -232,66 +196,56 @@ public class CtrlEAction extends AbstractHandler {
 			return super.close();
 		}
 
+		private void storeDialog(IDialogSettings dialogSettings) {
+			String[] idArray = new String[previousPicksList.size()];
+			String[] textArray = new String[previousPicksList.size()];
+			for(int i = 0; i < idArray.length; i++) {
+				Object element = previousPicksList.get(i);
+				if(element instanceof AbstractElement) {
+					AbstractElement abstractElement = (AbstractElement) element;
+					idArray[i] = abstractElement.getId();
+					textArray[i] = (String) reverseMap.get(element);
+				}
+			}
+			dialogSettings.put("idArray", idArray); //$NON-NLS-1$
+			dialogSettings.put("textArray", textArray); //$NON-NLS-1$
+		}
+
 		protected void handleElementSelected(Object selectedElement) {
 			addPreviousPick(selectedElement);
+			storeDialog(getDialogSettings());
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
-				if (selectedElement instanceof IViewDescriptor) {
-					IViewDescriptor viewDescriptor = (IViewDescriptor) selectedElement;
-					try {
-						activePage.showView(viewDescriptor.getId());
-						return;
-					} catch (PartInitException e) {
+				if (selectedElement instanceof AbstractElement) {
+					AbstractElement element = (AbstractElement) selectedElement;
+					element.execute();
+				}
+			}
+		}
+		
+		private void restoreDialog() {
+			IDialogSettings dialogSettings = getDialogSettings();
+			if(dialogSettings != null) {
+				String[] idArray = dialogSettings.getArray("idArray"); //$NON-NLS-1$
+				String[] textArray = dialogSettings.getArray("textArray"); //$NON-NLS-1$
+				if(idArray != null && idArray.length > 0 && textArray != null && textArray.length > 0) {
+					Map newMap = new HashMap();
+					Map newReverseMap = new HashMap();
+					LinkedList newList = new LinkedList();
+					for(int i = 0; i < idArray.length; i++) {
+						for(int j = 0; j < providers.length; j++) {
+							AbstractElement element = providers[j].getElementForId(idArray[i]);
+							if(element != null) {
+								newList.add(element);
+								newMap.put(textArray[i], element);
+								newReverseMap.put(element, textArray[i]);
+								break;
+							}
+						}						
 					}
-				}
-				if (selectedElement instanceof IPerspectiveDescriptor) {
-					IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) selectedElement;
-					activePage.setPerspective(perspectiveDescriptor);
-				}
-				if (selectedElement instanceof IEditorReference) {
-					IEditorReference editorReference = (IEditorReference) selectedElement;
-					IWorkbenchPart part = editorReference.getPart(true);
-					if (part != null) {
-						activePage.activate(part);
-					}
-					return;
-				}
-				if (selectedElement instanceof PreferenceNode) {
-					PreferenceNode preferenceNode = (PreferenceNode) selectedElement;
-					WorkbenchPreferenceDialog dialog = WorkbenchPreferenceDialog
-							.createDialogOn(window.getShell(), preferenceNode
-									.getId());
-					dialog.open();
-					return;
-				}
-				if (selectedElement instanceof IWizardDescriptor) {
-					IWizardDescriptor wizardDescriptor = (IWizardDescriptor) selectedElement;
-					NewWizardShortcutAction wizardAction = new NewWizardShortcutAction(
-							window, wizardDescriptor);
-					wizardAction.run();
-					return;
-				}
-				if (selectedElement instanceof ParameterizedCommand) {
-					IHandlerService handlerService = (IHandlerService) window
-							.getWorkbench().getService(IHandlerService.class);
-					ParameterizedCommand command = (ParameterizedCommand) selectedElement;
-					try {
-						handlerService.executeCommand(command, null);
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					} catch (NotDefinedException e) {
-						e.printStackTrace();
-					} catch (NotEnabledException e) {
-						e.printStackTrace();
-					} catch (NotHandledException e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-				if (selectedElement instanceof ActionContributionItem) {
-					ActionContributionItem item = (ActionContributionItem) selectedElement;
-					item.getAction().run();
-					return;
+					previousPicksMap = newMap;
+					reverseMap = newReverseMap;
+					previousPicksList = newList;
 				}
 			}
 		}
@@ -302,129 +256,30 @@ public class CtrlEAction extends AbstractHandler {
 		}
 	}
 
-	private static class Node {
-		private String name;
-
-		private String imageId;
-
-		Node(String name, String imageId) {
-			this.name = name;
-			this.imageId = imageId;
-		}
-
-		public String toString() {
-			return name;
-		}
-
-		/**
-		 * @return
-		 */
-		public String getImageId() {
-			return imageId;
-		}
-	}
-
 	private final class MyContentProvider implements ITreeContentProvider {
 		private Object input;
-
-		private Node previousNode = new Node(
-				IncubatorMessages.CtrlEAction_Previous, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private Node editorNode = new Node(
-				IncubatorMessages.CtrlEAction_Editors, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private Node viewNode = new Node(IncubatorMessages.CtrlEAction_Views,
-				IWorkbenchGraphicConstants.IMG_VIEW_DEFAULTVIEW_MISC);
-
-		private Node perspectiveNode = new Node(
-				IncubatorMessages.CtrlEAction_Perspectives,
-				IWorkbenchGraphicConstants.IMG_ETOOL_DEF_PERSPECTIVE);
-
-		private Node commandNode = new Node(
-				IncubatorMessages.CtrlEAction_Commands, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private Node menusNode = new Node(IncubatorMessages.CtrlEAction_Menus,
-				IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private Node newNode = new Node(IncubatorMessages.CtrlEAction_New, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private Node preferencesNode = new Node(
-				IncubatorMessages.CtrlEAction_Preferences, IWorkbenchGraphicConstants.IMG_OBJ_NODE);
-
-		private SortedSet commands;
+		private final AbstractProvider[] providers;
+		private HashMap elementMap;
 
 		/**
-		 * @param commands
+		 * @param providers
 		 */
-		public MyContentProvider(SortedSet commands) {
-			MyContentProvider.this.commands = commands;
+		public MyContentProvider(AbstractProvider[] providers) {
+			this.providers = providers;
+			this.elementMap = new HashMap();
+			for (int i = 0; i < providers.length; i++) {
+				elementMap.put(providers[i], providers[i].getElements());
+			}
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			if (parentElement instanceof Node) {
-				if (previousNode.equals(parentElement)) {
-					return getPreviousPicks();
-				} else if (editorNode.equals(parentElement)) {
-					if(window.getActivePage() != null) {
-						return window.getActivePage().getEditorReferences();
-					}
-				} else if (viewNode.equals(parentElement)) {
-					return PlatformUI.getWorkbench().getViewRegistry()
-							.getViews();
-				} else if (perspectiveNode.equals(parentElement)) {
-					return PlatformUI.getWorkbench().getPerspectiveRegistry()
-							.getPerspectives();
-				} else if (commandNode.equals(parentElement)) {
-					return commands.toArray();
-				} else if (preferencesNode.equals(parentElement)) {
-					List elements = PlatformUI.getWorkbench()
-							.getPreferenceManager().getElements(
-									PreferenceManager.PRE_ORDER);
-					Set uniqueElements = new HashSet(elements);
-					return uniqueElements.toArray();
-				} else if (menusNode.equals(parentElement)) {
-					MenuManager menu = ((WorkbenchWindow) window)
-							.getMenuBarManager();
-					Set result = new HashSet();
-					collectContributions(menu, result);
-					return result.toArray();
-				} else if (newNode.equals(parentElement)) {
-					IWizardCategory rootCategory = WorkbenchPlugin.getDefault()
-							.getNewWizardRegistry().getRootCategory();
-					List result = new ArrayList();
-					collectWizards(rootCategory, result);
-					return result.toArray();
-				}
+			if (parentElement instanceof AbstractProvider) {
+				return (Object[]) elementMap.get(parentElement);
 			}
 			if (parentElement == input) {
-				return new Node[] { previousNode, editorNode, viewNode,
-						perspectiveNode, commandNode, menusNode, newNode,
-						preferencesNode };
+				return providers;
 			}
 			return new Object[0];
-		}
-
-		private void collectContributions(MenuManager menu, Set result) {
-			IContributionItem[] items = menu.getItems();
-			for (int i = 0; i < items.length; i++) {
-				IContributionItem item = items[i];
-				if (item instanceof SubContributionItem) {
-					item = ((SubContributionItem) item).getInnerItem();
-				}
-				if (item instanceof MenuManager) {
-					collectContributions((MenuManager) item, result);
-				} else if (item instanceof ActionContributionItem) {
-					result.add(item);
-				}
-			}
-		}
-
-		private void collectWizards(IWizardCategory category, List result) {
-			result.addAll(Arrays.asList(category.getWizards()));
-			IWizardCategory[] childCategories = category.getCategories();
-			for (int i = 0; i < childCategories.length; i++) {
-				collectWizards(childCategories[i], result);
-			}
 		}
 
 		public Object getParent(Object element) {
@@ -453,34 +308,16 @@ public class CtrlEAction extends AbstractHandler {
 
 		public Image getImage(Object element) {
 			Image image = null;
-			if (element instanceof Node) {
-				Node node = (Node) element;
-				image = findOrCreateImage(WorkbenchImages
-						.getImageDescriptor(node.getImageId()));
-			}
-			else if (element instanceof IEditorReference) {
-				IEditorReference editorReference = (IEditorReference) element;
-				image = editorReference.getTitleImage();
-			}
-			else if (element instanceof IViewDescriptor) {
-				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
-				image = findOrCreateImage(viewDescriptor.getImageDescriptor());
-			}
-			else if (element instanceof IPerspectiveDescriptor) {
-				IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) element;
-				image = findOrCreateImage(perspectiveDescriptor
+			if (element instanceof AbstractProvider) {
+				AbstractProvider provider = (AbstractProvider) element;
+				image = findOrCreateImage(provider.getImageDescriptor());
+			} else if (element instanceof AbstractElement) {
+				image = findOrCreateImage(((AbstractElement) element)
 						.getImageDescriptor());
 			}
-			else if (element instanceof IPreferenceNode) {
-				IPreferenceNode preferenceNode = (IPreferenceNode) element;
-				image = preferenceNode.getLabelImage();
-			}
-			else if (element instanceof IWizardDescriptor) {
-				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
-				image = findOrCreateImage(wizardDescriptor.getDescriptionImage());
-			}
 			if (image == null) {
-				image = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT);
+				image = WorkbenchImages
+						.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT);
 			}
 			return image;
 		}
@@ -512,92 +349,59 @@ public class CtrlEAction extends AbstractHandler {
 		}
 
 		public String getText(Object element) {
-			String separator = " - "; //$NON-NLS-1$
-			if (element instanceof IEditorReference) {
-				IEditorReference editorReference = (IEditorReference) element;
-				StringBuffer result = new StringBuffer();
-				if (editorReference.isDirty()) {
-					result.append(DIRTY_MARK);
-				}
-				result.append(editorReference.getName());
-				result.append(separator);
-				result.append(editorReference.getTitleToolTip());
-				return result.toString();
-			}
-			if (element instanceof IViewDescriptor) {
-				IViewDescriptor viewDescriptor = (IViewDescriptor) element;
-				return viewDescriptor.getLabel();
-			}
-			if (element instanceof IPerspectiveDescriptor) {
-				IPerspectiveDescriptor perspectiveDescriptor = (IPerspectiveDescriptor) element;
-				return perspectiveDescriptor.getLabel();
-			}
-			if (element instanceof IPreferenceNode) {
-				IPreferenceNode preferenceNode = (IPreferenceNode) element;
-				IPreferencePage page = preferenceNode.getPage();
-				if (page != null && page.getDescription() != null
-						&& page.getDescription().length() != 0) {
-					return preferenceNode.getLabelText() + separator
-							+ page.getDescription();
-				}
-				return preferenceNode.getLabelText();
-			}
-			if (element instanceof IWizardDescriptor) {
-				IWizardDescriptor wizardDescriptor = (IWizardDescriptor) element;
-				return wizardDescriptor.getLabel() + separator
-						+ wizardDescriptor.getDescription();
-			}
-			if (element instanceof ActionContributionItem) {
-				ActionContributionItem item = (ActionContributionItem) element;
-				IAction action = item.getAction();
-				if (action.getToolTipText() != null
-						&& action.getToolTipText().length() != 0) {
-					return LegacyActionTools.removeMnemonics(action.getText())
-							+ separator + action.getToolTipText();
-				}
-				return LegacyActionTools.removeMnemonics(action.getText());
-			}
-			if (element instanceof ParameterizedCommand) {
-				ParameterizedCommand command = (ParameterizedCommand) element;
-				try {
-					Command nestedCommand = command.getCommand();
-					if (nestedCommand != null
-							&& nestedCommand.getDescription() != null
-							&& nestedCommand.getDescription().length() != 0) {
-						return command.getName() + separator
-								+ nestedCommand.getDescription();
-					}
-					return command.getName();
-				} catch (NotDefinedException e) {
-					return command.toString();
-				}
+			if (element instanceof AbstractProvider) {
+				AbstractProvider provider = (AbstractProvider) element;
+				return provider.getName();
+			} else if (element instanceof AbstractElement) {
+				AbstractElement abstractElement = (AbstractElement) element;
+				return abstractElement.getLabel();
 			}
 			return super.getText(element);
 		}
 	}
-	
+
 	/**
 	 * @param element
 	 */
 	private void addPreviousPick(Object element) {
 		previousPicksList.remove(element);
 		previousPicksList.addFirst(element);
+		String text = (String) reverseMap.put(element, rememberedText);
+		if(text != null) {
+			previousPicksMap.remove(text);
+		}
 		previousPicksMap.put(rememberedText, element);
 	}
 
 	/**
-	 * @return
+	 * @return the previously picked elements
 	 */
-	private Object[] getPreviousPicks() {
-		return previousPicksList.toArray();
+	private AbstractElement[] getPreviousPicks() {
+		return (AbstractElement[]) previousPicksList
+				.toArray(new AbstractElement[previousPicksList.size()]);
 	}
 
-	private static String stripDirtyIndicator(String elementName) {
-		if (elementName.startsWith(DIRTY_MARK)) {
-			elementName = elementName.substring(1);
+	private class PreviousPicksProvider extends AbstractProvider {
+
+		public AbstractElement getElementForId(String id) {
+			return null;
 		}
-		return elementName;
+
+		public AbstractElement[] getElements() {
+			return getPreviousPicks();
+		}
+
+		public String getId() {
+			return "org.eclipse.ui.previousPicks"; //$NON-NLS-1$
+		}
+
+		public ImageDescriptor getImageDescriptor() {
+			return WorkbenchImages
+					.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_NODE);
+		}
+
+		public String getName() {
+			return IncubatorMessages.CtrlEAction_Previous;
+		}
 	}
-
-
 }
