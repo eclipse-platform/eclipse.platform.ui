@@ -502,7 +502,7 @@ public abstract class Wizard implements IWizard, IPageTransitionListener {
      * @param b
      *            <code>true</code> if help is available, and
      *            <code>false</code> if this wizard is helpless
-     * @see #isHelpAvailable
+     * @see #isHelpAvailable()
      */
     public void setHelpAvailable(boolean b) {
         isHelpAvailable = b;

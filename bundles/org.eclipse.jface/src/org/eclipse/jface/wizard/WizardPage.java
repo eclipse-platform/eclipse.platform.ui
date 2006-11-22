@@ -109,7 +109,7 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      * and there is a next page to flip to. Subclasses may override (extend or reimplement).
      *
      * @see #getNextPage
-     * @see #isPageComplete
+     * @see #isPageComplete()
      */
     public boolean canFlipToNextPage() {
         return isPageComplete() && getNextPage() != null;
@@ -291,7 +291,7 @@ public abstract class WizardPage extends DialogPage implements IWizardPage {
      *
      * @param complete <code>true</code> if this page is complete, and
      *   and <code>false</code> otherwise
-     * @see #isPageComplete
+     * @see #isPageComplete()
      */
     public void setPageComplete(boolean complete) {
         isPageComplete = complete;
