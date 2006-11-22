@@ -40,8 +40,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
  * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
  * </p>
  * 
- * FIXME: must honor progress monitor.
- *
  * @since 3.3
  */
 public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconcilingStrategyExtension {
