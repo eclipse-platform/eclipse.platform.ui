@@ -259,6 +259,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	public synchronized ICompareNavigator getNavigator() {
 		if (isSelectedInSynchronizeView()) {
 			ICompareNavigator nav = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_NAVIGATOR);
+			// Set the input navigator property so that the advisor can get at it if needed.
 			synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, super.getNavigator());
 			return nav;
 		}

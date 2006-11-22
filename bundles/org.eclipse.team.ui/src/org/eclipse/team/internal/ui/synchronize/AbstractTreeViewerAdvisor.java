@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 
 /**
@@ -61,7 +61,7 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 			}
 			boolean noNextChange = super.selectChange(next);
 			if (!noNextChange) {
-				// TODO: Check to see if the selected element can be opened.
+				// Check to see if the selected element can be opened.
 				// If it can't, try the next one
 				Object selectedObject = AbstractTreeViewerAdvisor.this.getFirstElement((IStructuredSelection)getViewer().getSelection());
 				if (!hasCompareInput(selectedObject)) {
@@ -76,7 +76,11 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 			if(syncInfo != null) {
 				return syncInfo.getLocal().getType() == IResource.FILE;
 			}
-			// TODO: need to look for model-based compare input
+			ISynchronizeParticipant p = getConfiguration().getParticipant();
+			if (p instanceof ModelSynchronizeParticipant) {
+				ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) p;
+				return msp.hasCompareInputFor(selectedObject);
+			}
 			return true;
 		}
 
@@ -108,8 +112,10 @@ public class AbstractTreeViewerAdvisor extends StructuredViewerAdvisor implement
 				if(editor != null) {
 					// if an existing editor is open on the current selection, use it			 
 					CompareEditorInput input = (CompareEditorInput)editor.getEditorInput();
-					ICompareNavigator navigator = (ICompareNavigator)input.getAdapter(ICompareNavigator.class);
+					ICompareNavigator navigator = input.getNavigator();
 					if (navigator instanceof TreeCompareNavigator) {
+						// The input knows to use the global navigator.
+						// Assume it set the input navigator property
 						navigator = (ICompareNavigator)AbstractTreeViewerAdvisor.this.getConfiguration().getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
 					}
 					if (navigator instanceof CompareNavigator) {
