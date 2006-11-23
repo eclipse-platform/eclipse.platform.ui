@@ -36,6 +36,12 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
 final class WidgetProxy implements IWorkbenchWidget {
 
 	/**
+	 * Used to determine whether the load has been tried to 
+	 * prevent multiple retries at a failed load.
+	 */
+	private boolean firstLoad = true;
+	
+	/**
 	 * The configuration element from which the widget can be created. This
 	 * value will exist until the element is converted into a real class -- at
 	 * which point this value will be set to <code>null</code>.
@@ -132,11 +138,12 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 * @param newSide The new side that the trim will be displayed on
 	 */
 	public final void fill(Composite parent, int oldSide, int newSide) {
-		// NOTE: isMoveableTrimWidget calls loadWidget...
-		if (isMoveableTrimWidget()) {
-			((AbstractWorkbenchTrimWidget) widget).fill(parent, oldSide, newSide);
-		} else {
-			widget.fill(parent);
+		if (loadWidget()) {
+			if (isMoveableTrimWidget()) {
+				((AbstractWorkbenchTrimWidget) widget).fill(parent, oldSide, newSide);
+			} else {
+				widget.fill(parent);
+			}
 		}
 	}
 
@@ -148,20 +155,17 @@ final class WidgetProxy implements IWorkbenchWidget {
 	 *         <code>false</code> otherwise.
 	 */
 	private final boolean loadWidget() {
-		if (widget == null) {
+		if (firstLoad) {
 			// Load the handler.
 			try {
 				widget = (IWorkbenchWidget) configurationElement
 						.createExecutableExtension(widgetAttributeName);
-				configurationElement = null;
-				return true;
-				
+				configurationElement = null;				
 			} catch (final ClassCastException e) {
 				final String message = "The proxied widget was the wrong class"; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
-				return false;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied widget for '" + configurationElement.getAttribute(widgetAttributeName) //$NON-NLS-1$
@@ -169,11 +173,14 @@ final class WidgetProxy implements IWorkbenchWidget {
 				IStatus status = new Status(IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
-				return false;
 			}
 		}
 
-		return true;
+		// We're througth the first load
+		firstLoad = false;
+		
+		// the load only succeeded if there's a widget..
+		return widget != null;
 	}
 
 	/**
