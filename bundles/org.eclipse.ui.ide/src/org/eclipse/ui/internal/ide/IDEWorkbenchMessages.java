@@ -718,6 +718,13 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ChooseWorkspaceDialog_directoryBrowserTitle;
 	public static String ChooseWorkspaceDialog_directoryBrowserMessage;
 	public static String ChooseWorkspaceDialog_useDefaultMessage;
+	
+	public static String ChooseWorkspaceWithSettingsDialog_SettingsGroupName;
+	public static String ChooseWorkspaceWithSettingsDialog_ProblemsTransferTitle;
+	public static String ChooseWorkspaceWithSettingsDialog_TransferFailedMessage;
+	public static String ChooseWorkspaceWithSettingsDialog_SaveSettingsFailed;
+	public static String ChooseWorkspaceWithSettingsDialog_ClassCreationFailed;
+	
 	public static String IDEApplication_workspaceMandatoryTitle;
 	public static String IDEApplication_workspaceMandatoryMessage;
 	public static String IDEApplication_workspaceInUseTitle;

@@ -174,9 +174,17 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * </p>
      */
     protected void okPressed() {
-        launchData.workspaceSelected(text.getText());
+        launchData.workspaceSelected(getWorkspaceLocation());
         super.okPressed();
     }
+
+	/**
+	 * Get the workspace location from the widget.
+	 * @return String
+	 */
+	protected String getWorkspaceLocation() {
+		return text.getText();
+	}
 
     /**
      * Notifies that the cancel button of this dialog has been pressed.
@@ -204,7 +212,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
         layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
         panel.setLayout(layout);
-        panel.setLayoutData(new GridData(GridData.FILL_BOTH));
+        panel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         panel.setFont(parent.getFont());
 
         Label label = new Label(panel, SWT.NONE);
@@ -219,7 +227,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         		Button okButton = getButton(Window.OK);
         		if(okButton != null && !okButton.isDisposed()) {
         			boolean nonWhitespaceFound = false;
-					String characters = text.getText();
+					String characters = getWorkspaceLocation();
 					for (int i = 0; !nonWhitespaceFound
 							&& i < characters.length(); i++) {
 						if (!Character.isWhitespace(characters.charAt(i))) {
@@ -262,7 +270,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
      * @return closest parent that exists or an empty string
      */
     private String getInitialBrowsePath() {
-        File dir = new File(text.getText());
+        File dir = new File(getWorkspaceLocation());
         while (dir != null && !dir.exists()) {
 			dir = dir.getParentFile();
 		}

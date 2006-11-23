@@ -17,6 +17,9 @@ Typically this is used for operations such as Import and Export.
       <complexType>
          <sequence>
             <element ref="transfer" minOccurs="0" maxOccurs="unbounded"/>
+            <sequence>
+               <element ref="settingsTransfer" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -46,6 +49,11 @@ Typically this is used for operations such as Import and Export.
    </element>
 
    <element name="transfer">
+      <annotation>
+         <documentation>
+            A transfer is an element used for specifying a group of preferences that can be exported together.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="mapping" minOccurs="1" maxOccurs="unbounded"/>
@@ -142,6 +150,46 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
                <documentation>
                   an attribute specifing a comma separated list of preference keys within the given node to be transferred, specifying the key attribute without specifying a matching node will result in a runtime error.
                </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="settingsTransfer">
+      <annotation>
+         <documentation>
+            A settings transfer is the definition of a transfer of internal state from one workbench to another.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The human readable name of the transfer.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the transfer.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The subclass of &lt;code&gt;org.eclipse.ui.preferences.SettingsTransfer&lt;/code&gt; that specifies this transfer.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.preferences.SettingsTransfer"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>

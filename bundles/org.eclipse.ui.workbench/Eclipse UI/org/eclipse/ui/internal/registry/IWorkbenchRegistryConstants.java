@@ -1141,6 +1141,12 @@ public interface IWorkbenchRegistryConstants {
 	 * Separator tag. Value <code>separator</code>.
 	 */
 	public static String TAG_SEPARATOR = "separator"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Tag for the settings transfer entry.
+	 */
+	public static String TAG_SETTINGS_TRANSFER = "settingsTransfer"; //$NON-NLS-1$
 
 	/**
 	 * Show in part tag. Value <code>showInPart</code>.

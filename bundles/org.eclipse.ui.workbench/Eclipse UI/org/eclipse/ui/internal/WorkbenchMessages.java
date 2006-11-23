@@ -953,6 +953,11 @@ public class WorkbenchMessages extends NLS {
 
 
 	public static String ViewsPreferencePage_override;
+	
+	//Settings transfer
+	public static String WorkbenchSettings_Name;
+	public static String WorkbenchSettings_CouldNotCreateDirectories;
+
 
 
 }

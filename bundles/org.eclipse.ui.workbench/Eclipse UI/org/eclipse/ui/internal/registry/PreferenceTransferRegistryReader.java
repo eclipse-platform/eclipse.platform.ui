@@ -101,10 +101,11 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
         return transfers;
     }
 
-    /**
-     * Implement this method to read element attributes.
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.internal.registry.RegistryReader#readElement(org.eclipse.core.runtime.IConfigurationElement)
      */
-    public boolean readElement(IConfigurationElement element) {
+    protected boolean readElement(IConfigurationElement element) {
         if (!element.getName().equals(IWorkbenchRegistryConstants.TAG_TRANSFER)) {
 			return false;
 		}
@@ -127,6 +128,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 
    /**
+    * Get the preference mappings.
      * @param configElement
      * @return the child configuration elements
      */
@@ -172,5 +174,4 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
         }
         return map;
     }
-
-}
+    }

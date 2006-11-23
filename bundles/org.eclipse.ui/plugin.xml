@@ -1313,6 +1313,14 @@
          </location>
       </group>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferenceTransfer">
+      <settingsTransfer
+            class="org.eclipse.ui.internal.WorkbenchSettingsTransfer"
+            id="org.eclipse.ui.workbenchTransfer"
+            name="%SettingsTransfer.WorkbenchLayout">
+      </settingsTransfer>
+   </extension>
    
    <extension
            point="org.eclipse.core.expressions.propertyTesters">

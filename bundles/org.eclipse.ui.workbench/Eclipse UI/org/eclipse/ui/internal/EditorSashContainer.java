@@ -38,7 +38,7 @@ import org.eclipse.ui.presentations.StackPresentation;
  */
 public class EditorSashContainer extends PartSashContainer {
 
-    private static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
+    static final String DEFAULT_WORKBOOK_ID = "DefaultEditorWorkbook";//$NON-NLS-1$
 
     private ArrayList editorWorkbooks = new ArrayList(3);
 
