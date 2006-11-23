@@ -11,8 +11,11 @@
 package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.*;
@@ -31,8 +34,8 @@ import org.eclipse.ui.services.IDisposable;
  * @see IStructureCreator
  * @see ICompareInput
  */
-public class StructureDiffViewer extends DiffTreeViewer {
 		
+public class StructureDiffViewer extends DiffTreeViewer {
 	private Differencer fDifferencer;
 	private boolean fThreeWay= false;
 	
@@ -57,23 +60,38 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		public boolean setInput(ITypedElement newInput, boolean force) {
 			boolean changed = false;
 			if (force || newInput != fInput) {
+				removeDocumentRangeUpdaters();
 				if (fInput instanceof IContentChangeNotifier)
 					((IContentChangeNotifier)fInput).removeContentChangeListener(fContentChangedListener);
 				fInput= newInput;
-				if (fInput != null) {
-					refresh();
-					changed= true;
-				} else {
+				if (fInput == null) {
 					if (fStructureComparator instanceof IDisposable) {
 						IDisposable disposable = (IDisposable) fStructureComparator;
 						disposable.dispose();
 					}
 					fStructureComparator= null;
+				} else {
+					refresh();
+					changed= true;
 				}
 				if (fInput instanceof IContentChangeNotifier)
 					((IContentChangeNotifier)fInput).addContentChangeListener(fContentChangedListener);
 			}
 			return changed;
+		}
+
+		/**
+		 * Remove any document range updaters that were registered against the document.
+		 */
+		private void removeDocumentRangeUpdaters() {
+			if (fStructureComparator instanceof IDocumentRange) {
+				IDocument doc = ((IDocumentRange) fStructureComparator).getDocument();
+				try {
+					doc.removePositionCategory(IDocumentRange.RANGE_CATEGORY);
+				} catch (BadPositionCategoryException ex) {
+					// Ignore
+				}
+			}
 		}
 		
 		public IStructureComparator getStructureComparator() {
@@ -84,6 +102,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			IStructureComparator oldComparator = fStructureComparator;
 			fStructureComparator= createStructure();
 			// Dispose of the old one after in case they are using a shared document
+			// (i.e. disposing it after will hold on to a reference to the document 
+			// so it doesn't get freed and reloaded)
 			if (oldComparator instanceof IDisposable) {
 				IDisposable disposable = (IDisposable) oldComparator;
 				disposable.dispose();
@@ -249,7 +269,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		compareInputChanged(input, false);
 	}
 		
-	protected void compareInputChanged(ICompareInput input, boolean force) {
+	/* package */ void compareInputChanged(ICompareInput input, boolean force) {
 		ITypedElement t= null;
 		boolean changed= false;
 		

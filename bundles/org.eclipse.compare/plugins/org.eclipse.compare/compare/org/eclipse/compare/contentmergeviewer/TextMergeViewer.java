@@ -2497,22 +2497,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		IDocument oldDoc= tp.getDocument();
 		if (oldDoc == null) {
 			oldDoc= tp.getRememberedDocument();
-//			if (oldDoc != null)
-//				System.err.println("TextMergeViewer.unsetDocument: would leak");
 		}
 		if (oldDoc != null) {
 			tp.rememberDocument(null);
-			// de-install old positions
 			if (fPositionUpdater != null)
 				oldDoc.removePositionUpdater(fPositionUpdater);
-			try {
-				oldDoc.removePositionCategory(IDocumentRange.RANGE_CATEGORY);
-			} catch (BadPositionCategoryException ex) {
-				// NeedWork
-			}
-			
 			oldDoc.removeDocumentListener(fDocumentListener);
-			//LeakTester.remove(oldDoc);
 		}
 	}
 	
@@ -5000,7 +4990,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 	fChangeDiffs= null;
 		fAllDiffs= null;
 		
-		if (!fHasErrors /*&& !isPatchHunk() */)
+		if (!fHasErrors)
 			doDiff();
 		
 		if (includeControls)
