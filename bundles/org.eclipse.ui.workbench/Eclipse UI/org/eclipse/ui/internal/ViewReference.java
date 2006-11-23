@@ -13,6 +13,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -28,6 +29,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
@@ -360,6 +363,20 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 						}
 					}
 				}
+
+				//
+				// 3.3 start
+				//
+				IMenuService menuService = (IMenuService) site
+						.getService(IMenuService.class);
+				MenuLocationURI loc = new MenuLocationURI("menu://" //$NON-NLS-1$
+						+ site.getId());
+				menuService.populateMenu((ContributionManager) site
+						.getActionBars().getMenuManager(), loc);
+				loc = new MenuLocationURI("toolbar://" + site.getId()); //$NON-NLS-1$
+				menuService.populateMenu((ContributionManager) site
+						.getActionBars().getToolBarManager(), loc);
+				// 3.3 end
 				site.getActionBars().updateActionBars();
 			}
 

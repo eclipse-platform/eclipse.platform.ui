@@ -19,6 +19,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Display;
@@ -38,6 +40,8 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
+import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
@@ -115,6 +119,22 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			menuExtenders.add(new PopupMenuExtender(menuId, menuManager,
 					selectionProvider, part, includeEditorInput));
 		}
+		
+		//
+		// 3.3 start
+		final IMenuService menuService = (IMenuService) part.getSite().getService(
+				IMenuService.class);
+		final MenuLocationURI loc = new MenuLocationURI("popup://" + menuId); //$NON-NLS-1$
+		if (menuManager.getRemoveAllWhenShown()) {
+			menuManager.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager manager) {
+					menuService.populateMenu(menuManager, loc);
+				}
+			});
+		} else {
+			menuService.populateMenu(menuManager, loc);
+		}
+		// 3.3 end
 	}
 
 	private IWorkbenchPartReference partReference;

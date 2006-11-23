@@ -2,7 +2,6 @@ package org.eclipse.ui.tests.api.workbenchpart;
 
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -27,7 +26,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -133,18 +131,12 @@ public class MenuContributionHarness extends ViewPart {
 	}
 
 	private void fillLocalPullDown(IMenuManager manager) {
-		MenuLocationURI uri = new MenuLocationURI("menu://" + VIEW_ID);
-		menuSvc.populateMenu((ContributionManager) manager, uri);
-
 		manager.add(action1);
 		manager.add(new Separator());
 		manager.add(action2);
 	}
 
 	private void fillContextMenu(IMenuManager manager) {		
-		MenuLocationURI uri = new MenuLocationURI("popup://" + VIEW_ID);
-		menuSvc.populateMenu((ContributionManager) manager, uri);
-
 		// Add some local actions
 		manager.add(action1);
 		manager.add(new Separator());
@@ -152,9 +144,6 @@ public class MenuContributionHarness extends ViewPart {
 	}
 	
 	private void fillLocalToolBar(IToolBarManager manager) {
-		MenuLocationURI uri = new MenuLocationURI("toolbar://" + VIEW_ID);
-		menuSvc.populateMenu((ContributionManager) manager, uri);
-
 		manager.add(action1);
 		manager.add(action2);
 	}
