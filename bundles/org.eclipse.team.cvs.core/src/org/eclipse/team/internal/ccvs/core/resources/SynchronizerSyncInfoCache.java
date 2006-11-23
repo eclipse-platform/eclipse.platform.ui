@@ -35,7 +35,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  */
 /*package*/ class SynchronizerSyncInfoCache extends SyncInfoCache {
 	
-	// ap of sync bytes that were set without a scheduling rule
+	// Map of sync bytes that were set without a scheduling rule
 	Map pendingCacheWrites = new HashMap();
 	private static final Object BYTES_REMOVED = new byte[0];
 
@@ -120,19 +120,17 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	 */
 	byte[] getCachedSyncBytes(IResource resource, boolean threadSafeAccess) throws CVSException {
 		try {
-			byte[] bytes;
-			if (pendingCacheWrites.containsKey(resource)) {
-				bytes = (byte[])pendingCacheWrites.get(resource);
-				if (bytes == BYTES_REMOVED) {
-					bytes = null;
+			byte[] bytes = null;
+			if (!hasPendingCacheRemoval(resource)) {
+				bytes = getPendingCacheWrite(resource);
+				if (bytes == null) {
+					bytes = getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
 				}
-			} else {
-				bytes = getWorkspaceSynchronizer().getSyncInfo(RESOURCE_SYNC_KEY, resource);
 			}
 			if (bytes != null && resource.getType() == IResource.FILE) {
 				if (ResourceSyncInfo.isAddition(bytes)) {
 					// The local file has been deleted but was an addition
-					// Therefore, ignoe the sync bytes
+					// Therefore, ignore the sync bytes
 					bytes = null;
 				} else if (!ResourceSyncInfo.isDeletion(bytes)) {
 					// Ensure the bytes indicate an outgoing deletion
@@ -157,10 +155,10 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 						if (resource.exists() || resource.isPhantom()) {
 							getWorkspaceSynchronizer().flushSyncInfo(RESOURCE_SYNC_KEY, resource, IResource.DEPTH_ZERO);
 						}
-						pendingCacheWrites.remove(resource);
+						removePendingCacheWrite(resource);
 					} else {
 						if (resource.exists() || resource.isPhantom()) {
-							pendingCacheWrites.put(resource, BYTES_REMOVED);
+							setPendingCacheWriteToDelete(resource);
 						}
 					}
 				}
@@ -172,9 +170,9 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				if (oldBytes == null || !equals(syncBytes, oldBytes)) {
 					if (canModifyWorkspace) {
 						getWorkspaceSynchronizer().setSyncInfo(RESOURCE_SYNC_KEY, resource, syncBytes);
-						pendingCacheWrites.remove(resource);
+						removePendingCacheWrite(resource);
 					} else {
-						pendingCacheWrites.put(resource, syncBytes);
+						setPendingCacheWrite(resource, syncBytes);
 					}
 				}
 			}
@@ -302,15 +300,9 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 				getWorkspaceSynchronizer().flushSyncInfo(FOLDER_SYNC_KEY, root, depth);
 			}
 			if (deep) {
-				IPath fullPath = root.getFullPath();
-				for (Iterator iter = pendingCacheWrites.keySet().iterator(); iter.hasNext();) {
-					IResource resource = (IResource) iter.next();
-					if (fullPath.isPrefixOf(resource.getFullPath())) {
-						iter.remove();
-					}
-				}
+				removePendingCacheWritesUnder(root);
 			} else {
-				pendingCacheWrites.remove(root);
+				removePendingCacheWrite(root);
 			}
 		} catch (CoreException e) {
 			if (e.getStatus().getCode() == IResourceStatus.RESOURCE_NOT_FOUND) {
@@ -323,13 +315,15 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 	}
 	
 	public boolean isPhantom(IResource resource) {
-		return resource.isPhantom() || pendingCacheWrites.containsKey(resource);
+		return resource.isPhantom() || hasPendingCacheWrite(resource);
 	}
+	
 	public IResource[] members(IContainer folder) throws CoreException {
-		if (!pendingCacheWrites.isEmpty()){
+		IResource[] pendingWrites = getPendingCacheWrites();
+		if (pendingWrites != null){
 			HashSet cachedResources = new HashSet();
-			for (Iterator iter = pendingCacheWrites.keySet().iterator(); iter.hasNext();) {
-				IResource resource = (IResource) iter.next();
+			for (int i = 0; i < pendingWrites.length; i++) {
+				IResource resource = pendingWrites[i];
 				if (resource.getParent().equals(folder))
 					cachedResources.add(resource);
 			}
@@ -344,5 +338,77 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 			}
 		}
 		return folder.members(true);
+	}
+
+	/**
+	 * Return whether the given resource has a pending cache write
+	 * @param resource the resource
+	 * @return whether the given resource has a pending cache write
+	 */
+	private boolean hasPendingCacheWrite(IResource resource) {
+		synchronized (pendingCacheWrites) {
+			return pendingCacheWrites.containsKey(resource);
+		}
+	}
+	
+	private byte[] getPendingCacheWrite(IResource resource) {
+		synchronized (pendingCacheWrites) {
+			Object object = pendingCacheWrites.get(resource);
+			if (object instanceof byte[]) {
+				return (byte[])object;
+			}
+			return null;
+		}
+	}
+	
+	private boolean hasPendingCacheRemoval(IResource resource) {
+		synchronized (pendingCacheWrites) {
+			Object object = pendingCacheWrites.get(resource);
+			return object == BYTES_REMOVED;
+		}
+	}
+	
+	private void setPendingCacheWrite(IResource resource, byte[] syncBytes) {
+		synchronized (pendingCacheWrites) {
+			pendingCacheWrites.put(resource, syncBytes);
+		}
+	}
+	
+	private void setPendingCacheWriteToDelete(IResource resource) {
+		synchronized (pendingCacheWrites) {
+			pendingCacheWrites.put(resource, BYTES_REMOVED);
+		}
+	}
+	
+	private void removePendingCacheWrite(IResource resource) {
+		synchronized (pendingCacheWrites) {
+			pendingCacheWrites.remove(resource);
+		}
+	}
+	
+	private void removePendingCacheWritesUnder(IContainer root) {
+		synchronized (pendingCacheWrites) {
+			IPath fullPath = root.getFullPath();
+			for (Iterator iter = pendingCacheWrites.keySet().iterator(); iter.hasNext();) {
+				IResource resource = (IResource) iter.next();
+				if (fullPath.isPrefixOf(resource.getFullPath())) {
+					iter.remove();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Return the resources with pending cache writes or
+	 * <code>null</code> if there aren't any.
+	 * @return the resources with pending cache writes or
+	 * <code>null</code>
+	 */
+	private IResource[] getPendingCacheWrites() {
+		synchronized (pendingCacheWrites) {
+			if (pendingCacheWrites.isEmpty())
+				return null;
+			return (IResource[]) pendingCacheWrites.keySet().toArray(new IResource[pendingCacheWrites.size()]);
+		}
 	}
 }
