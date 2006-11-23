@@ -10,35 +10,51 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.search.PluginVersionInfo;
+import org.eclipse.help.internal.search.SearchIndex;
+import org.eclipse.help.internal.search.SearchIndexWithIndexingProgress;
 import org.eclipse.osgi.util.NLS;
 
-/**
- * application org.eclipse.help.indexTool
+/*
+ * An Eclipse application used for pre-indexing user assistance documentation (help,
+ * welcome, cheatsheets, etc) in order to avoid the initial search performance penalty
+ * at the cost of disk space.
+ * 
+ * This can be used to either index content for an entire product, or for a specific
+ * plug-in.
+ * 
+ * Accepted arguments:
+ * 
+ * - indexOutput: A full path to the directory to store the generated index.
+ * - indexLocale: The locale (e.g. "en" or "en_US") of the indexed content.
+ * - indexPlugin (optional): The id of the plug-in to index, e.g. "org.eclipse.platform.doc.user".
+ *      If not specified, assumes all plug-ins.
  */
-public class IndexToolApplication implements IPlatformRunnable,
-		IExecutableExtension {
+public class IndexToolApplication implements IPlatformRunnable, IExecutableExtension {
 
-	/**
-	 * Constructor for IndexToolApplication.
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
 	 */
-	public IndexToolApplication() {
-		super();
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-	}
-
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object args) throws Exception {
@@ -48,19 +64,18 @@ public class IndexToolApplication implements IPlatformRunnable,
 				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexOutput")); //$NON-NLS-1$
 			}
 			String localeStr = System.getProperty("indexLocale"); //$NON-NLS-1$
-			if (localeStr == null || localeStr.length() < 2) {
-				throw new Exception(NLS.bind(HelpBaseResources.IndexToolApplication_propertyNotSet, "indexLocale")); //$NON-NLS-1$
+			if (localeStr == null) {
+				localeStr = Platform.getNL();
 			}
 			Locale locale;
 			if (localeStr.length() >= 5) {
-				locale = new Locale(localeStr.substring(0, 2), localeStr
-						.substring(3, 5));
-			} else {
+				locale = new Locale(localeStr.substring(0, 2), localeStr.substring(3, 5));
+			}
+			else {
 				locale = new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
 			}
 			preindex(directory, locale);
 		} catch (Exception e) {
-			System.out.println(e);
 			e.printStackTrace();
 			HelpBasePlugin.logError("Preindexing failed.", e); //$NON-NLS-1$
 		}
@@ -68,31 +83,32 @@ public class IndexToolApplication implements IPlatformRunnable,
 	}
 
 	private void preindex(String outputDir, Locale locale) throws Exception {
-		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(),
-				"index/" + locale); //$NON-NLS-1$
-
 		// clean
+		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(), "index/" + locale); //$NON-NLS-1$
 		if (indexPath.exists()) {
 			delete(indexPath);
 		}
+		
 		// index
-		BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(
-				new NullProgressMonitor(),
-				BaseHelpSystem.getLocalSearchManager().getIndex(locale.toString()));
-		// zip up
-		File d = new File(outputDir,
-				"nl" + File.separator + locale.getLanguage()); //$NON-NLS-1$
-		if (locale.getCountry().length() > 0) {
-			d = new File(d, locale.getCountry());
+		SearchIndexWithIndexingProgress index = BaseHelpSystem.getLocalSearchManager().getIndex(locale.toString());
+		String indexPlugin = System.getProperty("indexPlugin"); //$NON-NLS-1$
+		if (indexPlugin != null) {
+			List bundleIds = Arrays.asList(new String[] { indexPlugin });
+			PluginVersionInfo docPlugins = new PluginVersionInfo(SearchIndex.INDEXED_CONTRIBUTION_INFO_FILE, bundleIds, indexPath, true);
+			index.setDocPlugins(docPlugins);
 		}
-		if (!d.exists())
-			d.mkdirs();
-		ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(
-				new File(d, "doc_index.zip"))); //$NON-NLS-1$
-		try {
-			zipDirectory(indexPath, zout, null);
-		} finally {
-			zout.close();
+		BaseHelpSystem.getLocalSearchManager().ensureIndexUpdated(new NullProgressMonitor(), index);
+
+		// package
+		if (indexPlugin == null) {
+			outputDir += File.separator + "nl" + File.separator + locale.getLanguage(); //$NON-NLS-1$
+			if (locale.getCountry().length() > 0) {
+				outputDir += File.separator + locale.getCountry();
+			}
+			zipDirectory(indexPath, outputDir);
+		}
+		else {
+			copyDirectory(indexPath, outputDir);
 		}
 	}
 
@@ -115,17 +131,20 @@ public class IndexToolApplication implements IPlatformRunnable,
 		}
 	}
 
-	/**
-	 * Adds files in a directory to a zip stream
-	 * 
-	 * @param dir
-	 *            directory with files to zip
-	 * @param zout
-	 *            ZipOutputStream
-	 * @param base
-	 *            directory prefix for file entries inside the zip or null
-	 * @throws IOException
-	 */
+	private static void zipDirectory(File srcDir, String destPath) throws IOException {
+		File destDir = new File(destPath);
+		if (!destDir.exists()) {
+			destDir.mkdirs();
+		}
+		ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(new File(destDir, "doc_index.zip"))); //$NON-NLS-1$
+		try {
+			zipDirectory(srcDir, zout, null);
+		}
+		finally {
+			zout.close();
+		}
+	}
+
 	private static void zipDirectory(File dir, ZipOutputStream zout, String base)
 			throws IOException {
 		byte buffer[] = new byte[8192];
@@ -152,6 +171,31 @@ public class IndexToolApplication implements IPlatformRunnable,
 				inputStream.close();
 				zout.flush();
 				zout.closeEntry();
+			}
+		}
+	}
+
+	private static void copyDirectory(File src, String outputDir) throws IOException {
+		byte buffer[] = new byte[8192];
+		File dest = new File(outputDir);
+		if (dest.exists()) {
+			delete(dest);
+		}
+		dest.mkdirs();
+		
+		String[] files = src.list();
+		if (files != null) {
+			for (int i=0;i<files.length;++i) {
+				File srcFile = new File(src, files[i]);
+				File destFile = new File(dest, files[i]);
+				FileInputStream in = new FileInputStream(srcFile);
+				FileOutputStream out = new FileOutputStream(destFile);
+				int len;
+				while ((len = in.read(buffer)) != -1) {
+					out.write(buffer, 0, len);
+				}
+				in.close();
+				out.close();
 			}
 		}
 	}
