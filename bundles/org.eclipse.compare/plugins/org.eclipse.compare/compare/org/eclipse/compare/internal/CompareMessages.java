@@ -23,6 +23,17 @@ public final class CompareMessages extends NLS {
 	public static String CompareDialog_commit_button;
 	public static String CompareDialog_error_message;
 	public static String CompareDialog_error_title;
+	public static String CompareEditor_0;
+	public static String CompareEditor_1;
+	public static String CompareEditor_10;
+	public static String CompareEditor_2;
+	public static String CompareEditor_3;
+	public static String CompareEditor_4;
+	public static String CompareEditor_5;
+	public static String CompareEditor_6;
+	public static String CompareEditor_7;
+	public static String CompareEditor_8;
+	public static String CompareEditor_9;
 	public static String ComparePlugin_internal_error;
 	public static String ComparePreferencePage_0;
 	public static String ComparePreferencePage_1;
