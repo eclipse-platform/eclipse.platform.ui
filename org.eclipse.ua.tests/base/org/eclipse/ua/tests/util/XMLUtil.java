@@ -99,13 +99,16 @@ public class XMLUtil extends Assert {
 			buf.append(ch, start, length);
 		}
 		
-		/* (non-Javadoc)
+		/*
+		 * Note: throws clause does not declare IOException due to a bug in
+		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
+		 * 
 		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 		 */
 		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}
-		
+
 		public String toString() {
 			return buf.toString();
 		}

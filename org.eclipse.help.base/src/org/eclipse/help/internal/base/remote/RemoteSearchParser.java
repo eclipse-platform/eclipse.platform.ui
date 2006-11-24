@@ -12,6 +12,7 @@ package org.eclipse.help.internal.base.remote;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -23,6 +24,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.help.internal.search.SearchHit;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -128,5 +130,15 @@ public class RemoteSearchParser extends DefaultHandler {
 	private void handleSummary(Attributes attr) {
 		// prepare the buffer to receive text summary
 		summary = new StringBuffer();
+	}
+	
+	/*
+	 * Note: throws clause does not declare IOException due to a bug in
+	 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
+	 * 
+	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
+	 */
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+		return new InputSource(new StringReader("")); //$NON-NLS-1$
 	}
 }

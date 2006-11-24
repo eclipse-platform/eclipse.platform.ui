@@ -25,6 +25,11 @@ import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.dynamic.ExtensionHandler;
+import org.eclipse.help.internal.dynamic.IncludeHandler;
+import org.eclipse.help.internal.dynamic.NodeHandler;
+import org.eclipse.help.internal.dynamic.NodeReader;
+import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -38,6 +43,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	private Stack stack = new Stack();
 	private SAXParser parser;
+	private XMLProcessor processor;
 	private boolean hasFilters;
 
 	/**
@@ -78,9 +84,6 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		void addText(String text);
 	}
 
-	/**
-	 * 
-	 */
 	private static class ParsedXMLContent implements IParsedXMLContent {
 		private StringBuffer buffer = new StringBuffer();
 		private StringBuffer summary = new StringBuffer();
@@ -121,7 +124,15 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		}
 
 		public String getSummary() {
-			return summary.toString();
+			// if the summary starts with the title, trim that part off.
+			String summaryStr = summary.toString();
+			if (title != null && summaryStr.length() >= title.length()) {
+				String header = summaryStr.substring(0, title.length());
+				if (header.equalsIgnoreCase(title)) {
+					return summaryStr.substring(title.length()).trim();
+				}
+			}
+			return summaryStr;
 		}
 
 		public String getTitle() {
@@ -268,12 +279,15 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			Document doc) {
 		InputStream stream = null;
 		try {
-			if (parser == null)
+			if (parser == null) {
 				parser = SAXParserFactory.newInstance().newSAXParser();
+			}
 			stack.clear();
+			hasFilters = false;
 			ParsedXMLContent parsed = new ParsedXMLContent(index.getLocale());
 			XMLHandler handler = new XMLHandler(parsed);
 			stream = url.openStream();
+			stream = preprocess(stream, name, index.getLocale());
 			parser.parse(stream, handler);
 			doc.add(Field.Text("contents", parsed.newContentReader())); //$NON-NLS-1$
 			doc.add(Field.Text("exact_contents", parsed //$NON-NLS-1$
@@ -327,5 +341,42 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			buf.append((String) stack.get(i));
 		}
 		return buf.toString();
+	}
+	
+	/**
+	 * <p>
+	 * Pre-processes the given document input stream for the given document name and locale.
+	 * This implementation will resolve dynamic content that is applicable to searching,
+	 * e.g. includes and extensions, but not filters. Subclasses may override to do their
+	 * own pre-processing.
+	 * </p>
+	 * <p>
+	 * For performance, implementations that handle documents that do not support dynamic
+	 * content should subclass and return the original stream.
+	 * </p>
+	 * 
+	 * @param in the input stream for the document content
+	 * @param name the name of the document as it appears in the index
+	 * @param locale the locale code, e.g. "en_US"
+	 * @return the processed content
+	 * @since 3.3
+	 */
+	protected InputStream preprocess(InputStream in, String name, String locale) {
+		if (processor == null) {
+			NodeReader reader = new NodeReader();
+			reader.setIgnoreWhitespaceNodes(true);
+			processor = new XMLProcessor(new NodeHandler[] {
+				new IncludeHandler(reader, locale),
+				new ExtensionHandler(reader, locale)
+			});
+		}
+		try {
+			return processor.process(in, name, null);
+		}
+		catch (Throwable t) {
+			String msg = "An error occured while pre-processing user assistance document \"" + name + "\" for search indexing"; //$NON-NLS-1$ //$NON-NLS-2$
+			HelpBasePlugin.logError(msg, t);
+			return in;
+		}
 	}
 }
