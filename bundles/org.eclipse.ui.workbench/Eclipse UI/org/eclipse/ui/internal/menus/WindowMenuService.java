@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
@@ -175,5 +176,16 @@ public final class WindowMenuService implements IMenuService {
 	 */
 	public void registerAdditionCache(MenuLocationURI  uri, MenuAddition addition) {
 		parent.registerAdditionCache(uri, addition);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#addContribution(org.eclipse.ui.internal.menus.MenuActivation)
+	 */
+	public void addContribution(MenuActivation menuItem) {
+		parent.addContribution(menuItem);
+	}
+	
+	public IEvaluationContext getCurrentState() {
+		return parent.getCurrentState();
 	}
 }

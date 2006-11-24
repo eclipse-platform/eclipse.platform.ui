@@ -31,8 +31,8 @@ public class WidgetAddition extends AdditionBase {
 
 	AbstractWorkbenchWidget widget = null;
 	
-	public WidgetAddition(IConfigurationElement element) {
-		super(element);
+	public WidgetAddition(IConfigurationElement element, IMenuService service) {
+		super(element, service);
 	}
 	
 	AbstractWorkbenchWidget getWidget() {

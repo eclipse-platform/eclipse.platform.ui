@@ -27,8 +27,8 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  */
 public class SeparatorAddition extends AdditionBase {
 
-	public SeparatorAddition(IConfigurationElement element) {
-		super(element);
+	public SeparatorAddition(IConfigurationElement element, IMenuService service) {
+		super(element, service);
 	}
 	
 	public boolean isVisible() {

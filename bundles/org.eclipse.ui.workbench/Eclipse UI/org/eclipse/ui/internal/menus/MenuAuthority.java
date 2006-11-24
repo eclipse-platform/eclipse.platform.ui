@@ -233,7 +233,8 @@ final public class MenuAuthority extends ExpressionAuthority {
 	private final Set[] activationsBySourcePriority = new Set[33];
 
 	/**
-	 * @param menuItem the activation
+	 * @param menuItem
+	 *            the activation
 	 */
 	public void addContribution(final IMenuActivation menuItem) {
 		IContributionItem item = menuItem.getContribution();
@@ -261,7 +262,8 @@ final public class MenuAuthority extends ExpressionAuthority {
 	}
 
 	/**
-	 * @param menuItem the activation
+	 * @param menuItem
+	 *            the activation
 	 */
 	public void removeContribution(final IMenuActivation menuItem) {
 		Object o = activationsByItem.get(menuItem.getContribution());
@@ -285,7 +287,7 @@ final public class MenuAuthority extends ExpressionAuthority {
 			}
 		}
 	}
-	
+
 	/**
 	 * @param sourcePriority
 	 */
@@ -324,7 +326,9 @@ final public class MenuAuthority extends ExpressionAuthority {
 			if (newVisible != currentlyVisible) {
 				// should we be proactive about notifying that an
 				// IContributionItem is dirty?
-				
+				IContributionItem menuItem = contribution.getContribution();
+				menuItem.update();
+
 				// old code
 				// contribution.getMenuElement().setVisible(window, newVisible);
 

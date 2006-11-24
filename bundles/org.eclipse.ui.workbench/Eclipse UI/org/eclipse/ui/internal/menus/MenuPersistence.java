@@ -1134,7 +1134,7 @@ final class MenuPersistence extends RegistryPersistence {
 			if (additionCache == null) {
 				String p = uri.getQuery();
 				if (p.length() == 0) {
-					additionCache = new MenuAddition(addition);
+					additionCache = new MenuAddition(addition, menuService);
 					menuService.registerAdditionCache(uri, additionCache);
 				}
 				else {

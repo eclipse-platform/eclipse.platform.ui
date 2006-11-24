@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
@@ -197,5 +198,16 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition) {
 		uriToManager.put(getIdFromURI(uri), addition);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#addContribution(org.eclipse.ui.internal.menus.MenuActivation)
+	 */
+	public void addContribution(MenuActivation menuItem) {
+		menuAuthority.addContribution(menuItem);
+	}
+	
+	public IEvaluationContext getCurrentState() {
+		return menuAuthority.getCurrentState();
 	}
 }

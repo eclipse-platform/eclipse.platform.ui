@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.menus;
 import java.util.Collection;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.ui.services.IServiceWithSources;
 
@@ -292,4 +293,11 @@ public interface IMenuService extends IServiceWithSources {
 	 * @param uri The URI to use to locate the menu additions
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
+
+	/**
+	 * @param menuItem
+	 */
+	public void addContribution(MenuActivation menuItem);
+	
+	public IEvaluationContext getCurrentState();
 }
