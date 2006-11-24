@@ -34,10 +34,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.preferences.WorkbenchSettingsTransfer;
 import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.preferences.SettingsTransfer;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -48,14 +48,16 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * @since 3.3
  * 
  */
-public class WorkbenchSettingsTransfer extends SettingsTransfer {
+public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 
-	private static final String WORKBENCH_LAYOUT_PATH = ".metadata/.plugins/org.eclipse.ui.workbench/workbench.xml"; //$NON-NLS-1$
+	// private static final String WORKBENCH_LAYOUT_PATH =
+	// ".metadata/.plugins/org.eclipse.ui.workbench/workbench.xml";
+	// //$NON-NLS-1$
 
 	/**
 	 * Create a new instance of the receiver.
 	 */
-	public WorkbenchSettingsTransfer() {
+	public WorkbenchLayoutSettingsTransfer() {
 		super();
 	}
 
@@ -184,7 +186,7 @@ public class WorkbenchSettingsTransfer extends SettingsTransfer {
 								WorkbenchMessages.WorkbenchPage_unableToSavePerspective,
 								page.getLabel()), null);
 
-		saveEditorState(page, memento);
+		saveEditorState( memento);
 
 		IMemento viewMem = memento.createChild(IWorkbenchConstants.TAG_VIEWS);
 
@@ -245,12 +247,11 @@ public class WorkbenchSettingsTransfer extends SettingsTransfer {
 	}
 
 	/**
-	 * Save the editor state for the page. Set it to be the defaults.
+	 * Save the editor state. Set it to be the defaults.
 	 * 
-	 * @param page
 	 * @param memento
 	 */
-	private void saveEditorState(WorkbenchPage page, IMemento memento) {
+	private void saveEditorState(IMemento memento) {
 
 		IMemento editorsMemento = memento
 				.createChild(IWorkbenchConstants.TAG_EDITORS);
@@ -276,7 +277,7 @@ public class WorkbenchSettingsTransfer extends SettingsTransfer {
 	/**
 	 * Get the name of the current presentation class name.
 	 * 
-	 * @return
+	 * @return String
 	 */
 	private String getCurrentPresentationClassName() {
 
@@ -348,8 +349,9 @@ public class WorkbenchSettingsTransfer extends SettingsTransfer {
 	 *         cannot be created.
 	 */
 	private File createFileAndDirectories(IPath newWorkspaceRoot) {
-		IPath newWorkspaceLocation = newWorkspaceRoot
-				.append(WORKBENCH_LAYOUT_PATH);
+		IPath newWorkspaceLocation = getNewWorkbenchStateLocation(
+				newWorkspaceRoot).append(
+				Workbench.DEFAULT_WORKBENCH_STATE_FILENAME);
 		File workspaceFile = new File(newWorkspaceLocation.toOSString());
 
 		File parent = workspaceFile.getParentFile();
@@ -367,7 +369,7 @@ public class WorkbenchSettingsTransfer extends SettingsTransfer {
 	 * @see org.eclipse.ui.preferences.SettingsTransfer#getName()
 	 */
 	public String getName() {
-		return WorkbenchMessages.WorkbenchSettings_Name;
+		return WorkbenchMessages.WorkbenchLayoutSettings_Name;
 	}
 
 }

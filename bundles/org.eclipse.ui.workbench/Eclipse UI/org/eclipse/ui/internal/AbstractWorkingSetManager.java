@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +36,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
@@ -353,7 +358,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @param memento the persistence store
      * @see IPersistableElement
      */
-    protected void saveWorkingSetState(IMemento memento) {
+    public void saveWorkingSetState(IMemento memento) {
         Iterator iterator = workingSets.iterator();
         
         // break the sets into aggregates and non aggregates.  The aggregates should be saved after the non-aggregates
@@ -633,4 +638,23 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     public IWorkingSetSelectionDialog createWorkingSetSelectionDialog(Shell parent, boolean multi, String[] workingsSetIds) {
         return new WorkingSetSelectionDialog(parent, multi, workingsSetIds);
     }
+
+	/**
+	 * Save the state to the state file.
+	 * 
+	 * @param stateFile
+	 * @throws IOException
+	 */
+	public void saveState(File stateFile) throws IOException {
+		XMLMemento memento = XMLMemento
+				.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET_MANAGER);
+		saveWorkingSetState(memento);
+		saveMruList(memento);
+	
+		FileOutputStream stream = new FileOutputStream(stateFile);
+		OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8"); //$NON-NLS-1$
+		memento.save(writer);
+		writer.close();
+	
+	}
 }

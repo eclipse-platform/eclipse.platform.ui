@@ -1316,9 +1316,14 @@
    <extension
          point="org.eclipse.ui.preferenceTransfer">
       <settingsTransfer
-            class="org.eclipse.ui.internal.WorkbenchSettingsTransfer"
+            class="org.eclipse.ui.internal.WorkbenchLayoutSettingsTransfer"
             id="org.eclipse.ui.workbenchTransfer"
             name="%SettingsTransfer.WorkbenchLayout">
+      </settingsTransfer>
+      <settingsTransfer
+            class="org.eclipse.ui.internal.preferences.WorkingSetSettingsTransfer"
+            id="org.eclipse.ui.workingSets"
+            name="%SettingsTransfer.WorkingSets">
       </settingsTransfer>
    </extension>
    

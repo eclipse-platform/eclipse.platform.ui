@@ -2780,7 +2780,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 String workingSetName = memento
                         .getString(IWorkbenchConstants.TAG_WORKING_SET);
                 if (workingSetName != null) {
-                    WorkingSetManager workingSetManager = (WorkingSetManager) getWorkbenchWindow()
+                    AbstractWorkingSetManager workingSetManager = (AbstractWorkingSetManager) getWorkbenchWindow()
                             .getWorkbench().getWorkingSetManager();
                     setWorkingSet(workingSetManager.getWorkingSet(workingSetName));
                 }
