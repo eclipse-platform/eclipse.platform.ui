@@ -597,19 +597,19 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					&& fDocumentProvider.getDocument(getDocumentKey()) == DocumentManager.get(object));
 		}
 		
-		public boolean flush(IProgressMonitor monitor) throws CoreException {
+		public boolean flush() throws CoreException {
 			if (fDocumentProvider != null) {
 				IEditorInput input = getDocumentKey();
 				IDocument document = fDocumentProvider.getDocument(input);
 				if (document != null) {
 					final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(fElement, ISharedDocumentAdapter.class);
 					if (sda != null) {
-						sda.flushDocument(fDocumentProvider, input, document, false, monitor);
+						sda.flushDocument(fDocumentProvider, input, document, false);
 						return true;
 					}
 					try {
 						fDocumentProvider.aboutToChange(input);
-						fDocumentProvider.saveDocument(monitor, input, document, false);
+						fDocumentProvider.saveDocument(new NullProgressMonitor(), input, document, false);
 						return true;
 					} finally {
 						fDocumentProvider.changed(input);
@@ -4860,14 +4860,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (leftContent != null && getCompareConfiguration().isLeftEditable() && isLeftDirty()) {
 			if (fLeftContributor.hasSharedDocument(leftContent)) {
-				if (flush(fLeftContributor, monitor))
+				if (flush(fLeftContributor))
 					setLeftDirty(false);
 			}
 		}
 		
 		if (rightContent != null && getCompareConfiguration().isRightEditable() && isRightDirty()) {
 			if (fRightContributor.hasSharedDocument(rightContent)) {
-				if (flush(fRightContributor, monitor))
+				if (flush(fRightContributor))
 					setRightDirty(false);
 			}
 		}
@@ -4877,37 +4877,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 	}
 	
-	private boolean flush(final ContributorInfo info, IProgressMonitor monitor) {
-		if (monitor == null) 
-			return flush(info);
-		
-		try {
-			return info.flush(monitor);
-		} catch (CoreException e) {
-			handleException(e);
-		}
-		return false;
-	}
-	
 	private boolean flush(final ContributorInfo info) {
 		try {
-			final boolean[] saved = new boolean[] { false };
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						saved[0] = info.flush(monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			};
-			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
-			progressService.run(false,false, runnable);
-			return saved[0];
-		} catch (InvocationTargetException e) {
+			return info.flush();
+		} catch (CoreException e) {
 			handleException(e);
-		} catch (InterruptedException e) {
-			// Ignore
 		}
 		return false;
 	}

@@ -121,7 +121,7 @@ public abstract class StorageTypedElement implements ITypedElement, IEncodedStre
 						}
 						public void flushDocument(IDocumentProvider provider,
 								IEditorInput documentKey, IDocument document,
-								boolean overwrite, IProgressMonitor monitor)
+								boolean overwrite)
 								throws CoreException {
 							// The document is read-only
 						}

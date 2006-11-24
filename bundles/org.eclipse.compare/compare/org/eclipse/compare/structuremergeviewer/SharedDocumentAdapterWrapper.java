@@ -11,6 +11,7 @@
 package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.SharedDocumentAdapter;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.IDocument;
@@ -43,7 +44,7 @@ public class SharedDocumentAdapterWrapper implements ISharedDocumentAdapter {
 	 *    or <code>null</code>
 	 */
 	public static ISharedDocumentAdapter getAdapter(Object element) {
-		return (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class);
+		return (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class, true);
 	}
 	
 	/**
@@ -81,9 +82,8 @@ public class SharedDocumentAdapterWrapper implements ISharedDocumentAdapter {
 	 * @see org.eclipse.compare.ISharedDocumentAdapter#saveDocument(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput, org.eclipse.jface.text.IDocument, boolean, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void flushDocument(IDocumentProvider provider,
-			IEditorInput documentKey, IDocument document, boolean overwrite,
-			IProgressMonitor monitor) throws CoreException {
-		wrappedAdapter.flushDocument(provider, documentKey, document, overwrite, monitor);
+			IEditorInput documentKey, IDocument document, boolean overwrite) throws CoreException {
+		wrappedAdapter.flushDocument(provider, documentKey, document, overwrite);
 	}
 
 	/**
@@ -92,6 +92,19 @@ public class SharedDocumentAdapterWrapper implements ISharedDocumentAdapter {
 	 */
 	public final ISharedDocumentAdapter getWrappedAdapter() {
 		return wrappedAdapter;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ISharedDocumentAdapter#disconnect(java.lang.Object)
+	 */
+	public void disconnect(Object element) {
+		IEditorInput input = getDocumentKey(element);
+		if (input == null)
+			return;
+		IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
+		if (provider == null)
+			return;
+		disconnect(provider, input);
 	}
 
 }

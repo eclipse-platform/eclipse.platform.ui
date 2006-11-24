@@ -37,6 +37,15 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
  */
 public abstract class SharedDocumentAdapter implements ISharedDocumentAdapter {
 
+	/**
+	 * Return the document provider for the given editor input.
+	 * @param input the editor input
+	 * @return the document provider for the given editor input
+	 */
+	public static IDocumentProvider getDocumentProvider(IEditorInput input) {
+		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ISharedDocumentAdapter#connect(org.eclipse.ui.texteditor.IDocumentProvider, org.eclipse.ui.IEditorInput)
 	 */
@@ -106,13 +115,17 @@ public abstract class SharedDocumentAdapter implements ISharedDocumentAdapter {
 		}
 	}
 	
-	/**
-	 * Return the document provider for the given editor input.
-	 * @param input the editor input
-	 * @return the document provider for the given editor input
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ISharedDocumentAdapter#disconnect(java.lang.Object)
 	 */
-	public static IDocumentProvider getDocumentProvider(IEditorInput input) {
-		return DocumentProviderRegistry.getDefault().getDocumentProvider(input);
+	public void disconnect(Object element) {
+		IEditorInput input = getDocumentKey(element);
+		if (input == null)
+			return;
+		IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
+		if (provider == null)
+			return;
+		disconnect(provider, input);
 	}
 
 }

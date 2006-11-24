@@ -14,13 +14,12 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.eclipse.jface.text.*;
-
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.*;
+import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.text.*;
 
 
 /**
@@ -37,14 +36,19 @@ import org.eclipse.compare.contentmergeviewer.IDocumentRange;
  * a structural diff on a document and have the nodes and leaves of the compare easily map
  * to character ranges within the document.
  * <p>
+ * Clients need to be aware that this node registers position updaters with the document
+ * using {@link IDocument#addPosition(String, Position)} with the category set to 
+ * {@link IDocumentRange#RANGE_CATEGORY}. The {@link StructureDiffViewer} will 
+ * remove the category when the nodes are no longer being used. Other clients
+ * must do the same.
+ * <p>
  * Subclasses may add additional state collected while parsing the document.
  * </p> 
  * @see Differencer
  */
 public class DocumentRangeNode
-		implements IDocumentRange, IStructureComparator, IEditableContent, IEncodedStreamContentAccessor {
+		implements IDocumentRange, IStructureComparator, IEditableContent, IEncodedStreamContentAccessor, IAdaptable {
 
-	private static final boolean POS_UPDATE= true;
 	private static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		
 	private IDocument fBaseDocument;
@@ -53,6 +57,7 @@ public class DocumentRangeNode
 	private String fID;
 	private Position fAppendPosition; // a position where to insert a child textually
 	private ArrayList fChildren;
+	private final DocumentRangeNode fParent;
 
 	/**
 	 * Creates a new <code>DocumentRangeNode</code> for the given range within the specified
@@ -67,22 +72,40 @@ public class DocumentRangeNode
 	 * @param length length of range
 	 */
 	public DocumentRangeNode(int typeCode, String id, IDocument document, int start, int length) {
-		
+		this(null, typeCode, id, document, start, length);
+	}
+	
+	/**
+	 * Creates a new <code>DocumentRangeNode</code> for the given range within the specified
+	 * document. The <code>typeCode</code> is uninterpreted client data. The ID is used when comparing
+	 * two nodes with each other: i.e. the differencing engine performs a content compare 
+	 * on two nodes if their IDs are equal.
+	 * 
+	 * @param parent the parent node
+	 * @param typeCode a type code for this node
+	 * @param id an identifier for this node
+	 * @param document document on which this node is based on
+	 * @param start start position of range within document
+	 * @param length length of range
+	 * @since 3.3
+	 */
+	public DocumentRangeNode(DocumentRangeNode parent, int typeCode, String id, IDocument document, int start, int length) {
+		fParent = parent;
 		fTypeCode= typeCode;
 		fID= id;
-		
 		fBaseDocument= document;
+		registerPositionUpdater(start, length);
+	}
+
+	private void registerPositionUpdater(int start, int length) {
 		fBaseDocument.addPositionCategory(RANGE_CATEGORY);
 		fRange= new Position(start, length);
-		
-		if (POS_UPDATE) {
-			try {
-				document.addPosition(RANGE_CATEGORY, fRange);
-			} catch (BadPositionCategoryException ex) {
-				// silently ignored
-			} catch (BadLocationException ex) {
-				// silently ignored
-			}
+		try {
+			fBaseDocument.addPosition(RANGE_CATEGORY, fRange);
+		} catch (BadPositionCategoryException ex) {
+			CompareUIPlugin.log(ex);
+		} catch (BadLocationException ex) {
+			CompareUIPlugin.log(ex);
 		}
 	}
 
@@ -170,46 +193,45 @@ public class DocumentRangeNode
 	 * @param pos the character position within the underlying document where text can be legally inserted
 	 */
 	public void setAppendPosition(int pos) {
-		if (POS_UPDATE) {
-			fBaseDocument.removePosition(fAppendPosition);
+		if (fAppendPosition != null)
 			try {
-				Position p= new Position(pos);
-				fBaseDocument.addPosition(RANGE_CATEGORY, p);
-				fAppendPosition= p;
-			} catch (BadPositionCategoryException ex) {
-				// silently ignored
-			} catch (BadLocationException ex) {
-				// silently ignored
+				fBaseDocument.removePosition(RANGE_CATEGORY, fAppendPosition);
+			} catch (BadPositionCategoryException e) {
+				// Ignore
 			}
-		} else {
-			fAppendPosition= new Position(pos);
+		try {
+			Position p= new Position(pos);
+			fBaseDocument.addPosition(RANGE_CATEGORY, p);
+			fAppendPosition= p;
+		} catch (BadPositionCategoryException ex) {
+			CompareUIPlugin.log(ex);
+		} catch (BadLocationException ex) {
+			CompareUIPlugin.log(ex);
 		}
 	}
 
 	/**
 	 * Returns the position that has been set with <code>setAppendPosition</code>.
 	 * If <code>setAppendPosition</code> hasn't been called, the position after the last character
-	 * of this range is returned.
+	 * of this range is returned. This method will return <code>null</code> if the position
+	 * could not be registered with the document.
 	 *
 	 * @return a position where text can be legally inserted
 	 */
 	public Position getAppendPosition() {
 		if (fAppendPosition == null) {
-			if (POS_UPDATE) {
-				try {
-					Position p= new Position(fBaseDocument.getLength());
-					fBaseDocument.addPosition(RANGE_CATEGORY, p);
-					fAppendPosition= p;
-				} catch (BadPositionCategoryException ex) {
-					// silently ignored
-				} catch (BadLocationException ex) {
-					// silently ignored
-				}
-			} else {
-				fAppendPosition= new Position(fBaseDocument.getLength());
+			try {
+				Position p= new Position(fBaseDocument.getLength());
+				fBaseDocument.addPosition(RANGE_CATEGORY, p);
+				fAppendPosition= p;
+				return fAppendPosition;
+			} catch (BadPositionCategoryException ex) {
+				CompareUIPlugin.log(ex);
+			} catch (BadLocationException ex) {
+				CompareUIPlugin.log(ex);
 			}
 		}
-		return fAppendPosition;
+		return new Position(fBaseDocument.getLength());
 	}
 
 	/**
@@ -291,7 +313,7 @@ public class DocumentRangeNode
 			try {
 				fBaseDocument.replace(p.getOffset(), p.getLength(), s);
 			} catch (BadLocationException ex) {
-				// silently ignored
+				CompareUIPlugin.log(ex);
 			}
 		}
 	}
@@ -309,10 +331,15 @@ public class DocumentRangeNode
 		return new ByteArrayInputStream(Utilities.getBytes(s, UTF_16));
 	}
 
-	/* (non Javadoc)
-	 * see IEditableContent.isEditable
+
+	/**
+	 * If this node has a parent, return the editability of the parent.
+	 * Otherwise return <code>true</code>. Subclasses may override.
+	 * @see org.eclipse.compare.IEditableContent#isEditable()
 	 */
 	public boolean isEditable() {
+		if (fParent != null)
+			return fParent.isEditable();
 		return true;
 	}
 		
@@ -321,33 +348,54 @@ public class DocumentRangeNode
 	 */
 	public ITypedElement replace(ITypedElement child, ITypedElement other) {
 
-		DocumentRangeNode src= null;
-		String srcContents= ""; //$NON-NLS-1$
-		
-		if (other != null) {
-			src= (DocumentRangeNode) child;
+		if (fParent == null) {
+			// TODO: I don't believe this code does anything useful but just in case
+			// I'm leaving it in but disabling it for the shared document case
+			// since all the subclasses that have been converted overrode the method anyway
+			DocumentRangeNode src= null;
+			String srcContents= ""; //$NON-NLS-1$
 			
-			if (other instanceof IStreamContentAccessor) {
-				try {
-					srcContents= Utilities.readString((IStreamContentAccessor)other);
-				} catch(CoreException ex) {
-					// NeedWork
-					CompareUIPlugin.log(ex);
+			if (other != null) {
+				src= (DocumentRangeNode) child;
+				
+				if (other instanceof IStreamContentAccessor) {
+					try {
+						srcContents= Utilities.readString((IStreamContentAccessor)other);
+					} catch(CoreException ex) {
+						// NeedWork
+						CompareUIPlugin.log(ex);
+					}
 				}
 			}
+	
+			if (child == null) // no destination: we have to add the contents into the parent
+				add(srcContents, null, src);
 		}
-
-		if (child == null) // no destination: we have to add the contents into the parent
-			add(srcContents, null, src);
-
+		nodeChanged(this);
 		return child;
 	}
 	
-	/* (non Javadoc)
-	 * see IEditableContent.setContent
+	/**
+	 * Default implementation that calls {@link #internalSetContents(byte[])}
+	 * and then {@link #nodeChanged(DocumentRangeNode)}. Subclasses
+	 * may override but should then call {@link #nodeChanged(DocumentRangeNode)}
+	 * after the contents have been set.
+	 * @see org.eclipse.compare.IEditableContent#setContent(byte[])
 	 */
 	public void setContent(byte[] content) {
-		// empty default implementation
+		internalSetContents(content);
+		nodeChanged(this);
+	}
+
+	/**
+	 * Method that is invoked from {@link #setContent(byte[])}. By default,
+	 * this method does nothing. Subclasses may override. 
+	 * @param content the new content
+	 * @since 3.3
+	 */
+	protected void internalSetContents(byte[] content) {
+		// By default, do nothing
+		
 	}
 
 	/* (non-Javadoc)
@@ -355,6 +403,35 @@ public class DocumentRangeNode
 	 */
 	public String getCharset() {
 		return UTF_16;
+	}
+	
+	/**
+	 * Method that should be invoked whenever the contents of this node are
+	 * changed. the change is propagated to the parent if there is one.
+	 * @param node the node that has changed.
+	 * @since 3.3
+	 */
+	protected void nodeChanged(DocumentRangeNode node) {
+		if (fParent != null)
+			fParent.nodeChanged(node);
+	}
+	
+	/**
+	 * Implement {@link IAdaptable#getAdapter(Class)} in order to provide
+	 * an {@link ISharedDocumentAdapter} that provides the proper look up key based
+	 * on the input from which this structure node was created. The proper
+	 * shared document adapter is obtained by calling {@link #getAdapter(Class)}
+	 * on this node's parent if there is one.
+	 * @param adapter the adapter class to look up
+	 * @return the object adapted to the given class or <code>null</code>
+	 * @see IAdaptable#getAdapter(Class)
+	 * @since 3.3
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == ISharedDocumentAdapter.class && fParent != null)
+			return fParent.getAdapter(adapter);
+		
+		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 }
 

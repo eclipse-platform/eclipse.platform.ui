@@ -118,7 +118,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fStructureCreator instanceof IStructureCreator2) {
 				IStructureCreator2 sc2 = (IStructureCreator2) fStructureCreator;
 				try {
-					return sc2.createStructure(fInput);
+					return sc2.createStructure(fInput, null);
 				} catch (CoreException e) {
 					CompareUIPlugin.log(e);
 				}

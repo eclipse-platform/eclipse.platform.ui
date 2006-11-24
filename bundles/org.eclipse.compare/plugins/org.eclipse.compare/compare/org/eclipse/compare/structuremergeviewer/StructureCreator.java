@@ -11,19 +11,16 @@
 package org.eclipse.compare.structuremergeviewer;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.*;
 import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -68,7 +65,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		}
 		
 		try {
-			return createStructureComparator(input, doc, null);
+			return createStructureComparator(input, doc, null, null);
 		} catch (CoreException e) {
 			CompareUIPlugin.log(e);
 			return null;
@@ -76,44 +73,71 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.compare.structuremergeviewer.ITextStructureCreator#getStructure(java.lang.Object, org.eclipse.compare.structuremergeviewer.IDocumentManager)
+	 * @see org.eclipse.compare.structuremergeviewer.IStructureCreator2#createStructure(java.lang.Object, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	public IStructureComparator createStructure(Object element) {
+	public IStructureComparator createStructure(Object element, IProgressMonitor monitor) throws CoreException {
 		IDocument document = null;
-		final IEditorInput input = getDocumentKey(element);
-		if (input != null) {
-			final IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
-			if (provider != null) {
-				try {
-					final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(input, ISharedDocumentAdapter.class);
-					if (sda != null) {
+		final ISharedDocumentAdapter sda = SharedDocumentAdapterWrapper.getAdapter(element);
+		if (sda != null) {
+			final IEditorInput input = sda.getDocumentKey(element);
+			if (input != null) {
+				final IDocumentProvider provider = SharedDocumentAdapter.getDocumentProvider(input);
+				if (provider != null) {
+					try {
 						sda.connect(provider, input);
-					} else {
-						provider.connect(input);
+						document = provider.getDocument(input);
+						setupDocument(document);
+						return createStructureComparator(element, document, wrapSharedDocumentAdapter(sda, element, document), monitor);
+					} catch (CoreException e) {
+						// Connection to the document provider failed.
+						// Log and fall through to use simple structure
+						CompareUIPlugin.log(e);
 					}
-					document = provider.getDocument(input);
-					IDisposable disposable = new IDisposable() {
-						public void dispose() {
-							if (sda != null) {
-								sda.disconnect(provider, input);
-							} else {
-								provider.disconnect(input);
-							}
-						}
-					};
-					setupDocument(document);
-					return createStructureComparator(element, document, disposable);
-				} catch (CoreException e) {
-					// Connection to the document provider failed.
-					// Log and fall through to use simple structure
-					CompareUIPlugin.log(e);
 				}
 			}
 		}
 		return getStructure(element);
-		
 	}
 	
+	/**
+	 * Create an {@link IStructureComparator} for the given element using the
+	 * contents available in the given document. If the provided
+	 * {@link ISharedDocumentAdapter} is not <code>null</code> then the
+	 * {@link IStructureComparator} returned by this method must implement the
+	 * {@link IDisposable} interface and disconnect from the adapter when the
+	 * comparator is disposed. The {@link StructureDiffViewer} class will call
+	 * dispose if the {@link IStructureComparator} also implements
+	 * {@link IDisposable}. Other clients must do the same.
+	 * <p>
+	 * It should be noted that the provided {@link ISharedDocumentAdapter}
+	 * will provide the key associated with the given element when
+	 * {@link ISharedDocumentAdapter#getDocumentKey(Object)} is called
+	 * for any {@link IDocumentRange} node whose document matches the
+	 * provided document. Thus, this adapter should also be returned
+	 * by the structure comparator and its children when they are adapted
+	 * to an {@link ISharedDocumentAdapter}.
+	 * @param element the element
+	 * @param document the document that has the contents for the element
+	 * @param sharedDocumentAdapter the shared document adapter from which the
+	 *            document was obtained or <code>null</code> if the document
+	 *            is not shared.
+	 * @param monitor a progress monitor or <code>null</code> if progress is not required
+	 * 
+	 * @return a structure comparator
+	 * @throws CoreException
+	 */
+	protected IStructureComparator createStructureComparator(final Object element, IDocument document, final ISharedDocumentAdapter sharedDocumentAdapter, IProgressMonitor monitor) throws CoreException {
+		IDisposable disposable = null;
+		if (sharedDocumentAdapter != null) {
+			disposable = new IDisposable() {
+				public void dispose() {
+					sharedDocumentAdapter.disconnect(element);
+				}
+			};
+		}
+		return createStructureComparator(element, document, disposable);
+	}
+
 	/**
 	 * Create an {@link IStructureComparator} for the given element using the
 	 * contents available in the given document. If the provided disposable is
@@ -131,9 +155,12 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	 *            <code>null</code> if disposal is not needed).
 	 * @return a structure comparator
 	 * @throws CoreException
+	 * @deprecated Subclasses should implement {@link #createStructureComparator(Object, IDocument, ISharedDocumentAdapter, IProgressMonitor)} instead
 	 */
-	protected abstract IStructureComparator createStructureComparator(Object element,
-			IDocument document, IDisposable disposable) throws CoreException;
+	protected IStructureComparator createStructureComparator(Object element,
+			IDocument document, IDisposable disposable) throws CoreException {
+		return null;
+	}
 
 	/**
 	 * Setup the newly created document as appropriate. Any document partitioners
@@ -185,17 +212,6 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		return null;
 	}
 	
-	private IEditorInput getDocumentKey(Object element) {
-		IEditorInput input = (IEditorInput)Utilities.getAdapter(element, IEditorInput.class);
-		if (input != null)
-			return input;
-		ISharedDocumentAdapter sda = (ISharedDocumentAdapter)Utilities.getAdapter(element, ISharedDocumentAdapter.class, true);
-		if (sda != null) {
-			return sda.getDocumentKey(element);
-		}
-		return null;
-	}
-	
 	/**
 	 * Default implementation of save that extracts the contents from 
 	 * the document of an {@link IDocumentRange} and sets it on the
@@ -210,7 +226,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		if (node instanceof IDocumentRange && input instanceof IEditableContent) {
 			IDocument document= ((IDocumentRange)node).getDocument();
 			// First check to see if we have a shared document
-			final ISharedDocumentAdapter sda = (ISharedDocumentAdapter) Utilities.getAdapter(input, ISharedDocumentAdapter.class);
+			final ISharedDocumentAdapter sda = SharedDocumentAdapterWrapper.getAdapter(input);
 			if (sda != null) {
 				IEditorInput key = sda.getDocumentKey(input);
 				if (key != null) {
@@ -250,35 +266,38 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	private boolean save(final IDocumentProvider provider, final IDocument document,
 			final Object input, final ISharedDocumentAdapter sda, final IEditorInput key) {
 		try {
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						doSave(provider, document, input, sda, key, monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			};
-			IProgressService progressService= PlatformUI.getWorkbench().getProgressService();
-			progressService.run(false,false, runnable);
+			sda.flushDocument(provider, key, document, false);
 			return true;
-		} catch (InvocationTargetException e) {
-			// TODO: Should show error to the user
-			Throwable t = e.getTargetException();
-			CompareUIPlugin.log(t);
-		} catch (InterruptedException e) {
-			// Ignore
+		} catch (CoreException e) {
+			CompareUIPlugin.log(e);
 		}
 		return false;
 	}
 	
-	private void doSave(IDocumentProvider provider, IDocument document,
-			Object input, final ISharedDocumentAdapter sda, IEditorInput key, IProgressMonitor monitor) throws CoreException {
-		try {
-			provider.aboutToChange(key);
-			sda.flushDocument(provider, key, document, false, monitor);
-		} finally {
-			provider.changed(input);
-		}
+	/**
+	 * Create an {@link ISharedDocumentAdapter} that will provide the document key for the given input
+	 * object for any {@link DocumentRangeNode} instances whose document is the same as the 
+	 * provided document.
+	 * @param input the input element
+	 * @param document the document associated with the input element
+	 * @return a shared document adapter that provides the proper document key for document range nodes
+	 */
+	private final ISharedDocumentAdapter wrapSharedDocumentAdapter(ISharedDocumentAdapter elementAdapter, final Object input, final IDocument document) {
+		// We need to wrap the adapter so that the proper document key gets returned
+		return new SharedDocumentAdapterWrapper(elementAdapter) {
+			public IEditorInput getDocumentKey(Object element) {
+				if (hasSameDocument(element)) {
+					return super.getDocumentKey(input);
+				}
+				return super.getDocumentKey(element);
+			}
+			private boolean hasSameDocument(Object element) {
+				if (element instanceof DocumentRangeNode) {
+					DocumentRangeNode drn = (DocumentRangeNode) element;
+					return drn.getDocument() == document;
+				}
+				return false;
+			}
+		};
 	}
 }

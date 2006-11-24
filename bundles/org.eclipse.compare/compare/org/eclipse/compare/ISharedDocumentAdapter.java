@@ -68,6 +68,14 @@ public interface ISharedDocumentAdapter {
 	void disconnect(IDocumentProvider provider, IEditorInput documentKey);
 	
 	/**
+	 * A helper disconnect method that looks up the appropriate key (using {@link #getDocumentKey(Object)}
+	 * and the appropriate provider and calls {@link #disconnect(IDocumentProvider, IEditorInput)}.
+	 * @param element the element that was used to previously connect to a document
+	 * @see IDocumentProvider#disconnect(Object)
+	 */
+	void disconnect(Object element);
+	
+	/**
 	 * Flush the contents of the given document into the typed element that provided the
 	 * document. This method is invoked by the Compare framework classes
 	 * when a request to flush the viewers has been made. It is up to the implementor to decide
@@ -79,10 +87,9 @@ public interface ISharedDocumentAdapter {
 	 * @param document the document
 	 * @param overwrite indicates whether overwrite should be performed
 	 * 			while saving the given element if necessary
-	 * @param monitor a progress monitor to report progress and request cancelation
 	 * @exception CoreException if document could not be stored to the given element
 	 * @see IDocumentProvider#saveDocument(IProgressMonitor, Object, IDocument, boolean)
 	 */
-	void flushDocument(IDocumentProvider provider, IEditorInput documentKey, IDocument document, boolean overwrite, IProgressMonitor monitor) throws CoreException;
+	void flushDocument(IDocumentProvider provider, IEditorInput documentKey, IDocument document, boolean overwrite) throws CoreException;
 
 }

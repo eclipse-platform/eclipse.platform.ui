@@ -136,7 +136,7 @@ public class EditableSharedDocumentAdapter extends
 
 	/**
 	 * Release the buffer if this adapter has buffered the contents in response to
-	 * a {@link #flushDocument(IDocumentProvider, IEditorInput, IDocument, boolean, IProgressMonitor)}.
+	 * a {@link #flushDocument(IDocumentProvider, IEditorInput, IDocument, boolean)}.
 	 */
 	public void releaseBuffer() {
 		if (bufferedKey != null) {
@@ -151,7 +151,7 @@ public class EditableSharedDocumentAdapter extends
 	 */
 	public void flushDocument(IDocumentProvider provider,
 			IEditorInput documentKey, IDocument document,
-			boolean overwrite, IProgressMonitor monitor)
+			boolean overwrite)
 			throws CoreException {
 		if (!hasBufferedContents()) {
 			// On a flush, make an extra connection to the shared document so it will be kept even

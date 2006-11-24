@@ -12,6 +12,7 @@ package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.compare.ISharedDocumentAdapter;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -53,10 +54,11 @@ public interface IStructureCreator2 extends IStructureCreator {
 	 * @param input
 	 *            the object from which to create the tree of
 	 *            <code>IStructureComparator</code>
+	 * @param monitor a progress monitor or <code>null</code> if progress and cancelation is not required
 	 * @return the root node of the structure or <code>null</code> in case of
 	 *         error
 	 * @throws CoreException
 	 * @see IStructureCreator#getStructure(Object)
 	 */
-	IStructureComparator createStructure(Object input) throws CoreException;
+	IStructureComparator createStructure(Object input, IProgressMonitor monitor) throws CoreException;
 }
