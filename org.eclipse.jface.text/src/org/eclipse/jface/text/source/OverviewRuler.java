@@ -93,6 +93,14 @@ public class OverviewRuler implements IOverviewRuler {
 		 * @since 3.3
 		 */
 		public void modelChanged(AnnotationModelEvent event) {
+			if (!event.isValid())
+				return;
+			
+			if (event.isWorldChange()) {
+				update();
+				return;
+			}
+			
 			Annotation[] annotations= event.getAddedAnnotations();
 			int length= annotations.length;
 			for (int i= 0; i < length; i++) {
