@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.compare.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.*;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -57,7 +60,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		private ITypedElement fInput;
 		private IStructureComparator fStructureComparator;
 		
-		public boolean setInput(ITypedElement newInput, boolean force) {
+		public boolean setInput(ITypedElement newInput, boolean force, IProgressMonitor monitor) {
 			boolean changed = false;
 			if (force || newInput != fInput) {
 				removeDocumentRangeUpdaters();
@@ -71,7 +74,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 					}
 					fStructureComparator= null;
 				} else {
-					refresh();
+					refresh(monitor);
 					changed= true;
 				}
 				if (fInput instanceof IContentChangeNotifier)
@@ -98,9 +101,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			return fStructureComparator;
 		}
 
-		public void refresh() {
+		public void refresh(IProgressMonitor monitor) {
 			IStructureComparator oldComparator = fStructureComparator;
-			fStructureComparator= createStructure();
+			fStructureComparator= createStructure(monitor);
 			// Dispose of the old one after in case they are using a shared document
 			// (i.e. disposing it after will hold on to a reference to the document 
 			// so it doesn't get freed and reloaded)
@@ -114,11 +117,11 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			return fInput;
 		}
 		
-		private IStructureComparator createStructure() {
+		private IStructureComparator createStructure(IProgressMonitor monitor) {
 			if (fStructureCreator instanceof IStructureCreator2) {
 				IStructureCreator2 sc2 = (IStructureCreator2) fStructureCreator;
 				try {
-					return sc2.createStructure(fInput, null);
+					return sc2.createStructure(fInput, monitor);
 				} catch (CoreException e) {
 					CompareUIPlugin.log(e);
 				}
@@ -266,118 +269,247 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * @param input this viewer's new input
 	 */
 	protected void compareInputChanged(ICompareInput input) {
+		// TODO
 		compareInputChanged(input, false);
 	}
 		
-	/* package */ void compareInputChanged(ICompareInput input, boolean force) {
+	/* package */ void compareInputChanged(final ICompareInput input, final boolean force) {
+		if (input == null) {
+			// When closing, we don't need a progress monitor to handle the input change
+			compareInputChanged(input, force, null);
+			return;
+		}
+		try {
+			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask("Generating Structure Differences", 100);
+					compareInputChanged(input, force, new SubProgressMonitor(monitor, 100));
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// Shouldn't happen since the run doesn't throw
+			CompareUIPlugin.log(e.getTargetException());
+			handleFailedRefresh(e.getTargetException().getMessage());
+		} catch (InterruptedException e) {
+			// Canceled by user
+			handleFailedRefresh("Refresh Canceled");
+		}
+	}
+
+	/* package */ void compareInputChanged(ICompareInput input, boolean force, IProgressMonitor monitor) {
 		ITypedElement t= null;
 		boolean changed= false;
 		
 		if (input != null)
 			t= input.getAncestor();
 		fThreeWay= (t != null);
-		if (fAncestorStructure.setInput(t, force))
-			changed = true;
-		
-		if (input != null)
-			t= input.getLeft();
-		if (fLeftStructure.setInput(t, force))
-			changed = true;
-		
-		if (input != null)
-			t= input.getRight();
-		if (fRightStructure.setInput(t, force))
-			changed = true;
-		
-		if (changed)
-			diff();
+		beginWork(monitor, 400);
+		try {
+			if (fAncestorStructure.setInput(t, force, subMonitor(monitor, 100)))
+				changed = true;
+			
+			if (input != null)
+				t= input.getLeft();
+			if (fLeftStructure.setInput(t, force, subMonitor(monitor, 100)))
+				changed = true;
+			
+			if (input != null)
+				t= input.getRight();
+			if (fRightStructure.setInput(t, force, subMonitor(monitor, 100)))
+				changed = true;
+			
+			if (changed)
+				diff(subMonitor(monitor, 100));
+		} finally {
+			endWork(monitor);
+		}
 	}
 	
+	private void endWork(IProgressMonitor monitor) {
+		if (monitor != null)
+			monitor.done();
+	}
+
+	private IProgressMonitor subMonitor(IProgressMonitor monitor, int work) {
+		if (monitor != null) {
+			if (monitor.isCanceled() || getControl().isDisposed())
+				throw new OperationCanceledException();
+			return new SubProgressMonitor(monitor, work);
+		}
+		return null;
+	}
+
+	private void beginWork(IProgressMonitor monitor, int totalWork) {
+		if (monitor != null)
+			monitor.beginTask(null, totalWork);
+	}
+
 	/**
 	 * Calls <code>diff</code> whenever the byte contents changes.
 	 * @param changed the object that sent out the notification
 	 */
-	protected void contentChanged(IContentChangeNotifier changed) {
+	protected void contentChanged(final IContentChangeNotifier changed) {
 		
 		if (fStructureCreator == null)
 			return;
-			
-		if (changed != null) {
-			if (changed == fAncestorStructure.getInput()) {
-				fAncestorStructure.refresh();
-			} else if (changed == fLeftStructure.getInput()) {
-				fLeftStructure.refresh();
-			} else if (changed == fRightStructure.getInput()) {
-				fRightStructure.refresh();
-			} else
-				return;
-		} else {
-			fAncestorStructure.refresh();
-			fLeftStructure.refresh();
-			fRightStructure.refresh();
-		}
 		
-		diff();
+		try {
+			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask("Reconciling Structure Differences", 100);
+					if (changed != null) {
+						handleContentChanged(changed, new SubProgressMonitor(monitor, 100));
+					} else {
+						resfreshStructure(new SubProgressMonitor(monitor, 100));
+					}
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// Shouldn't happen since the run doesn't throw
+			CompareUIPlugin.log(e.getTargetException());
+			handleFailedRefresh(e.getTargetException().getMessage());
+		} catch (InterruptedException e) {
+			// Canceled by user
+			handleFailedRefresh("Refresh Canceled");
+		}
+	}
+
+	private void resfreshStructure(IProgressMonitor monitor) {
+		beginWork(monitor, 400);
+		try {
+			fAncestorStructure.refresh(subMonitor(monitor, 100));
+			fLeftStructure.refresh(subMonitor(monitor, 100));
+			fRightStructure.refresh(subMonitor(monitor, 100));
+			diff(subMonitor(monitor, 100));
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* package */ void handleContentChanged(IContentChangeNotifier changed, IProgressMonitor monitor) {
+		if (changed == fAncestorStructure.getInput()) {
+			fAncestorStructure.refresh(monitor);
+		} else if (changed == fLeftStructure.getInput()) {
+			fLeftStructure.refresh(monitor);
+		} else if (changed == fRightStructure.getInput()) {
+			fRightStructure.refresh(monitor);
+		} else {
+			return;
+		}
+		diff(monitor);
 	}
 
 	/**
-	 * This method is called from within <code>diff()</code> before the difference
-	 * tree is being built.
-	 * Clients may override this method to perform their own pre-processing.
-	 * This default implementation does nothing.
+	 * This method is called from within <code>diff()</code> before the
+	 * difference tree is being built. Clients may override this method to
+	 * perform their own pre-processing. This default implementation does
+	 * nothing.
+	 * 
 	 * @param ancestor the ancestor input to the differencing operation
 	 * @param left the left input to the differencing operation
 	 * @param right the right input to the differencing operation
 	 * @since 2.0
+	 * @deprecated Clients should override
+	 *             {@link #preDiffHook(IStructureComparator, IStructureComparator, IStructureComparator, IProgressMonitor)}
 	 */
 	protected void preDiffHook(IStructureComparator ancestor, IStructureComparator left, IStructureComparator right) {
 		// we do nothing here
 	}
 	
 	/**
-	 * Runs the difference engine and refreshes the tree.
+	 * This method is called from within {@link #diff(IProgressMonitor)} before
+	 * the difference tree is being built. This method may be called from a
+	 * background (non-UI) thread).
+	 * <p>
+	 * For backwards compatibility, this default implementation calls
+	 * {@link #preDiffHook(IStructureComparator, IStructureComparator, IStructureComparator)}
+	 * from the UI thread. Clients should override this method even if they
+	 * don't perform pre-processing to avoid the call to the UI thread.
+	 * 
+	 * @param ancestor the ancestor input to the differencing operation
+	 * @param left the left input to the differencing operation
+	 * @param right the right input to the differencing operation
+	 * @param monitor a progress monitor or null if progress is not required
+	 * @since 3.3
 	 */
-	protected void diff() {
-		
-		IStructureComparator ancestorComparator = fAncestorStructure.getStructureComparator();
-		IStructureComparator leftComparator = fLeftStructure.getStructureComparator();
-		IStructureComparator rightComparator = fRightStructure.getStructureComparator();
-		
-		preDiffHook(ancestorComparator, 
-				leftComparator, 
-				rightComparator);
-							
-		String message= null;
-		
-		if ((fThreeWay && ancestorComparator == null) || leftComparator == null || rightComparator == null) {
-			// could not get structure of one (or more) of the legs
-			fRoot= null;
-			message= CompareMessages.StructureDiffViewer_StructureError;	
-			
-		} else {	// calculate difference of the two (or three) structures
-
-			if (fDifferencer == null)
-				fDifferencer= new Differencer() {
-					protected boolean contentsEqual(Object o1, Object o2) {
-						return StructureDiffViewer.this.contentsEqual(o1, o2);
-					}
-					protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
-						Object o= super.visit(data, result, ancestor, left, right);
-						if (fLeftIsLocal && o instanceof DiffNode)
-							((DiffNode)o).swapSides(fLeftIsLocal);
-						return o;
-					}
-				};
-			
-			fRoot= (IDiffContainer) fDifferencer.findDifferences(fThreeWay, null, null,
-					ancestorComparator, leftComparator, rightComparator);
-					
-			if (fRoot == null || fRoot.getChildren().length == 0) {
-				message= CompareMessages.StructureDiffViewer_NoStructuralDifferences;	
-			} else {
-				postDiffHook(fDifferencer, fRoot);
+	protected void preDiffHook(final IStructureComparator ancestor, final IStructureComparator left, final IStructureComparator right, IProgressMonitor monitor) {
+		syncExec(new Runnable() {
+			public void run() {
+				preDiffHook(ancestor, left, right);
 			}
+		});
+	}
+
+	/**
+	 * Runs the difference engine and refreshes the tree. This method may be called
+	 * from a background (non-UI) thread).
+	 * @param monitor a progress monitor or <code>null</code> if progress in not required
+	 */
+	protected void diff(IProgressMonitor monitor) {
+		try {
+			beginWork(monitor, 150);
+			
+			IStructureComparator ancestorComparator = fAncestorStructure.getStructureComparator();
+			IStructureComparator leftComparator = fLeftStructure.getStructureComparator();
+			IStructureComparator rightComparator = fRightStructure.getStructureComparator();
+			
+			preDiffHook(ancestorComparator, 
+					leftComparator, 
+					rightComparator,
+					subMonitor(monitor, 25));
+								
+			String message= null;
+			
+			if ((fThreeWay && ancestorComparator == null) || leftComparator == null || rightComparator == null) {
+				// could not get structure of one (or more) of the legs
+				fRoot= null;
+				message= CompareMessages.StructureDiffViewer_StructureError;	
+				
+			} else {	// calculate difference of the two (or three) structures
+	
+				if (fDifferencer == null)
+					fDifferencer= new Differencer() {
+						protected boolean contentsEqual(Object o1, Object o2) {
+							return StructureDiffViewer.this.contentsEqual(o1, o2);
+						}
+						protected Object visit(Object data, int result, Object ancestor, Object left, Object right) {
+							Object o= super.visit(data, result, ancestor, left, right);
+							if (fLeftIsLocal && o instanceof DiffNode)
+								((DiffNode)o).swapSides(fLeftIsLocal);
+							return o;
+						}
+					};
+				
+				fRoot= (IDiffContainer) fDifferencer.findDifferences(fThreeWay, subMonitor(monitor, 100), null,
+						ancestorComparator, leftComparator, rightComparator);
+						
+				if (fRoot == null || fRoot.getChildren().length == 0) {
+					message= CompareMessages.StructureDiffViewer_NoStructuralDifferences;	
+				} else {
+					postDiffHook(fDifferencer, fRoot, subMonitor(monitor, 25));
+				}
+			}
+			
+			if (Display.getCurrent() != null)
+				refreshAfterDiff(message);
+			else {
+				final String theMessage = message;
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						refreshAfterDiff(theMessage);
+					}
+				});
+			}
+		} finally {
+			endWork(monitor);
 		}
+	}
+
+	private void refreshAfterDiff(String message) {
+		if (getControl().isDisposed())
+			return;
 		if (fParent != null)
 			fParent.setTitleArgument(message);
 			
@@ -385,16 +517,80 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	}
 	
 	/**
-	 * This method is called from within <code>diff()</code> after the difference
-	 * tree has been built.
-	 * Clients may override this method to perform their own post-processing.
-	 * This default implementation does nothing.
+	 * Runs the difference engine and refreshes the tree.
+	 */
+	protected void diff() {
+		try {
+			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					monitor.beginTask("Generating Structure Differences", 100);
+					diff(new SubProgressMonitor(monitor, 100));
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// Shouldn't happen since the run doesn't throw
+			CompareUIPlugin.log(e.getTargetException());
+			handleFailedRefresh(e.getTargetException().getMessage());
+		} catch (InterruptedException e) {
+			// Canceled by user
+			handleFailedRefresh("Refresh Canceled");
+		}
+	}
+	
+	private void handleFailedRefresh(final String message) {
+		Runnable runnable = new Runnable() {
+			public void run() {
+				if (getControl().isDisposed())
+					return;
+				refreshAfterDiff(message);
+			}
+		};
+		if (Display.getCurrent() != null)
+			runnable.run();
+		else
+			Display.getDefault().asyncExec(runnable);
+	}
+
+	/**
+	 * This method is called from within <code>diff()</code> after the
+	 * difference tree has been built. Clients may override this method to
+	 * perform their own post-processing. This default implementation does
+	 * nothing.
+	 * 
 	 * @param differencer the differencer used to perform the differencing
 	 * @param root the non-<code>null</code> root node of the difference tree
 	 * @since 2.0
+	 * @deprecated Subclasses should override
+	 *             {@link #postDiffHook(Differencer, IDiffContainer, IProgressMonitor)}
+	 *             instead
 	 */
 	protected void postDiffHook(Differencer differencer, IDiffContainer root) {
 		// we do nothing here
+	}
+	
+	/**
+	 * This method is called from within {@link #diff(IProgressMonitor)} after
+	 * the difference tree has been built. This method may be called from a
+	 * background (non-UI) thread).
+	 * <p>
+	 * For backwards compatibility, this default implementation calls
+	 * {@link #postDiffHook(Differencer, IDiffContainer)} from the UI thread.
+	 * Clients should override this method even if they don't perform post
+	 * processing to avoid the call to the UI thread.
+	 * 
+	 * @param differencer the differencer used to perform the differencing
+	 * @param root the non-<code>null</code> root node of the difference tree
+	 * @param monitor a progress monitor or <code>null</code> if progress is
+	 *            not required
+	 * @since 3.3
+	 */
+	protected void postDiffHook(final Differencer differencer, final IDiffContainer root, IProgressMonitor monitor) {
+		syncExec(new Runnable() {
+			public void run() {
+				postDiffHook(differencer, root);
+			}
+		});
 	}
 	
 	/*
@@ -442,6 +638,20 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			fStructureCreator.save(
 							leftToRight ? fRightStructure.getStructureComparator() : fLeftStructure.getStructureComparator(),
 							leftToRight ? fRightStructure.getInput() : fLeftStructure.getInput());
+	}
+	
+	private void syncExec(final Runnable runnable) {
+		if (getControl().isDisposed())
+			return;
+		if (Display.getCurrent() != null)
+			runnable.run();
+		else
+			getControl().getDisplay().syncExec(new Runnable() {
+				public void run() {
+					if (!getControl().isDisposed())
+						runnable.run();
+				}
+			});
 	}
 }
 

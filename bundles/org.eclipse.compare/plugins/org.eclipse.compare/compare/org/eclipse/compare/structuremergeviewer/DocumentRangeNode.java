@@ -200,9 +200,12 @@ public class DocumentRangeNode
 				// Ignore
 			}
 		try {
-			Position p= new Position(pos);
-			fBaseDocument.addPosition(RANGE_CATEGORY, p);
-			fAppendPosition= p;
+			// TODO: Avoid an exception for a position that is past the end of the document
+			if (pos <= getDocument().getLength()) {
+				Position p= new Position(pos);
+				fBaseDocument.addPosition(RANGE_CATEGORY, p);
+				fAppendPosition= p;
+			}
 		} catch (BadPositionCategoryException ex) {
 			CompareUIPlugin.log(ex);
 		} catch (BadLocationException ex) {
