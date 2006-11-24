@@ -106,10 +106,11 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		if(config != null) {
 			try {
 				copy = config.getWorkingCopy();
+				fPanel.performApply(copy);
+				copy.doSave();
 			} 
 			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
-		fPanel.performApply(copy);
 		super.okPressed();
 	}
 	

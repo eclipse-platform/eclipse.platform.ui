@@ -357,9 +357,6 @@ public class SourceLookupPanel extends AbstractLaunchConfigurationTab implements
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_MEMENTO, fLocator.getMemento());
 					workingCopy.setAttribute(ILaunchConfiguration.ATTR_SOURCE_LOCATOR_ID, fLocator.getId());
 				}
-				if(!workingCopy.isReadOnly()) {
-					workingCopy.doSave(); 
-				}
 			}
 			catch(CoreException e) {
 				DebugUIPlugin.log(e);
