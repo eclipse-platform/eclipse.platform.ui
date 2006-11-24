@@ -122,7 +122,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.68f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.60f;
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
