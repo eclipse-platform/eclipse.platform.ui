@@ -1159,6 +1159,9 @@ final class MenuPersistence extends RegistryPersistence {
 		String[] queryParts = Util.split(query, '=');
 		if (queryParts[1].length() > 0) {
 			int indexOfId = mgr.indexOf(queryParts[1]);
+			if (indexOfId==-1) {
+				return 0;
+			}
 			
 			// Increment if we're 'after' this id
 			if (queryParts[0].equals("after")) //$NON-NLS-1$

@@ -32,6 +32,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -115,6 +116,7 @@ import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.LegacyMenuManager;
+import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.menus.TrimBarManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -3065,6 +3067,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		workbench.largeUpdateStart();
 		try {
 			getActionBarAdvisor().fillActionBars(flags);
+			//
+			// 3.3 start
+			final IMenuService menuService = (IMenuService) serviceLocator
+					.getService(IMenuService.class);
+			menuService.populateMenu((ContributionManager) getActionBars()
+					.getMenuManager(), new MenuLocationURI(
+					"menu://org.eclipse.ui.main.menu")); //$NON-NLS-1$
+			// 3.3 end
 		} finally {
 			workbench.largeUpdateEnd();
 		}

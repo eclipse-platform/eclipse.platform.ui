@@ -212,6 +212,6 @@ public class MenuAddition extends AdditionBase {
 				return index;
 			index++;
 		}
-		return 0;
+		return -1;
 	}
 }

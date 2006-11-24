@@ -1337,5 +1337,9 @@
               type="java.lang.Object">
         </propertyTester>
      </extension>
-   
+   <extension
+         point="org.eclipse.ui.menus2">
+      <menuAddition
+            locationURI="menu://org.eclipse.ui.main.menu"/>
+   </extension>
 </plugin>

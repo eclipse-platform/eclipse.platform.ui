@@ -3156,6 +3156,40 @@
             </visibleWhen>
          </item>
       </menuAddition>
+      <menuAddition
+            locationURI="menu://org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="org.eclipse.ui.tests.mainMenu.MenuX2"
+               label="Menu X2">
+            <item
+                  commandId="org.eclipse.ui.tests.bogusCmdId"
+                  id="org.eclipse.ui.tests.menus.itemX3"
+                  label="Menu Item X3">
+            </item>
+            <item
+                  commandId="org.eclipse.ui.tests.bogusCmdId"
+                  id="org.eclipse.ui.tests.menus.itemX4"
+                  label="Menu Item X4">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        operator="or">
+                     <equals
+                           value="org.eclipse.ui.menus.contexts.test1">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+            </item>
+            <item
+                  commandId="org.eclipse.ui.tests.bogusCmdId"
+                  id="org.eclipse.ui.tests.menus.itemX5"
+                  label="Menu Item X5">
+            </item>
+         </menu>
+      </menuAddition>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
