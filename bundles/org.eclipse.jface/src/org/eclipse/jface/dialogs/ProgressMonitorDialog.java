@@ -383,9 +383,13 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
         // Add a listener to set the message properly when the dialog becomes visible
         shell.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event event) {
-				setMessage(message);
+				// We need to async the message update since the Show precedes visibility
+				shell.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						setMessage(message);
+					}
+				});
 			}
-		
 		});
     }
 
