@@ -84,7 +84,7 @@ public class MenuManager extends ContributionManager implements IMenuManager {
      * Indicates this item is visible in its manager; <code>true</code> 
      * by default.
      */
-    private boolean visible = true;
+    protected boolean visible = true;
 
     /**
      * Creates a menu manager.  The text and id are <code>null</code>.

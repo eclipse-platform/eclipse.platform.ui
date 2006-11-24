@@ -28,12 +28,10 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 public abstract class AdditionBase {
 
 	protected IConfigurationElement element;
-	protected IMenuService menuService;
 	private Expression visibleWhenExpression;
 
-	public AdditionBase(IConfigurationElement element, IMenuService service) {
+	public AdditionBase(IConfigurationElement element) {
 		this.element = element;
-		this.menuService = service;
 		try {
 			IConfigurationElement[] visibleConfig = element
 					.getChildren(IWorkbenchRegistryConstants.TAG_VISIBLE_WHEN);

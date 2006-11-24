@@ -38,8 +38,11 @@ public class MenuAddition extends AdditionBase {
 	private ImageDescriptor imageDesc = null;
 	private Image icon = null;
 
+	private IMenuService menuService;
+
 	public MenuAddition(IConfigurationElement element, IMenuService service) {
-		super(element, service);
+		super(element);
+		menuService = service;
 	}
 
 	public void readAdditions(IConfigurationElement addition, int insertionIndex) {
@@ -48,19 +51,17 @@ public class MenuAddition extends AdditionBase {
 			String itemType = items[i].getName();
 
 			if (IWorkbenchRegistryConstants.TAG_ITEM.equals(itemType)) {
-				additions.add(insertionIndex++, new ItemAddition(items[i],
-						menuService));
+				additions.add(insertionIndex++, new ItemAddition(items[i]));
 			} else if (IWorkbenchRegistryConstants.TAG_WIDGET.equals(itemType)) {
-				additions.add(insertionIndex++, new WidgetAddition(items[i],
-						menuService));
+				additions.add(insertionIndex++, new WidgetAddition(items[i]));
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				MenuAddition newCache = new MenuAddition(items[i], menuService);
 				newCache.readAdditions(items[i], 0);
 				additions.add(insertionIndex++, newCache);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(itemType)) {
-				additions.add(insertionIndex++, new SeparatorAddition(items[i],
-						menuService));
+				additions
+						.add(insertionIndex++, new SeparatorAddition(items[i]));
 			}
 		}
 	}
@@ -109,8 +110,6 @@ public class MenuAddition extends AdditionBase {
 	 */
 	public IContributionItem getContributionItem() {
 		return new MenuManager(getLabel(), getId()) {
-			
-			MenuActivation visibleCache = null;
 
 			/*
 			 * (non-Javadoc)
@@ -119,19 +118,6 @@ public class MenuAddition extends AdditionBase {
 			 */
 			public String getMenuText() {
 				return getLabel();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.MenuManager#isVisible()
-			 */
-			public boolean isVisible() {
-				if (visibleCache==null && getVisibleWhen()!=null) {
-					visibleCache = new MenuActivation(this, getVisibleWhen(), menuService);
-					menuService.addContribution(visibleCache);
-				}
-				return visibleCache==null?true:visibleCache.evaluate(menuService.getCurrentState());
 			}
 
 			/*
@@ -162,6 +148,13 @@ public class MenuAddition extends AdditionBase {
 			public void fill(ToolBar parent, int index) {
 				super.fill(parent, index);
 			}
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.MenuManager#isVisible()
+			 */
+			public boolean isVisible() {
+				return visible;
+			}
 		};
 	}
 
@@ -189,6 +182,10 @@ public class MenuAddition extends AdditionBase {
 				// Should we just change getContributionItem to return
 				// a list and move the logic into ItemAddition??
 				IContributionItem ci = addition.getContributionItem();
+				if (addition.getVisibleWhen() != null) {
+					menuService.addContribution(new MenuActivation(ci, addition
+							.getVisibleWhen(), menuService));
+				}
 
 				// Populate the sub-items of menus
 				if (addition instanceof MenuAddition) {

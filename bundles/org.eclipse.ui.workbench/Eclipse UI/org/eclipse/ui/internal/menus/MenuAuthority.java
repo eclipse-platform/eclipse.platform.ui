@@ -246,6 +246,7 @@ final public class MenuAuthority extends ExpressionAuthority {
 			return;
 		}
 		activationsByItem.put(item, menuItem);
+		item.setVisible(evaluate(menuItem));
 
 		// Next we update the source priority bucket sort of activations.
 		final int sourcePriority = menuItem.getSourcePriority();
@@ -324,14 +325,12 @@ final public class MenuAuthority extends ExpressionAuthority {
 			contribution.clearResult();
 			final boolean newVisible = evaluate(contribution);
 			if (newVisible != currentlyVisible) {
-				// should we be proactive about notifying that an
-				// IContributionItem is dirty?
 				IContributionItem menuItem = contribution.getContribution();
+				menuItem.setVisible(newVisible);
 				menuItem.update();
 
 				// old code
 				// contribution.getMenuElement().setVisible(window, newVisible);
-
 			}
 		}
 	}

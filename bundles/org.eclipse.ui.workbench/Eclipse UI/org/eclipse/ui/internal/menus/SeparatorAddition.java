@@ -23,38 +23,46 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.3
- *
+ * 
  */
 public class SeparatorAddition extends AdditionBase {
 
-	public SeparatorAddition(IConfigurationElement element, IMenuService service) {
-		super(element, service);
-	}
-	
-	public boolean isVisible() {
-		String val = element.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
-		return Boolean.valueOf(val).booleanValue();
-	}
-	
-	public String toString() {
-		return getClass().getName() + "()";   //$NON-NLS-1$
+	public SeparatorAddition(IConfigurationElement element) {
+		super(element);
 	}
 
-	/* (non-Javadoc)
+	public boolean isVisible() {
+		String val = element
+				.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
+		return Boolean.valueOf(val).booleanValue();
+	}
+
+	public String toString() {
+		return getClass().getName() + "()"; //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContributionItem()
 	 */
 	public IContributionItem getContributionItem() {
 		return new ContributionItem(getId()) {
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.ui.internal.menus.AdditionBase#isSeparator()
 			 */
 			public boolean isSeparator() {
 				return true;
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.menus.AdditionBase#fill(org.eclipse.swt.widgets.Menu, int)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.internal.menus.AdditionBase#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
 			 */
 			public void fill(Menu parent, int index) {
 				if (isVisible()) {
@@ -62,8 +70,11 @@ public class SeparatorAddition extends AdditionBase {
 				}
 			}
 
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.menus.AdditionBase#fill(org.eclipse.swt.widgets.Menu, int)
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.ui.internal.menus.AdditionBase#fill(org.eclipse.swt.widgets.Menu,
+			 *      int)
 			 */
 			public void fill(ToolBar parent, int index) {
 				if (isVisible()) {

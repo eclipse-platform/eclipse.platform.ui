@@ -43,8 +43,8 @@ public class ItemAddition extends AdditionBase {
 	// Dynamic Item support
 	private AbstractDynamicMenuItem filler;
 
-	public ItemAddition(IConfigurationElement element, IMenuService service) {
-		super(element, service);
+	public ItemAddition(IConfigurationElement element) {
+		super(element);
 	}
 
 	public String getCommandId() {
@@ -144,8 +144,6 @@ public class ItemAddition extends AdditionBase {
 	public IContributionItem getContributionItem() {
 		return new ContributionItem(getId()) {
 
-			MenuActivation visibleCache = null;
-
 			public void fill(Menu parent, int index) {
 				MenuItem newItem = new MenuItem(parent, getStyle(), index);
 				newItem.setText(getLabel());
@@ -186,21 +184,6 @@ public class ItemAddition extends AdditionBase {
 						// Execute through the command service
 					}
 				});
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.ContributionItem#isVisible()
-			 */
-			public boolean isVisible() {
-				if (visibleCache == null && getVisibleWhen() != null) {
-					visibleCache = new MenuActivation(this, getVisibleWhen(),
-							menuService);
-					menuService.addContribution(visibleCache);
-				}
-				return visibleCache == null ? true : visibleCache
-						.evaluate(menuService.getCurrentState());
 			}
 
 			/*

@@ -25,16 +25,16 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.3
- *
+ * 
  */
 public class WidgetAddition extends AdditionBase {
 
 	AbstractWorkbenchWidget widget = null;
-	
-	public WidgetAddition(IConfigurationElement element, IMenuService service) {
-		super(element, service);
+
+	public WidgetAddition(IConfigurationElement element) {
+		super(element);
 	}
-	
+
 	AbstractWorkbenchWidget getWidget() {
 		if (widget == null) {
 			widget = loadWidget();
@@ -48,32 +48,40 @@ public class WidgetAddition extends AdditionBase {
 	private AbstractWorkbenchWidget loadWidget() {
 		if (widget == null) {
 			try {
-				widget = (AbstractWorkbenchWidget) element.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+				widget = (AbstractWorkbenchWidget) element
+						.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 			} catch (CoreException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 		return widget;
 	}
 
 	private String getClassSpec() {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 	}
-	
+
 	public String toString() {
-		return getClass().getName() + "() " + getClassSpec();   //$NON-NLS-1$
+		return getClass().getName() + "() " + getClassSpec(); //$NON-NLS-1$
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContributionItem()
 	 */
 	public IContributionItem getContributionItem() {
 		return new ContributionItem(getId()) {
-			public void dispose() {}
-			public void fill(Composite parent) {}
-			public void fill(Menu parent, int index) {}
+			public void dispose() {
+			}
+
+			public void fill(Composite parent) {
+			}
+
+			public void fill(Menu parent, int index) {
+			}
 
 			public void fill(ToolBar parent, int index) {
 				if (getWidget() != null) {
@@ -81,7 +89,8 @@ public class WidgetAddition extends AdditionBase {
 					getWidget().fill(widgetContainer);
 					Point prefSize = getWidget().getPreferredSize();
 
-					ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR, index);
+					ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR,
+							index);
 					sepItem.setControl(widgetContainer);
 					sepItem.setWidth(prefSize.x);
 				}
