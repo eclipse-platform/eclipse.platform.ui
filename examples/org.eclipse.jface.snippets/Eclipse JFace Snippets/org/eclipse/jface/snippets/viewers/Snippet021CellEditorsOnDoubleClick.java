@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Tom Schindl - initial API and implementation
+ *     Dinko Ivanov - bug 164365
  *******************************************************************************/
 
 package org.eclipse.jface.snippets.viewers;
@@ -157,6 +158,7 @@ public class Snippet021CellEditorsOnDoubleClick {
 				for (int i = 0; i < table.getColumnCount(); i++) {
 					if (item.getBounds(i).contains(event.x, event.y)) {
 						v.editElement(item.getData(), i);
+						modifier.setEnabled(false);
 						break;
 					}
 				}
