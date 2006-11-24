@@ -207,12 +207,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 
 		fStyledText= fTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE
-//				| SWT.DOUBLE_BUFFERED // not needed as long as painting does not take long. Flickering is avoided by NO_BACKGROUND
-				| SWT.NO_BACKGROUND // avoids the flash due to first painting the background
-				| SWT.NO_REDRAW_RESIZE // unless the viewport changes, we don't need to redraw on resize
-//				| SWT.NO_MERGE_PAINTS
-		);
+		fCanvas= new Canvas(parentControl, getCanvasStyle());
 
 		fCanvas.setBackground(getDefaultBackground());
 		fCanvas.setFont(getFont());
@@ -227,6 +222,22 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		fCanvas.addMouseMoveListener(fMouseHandler);
 
 		return fCanvas;
+	}
+
+	/**
+	 * Returns the SWT style bits used when creating the ruler canvas.
+	 * <p>
+	 * The default implementation returns <code>SWT.NO_BACKGROUND</code> and
+	 * <code>SWT.NO_REDRAW_RESIZE</code>.</p>
+	 * <p>
+	 * Clients may reimplement this method to create a canvas with their
+	 * desired style bits.</p>
+	 * 
+	 * @return the SWT style bits, or <code>SWT.NONE</code> if none
+	 * @since 3.3
+	 */
+	protected int getCanvasStyle() {
+		return SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE;
 	}
 
 	/*
