@@ -300,11 +300,14 @@ body, .page {
 }
 
 /*
- * Navigation link label text is normally hidden, so
- * turn it off and remove it from the document flow.
+ * Navigation link label text is normally hidden. Workaround to produce the
+ * same effect as display: none while still allowing screenreaders to
+ * speak it.
  */
 #navigation-links a .link-label { 
-	display : none;
+	position: absolute;
+	left: -999px;
+	width: 990px;
 }
 
 /*
@@ -337,6 +340,8 @@ body, .page {
 	top : -35px;
 	white-space: nowrap;
 	height : 32px;
+	left: auto;
+	width: auto;
 }
 
 /*
