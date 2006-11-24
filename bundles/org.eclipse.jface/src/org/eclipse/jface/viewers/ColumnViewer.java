@@ -7,13 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
@@ -21,8 +24,7 @@ import org.eclipse.swt.widgets.Widget;
  * The ColumnViewer is the abstract superclass of viewers that jave columns
  * (TreeViewer and TableViewer).
  * 
- * <strong> This class is not intended to be subclassed
- * by client classes.</strong>
+ * <strong> This class is not intended to be subclassed outside of the JFace viewers framework.</strong>
  * 
  * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
  *        added as part of a work in progress. This API may change at any given
@@ -39,24 +41,54 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	private ViewerCell cell = new ViewerCell(null, 0);
 
+	private AbstractViewerEditor viewerEditor;
+
 	/**
 	 * Create a new instance of the receiver.
 	 */
 	public ColumnViewer() {
-		super();
+		viewerEditor = createViewerEditor();
+	}
+
+	protected void hookControl(Control control) {
+		super.hookControl(control);
+		hookEditingSupport(control);
 	}
 
 	/**
-	 * Get the cell at this point.
-	 * <p>
-	 * <i>Subclasses should overwrite this method and provide a meaningful
-	 * implementation</i>
-	 * </p>
+	 * Hook up the editing support. Subclasses may override.
+	 * 
+	 * @param control
+	 *            the control you want to hook on
+	 */
+	protected void hookEditingSupport(Control control) {
+		// Needed for backwards comp with AbstractTreeViewer and TableTreeViewer
+		// who are not hooked this way others may already overwrite and provide
+		// their
+		// own impl
+		if (viewerEditor != null) {
+			control.addMouseListener(new MouseAdapter() {
+				public void mouseDown(MouseEvent e) {
+					viewerEditor.handleMouseDown(e);
+				}
+			});
+		}
+	}
+
+	/**
+	 * Creates the viewer editor used for editing cell contents. To be implemented by subclasses.
+	 * 
+	 * @return the editor, or <code>null</code> if this viewer does not support editing cell contents.
+	 */
+	protected abstract AbstractViewerEditor createViewerEditor();
+
+	/**
+	 * Returns the viewer cell at the given widget-relative coordinates, or
+	 * <code>null</code> if there is no cell at that location
 	 * 
 	 * @param point
-	 *            the point in the viewer where you need to corresponding cell
-	 *            from
-	 * @return the cell or if no cell is found at this point
+	 *            the widget-relative coordinates
+	 * @return the cell or <code>null</code> if no cell is found at the given point
 	 */
 	ViewerCell getCell(Point point) {
 		ViewerRow row = getViewerRow(point);
@@ -68,13 +100,12 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Get the ViewerRow at point.
+	 * Returns the viewer row at the given widget-relative coordinates.
 	 * 
 	 * @param point
-	 *            the point <b>relative to the display</b> you are interested
-	 *            in
-	 * @return ViewerRow the row or <code>null</code>if no row is found at
-	 *         this point
+	 *            the widget-relative coordinates of the viewer row
+	 * @return ViewerRow the row or <code>null</code> if no row is found at
+	 *         the given coordinates
 	 */
 	protected ViewerRow getViewerRow(Point point) {
 		Item item = getItemAt(point);
@@ -87,54 +118,30 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Get the ViewerRow associated with the Widget.
+	 * Returns the viewer row associated with the given row widget.
 	 * 
-	 * @param item
-	 * @return ViewerRow
+	 * @param item the row widget
+	 * @return ViewerRow the associated viewer row
 	 */
 	protected ViewerRow getViewerRowFromItem(Widget item) {
 		return (ViewerRow) item.getData(ViewerRow.ROWPART_KEY);
 	}
 
 	/**
-	 * Get the widget for the column at columnIndex.
+	 * Returns the column widget at the given column index.
 	 * 
-	 * @param columnIndex
-	 * @return Widget
+	 * @param columnIndex the column index
+	 * @return Widget the column widget
 	 */
 	protected abstract Widget getColumnViewerOwner(int columnIndex);
 
 	/**
-	 * Returns the cell modifier of this viewer.
-	 * 
-	 * @return the cell modifier
-	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
-	 */
-	public abstract ICellModifier getCellModifier();
-
-	/**
-	 * Return the CellEditors for the receiver.
-	 * 
-	 * @return CellEditor[]
-	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
-	 */
-	public abstract CellEditor[] getCellEditors();
-
-	/**
-	 * Returns the column properties of this table viewer. The properties must
-	 * correspond with the columns of the table control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @return the list of column properties
-	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
-	 */
-	public abstract Object[] getColumnProperties();
-
-	/**
-	 * Return the TableColumnViewer at columnIndex
+	 * Returns the viewer column for the given column index.
 	 * 
 	 * @param columnIndex
-	 * @return TableColumnViewer
+	 *            the column index
+	 * @return the viewer column at the given index, or <code>null</code> if
+	 *         there is none for the given index
 	 */
 	public ViewerColumn getViewerColumn(final int columnIndex) {
 
@@ -149,7 +156,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 				.getData(ViewerColumn.COLUMN_VIEWER_KEY);
 
 		if (viewer == null) {
-			viewer = createColumnViewer(columnOwner, CellLabelProvider
+			viewer = createViewerColumn(columnOwner, CellLabelProvider
 					.createViewerLabelProvider(getLabelProvider()));
 			setupEditingSupport(columnIndex, viewer);
 		}
@@ -162,7 +169,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Set the ViewerColumn at columnIndex
+	 * Sets up editing support for the given column based on the "old" cell editor API.
 	 * 
 	 * @param columnIndex
 	 * @param viewer
@@ -215,19 +222,19 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Create a ViewerColumn for the columnOwner.
+	 * Creates a viewer column for the given column widget, based on the given label provider.
 	 * 
-	 * @param columnOwner
-	 * @param labelProvider
-	 * @return ViewerColumn
+	 * @param columnOwner the column widget
+	 * @param labelProvider the label provider to use for the column
+	 * @return ViewerColumn the viewer column
 	 */
-	protected ViewerColumn createColumnViewer(Widget columnOwner,
+	protected ViewerColumn createViewerColumn(Widget columnOwner,
 			CellLabelProvider labelProvider) {
 		return new ViewerColumn(columnOwner, labelProvider);
 	}
 
 	/**
-	 * Activate the tooltip support.
+	 * Activate the support for custom tooltips.
 	 */
 	public void activateCustomTooltips() {
 		if (tooltipSupport == null) {
@@ -238,7 +245,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Deactivate the tooltip support.
+	 * Deactivate the support for custom tooltips.
 	 */
 	public void deactivateCustomTooltips() {
 		if (tooltipSupport != null) {
@@ -247,38 +254,42 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Update the cached cell with the row and column.
+	 * Update the cached cell object with the given row and column.
 	 * 
 	 * @param rowItem
 	 * @param column
 	 * @return ViewerCell
 	 */
-	ViewerCell updateCell(ViewerRow rowItem, int column) {
+	/* package */ ViewerCell updateCell(ViewerRow rowItem, int column) {
 		cell.update(rowItem, column);
 		return cell;
 	}
 
 	/**
-	 * Find the {@link Item} relative to the widget coordinate system.
+	 * Returns the {@link Item} at the given widget-relative coordinates, or
+     * <code>null</code> if there is no item at the given coordinates.
 	 * 
 	 * @param point
-	 *            the x/y coordinates relative to the widget
-	 * @return the {@link Item} at the coordinates or <code>null</code> if no item is
-	 *         located there
+	 *            the widget-relative coordinates
+	 * @return the {@link Item} at the coordinates or <code>null</code> if there
+	 *         is no item at the given coordinates
 	 */
 	protected abstract Item getItemAt(Point point);
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.StructuredViewer#getItem(int, int)
 	 */
 	protected Item getItem(int x, int y) {
 		return getItemAt(getControl().toControl(x, y));
 	}
-	
+
 	/**
-	 * The table viewer implementation of this <code>Viewer</code> framework
-	 * method ensures that the given label provider is an instance of either
-	 * <code>ITableLabelProvider</code> or <code>ILabelProvider</code>.
+	 * The column viewer implementation of this <code>Viewer</code> framework
+	 * method ensures that the given label provider is an instance of
+	 * <code>ITableLabelProvider</code>, <code>ILabelProvider</code>, or
+	 * <code>CellLabelProvider</code>.
 	 * <p>
 	 * If the label provider is an {@link ITableLabelProvider}, then it
 	 * provides a separate label text and image for each column. Implementers of
@@ -293,16 +304,14 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * may also implement {@link IColorProvider} and/or {@link IFontProvider} to
 	 * provide colors and/or fonts.
 	 * </p>
-	 * <p>
-	 * If the label provider implements the mixin interface ITooltipProvider, it
-	 * can provide custom tooltips.
-	 * </p>
+	 * 
 	 */
 	public void setLabelProvider(IBaseLabelProvider labelProvider) {
 		Assert.isTrue(labelProvider instanceof ITableLabelProvider
 				|| labelProvider instanceof ILabelProvider
 				|| labelProvider instanceof CellLabelProvider);
-		updateColumnParts(labelProvider);// Reset the label providers in the columns
+		updateColumnParts(labelProvider);// Reset the label providers in the
+		// columns
 		super.setLabelProvider(labelProvider);
 	}
 
@@ -312,9 +321,204 @@ public abstract class ColumnViewer extends StructuredViewer {
 	private void updateColumnParts(IBaseLabelProvider labelProvider) {
 		ViewerColumn column;
 		int i = 0;
-		
-		while( ( column = getViewerColumn(i++) ) != null) {
-			column.setLabelProvider(CellLabelProvider.createViewerLabelProvider(labelProvider));
+
+		while ((column = getViewerColumn(i++)) != null) {
+			column.setLabelProvider(CellLabelProvider
+					.createViewerLabelProvider(labelProvider));
+		}
+	}
+
+	/**
+	 * Cancels a currently active cell editor if one is active. All changes
+     * already done in the cell editor are lost.
+	 * 
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 */
+	public void cancelEditing() {
+		if (viewerEditor != null) {
+			viewerEditor.cancelEditing();
+		}
+	}
+
+	/**
+	 * Apply the value of the active cell editor if one is active.
+	 * 
+	 * @since 3.3
+	 */
+	protected void applyEditorValue() {
+		if (viewerEditor != null) {
+			viewerEditor.applyEditorValue();
+		}
+	}
+
+	/**
+	 * Starts editing the given element at the given column index.
+	 * 
+	 * @param element
+	 *            the element
+	 * @param column
+	 *            the column index
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 */
+	public void editElement(Object element, int column) {
+		if (viewerEditor != null) {
+			viewerEditor.editElement(element, column);
+		}
+	}
+
+	/**
+	 * Return the CellEditors for the receiver, or <code>null</code> if no
+     * cell editors are set.
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @return CellEditor[]
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public CellEditor[] getCellEditors() {
+		if (viewerEditor != null) {
+			return viewerEditor.getCellEditors();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the cell modifier of this viewer, or <code>null</code> if none
+     * has been set.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @return the cell modifier, or <code>null</code>
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public ICellModifier getCellModifier() {
+		if (viewerEditor != null) {
+			return viewerEditor.getCellModifier();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the column properties of this table viewer. The properties must
+	 * correspond with the columns of the table control. They are used to
+	 * identify the column in a cell modifier.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @return the list of column properties
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public Object[] getColumnProperties() {
+		if (viewerEditor != null) {
+			return viewerEditor.getColumnProperties();
+		}
+		return null;
+	}
+
+	/**
+	 * Returns whether there is an active cell editor.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @return <code>true</code> if there is an active cell editor, and
+	 *         <code>false</code> otherwise
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public boolean isCellEditorActive() {
+		if (viewerEditor != null) {
+			return viewerEditor.isCellEditorActive();
+		}
+		return false;
+	}
+
+	/**
+	 * Sets the cell editors of this column viewer. If editing is not supported
+	 * by this viewer the call simply has no effect.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @param editors
+	 *            the list of cell editors
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public void setCellEditors(CellEditor[] editors) {
+		if (viewerEditor != null) {
+			viewerEditor.setCellEditors(editors);
+		}
+	}
+
+	/**
+	 * Sets the cell modifier for this column viewer. This method does nothing if editing
+	 * is not supported by this viewer.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @param modifier
+	 *            the cell modifier
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public void setCellModifier(ICellModifier modifier) {
+		if (viewerEditor != null) {
+			viewerEditor.setCellModifier(modifier);
+		}
+	}
+
+	/**
+	 * Sets the column properties of this column viewer. The properties must
+	 * correspond with the columns of the control. They are used to identify the
+	 * column in a cell modifier. If editing is not supported by this viewer the
+	 * call simply has no effect.
+	 * 
+	 * <p>
+	 * Since 3.3, an alternative API is available, see
+	 * {@link ViewerColumn#setEditingSupport(EditingSupport)} for a more flexible
+	 * way of editing values in a column viewer.
+	 * </p>
+	 * 
+	 * @param columnProperties
+	 *            the list of column properties
+	 * @since 3.1 (in subclasses, added in 3.3 to abstract class)
+	 * @see ViewerColumn#setEditingSupport(EditingSupport)
+	 * @see EditingSupport
+	 */
+	public void setColumnProperties(String[] columnProperties) {
+		if (viewerEditor != null) {
+			viewerEditor.setColumnProperties(columnProperties);
 		}
 	}
 }

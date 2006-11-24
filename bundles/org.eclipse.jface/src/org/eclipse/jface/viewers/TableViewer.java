@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow, fix for 159597
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
+ *                                                 fix for 159597, refactoring (bug 153993)
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -18,13 +19,11 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -233,11 +232,6 @@ public class TableViewer extends ColumnViewer {
 	private VirtualManager virtualManager;
 
 	/**
-	 * Internal table viewer implementation.
-	 */
-	private TableEditorImpl tableViewerImpl;
-
-	/**
 	 * This viewer's table control.
 	 */
 	private Table table;
@@ -288,7 +282,6 @@ public class TableViewer extends ColumnViewer {
 		this.table = table;
 		hookControl(table);
 		tableEditor = new TableEditor(table);
-		initTableViewerImpl();
 		initializeVirtualManager(table.getStyle());
 	}
 
@@ -364,14 +357,6 @@ public class TableViewer extends ColumnViewer {
 	 */
 	public void add(Object element) {
 		add(new Object[] { element });
-	}
-
-	/**
-	 * Cancels a currently active cell editor. All changes already done in the
-	 * cell editor are lost.
-	 */
-	public void cancelEditing() {
-		tableViewerImpl.cancelEditing();
 	}
 
 	/*
@@ -475,45 +460,6 @@ public class TableViewer extends ColumnViewer {
 	public void setColumnPart(ViewerColumn viewerPart, int columnIndex) {
 		TableColumn column = getTable().getColumn(columnIndex);
 		column.setData(ViewerColumn.COLUMN_VIEWER_KEY, viewerPart);
-	}
-
-	/**
-	 * Starts editing the given element.
-	 * 
-	 * @param element
-	 *            the element
-	 * @param column
-	 *            the column number
-	 */
-	public void editElement(Object element, int column) {
-		tableViewerImpl.editElement(element, column);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
-	 */
-	public CellEditor[] getCellEditors() {
-		return tableViewerImpl.getCellEditors();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
-	 */
-	public ICellModifier getCellModifier() {
-		return tableViewerImpl.getCellModifier();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
-	 */
-	public Object[] getColumnProperties() {
-		return tableViewerImpl.getColumnProperties();
 	}
 
 	/*
@@ -637,23 +583,9 @@ public class TableViewer extends ColumnViewer {
 		return table;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ContentViewer#hookControl(org.eclipse.swt.widgets.Control)
-	 */
-	protected void hookControl(Control control) {
-		super.hookControl(control);
-		Table tableControl = (Table) control;
-		tableControl.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				tableViewerImpl.handleMouseDown(e);
-			}
-		});
-	}
-
 	/**
-	 * @param element the element to insert
+	 * @param element
+	 *            the element to insert
 	 * @return the index where the item should be inserted.
 	 */
 	protected int indexForElement(Object element) {
@@ -688,47 +620,31 @@ public class TableViewer extends ColumnViewer {
 		return min;
 	}
 
-	/**
-	 * Initializes the table viewer implementation.
-	 */
-	private void initTableViewerImpl() {
-		tableViewerImpl = new TableEditorImpl(this) {
-			Rectangle getBounds(Item item, int columnNumber) {
-				return ((TableItem) item).getBounds(columnNumber);
+	protected AbstractViewerEditor createViewerEditor() {
+		return new AbstractViewerEditor(this) {
+
+			protected StructuredSelection createSelection(Object element) {
+				return new StructuredSelection(element);
 			}
 
-			int getColumnCount() {
-				return getTable().getColumnCount();
-			}
-
-			Item[] getSelection() {
+			protected Item[] getSelection() {
 				return getTable().getSelection();
 			}
 
-			void setEditor(Control w, Item item, int columnNumber) {
-				tableEditor.setEditor(w, (TableItem) item, columnNumber);
+			protected void setEditor(Control w, Item item, int fColumnNumber) {
+				tableEditor.setEditor(w, (TableItem) item, fColumnNumber);
 			}
 
-			void setSelection(StructuredSelection selection, boolean b) {
-				TableViewer.this.setSelection(selection, b);
-			}
-
-			void showSelection() {
-				getTable().showSelection();
-			}
-
-			void setLayoutData(CellEditor.LayoutData layoutData) {
+			protected void setLayoutData(LayoutData layoutData) {
 				tableEditor.grabHorizontal = layoutData.grabHorizontal;
 				tableEditor.horizontalAlignment = layoutData.horizontalAlignment;
 				tableEditor.minimumWidth = layoutData.minimumWidth;
 			}
 
-			void handleDoubleClickEvent() {
-				Viewer viewer = getViewer();
-				fireDoubleClick(new DoubleClickEvent(viewer, viewer
-						.getSelection()));
-				fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+			protected void showSelection() {
+				getTable().showSelection();
 			}
+
 		};
 	}
 
@@ -765,7 +681,7 @@ public class TableViewer extends ColumnViewer {
 	 *            the last position
 	 */
 	public void insert(Object element, int position) {
-		tableViewerImpl.applyEditorValue();
+		applyEditorValue();
 		if (getComparator() != null || hasFilters()) {
 			add(element);
 			return;
@@ -793,7 +709,7 @@ public class TableViewer extends ColumnViewer {
 	 *      boolean)
 	 */
 	protected void internalRefresh(Object element, boolean updateLabels) {
-		tableViewerImpl.applyEditorValue();
+		applyEditorValue();
 		if (element == null || equals(element, getRoot())) {
 			if (virtualManager == null) {
 				internalRefreshAll(updateLabels);
@@ -957,16 +873,6 @@ public class TableViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Returns whether there is an active cell editor.
-	 * 
-	 * @return <code>true</code> if there is an active cell editor, and
-	 *         <code>false</code> otherwise
-	 */
-	public boolean isCellEditorActive() {
-		return tableViewerImpl.isCellEditorActive();
-	}
-
-	/**
 	 * Removes the given elements from this table viewer. The selection is
 	 * updated if required.
 	 * <p>
@@ -1021,38 +927,6 @@ public class TableViewer extends ColumnViewer {
 		if (w instanceof TableItem) {
 			getTable().showItem((TableItem) w);
 		}
-	}
-
-	/**
-	 * Sets the cell editors of this table viewer.
-	 * 
-	 * @param editors
-	 *            the list of cell editors
-	 */
-	public void setCellEditors(CellEditor[] editors) {
-		tableViewerImpl.setCellEditors(editors);
-	}
-
-	/**
-	 * Sets the cell modifier of this table viewer.
-	 * 
-	 * @param modifier
-	 *            the cell modifier
-	 */
-	public void setCellModifier(ICellModifier modifier) {
-		tableViewerImpl.setCellModifier(modifier);
-	}
-
-	/**
-	 * Sets the column properties of this table viewer. The properties must
-	 * correspond with the columns of the table control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @param columnProperties
-	 *            the list of column properties
-	 */
-	public void setColumnProperties(String[] columnProperties) {
-		tableViewerImpl.setColumnProperties(columnProperties);
 	}
 
 	/**

@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow
+ *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
+ *                                                 refactoring (bug 153993)
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -16,16 +17,14 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
+import org.eclipse.jface.viewers.CellEditor.LayoutData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -60,11 +59,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			+ ".DISPOSE_LISTENER"; //$NON-NLS-1$
 
 	/**
-	 * Internal tree viewer implementation.
-	 */
-	private TreeEditorImpl treeViewerImpl;
-
-	/**
 	 * This viewer's control.
 	 */
 	private Tree tree;
@@ -80,6 +74,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	private boolean treeIsDisposed = false;
 
 	private boolean contentProviderIsLazy;
+
 	private boolean contentProviderIsTreeBased;
 
 	/**
@@ -123,7 +118,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		this.tree = tree;
 		hookControl(tree);
 		treeEditor = new TreeEditor(tree);
-		initTreeViewerImpl();
 	}
 
 	/*
@@ -131,16 +125,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected void addTreeListener(Control c, TreeListener listener) {
 		((Tree) c).addTreeListener(listener);
-	}
-
-	/**
-	 * Cancels a currently active cell editor. All changes already done in the
-	 * cell editor are lost.
-	 * 
-	 * @since 3.1
-	 */
-	public void cancelEditing() {
-		treeViewerImpl.cancelEditing();
 	}
 
 	/*
@@ -215,37 +199,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		super.buildLabel(updateLabel, element);
 	}
 
-	/**
-	 * Starts editing the given element.
-	 * 
-	 * @param element
-	 *            the element
-	 * @param column
-	 *            the column number
-	 * @since 3.1
-	 */
-	public void editElement(Object element, int column) {
-		treeViewerImpl.editElement(element, column);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
-	 */
-	public CellEditor[] getCellEditors() {
-		return treeViewerImpl.getCellEditors();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
-	 */
-	public ICellModifier getCellModifier() {
-		return treeViewerImpl.getCellModifier();
-	}
-
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
@@ -257,15 +210,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			return ((Tree) o).getItems();
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
-	 */
-	public Object[] getColumnProperties() {
-		return treeViewerImpl.getColumnProperties();
 	}
 
 	/*
@@ -282,14 +226,15 @@ public class TreeViewer extends AbstractTreeViewer {
 		return ((TreeItem) item).getExpanded();
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getItemAt(org.eclipse.swt.graphics.Point)
 	 */
 	protected Item getItemAt(Point p) {
 		return getTree().getItem(p);
 	}
-	
+
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */
@@ -355,11 +300,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	protected void hookControl(Control control) {
 		super.hookControl(control);
 		Tree treeControl = (Tree) control;
-		treeControl.addMouseListener(new MouseAdapter() {
-			public void mouseDown(MouseEvent e) {
-				treeViewerImpl.handleMouseDown(e);
-			}
-		});
+		
 		if ((treeControl.getStyle() & SWT.VIRTUAL) != 0) {
 			treeControl.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
@@ -379,7 +320,9 @@ public class TreeViewer extends AbstractTreeViewer {
 						} else {
 							index = getTree().indexOf(item);
 						}
-						virtualLazyUpdateWidget(parentItem == null ? (Widget)getTree() : parentItem, index);
+						virtualLazyUpdateWidget(
+								parentItem == null ? (Widget) getTree()
+										: parentItem, index);
 					}
 				}
 
@@ -387,59 +330,36 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
-	/**
-	 * Initializes the tree viewer implementation.
-	 */
-	private void initTreeViewerImpl() {
-		treeViewerImpl = new TreeEditorImpl(this) {
-			Rectangle getBounds(Item item, int columnNumber) {
-				return ((TreeItem) item).getBounds(columnNumber);
+	protected AbstractViewerEditor createViewerEditor() {
+		return new AbstractViewerEditor(this) {
+
+			protected StructuredSelection createSelection(Object element) {
+				if (element instanceof TreePath) {
+					return new TreeSelection((TreePath) element, getComparer());
+				}
+
+				return new StructuredSelection(element);
 			}
 
-			int getColumnCount() {
-				return getTree().getColumnCount();
+			protected Item[] getSelection() {
+				return tree.getSelection();
 			}
 
-			Item[] getSelection() {
-				return getTree().getSelection();
+			protected void setEditor(Control w, Item item, int fColumnNumber) {
+				treeEditor.setEditor(w, (TreeItem) item, fColumnNumber);
 			}
 
-			void setEditor(Control w, Item item, int columnNumber) {
-				treeEditor.setEditor(w, (TreeItem) item, columnNumber);
-			}
-
-			void setSelection(IStructuredSelection selection, boolean b) {
-				TreeViewer.this.setSelection(selection, b);
-			}
-
-			void showSelection() {
-				getTree().showSelection();
-			}
-
-			void setLayoutData(CellEditor.LayoutData layoutData) {
+			protected void setLayoutData(LayoutData layoutData) {
 				treeEditor.grabHorizontal = layoutData.grabHorizontal;
 				treeEditor.horizontalAlignment = layoutData.horizontalAlignment;
 				treeEditor.minimumWidth = layoutData.minimumWidth;
 			}
 
-			void handleDoubleClickEvent() {
-				Viewer viewer = getViewer();
-				fireDoubleClick(new DoubleClickEvent(viewer, viewer
-						.getSelection()));
-				fireOpen(new OpenEvent(viewer, viewer.getSelection()));
+			protected void showSelection() {
+				getTree().showSelection();
 			}
-		};
-	}
 
-	/**
-	 * Returns whether there is an active cell editor.
-	 * 
-	 * @return <code>true</code> if there is an active cell editor, and
-	 *         <code>false</code> otherwise
-	 * @since 3.1
-	 */
-	public boolean isCellEditorActive() {
-		return treeViewerImpl.isCellEditorActive();
+		};
 	}
 
 	/*
@@ -463,41 +383,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 */
 	protected void removeAll(Control widget) {
 		((Tree) widget).removeAll();
-	}
-
-	/**
-	 * Sets the cell editors of this tree viewer.
-	 * 
-	 * @param editors
-	 *            the list of cell editors
-	 * @since 3.1
-	 */
-	public void setCellEditors(CellEditor[] editors) {
-		treeViewerImpl.setCellEditors(editors);
-	}
-
-	/**
-	 * Sets the cell modifier of this tree viewer.
-	 * 
-	 * @param modifier
-	 *            the cell modifier
-	 * @since 3.1
-	 */
-	public void setCellModifier(ICellModifier modifier) {
-		treeViewerImpl.setCellModifier(modifier);
-	}
-
-	/**
-	 * Sets the column properties of this tree viewer. The properties must
-	 * correspond with the columns of the tree control. They are used to
-	 * identify the column in a cell modifier.
-	 * 
-	 * @param columnProperties
-	 *            the list of column properties
-	 * @since 3.1
-	 */
-	public void setColumnProperties(String[] columnProperties) {
-		treeViewerImpl.setColumnProperties(columnProperties);
 	}
 
 	/*

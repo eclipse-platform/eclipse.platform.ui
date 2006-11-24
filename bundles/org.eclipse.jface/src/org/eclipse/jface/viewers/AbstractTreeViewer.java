@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -2803,31 +2804,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// Return null by default
 		return null;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellEditors()
-	 */
-	public CellEditor[] getCellEditors() {
-		return new CellEditor[0];
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getCellModifier()
-	 */
-	public ICellModifier getCellModifier() {
-		//Return a null cell modifier by default so that
-		//getCellEditors() or getColumnProperties() are
-		//not invoked
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnProperties()
-	 */
-	public Object[] getColumnProperties() {
-		return new Object[0];
-	}
-	
+		
 	/**
 	 * This implementation of {@link #getItemAt(Point)} returns null to ensure
 	 * API backwards compatibility. Subclasses should override.
@@ -2835,6 +2812,16 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.3
 	 */
 	protected Item getItemAt(Point point) {
+		return null;
+	}
+	
+	/**
+	 * This implementation of {@link #createViewerEditor()} returns null to ensure
+	 * API backwards compatibility. Subclasses should override.
+	 *
+	 * @since 3.3
+	 */
+	protected AbstractViewerEditor createViewerEditor() {
 		return null;
 	}
 }
