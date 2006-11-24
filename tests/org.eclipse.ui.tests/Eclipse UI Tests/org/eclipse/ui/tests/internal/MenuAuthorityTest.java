@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.MenuActivation;
 import org.eclipse.ui.internal.menus.MenuAuthority;
 import org.eclipse.ui.internal.services.ISourceProviderService;
+import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -53,7 +54,6 @@ public class MenuAuthorityTest extends UITestCase {
 		super(testName);
 	}
 
-	private static final String CONTEXT_ID1 = "org.eclipse.ui.menus.contexts.test1";
 	private IContextService contextService;
 	private IMenuService menuService;
 	private MenuAuthority menuAuth;
@@ -73,7 +73,8 @@ public class MenuAuthorityTest extends UITestCase {
 			}
 		};
 		ActionContributionItem item = new ActionContributionItem(a);
-		Expression activeContextExpr = new ActiveContextExpression(CONTEXT_ID1,
+		Expression activeContextExpr = new ActiveContextExpression(
+				MenuContributionHarness.CONTEXT_TEST1_ID,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
 
 		MenuActivation activation = new MenuActivation(item, activeContextExpr,
@@ -82,7 +83,8 @@ public class MenuAuthorityTest extends UITestCase {
 		assertFalse("starting state", activation.evaluate(menuAuth
 				.getCurrentState()));
 
-		activeContext = contextService.activateContext(CONTEXT_ID1);
+		activeContext = contextService
+				.activateContext(MenuContributionHarness.CONTEXT_TEST1_ID);
 
 		assertTrue("active context", activation.evaluate(menuAuth
 				.getCurrentState()));
@@ -138,7 +140,8 @@ public class MenuAuthorityTest extends UITestCase {
 		assertFalse("starting state", activation.evaluate(menuAuth
 				.getCurrentState()));
 
-		activeContext = contextService.activateContext(CONTEXT_ID1);
+		activeContext = contextService
+				.activateContext(MenuContributionHarness.CONTEXT_TEST1_ID);
 		assertTrue("active context", activation.evaluate(menuAuth
 				.getCurrentState()));
 
@@ -159,12 +162,13 @@ public class MenuAuthorityTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		
+
 		window = openTestWindow();
 		menuService = (IMenuService) window.getService(IMenuService.class);
 		contextService = (IContextService) window
 				.getService(IContextService.class);
-		Context context1 = contextService.getContext(CONTEXT_ID1);
+		Context context1 = contextService
+				.getContext(MenuContributionHarness.CONTEXT_TEST1_ID);
 		if (!context1.isDefined()) {
 			context1.define("Menu Test 1", "Menu test 1",
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
@@ -201,7 +205,7 @@ public class MenuAuthorityTest extends UITestCase {
 		menuService = null;
 		contextService = null;
 		window = null;
-		
+
 		super.doTearDown();
 	}
 }

@@ -3157,4 +3157,12 @@
          </item>
       </menuAddition>
    </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            id="org.eclipse.ui.menus.contexts.test1"
+            name="Text Context X1"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
+   </extension>
 </plugin>            
