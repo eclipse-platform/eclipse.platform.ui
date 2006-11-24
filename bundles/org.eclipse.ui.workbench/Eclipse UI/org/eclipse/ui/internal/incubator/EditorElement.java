@@ -29,7 +29,8 @@ public class EditorElement extends AbstractElement {
 
 	private IEditorReference editorReference;
 
-	/* package */EditorElement(IEditorReference editorReference) {
+	/* package */EditorElement(IEditorReference editorReference, EditorProvider editorProvider) {
+		super(editorProvider);
 		this.editorReference = editorReference;
 	}
 

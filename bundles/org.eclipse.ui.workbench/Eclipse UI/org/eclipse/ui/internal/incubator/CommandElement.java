@@ -32,7 +32,8 @@ public class CommandElement extends AbstractElement {
 
 	private ParameterizedCommand command;
 
-	/* package */CommandElement(ParameterizedCommand command) {
+	/* package */CommandElement(ParameterizedCommand command, CommandProvider commandProvider) {
+		super(commandProvider);
 		this.command = command;
 	}
 

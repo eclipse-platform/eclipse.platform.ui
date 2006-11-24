@@ -72,7 +72,7 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			TreeViewer treeViewer= (TreeViewer) viewer;
 
 			String matchName = getMatchName(element);
-			if (matchName != null && matcher.match(matchName))
+			if (isMatchable(element) && matchName != null && matcher.match(matchName))
 				return true;
 
 			return hasUnfilteredChild(treeViewer, element);
@@ -126,6 +126,17 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 
 		// Status field text can only be computed after widgets are created.
 		setInfoText(getStatusFieldText());
+	}
+
+	/**
+	 * Returns <code>true</code> if the given element can be a match result.
+	 * The default implementation returns <code>true</code>.
+	 * 
+	 * @param element
+	 * @return <code>true</code> if the given element can be a match result
+	 */
+	protected boolean isMatchable(Object element) {
+		return true;
 	}
 
 	/**

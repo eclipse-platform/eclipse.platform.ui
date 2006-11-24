@@ -50,7 +50,7 @@ public class PreferenceProvider extends AbstractProvider {
 			cachedElements = new AbstractElement[preferences.length];
 			for (int i = 0; i < preferences.length; i++) {
 				PreferenceElement preferenceElement = new PreferenceElement(
-						preferences[i]);
+						preferences[i], this);
 				cachedElements[i] = preferenceElement;
 				idToElement.put(preferenceElement.getId(), preferenceElement);
 			}

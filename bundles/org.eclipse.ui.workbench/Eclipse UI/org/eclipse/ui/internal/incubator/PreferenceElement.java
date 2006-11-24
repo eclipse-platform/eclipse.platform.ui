@@ -29,7 +29,8 @@ public class PreferenceElement extends AbstractElement {
 
 	private IPreferenceNode preferenceNode;
 
-	/* package */PreferenceElement(IPreferenceNode preferenceNode) {
+	/* package */PreferenceElement(IPreferenceNode preferenceNode, PreferenceProvider preferenceProvider) {
+		super(preferenceProvider);
 		this.preferenceNode = preferenceNode;
 	}
 

@@ -19,6 +19,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class AbstractElement {
 
+	private AbstractProvider provider;
+	
+	/**
+	 * @param provider
+	 */
+	public AbstractElement(AbstractProvider provider) {
+		super();
+		this.provider = provider;
+	}
+	
 	/**
 	 * Returns the label to be displayed to the user.
 	 * 
@@ -54,4 +64,11 @@ public abstract class AbstractElement {
 	public String getSortLabel() {
 		return getLabel();
 	}
+	
+	/**
+	 * @return Returns the provider.
+	 */
+	public AbstractProvider getProvider() {
+		return provider;
+	}	
 }

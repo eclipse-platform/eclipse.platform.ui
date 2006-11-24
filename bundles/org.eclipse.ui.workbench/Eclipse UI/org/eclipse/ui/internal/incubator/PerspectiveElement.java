@@ -24,7 +24,8 @@ public class PerspectiveElement extends AbstractElement {
 
 	private final IPerspectiveDescriptor descriptor;
 
-	/* package */PerspectiveElement(IPerspectiveDescriptor descriptor) {
+	/* package */PerspectiveElement(IPerspectiveDescriptor descriptor, PerspectiveProvider perspectiveProvider) {
+		super(perspectiveProvider);
 		this.descriptor = descriptor;
 	}
 

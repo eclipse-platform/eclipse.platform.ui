@@ -27,7 +27,8 @@ public class WizardElement extends AbstractElement {
 
 	private IWizardDescriptor wizardDescriptor;
 
-	/* package */WizardElement(IWizardDescriptor wizardDescriptor) {
+	/* package */WizardElement(IWizardDescriptor wizardDescriptor, WizardProvider wizardProvider) {
+		super(wizardProvider);
 		this.wizardDescriptor = wizardDescriptor;
 	}
 

@@ -45,7 +45,7 @@ public class PerspectiveProvider extends AbstractProvider {
 			cachedElements = new AbstractElement[perspectives.length];
 			for (int i = 0; i < perspectives.length; i++) {
 				PerspectiveElement perspectiveElement = new PerspectiveElement(
-						perspectives[i]);
+						perspectives[i], this);
 				cachedElements[i] = perspectiveElement;
 				idToElement.put(perspectiveElement.getId(), perspectiveElement);
 			}

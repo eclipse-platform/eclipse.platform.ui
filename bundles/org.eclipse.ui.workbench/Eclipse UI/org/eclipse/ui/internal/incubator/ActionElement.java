@@ -26,7 +26,8 @@ public class ActionElement extends AbstractElement {
 
 	private ActionContributionItem item;
 
-	/* package */ActionElement(ActionContributionItem item) {
+	/* package */ActionElement(ActionContributionItem item, ActionProvider actionProvider) {
+		super(actionProvider);
 		this.item = item;
 	}
 

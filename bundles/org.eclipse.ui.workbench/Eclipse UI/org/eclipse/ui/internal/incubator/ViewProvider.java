@@ -44,7 +44,7 @@ public class ViewProvider extends AbstractProvider {
 					.getViewRegistry().getViews();
 			cachedElements = new AbstractElement[views.length];
 			for (int i = 0; i < views.length; i++) {
-				ViewElement viewElement = new ViewElement(views[i]);
+				ViewElement viewElement = new ViewElement(views[i], this);
 				cachedElements[i] = viewElement;
 				idToElement.put(viewElement.getId(), viewElement);
 			}

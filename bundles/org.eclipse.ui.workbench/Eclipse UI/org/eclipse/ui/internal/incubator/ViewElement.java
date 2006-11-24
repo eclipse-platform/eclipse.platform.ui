@@ -25,7 +25,8 @@ public class ViewElement extends AbstractElement {
 
 	private final IViewDescriptor viewDescriptor;
 
-	/* package */ViewElement(IViewDescriptor viewDescriptor) {
+	/* package */ViewElement(IViewDescriptor viewDescriptor, ViewProvider viewProvider) {
+		super(viewProvider);
 		this.viewDescriptor = viewDescriptor;
 	}
 

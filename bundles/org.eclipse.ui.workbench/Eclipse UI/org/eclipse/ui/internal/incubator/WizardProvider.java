@@ -48,7 +48,7 @@ public class WizardProvider extends AbstractProvider {
 					.toArray(new IWizardDescriptor[result.size()]);
 			cachedElements = new AbstractElement[wizards.length];
 			for (int i = 0; i < wizards.length; i++) {
-				WizardElement wizardElement = new WizardElement(wizards[i]);
+				WizardElement wizardElement = new WizardElement(wizards[i], this);
 				cachedElements[i] = wizardElement;
 				idToElement.put(wizardElement.getId(), wizardElement);
 			}

@@ -42,7 +42,7 @@ public class EditorProvider extends AbstractProvider {
 			IEditorReference[] editors = activePage.getEditorReferences();
 			cachedElements = new AbstractElement[editors.length];
 			for (int i = 0; i < editors.length; i++) {
-				EditorElement editorElement = new EditorElement(editors[i]);
+				EditorElement editorElement = new EditorElement(editors[i], this);
 				cachedElements[i] = editorElement;
 				idToElement.put(editorElement.getId(), editorElement);
 			}

@@ -61,7 +61,7 @@ public class CommandProvider extends AbstractProvider {
 					.toArray(new ParameterizedCommand[commandSet.size()]);
 			cachedElements = new AbstractElement[commands.length];
 			for (int i = 0; i < commands.length; i++) {
-				CommandElement commandElement = new CommandElement(commands[i]);
+				CommandElement commandElement = new CommandElement(commands[i], this);
 				cachedElements[i] = commandElement;
 				idToElement.put(commandElement.getId(), commandElement);
 			}

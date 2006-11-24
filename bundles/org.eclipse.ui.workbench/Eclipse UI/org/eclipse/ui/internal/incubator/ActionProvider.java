@@ -56,7 +56,7 @@ public class ActionProvider extends AbstractProvider {
 						.toArray(new ActionContributionItem[result.size()]);
 				cachedElements = new AbstractElement[actions.length];
 				for (int i = 0; i < actions.length; i++) {
-					ActionElement actionElement = new ActionElement(actions[i]);
+					ActionElement actionElement = new ActionElement(actions[i], this);
 					cachedElements[i] = actionElement;
 					idToElement.put(actionElement.getId(), actionElement);
 				}

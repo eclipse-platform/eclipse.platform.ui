@@ -46,10 +46,13 @@ public class CtrlEAction extends AbstractHandler {
 	protected String rememberedText;
 
 	protected Map previousPicksMap = new HashMap();
-	
+
 	protected Map reverseMap = new HashMap();
 
 	private LinkedList previousPicksList = new LinkedList();
+
+	protected AbstractProvider[] providers;
+	protected Map providerMap;
 
 	/**
 	 * The constructor.
@@ -63,14 +66,21 @@ public class CtrlEAction extends AbstractHandler {
 		if (window == null) {
 			return null;
 		}
-		
-		AbstractProvider[] providers = { new PreviousPicksProvider(),
-				new EditorProvider(), new ViewProvider(),
-				new PerspectiveProvider(), new CommandProvider(),
-				new ActionProvider(), new WizardProvider(),
-				new PreferenceProvider() };
-		
-		FilteringInfoPopup popup = new MyInfoPopup(ProgressManagerUtil
+
+		if (providers == null) {
+			providers = new AbstractProvider[] { new PreviousPicksProvider(),
+					new EditorProvider(), new ViewProvider(),
+					new PerspectiveProvider(), new CommandProvider(),
+					new ActionProvider(), new WizardProvider(),
+					new PreferenceProvider() };
+
+			providerMap = new HashMap();
+			for (int i = 0; i < providers.length; i++) {
+				providerMap.put(providers[i].getId(), providers[i]);
+			}
+		}
+
+		FilteringInfoPopup popup = new QuickAccessPopup(ProgressManagerUtil
 				.getDefaultParent(), providers);
 		popup.setInput(new Object());
 		TreeItem[] rootItems = ((Tree) popup.getTreeViewer().getControl())
@@ -111,21 +121,21 @@ public class CtrlEAction extends AbstractHandler {
 	 * @since 3.2
 	 * 
 	 */
-	private final class MyInfoPopup extends FilteringInfoPopup {
+	private final class QuickAccessPopup extends FilteringInfoPopup {
 
 		AbstractProvider[] providers;
-		
+
 		/**
 		 * @param shell
 		 * @param providers
 		 */
-		public MyInfoPopup(Shell shell, AbstractProvider[] providers) {
+		public QuickAccessPopup(Shell shell, AbstractProvider[] providers) {
 			super(shell, SWT.RESIZE, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE,
 					false);
 			this.providers = providers;
 			restoreDialog();
 			getTreeViewer()
-					.setContentProvider(new MyContentProvider(providers));			
+					.setContentProvider(new MyContentProvider(providers));
 		}
 
 		protected TreeViewer createTreeViewer(Composite parent, int style) {
@@ -133,6 +143,10 @@ public class CtrlEAction extends AbstractHandler {
 			viewer.setLabelProvider(new MyLabelProvider());
 			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
+		}
+		
+		protected boolean isMatchable(Object element) {
+			return element instanceof AbstractElement;
 		}
 
 		protected void selectFirstMatch() {
@@ -158,16 +172,16 @@ public class CtrlEAction extends AbstractHandler {
 		}
 
 		protected Point getInitialSize() {
-			if (!MyInfoPopup.this.getPersistBounds()) {
+			if (!QuickAccessPopup.this.getPersistBounds()) {
 				return new Point(300, 400);
 			}
 			return super.getInitialSize();
 		}
 
 		protected Point getInitialLocation(Point initialSize) {
-			if (!MyInfoPopup.this.getPersistBounds()) {
+			if (!QuickAccessPopup.this.getPersistBounds()) {
 				Point size = new Point(300, 400);
-				Rectangle parentBounds = MyInfoPopup.this.getParentShell()
+				Rectangle parentBounds = QuickAccessPopup.this.getParentShell()
 						.getBounds();
 				int x = parentBounds.x + parentBounds.width / 2 - size.x / 2;
 				int y = parentBounds.y + parentBounds.height / 2 - size.y / 2;
@@ -199,49 +213,61 @@ public class CtrlEAction extends AbstractHandler {
 		private void storeDialog(IDialogSettings dialogSettings) {
 			String[] idArray = new String[previousPicksList.size()];
 			String[] textArray = new String[previousPicksList.size()];
-			for(int i = 0; i < idArray.length; i++) {
+			String[] providerArray = new String[previousPicksList.size()];
+			for (int i = 0; i < idArray.length; i++) {
 				Object element = previousPicksList.get(i);
-				if(element instanceof AbstractElement) {
+				if (element instanceof AbstractElement
+						&& reverseMap.containsKey(element)
+						&& previousPicksMap.containsValue(element)) {
 					AbstractElement abstractElement = (AbstractElement) element;
 					idArray[i] = abstractElement.getId();
 					textArray[i] = (String) reverseMap.get(element);
+					providerArray[i] = abstractElement.getProvider()
+							.getId();
 				}
 			}
 			dialogSettings.put("idArray", idArray); //$NON-NLS-1$
 			dialogSettings.put("textArray", textArray); //$NON-NLS-1$
+			dialogSettings.put("providerArray", providerArray); //$NON-NLS-1$
 		}
 
 		protected void handleElementSelected(Object selectedElement) {
-			addPreviousPick(selectedElement);
-			storeDialog(getDialogSettings());
 			IWorkbenchPage activePage = window.getActivePage();
 			if (activePage != null) {
 				if (selectedElement instanceof AbstractElement) {
+					addPreviousPick(selectedElement);
+					storeDialog(getDialogSettings());
 					AbstractElement element = (AbstractElement) selectedElement;
 					element.execute();
 				}
 			}
 		}
-		
+
 		private void restoreDialog() {
 			IDialogSettings dialogSettings = getDialogSettings();
-			if(dialogSettings != null) {
+			if (dialogSettings != null) {
 				String[] idArray = dialogSettings.getArray("idArray"); //$NON-NLS-1$
 				String[] textArray = dialogSettings.getArray("textArray"); //$NON-NLS-1$
-				if(idArray != null && idArray.length > 0 && textArray != null && textArray.length > 0) {
+				String[] providerArray = dialogSettings
+						.getArray("providerArray"); //$NON-NLS-1$
+				if (idArray != null && idArray.length > 0 && textArray != null
+						&& textArray.length > 0 && providerArray != null
+						&& providerArray.length > 0) {
 					Map newMap = new HashMap();
 					Map newReverseMap = new HashMap();
 					LinkedList newList = new LinkedList();
-					for(int i = 0; i < idArray.length; i++) {
-						for(int j = 0; j < providers.length; j++) {
-							AbstractElement element = providers[j].getElementForId(idArray[i]);
-							if(element != null) {
+					for (int i = 0; i < providerArray.length; i++) {
+						AbstractElement element = null;
+						AbstractProvider provider = (AbstractProvider) providerMap
+								.get(providerArray[i]);
+						if (provider != null) {
+							element = provider.getElementForId(idArray[i]);
+							if (element != null) {
 								newList.add(element);
 								newMap.put(textArray[i], element);
 								newReverseMap.put(element, textArray[i]);
-								break;
 							}
-						}						
+						}
 					}
 					previousPicksMap = newMap;
 					reverseMap = newReverseMap;
@@ -364,13 +390,26 @@ public class CtrlEAction extends AbstractHandler {
 	 * @param element
 	 */
 	private void addPreviousPick(Object element) {
+		// we want to maintain that:
+		//   - previousPicksList does not contain duplicate elements
+		//   - previousPicksList contains the same elements as previousPicksMap.values()
+		//   - previousPicksList contains the same elements as reverseMap.keySet()
+		// after this method completes, we want that:
+		//   - previousPicksList contains element
+		//   - previousPicksMap contains (rememberedText->element)
+		//   - reverseMap contains (element->rememberedText)
 		previousPicksList.remove(element);
 		previousPicksList.addFirst(element);
-		String text = (String) reverseMap.put(element, rememberedText);
-		if(text != null) {
-			previousPicksMap.remove(text);
+		String newTextForElement = rememberedText;
+		String oldTextForElement = (String) reverseMap.put(element, newTextForElement);
+		if (oldTextForElement != null) {
+			previousPicksMap.remove(oldTextForElement);
 		}
-		previousPicksMap.put(rememberedText, element);
+		Object oldElementForNewText = previousPicksMap.put(newTextForElement, element);
+		if (oldElementForNewText != null) {
+			previousPicksList.remove(oldElementForNewText);
+			reverseMap.remove(oldElementForNewText);
+		}
 	}
 
 	/**
