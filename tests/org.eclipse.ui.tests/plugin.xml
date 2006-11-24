@@ -2972,7 +2972,7 @@
          </widget>
          <menu
                icon="icons/binary_co.gif"
-               id="MenuTest.popup.MasicMenuItem"
+               id="MenuTest.popup.BasicMenuItem"
                label="Basic Menu">
             <item
                   commandId="MenuTest.SubItem"
@@ -3032,7 +3032,7 @@
          </widget>
          <menu
                icon="icons/binary_co.gif"
-               id="MenuTest.popup.MasicMenuItem"
+               id="MenuTest.popup.BasicMenuItem"
                label="Basic Menu">
             <item
                   commandId="MenuTest.SubItem"
@@ -3092,7 +3092,7 @@
          </widget>
          <menu
                icon="icons/binary_co.gif"
-               id="MenuTest.popup.MasicMenuItem"
+               id="MenuTest.popup.BasicMenuItem"
                label="Basic Menu">
             <item
                   commandId="MenuTest.SubItem"

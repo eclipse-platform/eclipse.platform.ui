@@ -141,7 +141,7 @@ public class ItemAddition extends AdditionBase {
 	 * 
 	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContribution()
 	 */
-	public IContributionItem getContributionItem() {
+	public IContributionItem getContributionItem(boolean forMenu) {
 		return new ContributionItem(getId()) {
 
 			public void fill(Menu parent, int index) {

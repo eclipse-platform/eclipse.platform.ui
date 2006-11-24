@@ -60,5 +60,13 @@ public abstract class AdditionBase {
 		return visibleWhenExpression;
 	}
 
-	public abstract IContributionItem getContributionItem();
+	/**
+	 * Returns a contribution item appropriate for the element that is being
+	 * added.
+	 * @param forMenu <code>true</code> if the item is for a MenuManager
+	 * <code>false</code> if it's for a ToolBarManager
+	 * 
+	 * @return The contribution item
+	 */
+	public abstract IContributionItem getContributionItem(boolean forMenu);
 }

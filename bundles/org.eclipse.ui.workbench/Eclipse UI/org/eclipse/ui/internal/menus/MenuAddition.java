@@ -16,13 +16,21 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -38,7 +46,8 @@ public class MenuAddition extends AdditionBase {
 	private ImageDescriptor imageDesc = null;
 	private Image icon = null;
 
-	private IMenuService menuService;
+	private Listener toolItemListener = null;
+	private IMenuService menuService = null;
 
 	public MenuAddition(IConfigurationElement element, IMenuService service) {
 		super(element);
@@ -57,6 +66,10 @@ public class MenuAddition extends AdditionBase {
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				MenuAddition newCache = new MenuAddition(items[i], menuService);
 				newCache.readAdditions(items[i], 0);
+				
+				MenuLocationURI uri = new MenuLocationURI("menu:" + newCache.getId()); //$NON-NLS-1$
+				menuService.registerAdditionCache(uri, newCache);
+				
 				additions.add(insertionIndex++, newCache);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(itemType)) {
@@ -103,59 +116,172 @@ public class MenuAddition extends AdditionBase {
 				+ "(" + getLabel() + ":" + getTooltip() + ") " + getIconPath(); //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
 
+	private IContributionItem getMenuContributionItem() {
+		return new MenuManager(getLabel(), getId()) {
+			MenuActivation visibleCache = null;
+
+			public String getMenuText() {
+				return getLabel();
+			}
+			
+			public boolean isVisible() {
+				if (visibleCache==null && getVisibleWhen()!=null) {
+					visibleCache = new MenuActivation(this, getVisibleWhen(), menuService);
+					menuService.addContribution(visibleCache);
+				}
+				return visibleCache==null?true:visibleCache.evaluate(menuService.getCurrentState());
+			}
+
+			public boolean isEnabled() {
+				return true;
+			}
+
+			public void fill(Menu parent, int index) {
+				super.fill(parent, index);
+			}
+
+			public void fill(ToolBar parent, int index) {
+				super.fill(parent, index);
+			}
+		};
+	}
+
+    /**
+     * Returns the listener for SWT tool item widget events.
+     * 
+     * @return a listener for tool item events
+     */
+    private Listener getToolItemListener() {
+        if (toolItemListener  == null) {
+            toolItemListener = new Listener() {
+                public void handleEvent(Event event) {
+                    switch (event.type) {
+                    case SWT.Dispose:
+                        handleWidgetDispose(event);
+                        break;
+                    case SWT.Selection:
+                        Widget ew = event.widget;
+                        if (ew != null) {
+                            handleShowMenu(event, ((ToolItem) ew)
+                                    .getSelection());
+                        }
+                        break;
+                    }
+                }
+            };
+        }
+        return toolItemListener;
+    }
+	
+	/**
+	 * @param event
+	 * @param selection
+	 */
+	protected void handleShowMenu(Event event, boolean selection) {
+		// Create a new Menu Manager and populate it from the additions
+		MenuManager mgr = new MenuManager();
+		MenuLocationURI uri = new MenuLocationURI("menu:" + getId()); //$NON-NLS-1$
+		menuService.populateMenu(mgr, uri);
+		
+		// Create a menu and fill it
+        Widget item = event.widget;
+        ToolItem ti = (ToolItem) item;
+		Menu m = new Menu(ti.getParent().getShell());
+		IContributionItem[] items = mgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			items[i].fill(m, i);
+		}
+		//mgr.fill(m, 0);
+		
+		// Show the menu if the correct location
+        if (m != null) {
+            // position the menu below the drop down item
+            Rectangle b = ti.getBounds();
+            Point p = ti.getParent().toDisplay(
+                    new Point(b.x, b.y + b.height));
+            m.setLocation(p.x, p.y); // waiting for SWT 0.42
+            m.setVisible(true);
+        }		
+	}
+
+	/**
+	 * @param event
+	 */
+	protected void handleWidgetDispose(Event event) {
+		// TODO Auto-generated method stub
+		int i = 0;
+		i=i+12;
+	}
+
+	private IContributionItem getToolBarContributionItem() {
+		return new ContributionItem(getId()) {
+
+			MenuActivation visibleCache = null;
+
+			public void fill(ToolBar parent, int index) {
+				ToolItem newItem = new ToolItem(parent, SWT.DROP_DOWN, index);
+
+				if (getIconPath() != null)
+					newItem.setImage(getIcon());
+				else if (getLabel() != null)
+					newItem.setText(getLabel());
+
+				if (getTooltip() != null)
+					newItem.setToolTipText(getTooltip());
+				else
+					newItem.setToolTipText(getLabel());
+
+	            newItem.addListener(SWT.Selection, getToolItemListener());
+	            newItem.addListener(SWT.Dispose, getToolItemListener());
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#isVisible()
+			 */
+			public boolean isVisible() {
+				if (visibleCache == null && getVisibleWhen() != null) {
+					visibleCache = new MenuActivation(this, getVisibleWhen(),
+							menuService);
+					menuService.addContribution(visibleCache);
+				}
+				return visibleCache == null ? true : visibleCache
+						.evaluate(menuService.getCurrentState());
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#update()
+			 */
+			public void update() {
+				update(null);
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.ContributionItem#update(java.lang.String)
+			 */
+			public void update(String id) {
+				if (getParent() != null) {
+					getParent().update(true);
+				}
+			}
+		};
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.internal.menus.AdditionBase#getContributionItem()
 	 */
-	public IContributionItem getContributionItem() {
-		return new MenuManager(getLabel(), getId()) {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.MenuManager#getMenuText()
-			 */
-			public String getMenuText() {
-				return getLabel();
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.MenuManager#isEnabled()
-			 */
-			public boolean isEnabled() {
-				return true;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.MenuManager#fill(org.eclipse.swt.widgets.Menu,
-			 *      int)
-			 */
-			public void fill(Menu parent, int index) {
-				super.fill(parent, index);
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.MenuManager#fill(org.eclipse.swt.widgets.Menu,
-			 *      int)
-			 */
-			public void fill(ToolBar parent, int index) {
-				super.fill(parent, index);
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.MenuManager#isVisible()
-			 */
-			public boolean isVisible() {
-				return visible;
-			}
-		};
+	public IContributionItem getContributionItem(boolean forMenu) {
+		if (forMenu)
+			return getMenuContributionItem();
+		
+		return getToolBarContributionItem();
 	}
 
 	public void populateMenuManager(ContributionManager mgr) {
@@ -181,7 +307,8 @@ public class MenuAddition extends AdditionBase {
 				// normal item, just get the contribution
 				// Should we just change getContributionItem to return
 				// a list and move the logic into ItemAddition??
-				IContributionItem ci = addition.getContributionItem();
+				boolean forMenu = mgr instanceof MenuManager;
+				IContributionItem ci = addition.getContributionItem(forMenu);
 				if (addition.getVisibleWhen() != null) {
 					menuService.addContribution(new MenuActivation(ci, addition
 							.getVisibleWhen(), menuService));
@@ -189,8 +316,10 @@ public class MenuAddition extends AdditionBase {
 
 				// Populate the sub-items of menus
 				if (addition instanceof MenuAddition) {
-					((MenuAddition) addition)
-							.populateMenuManager((MenuManager) ci);
+					if (ci instanceof MenuManager) {
+						((MenuAddition) addition)
+								.populateMenuManager((MenuManager) ci);
+					}
 				}
 
 				// Add the item to the manager
