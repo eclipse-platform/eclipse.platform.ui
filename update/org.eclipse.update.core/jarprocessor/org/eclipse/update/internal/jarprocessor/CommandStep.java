@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.jarprocessor;
 
 import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -62,7 +63,7 @@ public abstract class CommandStep implements IProcessStep {
 		return options;
 	}
 	
-	public void adjustInf(File input, Properties inf) {
+	public void adjustInf(File input, Properties inf, List containers) {
 		//nothing
 	}
 }

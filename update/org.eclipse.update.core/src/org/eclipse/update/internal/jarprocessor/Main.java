@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.jarprocessor;
 
 import java.io.*;
+import java.util.Properties;
 import java.util.zip.ZipException;
 
 /**
@@ -110,7 +111,7 @@ public class Main {
 	}
 
 	public static void runJarProcessor(Options options) {
-		if (options.input.getName().endsWith(".zip")) { //$NON-NLS-1$
+		if (options.input.isFile() && options.input.getName().endsWith(".zip")) { //$NON-NLS-1$
 			ZipProcessor processor = new ZipProcessor();
 			processor.setWorkingDirectory(options.outputDir);
 			processor.setSignCommand(options.signCommand);
@@ -134,16 +135,34 @@ public class Main {
 			processor.setProcessAll(options.processAll);
 			processor.setVerbose(options.verbose);
 
+			//load options file
+			Properties properties = null;
+			if(options.input.isDirectory()){
+				File packProperties  = new File(options.input, "pack.properties");
+				if(packProperties.exists() && packProperties.isFile()){
+					InputStream in = null;
+					try {
+						in = new BufferedInputStream( new FileInputStream(packProperties));
+						properties.load(in);
+					} catch (IOException e) {
+						if(options.verbose)
+							e.printStackTrace();
+					} finally {
+						Utils.close(in);
+					}
+				}
+			}
+			
 			if (options.repack || (options.pack && options.signCommand != null))
-				processor.addProcessStep(new PackUnpackStep(null, options.verbose));
+				processor.addProcessStep(new PackUnpackStep(properties, options.verbose));
 
 			if (options.signCommand != null)
-				processor.addProcessStep(new SignCommandStep(null, options.signCommand, options.verbose));
+				processor.addProcessStep(new SignCommandStep(properties, options.signCommand, options.verbose));
 
 			if (options.pack)
-				processor.addProcessStep(new PackStep(null, options.verbose));
+				processor.addProcessStep(new PackStep(properties, options.verbose));
 			else if (options.unpack)
-				processor.addProcessStep(new UnpackStep(null, options.verbose));
+				processor.addProcessStep(new UnpackStep(properties, options.verbose));
 
 			try {
 				processor.process(options.input, options.unpack ? Utils.PACK_GZ_FILTER : Utils.JAR_FILTER);

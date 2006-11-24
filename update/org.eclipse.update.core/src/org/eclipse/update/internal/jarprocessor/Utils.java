@@ -19,16 +19,45 @@ import java.util.jar.*;
  *
  */
 public class Utils {
-	public static final String SIGN_EXCLUDES = "sign.excludes"; //$NON-NLS-1$
-	public static final String PACK_EXCLUDES = "pack.excludes"; //$NON-NLS-1$
 	public static final String MARK_FILE_NAME = "META-INF/eclipse.inf"; //$NON-NLS-1$
+	
+	/*
+	 * Properties found in outer pack.properties file
+	 */
+	//comma separated list of jars to exclude from sigining
+	public static final String SIGN_EXCLUDES = "sign.excludes"; //$NON-NLS-1$
+	//comma separated list of jars to exlclude from packing
+	public static final String PACK_EXCLUDES = "pack.excludes"; //$NON-NLS-1$
+	//Suffix used when specifying arguments to use when running pack200 on a jar
+	public static final String PACK_ARGS_SUFFIX = ".pack.args"; //$NON-NLS-1$
+	
+	/*
+	 * Properties found in both pack.properties and eclipse.inf
+	 */
+	//	Default arguments to use when running pack200.
+	// Affects all jars when specified in pack.properties, affects children when specified in eclipse.inf
+	public static final String DEFAULT_PACK_ARGS = "pack200.default.args"; //$NON-NLS-1$
+	
+	/*
+	 * Properties found in eclipse.inf file
+	 */
+	//This jar has been conditioned with pack200
 	public static final String MARK_PROPERTY = "pack200.conditioned"; //$NON-NLS-1$
+	//Exclude this jar from processing
 	public static final String MARK_EXCLUDE = "jarprocessor.exclude"; //$NON-NLS-1$
+	//Exclude this jar from pack200
 	public static final String MARK_EXCLUDE_PACK = "jarprocessor.exclude.pack"; //$NON-NLS-1$
+	//Exclude this jar from signing
 	public static final String MARK_EXCLUDE_SIGN = "jarprocessor.exclude.sign"; //$NON-NLS-1$
-	public static final String MARK_JARPROCESSOR_VERSION = "jarprocessor.version"; //$NON-NLS-1$
+	//Exclude this jar's children from processing
+	public static final String MARK_EXCLUDE_CHILDREN = "jarprocessor.exclude.children";
+	//Exclude this jar's children from pack200
+	public static final String MARK_EXCLUDE_CHILDREN_PACK = "jarprocessor.exclude.children.pack";
+	//Exclude this jar's children from signing
+	public static final String MARK_EXCLUDE_CHILDREN_SIGN = "jarprocessor.exclude.children.sign";
+	//Arguments used in pack200 for this jar
 	public static final String PACK_ARGS = "pack200.args"; //$NON-NLS-1$
-
+	
 	public static final String PACK200_PROPERTY = "org.eclipse.update.jarprocessor.pack200"; //$NON-NLS-1$
 	public static final String JRE = "@jre"; //$NON-NLS-1$
 	public static final String PATH = "@path"; //$NON-NLS-1$
@@ -185,11 +214,11 @@ public class Utils {
 		}
 		return Collections.EMPTY_SET;
 	}
-	
-	public static String concat(String [] array){
+
+	public static String concat(String[] array) {
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < array.length; i++) {
-			if( i > 0 )
+			if (i > 0)
 				buffer.append(' ');
 			buffer.append(array[i]);
 		}
@@ -210,12 +239,14 @@ public class Utils {
 	 * Get the properties from the eclipse.inf file from the given jar.  If the file is not a jar, null is returned.
 	 * If the file is a jar, but does not contain an eclipse.inf file, an empty Properties object is returned.
 	 * @param jarFile
-	 * @return
+	 * @return The eclipse.inf properties for the given jar file
 	 */
-	public static Properties getEclipseInf(File jarFile) {
-		if (jarFile == null || !jarFile.exists())
+	public static Properties getEclipseInf(File jarFile, boolean verbose) {
+		if (jarFile == null || !jarFile.exists()) {
+			if (verbose)
+				System.out.println("Failed to obtain eclipse.inf due to missing jar file: " + jarFile);
 			return null;
-
+		}
 		JarFile jar = null;
 		try {
 			jar = new JarFile(jarFile, false);
@@ -229,15 +260,19 @@ public class Utils {
 			}
 			return new Properties();
 		} catch (IOException e) {
+			if (verbose) {
+				System.out.println("Failed to obtain eclipse.inf due to IOException: " + jarFile);
+				e.printStackTrace();
+			}
 			//not a jar
+			return null;
 		} finally {
 			close(jar);
 		}
-		return null;
 	}
 
 	public static boolean shouldSkipJar(File input, boolean processAll, boolean verbose) {
-		Properties inf = getEclipseInf(input);
+		Properties inf = getEclipseInf(input, verbose);
 		if (inf == null) {
 			//not a jar, could be a pack.gz
 			return false;

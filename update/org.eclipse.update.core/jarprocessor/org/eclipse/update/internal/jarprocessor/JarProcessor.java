@@ -24,6 +24,7 @@ public class JarProcessor {
 	private int depth = -1;
 	private boolean verbose = false;
 	private boolean processAll = false;
+	private LinkedList containingInfs = new LinkedList();
 
 	static public JarProcessor getUnpackProcessor(Properties properties) {
 		if (!canPerformUnpack())
@@ -54,7 +55,8 @@ public class JarProcessor {
 	}
 
 	public void setWorkingDirectory(String dir) {
-		workingDirectory = dir;
+		if(dir != null)
+			workingDirectory = dir;
 	}
 	
 	public void setVerbose(boolean verbose) {
@@ -169,7 +171,21 @@ public class JarProcessor {
 		return result;
 	}
 
-	private void extractEntries(JarFile jar, File tempDir, Map data) throws IOException {
+	private void extractEntries(JarFile jar, File tempDir, Map data, Properties inf) throws IOException {
+		if(inf != null ) {
+			//skip if excluding children
+			if(inf.containsKey(Utils.MARK_EXCLUDE_CHILDREN)){
+				String excludeChildren = inf.getProperty(Utils.MARK_EXCLUDE_CHILDREN);
+				if( Boolean.valueOf(excludeChildren).booleanValue() )
+					if(verbose){
+						for(int i = 0; i <= depth; i++)
+							System.out.print("  "); //$NON-NLS-1$
+						System.out.println("Children of " + jar.getName() + "are excluded from processing.");
+					}
+					return;
+			}
+		}
+		
 		Enumeration entries = jar.entries();
 		if (entries.hasMoreElements()) {
 			for (JarEntry entry = (JarEntry) entries.nextElement(); entry != null; entry = entries.hasMoreElements() ? (JarEntry) entries.nextElement() : null) {
@@ -201,10 +217,12 @@ public class JarProcessor {
 					data.put(name, newName);
 
 					//recurse
+					containingInfs.addFirst(inf);
 					String dir = getWorkingDirectory();
 					setWorkingDirectory(parentDir.getCanonicalPath());
 					processJar(extracted);
 					setWorkingDirectory(dir);
+					containingInfs.removeFirst();
 
 					//delete the extracted item leaving the recursion result
 					if (!name.equals(newName))
@@ -218,7 +236,7 @@ public class JarProcessor {
 		File result = null;
 		for (Iterator iter = steps.iterator(); iter.hasNext();) {
 			IProcessStep step = (IProcessStep) iter.next();
-			result = step.preProcess(input, tempDir);
+			result = step.preProcess(input, tempDir, containingInfs);
 			if (result != null)
 				input = result;
 		}
@@ -229,7 +247,7 @@ public class JarProcessor {
 		File result = null;
 		for (Iterator iter = steps.iterator(); iter.hasNext();) {
 			IProcessStep step = (IProcessStep) iter.next();
-			result = step.postProcess(input, tempDir);
+			result = step.postProcess(input, tempDir, containingInfs);
 			if (result != null)
 				input = result;
 		}
@@ -239,7 +257,7 @@ public class JarProcessor {
 	private void adjustInf(File input, Properties inf) {
 		for (Iterator iter = steps.iterator(); iter.hasNext();) {
 			IProcessStep step = (IProcessStep) iter.next();
-			step.adjustInf(input, inf);
+			step.adjustInf(input, inf, containingInfs);
 		}
 	}
 
@@ -284,9 +302,9 @@ public class JarProcessor {
 
 		JarFile jar = new JarFile(workingFile, false);
 		Map replacements = new HashMap();
-		extractEntries(jar, tempDir, replacements);
+		Properties inf = Utils.getEclipseInf(workingFile, verbose);
+		extractEntries(jar, tempDir, replacements, inf);
 
-		Properties inf = Utils.getEclipseInf(workingFile);
 		if (inf != null)
 			adjustInf(workingFile, inf);
 

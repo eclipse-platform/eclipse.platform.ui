@@ -12,6 +12,7 @@ package org.eclipse.update.internal.jarprocessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -40,19 +41,16 @@ public class PackUnpackStep extends PackStep {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.update.jarprocessor.IProcessStep#preProcess(java.io.File, java.io.File)
+	 * @see org.eclipse.update.internal.jarprocessor.PackStep#postProcess(java.io.File, java.io.File, java.util.LinkedList)
 	 */
-	public File postProcess(File input, File workingDirectory) {
+	public File postProcess(File input, File workingDirectory, List containers) {
 		if (canPack() && packCommand != null) {
-			Properties inf = Utils.getEclipseInf(input);
-			if (inf != null && inf.containsKey(Utils.MARK_EXCLUDE_PACK) && Boolean.valueOf(inf.getProperty(Utils.MARK_EXCLUDE_PACK)).booleanValue()) {
-				if (verbose)
-					System.out.println("Excluding " + input.getName() + " from " + getStepName()); //$NON-NLS-1$ //$NON-NLS-2$
+			Properties inf = Utils.getEclipseInf(input, verbose);
+			if (!shouldPack(input, containers, inf))
 				return null;
-			}
 			File tempFile = new File(workingDirectory, "temp_" + input.getName()); //$NON-NLS-1$
 			try {
-				String[] tmp = getCommand(input, tempFile, inf);
+				String[] tmp = getCommand(input, tempFile, inf, containers);
 				String[] cmd = new String[tmp.length + 1];
 				cmd[0] = tmp[0];
 				cmd[1] = "-r"; //$NON-NLS-1$
@@ -78,9 +76,9 @@ public class PackUnpackStep extends PackStep {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.update.jarprocessor.IProcessStep#postProcess(java.io.File, java.io.File)
+	 * @see org.eclipse.update.internal.jarprocessor.PackStep#preProcess(java.io.File, java.io.File, java.util.LinkedList)
 	 */
-	public File preProcess(File input, File workingDirectory) {
+	public File preProcess(File input, File workingDirectory, List containers) {
 		return null;
 	}
 

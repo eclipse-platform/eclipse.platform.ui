@@ -10,9 +10,20 @@
  *******************************************************************************/
 package org.eclipse.update.internal.jarprocessor;
 
-import java.io.*;
-import java.util.*;
-import java.util.jar.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
 
 /**
  * @author aniefer@ca.ibm.com
@@ -43,21 +54,15 @@ public class SignCommandStep extends CommandStep {
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.jarprocessor.IProcessStep#preProcess(java.io.File, java.io.File)
 	 */
-	public File preProcess(File input, File workingDirectory) {
+	public File preProcess(File input, File workingDirectory, List containers) {
 		return null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.jarprocessor.IProcessStep#postProcess(java.io.File, java.io.File)
 	 */
-	public File postProcess(File input, File workingDirectory) {
-		if (command != null) {
-			Properties inf = Utils.getEclipseInf(input);
-			if (inf != null && inf.containsKey(Utils.MARK_EXCLUDE_SIGN) && Boolean.valueOf(inf.getProperty(Utils.MARK_EXCLUDE_SIGN)).booleanValue()) {
-				if(verbose)
-					System.out.println("Excluding " + input.getName() + " from signing."); //$NON-NLS-1$ //$NON-NLS-2$
-				return null;
-			}
+	public File postProcess(File input, File workingDirectory, List containers) {
+		if (command != null && shouldSign(input, containers)) {
 			try {
 				String[] cmd = new String[] {command, input.getCanonicalPath()};
 				int result = execute(cmd, verbose);
@@ -74,6 +79,33 @@ public class SignCommandStep extends CommandStep {
 			}
 		}
 		return null;
+	}
+
+	private boolean shouldSign(File input, List containers) {
+		Properties inf = null;
+
+		//1: Are we excluded from signing by our parents?
+		//innermost jar is first on the list, it overrides outer jars
+		for (Iterator iterator = containers.iterator(); iterator.hasNext();) {
+			inf = (Properties) iterator.next();
+			if (inf.containsKey(Utils.MARK_EXCLUDE_CHILDREN_SIGN)){
+				if(Boolean.valueOf(inf.getProperty(Utils.MARK_EXCLUDE_CHILDREN_SIGN)).booleanValue()) {
+					if (verbose)
+						System.out.println(input.getName() + "is excluded from signing by its containers."); //$NON-NLS-1$ //$NON-NLS-2$
+					return false;
+				}
+				break;
+			}
+		}
+
+		//2: Is this jar itself marked as exclude?
+		inf = Utils.getEclipseInf(input, verbose);
+		if (inf != null && inf.containsKey(Utils.MARK_EXCLUDE_SIGN) && Boolean.valueOf(inf.getProperty(Utils.MARK_EXCLUDE_SIGN)).booleanValue()) {
+			if (verbose)
+				System.out.println("Excluding " + input.getName() + " from signing."); //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		}
+		return true;
 	}
 
 	private void normalize(File input, File workingDirectory) {

@@ -11,6 +11,7 @@
 package org.eclipse.update.internal.jarprocessor;
 
 import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -33,18 +34,20 @@ public interface IProcessStep {
 	 *  return the file containing the result of the processing
 	 * @param input
 	 * @param workingDirectory
+	 * @param containers: inf properties for containing jars, innermost jar is first on the list
 	 * @return
 	 */
-	public File preProcess(File input, File workingDirectory);
+	public File preProcess(File input, File workingDirectory, List containers);
 	
 	/**
 	 * Perform some processing on the input file after the JarProcessor returns from recursion
 	 * return the file containing the result of the processing
 	 * @param input
 	 * @param workingDirectory
+	 * @param containers: inf properties for containing jars, innermost jar is first on the list
 	 * @return
 	 */
-	public File postProcess(File input, File workingDirectory);
+	public File postProcess(File input, File workingDirectory, List containers);
 	
 	/**
 	 * Return the name of this process step
@@ -56,6 +59,7 @@ public interface IProcessStep {
 	 * Adjust any properties in the eclipse.inf as appropriate for this step
 	 * @param input
 	 * @param inf
+	 * @param containers: inf properties for containing jars, innermost jar is first on the list
 	 */
-	public void adjustInf(File input, Properties inf);
+	public void adjustInf(File input, Properties inf, List containers);
 }
