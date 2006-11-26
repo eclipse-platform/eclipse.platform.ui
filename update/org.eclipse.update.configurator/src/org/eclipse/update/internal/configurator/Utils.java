@@ -49,6 +49,8 @@ public class Utils {
 	public static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$	
 	static FrameworkLog log;
 	private static ServiceTracker bundleTracker;
+	private static ServiceTracker instanceLocation;
+	private static ServiceTracker configurationLocation;
 
 	public static void debug(String s) {
 		if (ConfigurationActivator.DEBUG)
@@ -137,9 +139,19 @@ public class Utils {
 	/**
 	 * Close the services that we were listening to.
 	 */
-	/*package*/ static void shutdown() {
-		if (bundleTracker != null)
+	/*package*/ static synchronized void shutdown() {
+		if (bundleTracker != null) {
 			bundleTracker.close();
+			bundleTracker = null;
+		}
+		if (instanceLocation != null) {
+			instanceLocation.close();
+			instanceLocation = null;
+		}		
+		if (configurationLocation != null) {
+			configurationLocation.close();
+			configurationLocation = null;
+		}
 	}
 
 	/**
@@ -219,7 +231,7 @@ public class Utils {
 	 * 
 	 * @see PackageAdmin#getBundles(String, String)
 	 */
-	public static Bundle getBundle(String symbolicName) {
+	public static synchronized Bundle getBundle(String symbolicName) {
 		if (bundleTracker == null) {
 			bundleTracker = new ServiceTracker(getContext(), PackageAdmin.class.getName(), null);
 			bundleTracker.open();
@@ -251,15 +263,17 @@ public class Utils {
 	 * 
 	 * @see Location
 	 */
-	public static Location getConfigurationLocation() {
-		Filter filter = null;
-		try {
-			filter = getContext().createFilter(Location.CONFIGURATION_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
+	public static synchronized Location getConfigurationLocation() {
+		if (configurationLocation == null) {
+			Filter filter = null;
+			try {
+				filter = getContext().createFilter(Location.CONFIGURATION_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this. It should never happen as we have tested the above format.
+			}
+			configurationLocation = new ServiceTracker(getContext(), filter, null);
+			configurationLocation.open();
 		}
-		ServiceTracker configurationLocation = new ServiceTracker(getContext(), filter, null);
-		configurationLocation.open();
 		return (Location) configurationLocation.getService();
 	}
 	
@@ -509,15 +523,18 @@ public class Utils {
 	 * 
 	 * @see Location
 	 */
-	public static URL getInstallURL() {
-		Filter filter = null;
-		try {
-			filter = getContext().createFilter(Location.INSTALL_FILTER);
-		} catch (InvalidSyntaxException e) {
-			// ignore this.  It should never happen as we have tested the above format.
+	public static synchronized URL getInstallURL() {
+		if (instanceLocation == null) {
+			Filter filter = null;
+			try {
+				filter = getContext().createFilter(Location.INSTALL_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this. It should never happen as we have tested the
+				// above format.
+			}
+			instanceLocation = new ServiceTracker(getContext(), filter, null);
+			instanceLocation.open();
 		}
-		ServiceTracker instanceLocation = new ServiceTracker(getContext(), filter, null);
-		instanceLocation.open();
 
 		Location location = (Location) instanceLocation.getService();
 
