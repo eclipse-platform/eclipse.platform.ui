@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -25,6 +28,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -87,16 +91,22 @@ public abstract class RevisionAnnotationController {
 	public static AbstractDecoratedTextEditor openEditor(IWorkbenchPage page, IFile file) throws PartInitException {
 		if (file == null)
 			return null;
-		AbstractDecoratedTextEditor te= findOpenTextEditorForFile(file);
-		if (te != null)
-			return te;
+		IEditorPart[] openEditors = findOpenEditorsForFile(file);
+		if (openEditors.length > 0) {
+			AbstractDecoratedTextEditor te= findTextEditor(openEditors);
+			if (te != null)
+				return te;
+		}
 		
-		//no existing editor references found, try to open a new editor for the file	
+		// No existing editor references found, try to open a new editor for the file	
 		try {
 			IEditorDescriptor descrptr = IDE.getEditorDescriptor(file);
-			//try to open the associated editor only if its an internal editor
-			if (descrptr.isInternal()){
-				IEditorPart part = IDE.openEditor(page, file);
+			// Try to open the associated editor only if its an internal editor
+			// Also, if a non-text editor is already open, there is no need to try and open 
+			// an editor since the open will find the non-text editor
+			IEditorInput input = new FileEditorInput(file);
+			if (descrptr.isInternal() && openEditors.length == 0){
+				IEditorPart part = page.openEditor(input, IDE.getEditorDescriptor(file).getId(), true, IWorkbenchPage.MATCH_INPUT);
 				if (part instanceof AbstractDecoratedTextEditor)
 					return (AbstractDecoratedTextEditor)part;
 				
@@ -104,7 +114,7 @@ public abstract class RevisionAnnotationController {
 				page.closeEditor(part, false);
 			}
 			//open file in default text editor	
-			IEditorPart part = IDE.openEditor(page, file, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID);
+			IEditorPart part = page.openEditor(input, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_ID);
 			if (part != null && part instanceof AbstractDecoratedTextEditor)
 				return (AbstractDecoratedTextEditor)part;
 			
@@ -191,23 +201,39 @@ public abstract class RevisionAnnotationController {
 	private static AbstractDecoratedTextEditor findOpenTextEditorForFile(IFile file) {
 		if (file == null)
 			return null;
+        IEditorPart[] editors = findOpenEditorsForFile(file);
+        return findTextEditor(editors);
+	}
+	
+	private static AbstractDecoratedTextEditor findTextEditor(IEditorPart[] editors) {
+		for (int i = 0; i < editors.length; i++) {
+			IEditorPart editor = editors[i];
+			if (editor instanceof AbstractDecoratedTextEditor)
+				return (AbstractDecoratedTextEditor) editor;
+		}
+		return null;
+	}
+	
+	private static IEditorPart[] findOpenEditorsForFile(IFile file) {
+		if (file == null)
+			return new IEditorPart[0];
         final IWorkbench workbench= PlatformUI.getWorkbench();
         final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-        IEditorReference[] references= window.getActivePage().getEditorReferences();
+        final IEditorReference[] references= window.getActivePage().getEditorReferences();
+        final List editors = new ArrayList();
 		for (int i= 0; i < references.length; i++) {
 			IEditorReference reference= references[i];
 			try {
 				if (file.equals(reference.getEditorInput().getAdapter(IFile.class))) {
 					IEditorPart editor= reference.getEditor(false);
-					if (editor instanceof AbstractDecoratedTextEditor)
-						return (AbstractDecoratedTextEditor) editor;
+					editors.add(editor);
 				}
 			} catch (PartInitException e) {
 				// ignore
 			}
 		}
 		
-        return null;
+        return (IEditorPart[]) editors.toArray(new IEditorPart[editors.size()]);
 	}
 	
 	private static AbstractDecoratedTextEditor findOpenTextEditorFor(Object object) {
