@@ -316,26 +316,37 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	 */
 	protected void fireLaunchHistoryChanged() {
 		Iterator iterator = fLaunchHistoryChangedListeners.iterator();
+		ILaunchHistoryChangedListener listener = null;
 		while (iterator.hasNext()) {
-			ILaunchHistoryChangedListener listener = (ILaunchHistoryChangedListener) iterator.next();
+			listener = (ILaunchHistoryChangedListener) iterator.next();
 			listener.launchHistoryChanged();
 		}
 	}
 
+	/**
+	 * Returns the history listing as XML
+	 * @return the history loisting as XML
+	 * @throws CoreException
+	 * @throws ParserConfigurationException
+	 * @throws TransformerException
+	 * @throws IOException
+	 */
 	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException, TransformerException, IOException {
 		Document doc = DebugUIPlugin.getDocument();
 		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
 		doc.appendChild(historyRootElement);
 		
 		Iterator histories = fLaunchHistories.values().iterator();
+		LaunchHistory history = null;
+		Element last = null;
 		while (histories.hasNext()) {
-			LaunchHistory history = (LaunchHistory)histories.next();
+			history = (LaunchHistory)histories.next();
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getHistory());
 			createEntry(doc, historyRootElement, history.getLaunchGroup().getMode(), history.getFavorites());
 			ILaunchConfiguration configuration = history.getRecentLaunch();
 			if (configuration != null) {
 				if(configuration.exists()) {
-					Element last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
+					last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
 					last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
 					last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
 					historyRootElement.appendChild(last);
@@ -346,6 +357,14 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		return DebugUIPlugin.serializeDocument(doc);
 	}
 
+	/**
+	 * Creates a new launch history element and adds it to the specified <code>Document</code>
+	 * @param doc the <code>Document</code> to add the new element to
+	 * @param historyRootElement the root element
+	 * @param mode the modes the history element should apply to
+	 * @param configurations the configurations to create entries for
+	 * @throws CoreException
+	 */
 	protected void createEntry(Document doc, Element historyRootElement, String mode, ILaunchConfiguration[] configurations) throws CoreException {
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];
@@ -358,6 +377,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		}
 	}
 				
+	/**
+	 * Returns the path to the local file for the launch history
+	 * @return the file path for the launch history file
+	 */
 	protected IPath getHistoryFilePath() {
 		return DebugUIPlugin.getDefault().getStateLocation().append(LAUNCH_CONFIGURATION_HISTORY_FILENAME); 
 	}
@@ -431,11 +454,13 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		LaunchHistory[] histories = (LaunchHistory[])l.toArray(new LaunchHistory[l.size()]);
 		NodeList list = rootHistoryElement.getChildNodes();
 		int length = list.getLength();
+		Node node = null;
+		Element entry = null;
 		for (int i = 0; i < length; ++i) {
-			Node node = list.item(i);
+			node = list.item(i);
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
-				Element entry = (Element) node;
+				entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAUNCH_NODE)) { 
 					createHistoryElement(entry, histories);
 				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) {
@@ -455,8 +480,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
+				LaunchHistory history = null;
 				for (int i = 0; i < histories.length; i++) {
-					LaunchHistory history = histories[i];
+					history = histories[i];
 					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
 						history.addHistory(launchConfig, false);
 					}
@@ -477,8 +503,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
+				LaunchHistory history = null;
 				for (int i = 0; i < histories.length; i++) {
-					LaunchHistory history = histories[i];
+					history = histories[i];
 					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
 						history.setRecentLaunch(launchConfig);
 					}
@@ -503,8 +530,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		// Load the configuration elements into a Map 
 		fLaunchShortcuts = new ArrayList(infos.length);
 		for (int i = 0; i < infos.length; i++) {
-			LaunchShortcutExtension ext = new LaunchShortcutExtension(infos[i]);
-			fLaunchShortcuts.add(ext);
+			fLaunchShortcuts.add(new LaunchShortcutExtension(infos[i]));
 		}
 		Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 	}
@@ -520,8 +546,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	
 			// Load the configuration elements into a Map 
 			fLaunchGroups = new HashMap(infos.length);
+			LaunchGroupExtension ext = null;
 			for (int i = 0; i < infos.length; i++) {
-				LaunchGroupExtension ext = new LaunchGroupExtension(infos[i]);
+				ext = new LaunchGroupExtension(infos[i]);
 				fLaunchGroups.put(ext.getIdentifier(), ext);
 			}
 		}
@@ -558,8 +585,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	protected List filterShortcuts(List unfiltered, String category) {
 		List filtered = new ArrayList(unfiltered.size());
 		Iterator iter = unfiltered.iterator();
+		LaunchShortcutExtension extension = null;
 		while (iter.hasNext()){
-			LaunchShortcutExtension extension = (LaunchShortcutExtension)iter.next();
+			extension = (LaunchShortcutExtension)iter.next();
 			if (category == null) {
 				if (extension.getCategory() == null) {
 					filtered.add(extension);
@@ -583,9 +611,11 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		if (fLaunchShortcutsByPerspective == null) {
 			Iterator shortcuts = getLaunchShortcuts().iterator();
 			fLaunchShortcutsByPerspective = new HashMap(10);
+			LaunchShortcutExtension ext = null;
+			Iterator perspectives = null;
 			while (shortcuts.hasNext()) {
-				LaunchShortcutExtension ext = (LaunchShortcutExtension)shortcuts.next();
-				Iterator perspectives = ext.getPerspectives().iterator();
+				ext = (LaunchShortcutExtension)shortcuts.next();
+				perspectives = ext.getPerspectives().iterator();
 				while (perspectives.hasNext()) {
 					String id = (String)perspectives.next();
 					List list = (List)fLaunchShortcutsByPerspective.get(id);
@@ -672,8 +702,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			fRestoring = true;
 			ILaunchGroup[] groups = getLaunchGroups();
 			fLaunchHistories = new HashMap(groups.length);
+			ILaunchGroup extension = null;
 			for (int i = 0; i < groups.length; i++) {
-				ILaunchGroup extension = groups[i];
+				extension = groups[i];
 				if (extension.isPublic()) {
 					fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
 				}
@@ -709,8 +740,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		try {
 			String category = configuration.getCategory();
 			ILaunchGroup[] groups = getLaunchGroups();
+			ILaunchGroup extension = null;
 			for (int i = 0; i < groups.length; i++) {
-				ILaunchGroup extension = groups[i];
+				extension = groups[i];
 				if (category == null) {
 					if (extension.getCategory() == null && extension.getMode().equals(mode)) {
 						return extension;
@@ -740,8 +772,9 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
 		ILaunchConfiguration shared = null;
 		ILaunchConfiguration[] configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type);
+		ILaunchConfiguration configuration = null;
 		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration configuration = configurations[i];
+			configuration = configurations[i];
 			if (configuration.getName().equals(name)) {
 				shared = configuration;
 				break;
@@ -762,6 +795,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 
 }
 
+/**
+ * A comparator for the ordering of launch shortcut extensions
+ * @since 3.3
+ */
 class ShortcutComparator implements Comparator {
 	/**
 	 * @see Comparator#compare(Object, Object)
