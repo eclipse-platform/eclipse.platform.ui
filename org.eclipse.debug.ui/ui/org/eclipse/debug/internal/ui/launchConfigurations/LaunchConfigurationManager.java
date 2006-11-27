@@ -294,6 +294,23 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	/**
+	 * Returns the most recent launch for the given group taking launch configuration
+	 * filters into account, or <code>null</code> if none.
+	 * 
+	 * @param groupId launch group
+	 * @return the most recent, un-filtered launch
+	 */
+	public ILaunchConfiguration getFilteredLastLaunch(String groupId) {
+		LaunchHistory history = getLaunchHistory(groupId);if (history != null) {
+			ILaunchConfiguration[] filterConfigs = filterConfigs(history.getHistory());
+			if (filterConfigs.length > 0) {
+				return filterConfigs[0];
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Add the specified listener to the list of listeners that will be notified when the
 	 * launch history changes.
 	 */

@@ -45,7 +45,7 @@ import com.ibm.icu.text.MessageFormat;
  * </p>
  * @since 2.1
  */
-public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener, IResourceChangeListener {
+public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener {
 	
 	/**
 	 * The menu created by this action
@@ -77,6 +77,19 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public AbstractLaunchHistoryAction(String launchGroupIdentifier) {
 		fLaunchGroupIdentifier = launchGroupIdentifier;
 	}
+	
+	/**
+	 * Resource change listener to update tooltip
+	 */
+	private IResourceChangeListener fListener = new IResourceChangeListener() {
+		public void resourceChanged(IResourceChangeEvent event) {
+			// need to update the tooltip in the event that one of the launch filters has removed the most recent entry.
+			// bug 156516  we only want to respond to after-the-fact updates
+			if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
+				updateTooltip();
+			}
+		}
+	};
 
 	/**
 	 * Sets the action used to render this delegate.
@@ -125,7 +138,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	private void initialize(IAction action) {
 		getLaunchConfigurationManager().addLaunchHistoryListener(this);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(fListener);
 		setAction(action);
 		updateTooltip();	
 		action.setEnabled(existsConfigTypesForMode());	
@@ -157,31 +170,19 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		if (lastLaunched == null) {
 			tooltip = DebugUIPlugin.removeAccelerators(getLaunchHistory().getLaunchGroup().getLabel());
 		} else {
-			String launchName = lastLaunched.getName();
-			String mode = getMode();
-			String label;
-			if (mode.equals(ILaunchManager.RUN_MODE)) {
-				label= ActionMessages.AbstractLaunchHistoryAction_1; 
-			} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
-				label= ActionMessages.AbstractLaunchHistoryAction_2; 
-			} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
-				label= ActionMessages.AbstractLaunchHistoryAction_3; 
-			} else {
-				label= ActionMessages.AbstractLaunchHistoryAction_4; 
-			}
-			tooltip = MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); 
+			tooltip = getToolTip(lastLaunched); 
 		}
 		getAction().setToolTipText(tooltip);
 	}
 	
 	/**
-	 * This method is used to set the tooltip for the luanch history action
-	 * @param lastLaunched the last launched <code>ILauncConfiguration</code>
+	 * Returns the tooltip specific to a configuration.
+	 * 
+	 * @param configuration a <code>ILauncConfiguration</code>
 	 * @return the string for the tool tip
-	 * @deprecated use the method <code>updateToolTip</code> only, this is part of bug 156516
 	 */
-	protected String getToolTip(ILaunchConfiguration lastLaunched) {
-		String launchName= lastLaunched.getName();
+	protected String getToolTip(ILaunchConfiguration configuration) {
+		String launchName= configuration.getName();
 		String mode= getMode();
 		String label;
 		if (mode.equals(ILaunchManager.RUN_MODE)) {
@@ -210,14 +211,17 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public void dispose() {
 		setMenu(null);
 		getLaunchConfigurationManager().removeLaunchHistoryListener(this);
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(fListener);
 	}
 	
 	/**
-	 * Return the last launch in this action's launch history
+	 * Return the last launch in this action's launch history.
+	 * 
+	 * @return the most recent configuration that was launched from this
+	 *  action's launch history that is not filtered from the menu
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		return getLaunchConfigurationManager().getLastLaunch(getLaunchGroupIdentifier());
+		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
 	}
 
 	/**
@@ -373,14 +377,4 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		return fLaunchGroupIdentifier;
 	}
 
-	/**
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		// need to update the tooltip in the event that one of the launch filters has removed the most recent entry.
-		// bug 156516  we only want to respond to after-the-fact updates
-		if(event.getType() == IResourceChangeEvent.POST_CHANGE) {
-			updateTooltip();
-		}
-	}
 }

@@ -78,7 +78,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Adds the given configuration to this hisotry
+	 * Adds the given configuration to this history
 	 * 
 	 * @param configuration
 	 * @param prepend whether the configuration should be added to the beginning of
@@ -382,7 +382,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Revmoves the given config from the favorites list, if needed.
+	 * Removes the given config from the favorites list, if needed.
 	 * 
 	 * @param configuration
 	 */
