@@ -102,10 +102,7 @@ public class SearchPattern {
 	 * Creates new instance of SearchPattern Default allowedRules for it is
 	 * result of belong logic operation: ( RULE_EXACT_MATCH | RULE_PREFIX_MATCH |
 	 * RULE_PATTERN_MATCH | RULE_CAMELCASE_MATCH )
-	 * 
-	 * @param pattern
-	 *            uses for matching strings
-	 * 
+	 *
 	 */
 	public SearchPattern() {
 		this(RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH
@@ -116,9 +113,6 @@ public class SearchPattern {
 	 * Creates a search pattern with the rule to apply for matching index keys.
 	 * It can be exact match, prefix match, pattern match or camelCase match.
 	 * Rule can also be combined with a case sensitivity flag.
-	 * 
-	 * @param pattern
-	 *            uses for matching strings
 	 * 
 	 * @param allowedRules
 	 *            one of {@link #RULE_EXACT_MATCH}, {@link #RULE_PREFIX_MATCH},

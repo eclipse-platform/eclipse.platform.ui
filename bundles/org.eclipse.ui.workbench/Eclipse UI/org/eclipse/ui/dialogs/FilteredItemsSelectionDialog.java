@@ -884,7 +884,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	/**
 	 * Removes item from history
 	 * 
-	 * @param element
+	 * @param item
 	 *            to remove
 	 * @return removed item
 	 */

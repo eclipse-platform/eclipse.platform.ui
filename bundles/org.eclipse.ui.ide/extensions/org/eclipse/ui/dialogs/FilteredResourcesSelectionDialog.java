@@ -797,7 +797,6 @@ public class FilteredResourcesSelectionDialog extends
 		/**
 		 * Creates new ResourceFilter instance
 		 * 
-		 * @param text
 		 * @param container
 		 * @param showDerived
 		 *            flag which determine showing derived elements
