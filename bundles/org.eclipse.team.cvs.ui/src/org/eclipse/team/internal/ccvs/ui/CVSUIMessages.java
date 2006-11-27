@@ -43,6 +43,12 @@ public class CVSUIMessages extends NLS {
 	public static String CommitAction_0;
 	public static String CommitAction_1;
 	public static String CommitAction_2;
+	public static String CommitWizard_10;
+	public static String CommitWizard_11;
+	public static String CommitWizard_12;
+	public static String CommitWizard_13;
+	public static String CommitWizard_8;
+	public static String CommitWizard_9;
 	public static String CreatePatchAction_0;
 	public static String CreatePatchAction_1;
 	public static String CVSHistoryPage_CollapseAllAction;

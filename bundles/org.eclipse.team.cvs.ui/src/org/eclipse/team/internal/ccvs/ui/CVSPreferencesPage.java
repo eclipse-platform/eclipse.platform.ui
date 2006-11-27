@@ -552,6 +552,23 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
 	    		);
 	    
+	    new StringRadioButtons(
+	    		composite, 
+	    		ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_WARNINGS, 
+	    		"Commit resources with warnings", 
+	    		IHelpContextIds.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT,
+	    		YES_NO_PROMPT,
+	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
+	    		);
+
+	    new StringRadioButtons(
+	    		composite, 
+	    		ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_ERRORS, 
+	    		"Commit resources with errors", 
+	    		IHelpContextIds.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT,
+	    		YES_NO_PROMPT,
+	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
+	    		);
 	    SWTUtils.createPlaceholder(composite, 1);
 	  
 		return composite;

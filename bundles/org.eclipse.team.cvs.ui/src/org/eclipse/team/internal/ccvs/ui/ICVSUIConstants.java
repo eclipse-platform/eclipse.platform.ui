@@ -119,6 +119,9 @@ public interface ICVSUIConstants {
     public final String PREF_USE_QUICKDIFFANNOTATE = "pref_use_quickdiffannotate"; //$NON-NLS-1$
     public final String PREF_INCLUDE_CHANGE_SETS_IN_COMMIT = "pref_include_change_sets"; //$NON-NLS-1$
     public final String PREF_ANNOTATE_PROMPTFORBINARY = "pref_annotate_promptforbinary"; //$NON-NLS-1$
+    public final String PREF_ALLOW_COMMIT_WITH_WARNINGS = "pref_commit_with_warning"; //$NON-NLS-1$
+    public final String PREF_ALLOW_COMMIT_WITH_ERRORS = "pref_commit_with_errors"; //$NON-NLS-1$
+    
     
 	// console preferences
 	public final String PREF_CONSOLE_COMMAND_COLOR = "pref_console_command_color"; //$NON-NLS-1$

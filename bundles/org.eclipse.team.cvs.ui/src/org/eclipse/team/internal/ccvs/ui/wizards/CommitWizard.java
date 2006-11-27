@@ -22,14 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
@@ -203,6 +203,28 @@ public class CommitWizard extends ResizableWizard {
         return fOutOfSyncInfos.size() > 0;
     }
     
+    public int getHighestProblemSeverity() {
+    	IResource[] resources = fOutOfSyncInfos.getResources();
+    	int mostSeriousSeverity = -1;
+    	
+    	for (int i = 0; i < resources.length; i++) {
+    		IResource resource = resources[i];
+    		try {
+				IMarker[] problems = resource.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				for (int j = 0; j < problems.length; j++) {
+					IMarker problem = problems[j];
+					int severity = problem.getAttribute(IMarker.SEVERITY, 0);
+					if (severity > mostSeriousSeverity) {
+						mostSeriousSeverity = severity;
+					}
+				}
+			} catch (CoreException e) {
+			}
+    	}
+    	
+    	return mostSeriousSeverity;
+    }
+    
     public CommitWizardFileTypePage getFileTypePage() {
         return fFileTypePage;
     }
@@ -353,10 +375,33 @@ public class CommitWizard extends ResizableWizard {
         if (!wizard.hasOutgoingChanges()) {
             MessageDialog.openInformation(shell, CVSUIMessages.CommitWizard_6, CVSUIMessages.CommitWizard_7); // 
         } else {
-            open(shell, wizard);
+        	int highestProblemSeverity = wizard.getHighestProblemSeverity();
+        	IPreferenceStore preferenceStore = CVSUIPlugin.getPlugin().getPreferenceStore();
+			switch (highestProblemSeverity) {
+			case IMarker.SEVERITY_WARNING:
+				String allowCommitsWithWarnings = preferenceStore.getString(ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_WARNINGS);
+				if (MessageDialogWithToggle.PROMPT.equals(allowCommitsWithWarnings) || MessageDialogWithToggle.NEVER.equals(allowCommitsWithWarnings)) {
+					MessageDialogWithToggle warningDialog = MessageDialogWithToggle.openYesNoQuestion(shell, CVSUIMessages.CommitWizard_8, CVSUIMessages.CommitWizard_9, CVSUIMessages.CommitWizard_10, false, preferenceStore, ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_WARNINGS);
+					if (IDialogConstants.YES_ID != warningDialog.getReturnCode()) {
+						return;
+					}
+				}
+				break;
+			case IMarker.SEVERITY_ERROR:
+				String allowCommitsWithErrors = preferenceStore.getString(ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_ERRORS);
+				if (MessageDialogWithToggle.PROMPT.equals(allowCommitsWithErrors) || MessageDialogWithToggle.NEVER.equals(allowCommitsWithErrors)) {
+					MessageDialogWithToggle errorDialog = MessageDialogWithToggle.openYesNoQuestion(shell, CVSUIMessages.CommitWizard_11, CVSUIMessages.CommitWizard_12, CVSUIMessages.CommitWizard_13, false, preferenceStore, ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_ERRORS);
+					if (IDialogConstants.YES_ID != errorDialog.getReturnCode()) {
+						return;
+					}
+				}
+				break;
+			}
+        	open(shell, wizard);
         }
     }
 
+    
     private static void getUnknownNamesAndExtension(SyncInfoSet infos, Collection names, Collection extensions) {
         
         final IFileContentManager manager= Team.getFileContentManager();
