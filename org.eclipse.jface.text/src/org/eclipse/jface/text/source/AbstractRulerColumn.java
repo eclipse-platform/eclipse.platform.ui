@@ -227,8 +227,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	/**
 	 * Returns the SWT style bits used when creating the ruler canvas.
 	 * <p>
-	 * The default implementation returns <code>SWT.NO_BACKGROUND</code> and
-	 * <code>SWT.NO_REDRAW_RESIZE</code>.</p>
+	 * The default implementation returns <code>SWT.NO_BACKGROUND</code>.</p>
 	 * <p>
 	 * Clients may reimplement this method to create a canvas with their
 	 * desired style bits.</p>
@@ -237,7 +236,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 	 * @since 3.3
 	 */
 	protected int getCanvasStyle() {
-		return SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE;
+		return SWT.NO_BACKGROUND;
 	}
 
 	/*
