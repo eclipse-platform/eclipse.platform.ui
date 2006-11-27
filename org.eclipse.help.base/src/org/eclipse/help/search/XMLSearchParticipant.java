@@ -31,6 +31,7 @@ import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -207,6 +208,16 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			String text = buff.toString().trim();
 			if (text.length() > 0)
 				handleText(text, data);
+		}
+		
+		/*
+		 * Note: throws clause does not declare IOException due to a bug in
+		 * sun jdk: http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6327149
+		 * 
+		 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
+		 */
+		public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+			return new InputSource(new StringReader("")); //$NON-NLS-1$
 		}
 	}
 
