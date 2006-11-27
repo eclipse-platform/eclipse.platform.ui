@@ -75,7 +75,7 @@ public class EditorRegistryReader extends RegistryReader {
         if (element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON) == null) {
             if (getClassValue(element, IWorkbenchRegistryConstants.ATT_CLASS) != null) {
                 logMissingAttribute(element, IWorkbenchRegistryConstants.ATT_ICON);
-                // Don't bail in this case - we can live without an icon as one will be provided for free in EditorDescriptor
+                return true;
             }
         }
         
