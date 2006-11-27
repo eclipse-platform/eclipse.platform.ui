@@ -117,8 +117,7 @@ public class OrderedMatching extends AbstractMatching {
 		XMLNode LeftTree,
 		XMLNode RightTree,
 		boolean rightTreeIsAncestor,
-		IProgressMonitor monitor)
-		throws InterruptedException {
+		IProgressMonitor monitor) {
 
 		fNLeft= new Vector();
 		//numbering LeftTree: Mapping nodes in LeftTree to numbers to be used as array indexes

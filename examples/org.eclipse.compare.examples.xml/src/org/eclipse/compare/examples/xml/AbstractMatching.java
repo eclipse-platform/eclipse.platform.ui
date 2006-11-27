@@ -251,7 +251,7 @@ public abstract class AbstractMatching {
 		return distance;
 	}
 
-	abstract public void match(XMLNode LeftTree, XMLNode RightTree, boolean rightTreeIsAncestor, IProgressMonitor monitor) throws InterruptedException;
+	abstract public void match(XMLNode LeftTree, XMLNode RightTree, boolean rightTreeIsAncestor, IProgressMonitor monitor);
 
 	protected int dist(XMLNode x, XMLNode y) {
 		//System.out.println("dist( "+x.getSignature()+" , "+y.getSignature()+")");

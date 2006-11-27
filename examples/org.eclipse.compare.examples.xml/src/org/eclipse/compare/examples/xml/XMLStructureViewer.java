@@ -10,37 +10,18 @@
  *******************************************************************************/
 package org.eclipse.compare.examples.xml;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.util.*;
 
-import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.CompareViewerSwitchingPane;
-import org.eclipse.compare.ITypedElement;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.IStructureComparator;
-import org.eclipse.compare.structuremergeviewer.StructureDiffViewer;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * An XML diff tree viewer that can be configured with a <code>IStructureCreator</code>
@@ -241,92 +222,14 @@ public class XMLStructureViewer extends StructureDiffViewer {
 
 	}
 
-	public IRunnableWithProgress getMatchingRunnable(
-		final XMLNode left,
-		final XMLNode right,
-		final XMLNode ancestor) {
-		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor)
-				throws
-					InvocationTargetException,
-					InterruptedException,
-					OperationCanceledException {
-				if (monitor == null) {
-					monitor= new NullProgressMonitor();
-				}
-				int totalWork;
-				if (ancestor != null)
-					totalWork= 1;
-				else
-					totalWork= 3;
-				monitor.beginTask(XMLCompareMessages.XMLStructureViewer_matching_beginTask, totalWork); 
-				ArrayList ordered= null;
-				if (!getXMLStructureCreator()
-					.getIdMap()
-					.equals(XMLStructureCreator.USE_UNORDERED)
-					&& !getXMLStructureCreator().getIdMap().equals(
-						XMLStructureCreator.USE_ORDERED)) {
-					ordered=
-						(ArrayList) fOrderedElements.get(
-							getXMLStructureCreator().getIdMap());
-					if (ordered == null)
-						ordered=
-							(ArrayList) fOrderedElementsInternal.get(
-								getXMLStructureCreator().getIdMap());
-				}
-				if (getSorter() instanceof XMLSorter)
-					 ((XMLSorter) getSorter()).setOrdered(ordered);
-				AbstractMatching m= null;
-				if (getXMLStructureCreator()
-					.getIdMap()
-					.equals(XMLStructureCreator.USE_ORDERED)) {
-					m= new OrderedMatching();
-					if (getSorter() instanceof XMLSorter)
-						 ((XMLSorter) getSorter()).setAlwaysOrderSort(true);
-				}
-				try {
-					if (m != null) {
-						m.match(left, right, false, monitor);
-						if (ancestor != null) {
-							m.match(
-								left,
-								ancestor,
-								true,
-								new SubProgressMonitor(monitor, 1));
-							m.match(
-								right,
-								ancestor,
-								true,
-								new SubProgressMonitor(monitor, 1));
-						}
-						//				} catch (InterruptedException e) {
-						//					System.out.println("in run");
-						//					e.printStackTrace();
-					}
-				} finally {
-					monitor.done();
-				}
-			}
-		};
-	}
-
 	protected void preDiffHook(
 		IStructureComparator ancestor,
 		IStructureComparator left,
-		IStructureComparator right) {
+		IStructureComparator right, IProgressMonitor monitor) {
 		//		if (!xsc.getIdMap().equals(XMLStructureCreator.USE_ORDERED)) {
 		//TimeoutContext.run(true, TIMEOUT, getControl().getShell(), runnable);
 		if (left != null && right != null) {
-			try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true,
-				//TimeoutContext.run(true, 500, XMLPlugin.getActiveWorkbenchShell(),
-					getMatchingRunnable(
-						(XMLNode) left,
-						(XMLNode) right,
-						(XMLNode) ancestor));
-			} catch (Exception e) {
-				XMLPlugin.log(e);
-			}
+			performMatching((XMLNode)left, (XMLNode)right, (XMLNode)ancestor, monitor);
 		}
 	}
 
@@ -595,6 +498,65 @@ public class XMLStructureViewer extends StructureDiffViewer {
 			getXMLStructureCreator().setRemoveWhiteSpace(
 				!getXMLStructureCreator().getRemoveWhiteSpace());
 			contentChanged();
+		}
+	}
+
+	private void performMatching(final XMLNode left, final XMLNode right,
+			final XMLNode ancestor, IProgressMonitor monitor) {
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		int totalWork;
+		if (ancestor != null)
+			totalWork= 1;
+		else
+			totalWork= 3;
+		monitor.beginTask(XMLCompareMessages.XMLStructureViewer_matching_beginTask, totalWork); 
+		ArrayList ordered= null;
+		if (!getXMLStructureCreator()
+			.getIdMap()
+			.equals(XMLStructureCreator.USE_UNORDERED)
+			&& !getXMLStructureCreator().getIdMap().equals(
+				XMLStructureCreator.USE_ORDERED)) {
+			ordered=
+				(ArrayList) fOrderedElements.get(
+					getXMLStructureCreator().getIdMap());
+			if (ordered == null)
+				ordered=
+					(ArrayList) fOrderedElementsInternal.get(
+						getXMLStructureCreator().getIdMap());
+		}
+		if (getSorter() instanceof XMLSorter)
+			 ((XMLSorter) getSorter()).setOrdered(ordered);
+		AbstractMatching m= null;
+		if (getXMLStructureCreator()
+			.getIdMap()
+			.equals(XMLStructureCreator.USE_ORDERED)) {
+			m= new OrderedMatching();
+			if (getSorter() instanceof XMLSorter)
+				 ((XMLSorter) getSorter()).setAlwaysOrderSort(true);
+		}
+		try {
+			if (m != null) {
+				m.match(left, right, false, monitor);
+				if (ancestor != null) {
+					m.match(
+						left,
+						ancestor,
+						true,
+						new SubProgressMonitor(monitor, 1));
+					m.match(
+						right,
+						ancestor,
+						true,
+						new SubProgressMonitor(monitor, 1));
+				}
+				//				} catch (InterruptedException e) {
+				//					System.out.println("in run");
+				//					e.printStackTrace();
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 }
