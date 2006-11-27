@@ -95,7 +95,7 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     }
         
     var childItem = document.createElement("div");
-    // roots should have an id of "tree_root" to prevent indentation
+    // roots should have a className of "root" to prevent indentation
     if (treeItem.id == "tree_root") {
         childItem.className = "root";
     } else {
@@ -104,15 +104,10 @@ function mergeChild(treeItem, id, name, href, image, isLeaf) {
     childItem.nodeid = id;
     treeItem.appendChild(childItem);
     
-    // If this is not a leaf create a span to prevent line breaking
-    var container;
-    if (isLeaf) {
-        container = childItem;
-    } else {
-        container = document.createElement("SPAN");
-        container.className = "item";
-        childItem.appendChild(container);
-    }
+    // Create a span to prevent line breaking
+    var container = document.createElement("SPAN");
+    container.className = "item";
+    childItem.appendChild(container);
    
     var topicImage = document.createElement("IMG");
     setImage(topicImage, image);
