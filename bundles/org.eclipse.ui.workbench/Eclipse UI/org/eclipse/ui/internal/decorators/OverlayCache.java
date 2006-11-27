@@ -10,14 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.swt.graphics.*;
 
 /**
  * The OverlayCache is a helper class used by the DecoratorManger
@@ -31,7 +28,7 @@ class OverlayCache {
      * @param icon the icon
      * @return the image
      */
-    Image getImageFor(DecoratorOverlayIcon icon) {
+    Image getImageFor(DecorationOverlayIcon icon) {
         Image image = (Image) cache.get(icon);
         if (image == null) {
             image = icon.createImage();
@@ -62,7 +59,7 @@ class OverlayCache {
     Image applyDescriptors(Image source, ImageDescriptor[] descriptors) {
         Rectangle bounds = source.getBounds();
         Point size = new Point(bounds.width, bounds.height);
-        DecoratorOverlayIcon icon = new DecoratorOverlayIcon(source,
+        DecorationOverlayIcon icon = new DecorationOverlayIcon(source,
                 descriptors, size);
         return getImageFor(icon);
     }
