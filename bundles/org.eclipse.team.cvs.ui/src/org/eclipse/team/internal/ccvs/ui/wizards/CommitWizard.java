@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 161536 Warn user when committing resources with problem markers
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui.wizards;

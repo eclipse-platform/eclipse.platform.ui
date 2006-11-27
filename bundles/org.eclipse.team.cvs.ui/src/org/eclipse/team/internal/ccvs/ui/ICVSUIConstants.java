@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Philippe Ombredanne - bug 84808
  *     William Mitsuda (wmitsuda@gmail.com) - Bug 153879 [Wizards] configurable size of cvs commit comment history
+ *     Brock Janiczak <brockj@tpg.com.au> - Bug 161536 Warn user when committing resources with problem markers
  *******************************************************************************/
 
 package org.eclipse.team.internal.ccvs.ui;
