@@ -13,6 +13,7 @@
 // on an XML dom. 
 
 var selectedNode;
+var highlightSelectedNode;
 
 function updateTree(xml) { 
     var tocData = xml.documentElement;  
@@ -36,7 +37,9 @@ function updateTree(xml) {
     selectedNode = null;
     mergeChildren(treeRoot, nodes);
     if (selectedNode != null) {
-        focusOnItem(selectedNode);
+        // Focusing on the last child will increase the chance that it is visible
+        focusOnDeepestVisibleChild(selectedNode, false);
+        focusOnItem(selectedNode, highlightSelectedNode);
     }
  }
  
@@ -63,6 +66,7 @@ function mergeChildren(treeItem, nodes) {
                 }
                 if (isSelected) {
                     selectedNode = childItem;
+                    highlightSelectedNode = node.getAttribute("is_highlighted");
                 }
                 childAdded = true;
             }

@@ -97,7 +97,7 @@ function keyDownHandler(e)
   		goDown(treeItem);
   	}
   				
-  	return true;
+  	return false;
 }
 
 // Handle a HOME key event
@@ -106,7 +106,7 @@ function goHome() {
     if (treeRoot === null) { 
         return; 
     }
-    focusOnItem(findChild(treeRoot, "DIV"));
+    focusOnItem(findChild(treeRoot, "DIV"), true);
 }
 
 function goToEnd() {    
@@ -114,7 +114,7 @@ function goToEnd() {
     if (treeRoot === null) { 
         return; 
     }
-    focusOnDeepestVisibleChild(treeRoot);
+    focusOnDeepestVisibleChild(treeRoot, true);
 }
 
 // Handle a left arrow key event
@@ -123,7 +123,7 @@ function goLeft(treeItem) {
     if (childClass == "visible") {
         toggleExpandState(treeItem);
      } else {
-         focusOnItem(getTreeItem(treeItem.parentNode));
+         focusOnItem(getTreeItem(treeItem.parentNode), true);
      }
 }
 
@@ -133,7 +133,7 @@ function goRight(treeItem) {
         toggleExpandState(treeItem);
         return;
      }       
-     focusOnItem(findChild(treeItem, "DIV"));
+     focusOnItem(findChild(treeItem, "DIV"), true);
 }
 
 function goUp(treeItem) {
@@ -142,57 +142,59 @@ function goUp(treeItem) {
   
    for (var prev = treeItem.previousSibling; prev !== null; prev = prev.previousSibling) {
         if (prev.tagName == "DIV") {
-            focusOnDeepestVisibleChild(prev);
+            focusOnDeepestVisibleChild(prev, true);
             return;
         }
     } 
-    focusOnItem(getTreeItem(treeItem.parentNode));
+    focusOnItem(getTreeItem(treeItem.parentNode), true);
 }
 
 function goDown(treeItem) {
     // If the node is expanded visit the first child       
     var childClass = getChildClass(treeItem);
     if (childClass == "visible") {
-        focusOnItem(findChild(treeItem, "DIV"));
+        focusOnItem(findChild(treeItem, "DIV"), true);
         return;
     }
     // visit the next sibling at this level, if not found try highter levels
     for (var level = treeItem; level !== null; level = getTreeItem(level.parentNode)) {
         for (var next = level.nextSibling; next !== null; next = next.nextSibling) {
             if (next.tagName == "DIV") {
-                focusOnItem(next);
+                focusOnItem(next, true);
                 return;
             }
         }
     }   
 }
 
-function focusOnDeepestVisibleChild(treeItem) { 
+function focusOnDeepestVisibleChild(treeItem, isSelected) { 
         var childDiv = findLastChild(treeItem, "DIV");
         if (childDiv) {  
             if (childDiv.className == "visible" || childDiv.className == "root" ) {        
-                focusOnDeepestVisibleChild(childDiv);
+                focusOnDeepestVisibleChild(childDiv, isSelected);
                 return;
             }
         }
-    focusOnItem(treeItem);
+    focusOnItem(treeItem, isSelected);
 }
 
 // Focus on the anchor within a tree item
-function focusOnItem(treeItem) {
+function focusOnItem(treeItem, isSelected) {
     if (treeItem === null) { return; }
     // Items with children will use a span to contain the anchor
     var anchorContainer = findChild(treeItem, "SPAN");
     if (!anchorContainer) { anchorContainer = treeItem; }
     var anchor = findChild(anchorContainer, "A");
     if (anchor) {
-  	  	if (oldActive) {
-  	  		oldActive.className = oldActiveClass;
-        }
-  		oldActive = anchor;
-  		oldActiveClass = anchor.className;
-  		anchor.className = "active";
         anchor.focus();
+        if (isSelected) {
+  	  	    if (oldActive) {
+  	  		    oldActive.className = oldActiveClass;
+            }
+  		    oldActive = anchor;
+  		    oldActiveClass = anchor.className;
+  		    anchor.className = "active";
+  		}
     }
 }
 
