@@ -292,16 +292,24 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 						canceledPage = getCanceledMessagePane(fPageBook);
 					}
 					fPageBook.showPage(canceledPage);
+					// Close the editor when we are canceled
+					closeEditor();
 				} else if (state == NO_DIFF) {
 					if (noDiffFoundPage == null) {
 						noDiffFoundPage = getNoDifferenceMessagePane(fPageBook);
 					}
 					fPageBook.showPage(noDiffFoundPage);
+					// Prompt and close the editor as well
+					CompareUIPlugin.getDefault().handleNoDifference();
+					closeEditor();
 				} else if (state == ERROR) {
 					if (errorPage == null) {
 						errorPage = getErrorMessagePane(fPageBook);
 					}
 					fPageBook.showPage(errorPage);
+					// If an error occurred, close the editor 
+					// (the message would be displayed by the progress view)
+					closeEditor();
 				}
 			} else {
 				fControl= (ci).createContents(fPageBook);
@@ -642,7 +650,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		closeButton.setLayoutData(data);
 		closeButton.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
-				getSite().getPage().closeEditor(CompareEditor.this, false);
+				closeEditor();
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// Do nothing
@@ -680,6 +688,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			group.setBackground(getBackgroundColor(fPageBook));
 		}
 		return forms;
+	}
+
+	private void closeEditor() {
+		getSite().getPage().closeEditor(CompareEditor.this, false);
 	}
 	
 }
