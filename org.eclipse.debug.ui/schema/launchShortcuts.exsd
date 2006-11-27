@@ -196,26 +196,44 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example of a launch shortcut extension point:
+         The following is an example of the Java Application launch shortcut contribution with an enablement expression:
 
 &lt;p&gt;
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.debug.ui.launchShortcuts&quot;&gt;
   &lt;shortcut
-     id=&quot;com.example.ExampleLaunchShortcutId&quot;
-     modes=&quot;run,debug&quot;
-     class=&quot;com.example.ExampleLaunchShortcutImpl&quot;
-     label=&quot;Example Launch Shortcut&quot;
-     icon=&quot;icons/examples.gif&quot;&gt;
-     &lt;perspective id=&quot;org.eclipse.jdt.ui.JavaPerspective&quot;/&gt;
-     &lt;perspective id=&quot;org.eclipse.debug.ui.DebugPerspective&quot;/&gt;
-  &lt;/shortcut&gt;
- &lt;/extension&gt;
+    label=&quot;Java Application&quot;
+    icon=&quot;$nl$/icons/full/etool16/java_app.gif&quot;
+    helpContextId=&quot;org.eclipse.jdt.debug.ui.shortcut_local_java_application&quot;
+    modes=&quot;run, debug&quot;
+    class=&quot;org.eclipse.jdt.internal.debug.ui.launcher.JavaApplicationLaunchShortcut&quot;
+    id=&quot;org.eclipse.jdt.debug.ui.localJavaShortcut&quot;&gt;
+  &lt;contextualLaunch&gt;
+  &lt;enablement&gt;
+    &lt;with variable=&quot;selection&quot;&gt;
+     &lt;count value=&quot;1&quot;/&gt;
+      &lt;iterate&gt;
+       &lt;or&gt;
+        &lt;test property=&quot;org.eclipse.jdt.launching.hasMain&quot;/&gt;
+         &lt;and&gt;
+          &lt;test property=&quot;org.eclipse.jdt.launching.isContainer&quot;/&gt;
+          &lt;test property=&quot;org.eclipse.jdt.launching.hasProjectNature&quot; args=&quot;org.eclipse.jdt.core.javanature&quot;/&gt;
+         &lt;/and&gt;
+        &lt;/or&gt;
+      &lt;/iterate&gt;
+     &lt;/with&gt;
+    &lt;/enablement&gt;
+  &lt;/contextualLaunch&gt;
+&lt;/shortcut&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
-
+&lt;p&gt;
 In the above example, a launch shortcut will be shown in the run and debug cascade menus with the label
-&quot;Example Launch Shortcut&quot;, in the JavaPerspective and the DebugPerspective.
+&quot;Java Application&quot;. Furthermore, the shortcut will only appear if the selected item has a main method in it, or it is a Java project.
+&lt;/p&gt;
+&lt;p&gt;
+For more information on property testers see &lt;code&gt;org.eclipse.core.expressions.PropertyTester&lt;/code&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -255,7 +273,7 @@ Since 3.1, the debug platform registers a command handler for each launch shortc
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2000, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies this distribution, and is available at 
