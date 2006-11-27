@@ -28,8 +28,12 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class EditorPane extends PartPane {
     private EditorStack workbook;
 
+   
     /**
      * Constructs an editor pane for an editor part.
+     * @param ref
+     * @param page
+     * @param workbook
      */
     public EditorPane(IEditorReference ref, WorkbenchPage page,
             EditorStack workbook) {
@@ -48,7 +52,7 @@ public class EditorPane extends PartPane {
     }
 
     /**
-     * @see PartPane::doHide
+     * @see PartPane#doHide()
      */
     public void doHide() {
         getPage().closeEditor(getEditorReference(), true);
@@ -56,6 +60,7 @@ public class EditorPane extends PartPane {
 
     /**
      * Answer the editor part child.
+     * @return {@link IEditorReference}
      */
     public IEditorReference getEditorReference() {
         return (IEditorReference) getPartReference();
@@ -70,6 +75,7 @@ public class EditorPane extends PartPane {
 
     /**
      * Answer the editor workbook container
+     * @return {@link EditorStack}
      */
     public EditorStack getWorkbook() {
         return workbook;
@@ -91,6 +97,7 @@ public class EditorPane extends PartPane {
 
     /**
      * Set the editor workbook container
+     * @param editorWorkbook
      */
     public void setWorkbook(EditorStack editorWorkbook) {
         workbook = editorWorkbook;
@@ -133,7 +140,8 @@ public class EditorPane extends PartPane {
     }
 
     /**
-     * Add the pin menu item on the editor system menu
+     * Add the pin menu item on the editor system menu.
+     * @param parent
      */
     protected void addPinEditorItem(Menu parent) {
         boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
@@ -180,8 +188,10 @@ public class EditorPane extends PartPane {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.PartPane#getName()
+   
+    /**
+     * Get the name of editor.
+     * @return String
      */
     public String getName() {
         return null;
