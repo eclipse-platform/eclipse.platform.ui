@@ -108,7 +108,7 @@ public class Snippet015CustomTooltipsForTree {
 	    };
 	    
 	    
-	    v.getViewerColumn(0).setLabelProvider(labelProvider);
+	    v.setLabelProvider(labelProvider);
 	    v.setInput("");
 	    
 	    shell.setSize(200,200);

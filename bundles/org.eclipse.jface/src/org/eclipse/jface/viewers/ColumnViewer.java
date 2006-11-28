@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
+												   fix in bug 163317
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -143,7 +144,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 * @return the viewer column at the given index, or <code>null</code> if
 	 *         there is none for the given index
 	 */
-	public ViewerColumn getViewerColumn(final int columnIndex) {
+	/* package */ ViewerColumn getViewerColumn(final int columnIndex) {
 
 		ViewerColumn viewer;
 		Widget columnOwner = getColumnViewerOwner(columnIndex);
@@ -222,15 +223,17 @@ public abstract class ColumnViewer extends StructuredViewer {
 	}
 
 	/**
-	 * Creates a viewer column for the given column widget, based on the given label provider.
+	 * Creates a generic viewer column for the given column widget, based on the given label provider.
 	 * 
 	 * @param columnOwner the column widget
 	 * @param labelProvider the label provider to use for the column
 	 * @return ViewerColumn the viewer column
 	 */
-	protected ViewerColumn createViewerColumn(Widget columnOwner,
+	private ViewerColumn createViewerColumn(Widget columnOwner,
 			CellLabelProvider labelProvider) {
-		return new ViewerColumn(columnOwner, labelProvider);
+		ViewerColumn column = new ViewerColumn(this,columnOwner) {};
+		column.setLabelProvider(labelProvider);
+		return column;
 	}
 
 	/**

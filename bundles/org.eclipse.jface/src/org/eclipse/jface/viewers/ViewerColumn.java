@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ * 												  fix for bug 163317
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -16,7 +17,9 @@ import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * The ViewerColumn is the implementation of the column parts.
+ * Instances of this class represent a column of a {@link ColumnViewer}. Label
+ * providers and editing support can be configured for each column separately.
+ * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
  * use this API without consulting with the Platform/UI team.
@@ -24,7 +27,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  * 
  */
-public final class ViewerColumn {
+public abstract class ViewerColumn {
 
 	private CellLabelProvider labelProvider;
 
@@ -32,15 +35,26 @@ public final class ViewerColumn {
 
 	private EditingSupport editingSupport;
 
+	private ILabelProviderListener listener;
+
 	/**
 	 * Create a new instance of the receiver at columnIndex.
 	 * 
+	 * @param viewer
+	 *            the viewer the column is part of
 	 * @param columnOwner
-	 * @param provider
+	 *            the widget owning the viewer in case the widget has no columns
+	 *            this could be the widget itself
 	 */
-	public ViewerColumn(Widget columnOwner, CellLabelProvider provider) {
-		labelProvider = provider;
+	protected ViewerColumn(final ColumnViewer viewer, Widget columnOwner) {
 		columnOwner.setData(ViewerColumn.COLUMN_VIEWER_KEY, this);
+		this.listener = new ILabelProviderListener() {
+
+			public void labelProviderChanged(LabelProviderChangedEvent event) {
+				viewer.handleLabelProviderChanged(event);
+			}
+
+		};
 	}
 
 	/**
@@ -48,29 +62,37 @@ public final class ViewerColumn {
 	 * 
 	 * @return ViewerLabelProvider
 	 */
-	public CellLabelProvider getLabelProvider() {
+	/* package */CellLabelProvider getLabelProvider() {
 		return labelProvider;
 	}
 
 	/**
 	 * Set the label provider for the column.
+	 * 
 	 * @param labelProvider
 	 *            the new {@link CellLabelProvider}
 	 */
 	public void setLabelProvider(CellLabelProvider labelProvider) {
+		if (this.labelProvider != null) {
+			this.labelProvider.removeListener(listener);
+		}
+
 		this.labelProvider = labelProvider;
+		this.labelProvider.addListener(listener);
 	}
 
 	/**
 	 * Return the editing support for the reciever.
+	 * 
 	 * @return {@link EditingSupport}
 	 */
-	EditingSupport getEditingSupport() {
+	/* package */ EditingSupport getEditingSupport() {
 		return editingSupport;
 	}
 
 	/**
 	 * Set the editing support.
+	 * 
 	 * @param editingSupport
 	 *            The {@link EditingSupport} to set.
 	 */
@@ -79,15 +101,14 @@ public final class ViewerColumn {
 	}
 
 	/**
-	 * Refresh the cell for the given columnIndex.
-	 * <strong>NOTE:</strong>the {@link ViewerCell}
-	 * provided to this method is no longer valid after
-	 * this method is exited. Do not cache the cell for
-	 * future use.
+	 * Refresh the cell for the given columnIndex. <strong>NOTE:</strong>the
+	 * {@link ViewerCell} provided to this method is no longer valid after this
+	 * method returns. Do not cache the cell for future use.
 	 * 
-	 * @param cell {@link ViewerCell}
+	 * @param cell
+	 *            {@link ViewerCell}
 	 */
-	public void refresh(ViewerCell cell) {
+	/* package */ void refresh(ViewerCell cell) {
 		getLabelProvider().update(cell);
 	}
 }

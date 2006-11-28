@@ -45,7 +45,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 	 *            The labelProvider to convert
 	 * @return ViewerLabelProvider
 	 */
-	static CellLabelProvider createViewerLabelProvider(
+	/* package */ static CellLabelProvider createViewerLabelProvider(
 			IBaseLabelProvider labelProvider) {
 
 		if (labelProvider instanceof ITableLabelProvider

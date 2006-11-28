@@ -33,6 +33,7 @@ import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -127,8 +128,6 @@ public abstract class TableView extends ViewPart {
 
 		viewer.setContentProvider(contentProvider);
 
-		setLabelProviders();
-
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event
@@ -180,19 +179,6 @@ public abstract class TableView extends ViewPart {
 				handleKeyPressed(e);
 			}
 		});
-	}
-
-	/**
-	 * Set the label providers for the columns.
-	 */
-	private void setLabelProviders() {
-		
-		IField[] fields = getAllFields();
-		for (int i = 0; i < fields.length; i++) {
-			IField field = fields[i];
-			viewer.getViewerColumn(i).setLabelProvider(new MarkerViewLabelProvider(field));
-		}	
-		
 	}
 
 	/**
@@ -325,12 +311,15 @@ public abstract class TableView extends ViewPart {
 		for (int i = 0; i < fields.length; i++) {
 			layout.addColumnData(columnWidths[i]);
 			TreeColumn tc = new TreeColumn(tree, SWT.NONE, i);
-			tc.setText(fields[i].getColumnHeaderText());
-			tc.setImage(fields[i].getColumnHeaderImage());
+			IField field = fields[i];
+			tc.setText(field.getColumnHeaderText());
+			tc.setImage(field.getColumnHeaderImage());
 			tc.setResizable(columnWidths[i].resizable);
 			tc.setMoveable(true);
 			tc.addSelectionListener(getHeaderListener());
-			tc.setData(fields[i]);
+			tc.setData(field);
+			TreeViewerColumn viewerColumn = new TreeViewerColumn(viewer, tc);
+			viewerColumn.setLabelProvider(new MarkerViewLabelProvider(field));
 		}
 
 		int[] order = restoreColumnOrder(memento);

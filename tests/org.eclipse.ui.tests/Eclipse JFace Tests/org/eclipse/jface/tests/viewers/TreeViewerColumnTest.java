@@ -10,16 +10,19 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.lang.reflect.Method;
+
+import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeViewer;
 
 public class TreeViewerColumnTest extends AbstractTreeViewerTest {
 
@@ -91,11 +94,22 @@ public class TreeViewerColumnTest extends AbstractTreeViewerTest {
         junit.textui.TestRunner.run(TreeViewerColumnTest.class);
     }
 
+	private ViewerColumn getViewerColumn(ColumnViewer viewer, int index) {
+		Method method;
+		try {
+			method = ColumnViewer.class.getDeclaredMethod("getViewerColumn", new Class[]{int.class});
+			method.setAccessible(true);
+			return (ViewerColumn) method.invoke(viewer, new Object[]{new Integer(index)});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
     public void testViewerColumn() {
-    	assertNull(((TreeViewer)fViewer).getViewerColumn(-1));
-    	assertNotNull(((TreeViewer)fViewer).getViewerColumn(0));
-    	assertNotNull(((TreeViewer)fViewer).getViewerColumn(1));
-    	assertNull(((TreeViewer)fViewer).getViewerColumn(2));
+    	assertNull(getViewerColumn((TreeViewer) fViewer, -1));
+		assertNotNull(getViewerColumn((TreeViewer) fViewer, 0));
+		assertNotNull(getViewerColumn((TreeViewer) fViewer, 1));
+		assertNull(getViewerColumn((TreeViewer) fViewer, 2));
     }
     
     public void testLabelProvider() {

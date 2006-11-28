@@ -10,12 +10,16 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.ViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -78,12 +82,23 @@ public class TableViewerTest extends StructuredItemViewerTest {
 
 		return viewer;
 	}
+	
+	ViewerColumn getViewerColumn(ColumnViewer viewer, int index) {
+		Method method;
+		try {
+			method = ColumnViewer.class.getDeclaredMethod("getViewerColumn", new Class[]{int.class});
+			method.setAccessible(true);
+			return (ViewerColumn) method.invoke(viewer, new Object[]{new Integer(index)});
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 	public void testViewerColumn() {
-    	assertNull(((TableViewer)fViewer).getViewerColumn(-1));
-    	assertNotNull(((TableViewer)fViewer).getViewerColumn(0));
-    	assertNotNull(((TableViewer)fViewer).getViewerColumn(1));
-    	assertNull(((TableViewer)fViewer).getViewerColumn(2));
+    	assertNull(getViewerColumn((TableViewer) fViewer, -1));
+		assertNotNull(getViewerColumn((TableViewer) fViewer, 0));
+		assertNotNull(getViewerColumn((TableViewer) fViewer, 1));
+		assertNull(getViewerColumn((TableViewer) fViewer, 2));
     }
 	
 	/**

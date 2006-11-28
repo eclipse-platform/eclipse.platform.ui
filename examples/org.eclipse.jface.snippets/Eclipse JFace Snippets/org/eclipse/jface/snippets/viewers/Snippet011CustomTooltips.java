@@ -14,6 +14,7 @@ package org.eclipse.jface.snippets.viewers;
 
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerColumn;
@@ -115,10 +116,10 @@ public class Snippet011CustomTooltips {
 	    };
 	    
 	    
-	    TableColumn column = new TableColumn(v.getTable(),SWT.NONE);
-	    new ViewerColumn(column,labelProvider);
-	    column.setText("Column 1");
-	    column.setWidth(100);
+	    TableViewerColumn column = new TableViewerColumn(v,SWT.NONE);
+	    column.setLabelProvider(labelProvider);
+	    column.getColumn().setText("Column 1");
+	    column.getColumn().setWidth(100);
 	    
 	    v.setInput("");
 	    
