@@ -181,6 +181,7 @@ public abstract class TableView extends ViewPart {
 		});
 	}
 
+
 	/**
 	 * Create the viewer input for the receiver.
 	 * 
@@ -232,9 +233,10 @@ public abstract class TableView extends ViewPart {
 
 		ColumnPixelData[] result = new ColumnPixelData[defaultData.length];
 		for (int i = 0; i < defaultData.length; i++) {
-			int width = defaultData[i].width;
+			
 			ColumnPixelData defaultPixelData = defaultData[i];
-
+			boolean addTrim = defaultPixelData.addTrim;
+			int width = defaultPixelData.width;
 			// non-resizable columns are always left at their default width
 			if (defaultPixelData.resizable) {
 				if (memento != null) {
@@ -242,12 +244,13 @@ public abstract class TableView extends ViewPart {
 
 					if (widthInt != null && widthInt.intValue() > 0) {
 						width = widthInt.intValue();
+						addTrim = false;
 					}
 				}
 			}
 
 			result[i] = new ColumnPixelData(width, defaultPixelData.resizable,
-					defaultPixelData.addTrim);
+					addTrim);
 		}
 
 		return result;
@@ -408,10 +411,12 @@ public abstract class TableView extends ViewPart {
 
 	/**
 	 * Create a TableComparator for the receiver.
+	 * 
 	 * @return TableComparator
 	 */
 	TableComparator createTableComparator() {
-		TableComparator sorter = TableComparator.createTableSorter(getSortingFields());
+		TableComparator sorter = TableComparator
+				.createTableSorter(getSortingFields());
 		sorter.restoreState(getDialogSettings());
 		return sorter;
 	}
