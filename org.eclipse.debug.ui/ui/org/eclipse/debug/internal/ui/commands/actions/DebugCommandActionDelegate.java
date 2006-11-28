@@ -73,12 +73,14 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * (non-Javadoc)
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
-	public synchronized void run(IAction action) {
-		if (!fInitialized) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-			}
+	public void run(IAction action) {
+		synchronized (this) {
+			if (!fInitialized) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+				}
+			}			
 		}
         fDebugAction.run();
 	}
@@ -109,10 +111,12 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
         action.setDelegate(this);
     }
 
-    public synchronized void setEnabled(boolean enabled) {
-    	if (!fInitialized) {
-    		fInitialized = true;
-    		notifyAll();
+    public void setEnabled(boolean enabled) {
+    	synchronized (this) {
+	    	if (!fInitialized) {
+	    		fInitialized = true;
+	    		notifyAll();
+	    	}
     	}
         fWindowAction.setEnabled(enabled);
     }

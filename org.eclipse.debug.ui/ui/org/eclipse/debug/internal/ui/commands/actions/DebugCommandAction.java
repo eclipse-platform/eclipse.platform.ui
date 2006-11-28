@@ -126,7 +126,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
     /**
      * @see org.eclipse.jface.action.Action#setEnabled(boolean)
      */
-    public synchronized void setEnabled(boolean enabled) {
+    public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (fDelegate != null) {
             fDelegate.setEnabled(enabled);
@@ -196,7 +196,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * (non-Javadoc)
      * @see org.eclipse.jface.action.Action#run()
      */
-    public synchronized void run() {
+    public void run() {
         ISelection selection = getContext();
         if (selection instanceof IStructuredSelection && isEnabled()) {
             IStructuredSelection ss = (IStructuredSelection) selection;
