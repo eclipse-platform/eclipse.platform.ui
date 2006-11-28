@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -128,8 +130,15 @@ public class RefactoringWizardOpenOperation {
 						return;
 					} else {
 						fWizard.setInitialConditionCheckingStatus(fInitialConditions);
+						
 						Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
-						result[0]= dialog.open();
+						IWizardPage startingPage= fWizard.getStartingPage();
+						if (startingPage == null) {
+							result[0]= Window.CANCEL;
+							return;
+						} else {
+							result[0]= dialog.open();
+						}
 						return;
 					} 
 				} catch (InterruptedException e) {
