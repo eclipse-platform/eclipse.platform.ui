@@ -121,8 +121,6 @@ public class MenuAdditionCacheEntry {
 			String itemType = items[i].getName();
 			IContributionItem newItem = null;
 			
-			System.out.println("Item: " + getId(items[i])); //$NON-NLS-1$
-			
 			if (IWorkbenchRegistryConstants.TAG_ITEM.equals(itemType)) {
 				if (isDynamic(items[i])) {
 					
@@ -156,9 +154,9 @@ public class MenuAdditionCacheEntry {
 				additions.add(newItem);
 				iciToConfigElementMap.put(newItem, items[i]);
 			}
-			else {
-				System.out.println("Bad Item"); //$NON-NLS-1$
-			}
+//			else {
+//				System.out.println("Bad Item"); //$NON-NLS-1$
+//			}
 		}
 	}
 
