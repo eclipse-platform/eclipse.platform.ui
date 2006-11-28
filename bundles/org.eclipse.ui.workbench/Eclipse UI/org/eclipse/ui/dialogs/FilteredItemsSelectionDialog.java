@@ -14,15 +14,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -41,12 +38,15 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -122,14 +122,12 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private ItemsTableViewer list;
 
-	private ViewForm detailsView;
-
-	private RefreshableCLabel details;
+	private DetailsContentViewer details;
 
 	/**
-	 * It is a duplicate of a field in the RefreshableCLabel class. It is
-	 * maintained, because the <code>setDetailsLabelProvider()</code> could be
-	 * called before content area is created.
+	 * It is a duplicate of a field in the CLabel class in DetailsContentViewer.
+	 * It is maintained, because the <code>setDetailsLabelProvider()</code>
+	 * could be called before content area is created.
 	 */
 	private ILabelProvider detailsLabelProvider;
 
@@ -155,8 +153,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private Object[] lastSelection;
 
-	private SelectionHistory history;
-
 	private ContentProvider contentProvider;
 
 	private AbstractFilterJob filterJob;
@@ -181,6 +177,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		super(shell);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
+		contentProvider = new ContentProvider();
 	}
 
 	/**
@@ -293,16 +290,14 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		toggleStatusLineAction.setChecked(toggleStatusLine);
 
-		GridData gd = (GridData) detailsView.getLayoutData();
-		gd.exclude = !toggleStatusLine;
+		details.setVisible(toggleStatusLine);
 
 		String setting = settings.get(HISTORY_SETTINGS);
 		if (setting != null) {
 			try {
 				IMemento memento = XMLMemento.createReadRoot(new StringReader(
 						setting));
-				if (history != null)
-					history.load(memento);
+				this.contentProvider.loadHistory(memento);
 			} catch (WorkbenchException e) {
 				// Simply don't restore the settings
 				WorkbenchPlugin.log(e);
@@ -317,8 +312,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	public boolean close() {
 		storeDialog(getDialogSettings());
-		detailsView.setContent(null);
-		details.dispose();
 		return super.close();
 	}
 
@@ -332,8 +325,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		settings.put(SHOW_STATUS_LINE, toggleStatusLineAction.isChecked());
 
 		XMLMemento memento = XMLMemento.createWriteRoot(HISTORY_SETTINGS);
-		if (history != null)
-			history.save(memento);
+		this.contentProvider.saveHistory(memento);
 		StringWriter writer = new StringWriter();
 		try {
 			memento.save(writer);
@@ -448,15 +440,14 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * 
 	 * @param parent
 	 *            parent to create the dialog widgets in
+	 * @return an extra content area
 	 */
 	protected abstract Control createExtendedContentArea(Composite parent);
 
-	/**
-	 * Creates the contents of this dialog, initializes the listener and the
-	 * update thread.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param parent
-	 *            parent to create the dialog widgets in
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogArea = (Composite) super.createDialogArea(parent);
@@ -499,10 +490,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
 
-		list = new ItemsTableViewer(content, (multi ? SWT.MULTI
-				: SWT.SINGLE)
+		list = new ItemsTableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
 				| SWT.BORDER | SWT.V_SCROLL);
-		contentProvider = new ContentProvider(this.history);
 		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getItemsListLabelProvider());
 		list.setInput(new Object[0]);
@@ -561,16 +550,10 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		createExtendedContentArea(content);
 
-		detailsView = new ViewForm(content, SWT.BORDER | SWT.FLAT);
-		detailsView.setFont(content.getFont());
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		gd.exclude = !toggleStatusLineAction.isChecked();
-		detailsView.setLayoutData(gd);
-		details = new RefreshableCLabel(detailsView, SWT.FLAT);
-		details.setFont(detailsView.getFont());
+		details = new DetailsContentViewer(content, SWT.BORDER | SWT.FLAT);
+		details.setVisible(toggleStatusLineAction.isChecked());
+		details.setContentProvider(new NullContentProvider());
 		details.setLabelProvider(getDetailsLabelProvider());
-		detailsView.setContent(details);
 
 		applyDialogFont(content);
 
@@ -604,12 +587,12 @@ public abstract class FilteredItemsSelectionDialog extends
 			Object element = selection.getFirstElement();
 
 			if (element instanceof ItemsListSeparator) {
-				details.setElement(null);
+				details.setInput(null);
 			} else {
-				details.setElement(element);
+				details.setInput(element);
 			}
 		} else {
-			details.setElement(null);
+			details.setInput(null);
 		}
 	}
 
@@ -700,6 +683,8 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Returns the dialog settings. Returned object can't be null.
+	 * 
+	 * @return return dialog settings for this dialog
 	 */
 	protected abstract IDialogSettings getDialogSettings();
 
@@ -709,7 +694,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 			list.getTable().setRedraw(false);
-			list.refresh();
+			list.refresh(false);
 			list.getTable().setRedraw(true);
 
 			if (list.getTable().getItemCount() > 0) {
@@ -831,14 +816,14 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected void applyFilter() {
 		stopCurrentFilterJob();
+		
 		this.filter = createFilter();
-		this.contentProvider = new ContentProvider(this.history);
-		if (list != null)
-			list.setContentProvider(contentProvider);
+		this.contentProvider.reset();
 
 		if (this.filter != null) {
 			if (this.filter.getPattern().length() == 0) {
 				filter = null;
+				this.contentProvider.refresh();
 			} else {
 				scheduleFilterJob();
 			}
@@ -858,6 +843,8 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @param contentProvider
 	 *            provider to fill items. During adding items it using
 	 *            ItemsFilter to filter items
+	 * @param itemsFilter
+	 *            the filter
 	 * @param progressMonitor
 	 *            it is used for tack searching progress. It is responsibility
 	 *            for refresh of progress. The state of this progress illustrate
@@ -934,16 +921,18 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @return history of selected elements, or null if it is not set
 	 */
 	protected SelectionHistory getSelectionHistory() {
-		return this.history;
+		return this.contentProvider.getSelectionHistory();
 	}
 
 	/**
 	 * Sets new history
 	 * 
 	 * @param selectionHistory
+	 *            the history
 	 */
 	protected void setSelectionHistory(SelectionHistory selectionHistory) {
-		this.history = selectionHistory;
+		if (this.contentProvider != null)
+			this.contentProvider.setSelectionHistory(selectionHistory);
 	}
 
 	/**
@@ -954,7 +943,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * the last one, a full search is scheduled.
 	 */
 	private synchronized void scheduleFilterJob() {
-		stopCurrentFilterJob();
 		if (lastCompletedFilter != null
 				&& lastCompletedFilter.isSubFilter(filter)) {
 			filterJob = new CachedResultFilterJob(contentProvider, filter,
@@ -989,9 +977,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		public void run() {
-			GridData gd = (GridData) detailsView.getLayoutData();
-			gd.exclude = !isChecked();
-			detailsView.getParent().layout();
+			details.setVisible(isChecked());
 		}
 	}
 
@@ -1305,7 +1291,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			ProgressMonitorWrapper {
 
 		private ContentProvider contentProvider;
-
+		
 		private String name;
 
 		private int totalWork;
@@ -1377,7 +1363,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void setCanceled(boolean b) {
 			done = true;
-			contentProvider.deactivate();
 			super.setCanceled(b);
 		}
 
@@ -1390,7 +1375,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			worked = worked + work;
 			if ((((int) (((worked - work) * 10) / totalWork)) < ((int) ((worked * 10) / totalWork)))
 					|| (((int) ((worked * 10) / totalWork)) == 0))
-				contentProvider.setProgressMessage(getMessage());
+				if (!isCanceled())
+					contentProvider.setProgressMessage(getMessage());
 		}
 
 		private String getMessage() {
@@ -1418,10 +1404,22 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	private abstract static class AbstractFilterJob extends Job {
 
+		/**
+		 * ContenProvider used to store results of the filtering process.
+		 */
 		protected ContentProvider contentProvider;
 
+		/**
+		 * Filter used during the filtering process.
+		 */
 		protected ItemsFilter itemsFilter;
 
+		/**
+		 * Creates a new instance of the filtering job.
+		 * 
+		 * @param contentProvider
+		 * @param itemsFilter
+		 */
 		protected AbstractFilterJob(ContentProvider contentProvider,
 				ItemsFilter itemsFilter) {
 			super(WorkbenchMessages.FilteredItemsSelectionDialog_jobLabel);
@@ -1448,6 +1446,14 @@ public abstract class FilteredItemsSelectionDialog extends
 			cancel();
 		}
 
+		/**
+		 * Executes job using the given filtering progress monitor. A hook for
+		 * subclasses.
+		 * 
+		 * @param monitor
+		 *            progress monitor
+		 * @return result of the exceution
+		 */
 		protected IStatus doRun(FilteringProgressMonitor monitor) {
 			try {
 				internalRun(monitor);
@@ -1534,7 +1540,6 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
 		 */
 		protected void filterContent(FilteringProgressMonitor monitor) {
-
 			for (Iterator iter = this.lastResult.iterator(); iter.hasNext();) {
 				AbstractListItem item = (AbstractListItem) iter.next();
 				if (monitor.isCanceled())
@@ -1596,21 +1601,32 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private static final int MAX_HISTORY_SIZE = 60;
 
-		private final Map historyMap;
+		private final List historyList;
 
 		private final String rootNodeName;
 
 		private final String infoNodeName;
 
 		private SelectionHistory(String rootNodeName, String infoNodeName) {
-			historyMap = Collections.synchronizedMap(new LinkedHashMap(80,
-					0.75f, true) {
-				private static final long serialVersionUID = 1L;
 
-				protected boolean removeEldestEntry(Map.Entry eldest) {
-					return size() > MAX_HISTORY_SIZE;
+			historyList = Collections.synchronizedList(new LinkedList() {
+
+				private static final long serialVersionUID = 0L;
+
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see java.util.LinkedList#add(java.lang.Object)
+				 */
+				public boolean add(Object arg0) {
+					// TODO Auto-generated method stub
+					if (this.size() > MAX_HISTORY_SIZE)
+						this.removeFirst();
+					return super.add(arg0);
 				}
+
 			});
+
 			this.rootNodeName = rootNodeName;
 			this.infoNodeName = infoNodeName;
 		}
@@ -1629,7 +1645,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            the item to be added to the history
 		 */
 		public synchronized void accessed(Object object) {
-			historyMap.put(object, object);
+			historyList.add(object);
 		}
 
 		/**
@@ -1640,17 +1656,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if history contains object false in other way
 		 */
 		public synchronized boolean contains(Object object) {
-			return historyMap.containsKey(object);
-		}
-
-		/**
-		 * Returns true if history contains key
-		 * 
-		 * @param key
-		 * @return true if history contains key object false in other way
-		 */
-		public synchronized boolean containsKey(Object key) {
-			return historyMap.containsKey(key);
+			return historyList.contains(object);
 		}
 
 		/**
@@ -1659,7 +1665,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if history is empty
 		 */
 		public synchronized boolean isEmpty() {
-			return historyMap.isEmpty();
+			return historyList.isEmpty();
 		}
 
 		/**
@@ -1669,21 +1675,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            to remove form the history
 		 * @return removed element
 		 */
-		public synchronized Object remove(Object element) {
-			Object removed = historyMap.remove(element);
-			return removed;
-		}
-
-		/**
-		 * Remove element form history by key
-		 * 
-		 * @param key
-		 *            to remove form the history
-		 * @return removed key
-		 */
-		public synchronized Object removeKey(Object key) {
-			Object removed = historyMap.remove(key);
-			return removed;
+		public synchronized boolean remove(Object element) {
+			return historyList.remove(element);
 		}
 
 		/**
@@ -1706,7 +1699,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				IMemento mementoElement = mementoElements[i];
 				Object object = restoreItemFromMemento(mementoElement);
 				if (object != null)
-					historyMap.put(object, object);
+					historyList.add(object);
 			}
 		}
 
@@ -1720,9 +1713,9 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			IMemento historyMemento = memento.createChild(rootNodeName);
 
-			Iterator values = getValues().iterator();
-			while (values.hasNext()) {
-				AbstractListItem item = (AbstractListItem) values.next();
+			Object[] items = getHistoryItems();
+			for (int i = 0; i < items.length; i++) {
+				AbstractListItem item = (AbstractListItem) items[i];
 				IMemento elementMemento = historyMemento
 						.createChild(infoNodeName);
 				storeItemToMemento(item, elementMemento);
@@ -1731,21 +1724,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Gets set of keys
+		 * Gets array of history items
 		 * 
-		 * @return set of keys
+		 * @return array of history elements
 		 */
-		protected Set getKeys() {
-			return historyMap.keySet();
-		}
-
-		/**
-		 * Gets collection of history items
-		 * 
-		 * @return collection of history elements
-		 */
-		public synchronized Collection getValues() {
-			return historyMap.values();
+		public synchronized Object[] getHistoryItems() {
+			return historyList.toArray();
 		}
 
 		/**
@@ -1753,6 +1737,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @param memento
 		 *            memento used for creating new AbstractListItem instance
+		 * 
+		 * @return the restored AbstractListItem
 		 */
 		protected abstract AbstractListItem restoreItemFromMemento(
 				IMemento memento);
@@ -1777,7 +1763,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract class ItemsFilter {
 
 		private SearchPattern patternMatcher;
-
+		
 		/**
 		 * Creates new instance of SearchFilter
 		 */
@@ -1904,8 +1890,6 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private String progressMessage = ""; //$NON-NLS-1$
 
-		private boolean active = true;
-
 		/**
 		 * Creates new instance of ContentProvider
 		 * 
@@ -1918,13 +1902,38 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
+		 * Creates new instance of ContentProvider
+		 * 
+		 * @param selectionHistory
+		 */
+		public ContentProvider() {
+			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+					getHistoryComparator()));
+		}
+
+		/**
+		 * Sets selection history
+		 * 
+		 * @param selectionHistory
+		 *            The selectionHistory to set.
+		 */
+		public void setSelectionHistory(SelectionHistory selectionHistory) {
+			this.selectionHistory = selectionHistory;
+		}
+
+		/**
+		 * @return Returns the selectionHistory.
+		 */
+		public SelectionHistory getSelectionHistory() {
+			return selectionHistory;
+		}
+
+		/**
 		 * Remove all content items and resets progress message
 		 */
 		public void reset() {
-			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
-					getHistoryComparator()));
+			this.sortedItems.clear();
 			this.progressMessage = ""; //$NON-NLS-1$
-			this.refresh();
 		}
 
 		/**
@@ -1934,20 +1943,25 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param itemsFilter
 		 */
 		public void add(AbstractListItem item, ItemsFilter itemsFilter) {
-			if (itemsFilter != null) {
-				if (itemsFilter.matchItem(item))
-					if (!item.isHistory()) {
-						if (!(this.selectionHistory != null && this.selectionHistory
+			if (itemsFilter == filter)
+				if (itemsFilter != null) {
+					if (itemsFilter.matchItem(item)) {
+						if (!item.isHistory()) {
+							if (!(this.selectionHistory != null && this.selectionHistory
 								.contains(item)))
+								this.sortedItems.add(item);
+						} else {
 							this.sortedItems.add(item);
-					} else
+						}
+					}
+				} else if (!item.isHistory()) {
+					if (!(this.selectionHistory != null && this.selectionHistory
+							.contains(item))) {
 						this.sortedItems.add(item);
-			} else if (!item.isHistory()) {
-				if (!(this.selectionHistory != null && this.selectionHistory
-						.contains(item)))
+					}
+				} else {
 					this.sortedItems.add(item);
-			} else
-				this.sortedItems.add(item);
+				}
 		}
 
 		/**
@@ -1957,16 +1971,17 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void addHistoryItems(ItemsFilter itemsFilter) {
 			if (this.selectionHistory != null) {
-				Collection values = this.selectionHistory.getValues();
-				for (Iterator iter = values.iterator(); active
-						&& iter.hasNext();) {
-					AbstractListItem item = (AbstractListItem) iter.next();
-					if (itemsFilter != null) {
-						if (itemsFilter.matchItem(item)) {
-							if (itemsFilter.isConsistentItem(item)) {
-								this.sortedItems.add(item);
-							} else {
-								this.selectionHistory.removeKey(item);
+				Object[] items = this.selectionHistory.getHistoryItems();
+				for (int i = 0; i < items.length; i++) {
+					AbstractListItem item = (AbstractListItem) items[i];
+					if (itemsFilter == filter) {
+						if (itemsFilter != null) {
+							if (itemsFilter.matchItem(item)) {
+								if (itemsFilter.isConsistentItem(item)) {
+									this.sortedItems.add(item);
+								} else {
+									this.selectionHistory.remove(item);
+								}
 							}
 						}
 					}
@@ -2036,6 +2051,27 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
+		 * Load history from memento.
+		 * 
+		 * @param memento
+		 *            memento from which the history will be retrieved
+		 */
+		public void loadHistory(IMemento memento) {
+			if (this.selectionHistory != null)
+				this.selectionHistory.load(memento);
+		}
+
+		/**
+		 * Save history to memento
+		 * 
+		 * @param memento
+		 *            memento to which the history will be added
+		 */
+		public void saveHistory(IMemento memento) {
+			this.selectionHistory.save(memento);
+		}
+
+		/**
 		 * Get filtered items
 		 * 
 		 * @return filtered items
@@ -2055,13 +2091,6 @@ public abstract class FilteredItemsSelectionDialog extends
 				lastCompletedResult = Collections
 						.synchronizedList(new ArrayList(this.sortedItems));
 			}
-		}
-
-		/**
-		 * Deactivate current ContentProvider
-		 */
-		public void deactivate() {
-			this.active = false;
 		}
 
 		/*
@@ -2093,101 +2122,105 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * RefreshableCLabel objects provide means to change label's image and text
-	 * when the attached LabelProvider is updated.
+	 * A content provider that does nothing.
 	 */
-	private class RefreshableCLabel extends CLabel implements
-			ILabelProviderListener {
+	private class NullContentProvider implements IContentProvider {
 
-		private ILabelProvider labelProvider;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
+		}
 
-		private Object element;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+	}
+
+	/**
+	 * DetailsContentViewer objects are wrappers for labels.
+	 * DetailsContentViewer provides means to change label's image and text when
+	 * the attached LabelProvider is updated.
+	 */
+	private class DetailsContentViewer extends ContentViewer {
+
+		private CLabel label;
+
+		/**
+		 * Unfortunately it was impossible to delegate displaying border to
+		 * label. The ViewForm is used because CLabel displays shadow when
+		 * border is present.
+		 */
+		private ViewForm viewForm;
 
 		/**
 		 * Constructs a new instance of this class given its parent and a style
 		 * value describing its behavior and appearance.
 		 * 
 		 * @param parent
-		 *            a widget which will be the parent of the new instance
-		 *            (cannot be null)
+		 *            the parent component
 		 * @param style
-		 *            the style of widget to construct
-		 * 
-		 * @see CLabel#CLabel(Composite, int)
+		 *            SWT style bits
 		 */
-		public RefreshableCLabel(Composite parent, int style) {
-			super(parent, style);
+		public DetailsContentViewer(Composite parent, int style) {
+			viewForm = new ViewForm(parent, style);
+			GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			viewForm.setLayoutData(gd);
+			label = new CLabel(viewForm, SWT.FLAT);
+			label.setFont(parent.getFont());
+			viewForm.setContent(label);
+			hookControl(label);
 		}
 
 		/**
-		 * Sets the element, for which text and image is displayed.
+		 * Shows/hides the content viewer.
 		 * 
-		 * @param element
-		 *            the new element
+		 * @param visible
+		 *            if the content viewer should be visible.
 		 */
-		public void setElement(Object element) {
-			if (this.element == null) {
-				if (element == null) {
-					return;
-				}
-				this.element = element;
-				refresh();
-				return;
-			}
-
-			this.element = element;
-			refresh();
-		}
-
-		private void refresh() {
-			if (element != null) {
-				setText(labelProvider.getText(this.element));
-				setImage(labelProvider.getImage(this.element));
-			} else {
-				setText(""); //$NON-NLS-1$
-				setImage(null);
-			}
-		}
-
-		private void refresh(Object[] objs) {
-			if (objs == null || this.element == null) {
-				return;
-			}
-			for (int i = 0; i < objs.length; i++) {
-				if (objs[i].equals(this.element)) {
-					refresh();
-					break;
-				}
-			}
-		}
-
-		/**
-		 * Sets a new label provider for this label.
-		 * 
-		 * @param labelProvider
-		 *            the label provider for this label, not null
-		 */
-		public void setLabelProvider(ILabelProvider labelProvider) {
-			if (this.labelProvider != null) {
-				this.labelProvider.removeListener(this);
-				this.labelProvider.dispose();
-			}
-
-			this.labelProvider = labelProvider;
-
-			if (this.labelProvider != null) {
-				this.labelProvider.addListener(this);
-			}
-
-			refresh();
+		public void setVisible(boolean visible) {
+			GridData gd = (GridData) viewForm.getLayoutData();
+			gd.exclude = !visible;
+			viewForm.getParent().layout();
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+		 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object,
+		 *      java.lang.Object)
 		 */
-		public void labelProviderChanged(LabelProviderChangedEvent event) {
+		protected void inputChanged(Object input, Object oldInput) {
+
+			if (oldInput == null) {
+				if (input == null) {
+					return;
+				}
+				refresh();
+				return;
+			}
+
+			if (!oldInput.equals(input)) {
+				refresh();
+			}
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ContentViewer#handleLabelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
+		 */
+		protected void handleLabelProviderChanged(
+				LabelProviderChangedEvent event) {
 			if (event != null) {
 				refresh(event.getElements());
 			}
@@ -2196,13 +2229,79 @@ public abstract class FilteredItemsSelectionDialog extends
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.swt.widgets.Widget#dispose()
+		 * @see org.eclipse.jface.viewers.Viewer#getControl()
 		 */
-		public void dispose() {
-			labelProvider.removeListener(this);
-			labelProvider.dispose();
-			super.dispose();
+		public Control getControl() {
+			return label;
 		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.Viewer#getSelection()
+		 */
+		public ISelection getSelection() {
+			// not supported
+			return null;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.Viewer#refresh()
+		 */
+		public void refresh() {
+			if (getInput() != null) {
+				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
+				doRefresh(labelProvider.getText(getInput()), labelProvider
+						.getImage(this.getInput()));
+			} else {
+				doRefresh("", null);//$NON-NLS-1$
+			}
+		}
+
+		/**
+		 * Sets the given text and image to the label.
+		 * 
+		 * @param text
+		 *            the new text
+		 * @param image
+		 *            the new image
+		 */
+		private void doRefresh(String text, Image image) {
+			label.setText(text);
+			label.setImage(image);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection,
+		 *      boolean)
+		 */
+		public void setSelection(ISelection selection, boolean reveal) {
+			// not supported
+		}
+
+		/**
+		 * Refreshes the label if currently chosen element is on the list.
+		 * 
+		 * @param objs
+		 *            list of changed object
+		 */
+		private void refresh(Object[] objs) {
+			if (objs == null || getInput() == null) {
+				return;
+			}
+			Object input = getInput();
+			for (int i = 0; i < objs.length; i++) {
+				if (objs[i].equals(input)) {
+					refresh();
+					break;
+				}
+			}
+		}
+
 	}
 
 	/**
