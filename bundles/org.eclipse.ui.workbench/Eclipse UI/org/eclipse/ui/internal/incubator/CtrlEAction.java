@@ -1,11 +1,13 @@
 package org.eclipse.ui.internal.incubator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -45,9 +47,9 @@ public class CtrlEAction extends AbstractHandler {
 
 	protected String rememberedText;
 
-	protected Map previousPicksMap = new HashMap();
+	protected Map textMap = new HashMap();
 
-	protected Map reverseMap = new HashMap();
+	protected Map elementMap = new HashMap();
 
 	private LinkedList previousPicksList = new LinkedList();
 
@@ -123,6 +125,11 @@ public class CtrlEAction extends AbstractHandler {
 	 */
 	private final class QuickAccessPopup extends FilteringInfoPopup {
 
+		private static final String TEXT_ARRAY = "textArray"; //$NON-NLS-1$
+		private static final String TEXT_ENTRIES = "textEntries"; //$NON-NLS-1$
+		private static final String ORDERED_PROVIDERS = "orderedProviders"; //$NON-NLS-1$
+		private static final String ORDERED_ELEMENTS = "orderedElements"; //$NON-NLS-1$
+
 		AbstractProvider[] providers;
 
 		/**
@@ -144,14 +151,14 @@ public class CtrlEAction extends AbstractHandler {
 			viewer.setComparator(new QuickAccessTreeSorter());
 			return viewer;
 		}
-		
+
 		protected boolean isMatchable(Object element) {
 			return element instanceof AbstractElement;
 		}
 
 		protected void selectFirstMatch() {
 			String text = getFilterText().getText();
-			Object element = previousPicksMap.get(text);
+			Object element = elementMap.get(text);
 			if (element != null) {
 				getTreeViewer().setSelection(new StructuredSelection(element),
 						true);
@@ -211,24 +218,27 @@ public class CtrlEAction extends AbstractHandler {
 		}
 
 		private void storeDialog(IDialogSettings dialogSettings) {
-			String[] idArray = new String[previousPicksList.size()];
-			String[] textArray = new String[previousPicksList.size()];
-			String[] providerArray = new String[previousPicksList.size()];
-			for (int i = 0; i < idArray.length; i++) {
-				Object element = previousPicksList.get(i);
-				if (element instanceof AbstractElement
-						&& reverseMap.containsKey(element)
-						&& previousPicksMap.containsValue(element)) {
-					AbstractElement abstractElement = (AbstractElement) element;
-					idArray[i] = abstractElement.getId();
-					textArray[i] = (String) reverseMap.get(element);
-					providerArray[i] = abstractElement.getProvider()
-							.getId();
-				}
+			String[] orderedElements = new String[previousPicksList.size()];
+			String[] orderedProviders = new String[previousPicksList.size()];
+			String[] textEntries = new String[previousPicksList.size()];
+			ArrayList arrayList = new ArrayList();
+			for (int i = 0; i < orderedElements.length; i++) {
+				AbstractElement abstractElement = (AbstractElement) previousPicksList
+						.get(i);
+				ArrayList elementText = (ArrayList) textMap
+						.get(abstractElement);
+				Assert.isNotNull(elementText);
+				orderedElements[i] = abstractElement.getId();
+				orderedProviders[i] = abstractElement.getProvider().getId();
+				arrayList.addAll(elementText);
+				textEntries[i] = elementText.size() + ""; //$NON-NLS-1$
 			}
-			dialogSettings.put("idArray", idArray); //$NON-NLS-1$
-			dialogSettings.put("textArray", textArray); //$NON-NLS-1$
-			dialogSettings.put("providerArray", providerArray); //$NON-NLS-1$
+			String[] textArray = (String[]) arrayList
+					.toArray(new String[arrayList.size()]);
+			dialogSettings.put(ORDERED_ELEMENTS, orderedElements);
+			dialogSettings.put(ORDERED_PROVIDERS, orderedProviders);
+			dialogSettings.put(TEXT_ENTRIES, textEntries);
+			dialogSettings.put(TEXT_ARRAY, textArray);
 		}
 
 		protected void handleElementSelected(Object selectedElement) {
@@ -246,32 +256,39 @@ public class CtrlEAction extends AbstractHandler {
 		private void restoreDialog() {
 			IDialogSettings dialogSettings = getDialogSettings();
 			if (dialogSettings != null) {
-				String[] idArray = dialogSettings.getArray("idArray"); //$NON-NLS-1$
-				String[] textArray = dialogSettings.getArray("textArray"); //$NON-NLS-1$
-				String[] providerArray = dialogSettings
-						.getArray("providerArray"); //$NON-NLS-1$
-				if (idArray != null && idArray.length > 0 && textArray != null
-						&& textArray.length > 0 && providerArray != null
-						&& providerArray.length > 0) {
-					Map newMap = new HashMap();
-					Map newReverseMap = new HashMap();
-					LinkedList newList = new LinkedList();
-					for (int i = 0; i < providerArray.length; i++) {
-						AbstractElement element = null;
-						AbstractProvider provider = (AbstractProvider) providerMap
-								.get(providerArray[i]);
-						if (provider != null) {
-							element = provider.getElementForId(idArray[i]);
-							if (element != null) {
-								newList.add(element);
-								newMap.put(textArray[i], element);
-								newReverseMap.put(element, textArray[i]);
+				String[] orderedElements = dialogSettings
+						.getArray(ORDERED_ELEMENTS);
+				String[] orderedProviders = dialogSettings
+						.getArray(ORDERED_PROVIDERS);
+				String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
+				String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
+				elementMap = new HashMap();
+				textMap = new HashMap();
+				previousPicksList = new LinkedList();
+				if (orderedElements != null && orderedProviders != null
+						&& textEntries != null && textArray != null) {
+					int arrayIndex = 0;
+					for (int i = 0; i < orderedElements.length; i++) {
+						AbstractProvider abstractProvider = (AbstractProvider) providerMap
+								.get(orderedProviders[i]);
+						int numTexts = Integer.parseInt(textEntries[i]);
+						if (abstractProvider != null) {
+							AbstractElement abstractElement = abstractProvider
+									.getElementForId(orderedElements[i]);
+							if (abstractElement != null) {
+								ArrayList arrayList = new ArrayList();
+								for (int j = arrayIndex; j < arrayIndex
+										+ numTexts; j++) {
+									arrayList.add(textArray[j]);
+									elementMap.put(textArray[j],
+											abstractElement);
+								}
+								textMap.put(abstractElement, arrayList);
+								previousPicksList.add(abstractElement);
 							}
 						}
+						arrayIndex += numTexts;
 					}
-					previousPicksMap = newMap;
-					reverseMap = newReverseMap;
-					previousPicksList = newList;
 				}
 			}
 		}
@@ -390,25 +407,34 @@ public class CtrlEAction extends AbstractHandler {
 	 * @param element
 	 */
 	private void addPreviousPick(Object element) {
-		// we want to maintain that:
-		//   - previousPicksList does not contain duplicate elements
-		//   - previousPicksList contains the same elements as previousPicksMap.values()
-		//   - previousPicksList contains the same elements as reverseMap.keySet()
-		// after this method completes, we want that:
-		//   - previousPicksList contains element
-		//   - previousPicksMap contains (rememberedText->element)
-		//   - reverseMap contains (element->rememberedText)
+		// previousPicks: add selected element to front
+		// and remove existing so there are no duplicates
 		previousPicksList.remove(element);
 		previousPicksList.addFirst(element);
-		String newTextForElement = rememberedText;
-		String oldTextForElement = (String) reverseMap.put(element, newTextForElement);
-		if (oldTextForElement != null) {
-			previousPicksMap.remove(oldTextForElement);
+
+		// elementMap: add element with text as key
+		Object replacedElement = elementMap.put(rememberedText, element);
+
+		// textList: add rememberedText to arrayList for given element
+		ArrayList textList = (ArrayList) textMap.get(element);
+		if (textList == null) {
+			textList = new ArrayList();
+			textMap.put(element, textList);
 		}
-		Object oldElementForNewText = previousPicksMap.put(newTextForElement, element);
-		if (oldElementForNewText != null) {
-			previousPicksList.remove(oldElementForNewText);
-			reverseMap.remove(oldElementForNewText);
+		if (!textList.contains(rememberedText)) {
+			textList.add(rememberedText);
+		}
+
+		// and remove from other elements arrayList if exists
+		if (replacedElement != null && !replacedElement.equals(element)) {
+			textList = (ArrayList) textMap.get(replacedElement);
+			if (textList != null) {
+				textList.remove(rememberedText);
+				if (textList.isEmpty()) {
+					textMap.remove(replacedElement);
+					previousPicksList.remove(replacedElement);
+				}
+			}
 		}
 	}
 
