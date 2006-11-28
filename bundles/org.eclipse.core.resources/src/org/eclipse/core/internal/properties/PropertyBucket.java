@@ -39,7 +39,7 @@ public class PropertyBucket extends Bucket {
 		 * array if the property to be deleted could not be found. Returns <code>null</code> if the property was found
 		 * and the original array had size 1 (instead of a zero-length array).
 		 */
-		private static String[][] delete(String[][] existing, QualifiedName propertyName) {
+		static String[][] delete(String[][] existing, QualifiedName propertyName) {
 			// a size-1 array is a special case
 			if (existing.length == 1)
 				return (existing[0][0].equals(propertyName.getQualifier()) && existing[0][1].equals(propertyName.getLocalName())) ? null : existing;
@@ -58,7 +58,7 @@ public class PropertyBucket extends Bucket {
 			return newValue;
 		}
 
-		private static String[][] insert(String[][] existing, QualifiedName propertyName, String propertyValue) {
+		static String[][] insert(String[][] existing, QualifiedName propertyName, String propertyValue) {
 			// look for the right spot where to insert the new guy
 			int index = search(existing, propertyName);
 			if (index >= 0) {
@@ -80,7 +80,7 @@ public class PropertyBucket extends Bucket {
 		/**
 		 * Merges two entries (are always sorted). Duplicated additions replace existing ones.
 		 */
-		private static Object merge(String[][] base, String[][] additions) {
+		static Object merge(String[][] base, String[][] additions) {
 			int additionPointer = 0;
 			int basePointer = 0;
 			int added = 0;
@@ -117,8 +117,14 @@ public class PropertyBucket extends Bucket {
 
 		public PropertyEntry(IPath path, PropertyEntry base) {
 			super(path);
-			this.value = new String[base.value.length][];
-			System.arraycopy(base.value, 0, this.value, 0, this.value.length);
+			//copy 2-dimensional array [x][y]
+			int xLen = base.value.length;
+			this.value = new String[xLen][];
+			for (int i = 0; i < xLen; i++) {
+				int yLen = base.value[i].length;
+				this.value[i] = new String[yLen];
+				System.arraycopy(base.value[i], 0, value[i], 0, yLen);
+			}
 		}
 
 		/** 
@@ -184,7 +190,7 @@ public class PropertyBucket extends Bucket {
 	public static final byte INDEX = 1;
 
 	public static final byte QNAME = 2;
-	
+
 	/** Version number for the current implementation file's format.
 	 * <p>
 	 * Version 1:
@@ -228,14 +234,14 @@ public class PropertyBucket extends Bucket {
 	protected String getIndexFileName() {
 		return "properties.index"; //$NON-NLS-1$
 	}
-	
+
 	public String getProperty(IPath path, QualifiedName name) {
 		PropertyEntry entry = getEntry(path);
 		if (entry == null)
 			return null;
 		return entry.getProperty(name);
 	}
-	
+
 	protected byte getVersion() {
 		return VERSION;
 	}
@@ -302,7 +308,7 @@ public class PropertyBucket extends Bucket {
 		String[][] existing = (String[][]) getEntryValue(pathAsString);
 		if (existing == null) {
 			if (value != null)
-				setEntryValue(pathAsString, new String[][] { {name.getQualifier(), name.getLocalName(), value}});
+				setEntryValue(pathAsString, new String[][] {{name.getQualifier(), name.getLocalName(), value}});
 			return;
 		}
 		String[][] newValue;
