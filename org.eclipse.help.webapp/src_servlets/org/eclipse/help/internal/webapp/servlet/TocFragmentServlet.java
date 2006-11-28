@@ -42,15 +42,18 @@ public class TocFragmentServlet extends HttpServlet {
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
+	    resp.setHeader("Cache-Control","no-cache");   //$NON-NLS-1$//$NON-NLS-2$
+	    resp.setHeader("Pragma","no-cache");  //$NON-NLS-1$ //$NON-NLS-2$
+	    resp.setDateHeader ("Expires", 0); 	 //$NON-NLS-1$
 		TocData data = new TocData(this.getServletContext(), req, resp);	
 		Serializer serializer = new Serializer(data, req.getLocale());
-		String response = serializer.generateTreeXml();
+		String response = serializer.generateTreeXml();	
 		locale2Response.put(locale, response);
 		resp.getWriter().write(response);
 	}
 	
 	/*
-	 * Class which creates teh xml file based upon the request parameters
+	 * Class which creates the xml file based upon the request parameters
 	 */
 	private class Serializer {
 		
