@@ -147,6 +147,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	boolean fUseOutlineView= false;
 
 	private ICompareContainer fContainer;
+	private boolean fContainerProvided;
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -184,6 +185,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (ps != null)
 			fStructureCompareOnSingleClick= ps.getBoolean(ComparePreferencePage.OPEN_STRUCTURE_COMPARE);
 		
+		fContainer = configuration.getContainer();
 		configuration.setContainer(this);
 	}
 	
@@ -859,10 +861,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void addCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		if (fContainer == null)
-			input.addCompareInputChangeListener(listener);
-		else 
-			fContainer.addCompareInputChangeListener(input, listener);
+		fContainer.addCompareInputChangeListener(input, listener);
 	}
 	
 	/* (non-Javadoc)
@@ -870,25 +869,21 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public void removeCompareInputChangeListener(ICompareInput input,
 			ICompareInputChangeListener listener) {
-		if (fContainer == null)
-			input.removeCompareInputChangeListener(listener);
-		else
-			fContainer.removeCompareInputChangeListener(input, listener);
+		fContainer.removeCompareInputChangeListener(input, listener);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(MenuManager menu, ISelectionProvider selectionProvider) {
-		if (fContainer != null)
-			fContainer.registerContextMenu(menu, selectionProvider);
+		fContainer.registerContextMenu(menu, selectionProvider);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
 	 */
 	public void setStatusMessage(String message) {
-		if (fContainer == null) {
+		if (!fContainerProvided) {
 			// Try the action bars directly
 			IActionBars actionBars= getActionBars();
 			if (actionBars != null) {
@@ -906,22 +901,24 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @see org.eclipse.compare.ICompareContainer#getActionBars()
 	 */
 	public IActionBars getActionBars() {
-		if (fContainer == null) {
+		IActionBars actionBars = fContainer.getActionBars();
+		if (actionBars == null && !fContainerProvided) {
 			// The old way to find the action bars
 			return Utilities.findActionBars(fComposite);
 		}
-		return fContainer.getActionBars();
+		return actionBars;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
 	 */
 	public IServiceLocator getServiceLocator() {
-		if (fContainer == null) {
+		IServiceLocator serviceLocator = fContainer.getServiceLocator();
+		if (serviceLocator == null && !fContainerProvided) {
 			// The old way to find the service locator
 			return Utilities.findSite(fComposite);
 		}
-		return fContainer.getServiceLocator();
+		return serviceLocator;
 	}
 	
 	/* (non-Javadoc)
@@ -930,19 +927,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void run(boolean fork, boolean cancelable,
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
-		if (fContainer == null) {
-			PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
-			return;
-		}
 		fContainer.run(fork, cancelable, runnable);
 	}
+	
+	public void runAsynchronously(IRunnableWithProgress runnable) {
+		fContainer.runAsynchronously(runnable);
+	}
+	
 	/**
 	 * Set the container of this input to the given container
 	 * @param container the container
 	 * @since 3.3
 	 */
 	public void setContainer(ICompareContainer container) {
+		Assert.isNotNull(container);
 		this.fContainer = container;
+		fContainerProvided = true;
 	}
 
 	/**

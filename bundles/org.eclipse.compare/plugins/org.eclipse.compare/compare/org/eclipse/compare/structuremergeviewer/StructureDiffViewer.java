@@ -53,12 +53,40 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private ICompareInputChangeListener fCompareInputChangeListener;
 	
 	/*
+	 * A set of background tasks for updating the structure
+	 */
+	private IRunnableWithProgress diffTask = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException,
+				InterruptedException {
+			monitor.beginTask("Generating Structure Differences", 100);
+			diff(new SubProgressMonitor(monitor, 100));
+			monitor.done();
+		}
+	};
+	
+	private IRunnableWithProgress inputChangedTask = new IRunnableWithProgress() {
+		public void run(IProgressMonitor monitor) throws InvocationTargetException,
+				InterruptedException {
+			monitor.beginTask("Computing Structure Differences", 100);
+			// TODO: Should we always force
+			compareInputChanged((ICompareInput)getInput(), true, new SubProgressMonitor(monitor, 100));
+			monitor.done();
+		}
+	};
+	
+	/*
 	 * A helper class for holding the input and generated structure
 	 * for the ancestor, left and right inputs.
 	 */
 	private class StructureInfo {
 		private ITypedElement fInput;
 		private IStructureComparator fStructureComparator;
+		private IRunnableWithProgress refreshTask = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				refresh(monitor);
+			}
+		};
 		
 		public boolean setInput(ITypedElement newInput, boolean force, IProgressMonitor monitor) {
 			boolean changed = false;
@@ -134,6 +162,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				IDisposable disposable = (IDisposable) fStructureComparator;
 				disposable.dispose();
 			}
+		}
+
+		public IRunnableWithProgress getRefreshTask() {
+			return refreshTask;
 		}
 	}
 	
@@ -269,7 +301,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	 * @param input this viewer's new input
 	 */
 	protected void compareInputChanged(ICompareInput input) {
-		// TODO
 		compareInputChanged(input, false);
 	}
 		
@@ -279,22 +310,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			compareInputChanged(input, force, null);
 			return;
 		}
-		try {
-			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask("Generating Structure Differences", 100);
-					compareInputChanged(input, force, new SubProgressMonitor(monitor, 100));
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			// Shouldn't happen since the run doesn't throw
-			CompareUIPlugin.log(e.getTargetException());
-			handleFailedRefresh(e.getTargetException().getMessage());
-		} catch (InterruptedException e) {
-			// Canceled by user
-			handleFailedRefresh("Refresh Canceled");
-		}
+		getCompareConfiguration().getContainer().runAsynchronously(inputChangedTask);
 	}
 
 	/* package */ void compareInputChanged(ICompareInput input, boolean force, IProgressMonitor monitor) {
@@ -320,7 +336,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				changed = true;
 			
 			if (changed)
-				diff(subMonitor(monitor, 100));
+				getCompareConfiguration().getContainer().runAsynchronously(diffTask);
 		} finally {
 			endWork(monitor);
 		}
@@ -354,51 +370,20 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		if (fStructureCreator == null)
 			return;
 		
-		try {
-			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask("Reconciling Structure Differences", 100);
-					if (changed != null) {
-						handleContentChanged(changed, new SubProgressMonitor(monitor, 100));
-					} else {
-						resfreshStructure(new SubProgressMonitor(monitor, 100));
-					}
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			// Shouldn't happen since the run doesn't throw
-			CompareUIPlugin.log(e.getTargetException());
-			handleFailedRefresh(e.getTargetException().getMessage());
-		} catch (InterruptedException e) {
-			// Canceled by user
-			handleFailedRefresh("Refresh Canceled");
-		}
-	}
-
-	private void resfreshStructure(IProgressMonitor monitor) {
-		beginWork(monitor, 400);
-		try {
-			fAncestorStructure.refresh(subMonitor(monitor, 100));
-			fLeftStructure.refresh(subMonitor(monitor, 100));
-			fRightStructure.refresh(subMonitor(monitor, 100));
-			diff(subMonitor(monitor, 100));
-		} finally {
-			monitor.done();
-		}
-	}
-
-	/* package */ void handleContentChanged(IContentChangeNotifier changed, IProgressMonitor monitor) {
-		if (changed == fAncestorStructure.getInput()) {
-			fAncestorStructure.refresh(monitor);
+		if (changed == null) {
+			getCompareConfiguration().getContainer().runAsynchronously(fAncestorStructure.getRefreshTask());
+			getCompareConfiguration().getContainer().runAsynchronously(fLeftStructure.getRefreshTask());
+			getCompareConfiguration().getContainer().runAsynchronously(fRightStructure.getRefreshTask());
+		} else if (changed == fAncestorStructure.getInput()) {
+			getCompareConfiguration().getContainer().runAsynchronously(fAncestorStructure.getRefreshTask());
 		} else if (changed == fLeftStructure.getInput()) {
-			fLeftStructure.refresh(monitor);
+			getCompareConfiguration().getContainer().runAsynchronously(fLeftStructure.getRefreshTask());
 		} else if (changed == fRightStructure.getInput()) {
-			fRightStructure.refresh(monitor);
+			getCompareConfiguration().getContainer().runAsynchronously(fRightStructure.getRefreshTask());
 		} else {
 			return;
 		}
-		diff(monitor);
+		getCompareConfiguration().getContainer().runAsynchronously(diffTask);
 	}
 
 	/**
@@ -522,9 +507,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	protected void diff() {
 		try {
 			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					monitor.beginTask("Generating Structure Differences", 100);
-					diff(new SubProgressMonitor(monitor, 100));
+					diffTask.run(new SubProgressMonitor(monitor, 100));
 					monitor.done();
 				}
 			});

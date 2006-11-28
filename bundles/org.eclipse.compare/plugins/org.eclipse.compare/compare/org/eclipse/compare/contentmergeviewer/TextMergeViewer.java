@@ -107,6 +107,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private static final char ANCESTOR_CONTRIBUTOR = MergeViewerContentProvider.ANCESTOR_CONTRIBUTOR;
 	private static final char RIGHT_CONTRIBUTOR = MergeViewerContentProvider.RIGHT_CONTRIBUTOR;
 	private static final char LEFT_CONTRIBUTOR = MergeViewerContentProvider.LEFT_CONTRIBUTOR;
+	
+	private static final String DIFF_RANGE_CATEGORY = CompareUIPlugin.PLUGIN_ID + ".DIFF_RANGE_CATEGORY"; //$NON-NLS-1$
 
 	static final boolean DEBUG= false;
 	
@@ -365,7 +367,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				
 				if (parent instanceof IDocumentRange) {
 					newDocument= ((IDocumentRange)parent).getDocument();
-					newDocument.addPositionCategory(IDocumentRange.RANGE_CATEGORY);
+					newDocument.addPositionCategory(DIFF_RANGE_CATEGORY);
 					Object input= this.fViewer.getInput();
 					range= this.fViewer.getNewRange(fLeg, input);
 					if (range == null) {
@@ -374,7 +376,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 							pos= this.fViewer.findInsertionPosition(fLeg, (ICompareInput)input);
 						range= new Position(pos, 0);
 						try {
-							newDocument.addPosition(IDocumentRange.RANGE_CATEGORY, range);
+							newDocument.addPosition(DIFF_RANGE_CATEGORY, range);
 						} catch (BadPositionCategoryException ex) {
 							// silently ignored
 							if (TextMergeViewer.DEBUG) System.out.println("BadPositionCategoryException: " + ex);	//$NON-NLS-1$
@@ -432,9 +434,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				return;
 			
 			// Add a position updater to the document
-			document.addPositionCategory(IDocumentRange.RANGE_CATEGORY);
+			document.addPositionCategory(DIFF_RANGE_CATEGORY);
 			if (this.fViewer.fPositionUpdater == null)
-				this.fViewer.fPositionUpdater= this.fViewer.new ChildPositionUpdater(IDocumentRange.RANGE_CATEGORY);
+				this.fViewer.fPositionUpdater= this.fViewer.new ChildPositionUpdater(DIFF_RANGE_CATEGORY);
 			else
 				document.removePositionUpdater(this.fViewer.fPositionUpdater);
 			document.addPositionUpdater(this.fViewer.fPositionUpdater);
@@ -911,7 +913,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				}
 				
 				try {
-					doc.addPosition(IDocumentRange.RANGE_CATEGORY, p);
+					doc.addPosition(DIFF_RANGE_CATEGORY, p);
 				} catch (BadPositionCategoryException ex) {
 					// silently ignored
 				}
@@ -2179,10 +2181,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			n++;
 		fHighlightRanges= n > 1;
 		
-		// clear stuff
-		fCurrentDiff= null;
-	 	fChangeDiffs= null;
-		fAllDiffs= null;
+		resetDiffs();
 		fHasErrors= false; // start with no errors
 		
 		CompareConfiguration cc= getCompareConfiguration();
@@ -2500,6 +2499,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 		if (oldDoc != null) {
 			tp.rememberDocument(null);
+			try {
+				oldDoc.removePositionCategory(DIFF_RANGE_CATEGORY);
+			} catch (BadPositionCategoryException ex) {
+				// Ignore
+			}
 			if (fPositionUpdater != null)
 				oldDoc.removePositionUpdater(fPositionUpdater);
 			oldDoc.removeDocumentListener(fDocumentListener);
@@ -2719,6 +2723,10 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			aRegion= fAncestor.getRegion();
 		}
 		
+		resetPositions(lDoc);
+		resetPositions(rDoc);
+		resetPositions(aDoc);
+		
 		fAncestor.resetLineBackground();
 		fLeft.resetLineBackground();
 		fRight.resetLineBackground();
@@ -2893,6 +2901,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}		
 	}
 	
+	private void resetPositions(IDocument doc) {
+		if (doc == null)
+			return;
+		try {
+			doc.removePositionCategory(DIFF_RANGE_CATEGORY);
+		} catch (BadPositionCategoryException e) {
+			// Ignore
+		}
+		doc.addPositionCategory(DIFF_RANGE_CATEGORY);
+	}
+
 	private Diff findDiff(char type, int pos) {
 								
 		IDocument aDoc= null;
@@ -4959,19 +4978,27 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	/* package */ void update(boolean includeControls) {
-		// clear stuff
-		fCurrentDiff= null;
-	 	fChangeDiffs= null;
-		fAllDiffs= null;
-		
-		if (!fHasErrors)
+		if (fHasErrors) {
+			resetDiffs();
+		} else {
 			doDiff();
+		}
 		
 		if (includeControls)
 			updateControls();
 		invalidateLines();
 		updateVScrollBar();
 		refreshBirdsEyeView();
+	}
+
+	private void resetDiffs() {
+		// clear stuff
+		fCurrentDiff= null;
+		fChangeDiffs= null;
+		fAllDiffs= null;
+		resetPositions(fLeft.getDocument());
+		resetPositions(fRight.getDocument());
+		resetPositions(fAncestor.getDocument());
 	}
 
 	private boolean isPatchHunk() {

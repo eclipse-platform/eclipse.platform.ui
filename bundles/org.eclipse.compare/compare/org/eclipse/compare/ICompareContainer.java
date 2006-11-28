@@ -14,6 +14,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -87,5 +88,22 @@ public interface ICompareContainer extends IRunnableContext{
 	 * @return the {@link ICompareNavigator} associated with this container or <code>null</code>
 	 */
 	public ICompareNavigator getNavigator();
+	
+	/**
+	 * Queue the given task to be run asynchronously. If the given runnable was
+	 * previously queued to run asynchronously and it has not yet run, the task
+	 * position will be moved to the end of the queue. If the task that is being
+	 * queued is currently running, the running task will be canceled and added
+	 * to the end of the queue.
+	 * <p>
+	 * This method should be treated as a request to run the given task asynchronously.
+	 * However, clients should not assume that the code will be run asynchronously. 
+	 * Depending on the container implementation, a call to this method may or may
+	 * not block the caller until the task is completed. Also, the task may be executed
+	 * in a modal or non-modal fashion.
+	 * 
+	 * @param runnable the task to be performed
+	 */
+	public void runAsynchronously(IRunnableWithProgress runnable);
 	
 }

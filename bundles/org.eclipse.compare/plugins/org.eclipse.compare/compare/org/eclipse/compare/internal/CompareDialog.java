@@ -12,25 +12,20 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * This is a dialog that can host a {@link CompareEditorInput}.
@@ -39,12 +34,39 @@ import org.eclipse.ui.services.IServiceLocator;
  * 
  * @since 3.3
  */
-public class CompareDialog extends TrayDialog implements IPropertyChangeListener, ICompareContainer {
+public class CompareDialog extends TrayDialog implements IPropertyChangeListener {
 	
 	private final CompareEditorInput fCompareEditorInput;
 	private Button fCommitButton;
 	private Label statusLabel;
 	boolean hasSettings = true;
+	private final DialogCompareContainer fContainer = new DialogCompareContainer();
+	
+	private class DialogCompareContainer extends CompareContainer {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
+		 */
+		public void run(boolean fork, boolean cancelable,
+				IRunnableWithProgress runnable) throws InvocationTargetException,
+				InterruptedException {
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+			dialog.run(fork, cancelable, runnable);
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
+		 */
+		public void setStatusMessage(String message) {
+			if (statusLabel != null && !statusLabel.isDisposed()) {
+				if (message == null) {
+					statusLabel.setText(""); //$NON-NLS-1$
+				} else {
+					statusLabel.setText(message);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Create a dialog to host the given input.
@@ -143,7 +165,7 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		// Before opening, set the container of the input and listen
 		// for changes to the input
 		fCompareEditorInput.addPropertyChangeListener(this);
-		fCompareEditorInput.setContainer(this);
+		fCompareEditorInput.setContainer(fContainer);
 		return super.open();
 	}
 	
@@ -183,59 +205,6 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
-	 */
-	public void addCompareInputChangeListener(ICompareInput input,
-			ICompareInputChangeListener listener) {
-		input.addCompareInputChangeListener(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#getActionBars()
-	 */
-	public IActionBars getActionBars() {
-		// No action bars available
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
-	 */
-	public IServiceLocator getServiceLocator() {
-		// No service locator available
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
-	 */
-	public void registerContextMenu(MenuManager menu,
-			ISelectionProvider selectionProvider) {
-		// Nothing to register
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
-	 */
-	public void removeCompareInputChangeListener(ICompareInput input,
-			ICompareInputChangeListener listener) {
-		input.removeCompareInputChangeListener(listener);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
-	 */
-	public void setStatusMessage(String message) {
-		if (statusLabel != null && !statusLabel.isDisposed()) {
-			if (message == null) {
-				statusLabel.setText(""); //$NON-NLS-1$
-			} else {
-				statusLabel.setText(message);
-			}
-		}
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 	 */
@@ -308,23 +277,6 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 */
 	protected final CompareEditorInput getInput() {
 		return fCompareEditorInput;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
-	public void run(boolean fork, boolean cancelable,
-			IRunnableWithProgress runnable) throws InvocationTargetException,
-			InterruptedException {
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
-		dialog.run(fork, cancelable, runnable);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#getNavigator()
-	 */
-	public ICompareNavigator getNavigator() {
-		return null;
 	}
 
 }

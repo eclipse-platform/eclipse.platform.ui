@@ -13,19 +13,17 @@ package org.eclipse.compare.internal;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -47,7 +45,7 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, ICompareContainer, IPropertyChangeListener {
+public class CompareEditor extends EditorPart implements IReusableEditor, ISaveablesSource, IPropertyChangeListener {
 
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 
@@ -77,7 +75,59 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private int state = UNINITIALIZED;
 
 	private Composite errorPage;
+	private final EditorCompareContainer fContainer = new EditorCompareContainer();
 
+	private class EditorCompareContainer extends CompareContainer {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
+		 */
+		public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
+			getSite().registerContextMenu(menu, provider);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
+		 */
+		public void setStatusMessage(String message) {
+			if (fActionBars != null) {
+				IStatusLineManager slm= fActionBars.getStatusLineManager();
+				if (slm != null) {
+					slm.setMessage(message);
+				}
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
+		 */
+		public IServiceLocator getServiceLocator() {
+			return getSite();
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.internal.CompareContainer#createWorkerJob()
+		 */
+		protected WorkerJob createWorkerJob() {
+			WorkerJob workerJob = new WorkerJob(getWorkerJobName()) {
+				public boolean belongsTo(Object family) {
+					if (family == CompareEditor.this)
+						return true;
+					return super.belongsTo(family);
+				}
+			};
+			workerJob.setModal(false);
+			return workerJob;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.internal.CompareContainer#getWorkerJobName()
+		 */
+		protected String getWorkerJobName() {
+			return NLS.bind("Update comparison {0}", getTitle());
+		}
+	}
+	
 	/**
 	 * No-argument constructor required for extension points.
 	 */
@@ -167,7 +217,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		super.setInput(input);
 		
 		final CompareEditorInput cei= (CompareEditorInput) input;
-		cei.setContainer(this);
+		cei.setContainer(fContainer);
 
 		setTitleImage(cei.getTitleImage());
 		setPartName(cei.getTitle());
@@ -190,6 +240,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (fControl != null && oldSize != null)
 			fControl.setSize(oldSize);
 		
+		Job.getJobManager().cancel(this);
 		if (cei.getCompareResult() == null) {
 			initializeInBackground(cei);
 		}
@@ -204,7 +255,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	
 	protected void initializeInBackground(final CompareEditorInput cei) {
 		// Need to cancel any running jobs associated with the oldInput
-		Job.getJobManager().cancel(this);
 		Job job = new Job(CompareMessages.CompareEditor_0) {
 			protected IStatus run(IProgressMonitor monitor) {
 				IStatus status;
@@ -484,64 +534,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		public int hashCode() {
 			return CompareEditor.this.hashCode();
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#removeCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
-	 */
-	public void removeCompareInputChangeListener(ICompareInput input,
-			ICompareInputChangeListener listener) {
-		input.removeCompareInputChangeListener(listener);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#addCompareInputChangeListener(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener)
-	 */
-	public void addCompareInputChangeListener(ICompareInput input,
-			ICompareInputChangeListener listener) {
-		input.addCompareInputChangeListener(listener);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
-	 */
-	public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
-		getSite().registerContextMenu(menu, provider);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#setStatusMessage(java.lang.String)
-	 */
-	public void setStatusMessage(String message) {
-		if (fActionBars != null) {
-			IStatusLineManager slm= fActionBars.getStatusLineManager();
-			if (slm != null) {
-				slm.setMessage(message);
-			}
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#getServiceLocator()
-	 */
-	public IServiceLocator getServiceLocator() {
-		return getSite();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
-	 */
-	public void run(boolean fork, boolean cancelable,
-			IRunnableWithProgress runnable) throws InvocationTargetException,
-			InterruptedException {
-		PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.compare.ICompareContainer#getNavigator()
-	 */
-	public ICompareNavigator getNavigator() {
-		return null;
 	}
 	
 	private Composite getInitializingMessagePane(Composite parent) {

@@ -10,25 +10,19 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.compare.internal.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * A <code>CompareConfiguration</code> object
@@ -601,36 +595,7 @@ public class CompareConfiguration {
 	public ICompareContainer getContainer() {
 		if (fContainer == null) {
 			// Create a default container in case one is not provided
-			fContainer= new ICompareContainer() {
-				public void removeCompareInputChangeListener(ICompareInput input,
-						ICompareInputChangeListener listener) {
-					input.removeCompareInputChangeListener(listener);
-				}
-				public void addCompareInputChangeListener(ICompareInput input,
-						ICompareInputChangeListener listener) {
-					input.addCompareInputChangeListener(listener);
-				}
-				public void registerContextMenu(MenuManager menu, ISelectionProvider provider) {
-					// By default, do nothing
-				}
-				public void setStatusMessage(String message) {
-					// By default, do nothing
-				}
-				public IActionBars getActionBars() {
-					return null;
-				}
-				public IServiceLocator getServiceLocator() {
-					return null;
-				}
-				public void run(boolean fork, boolean cancelable,
-						IRunnableWithProgress runnable)
-						throws InvocationTargetException, InterruptedException {
-					PlatformUI.getWorkbench().getProgressService().run(fork, cancelable, runnable);
-				}
-				public ICompareNavigator getNavigator() {
-					return null;
-				}
-			};
+			fContainer= new CompareContainer();
 		}
 		return fContainer;
 	}
