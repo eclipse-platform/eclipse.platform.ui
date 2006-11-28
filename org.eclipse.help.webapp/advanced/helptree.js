@@ -44,6 +44,11 @@ function mouseClickHandler(e) {
 	
 	if (clickedNode.className == "expander") {
 	    toggleExpandState(clickedNode);
+	} else if ( clickedNode.tagName == 'A') {
+	    var treeItem = getTreeItem(clickedNode);
+	    if (treeItem !== null) {
+	        highlightItem(getTreeItem(clickedNode), true); 
+	    }   
 	}
   	
   	if (isIE) {
@@ -178,23 +183,39 @@ function focusOnDeepestVisibleChild(treeItem, isSelected) {
     focusOnItem(treeItem, isSelected);
 }
 
-// Focus on the anchor within a tree item
-function focusOnItem(treeItem, isSelected) {
-    if (treeItem === null) { return; }
+function findAnchor(treeItem) {
+    if (treeItem === null) { 
+        return null; 
+    }
     // Items with children will use a span to contain the anchor
     var anchorContainer = findChild(treeItem, "SPAN");
-    if (!anchorContainer) { anchorContainer = treeItem; }
-    var anchor = findChild(anchorContainer, "A");
+    if (!anchorContainer) { 
+        return treeItem; 
+    }
+    return findChild(anchorContainer, "A");
+}
+
+// Focus on the anchor within a tree item
+function focusOnItem(treeItem, isSelected) {
+    var anchor = findAnchor(treeItem);
     if (anchor) {
         anchor.focus();
         if (isSelected) {
-  	  	    if (oldActive) {
-  	  		    oldActive.className = oldActiveClass;
-            }
-  		    oldActive = anchor;
-  		    oldActiveClass = anchor.className;
-  		    anchor.className = "active";
+            highlightItem(treeItem);
   		}
+    }
+}
+
+// Highlight the text for a tree item
+function highlightItem(treeItem) {
+    var anchor = findAnchor(treeItem);
+    if (anchor) {
+  	  	if (oldActive) {
+  	  		oldActive.className = oldActiveClass;
+        }
+  		oldActive = anchor;
+  		oldActiveClass = anchor.className;
+  		anchor.className = "active";
     }
 }
 

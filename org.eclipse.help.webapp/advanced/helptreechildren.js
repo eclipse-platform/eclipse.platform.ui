@@ -38,7 +38,9 @@ function updateTree(xml) {
     mergeChildren(treeRoot, nodes);
     if (selectedNode != null) {
         // Focusing on the last child will increase the chance that it is visible
-        focusOnDeepestVisibleChild(selectedNode, false);
+        if (!highlightSelectedNode) {
+            focusOnDeepestVisibleChild(selectedNode, false);
+        }
         focusOnItem(selectedNode, highlightSelectedNode);
     }
  }
