@@ -237,7 +237,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         }        
         
         if (adapterType.equals(IModelProxyFactoryAdapter.class)) {
-        	if (adaptableObject instanceof IDebugTarget ||
+        	if (adaptableObject instanceof ILaunch || adaptableObject instanceof IDebugTarget ||
         			adaptableObject instanceof IProcess || adaptableObject instanceof ILaunchManager ||
         			adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager ||
         			adaptableObject instanceof IExpression || adaptableObject instanceof IMemoryBlockRetrieval ||

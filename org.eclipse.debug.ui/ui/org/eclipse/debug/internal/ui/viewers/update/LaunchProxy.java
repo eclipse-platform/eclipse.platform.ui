@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
@@ -21,28 +24,43 @@ import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * Model proxy for launch manager.
+ * Model proxy for launch object.
+ * 
+ * @since 3.3
  */
-public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesListener2 {
+public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener2 {
 
-	private ILaunchManager fLaunchManager;
+	private ILaunch fLaunch;
+	
+	/**
+	 * Set of launch's previous children. When a child is added,
+	 * its model proxy is installed.
+	 */
+	private Set fPrevChildren = new HashSet(); 
 
+	/**
+	 * Constructs a new model proxy for the given launch.
+	 * 
+	 * @param launch
+	 */
+	public LaunchProxy(ILaunch launch) {
+		fLaunch = launch;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.AbstractModelProxy#init(org.eclipse.debug.internal.ui.viewers.IPresentationContext)
 	 */
 	public void init(IPresentationContext context) {
 		super.init(context);
-		fLaunchManager = DebugPlugin.getDefault().getLaunchManager();
-		fLaunchManager.addLaunchListener(this);
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
 	public void installed(Viewer viewer) {
-		// expand existing launches
-		ILaunch[] launches = fLaunchManager.getLaunches();
-		launchesAdded(launches);
+		// install model proxies for existing children
+		installModelProxies();
 	}
 
 	/* (non-Javadoc)
@@ -50,34 +68,68 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 */
 	public void dispose() {	
 		super.dispose();
-		fLaunchManager.removeLaunchListener(this);
-		fLaunchManager = null;
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
+		fPrevChildren.clear();
+		fLaunch = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesTerminated(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i] == fLaunch) {
+				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.UNINSTALL);
+			}
+		}		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesRemoved(ILaunch[] launches) {
-		fireDelta(launches, IModelDelta.REMOVED);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesAdded(ILaunch[] launches) {
-		fireDelta(launches, IModelDelta.ADDED | IModelDelta.INSTALL | IModelDelta.EXPAND);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse.debug.core.ILaunch[])
 	 */
-	public void launchesChanged(ILaunch[] launches) {	
+	public void launchesChanged(ILaunch[] launches) {
+		for (int i = 0; i < launches.length; i++) {
+			if (launches[i] == fLaunch) {
+				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT);
+				installModelProxies();
+			}
+		}
+	}
+	
+	/**
+	 * Installs model proxies for any new children in the given launch.
+	 * 
+	 * @param launch
+	 */
+	protected void installModelProxies() {
+		boolean changes = false;
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] allLaunches = manager.getLaunches();
+		ModelDelta root = new ModelDelta(manager, 0, IModelDelta.NO_CHANGE, allLaunches.length);
+		Object[] children = fLaunch.getChildren();
+		ModelDelta launchDelta = root.addNode(fLaunch, indexOf(fLaunch, allLaunches), IModelDelta.EXPAND, children.length);
+		for (int j = 0; j < children.length; j++) {
+			Object child = children[j];
+			if (fPrevChildren.add(child)) {
+				changes = true;
+				launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
+			}
+		}
+		if (changes) {
+			fireModelChanged(root);
+		}
 	}
 	
 	protected int indexOf(Object element, Object[] list) {
@@ -89,11 +141,9 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 		return -1;
 	}
 	
-	protected void fireDelta(ILaunch[] launches, int launchFlags) {
-		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NO_CHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			delta.addNode(launches[i], launchFlags);	
-		}
+	protected void fireDelta(int flags) {
+		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+		delta.addNode(fLaunch, flags);	
 		fireModelChanged(delta);		
 	}
 
