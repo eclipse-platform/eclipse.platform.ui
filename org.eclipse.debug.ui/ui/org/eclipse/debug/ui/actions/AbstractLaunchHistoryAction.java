@@ -221,7 +221,12 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 *  action's launch history that is not filtered from the menu
 	 */
 	protected ILaunchConfiguration getLastLaunch() {
-		return getLaunchConfigurationManager().getFilteredLastLaunch(getLaunchGroupIdentifier());
+		LaunchConfigurationManager manager = getLaunchConfigurationManager();
+		ILaunchConfiguration configuration = manager.getLastLaunch(getLaunchGroupIdentifier());
+		if (configuration == null) {
+			return manager.getFilteredLastLaunch(getLaunchGroupIdentifier());
+		}
+		return configuration;
 	}
 
 	/**
