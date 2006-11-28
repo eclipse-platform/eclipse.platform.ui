@@ -369,11 +369,11 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				//
 				IMenuService menuService = (IMenuService) site
 						.getService(IMenuService.class);
-				MenuLocationURI loc = new MenuLocationURI("menu://" //$NON-NLS-1$
+				MenuLocationURI loc = new MenuLocationURI("menu:" //$NON-NLS-1$
 						+ site.getId());
 				menuService.populateMenu((ContributionManager) site
 						.getActionBars().getMenuManager(), loc);
-				loc = new MenuLocationURI("toolbar://" + site.getId()); //$NON-NLS-1$
+				loc = new MenuLocationURI("toolbar:" + site.getId()); //$NON-NLS-1$
 				menuService.populateMenu((ContributionManager) site
 						.getActionBars().getToolBarManager(), loc);
 				// 3.3 end

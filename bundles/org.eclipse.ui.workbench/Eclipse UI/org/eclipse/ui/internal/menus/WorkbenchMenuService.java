@@ -11,16 +11,20 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -165,8 +169,13 @@ public final class WorkbenchMenuService implements IMenuService {
 	private Map uriToManager = new HashMap();
 
 	/**
-	 * Construct an 'id' string from the given URI.
-	 * @param uri The URI to construct teh id from
+	 * Construct an 'id' string from the given URI. The resulting
+	 * 'id' is the part of the URI not containing the query:
+	 * <p>
+	 * i.e. [menu | popup | toolbar]:id
+	 * </p>
+	 * 
+	 * @param uri The URI to construct the id from
 	 * @return The id
 	 */
 	private String getIdFromURI(MenuLocationURI uri) {
@@ -176,21 +185,88 @@ public final class WorkbenchMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
-	public MenuAddition getManagerForURI(MenuLocationURI uri) {
+	public List getAdditionsForURI(MenuLocationURI uri) {
 		if (uri == null)
 			return null;
 
-		MenuAddition mgr = (MenuAddition) uriToManager.get(getIdFromURI(uri));
-		return mgr;
+		List caches = (List) uriToManager.get(getIdFromURI(uri));
+		
+		// we always return a list
+		if (caches == null) {
+			caches = new ArrayList();
+			uriToManager.put(getIdFromURI(uri), caches);
+		}
+		
+		return caches;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager, org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
-		MenuAddition additionCache = getManagerForURI(uri);
-		if (additionCache != null)
-			additionCache.populateMenuManager(mgr);
+		List additionCaches = getAdditionsForURI(uri);
+		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
+			MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator.next();
+			
+			// Get the additions
+			List additions = new ArrayList();
+			cache.populateAdditions(additions);
+			
+			// If we have any then add them at the correct location
+			if (additions.size() > 0) {
+				int insertionIndex = getInsertionIndex(mgr, uri);
+				for (Iterator additionIter = additions.iterator(); additionIter
+						.hasNext();) {
+					IContributionItem ici = (IContributionItem) additionIter.next();
+
+					// Register for 'visibleWhen' handling
+					Expression visibleWhen = cache.getVisibleWhenForItem(ici);
+					if (visibleWhen != null) {
+						menuAuthority.addContribution(new MenuActivation(ici, visibleWhen, this));
+					}
+					
+					mgr.insert(insertionIndex++, ici);
+				}
+			}
+			
+		}
+		
+		// Now, recurse through any sub-menus
+		IContributionItem[] curItems = mgr.getItems();
+		for (int i = 0; i < curItems.length; i++) {
+			if (curItems[i] instanceof ContributionManager) {
+				IContributionItem menuItem = (IContributionItem)curItems[i];
+				MenuLocationURI subURI = new MenuLocationURI("menu:" + menuItem.getId()); //$NON-NLS-1$
+				populateMenu((ContributionManager) curItems[i], subURI);
+			}
+		}
+	}
+
+	/**
+	 * @param mgr
+	 * @param uri
+	 * @return
+	 */
+	private int getInsertionIndex(ContributionManager mgr, MenuLocationURI uri) {
+		String query = uri.getQuery();
+		if (query.length() == 0)
+			return 0;
+		
+		// Should be in the form "[before|after]=id"
+		String[] queryParts = Util.split(query, '=');
+		if (queryParts[1].length() > 0) {
+			int indexOfId = mgr.indexOf(queryParts[1]);
+			if (indexOfId==-1) {
+				return 0;
+			}
+			
+			// Increment if we're 'after' this id
+			if (queryParts[0].equals("after")) //$NON-NLS-1$
+				indexOfId++;
+			return indexOfId;
+		}
+		
+		return 0;
 	}
 
 	/* (non-Javadoc)

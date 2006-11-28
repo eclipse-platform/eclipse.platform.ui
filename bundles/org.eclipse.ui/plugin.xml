@@ -1340,6 +1340,6 @@
    <extension
          point="org.eclipse.ui.menus2">
       <menuAddition
-            locationURI="menu://org.eclipse.ui.main.menu"/>
+            locationURI="menu:org.eclipse.ui.main.menu"/>
    </extension>
 </plugin>

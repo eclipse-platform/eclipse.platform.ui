@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -270,7 +271,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * 
 	 * @since 3.3
 	 */
-	public MenuAddition getManagerForURI(MenuLocationURI uri);
+	public List getAdditionsForURI(MenuLocationURI uri);
 
 	/**
 	 * Register a new menu addition cache with the service. This

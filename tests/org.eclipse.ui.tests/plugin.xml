@@ -2938,7 +2938,7 @@
          id="menusX1"
          point="org.eclipse.ui.menus2">
       <menuAddition
-            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
+            locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
          <item
                commandId="MenuTest.InsertedBefore"
                icon="icons/anything.gif"
@@ -2948,7 +2948,7 @@
          </item>
       </menuAddition>
       <menuAddition
-            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness?after=MenuTest.Advanced">
+            locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?after=MenuTest.Advanced">
          <item
                commandId="MenuTest.InsertedAfter"
                icon="icons/anything.gif"
@@ -2958,7 +2958,7 @@
          </item>
       </menuAddition>
       <menuAddition
-            locationURI="popup://org.eclipse.ui.tests.api.MenuTestHarness">
+            locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="MenuTest.BasicCmd"
                icon="icons/anything.gif"
@@ -3018,7 +3018,7 @@
       </menuAddition>
 
       <menuAddition
-            locationURI="menu://org.eclipse.ui.tests.api.MenuTestHarness">
+            locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="MenuTest.BasicCmd"
                icon="icons/anything.gif"
@@ -3078,7 +3078,7 @@
       </menuAddition>
       
       <menuAddition
-            locationURI="toolbar://org.eclipse.ui.tests.api.MenuTestHarness">
+            locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="MenuTest.BasicCmd"
                icon="icons/anything.gif"
@@ -3137,7 +3137,7 @@
          </menu>
       </menuAddition>
       <menuAddition
-            locationURI="menu://org.eclipse.ui.tests.api.MenuTestHarness">
+            locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.bogusCmdId"
                id="org.eclipse.ui.tests.menus.itemX1"
@@ -3157,7 +3157,7 @@
          </item>
       </menuAddition>
       <menuAddition
-            locationURI="menu://org.eclipse.ui.main.menu?after=additions">
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="org.eclipse.ui.tests.mainMenu.MenuX2"
                label="Menu X2">

@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -29,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -1070,105 +1068,31 @@ final class MenuPersistence extends RegistryPersistence {
 				indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount, menuService);
 		
+		// read the 3.3 menu additions
 		readAdditions(menuService);
 	}
 	
 	//
 	// 3.3 menu extension code
 	// 
-	
-	private static List retryList = null;
 
 	public static void readAdditions(IMenuService menuService) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] menusExtensionPoint = registry
 				.getConfigurationElementsFor(COMMON_MENU_ADDITIONS);
 
-		retryList = new ArrayList();
-		
-		// read the menu additions extensions...
-		// NOTE: if the 'locationURI' cannot be located the config
-		// element will be placed into the retry list for post processing
+		// Create a cache entry for every menu addition
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
 			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
-				readMenuAddition(menuService, menusExtensionPoint[i]);
-			}
-		}
-		
-		// OK, iteratively loop through entries whose URI's could not
-		// be resolved until we either run out of entries or the list
-		// doesn't change size (indicating that the remaining entries
-		// can never be resolved).
-		boolean done = retryList.size() == 0;
-		while (!done) {
-			// Clone the retry list and clear it
-			List curRetry = new ArrayList(retryList);
-			int  retryCount = retryList.size();
-			retryList.clear();
-			
-			// Walk the current list seeing if any entries can now be resolved
-			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
-				IConfigurationElement addition = (IConfigurationElement) iterator.next();
-				readMenuAddition(menuService, addition);				
-			}
-			
-			// We're done if the retryList is now empty (everything done) or
-			// if the list hasn't changed at all (no hope)
-			done = (retryList.size() == 0) || (retryList.size() == retryCount);
-		}
-	}
+				// Determine the insertion location by parsing the URI
+				String locationURI = menusExtensionPoint[i].getAttribute(TAG_LOCATION_URI);
+				MenuLocationURI uri = new MenuLocationURI(locationURI);
 
-	private static void readMenuAddition(IMenuService menuService,
-			IConfigurationElement addition) {
-		// Determine the insertion location by parsing the URI
-		String locationURI = addition.getAttribute(TAG_LOCATION_URI);
-		MenuLocationURI uri = new MenuLocationURI(locationURI);
-
-		if (uri != null) {
-			MenuAddition additionCache = menuService.getManagerForURI(uri);
-			
-			// if we don't have a manager yet it may be due to one of two
-			// reasons; it's the def of a 'root' menu (i.e. a new cache
-			// location) or it may be an addition to a menu that hasn't
-			// been defined yet.
-			if (additionCache == null) {
-				String p = uri.getQuery();
-				if (p.length() == 0) {
-					additionCache = new MenuAddition(addition, menuService);
-					menuService.registerAdditionCache(uri, additionCache);
-				}
-				else {
-					// place the addition onto the 'retry' stack
-					retryList.add(addition);
-					return;
+				if (uri != null) {
+					List additionCache = menuService.getAdditionsForURI(uri);
+					additionCache.add(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
 				}
 			}
-			int insertionIndex = getInsertionIndexForURI(additionCache, uri);
-
-			// Read the child additions
-			additionCache.readAdditions(addition, insertionIndex);
 		}
-	}
-	
-	private static int getInsertionIndexForURI(MenuAddition mgr, MenuLocationURI uri) {
-		String query = uri.getQuery();
-		if (query.length() == 0)
-			return 0;
-		
-		// Should be in the form "[before|after]=id"
-		String[] queryParts = Util.split(query, '=');
-		if (queryParts[1].length() > 0) {
-			int indexOfId = mgr.indexOf(queryParts[1]);
-			if (indexOfId==-1) {
-				return 0;
-			}
-			
-			// Increment if we're 'after' this id
-			if (queryParts[0].equals("after")) //$NON-NLS-1$
-				indexOfId++;
-			return indexOfId;
-		}
-		
-		return 0;
 	}
 }

@@ -3073,7 +3073,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 					.getService(IMenuService.class);
 			menuService.populateMenu((ContributionManager) getActionBars()
 					.getMenuManager(), new MenuLocationURI(
-					"menu://org.eclipse.ui.main.menu")); //$NON-NLS-1$
+					"menu:org.eclipse.ui.main.menu")); //$NON-NLS-1$
 			// 3.3 end
 		} finally {
 			workbench.largeUpdateEnd();

@@ -124,7 +124,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		// 3.3 start
 		final IMenuService menuService = (IMenuService) part.getSite().getService(
 				IMenuService.class);
-		final MenuLocationURI loc = new MenuLocationURI("popup://" + menuId); //$NON-NLS-1$
+		final MenuLocationURI loc = new MenuLocationURI("popup:" + menuId); //$NON-NLS-1$
 		if (menuManager.getRemoveAllWhenShown()) {
 			menuManager.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {

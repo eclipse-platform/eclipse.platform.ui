@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -160,8 +161,8 @@ public final class WindowMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
 	 */
-	public MenuAddition getManagerForURI(MenuLocationURI uri) {
-		return parent.getManagerForURI(uri);
+	public List getAdditionsForURI(MenuLocationURI uri) {
+		return parent.getAdditionsForURI(uri);
 	}
 
 	/* (non-Javadoc)
