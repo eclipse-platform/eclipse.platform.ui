@@ -251,5 +251,22 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
     protected void dispatchSuspendTimeout(DebugEventHandler handler, DebugEvent resume) {
         handler.handleSuspendTimeout(resume);
     }
+    
+    /**
+     * Returns the index of the given element in the list or -1 if
+     * not present.
+     * 
+     * @param list
+     * @param element
+     * @return index or -1 if not present
+     */
+	protected int indexOf(Object[] list, Object element) {
+		for (int i = 0; i < list.length; i++) {
+			if (element.equals(list[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}    
 
 }
