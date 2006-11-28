@@ -1232,10 +1232,6 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (element instanceof ItemsListSeparator) {
 				return Display.getCurrent().getSystemColor(
 						SWT.COLOR_WIDGET_NORMAL_SHADOW);
-			} else if (element instanceof AbstractListItem
-					&& ((AbstractListItem) element).isHistory()) {
-				return Display.getCurrent().getSystemColor(
-						SWT.COLOR_WIDGET_NORMAL_SHADOW);
 			}
 
 			return null;
