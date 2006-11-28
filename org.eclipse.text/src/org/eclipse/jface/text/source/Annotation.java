@@ -61,7 +61,7 @@ public class Annotation {
 	/**
 	 * Creates a new annotation with the given properties.
 	 *
-	 * @param type the type of this annotation
+	 * @param type the unique name of this annotation type
 	 * @param isPersistent <code>true</code> if this annotation is
 	 *            persistent, <code>false</code> otherwise
 	 * @param text the text associated with this annotation
