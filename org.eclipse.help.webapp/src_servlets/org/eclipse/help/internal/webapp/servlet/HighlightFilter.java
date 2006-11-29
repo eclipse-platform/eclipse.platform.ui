@@ -28,7 +28,7 @@ public class HighlightFilter implements IFilter {
 	private static final String scriptPart5 = "advanced/highlight.js\"></script>\n"; //$NON-NLS-1$
 
 	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
-	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\">\n"; //$NON-NLS-1$
+	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
 	
 	private static final String noHighlightScript1 = "<script language=\"JavaScript\">\n<!--\nif (parent.ContentToolbarFrame) parent.ContentToolbarFrame.setButtonState(\"toggle_highlight\",\"hidden\");\n-->\n</script>\n"; //$NON-NLS-1$
 	/*
@@ -36,7 +36,7 @@ public class HighlightFilter implements IFilter {
 	 */
 	public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String uri = req.getRequestURI();
-		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm")) { //$NON-NLS-1$ //$NON-NLS-2$
+		if (uri == null) {
 			return out;
 		}
 		if (!(UrlUtil.isIE(req) || UrlUtil.isMozilla(req))) {
