@@ -200,35 +200,69 @@ public final class WorkbenchMenuService implements IMenuService {
 		return caches;
 	}
 
+	private boolean processAdditions(ContributionManager mgr, MenuAdditionCacheEntry cache) {
+		int insertionIndex = getInsertionIndex(mgr, cache.getUri());
+		if (insertionIndex == -1)
+			return false;  // can't process (yet)
+		
+		// Get the additions
+		List ciList = new ArrayList();
+		cache.getContributionItems(ciList);
+		
+		// If we have any then add them at the correct location
+		if (ciList.size() > 0) {
+			for (Iterator ciIter = ciList.iterator(); ciIter
+					.hasNext();) {
+				IContributionItem ici = (IContributionItem) ciIter.next();
+
+				// Register for 'visibleWhen' handling
+				Expression visibleWhen = cache.getVisibleWhenForItem(ici);
+				if (visibleWhen != null) {
+					menuAuthority.addContribution(new MenuActivation(ici, visibleWhen, this));
+				}
+				
+				mgr.insert(insertionIndex++, ici);
+			}
+		}
+		
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager, org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
 		List additionCaches = getAdditionsForURI(uri);
+
+		List retryList = new ArrayList();
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
 			MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator.next();
+			if (!processAdditions(mgr, cache)) {
+				retryList.add(cache);
+			}			
+		}
+		
+		// OK, iteratively loop through entries whose URI's could not
+		// be resolved until we either run out of entries or the list
+		// doesn't change size (indicating that the remaining entries
+		// can never be resolved).
+		boolean done = retryList.size() == 0;
+		while (!done) {
+			// Clone the retry list and clear it
+			List curRetry = new ArrayList(retryList);
+			int  retryCount = retryList.size();
+			retryList.clear();
 			
-			// Get the additions
-			List additions = new ArrayList();
-			cache.populateAdditions(additions);
-			
-			// If we have any then add them at the correct location
-			if (additions.size() > 0) {
-				int insertionIndex = getInsertionIndex(mgr, uri);
-				for (Iterator additionIter = additions.iterator(); additionIter
-						.hasNext();) {
-					IContributionItem ici = (IContributionItem) additionIter.next();
-
-					// Register for 'visibleWhen' handling
-					Expression visibleWhen = cache.getVisibleWhenForItem(ici);
-					if (visibleWhen != null) {
-						menuAuthority.addContribution(new MenuActivation(ici, visibleWhen, this));
-					}
-					
-					mgr.insert(insertionIndex++, ici);
-				}
+			// Walk the current list seeing if any entries can now be resolved
+			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
+				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator.next();
+				if (!processAdditions(mgr, cache))
+					retryList.add(cache);
 			}
 			
+			// We're done if the retryList is now empty (everything done) or
+			// if the list hasn't changed at all (no hope)
+			done = (retryList.size() == 0) || (retryList.size() == retryCount);
 		}
 		
 		// Now, recurse through any sub-menus
@@ -249,24 +283,29 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	private int getInsertionIndex(ContributionManager mgr, MenuLocationURI uri) {
 		String query = uri.getQuery();
-		if (query.length() == 0)
-			return 0;
 		
-		// Should be in the form "[before|after]=id"
-		String[] queryParts = Util.split(query, '=');
-		if (queryParts[1].length() > 0) {
-			int indexOfId = mgr.indexOf(queryParts[1]);
-			if (indexOfId==-1) {
-				return 0;
+		int additionsIndex = -1;
+
+		// No Query means 'after=additions' (if ther) or
+		// the end of the menu
+		if (query.length() == 0) {
+			additionsIndex = mgr.indexOf("additions"); //$NON-NLS-1$
+			if (additionsIndex == -1)
+				additionsIndex = mgr.getItems().length;
+			else
+				++additionsIndex;
+		}
+		else {
+			// Should be in the form "[before|after]=id"
+			String[] queryParts = Util.split(query, '=');
+			if (queryParts[1].length() > 0) {
+				additionsIndex = mgr.indexOf(queryParts[1]);
+				if (additionsIndex != -1 && queryParts[0].equals("after")) //$NON-NLS-1$
+					additionsIndex++;
 			}
-			
-			// Increment if we're 'after' this id
-			if (queryParts[0].equals("after")) //$NON-NLS-1$
-				indexOfId++;
-			return indexOfId;
 		}
 		
-		return 0;
+		return additionsIndex;
 	}
 
 	/* (non-Javadoc)

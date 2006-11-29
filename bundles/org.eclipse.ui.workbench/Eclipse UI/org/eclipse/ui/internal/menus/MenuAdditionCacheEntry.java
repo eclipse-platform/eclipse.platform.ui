@@ -113,7 +113,7 @@ public class MenuAdditionCacheEntry {
 	 * Populate the list
 	 * @param additions
 	 */
-	public void populateAdditions(List additions) {
+	public void getContributionItems(List additions) {
 		additions.clear();
 		
 		IConfigurationElement[] items = additionElement.getChildren();
@@ -154,9 +154,6 @@ public class MenuAdditionCacheEntry {
 				additions.add(newItem);
 				iciToConfigElementMap.put(newItem, items[i]);
 			}
-//			else {
-//				System.out.println("Bad Item"); //$NON-NLS-1$
-//			}
 		}
 	}
 
