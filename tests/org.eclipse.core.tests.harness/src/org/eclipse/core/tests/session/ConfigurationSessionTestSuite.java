@@ -32,7 +32,8 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		"org.eclipse.core.runtime.compatibility.registry",
 		"org.eclipse.equinox.registry@2:start", 
 		"org.eclipse.equinox.preferences", 
-		"org.eclipse.core.contenttype", 
+		"org.eclipse.core.contenttype",
+		"org.eclipse.equinox.app@2",
 		// -- end of new
 		"org.eclipse.core.runtime@2:start", 
 		"org.eclipse.core.runtime.compatibility", 

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
+import org.eclipse.equinox.app.IApplication;
+
 /**
  * Bootstrap type for the platform. Platform runnables represent executable 
  * entry points into plug-ins.  Runnables can be configured into the Platform's
@@ -21,6 +23,7 @@ package org.eclipse.core.runtime;
  * </p>
  * 
  * @since 3.0
+ * @deprecated use {@link IApplication}
  */
 public interface IPlatformRunnable {
 

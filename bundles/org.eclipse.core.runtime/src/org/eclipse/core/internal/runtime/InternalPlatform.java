@@ -23,13 +23,14 @@ import org.eclipse.core.internal.runtime.auth.AuthorizationHandler;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.equinox.internal.app.*;
+import org.eclipse.equinox.internal.app.Activator;
 import org.eclipse.osgi.framework.log.FrameworkLog;
-import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
-import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
@@ -40,12 +41,6 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public final class InternalPlatform {
 
-	// Command line args as seen by the Eclipse runtime. allArgs does NOT
-	// include args consumed by the underlying framework (e.g., OSGi)
-	private static String[] allArgs = new String[0];
-	private static String[] appArgs = new String[0];
-	private static final String APPLICATION = "-application"; //$NON-NLS-1$	
-
 	private static final String[] ARCH_LIST = {Platform.ARCH_PA_RISC, //
 			Platform.ARCH_PPC, //
 			Platform.ARCH_SPARC, //
@@ -53,29 +48,18 @@ public final class InternalPlatform {
 			Platform.ARCH_AMD64, // 
 			Platform.ARCH_IA64, //
 			Platform.ARCH_IA64_32};
-	private static final String BOOT = "-boot"; //$NON-NLS-1$
-	private static final String CLASSLOADER_PROPERTIES = "-classloaderProperties"; //$NON-NLS-1$	
 
 	// debug support:  set in loadOptions()
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_PLUGIN_PREFERENCES = false;
 
-	private static Runnable splashHandler = null;
-	private static final String FEATURE = "-feature"; //$NON-NLS-1$
-	private static final String FIRST_USE = "-firstUse"; //$NON-NLS-1$
-	private static String[] frameworkArgs = new String[0];
-
+	static boolean splashEnded = false;
 	private static boolean initialized;
 	private static final String KEYRING = "-keyring"; //$NON-NLS-1$
 	private static String keyringFile;
 
 	//XXX This is not synchronized
 	private static Map logs = new HashMap(5);
-	private static final String NEW_UPDATES = "-newUpdates"; //$NON-NLS-1$
-
-	// obsolete command line args
-	private static final String NO_PACKAGE_PREFIXES = "-noPackagePrefixes"; //$NON-NLS-1$
-	private static final String NO_UPDATE = "-noUpdate"; //$NON-NLS-1$
 
 	private static final String[] OS_LIST = {Platform.OS_AIX, Platform.OS_HPUX, Platform.OS_LINUX, Platform.OS_MACOSX, Platform.OS_QNX, Platform.OS_SOLARIS, Platform.OS_WIN32};
 	private static String password = ""; //$NON-NLS-1$
@@ -83,10 +67,7 @@ public final class InternalPlatform {
 	private static PlatformLogWriter platformLog = null;
 
 	private static final String PLUGIN_PATH = ".plugin-path"; //$NON-NLS-1$
-	private static final String PLUGINS = "-plugins"; //$NON-NLS-1$
 
-	// command line options
-	private static final String PRODUCT = "-product"; //$NON-NLS-1$	
 	public static final String PROP_APPLICATION = "eclipse.application"; //$NON-NLS-1$
 	public static final String PROP_ARCH = "osgi.arch"; //$NON-NLS-1$
 	public static final String PROP_CONFIG_AREA = "osgi.configuration.area"; //$NON-NLS-1$
@@ -106,7 +87,6 @@ public final class InternalPlatform {
 
 	private static final InternalPlatform singleton = new InternalPlatform();
 
-	private static final String UPDATE = "-update"; //$NON-NLS-1$
 	private static final String[] WS_LIST = {Platform.WS_CARBON, Platform.WS_GTK, Platform.WS_MOTIF, Platform.WS_PHOTON, Platform.WS_WIN32};
 	private Path cachedInstanceLocation; // Cache the path of the instance location
 	private ServiceTracker configurationLocation = null;
@@ -115,11 +95,7 @@ public final class InternalPlatform {
 	private Map groupProviders = new HashMap(3);
 	private ServiceTracker installLocation = null;
 	private ServiceTracker instanceLocation = null;
-	private boolean missingProductReported = false;
-	private IProduct product;
 	private AdapterManagerListener adapterManagerListener = null;
-	private String applicationId;
-	private Properties commandLineProperties = new Properties();
 
 	private Plugin runtimeInstance; // Keep track of the plugin object for runtime in case the backward compatibility is run.
 
@@ -132,9 +108,10 @@ public final class InternalPlatform {
 	private ServiceTracker debugTracker = null;
 	private ServiceTracker contentTracker = null;
 	private ServiceTracker preferencesTracker = null;
-	private ServiceTracker productTracker = null;
 	private ServiceTracker userLocation = null;
 	private ServiceTracker groupProviderTracker = null;
+
+	private IProduct product;
 
 	public static InternalPlatform getDefault() {
 		return singleton;
@@ -165,21 +142,14 @@ public final class InternalPlatform {
 	 * @see Platform#endSplash()
 	 */
 	public void endSplash() {
-		final Runnable handler = splashHandler;
-		if (handler == null)
-			return;
-		//clear reference to handler to avoid calling it again and to avoid object leak
-		splashHandler = null;
-		SafeRunner.run(new ISafeRunnable() {
-			public void handleException(Throwable e) {
-				// just continue ... the exception has already been logged by
-				// handleException(ISafeRunnable)
-			}
-
-			public void run() throws Exception {
-				handler.run();
-			}
-		});
+		synchronized (this) {
+			if (splashEnded)
+				return; // do not do this more than once
+			splashEnded = true;
+		}
+		IApplicationContext applicationContext = getApplicationContext();
+		if (applicationContext != null)
+			applicationContext.applicationRunning();
 	}
 
 	/**
@@ -191,29 +161,7 @@ public final class InternalPlatform {
 	}
 
 	public String[] getApplicationArgs() {
-		return appArgs;
-	}
-
-	public String getApplicationId() {
-		if (applicationId != null)
-			return applicationId;
-
-		// try commandLineProperties
-		applicationId = commandLineProperties.getProperty(PROP_APPLICATION);
-		if (applicationId != null)
-			return applicationId;
-
-		// try bundleContext properties
-		applicationId = context.getProperty(PROP_APPLICATION);
-		if (applicationId != null)
-			return applicationId;
-
-		//Derive the application from the product information
-		IProduct eclipseProduct = getProduct();
-		if (eclipseProduct != null) {
-			applicationId = eclipseProduct.getApplication();
-		}
-		return applicationId;
+		return CommandLineArgs.getApplicationArgs();
 	}
 
 	public boolean getBooleanOption(String option, boolean defaultValue) {
@@ -328,7 +276,7 @@ public final class InternalPlatform {
 	}
 
 	public String[] getCommandLineArgs() {
-		return allArgs;
+		return CommandLineArgs.getAllArgs();
 	}
 
 	public Location getConfigurationLocation() {
@@ -562,54 +510,15 @@ public final class InternalPlatform {
 	public IProduct getProduct() {
 		if (product != null)
 			return product;
-
-		// try commandLineProperties
-		String productId = commandLineProperties.getProperty(PROP_PRODUCT);
-
-		if (productId == null) {
-			// try bundleContext properties
-			if (context == null)
-				return null;
-			productId = context.getProperty(InternalPlatform.PROP_PRODUCT);
-			if (productId == null)
-				return null;
-		}
-		IConfigurationElement[] entries = InternalPlatform.getDefault().getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT, productId);
-		if (entries.length > 0) {
-			// There should only be one product with the given id so just take the first element
-			product = new Product(productId, entries[0]);
-			return product;
-		}
-		IConfigurationElement[] elements = InternalPlatform.getDefault().getRegistry().getConfigurationElementsFor(Platform.PI_RUNTIME, Platform.PT_PRODUCT);
-		List logEntries = null;
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
-			if (element.getName().equalsIgnoreCase("provider")) { //$NON-NLS-1$
-				try {
-					IProductProvider provider = (IProductProvider) element.createExecutableExtension("run"); //$NON-NLS-1$
-					IProduct[] products = provider.getProducts();
-					for (int j = 0; j < products.length; j++) {
-						IProduct provided = products[j];
-						if (provided.getId().equalsIgnoreCase(productId)) {
-							product = provided;
-							return product;
-						}
-					}
-				} catch (CoreException e) {
-					if (logEntries == null)
-						logEntries = new ArrayList(3);
-					logEntries.add(new FrameworkLogEntry(Platform.PI_RUNTIME, NLS.bind(Messages.provider_invalid, element.getParent().toString()), 0, e, null));
-				}
-			}
-		}
-		if (logEntries != null)
-			InternalPlatform.getDefault().getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Messages.provider_invalid_general, 0, null, (FrameworkLogEntry[]) logEntries.toArray()));
-
-		if (!missingProductReported) {
-			InternalPlatform.getDefault().getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, NLS.bind(Messages.product_notFound, productId), 0, null, null));
-			missingProductReported = true;
-		}
-		return null;
+		EclipseAppContainer container = Activator.getContainer();
+		IBranding branding = container == null ? null : container.getBranding();
+		if (branding == null)
+			return null;
+		Object brandingProduct = branding.getProduct();
+		if (!(brandingProduct instanceof IProduct))
+			brandingProduct = new Product(branding);
+		product = (IProduct) brandingProduct;
+		return product;
 	}
 
 	public IExtensionRegistry getRegistry() {
@@ -635,24 +544,20 @@ public final class InternalPlatform {
 		return runtimeInstance;
 	}
 
-	private Runnable getSplashHandler() {
+	private IApplicationContext getApplicationContext() {
 		ServiceReference[] ref;
 		try {
-			ref = context.getServiceReferences(Runnable.class.getName(), null);
+			ref = context.getServiceReferences(IApplicationContext.class.getName(), "(eclipse.application.type=main.thread)"); //$NON-NLS-1$
 		} catch (InvalidSyntaxException e) {
 			return null;
 		}
-		if (ref == null)
+		if (ref == null || ref.length == 0)
 			return null;
-		// assumes the endInitializationHandler is available as a service
-		// see EclipseStarter.publishSplashScreen
-		for (int i = 0; i < ref.length; i++) {
-			String name = (String) ref[i].getProperty("name"); //$NON-NLS-1$
-			if (name != null && name.equals("splashscreen")) { //$NON-NLS-1$
-				Runnable result = (Runnable) context.getService(ref[i]);
-				context.ungetService(ref[i]);
-				return result;
-			}
+		// assumes the application context is available as a service
+		IApplicationContext result = (IApplicationContext) context.getService(ref[0]);
+		if (result != null) {
+			context.ungetService(ref[0]);
+			return result;
 		}
 		return null;
 	}
@@ -766,105 +671,23 @@ public final class InternalPlatform {
 		RuntimeLog.log(status);
 	}
 
-	private String[] processCommandLine(String[] args) {
-		if (args == null)
-			return args;
-		allArgs = args;
-		if (args.length == 0)
-			return args;
+	private void processCommandLine(String[] args) {
+		if (args == null || args.length == 0)
+			return;
 
-		int[] configArgs = new int[args.length];
-		//need to initialize the first element to something that could not be an index.
-		configArgs[0] = -1;
-		int configArgIndex = 0;
 		for (int i = 0; i < args.length; i++) {
-			boolean found = false;
-			// check for args without parameters (i.e., a flag arg)
-
-			// consume obsolete args
-			if (args[i].equalsIgnoreCase(CLASSLOADER_PROPERTIES))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(NO_PACKAGE_PREFIXES))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(PLUGINS))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(FIRST_USE))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(NO_UPDATE))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(NEW_UPDATES))
-				found = true; // ignored
-			if (args[i].equalsIgnoreCase(UPDATE))
-				found = true; // ignored
-
-			// done checking for args.  Remember where an arg was found 
-			if (found) {
-				configArgs[configArgIndex++] = i;
-				continue;
-			}
 			// check for args with parameters
 			if (i == args.length - 1 || args[i + 1].startsWith("-")) //$NON-NLS-1$
 				continue;
 			String arg = args[++i];
 
 			// look for the keyring file
-			if (args[i - 1].equalsIgnoreCase(KEYRING)) {
+			if (args[i - 1].equalsIgnoreCase(KEYRING))
 				keyringFile = arg;
-				found = true;
-			}
-
 			// look for the user password.  
-			if (args[i - 1].equalsIgnoreCase(PASSWORD)) {
+			if (args[i - 1].equalsIgnoreCase(PASSWORD))
 				password = arg;
-				found = true;
-			}
-
-			// look for the product to run
-			// treat -feature as a synonym for -product for compatibility.
-			if (args[i - 1].equalsIgnoreCase(PRODUCT) || args[i - 1].equalsIgnoreCase(FEATURE)) {
-				// use the long way to set the property to compile against eeminimum
-				commandLineProperties.setProperty(PROP_PRODUCT, arg);
-				found = true;
-			}
-
-			// look for the application to run.  
-			if (args[i - 1].equalsIgnoreCase(APPLICATION)) {
-				// use the long way to set the property to compile against eeminimum
-				commandLineProperties.setProperty(PROP_APPLICATION, arg);
-				found = true;
-			}
-
-			// consume obsolete args for compatibility
-			if (args[i - 1].equalsIgnoreCase(CLASSLOADER_PROPERTIES))
-				found = true; // ignore
-			if (args[i - 1].equalsIgnoreCase(BOOT))
-				found = true; // ignore
-
-			// done checking for args.  Remember where an arg was found 
-			if (found) {
-				configArgs[configArgIndex++] = i - 1;
-				configArgs[configArgIndex++] = i;
-			}
 		}
-
-		// remove all the arguments consumed by this argument parsing
-		if (configArgIndex == 0) {
-			appArgs = args;
-			return args;
-		}
-		appArgs = new String[args.length - configArgIndex];
-		frameworkArgs = new String[configArgIndex];
-		configArgIndex = 0;
-		int j = 0;
-		int k = 0;
-		for (int i = 0; i < args.length; i++) {
-			if (i == configArgs[configArgIndex]) {
-				frameworkArgs[k++] = args[i];
-				configArgIndex++;
-			} else
-				appArgs[j++] = args[i];
-		}
-		return appArgs;
 	}
 
 	private URL[] readPluginPath(InputStream input) {
@@ -914,7 +737,7 @@ public final class InternalPlatform {
 	 */
 	public void start(BundleContext runtimeContext) {
 		this.context = runtimeContext;
-		splashHandler = getSplashHandler();
+		splashEnded = false;
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
 		initializeDebugFlags();
 		initialized = true;
@@ -1001,10 +824,6 @@ public final class InternalPlatform {
 	}
 
 	private void closeOSGITrackers() {
-		if (productTracker != null) {
-			productTracker.close();
-			productTracker = null;
-		}
 		if (preferencesTracker != null) {
 			preferencesTracker.close();
 			preferencesTracker = null;

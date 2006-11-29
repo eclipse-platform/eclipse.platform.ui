@@ -11,19 +11,14 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
-import java.util.Hashtable;
 import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.runnable.ParameterizedRunnable;
-import org.eclipse.osgi.util.NLS;
+import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.osgi.framework.*;
 
 /**
  * Activator for the Eclipse runtime.
  */
 public class PlatformActivator extends Plugin implements BundleActivator {
-	private static final String PROP_ECLIPSE_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
-	private static final String PROP_ECLIPSE_APPLICATION = "eclipse.application"; //$NON-NLS-1$
-
 	private static BundleContext context;
 	private ServiceRegistration entryLocatorRegistration;
 
@@ -34,7 +29,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	public void start(BundleContext runtimeContext) throws Exception {
 		PlatformActivator.context = runtimeContext;
 		InternalPlatform.getDefault().start(runtimeContext);
-		registerApplicationService();
+		startAppContainer();
 		InternalPlatform.getDefault().setRuntimeInstance(this);
 		super.start(runtimeContext);
 	}
@@ -47,46 +42,9 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.getDefault().setRuntimeInstance(null);
 	}
 
-	private void registerApplicationService() {
-		ParameterizedRunnable work = new ParameterizedRunnable() {
-			public Object run(Object arg) throws Exception {
-				IPlatformRunnable application = null;
-				String applicationId = InternalPlatform.getDefault().getApplicationId();
-				if (applicationId == null)
-					throw new RuntimeException(Messages.application_noIdFound);
-				IExtensionRegistry registry = InternalPlatform.getDefault().getRegistry();
-				IExtension applicationExtension = registry.getExtension(Platform.PI_RUNTIME, Platform.PT_APPLICATIONS, applicationId);
-				if (applicationExtension == null) {
-					IExtension[] availableApps = registry.getExtensionPoint(Platform.PI_RUNTIME + '.' + Platform.PT_APPLICATIONS).getExtensions();
-					String availableAppsString = "<NONE>"; //$NON-NLS-1$
-					if (availableApps.length != 0) {
-						availableAppsString = availableApps[0].getUniqueIdentifier();
-						for (int i = 1; i < availableApps.length; i++) {
-							availableAppsString = availableAppsString + ", " + availableApps[i].getUniqueIdentifier(); //$NON-NLS-1$
-						}
-					}
-					throw new RuntimeException(NLS.bind(Messages.application_notFound, applicationId, availableAppsString));
-				}
-				IConfigurationElement[] configs = applicationExtension.getConfigurationElements();
-				if (configs.length == 0)
-					throw new RuntimeException(NLS.bind(Messages.application_invalidExtension, applicationId));
-				IConfigurationElement config = configs[0];
-				application = (IPlatformRunnable) config.createExecutableExtension("run"); //$NON-NLS-1$
-				// if the given arg is null the pass in the left over command line args.
-				if (arg == null)
-					arg = InternalPlatform.getDefault().getApplicationArgs();
-				Object result = application.run(arg);
-				int exitCode = result instanceof Integer ? ((Integer) result).intValue() : 0;
-				// use the long way to set the property to compile against eeminimum
-				System.getProperties().setProperty(PROP_ECLIPSE_EXITCODE, Integer.toString(exitCode));
-				if (InternalPlatform.DEBUG)
-					System.out.println(NLS.bind(Messages.application_returned, (new String[] {applicationId, result == null ? "null" : result.toString()}))); //$NON-NLS-1$
-				return result;
-			}
-		};
-		Hashtable properties = new Hashtable(1);
-		properties.put(PROP_ECLIPSE_APPLICATION, "default"); //$NON-NLS-1$ 
-		context.registerService(ParameterizedRunnable.class.getName(), work, properties);
+	private void startAppContainer() {
+		// just using a class out of app admin to force it to lazy-start
+		CommandLineArgs.getApplicationArgs();
 	}
 
 	private void unregisterEntryLocator() {

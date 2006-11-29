@@ -18,12 +18,6 @@ public class Messages extends NLS {
 	// Adapter manager
 	public static String adapters_badAdapterFactory;
 
-	// application
-	public static String application_invalidExtension;
-	public static String application_noIdFound;
-	public static String application_notFound;
-	public static String application_returned;
-
 	// authorization
 	public static String auth_notAvailable;
 
