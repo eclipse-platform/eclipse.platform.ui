@@ -268,13 +268,18 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 
 		if (decorator instanceof IColorDecorator) {
 			IColorDecorator colorDecorator = (IColorDecorator) decorator;
-			settings.setBackground(colorDecorator.decorateBackground(element));
-			settings.setForeground(colorDecorator.decorateForeground(element));
+			Color color = colorDecorator.decorateBackground(element);
+			if (color != null)
+				settings.setBackground(color);
+			color = colorDecorator.decorateForeground(element);
+			if (color != null)
+				settings.setForeground(color);
 		}
 
 		if (decorator instanceof IFontDecorator) {
-			settings
-					.setFont(((IFontDecorator) decorator).decorateFont(element));
+			Font font = ((IFontDecorator) decorator).decorateFont(element);
+			if (font != null)
+				settings.setFont(font);
 		}
 
 	}
@@ -456,7 +461,7 @@ public class DecoratingLabelProvider extends CellLabelProvider implements
 
 		ViewerLabel label = new ViewerLabel(cell.getText(), cell.getImage());
 
-		//Set up the initial settings from the label provider
+		// Set up the initial settings from the label provider
 		label.setBackground(getBackground(cell.getElement()));
 		label.setForeground(getForeground(cell.getElement()));
 		label.setFont(getFont(cell.getElement()));
