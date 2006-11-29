@@ -293,37 +293,41 @@ public class StatusManager {
 		 *            the handler to add
 		 */
 		public void addHandler(AbstractStatusHandler handler) {
-			add(this.map, getPattern(handler), handler);
+			add(this.map, (String) handler.getParam("prefix"), handler); //$NON-NLS-1$
 		}
 
-		private void add(Map map, String pattern, AbstractStatusHandler handler) {
-			if (pattern == null) {
+		/*
+		 * Recursively searches the tree for the best place for the handler
+		 */
+		private void add(Map map, String prefix, AbstractStatusHandler handler) {
+			if (prefix == null) {
 				if (map.get(ASTERISK) == null) {
 					map.put(ASTERISK, new ArrayList());
 				}
 
 				((List) map.get(ASTERISK)).add(handler);
 			} else {
+				int delimIndex = prefix.indexOf("."); //$NON-NLS-1$
 
-				String s[] = pattern.split("\\.|$", 2); //$NON-NLS-1$
+				String pre = null;
+				String post = null;
 
-				if (map.get(s[0]) == null) {
-					map.put(s[0], new HashMap());
+				if (delimIndex != -1) {
+					pre = prefix.substring(0, delimIndex);
+
+					if (delimIndex < prefix.length() - 1) {
+						post = prefix.substring(delimIndex + 1);
+					}
+				} else {
+					pre = prefix;
 				}
 
-				add((Map) map.get(s[0]),
-						(s[1].equals("") ? null : s[1]), handler); //$NON-NLS-1$
+				if (map.get(pre) == null) {
+					map.put(pre, new HashMap());
+				}
+
+				add((Map) map.get(pre), post, handler);
 			}
-		}
-
-		private String getPattern(AbstractStatusHandler handler) {
-			Object pattern = handler.getParam("pattern"); //$NON-NLS-1$
-
-			if (pattern != null) {
-				return (String) pattern;
-			}
-
-			return null;
 		}
 
 		/**
@@ -337,18 +341,35 @@ public class StatusManager {
 			return get(pluginId, this.map);
 		}
 
+		/*
+		 * Recursively searches the prefix tree for the most specific handler
+		 * for the given pluginId.
+		 */
 		private List get(String pluginId, Map map) {
 			if (pluginId == null) {
 				return getAsteriskList(map);
 			}
 
-			String s[] = pluginId.split("\\.|$", 2); //$NON-NLS-1$
+			int delimIndex = pluginId.indexOf("."); //$NON-NLS-1$
 
-			if (map.get(s[0]) == null) {
+			String pre = null;
+			String post = null;
+
+			if (delimIndex != -1) {
+				pre = pluginId.substring(0, delimIndex);
+
+				if (delimIndex < pluginId.length() - 1) {
+					post = pluginId.substring(delimIndex + 1);
+				}
+			} else {
+				pre = pluginId;
+			}
+
+			if (map.get(pre) == null) {
 				return getAsteriskList(map);
 			}
 
-			return get((s[1].equals("") ? null : s[1]), (Map) map.get(s[0])); //$NON-NLS-1$
+			return get(post, (Map) map.get(pre));
 		}
 
 		private List getAsteriskList(Map map) {
