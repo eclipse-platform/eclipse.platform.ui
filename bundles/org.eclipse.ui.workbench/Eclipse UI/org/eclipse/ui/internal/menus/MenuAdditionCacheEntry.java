@@ -62,6 +62,33 @@ public class MenuAdditionCacheEntry {
 		uri = new MenuLocationURI(locationURI);
 
 		menuSvc = service;
+
+		generateSubCaches();
+	}
+
+	/**
+	 * 
+	 */
+	private void generateSubCaches() {
+		IConfigurationElement[] items = additionElement.getChildren();
+		for (int i = 0; i < items.length; i++) {
+			String itemType = items[i].getName();
+			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
+				// Menus are special...we have to add any sub menu
+				// items into their own cache
+
+				// -ALL- contibuted menus must have an id so create one
+				// if necessary
+				String menuId = getId(items[i]);
+				MenuLocationURI uri = new MenuLocationURI("menu:" + menuId); //$NON-NLS-1$
+				List subMenuCache = menuSvc.getAdditionsForURI(uri);
+				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
+						items[i], menuSvc);
+				// Add the 'original' definition to the start of the list
+				subMenuCache.add(0, subMenuEntry);
+			}
+		}
+
 	}
 
 	public Expression getVisibleWhenForItem(IContributionItem item) {
@@ -124,19 +151,6 @@ public class MenuAdditionCacheEntry {
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				newItem = createMenuAdditionContribution(items[i]);
 
-				// Menus are special...we have to add any sub menu
-				// items into their own cache
-
-				// -ALL- contibuted menus must have an id so create one
-				// if necessary
-				String menuId = getId(items[i]);
-				MenuLocationURI uri = new MenuLocationURI("menu:" + menuId); //$NON-NLS-1$
-				List subMenuCache = menuSvc.getAdditionsForURI(uri);
-				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						items[i], menuSvc);
-
-				// Add the 'original' definition to the start of the list
-				subMenuCache.add(0, subMenuEntry);
 			}
 
 			// Cache the relationship between the ICI and the

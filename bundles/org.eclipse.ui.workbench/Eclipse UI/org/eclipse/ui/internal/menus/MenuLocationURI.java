@@ -72,4 +72,10 @@ public class MenuLocationURI {
 		return vals[0];
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString() {
+		return rawString;
+	}
 }
