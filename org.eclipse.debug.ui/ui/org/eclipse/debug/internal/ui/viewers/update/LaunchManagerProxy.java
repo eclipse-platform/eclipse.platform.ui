@@ -80,15 +80,11 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	public void launchesChanged(ILaunch[] launches) {	
 	}
 	
-	protected int indexOf(Object element, Object[] list) {
-		for (int i = 0; i < list.length; i++) {
-			if (element == list[i]) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
+	/**
+	 * Convenience method for firing a delta 
+	 * @param launches the launches to set in the delta
+	 * @param launchFlags the flags for the delta
+	 */
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {
 		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NO_CHANGE);
 		for (int i = 0; i < launches.length; i++) {

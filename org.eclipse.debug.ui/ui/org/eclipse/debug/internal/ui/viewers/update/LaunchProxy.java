@@ -132,6 +132,12 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		}
 	}
 	
+	/**
+	 * Finds the index of the selected element in the given list
+	 * @param element the element to get the index for
+	 * @param list the list to search for the index
+	 * @return the index of the specified element in the given array or -1 if not found
+	 */
 	protected int indexOf(Object element, Object[] list) {
 		for (int i = 0; i < list.length; i++) {
 			if (element == list[i]) {
@@ -141,6 +147,10 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		return -1;
 	}
 	
+	/**
+	 * Convenience method to fire a delta
+	 * @param flags the flags to set on the delta
+	 */
 	protected void fireDelta(int flags) {
 		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
 		delta.addNode(fLaunch, flags);	
