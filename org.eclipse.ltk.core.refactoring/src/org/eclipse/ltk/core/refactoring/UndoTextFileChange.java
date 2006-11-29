@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring;
 
+import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.UndoEdit;
 
@@ -164,8 +165,6 @@ public class UndoTextFileChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
-		if (fValidationState.isValid(needsSaving(), false).hasFatalError())
-			return new NullChange();
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
@@ -190,7 +189,20 @@ public class UndoTextFileChange extends Change {
 			}
 			return createUndoChange(redo, currentStamp);
 		} catch (BadLocationException e) {
-			throw Changes.asCoreException(e);
+			if (! fValidationState.wasDerived())
+				throw Changes.asCoreException(e);
+			else
+				return new NullChange();
+		} catch (MalformedTreeException e) {
+			if (! fValidationState.wasDerived())
+				throw Changes.asCoreException(e);
+			else
+				return new NullChange();
+		} catch (CoreException e) {
+			if (! fValidationState.wasDerived())
+				throw e;
+			else
+				return new NullChange();
 		} finally {
 			if (buffer != null)
 				manager.disconnect(fFile.getFullPath(), new SubProgressMonitor(pm, 1));

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import org.eclipse.text.edits.MalformedTreeException;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,6 +52,13 @@ public class Changes {
 		String message= e.getMessage();
 		if (message == null)
 			message= "BadLocationException"; //$NON-NLS-1$
+		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.BAD_LOCATION, message, e));
+	}
+	
+	public static CoreException asCoreException(MalformedTreeException e) {
+		String message= e.getMessage();
+		if (message == null)
+			message= "MalformedTreeException"; //$NON-NLS-1$
 		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.BAD_LOCATION, message, e));
 	}
 }

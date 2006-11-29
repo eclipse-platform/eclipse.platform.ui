@@ -89,6 +89,10 @@ public abstract class BufferValidationState {
 		return fWasDirty;
 	}
 	
+	public boolean wasDerived() {
+		return fDerived;
+	}
+	
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
 		return isValid(needsSaving, false);
 	}
