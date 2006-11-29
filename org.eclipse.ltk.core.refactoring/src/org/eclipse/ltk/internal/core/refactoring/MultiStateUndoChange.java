@@ -32,6 +32,7 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.ContentStamp;
+import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 
@@ -180,7 +181,7 @@ public class MultiStateUndoChange extends Change {
 		pm.beginTask("", 1); //$NON-NLS-1$
 		ITextFileBuffer buffer= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath());
 		fDirty= buffer != null && buffer.isDirty();
-		RefactoringStatus result= fValidationState.isValid(needsSaving());
+		RefactoringStatus result= fValidationState.isValid(needsSaving(), true);
 		pm.worked(1);
 		return result;
 	}
@@ -193,6 +194,8 @@ public class MultiStateUndoChange extends Change {
 	 * {@inheritDoc}
 	 */
 	public Change perform(IProgressMonitor pm) throws CoreException {
+		if (fValidationState.isValid(needsSaving(), false).hasFatalError())
+			return new NullChange();
 		if (pm == null)
 			pm= new NullProgressMonitor();
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();

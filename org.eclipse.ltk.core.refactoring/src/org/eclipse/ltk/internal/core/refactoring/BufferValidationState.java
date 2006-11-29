@@ -31,10 +31,11 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
 public abstract class BufferValidationState {
 	
-	protected IFile fFile;
-	protected boolean fExisted;
-	protected boolean fWasDirty;
-	protected String fEncoding;
+	protected final IFile fFile;
+	protected final boolean fExisted;
+	protected final boolean fDerived;
+	protected final boolean fWasDirty;
+	protected final String fEncoding;
 
 	protected static class ModificationStamp {
 		private int fKind;
@@ -89,6 +90,13 @@ public abstract class BufferValidationState {
 	}
 	
 	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
+		return isValid(needsSaving, false);
+	}
+	
+	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
+		if (resilientForDerived && fDerived) {
+			return new RefactoringStatus();
+		}
 		if (!fExisted) {
 			if (fFile.exists())
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(
@@ -130,12 +138,15 @@ public abstract class BufferValidationState {
 	protected BufferValidationState(IFile file) {
 		fFile= file;
 		fExisted= file.exists();
+		fDerived= file.isDerived();
 		fWasDirty= isDirty(fFile);
+		String encoding;
 		try {
-			fEncoding= file.getCharset(true);
+			encoding= file.getCharset(true);
 		} catch (CoreException e) {
-			fEncoding= null;
+			encoding= null;
 		}
+		fEncoding= encoding;
 	}
 	
 	protected IDocument getDocument() {
@@ -244,8 +255,8 @@ class NoStampValidationState extends BufferValidationState {
 		getDocument().addDocumentListener(fDocumentListener);
 	}
 
-	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
-		RefactoringStatus result= super.isValid(needsSaving);
+	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
+		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
 		if (result.hasFatalError())
 			return result;
 		// If we have initialized the content stamp with the null stamp then we can't compare it with 
@@ -295,8 +306,8 @@ class ModificationStampValidationState extends BufferValidationState {
 		fModificationStamp= getModificationStamp();
 	}
 	
-	public RefactoringStatus isValid(boolean needsSaving) throws CoreException {
-		RefactoringStatus result= super.isValid(needsSaving);
+	public RefactoringStatus isValid(boolean needsSaving, boolean resilientForDerived) throws CoreException {
+		RefactoringStatus result= super.isValid(needsSaving, resilientForDerived);
 		if (result.hasFatalError())
 			return result;
 		ModificationStamp currentStamp= getModificationStamp();
