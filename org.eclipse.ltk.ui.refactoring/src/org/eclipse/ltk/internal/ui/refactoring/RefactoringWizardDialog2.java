@@ -609,11 +609,13 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		
 		buttonBar= createButtonBar(result);
 		
-		fCurrentPage.createControl(fPageContainer);
-		makeVisible(fCurrentPage);
-				
-		updateMessage();
-		updateButtons();
+		if (fCurrentPage != null) {
+			fCurrentPage.createControl(fPageContainer);
+			makeVisible(fCurrentPage);
+			updateMessage();
+			updateButtons();
+		}
+		
 		applyDialogFont(result);		
 		return result;
 	}

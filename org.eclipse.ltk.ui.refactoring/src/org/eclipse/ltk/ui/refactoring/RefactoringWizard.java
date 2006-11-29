@@ -151,7 +151,6 @@ public abstract class RefactoringWizard extends Wizard {
 	
 	private int fUserInputPages;
 	private boolean fInAddPages;
-	private IWizardPage fStartPage;
 	
 	private boolean fIsChangeCreationCancelable;
 	private boolean fForcePreviewReview;
@@ -393,19 +392,14 @@ public abstract class RefactoringWizard extends Wizard {
 	 * {@inheritDoc}
 	 */
 	public IWizardPage getStartingPage() {
-		if (fStartPage != null)
-			return fStartPage;
+		if (hasUserInput())
+			return super.getStartingPage();
 		
-		if (hasUserInput()) {
-			fStartPage= super.getStartingPage();
-			return fStartPage;
-		}
 		/*
 		 * XXX: Can return null if there's no user input page and change creation has been cancelled.
 		 * The only way to avoid this would be setChangeCreationCancelable(true).
 		 */
-		fStartPage= computeUserInputSuccessorPage(null, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
-		return fStartPage;
+		return computeUserInputSuccessorPage(null, PlatformUI.getWorkbench().getActiveWorkbenchWindow());
 	}
 	
 	/**

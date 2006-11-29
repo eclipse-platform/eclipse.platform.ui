@@ -34,7 +34,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.IWizardContainer;
 
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -127,19 +127,19 @@ public class RefactoringWizardOpenOperation {
 						String message= fInitialConditions.getMessageMatchingSeverity(RefactoringStatus.FATAL);
 						MessageDialog.openInformation(parent, dialogTitle, message);
 						result[0]= INITIAL_CONDITION_CHECKING_FAILED;
-						return;
 					} else {
 						fWizard.setInitialConditionCheckingStatus(fInitialConditions);
-						
 						Dialog dialog= RefactoringUI.createRefactoringWizardDialog(fWizard, parent);
-						IWizardPage startingPage= fWizard.getStartingPage();
-						if (startingPage == null) {
+						dialog.create();
+						IWizardContainer wizardContainer= (IWizardContainer) dialog;
+						if (wizardContainer.getCurrentPage() == null)
+							/*
+							 * Don't show the dialog at all if there are no user
+							 * input pages and change creation was cancelled.
+							 */
 							result[0]= Window.CANCEL;
-							return;
-						} else {
+						else
 							result[0]= dialog.open();
-						}
-						return;
 					} 
 				} catch (InterruptedException e) {
 					canceled[0]= e;
