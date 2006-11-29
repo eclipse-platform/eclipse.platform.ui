@@ -39,7 +39,7 @@ import org.eclipse.ui.internal.util.Util;
  */
 /**
  * @since 3.3
- *
+ * 
  */
 public final class WorkbenchMenuService implements IMenuService {
 
@@ -162,27 +162,30 @@ public final class WorkbenchMenuService implements IMenuService {
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		menuAuthority.removeSourceProvider(provider);
 	}
-	
+
 	//
 	// 3.3 common menu service information
 	//
 	private Map uriToManager = new HashMap();
 
 	/**
-	 * Construct an 'id' string from the given URI. The resulting
-	 * 'id' is the part of the URI not containing the query:
+	 * Construct an 'id' string from the given URI. The resulting 'id' is the
+	 * part of the URI not containing the query:
 	 * <p>
 	 * i.e. [menu | popup | toolbar]:id
 	 * </p>
 	 * 
-	 * @param uri The URI to construct the id from
+	 * @param uri
+	 *            The URI to construct the id from
 	 * @return The id
 	 */
 	private String getIdFromURI(MenuLocationURI uri) {
 		return uri.getScheme() + ":" + uri.getPath(); //$NON-NLS-1$;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public List getAdditionsForURI(MenuLocationURI uri) {
@@ -190,58 +193,68 @@ public final class WorkbenchMenuService implements IMenuService {
 			return null;
 
 		List caches = (List) uriToManager.get(getIdFromURI(uri));
-		
+
 		// we always return a list
 		if (caches == null) {
 			caches = new ArrayList();
 			uriToManager.put(getIdFromURI(uri), caches);
 		}
-		
+
 		return caches;
 	}
 
-	private boolean processAdditions(ContributionManager mgr, MenuAdditionCacheEntry cache) {
+	private boolean processAdditions(ContributionManager mgr,
+			MenuAdditionCacheEntry cache) {
 		int insertionIndex = getInsertionIndex(mgr, cache.getUri());
 		if (insertionIndex == -1)
-			return false;  // can't process (yet)
-		
+			return false; // can't process (yet)
+
 		// Get the additions
 		List ciList = new ArrayList();
 		cache.getContributionItems(ciList);
-		
+
 		// If we have any then add them at the correct location
 		if (ciList.size() > 0) {
-			for (Iterator ciIter = ciList.iterator(); ciIter
-					.hasNext();) {
+			for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
 
 				// Register for 'visibleWhen' handling
 				Expression visibleWhen = cache.getVisibleWhenForItem(ici);
 				if (visibleWhen != null) {
-					menuAuthority.addContribution(new MenuActivation(ici, visibleWhen, this));
+					MenuActivation menuActivation = new MenuActivation(ici,
+							visibleWhen, menuAuthority);
+					if (ici instanceof AuthorityContributionItem) {
+						((AuthorityContributionItem) ici)
+								.setActivation(menuActivation);
+					}
+					menuAuthority.addContribution(menuActivation);
 				}
-				
+
 				mgr.insert(insertionIndex++, ici);
 			}
 		}
-		
+
 		return true;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager, org.eclipse.ui.internal.menus.MenuLocationURI)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager,
+	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
 		List additionCaches = getAdditionsForURI(uri);
 
 		List retryList = new ArrayList();
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
-			MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator.next();
+			MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator
+					.next();
 			if (!processAdditions(mgr, cache)) {
 				retryList.add(cache);
-			}			
+			}
 		}
-		
+
 		// OK, iteratively loop through entries whose URI's could not
 		// be resolved until we either run out of entries or the list
 		// doesn't change size (indicating that the remaining entries
@@ -250,27 +263,29 @@ public final class WorkbenchMenuService implements IMenuService {
 		while (!done) {
 			// Clone the retry list and clear it
 			List curRetry = new ArrayList(retryList);
-			int  retryCount = retryList.size();
+			int retryCount = retryList.size();
 			retryList.clear();
-			
+
 			// Walk the current list seeing if any entries can now be resolved
 			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
-				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator.next();
+				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator
+						.next();
 				if (!processAdditions(mgr, cache))
 					retryList.add(cache);
 			}
-			
+
 			// We're done if the retryList is now empty (everything done) or
 			// if the list hasn't changed at all (no hope)
 			done = (retryList.size() == 0) || (retryList.size() == retryCount);
 		}
-		
+
 		// Now, recurse through any sub-menus
 		IContributionItem[] curItems = mgr.getItems();
 		for (int i = 0; i < curItems.length; i++) {
 			if (curItems[i] instanceof ContributionManager) {
-				IContributionItem menuItem = (IContributionItem)curItems[i];
-				MenuLocationURI subURI = new MenuLocationURI("menu:" + menuItem.getId()); //$NON-NLS-1$
+				IContributionItem menuItem = curItems[i];
+				MenuLocationURI subURI = new MenuLocationURI(
+						"menu:" + menuItem.getId()); //$NON-NLS-1$
 				populateMenu((ContributionManager) curItems[i], subURI);
 			}
 		}
@@ -283,7 +298,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	private int getInsertionIndex(ContributionManager mgr, MenuLocationURI uri) {
 		String query = uri.getQuery();
-		
+
 		int additionsIndex = -1;
 
 		// No Query means 'after=additions' (if ther) or
@@ -294,8 +309,7 @@ public final class WorkbenchMenuService implements IMenuService {
 				additionsIndex = mgr.getItems().length;
 			else
 				++additionsIndex;
-		}
-		else {
+		} else {
 			// Should be in the form "[before|after]=id"
 			String[] queryParts = Util.split(query, '=');
 			if (queryParts[1].length() > 0) {
@@ -304,24 +318,24 @@ public final class WorkbenchMenuService implements IMenuService {
 					additionsIndex++;
 			}
 		}
-		
+
 		return additionsIndex;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String, org.eclipse.ui.internal.menus.MenuAddition)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String,
+	 *      org.eclipse.ui.internal.menus.MenuAddition)
 	 */
 	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition) {
 		uriToManager.put(getIdFromURI(uri), addition);
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#addContribution(org.eclipse.ui.internal.menus.MenuActivation)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
 	 */
-	public void addContribution(MenuActivation menuItem) {
-		menuAuthority.addContribution(menuItem);
-	}
-	
 	public IEvaluationContext getCurrentState() {
 		return menuAuthority.getCurrentState();
 	}

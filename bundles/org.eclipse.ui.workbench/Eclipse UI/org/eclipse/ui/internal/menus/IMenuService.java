@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.services.IServiceWithSources;
 
 /**
@@ -295,10 +296,12 @@ public interface IMenuService extends IServiceWithSources {
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
 
-	/**
-	 * @param menuItem
-	 */
-	public void addContribution(MenuActivation menuItem);
 	
+	/**
+	 * Get the current state as seen by the menu service.
+	 * @return an IEvaluationContext containing state variables.
+	 * 
+	 * @see ISources
+	 */
 	public IEvaluationContext getCurrentState();
 }

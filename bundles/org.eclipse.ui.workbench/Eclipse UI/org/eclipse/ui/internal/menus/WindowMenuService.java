@@ -178,14 +178,10 @@ public final class WindowMenuService implements IMenuService {
 	public void registerAdditionCache(MenuLocationURI  uri, MenuAddition addition) {
 		parent.registerAdditionCache(uri, addition);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#addContribution(org.eclipse.ui.internal.menus.MenuActivation)
-	 */
-	public void addContribution(MenuActivation menuItem) {
-		parent.addContribution(menuItem);
-	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
+	 */
 	public IEvaluationContext getCurrentState() {
 		return parent.getCurrentState();
 	}

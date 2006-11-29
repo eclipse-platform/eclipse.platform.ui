@@ -66,10 +66,11 @@ public class MenuAddition extends AdditionBase {
 			} else if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				MenuAddition newCache = new MenuAddition(items[i], menuService);
 				newCache.readAdditions(items[i], 0);
-				
-				MenuLocationURI uri = new MenuLocationURI("menu:" + newCache.getId()); //$NON-NLS-1$
+
+				MenuLocationURI uri = new MenuLocationURI(
+						"menu:" + newCache.getId()); //$NON-NLS-1$
 				menuService.registerAdditionCache(uri, newCache);
-				
+
 				additions.add(insertionIndex++, newCache);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
 					.equals(itemType)) {
@@ -117,62 +118,36 @@ public class MenuAddition extends AdditionBase {
 	}
 
 	private IContributionItem getMenuContributionItem() {
-		return new MenuManager(getLabel(), getId()) {
-			MenuActivation visibleCache = null;
-
-			public String getMenuText() {
-				return getLabel();
-			}
-			
-			public boolean isVisible() {
-				if (visibleCache==null && getVisibleWhen()!=null) {
-					visibleCache = new MenuActivation(this, getVisibleWhen(), menuService);
-					menuService.addContribution(visibleCache);
-				}
-				return visibleCache==null?true:visibleCache.evaluate(menuService.getCurrentState());
-			}
-
-			public boolean isEnabled() {
-				return true;
-			}
-
-			public void fill(Menu parent, int index) {
-				super.fill(parent, index);
-			}
-
-			public void fill(ToolBar parent, int index) {
-				super.fill(parent, index);
-			}
-		};
+		return new MenuManager(getLabel(), getId());
 	}
 
-    /**
-     * Returns the listener for SWT tool item widget events.
-     * 
-     * @return a listener for tool item events
-     */
-    private Listener getToolItemListener() {
-        if (toolItemListener  == null) {
-            toolItemListener = new Listener() {
-                public void handleEvent(Event event) {
-                    switch (event.type) {
-                    case SWT.Dispose:
-                        handleWidgetDispose(event);
-                        break;
-                    case SWT.Selection:
-                        Widget ew = event.widget;
-                        if (ew != null) {
-                            handleShowMenu(event, ((ToolItem) ew)
-                                    .getSelection());
-                        }
-                        break;
-                    }
-                }
-            };
-        }
-        return toolItemListener;
-    }
-	
+	/**
+	 * Returns the listener for SWT tool item widget events.
+	 * 
+	 * @return a listener for tool item events
+	 */
+	private Listener getToolItemListener() {
+		if (toolItemListener == null) {
+			toolItemListener = new Listener() {
+				public void handleEvent(Event event) {
+					switch (event.type) {
+					case SWT.Dispose:
+						handleWidgetDispose(event);
+						break;
+					case SWT.Selection:
+						Widget ew = event.widget;
+						if (ew != null) {
+							handleShowMenu(event, ((ToolItem) ew)
+									.getSelection());
+						}
+						break;
+					}
+				}
+			};
+		}
+		return toolItemListener;
+	}
+
 	/**
 	 * @param event
 	 * @param selection
@@ -182,26 +157,25 @@ public class MenuAddition extends AdditionBase {
 		MenuManager mgr = new MenuManager();
 		MenuLocationURI uri = new MenuLocationURI("menu:" + getId()); //$NON-NLS-1$
 		menuService.populateMenu(mgr, uri);
-		
+
 		// Create a menu and fill it
-        Widget item = event.widget;
-        ToolItem ti = (ToolItem) item;
+		Widget item = event.widget;
+		ToolItem ti = (ToolItem) item;
 		Menu m = new Menu(ti.getParent().getShell());
 		IContributionItem[] items = mgr.getItems();
 		for (int i = 0; i < items.length; i++) {
 			items[i].fill(m, i);
 		}
-		//mgr.fill(m, 0);
-		
+		// mgr.fill(m, 0);
+
 		// Show the menu if the correct location
-        if (m != null) {
-            // position the menu below the drop down item
-            Rectangle b = ti.getBounds();
-            Point p = ti.getParent().toDisplay(
-                    new Point(b.x, b.y + b.height));
-            m.setLocation(p.x, p.y); // waiting for SWT 0.42
-            m.setVisible(true);
-        }		
+		if (m != null) {
+			// position the menu below the drop down item
+			Rectangle b = ti.getBounds();
+			Point p = ti.getParent().toDisplay(new Point(b.x, b.y + b.height));
+			m.setLocation(p.x, p.y); // waiting for SWT 0.42
+			m.setVisible(true);
+		}
 	}
 
 	/**
@@ -210,13 +184,11 @@ public class MenuAddition extends AdditionBase {
 	protected void handleWidgetDispose(Event event) {
 		// TODO Auto-generated method stub
 		int i = 0;
-		i=i+12;
+		i = i + 12;
 	}
 
 	private IContributionItem getToolBarContributionItem() {
 		return new ContributionItem(getId()) {
-
-			MenuActivation visibleCache = null;
 
 			public void fill(ToolBar parent, int index) {
 				ToolItem newItem = new ToolItem(parent, SWT.DROP_DOWN, index);
@@ -231,23 +203,8 @@ public class MenuAddition extends AdditionBase {
 				else
 					newItem.setToolTipText(getLabel());
 
-	            newItem.addListener(SWT.Selection, getToolItemListener());
-	            newItem.addListener(SWT.Dispose, getToolItemListener());
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.ContributionItem#isVisible()
-			 */
-			public boolean isVisible() {
-				if (visibleCache == null && getVisibleWhen() != null) {
-					visibleCache = new MenuActivation(this, getVisibleWhen(),
-							menuService);
-					menuService.addContribution(visibleCache);
-				}
-				return visibleCache == null ? true : visibleCache
-						.evaluate(menuService.getCurrentState());
+				newItem.addListener(SWT.Selection, getToolItemListener());
+				newItem.addListener(SWT.Dispose, getToolItemListener());
 			}
 
 			/*
@@ -271,7 +228,7 @@ public class MenuAddition extends AdditionBase {
 			}
 		};
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -280,7 +237,7 @@ public class MenuAddition extends AdditionBase {
 	public IContributionItem getContributionItem(boolean forMenu) {
 		if (forMenu)
 			return getMenuContributionItem();
-		
+
 		return getToolBarContributionItem();
 	}
 
@@ -309,10 +266,6 @@ public class MenuAddition extends AdditionBase {
 				// a list and move the logic into ItemAddition??
 				boolean forMenu = mgr instanceof MenuManager;
 				IContributionItem ci = addition.getContributionItem(forMenu);
-				if (addition.getVisibleWhen() != null) {
-					menuService.addContribution(new MenuActivation(ci, addition
-							.getVisibleWhen(), menuService));
-				}
 
 				// Populate the sub-items of menus
 				if (addition instanceof MenuAddition) {

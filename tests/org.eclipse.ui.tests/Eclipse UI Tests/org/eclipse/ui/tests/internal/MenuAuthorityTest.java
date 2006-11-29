@@ -28,7 +28,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.MenuActivation;
 import org.eclipse.ui.internal.menus.MenuAuthority;
 import org.eclipse.ui.internal.services.ISourceProviderService;
@@ -55,7 +54,6 @@ public class MenuAuthorityTest extends UITestCase {
 	}
 
 	private IContextService contextService;
-	private IMenuService menuService;
 	private MenuAuthority menuAuth;
 	private IWorkbenchWindow window;
 	private IContextActivation activeContext;
@@ -78,7 +76,7 @@ public class MenuAuthorityTest extends UITestCase {
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
 
 		MenuActivation activation = new MenuActivation(item, activeContextExpr,
-				menuService);
+				menuAuth);
 		menuAuth.addContribution(activation);
 		assertFalse("starting state", activation.evaluate(menuAuth
 				.getCurrentState()));
@@ -95,7 +93,7 @@ public class MenuAuthorityTest extends UITestCase {
 		assertFalse("after deactivation", activation.evaluate(menuAuth
 				.getCurrentState()));
 
-		menuAuth.removeContribution(activation);
+		activation.dispose();
 	}
 
 	public void testExtensionContributionExpression() throws Exception {
@@ -135,7 +133,7 @@ public class MenuAuthorityTest extends UITestCase {
 		assertNotNull("Failed to find expression", activeContextExpr);
 
 		MenuActivation activation = new MenuActivation(aci, activeContextExpr,
-				menuService);
+				menuAuth);
 		menuAuth.addContribution(activation);
 		assertFalse("starting state", activation.evaluate(menuAuth
 				.getCurrentState()));
@@ -151,8 +149,7 @@ public class MenuAuthorityTest extends UITestCase {
 		assertFalse("after deactivation", activation.evaluate(menuAuth
 				.getCurrentState()));
 
-		menuAuth.removeContribution(activation);
-
+		activation.dispose();
 	}
 
 	/*
@@ -164,7 +161,6 @@ public class MenuAuthorityTest extends UITestCase {
 		super.doSetUp();
 
 		window = openTestWindow();
-		menuService = (IMenuService) window.getService(IMenuService.class);
 		contextService = (IContextService) window
 				.getService(IContextService.class);
 		Context context1 = contextService
@@ -202,7 +198,6 @@ public class MenuAuthorityTest extends UITestCase {
 			menuAuth.removeSourceProvider(sourceProvider);
 		}
 		menuAuth = null;
-		menuService = null;
 		contextService = null;
 		window = null;
 

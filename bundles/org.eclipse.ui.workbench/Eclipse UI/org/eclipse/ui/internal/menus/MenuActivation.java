@@ -23,21 +23,21 @@ public class MenuActivation extends EvaluationResultCache implements
 		IMenuActivation {
 
 	private IContributionItem fItem;
-	private IMenuService fMenuService;
+	private MenuAuthority menuAuthority;
 
 	/**
 	 * @param item
 	 *            this contribution ite
 	 * @param visibleWhen
 	 *            when it's visible
-	 * @param service
-	 *            the menu service that handed out this cache
+	 * @param auth
+	 *            the menu authority responsible for this cache
 	 */
 	public MenuActivation(IContributionItem item, Expression visibleWhen,
-			IMenuService service) {
+			MenuAuthority auth) {
 		super(visibleWhen);
 		fItem = item;
-		fMenuService = service;
+		menuAuthority  = auth;
 	}
 
 	/*
@@ -48,14 +48,10 @@ public class MenuActivation extends EvaluationResultCache implements
 	public IContributionItem getContribution() {
 		return fItem;
 	}
+	
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuActivation#getMenuService()
-	 */
-	public IMenuService getMenuService() {
-		return fMenuService;
+	public void dispose() {
+		menuAuthority.removeContribution(this);
+		fItem = null;
 	}
-
 }
