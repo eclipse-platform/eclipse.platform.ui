@@ -11,12 +11,20 @@
 
 package org.eclipse.jface.tests.viewers;
 
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.tests.harness.util.Mocks;
 
 /**
  * @since 3.2
@@ -63,5 +71,82 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 			public void removeListener(ILabelProviderListener listener) {
 			}
 		});
+	}
+
+	public void testLabelProviderListeners() {
+		Table table = tableViewer.getTable();
+		new TableColumn(table, SWT.NONE);
+		new TableColumn(table, SWT.NONE);
+		ILabelProvider mockLabelProvider = (ILabelProvider) Mocks
+				.createOrderedMock(ILabelProvider.class);
+		// setLabelProvider will cause the addListener and does a refresh,
+		// so getText and getImage will be called for each element and both
+		// columns
+		mockLabelProvider.addListener(null);
+		int count = table.getItemCount();
+		for (int i = 0; i < count; i++) {
+			mockLabelProvider.getText(null);
+			mockLabelProvider.getImage(null);
+			mockLabelProvider.getText(null);
+			mockLabelProvider.getImage(null);
+		}
+		Mocks.startChecking(mockLabelProvider);
+		tableViewer.setLabelProvider(mockLabelProvider);
+		Mocks.verify(mockLabelProvider);
+
+		// this will be caused by the dispose()
+		mockLabelProvider.removeListener(null);
+		mockLabelProvider.dispose();
+		Mocks.startChecking(mockLabelProvider);
+		tableViewer.getTable().dispose();
+		Mocks.verify(mockLabelProvider);
+	}
+
+	public void testLabelProviderListenersWithColumn() {
+		Table table = tableViewer.getTable();
+		new TableColumn(table, SWT.NONE);
+		TableViewerColumn tvc = new TableViewerColumn(tableViewer, SWT.NONE);
+		final int[] disposeCounter = { 0 };
+		final int[] listenerCounter = { 0 };
+		tableViewer.setLabelProvider(new LabelProvider() {
+			public void addListener(ILabelProviderListener listener) {
+				listenerCounter[0]++;
+				super.addListener(listener);
+			}
+			public void removeListener(ILabelProviderListener listener) {
+				super.removeListener(listener);
+				listenerCounter[0]--;
+			}
+			public void dispose() {
+				disposeCounter[0]++;
+			}
+		});
+		table.dispose();
+		assertEquals(1, disposeCounter[0]);
+		assertEquals(0, listenerCounter[0]);
+	}
+
+	public void testColumnLabelProviderListeners() {
+		Table table = tableViewer.getTable();
+		new TableColumn(table, SWT.NONE);
+		TableViewerColumn tvc = new TableViewerColumn(tableViewer, SWT.NONE);
+		final int[] disposeCounter = { 0 };
+		final int[] listenerCounter = { 0 };
+		tvc.setLabelProvider(new ColumnLabelProvider() {
+			public void addListener(ILabelProviderListener listener) {
+				listenerCounter[0]++;
+				super.addListener(listener);
+			}
+			public void removeListener(ILabelProviderListener listener) {
+				super.removeListener(listener);
+				listenerCounter[0]--;
+			}
+			public void dispose() {
+				disposeCounter[0]++;
+			}
+		});
+		table.dispose();
+		assertEquals(0, listenerCounter[0]);
+		assertEquals(1, disposeCounter[0]);
 	}
 }

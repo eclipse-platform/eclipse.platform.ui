@@ -14,11 +14,15 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.util.Policy;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Widget;
 
 /**
  * Instances of this class represent a column of a {@link ColumnViewer}. Label
  * providers and editing support can be configured for each column separately.
+ * Concrete subclasses of {@link ColumnViewer} should implement a matching
+ * concrete subclass of {@link ViewerColumn}.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -36,6 +40,8 @@ public abstract class ViewerColumn {
 	private EditingSupport editingSupport;
 
 	private ILabelProviderListener listener;
+
+	private boolean listenerRegistered = false;
 
 	/**
 	 * Create a new instance of the receiver at columnIndex.
@@ -55,6 +61,11 @@ public abstract class ViewerColumn {
 			}
 
 		};
+		columnOwner.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				handleDispose();
+			}
+		});
 	}
 
 	/**
@@ -72,13 +83,27 @@ public abstract class ViewerColumn {
 	 * @param labelProvider
 	 *            the new {@link CellLabelProvider}
 	 */
-	public void setLabelProvider(CellLabelProvider labelProvider) {
-		if (this.labelProvider != null) {
+	public final void setLabelProvider(CellLabelProvider labelProvider) {
+		setLabelProvider(labelProvider, true);
+	}
+
+	/**
+	 * @param labelProvider
+	 * @param registerListener
+	 */
+	/* package */void setLabelProvider(CellLabelProvider labelProvider,
+			boolean registerListener) {
+		if (listenerRegistered && this.labelProvider != null) {
 			this.labelProvider.removeListener(listener);
+			listenerRegistered = false;
 		}
 
 		this.labelProvider = labelProvider;
-		this.labelProvider.addListener(listener);
+
+		if (registerListener) {
+			this.labelProvider.addListener(listener);
+			listenerRegistered = true;
+		}
 	}
 
 	/**
@@ -86,7 +111,7 @@ public abstract class ViewerColumn {
 	 * 
 	 * @return {@link EditingSupport}
 	 */
-	/* package */ EditingSupport getEditingSupport() {
+	/* package */EditingSupport getEditingSupport() {
 		return editingSupport;
 	}
 
@@ -96,7 +121,7 @@ public abstract class ViewerColumn {
 	 * @param editingSupport
 	 *            The {@link EditingSupport} to set.
 	 */
-	public void setEditingSupport(EditingSupport editingSupport) {
+	public final void setEditingSupport(EditingSupport editingSupport) {
 		this.editingSupport = editingSupport;
 	}
 
@@ -108,7 +133,22 @@ public abstract class ViewerColumn {
 	 * @param cell
 	 *            {@link ViewerCell}
 	 */
-	/* package */ void refresh(ViewerCell cell) {
+	/* package */void refresh(ViewerCell cell) {
 		getLabelProvider().update(cell);
 	}
+
+	/**
+	 * Disposes of the label provider (if set), deregisters the listener and
+	 * nulls the references to the label provider and editing support. This
+	 * method is called when the underlying widget is disposed. Subclasses may
+	 * extend but must call the super implementation.
+	 */
+	protected void handleDispose() {
+		CellLabelProvider clp = labelProvider;
+		setLabelProvider(null, false);
+		clp.dispose();
+		editingSupport = null;
+		listener = null;
+	}
+
 }

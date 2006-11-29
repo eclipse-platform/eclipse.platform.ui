@@ -13,19 +13,22 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * The ColumnViewer is the abstract superclass of viewers that jave columns
- * (TreeViewer and TableViewer).
+ * The ColumnViewer is the abstract superclass of viewers that have columns
+ * (e.g., AbstractTreeViewer and AbstractTableViewer). Concrete subclasses of
+ * {@link ColumnViewer} should implement a matching concrete subclass of
+ * {@link ViewerColumn}.
  * 
- * <strong> This class is not intended to be subclassed outside of the JFace viewers framework.</strong>
+ * <strong> This class is not intended to be subclassed outside of the JFace
+ * viewers framework.</strong>
  * 
  * @since 3.3 <strong>EXPERIMENTAL</strong> This class or interface has been
  *        added as part of a work in progress. This API may change at any given
@@ -232,7 +235,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	private ViewerColumn createViewerColumn(Widget columnOwner,
 			CellLabelProvider labelProvider) {
 		ViewerColumn column = new ViewerColumn(this,columnOwner) {};
-		column.setLabelProvider(labelProvider);
+		column.setLabelProvider(labelProvider, false);
 		return column;
 	}
 
@@ -327,7 +330,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 		while ((column = getViewerColumn(i++)) != null) {
 			column.setLabelProvider(CellLabelProvider
-					.createViewerLabelProvider(labelProvider));
+					.createViewerLabelProvider(labelProvider), false);
 		}
 	}
 
