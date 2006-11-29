@@ -22,18 +22,20 @@ package org.eclipse.ui.internal;
  * other properties do not match additional
  * requirements imposed by the contributor.
  *
- * @see IObjectContributorManager
  */
 
 public interface IObjectContributor {
     /**
      * Returns true if this contributor should be considered
      * for the given object.
+     * @param object the object to text
+     * @return boolean
      */
     public boolean isApplicableTo(Object object);
 
     /**
      * Return whether or not the receiver can adapt to IResource.
+     * @return boolean
      */
     public boolean canAdapt();
 }

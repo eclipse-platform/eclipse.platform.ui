@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.IMemento;
 
+/**
+ * DetachedPlaceHolder is the placeholder for detached views.
+ *
+ */
 public class DetachedPlaceHolder extends PartPlaceholder implements
         ILayoutContainer {
     ArrayList children = new ArrayList();
@@ -24,6 +28,7 @@ public class DetachedPlaceHolder extends PartPlaceholder implements
     /**
      * DetachedPlaceHolder constructor comment.
      * @param id java.lang.String
+     * @param bounds the size of the placeholder
      */
     public DetachedPlaceHolder(String id, Rectangle bounds) {
         super(id);
@@ -45,6 +50,7 @@ public class DetachedPlaceHolder extends PartPlaceholder implements
      * parts to show a border if they choose to,
      * else false if the container does not want
      * its parts to show a border.
+     * @return boolean
      */
     public boolean allowsBorder() {
         return false;
@@ -78,8 +84,10 @@ public class DetachedPlaceHolder extends PartPlaceholder implements
         add(newPart);
     }
 
+   
     /**
-     * @see IPersistablePart
+     * Restore the state from the memento.
+     * @param memento
      */
     public void restoreState(IMemento memento) {
         // Read the bounds.
@@ -107,7 +115,8 @@ public class DetachedPlaceHolder extends PartPlaceholder implements
     }
 
     /**
-     * @see IPersistablePart
+     * Save state to the memento.
+     * @param memento
      */
     public void saveState(IMemento memento) {
         // Save the bounds.
