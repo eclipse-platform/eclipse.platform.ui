@@ -61,11 +61,10 @@ public class Snippet024TableViewerExploreNewAPI {
 
 	protected abstract class AbstractEditingSupport extends EditingSupport {
 		private TextCellEditor editor;
-		private TableViewer viewer;
 
 		public AbstractEditingSupport(TableViewer viewer) {
+			super(viewer);
 			this.editor = new TextCellEditor(viewer.getTable());
-			this.viewer = viewer;
 		}
 
 		protected boolean canEdit(Object element) {
@@ -78,7 +77,7 @@ public class Snippet024TableViewerExploreNewAPI {
 
 		protected void setValue(Object element, Object value) {
 			doSetValue(element, value);
-			viewer.update(element, null);
+			getViewer().update(element, null);
 		}
 
 		protected abstract void doSetValue(Object element, Object value);

@@ -79,10 +79,9 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 	
 	private class GivenNameEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		private TableViewer viewer;
 		
 		public GivenNameEditing(TableViewer viewer) {
-			this.viewer = viewer;
+			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
 		
@@ -100,7 +99,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 		protected void setValue(Object element, Object value) {
 			((Person) element).givenname = value.toString();
-			viewer.update(element, null);
+			getViewer().update(element, null);
 		}
 	}
 	
@@ -112,10 +111,9 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 	
 	private class SurNameEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		private TableViewer viewer;
 		
 		public SurNameEditing( TableViewer viewer ) {
-			this.viewer = viewer;
+			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
 		
@@ -133,7 +131,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 		protected void setValue(Object element, Object value) {
 			((Person) element).surname = value.toString();
-			viewer.update(element, null);
+			getViewer().update(element, null);
 		}
 	}
 	
@@ -145,10 +143,9 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 	
 	private class EmailEditing extends EditingSupport {
 		private TextCellEditor cellEditor;
-		private TableViewer viewer;
 		
 		public EmailEditing( TableViewer viewer ) {
-			this.viewer = viewer;
+			super(viewer);
 			cellEditor = new TextCellEditor(viewer.getTable());
 		}
 		
@@ -166,7 +163,7 @@ public class Snippet019TableViewerAddRemoveColumnsWithEditingNewAPI {
 
 		protected void setValue(Object element, Object value) {
 			((Person) element).email = value.toString();
-			viewer.update(element, null);
+			getViewer().update(element, null);
 		}
 	}
 	

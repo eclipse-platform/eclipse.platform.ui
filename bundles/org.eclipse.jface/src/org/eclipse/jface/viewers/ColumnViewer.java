@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
-												   fix in bug 163317
+ *												   fix in bug 163317
+ *												   fix in bug 151295
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -47,6 +48,8 @@ public abstract class ColumnViewer extends StructuredViewer {
 
 	private AbstractViewerEditor viewerEditor;
 
+	private int tabEditingStyle = EditingSupport.TABING_NONE;
+	
 	/**
 	 * Create a new instance of the receiver.
 	 */
@@ -180,7 +183,7 @@ public abstract class ColumnViewer extends StructuredViewer {
 	 */
 	private void setupEditingSupport(final int columnIndex, ViewerColumn viewer) {
 		if (getCellModifier() != null) {
-			viewer.setEditingSupport(new EditingSupport() {
+			viewer.setEditingSupport(new EditingSupport(this) {
 
 				/*
 				 * (non-Javadoc)
@@ -526,5 +529,19 @@ public abstract class ColumnViewer extends StructuredViewer {
 		if (viewerEditor != null) {
 			viewerEditor.setColumnProperties(columnProperties);
 		}
+	}
+	
+	/**
+	 * The tab-editing style used if the default implementation is used
+	 * 
+	 * @param tabEditingStyle
+	 *            bit mask for the tab editing style
+	 */
+	public void setTabEditingStyle(int tabEditingStyle) {
+		this.tabEditingStyle = tabEditingStyle;
+	}
+
+	int getTabEditingStyle() {
+		return this.tabEditingStyle;
 	}
 }

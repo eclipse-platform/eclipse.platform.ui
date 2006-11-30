@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
+ *     											   fix in bug 151295
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -18,6 +19,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -56,6 +59,8 @@ public abstract class AbstractViewerEditor {
 
 	private Item item;
 
+	private TraverseListener tabeditingListener;
+
 	/**
 	 * Create a new editor implementation for the viewer
 	 * 
@@ -86,7 +91,7 @@ public abstract class AbstractViewerEditor {
 
 	void activateCellEditor() {
 
-		ViewerColumn part = viewer.getViewerColumn(columnNumber);
+		final ViewerColumn part = viewer.getViewerColumn(columnNumber);
 		Object element = item.getData();
 
 		if (part != null && part.getEditingSupport() != null
@@ -117,20 +122,37 @@ public abstract class AbstractViewerEditor {
 					};
 				}
 				control.addFocusListener(focusListener);
-				mouseListener = new MouseAdapter() {
-					public void mouseDown(MouseEvent e) {
-						// time wrap?
-						// check for expiration of doubleClickTime
-						if (e.time <= doubleClickExpirationTime) {
-							control.removeMouseListener(mouseListener);
-							cancelEditing();
-							handleDoubleClickEvent();
-						} else if (mouseListener != null) {
-							control.removeMouseListener(mouseListener);
+				if (mouseListener == null) {
+					mouseListener = new MouseAdapter() {
+						public void mouseDown(MouseEvent e) {
+							// time wrap?
+							// check for expiration of doubleClickTime
+							if (e.time <= doubleClickExpirationTime) {
+								control.removeMouseListener(mouseListener);
+								cancelEditing();
+								handleDoubleClickEvent();
+							} else if (mouseListener != null) {
+								control.removeMouseListener(mouseListener);
+							}
 						}
-					}
-				};
+					};
+				}
 				control.addMouseListener(mouseListener);
+				
+				if (tabeditingListener == null) {
+					tabeditingListener = new TraverseListener() {
+
+						public void keyTraversed(TraverseEvent e) {
+							if (part.getEditingSupport().isTabingSupported()) {
+								part.getEditingSupport().processTraversEvent(
+										columnNumber,
+										viewer.getViewerRowFromItem(item), e);
+							}
+						}
+					};
+				}
+				control.addTraverseListener(tabeditingListener);
+
 			}
 		}
 	}
@@ -195,6 +217,10 @@ public abstract class AbstractViewerEditor {
 				if (focusListener != null) {
 					control.removeFocusListener(focusListener);
 				}
+
+				if (tabeditingListener != null) {
+					control.removeTraverseListener(tabeditingListener);
+				}
 			}
 			c.deactivate();
 		}
@@ -207,6 +233,21 @@ public abstract class AbstractViewerEditor {
 		if (cellEditor != null) {
 			setEditor(null, null, 0);
 			cellEditor.removeListener(cellEditorListener);
+			
+			Control control = cellEditor.getControl();
+			if (control != null) {
+				if (mouseListener != null) {
+					control.removeMouseListener(mouseListener);
+				}
+				if (focusListener != null) {
+					control.removeFocusListener(focusListener);
+				}
+
+				if (tabeditingListener != null) {
+					control.removeTraverseListener(tabeditingListener);
+				}
+			}
+			
 			CellEditor oldEditor = cellEditor;
 			cellEditor = null;
 			oldEditor.deactivate();
