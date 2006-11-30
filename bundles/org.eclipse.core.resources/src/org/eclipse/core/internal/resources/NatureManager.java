@@ -47,7 +47,10 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * validation, because it must find and remove all inconsistencies.
 	 */
 	protected String[] computeNatureEnablements(Project project) {
-		String[] natureIds = project.internalGetDescription().getNatureIds();
+		final ProjectDescription description = project.internalGetDescription();
+		if (description == null)
+			return new String[0];//project deleted concurrently
+		String[] natureIds = description.getNatureIds();
 		int count = natureIds.length;
 		if (count == 0)
 			return natureIds;
@@ -323,7 +326,7 @@ public class NatureManager implements ILifecycleListener, IManager {
 	 * or null if there is nothing in the cache.
 	 */
 	protected String[] getEnabledNatures(Project project) {
-		String[] enabled;		
+		String[] enabled;
 		if (natureEnablements != null) {
 			enabled = (String[]) natureEnablements.get(project);
 			if (enabled != null)
