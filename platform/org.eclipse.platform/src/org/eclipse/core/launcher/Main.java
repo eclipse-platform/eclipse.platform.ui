@@ -15,8 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.security.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -257,7 +255,7 @@ public class Main {
      * @exception Exception thrown if a problem occurs during the launch
      */
     protected void basicRun(String[] args) throws Exception {
-        System.getProperties().setProperty("eclipse.startTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
+        System.getProperties().put("eclipse.startTime", Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
         commands = args;
         String[] passThruArgs = processCommandLine(args);
         if (!debug)
@@ -300,7 +298,7 @@ public class Main {
                     setSM = true;
                 }
                 catch (Throwable t) {
-                    System.setProperty("java.security.manager", eclipseSecurity); // let the framework try to load it later. //$NON-NLS-1$
+                    System.getProperties().put("java.security.manager", eclipseSecurity); // let the framework try to load it later. //$NON-NLS-1$
                 }
             }
             
@@ -558,17 +556,17 @@ public class Main {
         boolean fwkIsDirectory = fwkFile.isDirectory();
         //We found where the fwk is, remember it and its shape
         if (fwkIsDirectory) {
-            System.getProperties().setProperty(PROP_FRAMEWORK_SHAPE, "folder");//$NON-NLS-1$
+            System.getProperties().put(PROP_FRAMEWORK_SHAPE, "folder");//$NON-NLS-1$
         } else {
-            System.getProperties().setProperty(PROP_FRAMEWORK_SHAPE, "jar");//$NON-NLS-1$
+            System.getProperties().put(PROP_FRAMEWORK_SHAPE, "jar");//$NON-NLS-1$
         }
-	    String fwkPath = new File(base.getFile()).getParentFile().getAbsolutePath();
+	    String fwkPath = new File(new File(base.getFile()).getParent()).getAbsolutePath();
 		if (Character.isUpperCase(fwkPath.charAt(0))) {
 			char[] chars = fwkPath.toCharArray();
 			chars[0] = Character.toLowerCase(chars[0]);
 			fwkPath = new String(chars);
 		}
-        System.getProperties().setProperty(PROP_FRAMEWORK_SYSPATH, fwkPath);
+        System.getProperties().put(PROP_FRAMEWORK_SYSPATH, fwkPath);
         
         String[] baseJars = getArrayFromList(baseJarList);
         if (baseJars.length == 0) {
@@ -675,22 +673,21 @@ public class Main {
      * @param start the location to begin searching
      */
     protected String searchFor(final String target, String start) {
-        FileFilter filter = new FileFilter() {
-            public boolean accept(File candidate) {
-                return candidate.getName().equals(target) || candidate.getName().startsWith(target + "_"); //$NON-NLS-1$
-            }
-        };
-        File[] candidates = new File(start).listFiles(filter);
+    	// Note that File.list only gives you file names not the complete path from start
+        String[] candidates = new File(start).list();
         if (candidates == null)
             return null;
-        String[] arrays = new String[candidates.length];
-        for (int i = 0; i < arrays.length; i++) {
-            arrays[i] = candidates[i].getName();
-        }
-       int result = findMax(arrays);
+        
+        ArrayList matches = new ArrayList(2);
+        for (int i = 0; i < candidates.length; i++)
+        	if (candidates[i].equals(target) || candidates[i].startsWith(target + "_"))  //$NON-NLS-1$
+        		matches.add(candidates[i]);
+        String[] names = (String[]) matches.toArray(new String[matches.size()]);
+        int result = findMax(names);
         if (result == -1)
             return null;
-        return candidates[result].getAbsolutePath().replace(File.separatorChar, '/') + (candidates[result].isDirectory() ? "/" : "");  //$NON-NLS-1$//$NON-NLS-2$
+        File candidate = new File(start, names[result]);
+        return candidate.getAbsolutePath().replace(File.separatorChar, '/') + (candidate.isDirectory() ? "/" : "");  //$NON-NLS-1$//$NON-NLS-2$
     }
 
     protected int findMax(String[] candidates) {
@@ -1535,7 +1532,7 @@ public class Main {
         	// removed once the splash screen has been taken down.
         	try {
         		Runtime.getRuntime().addShutdownHook(endSplashHandler);
-        	} catch(Exception ex) {
+        	} catch(Throwable ex) {
         		// Best effort to register the handler
         	}
         }
@@ -1617,7 +1614,7 @@ public class Main {
         
         try {
         	Runtime.getRuntime().removeShutdownHook(endSplashHandler);
-        } catch (IllegalStateException e) {
+        } catch (Throwable e) {
         	// OK to ignore this, happens when the VM is already shutting down
         }
     }
@@ -1793,7 +1790,7 @@ public class Main {
 			log(e);
 			return null;
 		}
-		splash.getParentFile().mkdirs();
+		new File(splash.getParent()).mkdirs();
 		OutputStream output;
 		try {
 			output = new BufferedOutputStream(new FileOutputStream(splash));
@@ -1931,13 +1928,7 @@ public class Main {
             log.write(' ');
             log.write(String.valueOf(0));
             log.write(' ');
-            try {
-                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SS"); //$NON-NLS-1$
-                log.write(formatter.format(new Date()));
-            } catch (Exception e) {
-                // continue if we can't write out the date
-                log.write(Long.toString(System.currentTimeMillis()));
-            }
+           	log.write(getDate(new Date()));
             log.newLine();
             log.write(MESSAGE);
             log.write(' ');
@@ -1946,12 +1937,41 @@ public class Main {
         log.newLine();
     }
 
+	protected String getDate(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		StringBuffer sb = new StringBuffer();
+		appendPaddedInt(c.get(Calendar.YEAR), 4, sb).append('-');
+		appendPaddedInt(c.get(Calendar.MONTH) + 1, 2, sb).append('-');
+		appendPaddedInt(c.get(Calendar.DAY_OF_MONTH), 2, sb).append(' ');
+		appendPaddedInt(c.get(Calendar.HOUR_OF_DAY), 2, sb).append(':');
+		appendPaddedInt(c.get(Calendar.MINUTE), 2, sb).append(':');
+		appendPaddedInt(c.get(Calendar.SECOND), 2, sb).append('.');
+		appendPaddedInt(c.get(Calendar.MILLISECOND), 3, sb);
+		return sb.toString();
+	}
+
+	private StringBuffer appendPaddedInt(int value, int pad, StringBuffer buffer) {
+		pad = pad - 1;
+		if (pad == 0)
+			return buffer.append(Integer.toString(value));
+		int padding = (int) Math.pow(10, pad);
+		if (value >= padding)
+			return buffer.append(Integer.toString(value));
+		while (padding > value && padding > 1) {
+			buffer.append('0');
+			padding = padding / 10;
+		}
+		buffer.append(value);
+		return buffer;
+	}
+
     private void computeLogFileLocation() {
         String logFileProp = System.getProperty(PROP_LOGFILE);
         if (logFileProp != null) {
             if (logFile == null || !logFileProp.equals(logFile.getAbsolutePath())) {
                 logFile = new File(logFileProp);
-                logFile.getParentFile().mkdirs();
+                new File(logFile.getParent()).mkdirs();
             }
             return;
         }
@@ -1961,8 +1981,8 @@ public class Main {
         if (base == null)
             return;
         logFile = new File(base.getPath(), Long.toString(System.currentTimeMillis()) + ".log"); //$NON-NLS-1$
-        logFile.getParentFile().mkdirs();
-        System.setProperty(PROP_LOGFILE, logFile.getAbsolutePath());
+        new File(logFile.getParent()).mkdirs();
+        System.getProperties().put(PROP_LOGFILE, logFile.getAbsolutePath());
     }
 
     /**
