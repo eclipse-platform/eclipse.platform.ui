@@ -82,7 +82,7 @@ function bookmarkKeyDownHandler(e) {
 	
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 
@@ -90,10 +90,11 @@ function bookmarkKeyDownHandler(e) {
 	if (key != 46)
 		return true;
 		
-	if (isMozilla)
-		e.cancelBubble = true;
-	else if (isIE)
+	if (isIE) {
 		window.event.cancelBubble = true;
+	} else {
+	    e.cancelBubble = true;
+	}
   	
   	return removeBookmark();
 }

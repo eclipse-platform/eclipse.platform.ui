@@ -32,8 +32,8 @@
 		rows="32,*"
 <%}%>
 		frameborder="0" framespacing="0" border="0">
-	<frame name="IndexTypeinFrame" src="indexTypein.jsp" title='<%=ServletResources.getString("IndexTypeinTitle", request)%>' frameborder="0" marginheiht="0" marginwidth="0" noresize scrolling="no">
-	<frame name="IndexListFrame" src="indexList.jsp" title='<%=ServletResources.getString("IndexListTitle", request)%>' frameborder="0" marginheiht="0" marginwidth="0">
+	<frame name="IndexTypeinFrame" src="indexTypein.jsp" title='<%=ServletResources.getString("IndexTypeinTitle", request)%>' frameborder="0" marginheight="0" marginwidth="0" noresize scrolling="no">
+	<frame name="IndexListFrame" src="indexList.jsp" title='<%=ServletResources.getString("IndexListTitle", request)%>' frameborder="0" marginheight="0" marginwidth="0">
 </frameset>
 
 </html>

@@ -20,10 +20,11 @@ var oldActiveClass = "";
  */
 function getTarget(e) {
 	var target;
-  	if (isMozilla)
-  		target = e.target;
-  	else if (isIE)
+  	if (isIE) {
    		target = window.event.srcElement;
+   	} else {  	
+  		target = e.target;
+   	}
 
 	return target;
 }
@@ -290,7 +291,7 @@ function highlightTopic(topic) {
 
 		// it looks like the onclick event is not handled in mozilla
 		// *** TO DO: handle failed synchronization, do not select in that case
-		if (isMozilla && a.onclick)
+		if (!isIE && a.onclick)
 			a.onclick()
 		//if (isIE)
 		//	a.hideFocus = "true";
@@ -323,7 +324,7 @@ function getVerticalScroll(node) {
 	if (isIE) {
 		pageTop = document.body.scrollTop;
 		pageBottom = pageTop + document.body.clientHeight;
-	} else if (isMozilla) {
+	} else {
 		pageTop = window.pageYOffset;
 		pageBottom = pageTop + window.innerHeight - node.offsetHeight;
 	}
@@ -394,7 +395,7 @@ function mouseMoveHandler(e) {
 		return;
 	}
 
-	if (isMozilla)
+	if (!isIE)
 		e.cancelBubble = false;
 
 	if (overNode.title == "") {
@@ -428,10 +429,11 @@ function mouseClickHandler(e) {
 		parent.setTypeinValue(anchorNode);
 	}
 
-	if (isMozilla)
-		e.cancelBubble = true;
-	else if (isIE)
+	if (isIE) {
 		window.event.cancelBubble = true;
+	} else {	    
+		e.cancelBubble = true;
+	}
 }
 
 /**
@@ -442,17 +444,18 @@ function keyDownHandler(e) {
 
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 
 	if (key <37 || key > 40)
 		return true;
 
-	if (isMozilla)
-		e.cancelBubble = true;
-	else if (isIE)
+	if (isIE) {
 		window.event.cancelBubble = true;
+	} else {	    
+		e.cancelBubble = true;
+	}
 
 	if (key == 39) { // Right arrow, expand
 		var clickedNode = getTarget(e);
@@ -537,14 +540,15 @@ function onloadHandler() {
 	highlightTopic(node);
 	scrollToViewTop(node);
 
-	if (isMozilla) {
-		document.addEventListener('click', mouseClickHandler, true);
-		document.addEventListener('mousemove', mouseMoveHandler, true);
-		document.addEventListener('keydown', keyDownHandler, true);
-	} else if (isIE) {
+	
+	if (isIE) {
 		document.onclick = mouseClickHandler;
 		document.onmousemove = mouseMoveHandler;
 		document.onkeydown = keyDownHandler;
 		//window.onfocus = focusHandler;
+	} else {
+		document.addEventListener('click', mouseClickHandler, true);
+		document.addEventListener('mousemove', mouseMoveHandler, true);
+		document.addEventListener('keydown', keyDownHandler, true);
 	}
 }

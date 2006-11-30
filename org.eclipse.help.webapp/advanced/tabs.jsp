@@ -106,11 +106,10 @@ var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigat
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 var linksArray = new Array ("linktoc", "linksearch", "linklinks", "linkbookmarks");
 
-if (isMozilla) {
-  document.addEventListener('keydown', keyDownHandler, true);
-}
-else if (isIE){
+if (isIE){
   document.onkeydown = keyDownHandler;
+} else {
+  document.addEventListener('keydown', keyDownHandler, true);
 }
 
 /**
@@ -118,10 +117,10 @@ else if (isIE){
  */
 function getTarget(e) {
 	var target;
-  	if (isMozilla)
-  		target = e.target;
-  	else if (isIE)
+  	if (isIE)
    		target = window.event.srcElement;
+  	else
+  		target = e.target;
 
 	return target;
 }
@@ -181,7 +180,7 @@ function keyDownHandler(e)
 
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 		
@@ -197,10 +196,10 @@ function keyDownHandler(e)
 	else if(clickedNode.tagName == 'TD')
 		linkId="link"+clickedNode.id;
 
-	if (isMozilla)
-  		e.cancelBubble = true;
-  	else if (isIE)
+  	if (isIE)
   		window.event.cancelBubble = true;
+  	else
+  		e.cancelBubble = true;
   	if (key == 38 ) { // up arrow
 		if(linkId.length>4){
 			parent.showView(linkId.substring(4, linkId.length));

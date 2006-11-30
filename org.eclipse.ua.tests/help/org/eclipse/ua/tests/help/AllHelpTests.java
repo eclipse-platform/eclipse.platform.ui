@@ -18,6 +18,7 @@ import org.eclipse.ua.tests.help.index.AllIndexTests;
 import org.eclipse.ua.tests.help.preferences.AllPreferencesTests;
 import org.eclipse.ua.tests.help.search.AllSearchTests;
 import org.eclipse.ua.tests.help.toc.AllTocTests;
+import org.eclipse.ua.tests.help.webapp.AllWebappTests;
 
 /*
  * Tests help functionality (automated).
@@ -40,5 +41,6 @@ public class AllHelpTests extends TestSuite {
 		addTest(AllSearchTests.suite());
 		addTest(AllTocTests.suite());
 		addTest(AllIndexTests.suite());
+		addTest(AllWebappTests.suite());
 	}
 }

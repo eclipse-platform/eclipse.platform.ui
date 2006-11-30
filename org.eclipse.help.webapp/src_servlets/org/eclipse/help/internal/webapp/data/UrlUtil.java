@@ -27,7 +27,7 @@ public class UrlUtil {
 			"&amp;", "&gt;", "&lt;", "&quot;"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
 	// for Safari build 125.1 finds version 125
-	static final Pattern safariPatern = Pattern.compile(
+	static final Pattern safariPattern = Pattern.compile(
 			"Safari/(\\d+)(?:\\.|\\s|$)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	// Default locale to use for serving requests to help
@@ -136,6 +136,10 @@ public class UrlUtil {
 
 	public static boolean isGecko(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isGecko(agent);
+	}
+
+	public static boolean isGecko(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
@@ -146,6 +150,10 @@ public class UrlUtil {
 
 	public static boolean isIE(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isIE(agent);
+	}
+
+	public static boolean isIE(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
@@ -162,6 +170,10 @@ public class UrlUtil {
 
 	public static String getIEVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return getIEVersion(agent);
+	}
+
+	public static String getIEVersion(String agent) {
 		if (agent==null)
 		    return "0"; //$NON-NLS-1$
 
@@ -184,14 +196,28 @@ public class UrlUtil {
 
 	public static boolean isKonqueror(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isKonqueror(agent);
+	}
+
+	public static boolean isKonqueror(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH); 
 		return agent.indexOf("konqueror") >= 0; //$NON-NLS-1$
 	}
 
+	/**
+	 * Test to see if this is a "mozilla" browser, i.e. 
+	 * just about anything other than Internet Explorer
+	 * @param request a request from the browser
+	 * @return true if the browser is Netcape, Firefox, Safari or Konqueror
+	 */
 	public static boolean isMozilla(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isMozilla(agent);
+	}
+
+	public static boolean isMozilla(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
@@ -200,6 +226,10 @@ public class UrlUtil {
 
 	public static String getMozillaVersion(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return getMozillaVersion(agent);
+	}
+
+	public static String getMozillaVersion(String agent) {
 		if (agent==null)
 		    return "0"; //$NON-NLS-1$
 		agent=agent.toLowerCase(Locale.ENGLISH);
@@ -216,14 +246,36 @@ public class UrlUtil {
 
 	public static boolean isOpera(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isOpera(agent);
+	}
+
+	public static boolean isOpera(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
 		return agent.indexOf("opera") >= 0; //$NON-NLS-1$
 	}
 
+	public static String getOperaVersion(String agent) {
+		if (agent==null)
+		    return "0"; //$NON-NLS-1$
+		agent=agent.toLowerCase(Locale.ENGLISH);
+		final String OperaPrefix = "opera/"; //$NON-NLS-1$
+		int start = agent.indexOf(OperaPrefix) + OperaPrefix.length();
+		if (start < OperaPrefix.length() || start >= agent.length())
+			return "0"; //$NON-NLS-1$
+		int end = agent.indexOf(" (", start); //$NON-NLS-1$
+		if (end <= start)
+			return "0"; //$NON-NLS-1$
+		return agent.substring(start, end);
+	}
+
 	public static boolean isSafari(HttpServletRequest request) {
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return isSafari(agent);
+	}
+
+	public static boolean isSafari(String agent) {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
@@ -231,12 +283,16 @@ public class UrlUtil {
 	}
 
 	public static String getSafariVersion(HttpServletRequest request) {
-		String version = "0"; //$NON-NLS-1$
 		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		return getSafariVersion(agent);
+	}
+
+	public static String getSafariVersion(String agent) {
+		String version = "0"; //$NON-NLS-1$
 		if (agent==null)
 		    return version;
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		Matcher m = safariPatern.matcher(agent);
+		Matcher m = safariPattern.matcher(agent);
 		boolean matched = m.find();
 		if (matched) {
 			version = m.group(1);
@@ -506,5 +562,29 @@ public class UrlUtil {
 			}
 			return false;
 		}
+	}
+	
+	/*
+	 * Get the version from a string of the form mm.nn
+	 */
+	private static int getMajorVersion(String version) {
+		int result = 0;
+		for (int i = 0; i < version.length(); i++) {
+			char next = version.charAt(i);
+			if (next >= '0' && next <= '9') {
+				result = result * 10 + next - '0';
+			} else {
+				break;
+			}
+		}
+		return result;
+	}
+
+	public static boolean isAdvanced(String agent) {
+		if (isIE(agent) && "5.5".compareTo(getIEVersion(agent)) <= 0) return true; //$NON-NLS-1$
+		if (isMozilla(agent) && isGecko(agent)) return true;
+		if (isSafari(agent) && "120".compareTo(getSafariVersion(agent)) <= 0) return true; //$NON-NLS-1$
+		if (isOpera(agent) && getMajorVersion(getOperaVersion(agent)) >= 9) return true;
+		return false;
 	}
 }

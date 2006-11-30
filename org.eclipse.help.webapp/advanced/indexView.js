@@ -81,7 +81,7 @@ function setTypeinValue(anchor) {
 		typeinFrame.currentId = "";
 		if (isIE)
 			value = anchor.innerText;
-		else if (isMozilla)
+		else 
 			value = anchor.lastChild.nodeValue;
 		if (!value)
 			value = "";

@@ -72,17 +72,18 @@ function keyDownHandler(e) {
 
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 
 	if (key != 13 && key != 38 && key != 40)
 		return true;
 
-	if (isMozilla)
-		e.cancelBubble = true;
-	else if (isIE)
+	if (isIE) {
 		window.event.cancelBubble = true;
+	} else {	    
+		e.cancelBubble = true;
+	}
 
 	if (key == 13) { // enter
 		// display topic corresponded to selected list item
@@ -128,10 +129,10 @@ function onloadHandler() {
 
 	currentId = "";
 
-	if (isMozilla) {
-		document.addEventListener("keydown", keyDownHandler, true);
-	} else if (isIE) {
+	if (isIE) {
 		document.onkeydown = keyDownHandler;
+	} else {
+		document.addEventListener("keydown", keyDownHandler, true);
 	}
 
 	setInterval("intervalHandler()", 200);

@@ -43,9 +43,8 @@ public class RequestData {
 		preferences = new WebappPreferences();
 
 		locale = UrlUtil.getLocale(request, response);
-		advancedUI = (isIE() && "5.5".compareTo(getIEVersion()) <= 0) //$NON-NLS-1$
-				|| (isMozilla() && isGecko())
-				|| (isSafari() && "120".compareTo(getSafariVersion()) <= 0); //$NON-NLS-1$
+		String agent = request.getHeader("User-Agent"); //$NON-NLS-1$
+		advancedUI = UrlUtil.isAdvanced(agent);
 	}
 
 	/**

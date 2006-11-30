@@ -24,10 +24,11 @@ var oldActive;
  */
 function getTarget(e) {
 	var target;
-  	if (isMozilla)
-  		target = e.target;
-  	else if (isIE)
+  	if (isIE) {
    		target = window.event.srcElement;
+   	} else { 	    
+  		target = e.target;
+   	}
 
 	return target;
 }
@@ -256,12 +257,10 @@ function showPopupMenu(e) {
 function showStatus(e) {
 	try {
 		var overNode;
-		if (isMozilla)
-			overNode = e.target;
-		else if (isIE)
+		if (isIE)
 			overNode = window.event.srcElement;
 		else
-			return true;
+			overNode = e.target;
 
 		overNode = getTRNode(overNode);
 		if (overNode == null) {
@@ -269,14 +268,14 @@ function showStatus(e) {
 			return true;
 		}
 
-		if (isMozilla)
+		if (!isIE)
 			e.cancelBubble = false;
 
 		var a = getAnchorNode(overNode);
 		var statusText = "";
 		if (isIE)
 			statusText = a.innerText;
-		else if (isMozilla)
+		else 
 			statusText = a.lastChild.nodeValue;
 			
 		if (statusText != a.title)
@@ -306,10 +305,10 @@ function contextMenuHandler(e)
 		e = window.event;
 		
   	var clickedNode;
-  	if (isMozilla)
-  		clickedNode = e.target;
-  	else if (isIE)
+  	if (isIE)
    		clickedNode = e.srcElement;
+  	else
+  		clickedNode = e.target;
 
   	if (!clickedNode)
   		return true;
@@ -334,16 +333,14 @@ function contextMenuHandler(e)
  */
 function mouseClickHandler(e) {
 
-	if (!isMozilla || e && e.target && e.target != popupMenuTarget)
+	if (isIE || e && e.target && e.target != popupMenuTarget)
 		hidePopupMenu();
 		
   	var clickedNode;
- 	if (isMozilla)
-  		clickedNode = e.target;
-  	else if (isIE)
+  	if (isIE)
    		clickedNode = window.event.srcElement;
   	else 
-  		return true;
+  		clickedNode = e.target;
   	
   	highlightTopic(clickedNode);
 }
@@ -368,17 +365,17 @@ function keyDownHandler(e)
 
 	if (isIE) {
 		key = window.event.keyCode;
-	} else if (isMozilla) {
+	} else {
 		key = e.keyCode;
 	}
 
 	if (key <37 || key > 40)
 		return true;
 		
-	if (isMozilla)
-  		e.cancelBubble = true;
-  	else if (isIE)
+  	if (isIE)
   		window.event.cancelBubble = true;
+  	else 
+  		e.cancelBubble = true;
   		
   	if (key == 40 ) { // down arrow
   		var clickedNode = getTarget(e);
@@ -409,7 +406,12 @@ function keyDownHandler(e)
 
 
 // listen for events
-if (isMozilla) {
+ 
+if (isIE){
+  document.onclick = mouseClickHandler;
+  document.onkeydown = keyDownHandler;
+  window.onfocus = focusHandler;
+} else {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('keydown', keyDownHandler, true);
   //document.addEventListener("focus", focusHandler, true);
@@ -419,9 +421,4 @@ if (isMozilla) {
 		document.write('.active {background:#B5D5FF;color:#000000;}');
 		document.write('</style>');
 	}
-}
-else if (isIE){
-  document.onclick = mouseClickHandler;
-  document.onkeydown = keyDownHandler;
-  window.onfocus = focusHandler;
 }
