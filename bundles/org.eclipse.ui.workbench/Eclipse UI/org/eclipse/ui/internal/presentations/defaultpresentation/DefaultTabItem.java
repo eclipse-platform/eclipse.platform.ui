@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.custom.CTabFolder;
@@ -21,10 +19,11 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchThemeConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.presentations.util.PartInfo;
 import org.eclipse.ui.internal.presentations.util.WidgetTabItem;
 import org.eclipse.ui.internal.util.Util;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @since 3.1
@@ -54,10 +53,7 @@ public class DefaultTabItem extends WidgetTabItem {
 	 * @return CTabItem
 	 */
 	private static CTabItem getTab(CTabFolder parent, int index, int flags) {
-		if (Policy.DEBUG_SWT_GRAPHICS)
-			return new AnimatedTabItem(parent, flags, index);
-		else
-			return new CTabItem(parent, flags, index);
+		return new AnimatedTabItem(parent, flags, index);
 	}
 
 	/*
@@ -162,13 +158,12 @@ public class DefaultTabItem extends WidgetTabItem {
 		super.setBusy(busy);
 		updateFont();
 
-		if (Policy.DEBUG_SWT_GRAPHICS) {
-			AnimatedTabItem item = (AnimatedTabItem) getWidget();
-			if (busy)
-				item.startBusy();
-			else
-				item.stopBusy();
-		}
+		AnimatedTabItem item = (AnimatedTabItem) getWidget();
+		if (busy)
+			item.startBusy();
+		else
+			item.stopBusy();
+
 	}
 
 	private void updateFont() {
