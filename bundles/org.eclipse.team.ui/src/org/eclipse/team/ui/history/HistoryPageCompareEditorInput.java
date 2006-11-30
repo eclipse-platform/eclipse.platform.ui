@@ -17,8 +17,11 @@ import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
 import org.eclipse.team.ui.PageCompareEditorInput;
@@ -37,6 +40,11 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 	private DialogHistoryPageSite site;
 	private final Object object;
 	private final IHistoryPageSource pageSource;
+	private final IPropertyChangeListener changeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			handlePropertyChange(event);
+		}
+	};
 	
 	/**
 	 * Create a history page compare editor input for the given page and object.
@@ -63,8 +71,10 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 	 */
 	protected void handleDispose() {
 		super.handleDispose();
-		if (historyPage != null)
+		if (historyPage != null) {
+			historyPage.removePropertyChangeListener(changeListener);
 			historyPage.dispose();
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -82,6 +92,7 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 			description = ""; //$NON-NLS-1$
 		setPageDescription(description);
 		setTitle(historyPage.getName());
+		historyPage.addPropertyChangeListener(changeListener);
 		return (IPage)historyPage;
 	}
 	
@@ -125,6 +136,28 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 	 */
 	public final IHistoryPage getHistoryPage() {
 		return historyPage;
+	}
+
+	/**
+	 * Handle a property change event from the history page.
+	 * @param event the change event
+	 */
+	protected void handlePropertyChange(PropertyChangeEvent event) {
+		if (event.getSource() == historyPage) {
+			if (event.getProperty().equals(IHistoryPage.P_NAME)) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						setTitle(historyPage.getName());
+					}
+				});
+			} else if (event.getProperty().equals(IHistoryPage.P_DESCRIPTION)) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						setPageDescription(historyPage.getDescription());
+					}
+				});
+			}
+		}
 	}
 	
 }

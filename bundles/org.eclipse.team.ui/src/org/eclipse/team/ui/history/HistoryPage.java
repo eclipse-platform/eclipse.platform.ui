@@ -11,6 +11,8 @@
 package org.eclipse.team.ui.history;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.team.internal.ui.PropertyChangeHandler;
 import org.eclipse.ui.part.Page;
 
 /**
@@ -25,6 +27,7 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 	private IHistoryPageSite site;
 	private Object input;
 	private IHistoryView historyView;
+	private PropertyChangeHandler fChangeHandler;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.history.IHistoryPage#setSite(org.eclipse.team.ui.history.IHistoryPageSite)
@@ -79,4 +82,38 @@ public abstract class HistoryPage extends Page implements IHistoryPage, IAdaptab
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public synchronized void addPropertyChangeListener(IPropertyChangeListener listener) {
+		if (fChangeHandler == null) {
+			fChangeHandler = new PropertyChangeHandler();
+		}
+		fChangeHandler.addPropertyChangeListener(listener);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryPage#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		if (fChangeHandler != null) {
+			fChangeHandler.removePropertyChangeListener(listener);
+		}
+	}
+	
+	/**
+	 * Notify all listeners that the given property has changed.
+	 * 
+	 * @param source the object on which a property has changed
+	 * @param property identifier of the property that has changed
+	 * @param oldValue the old value of the property, or <code>null</code>
+	 * @param newValue the new value of the property, or <code>null</code>
+	 * @since 3.3
+	 */
+	protected void firePropertyChange(Object source, String property, Object oldValue, Object newValue) {
+		if (fChangeHandler == null) {
+			return;
+		}
+		fChangeHandler.firePropertyChange(source, property, oldValue, newValue);
+	}
 }

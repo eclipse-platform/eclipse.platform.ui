@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -56,7 +55,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
 	
 	// property listeners
-	private ListenerList fListeners;
+	private PropertyChangeHandler fChangeHandler;
 
 	private String fName;
 	private String fId;
@@ -64,48 +63,6 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	private boolean pinned;
 	private ImageDescriptor fImageDescriptor;
 	protected IConfigurationElement configElement;
-
-	/**
-	 * Notifies listeners of property changes, handling any exceptions
-	 */
-	class PropertyNotifier implements ISafeRunnable {
-
-		private IPropertyChangeListener fListener;
-		private PropertyChangeEvent fEvent;
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
-		 */
-		public void handleException(Throwable exception) {
-			TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.AbstractSynchronizeParticipant_5, exception); 
-		}
-
-		/**
-		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
-		 */
-		public void run() throws Exception {
-			fListener.propertyChange(fEvent);
-		}
-
-		/**
-		 * Notifies listeners of the property change
-		 * 
-		 * @param event
-		 *            the property change event
-		 */
-		public void notify(PropertyChangeEvent event) {
-			if (fListeners == null) {
-				return;
-			}
-			fEvent = event;
-			Object[] copiedListeners = fListeners.getListeners();
-			for (int i = 0; i < copiedListeners.length; i++) {
-				fListener = (IPropertyChangeListener) copiedListeners[i];
-				Platform.run(this);
-			}
-			fListener = null;
-		}
-	}
 
 	/**
 	 * Default constructor is a no-op. Subclasses that are persistable must support a no-arg constructor
@@ -201,19 +158,19 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		if (fListeners == null) {
-			fListeners = new ListenerList(ListenerList.IDENTITY);
+	public synchronized void addPropertyChangeListener(IPropertyChangeListener listener) {
+		if (fChangeHandler == null) {
+			fChangeHandler = new PropertyChangeHandler();
 		}
-		fListeners.add(listener);
+		fChangeHandler.addPropertyChangeListener(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		if (fListeners != null) {
-			fListeners.remove(listener);
+		if (fChangeHandler != null) {
+			fChangeHandler.removePropertyChangeListener(listener);
 		}
 	}
 
@@ -226,11 +183,10 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	 * @param newValue the new value of the property, or <code>null</code>
 	 */
 	public void firePropertyChange(Object source, String property, Object oldValue, Object newValue) {
-		if (fListeners == null) {
+		if (fChangeHandler == null) {
 			return;
 		}
-		PropertyNotifier notifier = new PropertyNotifier();
-		notifier.notify(new PropertyChangeEvent(source, property, oldValue, newValue));
+		fChangeHandler.firePropertyChange(source, property, oldValue, newValue);
 	}
 
 	/* (non-Javadoc)

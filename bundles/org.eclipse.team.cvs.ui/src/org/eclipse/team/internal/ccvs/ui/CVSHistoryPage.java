@@ -152,6 +152,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private int refreshRequest = 0;
 	private DateFormat dateTimeFormat;
+	private String description;
 	
 	public CVSHistoryPage(Object object) {
 		this.file = getCVSFile(object);
@@ -559,13 +560,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				if (historyFilter != null)
 					treeViewer.removeFilter(historyFilter);
 					historyFilter = null;
-					IHistoryPageSite historyPageSite = getHistoryPageSite();
-					if (historyPageSite instanceof WorkbenchHistoryPageSite){
-						IWorkbenchPart part = ((WorkbenchHistoryPageSite) historyPageSite).getPart();
-						if (part instanceof GenericHistoryView){
-							((GenericHistoryView) part).updateContentDescription(file.getName());
-						}
-					}
+					String old = CVSHistoryPage.this.description;
+					CVSHistoryPage.this.description = null;
+					CVSHistoryPage.this.firePropertyChange(CVSHistoryPage.this, P_NAME, old, getName());
 					toggleFilterAction.setEnabled(false);
 			}
 		};
@@ -1536,6 +1533,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public String getName() {
+		if (description != null)
+			return description;
 		if (file != null)
 			return file.getName();
 		
@@ -1837,7 +1836,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			IWorkbenchPart part = ((WorkbenchHistoryPageSite) historyPageSite).getPart();
 			if (part instanceof GenericHistoryView){
 				String revisions = NLS.bind(CVSUIMessages.CVSHistoryPage_FilterOnMessage, new Object[]{new Integer(historyFilter.getMatchCount()),new Integer(before)});
-				((GenericHistoryView) part).updateContentDescription(NLS.bind(CVSUIMessages.CVSHistoryPage_FilterDescription, new Object[]{file.getName(), revisions}));
+				String old = getName();
+				description = NLS.bind(CVSUIMessages.CVSHistoryPage_FilterDescription, new Object[]{file.getName(), revisions});
+				CVSHistoryPage.this.firePropertyChange(CVSHistoryPage.this, P_NAME, old, getName());
 			}
 		}
 		toggleFilterAction.setEnabled(true);

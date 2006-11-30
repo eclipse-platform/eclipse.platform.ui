@@ -12,8 +12,10 @@
 package org.eclipse.team.ui.history;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.SubActionBars;
 
@@ -55,6 +57,20 @@ import org.eclipse.ui.SubActionBars;
  */
 public interface IHistoryPage {
 	
+    /**
+     * Property name constant (value <code>"org.eclipse.team.ui.name"</code>)
+     * for the page's name.
+     * @since 3.3
+     */
+    public static final String P_NAME = TeamUIPlugin.ID + ".name"; //$NON-NLS-1$
+
+    /**
+     * Property name constant (value <code>"org.eclipse.team.ui.description"</code>)
+     * for an page's description.
+     * @since 3.3
+     */
+    public static final String P_DESCRIPTION = TeamUIPlugin.ID + ".description"; //$NON-NLS-1$
+    
 	/**
 	 * Fetches and populates the history page for the given Object. Clients
 	 * should provide an implementation for their individual pages.
@@ -136,4 +152,33 @@ public interface IHistoryPage {
 	 * @since 3.3
 	 */
 	public IHistoryView getHistoryView();
+	
+	/**
+	 * Adds a listener for changes to properties of this page. 
+	 * Has no effect if an identical listener is already
+	 * registered.
+	 * <p>
+	 * The changes supported by the page are as follows:
+	 * <ul>
+	 * <li><code>P_NAME</code>- indicates the name
+	 * of the page has changed</li>
+	 * <li><code>P_DESCRIPTION</code>- indicates the
+	 * description of the page has changed</li>
+	 * </ul></p>
+	 * <p>
+	 * Clients may define additional properties as required.
+	 * </p>
+	 * @param listener a property change listener
+	 * @since 3.3
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Removes the given property listener from this page.
+	 * Has no effect if an identical listener is not already registered.
+	 * 
+	 * @param listener a property listener
+	 * @since 3.3
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
 }

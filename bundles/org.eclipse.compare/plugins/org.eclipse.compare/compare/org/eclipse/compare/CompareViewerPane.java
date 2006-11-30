@@ -105,7 +105,7 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 	 */
 	public void setText(String label) {
 		CLabel cl= (CLabel) getTopLeft();
-		if (cl != null)
+		if (cl != null && !cl.isDisposed())
 			cl.setText(label);		
 	}
 	

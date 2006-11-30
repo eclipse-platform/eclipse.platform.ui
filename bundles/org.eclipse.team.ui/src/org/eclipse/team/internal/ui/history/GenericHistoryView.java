@@ -16,12 +16,13 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.internal.ui.*;
@@ -31,7 +32,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
 
-public class GenericHistoryView extends ViewPart implements IHistoryView {
+public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener {
 
 	class PageContainer {
 		private Page page;
@@ -362,6 +363,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		if (currentPageContainer != null) {
 			currentPageContainer.getSubBars().deactivate();
 			//give the current page a chance to dispose
+			((IHistoryPage)currentPageContainer.getPage()).removePropertyChangeListener(this);
 			currentPageContainer.getPage().dispose();
 			currentPageContainer.getSubBars().dispose();
 		}
@@ -373,6 +375,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 			// Verify that the page control is not disposed
 			// If we are closing, it may have already been disposed
 			book.showPage(pageControl);
+			((IHistoryPage)currentPageContainer.getPage()).addPropertyChangeListener(this);
 			currentPageContainer.getSubBars().activate();
 			refreshGlobalActionHandlers();
 			// Update action bars.
@@ -662,6 +665,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		if (dropTarget != null && !dropTarget.isDisposed())
 			dropTarget.removeDropListener(dropAdapter);
 		//Call dispose on current and default pages
+		((IHistoryPage)currentPageContainer.getPage()).removePropertyChangeListener(this);
 		currentPageContainer.getPage().dispose();
 		defaultPageContainer.getPage().dispose();
 		currentPageContainer = null;
@@ -684,13 +688,21 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		
 		return (IHistoryPage) defaultPageContainer.getPage();
 	}
-	
-	/**
-	 * Updates the content description of the view with the passed
-	 * in string.
-	 * @param description
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
-	public void updateContentDescription(String description){
-		setContentDescription(description);
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getSource() == currentPageContainer.getPage()) {
+			if (event.getProperty().equals(IHistoryPage.P_NAME)) {
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						setContentDescription(((IHistoryPage)currentPageContainer.getPage()).getName());
+					}
+				});
+			} else if (event.getProperty().equals(IHistoryPage.P_DESCRIPTION)) {
+				// We don't show the description
+			}
+		}
 	}
 }

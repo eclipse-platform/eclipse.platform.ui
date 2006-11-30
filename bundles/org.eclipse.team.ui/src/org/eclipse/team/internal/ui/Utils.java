@@ -781,6 +781,18 @@ public class Utils {
 			});
 		}
 	}
+	
+	public static void asyncExec(final Runnable r, final Control ctrl) {
+		if (ctrl != null && !ctrl.isDisposed()) {
+			ctrl.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (!ctrl.isDisposed()) {
+						BusyIndicator.showWhile(ctrl.getDisplay(), r);
+					}
+				}
+			});
+		}
+	}
 
     public static SyncInfo getSyncInfo(ISynchronizeModelElement node) {
         if (node instanceof IAdaptable) {
