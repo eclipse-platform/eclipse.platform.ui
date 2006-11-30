@@ -245,18 +245,17 @@ public class LaunchConfigurationPresentationManager {
 				if(delegate == null) {
 					delegate = config.getType().getPreferredDelegate(modes);
 				}
+				Set delegateSet = tabs[i].getDelegateSet();
 				if(delegate != null) {
-					if(tabs[i].getDelegateSet().contains(delegate.getId())) {
+					if(delegateSet.isEmpty() || delegateSet.contains(delegate.getId())) {
 						set.add(tabs[i]);
 					}
 				}
 				else {
 					//otherwise filter based on the collection of delegates for the modes
 					ILaunchDelegate[] delegates = config.getType().getDelegates(modes);
-					Set delegateset = null;
 					for(int j = 0; j < delegates.length; j++) {
-						delegateset = tabs[i].getDelegateSet();
-						if(delegateset.size() == 0 || delegateset.contains(delegates[j].getId())) {
+						if(delegateSet.size() == 0 || delegateSet.contains(delegates[j].getId())) {
 							//associated with all modes and tab groups or only specific ones if indicated
 							set.add(tabs[i]);
 						}
