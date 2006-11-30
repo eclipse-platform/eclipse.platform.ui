@@ -233,13 +233,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		pinAction = new Action(TeamUIMessages.GenericHistoryView_PinCurrentHistory, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PINNED)) {
 			public void run() {
 				if (isChecked()) {
-					//uncheck editor linking and disable
+					//uncheck editor linking
 					linkWithEditorAction.setChecked(false);
-					linkWithEditorAction.setEnabled(false);
 					setLinkingEnabled(false);
-				} else {
-					//renable the linking button
-					linkWithEditorAction.setEnabled(true);
 				}
 				setViewPinned(isChecked());
 			}
@@ -258,6 +254,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 		
 		linkWithEditorAction = new Action(TeamUIMessages.GenericHistoryView_LinkWithEditor, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_LINK_WITH)) {
 			public void run() {
+				if (isChecked()) {
+					// uncheck pinned
+					pinAction.setChecked(false);
+					setViewPinned(false);
+				}
 				setLinkingEnabled(isViewPinned() ? false : isChecked());
 			}
 		};
