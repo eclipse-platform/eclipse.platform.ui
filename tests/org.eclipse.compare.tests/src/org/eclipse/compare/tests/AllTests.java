@@ -29,6 +29,7 @@ public class AllTests {
 		suite.addTestSuite(FilterTest.class);
 		suite.addTestSuite(PatchTest.class);
 		suite.addTestSuite(AsyncExecTests.class);
+		suite.addTestSuite(DiffTest.class);
 		//$JUnit-END$
 		return suite;
 	}

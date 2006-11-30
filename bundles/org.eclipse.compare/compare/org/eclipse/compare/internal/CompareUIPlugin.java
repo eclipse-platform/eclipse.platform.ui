@@ -185,6 +185,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	private Map fStructureViewerAliases;
 	private CompareFilter fFilter;
 	private IPropertyChangeListener fPropertyChangeListener;
+	private boolean useOldDifferencer = false;
 	
 	/**
 	 * Creates the <code>CompareUIPlugin</code> object and registers all
@@ -1203,5 +1204,13 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+
+	public boolean isUseOldDifferencer() {
+		return useOldDifferencer;
+	}
+
+	public void setUseOldDifferencer(boolean useOldDifferencer) {
+		this.useOldDifferencer = useOldDifferencer;
 	}
 }

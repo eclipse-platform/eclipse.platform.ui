@@ -16,7 +16,7 @@ package org.eclipse.compare.rangedifferencer;
  * <code>RangeDifference</code> objects are the elements of a compare result returned from
  * the <code>RangeDifferencer</code> <code>find* </code> methods.
  * Clients use these objects as they are returned from the differencer.
- * This class is not intended to be instantiated or subclassed.
+ * This class is not intended to be instantiated or subclassed outside of the Compare framework.
  * <p>
  * Note: A range in the <code>RangeDifference</code> object is given as a start index
  * and length in terms of comparable entities. However, these entity indices and counts
@@ -203,6 +203,31 @@ public class RangeDifference {
 	 */
 	public int maxLength() {
 		return Math.max(fRightLength, Math.max(fLeftLength, lAncestorLength));
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof RangeDifference) {
+			RangeDifference other = (RangeDifference) obj;
+			return fKind == other.fKind
+				&& fLeftStart == other.fLeftStart
+				&& fLeftLength == other.fLeftLength
+				&& fRightStart == other.fRightStart
+				&& fRightLength == other.fRightLength
+				&& lAncestorStart == other.lAncestorStart
+				&& lAncestorLength == other.lAncestorLength;
+		}
+		return super.equals(obj);
+	}
+	
+	public String toString() {
+		String string = "Left: " + toRangeString(fLeftStart, fLeftLength) + " Right: " + toRangeString(fRightStart, fRightLength); //$NON-NLS-1$ //$NON-NLS-2$
+		if (lAncestorLength > 0 || lAncestorStart> 0)
+			string += " Ancestor: " + toRangeString(lAncestorStart, lAncestorLength); //$NON-NLS-1$
+		return string;
+	}
+
+	private String toRangeString(int start, int length) {
+		return "(" + start + ", " + length + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 }
 
