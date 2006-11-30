@@ -256,7 +256,8 @@ public class FilteredResourcesSelectionDialog extends
 							IWorkingSet workingSet = (IWorkingSet) event
 									.getNewValue();
 
-							if (workingSet != null) {
+							if (workingSet != null && !(workingSet.isAggregateWorkingSet()
+									&& workingSet.isEmpty())) {
 								workingSetFilter.setWorkingSet(workingSet);
 								setSubtitle(workingSet.getLabel());
 							} else {
