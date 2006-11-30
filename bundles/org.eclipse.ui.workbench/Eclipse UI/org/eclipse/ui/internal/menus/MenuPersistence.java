@@ -1068,6 +1068,9 @@ final class MenuPersistence extends RegistryPersistence {
 				indexedConfigurationElements[INDEX_ACTION_SETS],
 				actionSetCount, menuService);
 		
+		// Read legacy 3.2 'trim' additions
+		readTrimAdditions(null);//menuService);
+		
 		// read the 3.3 menu additions
 		readAdditions(menuService);
 	}
@@ -1075,7 +1078,53 @@ final class MenuPersistence extends RegistryPersistence {
 	//
 	// 3.3 menu extension code
 	// 
+	
+	public static void readTrimAdditions(IMenuService menuService) {
+		if (menuService == null)
+			return;
+		
+		final IExtensionRegistry registry = Platform.getExtensionRegistry();
+		final IConfigurationElement[] groups = registry
+				.getConfigurationElementsFor(EXTENSION_MENUS);
 
+		// Create a cache entry for every menu addition
+		for (int i = 0; i < groups.length; i++) {
+			String id = groups[i].getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+			
+			// Define the initial URI spec
+			String uriSpec = "toolbar:" + id; //$NON-NLS-1$
+			if (groups[i].getChildren(TAG_LOCATION).length > 0) {
+				IConfigurationElement location = groups[i].getChildren(TAG_LOCATION)[0];
+				if (location.getChildren(TAG_ORDER).length > 0) {
+					IConfigurationElement order = location.getChildren(TAG_ORDER)[0];
+					
+					String pos = order.getAttribute(IWorkbenchRegistryConstants.ATT_POSITION);
+					String relTo = order.getAttribute(IWorkbenchRegistryConstants.ATT_RELATIVE_TO);
+					uriSpec += "?" + pos + "=" + relTo; //$NON-NLS-1$ //$NON-NLS-2$
+					
+					// HACK! We expect that the new trim group is -always- relative to
+					// one of the 'default' groups; indicating which trim area they're in
+					MenuLocationURI uri = new MenuLocationURI("toolbar:" + relTo); //$NON-NLS-1$
+					List trimAdditions = menuService.getAdditionsForURI(uri);
+					
+					// OK, add the addition to this area
+					uri = new MenuLocationURI(uriSpec);
+					trimAdditions.add(new TrimAdditionCacheEntry(groups[i], uri, menuService));
+					System.out.println("Added cache entry: " + uri.toString()); //$NON-NLS-1$
+				}
+				else {
+					System.out.println("new Trim Cache: " + uriSpec); //$NON-NLS-1$
+					
+					// Must be a default group; make a new entry cache
+					MenuLocationURI uri = new MenuLocationURI(uriSpec);
+					
+					// NOTE: 'getAdditionsForURI' forces creation
+					menuService.getAdditionsForURI(uri);
+				}
+			}
+		}
+	}
+	
 	public static void readAdditions(IMenuService menuService) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] menusExtensionPoint = registry
