@@ -47,16 +47,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 		pluginPoint = pluginPointId;
 	}
 
-	/**
-	 * Adds new wizard to the provided collection. Override to provide more
-	 * logic.
-	 * 
-	 * TODO: remove the config parameter?
-	 */
-	protected void addNewElementToResult(PreferenceTransferElement element,
-			IConfigurationElement config) {
-		preferenceTransfers.add(element);
-	}
+
 
 	/**
 	 * Returns a new PreferenceTransferElement configured according to the
@@ -113,7 +104,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 
 			PreferenceTransferElement transfer = createPreferenceTransferElement(element);
 			if (transfer != null)
-				addNewElementToResult(transfer, element);
+				preferenceTransfers.add(transfer);
 			return true;
 		}
 
