@@ -448,15 +448,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView {
 				//If a current page exists, see if it can handle the dropped item
 				if (currentPageContainer.getPage() instanceof IHistoryPage) {
 					PageContainer tempPageContainer = currentPageContainer;
-					if (!((IHistoryPage) tempPageContainer.getPage()).isValidInput(resource)) {
+					IHistoryPage page = (IHistoryPage) tempPageContainer.getPage();
+					if (!page.isValidInput(resource)) {
 						tempPageContainer = createPage(pageSource, resource);
+						if (tempPageContainer == null)
+							page = null;
+						else
+							page = (IHistoryPage) tempPageContainer.getPage();
 					}
-					if (tempPageContainer != null) {
-						if (((IHistoryPage) tempPageContainer.getPage()).setInput(resource)){
-							((HistoryPage) tempPageContainer.getPage()).setHistoryView(this);
-							setContentDescription(resource.getName());
+					if (page != null) {
+						if (page.setInput(resource)){
+							((HistoryPage) page).setHistoryView(this);
+							setContentDescription(page.getName());
 							showPageRec(tempPageContainer);
-							return (IHistoryPage) tempPageContainer.getPage();
+							return page;
 						}
 					} else {
 						showPageRec(defaultPageContainer);
