@@ -72,8 +72,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 				tabGroup.createTabs(dialog, dialog.getMode());
 				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
 				for (int i = 0; i < tabs.length; i++) {
-					ILaunchConfigurationTab tab = tabs[i];
-					tab.setLaunchConfigurationDialog(dialog);
+					tabs[i].setLaunchConfigurationDialog(dialog);
 				}
 				tabGroup.setDefaults(wc);
 				tabGroup.dispose();

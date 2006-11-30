@@ -206,4 +206,14 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	public String getPluginIdentifier() {
 		return fElement.getContributor().getName();
 	}
+
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if(obj == null) {
+			return false;
+		}
+		return obj instanceof ILaunchDelegate && getId() != null && getId().equals(((ILaunchDelegate)obj).getId());
+	}
 }

@@ -195,6 +195,22 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void setModes(Set modes);
 	
 	/**
+	 * Set the preferred launch delegates' id for the given mode set. Passing in <code>null</code> as a delegate
+	 * id will cause the mapping for the specified mode set (if any) to be removed
+	 * @param modes the set of modes to set this delegate id for
+	 * @param delegateId the id of the delegate to associate as preferred for the specified mode set
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public void setPreferredLaunchDelegate(Set modes, String delegateId);
+	
+	/**
 	 * Adds the specified launch modes to this configuration's settings.
 	 * <p>
 	 * Setting launch modes on a configuration allows the configuration to

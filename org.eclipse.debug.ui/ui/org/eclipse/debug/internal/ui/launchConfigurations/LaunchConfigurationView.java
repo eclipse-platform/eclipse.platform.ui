@@ -101,6 +101,11 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fLaunchGroup = launchGroup;
 	}
 	
+	/**
+	 * Constructor
+	 * @param launchGroup
+	 * @param filters
+	 */
 	public LaunchConfigurationView(LaunchGroupExtension launchGroup, ViewerFilter[] filters) {
 		super();
 		fLaunchGroup = launchGroup;
@@ -181,6 +186,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		
 		fFilterAction = new FilterLaunchConfigurationAction();
 		setAction(FilterLaunchConfigurationAction.ID_FILTER_ACTION, fFilterAction);
+		
 	}
 
 	/**
@@ -277,8 +283,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationChanged(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-	}
+	public void launchConfigurationChanged(ILaunchConfiguration configuration) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationListener#launchConfigurationRemoved(org.eclipse.debug.core.ILaunchConfiguration)

@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -408,18 +409,18 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setModes(java.util.Set)
 	 */
-	public void setModes(Set options) {
-		getInfo().setAttribute(ATTR_LAUNCH_MODES, (options.size() > 0 ? options : null));
+	public void setModes(Set modes) {
+		getInfo().setAttribute(ATTR_LAUNCH_MODES, (modes.size() > 0 ? modes : null));
 		setDirty();
 	}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#addModes(java.util.Set)
 	 */
-	public void addModes(Set options) {
+	public void addModes(Set modes) {
 		try {
 			Set opts = getModes();
-			if(opts.addAll(options)) {
+			if(opts.addAll(modes)) {
 				getInfo().setAttribute(ATTR_LAUNCH_MODES, opts);
 				setDirty();
 			}
@@ -609,6 +610,30 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_PATHS, paths);
 		setAttribute(LaunchConfiguration.ATTR_MAPPED_RESOURCE_TYPES, types);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setPreferredLaunchDelegate(java.util.Set, java.lang.String)
+	 */
+	public void setPreferredLaunchDelegate(Set modes, String delegateId) {
+		if(modes != null) {
+			try {
+				Map delegates = getAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
+					//copy map to avoid pointer issues
+					Map map = new HashMap();
+					if(delegates != null) {
+						map.putAll(delegates);
+					}
+					if(delegateId == null) {
+						map.remove(modes.toString());
+					}
+					else {
+						map.put(modes.toString(), delegateId);
+					}
+					setAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, map);
+			}
+			catch (CoreException ce) {DebugPlugin.log(ce);}
+		}
 	}
 
 }

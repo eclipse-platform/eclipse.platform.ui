@@ -624,16 +624,30 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
     		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found, canceling launch and returning", null); //$NON-NLS-1$
     		throw new CoreException(status);
     	} else {
-    		ILaunchDelegate del = getType().getPreferredDelegate(modes);
+    		ILaunchDelegate del = getPreferredDelegate(modes);
+    		if(del == null) {
+    			del = getType().getPreferredDelegate(modes);
+    		}
     		if(del == null) {
     			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
     			IStatus status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
 				if(status != null && status.isOK()) {
-					delegate = getType().getPreferredDelegate(modes).getDelegate();
+					del = getPreferredDelegate(modes);
+					if(del == null) {
+						del = getType().getPreferredDelegate(modes);
+					}
+					if(del != null) {
+						delegate = del.getDelegate();
+					}
+					else {
+						monitor.setCanceled(true);
+						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
+			    		throw new CoreException(status);
+					}
 				}
 				else {
 					monitor.setCanceled(true);
-					status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launch tooling detected, canceling launch and returning", null); //$NON-NLS-1$
+					status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
 		    		throw new CoreException(status);
 				}
     		}
@@ -776,6 +790,20 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPreferredDelegate(java.util.Set)
+	 */
+	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException {
+		Map delegates = getAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
+		if(delegates != null) {
+			String id = (String) delegates.get(modes.toString());
+			if(id != null) {
+				return getLaunchManager().getLaunchDelegate(id);
+			}
+		}
+		return null;
 	}
 	
 }

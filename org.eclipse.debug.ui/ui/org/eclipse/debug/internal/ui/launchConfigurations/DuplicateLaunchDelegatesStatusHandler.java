@@ -48,18 +48,19 @@ public class DuplicateLaunchDelegatesStatusHandler implements IStatusHandler {
 				HashSet modes = new HashSet();
 				modes.add(mode);
 				modes.addAll(config.getModes());
-				SelectLaunchDelegatesDialog sld = new SelectLaunchDelegatesDialog(shell, config.getType().getDelegates(modes));
-				if(sld.open() == IDialogConstants.OK_ID) {
-					Object[] res = sld.getResult();
-					if(res != null && res.length > 0) {
-						config.getType().setPreferredDelegate(modes, (ILaunchDelegate) res[0]);
-					}
-					else {
-						return Status.CANCEL_STATUS;
-					}
+				SelectLaunchersDialog sldd = new SelectLaunchersDialog(shell,
+						config.getType().getDelegates(modes),
+						config.getWorkingCopy(),
+						mode);
+				if(sldd.open() != IDialogConstants.OK_ID) {
+					return Status.CANCEL_STATUS;
 				}
 				//check that the delegate has been set
-				return (config.getType().getPreferredDelegate(modes) == null ? Status.CANCEL_STATUS : Status.OK_STATUS);
+				ILaunchDelegate delegate = config.getPreferredDelegate(modes);
+				if(delegate == null) {
+					delegate = config.getType().getPreferredDelegate(modes);
+				}
+				return (delegate == null ? Status.CANCEL_STATUS : Status.OK_STATUS);
 			}
 		}
 		return Status.CANCEL_STATUS;

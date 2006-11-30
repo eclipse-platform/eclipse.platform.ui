@@ -63,7 +63,7 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
  * 
  * EXPERIMENTAL
  */
-public class LaunchDelegatesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+public class LaunchersPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	/**
 	 * Class to collect and persist attributes to sufficiently describe a dupicate launch delegate
@@ -148,7 +148,7 @@ public class LaunchDelegatesPreferencePage extends PreferencePage implements IWo
 	/**
 	 * Constructor
 	 */
-	public LaunchDelegatesPreferencePage() {
+	public LaunchersPreferencePage() {
 		setTitle(DebugPreferencesMessages.LaunchDelegatesPreferencePage_0);
 	}
 

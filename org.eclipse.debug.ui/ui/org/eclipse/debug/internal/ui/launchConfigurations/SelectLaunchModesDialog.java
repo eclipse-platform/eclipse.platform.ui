@@ -18,29 +18,16 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This class provides a dialog to present the user with a list of of viable launch options in the event 
@@ -52,7 +39,7 @@ import org.eclipse.ui.dialogs.SelectionDialog;
  *  
  *  EXPERIMENTAL
  */
-public class SelectLaunchModesDialog extends SelectionDialog {
+public class SelectLaunchModesDialog extends AbstractDebugSelectionDialog {
 
 	/**
 	 * Builds labels for list control
@@ -70,10 +57,6 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 		public void removeListener(ILabelProviderListener listener) {}
 	}
 	
-	private static final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_MODES_DIALOG"; //$NON-NLS-1$
-	
-	private CheckboxTableViewer fTableViewer = null;
-	private Table fTable  = null;
 	private List fValidModes = null;
 	
 	/**
@@ -101,31 +84,6 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	}
 	
 	/**
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Control createDialogArea(Composite parent) {
-		initializeDialogUnits(parent);
-		Composite comp = (Composite) super.createDialogArea(parent);
-		SWTUtil.createLabel(comp, LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4, 1);
-		fTable = new Table(comp, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
-		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		fTableViewer = new CheckboxTableViewer(fTable);
-		fTableViewer.setLabelProvider(new OptionsLabelProvider());
-		fTableViewer.setContentProvider(new ArrayContentProvider());
-		fTableViewer.setInput(fValidModes.toArray());
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				fTableViewer.setAllChecked(false);
-				fTableViewer.setChecked(event.getElement(), true);
-				getButton(IDialogConstants.OK_ID).setEnabled(true);
-			}
-		});
-		Dialog.applyDialogFont(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG);
-		return comp;
-	}
-	
-	/**
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -145,35 +103,38 @@ public class SelectLaunchModesDialog extends SelectionDialog {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.dialogs.SelectionDialog#getDialogBoundsSettings()
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getDialogSettingsId()
 	 */
-	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(SETTINGS_ID);
-		if (section == null) {
-			section = settings.addNewSection(SETTINGS_ID);
-		} 
-		return section;
+	protected String getDialogSettingsId() {
+		return IDebugUIConstants.PLUGIN_ID + ".SELECT_LAUNCH_MODES_DIALOG"; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getLabelProvider()
 	 */
-	protected Point getInitialSize() {
-		IDialogSettings settings = getDialogBoundsSettings();
-		if(settings != null) {
-			try {
-				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
-				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
-				if(width > 0 & height > 0) {
-					return new Point(width, height);
-				}
-			}
-			catch (NumberFormatException nfe) {
-				return new Point(350, 400);
-			}
-		}
-		return new Point(350, 400);
+	protected IBaseLabelProvider getLabelProvider() {
+		return new OptionsLabelProvider();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getTableViewerMessage()
+	 */
+	protected String getTableViewerMessage() {
+		return LaunchConfigurationsMessages.SelectLaunchOptionsDialog_4;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
+	 */
+	protected Object getViewerInput() {
+		return fValidModes.toArray();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.SELECT_LAUNCH_MODES_DIALOG;
 	}
 
 }

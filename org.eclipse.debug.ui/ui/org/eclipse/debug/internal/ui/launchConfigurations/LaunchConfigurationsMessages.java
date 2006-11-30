@@ -99,6 +99,7 @@ public class LaunchConfigurationsMessages extends NLS {
 
 	public static String LaunchConfigurationTabGroupViewer_16;
 
+	public static String LaunchConfigurationTabGroupViewer_17;
 	public static String LaunchConfigurationTabGroupViewer_9;
 	public static String LaunchConfigurationTabGroupViewer_13;
 	public static String PerspectiveManager_Error_1;
@@ -173,25 +174,20 @@ public class LaunchConfigurationsMessages extends NLS {
     public static String LaunchConfigurationTabGroupViewer_6;
 
 	public static String SaveScopeResourcesHandler_1;
-
 	public static String SaveScopeResourcesHandler_2;
 	public static String SaveScopeResourcesHandler_3;
 
 	public static String FavoritesDialog_8;
 
 	public static String LaunchConfigurationsDialog_0;
-
 	public static String LaunchConfigurationsDialog_1;
-
 	public static String LaunchConfigurationsDialog_4;
-
-	public static String DeleteLaunchConfigurations_0;
-
-	public static String DeleteLaunchConfigurations_1;
-
-	public static String FilterLaunchConfigurationAction_0;
-
+	public static String LaunchConfigurationsDialog_5;
 	public static String LaunchConfigurationsDialog_7;
+	public static String DeleteLaunchConfigurations_0;
+	public static String DeleteLaunchConfigurations_1;
+	public static String FilterLaunchConfigurationAction_0;
+	
 
 	public static String LaunchConfigurationTabGroupViewer_8;
 
@@ -201,17 +197,18 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String FilterDropDownMenuCreator_3;
 	public static String FilterDropDownMenuCreator_4;
 
-	public static String LaunchConfigurationsDialog_5;
 	public static String LaunchConfigurationsDialog_c_ancel;
 
 	public static String CollapseAllLaunchConfigurationAction_0;
 	public static String CollapseAllLaunchConfigurationAction_1;
 	public static String CollapseAllLaunchConfigurationAction_2;
 
-	public static String SelectLaunchDelegatesDialog_0;
-	public static String SelectLaunchDelegatesDialog_1;
-	public static String SelectLaunchDelegatesDialog_2;
-	public static String SelectLaunchDelegatesDialog_3;
+	public static String SelectLaunchersDialog_0;
+	public static String SelectLaunchersDialog_1;
+	public static String SelectLaunchersDialog_2;
+	public static String SelectLaunchersDialog_3;
+	public static String SelectLaunchersDialog_4;
+	public static String SelectLaunchersDialog_5;
 	public static String SelectLaunchOptionsDialog_2;
 	public static String SelectLaunchOptionsDialog_3;
 	public static String SelectLaunchOptionsDialog_4;

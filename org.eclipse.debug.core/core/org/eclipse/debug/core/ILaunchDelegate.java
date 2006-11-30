@@ -20,6 +20,8 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * launch delegate contributed to the <code>org.eclipse.debug.core.launchDelegates</code>
  * extension point. 
  * 
+ * This interface is NOT to be implemented by clients
+ * 
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as

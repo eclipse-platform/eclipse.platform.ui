@@ -175,7 +175,7 @@ public class LaunchConfigurationPresentationManager {
 	}
 	
 	/**
-	 * Returns the tab group for the given launch configutation, its type and the mode the dialog opened in
+	 * Returns the tab group for the given launch configutation and the mode the dialog opened in
 	 * @param type the type of the configuration
 	 * @param config
 	 * @param mode
@@ -195,7 +195,7 @@ public class LaunchConfigurationPresentationManager {
 	/**
 	 * Returns the proxy elements for all contributed tabs for the specified tab group id
 	 * @param groupid the id of the tab group
-	 * @param type the type the tab group is opened on
+	 * @param config the config the tab group is opened on
 	 * @param mode the mode the associated launch dialog is opened on
 	 * @return the listing of all of the tab extensions or an empty array, never <code>null</code>
 	 * 
@@ -241,7 +241,10 @@ public class LaunchConfigurationPresentationManager {
 			//filter to preferred delegate (if there is one)
 				HashSet modes = (HashSet) config.getModes();
 				modes.add(mode);
-				ILaunchDelegate delegate = config.getType().getPreferredDelegate(modes);
+				ILaunchDelegate delegate = config.getPreferredDelegate(modes);
+				if(delegate == null) {
+					delegate = config.getType().getPreferredDelegate(modes);
+				}
 				if(delegate != null) {
 					if(tabs[i].getDelegateSet().contains(delegate.getId())) {
 						set.add(tabs[i]);

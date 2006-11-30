@@ -99,8 +99,7 @@ public interface IDebugHelpContextIds {
 	public static final String SELECT_DEFAULT_WORKINGSET_DIALOG = PREFIX + "select_breakpoint_workingset_dialog"; //$NON-NLS-1$
 	public static final String DELETE_ASSOCIATED_LAUNCH_CONFIGS_DIALOG = PREFIX + "delete_associated_launch_configs_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCH_MODES_DIALOG = PREFIX + "select_launch_modes_dialog"; //$NON-NLS-1$
-	public static final String SELECT_LAUNCH_DELEGATES_DIALOG = PREFIX + "select_launch_delegates_dialog"; //$NON-NLS-1$
-	public static final String SELECT_DUPE_LAUNCH_DELEGATE_ACTION_DIALOG = PREFIX + "select_dupe_delegate_action_dialog"; //$NON-NLS-1$
+	public static final String SELECT_LAUNCHERS_DIALOG = PREFIX + "select_launchers_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$

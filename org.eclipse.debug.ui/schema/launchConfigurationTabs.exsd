@@ -66,7 +66,7 @@ without consulting with the Platform/Debug team.&lt;/p&gt;
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  fully qualified name of the java class that implemnents &lt;code&gt;ILaunchConfigurationTab&lt;/code&gt;.
+                  fully qualified name of the java class that implements &lt;code&gt;ILaunchConfigurationTab&lt;/code&gt;.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.debug.ui.ILaunchConfigurationTab"/>

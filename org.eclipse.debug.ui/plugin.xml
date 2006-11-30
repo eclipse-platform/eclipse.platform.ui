@@ -147,7 +147,7 @@
       </page>
       <page
             category="org.eclipse.debug.ui.LaunchingPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.LaunchDelegatesPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.LaunchersPreferencePage"
             id="org.eclipse.debug.ui.LaunchDelegatesPreferencePage"
             name="%LaunchDelegatesPreferencePage.name">
          <keywordReference

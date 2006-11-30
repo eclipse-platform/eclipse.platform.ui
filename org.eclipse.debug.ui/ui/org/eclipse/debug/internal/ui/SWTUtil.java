@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -59,6 +60,30 @@ public class SWTUtil {
 		}
 	}		
 	
+	/**
+	 * Creates a check box button using the parents' font
+	 * @param parent the parent to add the button to
+	 * @param label the label for the button
+	 * @param image the image for the button 
+	 * @param checked the initial checked state of the button
+	 * @return a new checked button set to the initial checked state
+	 * @since 3.3
+	 */
+	public static Button createCheckButton(Composite parent, String label, Image image, boolean checked) {
+		Button button = new Button(parent, SWT.CHECK);
+		button.setFont(parent.getFont());
+		button.setSelection(checked);
+		if(image != null) {
+			button.setImage(image);
+		}
+		if(label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData();
+		button.setLayoutData(gd);
+		setButtonDimensionHint(button);
+		return button;
+	}
 	
 	/**
 	 * Creates and returns a new push button with the given
@@ -163,6 +188,32 @@ public class SWTUtil {
 		gd.widthHint = wrapwidth;
 		l.setLayoutData(gd);
 		return l;
+	}
+	
+	/**
+	 * Creates a new <code>CLabel</code> that will wrap at the specified width and has the specified image
+	 * @param parent the parent to add this label to
+	 * @param text the text for the label
+	 * @param image the image for the label
+	 * @param hspan the h span to take up in the parent
+	 * @param wrapwidth the with to wrap at
+	 * @return a new <code>CLabel</code>
+	 * @since 3.3
+	 */
+	public static CLabel createWrapCLabel(Composite parent, String text, Image image, int hspan, int wrapwidth) {
+		CLabel label = new CLabel(parent, SWT.NONE | SWT.WRAP);
+		label.setFont(parent.getFont());
+		if(text != null) {
+			label.setText(text);
+		}
+		if(image != null) {
+			label.setImage(image);
+		}
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = hspan;
+		gd.widthHint = wrapwidth;
+		label.setLayoutData(gd);
+		return label;
 	}
 	
 	/**

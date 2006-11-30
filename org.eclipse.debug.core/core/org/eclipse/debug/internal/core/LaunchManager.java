@@ -1390,10 +1390,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * without consulting with the Platform/Debug team.
 	 * </p>
 	 */
-	public LaunchDelegate[] getLaunchDelegates() {
+	public ILaunchDelegate[] getLaunchDelegates() {
 		initializeLaunchDelegates();
 		Collection col = fLaunchDelegates.values();
-		return (LaunchDelegate[]) col.toArray(new LaunchDelegate[col.size()]);
+		return (ILaunchDelegate[]) col.toArray(new ILaunchDelegate[col.size()]);
 	}
 	
 	/**
@@ -1418,6 +1418,26 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		return (LaunchDelegate[]) list.toArray(new LaunchDelegate[list.size()]);
+	}
+	
+	/**
+	 * This method returns the <code>ILaunchDelegate</code> instance corresponding to the id 
+	 * of the launch delegate specified
+	 * @param id the id of the <code>ILaunchDelegate</code> to find 
+	 * @return the <code>ILaunchDelegate</code> or <code>null</code> if not found
+	 * @since 3.3
+	 * EXPERIMENTAL
+	 */
+	public ILaunchDelegate getLaunchDelegate(String id) {
+		if(id != null) {
+			ILaunchDelegate[] delegates = getLaunchDelegates();
+			for(int i = 0; i < delegates.length; i++) {
+				if(id.equals(delegates[i].getId())) {
+					return delegates[i];
+				}
+			}
+		}
+		return null;
 	}
 	
 	/**
@@ -2197,18 +2217,20 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					for(Iterator iter = preferred.keySet().iterator(); iter.hasNext();) {
 						modes = (Set) iter.next();
 						delegate = (ILaunchDelegate) preferred.get(modes);
-						child = doc.createElement(DELEGATE);
-						child.setAttribute(ID, delegate.getId());
-						child.setAttribute(TYPEID, types[i].getIdentifier());
-						for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
-							modestr += iter2.next();
-							if(iter2.hasNext()) {
-								modestr += ","; //$NON-NLS-1$
+						if(delegate != null) {
+							child = doc.createElement(DELEGATE);
+							child.setAttribute(ID, delegate.getId());
+							child.setAttribute(TYPEID, types[i].getIdentifier());
+							for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
+								modestr += iter2.next();
+								if(iter2.hasNext()) {
+									modestr += ","; //$NON-NLS-1$
+								}
 							}
+							child.setAttribute(MODES, modestr);
+							modestr = EMPTY_STRING;
+							root.appendChild(child);
 						}
-						child.setAttribute(MODES, modestr);
-						modestr = EMPTY_STRING;
-						root.appendChild(child);
 					}
 				}
 			}

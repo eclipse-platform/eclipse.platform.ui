@@ -89,6 +89,16 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute storing a list 
+	 * of preferred launchers for associated mode sets.
+	 * This attribute is a list of launchers stored by mode set
+	 * and relating to the id of the preferred launcher, which happens to be an <code>ILaunchDelegate</code>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$
+	
+	/**
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
 	 * 
@@ -343,6 +353,21 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.3
 	 */
 	public Set getModes() throws CoreException;
+	
+	/**
+	 * Returns the preferred launch delegate that has been set on this configuration.
+	 * @return this configuration's preferred launch delegate for the specified mode set, or 
+	 * <code>null</code> if one is not specified
+	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 * @since 3.3
+	 */
+	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException;
 	
 	/**
 	 * Returns the type of this launch configuration. This is a
