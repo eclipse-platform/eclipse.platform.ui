@@ -27,6 +27,7 @@ import org.eclipse.jface.text.revisions.IRevisionRulerColumn;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.revisions.IRevisionRulerColumnExtension.RenderingMode;
+import org.eclipse.jface.text.source.AnnotationModel;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
@@ -539,9 +540,16 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		if (!isShowingChangeInformation())
 			installChangeRulerModel(fDelegate); // FIXME pass provider id
 		
+		
+		IAnnotationModel annotationModel= fViewer.getAnnotationModel();
 		IAnnotationModel oldDiffer= getDiffer();
-		if (oldDiffer == null)
+		if (oldDiffer == null && annotationModel != null)
 			return false; // quick diff is enabled, but no differ? not working for whatever reason
+
+		if (annotationModel == null)
+			annotationModel= new AnnotationModel();
+		if (!(annotationModel instanceof IAnnotationModelExtension))
+			return false;
 
 		QuickDiff util= new QuickDiff();
 		if (util.getConfiguredQuickDiffProvider(oldDiffer).equals(diffProviderId)) {
@@ -565,18 +573,15 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 				return false;
 		}
 		
-		IAnnotationModel m= fViewer.getAnnotationModel();
-		if (!(m instanceof IAnnotationModelExtension))
-			return false;
-		IAnnotationModelExtension model= (IAnnotationModelExtension) m;
-		model.removeAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
+		IAnnotationModelExtension modelExtension=(IAnnotationModelExtension) annotationModel;
+		modelExtension.removeAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID);
 		
 		IAnnotationModel newDiffer= util.createQuickDiffAnnotationModel(getEditor(), diffProviderId);
 
-		model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, newDiffer);
+		modelExtension.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, newDiffer);
 		
 		if (fDelegate instanceof IChangeRulerColumn)
-			((IChangeRulerColumn) fDelegate).setModel(m); // picks up the new model attachment
+			((IChangeRulerColumn) fDelegate).setModel(annotationModel); // picks up the new model attachment
 		
 		return true;
 	}
