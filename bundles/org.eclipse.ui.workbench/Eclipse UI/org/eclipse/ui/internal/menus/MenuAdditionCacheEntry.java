@@ -280,4 +280,33 @@ public class MenuAdditionCacheEntry {
 		return getClassSpec(element) != null
 				&& getClassSpec(element).length() > 0;
 	}
+
+	/**
+	 * @param itemAddition
+	 * @return
+	 */
+	public static String getCommandId(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_COMMAND_ID);
+	}
+
+	/**
+	 * @param element
+	 * @return A map of parameters names to parameter values. All Strings. The
+	 *         map may be empty.
+	 */
+	public static Map getParameters(IConfigurationElement element) {
+		HashMap map = new HashMap();
+		IConfigurationElement[] parameters = element
+				.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
+		for (int i = 0; i < parameters.length; i++) {
+			String name = parameters[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+			String value = parameters[i]
+					.getAttribute(IWorkbenchRegistryConstants.ATT_VALUE);
+			if (name != null && value != null) {
+				map.put(name, value);
+			}
+		}
+		return map;
+	}
 }
