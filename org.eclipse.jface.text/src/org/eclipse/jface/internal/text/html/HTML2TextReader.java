@@ -74,6 +74,7 @@ public class HTML2TextReader extends SubstitutionTextReader {
 	private boolean fInParagraph= false;
 	private boolean fIsPreformattedText= false;
 	private boolean fIgnore= false;
+	private boolean fHeaderDetected= false;
 
 	/**
 	 * Transforms the HTML text from the reader to formatted text.
@@ -212,12 +213,13 @@ public class HTML2TextReader extends SubstitutionTextReader {
 		if ("/dd".equals(html)) //$NON-NLS-1$
 			return LINE_DELIM;
 		
-		if ("head".equals(html)) { //$NON-NLS-1$
+		if ("head".equals(html) && !fHeaderDetected) { //$NON-NLS-1$
+			fHeaderDetected= true;
 			fIgnore= true;
 			return EMPTY_STRING;
 		}
 		
-		if ("/head".equals(html)) { //$NON-NLS-1$
+		if ("/head".equals(html) && fHeaderDetected && fIgnore) { //$NON-NLS-1$
 			fIgnore= false;
 			return EMPTY_STRING;
 		}
