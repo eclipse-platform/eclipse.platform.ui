@@ -12,11 +12,12 @@ package org.eclipse.team.ui;
 
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.history.GenericHistoryView;
 import org.eclipse.team.internal.ui.registry.TeamContentProviderManager;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
 /**
  * TeamUI contains public API for generic UI-based Team functionality.
@@ -98,6 +99,47 @@ public class TeamUI {
 		}
 
 		return null;
+	}
+	
+	/**
+	 * Shows a history view containing the given input and returns a handle to the view
+	 * or <code>null</code> if no history was available for the given input. If an appropriate
+	 * instance of a history view is already opened, its input will be changed and the view will
+	 * be activated. Otherwise a new view will be opened.
+	 * @param page the workbench page containing the history view
+	 * @param input the input whose history is to be displayed
+	 * 
+	 * @return an IHistoryView which is the main history view if it is found or null if it can't be found
+	 * @since 3.3
+	 */
+	public static IHistoryView showHistoryFor(IWorkbenchPage page, Object input) {
+		try {
+			IHistoryView view = (IHistoryView) page.findView(IHistoryView.VIEW_ID);
+			if (view == null) {
+				page.showView(IHistoryView.VIEW_ID);
+				view = (IHistoryView) TeamUIPlugin.getActivePage().findView(IHistoryView.VIEW_ID);
+				view.showHistoryFor(input);
+			} else {
+				view = ((GenericHistoryView)view).findUnpinnedHistoryView();
+				if (view == null) {
+					view = (IHistoryView) page.showView(IHistoryView.VIEW_ID, IHistoryView.VIEW_ID + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
+					return showInputInView(page, input, view);
+				} else {
+					return showInputInView(page, input, view);
+				}
+			}
+			return view;
+		} catch (PartInitException e) {
+		}
+
+		return null;
+	}
+
+	private static IHistoryView showInputInView(IWorkbenchPage page,
+			Object input, IHistoryView view) {
+		page.activate((IWorkbenchPart)view);
+		((GenericHistoryView)view).itemDropped(input, true);
+		return view;
 	}
 	
 	/**

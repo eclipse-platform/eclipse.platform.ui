@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.*;
 
@@ -46,7 +47,8 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					IFile file = (IFile) getSelectedResources()[0];
 					showCompareInDialog(getShell(), file);
 				} else {
-					IHistoryPage page = TeamUI.getHistoryView().showHistoryFor((IFile)getSelectedResources()[0]);
+					IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), (IFile)getSelectedResources()[0]);
+					IHistoryPage page = view.getHistoryPage();
 					if (page instanceof CVSHistoryPage){
 						CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) page;
 						cvsHistoryPage.setClickAction(true);

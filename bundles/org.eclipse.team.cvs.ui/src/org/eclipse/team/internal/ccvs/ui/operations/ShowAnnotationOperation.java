@@ -39,6 +39,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
@@ -125,8 +126,7 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @throws PartInitException
      */
     private IHistoryView showHistoryView(IWorkbenchPage page) throws PartInitException {
-    	final IHistoryView historyView= (IHistoryView)page.showView(IHistoryView.VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-    	historyView.showHistoryFor(fCVSResource.getIResource());
+    	IHistoryView historyView= TeamUI.showHistoryFor(page, fCVSResource.getIResource());
     	IHistoryPage historyPage = historyView.getHistoryPage();
     	if (historyPage instanceof CVSHistoryPage){
     		CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;

@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ui.history;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.IPageSite;
@@ -58,10 +57,6 @@ public class WorkbenchHistoryPageSite implements IHistoryPageSite {
 
 	public IToolBarManager getToolBarManager() {
 		return site.getActionBars().getToolBarManager();
-	}
-
-	public IHistoryPage showHistoryFor(Object input) {
-		return part.showHistoryInView(input);
 	}
 
 }

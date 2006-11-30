@@ -406,15 +406,15 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		return null;
 	}
 	
-	public IHistoryPage showHistoryInView(Object input) {
-		return itemDropped(input, true, true);
+	public IHistoryPage showHistoryFor(Object object, boolean force) {
+		return itemDropped(object, true, force);
 	}
 	
 	public IHistoryPage itemDropped(Object object, boolean refresh) {
 		return itemDropped(object, refresh, false);
 	}
 	
-	public IHistoryPage itemDropped(Object object, boolean refresh, boolean thisView) {
+	public IHistoryPage itemDropped(Object object, boolean refresh, boolean force) {
 		
 		//check to see if history view is visible - if it's not, don't bother
 		//going to the trouble of fetching the history
@@ -426,13 +426,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		if (resource != null) {
 			
 			//check to see if this resource is already being displayed in another page
-			IHistoryPage existingPage = checkForExistingPage(object, resource.getName(), refresh, thisView);
+			IHistoryPage existingPage = checkForExistingPage(object, resource.getName(), refresh, force);
 			if (existingPage != null){
 				return existingPage;
 			}
 			
 			//now check to see if this view is pinned
-			IHistoryPage pinnedPage = checkForPinnedView(object, resource.getName(), refresh, thisView);
+			IHistoryPage pinnedPage = checkForPinnedView(object, resource.getName(), refresh, force);
 			if (pinnedPage != null)
 				return pinnedPage;
 		
@@ -496,12 +496,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				if (tempPageContainer != null) {
 					
 					//check to see if this resource is alreadu being displayed in another page
-					IHistoryPage existingPage = checkForExistingPage(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, thisView);
+					IHistoryPage existingPage = checkForExistingPage(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, force);
 					if (existingPage != null){
 						return existingPage;
 					}
 					
-					IHistoryPage pinnedPage = checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, thisView);
+					IHistoryPage pinnedPage = checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, force);
 					if (pinnedPage != null)
 						return pinnedPage;
 					
@@ -589,7 +589,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		return null;
 	}
 	
-	private GenericHistoryView findUnpinnedHistoryView(){
+	public GenericHistoryView findUnpinnedHistoryView(){
 		IWorkbenchPage page = getSite().getPage();
 		IViewReference[] historyViews = page.getViewReferences();
 		for (int i = 0; i < historyViews.length; i++) {
@@ -678,7 +678,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {
-		 return itemDropped(object, true);
+		 return showHistoryFor(object, false);
 	}
 
 	public IHistoryPage getHistoryPage() {

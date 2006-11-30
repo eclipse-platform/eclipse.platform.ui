@@ -40,14 +40,28 @@ public interface IHistoryView {
 	public IHistoryPage getHistoryPage();
 	
 	/**
-	 * Shows the history for the passed in object. If the object is being shown
-	 * in another instance of a history view in the same page as this view, that
-	 * view will be given focus.
+	 * Shows the history for the passed in object. This method is equivalent to 
+	 * {@link #showHistoryFor(Object, boolean)} with <code>force</code>
+	 * set to <code>false</code>.
 	 * 
-	 * @param object
+	 * @param object the input whose history is to be displayed
 	 * @return returns the history page that the passed in object is being shown
 	 *         in or null if no appropriate page can be found.
 	 */
 	public IHistoryPage showHistoryFor(Object object);
+	
+	/**
+	 * Shows the history for the given object. If force is <code>false</code>,
+	 * the history may be displayed in another instance of {@link IHistoryView}.
+	 * For example, if the target view is pinned, the history will be shown in another
+	 * view instance. If force is <code>true</code>, the history will be shown in this view
+	 * instance regardless of the view state.
+	 * 
+	 * @param object the input whose history is to be displayed
+	 * @param force whether this view should show the input even if it is pinned
+	 * @return returns the history page that the passed in object is being shown
+	 *         in or <code>null</code> if no appropriate page can be found.
+	 */
+	public IHistoryPage showHistoryFor(Object object, boolean force);
 	
 }

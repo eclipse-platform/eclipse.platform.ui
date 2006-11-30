@@ -25,7 +25,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ui.history.GenericHistoryView;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.*;
@@ -43,7 +43,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class AnnotateView extends ViewPart implements ISelectionChangedListener {
 
 	ITextEditor editor;
-	GenericHistoryView historyView;
+	IHistoryView historyView;
 	IWorkbenchPage page;
 
 	ListViewer viewer;
@@ -154,10 +154,8 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 			return;
 		}
 
-		// Get hook to the HistoryView
-				
-		historyView = (GenericHistoryView) page.showView(IHistoryView.VIEW_ID);
-		historyView.showHistoryFor((ICVSRemoteFile) CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
+		// Show the history in the history view
+		historyView = TeamUI.showHistoryFor(page, CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
 	}
 	
 	protected void disconnect() {

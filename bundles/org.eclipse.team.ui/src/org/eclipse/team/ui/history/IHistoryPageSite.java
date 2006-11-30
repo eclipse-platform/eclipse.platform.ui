@@ -93,19 +93,4 @@ public interface IHistoryPageSite {
 	 */
 	boolean isModal();
 	
-	/**
-	 * Change the input of the History view hosting this site to the
-	 * provided input. This method is provided to allow history
-	 * pages to change the input of their containing view (i.e.
-	 * calling {@link IHistoryView#showHistoryFor(Object)} may
-	 * pick a different view to show the history in.
-	 * <p>
-	 * Some sites (e.g dialogs) do not support changing the 
-	 * page input. In these cases, <code>null</code> will be returned.
-	 * @param input the input
-	 * @return the page containing the input or <code>null</code> if the history
-	 * for the input could not be shown.
-	 * @since 3.3
-	 */
-	IHistoryPage showHistoryFor(Object input);
 }

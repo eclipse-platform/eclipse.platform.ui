@@ -12,8 +12,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.history.IHistoryView;
 import org.eclipse.ui.IObjectActionDelegate;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.ActionDelegate;
@@ -30,8 +30,7 @@ public class ShowHistoryAction extends ActionDelegate implements IObjectActionDe
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {
-								IHistoryView view = TeamUI.getHistoryView();
-								view.showHistoryFor(resource);
+							TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource);
 						}
 					};
 
