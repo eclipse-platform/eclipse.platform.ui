@@ -149,4 +149,15 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 		assertEquals(0, listenerCounter[0]);
 		assertEquals(1, disposeCounter[0]);
 	}
+	
+	public void testCellLabelProviderDispose() {
+		final int[] disposeCounter = { 0 };
+		tableViewer.setLabelProvider(new ColumnLabelProvider() {
+			public void dispose() {
+				disposeCounter[0]++;
+			}
+		});
+		tableViewer.getTable().dispose();
+		assertEquals(1, disposeCounter[0]);
+	}
 }

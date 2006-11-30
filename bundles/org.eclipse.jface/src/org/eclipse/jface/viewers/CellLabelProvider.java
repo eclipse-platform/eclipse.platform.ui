@@ -53,7 +53,7 @@ public abstract class CellLabelProvider extends BaseLabelProvider  {
 				|| labelProvider instanceof ITableFontProvider)
 			return new TableColumnViewerLabelProvider(labelProvider);
 		if (labelProvider instanceof CellLabelProvider)
-			return (CellLabelProvider) labelProvider;
+			return new DelegatingCellLabelProvider((CellLabelProvider) labelProvider);
 		return new WrappedViewerLabelProvider(labelProvider);
 
 	}
