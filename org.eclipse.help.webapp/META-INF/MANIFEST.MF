@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %help_webapp_plugin_name
 Bundle-SymbolicName: org.eclipse.help.webapp; singleton:=true
 Bundle-Version: 3.3.0.qualifier
-Bundle-ClassPath: webapp.jar
+Bundle-ClassPath: webapp.jar,
+ WEB-INF/lib/servlets.jar
 Bundle-Activator: org.eclipse.help.internal.webapp.HelpWebappPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
