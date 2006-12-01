@@ -27,6 +27,7 @@ import org.osgi.framework.BundleContext;
 public class HelpPlugin extends Plugin {
 
 	public final static String PLUGIN_ID = "org.eclipse.help"; //$NON-NLS-1$
+	public final static String HELP_DATA_KEY = "HELP_DATA"; //$NON-NLS-1$
 	public final static String BASE_TOCS_KEY = "baseTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_TOCS_KEY = "ignoredTOCS"; //$NON-NLS-1$
 	public final static String IGNORED_INDEXES_KEY = "ignoredIndexes"; //$NON-NLS-1$

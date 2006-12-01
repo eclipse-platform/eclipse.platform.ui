@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extensions>
+	<tocOrder>
+		<toc id="toc1"/>
+		<category id="category1"/>
+		<toc id="toc2"/>
+		<toc id="toc3"/>
+	</tocOrder>
+	<hidden>
+		<index id="index1"/>
+		<category id="category2"/>
+		<index id="index2"/>
+		<toc id="toc4"/>
+	</hidden>
+</extensions>

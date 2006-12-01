@@ -30,5 +30,6 @@ public class AllPreferencesTests extends TestSuite {
 	 */
 	public AllPreferencesTests() {
 		addTest(ProductPreferencesTest.suite());
+		addTest(HelpDataTest.suite());
 	}
 }

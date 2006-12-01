@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractTocProvider;
 import org.eclipse.help.TocContribution;
+import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
@@ -189,16 +190,22 @@ public class TocManager {
 	}
 	
 	private Set getIgnoredTocContributions() {
-		HashSet ignored = new HashSet();
-		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-		String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
-		if (preferredTocs.length() > 0) {
-			StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
-			while (suggestdOrderedInfosets.hasMoreTokens()) {
-				ignored.add(suggestdOrderedInfosets.nextToken());
-			}
+		HelpData helpData = HelpData.getInstance();
+		if (helpData.exists()) {
+			return helpData.getHiddenTocs();
 		}
-		return ignored;
+		else {
+			HashSet ignored = new HashSet();
+			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+			String preferredTocs = pref.getString(HelpPlugin.IGNORED_TOCS_KEY);
+			if (preferredTocs.length() > 0) {
+				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredTocs, " ;,"); //$NON-NLS-1$
+				while (suggestdOrderedInfosets.hasMoreTokens()) {
+					ignored.add(suggestdOrderedInfosets.nextToken());
+				}
+			}
+			return ignored;
+		}
 	}
 
 	/*
@@ -235,9 +242,16 @@ public class TocManager {
 		// first categorize the TOCs
 		List itemsToOrder = new ArrayList();
 		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
-			
+		
 		// order them
-		List orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
+		List orderedItems;
+		HelpData helpData = HelpData.getInstance();
+		if (helpData.exists()) {
+			orderedItems =  ProductPreferences.getOrderedList(itemsToOrder, helpData.getTocOrder());
+		}
+		else {
+			orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
+		}
 			
 		// replace with actual TocContribution or category
 		orderedItems = substituteValues(orderedItems, categorized);

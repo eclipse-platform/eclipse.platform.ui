@@ -146,6 +146,10 @@ public class ProductPreferences {
 		return getOrderedList(items, primary, secondary);
 	}
 
+	public static List getOrderedList(List items, List order) {
+		return getOrderedList(items, order, null);
+	}
+
 	/**
 	 * Returns the given items in an order that best satisfies the given orderings.
 	 * The primary ordering is consulted first, then the secondary.
@@ -174,17 +178,19 @@ public class ProductPreferences {
 		
 		// if there are any remaining items, order them
 		if (!itemsRemaining.isEmpty()) {
-			List secondaryOrderingsRemaining = new ArrayList(Arrays.asList(secondary));
-			List bestMatch;
-			while ((bestMatch = findBestMatch(itemsRemaining, secondaryOrderingsRemaining)) != null) {
-				// satisfy this ordering
-				Iterator iter = bestMatch.iterator();
-				while (iter.hasNext()) {
-					String item = (String)iter.next();
-					if (itemsRemaining.contains(item)) {
-						orderedList.add(item);
-						itemsRemaining.remove(item);
-						secondaryOrderingsRemaining.remove(bestMatch);
+			if (secondary != null && secondary.length > 0) {
+				List secondaryOrderingsRemaining = new ArrayList(Arrays.asList(secondary));
+				List bestMatch;
+				while ((bestMatch = findBestMatch(itemsRemaining, secondaryOrderingsRemaining)) != null) {
+					// satisfy this ordering
+					Iterator iter = bestMatch.iterator();
+					while (iter.hasNext()) {
+						String item = (String)iter.next();
+						if (itemsRemaining.contains(item)) {
+							orderedList.add(item);
+							itemsRemaining.remove(item);
+							secondaryOrderingsRemaining.remove(bestMatch);
+						}
 					}
 				}
 			}

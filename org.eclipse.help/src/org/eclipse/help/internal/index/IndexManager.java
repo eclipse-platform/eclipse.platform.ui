@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
  *                       163558 Dynamic content support for all UA
+ *                       165168 [Help] Better control of how help content is arranged and ordered
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -30,6 +31,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IndexContribution;
+import org.eclipse.help.internal.HelpData;
 import org.eclipse.help.internal.HelpPlugin;
 
 public class IndexManager {
@@ -161,15 +163,21 @@ public class IndexManager {
 	}
 
 	private Set getIgnoredIndexContributions() {
-		HashSet ignored = new HashSet();
-		Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
-		String preferredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
-		if (preferredIndexes.length() > 0) {
-			StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$
-			while (suggestdOrderedInfosets.hasMoreTokens()) {
-				ignored.add(suggestdOrderedInfosets.nextToken());
-			}
+		HelpData helpData = HelpData.getInstance();
+		if (helpData.exists()) {
+			return helpData.getHiddenIndexes();
 		}
-		return ignored;
+		else {
+			HashSet ignored = new HashSet();
+			Preferences pref = HelpPlugin.getDefault().getPluginPreferences();
+			String preferredIndexes = pref.getString(HelpPlugin.IGNORED_INDEXES_KEY);
+			if (preferredIndexes.length() > 0) {
+				StringTokenizer suggestdOrderedInfosets = new StringTokenizer(preferredIndexes, " ;,"); //$NON-NLS-1$
+				while (suggestdOrderedInfosets.hasMoreTokens()) {
+					ignored.add(suggestdOrderedInfosets.nextToken());
+				}
+			}
+			return ignored;
+		}
 	}
 }
