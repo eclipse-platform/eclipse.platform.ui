@@ -151,7 +151,6 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 			
 			viewer.removeLabelUpdateListener(listener);
 			if (!monitor.isCanceled()) {
-				Tree tree = (Tree) fViewer.getControl();
 				List roots = getPrunedSelection();
 				Iterator iterator = roots.iterator();
 				StringBuffer buffer = new StringBuffer();
