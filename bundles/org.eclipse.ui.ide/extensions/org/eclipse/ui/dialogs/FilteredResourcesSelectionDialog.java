@@ -428,8 +428,9 @@ public class FilteredResourcesSelectionDialog extends
 	protected void fillContentProvider(AbstractContentProvider contentProvider,
 			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
 			throws CoreException {
-
-		container.accept(new ResourceProxyVisitor(contentProvider, itemsFilter,
+		
+		if (itemsFilter instanceof ResourceFilter)
+			container.accept(new ResourceProxyVisitor(contentProvider, (ResourceFilter)itemsFilter,
 				progressMonitor), IResource.NONE);
 
 		if (progressMonitor != null)
@@ -727,7 +728,7 @@ public class FilteredResourcesSelectionDialog extends
 
 		private AbstractContentProvider contentProvider;
 
-		private ItemsFilter itemsFilter;
+		private ResourceFilter resourceFilter;
 
 		private IProgressMonitor progressMonitor;
 
@@ -742,11 +743,11 @@ public class FilteredResourcesSelectionDialog extends
 		 * @throws CoreException
 		 */
 		public ResourceProxyVisitor(AbstractContentProvider contentProvider,
-				ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
+				ResourceFilter resourceFilter, IProgressMonitor progressMonitor)
 				throws CoreException {
 			super();
 			this.contentProvider = contentProvider;
-			this.itemsFilter = itemsFilter;
+			this.resourceFilter = resourceFilter;
 			this.progressMonitor = progressMonitor;
 			IResource[] resources = container.members();
 			this.projects = new ArrayList(Arrays.asList(resources));
@@ -772,9 +773,13 @@ public class FilteredResourcesSelectionDialog extends
 					|| this.projects.remove((res))) {
 				progressMonitor.worked(1);
 			}
-
-			contentProvider.add(resourceItem, itemsFilter);
-
+			
+			contentProvider.add(resourceItem, resourceFilter);
+			
+			if (res.getType() == IResource.FOLDER && res.isDerived() && !resourceFilter.isShowDerived() ) {
+				return false;
+			}
+			
 			if (res.getType() == IResource.FILE) {
 				return false;
 			}
@@ -861,6 +866,16 @@ public class FilteredResourcesSelectionDialog extends
 					return true;
 			return false;
 		}
+		
+		/**
+		 * Check show derived flag for a filter
+		 * 
+		 * @return true if filter allow derived resources
+		 * 			false if not
+		 */
+		public boolean isShowDerived() {
+			return showDerived;
+		}
 
 	}
 
@@ -896,9 +911,9 @@ public class FilteredResourcesSelectionDialog extends
 		}
 
 		/**
-		 * Gets IResource object
+		 * Gets encapsulated IResource object
 		 * 
-		 * @return resource
+		 * @return resource (an instance of IResource object)
 		 */
 		public IResource getResource() {
 			return this.resource;
