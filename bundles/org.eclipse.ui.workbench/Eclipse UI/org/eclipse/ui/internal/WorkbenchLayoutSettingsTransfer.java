@@ -162,6 +162,7 @@ public class WorkbenchLayoutSettingsTransfer extends WorkbenchSettingsTransfer {
 							.createChild(IWorkbenchConstants.TAG_INPUT);
 					inputMem.putString(IWorkbenchConstants.TAG_FACTORY_ID,
 							persistable.getFactoryId());
+					persistable.saveState(inputMem);
 				}
 			}
 		}
