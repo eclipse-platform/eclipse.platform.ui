@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class BrowserIdentificationTest extends TestCase {
 	
-	public void placeholderTest() {
+	public void testPlaceholder() {
 		
 	}
 	
