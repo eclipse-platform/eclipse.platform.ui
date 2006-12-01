@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 
@@ -256,9 +257,15 @@ public class WhitespaceCharacterPainter implements IPainter, PaintListener {
 	 * @param fg the foreground color
 	 */
 	private void draw(GC gc, int offset, String s, Color fg) {
+		// Compute baseline delta (see https://bugs.eclipse.org/bugs/show_bug.cgi?id=165640)
+		int baseline= fTextWidget.getBaseline(offset);
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		int fontBaseline= fontMetrics.getAscent() + fontMetrics.getLeading();
+		int baslineDelta= baseline - fontBaseline;
+		
 		Point pos= fTextWidget.getLocationAtOffset(offset);
 		gc.setForeground(fg);
-		gc.drawString(s, pos.x, pos.y, true);
+		gc.drawString(s, pos.x, pos.y + baslineDelta, true);
 	}
 
 	/**
