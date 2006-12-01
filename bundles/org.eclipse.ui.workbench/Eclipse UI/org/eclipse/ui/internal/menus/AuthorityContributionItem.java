@@ -20,6 +20,7 @@ import org.eclipse.jface.action.ContributionItem;
 public class AuthorityContributionItem extends ContributionItem {
 
 	private IMenuActivation menuActivation;
+	private boolean dirty = false;
 
 	/**
 	 * @param id
@@ -32,6 +33,7 @@ public class AuthorityContributionItem extends ContributionItem {
 
 	/**
 	 * The activation relavent to this contribution item.
+	 * 
 	 * @param act
 	 */
 	public void setActivation(IMenuActivation act) {
@@ -49,5 +51,30 @@ public class AuthorityContributionItem extends ContributionItem {
 			menuActivation = null;
 		}
 		super.dispose();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#setVisible(boolean)
+	 */
+	public void setVisible(boolean visible) {
+		if (visible != isVisible()) {
+			setDirty(true);
+			super.setVisible(visible);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isDirty()
+	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean d) {
+		dirty = d;
 	}
 }

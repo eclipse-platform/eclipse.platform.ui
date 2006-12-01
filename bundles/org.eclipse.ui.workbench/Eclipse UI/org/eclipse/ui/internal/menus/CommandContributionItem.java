@@ -132,6 +132,7 @@ public final class CommandContributionItem extends AuthorityContributionItem {
 		newItem.addListener(SWT.Dispose, getItemListener());
 		newItem.addListener(SWT.Selection, getItemListener());
 		widget = newItem;
+		setDirty(false);
 	}
 
 	public void fill(ToolBar parent, int index) {
@@ -164,6 +165,7 @@ public final class CommandContributionItem extends AuthorityContributionItem {
 		newItem.addListener(SWT.Dispose, getItemListener());
 
 		widget = newItem;
+		setDirty(false);
 	}
 
 	/*
@@ -195,6 +197,7 @@ public final class CommandContributionItem extends AuthorityContributionItem {
 		disposeOldImages();
 		itemAddition = null;
 		command = null;
+		setDirty(false);
 		super.dispose();
 	}
 
