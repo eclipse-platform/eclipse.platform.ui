@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.editors.text;
 
+import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 
 import org.eclipse.ui.IActionBars;
@@ -43,12 +45,24 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 	 * @since 3.1
 	 */
 	private RetargetTextEditorAction fChangeEncodingAction;
+	/**
+	 * Quick assist assistant action.
+	 * @since 3.3
+	 */
+	private RetargetTextEditorAction fQuickAssistAction;
+	/**
+	 * Quick assist menu contribution item.
+	 * @since 3.3
+	 */
+	private IContributionItem fQuickAssistMenuEntry;
 
 	/**
 	 * Creates a new contributor.
 	 */
 	public TextEditorActionContributor() {
 		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
+		fQuickAssistAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist."); //$NON-NLS-1$
+		fQuickAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
 	}
 
 	/**
@@ -77,6 +91,36 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		actionBars.setGlobalActionHandler(ITextEditorActionConstants.PREVIOUS, action);
 
 		fChangeEncodingAction.setAction(getAction(textEditor, ITextEditorActionConstants.CHANGE_ENCODING));
+		
+		IAction quickAssistAction= getAction(textEditor, ITextEditorActionConstants.QUICK_ASSIST);
+		fQuickAssistAction.setAction(quickAssistAction);
+
+		if (textEditor == null)
+			return;
+		
+		// Update Quick Assist menu entry - for now don't show disabled entry
+		IMenuManager menuMgr= textEditor.getEditorSite().getActionBars().getMenuManager();
+		IMenuManager editMenu= menuMgr.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null) { 
+			boolean isEnabled= quickAssistAction != null && quickAssistAction.isEnabled();
+			fQuickAssistMenuEntry.setVisible(isEnabled);
+			editMenu.update(true);
+		}
+	}
+	
+	/*
+	 * @see org.eclipse.ui.texteditor.BasicTextEditorActionContributor#contributeToMenu(org.eclipse.jface.action.IMenuManager)
+	 * @since 3.3
+	 */
+	public void contributeToMenu(IMenuManager menu) {
+		super.contributeToMenu(menu);
+		
+		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
+		if (editMenu != null) {
+			fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
+			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistMenuEntry);
+			fQuickAssistMenuEntry.setVisible(false);
+		}
 	}
 
 	/*
