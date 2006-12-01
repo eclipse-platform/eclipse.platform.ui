@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions;
+package org.eclipse.debug.internal.ui.viewers.model;
 
  
 import java.lang.reflect.InvocationTargetException;
@@ -17,10 +17,10 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.ILabelResult;
+import org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate;
+import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -37,12 +37,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
+public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	
 	private ContentViewer fViewer;
 	private static final String TAB = "\t"; //$NON-NLS-1$
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 	private static final String SEPARATOR = "line.separator"; //$NON-NLS-1$
+	private boolean fDone = false;
 	
 	/**
 	 * @see AbstractDebugActionDelegate#initialize(IAction, ISelection)
@@ -70,11 +71,19 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * to the buffer.  For elements down to stack frames, children representations
 	 * are append to the buffer as well.
 	 */
-	protected void append(ILabelResult item, StringBuffer buffer, int indent) {
+	protected void append(TreeItem item, StringBuffer buffer, int indent) {
 		for (int i= 0; i < indent; i++) {
 			buffer.append(TAB);
 		}
-		String[] labels = item.getLabels();
+		String[] labels = null;
+		if (((InternalTreeModelViewer)fViewer).isShowColumns()) {
+			labels = new String[((InternalTreeModelViewer)fViewer).getPresentationContext().getColumns().length];
+			for (int i = 0; i < labels.length; i++) {
+				labels[i] = item.getText(i);
+			}
+		} else {
+			labels = new String[]{item.getText()};
+		}
 		int count = labels.length;
 		if(count > 0) {
 			for (int i = 0; i < count; i++) {
@@ -91,40 +100,45 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 	 * Do the specific action using the current selection.
 	 */
 	public void run(final IAction action) {
-		if (fViewer instanceof AsynchronousTreeViewer) {
-			// force labels to be created
-			final AsynchronousTreeViewer atv = (AsynchronousTreeViewer)fViewer;
-			List selectedItems = getPrunedSelection();
-			TreeItem[]items = (TreeItem[]) selectedItems.toArray(new TreeItem[selectedItems.size()]);
-			final Object[] elements = new Object[selectedItems.size()];
-			for (int i = 0; i < elements.length; i++) {
-				elements[i] = items[i].getData();
-			}
-			if (elements.length > 0) {
-				final StringBuffer buffer = new StringBuffer();
+		if (fViewer instanceof InternalTreeModelViewer) {
+			InternalTreeModelViewer viewer = (InternalTreeModelViewer) fViewer;
+			fDone = false;
+			final Object lock = new Object();
+			ProgressMonitorDialog dialog = new ProgressMonitorDialog(fViewer.getControl().getShell());
+			final IProgressMonitor monitor = dialog.getProgressMonitor();
+			dialog.setCancelable(true);
+			
+			boolean queued = false;
+			ILabelUpdateListener listener = new ILabelUpdateListener() {
+				public void labelUpdatesComplete() {
+					synchronized (lock) {
+						fDone = true;
+						lock.notifyAll();
+					}
+				}
+				public void labelUpdatesBegin() {
+				}
+				public void labelUpdateStarted(ILabelUpdate update) {
+				}
+				public void labelUpdateComplete(ILabelUpdate update) {
+					monitor.worked(1);
+				}
+			};
+			viewer.addLabelUpdateListener(listener);
+			queued = viewer.populateVitrualItems(); 
+			
+			if (queued) { 
 				IRunnableWithProgress runnable = new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						monitor.beginTask(DebugUIPlugin.removeAccelerators(action.getText()), elements.length * 2);
-						for (int i = 0; i < elements.length; i++) {
-							Object element = elements[i];
-							if (element != null) {
-								SubProgressMonitor sub = new SubProgressMonitor(monitor, 1);
-								List results = atv.buildLabels(sub, element, ""); //$NON-NLS-1$
-								if (monitor.isCanceled()) {
-									throw new InterruptedException();
-								}
-								// now copy to buffer
-								performCopy(results, buffer);
-								monitor.worked(1);
-							} else {
-								monitor.worked(2);
+					public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
+						m.beginTask(DebugUIPlugin.removeAccelerators(getAction().getText()), IProgressMonitor.UNKNOWN);
+						synchronized (lock) { 
+							if (!fDone) {
+								lock.wait();
 							}
 						}
-						monitor.done();
+						m.done();
 					}
 				};
-				ProgressMonitorDialog dialog = new ProgressMonitorDialog(fViewer.getControl().getShell());
-				dialog.setCancelable(true);
 				try {
 					dialog.run(true, true, runnable);
 				} catch (InvocationTargetException e) {
@@ -132,6 +146,18 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 					return;
 				} catch (InterruptedException e) {
 					return;
+				}
+			}
+			
+			viewer.removeLabelUpdateListener(listener);
+			if (!monitor.isCanceled()) {
+				Tree tree = (Tree) fViewer.getControl();
+				List roots = getPrunedSelection();
+				Iterator iterator = roots.iterator();
+				StringBuffer buffer = new StringBuffer();
+				while (iterator.hasNext()) {
+					TreeItem item = (TreeItem) iterator.next();
+					copy(item, buffer, 0);
 				}
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
@@ -141,21 +167,23 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 					clipboard.dispose();
 				}
 			}
-
 		}
 	}
 	
-	protected void performCopy(List results, StringBuffer buffer) {
-		final Iterator iter= results.iterator();
-		if (results.size() > 0) {
-			int topLevel = ((ILabelResult)results.get(0)).getDepth();
-			while (iter.hasNext()) {
-				ILabelResult result = (ILabelResult) iter.next();
-				append(result, buffer, result.getDepth() - topLevel);
+	/**
+	 * @param item
+	 * @param buffer
+	 */
+	protected void copy(TreeItem item, StringBuffer buffer, int indent) {
+		append(item, buffer, indent);
+		if (item.getExpanded()) {
+			TreeItem[] items = item.getItems();
+			for (int i = 0; i < items.length; i++) {
+				copy(items[i], buffer, indent + 1);
 			}
 		}
 	}
-	
+
 	protected void doCopy(Clipboard clipboard, TextTransfer plainTextTransfer, StringBuffer buffer) {
 		try {
 			clipboard.setContents(
@@ -207,13 +235,6 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 			return false;
 		}
 		return walkHierarchy(parent, elements);		
-	}
-	
-	/**
-	 * Only append children that are expanded in the tree viewer
-	 */
-	protected boolean shouldAppendChildren(TreeItem item) {
-		return item.getExpanded();
 	}
 			
 	protected ContentViewer getViewer() {

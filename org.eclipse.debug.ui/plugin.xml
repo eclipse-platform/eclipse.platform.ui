@@ -1117,7 +1117,7 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_to_clipboard_action_context"
-               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
                menubarPath="editGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyToClipboard">
          </action>
@@ -1233,7 +1233,7 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
-               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
                menubarPath="variableGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
          </action>
@@ -1278,7 +1278,7 @@
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                definitionId="org.eclipse.ui.edit.copy"
                helpContextId="copy_variables_to_clipboard_action_context"
-               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
                menubarPath="expressionGroup"
                id="org.eclipse.debug.ui.debugview.popupMenu.copyVariablesToClipboard">
             <selection
@@ -1300,7 +1300,7 @@
       <!-- Variable Group -->
          <action
                menubarPath="variableGroup"
-               class="org.eclipse.debug.internal.ui.actions.CopyToClipboardActionDelegate"
+               class="org.eclipse.debug.internal.ui.viewers.model.VirtualCopyToClipboardActionDelegate"
                definitionId="org.eclipse.ui.edit.copy"
                icon="$nl$/icons/full/elcl16/copy_edit_co.gif"
                label="%CopyRegistersToClipboardAction.label"
