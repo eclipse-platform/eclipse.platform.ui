@@ -105,7 +105,7 @@ public class SimpleTableViewerTest extends ViewerTestCase {
 	public void testLabelProviderListenersWithColumn() {
 		Table table = tableViewer.getTable();
 		new TableColumn(table, SWT.NONE);
-		TableViewerColumn tvc = new TableViewerColumn(tableViewer, SWT.NONE);
+		new TableViewerColumn(tableViewer, SWT.NONE);
 		final int[] disposeCounter = { 0 };
 		final int[] listenerCounter = { 0 };
 		tableViewer.setLabelProvider(new LabelProvider() {
