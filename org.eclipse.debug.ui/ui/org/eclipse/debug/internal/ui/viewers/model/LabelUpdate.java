@@ -224,5 +224,11 @@ class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
 	public Object getElement() {
 		return getElementPath().getLastSegment();
 	}
-	
+
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("ILabelUpdate: "); //$NON-NLS-1$
+		buf.append(getElement());
+		return buf.toString();
+	}
 }

@@ -145,12 +145,15 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 */
 	protected static final TreePath EMPTY_TREE_PATH = new TreePath(new Object[]{});
 	
-	// debug flag
+	// debug flags
 	public static boolean DEBUG_CONTENT_PROVIDER = false;
+	public static boolean DEBUG_UPDATE_SEQUENCE = false;
 	
 	static {
 		DEBUG_CONTENT_PROVIDER = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
 		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/contentProvider")); //$NON-NLS-1$
+		DEBUG_UPDATE_SEQUENCE = DebugUIPlugin.DEBUG && "true".equals( //$NON-NLS-1$
+		 Platform.getDebugOption("org.eclipse.debug.ui/debug/viewers/updateSequence")); //$NON-NLS-1$
 	} 	
 
 	/*
@@ -822,7 +825,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			fUpdatesInProgress.add(update);
 		}
 		if (begin) {
+			if (DEBUG_UPDATE_SEQUENCE) {
+				System.out.println("MODEL SEQUENCE BEGINS"); //$NON-NLS-1$
+			}
 			notifyUpdate(UPDATE_SEQUENCE_BEGINS, null);
+		}
+		if (DEBUG_UPDATE_SEQUENCE) {
+			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(UPDATE_BEGINS, update);
 	}
@@ -839,7 +848,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			end = fUpdatesInProgress.isEmpty();
 		}
 		notifyUpdate(UPDATE_COMPLETE, update);
+		if (DEBUG_UPDATE_SEQUENCE) {
+			System.out.println("\tEND - " + update); //$NON-NLS-1$
+		}
 		if (end) {
+			if (DEBUG_UPDATE_SEQUENCE) {
+				System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+			}
 			notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
 		}
 	}

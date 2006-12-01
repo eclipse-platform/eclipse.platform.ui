@@ -57,4 +57,10 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		return getElementPath().startsWith(path, null);
 	}
 
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("IHasChildrenUpdate: "); //$NON-NLS-1$
+		buf.append(getElement());
+		return buf.toString();
+	}	
 }

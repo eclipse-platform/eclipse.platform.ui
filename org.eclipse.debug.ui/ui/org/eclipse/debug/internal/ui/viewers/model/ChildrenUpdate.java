@@ -147,4 +147,16 @@ class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpdate {
 		return getElementPath().startsWith(path, null);
 	}
 	
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("IChildrenUpdate: "); //$NON-NLS-1$
+		buf.append(getElement());
+		buf.append(" {"); //$NON-NLS-1$
+		buf.append(getOffset());
+		buf.append(',');
+		buf.append(getLength());
+		buf.append("}"); //$NON-NLS-1$
+		return buf.toString();
+	}	
 }
+

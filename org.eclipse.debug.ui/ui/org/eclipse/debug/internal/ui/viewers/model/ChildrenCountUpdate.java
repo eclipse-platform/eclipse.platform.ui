@@ -55,5 +55,12 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 	boolean isContained(TreePath path) {
 		return getElementPath().startsWith(path, null);
 	}
+	
+	public String toString() {
+		StringBuffer buf = new StringBuffer();
+		buf.append("IChildrenCountUpdate: "); //$NON-NLS-1$
+		buf.append(getElement());
+		return buf.toString();
+	}	
 
 }

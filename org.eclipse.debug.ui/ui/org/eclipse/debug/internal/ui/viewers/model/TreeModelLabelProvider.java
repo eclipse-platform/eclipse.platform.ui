@@ -273,7 +273,13 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 			fUpdatesInProgress.add(update);
 		}
 		if (begin) {
+			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+				System.out.println("LABEL SEQUENCE BEGINS"); //$NON-NLS-1$
+			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_BEGINS, null);
+		}
+		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+			System.out.println("\tBEGIN - " + update); //$NON-NLS-1$
 		}
 		notifyUpdate(ModelContentProvider.UPDATE_BEGINS, update);
 	}
@@ -289,8 +295,14 @@ class TreeModelLabelProvider extends ColumnLabelProvider {
 			fUpdatesInProgress.remove(update);
 			end = fUpdatesInProgress.isEmpty();
 		}
+		if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+			System.out.println("\tEND - " + update); //$NON-NLS-1$
+		}
 		notifyUpdate(ModelContentProvider.UPDATE_COMPLETE, update);
 		if (end) {
+			if (ModelContentProvider.DEBUG_UPDATE_SEQUENCE) {
+				System.out.println("LABEL SEQUENCE ENDS"); //$NON-NLS-1$
+			}
 			notifyUpdate(ModelContentProvider.UPDATE_SEQUENCE_COMPLETE, null);
 		}
 	}
