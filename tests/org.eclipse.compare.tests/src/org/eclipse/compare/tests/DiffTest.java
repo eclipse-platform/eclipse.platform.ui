@@ -22,11 +22,11 @@ public class DiffTest extends TestCase {
 
 	private static final String ABC= "abc"; //$NON-NLS-1$
 	private static final String DEF= "def"; //$NON-NLS-1$
-	private static final String BAR= "bar"; //$NON-NLS-1$
-	private static final String FOO= "foo"; //$NON-NLS-1$
+	//private static final String BAR= "bar"; //$NON-NLS-1$
+	//private static final String FOO= "foo"; //$NON-NLS-1$
 	private static final String XYZ= "xyz"; //$NON-NLS-1$
 	private static final String _123= "123"; //$NON-NLS-1$
-	private static final String _456= "456"; //$NON-NLS-1$
+	//private static final String _456= "456"; //$NON-NLS-1$
 	
 	static final String SEPARATOR= System.getProperty("line.separator"); //$NON-NLS-1$
 	
