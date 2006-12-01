@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
  *     											   fix in bug 151295
+ *                                                 fix in bug 166500
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -91,7 +92,7 @@ public abstract class AbstractViewerEditor {
 
 	void activateCellEditor() {
 
-		final ViewerColumn part = viewer.getViewerColumn(columnNumber);
+		ViewerColumn part = viewer.getViewerColumn(columnNumber);
 		Object element = item.getData();
 
 		if (part != null && part.getEditingSupport() != null
@@ -122,35 +123,36 @@ public abstract class AbstractViewerEditor {
 					};
 				}
 				control.addFocusListener(focusListener);
-				if (mouseListener == null) {
-					mouseListener = new MouseAdapter() {
-						public void mouseDown(MouseEvent e) {
-							// time wrap?
-							// check for expiration of doubleClickTime
-							if (e.time <= doubleClickExpirationTime) {
-								control.removeMouseListener(mouseListener);
-								cancelEditing();
-								handleDoubleClickEvent();
-							} else if (mouseListener != null) {
-								control.removeMouseListener(mouseListener);
-							}
+
+				mouseListener = new MouseAdapter() {
+					public void mouseDown(MouseEvent e) {
+						// time wrap?
+						// check for expiration of doubleClickTime
+						if (e.time <= doubleClickExpirationTime) {
+							control.removeMouseListener(mouseListener);
+							cancelEditing();
+							handleDoubleClickEvent();
+						} else if (mouseListener != null) {
+							control.removeMouseListener(mouseListener);
 						}
-					};
-				}
+					}
+				};
 				control.addMouseListener(mouseListener);
-				
-				if (tabeditingListener == null) {
+
+				if( tabeditingListener == null ) {
 					tabeditingListener = new TraverseListener() {
 
 						public void keyTraversed(TraverseEvent e) {
-							if (part.getEditingSupport().isTabingSupported()) {
-								part.getEditingSupport().processTraversEvent(
+							ViewerColumn col = viewer.getViewerColumn(columnNumber);
+							if ( col != null && col.getEditingSupport().isTabingSupported() ) {
+								col.getEditingSupport().processTraversEvent(
 										columnNumber,
 										viewer.getViewerRowFromItem(item), e);
 							}
 						}
 					};
 				}
+				
 				control.addTraverseListener(tabeditingListener);
 
 			}
@@ -213,6 +215,8 @@ public abstract class AbstractViewerEditor {
 			if (control != null) {
 				if (mouseListener != null) {
 					control.removeMouseListener(mouseListener);
+					// Clear the instance not needed any more
+					mouseListener = null;
 				}
 				if (focusListener != null) {
 					control.removeFocusListener(focusListener);
@@ -233,11 +237,13 @@ public abstract class AbstractViewerEditor {
 		if (cellEditor != null) {
 			setEditor(null, null, 0);
 			cellEditor.removeListener(cellEditorListener);
-			
+
 			Control control = cellEditor.getControl();
 			if (control != null) {
 				if (mouseListener != null) {
 					control.removeMouseListener(mouseListener);
+					// Clear the instance not needed any more
+					mouseListener = null;
 				}
 				if (focusListener != null) {
 					control.removeFocusListener(focusListener);
@@ -247,7 +253,7 @@ public abstract class AbstractViewerEditor {
 					control.removeTraverseListener(tabeditingListener);
 				}
 			}
-			
+
 			CellEditor oldEditor = cellEditor;
 			cellEditor = null;
 			oldEditor.deactivate();
