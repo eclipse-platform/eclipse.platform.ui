@@ -185,4 +185,11 @@ public final class WindowMenuService implements IMenuService {
 	public IEvaluationContext getCurrentState() {
 		return parent.getCurrentState();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI, org.eclipse.ui.internal.menus.MenuCacheEntry)
+	 */
+	public void addCacheForURI(MenuCacheEntry cache) {
+		parent.addCacheForURI(cache);
+	}
 }

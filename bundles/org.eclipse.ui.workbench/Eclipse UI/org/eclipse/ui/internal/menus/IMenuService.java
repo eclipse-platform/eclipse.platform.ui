@@ -258,11 +258,11 @@ public interface IMenuService extends IServiceWithSources {
 	 *            collection must not be <code>null</code>.
 	 */
 	public void removeContributions(Collection contributions);
-	
+
 	//
 	// additions for 3.3 support
 	//
-	
+
 	/**
 	 * Transient - get the contribution manager for this URI.
 	 * 
@@ -275,30 +275,41 @@ public interface IMenuService extends IServiceWithSources {
 	public List getAdditionsForURI(MenuLocationURI uri);
 
 	/**
-	 * Register a new menu addition cache with the service. This
-	 * entry represents the 'root' location of some id'd menu.
-	 * Submenus are explicitly registered here so that additions
-	 * can be made directly into sub-menus.
+	 * Contribute and initialize the cache. This should only be called once per
+	 * cache.
 	 * 
-	 * @param id The id representing the 'key' for the map
-	 * @param addition The cache element representing the 'value'
-	 * for the map.
+	 * @param uri
+	 * @param cache
+	 * @since 3.3
+	 */
+	public void addCacheForURI(MenuCacheEntry cache);
+
+	/**
+	 * Register a new menu addition cache with the service. This entry
+	 * represents the 'root' location of some id'd menu. Submenus are explicitly
+	 * registered here so that additions can be made directly into sub-menus.
+	 * 
+	 * @param id
+	 *            The id representing the 'key' for the map
+	 * @param addition
+	 *            The cache element representing the 'value' for the map.
 	 */
 	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition);
-	
+
 	/**
-	 * populate a <code>ContributionManager</code> with the
-	 * set of <code>IContributionElement</code>'s representing
-	 * the additions.
+	 * populate a <code>ContributionManager</code> with the set of
+	 * <code>IContributionElement</code>'s representing the additions.
 	 * 
-	 * @param mgr The MenuManager to populate
-	 * @param uri The URI to use to locate the menu additions
+	 * @param mgr
+	 *            The MenuManager to populate
+	 * @param uri
+	 *            The URI to use to locate the menu additions
 	 */
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
 
-	
 	/**
 	 * Get the current state as seen by the menu service.
+	 * 
 	 * @return an IEvaluationContext containing state variables.
 	 * 
 	 * @see ISources

@@ -1107,6 +1107,9 @@ final class MenuPersistence extends RegistryPersistence {
 					MenuLocationURI uri = new MenuLocationURI("toolbar:" + relTo); //$NON-NLS-1$
 					List trimAdditions = menuService.getAdditionsForURI(uri);
 					
+					//
+					// TODO convert the TrimAdditionCacheEntry over to use the
+					//      new MenuCacheEntry and addCacheForURI(*)
 					// OK, add the addition to this area
 					uri = new MenuLocationURI(uriSpec);
 					trimAdditions.add(new TrimAdditionCacheEntry(groups[i], uri, menuService));
@@ -1138,8 +1141,7 @@ final class MenuPersistence extends RegistryPersistence {
 				MenuLocationURI uri = new MenuLocationURI(locationURI);
 
 				if (uri != null) {
-					List additionCache = menuService.getAdditionsForURI(uri);
-					additionCache.add(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
+					menuService.addCacheForURI(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
 				}
 			}
 		}

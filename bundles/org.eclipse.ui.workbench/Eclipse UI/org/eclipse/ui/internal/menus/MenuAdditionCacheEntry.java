@@ -30,9 +30,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 3.3
  * 
  */
-public class MenuAdditionCacheEntry {
+public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	private IConfigurationElement additionElement;
-	private MenuLocationURI uri = null;
 	private IMenuService menuSvc = null;
 
 	// Caches
@@ -59,17 +58,16 @@ public class MenuAdditionCacheEntry {
 		if (locationURI == null) {
 			locationURI = "menu:" + getId(element); //$NON-NLS-1$
 		}
-		uri = new MenuLocationURI(locationURI);
+		setUri(new MenuLocationURI(locationURI));
 
 		menuSvc = service;
 
-		generateSubCaches();
 	}
 
 	/**
 	 * 
 	 */
-	private void generateSubCaches() {
+	public void generateSubCaches() {
 		IConfigurationElement[] items = additionElement.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
@@ -79,16 +77,11 @@ public class MenuAdditionCacheEntry {
 
 				// -ALL- contibuted menus must have an id so create one
 				// if necessary
-				String menuId = getId(items[i]);
-				MenuLocationURI uri = new MenuLocationURI("menu:" + menuId); //$NON-NLS-1$
-				List subMenuCache = menuSvc.getAdditionsForURI(uri);
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
 						items[i], menuSvc);
-				// Add the 'original' definition to the start of the list
-				subMenuCache.add(0, subMenuEntry);
+				menuSvc.addCacheForURI(subMenuEntry);
 			}
 		}
-
 	}
 
 	public Expression getVisibleWhenForItem(IContributionItem item) {
@@ -197,12 +190,6 @@ public class MenuAdditionCacheEntry {
 		return new CommandContributionItem(getId(itemAddition), itemAddition);
 	}
 
-	/**
-	 * @return Returns the uri.
-	 */
-	public MenuLocationURI getUri() {
-		return uri;
-	}
 
 	/*
 	 * Support Utilities

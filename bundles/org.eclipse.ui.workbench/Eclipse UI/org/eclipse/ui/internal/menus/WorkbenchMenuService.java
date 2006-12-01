@@ -202,9 +202,28 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		return caches;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuCacheEntry)
+	 */
+	public void addCacheForURI(MenuCacheEntry cache) {
+		if (cache == null || cache.getUri()==null)
+			return;
+
+		String cacheId = getIdFromURI(cache.getUri());
+		List caches = (List) uriToManager.get(cacheId);
+
+		// we always return a list
+		if (caches == null) {
+			caches = new ArrayList();
+			uriToManager.put(cacheId, caches);
+		}
+		cache.generateSubCaches();
+		caches.add(cache);
+	}
 
 	private boolean processAdditions(ContributionManager mgr,
-			MenuAdditionCacheEntry cache) {
+			MenuCacheEntry cache) {
 		int insertionIndex = getInsertionIndex(mgr, cache.getUri());
 		if (insertionIndex == -1)
 			return false; // can't process (yet)
@@ -248,7 +267,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		List retryList = new ArrayList();
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
-			MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator
+			MenuCacheEntry cache = (MenuCacheEntry) iterator
 					.next();
 			if (!processAdditions(mgr, cache)) {
 				retryList.add(cache);
@@ -268,7 +287,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 			// Walk the current list seeing if any entries can now be resolved
 			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
-				MenuAdditionCacheEntry cache = (MenuAdditionCacheEntry) iterator
+				MenuCacheEntry cache = (MenuCacheEntry) iterator
 						.next();
 				if (!processAdditions(mgr, cache))
 					retryList.add(cache);

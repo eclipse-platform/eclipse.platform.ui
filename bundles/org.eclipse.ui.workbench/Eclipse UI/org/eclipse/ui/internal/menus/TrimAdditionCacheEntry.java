@@ -15,7 +15,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.IContributionItem;
 
 /**
  * Handles the top level caching for 3.2 style trim
@@ -24,7 +26,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * @since 3.3
  * 
  */
-public class TrimAdditionCacheEntry {
+public class TrimAdditionCacheEntry extends MenuCacheEntry {
 	private IConfigurationElement additionElement;
 	private MenuLocationURI uri = null;
 	private IMenuService menuSvc = null;
@@ -55,5 +57,21 @@ public class TrimAdditionCacheEntry {
 	public void getContributionItems(List additions) {
 		additions.clear();
 
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.MenuCacheEntry#generateSubCaches()
+	 */
+	public void generateSubCaches() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.MenuCacheEntry#getVisibleWhenForItem(org.eclipse.jface.action.IContributionItem)
+	 */
+	public Expression getVisibleWhenForItem(IContributionItem item) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
