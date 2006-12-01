@@ -9,7 +9,7 @@
  *     Tom Schindl - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.jface.snippets.viewers;
+package org.eclipse.jface.snippets.window;
 
 import org.eclipse.jface.window.DefaultToolTip;
 import org.eclipse.jface.window.ToolTip;
