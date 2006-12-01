@@ -286,7 +286,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		Composite linkComp = SWTUtil.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 
 	//a link for launch options
-		fOptionsLink = new Link(linkComp, SWT.WRAP | SWT.BORDER);
+		fOptionsLink = new Link(linkComp, SWT.WRAP);
 		fOptionsLink.setFont(linkComp.getFont());
 		gd = new GridData(SWT.LEFT);
 		gd.grabExcessHorizontalSpace = true;
@@ -541,7 +541,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			fOptionsLink.setText(text);
 		}
 		fOptionsLink.setVisible(!canLaunchWithModes() || hasMultipleDelegates());
-		fOptionsLink.getParent().layout();
+		fOptionsLink.getParent().layout(true);
 	}
 	
 	/**
