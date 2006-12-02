@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.eclipse.ui.tests.menus.ObjectContributionClasses.IA;
 
 public class IWorkingSetTest extends UITestCase {
     final static String WORKING_SET_NAME_1 = "ws1";
@@ -121,4 +122,59 @@ public class IWorkingSetTest extends UITestCase {
 		} });
 		assertFalse(fWorkingSet.isEmpty());
 	}
+    
+    
+    public void testApplicableTo_ResourceWorkingSet() {
+		fWorkingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
+		assertEquals("org.eclipse.ui.resourceWorkingSetPage", fWorkingSet
+				.getId());
+		assertTrue(fWorkingSet.isApplicable(ResourcesPlugin.getWorkspace()
+				.getRoot()));
+    }
+    
+    public void testApplicableTo_DirectComparison() {
+
+		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
+		Foo myFoo = new Foo();
+		assertTrue(fWorkingSet.isApplicable(myFoo));
+    }
+    
+    public void testApplicableTo_Inheritance() {
+    	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
+		Bar myBar = new Bar();
+		
+		assertTrue(fWorkingSet.isApplicable(myBar));
+	}
+    
+    public void testApplicableTo_AdapterManager() {
+    	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
+    	IAImpl ia = new IAImpl();
+    	assertTrue(fWorkingSet.isApplicable(ia));
+    }
+    
+    public static class Foo implements IAdaptable {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			// TODO Auto-generated method stub
+			return null;
+		}	
+    }
+    
+    public static class Bar extends Foo {
+    	
+    }
+    
+    public static class IAImpl implements IA, IAdaptable {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			// TODO Auto-generated method stub
+			return null;
+		}	
+    }
 }

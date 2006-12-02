@@ -52,6 +52,9 @@ The resource navigator uses a working set to filter elements from the navigator 
 
    <element name="workingSet">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="applicableType"/>
+         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -96,6 +99,31 @@ The resource navigator uses a working set to filter elements from the navigator 
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetUpdater"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="applicableType">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="class"/>
+         </appInfo>
+         <documentation>
+            Reference to classes that may be contained within a working set.  These are used by the workbench as a hint to determine whether a the option to add a given element to a working set is presented within the UI.  These references are only a hint, however, and are not enforced by &lt;samp&gt;IWorkingSet.setElements()&lt;/samp&gt;.
+
+Since 3.3.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the name of the class that is recommended as belonging to working sets of this type.  Any object which is either directly assignable to this type or has an adapter registered with the runtime adapter manager is considered recommended.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
                </appInfo>
             </annotation>
          </attribute>

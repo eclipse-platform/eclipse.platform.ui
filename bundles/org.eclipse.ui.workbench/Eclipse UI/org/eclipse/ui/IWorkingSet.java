@@ -188,4 +188,13 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @since 3.2
 	 */
 	public boolean isEmpty();
+	
+	/**
+	 * Tests whether this working set is suitable to contain the provided object.
+	 * 
+	 * @param object the object to test
+	 * @return whether the working set is suitable to contain the provided object
+	 * @since 3.3
+	 */
+	public boolean isApplicable(IAdaptable object);
 }

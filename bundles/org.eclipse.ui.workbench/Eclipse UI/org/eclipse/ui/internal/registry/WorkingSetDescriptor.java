@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
@@ -23,6 +29,9 @@ import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.packageadmin.ExportedPackage;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * A working set descriptor stores the plugin registry data for 
@@ -42,6 +51,8 @@ public class WorkingSetDescriptor implements IPluginContribution {
     private String updaterClassName;
 
     private IConfigurationElement configElement;
+    
+    private String[] applicableTypes;
 
     private static final String ATT_ID = "id"; //$NON-NLS-1$
 
@@ -53,6 +64,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
     
     private static final String ATT_UPDATER_CLASS = "updaterClass";  //$NON-NLS-1$
 
+private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1$
     /**
      * Creates a descriptor from a configuration element.
      * 
@@ -74,6 +86,24 @@ public class WorkingSetDescriptor implements IPluginContribution {
                     "Invalid extension (missing class name): " + id, //$NON-NLS-1$
                     null));
         }
+        
+        IConfigurationElement[] containsChildren = configElement
+				.getChildren(TAG_APPLICABLE_TYPE);
+		if (containsChildren.length > 0) {
+			List list = new ArrayList(containsChildren.length);
+			for (int i = 0; i < containsChildren.length; i++) {
+				IConfigurationElement child = containsChildren[i];
+				String className = child
+						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+				if (className != null)
+					list.add(className);
+			}
+			if (!list.isEmpty()) {
+				applicableTypes = (String[]) list.toArray(new String[list
+						.size()]);
+				Arrays.sort(applicableTypes);
+			}
+		}
     }
     
     /**
@@ -204,5 +234,72 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
 	public String getPluginId() {
 		return getDeclaringNamespace();
+	}
+	
+	/**
+	 * Determines whether the given object can reasonably be contained by
+	 * working sets of this type.
+	 * 
+	 * @param object
+	 *            the object to test
+	 * @return whether the given object can reasonably be contained by working
+	 *         sets of this type
+	 * @since 3.3
+	 */
+	public boolean isApplicable(IAdaptable object) {
+		if (applicableTypes == null || applicableTypes.length == 0)
+			return true;
+
+		IAdapterManager adapterManager = Platform.getAdapterManager();
+		Class[] directClasses = adapterManager.computeClassOrder(object
+				.getClass());
+		for (int i = 0; i < directClasses.length; i++) {
+			Class clazz = directClasses[i];
+			if (Arrays.binarySearch(applicableTypes, clazz.getName()) >= 0)
+				return true;
+		}
+
+		for (int i = 0; i < applicableTypes.length; i++) {
+			String type = applicableTypes[i];
+			if (adapterManager.hasAdapter(object, type))
+				return true;
+		}
+
+		ServiceReference reference = WorkbenchPlugin.getDefault()
+				.getBundleContext().getServiceReference(
+						PackageAdmin.class.getName());
+
+		if (reference != null) {
+			PackageAdmin admin = (PackageAdmin) WorkbenchPlugin.getDefault()
+					.getBundleContext().getService(reference);
+
+			for (int i = 0; i < applicableTypes.length; i++) {
+				String type = applicableTypes[i];
+				int lastDot = type.lastIndexOf('.');
+				if (lastDot > 0) { // this lives in a package
+					String packageName = type.substring(0, lastDot);
+					ExportedPackage[] packages = admin
+							.getExportedPackages(packageName);
+					if (packages != null && packages.length == 1) { // if there is exactly one
+						// exporter of this package we
+						// can go further
+						if (packages[0].getExportingBundle().getState() == Bundle.ACTIVE) {
+							try { // if the bundle is loaded we can safely get
+								// the class object and check for an adapter
+								// on the object directly
+								if (object.getAdapter(Class.forName(type)) != null)
+									return true;
+							} catch (ClassNotFoundException e) {
+								WorkbenchPlugin.log(e);
+							}
+						}
+					}
+				}
+			}
+			WorkbenchPlugin.getDefault().getBundleContext().ungetService(
+					reference);
+		}
+
+		return false;
 	}
 }

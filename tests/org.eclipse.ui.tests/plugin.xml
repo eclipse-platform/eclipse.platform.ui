@@ -1628,6 +1628,12 @@
             pageClass="org.eclipse.ui.tests.api.MockWorkingSetPage"
             icon="icons/anything.gif"
             id="org.eclipse.ui.tests.api.MockWorkingSet">
+         <applicableType
+               class="org.eclipse.ui.tests.api.IWorkingSetTest$Foo">
+         </applicableType>
+         <applicableType
+               class="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon">
+         </applicableType>
       </workingSet>
    </extension>
 <!-- Preference tests -->

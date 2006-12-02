@@ -245,4 +245,19 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	public boolean isAggregateWorkingSet() {
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkingSet#isApplicable(org.eclipse.core.runtime.IAdaptable)
+	 */
+	public boolean isApplicable(IAdaptable object) {
+		if (components == null || components.length == 0)
+			return false;
+		
+		for (int i= 0; i < components.length; i++) {
+			if (components[i].isApplicable(object)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
