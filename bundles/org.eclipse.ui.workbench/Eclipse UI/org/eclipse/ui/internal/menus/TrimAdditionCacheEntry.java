@@ -29,7 +29,6 @@ import org.eclipse.jface.action.IContributionItem;
 public class TrimAdditionCacheEntry extends MenuCacheEntry {
 	private IConfigurationElement additionElement;
 	private MenuLocationURI uri = null;
-	private IMenuService menuSvc = null;
 
 	// Caches
 
@@ -40,13 +39,13 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 
 	public TrimAdditionCacheEntry(IConfigurationElement element,
 			MenuLocationURI uri, IMenuService service) {
+		super(service);
 		this.additionElement = element;
 		this.uri = uri;
 
-		menuSvc = service;
 		
-		if (additionElement == null || this.uri == null || menuSvc == null)
-			menuSvc = null;
+		if (additionElement == null || this.uri == null)
+			menuService = null;
 	}
 
 	/**

@@ -32,7 +32,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	private IConfigurationElement additionElement;
-	private IMenuService menuSvc = null;
 
 	// Caches
 
@@ -48,6 +47,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 
 	public MenuAdditionCacheEntry(IConfigurationElement element,
 			IMenuService service) {
+		super(service);
 		this.additionElement = element;
 
 		String locationURI = additionElement
@@ -59,8 +59,6 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 			locationURI = "menu:" + getId(element); //$NON-NLS-1$
 		}
 		setUri(new MenuLocationURI(locationURI));
-
-		menuSvc = service;
 
 	}
 
@@ -78,8 +76,8 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 				// -ALL- contibuted menus must have an id so create one
 				// if necessary
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						items[i], menuSvc);
-				menuSvc.addCacheForURI(subMenuEntry);
+						items[i], menuService);
+				menuService.addCacheForURI(subMenuEntry);
 			}
 		}
 	}
