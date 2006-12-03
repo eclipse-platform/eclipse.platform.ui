@@ -20,6 +20,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.ItemData;
+import org.eclipse.ui.internal.menus.MenuData;
+import org.eclipse.ui.internal.menus.MenuDataCacheEntry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.decorators.BackgroundColorDecorator;
 import org.eclipse.ui.tests.dynamicplugins.TestInstallUtil;
@@ -123,14 +128,49 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     public void start(BundleContext context) throws Exception {
         TestInstallUtil.setContext(context);
         super.start(context);
+        addMenuContribution();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
+    	removeMenuContribution();
         TestInstallUtil.setContext(null);
         super.stop(context);
         BackgroundColorDecorator.color = null;
+    }
+    
+    public void addMenuContribution() {
+		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+				.getService(IMenuService.class);
+		MenuDataCacheEntry cache = new MenuDataCacheEntry(menuService,
+				"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions");
+
+		ItemData item = new ItemData("org.eclipse.ui.tests.menus.itemX20",
+				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"Item X20", null, null);
+		cache.add(item);
+		MenuData submenu = new MenuData("org.eclipse.ui.tests.menus.menuX21",null, "Menu X21", null,null);
+		cache.add(submenu);
+		item = new ItemData("org.eclipse.ui.tests.menus.itemX22",
+				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"Item X22", null, null);
+		submenu.add(item);
+		item = new ItemData("org.eclipse.ui.tests.menus.itemX23",
+				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"Item X23", null, null);
+		submenu.add(item);
+		
+		item = new ItemData("org.eclipse.ui.tests.menus.itemX24",
+				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"Item X24", null, null);
+		cache.add(item);
+		
+		menuService.addCacheForURI(cache);
+	}
+    
+    public void removeMenuContribution() {
+    	// still figuring this out
     }
 }

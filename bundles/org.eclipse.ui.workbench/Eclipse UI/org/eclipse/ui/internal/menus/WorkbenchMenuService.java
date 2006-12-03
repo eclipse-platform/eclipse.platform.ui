@@ -218,8 +218,8 @@ public final class WorkbenchMenuService implements IMenuService {
 			caches = new ArrayList();
 			uriToManager.put(cacheId, caches);
 		}
-		cache.generateSubCaches();
 		caches.add(cache);
+		cache.generateSubCaches();
 	}
 
 	private boolean processAdditions(ContributionManager mgr,
@@ -322,7 +322,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		// No Query means 'after=additions' (if ther) or
 		// the end of the menu
-		if (query.length() == 0) {
+		if (query.length() == 0 || query.equals("after=additions")) { //$NON-NLS-1$
 			additionsIndex = mgr.indexOf("additions"); //$NON-NLS-1$
 			if (additionsIndex == -1)
 				additionsIndex = mgr.getItems().length;
