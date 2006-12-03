@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
 import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI Implementation.
@@ -47,6 +47,5 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(ResourceMappingMarkersTest.class));
         addTest(new TestSuite(MarkerSupportRegistryTests.class));
         addTest(Bug99858Test.suite());
-        addTest(new TestSuite(MenuAuthorityTest.class));
     }
 }

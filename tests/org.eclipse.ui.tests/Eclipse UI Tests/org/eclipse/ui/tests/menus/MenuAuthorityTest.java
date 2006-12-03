@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.tests.internal;
+package org.eclipse.ui.tests.menus;
 
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.expressions.Expression;
