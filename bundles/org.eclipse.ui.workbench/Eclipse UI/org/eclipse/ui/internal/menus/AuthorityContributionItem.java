@@ -20,6 +20,7 @@ import org.eclipse.jface.action.ContributionItem;
 public class AuthorityContributionItem extends ContributionItem {
 
 	private IMenuActivation menuActivation;
+
 	private boolean dirty = false;
 
 	/**
@@ -76,5 +77,8 @@ public class AuthorityContributionItem extends ContributionItem {
 
 	public void setDirty(boolean d) {
 		dirty = d;
+		if (dirty && getParent() != null) {
+			getParent().markDirty();
+		}
 	}
 }
