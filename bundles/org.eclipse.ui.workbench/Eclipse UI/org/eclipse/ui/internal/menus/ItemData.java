@@ -22,6 +22,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public class ItemData extends ServiceData {
 
+	private final String commandId;
+
+	private final Map parameters;
+
+	private final ImageDescriptor icon;
+
+	private final String label;
+
+	private final String tooltip;
+
 	/**
 	 * @param id
 	 *            The id for this item. May be <code>null</code>.
@@ -43,6 +53,46 @@ public class ItemData extends ServiceData {
 	public ItemData(String id, String commandId, Map parameters,
 			ImageDescriptor icon, String label, String tooltip,
 			Expression visibleWhen) {
-		super(id, commandId, parameters, icon, label, tooltip, visibleWhen);
+		super(id, visibleWhen);
+		this.commandId = commandId;
+		this.parameters = parameters;
+		this.icon = icon;
+		this.label = label;
+		this.tooltip = tooltip;
+	}
+
+	/**
+	 * @return Returns the commandId.
+	 */
+	public String getCommandId() {
+		return commandId;
+	}
+
+	/**
+	 * @return Returns the parameters.
+	 */
+	public Map getParameters() {
+		return parameters;
+	}
+
+	/**
+	 * @return Returns the icon.
+	 */
+	public ImageDescriptor getIcon() {
+		return icon;
+	}
+
+	/**
+	 * @return Returns the label.
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @return Returns the tooltip.
+	 */
+	public String getTooltip() {
+		return tooltip;
 	}
 }

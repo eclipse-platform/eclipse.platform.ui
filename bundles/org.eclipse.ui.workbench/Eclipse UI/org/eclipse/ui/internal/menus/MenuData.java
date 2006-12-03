@@ -25,6 +25,12 @@ public class MenuData extends ServiceData {
 
 	private List items = new ArrayList();
 
+	private final ImageDescriptor icon;
+
+	private final String label;
+
+	private final String tooltip;
+
 	/**
 	 * @param id
 	 *            The id of the menu. Must not be <code>null</code>.
@@ -40,7 +46,10 @@ public class MenuData extends ServiceData {
 	 */
 	public MenuData(String id, ImageDescriptor icon, String label,
 			String tooltip, Expression visibleWhen) {
-		super(id, null, null, icon, label, tooltip, visibleWhen);
+		super(id, visibleWhen);
+		this.icon = icon;
+		this.label = label;
+		this.tooltip = tooltip;
 	}
 
 	/**
@@ -58,5 +67,26 @@ public class MenuData extends ServiceData {
 	 */
 	public List getItems() {
 		return items;
+	}
+
+	/**
+	 * @return Returns the icon.
+	 */
+	public ImageDescriptor getIcon() {
+		return icon;
+	}
+
+	/**
+	 * @return Returns the label.
+	 */
+	public String getLabel() {
+		return label;
+	}
+
+	/**
+	 * @return Returns the tooltip.
+	 */
+	public String getTooltip() {
+		return tooltip;
 	}
 }

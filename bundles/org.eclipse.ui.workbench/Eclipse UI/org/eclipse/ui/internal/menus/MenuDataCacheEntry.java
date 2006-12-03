@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.3
@@ -88,8 +89,16 @@ public class MenuDataCacheEntry extends MenuCacheEntry {
 						.getId());
 				contributionsToData.put(manager, menu);
 				additions.add(manager);
+			} else if (obj instanceof WidgetData) {
+				WidgetData widget = (WidgetData) obj;
+				IContributionItem ici = new WidgetDataContributionItem(widget
+						.getId(), widget);
+				contributionsToData.put(ici, widget);
+				additions.add(ici);
 			} else {
-				// report the error
+				WorkbenchPlugin
+						.log("Unknown object contributed to menu cache: " //$NON-NLS-1$
+								+ obj);
 			}
 		}
 	}

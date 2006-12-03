@@ -14,34 +14,25 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.core.expressions.Expression;
 
 /**
- * @since 3.3
+ * WidgetData can be provided to the programmatic MenuDataCacheEntry. It must
+ * implement createWidget() to return a new abstract workbench widget.
  * 
+ * @since 3.3
  */
-public class ServiceData {
-	private final String id;
-
-	private final Expression visibleWhenExpression;
+public abstract class WidgetData extends ServiceData {
 
 	/**
 	 * @param id
 	 * @param visibleWhen
 	 */
-	public ServiceData(String id, Expression visibleWhen) {
-		this.id = id;
-		this.visibleWhenExpression = visibleWhen;
+	public WidgetData(String id, Expression visibleWhen) {
+		super(id, visibleWhen);
 	}
 
 	/**
-	 * @return Returns the id.
+	 * Create the widget when populating menus.
+	 * 
+	 * @return the newly created widget.
 	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @return Returns the visible.
-	 */
-	public Expression getVisibleWhen() {
-		return visibleWhenExpression;
-	}
+	public abstract AbstractWorkbenchWidget createWidget();
 }
