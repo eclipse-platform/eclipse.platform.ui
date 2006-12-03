@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  */
 public final class CommandDataContributionItem extends
-		AuthorityContributionItem {
+		AuthorityContributionItem implements IMenuCallback {
 	/**
 	 * 
 	 */
@@ -124,6 +124,7 @@ public final class CommandDataContributionItem extends
 		}
 		MenuItem newItem = new MenuItem(parent, SWT.PUSH, index);
 		newItem.setData(this);
+		newItem.setData(IMenuCallback.CALLBACK, this);
 		newItem.setText(item.getLabel());
 
 		ImageDescriptor iconDescriptor = item.getIcon();
@@ -147,6 +148,7 @@ public final class CommandDataContributionItem extends
 		}
 		ToolItem newItem = new ToolItem(parent, SWT.PUSH, index);
 		newItem.setData(this);
+		newItem.setData(IMenuCallback.CALLBACK, this);
 
 		ImageDescriptor iconDescriptor = item.getIcon();
 		if (iconDescriptor != null) {
@@ -258,6 +260,57 @@ public final class CommandDataContributionItem extends
 		} catch (NotHandledException e) {
 			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
 					+ getId(), e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuData#setIcon(org.eclipse.jface.resource.ImageDescriptor)
+	 */
+	public void setIcon(ImageDescriptor icon) {
+		if (widget instanceof MenuItem) {
+			MenuItem item = (MenuItem) widget;
+			if (icon != null) {
+				LocalResourceManager m = new LocalResourceManager(
+						JFaceResources.getResources());
+				item.setImage(m.createImage(icon));
+				disposeOldImages();
+				localResourceManager = m;
+			}
+		} else if (widget instanceof ToolItem) {
+			ToolItem item = (ToolItem) widget;
+			if (icon != null) {
+				LocalResourceManager m = new LocalResourceManager(
+						JFaceResources.getResources());
+				item.setImage(m.createImage(icon));
+				disposeOldImages();
+				localResourceManager = m;
+			}
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuData#setLabel(java.lang.String)
+	 */
+	public void setLabel(String text) {
+		if (widget instanceof MenuItem) {
+			((MenuItem) widget).setText(text);
+		} else if (widget instanceof ToolItem) {
+			((ToolItem) widget).setText(text);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuData#setTooltip(java.lang.String)
+	 */
+	public void setTooltip(String text) {
+		if (widget instanceof ToolItem) {
+			((ToolItem) widget).setToolTipText(text);
 		}
 	}
 }

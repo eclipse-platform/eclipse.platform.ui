@@ -158,7 +158,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				null, "Menu X21", null, null);
 		cache.add(submenu);
 		item = new ItemData("org.eclipse.ui.tests.menus.itemX22",
-				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"org.eclipse.ui.tests.menus.updateWorld", null, null,
 				"Item X22", null, null);
 		submenu.add(item);
 		item = new ItemData("org.eclipse.ui.tests.menus.itemX23",
@@ -176,7 +176,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 		cache = new MenuDataCacheEntry(menuService,
 				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness");
 		item = new ItemData("org.eclipse.ui.tests.menus.itemX25",
-				"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+				"org.eclipse.ui.tests.menus.updateWorld", null, null,
 				"Item X25", null, null);
 		cache.add(item);
 		WidgetData widget = new WidgetData(
