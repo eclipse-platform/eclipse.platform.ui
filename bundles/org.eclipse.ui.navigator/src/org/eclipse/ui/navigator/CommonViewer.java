@@ -411,7 +411,7 @@ public class CommonViewer extends TreeViewer {
 
 
 		if(element != getInput()) {
-			NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
+			INavigatorPipelineService pipeDream = contentService
 					.getPipelineService();
 	
 			PipelinedViewerUpdate update = new PipelinedViewerUpdate();
