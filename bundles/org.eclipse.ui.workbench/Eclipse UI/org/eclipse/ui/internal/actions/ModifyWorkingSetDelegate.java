@@ -221,9 +221,12 @@ public class ModifyWorkingSetDelegate extends
 							IAdaptable object = (IAdaptable) k.next();
 							if (add) {
 								if (!existingElements.contains(object)) {
-									visible = true; // show if any element is
-									// not
-									// present in addition
+									if (set.isApplicable(object)) {
+										// show if any element is not present in
+										// addition
+										visible = true;
+									}
+									
 									break;
 								}
 							} else {
