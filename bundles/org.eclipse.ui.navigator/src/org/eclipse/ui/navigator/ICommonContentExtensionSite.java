@@ -49,8 +49,7 @@ public interface ICommonContentExtensionSite {
 	 *         between workbench sessions.
 	 */
 	IMemento getMemento(); 
- 
-
+  
 	/**
 	 * 
 	 * @return The extension instance. Clients may use their extension
@@ -58,4 +57,11 @@ public interface ICommonContentExtensionSite {
 	 *         extension.
 	 */
 	INavigatorContentExtension getExtension();
+	
+	/**
+	 * 
+	 * @return The content service associated with this extension site.
+	 * @since 3.3
+	 */
+	INavigatorContentService getService();
 }

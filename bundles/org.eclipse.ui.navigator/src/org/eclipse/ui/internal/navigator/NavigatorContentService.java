@@ -539,6 +539,16 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		return overrideableExtensions;
 	}
 	
+	/*
+	 * (Non-Javadoc)
+	 *  
+	 * @see INavigatorContentService#getContentDescriptorById(String)
+	 */
+	public INavigatorContentDescriptor getContentDescriptorById(String anExtensionId) {
+		return CONTENT_DESCRIPTOR_REGISTRY.getContentDescriptor(anExtensionId); 
+	}
+
+	
 	/** 
 	 * 
 	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.

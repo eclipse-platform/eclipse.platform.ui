@@ -432,6 +432,16 @@ public interface INavigatorContentService {
 	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
 	 */
 	public INavigatorContentExtension getContentExtensionById(String anExtensionId);
+	
+	/** 
+	 * Return the content extension for the given id. 
+	 * 
+	 * @param anExtensionId The id used to define the <b>org.eclipse.ui.navigator.navigatorContent/navigatorContent</b> extension.
+	 * @return An instance of the content extension for the given extension id. May return <b>null</b> if the id is invalid.
+	 * @since 3.3
+	 */
+	public INavigatorContentDescriptor getContentDescriptorById(String anExtensionId);
+
 
 
 }

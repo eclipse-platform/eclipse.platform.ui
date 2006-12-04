@@ -54,6 +54,17 @@
               </or>
            </parentExpression>
         </commonSorter>
+        <!-- The following two sorters are used to test the INavigatorSorterService -->
+       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+          <parentExpression>
+             <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+          </parentExpression>
+       </commonSorter> 
+       <commonSorter class="org.eclipse.ui.tests.navigator.extension.TestDataSorter">
+          <parentExpression>
+             <instanceof value="org.eclipse.ui.navigator.INavigatorSorterService"/>
+          </parentExpression>
+       </commonSorter>
 	      <actionProvider
 	            class="org.eclipse.ui.tests.navigator.extension.TestActionProvider"
 	            id="org.eclipse.ui.tests.navigator.extension.TestActionProvider"

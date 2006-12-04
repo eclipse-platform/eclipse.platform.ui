@@ -121,6 +121,26 @@ public class CommonSorterDescriptorManager {
 		return (CommonSorterDescriptor[]) applicableSorters
 				.toArray(new CommonSorterDescriptor[applicableSorters.size()]);
 	}
+	
+
+	/**
+	 * 
+	 * @param aContentService
+	 *            A content service to filter the visible filters.
+	 * @param theSource
+	 *            The source of each *value. 
+	 * @return The set of filters that are 'visible' to the given viewer
+	 *         descriptor.
+	 */
+	public CommonSorterDescriptor[] findApplicableSorters(INavigatorContentDescriptor theSource) {
+  
+		Set sorters = getCommonSorters(theSource); 
+		if (sorters.size() == 0) {
+			return NO_SORTER_DESCRIPTORS;
+		}
+		return (CommonSorterDescriptor[]) sorters
+				.toArray(new CommonSorterDescriptor[sorters.size()]);
+	}
 
 	private class CommonSorterDescriptorRegistry extends
 			NavigatorContentRegistryReader {
@@ -183,10 +203,7 @@ public class CommonSorterDescriptorManager {
 	}
 
 	private Set getCommonSorters(INavigatorContentDescriptor contentDescriptor) {
-		Set descriptors = (Set) sortersMap.get(contentDescriptor);
-		if (descriptors != null) {
-			return descriptors;
-		}
+		Set descriptors = null;
 		synchronized (sortersMap) {
 			descriptors = (Set) sortersMap.get(contentDescriptor);
 			if (descriptors == null) {

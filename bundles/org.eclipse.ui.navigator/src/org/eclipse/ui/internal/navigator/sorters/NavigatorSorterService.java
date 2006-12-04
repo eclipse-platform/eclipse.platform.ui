@@ -60,10 +60,7 @@ public class NavigatorSorterService implements INavigatorSorterService {
 	}
 
 	private ViewerSorter getSorter(CommonSorterDescriptor descriptor) {
-		ViewerSorter sorter = (ViewerSorter) sorters.get(descriptor);
-		if (sorter != null) {
-			return sorter;
-		}
+		ViewerSorter sorter = null;
 		synchronized (sorters) {
 			sorter = (ViewerSorter) sorters.get(descriptor);
 			if (sorter == null) {
@@ -89,6 +86,24 @@ public class NavigatorSorterService implements INavigatorSorterService {
 		} 
 		return null;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.INavigatorSorterService#findAvailableSorters(org.eclipse.ui.navigator.INavigatorContentDescriptor)
+	 */
+	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
+		
+		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance().findApplicableSorters(theSource);
+		Map sorters = new HashMap();
+
+		int count = 0;
+		for (int i = 0; i < descriptors.length; i++) {
+			if(descriptors[i].getId() != null && descriptors[i].getId().length() > 0)
+				sorters.put(descriptors[i].getId(), getSorter(descriptors[i]));
+			else 
+				sorters.put(theSource.getId()+".sorter."+ (++count), getSorter(descriptors[i])); //$NON-NLS-1$
+		}
+		return sorters;
+	} 
 	 
 
 }

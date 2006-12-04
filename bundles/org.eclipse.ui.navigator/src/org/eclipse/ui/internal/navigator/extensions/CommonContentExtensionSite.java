@@ -15,6 +15,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 import org.eclipse.ui.navigator.INavigatorContentExtension;
+import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
  * @since 3.2
@@ -26,6 +27,8 @@ public class CommonContentExtensionSite extends CommonExtensionSite implements
 	private NavigatorContentExtension extension;
 
 	private IMemento memento;
+
+	private NavigatorContentService contentService;
 
 	/**
 	 * Create a config element for the initialization of Content Extensions.
@@ -51,6 +54,7 @@ public class CommonContentExtensionSite extends CommonExtensionSite implements
 
 		extension = aContentService.getExtension(contentDescriptor);
 		memento = aMemento;
+		contentService = aContentService;
 	}
 
 	/*
@@ -69,6 +73,13 @@ public class CommonContentExtensionSite extends CommonExtensionSite implements
 	 */
 	public INavigatorContentExtension getExtension() {
 		return extension;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.navigator.ICommonContentExtensionSite#getService()
+	 */
+	public INavigatorContentService getService() { 
+		return contentService;
 	}
 
 }
