@@ -1177,6 +1177,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
 			return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new String[]{names.toString()});
 		}
+		if(hasDuplicateDelegates()) {
+			return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_18;
+		}
 		return null;
 	}	
 	
