@@ -53,7 +53,7 @@ import org.eclipse.ui.model.WorkbenchPartLabelProvider;
  * </p>
  * <p>
  * The 'breaking' occurs as the saving is moved from <code>DebugUIPlugin</code> to the launch configuration delegate, which will require
- * implementors of <code>LaunchConfigurationDelegate</code> to incorporate the use of this status handler to perform any prelaunch saving. 
+ * implementors of <code>LaunchConfigurationDelegate</code> to incorporate the use of this status handler to perform any pre-launch saving. 
  * </p>
  * @since 3.2
  */
@@ -109,7 +109,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
 	 */
 	public Object handleStatus(IStatus status, Object source) throws CoreException {
-		// unmarshal config and projets
+		// retrieve config and projects
 		ILaunchConfiguration config = null;
 		IProject[] projects = null;
 		if (source instanceof Object[]) {
@@ -182,11 +182,11 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	
 	/**
 	 * show the save dialog with a list of editors to save (if any)
-	 * The dialog is also not shown if the the pref for automatically saving dirty before laucnh is set to always
+	 * The dialog is also not shown if the the preference for automatically saving dirty before launch is set to always
 	 * @param projects the projects to consider for the save
 	 * @param save if we should save
 	 * @param prompt if we should prompt to save or do it automatically
-	 * @return the dialog status, to be propogated back to the <code>handleStatus</code> method
+	 * @return the dialog status, to be propagated back to the <code>handleStatus</code> method
 	 */
 	protected int showSaveDialog(IProject[] projects, boolean save, boolean prompt) {
 		if(save) {
