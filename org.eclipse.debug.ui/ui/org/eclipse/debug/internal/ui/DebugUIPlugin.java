@@ -15,7 +15,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import com.ibm.icu.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -116,6 +115,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 import org.w3c.dom.Document;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plugin.
@@ -392,12 +393,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		super.start(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
 				new ISaveParticipant() {
-					public void saving(ISaveContext context) throws CoreException {
+					public void saving(ISaveContext saveContext) throws CoreException {
 						savePluginPreferences();
 					}				
-					public void rollback(ISaveContext context) {}
-					public void prepareToSave(ISaveContext context) throws CoreException {}
-					public void doneSaving(ISaveContext context) {}
+					public void rollback(ISaveContext saveContext) {}
+					public void prepareToSave(ISaveContext saveContext) throws CoreException {}
+					public void doneSaving(ISaveContext saveContext) {}
 				});
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		

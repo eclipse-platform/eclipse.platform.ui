@@ -612,14 +612,14 @@ public class DebugPlugin extends Plugin {
 		super.start(context);
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
 				new ISaveParticipant() {
-					public void saving(ISaveContext context) throws CoreException {
+					public void saving(ISaveContext saveContext) throws CoreException {
 						savePluginPreferences();
 					}				
-					public void rollback(ISaveContext context) {				
+					public void rollback(ISaveContext saveContext) {				
 					}
-					public void prepareToSave(ISaveContext context) throws CoreException {
+					public void prepareToSave(ISaveContext saveContext) throws CoreException {
 					}
-					public void doneSaving(ISaveContext context) {
+					public void doneSaving(ISaveContext saveContext) {
 					}
 				});
 	}
