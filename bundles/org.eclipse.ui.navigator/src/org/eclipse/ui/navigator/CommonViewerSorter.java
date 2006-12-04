@@ -53,8 +53,8 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
 	 * @param aContentService
 	 *            The content service used by the viewer that will use this sorter service.
 	 */
-	protected void setContentService(NavigatorContentService aContentService) {
-		contentService = aContentService;
+	public void setContentService(INavigatorContentService aContentService) {
+		contentService = (NavigatorContentService) aContentService;
 		sorterService = contentService.getSorterService();
 	}
 
