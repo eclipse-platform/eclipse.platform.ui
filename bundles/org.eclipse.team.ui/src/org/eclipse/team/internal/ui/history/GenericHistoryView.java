@@ -12,6 +12,7 @@
 package org.eclipse.team.internal.ui.history;
 
 import java.util.*;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -20,6 +21,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
 import org.eclipse.swt.widgets.*;
@@ -33,6 +35,10 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
 
 public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener {
+
+	private static final String HISTORY_VIEW_GROUP = "org.eclipse.team.ui.historyView"; //$NON-NLS-1$
+	private static final String NAVIGATION_GROUP = "org.eclipse.team.ui.navigation"; //$NON-NLS-1$
+	private static final int MAX_NAVIGATION_HISTORY_ENTRIES = 15;
 
 	class PageContainer {
 		private Page page;
@@ -58,6 +64,211 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			this.subBars = subBars;
 		}
 	}
+	
+	class NavigationHistory {
+		List history = new ArrayList();
+		int position;
+		private boolean navigating;
+		public boolean hasNextEntry() {
+			return position < history.size() - 1;
+		}
+		public boolean hasPreviousEntry() {
+			return (position > 0 && history.size() > 1);
+		}
+		public void gotoNextEntry() {
+			if (hasNextEntry()) {
+				position++;
+				gotoEntry();
+			}
+		}
+		private void gotoEntry() {
+			try {
+				navigating = true;
+				itemDropped(getCurrentEntry().object, true, true);
+			} finally {
+				navigating = false;
+			}
+		}
+		private NavigationHistoryEntry getCurrentEntry() {
+			return (NavigationHistoryEntry)history.get(position);
+		}
+		public void gotoPreviousEntry() {
+			if (hasPreviousEntry()) {
+				position--;
+				gotoEntry();
+			}
+		}
+		public void addEntry(Object object, String name) {
+			if (!navigating) {
+				NavigationHistoryEntry navigationHistoryEntry = new NavigationHistoryEntry(object, name);
+				if (history.contains(navigationHistoryEntry)) {
+					history.remove(navigationHistoryEntry);
+				}
+				history.add(navigationHistoryEntry);
+				if (history.size() > MAX_NAVIGATION_HISTORY_ENTRIES) {
+					history.remove(0);
+				}
+				position = history.size() - 1;
+			}
+			navigateBackwardAction.update();
+			navigateForwardAction.update();
+		}
+		public NavigationHistoryEntry[] getNextEntries(boolean forward) {
+			List entries = new ArrayList();
+			if (forward) {
+				for (int i = position + 1; i < history.size(); i++) {
+					NavigationHistoryEntry entry = getEntry(i);
+					entries.add(entry);
+				}
+			} else {
+				for (int i = position - 1; i >= 0; i--) {
+					NavigationHistoryEntry entry = getEntry(i);
+					entries.add(entry);
+				}
+			}
+			return (NavigationHistoryEntry[]) entries.toArray(new NavigationHistoryEntry[entries.size()]);
+		}
+		private NavigationHistoryEntry getEntry(int i) {
+			return (NavigationHistoryEntry)history.get(i);
+		}
+		public void gotoEntry(NavigationHistoryEntry navigationHistoryEntry) {
+			position = history.indexOf(navigationHistoryEntry);
+			gotoEntry();
+		}
+		public NavigationHistoryEntry getNextEntry() {
+			return getEntry(position + 1);
+		}
+		public NavigationHistoryEntry getPreviousEntry() {
+			return getEntry(position - 1);
+		}
+	}
+	
+	static class NavigationHistoryEntry {
+		Object object;
+		String name;
+		public NavigationHistoryEntry(Object object, String name) {
+			this.object = object;
+			this.name = name;
+		}
+		public boolean equals(Object obj) {
+			if (obj instanceof NavigationHistoryEntry) {
+				NavigationHistoryEntry other = (NavigationHistoryEntry) obj;
+				return other.object.equals(this.object);
+			}
+			return false;
+		}
+		public int hashCode() {
+			return object.hashCode();
+		}
+	}
+	
+	abstract class MenuCreator implements IMenuCreator {
+		private MenuManager menuManager;
+		public void dispose() {
+			if(menuManager != null) {
+				menuManager.dispose();
+				menuManager = null;
+			}
+		}
+		public Menu getMenu(Control parent) {
+			Menu fMenu = null;
+			if (menuManager == null) {
+				menuManager = new MenuManager();
+				fMenu = menuManager.createContextMenu(parent);
+				IAction[] actions = getDropDownActions();
+				for (int i = 0; i < actions.length; i++) {
+					IAction action = actions[i];
+					menuManager.add(action);
+				}
+				menuManager.update(true);
+			} else {
+				fMenu = menuManager.getMenu();
+			}
+			return fMenu;
+		}
+
+		protected abstract IAction[] getDropDownActions();
+		
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+		
+		public void rebuildMenu() {
+			if(menuManager != null) {
+				menuManager.dispose();
+				menuManager = null;
+			}
+		}
+	}
+	
+	class NavigationHistoryAction extends Action {
+		private boolean forward;
+		private MenuCreator menuCreator;
+
+		public NavigationHistoryAction(boolean forward) {
+			this.forward = forward;
+			menuCreator = new MenuCreator() {
+				protected IAction[] getDropDownActions() {
+					NavigationHistoryEntry[] entries = getDropDownEntries();
+					List actions = new ArrayList();
+					for (int i = 0; i < entries.length; i++) {
+						NavigationHistoryEntry navigationHistoryEntry = entries[i];
+						actions.add(new NavigationHistoryEntryAction(navigationHistoryEntry));
+					}
+					return (IAction[]) actions.toArray(new IAction[actions.size()]);
+				}
+			};
+			setMenuCreator(menuCreator);
+			update();
+		}
+		protected NavigationHistoryEntry[] getDropDownEntries() {
+			return navigationHistory.getNextEntries(forward);
+		}
+		public void run() {
+			if (forward) {
+				navigationHistory.gotoNextEntry();
+			} else {
+				navigationHistory.gotoPreviousEntry();
+			}
+		}
+		public void update() {
+			if (forward) {
+				setEnabled(navigationHistory.hasNextEntry());
+				if (isEnabled()) {
+					setToolTipText(NLS.bind("Forward to {0}", navigationHistory.getNextEntry().name));
+				} else {
+					setToolTipText("Forward");
+				}
+			} else {
+				setEnabled(navigationHistory.hasPreviousEntry());
+				if (isEnabled()) {
+					setToolTipText(NLS.bind("Back to {0}", navigationHistory.getPreviousEntry().name));
+				} else {
+					setToolTipText("Back");
+				}
+			}
+			menuCreator.rebuildMenu();
+		}
+		
+		public void dispose() {
+			menuCreator.dispose();
+		}
+	}
+	
+	class NavigationHistoryEntryAction extends Action {
+
+		private final NavigationHistoryEntry navigationHistoryEntry;
+
+		public NavigationHistoryEntryAction(NavigationHistoryEntry navigationHistoryEntry) {
+			super(navigationHistoryEntry.name);
+			this.navigationHistoryEntry = navigationHistoryEntry;
+		}
+		
+		public void run() {
+			navigationHistory.gotoEntry(navigationHistoryEntry);
+		}
+		
+	}
 
 	/**
 	 * The pagebook control, or <code>null</code> if not initialized.
@@ -70,6 +281,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	private Action refreshAction;
 	private Action linkWithEditorAction;
 	private Action pinAction;
+	private NavigationHistoryAction navigateForwardAction, navigateBackwardAction;
 
 	/**
 	 * The page container for the default page.
@@ -86,6 +298,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	 */
 	DropTarget dropTarget;
 	GenericHistoryDropAdapter dropAdapter;
+	
+	NavigationHistory navigationHistory = new NavigationHistory();
 	
 	/**
 	 * Keeps track of the last selected element (either by selecting or opening an editor)
@@ -266,12 +480,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		linkWithEditorAction.setChecked(isLinkingEnabled());
 		linkWithEditorAction.setToolTipText(TeamUIMessages.GenericHistoryView_LinkWithTooltip);
 		
+		navigateForwardAction = new NavigationHistoryAction(true);
+		navigateBackwardAction = new NavigationHistoryAction(false);
+		Utils.initAction(navigateForwardAction, "action.navigateForwards."); //$NON-NLS-1$
+		Utils.initAction(navigateBackwardAction, "action.navigateBackwards."); //$NON-NLS-1$
+		
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();
-		tbm.add(new Separator("historyView")); //$NON-NLS-1$
-		tbm.appendToGroup("historyView", refreshAction);  //$NON-NLS-1$
-		tbm.appendToGroup("historyView", linkWithEditorAction);  //$NON-NLS-1$
-		tbm.appendToGroup("historyView", pinAction);  //$NON-NLS-1$
+		tbm.add(new Separator(HISTORY_VIEW_GROUP)); //$NON-NLS-1$
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, refreshAction);  //$NON-NLS-1$
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, linkWithEditorAction);  //$NON-NLS-1$
+		tbm.appendToGroup(HISTORY_VIEW_GROUP, pinAction);  //$NON-NLS-1$
+		tbm.add(new Separator(NAVIGATION_GROUP)); //$NON-NLS-1$
+		tbm.appendToGroup(NAVIGATION_GROUP, navigateBackwardAction);
+		tbm.appendToGroup(NAVIGATION_GROUP, navigateForwardAction);
 		tbm.update(false);
 	}
 
@@ -281,7 +503,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 	/**
 	 * Enabled linking to the active editor
-	 * @param enabled	flag indiciating whether linking is enabled
+	 * @param enabled flag indicating whether linking is enabled
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
@@ -351,11 +573,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	 */
 	protected void showPageRec(PageContainer pageContainer) {
 		// If already showing do nothing
-		if (currentPageContainer == pageContainer)
-			return;
-		// If the page is the same, just set activeRec to pageRec
-		if (currentPageContainer != null && pageContainer != null && currentPageContainer == pageContainer) {
-			currentPageContainer = pageContainer;
+		if (currentPageContainer == pageContainer) {
+			addNavigationHistoryEntry();
 			return;
 		}
 
@@ -380,6 +599,15 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			refreshGlobalActionHandlers();
 			// Update action bars.
 			getViewSite().getActionBars().updateActionBars();
+			addNavigationHistoryEntry();
+		}
+	}
+
+	private void addNavigationHistoryEntry() {
+		if (currentPageContainer != null) {
+			Object input = ((IHistoryPage)currentPageContainer.getPage()).getInput();
+			if (input != null)
+				navigationHistory.addEntry(input, ((IHistoryPage)currentPageContainer.getPage()).getName());
 		}
 	}
 
@@ -495,7 +723,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				}
 				if (tempPageContainer != null) {
 					
-					//check to see if this resource is alreadu being displayed in another page
+					//check to see if this resource is already being displayed in another page
 					IHistoryPage existingPage = checkForExistingPage(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, force);
 					if (existingPage != null){
 						return existingPage;
@@ -675,6 +903,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().removeSelectionListener(selectionListener);
+		navigateBackwardAction.dispose();
+		navigateForwardAction.dispose();
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {
