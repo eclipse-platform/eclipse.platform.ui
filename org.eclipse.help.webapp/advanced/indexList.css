@@ -77,8 +77,7 @@ A.nolink:hover {
 	text-decoration:none; 
 }
 
-A.active {
-	background:Highlight;
+A.active{ 
 	color:HighlightText;
 	width:100%;
 }
@@ -86,6 +85,27 @@ A.active {
 A.active:link, A.active:visited {
 	color:HighlightText;
 }
+
+<%
+if (data.isSafari()){
+%>
+
+A.active{ 
+	background:DarkBlue;
+}
+
+<% 
+} else {
+%>
+
+A.active{ 
+	background:Highlight;
+}
+
+<%
+}
+%>
+
 
 <%if (data.isMozilla()) {%>
 UL {
