@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -167,15 +168,38 @@ public class CtrlEAction extends AbstractHandler {
 			super.selectFirstMatch();
 		}
 
-		protected String getMatchName(Object element) {
+		public String[] getMatchNames(Object element, Object parentElementOrNull) {
 			if (element instanceof AbstractProvider) {
 				AbstractProvider provider = (AbstractProvider) element;
-				return provider.getName();
+				return (new String[]{provider.getName()});
 			} else if (element instanceof AbstractElement) {
 				AbstractElement abstractElement = (AbstractElement) element;
-				return abstractElement.getSortLabel();
+				String sortLabel = abstractElement.getSortLabel();
+				String camelCase = getCamelCase(sortLabel);
+				if (parentElementOrNull instanceof AbstractProvider) {
+					AbstractProvider abstractProvider = (AbstractProvider) parentElementOrNull;
+					String combinedLabel = abstractProvider.getName()
+							+ " " + abstractElement.getLabel(); //$NON-NLS-1$
+					String combinedCamelCase = getCamelCase(combinedLabel);
+					return (new String[] { sortLabel, camelCase, combinedLabel, combinedCamelCase });
+				}
+				return (new String[] { sortLabel, camelCase });
 			}
-			return ""; //$NON-NLS-1$
+			return (new String[]{""}); //$NON-NLS-1$
+		}
+		
+		/**
+		 * @return a string containing the first character of every word for
+		 * camel case checking.
+		 */
+		private String getCamelCase(String label) {
+			StringTokenizer tokenizer = new StringTokenizer(label);
+			StringBuffer camelCase = new StringBuffer();
+			while(tokenizer.hasMoreTokens()) {
+				String word = tokenizer.nextToken();
+				camelCase.append(word.charAt(0));
+			}
+			return camelCase.toString();
 		}
 
 		protected Point getInitialSize() {

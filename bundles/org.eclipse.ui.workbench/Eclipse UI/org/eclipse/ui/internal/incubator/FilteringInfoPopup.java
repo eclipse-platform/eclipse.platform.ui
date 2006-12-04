@@ -71,10 +71,15 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			
 			TreeViewer treeViewer= (TreeViewer) viewer;
 
-			String matchName = getMatchName(element);
-			if (isMatchable(element) && matchName != null && matcher.match(matchName))
-				return true;
-
+			if (isMatchable(element)) {
+				String[] matchNames = getMatchNames(element, parentElement);
+				for (int i = 0; i < matchNames.length; i++) {
+					if (matchNames[i] != null
+							&& matcher.match(matchNames[i]))
+						return true;
+				}
+			}
+			
 			return hasUnfilteredChild(treeViewer, element);
 		}
 
@@ -425,11 +430,18 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			Object element= items[i].getData();
 			if (matcher == null)
 				return element;
+			TreeItem parentItem = items[i].getParentItem();
+			Object parentElement = null;
+			if (parentItem != null) {
+				parentElement = parentItem.getData();
+			}
 
 			if (element != null) {
-				String label= getMatchName(element);
-				if (matcher.match(label))
-					return element;
+				String[] label= getMatchNames(element, parentElement);
+				for(int j = 0; j < label.length; j++) {
+					if (matcher.match(label[j]))
+						return element;
+				}
 			}
 
 			element= findElement(items[i].getItems());
@@ -640,14 +652,16 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 	}
 
 	/**
-	 * Returns the name of the given element used for matching. The default
-	 * implementation gets the name from the tree viewer's label provider.
+	 * Returns the names of the given element used for matching. The default
+	 * implementation returns an array with one element, the name from the tree viewer's label provider.
 	 * Subclasses may override.
 	 * 
 	 * @param element the element
-	 * @return the name to be used for matching
+	 * @param parentElementOrNull the parent element, or <code>null</code>
+	 * @return the names to be used for matching
 	 */
-	protected String getMatchName(Object element) {
-		return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(element);
+	protected String[] getMatchNames(Object element, Object parentElementOrNull) {
+		return (new String[] { ((ILabelProvider) getTreeViewer()
+				.getLabelProvider()).getText(element) });
 	}
 }
