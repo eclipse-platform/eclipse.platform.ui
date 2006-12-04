@@ -262,9 +262,6 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 				catch (CoreException e) {DebugUIPlugin.log(e);}
 			}
 		}
-		if(getPreferenceStore().needsSaving()) {
-			DebugUIPlugin.getDefault().savePluginPreferences();
-		}
 		return super.performOk();
 	}
 

@@ -78,13 +78,5 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {}
-		
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
-	public boolean performOk() {
-		boolean ok= super.performOk();
-		DebugUIPlugin.getDefault().savePluginPreferences();
-		return ok;
-	}			
+				
 }

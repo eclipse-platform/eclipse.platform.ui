@@ -72,7 +72,6 @@ public abstract class VariableViewToggleAction implements IViewActionDelegate, I
 		IPreferenceStore store = getPreferenceStore();
 		String key = getView().getSite().getId() + "." + getPreferenceKey(); //$NON-NLS-1$
 		store.setValue(key, action.isChecked());
-		DebugUIPlugin.getDefault().savePluginPreferences();
 	}
 
 	/* (non-Javadoc)

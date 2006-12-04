@@ -212,7 +212,6 @@ public class PerspectivePreferencePage extends PreferencePage implements IWorkbe
 		if(fCurrentType != null) {
 			store.setValue(LAST_SELECTED_CONFIGTYPE, fCurrentType.getName());
 		}
-		DebugUIPlugin.getDefault().savePluginPreferences();
 		return super.performOk();
 	}
 

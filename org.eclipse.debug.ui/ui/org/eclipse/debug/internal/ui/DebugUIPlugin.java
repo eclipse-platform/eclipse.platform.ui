@@ -27,6 +27,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -376,6 +378,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fServiceTracker.close();
 			fPackageAdminService = null;
 			
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			
 		} finally {
 			super.stop(context);
 		}
@@ -386,7 +390,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		
+		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
+				new ISaveParticipant() {
+					public void saving(ISaveContext context) throws CoreException {
+						savePluginPreferences();
+					}				
+					public void rollback(ISaveContext context) {}
+					public void prepareToSave(ISaveContext context) throws CoreException {}
+					public void doneSaving(ISaveContext context) {}
+				});
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.ui/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		
 		// make sure the perspective manager is created

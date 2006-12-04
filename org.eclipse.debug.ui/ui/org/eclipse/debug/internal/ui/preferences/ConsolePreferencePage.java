@@ -162,7 +162,6 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		int low = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
 		int high = low + 8000;
 		store.setValue(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK, high);
-		DebugUIPlugin.getDefault().savePluginPreferences();
 		return ok;
 	}
 

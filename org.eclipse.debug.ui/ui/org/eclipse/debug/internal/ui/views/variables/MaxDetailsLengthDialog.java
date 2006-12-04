@@ -124,9 +124,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	protected void okPressed() {
 		String text = getValue();
 		try {
-			int max = Integer.parseInt(text);
-			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, max);
-			DebugUIPlugin.getDefault().savePluginPreferences();
+			DebugUIPlugin.getDefault().getPreferenceStore().setValue(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH, Integer.parseInt(text));
 		} 
 		catch (NumberFormatException e) {
 			DebugUIPlugin.log(e);
