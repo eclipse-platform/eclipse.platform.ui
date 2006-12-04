@@ -119,7 +119,7 @@ import org.w3c.dom.Document;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * The Debug UI Plugin.
+ * The Debug UI Plug-in.
  *
  */
 public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
@@ -131,7 +131,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	private static final String PI_DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
 	
 	/**
-	 * The singleton debug plugin instance
+	 * The singleton debug plug-in instance
 	 */
 	private static DebugUIPlugin fgDebugUIPlugin = null;
 	
@@ -202,8 +202,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
             fJob= job;
         }
 
-        // Allow the user to terminate the dummy launch as a means of
-        // cancelling the launch while waiting for a build to finish.
+        // Allow the user to terminate the dummy launch as a means to
+        // cancel the launch while waiting for a build to finish.
         public boolean canTerminate() {
             return true;
         }
@@ -229,7 +229,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Constructs the debug UI plugin
+	 * Constructs the debug UI plug-in
 	 */
 	public DebugUIPlugin() {
 		super();
@@ -243,14 +243,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 		
 	/**
-	 * Returns the singleton instance of the debug plugin.
+	 * Returns the singleton instance of the debug plug-in.
 	 */
 	public static DebugUIPlugin getDefault() {
 		return fgDebugUIPlugin;
 	}
 	
 	/**
-	 * Convenience method which returns the unique identifier of this plugin.
+	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_DEBUG_UI;
@@ -304,7 +304,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 	/**
-	 * Creates an extension.  If the extension plugin has not
+	 * Creates an extension.  If the extension plug-in has not
 	 * been loaded a busy cursor will be activated during the duration of
 	 * the load.
 	 *
@@ -313,7 +313,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @return the extension object
 	 */
 	public static Object createExtension(final IConfigurationElement element, final String classAttribute) throws CoreException {
-		// If plugin has been loaded create extension.
+		// If plug-n has been loaded create extension.
 		// Otherwise, show busy cursor then create extension.
 		Bundle bundle = Platform.getBundle(element.getContributor().getName());
 		if (bundle.getState() == Bundle.ACTIVE) {
@@ -525,7 +525,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns a new error status for this plugin with the given message
+	 * Returns a new error status for this plug-in with the given message
 	 * @param message the message to be included in the status
 	 * @param exception the exception to be included in the status or <code>null</code> if none
 	 * @return a new error status
@@ -749,7 +749,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	
 	/**
 	 * Builds the workspace (according to preferences) and launches the given launch
-	 * configuration in the specified mode. May return null if autobuild is in process and 
+	 * configuration in the specified mode. May return null if auto build is in process and 
 	 * user cancels the launch.
 	 * 
 	 * @param configuration the configuration to launch
@@ -1018,7 +1018,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     }
 
     /**
-     * Returns the image descriptor registry used for this plugin.
+     * Returns the image descriptor registry used for this plug-in.
      * 
      * @since 3.1
      */
@@ -1070,7 +1070,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
     }
     
     /**
-	 * Performs extra filtering for launch configurations based on the prefs set on the 
+	 * Performs extra filtering for launch configurations based on the preferences set on the 
 	 * Launch Configurations page
 	 * @param config the config to filter
 	 * @return true if it should pass the filter, false otherwise
