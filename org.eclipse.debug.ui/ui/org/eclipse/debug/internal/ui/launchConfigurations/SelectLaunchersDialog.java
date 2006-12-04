@@ -113,13 +113,6 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getTableViewerMessage()
-	 */
-	protected String getTableViewerMessage() {
-		return LaunchConfigurationsMessages.SelectLaunchersDialog_1;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#getViewerInput()
 	 */
 	protected Object getViewerInput() {
@@ -131,22 +124,10 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	 */
 	protected void addCustomHeaderControls(Composite parent) {
 		Label label = SWTUtil.createWrapLabel(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 1);
-		((GridData)label.getLayoutData()).widthHint = 40;
-		SWTUtil.createVerticalSpacer(parent, 1);
-		fUseSystemLauncher = SWTUtil.createCheckButton(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_3, null, true);
-		fUseSystemLauncher.addSelectionListener(new SelectionListener() {
-			public void widgetDefaultSelected(SelectionEvent e) {}
-			public void widgetSelected(SelectionEvent e) {
-				boolean checked = ((Button)e.widget).getSelection();
-				fTable.setEnabled(checked);
-				resetDelegate();
-			}
-		});
-		Link link = new Link(parent, SWT.NONE);
+/*		((GridData)label.getLayoutData()).widthHint = 40;*/
+		Link link = new Link(parent, SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.SelectLaunchersDialog_4);
-		GridData gd = new GridData(SWT.LEFT);
-		gd.horizontalIndent = 25;
-		link.setLayoutData(gd);
+		link.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
 		link.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 			public void widgetSelected(SelectionEvent e) {
@@ -156,7 +137,15 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 				}
 			}
 		});
-		SWTUtil.createVerticalSpacer(parent, 1);
+		fUseSystemLauncher = SWTUtil.createCheckButton(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_1, null, true);
+		fUseSystemLauncher.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetSelected(SelectionEvent e) {
+				boolean checked = ((Button)e.widget).getSelection();
+				fTable.setEnabled(checked);
+				resetDelegate();
+			}
+		});
 	}
 	
 	/**

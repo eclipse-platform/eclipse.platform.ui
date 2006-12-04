@@ -85,13 +85,19 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 * Returns the message for the viewer: i.e. Select Foo:
 	 * @return the message for the viewer
 	 */
-	protected abstract String getTableViewerMessage();
+	protected String getTableViewerMessage() {
+		//do nothing by default
+		return null;
+	}
 	
 	/**
 	 * Returns the help context id for this dialog
 	 * @return the help context id for this dialog
 	 */
-	protected abstract String getHelpContextId();
+	protected String getHelpContextId() {
+		//do nothing by default
+		return null;
+	}
 	
 	/**
 	 * This method allows custom controls to be added before the viewer
@@ -124,7 +130,10 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		initializeDialogUnits(parent);
 		Composite comp = (Composite) super.createDialogArea(parent);
 		addCustomHeaderControls(comp);
-		SWTUtil.createLabel(comp, getTableViewerMessage(), 1);
+		String label = getTableViewerMessage();
+		if(label != null) {
+			SWTUtil.createLabel(comp, label, 1);
+		}
 		fTable = new Table(comp, SWT.BORDER | SWT.SINGLE | SWT.CHECK);
 		fTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fTableViewer = new CheckboxTableViewer(fTable);
@@ -140,7 +149,10 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		addCustomFooterControls(comp);
 		initializeControls();
 		Dialog.applyDialogFont(comp);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, getHelpContextId());
+		String help = getHelpContextId();
+		if(help != null) {
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(comp, help);
+		}
 		return comp;
 	}
 	
