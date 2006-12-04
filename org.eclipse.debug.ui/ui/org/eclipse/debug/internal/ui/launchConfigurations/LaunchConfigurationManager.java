@@ -30,6 +30,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.resources.ISaveContext;
+import org.eclipse.core.resources.ISaveParticipant;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -67,7 +70,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class LaunchConfigurationManager implements ILaunchListener {
+public class LaunchConfigurationManager implements ILaunchListener, ISaveParticipant {
 	/**
 	 * Launch group extensions, keyed by launch group identifier.
 	 */
@@ -127,7 +130,10 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	public void startup() {				
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
-
+		try {
+			ResourcesPlugin.getWorkspace().addSaveParticipant(DebugUIPlugin.getDefault(), this);
+		} 
+		catch (CoreException e) {DebugUIPlugin.log(e);}
 		//update histories for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
@@ -241,6 +247,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 				history.dispose();
 			}
 		}
+		ResourcesPlugin.getWorkspace().removeSaveParticipant(DebugUIPlugin.getDefault());
 	}
 	
 	/**
@@ -808,6 +815,35 @@ public class LaunchConfigurationManager implements ILaunchListener {
 			shared = workingCopy.doSave();
 		}
 		return shared;
+	}
+
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#doneSaving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void doneSaving(ISaveContext context) {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#prepareToSave(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void prepareToSave(ISaveContext context) throws CoreException {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#rollback(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void rollback(ISaveContext context) {}
+
+	/**
+	 * @see org.eclipse.core.resources.ISaveParticipant#saving(org.eclipse.core.resources.ISaveContext)
+	 */
+	public void saving(ISaveContext context) throws CoreException {
+		try {
+			persistLaunchHistory();
+		} 
+		catch (CoreException e) {DebugUIPlugin.log(e);} 
+		catch (IOException e) {DebugUIPlugin.log(e);} 
+		catch (ParserConfigurationException e) {DebugUIPlugin.log(e);} 
+		catch (TransformerException e) {DebugUIPlugin.log(e);}
 	}
 
 }

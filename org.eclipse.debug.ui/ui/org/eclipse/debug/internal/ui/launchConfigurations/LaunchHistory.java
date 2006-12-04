@@ -11,13 +11,9 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -40,7 +36,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	
 	private List fHistory = new ArrayList();
 	private List fFavorites = new ArrayList();
-	private boolean fDirty = false;
 	private ILaunchConfiguration fRecentLaunch;
 	
 	private static List launchHistoryInstances= new ArrayList();
@@ -85,7 +80,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * the history list
 	 */
 	protected void addHistory(ILaunchConfiguration configuration, boolean prepend) {
-		clearDirty();
 		if (fFavorites.contains(configuration)) {
 			return;
 		}
@@ -101,69 +95,24 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 				fHistory.add(configuration);
 			}
 			resizeHistory();
-			setDirty();
 		} else if (index > 0) {
 			// move to first
 			for (int i = index; i > 0; i--) {
 				fHistory.set(i, fHistory.get(i -1));
 			}
 			fHistory.set(0, configuration);
-			setDirty();
 		}	
-		save();
 	}
-	
-	/**
-	 * Saves if dirty
-	 */
-	private void save() {
-		if (isDirty()) {
-			try {
-				DebugUIPlugin.getDefault().getLaunchConfigurationManager().persistLaunchHistory();
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e);
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
-			} catch (ParserConfigurationException e) {
-				DebugUIPlugin.log(e);
-			} catch (TransformerException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-	}
-	
-	/**
-	 * Clears the dirty flag
-	 */
-	private void clearDirty() {
-		fDirty = false;
-	}
-	
-	/**
-	 * Sets the dirty flag
-	 */
-	private void setDirty() {
-		fDirty = true;
-	}
-	
-	/**
-	 * Returns the dirty state
-	 */
-	private boolean isDirty() {
-		return fDirty;
-	}	
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchChanged(ILaunch launch) {
-	}
+	public void launchChanged(ILaunch launch) {}
 
 	/**
 	 * @see org.eclipse.debug.core.ILaunchListener#launchRemoved(org.eclipse.debug.core.ILaunch)
 	 */
-	public void launchRemoved(ILaunch launch) {
-	}
+	public void launchRemoved(ILaunch launch) {}
 
 	/**
 	 * Returns the most recently launched configuration in this history, or
@@ -194,8 +143,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		if (accepts(configuration)) {
 			if (!configuration.equals(fRecentLaunch)) {
 				fRecentLaunch = configuration;
-				setDirty();
-				save();
 			}
 		}
 	}	
@@ -230,8 +177,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		for (int i = 0; i < favorites.length; i++) {
 			fFavorites.add(favorites[i]);
 		}
-		setDirty();
-		save();
 	}	
 	
 	/**
@@ -240,13 +185,10 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param configuration
 	 */
 	public void addFavorite(ILaunchConfiguration configuration) {
-		clearDirty();
 		if (!fFavorites.contains(configuration)) {
 			fFavorites.add(configuration);
 			fHistory.remove(configuration);
-			setDirty();
 		}
-		save();
 	}
 	
 	/**
@@ -259,7 +201,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	}
 	
 	/**
-	 * Returns whether the given configruation is included in the group
+	 * Returns whether the given configuration is included in the group
 	 * associated with this launch history.
 	 * 
 	 * @param launch
@@ -291,9 +233,8 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	public static void launchHistoryChanged() {
 		Iterator iter= launchHistoryInstances.iterator();
 		while (iter.hasNext()) {
-			LaunchHistory history= (LaunchHistory) iter.next();
-			history.resizeHistory();
-			history.save();			
+			LaunchHistory history = (LaunchHistory) iter.next();
+			history.resizeHistory();		
 		}
 
 	}
@@ -306,7 +247,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 		int max = getMaxHistorySize();
 		while (fHistory.size() > max) {
 			fHistory.remove(fHistory.size() - 1);
-			setDirty();
 		}
 	}
 
@@ -334,7 +274,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 					if (i == 0) {
 						fRecentLaunch= configuration;
 					}
-					setDirty();
 				}
 			}
 		}
@@ -387,11 +326,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 	 * @param configuration
 	 */
 	protected void removeFavorite(ILaunchConfiguration configuration) {
-		if (fFavorites.contains(configuration)) {
-			fFavorites.remove(configuration);
-			setDirty();
-			save();
-		}
+		fFavorites.remove(configuration);
 	}
 
 	/**
@@ -427,7 +362,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 			checkIfFavorite(newConfig);
 		}
 		if (changed) {
-			setDirty();
 			if (configuration.equals(fRecentLaunch)) {
 				if (!fHistory.isEmpty()) {
 					fRecentLaunch = (ILaunchConfiguration)fHistory.get(0);
@@ -437,7 +371,6 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 					fRecentLaunch = null;
 				}
 			}
-			save();
 		}
 	}
 
