@@ -36,7 +36,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -123,8 +122,7 @@ public class SelectLaunchersDialog extends AbstractDebugSelectionDialog {
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.AbstractDebugSelectionDialog#addCustomHeaderControls(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void addCustomHeaderControls(Composite parent) {
-		Label label = SWTUtil.createWrapLabel(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 1);
-/*		((GridData)label.getLayoutData()).widthHint = 40;*/
+		SWTUtil.createWrapLabel(parent, LaunchConfigurationsMessages.SelectLaunchersDialog_2, 1);
 		Link link = new Link(parent, SWT.WRAP);
 		link.setText(LaunchConfigurationsMessages.SelectLaunchersDialog_4);
 		link.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false));
