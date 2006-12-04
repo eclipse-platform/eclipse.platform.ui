@@ -169,11 +169,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	 *         {@link SkeletonViewerFilter#INSTANCE}).
 	 */
 	public ViewerFilter getViewerFilter(ICommonFilterDescriptor descriptor) {
-		ViewerFilter filter = (ViewerFilter) declaredViewerFilters
-				.get(descriptor);
-		if (filter != null) {
-			return filter;
-		}
+		ViewerFilter filter = null;
 		synchronized (declaredViewerFilters) {
 			filter = (ViewerFilter) declaredViewerFilters.get(descriptor);
 			if (filter == null) {
@@ -251,5 +247,5 @@ public class NavigatorFilterService implements INavigatorFilterService {
 				
 		}
 	}
-
+ 
 }

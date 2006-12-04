@@ -97,4 +97,16 @@ public interface INavigatorFilterService {
 	 * Persist the current activation state for visible filters.
 	 */
 	void persistFilterActivationState();
+	
+	/**
+	 * 
+	 * Return the viewer filter for the given descriptor
+	 * 
+	 * @param theDescriptor
+	 *            A non-null filter descriptor.
+	 * @return the viewer filter for the given descriptor
+	 * @since 3.3
+	 */
+	ViewerFilter getViewerFilter(ICommonFilterDescriptor theDescriptor);
+	
 }
