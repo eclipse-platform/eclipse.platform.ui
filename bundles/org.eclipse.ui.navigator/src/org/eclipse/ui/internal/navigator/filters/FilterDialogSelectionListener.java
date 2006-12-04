@@ -52,8 +52,12 @@ public class FilterDialogSelectionListener implements ISelectionChangedListener 
 							new Object[] { ncd.getName() });
 			descriptionText.setText(desc);
 		} else if (element instanceof ICommonFilterDescriptor) {
-			descriptionText.setText(((ICommonFilterDescriptor) element)
-					.getDescription());
+			ICommonFilterDescriptor cfd = (ICommonFilterDescriptor) element;
+			String description = 	cfd.getDescription();
+			if(description != null)
+				descriptionText.setText(description);
+			else 
+				descriptionText.setText(NLS.bind(CommonNavigatorMessages.FilterDialogSelectionListener_Enable_the_0_filter_, cfd.getName()));
 		}
 
 	}
