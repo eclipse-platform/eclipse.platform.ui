@@ -18,7 +18,6 @@ import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -49,7 +48,12 @@ import org.eclipse.ui.internal.ide.misc.ContainerSelectionGroup;
  * </p>
  */
 public class ContainerSelectionDialog extends SelectionDialog {
-    // the widget group;
+    /**
+	 * 
+	 */
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+
+	// the widget group;
     ContainerSelectionGroup group;
 
     // the root resource to populate the viewer with
@@ -114,12 +118,10 @@ public class ContainerSelectionDialog extends SelectionDialog {
                 if (statusMessage != null && validator != null) {
                     String errorMsg = validator.isValid(group
                             .getContainerFullPath());
-                    if (errorMsg == null || errorMsg.equals("")) { //$NON-NLS-1$
-                        statusMessage.setText(""); //$NON-NLS-1$
+                    if (errorMsg == null || errorMsg.equals(EMPTY_STRING)) {
+                        statusMessage.setText(EMPTY_STRING);
                         getOkButton().setEnabled(true);
                     } else {
-                        statusMessage.setForeground(JFaceColors
-                                .getErrorText(statusMessage.getDisplay()));
                         statusMessage.setText(errorMsg);
                         getOkButton().setEnabled(false);
                     }
@@ -134,8 +136,9 @@ public class ContainerSelectionDialog extends SelectionDialog {
             group.setSelectedContainer(initialSelection);
         }
 
-        statusMessage = new Label(parent, SWT.NONE);
+        statusMessage = new Label(area, SWT.WRAP);
         statusMessage.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        statusMessage.setText(" \n "); //$NON-NLS-1$
         statusMessage.setFont(parent.getFont());
 
         return dialogArea;
