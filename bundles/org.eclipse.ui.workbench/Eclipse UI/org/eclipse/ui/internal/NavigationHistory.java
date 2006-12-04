@@ -167,18 +167,19 @@ public class NavigationHistory implements INavigationHistory {
         ignoreEntries++;
         getDisplay().asyncExec(new Runnable() {
             public void run() {
-                ignoreEntries--;
-                EditorSite site = (EditorSite) (part.getEditorSite());
-                Control c = site.getPane().getControl();
-                if (c == null || c.isDisposed()) {
-					return;
-				}
-                NavigationHistoryEntry e = getEntry(activeEntry);
-                if (e != null
-                        && part.getEditorInput() != e.editorInfo.editorInput) {
-					updateEntry(e);
-				}
-                addEntry(part, true);
+                if (--ignoreEntries == 0) {
+	                EditorSite site = (EditorSite) (part.getEditorSite());
+	                Control c = site.getPane().getControl();
+	                if (c == null || c.isDisposed()) {
+						return;
+					}
+	                NavigationHistoryEntry e = getEntry(activeEntry);
+	                if (e != null
+	                        && part.getEditorInput() != e.editorInfo.editorInput) {
+						updateEntry(e);
+					}
+	                addEntry(part, true);
+                }
             }
         });
     }
