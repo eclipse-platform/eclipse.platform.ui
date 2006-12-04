@@ -615,12 +615,9 @@ public class DebugPlugin extends Plugin {
 					public void saving(ISaveContext saveContext) throws CoreException {
 						savePluginPreferences();
 					}				
-					public void rollback(ISaveContext saveContext) {				
-					}
-					public void prepareToSave(ISaveContext saveContext) throws CoreException {
-					}
-					public void doneSaving(ISaveContext saveContext) {
-					}
+					public void rollback(ISaveContext saveContext) {}
+					public void prepareToSave(ISaveContext saveContext) throws CoreException {}
+					public void doneSaving(ISaveContext saveContext) {}
 				});
 	}
 
