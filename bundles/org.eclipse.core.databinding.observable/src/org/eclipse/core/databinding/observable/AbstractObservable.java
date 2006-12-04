@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -15,22 +16,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
  * @since 1.0
- * 
  */
 public abstract class AbstractObservable implements IObservable {
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of
-	 * IChangeListener
+	 * IChangeListener.  Access must be synchronized.
 	 */
 	private Object changeListeners = null;
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of
-	 * IChangeListener
+	 * IChangeListener.  Access must be synchronized.
 	 */
 	private Object staleListeners = null;
 	
@@ -44,7 +45,7 @@ public abstract class AbstractObservable implements IObservable {
 		this.realm = realm;
 	}
 
-	public void addChangeListener(IChangeListener listener) {
+	public synchronized void addChangeListener(IChangeListener listener) {
 		if (changeListeners == null) {
 			boolean hadListeners = hasListeners();
 			changeListeners = listener;
@@ -68,7 +69,7 @@ public abstract class AbstractObservable implements IObservable {
 		listenerList.add(listener);
 	}
 
-	public void removeChangeListener(IChangeListener listener) {
+	public synchronized void removeChangeListener(IChangeListener listener) {
 		if (changeListeners == listener) {
 			changeListeners = null;
 			if (!hasListeners()) {
@@ -89,7 +90,7 @@ public abstract class AbstractObservable implements IObservable {
 		}
 	}
 
-	public void addStaleListener(IStaleListener listener) {
+	public synchronized void addStaleListener(IStaleListener listener) {
 		if (staleListeners == null) {
 			boolean hadListeners = hasListeners();
 			staleListeners = listener;
@@ -113,7 +114,7 @@ public abstract class AbstractObservable implements IObservable {
 		listenerList.add(listener);
 	}
 
-	public void removeStaleListener(IStaleListener listener) {
+	public synchronized void removeStaleListener(IStaleListener listener) {
 		if (staleListeners == listener) {
 			staleListeners = null;
 			if (!hasListeners()) {
@@ -135,6 +136,8 @@ public abstract class AbstractObservable implements IObservable {
 	}
 
 	protected void fireChange() {
+		checkRealm();
+		
 		if (changeListeners == null) {
 			return;
 		}
@@ -154,6 +157,8 @@ public abstract class AbstractObservable implements IObservable {
 	}
 
 	protected void fireStale() {
+		checkRealm();
+		
 		if (staleListeners == null) {
 			return;
 		}
@@ -175,7 +180,7 @@ public abstract class AbstractObservable implements IObservable {
 	/**
 	 * @return true if this observable has listeners
 	 */
-	protected boolean hasListeners() {
+	protected synchronized boolean hasListeners() {
 		return changeListeners != null || staleListeners != null;
 	}
 
@@ -194,7 +199,7 @@ public abstract class AbstractObservable implements IObservable {
 	/**
 	 * 
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		changeListeners = null;
 		staleListeners = null;
 	}
@@ -205,5 +210,13 @@ public abstract class AbstractObservable implements IObservable {
 	public Realm getRealm() {
 		return realm;
 	}
-
+	
+	/**
+	 * Checks the current realm for the current realm.
+	 * 
+	 * @throws AssertionFailedException if the realm is not the current realm
+	 */
+	protected void checkRealm() {
+		Assert.isTrue(realm.isCurrent());
+	}
 }

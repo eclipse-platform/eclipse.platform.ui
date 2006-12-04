@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -22,11 +23,9 @@ import org.eclipse.core.databinding.observable.Realm;
  * @since 1.0
  * 
  */
-abstract public class AbstractObservableValue extends AbstractObservable
-		implements IObservableValue {
-
+abstract public class AbstractObservableValue extends AbstractObservable implements IObservableValue {
 	/**
-	 * @param realm
+	 * Constructs a new instance with the default realm.
 	 */
 	public AbstractObservableValue() {
 		this(Realm.getDefault());
@@ -38,10 +37,14 @@ abstract public class AbstractObservableValue extends AbstractObservable
 	public AbstractObservableValue(Realm realm) {
 		super(realm);
 	}
-	
+
+	/**
+	 * Collection of {@link IValueChangeListener value change listeners}.
+	 * Access must be synchronized.
+	 */
 	private Collection valueChangeListeners = null;
 
-	public void addValueChangeListener(IValueChangeListener listener) {
+	public synchronized void addValueChangeListener(IValueChangeListener listener) {
 		if (valueChangeListeners == null) {
 			boolean hadListeners = hasListeners();
 			valueChangeListeners = new ArrayList();
@@ -54,7 +57,7 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		}
 	}
 
-	public void removeValueChangeListener(IValueChangeListener listener) {
+	public synchronized void removeValueChangeListener(IValueChangeListener listener) {
 		if (valueChangeListeners == null) {
 			return;
 		}
@@ -67,7 +70,18 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		}
 	}
 
-	public void setValue(Object value) {
+	final public void setValue(Object value) {
+		checkRealm();
+		doSetValue(value);
+	}
+
+	/**
+	 * Template method for setting the value of the observable. By default the
+	 * method throws an {@link UnsupportedOperationException}.
+	 * 
+	 * @param value
+	 */
+	protected void doSetValue(Object value) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -95,7 +109,7 @@ abstract public class AbstractObservableValue extends AbstractObservable
 		return false;
 	}
 
-	protected boolean hasListeners() {
+	protected synchronized boolean hasListeners() {
 		return super.hasListeners() || valueChangeListeners != null;
 	}
 
@@ -109,7 +123,7 @@ abstract public class AbstractObservableValue extends AbstractObservable
 	 * 
 	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		valueChangeListeners = null;
 		super.dispose();
 	}

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - bug 158687
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.observable.value;
@@ -50,6 +51,13 @@ public class WritableValueTest extends TestCase {
         //set different
         writableValue.setValue(null);
         assertEquals(2, counter.count);
+    }
+    
+    public void testDoSetValue() throws Exception {
+        WritableValue writableValue = new WritableValue(SWTObservables.getRealm(Display.getDefault()), null);
+        Object value = new Object();
+        writableValue.setValue(value);
+        assertEquals(value, writableValue.getValue());
     }
     
     private static class ValueChangeCounter implements IValueChangeListener {

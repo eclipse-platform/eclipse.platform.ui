@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -58,7 +59,7 @@ public class TableObservableValue extends AbstractSWTObservableValue {
 		}
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		try {
 			updating = true;
 			int intValue = ((Integer) value).intValue();

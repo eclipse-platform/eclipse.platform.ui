@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds (bug 135446)
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -197,11 +198,11 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * 
 	 * @param value
 	 *            new value, String expected
-	 * @see org.eclipse.jface.databinding.observable.value.AbstractVetoableValue#doSetValue(java.lang.Object)
+	 * @see org.eclipse.core.databinding.observable.value.AbstractVetoableValue#doSetApprovedValue(java.lang.Object)
 	 * @throws ClassCastException
 	 *             if the value is anything other than a String
 	 */
-	public void doSetValue(final Object value) {
+	public void doSetApprovedValue(final Object value) {
 		try {
 			updating = true;
 			bufferedValue = (String) value;
@@ -214,7 +215,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	/**
 	 * Returns the current value of the {@link Text}.
 	 * 
-	 * @see org.eclipse.jface.databinding.observable.value.AbstractObservableValue#doGetValue()
+	 * @see org.eclipse.core.databinding.observable.value.AbstractVetoableValue#doGetValue()
 	 */
 	public Object doGetValue() {
 		return text.getText();
@@ -224,7 +225,7 @@ public class TextObservableValue extends AbstractSWTVetoableValue {
 	 * Returns the type of the value from {@link #doGetValue()}, i.e.
 	 * String.class
 	 * 
-	 * @see org.eclipse.jface.databinding.observable.value.IObservableValue#getValueType()
+	 * @see org.eclipse.core.databinding.observable.value.IObservableValue#getValueType()
 	 */
 	public Object getValueType() {
 		return String.class;

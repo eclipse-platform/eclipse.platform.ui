@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -56,7 +57,7 @@ public class ComboObservableValue extends AbstractSWTObservableValue {
 			throw new IllegalArgumentException();
 	}
 
-	public void setValue(final Object value) {
+	public void doSetValue(final Object value) {
 		String oldValue = combo.getText();
 		try {
 			updating = true;

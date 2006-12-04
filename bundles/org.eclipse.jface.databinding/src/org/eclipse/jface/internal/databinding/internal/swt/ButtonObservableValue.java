@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -47,7 +48,7 @@ public class ButtonObservableValue extends AbstractSWTObservableValue {
 		button.addListener(SWT.DefaultSelection, updateListener);
 	}
 
-	public void setValue(final Object value) {
+	public void doSetValue(final Object value) {
 		boolean oldSelectionValue = selectionValue;
 		selectionValue = value == null ? false : ((Boolean) value)
 				.booleanValue();

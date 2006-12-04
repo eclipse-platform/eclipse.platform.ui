@@ -12,6 +12,7 @@
 package org.eclipse.core.databinding.observable.value;
 
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * A value whose changes can be tracked by value change listeners.
@@ -37,12 +38,16 @@ public interface IObservableValue extends IObservable {
 	public Object getValueType();
 
 	/**
+	 * Returns the value.  Must be invoked in the {@link Realm} of the observable.
+	 * 
 	 * @return the current value
 	 * @TrackedGetter
 	 */
 	public Object getValue();
 
 	/**
+	 * Sets the value.  Must be invoked in the {@link Realm} of the observable.
+	 * 
 	 * @param value
 	 *            the value to set
 	 * @throws UnsupportedOperationException

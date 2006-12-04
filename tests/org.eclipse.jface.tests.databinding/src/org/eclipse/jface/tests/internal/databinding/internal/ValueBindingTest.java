@@ -8,6 +8,7 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.jface.tests.internal.databinding.internal;
@@ -157,5 +158,9 @@ public class ValueBindingTest extends TestCase {
 			// do nothing
 			return null;
 		}
+
+        protected void doSetValue(Object value) {
+            
+        }
 	}
 }

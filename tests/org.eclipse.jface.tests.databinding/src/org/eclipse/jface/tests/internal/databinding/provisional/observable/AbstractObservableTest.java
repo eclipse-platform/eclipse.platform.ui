@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -28,138 +29,195 @@ import org.eclipse.swt.widgets.Display;
  * @since 1.1
  */
 public class AbstractObservableTest extends TestCase {
-	private ObservableStub stub;
+	private ObservableStub observable;
 	
 	protected void setUp() throws Exception {
         Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-		stub = new ObservableStub(Realm.getDefault());
+		observable = new ObservableStub(Realm.getDefault());
 	}
 	
 	public void testStaleListener() throws Exception {
-		assertFalse(stub.hasListeners());
+		assertFalse(observable.hasListeners());
 		
 		StaleListener listener1 = new StaleListener();
 		
-		assertFalse(stub.firstListenerAdded);
-		stub.addStaleListener(listener1);
-		assertTrue(stub.firstListenerAdded);
-		stub.firstListenerAdded = false; //reset
+		assertFalse(observable.firstListenerAdded);
+		observable.addStaleListener(listener1);
+		assertTrue(observable.firstListenerAdded);
+		observable.firstListenerAdded = false; //reset
 		
-		assertTrue(stub.hasListeners());
+		assertTrue(observable.hasListeners());
 		assertEquals(0, listener1.count);
 		
-		stub.fireStale();
+		observable.fireStale();
 		
 		assertEquals(1, listener1.count);
-		assertSame(stub, listener1.source);
+		assertSame(observable, listener1.source);
 		
 		//Add a second stale listener as 1 vs. 2 listener code is different.
 		StaleListener listener2 = new StaleListener();
 		assertEquals(0, listener2.count);
-		stub.addStaleListener(listener2);
-		stub.fireStale();
+		observable.addStaleListener(listener2);
+		observable.fireStale();
 		
 		assertEquals(2, listener1.count);
 		assertEquals(1, listener2.count);
 		
 		//Add a third stale listener as 2 vs. 3 or greater code is different.
 		StaleListener listener3 = new StaleListener();
-		stub.addStaleListener(listener3);
+		observable.addStaleListener(listener3);
 		assertEquals(0, listener3.count);
 		
-		stub.fireStale();
+		observable.fireStale();
 		
 		assertEquals(3, listener1.count);
 		assertEquals(2, listener2.count);
 		assertEquals(1, listener3.count);
 		
-		assertFalse(stub.lastListenerRemoved);
-		stub.removeStaleListener(listener1);
-		stub.removeStaleListener(listener2);
-		stub.removeStaleListener(listener3);
-		assertTrue(stub.lastListenerRemoved);
+		assertFalse(observable.lastListenerRemoved);
+		observable.removeStaleListener(listener1);
+		observable.removeStaleListener(listener2);
+		observable.removeStaleListener(listener3);
+		assertTrue(observable.lastListenerRemoved);
 	
-		assertFalse(stub.hasListeners());
+		assertFalse(observable.hasListeners());
 	}
 	
 	public void testChangeListener() throws Exception {
-		assertFalse(stub.hasListeners());
+		assertFalse(observable.hasListeners());
 		
 		ChangeListener listener1 = new ChangeListener();
 		
-		assertFalse(stub.firstListenerAdded);
-		stub.addChangeListener(listener1);
-		assertTrue(stub.firstListenerAdded);
-		stub.firstListenerAdded = false;
+		assertFalse(observable.firstListenerAdded);
+		observable.addChangeListener(listener1);
+		assertTrue(observable.firstListenerAdded);
+		observable.firstListenerAdded = false;
 		
-		assertTrue(stub.hasListeners());
+		assertTrue(observable.hasListeners());
 		assertEquals(0, listener1.count);
 		
-		stub.fireChange();
+		observable.fireChange();
 		
 		assertEquals(1, listener1.count);
-		assertSame(stub, listener1.source);
+		assertSame(observable, listener1.source);
 		
 		//Add a second listener as the 1 vs. 2 listener code is different.
 		ChangeListener listener2 = new ChangeListener();
-		stub.addChangeListener(listener2);
+		observable.addChangeListener(listener2);
 		assertEquals(0, listener2.count);
 		
-		stub.fireChange();
+		observable.fireChange();
 		assertEquals(2, listener1.count);
 		assertEquals(1, listener2.count);
 		
 		//Add a third listener as the 2 vs. 3 or greater code is different.
 		ChangeListener listener3 = new ChangeListener();
-		stub.addChangeListener(listener3);
+		observable.addChangeListener(listener3);
 		assertEquals(0, listener3.count);
 		
-		stub.fireChange();
+		observable.fireChange();
 		
 		assertEquals(3, listener1.count);
 		assertEquals(2, listener2.count);
 		assertEquals(1, listener3.count);
 		
-		assertFalse(stub.lastListenerRemoved);
-		stub.removeChangeListener(listener1);
-		stub.removeChangeListener(listener2);
-		stub.removeChangeListener(listener3);
-		assertTrue(stub.lastListenerRemoved);
+		assertFalse(observable.lastListenerRemoved);
+		observable.removeChangeListener(listener1);
+		observable.removeChangeListener(listener2);
+		observable.removeChangeListener(listener3);
+		assertTrue(observable.lastListenerRemoved);
 		
-		assertFalse(stub.hasListeners());
+		assertFalse(observable.hasListeners());
 	}
 	
 	public void testHasListenersWithChangeAndStaleListeners() throws Exception {
 		ChangeListener changeListener = new ChangeListener();
 		StaleListener staleListener = new StaleListener();
 		
-		assertFalse(stub.hasListeners());
-		assertFalse(stub.firstListenerAdded);
-		assertFalse(stub.lastListenerRemoved);
+		assertFalse(observable.hasListeners());
+		assertFalse(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
 		
-		stub.addChangeListener(changeListener);
-		assertTrue(stub.hasListeners());
-		assertTrue(stub.firstListenerAdded);
-		assertFalse(stub.lastListenerRemoved);
+		observable.addChangeListener(changeListener);
+		assertTrue(observable.hasListeners());
+		assertTrue(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
 		
 		//reset
-		stub.firstListenerAdded = false;
-		stub.lastListenerRemoved = false;
+		observable.firstListenerAdded = false;
+		observable.lastListenerRemoved = false;
 		
-		stub.addStaleListener(staleListener);
-		assertTrue(stub.hasListeners());
-		assertFalse(stub.firstListenerAdded);
-		assertFalse(stub.lastListenerRemoved);
+		observable.addStaleListener(staleListener);
+		assertTrue(observable.hasListeners());
+		assertFalse(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
 		
-		stub.removeChangeListener(changeListener);
-		assertTrue(stub.hasListeners());
-		assertFalse(stub.firstListenerAdded);
-		assertFalse(stub.lastListenerRemoved);
+		observable.removeChangeListener(changeListener);
+		assertTrue(observable.hasListeners());
+		assertFalse(observable.firstListenerAdded);
+		assertFalse(observable.lastListenerRemoved);
 		
-		stub.removeStaleListener(staleListener);
-		assertFalse(stub.hasListeners());
-		assertFalse(stub.firstListenerAdded);
-		assertTrue(stub.lastListenerRemoved);
+		observable.removeStaleListener(staleListener);
+		assertFalse(observable.hasListeners());
+		assertFalse(observable.firstListenerAdded);
+		assertTrue(observable.lastListenerRemoved);
+	}
+	
+	public void testFireStaleInvalidRealm() throws Exception {		
+		RealmStub realm = new RealmStub();
+		realm.current = false;
+		observable = new ObservableStub(realm);
+		
+		try {
+			observable.fireStale();
+			fail("exception should have been thrown");
+		} catch (AssertionFailedException e) {
+		}
+		
+	}
+	
+	public void testFireStaleCurrentRealm() throws Exception {
+		RealmStub realm = new RealmStub();
+		realm.current = true;
+		observable = new ObservableStub(realm);
+		
+		try {
+			observable.fireStale();
+		} catch (AssertionFailedException e) {
+			fail("exception should not have been thrown");
+		}		
+	}
+	
+	public void testFireChangeInvalidRealm() throws Exception {
+		RealmStub realm = new RealmStub();
+		realm.current = false;
+		observable = new ObservableStub(realm);
+		
+		try {
+			observable.fireChange();
+			fail("exception should have been thrown");
+		} catch (AssertionFailedException e) {
+		}
+	}
+	
+	public void testFireChangeCurrentRealm() throws Exception {
+		RealmStub realm = new RealmStub();
+		realm.current = true;
+		observable = new ObservableStub(realm);
+		
+		try {
+			observable.fireChange();
+		} catch (AssertionFailedException e) {
+			fail("exception should not have been thrown");
+		}
+	}
+	
+	private static class RealmStub extends Realm {
+		boolean current;
+		
+		public boolean isCurrent() {
+			return current;
+		}		
 	}
 	
 	private class ChangeListener implements IChangeListener {

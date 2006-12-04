@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 137877
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.internal.viewers;
@@ -79,7 +80,7 @@ public class SelectionProviderSingleSelectionObservableValue extends
 	 *            object to set as selected, <code>null</code> if wanting to
 	 *            remove selection
 	 */
-	public void setValue(final Object value) {
+	public void doSetValue(final Object value) {
 		try {
 			updating = true;
 

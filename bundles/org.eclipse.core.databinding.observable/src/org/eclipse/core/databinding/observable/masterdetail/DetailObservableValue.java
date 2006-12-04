@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.masterdetail;
 
@@ -92,7 +93,7 @@ import org.eclipse.core.runtime.Assert;
 		}
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		if (innerObservableValue != null)
 			innerObservableValue.setValue(value);
 	}

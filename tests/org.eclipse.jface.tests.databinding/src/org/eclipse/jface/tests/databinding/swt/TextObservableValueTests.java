@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 
@@ -59,4 +60,13 @@ public class TextObservableValueTests extends TestCase {
 			assertTrue(true);
 		}
 	}
+    
+    public void testSetValue() throws Exception {
+        TextObservableValue observableValue = new TextObservableValue(text, SWT.NONE);
+        
+        assertEquals("", observableValue.getValue());
+        String value = "value";
+        observableValue.setValue(value);
+        assertEquals("observable value", value, observableValue.getValue());
+    }
 }

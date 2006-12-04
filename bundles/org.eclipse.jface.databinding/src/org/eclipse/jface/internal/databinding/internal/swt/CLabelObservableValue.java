@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -30,7 +31,7 @@ public class CLabelObservableValue extends AbstractSWTObservableValue {
 		this.label = label;
 	}
 
-	public void setValue(final Object value) {
+	public void doSetValue(final Object value) {
 		String oldValue = label.getText();
 		label.setText(value == null ? "" : value.toString()); //$NON-NLS-1$
 		fireValueChange(Diffs.createValueDiff(oldValue, label.getText()));

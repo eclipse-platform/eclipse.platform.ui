@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -38,7 +39,7 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 		}
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
 		if (attribute.equals(SWTProperties.ENABLED)) {
 			control.setEnabled(((Boolean) value).booleanValue());

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
@@ -37,20 +38,27 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		super(realm);
 	}
 	
-	public void setValue(Object value) {
-		Object currentValue = doGetValue();
-		ValueDiff diff = Diffs.createValueDiff(currentValue, value);
-		boolean okToProceed = fireValueChanging(diff);
-		if (!okToProceed) {
-			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
-		}
-		doSetValue(value);
-		fireValueChange(diff);
-	}
+	final protected void doSetValue(Object value) {
+        Object currentValue = doGetValue();
+        ValueDiff diff = Diffs.createValueDiff(currentValue, value);
+        boolean okToProceed = fireValueChanging(diff);
+        if (!okToProceed) {
+            throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
+        }
+        doSetApprovedValue(value);
+        fireValueChange(diff);
+    }
+    
+    /**
+     * Sets the value.  Invoked after performing veto checks.
+     * 
+     * @param value
+     */
+    protected abstract void doSetApprovedValue(Object value);
 
 	private Collection valueChangingListeners = null;
 
-	public void addValueChangingListener(IValueChangingListener listener) {
+	public synchronized void addValueChangingListener(IValueChangingListener listener) {
 		if (valueChangingListeners == null) {
 			boolean hadListeners = hasListeners();
 			valueChangingListeners = new ArrayList();
@@ -63,7 +71,7 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		}
 	}
 
-	public void removeValueChangingListener(IValueChangingListener listener) {
+	public synchronized void removeValueChangingListener(IValueChangingListener listener) {
 		if (valueChangingListeners == null) {
 			return;
 		}
@@ -84,6 +92,8 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	 * @return false if the change was vetoed, true otherwise
 	 */
 	protected boolean fireValueChanging(ValueDiff diff) {
+		checkRealm();
+		
 		if (valueChangingListeners != null) {
 			IValueChangingListener[] listeners = (IValueChangingListener[]) valueChangingListeners
 					.toArray(new IValueChangingListener[valueChangingListeners
@@ -98,8 +108,6 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 		}
 		return true;
 	}
-
-	protected abstract void doSetValue(Object value);
 
 	protected boolean hasListeners() {
 		return super.hasListeners();

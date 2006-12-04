@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding;
@@ -130,5 +131,19 @@ public class ComputedValueTest extends TestCase {
         assertEquals(new Integer(1), cv.getValue());
         assertTrue(value1.hasListeners());
         assertFalse("because value2 is not a part of the calculation the listeners should have been removed", value2.hasListeners());
+    }
+    
+    public void testSetValueUnsupportedOperationException() throws Exception {
+        ComputedValue cv = new ComputedValue() {
+            protected Object calculate() {
+                return null;
+            }
+        };
+        
+        try {
+            cv.setValue(new Object());
+            fail("exception should have been thrown");
+        } catch (UnsupportedOperationException e) {
+        }
     }
 }

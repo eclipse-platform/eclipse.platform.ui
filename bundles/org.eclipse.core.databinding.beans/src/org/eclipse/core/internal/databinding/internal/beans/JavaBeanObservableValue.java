@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.internal.beans;
 
@@ -83,7 +84,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 		listener = null;
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		updating = true;
 		try {
 			Object oldValue = doGetValue();

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -56,7 +57,7 @@ public class ListObservableValue extends AbstractSWTObservableValue {
 		});
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		String oldValue = null;
 		if (list.getSelection() != null && list.getSelection().length > 0)
 			oldValue = list.getSelection()[0];

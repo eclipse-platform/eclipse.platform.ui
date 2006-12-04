@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 158687
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -85,7 +86,7 @@ public class WritableValue extends AbstractObservableValue {
 	 * @param value
 	 *            The value to set.
 	 */
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
         boolean changed = false;
 
         if (this.value == null && value != null) {

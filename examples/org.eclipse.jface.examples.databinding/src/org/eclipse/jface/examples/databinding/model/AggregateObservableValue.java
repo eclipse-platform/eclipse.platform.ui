@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
@@ -55,7 +56,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 		doGetValue();
 	}
 
-	public void setValue(Object value) {
+	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
 		StringTokenizer tokenizer = new StringTokenizer((String) value,
 				delimiter);
