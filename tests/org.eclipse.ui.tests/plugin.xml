@@ -1629,10 +1629,16 @@
             icon="icons/anything.gif"
             id="org.eclipse.ui.tests.api.MockWorkingSet">
          <applicableType
+               adaptable="false"
                class="org.eclipse.ui.tests.api.IWorkingSetTest$Foo">
          </applicableType>
          <applicableType
+               adaptable="true"
                class="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon">
+         </applicableType>
+         <applicableType
+               adaptable="false"
+               class="org.eclipse.core.resources.IResource">
          </applicableType>
       </workingSet>
    </extension>
