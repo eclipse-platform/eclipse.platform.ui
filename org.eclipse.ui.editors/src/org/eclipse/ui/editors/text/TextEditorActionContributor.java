@@ -34,6 +34,7 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
  * 		<li>Add Bookmark</li>
  * 		<li>Add Task</li>
  * 		<li>Change Encoding</li>
+ * 		<li>Quick Assist</li>
  * </ul>
  *
  * @since 2.0
@@ -63,6 +64,7 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		fChangeEncodingAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction."); //$NON-NLS-1$
 		fQuickAssistAction= new RetargetTextEditorAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.QuickAssist."); //$NON-NLS-1$
 		fQuickAssistAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
+		fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
 	}
 
 	/**
@@ -117,7 +119,6 @@ public class TextEditorActionContributor extends BasicTextEditorActionContributo
 		
 		IMenuManager editMenu= menu.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
-			fQuickAssistMenuEntry= new ActionContributionItem(fQuickAssistAction);
 			editMenu.appendToGroup(ITextEditorActionConstants.GROUP_ASSIST, fQuickAssistMenuEntry);
 			fQuickAssistMenuEntry.setVisible(false);
 		}
