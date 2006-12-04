@@ -782,7 +782,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @since 3.0
 	 */
 	public static void launchInForeground(final ILaunchConfiguration configuration, final String mode) {
-		final IJobManager jobManager = Platform.getJobManager();
+		final IJobManager jobManager = Job.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		boolean wait = false;
 		
@@ -889,7 +889,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @since 3.0
 	 */
 	public static void launchInBackground(final ILaunchConfiguration configuration, final String mode) {
-		final IJobManager jobManager = Platform.getJobManager();
+		final IJobManager jobManager = Job.getJobManager();
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 
 		boolean wait = (jobManager.find(ResourcesPlugin.FAMILY_AUTO_BUILD).length > 0) || (jobManager.find(ResourcesPlugin.FAMILY_MANUAL_BUILD).length > 0);
