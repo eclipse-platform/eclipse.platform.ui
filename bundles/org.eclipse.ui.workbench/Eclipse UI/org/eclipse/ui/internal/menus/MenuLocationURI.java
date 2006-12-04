@@ -78,4 +78,11 @@ public class MenuLocationURI {
 	public String toString() {
 		return rawString;
 	}
+
+	/**
+	 * @return the full URI definition string
+	 */
+	public Object getRawString() {
+		return rawString;
+	}
 }
