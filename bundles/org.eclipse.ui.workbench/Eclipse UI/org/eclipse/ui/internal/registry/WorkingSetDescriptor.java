@@ -52,7 +52,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
     private IConfigurationElement configElement;
     
-    private String[] applicableTypes;
+    private String[] classTypes;
+
+	private String[] adapterTypes;
 
     private static final String ATT_ID = "id"; //$NON-NLS-1$
 
@@ -90,18 +92,27 @@ private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1
         IConfigurationElement[] containsChildren = configElement
 				.getChildren(TAG_APPLICABLE_TYPE);
 		if (containsChildren.length > 0) {
-			List list = new ArrayList(containsChildren.length);
+			List byClassList = new ArrayList(containsChildren.length);
+			List byAdapterList = new ArrayList(containsChildren.length);
 			for (int i = 0; i < containsChildren.length; i++) {
 				IConfigurationElement child = containsChildren[i];
 				String className = child
 						.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				if (className != null)
-					list.add(className);
+					byClassList.add(className);
+				if ("true".equals(child.getAttribute(IWorkbenchRegistryConstants.ATT_ADAPTABLE)))  //$NON-NLS-1$
+					byAdapterList.add(className);
 			}
-			if (!list.isEmpty()) {
-				applicableTypes = (String[]) list.toArray(new String[list
+			if (!byClassList.isEmpty()) {
+				classTypes = (String[]) byClassList.toArray(new String[byClassList
 						.size()]);
-				Arrays.sort(applicableTypes);
+				Arrays.sort(classTypes);
+			}
+			
+			if (!byAdapterList.isEmpty()) {
+				adapterTypes = (String[]) byAdapterList.toArray(new String[byAdapterList
+						.size()]);
+				Arrays.sort(adapterTypes);
 			}
 		}
     }
@@ -247,7 +258,7 @@ private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1
 	 * @since 3.3
 	 */
 	public boolean isApplicable(IAdaptable object) {
-		if (applicableTypes == null || applicableTypes.length == 0)
+		if (classTypes == null || classTypes.length == 0)
 			return true;
 
 		IAdapterManager adapterManager = Platform.getAdapterManager();
@@ -255,49 +266,67 @@ private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1
 				.getClass());
 		for (int i = 0; i < directClasses.length; i++) {
 			Class clazz = directClasses[i];
-			if (Arrays.binarySearch(applicableTypes, clazz.getName()) >= 0)
+			if (Arrays.binarySearch(classTypes, clazz.getName()) >= 0)
 				return true;
 		}
 
-		for (int i = 0; i < applicableTypes.length; i++) {
-			String type = applicableTypes[i];
-			if (adapterManager.hasAdapter(object, type))
-				return true;
-		}
+		if (adapterTypes != null && adapterTypes.length > 0) {
+			for (int i = 0; i < adapterTypes.length; i++) {
+				String type = adapterTypes[i];
+				int query = adapterManager.queryAdapter(object, type);
+				if (query == IAdapterManager.LOADED) {
+					if (adapterManager.getAdapter(object, type) != null)
+						return true;
+				}
+				else if (query == IAdapterManager.NOT_LOADED) {
+					if (adapterManager.hasAdapter(object, type))
+						return true;
+				}
+			}
 
-		ServiceReference reference = WorkbenchPlugin.getDefault()
-				.getBundleContext().getServiceReference(
-						PackageAdmin.class.getName());
+			ServiceReference reference = WorkbenchPlugin.getDefault()
+					.getBundleContext().getServiceReference(
+							PackageAdmin.class.getName());
 
-		if (reference != null) {
-			PackageAdmin admin = (PackageAdmin) WorkbenchPlugin.getDefault()
-					.getBundleContext().getService(reference);
+			if (reference != null) {
+				PackageAdmin admin = (PackageAdmin) WorkbenchPlugin
+						.getDefault().getBundleContext().getService(reference);
 
-			for (int i = 0; i < applicableTypes.length; i++) {
-				String type = applicableTypes[i];
-				int lastDot = type.lastIndexOf('.');
-				if (lastDot > 0) { // this lives in a package
-					String packageName = type.substring(0, lastDot);
-					ExportedPackage[] packages = admin
-							.getExportedPackages(packageName);
-					if (packages != null && packages.length == 1) { // if there is exactly one
-						// exporter of this package we
-						// can go further
-						if (packages[0].getExportingBundle().getState() == Bundle.ACTIVE) {
-							try { // if the bundle is loaded we can safely get
-								// the class object and check for an adapter
-								// on the object directly
-								if (object.getAdapter(Class.forName(type)) != null)
-									return true;
-							} catch (ClassNotFoundException e) {
-								WorkbenchPlugin.log(e);
+				try {
+					for (int i = 0; i < adapterTypes.length; i++) {
+						String type = adapterTypes[i];
+						int lastDot = type.lastIndexOf('.');
+						if (lastDot > 0) { // this lives in a package
+							String packageName = type.substring(0, lastDot);
+							ExportedPackage[] packages = admin
+									.getExportedPackages(packageName);
+							if (packages != null && packages.length == 1) {
+								// if there is exactly one exporter of this
+								// package
+								// we can go further
+								if (packages[0].getExportingBundle().getState() == Bundle.ACTIVE) {
+									try {
+										// if the bundle is loaded we can safely
+										// get
+										// the class object and check for an
+										// adapter
+										// on the object directly
+										if (object.getAdapter(packages[0]
+												.getExportingBundle()
+												.loadClass(type)) != null)
+											return true;
+									} catch (ClassNotFoundException e) {
+										WorkbenchPlugin.log(e);
+									}
+								}
 							}
 						}
 					}
+				} finally {
+					WorkbenchPlugin.getDefault().getBundleContext()
+							.ungetService(reference);
 				}
 			}
-			WorkbenchPlugin.getDefault().getBundleContext().ungetService(
-					reference);
 		}
 
 		return false;

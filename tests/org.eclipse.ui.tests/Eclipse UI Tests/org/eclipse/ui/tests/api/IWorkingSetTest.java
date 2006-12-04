@@ -21,6 +21,8 @@ import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IA;
+import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
+import org.eclipse.ui.tests.menus.ObjectContributionClasses.IModelElement;
 
 public class IWorkingSetTest extends UITestCase {
     final static String WORKING_SET_NAME_1 = "ws1";
@@ -146,10 +148,25 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(fWorkingSet.isApplicable(myBar));
 	}
     
-    public void testApplicableTo_AdapterManager() {
+    public void testApplicableTo_Adapter1() {
+    	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
+    	ToCommon tc = new ToCommon();
+    	assertTrue(fWorkingSet.isApplicable(tc));
+    }
+    
+    public void testApplicableTo_AdapterManager1() {
     	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
     	IAImpl ia = new IAImpl();
     	assertTrue(fWorkingSet.isApplicable(ia));
+    }
+    
+    /**
+     * Tests that adaptable=false is working.  ModelElement has a registered adapter to IResource that should not be used.
+     */
+    public void testApplicableTo_AdapterManager2() {
+    	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
+    	ModelElement element = new ModelElement();
+    	assertFalse(fWorkingSet.isApplicable(element));
     }
     
     public static class Foo implements IAdaptable {
@@ -167,6 +184,20 @@ public class IWorkingSetTest extends UITestCase {
     	
     }
     
+    public class ToCommon implements IAdaptable {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			if (adapter == ICommon.class) {
+				return new ICommon() {};
+			}
+			return null;
+		}
+    	
+    }
+    
     public static class IAImpl implements IA, IAdaptable {
 
 		/* (non-Javadoc)
@@ -176,5 +207,16 @@ public class IWorkingSetTest extends UITestCase {
 			// TODO Auto-generated method stub
 			return null;
 		}	
+    }
+    
+    public static class ModelElement implements IModelElement, IAdaptable {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
+    	
     }
 }

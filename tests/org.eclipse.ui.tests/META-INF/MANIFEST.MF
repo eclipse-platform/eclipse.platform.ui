@@ -24,3 +24,4 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.core.filesystem
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.ui.tests.TestPlugin
+Export-Package: org.eclipse.ui.tests.menus

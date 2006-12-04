@@ -111,7 +111,7 @@ The resource navigator uses a working set to filter elements from the navigator 
             <meta.element labelAttribute="class"/>
          </appInfo>
          <documentation>
-            Reference to classes that may be contained within a working set.  These are used by the workbench as a hint to determine whether a the option to add a given element to a working set is presented within the UI.  These references are only a hint, however, and are not enforced by &lt;samp&gt;IWorkingSet.setElements()&lt;/samp&gt;.
+            Reference to classes that may be contained within a working set.  These are used by the workbench as a hint to determine whether the option to add a given element to a working set is presented within the UI.  These references are only a hint, however, and are not enforced by &lt;samp&gt;IWorkingSet.setElements()&lt;/samp&gt;.
 
 Since 3.3.
          </documentation>
@@ -120,11 +120,18 @@ Since 3.3.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the name of the class that is recommended as belonging to working sets of this type.  Any object which is either directly assignable to this type or has an adapter registered with the runtime adapter manager is considered recommended.
+                  the name of the class that is recommended as belonging to working sets of this type.  Any object which is directly assignable to this type will be considered recommended.  Additionally, if the adaptable attribute is true the platform adapter manager and getAdaptable will be consulted as well.  If there is an adapter between the target object and the specified class and that adapter is loaded then an attempt will be made to adapt the two.  If the adapter is not loaded it is assumed that it will be successful and a recommendation is made.  If there is no adapter factory present an effort to call getAdapter directly on the object will be undertaken.  This effort will only occur if the package of the class being tested for exists as an exported package in exactly ONE bundle and that bundle is active.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
                </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="adaptable" type="string" use="default" value="false">
+            <annotation>
+               <documentation>
+                  whether or not candidate objects should be tested for adaptable compatibility or not.  If true then the object being tested will be first checked against the adapter manager for an applicable adapter and if one is not present an effort to call getAdapter directly on the object will be undertaken.  This effort will only occur if the package of the class being tested for exists as an exported package in exactly ONE bundle and that bundle is active.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
@@ -152,7 +159,12 @@ Since 3.3.
             id=&quot;org.eclipse.ui.resourceWorkingSetPage&quot;
             name=&quot;Resource&quot;
             icon=&quot;icons/resworkset.gif&quot;
-            pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot; /&gt;
+            pageClass=&quot;org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage&quot;&gt;
+            &lt;applicableType
+               adaptable=&quot;true&quot;
+               class=&quot;org.eclipse.core.resources.IResource&quot;&gt;
+            &lt;/applicableType&gt;
+        &lt;/workingSet&gt;
     &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
