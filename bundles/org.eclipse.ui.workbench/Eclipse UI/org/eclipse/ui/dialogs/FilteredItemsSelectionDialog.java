@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -422,7 +422,7 @@ public abstract class FilteredItemsSelectionDialog extends
 				for (Iterator it = selectedElements.iterator(); it.hasNext();) {
 					item = it.next();
 					if (item instanceof ItemsListSeparator
-							|| !((AbstractListItem) item).isHistory()) {
+							|| !isHistoryElement(item)) {
 						removeHistoryItemAction.setEnabled(false);
 						return;
 					}
@@ -625,7 +625,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			List items = selection.toList();
 
-			AbstractListItem item = null;
+			Object item = null;
 			IStatus tempStatus = null;
 
 			for (Iterator it = items.iterator(); it.hasNext();) {
@@ -635,7 +635,7 @@ public abstract class FilteredItemsSelectionDialog extends
 					continue;
 				}
 
-				item = (AbstractListItem) o;
+				item = o;
 				tempStatus = validateItem(item);
 
 				if (tempStatus.isOK()) {
@@ -694,7 +694,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
 			list.getTable().setRedraw(false);
-			list.refresh(false);
+			list.refresh();
 			list.getTable().setRedraw(true);
 
 			if (list.getTable().getItemCount() > 0) {
@@ -736,8 +736,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		for (Iterator it = selectedElements.iterator(); it.hasNext();) {
 			item = it.next();
 
-			if (item instanceof AbstractListItem) {
-				accessedHistoryItem((AbstractListItem) item);
+			if (!(item instanceof ItemsListSeparator)) {
+				accessedHistoryItem(item);
 				objectsToReturn.add(item);
 			}
 		}
@@ -801,7 +801,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 *            an item to be checked
 	 * @return status of the item
 	 */
-	protected abstract IStatus validateItem(AbstractListItem item);
+	protected abstract IStatus validateItem(Object item);
 
 	/**
 	 * Creates an instance of a filter.
@@ -816,7 +816,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	protected void applyFilter() {
 		stopCurrentFilterJob();
-		
+
 		this.filter = createFilter();
 		this.contentProvider.reset();
 
@@ -838,7 +838,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract Comparator getItemsComparator();
 
 	/**
-	 * Fills content provider with AbstractListItem objects.
+	 * Fills content provider with objects.
 	 * 
 	 * @param contentProvider
 	 *            provider to fill items. During adding items it using
@@ -863,7 +863,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 */
 	private void removeSelectedItems(List items) {
 		for (Iterator iter = items.iterator(); iter.hasNext();) {
-			AbstractListItem item = (AbstractListItem) iter.next();
+			Object item = iter.next();
 			removeHistoryItem(item);
 		}
 	}
@@ -875,18 +875,18 @@ public abstract class FilteredItemsSelectionDialog extends
 	 *            to remove
 	 * @return removed item
 	 */
-	protected AbstractListItem removeHistoryItem(AbstractListItem item) {
+	protected Object removeHistoryItem(Object item) {
 		return contentProvider.removeHistoryElement(item);
 	}
 
 	/**
 	 * Adds item to history
 	 * 
-	 * @param listItem
+	 * @param item
 	 *            the item to be added
 	 */
-	protected void accessedHistoryItem(AbstractListItem listItem) {
-		contentProvider.addHistoryElement(listItem);
+	protected void accessedHistoryItem(Object item) {
+		contentProvider.addHistoryElement(item);
 	}
 
 	/**
@@ -895,24 +895,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * @return decorated comparator
 	 */
 	private Comparator getHistoryComparator() {
-		return new Comparator() {
-
-			public int compare(Object o1, Object o2) {
-				AbstractListItem item1 = ((AbstractListItem) o1);
-				AbstractListItem item2 = ((AbstractListItem) o2);
-
-				if ((item1.isHistory() && item2.isHistory())
-						|| (!item1.isHistory() && !item2.isHistory()))
-					return getItemsComparator().compare(o1, o2);
-
-				if (item1.isHistory())
-					return -1;
-				if (item2.isHistory())
-					return +1;
-
-				return 0;
-			}
-		};
+		return new HistoryComparator();
 	}
 
 	/**
@@ -964,6 +947,37 @@ public abstract class FilteredItemsSelectionDialog extends
 			filterJob = null;
 		}
 	}
+
+	/**
+	 * Tells whether the given item is a history item.
+	 * 
+	 * @param item
+	 *            the item to be investigated
+	 * @return true if the given item is in history
+	 */
+	public boolean isHistoryElement(Object item) {
+		return this.contentProvider.isHistoryElement(item);
+	}
+
+	/**
+	 * Tells whether the given item is a duplicate.
+	 * 
+	 * @param item
+	 *            the item to be investigated
+	 * @return true if the item is duplicate
+	 */
+	public boolean isDuplicateElement(Object item) {
+		return this.contentProvider.isDuplicateElement(item);
+	}
+
+	/**
+	 * Returns name for then given object.
+	 * 
+	 * @param item
+	 *            the object
+	 * @return name of the given item
+	 */
+	public abstract String getElementName(Object item);
 
 	private class ToggleStatusLineAction extends Action {
 
@@ -1287,7 +1301,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			ProgressMonitorWrapper {
 
 		private ContentProvider contentProvider;
-		
+
 		private String name;
 
 		private int totalWork;
@@ -1537,7 +1551,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		protected void filterContent(FilteringProgressMonitor monitor) {
 			for (Iterator iter = this.lastResult.iterator(); iter.hasNext();) {
-				AbstractListItem item = (AbstractListItem) iter.next();
+				Object item = iter.next();
 				if (monitor.isCanceled())
 					break;
 				this.contentProvider.add(item, itemsFilter);
@@ -1618,7 +1632,9 @@ public abstract class FilteredItemsSelectionDialog extends
 					// TODO Auto-generated method stub
 					if (this.size() > MAX_HISTORY_SIZE)
 						this.removeFirst();
-					return super.add(arg0);
+					if (!this.contains(arg0))
+						return super.add(arg0);
+					return false;
 				}
 
 			});
@@ -1711,7 +1727,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			Object[] items = getHistoryItems();
 			for (int i = 0; i < items.length; i++) {
-				AbstractListItem item = (AbstractListItem) items[i];
+				Object item = items[i];
 				IMemento elementMemento = historyMemento
 						.createChild(infoNodeName);
 				storeItemToMemento(item, elementMemento);
@@ -1729,26 +1745,24 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 
 		/**
-		 * Creates an instance of an AbstractListItem using given memento
+		 * Creates an object using given memento
 		 * 
 		 * @param memento
-		 *            memento used for creating new AbstractListItem instance
+		 *            memento used for creating new object
 		 * 
-		 * @return the restored AbstractListItem
+		 * @return the restored object
 		 */
-		protected abstract AbstractListItem restoreItemFromMemento(
-				IMemento memento);
+		protected abstract Object restoreItemFromMemento(IMemento memento);
 
 		/**
-		 * Store <code>AbstractListItem</code> object in <code>IMemento</code>
+		 * Store object in <code>IMemento</code>
 		 * 
 		 * @param item
 		 *            the item to store
 		 * @param memento
 		 *            the memento to store to
 		 */
-		protected abstract void storeItemToMemento(AbstractListItem item,
-				IMemento memento);
+		protected abstract void storeItemToMemento(Object item, IMemento memento);
 
 	}
 
@@ -1759,7 +1773,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract class ItemsFilter {
 
 		private SearchPattern patternMatcher;
-		
+
 		/**
 		 * Creates new instance of SearchFilter
 		 */
@@ -1842,7 +1856,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if item matches against filter conditions false
 		 *         otherwise
 		 */
-		public abstract boolean matchItem(AbstractListItem item);
+		public abstract boolean matchItem(Object item);
 
 		/**
 		 * Checks consistency of items. Item is inconsitent if was changed or
@@ -1851,7 +1865,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param item
 		 * @return true if item is consistent false if item is inconsitent
 		 */
-		public abstract boolean isConsistentItem(AbstractListItem item);
+		public abstract boolean isConsistentItem(Object item);
 
 	}
 
@@ -1867,7 +1881,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param item
 		 * @param itemsFilter
 		 */
-		public abstract void add(AbstractListItem item, ItemsFilter itemsFilter);
+		public abstract void add(Object item, ItemsFilter itemsFilter);
 	}
 
 	/**
@@ -1882,7 +1896,7 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private SelectionHistory selectionHistory;
 
-		private SortedSet sortedItems;
+		private SortedMap sortedItems;
 
 		private String progressMessage = ""; //$NON-NLS-1$
 
@@ -1892,7 +1906,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param selectionHistory
 		 */
 		public ContentProvider(SelectionHistory selectionHistory) {
-			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+			this.sortedItems = Collections.synchronizedSortedMap(new TreeMap(
 					getHistoryComparator()));
 			this.selectionHistory = selectionHistory;
 		}
@@ -1900,10 +1914,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		/**
 		 * Creates new instance of ContentProvider
 		 * 
-		 * @param selectionHistory
 		 */
 		public ContentProvider() {
-			this.sortedItems = Collections.synchronizedSortedSet(new TreeSet(
+			this.sortedItems = Collections.synchronizedSortedMap(new TreeMap(
 					getHistoryComparator()));
 		}
 
@@ -1938,25 +1951,14 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param item
 		 * @param itemsFilter
 		 */
-		public void add(AbstractListItem item, ItemsFilter itemsFilter) {
+		public void add(Object item, ItemsFilter itemsFilter) {
 			if (itemsFilter == filter)
 				if (itemsFilter != null) {
 					if (itemsFilter.matchItem(item)) {
-						if (!item.isHistory()) {
-							if (!(this.selectionHistory != null && this.selectionHistory
-								.contains(item)))
-								this.sortedItems.add(item);
-						} else {
-							this.sortedItems.add(item);
-						}
-					}
-				} else if (!item.isHistory()) {
-					if (!(this.selectionHistory != null && this.selectionHistory
-							.contains(item))) {
-						this.sortedItems.add(item);
+						this.sortedItems.put(item, new Boolean(false));
 					}
 				} else {
-					this.sortedItems.add(item);
+					this.sortedItems.put(item, new Boolean(false));
 				}
 		}
 
@@ -1969,12 +1971,13 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (this.selectionHistory != null) {
 				Object[] items = this.selectionHistory.getHistoryItems();
 				for (int i = 0; i < items.length; i++) {
-					AbstractListItem item = (AbstractListItem) items[i];
+					Object item = items[i];
 					if (itemsFilter == filter) {
 						if (itemsFilter != null) {
 							if (itemsFilter.matchItem(item)) {
 								if (itemsFilter.isConsistentItem(item)) {
-									this.sortedItems.add(item);
+									this.sortedItems.put(item, new Boolean(
+											false));
 								} else {
 									this.selectionHistory.remove(item);
 								}
@@ -2020,12 +2023,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @return removed item
 		 */
-		public AbstractListItem removeHistoryElement(AbstractListItem item) {
-			this.sortedItems.remove(item);
-			item.unmarkHistory();
-			this.sortedItems.add(item);
+		public Object removeHistoryElement(Object item) {
+			Object isDuplicate = this.sortedItems.remove(item);
 			if (this.selectionHistory != null)
 				this.selectionHistory.remove(item);
+			this.sortedItems.put(item, isDuplicate);
 			this.refresh();
 			return item;
 		}
@@ -2036,14 +2038,43 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param item
 		 *            to add
 		 */
-		public void addHistoryElement(AbstractListItem item) {
-			this.sortedItems.remove(item);
-			item.markAsHistory();
+		public void addHistoryElement(Object item) {
+			Object isDuplicate = this.sortedItems.remove(item);
 			if (filter != null && filter.matchItem(item))
-				this.sortedItems.add(item);
+				this.sortedItems.put(item, isDuplicate);
 			if (this.selectionHistory != null)
 				this.selectionHistory.accessed(item);
 			this.refresh();
+		}
+
+		/**
+		 * @param item
+		 * @return true if given item is part of the hisory
+		 */
+		public boolean isHistoryElement(Object item) {
+			if (this.selectionHistory != null) {
+				return this.selectionHistory.contains(item);
+			}
+			return false;
+		}
+
+		/**
+		 * @param item
+		 * @param isDuplicate
+		 */
+		public void setDuplicateElement(Object item, boolean isDuplicate) {
+			this.sortedItems.put(item, new Boolean(isDuplicate));
+		}
+
+		/**
+		 * @param item
+		 * @return true if item is duplicate
+		 */
+		public boolean isDuplicateElement(Object item) {
+			Boolean isDuplicate = (Boolean) this.sortedItems.get(item);
+			if (isDuplicate != null)
+				return isDuplicate.booleanValue();
+			return false;
 		}
 
 		/**
@@ -2073,7 +2104,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return filtered items
 		 */
 		private Object[] getItems() {
-			return sortedItems.toArray();
+			return sortedItems.keySet().toArray();
 		}
 
 		/**
@@ -2085,7 +2116,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			if (lastCompletedResult == null) {
 				lastCompletedFilter = itemsFilter;
 				lastCompletedResult = Collections
-						.synchronizedList(new ArrayList(this.sortedItems));
+						.synchronizedList(new ArrayList(this.sortedItems
+								.keySet()));
 			}
 		}
 
@@ -2205,9 +2237,8 @@ public abstract class FilteredItemsSelectionDialog extends
 				return;
 			}
 
-			if (!oldInput.equals(input)) {
-				refresh();
-			}
+			refresh();
+			
 		}
 
 		/*
@@ -2301,96 +2332,6 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * AbstractListItem objects are decorators for objects which are to show in
-	 * the dialog list. Each such a decorator has history flag and duplicate
-	 * flag. History flag helps to sort decorated objects (history marked are at
-	 * the beggining of the list) and duplicate is used by label providers.
-	 */
-	protected static abstract class AbstractListItem {
-
-		private boolean duplicate = false;
-
-		private boolean isHistory = false;
-
-		/**
-		 * Checks item is duplicate
-		 * 
-		 * @return true if item is duplicated false in other way
-		 */
-		public boolean isDuplicate() {
-			return this.duplicate;
-		}
-
-		/**
-		 * Sets item as duplicate
-		 * 
-		 * @param duplicate
-		 */
-		public void setDuplicate(boolean duplicate) {
-			this.duplicate = duplicate;
-		}
-
-		/**
-		 * Checks if item is part of the selected history
-		 * 
-		 * @return true if it's duplicate, else false
-		 */
-		public boolean isHistory() {
-			return this.isHistory;
-		}
-
-		/**
-		 * Marks item as a part of history
-		 */
-		public void markAsHistory() {
-			this.isHistory = true;
-		}
-
-		/**
-		 * Unmarks history item
-		 */
-		public void unmarkHistory() {
-			this.isHistory = false;
-		}
-
-		/**
-		 * Gets name of item. It's used as element name on dialog view.
-		 * Duplicate marking depend on this name.
-		 * 
-		 * @return name of item
-		 */
-		public abstract String getName();
-
-		/**
-		 * @return embedded object
-		 */
-		public abstract Object getObject();
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
-		public boolean equals(Object obj) {
-			if (obj instanceof AbstractListItem) {
-				AbstractListItem item = (AbstractListItem) obj;
-				return getObject().equals(item.getObject());
-			}
-			return super.equals(obj);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
-		public int hashCode() {
-			return getObject().hashCode();
-		}
-
-	}
-
-	/**
 	 * Additional functionality comparing to the super class. It puts separator
 	 * below history items and marks each items as duplicate if its name repeats
 	 * more than once on the filtered list.
@@ -2439,23 +2380,24 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			Object[] filteredElements = super.getFilteredChildren(parent);
 
-			for (int i = 0; i < filteredElements.length; i++) {
-				AbstractListItem item = (AbstractListItem) filteredElements[i];
-
-				AbstractListItem previousItem = (AbstractListItem) helperMap
-						.put(item.getName(), item);
-				if (previousItem != null) {
-					previousItem.setDuplicate(true);
-					item.setDuplicate(true);
-				} else {
-					item.setDuplicate(false);
-				}
-
-				if (item.isHistory()) {
+			if (filteredElements.length > 0) {
+				if (isHistoryElement(filteredElements[0])) {
 					hasHistory = true;
 				}
+			}
 
-				if (hasHistory && !item.isHistory()) {
+			for (int i = 0; i < filteredElements.length; i++) {
+				Object item = filteredElements[i];
+
+				Object previousItem = helperMap.put(getElementName(item), item);
+				if (previousItem != null) {
+					contentProvider.setDuplicateElement(previousItem, true);
+					contentProvider.setDuplicateElement(item, true);
+				} else {
+					contentProvider.setDuplicateElement(item, false);
+				}
+
+				if (hasHistory && !isHistoryElement(item)) {
 					preaparedElements
 							.add(new ItemsListSeparator(
 									WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel));
@@ -2469,6 +2411,32 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			return preaparedElements.toArray();
 		}
+	}
+	
+	/**
+	 * Compares items 
+	 * 
+	 */
+	private class HistoryComparator implements Comparator {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Object o1, Object o2) {
+			if ((isHistoryElement(o1) && isHistoryElement(o2))
+					|| (!isHistoryElement(o1) && !isHistoryElement(o2)))
+				return getItemsComparator().compare(o1, o2);
+
+			if (isHistoryElement(o1))
+				return -2;
+			if (isHistoryElement(o2))
+				return +2;
+
+			return 0;
+		}
+
 	}
 
 }

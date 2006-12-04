@@ -16,7 +16,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
@@ -224,11 +223,7 @@ public class FilteredResourcesSelectionDialog extends
 				// don't do anything. Simply don't restore the settings
 			}
 		}
-
-		// IWorkingSet ws = workingSetFilterActionGroup.getWorkingSet();
-		//
-		// setSubtitle(ws != null ? ws.getLabel() : null);
-		// workingSetFilter.setWorkingSet(ws);
+		
 		addListFilter(workingSetFilter);
 
 		applyFilter();
@@ -256,8 +251,9 @@ public class FilteredResourcesSelectionDialog extends
 							IWorkingSet workingSet = (IWorkingSet) event
 									.getNewValue();
 
-							if (workingSet != null && !(workingSet.isAggregateWorkingSet()
-									&& workingSet.isEmpty())) {
+							if (workingSet != null
+									&& !(workingSet.isAggregateWorkingSet() && workingSet
+											.isEmpty())) {
 								workingSetFilter.setWorkingSet(workingSet);
 								setSubtitle(workingSet.getLabel());
 							} else {
@@ -301,17 +297,6 @@ public class FilteredResourcesSelectionDialog extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#refresh()
-	 */
-	public void refresh() {
-		resourceItemLabelProvider.reset();
-		resourceItemDetailsLabelProvider.reset();
-		super.refresh();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.ui.dialogs.SelectionDialog#getResult()
 	 */
 	public Object[] getResult() {
@@ -320,14 +305,14 @@ public class FilteredResourcesSelectionDialog extends
 		List resultToReturn = new ArrayList();
 
 		for (int i = 0; i < result.length; i++) {
-			if (result[i] instanceof ResourceItem) {
-				resultToReturn.add(((ResourceItem) result[i]).getResource());
+			if (result[i] instanceof IResource) {
+				resultToReturn.add((result[i]));
 			}
 		}
 
 		return resultToReturn.toArray();
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -335,7 +320,8 @@ public class FilteredResourcesSelectionDialog extends
 	 */
 	public int open() {
 		if (getInitialPattern() == null) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+			IWorkbenchWindow window = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow();
 			if (window != null) {
 				ISelection selection = window.getSelectionService()
 						.getSelection();
@@ -344,8 +330,10 @@ public class FilteredResourcesSelectionDialog extends
 					if (text != null) {
 						text = text.trim();
 						if (text.length() > 0) {
-							IWorkspace workspace = ResourcesPlugin.getWorkspace();
-							IStatus result = workspace.validateName(text, IResource.FILE);
+							IWorkspace workspace = ResourcesPlugin
+									.getWorkspace();
+							IStatus result = workspace.validateName(text,
+									IResource.FILE);
 							if (result.isOK()) {
 								setInitialPattern(text);
 							}
@@ -360,16 +348,26 @@ public class FilteredResourcesSelectionDialog extends
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#getElementName(java.lang.Object)
 	 */
-	protected IStatus validateItem(AbstractListItem item) {
+	public String getElementName(Object item) {
+		IResource resource = (IResource) item;
+		return resource.getName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#validateItem(java.lang.Object)
+	 */
+	protected IStatus validateItem(Object item) {
 		return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter(java.lang.String)
+	 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog#createFilter()
 	 */
 	protected ItemsFilter createFilter() {
 		return new ResourceFilter(container, isDerived, typeMask);
@@ -400,10 +398,8 @@ public class FilteredResourcesSelectionDialog extends
 			 */
 			public int compare(Object o1, Object o2) {
 				Collator collator = Collator.getInstance();
-				ResourceItem resourceDecorator1 = ((ResourceItem) o1);
-				ResourceItem resourceDecorator2 = ((ResourceItem) o2);
-				IResource resource1 = resourceDecorator1.getResource();
-				IResource resource2 = resourceDecorator2.getResource();
+				IResource resource1 = (IResource) o1;
+				IResource resource2 = (IResource) o2;
 				String s1 = resource1.getName();
 				String s2 = resource2.getName();
 				int comparability = collator.compare(s1, s2);
@@ -428,10 +424,11 @@ public class FilteredResourcesSelectionDialog extends
 	protected void fillContentProvider(AbstractContentProvider contentProvider,
 			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
 			throws CoreException {
-		
+
 		if (itemsFilter instanceof ResourceFilter)
-			container.accept(new ResourceProxyVisitor(contentProvider, (ResourceFilter)itemsFilter,
-				progressMonitor), IResource.NONE);
+			container.accept(new ResourceProxyVisitor(contentProvider,
+					(ResourceFilter) itemsFilter, progressMonitor),
+					IResource.NONE);
 
 		if (progressMonitor != null)
 			progressMonitor.done();
@@ -469,11 +466,6 @@ public class FilteredResourcesSelectionDialog extends
 		// Need to keep our own list of listeners
 		private ListenerList listeners = new ListenerList();
 
-		// Keeps relations between Resource and ResorceDecorator objects.
-		// It is used when the provider want to forward label changed
-		// notification from inner providers.
-		private HashMap map = new HashMap();
-
 		WorkbenchLabelProvider provider = new WorkbenchLabelProvider();
 
 		ILabelDecorator decorator = PlatformUI.getWorkbench()
@@ -494,12 +486,11 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			if (!(element instanceof ResourceItem)) {
+			if (!(element instanceof IResource)) {
 				return super.getImage(element);
 			}
 
-			IResource res = ((ResourceItem) element).getResource();
-			map.put(res, element);
+			IResource res = (IResource) element;
 
 			Image img = provider.getImage(res);
 
@@ -512,18 +503,16 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			if (!(element instanceof ResourceItem)) {
+			if (!(element instanceof IResource)) {
 				return super.getText(element);
 			}
 
-			IResource res = ((ResourceItem) element).getResource();
-
-			map.put(res, element);
-
+			IResource res = (IResource) element;
+			
 			String str = res.getName();
 
 			// extra info for duplicates
-			if ((((ResourceItem) element)).isDuplicate())
+			if (isDuplicateElement(element))
 				str = str
 						+ " - " + res.getParent().getFullPath().makeRelative().toString(); //$NON-NLS-1$
 
@@ -569,34 +558,12 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
 		 */
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
-			Object[] elements = event.getElements();
-
-			ArrayList items = null;
-
-			if (elements != null) {
-				items = new ArrayList();
-				for (int i = 0; i < elements.length; i++) {
-					if (map.containsKey(elements[i])) {
-						items.add(map.get(elements[i]));
-					}
-				}
-			}
-
-			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
-					this, items != null ? items.toArray() : null);
-
 			Object[] l = listeners.getListeners();
 			for (int i = 0; i < listeners.size(); i++) {
-				((ILabelProviderListener) l[i]).labelProviderChanged(newEvent);
+				((ILabelProviderListener) l[i]).labelProviderChanged(event);
 			}
 		}
 
-		/**
-		 * Clears relations map
-		 */
-		public void reset() {
-			map.clear();
-		}
 	}
 
 	/**
@@ -610,13 +577,11 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		public Image getImage(Object element) {
-			if (!(element instanceof ResourceItem)) {
+			if (!(element instanceof IResource)) {
 				return super.getImage(element);
 			}
 
-			IResource parent = ((ResourceItem) element).getResource()
-					.getParent();
-			super.map.put(parent, element);
+			IResource parent = ((IResource) element).getParent();
 			Image img = provider.getImage(parent);
 
 			return decorator.decorateImage(img, parent);
@@ -628,13 +593,11 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 		 */
 		public String getText(Object element) {
-			if (!(element instanceof ResourceItem)) {
+			if (!(element instanceof IResource)) {
 				return super.getText(element);
 			}
 
-			IResource parent = ((ResourceItem) element).getResource()
-					.getParent();
-			super.map.put(parent, element);
+			IResource parent = ((IResource) element).getParent();
 
 			if (parent.getType() == IResource.ROOT) {
 				// Get readable name for workspace root ("Workspace"), without
@@ -652,25 +615,9 @@ public class FilteredResourcesSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
 		 */
 		public void labelProviderChanged(LabelProviderChangedEvent event) {
-			Object[] elements = event.getElements();
-
-			ArrayList items = null;
-
-			if (elements != null) {
-				items = new ArrayList();
-				for (int i = 0; i < elements.length; i++) {
-					if (super.map.containsKey(elements[i])) {
-						items.add(super.map.get(elements[i]));
-					}
-				}
-			}
-
-			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
-					this, items != null ? items.toArray() : null);
-
 			Object[] l = super.listeners.getListeners();
 			for (int i = 0; i < super.listeners.size(); i++) {
-				((ILabelProviderListener) l[i]).labelProviderChanged(newEvent);
+				((ILabelProviderListener) l[i]).labelProviderChanged(event);
 			}
 		}
 	}
@@ -710,9 +657,9 @@ public class FilteredResourcesSelectionDialog extends
 				Object element) {
 			if (element instanceof ItemsListSeparator) {
 				return true;
-			} else if (element instanceof ResourceItem) {
+			} else if (element instanceof IResource) {
 				return resourceWorkingSetFilter.select(viewer, parentElement,
-						((ResourceItem) element).getResource());
+						element);
 			}
 
 			return false;
@@ -766,21 +713,22 @@ public class FilteredResourcesSelectionDialog extends
 			if (progressMonitor.isCanceled())
 				return false;
 
-			IResource res = proxy.requestResource();
-			ResourceItem resourceItem = new ResourceItem(res);
+			IResource resource = proxy.requestResource();
 
-			if (this.projects.remove((res.getProject()))
-					|| this.projects.remove((res))) {
+			if (this.projects.remove((resource.getProject()))
+					|| this.projects.remove((resource))) {
 				progressMonitor.worked(1);
 			}
-			
-			contentProvider.add(resourceItem, resourceFilter);
-			
-			if (res.getType() == IResource.FOLDER && res.isDerived() && !resourceFilter.isShowDerived() ) {
+
+			contentProvider.add(resource, resourceFilter);
+
+			if (resource.getType() == IResource.FOLDER && resource.isDerived()
+					&& !resourceFilter.isShowDerived()) {
+
 				return false;
 			}
-			
-			if (res.getType() == IResource.FILE) {
+
+			if (resource.getType() == IResource.FILE) {
 				return false;
 			}
 
@@ -829,11 +777,10 @@ public class FilteredResourcesSelectionDialog extends
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#getConsistentItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#isConsistentItem(java.lang.Object)
 		 */
-		public boolean isConsistentItem(AbstractListItem item) {
-			ResourceItem resourceItem = (ResourceItem) item;
-			IResource resource = resourceItem.getResource();
+		public boolean isConsistentItem(Object item) {
+			IResource resource = (IResource) item;
 			if (this.filterContainer.findMember(resource.getFullPath()) != null)
 				return true;
 			return false;
@@ -842,11 +789,10 @@ public class FilteredResourcesSelectionDialog extends
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#matchItem(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem)
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#matchItem(java.lang.Object)
 		 */
-		public boolean matchItem(AbstractListItem item) {
-			ResourceItem resourceItem = (ResourceItem) item;
-			IResource resource = resourceItem.getResource();
+		public boolean matchItem(Object item) {
+			IResource resource = (IResource) item;
 			if ((!this.showDerived && resource.isDerived())
 					|| ((this.filterTypeMask & resource.getType()) == 0))
 				return false;
@@ -866,12 +812,11 @@ public class FilteredResourcesSelectionDialog extends
 					return true;
 			return false;
 		}
-		
+
 		/**
 		 * Check show derived flag for a filter
 		 * 
-		 * @return true if filter allow derived resources
-		 * 			false if not
+		 * @return true if filter allow derived resources false if not
 		 */
 		public boolean isShowDerived() {
 			return showDerived;
@@ -880,69 +825,9 @@ public class FilteredResourcesSelectionDialog extends
 	}
 
 	/**
-	 * Decorator for objects implementing IResource
-	 */
-	private class ResourceItem extends AbstractListItem {
-
-		private IResource resource;
-
-		/**
-		 * Creates instance of ResourceItem
-		 * 
-		 * @param resource
-		 * 
-		 */
-		public ResourceItem(IResource resource) {
-			this.resource = resource;
-		}
-
-		/**
-		 * Creates instance of ResourceItem and marks it as history
-		 * 
-		 * @param resource
-		 * @param isHistory
-		 *            is true if this resource is part of history
-		 * 
-		 */
-		public ResourceItem(IResource resource, boolean isHistory) {
-			this.resource = resource;
-			if (isHistory)
-				this.markAsHistory();
-		}
-
-		/**
-		 * Gets encapsulated IResource object
-		 * 
-		 * @return resource (an instance of IResource object)
-		 */
-		public IResource getResource() {
-			return this.resource;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem#getName()
-		 */
-		public String getName() {
-			return this.resource.getName();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem#getObject()
-		 */
-		public Object getObject() {
-			return this.resource;
-		}
-
-	}
-
-	/**
 	 * <code>ResourceSelectionHistory</code> provides behavior specific to
-	 * resources - storing and restoring <code>IResource</code>s state to/from
-	 * XML (memento).
+	 * resources - storing and restoring <code>IResource</code>s state
+	 * to/from XML (memento).
 	 */
 	private class ResourceSelectionHistory extends SelectionHistory {
 
@@ -951,23 +836,22 @@ public class FilteredResourcesSelectionDialog extends
 		 * 
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#restoreItemFromMemento(org.eclipse.ui.IMemento)
 		 */
-		protected AbstractListItem restoreItemFromMemento(IMemento element) {
+		protected Object restoreItemFromMemento(IMemento element) {
 
 			IResource resource = null;
 			ResourceFactory resourceFactory = new ResourceFactory();
 			resource = (IResource) resourceFactory.createElement(element);
-			return new ResourceItem(resource, true);
+			return resource;
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#storeItemToMemento(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractListItem,
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.SelectionHistory#storeItemToMemento(java.lang.Object,
 		 *      org.eclipse.ui.IMemento)
 		 */
-		protected void storeItemToMemento(AbstractListItem item,
-				IMemento element) {
-			IResource resource = ((ResourceItem) item).getResource();
+		protected void storeItemToMemento(Object item, IMemento element) {
+			IResource resource = (IResource) item;
 			ResourceFactory resourceFactory = new ResourceFactory(resource);
 			resourceFactory.saveState(element);
 		}
