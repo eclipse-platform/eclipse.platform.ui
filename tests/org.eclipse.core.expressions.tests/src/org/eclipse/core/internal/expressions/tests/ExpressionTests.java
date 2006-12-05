@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions.tests;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -43,6 +47,10 @@ import org.eclipse.core.internal.expressions.ResolveExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
 import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 
 public class ExpressionTests extends TestCase {
@@ -652,7 +660,27 @@ public class ExpressionTests extends TestCase {
 		Expression exp= ExpressionConverter.getDefault().perform(enable);
 		ref(exp);
 	}
-	
+
+	public void testReadDOMExpression() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		DocumentBuilder builder= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		URL url= ExpressionTestPlugin.getDefault().getBundle().getEntry("plugin.xml");
+		Document document= builder.parse(url.openStream());
+		NodeList testParticipants= document.getElementsByTagName("testParticipant");
+		for (int i= 0; i < testParticipants.getLength(); i++) {
+			Element elem= (Element)testParticipants.item(i);
+			String id = elem.getAttribute("id");
+			Element enable1= (Element)elem.getElementsByTagName("enablement").item(0);
+			IConfigurationElement enable2= findExtension(ces, id).getChildren("enablement")[0]; //$NON-NLS-1$
+			
+			Expression exp1= ExpressionConverter.getDefault().perform(enable1);
+			Expression exp2= ExpressionConverter.getDefault().perform(enable2);
+			assertEquals(exp1, exp2);
+		}
+	}
+
 	public void testForcePluginActivation() throws Exception {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$

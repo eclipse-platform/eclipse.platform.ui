@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,7 +39,13 @@ public class EqualsExpression extends Expression {
 		Expressions.checkAttribute(ATT_VALUE, value);
 		fExpectedValue= Expressions.convertArgument(value);
 	}
-	
+
+	public EqualsExpression(Element element) throws CoreException {
+		String value= element.getAttribute(ATT_VALUE);
+		Expressions.checkAttribute(ATT_VALUE, value.length() > 0 ? value : null);
+		fExpectedValue= Expressions.convertArgument(value);
+	}
+
 	public EvaluationResult evaluate(IEvaluationContext context) throws CoreException {
 		Object element= context.getDefaultVariable();
 		return EvaluationResult.valueOf(element.equals(fExpectedValue));
