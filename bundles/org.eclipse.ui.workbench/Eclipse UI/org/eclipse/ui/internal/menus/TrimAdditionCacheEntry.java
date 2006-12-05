@@ -121,15 +121,40 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 
 	/**
 	 * Returns whether or not the defining {@link IConfigurationElement}
-	 * declares that the widget shoud be resizeable.
+	 * declares that the widget should use extra space in the 'major'
+	 * dimension (ie. use extra horizontal space in the status area).
+	 * The space is equally divided with other elementa in the same
+	 * trim area that also want to use the extra space.
 	 * 
 	 * @param widgetElement the {@link IConfigurationElement} declaring this
 	 * widget.
 	 * 
-	 * @return <code>true</code> iff the resulting widget should be resizeable
+	 * @return <code>true</code> iff the resulting widget should use
+	 * extra major space
 	 */
-	public boolean isResizeable(IConfigurationElement widgetElement) {
-		return false;
+	public boolean fillMajor(IConfigurationElement widgetElement) {
+		IConfigurationElement layout = widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT)[0];
+		String fillMajorVal = layout.getAttribute(IWorkbenchRegistryConstants.ATT_FILL_MAJOR);
+
+		return (fillMajorVal != null && fillMajorVal.equals("true")); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns whether or not the defining {@link IConfigurationElement}
+	 * declares that the widget should use extra space in the 'minor'
+	 * dimension (ie. use extra vertical space in the status area)
+	 * 
+	 * @param widgetElement the {@link IConfigurationElement} declaring this
+	 * widget.
+	 * 
+	 * @return <code>true</code> iff the resulting widget should use
+	 * extra minor space
+	 */
+	public boolean fillMinor(IConfigurationElement widgetElement) {
+		IConfigurationElement layout = widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT)[0];
+		String fillMinorVal = layout.getAttribute(IWorkbenchRegistryConstants.ATT_FILL_MINOR);
+
+		return (fillMinorVal != null && fillMinorVal.equals("true")); //$NON-NLS-1$
 	}
 
 	/**
