@@ -192,6 +192,13 @@ default (@see org.eclipse.core.resources.ProjectScope.SCOPE)
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="helpContext" type="string">
+            <annotation>
+               <documentation>
+                  The help context for the transfer. See IWorkbench#getHelpSystem().
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

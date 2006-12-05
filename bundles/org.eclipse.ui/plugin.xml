@@ -1317,11 +1317,13 @@
          point="org.eclipse.ui.preferenceTransfer">
       <settingsTransfer
             class="org.eclipse.ui.internal.WorkbenchLayoutSettingsTransfer"
+            helpContext="org.eclipse.ui.switch_workspace_dialog_context"
             id="org.eclipse.ui.workbenchTransfer"
             name="%SettingsTransfer.WorkbenchLayout">
       </settingsTransfer>
       <settingsTransfer
             class="org.eclipse.ui.internal.preferences.WorkingSetSettingsTransfer"
+            helpContext="org.eclipse.ui.switch_workspace_dialog_context"
             id="org.eclipse.ui.workingSets"
             name="%SettingsTransfer.WorkingSets">
       </settingsTransfer>

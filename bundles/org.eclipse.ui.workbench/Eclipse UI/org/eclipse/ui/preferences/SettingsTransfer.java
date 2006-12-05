@@ -25,16 +25,6 @@ import org.eclipse.ui.internal.preferences.SettingsTransferRegistryReader;
 public abstract class SettingsTransfer {
 	
 	/**
-	 * The class attribute for a settings transfer.
-	 */
-	public static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	
-	/**
-	 * 
-	 */
-	public static final String ATT_NAME = "name"; //$NON-NLS-1$
-
-	/**
 	 * Return the configuration elements for all of the settings 
 	 * transfers.
 	 * @return IConfigurationElement[]

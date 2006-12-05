@@ -203,4 +203,7 @@ public interface IIDEHelpContextIds {
 
    public static final String NEW_PROJECT_WIZARD = PREFIX
    	+ "new_project_wizard_context"; //$NON-NLS-1$
+   
+   public static final String SWITCH_WORKSPACE_ACTION = PREFIX
+	+ "switch_workspace_dialog_context"; //$NON-NLS-1$
 }
