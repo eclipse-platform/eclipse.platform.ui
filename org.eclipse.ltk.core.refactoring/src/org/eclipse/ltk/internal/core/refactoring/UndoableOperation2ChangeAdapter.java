@@ -360,6 +360,8 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	}
 
 	private IValidationCheckResultQuery getQuery(IAdaptable info, String title) {
+		if (info == null)
+			return RefactoringCore.getQueryFactory().create(null);
 		IValidationCheckResultQuery result= (IValidationCheckResultQuery)info.getAdapter(IValidationCheckResultQuery.class);
 		if (result != null)
 			return result;
