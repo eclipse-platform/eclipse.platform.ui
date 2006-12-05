@@ -24,10 +24,11 @@ import org.eclipse.core.databinding.observable.value.IValueChangingListener;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.validation.IDomainValidator;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.0
@@ -45,14 +46,14 @@ public class ValueBinding extends Binding {
 
 	private IConverter modelToTargetConverter;
 
-	private IDomainValidator domainValidator;
-
 	private boolean updatingTarget = false;
 	private boolean updatingModel = false;
 
 	private WritableValue partialValidationErrorObservable;
 
 	private WritableValue validationErrorObservable;
+
+	private IValidator domainValidator;
 
 	/**
 	 * @param context
@@ -66,9 +67,9 @@ public class ValueBinding extends Binding {
 		this.target = target;
 		this.model = model;
 		validationErrorObservable = new WritableValue(context
-				.getValidationRealm(), ValidationError.class, null);
+				.getValidationRealm(), IStatus.class, null);
 		partialValidationErrorObservable = new WritableValue(context
-				.getValidationRealm(), ValidationError.class, null);
+				.getValidationRealm(), IStatus.class, null);
 		if (bindSpec.isUpdateTarget()) {
 			modelToTargetConverter = bindSpec.getModelToTargetConverter();
 			if (modelToTargetConverter == null) {
@@ -118,10 +119,7 @@ public class ValueBinding extends Binding {
 			updateTargetFromModel();
 		}
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
-	 */
+
 	public void dispose() {
 		target.removeValueChangeListener(targetChangeListener);
 		if (target instanceof IVetoableValue) {
@@ -131,7 +129,7 @@ public class ValueBinding extends Binding {
 		model.removeValueChangeListener(modelChangeListener);
 		super.dispose();
 	}
-	
+
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
 		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {
 			if (updatingTarget)
@@ -139,15 +137,16 @@ public class ValueBinding extends Binding {
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
 			Object value = diff.getNewValue();
-			ValidationError partialValidationError = targetValidator
-					.isPartiallyValid(value);
+			IStatus partialValidationError = targetValidator
+					.validatePartial(value);
 			partialValidationErrorObservable.setValue(partialValidationError);
-			return partialValidationError == null;
+			return partialValidationError.isOK();
 		}
 	};
 
 	private final IValueChangeListener targetChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, final ValueDiff diff) {
+		public void handleValueChange(IObservableValue source,
+				final ValueDiff diff) {
 			if (updatingTarget)
 				return;
 			// the target (usually a widget) has changed, validate
@@ -161,7 +160,8 @@ public class ValueBinding extends Binding {
 	};
 
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, final ValueDiff diff) {
+		public void handleValueChange(IObservableValue source,
+				final ValueDiff diff) {
 			if (updatingModel)
 				return;
 			// The model has changed so we must update the target
@@ -192,8 +192,8 @@ public class ValueBinding extends Binding {
 			return;
 		}
 
-		ValidationError validationError = doValidate(e.originalValue);
-		if (validationError != null) {
+		IStatus validationStatus = doValidate(e.originalValue);
+		if (!validationStatus.isOK()) {
 			return;
 		}
 		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
@@ -210,8 +210,8 @@ public class ValueBinding extends Binding {
 				return;
 			}
 
-			validationError = doDomainValidation(e.convertedValue);
-			if (validationError != null) {
+			validationStatus = doDomainValidation(e.convertedValue);
+			if (!validationStatus.isOK()) {
 				return;
 			}
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_BUSINESS_VALIDATE;
@@ -223,9 +223,9 @@ public class ValueBinding extends Binding {
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			ValidationError error = ValidationError.error(
-				BindingMessages.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-				ex);
+			IStatus error = ValidationStatus.error(BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+					ex);
 			validationErrorObservable.setValue(error);
 		} finally {
 			updatingModel = false;
@@ -236,44 +236,40 @@ public class ValueBinding extends Binding {
 	 * @param convertedValue
 	 * @return String
 	 */
-	private ValidationError doDomainValidation(Object convertedValue) {
+	private IStatus doDomainValidation(Object convertedValue) {
 		if (domainValidator == null) {
-			return null;
+			return Status.OK_STATUS;
 		}
-		ValidationError validationError = domainValidator
-				.isValid(convertedValue);
-		return errMsg(validationError);
+		IStatus validationStatus = domainValidator.validate(convertedValue);
+		return errMsg(validationStatus);
 	}
 
-	private ValidationError doValidate(Object value) {
+	private IStatus doValidate(Object value) {
 		if (targetValidator == null)
-			return null;
-		ValidationError validationError = targetValidator.isValid(value);
-		return errMsg(validationError);
+			return Status.OK_STATUS;
+		IStatus validationStatus = targetValidator.validate(value);
+		return errMsg(validationStatus);
 	}
 
-	private ValidationError errMsg(final ValidationError validationError) {
-		Assert.isTrue(partialValidationErrorObservable.getRealm().equals(validationErrorObservable.getRealm()));
+	private IStatus errMsg(final IStatus validationStatus) {
+		Assert.isTrue(partialValidationErrorObservable.getRealm().equals(
+				validationErrorObservable.getRealm()));
 		partialValidationErrorObservable.getRealm().exec(new Runnable() {
 			public void run() {
-				partialValidationErrorObservable.setValue(null);
-				validationErrorObservable.setValue(validationError);
+				partialValidationErrorObservable.setValue(Status.OK_STATUS);
+				validationErrorObservable.setValue(validationStatus);
 			}
 		});
-		return validationError;
+		return validationStatus;
 	}
 
-	private boolean failure(ValidationError errorMessage) {
+	private boolean failure(IStatus errorStatus) {
 		// FIXME: Need to fire a BindingEvent here
-		if (errorMessage != null
-				&& errorMessage.status == ValidationError.ERROR) {
-			return true;
-		}
-		return false;
+		return !errorStatus.isOK();
 	}
 
 	/**
-	 *  Can be called from any thread/realm.
+	 * Can be called from any thread/realm.
 	 */
 	public void updateTargetFromModel() {
 		model.getRealm().exec(new Runnable() {
@@ -317,14 +313,15 @@ public class ValueBinding extends Binding {
 				return;
 			}
 
-			//FIXME ValueBinding Needs Separate modelValidator to perform model to target validation.
+			// FIXME ValueBinding Needs Separate modelValidator to perform model
+			// to target validation.
 			doValidate(target.getValue());
 			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
 			fireBindingEvent(e);
 		} catch (Exception ex) {
-			final ValidationError error = ValidationError.error(
-				BindingMessages.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
-				ex);
+			final IStatus error = ValidationStatus.error(BindingMessages
+					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
+					ex);
 			validationErrorObservable.getRealm().exec(new Runnable() {
 				public void run() {
 					validationErrorObservable.setValue(error);
@@ -335,16 +332,16 @@ public class ValueBinding extends Binding {
 		}
 	}
 
-	public IObservableValue getValidationError() {
+	public IObservableValue getValidationStatus() {
 		return validationErrorObservable;
 	}
 
-	public IObservableValue getPartialValidationError() {
+	public IObservableValue getPartialValidationStatus() {
 		return partialValidationErrorObservable;
 	}
 
 	/**
-	 *  Can be called from any thread/realm.
+	 * Can be called from any thread/realm.
 	 */
 	public void updateModelFromTarget() {
 		target.getRealm().exec(new Runnable() {

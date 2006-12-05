@@ -12,24 +12,15 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
-    private DataBindingContext ctx;
+public class DefaultBindSupportFactoryDoublePrimitiveTest extends AbstractBindSupportFactoryTest {
 
     private TestDataObject dataObject;
 
     public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        ctx = new DataBindingContext();
+    	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setDoublePrimitiveVal(0);
@@ -43,23 +34,23 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
         dataObject.setDoublePrimitiveVal(789.5);
         assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("String value does not match", "789.5", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("910.5");
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("String value does not match", "910.5", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("");
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("String value does not match", "", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         dataObject.setStringVal(null);
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertNull("String value does not match", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
-    }
+        assertErrorsFound();
+       }
 
     public void testDoubleToDoublePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "doubleVal"), BeansObservables.observeValue(dataObject,
@@ -70,17 +61,17 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
         dataObject.setDoublePrimitiveVal(789.5);
         assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("Double value does not match", new Double(789.5), dataObject.getDoubleVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setDoubleVal(new Double(910.5));
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("Double value does not match", new Double(910.5), dataObject.getDoubleVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setDoubleVal(null);
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertNull("Double value does not match", dataObject.getDoubleVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testObjectToDoublePrimitiveConverter() {
@@ -90,23 +81,23 @@ public class DefaultBindSupportFactoryDoublePrimitiveTest extends TestCase {
         dataObject.setDoublePrimitiveVal(789.5);
         assertEquals("double value does not match", 789.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("Object value does not match", new Double(789.5), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(new Double(910.5));
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertEquals("Object value does not match", new Double(910.5), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(null);
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertNull("Object value does not match", dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         Object object = new Object();
         dataObject.setObjectVal(object);
         assertEquals("double value does not match", 910.5, dataObject.getDoublePrimitiveVal(), .001);
         assertSame("Object value does not match", object, dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public class TestDataObject extends ModelObject {

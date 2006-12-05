@@ -11,7 +11,6 @@
 package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.validation.IDomainValidator;
 import org.eclipse.core.databinding.validation.IValidator;
 
 /**
@@ -59,7 +58,7 @@ public abstract class BindSupportFactory {
 	 *            The type to validate or <code>null</code> if not known
 	 * @return IDomainValidator
 	 */
-	public IDomainValidator createDomainValidator(Object modelType) {
+	public IValidator createDomainValidator(Object modelType) {
 		return null;
 	}
 

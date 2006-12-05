@@ -20,7 +20,8 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.IBindingListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -67,9 +68,9 @@ public class ListBindingTest extends TestCase {
         /* (non-Javadoc)
          * @see org.eclipse.jface.databinding.IBindingListener#bindingEvent(org.eclipse.jface.databinding.BindingEvent)
          */
-        public ValidationError bindingEvent(BindingEvent e) {
+        public IStatus bindingEvent(BindingEvent e) {
             count++;
-            return null;
+            return Status.OK_STATUS;
         }
         
         int purgeCount() {

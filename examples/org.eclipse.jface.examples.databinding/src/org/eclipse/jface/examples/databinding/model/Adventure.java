@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.examples.databinding.model;
 
-import org.eclipse.core.databinding.validation.IDomainValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.examples.databinding.ModelObject;
 
 public class Adventure extends ModelObject {
@@ -50,15 +52,19 @@ public class Adventure extends ModelObject {
 		firePropertyChange("maxNumberOfPeople", oldValue, maxNumberOfPeople);
 	}
 	
-	public IDomainValidator getMaxNumberOfPeopleDomainValidator() {
-		return new IDomainValidator() {
-			public ValidationError isValid(Object value) {
+	public IValidator getMaxNumberOfPeopleDomainValidator() {
+		return new IValidator() {
+			public IStatus validate(Object value) {
 				int intValue = ((Integer)value).intValue();
 				if (intValue < 1 || intValue > 20) {
-					return ValidationError
+					return ValidationStatus
 							.error("Max number of people must be between 1 and 20 inclusive");
 				}
 				return null;
+			}
+
+			public IStatus validatePartial(Object value) {
+				return Status.OK_STATUS;
 			}
 		};
 	}

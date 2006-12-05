@@ -9,9 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *******************************************************************************/
-package org.eclipse.core.databinding.observable.masterdetail;
+package org.eclipse.core.internal.databinding;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;

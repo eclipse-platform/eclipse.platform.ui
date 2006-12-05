@@ -12,24 +12,15 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
-    private DataBindingContext ctx;
+public class DefaultBindSupportFactoryFloatPrimitiveTest extends AbstractBindSupportFactoryTest {
 
     private TestDataObject dataObject;
 
     public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        ctx = new DataBindingContext();
+    	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setFloatPrimitiveVal(0);
@@ -43,22 +34,22 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("String value does not match", "789.5", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("910.5");
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("String value does not match", "910.5", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("");
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("String value does not match", "", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         dataObject.setStringVal(null);
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertNull("String value does not match", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testFloatToFloatPrimitiveConverter() {
@@ -68,17 +59,17 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("Float value does not match", new Float(789.5), dataObject.getFloatVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setFloatVal(new Float(910.5));
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("Float value does not match", new Float(910.5), dataObject.getFloatVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setFloatVal(null);
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertNull("Float value does not match", dataObject.getFloatVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testObjectToFloatPrimitiveConverter() {
@@ -88,23 +79,23 @@ public class DefaultBindSupportFactoryFloatPrimitiveTest extends TestCase {
         dataObject.setFloatPrimitiveVal((float) 789.5);
         assertEquals("float value does not match", 789.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("Object value does not match", new Float(789.5), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(new Float(910.5));
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertEquals("Object value does not match", new Float(910.5), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(null);
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertNull("Object value does not match", dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         Object object = new Object();
         dataObject.setObjectVal(object);
         assertEquals("float value does not match", 910.5, dataObject.getFloatPrimitiveVal(), .001);
         assertSame("Object value does not match", object, dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public class TestDataObject extends ModelObject {

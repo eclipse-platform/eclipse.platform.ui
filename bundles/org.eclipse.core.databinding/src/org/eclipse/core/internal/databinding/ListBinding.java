@@ -20,7 +20,7 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * 
@@ -55,8 +55,10 @@ public class ListBinding extends Binding {
 		modelList.addListChangeListener(modelChangeListener);
 		updateTargetFromModel();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.internal.databinding.provisional.Binding#dispose()
 	 */
 	public void dispose() {
@@ -64,7 +66,7 @@ public class ListBinding extends Binding {
 		modelList.removeListChangeListener(modelChangeListener);
 		super.dispose();
 	}
-	
+
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {
 		public void handleListChange(IObservableList source, ListDiff diff) {
 			if (updating) {
@@ -141,19 +143,15 @@ public class ListBinding extends Binding {
 
 	private WritableValue validationErrorObservable;
 
-	private ValidationError errMsg(ValidationError validationError) {
+	private IStatus errMsg(IStatus validationStatus) {
 		partialValidationErrorObservable.setValue(null);
-		validationErrorObservable.setValue(validationError);
-		return validationError;
+		validationErrorObservable.setValue(validationStatus);
+		return validationStatus;
 	}
 
-	private boolean failure(ValidationError errorMessage) {
+	private boolean failure(IStatus errorMessage) {
 		// FIXME: Need to fire a BindingEvent here
-		if (errorMessage != null
-				&& errorMessage.status == ValidationError.ERROR) {
-			return true;
-		}
-		return false;
+		return !errorMessage.isOK();
 	}
 
 	public void updateTargetFromModel() {
@@ -166,11 +164,11 @@ public class ListBinding extends Binding {
 		}
 	}
 
-	public IObservableValue getValidationError() {
+	public IObservableValue getValidationStatus() {
 		return validationErrorObservable;
 	}
 
-	public IObservableValue getPartialValidationError() {
+	public IObservableValue getPartialValidationStatus() {
 		return partialValidationErrorObservable;
 	}
 

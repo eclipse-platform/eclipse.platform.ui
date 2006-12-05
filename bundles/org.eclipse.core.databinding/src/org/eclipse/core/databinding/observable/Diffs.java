@@ -13,6 +13,7 @@ package org.eclipse.core.databinding.observable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.eclipse.core.databinding.observable.tree.TreeDiff;
 import org.eclipse.core.databinding.observable.tree.TreeDiffNode;
 import org.eclipse.core.databinding.observable.tree.TreePath;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.internal.databinding.Util;
 
 /**
  * @since 1.0
@@ -84,6 +86,65 @@ public class Diffs {
 		return createSetDiff(additions, removals);
 	}
 
+	/**
+	 * Computes the difference between two maps.
+	 * 
+	 * @param oldMap
+	 * @param newMap
+	 * @return a map diff representing the changes needed to turn oldMap into
+	 *         newMap
+	 */
+	public static MapDiff computeMapDiff(Map oldMap, Map newMap) {
+		// starts out with all keys from the new map, we will remove keys from
+		// the old map as we go
+		final Set addedKeys = new HashSet(newMap.keySet());
+		final Set removedKeys = new HashSet();
+		final Set changedKeys = new HashSet();
+		final Map oldValues = new HashMap();
+		final Map newValues = new HashMap();
+		for (Iterator it = oldMap.keySet().iterator(); it.hasNext();) {
+			Object oldKey = it.next();
+			if (addedKeys.remove(oldKey)) {
+				// potentially changed key since it is in oldMap and newMap
+				Object oldValue = oldMap.get(oldKey);
+				Object newValue = newMap.get(oldKey);
+				if (!Util.equals(oldValue, newValue)) {
+					changedKeys.add(oldKey);
+					oldValues.put(oldKey, oldValue);
+					newValues.put(oldKey, newValue);
+				}
+			} else {
+				removedKeys.add(oldKey);
+				oldValues.put(oldKey, oldMap.get(oldKey));
+			}
+		}
+		for (Iterator it = addedKeys.iterator(); it.hasNext();) {
+			Object newKey = it.next();
+			newValues.put(newKey, newMap.get(newKey));
+		}
+		return new MapDiff() {
+			public Set getAddedKeys() {
+				return addedKeys;
+			}
+
+			public Set getChangedKeys() {
+				return changedKeys;
+			}
+
+			public Set getRemovedKeys() {
+				return removedKeys;
+			}
+
+			public Object getNewValue(Object key) {
+				return newValues.get(key);
+			}
+
+			public Object getOldValue(Object key) {
+				return oldValues.get(key);
+			}
+		};
+	}
+	
 	/**
 	 * @param oldValue
 	 * @param newValue

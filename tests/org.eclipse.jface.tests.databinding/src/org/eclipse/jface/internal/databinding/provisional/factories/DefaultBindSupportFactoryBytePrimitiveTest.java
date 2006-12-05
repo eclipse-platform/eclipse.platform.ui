@@ -12,24 +12,14 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
-    private DataBindingContext ctx;
-
+public class DefaultBindSupportFactoryBytePrimitiveTest extends AbstractBindSupportFactoryTest {
     private TestDataObject dataObject;
 
     public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        ctx = new DataBindingContext();
+    	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setBytePrimitiveVal((byte) 0);
@@ -43,42 +33,42 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("String value does not match", "110", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("70");
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("String value does not match", "70", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("");
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("String value does not match", "", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         dataObject.setStringVal(null);
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertNull("String value does not match", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
-    public void testByteToBytePrimitiveConverter() {
+	public void testByteToBytePrimitiveConverter() {
         ctx.bindValue(BeansObservables.observeValue(dataObject, "byteVal"), BeansObservables.observeValue(dataObject,
                 "bytePrimitiveVal"), null);
 
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("Byte value does not match", new Byte((byte) 110), dataObject.getByteVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setByteVal(new Byte((byte) 70));
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("Byte value does not match", new Byte((byte) 70), dataObject.getByteVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setByteVal(null);
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertNull("Byte value does not match", dataObject.getByteVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testObjectToBytePrimitiveConverter() {
@@ -88,23 +78,23 @@ public class DefaultBindSupportFactoryBytePrimitiveTest extends TestCase {
         dataObject.setBytePrimitiveVal((byte) 110);
         assertEquals("byte value does not match", 110, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("Object value does not match", new Byte((byte) 110), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(new Byte((byte) 70));
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal(), .001);
         assertEquals("Object value does not match", new Byte((byte) 70), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(null);
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal());
         assertNull("Object value does not match", dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         Object object = new Object();
         dataObject.setObjectVal(object);
         assertEquals("byte value does not match", 70, dataObject.getBytePrimitiveVal());
         assertSame("Object value does not match", object, dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public class TestDataObject extends ModelObject {

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import java.beans.IntrospectionException;
-
 import org.eclipse.jface.examples.databinding.model.Catalog;
 import org.eclipse.jface.examples.databinding.model.Category;
 import org.eclipse.jface.examples.databinding.model.SampleData;
@@ -86,7 +84,7 @@ public class NewTableScenarios extends ScenariosTestCase {
 		return text;
 	}
 
-	public void testScenario01() throws IntrospectionException {
+	public void testScenario01() {
 //		// Factory for directly creating IObservables for beans
 //		JavaBeans javaBeans = new JavaBeans();
 //		

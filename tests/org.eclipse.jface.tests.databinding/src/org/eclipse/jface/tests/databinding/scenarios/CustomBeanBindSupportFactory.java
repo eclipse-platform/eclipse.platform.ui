@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.databinding.BindSupportFactory;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.validation.IDomainValidator;
+import org.eclipse.core.databinding.validation.IValidator;
 
 /**
  * A BindSupportFactory that will automatically grab validators from an object's
@@ -52,7 +52,7 @@ public class CustomBeanBindSupportFactory extends BindSupportFactory {
 		return parentContext.createConverter(fromType, toType);
 	}
 
-	public IDomainValidator createDomainValidator(Object modelType) {
+	public IValidator createDomainValidator(Object modelType) {
 		if (modelType instanceof CustomBeanModelType) {
 			CustomBeanModelType property = (CustomBeanModelType) modelType;
 			String propertyName = property.getPropertyName();
@@ -69,7 +69,7 @@ public class CustomBeanBindSupportFactory extends BindSupportFactory {
 			}
 
 			try {
-				IDomainValidator result = (IDomainValidator) getValidator
+				IValidator result = (IValidator) getValidator
 						.invoke(property.getObject(), new Object[0]);
 				return result;
 			} catch (Exception e) {

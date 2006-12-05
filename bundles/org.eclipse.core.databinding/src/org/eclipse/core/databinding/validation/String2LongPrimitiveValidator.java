@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2006 db4objects Inc. (http://www.db4o.com) and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,42 +8,38 @@
  *
  * Contributors:
  *     db4objects - Initial API and implementation
+ *     Boris Bokowski (IBM Corporation) - bug 118429
  */
 package org.eclipse.core.databinding.validation;
 
 import org.eclipse.core.internal.databinding.BindingMessages;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
- * LongValidator.  Validate String to long data input
+ * LongValidator. Validate String to long data input
  */
 public class String2LongPrimitiveValidator implements IValidator {
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
-	 */
-	public ValidationError isPartiallyValid(Object fragment) {
-		if (((String)fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-            return null;
+	public IStatus validatePartial(Object fragment) {
+		if (((String) fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
+			return Status.OK_STATUS;
 
-        return ValidationError.error(getHint());
+		return ValidationStatus.error(getHint());
 	}
-    
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.databinding.validator.IValidator#isValid(java.lang.Object)
-	 */
-	public ValidationError isValid(Object value) {
-        try {
-            Long.parseLong((String)value);
-            return null;
-        } catch (Throwable t) {
-            return ValidationError.error(getHint());
-        }
-    }    
+
+	public IStatus validate(Object value) {
+		try {
+			Long.parseLong((String) value);
+			return Status.OK_STATUS;
+		} catch (Throwable t) {
+			return ValidationStatus.error(getHint());
+		}
+	}
 
 	private String getHint() {
-		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE +  //$NON-NLS-1$
-			BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
+		return BindingMessages.getString("Validate_RangeStart") + Long.MIN_VALUE + //$NON-NLS-1$
+				BindingMessages.getString("and") + Long.MAX_VALUE + "."; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

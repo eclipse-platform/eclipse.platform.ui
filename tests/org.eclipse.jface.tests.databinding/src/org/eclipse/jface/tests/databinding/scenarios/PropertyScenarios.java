@@ -26,7 +26,9 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
@@ -235,18 +237,18 @@ public class PropertyScenarios extends ScenariosTestCase {
         adventure.setName("ValidValue");
 
         IValidator validator = new IValidator() {
-            public ValidationError isPartiallyValid(Object value) {
-                return isValid(value);
+            public IStatus validatePartial(Object value) {
+                return validate(value);
             }
 
-            public ValidationError isValid(Object value) {
+            public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 if (stringValue.length() > 15) {
-                    return ValidationError.error(max15CharactersMessage);
+                    return ValidationStatus.error(max15CharactersMessage);
                 } else if (stringValue.indexOf(' ') != -1) {
-                    return ValidationError.error(noSpacesMessage);
+                    return ValidationStatus.error(noSpacesMessage);
                 } else {
-                    return null;
+                    return Status.OK_STATUS;
                 }
             }
         };
@@ -260,16 +262,16 @@ public class PropertyScenarios extends ScenariosTestCase {
                 bindSpec);
 
         // no validation message
-        assertEquals(null, getDbc().getPartialValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getPartialValidationStatus().getValue()).isOK());
         enterText(text, "Invalid Value");
-        assertEquals(noSpacesMessage, ((ValidationError) getDbc().getPartialValidationError().getValue()).message);
+        assertEquals(noSpacesMessage, ((IStatus) getDbc().getPartialValidationStatus().getValue()).getMessage());
         assertEquals("ValidValue", text.getText());
         text.setText("InvalidValueBecauseTooLong");
         assertEquals(max15CharactersMessage,
-                ((ValidationError) getDbc().getPartialValidationError().getValue()).message);
+                ((IStatus) getDbc().getPartialValidationStatus().getValue()).getMessage());
         assertEquals("ValidValue", text.getText());
         enterText(text, "anothervalid");
-        assertEquals(null, getDbc().getPartialValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getPartialValidationStatus().getValue()).isOK());
         assertEquals("anothervalid", text.getText());
         assertEquals("anothervalid", adventure.getName());
     }
@@ -284,20 +286,20 @@ public class PropertyScenarios extends ScenariosTestCase {
         final String mustBeCurrencyMessage = "Price must be a currency.";
 
         IValidator validator = new IValidator() {
-            public ValidationError isPartiallyValid(Object value) {
-                return null;
+            public IStatus validatePartial(Object value) {
+                return Status.OK_STATUS;
             }
 
-            public ValidationError isValid(Object value) {
+            public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 try {
                     double doubleValue = new Double(stringValue).doubleValue();
                     if (doubleValue < 0.0) {
-                        return ValidationError.error(cannotBeNegativeMessage);
+                        return ValidationStatus.error(cannotBeNegativeMessage);
                     }
-                    return null;
+                    return Status.OK_STATUS;
                 } catch (NumberFormatException ex) {
-                    return ValidationError.error(mustBeCurrencyMessage);
+                    return ValidationStatus.error(mustBeCurrencyMessage);
                 }
             }
         };
@@ -307,20 +309,20 @@ public class PropertyScenarios extends ScenariosTestCase {
                 new BindSpec().setValidator(validator));
 
         assertEquals("5.0", text.getText());
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         enterText(text, "0.65");
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
         adventure.setPrice(42.24);
         assertEquals("42.24", text.getText());
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, ((ValidationError) getDbc().getValidationError().getValue()).message);
+        assertEquals(mustBeCurrencyMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
         enterText(text, "-23.9");
-        assertEquals(cannotBeNegativeMessage, ((ValidationError) getDbc().getValidationError().getValue()).message);
+        assertEquals(cannotBeNegativeMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
     }
 
     public void testScenario08() {
@@ -353,20 +355,20 @@ public class PropertyScenarios extends ScenariosTestCase {
         };
 
         IValidator validator = new IValidator() {
-            public ValidationError isPartiallyValid(Object value) {
-                return null;
+            public IStatus validatePartial(Object value) {
+                return Status.OK_STATUS;
             }
 
-            public ValidationError isValid(Object value) {
+            public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 try {
                     double doubleValue = currencyFormat.parse(stringValue).doubleValue();
                     if (doubleValue < 0.0) {
-                        return ValidationError.error(cannotBeNegativeMessage);
+                        return ValidationStatus.error(cannotBeNegativeMessage);
                     }
-                    return null;
+                    return Status.OK_STATUS;
                 } catch (ParseException e) {
-                    return ValidationError.error(mustBeCurrencyMessage);
+                    return ValidationStatus.error(mustBeCurrencyMessage);
                 }
             }
         };
@@ -379,20 +381,20 @@ public class PropertyScenarios extends ScenariosTestCase {
                 bindSpec);
 
         assertEquals("$5.00", text.getText());
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         enterText(text, "$0.65");
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         assertEquals(0.65, adventure.getPrice(), 0.0001);
         adventure.setPrice(42.24);
         assertEquals("$42.24", text.getText());
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
         enterText(text, "jygt");
-        assertEquals(mustBeCurrencyMessage, ((ValidationError) getDbc().getValidationError().getValue()).message);
+        assertEquals(mustBeCurrencyMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
         enterText(text, "-$23.9");
-        assertEquals(cannotBeNegativeMessage, ((ValidationError) getDbc().getValidationError().getValue()).message);
+        assertEquals(cannotBeNegativeMessage, ((IStatus) getDbc().getValidationStatus().getValue()).getMessage());
         assertEquals(42.24, adventure.getPrice(), 0.0001);
         adventure.setPrice(0.0);
-        assertEquals(null, getDbc().getValidationError().getValue());
+        assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
     }
 
     public void testScenario09() {
@@ -548,9 +550,9 @@ public class PropertyScenarios extends ScenariosTestCase {
         Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"), null);
         Text errorText = new Text(getComposite(), SWT.NONE);
         
-        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationError(), new BindSpec().setUpdateModel(false));
-        assertEquals(null, b.getValidationError().getValue());
+        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new BindSpec().setUpdateModel(false));
+        assertTrue(((IStatus)b.getValidationStatus().getValue()).isOK());
         enterText(text, "foo");
-        assertNotNull(b.getValidationError().getValue());
+        assertFalse(((IStatus)b.getValidationStatus().getValue()).isOK());
     }
 }

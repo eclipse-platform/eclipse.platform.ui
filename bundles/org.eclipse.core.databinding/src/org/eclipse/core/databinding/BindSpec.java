@@ -13,9 +13,7 @@
 package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.validation.IDomainValidator;
 import org.eclipse.core.databinding.validation.IValidator;
-
 
 /**
  * Data binding has three concerns, the target, the model, and the data flow
@@ -32,8 +30,8 @@ public class BindSpec {
 	private IConverter[] targetToModelConverters;
 
 	private IValidator[] targetValidators;
-	
-	private IDomainValidator domainValidator;
+
+	private IValidator domainValidator;
 
 	private Integer modelUpdatePolicy;
 
@@ -54,7 +52,7 @@ public class BindSpec {
 	 */
 	public BindSpec() {
 	}
-	
+
 	/**
 	 * Creates a bind spec with the given converters, validators, and update
 	 * policies.
@@ -65,14 +63,14 @@ public class BindSpec {
 	 * @param domainValidator
 	 * @param modelUpdatePolicy
 	 * @param validatePolicy
-	 * @param targetUpdatePolicy 
+	 * @param targetUpdatePolicy
 	 * 
 	 */
 	protected BindSpec(IConverter[] modelToTargetConverter,
 			IConverter[] targetToModelConverter, IValidator[] targetValidator,
-			IDomainValidator domainValidator, Integer modelUpdatePolicy,
+			IValidator domainValidator, Integer modelUpdatePolicy,
 			Integer validatePolicy, Integer targetUpdatePolicy) {
-		
+
 		this.modelToTargetConverters = modelToTargetConverter;
 		this.targetToModelConverters = targetToModelConverter;
 		this.targetValidators = targetValidator;
@@ -153,7 +151,7 @@ public class BindSpec {
 	 * 
 	 * @return the validator, or <code>null</code>
 	 */
-	public IDomainValidator getDomainValidator() {
+	public IValidator getDomainValidator() {
 		return domainValidator;
 	}
 
@@ -199,7 +197,9 @@ public class BindSpec {
 	/**
 	 * Sets the model to target converter.
 	 * 
-	 * @param converter <code>null</code> allowed and will remove all existing converters.
+	 * @param converter
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setModelToTargetConverter(IConverter converter) {
@@ -210,7 +210,9 @@ public class BindSpec {
 	/**
 	 * Sets the model to target converters.
 	 * 
-	 * @param converters <code>null</code> allowed and will remove all existing converters.
+	 * @param converters
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setModelToTargetConverters(IConverter[] converters) {
@@ -221,7 +223,9 @@ public class BindSpec {
 	/**
 	 * Sets the target to model converter.
 	 * 
-	 * @param converter <code>null</code> allowed and will remove all existing converters.
+	 * @param converter
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setTargetToModelConverter(IConverter converter) {
@@ -232,7 +236,9 @@ public class BindSpec {
 	/**
 	 * Sets the target to model converters.
 	 * 
-	 * @param converters <code>null</code> allowed and will remove all existing converters.
+	 * @param converters
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setTargetToModelConverters(IConverter[] converters) {
@@ -243,7 +249,9 @@ public class BindSpec {
 	/**
 	 * Sets the validator.
 	 * 
-	 * @param validator <code>null</code> allowed and will remove all existing validators.
+	 * @param validator
+	 *            <code>null</code> allowed and will remove all existing
+	 *            validators.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setValidator(IValidator validator) {
@@ -254,7 +262,9 @@ public class BindSpec {
 	/**
 	 * Sets the validators.
 	 * 
-	 * @param validators <code>null</code> allowed and will remove all existing validators.
+	 * @param validators
+	 *            <code>null</code> allowed and will remove all existing
+	 *            validators.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setValidators(IValidator[] validators) {
@@ -265,10 +275,11 @@ public class BindSpec {
 	/**
 	 * Sets the domain validator.
 	 * 
-	 * @param validator <code>null</code> allowed
+	 * @param validator
+	 *            <code>null</code> allowed
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public BindSpec setDomainValidator(IDomainValidator validator) {
+	public BindSpec setDomainValidator(IValidator validator) {
 		this.domainValidator = validator;
 		return this;
 	}

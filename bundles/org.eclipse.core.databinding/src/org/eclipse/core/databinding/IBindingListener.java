@@ -11,24 +11,25 @@
 
 package org.eclipse.core.databinding;
 
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.runtime.IStatus;
 
 /**
- * An interface for objects that need to listen to events that occur in the
- * data flow pipeline
- *  
+ * An interface for objects that need to listen to events that occur in the data
+ * flow pipeline
+ * 
  * @since 1.0
  */
 public interface IBindingListener {
 	/**
-	 * Method bindingEvent.  The method that is called when something interesting
+	 * Method bindingEvent. The method that is called when something interesting
 	 * occurs in the data flow pipeline.
 	 * 
-	 * @param e The IBindingEvent to handle.
-	 * @return null if no error or a ValidationError with an error status to 
-	 * abort the operation.  The error will be propagated to the data binding 
-	 * context's error message updatable.
+	 * @param e
+	 *            The IBindingEvent to handle.
+	 * @return a status object. To abort the operation, a status object with an
+	 *         error or cancel status is returned. The error will be propagated
+	 *         to the data binding context's error message updatable.
 	 */
-	public ValidationError bindingEvent(BindingEvent e);
-	
+	public IStatus bindingEvent(BindingEvent e);
+
 }

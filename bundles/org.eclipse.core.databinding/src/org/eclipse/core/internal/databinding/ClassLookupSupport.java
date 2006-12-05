@@ -68,7 +68,7 @@ public class ClassLookupSupport {
 		while (clazz != null) {
 			classes.add(clazz);
 			computeInterfaceOrder(clazz.getInterfaces(), classes, seen);
-			clazz = clazz.getSuperclass();
+			clazz = clazz.isInterface() ? Object.class : clazz.getSuperclass();
 		}
 	}
 

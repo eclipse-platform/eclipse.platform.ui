@@ -61,6 +61,10 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		return super.hasListeners() || !mapChangeListeners.isEmpty();
 	}
 
+	protected void getterCalled() {
+		ObservableTracker.getterCalled(this);
+	}
+
 	protected void fireMapChange(MapDiff diff) {
 		// fire general change event first
 		super.fireChange();
@@ -72,42 +76,42 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	public boolean containsKey(Object key) {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.containsKey(key);
 	}
 
 	public boolean containsValue(Object value) {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.containsValue(value);
 	}
 
 	public Set entrySet() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.entrySet();
 	}
 
 	public Object get(Object key) {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.get(key);
 	}
 
 	public boolean isEmpty() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.isEmpty();
 	}
 
 	public Set keySet() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.keySet();
 	}
 
 	public int size() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.size();
 	}
 
 	public Collection values() {
-		ObservableTracker.getterCalled(this);
+		getterCalled();
 		return wrappedMap.values();
 	}
 

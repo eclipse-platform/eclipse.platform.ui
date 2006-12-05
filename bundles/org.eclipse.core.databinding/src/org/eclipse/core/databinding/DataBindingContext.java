@@ -23,17 +23,17 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.validation.IDomainValidator;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
 import org.eclipse.core.internal.databinding.ListBinding;
-import org.eclipse.core.internal.databinding.ValidationErrorList;
+import org.eclipse.core.internal.databinding.ValidationStatusMap;
 import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * A context for binding observable objects. This class is not intended to be
@@ -90,13 +90,11 @@ public class DataBindingContext {
 
 	protected DataBindingContext parent;
 
-	private ComputedValue partialValidationError;
+	private ComputedValue partialValidationStatus;
 
-	private ObservableList partialValidationErrors;
+	private ComputedValue validationStatus;
 
-	private ComputedValue validationError;
-
-	private ObservableList validationErrors;
+	private IObservableMap validationStatusMap;
 
 	private List childContexts = new ArrayList();
 
@@ -146,21 +144,31 @@ public class DataBindingContext {
 		bindings = new WritableList(validationRealm);
         
         unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
-		partialValidationError = new ComputedValue(validationRealm) {
+		partialValidationStatus = new ComputedValue(validationRealm) {
 			protected Object calculate() {
-				int size = partialValidationErrors.size();
-				return size == 0 ? null : partialValidationErrors.get(size - 1);
+				for(Iterator it=bindings.iterator(); it.hasNext();) {
+					Binding binding = (Binding) it.next();
+					IStatus status = (IStatus) binding.getPartialValidationStatus().getValue();
+					if(!status.isOK()) {
+						return status;
+					}
+				}
+				return Status.OK_STATUS;
 			}
 		};
-		partialValidationErrors = new ValidationErrorList(validationRealm,
-				bindings, true);
-		validationError = new ComputedValue(validationRealm) {
+		validationStatus = new ComputedValue(validationRealm) {
 			protected Object calculate() {
-				int size = validationErrors.size();
-				return size == 0 ? null : validationErrors.get(size - 1);
+				for(Iterator it=bindings.iterator(); it.hasNext();) {
+					Binding binding = (Binding) it.next();
+					IStatus status = (IStatus) binding.getValidationStatus().getValue();
+					if(!status.isOK()) {
+						return status;
+					}
+				}
+				return Status.OK_STATUS;
 			}
 		};
-		validationErrors = new ValidationErrorList(validationRealm, bindings,
+		validationStatusMap = new ValidationStatusMap(validationRealm, bindings,
 				false);
 	}
 
@@ -260,11 +268,11 @@ public class DataBindingContext {
 	 * @param modelType
 	 * @return an IValidator, or null if unsuccessful
 	 */
-	public IDomainValidator createDomainValidator(Object modelType) {
+	public IValidator createDomainValidator(Object modelType) {
 		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
 			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
 					.get(i);
-			IDomainValidator validator = bindSupportFactory
+			IValidator validator = bindSupportFactory
 					.createDomainValidator(modelType);
 			if (validator != null) {
 				return validator;
@@ -375,14 +383,14 @@ public class DataBindingContext {
 		}
 	}
 
-	protected ValidationError fireBindingEvent(BindingEvent event) {
-		ValidationError result = null;
+	protected IStatus fireBindingEvent(BindingEvent event) {
+		IStatus result = Status.OK_STATUS;
 		for (Iterator bindingEventIter = bindingEventListeners.iterator(); bindingEventIter
 				.hasNext();) {
 			IBindingListener listener = (IBindingListener) bindingEventIter
 					.next();
 			result = listener.bindingEvent(event);
-			if (result != null)
+			if (!result.isOK())
 				break;
 		}
 		return result;
@@ -399,34 +407,34 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an observable value of type ValidationError, containing the most
+	 * Returns an observable value of type IStatus, containing the most
 	 * recent partial validation error
 	 * 
 	 * @return the validation error observable
 	 */
-	public IObservableValue getPartialValidationError() {
-		return partialValidationError;
+	public IObservableValue getPartialValidationStatus() {
+		return partialValidationStatus;
 	}
 
 	/**
-	 * Returns an observable value of type ValidationError, containing the most
+	 * Returns an observable value of type IStatus, containing the most
 	 * recent full validation error, i.e. the last element of the list returned
 	 * by getValidationErrors().
 	 * 
 	 * @return the validation observable
 	 */
-	public IObservableValue getValidationError() {
-		return validationError;
+	public IObservableValue getValidationStatus() {
+		return validationStatus;
 	}
 
 	/**
-	 * Returns an observable list with elements of type ValidationError, ordered
+	 * Returns an observable list with elements of type IStatus, ordered
 	 * by the time of detection
 	 * 
 	 * @return the observable list containing all validation errors
 	 */
-	public IObservableList getValidationErrors() {
-		return validationErrors;
+	public IObservableMap getValidationStatusMap() {
+		return validationStatusMap;
 	}
 
 	/**

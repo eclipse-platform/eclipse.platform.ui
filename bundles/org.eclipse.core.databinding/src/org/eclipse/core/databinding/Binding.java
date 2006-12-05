@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * The interface that represents a binding between a model and a target.
@@ -59,8 +60,8 @@ public abstract class Binding {
 	 * @param event
 	 * @return the validation error, or null
 	 */
-	protected ValidationError fireBindingEvent(BindingEvent event) {
-		ValidationError result = null;
+	protected IStatus fireBindingEvent(BindingEvent event) {
+		IStatus result = Status.OK_STATUS;
 		IBindingListener[] listeners;
 		synchronized (bindingEventListeners) {
 			listeners = (IBindingListener[]) bindingEventListeners
@@ -69,25 +70,24 @@ public abstract class Binding {
 		for (int i = 0; i < listeners.length; i++) {
 			IBindingListener listener = listeners[i];
 			result = listener.bindingEvent(event);
-			if (result != null)
+			if (!result.isOK())
 				break;
 		}
-		if (result == null)
+		if (result.isOK())
 			result = context.fireBindingEvent(event);
 		return result;
 	}
 
 	/**
 	 * @return an observable value containing the current partial validation
-	 *         error or null
+	 *         status
 	 */
-	public abstract IObservableValue getPartialValidationError();
+	public abstract IObservableValue getPartialValidationStatus();
 
 	/**
-	 * @return an observable value containing the current validation error or
-	 *         null
+	 * @return an observable value containing the current validation status
 	 */
-	public abstract IObservableValue getValidationError();
+	public abstract IObservableValue getValidationStatus();
 
 	/**
 	 * Removes a listener from the set of listeners that will be notified when

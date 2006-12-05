@@ -10,11 +10,14 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.validation;
 
+import org.eclipse.core.runtime.IStatus;
 
 /**
- * A validator.  This validator is responsible for telling clients if its associated
- * type conversion function will succeed or fail.  For example, a String2IntValidator would
- * only accept source Strings that can successfully be converted to an integer value.
+ * A validator. This validator is responsible for determining if a given value
+ * is valid. Validators can be used on target or model values. For example, a
+ * String2IntValidator would only accept source Strings that can successfully be
+ * converted to an integer value, and a PositiveIntegerValidator would only
+ * accept positive integers.
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will remain
@@ -23,7 +26,7 @@ package org.eclipse.core.databinding.validation;
  * </p>
  * 
  * @since 1.0
- *
+ * 
  */
 public interface IValidator {
 
@@ -33,19 +36,19 @@ public interface IValidator {
 	 * 
 	 * @param value
 	 *            the value to validate
-	 * @return the ValidationError, or </code>null</code> if the value is
-	 *         partially valid.
+	 * @return a status object indicating whether the validation succeeded
+	 *         {@link IStatus#isOK()} or not. Never null.
 	 */
-	public ValidationError isPartiallyValid(Object value);
+	public IStatus validatePartial(Object value);
 
 	/**
-	 * Determines if the given value is valid, that is if it can successfully
-	 * be converted to the target data type.
+	 * Determines if the given value is valid.
 	 * 
 	 * @param value
 	 *            the value to validate
-	 * @return the ValidationError, or </code>null</code> if the value is valid.
+	 * @return a status object indicating whether the validation succeeded
+	 *         {@link IStatus#isOK()} or not. Never null.
 	 */
-	public ValidationError isValid(Object value);
-
+	public IStatus validate(Object value);
+	
 }

@@ -12,23 +12,14 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryIntTest extends TestCase {
-	private DataBindingContext ctx;
+public class DefaultBindSupportFactoryIntTest extends AbstractBindSupportFactoryTest {
 	private TestDataObject dataObject;
 
 	public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-		ctx = new DataBindingContext();
-        
+		super.setUp();
 		dataObject = new TestDataObject();
 		dataObject.setStringVal("0");
 		dataObject.setIntVal(0);
@@ -41,22 +32,22 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
 		assertEquals("String value does not match", "789", dataObject.getStringVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 		
 		dataObject.setStringVal("910");
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertEquals("String value does not match", "910", dataObject.getStringVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
+        assertNoErrorsFound();
 
 		dataObject.setStringVal("");
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertEquals("String value does not match", "", dataObject.getStringVal());
-		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
+        assertErrorsFound();
 
 		dataObject.setStringVal(null);
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertNull("String value does not match", dataObject.getStringVal());
-		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
+        assertErrorsFound();
 	}
 
 	public void testIntegerToIntConverter() {
@@ -65,17 +56,17 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
 		assertEquals("Integer value does not match", new Integer(789), dataObject.getIntegerVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 		
 		dataObject.setIntegerVal(new Integer(910));
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertEquals("Integer value does not match", new Integer(910), dataObject.getIntegerVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
+        assertNoErrorsFound();
 
 		dataObject.setIntegerVal(null);
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertNull("Integer value does not match", dataObject.getIntegerVal());
-		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
+        assertErrorsFound();
 	}
 	
 	public void testObjectToIntegerConverter() {
@@ -84,23 +75,23 @@ public class DefaultBindSupportFactoryIntTest extends TestCase {
 		dataObject.setIntVal(789);
 		assertEquals("Int value does not match", 789, dataObject.getIntVal());
 		assertEquals("Object value does not match", new Integer(789), dataObject.getObjectVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 		
 		dataObject.setObjectVal(new Integer(910));
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertEquals("Object value does not match", new Integer(910), dataObject.getObjectVal());
-		assertNull("No errors should be found.", ctx.getValidationError().getValue());		
+        assertNoErrorsFound();
 
 		dataObject.setObjectVal(null);
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertNull("Object value does not match", dataObject.getObjectVal());
-		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());		
+        assertErrorsFound();
 
 		Object object = new Object();
 		dataObject.setObjectVal(object);
 		assertEquals("Int value does not match", 910, dataObject.getIntVal());
 		assertSame("Object value does not match", object, dataObject.getObjectVal());
-		assertNotNull("Errors should be found.", ctx.getValidationError().getValue());			
+        assertErrorsFound();
 	}
 	
 	public class TestDataObject extends ModelObject {

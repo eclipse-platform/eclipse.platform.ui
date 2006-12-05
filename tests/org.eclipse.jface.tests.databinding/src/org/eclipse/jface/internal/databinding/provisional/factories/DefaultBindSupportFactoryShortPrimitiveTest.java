@@ -12,24 +12,15 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
-    private DataBindingContext ctx;
+public class DefaultBindSupportFactoryShortPrimitiveTest extends AbstractBindSupportFactoryTest {
 
     private TestDataObject dataObject;
 
     public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        ctx = new DataBindingContext();
+    	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setShortPrimitiveVal((short) 0);
@@ -43,22 +34,22 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
         assertEquals("String value does not match", "110", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("70");
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertEquals("String value does not match", "70", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("");
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertEquals("String value does not match", "", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         dataObject.setStringVal(null);
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertNull("String value does not match", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testShortToShortPrimitiveConverter() {
@@ -68,17 +59,17 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
         assertEquals("Short value does not match", new Short((short) 110), dataObject.getShortVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setShortVal(new Short((short) 70));
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertEquals("Short value does not match", new Short((short) 70), dataObject.getShortVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setShortVal(null);
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertNull("Short value does not match", dataObject.getShortVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testObjectToShortPrimitiveConverter() {
@@ -88,23 +79,23 @@ public class DefaultBindSupportFactoryShortPrimitiveTest extends TestCase {
         dataObject.setShortPrimitiveVal((short) 110);
         assertEquals("short value does not match", 110, dataObject.getShortPrimitiveVal());
         assertEquals("Object value does not match", new Short((short) 110), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(new Short((short) 70));
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertEquals("Object value does not match", new Short((short) 70), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(null);
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertNull("Object value does not match", dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         Object object = new Object();
         dataObject.setObjectVal(object);
         assertEquals("short value does not match", 70, dataObject.getShortPrimitiveVal());
         assertSame("Object value does not match", object, dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public class TestDataObject extends ModelObject {

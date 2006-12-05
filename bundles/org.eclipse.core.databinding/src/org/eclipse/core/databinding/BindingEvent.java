@@ -16,7 +16,8 @@ import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * The event that is passed to a #bindingEvent method of an IBindingListener.
@@ -28,15 +29,15 @@ public class BindingEvent {
 	/**
 	 * (Non-API Method) Construct a BindingEvent.
 	 * 
-	 * @param model 
-	 * @param target 
+	 * @param model
+	 * @param target
 	 * @param diff
-	 * @param copyType 
+	 * @param copyType
 	 * @param pipelinePosition
 	 *            The initial processing pipeline position.
 	 */
-	public BindingEvent(IObservable model, IObservable target, IDiff diff, int copyType,
-			int pipelinePosition) {
+	public BindingEvent(IObservable model, IObservable target, IDiff diff,
+			int copyType, int pipelinePosition) {
 		this.model = model;
 		this.target = target;
 		this.diff = diff;
@@ -54,7 +55,7 @@ public class BindingEvent {
 	 * The target observable for the change that is being processed.
 	 */
 	public final IObservable target;
-	
+
 	/**
 	 * The diff describing the change, or <code>null</code> if no diff is
 	 * available.
@@ -62,8 +63,8 @@ public class BindingEvent {
 	public final IDiff diff;
 
 	/**
-	 * The direction in which data is copied, either EVENT_COPY_TO_TARGET
-	 * or EVENT_COPY_TO_MODEL.
+	 * The direction in which data is copied, either EVENT_COPY_TO_TARGET or
+	 * EVENT_COPY_TO_MODEL.
 	 */
 	public final int copyType;
 
@@ -78,11 +79,11 @@ public class BindingEvent {
 	 * effect.
 	 */
 	public int pipelinePosition;
-	
+
 	/**
-	 * The current ValidationError object (if there is one).
+	 * The current validation status (if there is one).
 	 */
-	public ValidationError validationError;
+	public IStatus validationStatus = Status.OK_STATUS;
 
 	/**
 	 * Holds the value that was retrieved from the source updatable. Setting the
@@ -123,13 +124,13 @@ public class BindingEvent {
 	 * remove operation.
 	 */
 	public static final int EVENT_REMOVE = 3;
-	
+
 	/**
 	 * A constant indicating that this event is occuring during a lazy list
 	 * insert operation.
 	 */
 	public static final int EVENT_LAZY_INSERT = 4;
-	
+
 	/**
 	 * A constant indicating that this event is occuring during a lazy list
 	 * delete operation.
@@ -166,10 +167,10 @@ public class BindingEvent {
 	 * converted value has been set/changed on the updatable.
 	 */
 	public static final int PIPELINE_AFTER_CHANGE = 4;
-	
+
 	/**
-	 * A constant indicating that this event is occuring due to either a validation
-	 * error or warning occuring.
+	 * A constant indicating that this event is occuring due to either a
+	 * validation error or warning occuring.
 	 */
 	public static final int PIPELINE_VALIDATION_ERROR_OR_WARNING = 5;
 
@@ -204,7 +205,8 @@ public class BindingEvent {
 	 */
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		result.append(eventConstants.get(new Integer(copyType)) + ": Diff(" + diff + "): "); //$NON-NLS-1$ //$NON-NLS-2$
+		result.append(eventConstants.get(new Integer(copyType))
+				+ ": Diff(" + diff + "): "); //$NON-NLS-1$ //$NON-NLS-2$
 		result.append("("); //$NON-NLS-1$
 		result.append(pipelineConstants.get(new Integer(pipelinePosition)));
 		result.append(")"); //$NON-NLS-1$

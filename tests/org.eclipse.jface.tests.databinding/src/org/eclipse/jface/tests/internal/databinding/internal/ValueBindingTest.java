@@ -23,8 +23,10 @@ import org.eclipse.core.databinding.IBindingListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ValueBinding;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -100,19 +102,19 @@ public class ValueBindingTest extends TestCase {
         DataBindingContext dbc = new DataBindingContext();
         Binding binding = dbc.bindValue(settableValue1, settableValue2, null);
         binding.addBindingEventListener(new IBindingListener() {
-            public ValidationError bindingEvent(BindingEvent e) {
+            public IStatus bindingEvent(BindingEvent e) {
                 // Make sure we get the right sequence of pipeline positions
                 assertEquals("Unexpected pipeline position at call #"
                         + calls[0], pipelinePositions[calls[0]],
                         e.pipelinePosition);
                 calls[0]++;
-                return null;
+                return Status.OK_STATUS;
             }
         });
         binding.addBindingEventListener(new IBindingListener() {
-            public ValidationError bindingEvent(BindingEvent e) {
+            public IStatus bindingEvent(BindingEvent e) {
                 calls[1]++;
-                return null;
+                return Status.OK_STATUS;
             }
         });
         assertEquals(o2, settableValue1.getValue());
@@ -132,11 +134,11 @@ public class ValueBindingTest extends TestCase {
 
         // Now test forcing an error from the event handler...
         binding.addBindingEventListener(new IBindingListener() {
-            public ValidationError bindingEvent(BindingEvent e) {
+            public IStatus bindingEvent(BindingEvent e) {
                 if (e.pipelinePosition == BindingEvent.PIPELINE_AFTER_CONVERT) {
-                    return ValidationError.error("error");
+                    return ValidationStatus.error("error");
                 }
-                return null;
+                return Status.OK_STATUS;
             }
         });
         settableValue1.setValue(o1);

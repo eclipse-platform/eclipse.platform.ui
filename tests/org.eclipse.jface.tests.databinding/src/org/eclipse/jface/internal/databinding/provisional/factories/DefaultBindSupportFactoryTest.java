@@ -12,21 +12,15 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSupportFactory;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
 /**
  * @since 3.2
  * 
  */
-public class DefaultBindSupportFactoryTest extends TestCase {
+public class DefaultBindSupportFactoryTest extends AbstractBindSupportFactoryTest {
     /**
      * Asserts that the instances of Boolean that are returned from
      * {@link DefaultBindSupportFactory#isAssignableFromTo()} are not new
@@ -52,9 +46,6 @@ public class DefaultBindSupportFactoryTest extends TestCase {
     }
 
     public void testStringToIntegerConverter() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        DataBindingContext ctx = new DataBindingContext();
         TestDataObject dataObject = new TestDataObject();
         dataObject.setIntegerStringVal("123");
         dataObject.setIntStringVal("456");
@@ -71,13 +62,13 @@ public class DefaultBindSupportFactoryTest extends TestCase {
 
         dataObject.setIntStringVal("789");
         assertEquals("Int value does not match", 789, dataObject.getIntVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setIntegerStringVal("");
         assertNull("Integer value not null", dataObject.getIntegerVal());
 
         dataObject.setIntStringVal("");
-        assertNotNull("Validation error expected.", ctx.getValidationError().getValue());
+        assertErrorsFound();
         assertEquals("Int value should not have changed.", 789, dataObject.getIntVal());
     }
 

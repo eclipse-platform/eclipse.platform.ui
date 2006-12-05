@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 db4objects Inc.  http://www.db4o.com
+ * Copyright (C) 2005, 2006 db4objects Inc. (http://www.db4o.com) and others.
  * 
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -8,21 +8,22 @@
  *
  * Contributors:
  *     db4objects - Initial API and implementation
+ *     Boris Bokowski (IBM Corporation) - bug 118429
  */
 package org.eclipse.core.databinding.validation;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 /**
- * IntegerValidator.  Validate String to Short data input
+ * IntegerValidator. Validate String to Short data input
  */
 public class String2ShortValidator extends String2ShortPrimitiveValidator {
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.core.databinding.validator.IValidator#isValid(java.lang.Object)
-     */
-    public ValidationError isValid(Object value) {
-       if ("".equals(value)) { //$NON-NLS-1$
-          return null;
-       }
-       return super.isValid(value);
-    }
+
+	public IStatus validate(Object value) {
+		if ("".equals(value)) { //$NON-NLS-1$
+			return Status.OK_STATUS;
+		}
+		return super.validate(value);
+	}
 }

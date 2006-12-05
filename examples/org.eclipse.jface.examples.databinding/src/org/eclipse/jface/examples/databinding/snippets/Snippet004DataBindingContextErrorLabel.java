@@ -16,8 +16,10 @@ import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
-import org.eclipse.core.databinding.validation.IDomainValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
@@ -58,7 +60,7 @@ public class Snippet004DataBindingContextErrorLabel {
                 new BindSpec().setDomainValidator(new FiveValidator()));
 
         // Bind the error label to the validation error on the dbc.
-        dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationError(), null);
+        dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationStatus(), null);
 
         shell.pack();
         shell.open();
@@ -73,9 +75,13 @@ public class Snippet004DataBindingContextErrorLabel {
      * 
      * @since 3.2
      */
-    private static class FiveValidator implements IDomainValidator {
-        public ValidationError isValid(Object value) {
-            return ("5".equals(value)) ? null : ValidationError.error("the value was '" + value + "', not '5'");
+    private static class FiveValidator implements IValidator {
+        public IStatus validate(Object value) {
+            return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus.error("the value was '" + value + "', not '5'");
         }
+
+		public IStatus validatePartial(Object value) {
+			return Status.OK_STATUS;
+		}
     }
 }

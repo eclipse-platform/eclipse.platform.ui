@@ -24,19 +24,22 @@ import org.eclipse.core.databinding.conversion.ConvertString2Byte;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.IdentityConverter;
 import org.eclipse.core.databinding.conversion.ToStringConverter;
+import org.eclipse.core.databinding.observable.IChangeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
-import org.eclipse.core.databinding.validation.ValidationError;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValueBinding;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -134,8 +137,8 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	/**
-	 * Asserts that ValidationError is populated and change events are fired
-	 * when a Binding that is associated with a context is in error.
+	 * Asserts that IStatus is populated and change events are fired when a
+	 * Binding that is associated with a context is in error.
 	 * 
 	 * @throws Exception
 	 */
@@ -146,23 +149,23 @@ public class DatabindingContextTest extends TestCase {
 		final String errorMessage = "error";
 		DataBindingContext dbc = new DataBindingContext();
 		ValueChangeCounter errorCounter = new ValueChangeCounter();
-		ListChangeCounter errorsCounter = new ListChangeCounter();
+		ChangeCounter errorsCounter = new ChangeCounter();
 
-		IObservableValue error = dbc.getValidationError();
+		IObservableValue error = dbc.getValidationStatus();
 		error.addValueChangeListener(errorCounter);
-		assertNull(error.getValue());
+		assertTrue(((IStatus)error.getValue()).isOK());
 
-		IObservableList errors = dbc.getValidationErrors();
-		errors.addListChangeListener(errorsCounter);
+		IObservableMap errors = dbc.getValidationStatusMap();
+		errors.addChangeListener(errorsCounter);
 		assertEquals(0, errors.size());
 
 		IValidator validator = new IValidator() {
-			public ValidationError isPartiallyValid(Object value) {
-				return null;
+			public IStatus validatePartial(Object value) {
+				return Status.OK_STATUS;
 			}
 
-			public ValidationError isValid(Object value) {
-				return ValidationError.error(errorMessage);
+			public IStatus validate(Object value) {
+				return ValidationStatus.error(errorMessage);
 			}
 		};
 
@@ -170,8 +173,8 @@ public class DatabindingContextTest extends TestCase {
 				.setValidator(validator));
 
 		targetObservable.setValue("");
-		assertNotNull(error.getValue());
-		assertEquals(errorMessage, error.getValue().toString());
+		assertFalse(((IStatus)error.getValue()).isOK());
+		assertEquals(errorMessage, ((IStatus)error.getValue()).getMessage());
 		assertEquals(1, errors.size());
 		assertEquals(1, errorsCounter.count);
 		assertEquals(1, errorCounter.count);
@@ -263,14 +266,14 @@ public class DatabindingContextTest extends TestCase {
 	}
 
 	/**
-	 * {@link IListChangeListener} implementation that counts the times
-	 * handleListChange(...) is invoked.
+	 * {@link IChangeListener} implementation that counts the times
+	 * handleChange(...) is invoked.
 	 * 
 	 */
-	private static class ListChangeCounter implements IListChangeListener {
+	private static class ChangeCounter implements IChangeListener {
 		int count;
-
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		
+		public void handleChange(IObservable source) {
 			count++;
 		}
 	}
@@ -282,11 +285,11 @@ public class DatabindingContextTest extends TestCase {
 			super(context);
 		}
 
-		public IObservableValue getPartialValidationError() {
+		public IObservableValue getPartialValidationStatus() {
 			return null;
 		}
 
-		public IObservableValue getValidationError() {
+		public IObservableValue getValidationStatus() {
 			return null;
 		}
 

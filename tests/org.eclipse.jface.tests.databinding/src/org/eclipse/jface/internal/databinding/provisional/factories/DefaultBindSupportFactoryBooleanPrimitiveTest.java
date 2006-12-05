@@ -12,24 +12,14 @@
 
 package org.eclipse.jface.internal.databinding.provisional.factories;
 
-import junit.framework.TestCase;
-
-import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.ModelObject;
-import org.eclipse.swt.widgets.Display;
 
-public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
-    private DataBindingContext ctx;
-
+public class DefaultBindSupportFactoryBooleanPrimitiveTest extends AbstractBindSupportFactoryTest {
     private TestDataObject dataObject;
 
     public void setUp() {
-        Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
-
-        ctx = new DataBindingContext();
+    	super.setUp();
         dataObject = new TestDataObject();
         dataObject.setStringVal("0");
         dataObject.setBooleanPrimitiveVal(false);
@@ -43,22 +33,22 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
         assertEquals("String value does not match", "true", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("false");
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertEquals("String value does not match", "false", dataObject.getStringVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setStringVal("");
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertEquals("String value does not match", "", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         dataObject.setStringVal(null);
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertNull("String value does not match", dataObject.getStringVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testBooleanToBooleanPrimitiveConverter() {
@@ -69,17 +59,17 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
         assertEquals("Boolean value does not match", new Boolean(true), dataObject.getBooleanVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setBooleanVal(new Boolean(false));
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertEquals("Boolean value does not match", new Boolean(false), dataObject.getBooleanVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setBooleanVal(null);
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertNull("Boolean value does not match", dataObject.getBooleanVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public void testObjectToBooleanPrimitiveConverter() {
@@ -89,23 +79,23 @@ public class DefaultBindSupportFactoryBooleanPrimitiveTest extends TestCase {
         dataObject.setBooleanPrimitiveVal(true);
         assertEquals("boolean value does not match", true, dataObject.getBooleanPrimitiveVal());
         assertEquals("Object value does not match", new Boolean(true), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(new Boolean(false));
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertEquals("Object value does not match", new Boolean(false), dataObject.getObjectVal());
-        assertNull("No errors should be found.", ctx.getValidationError().getValue());
+        assertNoErrorsFound();
 
         dataObject.setObjectVal(null);
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertNull("Object value does not match", dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
 
         Object object = new Object();
         dataObject.setObjectVal(object);
         assertEquals("boolean value does not match", false, dataObject.getBooleanPrimitiveVal());
         assertSame("Object value does not match", object, dataObject.getObjectVal());
-        assertNotNull("Errors should be found.", ctx.getValidationError().getValue());
+        assertErrorsFound();
     }
 
     public class TestDataObject extends ModelObject {
