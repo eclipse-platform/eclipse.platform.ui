@@ -1001,7 +1001,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (Policy.EXPERIMENTAL_MENU)
 			trimMgr2 = new TrimBarManager2(this);
 		else
-			trimMgr = new TrimBarManager(this);
+			trimMgr = new TrimBarManager(this, ((Workbench)getWorkbench()).getSMenuManager());
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);

@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +26,6 @@ import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
-import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -47,7 +44,6 @@ import org.eclipse.jface.commands.RadioState;
 import org.eclipse.jface.commands.ToggleState;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.jface.menus.IMenuStateIds;
-import org.eclipse.jface.menus.IWidget;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.SelectionEnabler;
@@ -56,8 +52,6 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.expressions.LegacyActionExpressionWrapper;
 import org.eclipse.ui.internal.expressions.LegacyActionSetExpression;
 import org.eclipse.ui.internal.expressions.LegacyEditorContributionExpression;
@@ -67,10 +61,8 @@ import org.eclipse.ui.internal.expressions.LegacyViewerContributionExpression;
 import org.eclipse.ui.internal.handlers.ActionDelegateHandlerProxy;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.keys.IBindingService;
 
 /**
@@ -123,38 +115,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private static final int INDEX_VIEWER_CONTRIBUTIONS = 4;
 
-	/**
-	 * Constructs a new instance of <code>SLocation</code> with the
-	 * information provided.
-	 * 
-	 * @param barType
-	 *            The type of <code>SBar</code> to create as the leaf element;
-	 *            must be one of the types defined in <code>SBar</code>
-	 * @param path
-	 *            The path to use with <code>SBar</code>; must not be
-	 *            <code>null</code>.
-	 * @param locationInfo
-	 *            The information needed to construct the non-leaf portion of
-	 *            the location; may be <code>null</code>.
-	 * @param mnemonic
-	 *            The mnemonic; may be {@link SLocation#MNEMONIC_NONE}.
-	 * @param imageStyle
-	 *            The image style to use; may be <code>null</code>.
-	 * @return A location instance encapsulating this information; never
-	 *         <code>null</code>.
-	 */
-	private static final SLocation createLocation(final String barType,
-			final String path, final LegacyLocationInfo locationInfo,
-			final char mnemonic, final String imageStyle) {
-		final LeafLocationElement leafElement = new SBar(barType, path);
-		final LocationElement locationElement;
-		if (locationInfo == null) {
-			locationElement = leafElement;
-		} else {
-			locationElement = locationInfo.append(leafElement);
-		}
-		return new SLocation(locationElement, null, mnemonic, imageStyle);
-	}
 
 	/**
 	 * Reads the visibility element for a contribution from the
@@ -201,11 +161,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 */
 	private final BindingService bindingService;
 
-	/**
-	 * The command image manager which should be populated with the images from
-	 * the actions; must not be <code>null</code>.
-	 */
-	private final ICommandImageService commandImageService;
+
 
 	/**
 	 * The command service which is providing the commands for the workbench;
@@ -226,12 +182,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * <code>null</code>
 	 */
 	private final Collection menuContributions = new ArrayList();
-
-	/**
-	 * The menu service which should be populated with the values from the
-	 * registry; must not be <code>null</code>.
-	 */
-	private final IMenuService menuService;
 
 	/**
 	 * The service locator from which services can be retrieved in the future;
@@ -285,10 +235,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 		this.commandService = (ICommandService) window
 				.getService(ICommandService.class);
-		this.commandImageService = (ICommandImageService) window
-				.getService(ICommandImageService.class);
-		this.menuService = (IMenuService) window.getService(IMenuService.class);
-
 		this.window = window;
 	}
 
@@ -345,7 +291,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * collection. This should be called before every read.
 	 */
 	private final void clearMenus() {
-		menuService.removeContributions(menuContributions);
 		menuContributions.clear();
 	}
 
@@ -601,159 +546,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 		handlerActivations.add(handlerActivation);
 	}
 
-	/**
-	 * Extracts any image definitions from the action. These are defined as
-	 * image bindings on the given command with an auto-generated style.
-	 * 
-	 * @param element
-	 *            The action element from which the images should be read; must
-	 *            not be <code>null</code>.
-	 * @param command
-	 *            The command to which the images should be bound; must not be
-	 *            <code>null</code>.
-	 * @return The image style used to define these images; may be
-	 *         <code>null</code>.
-	 */
-	private final String convertActionToImages(
-			final IConfigurationElement element,
-			final ParameterizedCommand command) {
-		final String commandId = command.getId();
 
-		// Read the icon attributes.
-		final String icon = readOptional(element, ATT_ICON);
-		final String disabledIcon = readOptional(element, ATT_DISABLEDICON);
-		final String hoverIcon = readOptional(element, ATT_HOVERICON);
-
-		// Check if at least one is defined.
-		if ((icon == null) && (disabledIcon == null) && (hoverIcon == null)) {
-			return null;
-		}
-
-		final String style = commandImageService.generateUnusedStyle(commandId);
-
-		// Bind the images.
-		if (icon != null) {
-			final URL iconURL = BundleUtility.find(element.getContributor()
-					.getName(), icon);
-			commandImageService.bind(commandId,
-					ICommandImageService.TYPE_DEFAULT, style, iconURL);
-		}
-		if (disabledIcon != null) {
-			final URL disabledIconURL = BundleUtility.find(element
-					.getContributor().getName(), disabledIcon);
-			commandImageService.bind(commandId,
-					ICommandImageService.TYPE_DISABLED, style, disabledIconURL);
-		}
-		if (hoverIcon != null) {
-			final URL hoverIconURL = BundleUtility.find(element
-					.getContributor().getName(), hoverIcon);
-			commandImageService.bind(commandId,
-					ICommandImageService.TYPE_HOVER, style, hoverIconURL);
-		}
-
-		return style;
-	}
-
-	/**
-	 * Extracts the item part of the action, and registers it with the given
-	 * menu service.
-	 * 
-	 * @param element
-	 *            The action element from which the item should be read; must
-	 *            not be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings logged while parsing this extension
-	 *            point; must not be <code>null</code>.
-	 * @param command
-	 *            The command with which the item should be associated; must not
-	 *            be <code>null</code>.
-	 * @param imageStyle
-	 *            The image style to use; may be <code>null</code>.
-	 * @param leadingPart
-	 *            The <code>part</code> string for an <code>SPart</code>.
-	 *            This value is <code>null</code> if it is not in an
-	 *            <code>SPart</code>.
-	 * @param locationInfo
-	 *            The information required to create the non-leaf portion of the
-	 *            location element; may be <code>null</code> if there is no
-	 *            non-leaf component.
-	 * @param visibleWhenExpression
-	 *            The visibility crtieria for the corresponding item; may be
-	 *            <code>null</code>.
-	 */
-	private final void convertActionToItem(final IConfigurationElement element,
-			final List warningsToLog, final ParameterizedCommand command,
-			final String imageStyle, final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression) {
-		final String commandId = command.getId();
-
-		// Read the id attribute.
-		final String id = readRequired(element, ATT_ID, warningsToLog,
-				"Actions require an id", commandId); //$NON-NLS-1$
-		if (id == null) {
-			return;
-		}
-
-		// Figure out the mnemonic, if any.
-		final String label = readOptional(element, ATT_LABEL);
-		final char mnemonic = LegacyActionTools.extractMnemonic(label);
-
-		// Count how many locations there will be.
-		final String menubarPath = adjustPath(readOptional(element,
-				ATT_MENUBAR_PATH));
-		final String toolbarPath = readOptional(element, ATT_TOOLBAR_PATH);
-		int locationCount = 0;
-		if (menubarPath != null) {
-			locationCount++;
-		}
-		if (toolbarPath != null) {
-			locationCount++;
-		}
-
-		// Create the locations.
-		final SLocation[] locations;
-		if (locationCount == 0) {
-			locations = null;
-		} else {
-			locations = new SLocation[locationCount];
-			int i = 0;
-
-			if (menubarPath != null) {
-				locations[i++] = createLocation(SBar.TYPE_MENU, menubarPath,
-						locationInfo, mnemonic, imageStyle);
-			}
-			if (toolbarPath != null) {
-				locations[i++] = createLocation(SBar.TYPE_TRIM, toolbarPath,
-						locationInfo, mnemonic, imageStyle);
-			}
-		}
-
-		/*
-		 * Figure out whether this a pulldown or not. If it is a pulldown, then
-		 * we are going to need to make an SWidget rather than an SItem.
-		 */
-		if (isPulldown(element)) {
-			final SWidget widget = menuService.getWidget(id);
-			final IWidget proxy = new PulldownDelegateWidgetProxy(element,
-					ATT_CLASS, command, window);
-			widget.define(proxy, locations);
-			/*
-			 * TODO Cannot duplicate the class instance between handler and item
-			 * Note that this is not an issue when creating a retarget pulldown.
-			 */
-			final IMenuContribution contribution = menuService.contributeMenu(
-					widget, visibleWhenExpression);
-			menuContributions.add(contribution);
-
-		} else {
-			final SItem item = menuService.getItem(id);
-			item.define(command, id, locations);
-			final IMenuContribution contribution = menuService.contributeMenu(
-					item, visibleWhenExpression);
-			menuContributions.add(contribution);
-
-		}
-	}
 
 	public final void dispose() {
 		super.dispose();
@@ -926,9 +719,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// TODO Read the overrideActionId attribute
 
 			convertActionToBinding(element, command);
-			final String imageStyle = convertActionToImages(element, command);
-			convertActionToItem(element, warningsToLog, command, imageStyle,
-					locationInfo, visibleWhenExpression);
 
 			references.add(new SReference(SReference.TYPE_ITEM, id));
 		}
@@ -972,39 +762,11 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final List warningsToLog, final LegacyLocationInfo locationInfo,
 			final Expression visibleWhenExpression, final String viewId) {
 
-		// Read out the menus and groups, if any.
-		// they must be read first, to allow anybody elses path to be adjusted
-		final IConfigurationElement[] menuElements = element
-				.getChildren(TAG_MENU);
-		final SReference[] menuAndGroupReferences;
-		if ((menuElements != null) && (menuElements.length > 0)) {
-			menuAndGroupReferences = readMenusAndGroups(menuElements, id,
-					warningsToLog, locationInfo, visibleWhenExpression);
-		} else {
-			menuAndGroupReferences = null;
-		}
-
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
 				.getChildren(TAG_ACTION);
 		final SReference[] itemReferences = readActions(id, actionElements,
 				warningsToLog, locationInfo, visibleWhenExpression, viewId);
-
-		if ((menuElements != null) && (menuElements.length > 0)) {
-
-			if ((itemReferences == null) || (itemReferences.length == 0)) {
-				return menuAndGroupReferences;
-			}
-
-			final SReference[] references = new SReference[itemReferences.length
-					+ menuAndGroupReferences.length];
-			System.arraycopy(itemReferences, 0, references, 0,
-					itemReferences.length);
-			System.arraycopy(menuAndGroupReferences, 0, references,
-					itemReferences.length, menuAndGroupReferences.length);
-			return references;
-
-		}
 
 		// There were neither menus nor groups.
 		return itemReferences;
@@ -1058,11 +820,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			final LegacyActionSetExpression expression = new LegacyActionSetExpression(
 					id, window);
 
-			// Read the description.
-			final String description = readOptional(element, ATT_DESCRIPTION);
-
-			// Read whether the action set should be visible by default.
-			final boolean visible = readBoolean(element, ATT_VISIBLE, false);
 
 			// Read all of the child elements.
 			final SReference[] references = readActionsAndMenus(element, id,
@@ -1072,8 +829,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 
 			// Define the action set.
-			final SActionSet actionSet = menuService.getActionSet(id);
-			actionSet.define(label, description, visible, references);
 		}
 
 		logWarnings(
@@ -1129,266 +884,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 				"Warnings while parsing the editor contributions from the 'org.eclipse.ui.editorActions' extension point"); //$NON-NLS-1$
 	}
 
-	/**
-	 * Reads the separators represented by the given elements.
-	 * 
-	 * @param elements
-	 *            The elements representing the separators; must not be
-	 *            <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings already logged for this extension point;
-	 *            must not be <code>null</code>.
-	 * @param menuId
-	 *            The menu that this group belongs to.
-	 * @param path
-	 *            The path at which the separators will appear; may be
-	 *            <code>null</code>.
-	 * @param locationInfo
-	 *            The information required to create the non-leaf portion of the
-	 *            location element; may be <code>null</code> if there is no
-	 *            non-leaf component.
-	 * @param visibleWhenExpression
-	 *            An expression controlling the visibility. If this value is
-	 *            <code>null</code>, then the menus and groups are always
-	 *            visible.
-	 * @param separatorsVisible
-	 *            Whether separators should be drawn around this group.
-	 * @return References to the separators. May be empty if none of the
-	 *         elements are valid, but never <code>null</code>.
-	 */
-	protected final SReference[] readGroups(
-			final IConfigurationElement[] elements, final List warningsToLog,
-			final String menuId, final String path,
-			final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression,
-			final boolean separatorsVisible) {
-		final int length = elements.length;
-		final Collection separators = new ArrayList(length);
-		for (int i = 0; i < length; i++) {
-			final IConfigurationElement element = elements[i];
 
-			// Read the name attribute.
-			String name = readRequired(element, ATT_NAME, warningsToLog,
-					"Groups require a name"); //$NON-NLS-1$
-			if (name == null) {
-				continue;
-			}
 
-			name = menuId + '-' + name;
-
-			// Define the group.
-			final SGroup group = menuService.getGroup(name);
-			final SLocation location = createLocation(SBar.TYPE_MENU, path,
-					locationInfo, SLocation.MNEMONIC_NONE, null);
-			if (group.isDefined()) {
-				// Add another location.
-
-				group.addLocation(location);
-
-			} else {
-				// This is the first location.
-				SLocation[] locations = new SLocation[] { location };
-				group.define(separatorsVisible, locations, null);
-
-			}
-			final IMenuContribution contribution = menuService.contributeMenu(
-					group, visibleWhenExpression);
-			menuContributions.add(contribution);
-
-			// Add a reference.
-			final SReference reference = new SReference(SReference.TYPE_GROUP,
-					name);
-			separators.add(reference);
-		}
-
-		return (SReference[]) separators.toArray(new SReference[separators
-				.size()]);
-	}
-
-	/**
-	 * 
-	 * @param menuElements
-	 *            The menu elements to parse; must not be <code>null</code>.
-	 * @param contributionId
-	 *            The identifier of the contribution being made. This could be
-	 *            an action set, an editor contribution, a view contribution, a
-	 *            viewer contribution or an object contribution. This value must
-	 *            not be <code>null</code>.
-	 * @param warningsToLog
-	 *            The list of warnings already logged for this extension point;
-	 *            must not be <code>null</code>.
-	 * @param locationInfo
-	 *            The information required to create the non-leaf portion of the
-	 *            location element; may be <code>null</code> if there is no
-	 *            non-leaf component.
-	 * @param visibleWhenExpression
-	 *            An expression controlling the visibility. If this value is
-	 *            <code>null</code>, then the menus and groups are always
-	 *            visible.
-	 * @return An array of references to the menus and groups created. This
-	 *         value is never <code>null</code>.
-	 */
-	private final SReference[] readMenusAndGroups(
-			final IConfigurationElement[] menuElements,
-			final String contributionId, final List warningsToLog,
-			final LegacyLocationInfo locationInfo,
-			final Expression visibleWhenExpression) {
-		final int length = menuElements.length;
-		final Collection references = new ArrayList(length);
-		for (int i = 0; i < length; i++) {
-			final IConfigurationElement menuElement = menuElements[i];
-
-			// Read the id attribute.
-			final String menuId = readRequired(menuElement, ATT_ID,
-					warningsToLog, "Menus require an id", contributionId); //$NON-NLS-1$
-			if (menuId == null) {
-				continue;
-			}
-
-			// Read the label attribute, and extract the mnemonic.
-			String label = readRequired(menuElement, ATT_LABEL, warningsToLog,
-					"Menus require a label", menuId); //$NON-NLS-1$
-			if (label == null) {
-				continue;
-			}
-			final char mnemonic = LegacyActionTools.extractMnemonic(label);
-			label = LegacyActionTools.removeMnemonics(label);
-
-			// Read the path attribute.
-			final String path = adjustPath(readOptional(menuElement, ATT_PATH));
-
-			final String subpath;
-			if (path == null) {
-				subpath = menuId;
-			} else {
-				subpath = path + LeafLocationElement.PATH_SEPARATOR + menuId;
-			}
-
-			// Read the separator elements. There must be at least one.
-			final IConfigurationElement[] separatorElements = menuElement
-					.getChildren(TAG_SEPARATOR);
-			final SReference[] separatorReferences = readGroups(
-					separatorElements, warningsToLog, menuId, subpath,
-					locationInfo, visibleWhenExpression, true);
-			if (separatorReferences != null) {
-				references.addAll(Arrays.asList(separatorReferences));
-			}
-
-			// Read the group elements.
-			final IConfigurationElement[] groupElements = menuElement
-					.getChildren(TAG_GROUP_MARKER);
-			final SReference[] groupReferences = readGroups(groupElements,
-					warningsToLog, menuId, subpath, locationInfo,
-					visibleWhenExpression, false);
-			if (groupReferences != null) {
-				references.addAll(Arrays.asList(groupReferences));
-			}
-
-			// Define the menu.
-			final SMenu menu = menuService.getMenu(menuId);
-
-			final SLocation location = createLocation(SBar.TYPE_MENU, path,
-					locationInfo, mnemonic, null);
-			if (menu.isDefined()) {
-				menu.addLocation(location);
-			} else {
-				final SLocation[] locations = new SLocation[] { location };
-				menu.define(label, locations, null);
-			}
-			final IMenuContribution contribution = menuService.contributeMenu(
-					menu, visibleWhenExpression);
-			menuContributions.add(contribution);
-			references.add(new SReference(SReference.TYPE_MENU, menuId));
-		}
-
-		return (SReference[]) references.toArray(new SReference[references
-				.size()]);
-	}
-
-	/**
-	 * @param string
-	 * @return the adjusted path ... i.e. the group has been sliced and diced
-	 */
-	private String adjustPath(final String path) {
-		if (path == null) {
-			return null;
-		}
-		String result = null;
-
-		SBar loc = new SBar(SBar.TYPE_MENU, path);
-		ILocationElementTokenizer tokenizer = loc.getTokenizer();
-		LocationElementToken token = null;
-		LocationElementToken lastToken = null;
-		while (tokenizer.hasMoreTokens()) {
-			lastToken = token;
-			token = tokenizer.nextToken();
-		}
-
-		if (token == null || token.getId() == null
-				|| token.getId().length() == 0) {
-			return null;
-		}
-		String groupId = token.getId();
-		if (lastToken != null) {
-			groupId = lastToken.getId() + '-' + groupId;
-		}
-		if (Policy.EXPERIMENTAL_MENU
-				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) {
-			System.err.println("adjustPath: groupId: " + groupId); //$NON-NLS-1$
-		}
-
-		SGroup sgroup = menuService.getGroup(groupId);
-		if (sgroup.isDefined()) {
-			try {
-				SLocation[] locs = sgroup.getLocations();
-				if (locs != null && locs.length > 0) {
-					result = getLocationPath(locs[0])
-							+ LeafLocationElement.PATH_SEPARATOR + groupId;
-				}
-			} catch (NotDefinedException e) {
-				WorkbenchPlugin.log(
-						"Unable to find defined group path for " + groupId, e); //$NON-NLS-1$
-			}
-		}
-
-		SMenu smenu = null;
-		if (result == null) {
-			smenu = menuService.getMenu(token.getId());
-		}
-
-		if (smenu != null && smenu.isDefined()) {
-			SLocation[] locs;
-			try {
-				locs = smenu.getLocations();
-				if (locs != null && locs.length > 0) {
-					result = getLocationPath(locs[0])
-							+ LeafLocationElement.PATH_SEPARATOR
-							+ token.getId()
-							+ LeafLocationElement.PATH_SEPARATOR
-							+ token.getId() + '-' + "additions"; //$NON-NLS-1$
-				}
-			} catch (NotDefinedException e) {
-				WorkbenchPlugin.log(
-						"Unable to find defined menu path for " + token.getId(), e); //$NON-NLS-1$
-			}
-		}
-
-		if (Policy.EXPERIMENTAL_MENU
-				&& path.indexOf(LeafLocationElement.BREAKPOINT_PATH) > -1) {
-			System.err.println("adjustPath: " + path + "\n\tresult: " + result); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		return result;
-	}
-
-	private String getLocationPath(SLocation location) {
-		LocationElement element = location.getPath();
-		if (element instanceof LeafLocationElement) {
-			return ((LeafLocationElement) element).getPath();
-		} else if (element instanceof SPart) {
-			return ((SPart) element).getLocation().getPath();
-		}
-		return null;
-	}
 
 	/**
 	 * Reads the deprecated object contributions from an array of elements from

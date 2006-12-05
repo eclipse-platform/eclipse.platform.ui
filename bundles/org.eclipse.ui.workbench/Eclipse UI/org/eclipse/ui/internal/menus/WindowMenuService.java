@@ -92,50 +92,6 @@ public final class WindowMenuService implements IMenuService {
 		menuAuthority.dispose();
 	}
 
-	public final SActionSet getActionSet(final String actionSetId) {
-		return parent.getActionSet(actionSetId);
-	}
-
-	public final SActionSet[] getDefinedActionSets() {
-		return parent.getDefinedActionSets();
-	}
-
-	public final SGroup[] getDefinedGroups() {
-		return parent.getDefinedGroups();
-	}
-
-	public final SItem[] getDefinedItems() {
-		return parent.getDefinedItems();
-	}
-
-	public final SMenu[] getDefinedMenus() {
-		return parent.getDefinedMenus();
-	}
-
-	public final SWidget[] getDefinedWidgets() {
-		return parent.getDefinedWidgets();
-	}
-
-	public final SGroup getGroup(final String groupId) {
-		return parent.getGroup(groupId);
-	}
-
-	public final SItem getItem(final String itemId) {
-		return parent.getItem(itemId);
-	}
-
-	public final SMenuLayout getLayout() {
-		return parent.getLayout();
-	}
-
-	public final SMenu getMenu(final String menuId) {
-		return parent.getMenu(menuId);
-	}
-
-	public final SWidget getWidget(final String widgetId) {
-		return parent.getWidget(widgetId);
-	}
-
 	public final void readRegistry() {
 		parent.readRegistry();
 	}

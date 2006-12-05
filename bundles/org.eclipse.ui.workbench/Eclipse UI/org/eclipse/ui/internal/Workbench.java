@@ -2994,4 +2994,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 	public final void removeShowingMenus(final Set menuIds) {
 		menuSourceProvider.removeShowingMenus(menuIds);
 	}
+
+	/**
+	 * @return
+	 */
+	public SMenuManager getSMenuManager() {
+		return serviceMenuManager;
+	}
 }

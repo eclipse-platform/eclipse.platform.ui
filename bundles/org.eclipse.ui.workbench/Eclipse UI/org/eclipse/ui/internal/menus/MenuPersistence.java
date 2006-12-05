@@ -77,25 +77,6 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private static final int INDEX_WIDGETS = 4;
 
-	/**
-	 * The menu contributions that have come from the registry. This is used to
-	 * flush the contributions when the registry is re-read. This value is never
-	 * <code>null</code>
-	 */
-	private static final Collection menuContributions = new ArrayList();
-
-	/**
-	 * Removes all of the contributions made by this class, and then clears the
-	 * collection. This should be called before every read.
-	 * 
-	 * @param menuService
-	 *            The service handling the contributions; must not be
-	 *            <code>null</code>.
-	 */
-	private static final void clearContributions(final IMenuService menuService) {
-		menuService.removeContributions(menuContributions);
-		menuContributions.clear();
-	}
 
 	/**
 	 * Reads the action sets from an array of action set elements from the menus
@@ -113,7 +94,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private static final void readActionSetsFromRegistry(
 			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMenuService menuService) {
+			final int configurationElementCount, final SMenuManager menuService) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = menuService.getDefinedActionSets();
 		if (handleObjects != null) {
@@ -272,7 +253,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private static final void readGroupsFromRegistry(
 			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMenuService menuService) {
+			final int configurationElementCount, final SMenuManager menuService) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = menuService.getDefinedGroups();
 		if (handleObjects != null) {
@@ -315,8 +296,6 @@ final class MenuPersistence extends RegistryPersistence {
 
 			final SGroup group = menuService.getGroup(id);
 			group.define(separatorsVisible, locations, dynamicMenu);
-			menuContributions.add(menuService.contributeMenu(group,
-					visibleWhenExpression));
 		}
 
 		logWarnings(
@@ -344,7 +323,7 @@ final class MenuPersistence extends RegistryPersistence {
 	private static final void readItemsFromRegistry(
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
-			final IMenuService menuService, final ICommandService commandService) {
+			final SMenuManager menuService, final ICommandService commandService) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = menuService.getDefinedItems();
 		if (handleObjects != null) {
@@ -388,8 +367,6 @@ final class MenuPersistence extends RegistryPersistence {
 
 			final SItem item = menuService.getItem(id);
 			item.define(command, menuId, locations);
-			menuContributions.add(menuService.contributeMenu(item,
-					visibleWhenExpression));
 		}
 
 		logWarnings(
@@ -570,7 +547,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private static final void readMenusFromRegistry(
 			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMenuService menuService) {
+			final int configurationElementCount, final SMenuManager menuService) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = menuService.getDefinedMenus();
 		if (handleObjects != null) {
@@ -613,8 +590,6 @@ final class MenuPersistence extends RegistryPersistence {
 
 			final SMenu menu = menuService.getMenu(id);
 			menu.define(label, locations, dynamicMenu);
-			menuContributions.add(menuService.contributeMenu(menu,
-					visibleWhenExpression));
 		}
 
 		logWarnings(
@@ -893,7 +868,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private static final void readWidgetsFromRegistry(
 			final IConfigurationElement[] configurationElements,
-			final int configurationElementCount, final IMenuService menuService) {
+			final int configurationElementCount, final SMenuManager menuService) {
 		// Undefine all the previous handle objects.
 		final HandleObject[] handleObjects = menuService.getDefinedWidgets();
 		if (handleObjects != null) {
@@ -940,8 +915,6 @@ final class MenuPersistence extends RegistryPersistence {
 					
 			final SWidget widget = menuService.getWidget(id);
 			widget.define(widgetClass, locations, layout);
-			menuContributions.add(menuService.contributeMenu(widget,
-					visibleWhenExpression));
 		}
 
 		logWarnings(
@@ -959,21 +932,23 @@ final class MenuPersistence extends RegistryPersistence {
 	 * The menu service which should be populated with the values from the
 	 * registry; must not be <code>null</code>.
 	 */
+	private final SMenuManager sMenuManager;
+	
 	private final IMenuService menuService;
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
 	 * 
-	 * @param menuService
+	 * @param mm
 	 *            The menu service which should be populated with the values
 	 *            from the registry; must not be <code>null</code>.
 	 * @param commandService
 	 *            The command service which is providing the commands for the
 	 *            workbench; must not be <code>null</code>.
 	 */
-	MenuPersistence(final IMenuService menuService,
+	MenuPersistence(final SMenuManager mm, final IMenuService ms,
 			final ICommandService commandService) {
-		if (menuService == null) {
+		if (ms == null) {
 			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
 		}
 
@@ -982,12 +957,12 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 
 		this.commandService = commandService;
-		this.menuService = menuService;
+		this.sMenuManager = mm;
+		this.menuService = ms;
 	}
 
 	public final void dispose() {
 		super.dispose();
-		clearContributions(menuService);
 	}
 
 	protected final boolean isChangeImportant(final IRegistryChangeEvent event) {
@@ -1055,18 +1030,17 @@ final class MenuPersistence extends RegistryPersistence {
 			}
 		}
 
-		clearContributions(menuService);
 		readItemsFromRegistry(indexedConfigurationElements[INDEX_ITEMS],
-				itemCount, menuService, commandService);
+				itemCount, sMenuManager, commandService);
 		readMenusFromRegistry(indexedConfigurationElements[INDEX_MENUS],
-				menuCount, menuService);
+				menuCount, sMenuManager);
 		readGroupsFromRegistry(indexedConfigurationElements[INDEX_GROUPS],
-				groupCount, menuService);
+				groupCount, sMenuManager);
 		readWidgetsFromRegistry(indexedConfigurationElements[INDEX_WIDGETS],
-				widgetCount, menuService);
+				widgetCount, sMenuManager);
 		readActionSetsFromRegistry(
 				indexedConfigurationElements[INDEX_ACTION_SETS],
-				actionSetCount, menuService);
+				actionSetCount, sMenuManager);
 		
 		// Read legacy 3.2 'trim' additions
 		readTrimAdditions(menuService);

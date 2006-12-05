@@ -37,10 +37,6 @@ import org.eclipse.ui.internal.util.Util;
  * 
  * @since 3.2
  */
-/**
- * @since 3.3
- * 
- */
 public final class WorkbenchMenuService implements IMenuService {
 
 	/**
@@ -48,11 +44,6 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * window.
 	 */
 	private final MenuAuthority menuAuthority;
-
-	/**
-	 * The menu manager underlying this menu service; never <code>null</code>.
-	 */
-	private final SMenuManager menuManager;
 
 	/**
 	 * The class providing persistence for this service.
@@ -71,8 +62,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	public WorkbenchMenuService(final SMenuManager menuManager,
 			final ICommandService commandService) {
 		this.menuAuthority = new MenuAuthority(null);
-		this.menuManager = menuManager;
-		this.menuPersistence = new MenuPersistence(this, commandService);
+		this.menuPersistence = new MenuPersistence(menuManager, this, commandService);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -94,50 +84,6 @@ public final class WorkbenchMenuService implements IMenuService {
 	public final void dispose() {
 		menuPersistence.dispose();
 		menuAuthority.dispose();
-	}
-
-	public final SActionSet getActionSet(final String actionSetId) {
-		return menuManager.getActionSet(actionSetId);
-	}
-
-	public final SActionSet[] getDefinedActionSets() {
-		return menuManager.getDefinedActionSets();
-	}
-
-	public final SGroup[] getDefinedGroups() {
-		return menuManager.getDefinedGroups();
-	}
-
-	public final SItem[] getDefinedItems() {
-		return menuManager.getDefinedItems();
-	}
-
-	public final SMenu[] getDefinedMenus() {
-		return menuManager.getDefinedMenus();
-	}
-
-	public final SWidget[] getDefinedWidgets() {
-		return menuManager.getDefinedWidgets();
-	}
-
-	public final SGroup getGroup(final String groupId) {
-		return menuManager.getGroup(groupId);
-	}
-
-	public final SItem getItem(final String itemId) {
-		return menuManager.getItem(itemId);
-	}
-
-	public final SMenuLayout getLayout() {
-		return menuManager.getLayout();
-	}
-
-	public final SMenu getMenu(final String menuId) {
-		return menuManager.getMenu(menuId);
-	}
-
-	public final SWidget getWidget(final String widgetId) {
-		return menuManager.getWidget(widgetId);
 	}
 
 	public final void readRegistry() {

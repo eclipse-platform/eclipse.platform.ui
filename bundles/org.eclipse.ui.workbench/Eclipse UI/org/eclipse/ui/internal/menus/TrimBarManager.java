@@ -53,7 +53,7 @@ public class TrimBarManager {
 	 */
 	private STrimBuilder fTrimBuilder;
 
-	private IMenuService fMenuService;
+	private SMenuManager fMenuService;
 
 	private boolean fDirty;
 
@@ -64,13 +64,13 @@ public class TrimBarManager {
 	 *            The window on which this menu manager exists; must not be
 	 *            <code>null</code>.
 	 */
-	public TrimBarManager(final WorkbenchWindow window) {
+	public TrimBarManager(final WorkbenchWindow window, SMenuManager manager) {
 		if (window == null) {
 			throw new IllegalArgumentException("The window cannot be null"); //$NON-NLS-1$
 		}
 
 		// Remember the parameters
-		fMenuService = (IMenuService) window.getService(IMenuService.class);
+		fMenuService = manager;
 		fTrimBuilder = new STrimBuilder(window);
 
 		// New layouts are always 'dirty'
