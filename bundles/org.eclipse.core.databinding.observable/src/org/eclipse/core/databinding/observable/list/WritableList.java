@@ -184,6 +184,7 @@ public class WritableList extends ObservableList {
 			Object element = it.next();
 			// always report 0 as the remove index
 			entries.add(Diffs.createListDiffEntry(0, false, element));
+			it.remove();
 		}
 		fireListChange(Diffs.createListDiff((ListDiffEntry[]) entries
 				.toArray(new ListDiffEntry[entries.size()])));

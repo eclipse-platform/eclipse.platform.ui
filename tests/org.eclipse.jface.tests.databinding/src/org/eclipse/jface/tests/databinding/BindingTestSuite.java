@@ -33,6 +33,7 @@ import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPri
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskParserTest;
 import org.eclipse.jface.tests.databinding.observable.ThreadRealmTest;
+import org.eclipse.jface.tests.databinding.observable.list.WritableListTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractObservableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
@@ -117,6 +118,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(AbstractObservableValueTest.class);
 		addTestSuite(AbstractVetoableValueTest.class);
 		addTestSuite(WritableValueTest.class);
+		addTestSuite(WritableListTest.class);
 
 		// org.eclipse.jface.tests.databinding.scenarios
 		addTest(BindingScenariosTestSuite.suite());
