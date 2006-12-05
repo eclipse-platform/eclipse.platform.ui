@@ -23,7 +23,6 @@ public class MenuActivation extends EvaluationResultCache implements
 		IMenuActivation {
 
 	private IContributionItem fItem;
-	private MenuAuthority menuAuthority;
 
 	/**
 	 * @param item
@@ -33,11 +32,9 @@ public class MenuActivation extends EvaluationResultCache implements
 	 * @param auth
 	 *            the menu authority responsible for this cache
 	 */
-	public MenuActivation(IContributionItem item, Expression visibleWhen,
-			MenuAuthority auth) {
+	public MenuActivation(IContributionItem item, Expression visibleWhen) {
 		super(visibleWhen);
 		fItem = item;
-		menuAuthority  = auth;
 	}
 
 	/*
@@ -47,11 +44,5 @@ public class MenuActivation extends EvaluationResultCache implements
 	 */
 	public IContributionItem getContribution() {
 		return fItem;
-	}
-	
-
-	public void dispose() {
-		menuAuthority.removeContribution(this);
-		fItem = null;
 	}
 }

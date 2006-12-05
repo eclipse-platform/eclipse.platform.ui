@@ -19,8 +19,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
 
 /**
@@ -331,6 +333,85 @@ final public class MenuAuthority extends ExpressionAuthority {
 
 				// old code
 				// contribution.getMenuElement().setVisible(window, newVisible);
+			}
+		}
+	}
+
+	/**
+	 * This item will have its visibleWhen clause managed by this menu
+	 * authority. The item lifecycle must be managed by the IMenuService that
+	 * calls this method.
+	 * 
+	 * @param item
+	 *            the item to manage. Must not be <code>null</code>. The item
+	 *            must return the <code>setVisible(boolean)</code> value from
+	 *            its <code>isVisible()</code> method.
+	 * @param visibleWhen
+	 *            The visibleWhen expression. Must not be <code>null</code>.
+	 */
+	public void addContribution(final IContributionItem item,
+			final Expression visibleWhen) {
+		if (item == null) {
+			throw new IllegalArgumentException("item cannot be null"); //$NON-NLS-1$
+		}
+		if (visibleWhen == null) {
+			throw new IllegalArgumentException(
+					"visibleWhen expression cannot be null"); //$NON-NLS-1$
+		}
+		Object obj = activationsByItem.get(item);
+		if (obj != null) {
+			String id = item.getId();
+			WorkbenchPlugin.log("item is already registered: " //$NON-NLS-1$
+					+ (id == null ? "no id" : id)); //$NON-NLS-1$
+			return;
+		}
+		MenuActivation activation = new MenuActivation(item, visibleWhen);
+		activationsByItem.put(item, activation);
+		item.setVisible(evaluate(activation));
+		// Next we update the source priority bucket sort of activations.
+		final int sourcePriority = activation.getSourcePriority();
+		for (int i = 1; i <= 32; i++) {
+			if ((sourcePriority & (1 << i)) != 0) {
+				Set contributions = activationsBySourcePriority[i];
+				if (contributions == null) {
+					contributions = new HashSet(1);
+					activationsBySourcePriority[i] = contributions;
+				}
+				contributions.add(activation);
+			}
+		}
+	}
+
+	/**
+	 * Remove this item from having its visibleWhen clause managed by this menu
+	 * authority. This method does nothing if the item is not managed by this
+	 * menu authority.
+	 * 
+	 * @param item
+	 *            the item to remove. Must not be <code>null</code>.
+	 */
+	public void removeContribition(final IContributionItem item) {
+		if (item == null) {
+			throw new IllegalArgumentException("item cannot be null"); //$NON-NLS-1$
+		}
+
+		Object obj = activationsByItem.remove(item);
+		if (obj == null) {
+			// it's a no-op to remove an unmanaged item
+			return;
+		}
+		MenuActivation activation = (MenuActivation) obj;
+		final int sourcePriority = activation.getSourcePriority();
+		for (int i = 1; i <= 32; i++) {
+			if ((sourcePriority & (1 << i)) != 0) {
+				final Set contributions = activationsBySourcePriority[i];
+				if (contributions == null) {
+					continue;
+				}
+				contributions.remove(activation);
+				if (contributions.isEmpty()) {
+					activationsBySourcePriority[i] = null;
+				}
 			}
 		}
 	}

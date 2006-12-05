@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
 
@@ -191,5 +192,27 @@ public final class WindowMenuService implements IMenuService {
 	 */
 	public void addCacheForURI(MenuCacheEntry cache) {
 		parent.addCacheForURI(cache);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression)
+	 */
+	public void registerVisibleWhen(IContributionItem item,
+			Expression visibleWhen) {
+		parent.registerVisibleWhen(item, visibleWhen);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
+	 */
+	public void unregisterVisibleWhen(IContributionItem item) {
+		parent.unregisterVisibleWhen(item);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
+	 */
+	public void releaseMenu(ContributionManager mgr) {
+		parent.releaseMenu(mgr);
 	}
 }

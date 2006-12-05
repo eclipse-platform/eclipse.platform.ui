@@ -13,11 +13,13 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -215,10 +217,20 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	 */
 	public void dispose() {
 		if (menuExtenders != null) {
+			HashSet managers = new HashSet();
 			for (int i = 0; i < menuExtenders.size(); i++) {
-				((PopupMenuExtender) menuExtenders.get(i)).dispose();
+				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
+				managers.add(ext.getManager());
+				ext.dispose();
+			}
+			Iterator i = managers.iterator();
+			final IMenuService menuService = (IMenuService) getService(
+					IMenuService.class);
+			while (i.hasNext()) {
+				menuService.releaseMenu((ContributionManager) i.next());
 			}
 			menuExtenders = null;
+			
 		}
 
 		 if (keyBindingService != null) {

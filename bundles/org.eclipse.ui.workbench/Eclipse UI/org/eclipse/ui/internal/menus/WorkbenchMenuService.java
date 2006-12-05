@@ -219,7 +219,6 @@ public final class WorkbenchMenuService implements IMenuService {
 			uriToManager.put(cacheId, caches);
 		}
 		caches.add(cache);
-		cache.generateSubCaches();
 	}
 
 	private boolean processAdditions(ContributionManager mgr,
@@ -236,18 +235,6 @@ public final class WorkbenchMenuService implements IMenuService {
 		if (ciList.size() > 0) {
 			for (Iterator ciIter = ciList.iterator(); ciIter.hasNext();) {
 				IContributionItem ici = (IContributionItem) ciIter.next();
-
-				// Register for 'visibleWhen' handling
-				Expression visibleWhen = cache.getVisibleWhenForItem(ici);
-				if (visibleWhen != null) {
-					MenuActivation menuActivation = new MenuActivation(ici,
-							visibleWhen, menuAuthority);
-					if (ici instanceof AuthorityContributionItem) {
-						((AuthorityContributionItem) ici)
-								.setActivation(menuActivation);
-					}
-					menuAuthority.addContribution(menuActivation);
-				}
 
 				mgr.insert(insertionIndex++, ici);
 			}
@@ -357,5 +344,33 @@ public final class WorkbenchMenuService implements IMenuService {
 	 */
 	public IEvaluationContext getCurrentState() {
 		return menuAuthority.getCurrentState();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression)
+	 */
+	public void registerVisibleWhen(IContributionItem item,
+			Expression visibleWhen) {
+		menuAuthority.addContribution(item, visibleWhen);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
+	 */
+	public void unregisterVisibleWhen(IContributionItem item) {
+		menuAuthority.removeContribition(item);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
+	 */
+	public void releaseMenu(ContributionManager mgr) {
+		IContributionItem[] items = mgr.getItems();
+		for (int i = 0; i < items.length; i++) {
+			menuAuthority.removeContribition(items[i]);
+			if (items[i] instanceof ContributionManager) {
+				releaseMenu((ContributionManager) items[i]);
+			}
+		}
 	}
 }

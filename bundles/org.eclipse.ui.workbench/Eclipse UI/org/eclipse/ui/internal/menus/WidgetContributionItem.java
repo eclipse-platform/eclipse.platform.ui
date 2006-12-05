@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -11,7 +12,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * @since 3.3
  * 
  */
-final class WidgetContributionItem extends AuthorityContributionItem {
+final class WidgetContributionItem extends ContributionItem {
 	/**
 	 * 
 	 */

@@ -28,7 +28,6 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.menus.MenuActivation;
 import org.eclipse.ui.internal.menus.MenuAuthority;
 import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
@@ -75,25 +74,21 @@ public class MenuAuthorityTest extends UITestCase {
 				MenuContributionHarness.CONTEXT_TEST1_ID,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
 
-		MenuActivation activation = new MenuActivation(item, activeContextExpr,
-				menuAuth);
-		menuAuth.addContribution(activation);
-		assertFalse("starting state", activation.evaluate(menuAuth
-				.getCurrentState()));
+		menuAuth.addContribution(item, activeContextExpr);
+		
+		assertFalse("starting state", item.isVisible());
 
 		activeContext = contextService
 				.activateContext(MenuContributionHarness.CONTEXT_TEST1_ID);
 
-		assertTrue("active context", activation.evaluate(menuAuth
-				.getCurrentState()));
+		assertTrue("active context", item.isVisible());
 
 		contextService.deactivateContext(activeContext);
 		activeContext = null;
 
-		assertFalse("after deactivation", activation.evaluate(menuAuth
-				.getCurrentState()));
+		assertFalse("after deactivation", item.isVisible());
 
-		activation.dispose();
+		menuAuth.removeContribition(item);
 	}
 
 	public void testExtensionContributionExpression() throws Exception {
@@ -132,24 +127,20 @@ public class MenuAuthorityTest extends UITestCase {
 		}
 		assertNotNull("Failed to find expression", activeContextExpr);
 
-		MenuActivation activation = new MenuActivation(aci, activeContextExpr,
-				menuAuth);
-		menuAuth.addContribution(activation);
-		assertFalse("starting state", activation.evaluate(menuAuth
-				.getCurrentState()));
+		
+		menuAuth.addContribution(aci, activeContextExpr);
+		assertFalse("starting state", aci.isVisible());
 
 		activeContext = contextService
 				.activateContext(MenuContributionHarness.CONTEXT_TEST1_ID);
-		assertTrue("active context", activation.evaluate(menuAuth
-				.getCurrentState()));
+		assertTrue("active context", aci.isVisible());
 
 		contextService.deactivateContext(activeContext);
 		activeContext = null;
 
-		assertFalse("after deactivation", activation.evaluate(menuAuth
-				.getCurrentState()));
+		assertFalse("after deactivation", aci.isVisible());
 
-		activation.dispose();
+		menuAuth.removeContribition(aci);
 	}
 
 	/*

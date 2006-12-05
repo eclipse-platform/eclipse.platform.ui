@@ -23,9 +23,4 @@ public interface IMenuActivation extends IEvaluationResultCache {
 	 * @return the IContributionItem for the cache.
 	 */
 	public IContributionItem getContribution();
-	
-	/**
-	 * remove this menu activation from its authority.
-	 */
-	public void dispose();
 }

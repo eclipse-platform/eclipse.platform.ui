@@ -1,6 +1,7 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -11,7 +12,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * @since 3.3
  * 
  */
-final public class SeparatorContributionItem extends AuthorityContributionItem {
+final public class SeparatorContributionItem extends ContributionItem {
 	/**
 	 * 
 	 */

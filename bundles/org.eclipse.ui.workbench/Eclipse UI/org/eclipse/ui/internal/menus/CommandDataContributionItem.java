@@ -12,6 +12,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -32,8 +33,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.3
  * 
  */
-public final class CommandDataContributionItem extends
-		AuthorityContributionItem implements IMenuCallback {
+public final class CommandDataContributionItem extends ContributionItem
+		implements IMenuCallback {
 	/**
 	 * 
 	 */
@@ -49,29 +50,45 @@ public final class CommandDataContributionItem extends
 
 	private ParameterizedCommand command;
 
-	private ItemData item;
+	private ImageDescriptor icon;
+
+	private String label;
+
+	private String tooltip;
 
 	/**
 	 * @param id
-	 * @param data
+	 *            The id for this item. May be <code>null</code>.
+	 * @param commandId
+	 *            The commandId. Must not be <code>null</code>.
+	 * @param parameters
+	 *            A map of strings to strings. Parameters names to values. This
+	 *            may be <code>null</code>.
+	 * @param icon
+	 *            An icon for this item. May be <code>null</code>.
+	 * @param label
+	 *            A label for this item. May be <code>null</code>.
+	 * @param tooltip
+	 *            A tooltip for this item. May be <code>null</code>.
 	 */
-	CommandDataContributionItem(String id, ItemData data) {
+	public CommandDataContributionItem(String id, String commandId,
+			Map parameters, ImageDescriptor icon, String label, String tooltip) {
 		super(id);
+		this.icon = icon;
+		this.label = label;
+		this.tooltip = tooltip;
 		commandService = (ICommandService) PlatformUI.getWorkbench()
 				.getService(ICommandService.class);
 		handlerService = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
-		item = data;
-		createCommand();
+		createCommand(commandId, parameters);
 	}
 
 	ParameterizedCommand getCommand() {
 		return command;
 	}
 
-	void createCommand() {
-
-		String commandId = item.getCommandId();
+	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
 			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
 					+ "\", no command id"); //$NON-NLS-1$
@@ -83,7 +100,7 @@ public final class CommandDataContributionItem extends
 					+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		Map parameters = item.getParameters();
+
 		if (parameters == null || parameters.size() == 0) {
 			command = new ParameterizedCommand(cmd, null);
 			return;
@@ -125,13 +142,12 @@ public final class CommandDataContributionItem extends
 		MenuItem newItem = new MenuItem(parent, SWT.PUSH, index);
 		newItem.setData(this);
 		newItem.setData(IMenuCallback.CALLBACK, this);
-		newItem.setText(item.getLabel());
+		newItem.setText(label);
 
-		ImageDescriptor iconDescriptor = item.getIcon();
-		if (iconDescriptor != null) {
+		if (icon != null) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
 					.getResources());
-			newItem.setImage(m.createImage(iconDescriptor));
+			newItem.setImage(m.createImage(icon));
 			disposeOldImages();
 			localResourceManager = m;
 		}
@@ -139,7 +155,6 @@ public final class CommandDataContributionItem extends
 		newItem.addListener(SWT.Dispose, getItemListener());
 		newItem.addListener(SWT.Selection, getItemListener());
 		widget = newItem;
-		setDirty(false);
 	}
 
 	public void fill(ToolBar parent, int index) {
@@ -150,27 +165,25 @@ public final class CommandDataContributionItem extends
 		newItem.setData(this);
 		newItem.setData(IMenuCallback.CALLBACK, this);
 
-		ImageDescriptor iconDescriptor = item.getIcon();
-		if (iconDescriptor != null) {
+		if (icon != null) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
 					.getResources());
-			newItem.setImage(m.createImage(iconDescriptor));
+			newItem.setImage(m.createImage(icon));
 			disposeOldImages();
 			localResourceManager = m;
-		} else if (item.getLabel() != null) {
-			newItem.setText(item.getLabel());
+		} else if (label != null) {
+			newItem.setText(label);
 		}
 
-		if (item.getTooltip() != null)
-			newItem.setToolTipText(item.getTooltip());
-		else
-			newItem.setToolTipText(item.getLabel());
+		if (tooltip != null)
+			newItem.setToolTipText(tooltip);
+		else if (label != null)
+			newItem.setToolTipText(label);
 		// TBD...Listener support
 		newItem.addListener(SWT.Selection, getItemListener());
 		newItem.addListener(SWT.Dispose, getItemListener());
 
 		widget = newItem;
-		setDirty(false);
 	}
 
 	/*
@@ -200,9 +213,6 @@ public final class CommandDataContributionItem extends
 	 */
 	public void dispose() {
 		disposeOldImages();
-		item = null;
-		command = null;
-		setDirty(false);
 		super.dispose();
 	}
 
@@ -268,23 +278,24 @@ public final class CommandDataContributionItem extends
 	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuData#setIcon(org.eclipse.jface.resource.ImageDescriptor)
 	 */
-	public void setIcon(ImageDescriptor icon) {
+	public void setIcon(ImageDescriptor desc) {
+		icon = desc;
 		if (widget instanceof MenuItem) {
 			MenuItem item = (MenuItem) widget;
-			if (icon != null) {
+			disposeOldImages();
+			if (desc != null) {
 				LocalResourceManager m = new LocalResourceManager(
 						JFaceResources.getResources());
-				item.setImage(m.createImage(icon));
-				disposeOldImages();
+				item.setImage(m.createImage(desc));
 				localResourceManager = m;
 			}
 		} else if (widget instanceof ToolItem) {
 			ToolItem item = (ToolItem) widget;
-			if (icon != null) {
+			disposeOldImages();
+			if (desc != null) {
 				LocalResourceManager m = new LocalResourceManager(
 						JFaceResources.getResources());
-				item.setImage(m.createImage(icon));
-				disposeOldImages();
+				item.setImage(m.createImage(desc));
 				localResourceManager = m;
 			}
 		}
@@ -296,6 +307,7 @@ public final class CommandDataContributionItem extends
 	 * @see org.eclipse.ui.internal.menus.IMenuData#setLabel(java.lang.String)
 	 */
 	public void setLabel(String text) {
+		label = text;
 		if (widget instanceof MenuItem) {
 			((MenuItem) widget).setText(text);
 		} else if (widget instanceof ToolItem) {
@@ -309,6 +321,7 @@ public final class CommandDataContributionItem extends
 	 * @see org.eclipse.ui.internal.menus.IMenuData#setTooltip(java.lang.String)
 	 */
 	public void setTooltip(String text) {
+		tooltip = text;
 		if (widget instanceof ToolItem) {
 			((ToolItem) widget).setToolTipText(text);
 		}

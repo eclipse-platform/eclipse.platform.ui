@@ -77,6 +77,7 @@ public class MenuPopulationTest extends UITestCase {
 
 		assertTrue(itemX1.isVisible());
 
+		menuService.releaseMenu(manager);
 		manager.dispose();
 	}
 

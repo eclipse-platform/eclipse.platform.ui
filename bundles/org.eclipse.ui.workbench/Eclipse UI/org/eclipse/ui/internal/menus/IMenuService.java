@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.services.IServiceWithSources;
 
@@ -308,6 +309,17 @@ public interface IMenuService extends IServiceWithSources {
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
 
 	/**
+	 * Before calling dispose() on a ContributionManager populated by the menu
+	 * service, you must unregister the contribution manager. This takes care of
+	 * unregistering any IContributionItems that have their visibleWhen clause
+	 * managed by this menu service.
+	 * 
+	 * @param mgr
+	 *            The manager that was populated by a call to populateMenu
+	 */
+	public void releaseMenu(ContributionManager mgr);
+
+	/**
 	 * Get the current state as seen by the menu service.
 	 * 
 	 * @return an IEvaluationContext containing state variables.
@@ -315,4 +327,28 @@ public interface IMenuService extends IServiceWithSources {
 	 * @see ISources
 	 */
 	public IEvaluationContext getCurrentState();
+
+	/**
+	 * This item will have its visibleWhen clause managed by this menu service.
+	 * The item lifecycle must be managed by this service as well.
+	 * 
+	 * @param item
+	 *            the item to manage. Must not be <code>null</code>. The item
+	 *            must return the <code>setVisible(boolean)</code> value from
+	 *            its <code>isVisible()</code> method.
+	 * @param visibleWhen
+	 *            The visibleWhen expression. Must not be <code>null</code>.
+	 */
+	public void registerVisibleWhen(IContributionItem item,
+			Expression visibleWhen);
+
+	/**
+	 * Remove this item from having its visibleWhen clause managed by this menu
+	 * service. This method does nothing if the item is not managed by this menu
+	 * service.
+	 * 
+	 * @param item
+	 *            the item to remove. Must not be <code>null</code>.
+	 */
+	public void unregisterVisibleWhen(IContributionItem item);
 }

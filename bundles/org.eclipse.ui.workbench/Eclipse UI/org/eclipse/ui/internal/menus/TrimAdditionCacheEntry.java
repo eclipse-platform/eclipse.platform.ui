@@ -34,7 +34,7 @@ import org.eclipse.ui.menus.IWorkbenchWidget;
  * @since 3.3
  * 
  */
-public class TrimAdditionCacheEntry extends MenuCacheEntry {
+public class TrimAdditionCacheEntry  {
 	private IConfigurationElement additionElement;
 	private MenuLocationURI uri = null;
 	
@@ -60,13 +60,8 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 
 	public TrimAdditionCacheEntry(IConfigurationElement element,
 			MenuLocationURI uri, IMenuService service) {
-		super(service);
 		this.additionElement = element;
 		this.uri = uri;
-
-		
-		if (additionElement == null || this.uri == null)
-			menuService = null;
 	}
 
 	/**
@@ -264,5 +259,9 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 	 */
 	public void removeWidget(IWidget widget) {
 		widgetToConfigElementMap.remove(widget);
+	}
+	
+	public MenuLocationURI getUri() {
+		return uri;
 	}
 }

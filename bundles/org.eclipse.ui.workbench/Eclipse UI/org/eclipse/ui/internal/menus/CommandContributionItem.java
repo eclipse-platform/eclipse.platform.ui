@@ -13,6 +13,7 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -33,7 +34,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * @since 3.3
  * 
  */
-public final class CommandContributionItem extends AuthorityContributionItem
+public final class CommandContributionItem extends ContributionItem
 		implements IMenuCallback {
 	/**
 	 * 
@@ -140,7 +141,6 @@ public final class CommandContributionItem extends AuthorityContributionItem
 		newItem.addListener(SWT.Dispose, getItemListener());
 		newItem.addListener(SWT.Selection, getItemListener());
 		widget = newItem;
-		setDirty(false);
 	}
 
 	public void fill(ToolBar parent, int index) {
@@ -174,7 +174,6 @@ public final class CommandContributionItem extends AuthorityContributionItem
 		newItem.addListener(SWT.Dispose, getItemListener());
 
 		widget = newItem;
-		setDirty(false);
 	}
 
 	/*
@@ -204,9 +203,6 @@ public final class CommandContributionItem extends AuthorityContributionItem
 	 */
 	public void dispose() {
 		disposeOldImages();
-		itemAddition = null;
-		command = null;
-		setDirty(false);
 		super.dispose();
 	}
 

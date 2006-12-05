@@ -91,6 +91,16 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			// Free action bars, pane, etc.
 			PartSite site = (PartSite) view.getSite();
 			ViewActionBars actionBars = (ViewActionBars) site.getActionBars();
+			//
+			// 3.3 start
+			//
+			IMenuService menuService = (IMenuService) site
+					.getService(IMenuService.class);
+			menuService.releaseMenu((ContributionManager) site.getActionBars()
+					.getMenuManager());
+			menuService.releaseMenu((ContributionManager) site.getActionBars()
+					.getToolBarManager());
+			// 3.3 end
 			actionBars.dispose();
 
 			// Free the site.

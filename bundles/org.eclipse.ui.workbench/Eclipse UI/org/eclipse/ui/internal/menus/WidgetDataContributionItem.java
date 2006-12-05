@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal.menus;
 
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -10,23 +11,18 @@ import org.eclipse.swt.widgets.ToolItem;
  * @since 3.3
  * 
  */
-final class WidgetDataContributionItem extends AuthorityContributionItem {
-	/**
-	 * 
-	 */
-	private final WidgetData widgetAddition;
+public abstract class WidgetDataContributionItem extends ContributionItem {
 
 	/**
 	 * @param id
 	 * @param widgetAddition
 	 */
-	public WidgetDataContributionItem(String id, WidgetData widgetAddition) {
+	public WidgetDataContributionItem(String id) {
 		super(id);
-		this.widgetAddition = widgetAddition;
 	}
 
 	public void fill(ToolBar parent, int index) {
-		AbstractWorkbenchWidget widget = widgetAddition.createWidget();
+		AbstractWorkbenchWidget widget = createWidget();
 		if (widget != null) {
 			Composite widgetContainer = new Composite(parent, SWT.NONE);
 			widget.fill(widgetContainer);
@@ -37,4 +33,6 @@ final class WidgetDataContributionItem extends AuthorityContributionItem {
 			sepItem.setWidth(prefSize.x);
 		}
 	}
+	
+	public abstract AbstractWorkbenchWidget createWidget();
 }

@@ -60,12 +60,13 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 		}
 		setUri(new MenuLocationURI(locationURI));
 
+		generateSubCaches();
 	}
 
 	/**
 	 * 
 	 */
-	public void generateSubCaches() {
+	private void generateSubCaches() {
 		IConfigurationElement[] items = additionElement.getChildren();
 		for (int i = 0; i < items.length; i++) {
 			String itemType = items[i].getName();
@@ -82,7 +83,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 		}
 	}
 
-	public Expression getVisibleWhenForItem(IContributionItem item) {
+	private Expression getVisibleWhenForItem(IContributionItem item) {
 		IConfigurationElement configElement = (IConfigurationElement) iciToConfigElementMap
 				.get(item);
 		if (configElement == null)
@@ -147,8 +148,12 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 			// Cache the relationship between the ICI and the
 			// registry element used to back it
 			if (newItem != null) {
-				additions.add(newItem);
 				iciToConfigElementMap.put(newItem, items[i]);
+				additions.add(newItem);
+				Expression visibleWhen = getVisibleWhenForItem(newItem);
+				if (visibleWhen!=null) {
+					menuService.registerVisibleWhen(newItem, visibleWhen);
+				}
 			}
 		}
 	}
@@ -293,5 +298,13 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 			}
 		}
 		return map;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.menus.MenuCacheEntry#releaseContributionItems(java.util.List)
+	 */
+	public void releaseContributionItems(List items) {
+		// TODO Auto-generated method stub
+		
 	}
 }

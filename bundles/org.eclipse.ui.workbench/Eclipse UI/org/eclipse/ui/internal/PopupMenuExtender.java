@@ -436,4 +436,8 @@ public class PopupMenuExtender implements IMenuListener2,
 			}
 		}
 	}
+	
+	public MenuManager getManager() {
+		return menu;
+	}
 }

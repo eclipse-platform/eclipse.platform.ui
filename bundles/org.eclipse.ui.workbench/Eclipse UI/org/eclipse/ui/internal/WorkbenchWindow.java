@@ -1482,6 +1482,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			closeAllPages();
 
 			fireWindowClosed();
+			
+			// time to wipe our our populate
+			IMenuService menuService = (IMenuService) workbench
+					.getService(IMenuService.class);
+			menuService.releaseMenu(((ContributionManager) getActionBars()
+					.getMenuManager()));
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();

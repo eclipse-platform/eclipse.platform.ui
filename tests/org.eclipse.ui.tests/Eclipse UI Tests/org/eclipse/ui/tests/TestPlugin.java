@@ -12,15 +12,25 @@ package org.eclipse.ui.tests;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.menus.AbstractWorkbenchWidget;
+import org.eclipse.ui.internal.menus.CommandDataContributionItem;
+import org.eclipse.ui.internal.menus.IMenuService;
+import org.eclipse.ui.internal.menus.MenuCacheEntry;
+import org.eclipse.ui.internal.menus.MenuLocationURI;
+import org.eclipse.ui.internal.menus.WidgetDataContributionItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.tests.api.workbenchpart.TextWidget;
 import org.eclipse.ui.tests.decorators.BackgroundColorDecorator;
 import org.eclipse.ui.tests.dynamicplugins.TestInstallUtil;
 import org.osgi.framework.BundleContext;
@@ -123,14 +133,96 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     public void start(BundleContext context) throws Exception {
         TestInstallUtil.setContext(context);
         super.start(context);
+        addMenuContribution();
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
      */
     public void stop(BundleContext context) throws Exception {
+    	removeMenuContribution();
         TestInstallUtil.setContext(null);
         super.stop(context);
         BackgroundColorDecorator.color = null;
     }
+    
+    public void addMenuContribution() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
+		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+				.getService(IMenuService.class);
+		MenuCacheEntry cache = new MenuCacheEntry(menuService) {
+			public void getContributionItems(List additions) {
+				CommandDataContributionItem item = new CommandDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX20",
+						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+						"Item X20", null);
+				additions.add(item);
+
+				MenuManager submenu = new MenuManager("Menu X21",
+						"org.eclipse.ui.tests.menus.menuX21");
+				item = new CommandDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX22",
+						"org.eclipse.ui.tests.menus.updateWorld", null, null,
+						"Item X22", null);
+				submenu.add(item);
+				item = new CommandDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX23",
+						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+						"Item X23", null);
+				submenu.add(item);
+
+				additions.add(submenu);
+
+				item = new CommandDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX24",
+						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
+						"Item X24", null);
+				additions.add(item);
+			}
+
+			public void releaseContributionItems(List items) {
+				// for us this is a no-op
+			}
+		};
+		cache
+				.setUri(new MenuLocationURI(
+						"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions"));
+
+		menuService.addCacheForURI(cache);
+
+		cache = new MenuCacheEntry(menuService) {
+			public void getContributionItems(List additions) {
+				CommandDataContributionItem item = new CommandDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX25",
+						"org.eclipse.ui.tests.menus.updateWorld", null, null,
+						"Item X25", null);
+				additions.add(item);
+				WidgetDataContributionItem widget = new WidgetDataContributionItem(
+						"org.eclipse.ui.tests.menus.itemX26") {
+
+					public AbstractWorkbenchWidget createWidget() {
+						return new TextWidget();
+					}
+
+				};
+				additions.add(widget);
+			}
+
+			public void releaseContributionItems(List items) {
+				// for us this is a no-op
+			}
+		};
+		cache.setUri(new MenuLocationURI(
+				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness"));
+
+		menuService.addCacheForURI(cache);
+	}
+    
+    public void removeMenuContribution() {
+		if (!PlatformUI.isWorkbenchRunning()) {
+			return;
+		}
+	}
 }

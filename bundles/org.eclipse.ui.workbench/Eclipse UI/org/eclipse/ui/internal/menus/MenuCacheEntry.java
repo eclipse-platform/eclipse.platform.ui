@@ -13,9 +13,6 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.List;
 
-import org.eclipse.core.expressions.Expression;
-import org.eclipse.jface.action.IContributionItem;
-
 /**
  * @since 3.3
  * 
@@ -41,21 +38,9 @@ public abstract class MenuCacheEntry {
 		return uri;
 	}
 
-	void setUri(MenuLocationURI u) {
+	public void setUri(MenuLocationURI u) {
 		uri = u;
 	}
-
-	/**
-	 * The menu cache can return the visibleWhen clause for any
-	 * IContributionItems that it generates. It can return the same Expression
-	 * for many items.
-	 * 
-	 * @param item
-	 *            to find. Must not be <code>null</code>.
-	 * @return the visibleWhen clause, or <code>null</code> if there is none
-	 *         for this item.
-	 */
-	public abstract Expression getVisibleWhenForItem(IContributionItem item);
 
 	/**
 	 * This should be renamed to contributeItems. Cause the menu cache to
@@ -68,9 +53,11 @@ public abstract class MenuCacheEntry {
 	public abstract void getContributionItems(List additions);
 
 	/**
-	 * A framework lifecycle method. When a menu cache is added to the
-	 * IMenuService, it can generate additional menu caches for any submenus
-	 * that it contains.
+	 * This method tells the cache that the menu service is finished with the
+	 * IContributionItems that it created. If it caches them internally, it is
+	 * time to remove them.
+	 * 
+	 * @param items a list of IContributionItems created by this cache.
 	 */
-	public abstract void generateSubCaches();
+	public abstract void releaseContributionItems(List items);
 }
