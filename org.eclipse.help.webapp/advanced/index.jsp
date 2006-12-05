@@ -41,11 +41,17 @@ FRAMESET {
 function onloadHandler(e)
 {
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
-%>	var h=window.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
-	if(h<=19){
-		return; <%-- no need to resize up to 19px --%>
+%>	
+    try {
+        var h=window.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
+	    if(h<=19){
+		    // no need to resize up to 19px 
+	    } else {
+	        document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":"\""+data.getBannerHeight()+",\"+"%>(11+h)+",*"); <%-- default 24 --%>
+        }
+    }
+    catch (e) {
 	}
-	document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":"\""+data.getBannerHeight()+",\"+"%>(11+h)+",*"); <%-- default 24 --%>
 <%}%>
 <%
 if (data.isMozilla()){
