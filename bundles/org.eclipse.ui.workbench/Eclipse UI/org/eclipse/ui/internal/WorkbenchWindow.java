@@ -115,7 +115,6 @@ import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
-import org.eclipse.ui.internal.menus.LegacyMenuManager;
 import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.menus.TrimBarManager;
 import org.eclipse.ui.internal.menus.WindowMenuService;
@@ -1063,10 +1062,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @return a menu manager for this workbench window; never <code>null</code>.
 	 */
 	protected MenuManager createMenuManager() {
-		if (Policy.EXPERIMENTAL_MENU) {
-			return new LegacyMenuManager(this);
-		}
-
 		return super.createMenuManager();
 	}
 
@@ -2818,10 +2813,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			if (coolBarManager != null) {
 				coolBarManager.refresh();
 			}
-			if (!Policy.EXPERIMENTAL_MENU) {
-				getActionPresentation().setActionSets(
-						currentPage.getActionSets());
-			}
+			getActionPresentation().setActionSets(
+					currentPage.getActionSets());
 		}
 		fireActionSetsChanged();
 		updateActionBars();
