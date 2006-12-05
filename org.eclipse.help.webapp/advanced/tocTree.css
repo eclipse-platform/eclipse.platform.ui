@@ -27,7 +27,7 @@ DIV.hidden {
 }
 
 DIV.visible, DIV.root {  
-    margin-top:3px; 
+    margin-top:1px; 
 }
 
 SPAN.item{
@@ -41,6 +41,10 @@ IMG {
 	margin-<%=isRTL?"left":"right"%>:4px;
 }
 
+IMG.expander, IMG.h {
+    margin-top:4px;
+    margin-bottom:2px;
+}
 
 A {
 	text-decoration:none; 
