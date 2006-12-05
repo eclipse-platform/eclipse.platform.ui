@@ -669,6 +669,16 @@ public class ExpressionTests extends TestCase {
 		assertTrue(!test.testGetForcePluginActivation());
 	}
 
+	public void testPlatformPropertyTester() throws Exception {
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
+		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants"); //$NON-NLS-1$ //$NON-NLS-2$
+		
+		IConfigurationElement enable= findExtension(ces, "test3").getChildren("enablement")[0]; //$NON-NLS-1$ //$NON-NLS-2$
+		Expression exp= ExpressionConverter.getDefault().perform(enable);
+		EvaluationContext context = new EvaluationContext(null, Platform.class);
+		assertEquals(EvaluationResult.TRUE, exp.evaluate(context));
+	}
+
 	private IConfigurationElement findExtension(IConfigurationElement[] ces, String id) {
 		for (int i= 0; i < ces.length; i++) {
 			if (id.equals(ces[i].getAttribute("id"))) //$NON-NLS-1$

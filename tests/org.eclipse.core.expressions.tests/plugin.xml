@@ -3,7 +3,7 @@
 <plugin
    id="org.eclipse.core.expressions.tests"
    name="%pluginName"
-   version="3.2.0.qualifier"
+   version="3.3.0.qualifier"
    provider-name="%providerName"
    class="org.eclipse.core.internal.expressions.tests.ExpressionTestPlugin">
 
@@ -175,6 +175,19 @@
             <test property="namespace.isDefault" forcePluginActivation="true"/>
             <test property="namespace.isDefault" forcePluginActivation="false"/>
             <test property="namespace.isDefault"/>
+      	</enablement>
+      </testParticipant>
+   	</extension>
+
+	<extension point="org.eclipse.core.expressions.tests.testParticipants">
+	  <testParticipant id="test3">
+		<enablement>
+			<and>
+            	<test property="org.eclipse.core.runtime.isBundleInstalled" args="org.eclipse.core.expressions"/>
+            	<not>
+            		<test property="org.eclipse.core.runtime.isBundleInstalled" args="org.eclipse.core.expressions.invalid.bundle.name"/>
+            	</not>
+            </and>
       	</enablement>
       </testParticipant>
    	</extension>

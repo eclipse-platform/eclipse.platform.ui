@@ -3,5 +3,16 @@
 <plugin>
    
      <extension-point id="propertyTesters" name="%propertyTesterExtensionPoint" schema="schema/propertyTesters.exsd"/>
+ 
+     <extension
+           point="org.eclipse.core.expressions.propertyTesters">
+        <propertyTester
+              id="org.eclipse.core.expressions.bundlePropertyTester"
+              type="org.eclipse.core.runtime.Platform"
+              namespace="org.eclipse.core.runtime"
+              properties="isBundleInstalled"
+              class="org.eclipse.core.internal.expressions.propertytester.PlatformPropertyTester">
+        </propertyTester>
+     </extension>
 
 </plugin>
