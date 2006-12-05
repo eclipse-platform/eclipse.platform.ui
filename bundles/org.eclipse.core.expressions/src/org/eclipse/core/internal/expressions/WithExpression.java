@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -33,7 +35,12 @@ public class WithExpression extends CompositeExpression {
 		fVariable= configElement.getAttribute(ATT_VARIABLE);
 		Expressions.checkAttribute(ATT_VARIABLE, fVariable);
 	}
-	
+
+	public WithExpression(Element element) throws CoreException {
+		fVariable= element.getAttribute(ATT_VARIABLE);
+		Expressions.checkAttribute(ATT_VARIABLE, fVariable.length() > 0 ? fVariable : null);
+	}
+
 	public WithExpression(String variable) {
 		Assert.isNotNull(variable);
 		fVariable= variable;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -35,7 +37,12 @@ public class AdaptExpression extends CompositeExpression {
 		fTypeName= configElement.getAttribute(ATT_TYPE);
 		Expressions.checkAttribute(ATT_TYPE, fTypeName);
 	}
-	
+
+	public AdaptExpression(Element element) throws CoreException {
+		fTypeName= element.getAttribute(ATT_TYPE);
+		Expressions.checkAttribute(ATT_TYPE, fTypeName.length() > 0 ? fTypeName : null);
+	}
+
 	public AdaptExpression(String typeName) {
 		Assert.isNotNull(typeName);
 		fTypeName= typeName;

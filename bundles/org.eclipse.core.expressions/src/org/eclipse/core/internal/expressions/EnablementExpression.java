@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -20,6 +22,10 @@ public class EnablementExpression extends CompositeExpression {
 
 	public EnablementExpression(IConfigurationElement configElement) {
 		// config element not used yet.
+	}
+
+	public EnablementExpression(Element element) {
+		// element not used yet.
 	}
 
 	public boolean equals(final Object object) {

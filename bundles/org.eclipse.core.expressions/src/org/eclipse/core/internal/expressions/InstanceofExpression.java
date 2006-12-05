@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,7 +33,12 @@ public class InstanceofExpression extends Expression {
 		fTypeName= element.getAttribute(ATT_VALUE);
 		Expressions.checkAttribute(ATT_VALUE, fTypeName);
 	}
-	
+
+	public InstanceofExpression(Element element) throws CoreException {
+		fTypeName= element.getAttribute(ATT_VALUE);
+		Expressions.checkAttribute(ATT_VALUE, fTypeName.length() > 0 ? fTypeName : null);
+	}
+
 	public InstanceofExpression(String typeName) {
 		Assert.isNotNull(typeName);
 		fTypeName= typeName;

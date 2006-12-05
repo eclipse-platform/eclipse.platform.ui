@@ -10,14 +10,13 @@
 Application programming interfaces for the expression language. 
 <h2>Package Specification</h2>
 The package provides API and implementation classes to define a unified
-XML expression language to be used in extension points. The expression
-language isn't bound to one specific extension point. It can be used in
-all extension points which have to define some sort of enablement
-expression.
+XML expression language. The expression language isn't only for extension
+points, it can be used in any XML document that supports enablement
+expressions.
 <h3>XML expression language</h3>
 The XML expression language consists of the following predefined
-expression tags. The set is open and can be extended by an extension
-point provider to customize the expression language to its need.
+expression tags. The set is open and can be extended to customize the
+expression language.
 <p><i><u>Boolean operators</u></i></p>
 <p>The expression language provides standard expressions for the Boolean
 operators and, or and not.</p>
@@ -217,7 +216,8 @@ or more objects and all objects fulfill the expression defined by the
 adapt element.</p>
 <p><u><i>Enablement expression</i></u></p>
 <p>XML expressions are mostly used to define the availability of an
-extension point contribution. To separate the expression from other
+extension point contribution, but they can be used in any XML document
+that allows expressions. To separate the expression from other
 child elements the common expression language provides an enablement
 element. Its use is as follows:</p>
 <blockquote><pre>&lt;renameParticipant<br>   id="launchConfigUpdater"<br>   class="org.eclipse...LaunchConfigUpdater"&gt;<br>   &lt;enablement&gt;<br>    ...<br>   &lt;/enablement&gt;<br>&lt;/renameParticipant&gt;</pre>

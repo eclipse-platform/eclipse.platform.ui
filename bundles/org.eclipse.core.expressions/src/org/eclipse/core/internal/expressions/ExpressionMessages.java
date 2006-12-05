@@ -41,7 +41,9 @@ public final class ExpressionMessages extends NLS {
 	public static String PropertyTesterDescritpri_no_properties;
 
 	public static String PropertyTester_error_activating_plugin;
-	
+
+	public static String ElementHandler_unsupported_element;
+
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, ExpressionMessages.class);
 	}

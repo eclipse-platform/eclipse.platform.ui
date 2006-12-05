@@ -228,10 +228,10 @@ public class ExpressionTests extends TestCase {
 	}
 
 	public void testEnablementExpressionNotEqual() throws Exception {
-		EnablementExpression expression1 = new EnablementExpression(null);
+		EnablementExpression expression1 = new EnablementExpression((IConfigurationElement)null);
 		expression1.add(new InstanceofExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter1")); //$NON-NLS-1$
-		EnablementExpression expression2 = new EnablementExpression(null);
+		EnablementExpression expression2 = new EnablementExpression((IConfigurationElement)null);
 		expression2.add(new InstanceofExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter2")); //$NON-NLS-1$
 		assertTrue("These enablement expressions should not be equal",
@@ -239,10 +239,10 @@ public class ExpressionTests extends TestCase {
 	}
 
 	public void testEnablementExpressionHashCode() throws Exception {
-		EnablementExpression expression1 = new EnablementExpression(null);
+		EnablementExpression expression1 = new EnablementExpression((IConfigurationElement)null);
 		expression1.add(new InstanceofExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter")); //$NON-NLS-1$
-		EnablementExpression expression2 = new EnablementExpression(null);
+		EnablementExpression expression2 = new EnablementExpression((IConfigurationElement)null);
 		expression2.add(new InstanceofExpression(
 				"org.eclipse.core.internal.expressions.tests.Adapter")); //$NON-NLS-1$
 		assertEquals("Equal expressions should have the same hash code",

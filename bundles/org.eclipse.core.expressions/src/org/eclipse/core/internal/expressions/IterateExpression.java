@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -87,7 +89,12 @@ public class IterateExpression extends CompositeExpression {
 		String opValue= configElement.getAttribute(ATT_OPERATOR);
 		initializeOperatorValue(opValue);
 	}
-	
+
+	public IterateExpression(Element element) throws CoreException {
+		String opValue= element.getAttribute(ATT_OPERATOR);
+		initializeOperatorValue(opValue.length() > 0 ? opValue : null);
+	}
+
 	public IterateExpression(String opValue) throws CoreException {
 		initializeOperatorValue(opValue);
 	}

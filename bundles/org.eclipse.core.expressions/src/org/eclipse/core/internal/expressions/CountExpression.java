@@ -12,6 +12,8 @@ package org.eclipse.core.internal.expressions;
 
 import java.util.Collection;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -42,7 +44,12 @@ public class CountExpression extends Expression {
 		String size = configElement.getAttribute(ATT_VALUE);
 		initializeSize(size);
 	}
-	
+
+	public CountExpression(Element element) {
+		String size = element.getAttribute(ATT_VALUE);
+		initializeSize(size.length() > 0 ? size : null);
+	}
+
 	public CountExpression(String size) {
 		initializeSize(size);
 	}

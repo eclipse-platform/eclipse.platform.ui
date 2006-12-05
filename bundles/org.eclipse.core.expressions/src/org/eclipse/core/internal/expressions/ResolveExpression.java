@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,7 +39,13 @@ public class ResolveExpression extends CompositeExpression {
 		Expressions.checkAttribute(ATT_VARIABLE, fVariable);
 		fArgs= Expressions.getArguments(configElement, ATT_ARGS);
 	}
-	
+
+	public ResolveExpression(Element element) throws CoreException {
+		fVariable= element.getAttribute(ATT_VARIABLE);
+		Expressions.checkAttribute(ATT_VARIABLE, fVariable.length() > 0 ? fVariable : null);
+		fArgs= Expressions.getArguments(element, ATT_ARGS);
+	}
+
 	public ResolveExpression(String variable, Object[] args) {
 		Assert.isNotNull(variable);
 		fVariable= variable;

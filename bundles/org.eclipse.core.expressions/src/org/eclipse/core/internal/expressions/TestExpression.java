@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -51,7 +53,23 @@ public class TestExpression extends Expression {
 		fExpectedValue= Expressions.convertArgument(element.getAttribute(ATT_VALUE));
 		fForcePluginActivation= Expressions.getOptionalBooleanAttribute(element, ATT_FORCE_PLUGIN_ACTIVATION);
 	}
-	
+
+	public TestExpression(Element element) throws CoreException {
+		String property= element.getAttribute(ATT_PROPERTY);
+		int pos= property.lastIndexOf('.');
+		if (pos == -1) {
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.NO_NAMESPACE_PROVIDED,
+				ExpressionMessages.TestExpression_no_name_space)); 
+		}
+		fNamespace= property.substring(0, pos);
+		fProperty= property.substring(pos + 1);
+		fArgs= Expressions.getArguments(element, ATT_ARGS);
+		String value = element.getAttribute(ATT_VALUE);
+		fExpectedValue= Expressions.convertArgument(value.length() > 0 ? value : null);
+		fForcePluginActivation= Expressions.getOptionalBooleanAttribute(element, ATT_FORCE_PLUGIN_ACTIVATION);
+	}
+
 	public TestExpression(String namespace, String property, Object[] args, Object expectedValue) {
 		this(namespace, property, args, expectedValue, false);
 	}

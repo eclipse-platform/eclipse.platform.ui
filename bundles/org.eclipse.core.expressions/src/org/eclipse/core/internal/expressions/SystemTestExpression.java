@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -37,7 +39,14 @@ public class SystemTestExpression extends Expression {
 		fExpectedValue= element.getAttribute(ATT_VALUE);
 		Expressions.checkAttribute(ATT_VALUE, fExpectedValue);
 	}
-	
+
+	public SystemTestExpression(Element element) throws CoreException {
+		fProperty= element.getAttribute(ATT_PROPERTY);
+		Expressions.checkAttribute(ATT_PROPERTY, fProperty.length() > 0 ? fProperty : null);
+		fExpectedValue= element.getAttribute(ATT_VALUE);
+		Expressions.checkAttribute(ATT_VALUE, fExpectedValue.length() > 0 ? fExpectedValue : null);
+	}
+
 	public SystemTestExpression(String property, String expectedValue) {
 		Assert.isNotNull(property);
 		Assert.isNotNull(expectedValue);

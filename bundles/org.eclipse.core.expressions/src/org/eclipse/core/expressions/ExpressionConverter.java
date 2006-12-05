@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.expressions;
 
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -23,7 +26,8 @@ import org.eclipse.core.internal.expressions.Messages;
 
 /**
  * An expression converter converts an XML expression represented by an 
- * {@link IConfigurationElement} tree into a corresponding expression tree.
+ * {@link IConfigurationElement} or {@link Element} (DOM) subtree into a
+ * corresponding expression tree.
  * 
  * <p>
  * An expression converter manages a list of {@link ElementHandler}s. Element
@@ -88,7 +92,32 @@ public final class ExpressionConverter {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Converts the tree of DOM elements represented by the given
+	 * root element and returns a corresponding expression tree.
+	 * 
+	 * @param root the element to be converted
+	 * 
+	 * @return the corresponding expression tree or <code>null</code>
+	 *  if the element cannot be converted
+	 * 
+	 * @throws CoreException if the element can't be converted.
+	 *  Reasons include: (a) no handler is available to cope with
+	 *  a certain element or (b) the XML expression tree is malformed.
+	 * 
+	 * @since 3.3
+	 */
+	public Expression perform(Element root) throws CoreException {
+		for (int i= 0; i < fHandlers.length; i++) {
+			ElementHandler handler= fHandlers[i];
+			Expression result= handler.create(this, root);
+			if (result != null)
+				return result;
+		}
+		return null;
+	}
+
 	/* package */ void processChildren(IConfigurationElement element, CompositeExpression result) throws CoreException {
 		IConfigurationElement[] children= element.getChildren();
 		if (children != null) {
@@ -104,5 +133,23 @@ public final class ExpressionConverter {
 				result.add(child);
 			}
 		}		
+	}
+
+	/* package */ void processChildren(Element element, CompositeExpression result) throws CoreException {
+		Node child = element.getFirstChild();
+		while (child != null) {
+			if (child.getNodeType() == Node.ELEMENT_NODE) {
+				Expression exp= perform((Element)child);
+				if (exp == null)
+					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+						IStatus.ERROR, 
+						Messages.format(
+							ExpressionMessages.Expression_unknown_element,  
+							child.getNodeName()),
+						null));
+				result.add(exp);
+			}
+			child = child.getNextSibling();
+		}
 	}
 }

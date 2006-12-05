@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.w3c.dom.Element;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -95,7 +97,14 @@ public class Expressions {
 			return false;
 		return Boolean.valueOf(value).booleanValue();
 	}
-	
+
+	public static boolean getOptionalBooleanAttribute(Element element, String attributeName) {
+		String value= element.getAttribute(attributeName);
+		if (value.length() == 0)
+			return false;
+		return Boolean.valueOf(value).booleanValue();
+	}
+
 	//---- Argument parsing --------------------------------------------
 	
 	public static final Object[] EMPTY_ARGS= new Object[0];
@@ -108,7 +117,16 @@ public class Expressions {
 			return EMPTY_ARGS;
 		}
 	}
-	
+
+	public static Object[] getArguments(Element element, String attributeName) throws CoreException {
+		String args= element.getAttribute(attributeName);
+		if (args.length() > 0) {
+			return parseArguments(args);
+		} else {
+			return EMPTY_ARGS;
+		}
+	}
+
 	public static Object[] parseArguments(String args) throws CoreException {
 		List result= new ArrayList();
 		int start= 0;
