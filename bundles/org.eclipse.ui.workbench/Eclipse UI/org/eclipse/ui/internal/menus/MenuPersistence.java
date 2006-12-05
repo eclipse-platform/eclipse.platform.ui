@@ -1069,7 +1069,7 @@ final class MenuPersistence extends RegistryPersistence {
 				actionSetCount, menuService);
 		
 		// Read legacy 3.2 'trim' additions
-		readTrimAdditions(null);//menuService);
+		readTrimAdditions(menuService);
 		
 		// read the 3.3 menu additions
 		readAdditions(menuService);
@@ -1089,6 +1089,10 @@ final class MenuPersistence extends RegistryPersistence {
 
 		// Create a cache entry for every menu addition
 		for (int i = 0; i < groups.length; i++) {
+			// Only process 'group' entries
+			if (!TAG_GROUP.equals(groups[i].getName()))
+				continue;
+			
 			String id = groups[i].getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 			
 			// Define the initial URI spec
@@ -1113,11 +1117,8 @@ final class MenuPersistence extends RegistryPersistence {
 					// OK, add the addition to this area
 					uri = new MenuLocationURI(uriSpec);
 					trimAdditions.add(new TrimAdditionCacheEntry(groups[i], uri, menuService));
-					System.out.println("Added cache entry: " + uri.toString()); //$NON-NLS-1$
 				}
 				else {
-					System.out.println("new Trim Cache: " + uriSpec); //$NON-NLS-1$
-					
 					// Must be a default group; make a new entry cache
 					MenuLocationURI uri = new MenuLocationURI(uriSpec);
 					

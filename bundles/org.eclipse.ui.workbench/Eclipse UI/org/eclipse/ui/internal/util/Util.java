@@ -29,9 +29,13 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -788,4 +792,57 @@ public final class Util {
 		}
 		return buf.toString();
 	}
+	
+	/**
+	 * Attempt to load the executable extension from the element/attName. If
+	 * the load fails or the resulting object is not castable to the
+	 * provided classSpec (if any) an error is logged and a null is returned.
+	 * 
+	 * @param element The {@link IConfigurationElement} containing the
+	 * executable extension's specification 
+	 * @param attName The attribute name of the executable extension
+	 * @param classSpec An optional <code>Class</code> defining the type
+	 * that the loaded Object must be castable to. This is optional to support
+	 * code where the client has a choice of mutually non-castable types to
+	 * choose from.
+	 * 
+	 * @return The loaded object which is guaranteed to be
+	 * castable to the given classSpec or null if a failure occurred 
+	 */
+	public static Object safeLoadExecutableExtension(IConfigurationElement element, 
+			String attName, Class classSpec) {
+		Object loadedEE = null;
+		
+		// Load the handler.
+		try {
+			loadedEE = element.createExecutableExtension(attName);
+		} catch (final CoreException e) {
+			// TODO: give more info (eg plugin id)....
+			// Gather formatting info
+			final String classDef = element.getAttribute(attName);			
+
+			final String message = "Class load Failure: '" + classDef + "'";  //$NON-NLS-1$//$NON-NLS-2$
+			IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+			WorkbenchPlugin.log(message, status);
+		}
+		
+		// Check the loaded object's type
+		if (classSpec != null && loadedEE != null && !classSpec.isInstance(loadedEE)) {
+			// ooops, the loaded class is not castable to the given type
+			final String message = "Loaded class is of incorrect type: expected(" + //$NON-NLS-1$
+				classSpec.getName() + ") got (" + loadedEE.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+
+			IllegalArgumentException e = new IllegalArgumentException(message);			
+			final IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+			WorkbenchPlugin.log(message, status);
+			
+			// This 'failed'
+			loadedEE = null;
+		}
+		
+		return loadedEE;
+	}
+	
 }

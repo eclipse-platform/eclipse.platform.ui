@@ -117,6 +117,7 @@ import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
 import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.menus.TrimBarManager;
+import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
@@ -172,7 +173,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	ProgressRegion progressRegion = null;
 	
-	private TrimBarManager trimMgr;
+	private TrimBarManager trimMgr = null;
+	private TrimBarManager2 trimMgr2 = null;
 	
 	/**
 	 * The map of services maintained by the workbench window. These services
@@ -996,7 +998,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Insert any contributed trim into the layout
 		// TODO: Hook this up with the Menu and/or CoolBar manager
 		// to allow for 'update' calls...
-		trimMgr = new TrimBarManager(this);
+		if (Policy.EXPERIMENTAL_MENU)
+			trimMgr2 = new TrimBarManager2(this);
+		else
+			trimMgr = new TrimBarManager(this);
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
@@ -1493,10 +1498,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			DragUtil.removeDragTarget(getShell(), trimDropTarget);
 			trimDropTarget = null;
 			
-			if (trimMgr!=null) {
+			if (trimMgr != null) {
 				trimMgr.dispose();
+				trimMgr = null;
 			}
-			trimMgr = null;
+			
+			if (trimMgr2 != null) {
+				trimMgr2.dispose();
+				trimMgr2 = null;
+			}
 		} finally {
 			result = super.close();
 		}
@@ -2551,7 +2561,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			// get the trim manager to re-locate any -newly contributed-
 			// trim widgets
-			trimMgr.updateLocations(knownIds);
+			if (trimMgr != null)
+				trimMgr.updateLocations(knownIds);
+			if (trimMgr2 != null)
+				trimMgr2.updateLocations(knownIds);
 		}
 		else {
 			// No 3.2 state...check if the FVB has state
@@ -3338,7 +3351,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		defaultLayout.setCenterControl(getPageComposite());
 
 		// Re-populate the trim elements
-		trimMgr.update(true, false, !topBar.getVisible());
+		if (trimMgr != null)
+			trimMgr.update(true, false, !topBar.getVisible());
+		if (trimMgr2 != null)
+			trimMgr2.update(true, false, !topBar.getVisible());
 	}
 
 	public boolean getShowFastViewBars() {
