@@ -30,5 +30,5 @@ public abstract class AbstractDynamicMenuItem {
 	 * 
 	 * @param items A list of <code>IContributionItem</code>s. 
 	 */
-	public abstract void fillItems(List items);
+	public abstract void createContributionItems(List items);
 }

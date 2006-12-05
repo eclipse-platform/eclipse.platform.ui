@@ -153,7 +153,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
 		MenuCacheEntry cache = new MenuCacheEntry(menuService) {
-			public void getContributionItems(List additions) {
+			public void createContributionItems(List additions) {
 				CommandDataContributionItem item = new CommandDataContributionItem(
 						"org.eclipse.ui.tests.menus.itemX20",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
@@ -190,10 +190,10 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				.setUri(new MenuLocationURI(
 						"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions"));
 
-		menuService.addCacheForURI(cache);
+		menuService.addMenuCache(cache);
 
 		cache = new MenuCacheEntry(menuService) {
-			public void getContributionItems(List additions) {
+			public void createContributionItems(List additions) {
 				CommandDataContributionItem item = new CommandDataContributionItem(
 						"org.eclipse.ui.tests.menus.itemX25",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
@@ -217,7 +217,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 		cache.setUri(new MenuLocationURI(
 				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness"));
 
-		menuService.addCacheForURI(cache);
+		menuService.addMenuCache(cache);
 	}
     
     public void removeMenuContribution() {

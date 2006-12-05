@@ -1116,7 +1116,7 @@ final class MenuPersistence extends RegistryPersistence {
 				MenuLocationURI uri = new MenuLocationURI(locationURI);
 
 				if (uri != null) {
-					menuService.addCacheForURI(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
+					menuService.addMenuCache(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
 				}
 			}
 		}

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.menus;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
@@ -47,60 +46,6 @@ public interface IMenuService extends IServiceWithSources {
 
 	/**
 	 * <p>
-	 * Contributes the given menu element within the context of this service. If
-	 * this service was retrieved from the workbench, then this contribution
-	 * will be visible globally. If the service was retrieved from a nested
-	 * component, then the contribution will only be visible within that
-	 * component.
-	 * </p>
-	 * <p>
-	 * Also, it is guaranteed that the contributions submitted through a
-	 * particular service will be cleaned up when that service is destroyed. So,
-	 * for example, a service retrieved from a <code>IWorkbenchPartSite</code>
-	 * would remove all of its contributions when the site is destroyed.
-	 * </p>
-	 * 
-	 * @param menuElement
-	 *            The menu element to contribute; must not be <code>null</code>.
-	 * @return A token which can be used to later cancel the contribution. Only
-	 *         someone with access to this token can cancel the contribution.
-	 *         The contribution will automatically be cancelled if the context
-	 *         from which this service was retrieved is destroyed.
-	 */
-	public IMenuContribution contributeMenu(MenuElement menuElement);
-
-	/**
-	 * <p>
-	 * Contributes the given menu element within the context of this service.
-	 * The menu element becomes visible when <code>expression</code> evaluates
-	 * to <code>true</code>.
-	 * </p>
-	 * <p>
-	 * Also, it is guaranteed that the contribution submitted through a
-	 * particular service will be cleaned up when that services is destroyed.
-	 * So, for example, a service retrieved from a
-	 * <code>IWorkbenchPartSite</code> would remove all of its contributions
-	 * when the site is destroyed.
-	 * </p>
-	 * 
-	 * @param menuElement
-	 *            The menu element to contribution; must not be
-	 *            <code>null</code>.
-	 * @param expression
-	 *            This expression must evaluate to <code>true</code> before
-	 *            this handler will really become visible. The expression may be
-	 *            <code>null</code> if the menu element should always be
-	 *            visible.
-	 * @return A token which can be used to later cancel the contribution. Only
-	 *         someone with access to this token can cancel the contribution.
-	 *         The contribution will automatically be cancelled if the context
-	 *         from which this service was retrieved is destroyed.
-	 */
-	public IMenuContribution contributeMenu(MenuElement menuElement,
-			Expression expression);
-
-	/**
-	 * <p>
 	 * Reads the menu information from the registry and the preferences. This
 	 * will overwrite any of the existing information in the menu service. This
 	 * method is intended to be called during start-up. When this method
@@ -113,34 +58,6 @@ public interface IMenuService extends IServiceWithSources {
 	 * </p>
 	 */
 	public void readRegistry();
-
-	/**
-	 * Removes the given contribution within the context of this service. If the
-	 * contribution was contributed with a different service, then it must be
-	 * removed from that service instead. It is only possible to retract a
-	 * contribution with this method. That is, you must have the same
-	 * <code>IMenuContribution</code> used to contribute.
-	 * 
-	 * @param contribution
-	 *            The token that was returned from a call to
-	 *            <code>contributeMenu</code>; must not be <code>null</code>.
-	 */
-	public void removeContribution(IMenuContribution contribution);
-
-	/**
-	 * Removes the given contribution within the context of this service. If the
-	 * contribution was contributed with a different service, then it must be
-	 * removed from that service instead. It is only possible to retract a
-	 * contribution with this method. That is, you must have the same
-	 * <code>IMenuContribution</code> used to contribute.
-	 * 
-	 * @param contributions
-	 *            The tokens that were returned from a call to
-	 *            <code>contributeMenu</code>. This collection must only
-	 *            contain instances of <code>IMenuContribution</code>. The
-	 *            collection must not be <code>null</code>.
-	 */
-	public void removeContributions(Collection contributions);
 
 	//
 	// additions for 3.3 support
@@ -165,19 +82,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * @param cache
 	 * @since 3.3
 	 */
-	public void addCacheForURI(MenuCacheEntry cache);
-
-	/**
-	 * Register a new menu addition cache with the service. This entry
-	 * represents the 'root' location of some id'd menu. Submenus are explicitly
-	 * registered here so that additions can be made directly into sub-menus.
-	 * 
-	 * @param id
-	 *            The id representing the 'key' for the map
-	 * @param addition
-	 *            The cache element representing the 'value' for the map.
-	 */
-	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition);
+	public void addMenuCache(MenuCacheEntry cache);
 
 	/**
 	 * populate a <code>ContributionManager</code> with the set of

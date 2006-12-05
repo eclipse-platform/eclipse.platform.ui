@@ -48,16 +48,17 @@ public abstract class MenuCacheEntry {
 	 * 
 	 * @param additions
 	 *            A List supplied by the framework. It should be filled in with
-	 *            IContributionItems.
+	 *            new instances of IContributionItems.
 	 */
-	public abstract void getContributionItems(List additions);
+	public abstract void createContributionItems(List additions);
 
 	/**
 	 * This method tells the cache that the menu service is finished with the
 	 * IContributionItems that it created. If it caches them internally, it is
 	 * time to remove them.
 	 * 
-	 * @param items a list of IContributionItems created by this cache.
+	 * @param items
+	 *            a list of IContributionItems created by this cache.
 	 */
 	public abstract void releaseContributionItems(List items);
 }

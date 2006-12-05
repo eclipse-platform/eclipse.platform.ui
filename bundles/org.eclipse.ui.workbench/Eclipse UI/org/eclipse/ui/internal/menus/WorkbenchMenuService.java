@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -69,18 +68,6 @@ public final class WorkbenchMenuService implements IMenuService {
 		menuAuthority.addSourceProvider(provider);
 	}
 
-	public final IMenuContribution contributeMenu(final MenuElement menuElement) {
-		return contributeMenu(menuElement, null);
-	}
-
-	public final IMenuContribution contributeMenu(
-			final MenuElement menuElement, final Expression expression) {
-		final IMenuContribution contribution = new MenuContribution(
-				menuElement, expression, this);
-		menuAuthority.contributeMenu(contribution);
-		return contribution;
-	}
-
 	public final void dispose() {
 		menuPersistence.dispose();
 		menuAuthority.dispose();
@@ -88,21 +75,6 @@ public final class WorkbenchMenuService implements IMenuService {
 
 	public final void readRegistry() {
 		menuPersistence.read();
-	}
-
-	public final void removeContribution(final IMenuContribution contribution) {
-		if (contribution.getMenuService() == this) {
-			menuAuthority.removeContribution(contribution);
-		}
-	}
-
-	public final void removeContributions(final Collection contributions) {
-		final Iterator contributionItr = contributions.iterator();
-		while (contributionItr.hasNext()) {
-			final IMenuContribution contribution = (IMenuContribution) contributionItr
-					.next();
-			removeContribution(contribution);
-		}
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
@@ -152,7 +124,7 @@ public final class WorkbenchMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
-	public void addCacheForURI(MenuCacheEntry cache) {
+	public void addMenuCache(MenuCacheEntry cache) {
 		if (cache == null || cache.getUri()==null)
 			return;
 
@@ -175,7 +147,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		// Get the additions
 		List ciList = new ArrayList();
-		cache.getContributionItems(ciList);
+		cache.createContributionItems(ciList);
 
 		// If we have any then add them at the correct location
 		if (ciList.size() > 0) {
@@ -272,16 +244,6 @@ public final class WorkbenchMenuService implements IMenuService {
 		}
 
 		return additionsIndex;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String,
-	 *      org.eclipse.ui.internal.menus.MenuAddition)
-	 */
-	public void registerAdditionCache(MenuLocationURI uri, MenuAddition addition) {
-		uriToManager.put(getIdFromURI(uri), addition);
 	}
 
 

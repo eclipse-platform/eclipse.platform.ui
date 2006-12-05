@@ -70,7 +70,7 @@ public class DynamicItem extends AbstractDynamicMenuItem {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.AbstractDynamicMenuItem#fillItems(java.util.List)
 	 */
-	public void fillItems(List items) {
+	public void createContributionItems(List items) {
 		items.clear();
 		
 		ActionContributionItem aci1 = new ActionContributionItem(action1);

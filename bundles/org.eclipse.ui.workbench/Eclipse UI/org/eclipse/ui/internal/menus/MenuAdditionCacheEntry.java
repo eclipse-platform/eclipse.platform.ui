@@ -78,7 +78,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 				// if necessary
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
 						items[i], menuService);
-				menuService.addCacheForURI(subMenuEntry);
+				menuService.addMenuCache(subMenuEntry);
 			}
 		}
 	}
@@ -122,7 +122,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	 * 
 	 * @param additions
 	 */
-	public void getContributionItems(List additions) {
+	public void createContributionItems(List additions) {
 		additions.clear();
 
 		IConfigurationElement[] items = additionElement.getChildren();

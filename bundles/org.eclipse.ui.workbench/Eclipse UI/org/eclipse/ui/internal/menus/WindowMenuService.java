@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.expressions.Expression;
@@ -76,39 +74,12 @@ public final class WindowMenuService implements IMenuService {
 		menuAuthority.addSourceProvider(provider);
 	}
 
-	public final IMenuContribution contributeMenu(final MenuElement menuElement) {
-		return contributeMenu(menuElement, null);
-	}
-
-	public final IMenuContribution contributeMenu(
-			final MenuElement menuElement, final Expression expression) {
-		final IMenuContribution contribution = new MenuContribution(
-				menuElement, expression, this);
-		menuAuthority.contributeMenu(contribution);
-		return contribution;
-	}
-
 	public final void dispose() {
 		menuAuthority.dispose();
 	}
 
 	public final void readRegistry() {
 		parent.readRegistry();
-	}
-
-	public final void removeContribution(final IMenuContribution contribution) {
-		if (contribution.getMenuService() == this) {
-			menuAuthority.removeContribution(contribution);
-		}
-	}
-
-	public final void removeContributions(final Collection contributions) {
-		final Iterator contributionItr = contributions.iterator();
-		while (contributionItr.hasNext()) {
-			final IMenuContribution contribution = (IMenuContribution) contributionItr
-					.next();
-			removeContribution(contribution);
-		}
 	}
 
 	public final void removeSourceProvider(final ISourceProvider provider) {
@@ -128,13 +99,6 @@ public final class WindowMenuService implements IMenuService {
 	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
 		parent.populateMenu(mgr, uri);
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerAdditionCache(java.lang.String, org.eclipse.ui.internal.menus.MenuAddition)
-	 */
-	public void registerAdditionCache(MenuLocationURI  uri, MenuAddition addition) {
-		parent.registerAdditionCache(uri, addition);
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
@@ -146,8 +110,8 @@ public final class WindowMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI, org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
-	public void addCacheForURI(MenuCacheEntry cache) {
-		parent.addCacheForURI(cache);
+	public void addMenuCache(MenuCacheEntry cache) {
+		parent.addMenuCache(cache);
 	}
 	
 	/* (non-Javadoc)
