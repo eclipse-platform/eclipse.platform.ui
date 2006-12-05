@@ -144,9 +144,12 @@ public abstract class ViewerColumn {
 	 * extend but must call the super implementation.
 	 */
 	protected void handleDispose() {
-		CellLabelProvider clp = labelProvider;
+		boolean disposeLabelProvider = listenerRegistered;
+		CellLabelProvider cellLabelProvider = labelProvider;
 		setLabelProvider(null, false);
-		clp.dispose();
+		if (disposeLabelProvider) {
+			cellLabelProvider.dispose();
+		}
 		editingSupport = null;
 		listener = null;
 	}
