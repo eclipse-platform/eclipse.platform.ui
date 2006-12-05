@@ -356,7 +356,7 @@ public class TrimBarManager2 {
 					IWorkbenchWidget widget = (IWorkbenchWidget) widgetIter.next();
 					IConfigurationElement widgetElement = trimEntry.getElement(widget);
 					if (widget != null) {
-						resizeable |= trimEntry.isResizeable(widgetElement);
+						resizeable |= trimEntry.fillMajor(widgetElement);
 						renderTrim(grpComposite, widget, swtSide);
 					}
 				}
