@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Assert;
  * @since 1.0
  * 
  */
-/* package */class DetailObservableValue extends AbstractObservableValue {
+public class DetailObservableValue extends AbstractObservableValue {
 
 	private boolean updating = false;
 
