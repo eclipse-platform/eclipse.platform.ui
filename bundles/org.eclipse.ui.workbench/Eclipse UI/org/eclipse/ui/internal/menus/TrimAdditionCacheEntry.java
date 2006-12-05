@@ -103,10 +103,32 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 	}
 
 	/**
-	 * @return
+	 * @return <code>true</code> iff the group is positioned at the start
+	 * (or 'before') the entry that it is relative to. Default is true
+	 * 
 	 */
 	public boolean isAtStart() {
-		// TODO Auto-generated method stub
+		IConfigurationElement location = additionElement.getChildren(IWorkbenchRegistryConstants.TAG_LOCATION)[0];
+		if (location.getChildren(IWorkbenchRegistryConstants.TAG_ORDER).length > 0) {
+			IConfigurationElement order = location.getChildren(IWorkbenchRegistryConstants.TAG_ORDER)[0];
+			
+			String pos = order.getAttribute(IWorkbenchRegistryConstants.ATT_POSITION);
+			if (pos != null)
+				return (pos.equals("start") | pos.equals("before"));  //$NON-NLS-1$//$NON-NLS-2$
+		}
+		return true;
+	}
+
+	/**
+	 * Returns whether or not the defining {@link IConfigurationElement}
+	 * declares that the widget shoud be resizeable.
+	 * 
+	 * @param widgetElement the {@link IConfigurationElement} declaring this
+	 * widget.
+	 * 
+	 * @return <code>true</code> iff the resulting widget should be resizeable
+	 */
+	public boolean isResizeable(IConfigurationElement widgetElement) {
 		return false;
 	}
 
@@ -210,19 +232,6 @@ public class TrimAdditionCacheEntry extends MenuCacheEntry {
 	 */
 	public IConfigurationElement getElement(IWorkbenchWidget widget) {
 		return (IConfigurationElement) widgetToConfigElementMap.get(widget);
-	}
-
-	/**
-	 * Returns whether or not the defining {@link IConfigurationElement}
-	 * declares that the widget shoud be resizeable.
-	 * 
-	 * @param widgetElement the {@link IConfigurationElement} declaring this
-	 * widget.
-	 * 
-	 * @return <code>true</code> iff the resulting widget should be resizeable
-	 */
-	public boolean isResizeable(IConfigurationElement widgetElement) {
-		return false;
 	}
 
 	/**
