@@ -229,7 +229,7 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 			});
 
 		}
-		return enabledSettings.length > 0;
+		return enabledSettings != null && enabledSettings.length > 0;
 	}
 
 	/**
