@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Shindl <tom.schindl@bestsolution.at> - initial API and implementation
+ *                                                fix for bug 166346
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -189,7 +190,12 @@ public abstract class ViewerRow {
 	 */
 	public int getColumnIndex(Point point) {
 		int count = getColumnCount();
-
+		
+		// If there are no columns the column-index is 0
+		if( count == 0 ) {
+			return 0;
+		}
+		
 		for (int i = 0; i < count; i++) {
 			if (getBounds(i).contains(point)) {
 				return i;
