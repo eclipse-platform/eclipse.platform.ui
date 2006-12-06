@@ -159,6 +159,16 @@ The launch framework has been enhanced to support the following:
   <li><code> ISuspendCommand</code></li>
   <li><code> ITerminateCommand</code></li>
 </ul>
+<h3>Pluggable Detail Panes</h3>
+<p>The variables, registers, and expressions views in Eclipse 3.3 support pluggable 
+  detail panes. A new extension point - <code>org.eclipse.debug.ui.detailPaneFactories</code> 
+  - is used to contribute factories that create detail panes for specific selections. 
+  The platform provides a default text details area that displays textual details 
+  based on a debug model presentation's <code>computeDetails(...)</code> method. 
+  Clients can contribute detail pane factories with enablement expressions that 
+  can create one or more detail panes for specific objects/selections. The user 
+  is allowed to choose between available detail panes using a context menu. See 
+  <code>IDetailPaneFactory</code> and <code>IDetailPane</code>.</p>
 <h3>Source Lookup</h3>
 <p>Source lookup is driven by the active debug context. When a context is activated 
   the debug platform displays source for that context. Clients may provide a custom 
@@ -199,7 +209,11 @@ The launch framework has been enhanced to support the following:
     breakpoints view.</li>
 </ul>
 
-<h2>Dec 6, 2006</h2> 
+<h2>Dec 11, 2006</h2> 
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=75852">75852</a>: [variables] Support for custom details view widgets.<br>
+
+<h2>Dec 5, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166683">166683</a>: [plugins] DebugUIPlugin should be a save participant<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166525">166525</a>: [launching] Should display error message in LCD when launcher choice required<br>
