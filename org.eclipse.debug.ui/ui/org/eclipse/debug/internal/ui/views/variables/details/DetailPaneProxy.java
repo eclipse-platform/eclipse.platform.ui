@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
@@ -63,13 +60,6 @@ public class DetailPaneProxy {
 		
 	private IWorkbenchPartSite fWorkbenchPartSite;
 	private Composite fParent;
-	
-	/**
-	 * Every time a previously unused detail pane is created, it is initialized
-	 * and added to this map so that it does not have to be instantiated and
-	 * initialized again if the pane is reused.
-	 */
-	private Map initializedPanes = new HashMap();
 	
 	/**
 	 * Constructor that sets up the detail pane for a view.  Creates a default pane to retain look of previous versions.
@@ -171,8 +161,9 @@ public class DetailPaneProxy {
 	private void setupPane(String paneID, IStructuredSelection selection) {
 		if (fCurrentPane != null) fCurrentPane.dispose();
 		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
-		fCurrentPane = findAndInitViewerByID(paneID);
+		fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
 		if (fCurrentPane != null){
+			fCurrentPane.init(fWorkbenchPartSite);
 			fCurrentControl = fCurrentPane.createControl(fParent);
 			if (fCurrentControl != null){
 				if (fActivateListener != null) fCurrentControl.addListener(SWT.Activate,fActivateListener);
@@ -189,26 +180,7 @@ public class DetailPaneProxy {
 			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Could not create the detail pane with ID " + paneID, new NullPointerException()))); //$NON-NLS-1$
 		}
 	}
-	
-	/**
-	 * Returns the initialized detail pane for the given ID if one exists.  If one does
-	 * not exist, the method asks the pane manager to create one.
-	 * 
-	 * @param paneID The ID of the pane to init
-	 * @return The initialized detail pane or null
-	 */
-	private IDetailPane findAndInitViewerByID(String paneID){
-		IDetailPane newViewer = (IDetailPane)initializedPanes.get(paneID);
-		if (newViewer == null){
-			newViewer = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
-			if (newViewer != null){
-				newViewer.init(fWorkbenchPartSite);
-				initializedPanes.put(newViewer.getID(), newViewer);
-			}
-		}
-		return newViewer;
-	}
-	
+
 	/**
 	 * Creates a label in the detail pane area with the given message.
 	 * 
