@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.preferences;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -30,74 +29,12 @@ import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
  */
 public class ProductPreferencesTest extends TestCase {
 	
-	// [expected number of matches], [comma-separated set 1] [comma-separated set 2]
-	private static final String[][] COUNT_MATCHING_ITEMS_DATA = {
-		
-		// no items, no matches
-		{ "0", "", "" },
-		
-		// second set empty
-		{ "0", "one,two,three", "" },
-		
-		// first set empty
-		{ "0", "", "four,five,six" },
-		
-		// neither empty, but no matches
-		{ "0", "a,b,c", "d,e,f" },
-		
-		// two matches
-		{ "2", "a,b,c", "b,c,d" },
-		
-		// all matches
-		{ "3", "a,b,c", "a,b,c" },
-		
-		// all matches; different order
-		{ "3", "a,b,c", "c,b,a" },
-		
-		// two matches with extra items
-		{ "2", "one,two,three,four,five", "two,six,three,seven" }
-	};
-
-	// [comma-delimited items to search], [index of expected match], [list1], [list2], ...
-	private static final String[][] FIND_BEST_MATCH_DATA = {
-		
-		// not found
-		{ "a", null, "b,c,d" },
-		
-		// not found, more choices
-		{ "a", null, "b,c,d", "c,f,e", "h,f,w", "j,e,z", "x,y,z","1,2,3" },
-		
-		// found one, take only choice
-		{ "a", "0", "a,b,c,d" },
-
-		// found some, take only choice
-		{ "a,c", "0", "a,b,c,d" },
-
-		// found all, take only choice
-		{ "a,c,b,d", "0", "a,b,c,d" },
-		
-		// found one item in one list
-		{ "a", "0", "a,b,c", "d,e,f", "g,h,i", "j,k,l" },
-
-		// found one item in one list, not the first
-		{ "h", "2", "a,b,c", "d,e,f", "g,h,i", "j,k,l" },
-
-		// found one item in two list, take the first
-		{ "e,j", "1", "a,b,c", "d,e,f", "g,h,i", "j,k,l" },
-
-		// d,e,f is the best choice
-		{ "b,c,d,e,f,g,h", "1", "a,b,c", "d,e,f", "g,h,i", "j,k,l" },
-
-		// same, but items and lists shuffled
-		{ "g,c,e,b,h,d,f", "2", "i,g,h", "l,k,j", "e,f,d", "b,c,a" },
-
-		// longer names and different delimiters
-		{ "one,five,two,four,three", "3", "one;five,;zero", "two five,six", "seven, one, eight, ;four", "five;;two;;three" },
-	};
-
 	// [items], [expectedOrder], [primaryOrdering], [secondaryOrdering1], [secondaryOrdering2], ...
 	private static final String[][] GET_ORDERED_LIST_DATA = {
-		
+
+		// one item, no specified ordering
+		{ "a", "a", "", },
+
 		// just one item to order, not found
 		{ "a", "a", "b,c,d", "e,f,g" },
 
@@ -111,13 +48,35 @@ public class ProductPreferencesTest extends TestCase {
 		{ "a,b,c", "b,c,a", "b,c", "d,e,f", "g,h,i" },
 
 		// longer test
-		{ "one,two,three,four,five", "two,three,four,five,one", "two,three", "one,two", "four,five", "three,four" },
+		{ "1,2,3,4,5", "1,2,3,4,5", "2,3", "1,2", "4,5", "3,4" },
 
 		// same, but items shuffled
-		{ "four,two,five,one,three", "two,three,four,five,one", "two,three", "one,two", "four,five", "three,four" },
+		{ "four,two,five,one,three", "one,two,three,four,five", "two,three", "one,two", "four,five", "three,four" },
 
 		// would fail if only used one secondary ordering
 		{ "seven,six,five,four,three,two,one", "one,two,three,four,five,six,seven", "one,two", "two,three,four", "one,two,six", "three,four,five", "five,six", "four,five", "six,seven" },
+
+		// slightly overlapping
+		{ "5,4,6,3,7,2,8,1,9", "9,8,7,6,5,4,3,2,1", "3,2,1", "9,8,7", "7,6,5", "5,4,3" },
+
+		// primary is subset
+		{ "5,4,6,3,7,2,8,1,9", "9,8,7,6,5,4,3,2,1", "9,7,5,3,1", "9,8,7,6,5,4,3,2,1" },
+		
+		// complex test
+		{ "4,7,2,8,1,5,9,3,6", "1,2,3,4,5,6,7,8,9", "2,4,6,8", "1,3,5,7,9", "1,2", "3,4", "5,6", "7,8" },
+
+		// conflicts; primary wins
+		{ "1,2,3", "2,3,1", "2,3,1", "1,2,3", "1,3,2", "2,1,3", "2,3,1", "3,1,2", "3,2,1" },
+
+		// one conflict; primary wins
+		{ "3,2,1", "1,3,2", "1,3", "1,2" },
+
+		// variation of previous
+		{ "3,2,1", "1,2,3", "1,3", "1,2,3" },
+
+		// primary wants one way but everyone else wants other way; primary wins
+		{ "2,1,3", "3,1,2", "3,1,2", "3,2,1", "3,2,1" },
+
 	};
 
 	// [inputFile in data/help/preferences/], [key1=value1], [key2=value2], ...
@@ -182,33 +141,6 @@ public class ProductPreferencesTest extends TestCase {
 	 */
 	public static Test suite() {
 		return new TestSuite(ProductPreferencesTest.class);
-	}
-	
-	public void testCountMatchingItems() {
-		for (int i=0;i<COUNT_MATCHING_ITEMS_DATA.length;++i) {
-			String[] data = COUNT_MATCHING_ITEMS_DATA[i];
-			int expectedCount = Integer.parseInt(data[0]);
-			Set a = new HashSet(ProductPreferences.tokenize(data[1]));
-			Set b = new HashSet(ProductPreferences.tokenize(data[2]));
-			int actualCount = ProductPreferences.countCommonItems(a, b);
-			Assert.assertEquals("Number of matching items found was incorrect for: " + data[1] + " and " + data[2], expectedCount, actualCount);
-		}
-	}
-	
-	public void testFindBestMatch() {
-		for (int i=0;i<FIND_BEST_MATCH_DATA.length;++i) {
-			String[] data = FIND_BEST_MATCH_DATA[i];
-			Set items = new HashSet(ProductPreferences.tokenize(data[0]));
-			List[] lists = new List[data.length - 2];
-			for (int j=0;j<lists.length;++j) {
-				lists[j] = ProductPreferences.tokenize(data[j + 2]);
-			}
-			List expectedBestMatch = null;
-			if (data[1] != null) {
-				expectedBestMatch = lists[Integer.parseInt(data[1])];
-			}
-			Assert.assertEquals("The best match found did not match the expected one", expectedBestMatch, ProductPreferences.findBestMatch(items, Arrays.asList(lists)));
-		}
 	}
 	
 	public void testGetOrderedList() {

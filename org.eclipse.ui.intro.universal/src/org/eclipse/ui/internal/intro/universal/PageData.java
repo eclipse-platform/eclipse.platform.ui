@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.universal;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -57,7 +58,7 @@ public class PageData {
 			groups.add(gd);
 	}
 
-	public void addAnchors(ArrayList result, String groupId) {
+	public void addAnchors(List result, String groupId) {
 		GroupData group = findGroup(groupId);
 		if (group==null) return;
 		group.addAnchors(result);
@@ -66,11 +67,8 @@ public class PageData {
 	public String resolvePath(String extensionId) {
 		if (isHidden(extensionId))
 			return null;
-		GroupData ddata = null;
 		for (int i=0; i<groups.size(); i++) {
 			GroupData gdata = (GroupData)groups.get(i);
-			if (gdata.isDefault())
-				ddata=gdata;
 			if (gdata.contains(extensionId)) {
 				IPath resolvedPath = new Path(id);
 				resolvedPath = resolvedPath.append(gdata.getPath());
@@ -78,12 +76,21 @@ public class PageData {
 				return resolvedPath.toString();
 			}
 		}
-		// resolve as default
-		IPath resolvedPath = new Path(id).append(ddata.getPath());
-		resolvedPath = resolvedPath.append(IUniversalIntroConstants.DEFAULT_ANCHOR);
-		return resolvedPath.toString();
+		return null;
 	}
-	
+
+	public String resolveDefaultPath() {
+		for (int i=0; i<groups.size(); i++) {
+			GroupData gdata = (GroupData)groups.get(i);
+			if (gdata.isDefault()) {
+				IPath resolvedPath = new Path(id).append(gdata.getPath());
+				resolvedPath = resolvedPath.append(IUniversalIntroConstants.DEFAULT_ANCHOR);
+				return resolvedPath.toString();
+			}
+		}
+		return null;
+	}
+
 	public boolean isHidden(String extensionId) {
 		return hidden!=null && hidden.contains(extensionId);
 	}

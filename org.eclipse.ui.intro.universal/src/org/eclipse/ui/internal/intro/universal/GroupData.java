@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.intro.universal;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.ui.intro.config.IntroElement;
 import org.w3c.dom.Element;
@@ -59,7 +60,7 @@ public class GroupData {
 		return fDefault;
 	}
 
-	public void addAnchors(ArrayList result) {
+	public void addAnchors(List result) {
 		for (int i = 0; i < children.size(); i++) {
 			BaseData edata = (BaseData) children.get(i);
 			String id = edata.getId();

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.preferences;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -49,24 +48,12 @@ public class HelpDataTest extends TestCase {
 			String file = entry[0][0];
 			List expectedTocOrder = Arrays.asList(entry[1]); 
 			Set expectedHiddenTocs = new HashSet(Arrays.asList(entry[2])); 
-			Set expectedHiddenIndexes = new HashSet(Arrays.asList(entry[3])); 
-			HelpDataTester data = new HelpDataTester(file);
+			Set expectedHiddenIndexes = new HashSet(Arrays.asList(entry[3]));
+			URL url = UserAssistanceTestPlugin.getDefault().getBundle().getEntry(file);
+			HelpData data = new HelpData(url);
 			Assert.assertEquals("Did not get the expected toc order from help data file " + file, expectedTocOrder, data.getTocOrder());
 			Assert.assertEquals("Did not get the expected hidden tocs from help data file " + file, expectedHiddenTocs, data.getHiddenTocs());
 			Assert.assertEquals("Did not get the expected hidden indexes from help data file " + file, expectedHiddenIndexes, data.getHiddenIndexes());
-		}
-	}
-
-	private class HelpDataTester extends HelpData {
-		
-		private String path;
-		
-		public HelpDataTester(String path) {
-			this.path = path;
-		}
-		
-		public InputStream getHelpDataFile(String filePath) throws IOException {
-			return UserAssistanceTestPlugin.getDefault().getBundle().getEntry(path).openStream();
 		}
 	}
 }

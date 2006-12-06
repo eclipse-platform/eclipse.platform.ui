@@ -190,8 +190,8 @@ public class TocManager {
 	}
 	
 	private Set getIgnoredTocContributions() {
-		HelpData helpData = HelpData.getInstance();
-		if (helpData.exists()) {
+		HelpData helpData = HelpData.getProductHelpData();
+		if (helpData != null) {
 			return helpData.getHiddenTocs();
 		}
 		else {
@@ -242,16 +242,9 @@ public class TocManager {
 		// first categorize the TOCs
 		List itemsToOrder = new ArrayList();
 		Map categorized = categorizeTocs(Arrays.asList(unorderedTocs), itemsToOrder);
-		
+			
 		// order them
-		List orderedItems;
-		HelpData helpData = HelpData.getInstance();
-		if (helpData.exists()) {
-			orderedItems =  ProductPreferences.getOrderedList(itemsToOrder, helpData.getTocOrder());
-		}
-		else {
-			orderedItems = ProductPreferences.getOrderedList(HelpPlugin.getDefault(), HelpPlugin.BASE_TOCS_KEY, itemsToOrder);
-		}
+		List orderedItems = ProductPreferences.getTocOrder(itemsToOrder);
 			
 		// replace with actual TocContribution or category
 		orderedItems = substituteValues(orderedItems, categorized);

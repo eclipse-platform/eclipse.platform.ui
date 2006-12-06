@@ -13,6 +13,7 @@ package org.eclipse.help.internal;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,8 +22,8 @@ import java.util.Set;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -40,29 +41,37 @@ public class HelpData {
 	private static final String ELEMENT_CATEGORY = "category"; //$NON-NLS-1$
 	private static final String ELEMENT_INDEX = "index"; //$NON-NLS-1$
 	private static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+
+	private static HelpData productHelpData;
 	
-	private static HelpData instance;
-	
+	private URL url;
 	private List tocOrder;
 	private Set hiddenTocs;
 	private Set hiddenIndexes;
-	
+
 	/*
-	 * Returns the singleton instance.
+	 * Get the active product's help data, or null if the product doesn't have
+	 * help data or there is no active product.
 	 */
-	public static synchronized HelpData getInstance() {
-		if (instance == null) {
-			instance = new HelpData();
+	public static synchronized HelpData getProductHelpData() {
+		if (productHelpData == null) {
+			String helpDataFile = HelpPlugin.getDefault().getPluginPreferences().getString(HelpPlugin.HELP_DATA_KEY);
+			if (helpDataFile.length() != 0) {
+				IProduct product = Platform.getProduct();
+				if (product != null) {
+					URL url = product.getDefiningBundle().getEntry(helpDataFile);
+					productHelpData = new HelpData(url);
+				}
+			}
 		}
-		return instance;
+		return productHelpData;
 	}
-	
+
 	/*
-	 * Returns whether the currently running product has any help data defined.
+	 * Constructs help data from the XML at the given URL.
 	 */
-	public boolean exists() {
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		return prefs.getString(HelpPlugin.HELP_DATA_KEY).length() != 0;
+	public HelpData(URL url) {
+		this.url = url;
 	}
 	
 	/*
@@ -112,16 +121,16 @@ public class HelpData {
 		tocOrder = new ArrayList();
 		hiddenTocs = new HashSet();
 		hiddenIndexes = new HashSet();
-		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
-		String filePath = prefs.getString(HelpPlugin.HELP_DATA_KEY);
-		try {
-			SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-			InputStream in = getHelpDataFile(filePath);
-			parser.parse(in, new Handler());
-		}
-		catch (Throwable t) {
-			String msg = "Error loading help data file \"" + filePath + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-			HelpPlugin.logError(msg, t);
+		if (url != null) {
+			try {
+				SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+				InputStream in = url.openStream();
+				parser.parse(in, new Handler());
+			}
+			catch (Throwable t) {
+				String msg = "Error loading help data file \"" + url + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+				HelpPlugin.logError(msg, t);
+			}
 		}
 	}
 

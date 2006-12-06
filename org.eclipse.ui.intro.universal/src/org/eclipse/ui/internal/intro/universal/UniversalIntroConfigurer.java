@@ -12,19 +12,24 @@ package org.eclipse.ui.internal.intro.universal;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.help.internal.util.ProductPreferences;
+import org.eclipse.help.internal.util.SequenceResolver;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.internal.intro.universal.util.ImageUtil;
+import org.eclipse.ui.internal.intro.universal.util.PreferenceArbiter;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.intro.config.IntroConfigurer;
 import org.eclipse.ui.intro.config.IntroElement;
@@ -36,10 +41,12 @@ import org.osgi.framework.Bundle;
  * 
  * @since 3.2
  */
-
 public class UniversalIntroConfigurer extends IntroConfigurer implements
 		IUniversalIntroConstants {
-	private ArrayList introData = new ArrayList();
+	
+	private IntroData primaryIntroData;
+	private IntroData[] secondaryIntroData;
+	private SequenceResolver sequenceResolver;
 
 	public UniversalIntroConfigurer() {
 		loadData();
@@ -94,21 +101,49 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	 * @see org.eclipse.ui.intro.config.IntroConfigurer#getMixinStyle(java.lang.String)
 	 */
 	public String getMixinStyle(String pageId, String extensionId) {
-		if (introData.size() > 0) {
-			// TODO getting the active product one only
-			// Eventually we should consult the data from all the products
-			IntroData idata = (IntroData) introData.get(0);
-			PageData pdata = idata.getPage(pageId);
-			if (pdata != null) {
-				ExtensionData ed = pdata.findExtension(extensionId, false);
-				if (ed!=null) {
-					int importance = ed.getImportance();
-					if (importance != ExtensionData.HIDDEN)
-						return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
-				}
+		// if active product has a preference, use it
+		if (primaryIntroData != null) {
+			int importance = getImportance(primaryIntroData, pageId, extensionId);
+			if (importance >= 0) {
+				return ExtensionData.IMPORTANCE_STYLE_TABLE[importance];
 			}
 		}
+		// else, find the most referenced importance style from other products
+		int[] importanceRefs = new int[ExtensionData.IMPORTANCE_TABLE.length];
+		for (int i=0;i<secondaryIntroData.length;++i) {
+			IntroData data = secondaryIntroData[i];
+			int importance = getImportance(data, pageId, extensionId);
+			if (importance >= 0) {
+				++importanceRefs[importance];
+			}
+		}
+		int maxIndex = 0;
+		for (int i=1;i<importanceRefs.length;++i) {
+			if (importanceRefs[i] > importanceRefs[maxIndex]) {
+				maxIndex = i;
+			}
+		}
+		if (importanceRefs[maxIndex] > 0) {
+			return ExtensionData.IMPORTANCE_STYLE_TABLE[maxIndex];
+		}
+		// nobody has a preference
 		return null;
+	}
+
+	/*
+	 * Returns the given extension's importance as specified by the
+	 * given intro data.
+	 */
+	private int getImportance(IntroData data, String pageId, String extensionId) {
+		PageData pdata = data.getPage(pageId);
+		if (pdata != null) {
+			ExtensionData ed = pdata.findExtension(extensionId, false);
+			if (ed != null) {
+				return ed.getImportance();
+			}
+		}
+		// none specified
+		return -1;
 	}
 
 	private String resolveVariable(Bundle bundle, String value) {
@@ -421,53 +456,38 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 	}
 
 	private void loadData() {
-		// add intro data for this product first
-		String dataFile = getVariable(VAR_INTRO_DATA);
-		String pid = Platform.getProduct().getId();
-		if (dataFile != null)
-			introData.add(new IntroData(pid, dataFile, true));
-		IConfigurationElement[] products = Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(
-						"org.eclipse.core.runtime.products"); //$NON-NLS-1$
-		for (int i = 0; i < products.length; i++) {
-			IConfigurationElement product = products[i];
-			IExtension extension = product.getDeclaringExtension();
-			String uid = extension.getUniqueIdentifier();
-			// skip this product
-			if (pid.equals(uid))
-				continue;
-			addIntroDataFor(uid, product);
+		// load the active product's intro data first
+		IProduct product = Platform.getProduct();
+		if (product != null) {
+			String dataFile = getVariable(VAR_INTRO_DATA);
+			if (dataFile != null) {
+				primaryIntroData = new IntroData(product.getId(), dataFile, true);
+			}
 		}
-	}
-
-	private void addIntroDataFor(String pid, IConfigurationElement product) {
-		IConfigurationElement[] children = product.getChildren("property"); //$NON-NLS-1$
-		for (int i = 0; i < children.length; i++) {
-			IConfigurationElement child = children[i];
-			String name = child.getAttribute("name"); //$NON-NLS-1$
-			if (name != null && name.equals(VAR_INTRO_DATA)) {
-				String value = child.getAttribute("value"); //$NON-NLS-1$
-				String bid = child.getDeclaringExtension()
-						.getNamespaceIdentifier();
-				Bundle bundle = Platform.getBundle(bid);
+		// load all other installed (but not running) products' intro data
+		List result = new ArrayList();
+		Properties[] prefs = ProductPreferences.getProductPreferences(false);
+		for (int i=0;i<prefs.length;++i) {
+			String key = UniversalIntroPlugin.PLUGIN_ID + '/' + VAR_INTRO_DATA;
+			String dataFile = prefs[i].getProperty(key);
+			if (dataFile != null) {
+				String pluginId = ProductPreferences.getPluginId(prefs[i]);
+				Bundle bundle = Platform.getBundle(pluginId);
 				if (bundle != null) {
-					String dataFile = resolveVariable(bundle, value);
-					introData.add(new IntroData(pid, dataFile, false));
+					String pid = ProductPreferences.getProductId(prefs[i]);
+					dataFile = resolveVariable(bundle, dataFile);
+					result.add(new IntroData(pid, dataFile, false));
 				}
 			}
 		}
+		secondaryIntroData = (IntroData[])result.toArray(new IntroData[result.size()]);
 	}
 
 	private IntroElement[] getContent(String pageId, String groupId) {
-		ArrayList result = new ArrayList();
-		if (introData.size() > 0) {
-			// TODO getting the active product one only
-			// Eventually we should consult the data from all the products
-			IntroData idata = (IntroData) introData.get(0);
-			PageData pdata = idata.getPage(pageId);
-			if (pdata != null) {
-				pdata.addAnchors(result, groupId);
-			}
+		List result = new ArrayList();
+		List anchors = getAnchors(pageId, groupId);
+		if (anchors != null) {
+			result.addAll(anchors);
 		}
 		// Add the fallback anchor
 		IntroElement fallback = new IntroElement("anchor"); //$NON-NLS-1$
@@ -476,6 +496,39 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		return (IntroElement[]) result.toArray(new IntroElement[result.size()]);
 	}
 
+	private List getAnchors(String pageId, String groupId) {
+		List primaryAnchors = null;
+		if (primaryIntroData != null) {
+			primaryAnchors = getAnchors(primaryIntroData, pageId, groupId);
+		}
+		if (primaryAnchors == null) {
+			primaryAnchors = Collections.EMPTY_LIST;
+		}
+		List secondaryAnchorsList = new ArrayList();
+		for (int i=0;i<secondaryIntroData.length;++i) {
+			IntroData idata = secondaryIntroData[i];
+			List anchors = getAnchors(idata, pageId, groupId);
+			if (anchors != null) {
+				secondaryAnchorsList.add(anchors);
+			}
+		}
+		List[] secondaryAnchors = (List[])secondaryAnchorsList.toArray(new List[secondaryAnchorsList.size()]);
+		if (sequenceResolver == null) {
+			sequenceResolver = new SequenceResolver();
+		}
+		return sequenceResolver.getSequence(primaryAnchors, secondaryAnchors);
+	}
+	
+	private List getAnchors(IntroData data, String pageId, String groupId) {
+		PageData pdata = data.getPage(pageId);
+		if (pdata != null) {
+			List anchors = new ArrayList();
+			pdata.addAnchors(anchors, groupId);
+			return anchors;
+		}
+		return null;
+	}
+	
 	public String resolvePath(String extensionId, String path) {
 		boolean extensionRelativePath = false;
 		IPath ipath = new Path(path);
@@ -488,30 +541,82 @@ public class UniversalIntroConfigurer extends IntroConfigurer implements
 		if (!s2.equals("@")) { //$NON-NLS-1$
 			extensionRelativePath = true;
 		}
-		if (introData.size() > 0) {
-			// TODO getting the active product one only
-			// Eventually we should consult the data from all the products
-			IntroData idata = (IntroData) introData.get(0);
-			PageData pdata = idata.getPage(pageId);
-			if (pdata != null) {
-				String resolvedPath = pdata.resolvePath(extensionId);
+		if (!isHidden(extensionId, pageId)) {
+			String resolvedPath = resolveExtensionPath(extensionId, pageId);
+			if (resolvedPath != null) {
 				if (extensionRelativePath) {
-					// not done - use the resolved extension path
-					// to complete the source path
+					// not done - use the resolved extension path to complete the source path
 					IPath p2 = new Path(resolvedPath);
 					IPath p1 = ipath.removeFirstSegments(2);
-					// remove the last anchor and append the
-					// relative path from the extension
-					resolvedPath = p2.removeLastSegments(1).append(p1)
-							.toString();
+					// remove the last anchor and append the relative path from the extension
+					resolvedPath = p2.removeLastSegments(1).append(p1).toString();
 				}
 				return resolvedPath;
 			}
-		} else {
-			// use fallback anchor
 			return pageId + DEFAULT_CONTENT_PATH;
 		}
 		return null;
+	}
+
+	private String resolveExtensionPath(String extensionId, String pageId) {
+		// does the active product have a preference?
+		if (primaryIntroData != null) {
+			PageData pdata = primaryIntroData.getPage(pageId);
+			if (pdata != null) {
+				String path = pdata.resolvePath(extensionId);
+				if (path != null) {
+					return path;
+				}
+			}
+		}
+		// if not, do the others have preferences?
+		PreferenceArbiter arbiter = new PreferenceArbiter();
+		for (int i=0;i<secondaryIntroData.length;++i) {
+			IntroData idata = secondaryIntroData[i];
+			PageData pdata = idata.getPage(pageId);
+			if (pdata != null) {
+				arbiter.consider(pdata.resolvePath(extensionId));
+			}
+		}
+		String path = (String)arbiter.getWinner();
+		if (path != null) {
+			return path;
+		}
+		// there was no clear winner; fall back to the default
+		return resolveDefaultPath(pageId);
+	}
+	
+	private String resolveDefaultPath(String pageId) {
+		// does the active product have a preference?
+		if (primaryIntroData != null) {
+			PageData pdata = primaryIntroData.getPage(pageId);
+			if (pdata != null) {
+				String path = pdata.resolveDefaultPath();
+				if (path != null) {
+					return path;
+				}
+			}
+		}
+		// if not, do the others have preferences?
+		PreferenceArbiter arbiter = new PreferenceArbiter();
+		for (int i=0;i<secondaryIntroData.length;++i) {
+			IntroData idata = secondaryIntroData[i];
+			PageData pdata = idata.getPage(pageId);
+			if (pdata != null) {
+				arbiter.consider(pdata.resolveDefaultPath());
+			}
+		}
+		return (String)arbiter.getWinner();
+	}
+
+	private boolean isHidden(String extensionId, String pageId) {
+		if (primaryIntroData != null) {
+			PageData pdata = primaryIntroData.getPage(pageId);
+			if (pdata != null) {
+				return pdata.isHidden(extensionId);
+			}
+		}
+		return false;
 	}
 
 	public void init(IIntroSite site, Map themeProperties) {

@@ -163,8 +163,8 @@ public class IndexManager {
 	}
 
 	private Set getIgnoredIndexContributions() {
-		HelpData helpData = HelpData.getInstance();
-		if (helpData.exists()) {
+		HelpData helpData = HelpData.getProductHelpData();
+		if (helpData != null) {
 			return helpData.getHiddenIndexes();
 		}
 		else {

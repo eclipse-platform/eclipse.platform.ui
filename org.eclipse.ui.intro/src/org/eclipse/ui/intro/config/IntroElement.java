@@ -121,4 +121,21 @@ public class IntroElement {
 			return new IntroElement[0];
 		return (IntroElement[]) children.toArray(new IntroElement[children.size()]);
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof IntroElement) {
+			if (obj == this) {
+				return true;
+			}
+			String id1 = (String)atts.get("id"); //$NON-NLS-1$
+			String id2 = (String)((IntroElement)obj).atts.get("id"); //$NON-NLS-1$
+			if (id1 == null && id2 == null) {
+				return super.equals(obj);
+			}
+			if (id1 != null && id2 != null) {
+				return id1.equals(id2);
+			}
+		}
+		return false;
+	}
 }
