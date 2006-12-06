@@ -155,7 +155,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	public DiffTreeViewer(Tree tree, CompareConfiguration configuration) {
 		super(tree);
-		initialize(configuration);
+		initialize(configuration == null ? new CompareConfiguration() : configuration);
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public class DiffTreeViewer extends TreeViewer {
 	 */
 	public DiffTreeViewer(Composite parent, CompareConfiguration configuration) {
 		super(new Tree(parent, SWT.MULTI));
-		initialize(configuration);
+		initialize(configuration == null ? new CompareConfiguration() : configuration);
 	}
 	
 	private void initialize(CompareConfiguration configuration) {
