@@ -11,14 +11,14 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.util.List;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -78,26 +78,15 @@ public final class WindowMenuService implements IMenuService {
 		menuAuthority.dispose();
 	}
 
-	public final void readRegistry() {
-		parent.readRegistry();
-	}
-
 	public final void removeSourceProvider(final ISourceProvider provider) {
 		menuAuthority.removeSourceProvider(provider);
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#getManagerForURI(java.net.URI)
-	 */
-	public List getAdditionsForURI(MenuLocationURI uri) {
-		return parent.getAdditionsForURI(uri);
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.MenuManager, org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
-	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
-		parent.populateMenu(mgr, uri);
+	public void populateContributionManager(ContributionManager mgr, String uri) {
+		parent.populateContributionManager(mgr, uri);
 	}
 	
 	/* (non-Javadoc)
@@ -110,8 +99,8 @@ public final class WindowMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI, org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
-	public void addMenuCache(MenuCacheEntry cache) {
-		parent.addMenuCache(cache);
+	public void addContributionFactory(AbstractContributionFactory cache) {
+		parent.addContributionFactory(cache);
 	}
 	
 	/* (non-Javadoc)
@@ -132,7 +121,14 @@ public final class WindowMenuService implements IMenuService {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
-	public void releaseMenu(ContributionManager mgr) {
-		parent.releaseMenu(mgr);
+	public void releaseContributions(ContributionManager mgr) {
+		parent.releaseContributions(mgr);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
+	 */
+	public void removeContributionFactory(AbstractContributionFactory factory) {
+		parent.removeContributionFactory(factory);
 	}
 }

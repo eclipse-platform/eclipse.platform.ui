@@ -28,6 +28,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -934,7 +935,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	private final SMenuManager sMenuManager;
 	
-	private final IMenuService menuService;
+	private final WorkbenchMenuService menuService;
 
 	/**
 	 * Constructs a new instance of {@link MenuPersistence}.
@@ -948,7 +949,7 @@ final class MenuPersistence extends RegistryPersistence {
 	 */
 	MenuPersistence(final SMenuManager mm, final IMenuService ms,
 			final ICommandService commandService) {
-		if (ms == null) {
+		if (ms == null || !(ms instanceof WorkbenchMenuService)) {
 			throw new NullPointerException("The menu service cannot be null"); //$NON-NLS-1$
 		}
 
@@ -958,7 +959,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		this.commandService = commandService;
 		this.sMenuManager = mm;
-		this.menuService = ms;
+		this.menuService = (WorkbenchMenuService) ms;
 	}
 
 	public final void dispose() {
@@ -1053,7 +1054,7 @@ final class MenuPersistence extends RegistryPersistence {
 	// 3.3 menu extension code
 	// 
 	
-	public static void readTrimAdditions(IMenuService menuService) {
+	public static void readTrimAdditions(WorkbenchMenuService menuService) {
 		if (menuService == null)
 			return;
 		
@@ -1103,21 +1104,20 @@ final class MenuPersistence extends RegistryPersistence {
 		}
 	}
 	
-	public static void readAdditions(IMenuService menuService) {
+	public static void readAdditions(WorkbenchMenuService menuService) {
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
 		final IConfigurationElement[] menusExtensionPoint = registry
-				.getConfigurationElementsFor(COMMON_MENU_ADDITIONS);
+				.getConfigurationElementsFor(EXTENSION_MENUS);
 
 		// Create a cache entry for every menu addition
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
 			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
 				// Determine the insertion location by parsing the URI
-				String locationURI = menusExtensionPoint[i].getAttribute(TAG_LOCATION_URI);
-				MenuLocationURI uri = new MenuLocationURI(locationURI);
+				String location = menusExtensionPoint[i]
+						.getAttribute(TAG_LOCATION_URI);
 
-				if (uri != null) {
-					menuService.addMenuCache(new MenuAdditionCacheEntry(menusExtensionPoint[i], menuService));
-				}
+				menuService.addContributionFactory(new MenuAdditionCacheEntry(
+						menusExtensionPoint[i], menuService, location));
 			}
 		}
 	}

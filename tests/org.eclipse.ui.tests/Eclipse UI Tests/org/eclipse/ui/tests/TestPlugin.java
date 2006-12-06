@@ -23,12 +23,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.AbstractWorkbenchWidget;
-import org.eclipse.ui.internal.menus.CommandDataContributionItem;
-import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.MenuCacheEntry;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.menus.WidgetDataContributionItem;
+import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.TextWidget;
 import org.eclipse.ui.tests.decorators.BackgroundColorDecorator;
@@ -48,6 +47,10 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
     // This boolean should only be true if the earlyStartup() method
     // has been called.
     private static boolean earlyStartupCalled = false;
+
+	private AbstractContributionFactory viewMenuAddition;
+
+	private AbstractContributionFactory viewToolbarAddition;
 
     /**
      * The constructor.
@@ -152,9 +155,9 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 		}
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
-		MenuCacheEntry cache = new MenuCacheEntry(menuService) {
-			public void createContributionItems(List additions) {
-				CommandDataContributionItem item = new CommandDataContributionItem(
+		viewMenuAddition = new AbstractContributionFactory("menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions") {
+			public void createContributionItems(IMenuService menuService, List additions) {
+				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX20",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						"Item X20", null);
@@ -162,12 +165,12 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 
 				MenuManager submenu = new MenuManager("Menu X21",
 						"org.eclipse.ui.tests.menus.menuX21");
-				item = new CommandDataContributionItem(
+				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX22",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						"Item X22", null);
 				submenu.add(item);
-				item = new CommandDataContributionItem(
+				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX23",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						"Item X23", null);
@@ -175,26 +178,22 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 
 				additions.add(submenu);
 
-				item = new CommandDataContributionItem(
+				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX24",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
 						"Item X24", null);
 				additions.add(item);
 			}
 
-			public void releaseContributionItems(List items) {
+			public void releaseContributionItems(IMenuService menuService, List items) {
 				// for us this is a no-op
 			}
 		};
-		cache
-				.setUri(new MenuLocationURI(
-						"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions"));
+		menuService.addContributionFactory(viewMenuAddition);
 
-		menuService.addMenuCache(cache);
-
-		cache = new MenuCacheEntry(menuService) {
-			public void createContributionItems(List additions) {
-				CommandDataContributionItem item = new CommandDataContributionItem(
+		viewToolbarAddition = new AbstractContributionFactory("toolbar:org.eclipse.ui.tests.api.MenuTestHarness") {
+			public void createContributionItems(IMenuService menuService, List additions) {
+				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX25",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						"Item X25", null);
@@ -202,7 +201,7 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				WidgetDataContributionItem widget = new WidgetDataContributionItem(
 						"org.eclipse.ui.tests.menus.itemX26") {
 
-					public AbstractWorkbenchWidget createWidget() {
+					public AbstractWorkbenchTrimWidget createWidget() {
 						return new TextWidget();
 					}
 
@@ -210,19 +209,22 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				additions.add(widget);
 			}
 
-			public void releaseContributionItems(List items) {
+			public void releaseContributionItems(IMenuService menuService, List items) {
 				// for us this is a no-op
 			}
 		};
-		cache.setUri(new MenuLocationURI(
-				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness"));
-
-		menuService.addMenuCache(cache);
+		menuService.addContributionFactory(viewToolbarAddition);
 	}
     
     public void removeMenuContribution() {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
+		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
+				.getService(IMenuService.class);
+		menuService.removeContributionFactory(viewMenuAddition);
+		viewMenuAddition = null;
+		menuService.removeContributionFactory(viewToolbarAddition);
+		viewMenuAddition = null;
 	}
 }

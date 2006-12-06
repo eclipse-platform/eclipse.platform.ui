@@ -24,13 +24,17 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @since 3.3
  * 
  */
-public class MenuAdditionCacheEntry extends MenuCacheEntry {
+public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	private IConfigurationElement additionElement;
 
 	// Caches
@@ -45,20 +49,13 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	 */
 	private HashMap visWhenMap = new HashMap();
 
+	private IMenuService menuService;
+
 	public MenuAdditionCacheEntry(IConfigurationElement element,
-			IMenuService service) {
-		super(service);
+			IMenuService service, String location) {
+		super(location);
 		this.additionElement = element;
-
-		String locationURI = additionElement
-				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI);
-
-		// If the locationURI is null then this should be a sub menu
-		// addition..create the 'root' URI
-		if (locationURI == null) {
-			locationURI = "menu:" + getId(element); //$NON-NLS-1$
-		}
-		setUri(new MenuLocationURI(locationURI));
+		this.menuService = service;
 
 		generateSubCaches();
 	}
@@ -73,12 +70,18 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 			if (IWorkbenchRegistryConstants.TAG_MENU.equals(itemType)) {
 				// Menus are special...we have to add any sub menu
 				// items into their own cache
+				// If the locationURI is null then this should be a sub menu
+				// addition..create the 'root' URI
+
+				String location = new MenuLocationURI(getLocation())
+						.getScheme()
+						+ ":" + MenuAdditionCacheEntry.getId(items[i]); //$NON-NLS-1$
 
 				// -ALL- contibuted menus must have an id so create one
 				// if necessary
 				MenuAdditionCacheEntry subMenuEntry = new MenuAdditionCacheEntry(
-						items[i], menuService);
-				menuService.addMenuCache(subMenuEntry);
+						items[i], menuService, location);
+				menuService.addContributionFactory(subMenuEntry);
 			}
 		}
 	}
@@ -117,12 +120,13 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 		return (Expression) visWhenMap.get(configElement);
 	}
 
-	/**
-	 * Populate the list
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param additions
+	 * @see org.eclipse.ui.internal.menus.AbstractContributionFactory#createContributionItems(org.eclipse.ui.internal.menus.IMenuService,
+	 *      java.util.List)
 	 */
-	public void createContributionItems(List additions) {
+	public void createContributionItems(IMenuService menuService, List additions) {
 		additions.clear();
 
 		IConfigurationElement[] items = additionElement.getChildren();
@@ -151,7 +155,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 				iciToConfigElementMap.put(newItem, items[i]);
 				additions.add(newItem);
 				Expression visibleWhen = getVisibleWhenForItem(newItem);
-				if (visibleWhen!=null) {
+				if (visibleWhen != null) {
 					menuService.registerVisibleWhen(newItem, visibleWhen);
 				}
 			}
@@ -190,14 +194,18 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	 */
 	private IContributionItem createItemAdditionContribution(
 			final IConfigurationElement itemAddition) {
-		return new CommandContributionItem(getId(itemAddition), itemAddition);
+		return new CommandContributionItem(getId(itemAddition),
+				getCommandId(itemAddition), getParameters(itemAddition),
+				getIconDescriptor(itemAddition), getLabel(itemAddition),
+				getTooltip(itemAddition));
+		// return new CommandContributionItem(getId(itemAddition),
+		// itemAddition);
 	}
-
 
 	/*
 	 * Support Utilities
 	 */
-	private String getId(IConfigurationElement element) {
+	public static String getId(IConfigurationElement element) {
 		String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 
 		// For sub-menu management -all- items must be id'd so enforce this
@@ -233,7 +241,7 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 		return null;
 	}
 
-	public static AbstractWorkbenchWidget getWidget(
+	public static AbstractWorkbenchTrimWidget getWidget(
 			IConfigurationElement element) {
 		return loadWidget(element);
 	}
@@ -242,11 +250,11 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 	 * @param element
 	 * @return
 	 */
-	private static AbstractWorkbenchWidget loadWidget(
+	private static AbstractWorkbenchTrimWidget loadWidget(
 			IConfigurationElement element) {
-		AbstractWorkbenchWidget widget = null;
+		AbstractWorkbenchTrimWidget widget = null;
 		try {
-			widget = (AbstractWorkbenchWidget) element
+			widget = (AbstractWorkbenchTrimWidget) element
 					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
@@ -300,11 +308,14 @@ public class MenuAdditionCacheEntry extends MenuCacheEntry {
 		return map;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.MenuCacheEntry#releaseContributionItems(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.AbstractContributionFactory#releaseContributionItems(org.eclipse.ui.internal.menus.IMenuService,
+	 *      java.util.List)
 	 */
-	public void releaseContributionItems(List items) {
+	public void releaseContributionItems(IMenuService menuService, List items) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

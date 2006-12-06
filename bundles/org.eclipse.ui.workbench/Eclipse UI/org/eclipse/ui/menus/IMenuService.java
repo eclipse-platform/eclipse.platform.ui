@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.menus;
-
-import java.util.List;
+package org.eclipse.ui.menus;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -40,60 +38,37 @@ import org.eclipse.ui.services.IServiceWithSources;
  * package.
  * </p>
  * 
- * @since 3.2
+ * @since 3.3
  */
 public interface IMenuService extends IServiceWithSources {
-
-	/**
-	 * <p>
-	 * Reads the menu information from the registry and the preferences. This
-	 * will overwrite any of the existing information in the menu service. This
-	 * method is intended to be called during start-up. When this method
-	 * completes, this menu service will reflect the current state of the
-	 * registry and preference store.
-	 * </p>
-	 * <p>
-	 * This will also attach listeners that will monitor changes to the registry
-	 * and preference store and update appropriately.
-	 * </p>
-	 */
-	public void readRegistry();
-
-	//
-	// additions for 3.3 support
-	//
-
-	/**
-	 * Transient - get the contribution manager for this URI.
-	 * 
-	 * @param uri
-	 *            The uri
-	 * @return a contribution manager
-	 * 
-	 * @since 3.3
-	 */
-	public List getAdditionsForURI(MenuLocationURI uri);
 
 	/**
 	 * Contribute and initialize the cache. This should only be called once per
 	 * cache.
 	 * 
-	 * @param uri
-	 * @param cache
-	 * @since 3.3
+	 * @param factory
 	 */
-	public void addMenuCache(MenuCacheEntry cache);
+	public void addContributionFactory(AbstractContributionFactory factory);
+
+	/**
+	 * Remove the contributed cache from the menu service.
+	 * 
+	 * @param factory
+	 */
+	public void removeContributionFactory(AbstractContributionFactory factory);
 
 	/**
 	 * populate a <code>ContributionManager</code> with the set of
 	 * <code>IContributionElement</code>'s representing the additions.
 	 * 
 	 * @param mgr
-	 *            The MenuManager to populate
-	 * @param uri
-	 *            The URI to use to locate the menu additions
+	 *            The ContributionManager to populate
+	 * @param location
+	 *            The starting location to begin populating this contribution
+	 *            manager. The format is the Menu API URI format.
 	 */
-	public void populateMenu(ContributionManager mgr, MenuLocationURI uri);
+	public void populateContributionManager(ContributionManager mgr,
+			String location);
 
 	/**
 	 * Before calling dispose() on a ContributionManager populated by the menu
@@ -104,7 +79,7 @@ public interface IMenuService extends IServiceWithSources {
 	 * @param mgr
 	 *            The manager that was populated by a call to populateMenu
 	 */
-	public void releaseMenu(ContributionManager mgr);
+	public void releaseContributions(ContributionManager mgr);
 
 	/**
 	 * Get the current state as seen by the menu service.
@@ -118,6 +93,11 @@ public interface IMenuService extends IServiceWithSources {
 	/**
 	 * This item will have its visibleWhen clause managed by this menu service.
 	 * The item lifecycle must be managed by this service as well.
+	 * <p>
+	 * <b>Note:</b> With both menu service and handler service processing and
+	 * managing core expression sources and caches, in 3.3M5 we need to look at
+	 * rationalizing the API across the board.
+	 * </p>
 	 * 
 	 * @param item
 	 *            the item to manage. Must not be <code>null</code>. The item

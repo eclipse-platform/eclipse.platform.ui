@@ -2948,7 +2948,7 @@
   
    <extension
          id="menusX1"
-         point="org.eclipse.ui.menus2">
+         point="org.eclipse.ui.menus">
       <menuAddition
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
          <item
@@ -2979,7 +2979,7 @@
                mnemonic="B">
          </item>
          <widget
-               class="BasicWidget"
+               class="non.existant.NonExistantClass"
                id="MenuTest.popup.BasicWidgetItem">
          </widget>
          <menu
@@ -3000,7 +3000,7 @@
                label="Parameter Cmd"
                mnemonic="C">
             <parameter
-                  id="Greeting"
+                  name="Greeting"
                   value="Hi There!">
             </parameter>
          </item>
@@ -3012,9 +3012,6 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-            <enabledWhen
-                  checkEnabled="false">
-            </enabledWhen>
          </item>
          <menu
                icon="icons/dynamic.gif"
@@ -3060,7 +3057,7 @@
                label="Parameter Cmd"
                mnemonic="C">
             <parameter
-                  id="Greeting"
+                  name="Greeting"
                   value="Hi There!">
             </parameter>
          </item>
@@ -3072,9 +3069,6 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-            <enabledWhen
-                  checkEnabled="false">
-            </enabledWhen>
          </item>
          <menu
                icon="icons/dynamic.gif"
@@ -3120,7 +3114,7 @@
                label="Parameter Cmd"
                mnemonic="C">
             <parameter
-                  id="Greeting"
+                  name="Greeting"
                   value="Hi There!">
             </parameter>
          </item>
@@ -3132,9 +3126,6 @@
             <visibleWhen
                   checkEnabled="false">
             </visibleWhen>
-            <enabledWhen
-                  checkEnabled="false">
-            </enabledWhen>
          </item>
          <menu
                icon="icons/dynamic.gif"

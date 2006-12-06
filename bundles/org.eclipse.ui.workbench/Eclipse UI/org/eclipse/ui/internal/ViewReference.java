@@ -29,12 +29,11 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -96,9 +95,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			//
 			IMenuService menuService = (IMenuService) site
 					.getService(IMenuService.class);
-			menuService.releaseMenu((ContributionManager) site.getActionBars()
+			menuService.releaseContributions((ContributionManager) site.getActionBars()
 					.getMenuManager());
-			menuService.releaseMenu((ContributionManager) site.getActionBars()
+			menuService.releaseContributions((ContributionManager) site.getActionBars()
 					.getToolBarManager());
 			// 3.3 end
 			actionBars.dispose();
@@ -379,13 +378,14 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				//
 				IMenuService menuService = (IMenuService) site
 						.getService(IMenuService.class);
-				MenuLocationURI loc = new MenuLocationURI("menu:" //$NON-NLS-1$
-						+ site.getId());
-				menuService.populateMenu((ContributionManager) site
-						.getActionBars().getMenuManager(), loc);
-				loc = new MenuLocationURI("toolbar:" + site.getId()); //$NON-NLS-1$
-				menuService.populateMenu((ContributionManager) site
-						.getActionBars().getToolBarManager(), loc);
+				menuService.populateContributionManager(
+						(ContributionManager) site.getActionBars()
+								.getMenuManager(), "menu:" //$NON-NLS-1$
+								+ site.getId());
+				menuService
+						.populateContributionManager((ContributionManager) site
+								.getActionBars().getToolBarManager(),
+								"toolbar:" + site.getId()); //$NON-NLS-1$
 				// 3.3 end
 				site.getActionBars().updateActionBars();
 			}

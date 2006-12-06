@@ -1,18 +1,13 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.action.ContributionItem;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 
 /**
  * @since 3.3
  * 
  */
-final class WidgetContributionItem extends ContributionItem {
+final class WidgetContributionItem extends WidgetDataContributionItem {
 	/**
 	 * 
 	 */
@@ -27,17 +22,12 @@ final class WidgetContributionItem extends ContributionItem {
 		this.widgetAddition = widgetAddition;
 	}
 
-	public void fill(ToolBar parent, int index) {
-		AbstractWorkbenchWidget widget = MenuAdditionCacheEntry
-				.getWidget(widgetAddition);
-		if (widget != null) {
-			Composite widgetContainer = new Composite(parent, SWT.NONE);
-			widget.fill(widgetContainer);
-			Point prefSize = widget.getPreferredSize();
-
-			ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR, index);
-			sepItem.setControl(widgetContainer);
-			sepItem.setWidth(prefSize.x);
-		}
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.WidgetDataContributionItem#createWidget()
+	 */
+	public AbstractWorkbenchTrimWidget createWidget() {
+		return MenuAdditionCacheEntry.getWidget(widgetAddition);
 	}
 }

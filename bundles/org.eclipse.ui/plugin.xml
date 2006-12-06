@@ -46,7 +46,6 @@
    <extension-point id="views" name="%ExtPoint.views" schema="schema/views.exsd"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets" schema="schema/workingSets.exsd"/>
    <extension-point id="browserSupport" name="%ExtPoint.browserSupport" schema="schema/browserSupport.exsd"/>
-   <extension-point id="menus2" name="%ExtPoint.menus2" schema="schema/menus2.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">
@@ -1284,35 +1283,7 @@
       </triggerPoint>    
    </extension>
  
-<!-- Trim Area 'group' definitions -->
-   <extension
-         point="org.eclipse.ui.menus">
-      <group id="command1">
-         <location>
-            <bar  type="trim"/>
-         </location>
-      </group>
-      <group id="command2" separatorsVisible="true">
-         <location>
-            <bar  path="" type="trim"/>
-         </location>
-      </group>
-      <group id="vertical1" separatorsVisible="true">
-         <location>
-            <bar  path="" type="trim"/>
-         </location>
-      </group>
-      <group id="vertical2" separatorsVisible="true">
-         <location>
-            <bar  path="" type="trim"/>
-         </location>
-      </group>
-      <group id="status" separatorsVisible="true">
-         <location>
-            <bar  path="" type="trim"/>
-         </location>
-      </group>
-   </extension>
+
    <extension
          point="org.eclipse.ui.preferenceTransfer">
       <settingsTransfer
@@ -1340,7 +1311,7 @@
         </propertyTester>
      </extension>
    <extension
-         point="org.eclipse.ui.menus2">
+         point="org.eclipse.ui.menus">
       <menuAddition
             locationURI="menu:org.eclipse.ui.main.menu"/>
    </extension>

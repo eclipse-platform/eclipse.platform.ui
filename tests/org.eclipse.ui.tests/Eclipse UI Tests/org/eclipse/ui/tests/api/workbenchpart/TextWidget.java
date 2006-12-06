@@ -16,7 +16,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.menus.AbstractWorkbenchWidget;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 
 /**
  * Basic widget wrapping an SWT Text Control.
@@ -24,7 +24,7 @@ import org.eclipse.ui.internal.menus.AbstractWorkbenchWidget;
  * @since 3.3
  *
  */
-public class TextWidget extends AbstractWorkbenchWidget {
+public class TextWidget extends AbstractWorkbenchTrimWidget {
 	Text tw;
 
 	/**
@@ -66,5 +66,20 @@ public class TextWidget extends AbstractWorkbenchWidget {
 	 */
 	public Point getPreferredSize() {
 		return tw.computeSize(100, SWT.DEFAULT, true);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.AbstractTrimWidget#dispose()
+	 */
+	public void dispose() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.menus.AbstractTrimWidget#fill(org.eclipse.swt.widgets.Composite, int, int)
+	 */
+	public void fill(Composite parent, int oldSide, int newSide) {
+		fill(parent);
 	}
 }

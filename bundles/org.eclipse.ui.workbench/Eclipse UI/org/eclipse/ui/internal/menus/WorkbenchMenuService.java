@@ -24,6 +24,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>
@@ -61,7 +63,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	public WorkbenchMenuService(final SMenuManager menuManager,
 			final ICommandService commandService) {
 		this.menuAuthority = new MenuAuthority(null);
-		this.menuPersistence = new MenuPersistence(menuManager, this, commandService);
+		this.menuPersistence = new MenuPersistence(menuManager, this,
+				commandService);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {
@@ -120,15 +123,18 @@ public final class WorkbenchMenuService implements IMenuService {
 
 		return caches;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
-	public void addMenuCache(MenuCacheEntry cache) {
-		if (cache == null || cache.getUri()==null)
+	public void addContributionFactory(AbstractContributionFactory factory) {
+		if (factory == null || factory.getLocation() == null)
 			return;
 
-		String cacheId = getIdFromURI(cache.getUri());
+		MenuLocationURI uri = new MenuLocationURI(factory.getLocation());
+		String cacheId = getIdFromURI(uri);
 		List caches = (List) uriToManager.get(cacheId);
 
 		// we always return a list
@@ -136,18 +142,33 @@ public final class WorkbenchMenuService implements IMenuService {
 			caches = new ArrayList();
 			uriToManager.put(cacheId, caches);
 		}
-		caches.add(cache);
+		caches.add(factory);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
+	 */
+	public void removeContributionFactory(AbstractContributionFactory factory) {
+		if (factory == null || factory.getLocation() == null)
+			return;
+
+		MenuLocationURI uri = new MenuLocationURI(factory.getLocation());
+		String cacheId = getIdFromURI(uri);
+		List caches = (List) uriToManager.get(cacheId);
+		if (caches != null) {
+			caches.remove(factory);
+		}
 	}
 
 	private boolean processAdditions(ContributionManager mgr,
-			MenuCacheEntry cache) {
-		int insertionIndex = getInsertionIndex(mgr, cache.getUri());
+			AbstractContributionFactory cache) {
+		int insertionIndex = getInsertionIndex(mgr, cache.getLocation());
 		if (insertionIndex == -1)
 			return false; // can't process (yet)
 
 		// Get the additions
 		List ciList = new ArrayList();
-		cache.createContributionItems(ciList);
+		cache.createContributionItems(this, ciList);
 
 		// If we have any then add them at the correct location
 		if (ciList.size() > 0) {
@@ -167,12 +188,13 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.ContributionManager,
 	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
-	public void populateMenu(ContributionManager mgr, MenuLocationURI uri) {
-		List additionCaches = getAdditionsForURI(uri);
+	public void populateContributionManager(ContributionManager mgr, String uri) {
+		MenuLocationURI contributionLocation = new MenuLocationURI(uri);
+		List additionCaches = getAdditionsForURI(contributionLocation);
 
 		List retryList = new ArrayList();
 		for (Iterator iterator = additionCaches.iterator(); iterator.hasNext();) {
-			MenuCacheEntry cache = (MenuCacheEntry) iterator
+			AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 					.next();
 			if (!processAdditions(mgr, cache)) {
 				retryList.add(cache);
@@ -192,7 +214,7 @@ public final class WorkbenchMenuService implements IMenuService {
 
 			// Walk the current list seeing if any entries can now be resolved
 			for (Iterator iterator = curRetry.iterator(); iterator.hasNext();) {
-				MenuCacheEntry cache = (MenuCacheEntry) iterator
+				AbstractContributionFactory cache = (AbstractContributionFactory) iterator
 						.next();
 				if (!processAdditions(mgr, cache))
 					retryList.add(cache);
@@ -208,9 +230,8 @@ public final class WorkbenchMenuService implements IMenuService {
 		for (int i = 0; i < curItems.length; i++) {
 			if (curItems[i] instanceof ContributionManager) {
 				IContributionItem menuItem = curItems[i];
-				MenuLocationURI subURI = new MenuLocationURI(
-						"menu:" + menuItem.getId()); //$NON-NLS-1$
-				populateMenu((ContributionManager) curItems[i], subURI);
+				populateContributionManager((ContributionManager) curItems[i],
+						contributionLocation.getScheme() + ":" + menuItem.getId()); //$NON-NLS-1$
 			}
 		}
 	}
@@ -220,7 +241,8 @@ public final class WorkbenchMenuService implements IMenuService {
 	 * @param uri
 	 * @return
 	 */
-	private int getInsertionIndex(ContributionManager mgr, MenuLocationURI uri) {
+	private int getInsertionIndex(ContributionManager mgr, String location) {
+		MenuLocationURI uri = new MenuLocationURI(location);
 		String query = uri.getQuery();
 
 		int additionsIndex = -1;
@@ -246,38 +268,46 @@ public final class WorkbenchMenuService implements IMenuService {
 		return additionsIndex;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
 	 */
 	public IEvaluationContext getCurrentState() {
 		return menuAuthority.getCurrentState();
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem,
+	 *      org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibleWhen(IContributionItem item,
 			Expression visibleWhen) {
 		menuAuthority.addContribution(item, visibleWhen);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
 	 */
 	public void unregisterVisibleWhen(IContributionItem item) {
 		menuAuthority.removeContribition(item);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
-	public void releaseMenu(ContributionManager mgr) {
+	public void releaseContributions(ContributionManager mgr) {
 		IContributionItem[] items = mgr.getItems();
 		for (int i = 0; i < items.length; i++) {
 			menuAuthority.removeContribition(items[i]);
 			if (items[i] instanceof ContributionManager) {
-				releaseMenu((ContributionManager) items[i]);
+				releaseContributions((ContributionManager) items[i]);
 			}
 		}
 	}

@@ -105,8 +105,8 @@ public class MenuAuthorityTest extends UITestCase {
 		ActionContributionItem aci = new ActionContributionItem(a);
 
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint menus2 = reg.getExtensionPoint("org.eclipse.ui.menus2");
-		IExtension extension = menus2.getExtension(EXTENSION_ID);
+		IExtensionPoint menusExtension = reg.getExtensionPoint("org.eclipse.ui.menus");
+		IExtension extension = menusExtension.getExtension(EXTENSION_ID);
 
 		IConfigurationElement[] mas = extension.getConfigurationElements();
 		Expression activeContextExpr = null;

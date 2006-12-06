@@ -42,11 +42,10 @@ import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.SlaveContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.SlaveHandlerService;
-import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
@@ -126,15 +125,15 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		// 3.3 start
 		final IMenuService menuService = (IMenuService) part.getSite().getService(
 				IMenuService.class);
-		final MenuLocationURI loc = new MenuLocationURI("popup:" + menuId); //$NON-NLS-1$
+		final String loc = "popup:" + menuId; //$NON-NLS-1$
 		if (menuManager.getRemoveAllWhenShown()) {
 			menuManager.addMenuListener(new IMenuListener() {
 				public void menuAboutToShow(IMenuManager manager) {
-					menuService.populateMenu(menuManager, loc);
+					menuService.populateContributionManager(menuManager, loc);
 				}
 			});
 		} else {
-			menuService.populateMenu(menuManager, loc);
+			menuService.populateContributionManager(menuManager, loc);
 		}
 		// 3.3 end
 	}
@@ -227,7 +226,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			final IMenuService menuService = (IMenuService) getService(
 					IMenuService.class);
 			while (i.hasNext()) {
-				menuService.releaseMenu((ContributionManager) i.next());
+				menuService.releaseContributions((ContributionManager) i.next());
 			}
 			menuExtenders = null;
 			

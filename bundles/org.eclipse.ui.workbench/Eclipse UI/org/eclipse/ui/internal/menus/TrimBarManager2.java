@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchWidget;
 
 /**
@@ -67,7 +68,7 @@ public class TrimBarManager2 {
 	 */
 	private STrimBuilder fTrimBuilder;
 
-	private IMenuService fMenuService;
+	private WorkbenchMenuService fMenuService;
 
 	private boolean fDirty;
 
@@ -84,7 +85,8 @@ public class TrimBarManager2 {
 		}
 
 		// Remember the parameters
-		fMenuService = (IMenuService) window.getService(IMenuService.class);
+		fMenuService = (WorkbenchMenuService) window.getWorkbench().getService(
+				IMenuService.class);
 		fTrimBuilder = new STrimBuilder(window);
 
 		// New layouts are always 'dirty'

@@ -113,9 +113,7 @@ import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
-import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
 import org.eclipse.ui.internal.menus.TrimBarManager;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.WindowMenuService;
@@ -133,6 +131,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 
 /**
@@ -998,10 +997,10 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		// Insert any contributed trim into the layout
 		// TODO: Hook this up with the Menu and/or CoolBar manager
 		// to allow for 'update' calls...
-		if (Policy.EXPERIMENTAL_MENU)
-			trimMgr2 = new TrimBarManager2(this);
-		else
-			trimMgr = new TrimBarManager(this, ((Workbench)getWorkbench()).getSMenuManager());
+//		if (Policy.EXPERIMENTAL_MENU)
+		trimMgr2 = new TrimBarManager2(this);
+//		else
+//			trimMgr = new TrimBarManager(this, ((Workbench)getWorkbench()).getSMenuManager());
 		
 		trimDropTarget = new TrimDropTarget(shell, this);
 		DragUtil.addDragTarget(shell, trimDropTarget);
@@ -1486,7 +1485,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// time to wipe our our populate
 			IMenuService menuService = (IMenuService) workbench
 					.getService(IMenuService.class);
-			menuService.releaseMenu(((ContributionManager) getActionBars()
+			menuService.releaseContributions(((ContributionManager) getActionBars()
 					.getMenuManager()));
 
 			getActionBarAdvisor().dispose();
@@ -3083,9 +3082,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// 3.3 start
 			final IMenuService menuService = (IMenuService) serviceLocator
 					.getService(IMenuService.class);
-			menuService.populateMenu((ContributionManager) getActionBars()
-					.getMenuManager(), new MenuLocationURI(
-					"menu:org.eclipse.ui.main.menu")); //$NON-NLS-1$
+			menuService.populateContributionManager((ContributionManager) getActionBars()
+					.getMenuManager(), "menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$
 			// 3.3 end
 		} finally {
 			workbench.largeUpdateEnd();

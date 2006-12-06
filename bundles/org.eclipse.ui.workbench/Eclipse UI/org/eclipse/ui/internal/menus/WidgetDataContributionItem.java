@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 
 /**
  * @since 3.3
@@ -15,14 +16,13 @@ public abstract class WidgetDataContributionItem extends ContributionItem {
 
 	/**
 	 * @param id
-	 * @param widgetAddition
 	 */
 	public WidgetDataContributionItem(String id) {
 		super(id);
 	}
 
 	public void fill(ToolBar parent, int index) {
-		AbstractWorkbenchWidget widget = createWidget();
+		AbstractWorkbenchTrimWidget widget = createWidget();
 		if (widget != null) {
 			Composite widgetContainer = new Composite(parent, SWT.NONE);
 			widget.fill(widgetContainer);
@@ -33,6 +33,6 @@ public abstract class WidgetDataContributionItem extends ContributionItem {
 			sepItem.setWidth(prefSize.x);
 		}
 	}
-	
-	public abstract AbstractWorkbenchWidget createWidget();
+
+	public abstract AbstractWorkbenchTrimWidget createWidget();
 }

@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.menus.IMenuCallback;
+import org.eclipse.ui.menus.CommandContributionItem;
 
 /**
  * @since 3.3
@@ -35,8 +35,8 @@ public class HelloUpdateHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		if (event.getTrigger() != null) {
 			Event trigger = (Event) event.getTrigger();
-			IMenuCallback callback = (IMenuCallback) trigger.widget
-					.getData(IMenuCallback.CALLBACK);
+			CommandContributionItem callback = (CommandContributionItem) trigger.widget
+					.getData();
 			if (callback != null) {
 				callback.setLabel("My New Menu Item");
 			}

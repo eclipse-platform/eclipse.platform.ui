@@ -25,6 +25,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchWidget;
 
 /**
@@ -128,6 +129,9 @@ public class TrimAdditionCacheEntry  {
 	 * extra major space
 	 */
 	public boolean fillMajor(IConfigurationElement widgetElement) {
+		if (widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT).length==0) {
+			return false;
+		}
 		IConfigurationElement layout = widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT)[0];
 		String fillMajorVal = layout.getAttribute(IWorkbenchRegistryConstants.ATT_FILL_MAJOR);
 
@@ -146,6 +150,9 @@ public class TrimAdditionCacheEntry  {
 	 * extra minor space
 	 */
 	public boolean fillMinor(IConfigurationElement widgetElement) {
+		if (widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT).length==0) {
+			return false;
+		}
 		IConfigurationElement layout = widgetElement.getChildren(IWorkbenchRegistryConstants.TAG_LAYOUT)[0];
 		String fillMinorVal = layout.getAttribute(IWorkbenchRegistryConstants.ATT_FILL_MINOR);
 

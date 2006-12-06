@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.ui.ISources;
-import org.eclipse.ui.internal.menus.IMenuService;
 
 /**
  * <p>
@@ -42,7 +41,7 @@ import org.eclipse.ui.internal.menus.IMenuService;
  * @see org.eclipse.ui.ISources
  * @see org.eclipse.ui.contexts.IContextService
  * @see org.eclipse.ui.handlers.IHandlerService
- * @see IMenuService
+ * @see org.eclipse.ui.menus.IMenuService
  */
 public final class SourcePriorityNameMapping implements ISources {
 

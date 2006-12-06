@@ -127,7 +127,6 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.IMenuService;
 import org.eclipse.ui.internal.menus.SMenuManager;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -154,6 +153,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
@@ -1282,8 +1282,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 				commandImageService);
 		
 		serviceMenuManager = new SMenuManager();
-		IMenuService menuService = new WorkbenchMenuService(serviceMenuManager,
-				commandService);
+		WorkbenchMenuService menuService = new WorkbenchMenuService(
+				serviceMenuManager, commandService);
 		menuService.readRegistry();
 		serviceLocator.registerService(IMenuService.class, menuService);
 

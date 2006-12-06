@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.menus;
 
 import org.eclipse.ui.internal.services.IEvaluationResultCache;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>

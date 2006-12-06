@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.menus;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.internal.services.EvaluationResultCache;
+import org.eclipse.ui.menus.IMenuService;
 
 /**
  * <p>

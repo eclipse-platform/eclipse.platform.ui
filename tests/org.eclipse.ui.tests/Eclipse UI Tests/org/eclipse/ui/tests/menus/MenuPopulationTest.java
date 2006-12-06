@@ -17,8 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.menus.IMenuService;
-import org.eclipse.ui.internal.menus.MenuLocationURI;
+import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -50,8 +49,8 @@ public class MenuPopulationTest extends UITestCase {
 
 	public void testViewPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, MENU_VIEW_ID);
-		menuService.populateMenu(manager, new MenuLocationURI("menu:"
-				+ MENU_VIEW_ID));
+		menuService.populateContributionManager(manager, "menu:"
+				+ MENU_VIEW_ID);
 		IContributionItem[] items = manager.getItems();
 		IContributionItem itemX1 = null;
 		for (int i = 0; i < items.length; i++) {
@@ -77,7 +76,7 @@ public class MenuPopulationTest extends UITestCase {
 
 		assertTrue(itemX1.isVisible());
 
-		menuService.releaseMenu(manager);
+		menuService.releaseContributions(manager);
 		manager.dispose();
 	}
 

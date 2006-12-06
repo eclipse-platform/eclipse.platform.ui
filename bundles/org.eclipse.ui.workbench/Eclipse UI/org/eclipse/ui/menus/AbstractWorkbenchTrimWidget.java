@@ -12,6 +12,7 @@
 package org.eclipse.ui.menus;
 
 import org.eclipse.jface.menus.AbstractTrimWidget;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -55,5 +56,12 @@ public abstract class AbstractWorkbenchTrimWidget extends AbstractTrimWidget imp
 	 */
 	public IWorkbenchWindow getWorkbenchWindow() {
 		return wbWindow;
+	}
+	
+	/**
+	 * @return The preferred size of this item
+	 */
+	public Point getPreferredSize() {
+		return null;
 	}
 }

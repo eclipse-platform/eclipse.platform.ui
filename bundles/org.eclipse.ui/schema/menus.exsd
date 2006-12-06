@@ -21,16 +21,11 @@ Every element within this extension point is given a unique identifier.  This is
    <include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
 
    <element name="extension">
-      <annotation>
-         <documentation>
-         </documentation>
-      </annotation>
       <complexType>
          <sequence>
-            <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="menuAddition" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -59,82 +54,11 @@ Every element within this extension point is given a unique identifier.  This is
       </complexType>
    </element>
 
-   <element name="item">
-      <annotation>
-         <documentation>
-            &lt;p&gt;
-An item could be a menu item or a trim item, depending on where it is placed.  The text and image associated with the item will be drawn from the command.
-&lt;/p&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="location" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A unique identifier for this item.  It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.  For example, an item contributed by &lt;code&gt;org.eclipse.ui&lt;/code&gt; might be called &lt;code&gt;org.eclipse.ui.item1&lt;/code&gt;.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="commandId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  The identifier of the command that should be executed when this item is triggered by the user.  Commands are defined in the &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;commands extension point&lt;/a&gt;.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="menuId" type="string">
-            <annotation>
-               <documentation>
-                  Attaches a drop-down menu to a tool item.  If this item appears somewhere other than a tool bar, then a warning will be printed to the log on start-up.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="menu">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="label"/>
-         </appInfo>
-         <documentation>
-            &lt;p&gt;
-A menu can appear either attached to a tool item, or somewhere within a view menu, context menu or the top-level menu bar.  For free, the plug-in developer can assume that there is a menu and tool bar for every view, and that the top-level menu bar exists.  Context menus must be registered programmatically before they can be used (see API Information).
-&lt;/p&gt;
-&lt;p&gt;
-A menu can only contain groups.
-&lt;/p&gt;
-         </documentation>
-      </annotation>
-      <complexType>
-         <sequence>
-            <element ref="location" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
-         </sequence>
-         <attribute name="id" type="string" use="required">
-            <annotation>
-               <documentation>
-                  A unique identifier for this menu.  It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.  For example, a menu contributed by &lt;code&gt;org.eclipse.ui&lt;/code&gt; might be called &lt;code&gt;org.eclipse.ui.menu1&lt;/code&gt;.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="label" type="string">
-            <annotation>
-               <documentation>
-                  The human-readable text to associate with this menu.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
    <element name="group">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 A logical group.  It can either be visible (e.g., separators are drawn before and after, as appropriate) or invisible.  By default, logicial groups are visible.
@@ -201,6 +125,9 @@ A group can contain menus, items and other groups.
 
    <element name="layout">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             This element can be used to specify various layout options for elements added into  &lt;code&gt;trim&lt;/code&gt; locations.
          </documentation>
@@ -225,6 +152,9 @@ A group can contain menus, items and other groups.
 
    <element name="location">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             A location in which a &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;item&lt;/code&gt; or &lt;code&gt;widget&lt;/code&gt; can appear.  This element is used to control location-specific information.
          </documentation>
@@ -260,6 +190,9 @@ A group can contain menus, items and other groups.
 
    <element name="bar">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             A leaf element within a location.  This can be the menu bar or the trim area.  If unqualified, this indicates the top-level menu bar or trim.  If this is qualified with a &lt;code&gt;part&lt;/code&gt; element, then this indicates that part&apos;s menu or trim.
          </documentation>
@@ -333,7 +266,7 @@ By positioning the trim contribution within or with respect to these groups, the
          </documentation>
       </annotation>
       <complexType>
-         <choice>
+         <choice minOccurs="0" maxOccurs="1">
             <element ref="not"/>
             <element ref="or"/>
             <element ref="and"/>
@@ -359,6 +292,9 @@ By positioning the trim contribution within or with respect to these groups, the
 
    <element name="part">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             &lt;p&gt;
 An element within a location.  This qualifies the location to refer to a particular workbench part.  This can be either a view or an editor.  The qualification can use either the class name of the part (including inheritance), or it can refer to the identifier for the view or editor.
@@ -416,6 +352,9 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
 
    <element name="order">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             Controls the position of a menu, group, item or widget within a particular location.
          </documentation>
@@ -461,6 +400,9 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
 
    <element name="popup">
       <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
          <documentation>
             Part of a location.  It indicates that the menu, group, item or widget should appear in the popup menu.
          </documentation>
@@ -477,6 +419,180 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
             <annotation>
                <documentation>
                   The path within the popup menu to place the element.  If not specified, then this is added to the &quot;additions&quot; group.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menuAddition">
+      <annotation>
+         <documentation>
+            Defines an ordered set of additions to the command UI structure. The defined elements will be added into the command UI structure at the location specified by the &lt;code&gt;commandURI&lt;/code&gt;.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="locationURI" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A &lt;code&gt;URI&lt;/code&gt; specification that defines the insertion point at which the contained additions will be added.
+
+The format for the URI is comprised of three basic parts:
+
+Sheme: One of &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar. Indicates the type of the manager used to handle the contributions
+Id: This is either the id of an existing menu, a view id or the id of the editor &apos;type&apos;
+Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
+ &amp;lt;placement&amp;gt; is one of: &quot;before&quot;, &quot;after&quot;, &quot;start&quot; or &quot;end&quot;
+ &amp;lt;id&amp;gt; is the id of an existing menu item
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="menu">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
+            <element ref="menu" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="mnemonic" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="item">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="label" icon="icon"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
+            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="commandId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="mnemonic" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractDynamicMenuItem"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="separator">
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="visible" type="boolean">
+            <annotation>
+               <documentation>
+                  
                </documentation>
             </annotation>
          </attribute>
