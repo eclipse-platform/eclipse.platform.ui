@@ -72,7 +72,19 @@ public class CVSHistoryFilter extends ViewerFilter {
 	}
 
 	protected boolean dateMatch(CVSFileRevision revision) {
-		return (fromDate.before(new Date(revision.getTimestamp()))) && (toDate.after(new Date(revision.getTimestamp())));
+		return isAfterFromDate(revision) && isBeforeToDate(revision);
+	}
+
+	private boolean isBeforeToDate(CVSFileRevision revision) {
+		if (toDate == null)
+			return true;
+		return (toDate.after(new Date(revision.getTimestamp())));
+	}
+
+	private boolean isAfterFromDate(CVSFileRevision revision) {
+		if (fromDate == null)
+			return true;
+		return (fromDate.before(new Date(revision.getTimestamp())));
 	}
 
 	protected boolean hasAuthor() {
@@ -84,7 +96,7 @@ public class CVSHistoryFilter extends ViewerFilter {
 	}
 
 	protected boolean hasDate() {
-		return fromDate != null && toDate != null;
+		return fromDate != null || toDate != null;
 	}
 	
 	public int getMatchCount(){
