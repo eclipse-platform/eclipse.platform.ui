@@ -126,41 +126,10 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	 * @return a structure comparator
 	 * @throws CoreException
 	 */
-	protected IStructureComparator createStructureComparator(final Object element, IDocument document, final ISharedDocumentAdapter sharedDocumentAdapter, IProgressMonitor monitor) throws CoreException {
-		IDisposable disposable = null;
-		if (sharedDocumentAdapter != null) {
-			disposable = new IDisposable() {
-				public void dispose() {
-					sharedDocumentAdapter.disconnect(element);
-				}
-			};
-		}
-		return createStructureComparator(element, document, disposable);
-	}
-
-	/**
-	 * Create an {@link IStructureComparator} for the given element using the
-	 * contents available in the given document. If the provided disposable is
-	 * not <code>null</code> then the {@link IStructureComparator} returned by
-	 * this method should also be an {@link IDisposable} which delegates the
-	 * dispose to the given disposable.
-	 * 
-	 * @param element
-	 *            the element
-	 * @param document
-	 *            the document that has the contents for the element
-	 * @param disposable
-	 *            a disposable that must be disposed when the returned
-	 *            {@link IStructureComparator} is no longer needed (or
-	 *            <code>null</code> if disposal is not needed).
-	 * @return a structure comparator
-	 * @throws CoreException
-	 * @deprecated Subclasses should implement {@link #createStructureComparator(Object, IDocument, ISharedDocumentAdapter, IProgressMonitor)} instead
-	 */
-	protected IStructureComparator createStructureComparator(Object element,
-			IDocument document, IDisposable disposable) throws CoreException {
-		return null;
-	}
+	protected abstract IStructureComparator createStructureComparator(
+			final Object element, IDocument document,
+			final ISharedDocumentAdapter sharedDocumentAdapter,
+			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Setup the newly created document as appropriate. Any document partitioners
