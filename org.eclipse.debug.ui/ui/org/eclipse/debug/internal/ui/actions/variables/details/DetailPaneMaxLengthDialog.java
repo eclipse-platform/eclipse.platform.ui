@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.views.variables;
+package org.eclipse.debug.internal.ui.actions.variables.details;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -29,10 +30,11 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Provides a dialog for changing the default length allowed in the details pane
+ * Provides a dialog for changing the maximum length allowed in the detail pane
+ * 
  * @since 3.0
  */
-public class MaxDetailsLengthDialog extends TrayDialog {
+public class DetailPaneMaxLengthDialog extends TrayDialog {
 
 	private static final String SETTINGS_ID = ".MAX_DETAILS_LENGTH_DIALOG"; //$NON-NLS-1$
 	
@@ -47,7 +49,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	 * 
 	 * @param parent shell
 	 */
-	public MaxDetailsLengthDialog(Shell parent) {
+	public DetailPaneMaxLengthDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValue = Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
@@ -56,10 +58,10 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 						try {
 							int num = Integer.parseInt(newText);
 							if (num < 0) {
-								return VariablesViewMessages.MaxDetailsLengthDialog_2;
+								return VariablesViewMessages.DetailPaneMaxLengthDialog_2;
 							}
 						} catch (NumberFormatException e) {
-							return VariablesViewMessages.MaxDetailsLengthDialog_3;
+							return VariablesViewMessages.DetailPaneMaxLengthDialog_3;
 						}
 						return null;
 					}
@@ -83,9 +85,9 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		getShell().setText(VariablesViewMessages.MaxDetailsLengthDialog_0);
+		getShell().setText(VariablesViewMessages.DetailPaneMaxLengthDialog_0);
 		Control contents = super.createContents(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.MAX_DETAILS_LENGTH_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getDialogArea(), IDebugHelpContextIds.DETAIL_PANE_MAX_LENGTH_ACTION);
 		return contents;
 	}
 
@@ -95,7 +97,7 @@ public class MaxDetailsLengthDialog extends TrayDialog {
 	protected Control createDialogArea(Composite parent) {
         Composite composite = (Composite) super.createDialogArea(parent);
         Label label = new Label(composite, SWT.WRAP);
-        label.setText(VariablesViewMessages.MaxDetailsLengthDialog_1);
+        label.setText(VariablesViewMessages.DetailPaneMaxLengthDialog_1);
         GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_CENTER);
         data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
         label.setLayoutData(data);

@@ -32,6 +32,19 @@ public class ActionMessages extends NLS {
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
+	public static String DetailPaneAssignValueAction_0;
+
+	public static String DetailPaneAssignValueAction_1;
+
+	public static String DetailPaneAssignValueAction_2;
+
+	public static String DetailPaneAssignValueAction_3;
+
+	public static String DetailPaneAssignValueAction_4;
+
+    public static String DetailPaneWordWrapAction_0;
+    public static String DetailPaneMaxLengthAction_0;
+    
     public static String DisconnectActionDelegate_Disconnect_failed_1;
     public static String DisconnectActionDelegate_Exceptions_occurred_attempting_to_disconnect__2;
 
@@ -123,11 +136,6 @@ public class ActionMessages extends NLS {
     public static String WatchAction_1;
     public static String SkipAllBreakpointsAction_0;
     public static String SkipAllBreakpointsAction_2;
-    public static String AssignValueAction_1;
-    public static String AssignValueAction_2;
-    public static String AssignValueAction_3;
-    public static String AssignValueAction_4;
-
     public static String RunToLineAction_0;
     public static String RunToLineAction_1;
     public static String RunToLineHandler_0;
@@ -146,8 +154,6 @@ public class ActionMessages extends NLS {
         // load message values from bundle file
         NLS.initializeMessages(BUNDLE_NAME, ActionMessages.class);
     }
-
-    public static String AssignValueAction_0;
 
     public static String AbstractDebugActionDelegate_0;
 

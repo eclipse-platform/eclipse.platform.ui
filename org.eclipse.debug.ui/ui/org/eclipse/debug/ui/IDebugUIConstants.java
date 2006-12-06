@@ -61,7 +61,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  *   <li>Variable group</li>
  *   <li>Select all action</li>
  *   <li>Copy to clipboard action</li>
+ *   <li>Find action</li>
  *   <li>Change value action</li>
+ *   <li>Available logical structures action</li>
+ *   <li>Available detail panes action</li>
  *   <li>Empty render group</li>
  *   <li>Render group</li>
  *   <li>Show type names action</li>
@@ -91,7 +94,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
  * 	 <li>Copy to clipboard action</li>	 
  *   <li>Remove action</li>
  *   <li>Remove all action</li>
+ *   <li>Find action</li>
  *   <li>Change variable value action</li>
+ *   <li>Available logical structures action</li>
+ *   <li>Available detail panes action</li>
  *   <li>Empty Render group</li>
  *   <li>Render group</li>
  * 	 <li>Show type names action</li>
@@ -1039,7 +1045,15 @@ public interface IDebugUIConstants {
      * @since 3.1
      */
     public static final String EXTENSION_POINT_BREAKPOINT_ORGANIZERS = "breakpointOrganizers"; //$NON-NLS-1$    
-    
+	
+	/**
+	 * Simple identifier constant (value <code>"detailPaneFactories"</code>) for the
+	 * detail pane factories extension point.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String EXTENSION_POINT_DETAIL_FACTORIES = "detailPaneFactories"; //$NON-NLS-1$
+	
     /**
      * Update policies extension point identifier (value
      * <code>"updatePolicies"</code>

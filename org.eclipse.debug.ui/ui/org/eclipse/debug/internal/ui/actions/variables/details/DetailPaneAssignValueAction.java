@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.internal.ui.actions.variables;
+package org.eclipse.debug.internal.ui.actions.variables.details;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
@@ -19,19 +19,18 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.VariableValueEditorManager;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.StatusInfo;
-import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 
@@ -41,39 +40,38 @@ import com.ibm.icu.text.MessageFormat;
  * Action which assigns a value to a variable from the detail pane
  * of the variables view.
  */
-public class AssignValueAction extends SelectionProviderAction {
-	private VariablesView variablesView;
-	private ISourceViewer detailsViewer;
-    private IHandlerActivation fHandlerActivation;
+public class DetailPaneAssignValueAction extends Action{
 
-	public AssignValueAction(VariablesView varView, ISourceViewer detailViewer) {
-		super(varView.getViewer(), ActionMessages.AssignValueAction_1); 
-        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.ASSIGN_VALUE_ACTION);
-		variablesView = varView;
-		detailsViewer = detailViewer;
+    private IHandlerActivation fHandlerActivation;
+	private IViewSite fViewSite;
+	private ITextViewer fTextViewer;
+	private IStructuredSelection fCurrentSelection;
+
+	public DetailPaneAssignValueAction(ITextViewer textViewer, IViewSite viewSite) {
+		super(ActionMessages.DetailPaneAssignValueAction_1);
+		
+        PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.DETAIL_PANE_ASSIGN_VALUE_ACTION);
+
+		fTextViewer = textViewer;
+		fViewSite = viewSite;
+		
 		setEnabled(false);
-		IWorkbenchPartSite site = variablesView.getSite();
-        IHandlerService service = (IHandlerService) site.getService(IHandlerService.class);
+        IHandlerService service = (IHandlerService) fViewSite.getService(IHandlerService.class);
         ActionHandler handler = new ActionHandler(this);
         fHandlerActivation = service.activateHandler(getActionDefinitionId(), handler);
 	}
 		
 	public void dispose() {
-        IWorkbenchPartSite site = variablesView.getSite();
-        IHandlerService service = (IHandlerService) site.getService(IHandlerService.class);
+        IHandlerService service = (IHandlerService) fViewSite.getService(IHandlerService.class);
         service.deactivateHandler(fHandlerActivation);
-        super.dispose();
     }
 
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
-	public void selectionChanged(IStructuredSelection selection) {
+	public void updateCurrentVariable(IStructuredSelection selection) {
 		boolean enabled = false;
 		if ((selection.size() == 1) && (selection.getFirstElement() instanceof IValueModification)) {
 			IValueModification valMod = (IValueModification) selection.getFirstElement();
 			if (valMod.supportsValueModification()) {
-				super.selectionChanged(selection);
+				fCurrentSelection = selection;
 				enabled = true;
 			}
 		} 
@@ -84,15 +82,15 @@ public class AssignValueAction extends SelectionProviderAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		IVariable variable = (IVariable) getStructuredSelection().getFirstElement();
+		IVariable variable = (IVariable) fCurrentSelection.getFirstElement();
 		
-		Point selection = detailsViewer.getSelectedRange();
+		Point selection = fTextViewer.getSelectedRange();
 		String value = null;
 		if (selection.y == 0) {
-			value = detailsViewer.getDocument().get();
+			value = fTextViewer.getDocument().get();
 		} else {
 			try {
-				value = detailsViewer.getDocument().get(selection.x, selection.y);
+				value = fTextViewer.getDocument().get(selection.x, selection.y);
 			} catch (BadLocationException e1) {
 			}
 		}
@@ -118,11 +116,11 @@ public class AssignValueAction extends SelectionProviderAction {
 				variable.setValue(value);
 			} else {
 			    if (activeShell != null) {
-			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.AssignValueAction_2, MessageFormat.format(ActionMessages.AssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.AssignValueAction_4));  //  
+			        DebugUIPlugin.errorDialog(activeShell, ActionMessages.DetailPaneAssignValueAction_2, MessageFormat.format(ActionMessages.DetailPaneAssignValueAction_3, new String[] {value, variable.getName()}), new StatusInfo(IStatus.ERROR, ActionMessages.DetailPaneAssignValueAction_4));  //  
 			    }
 			}
 		} catch (DebugException e) {
-            MessageDialog.openError(activeShell, ActionMessages.AssignValueAction_0, e.getStatus().getMessage());
+            MessageDialog.openError(activeShell, ActionMessages.DetailPaneAssignValueAction_0, e.getStatus().getMessage());
 		}
 		
 	}

@@ -19,6 +19,7 @@
    <extension-point id="breakpointOrganizers" name="%BreakpointOrganizersName" schema="schema/breakpointOrganizers.exsd"/>
    <extension-point id="variableValueEditors" name="%VariableValueEditorsName" schema="schema/variableValueEditors.exsd"/>
    <extension-point id="launchConfigurationTabs" name="%LaunchConfigurationTabsExtension.name" schema="schema/launchConfigurationTabs.exsd"/>
+   <extension-point id="detailPaneFactories" name="%DetailPaneFactoriesExtension.name" schema="schema/detailPaneFactories.exsd"/>
 
 <!-- Extensions -->
    <extension
@@ -655,27 +656,6 @@
       </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
       <viewContribution
-            targetID="org.eclipse.debug.ui.VariableView"
-            id="org.eclipse.debug.ui.variableView.toolbar">
-         <action
-               label="%DetailPaneWordWrapAction.label"
-               style="toggle"
-               helpContextId="detail_pane_word_wrap_action_context"
-               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
-               tooltip="%DetailPaneWordWrapAction.tooltip"
-               menubarPath="viewActions"
-               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
-         </action>
-         <action
-               class="org.eclipse.debug.internal.ui.views.variables.MaxDetailsLengthAction"
-               helpContextId="detail_pane_max_length_action_context"
-               id="org.eclipse.debug.ui.variableViewActions.pulldown.MaxDetailsLength"
-               label="%DetailPaneMaxLengthAction.label"
-               menubarPath="viewActions"
-               style="push"
-               tooltip="%DetailPaneMaxLengthAction.tooltip"/>
-      </viewContribution>
-      <viewContribution
             targetID="org.eclipse.debug.ui.ExpressionView"
             id="org.eclipse.debug.ui.expressionsView.toolbar">
          <action
@@ -706,44 +686,6 @@
                   class="org.eclipse.debug.core.model.IVariable">
             </selection>
          </action>
-         <action
-               label="%DetailPaneWordWrapAction.label"
-               helpContextId="detail_pane_word_wrap_action_context"
-               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
-               state="false"
-               tooltip="%DetailPaneWordWrapAction.tooltip"
-               menubarPath="viewActions"
-               id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
-         </action>
-         <action
-               class="org.eclipse.debug.internal.ui.views.variables.MaxDetailsLengthAction"
-               helpContextId="detail_pane_max_length_action_context"
-               id="org.eclipse.debug.ui.expresssionsView.pulldown.MaxDetailsLength"
-               label="%DetailPaneMaxLengthAction.label"
-               menubarPath="viewActions"
-               style="push"
-               tooltip="%DetailPaneMaxLengthAction.tooltip"/>         
-      </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.debug.ui.RegistersView"
-            id="org.eclipse.debug.ui.registersView.toolbar">
-         <action
-               label="%DetailPaneWordWrapAction.label"
-               style="toggle"
-               helpContextId="detail_pane_word_wrap_action_context"
-               tooltip="%DetailPaneWordWrapAction.tooltip"
-               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
-               menubarPath="viewActions"
-               id="org.eclipse.debug.ui.registersView.toolbar.detailPaneWordWrap">
-         </action>
-		 <action
-               class="org.eclipse.debug.internal.ui.views.variables.MaxDetailsLengthAction"
-               helpContextId="detail_pane_max_length_action_context"
-               id="org.eclipse.debug.ui.registersView.pulldown.MaxDetailsLength"
-               label="%DetailPaneMaxLengthAction.label"
-               menubarPath="viewActions"
-               style="push"
-               tooltip="%DetailPaneMaxLengthAction.tooltip"/>         
       </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.MemoryView"
@@ -2314,6 +2256,13 @@ M4 = Platform-specific fourth key
           </description>
           <selection class="org.eclipse.core.resources.IResource"/>
        </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.debug.ui.detailPaneFactories">
+       <detailFactories
+             class="org.eclipse.debug.internal.ui.views.variables.details.DefaultDetailPaneFactory"
+             id="org.eclipse.debug.ui.defaultDetailPaneFactory">
+       </detailFactories>
     </extension>
 
 </plugin>

@@ -35,6 +35,7 @@ public interface IDebugHelpContextIds {
 	public static final String SHOW_TYPES_ACTION = PREFIX + "show_types_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_CONTENT_PROVIDERS_ACTION = PREFIX + "variables_content_providers_action_context"; //$NON-NLS-1$
 	public static final String VARIABLES_SELECT_LOGICAL_STRUCTURE = PREFIX + "variables_select_logical_structure"; //$NON-NLS-1$
+	public static final String VARIABLES_SELECT_DETAIL_PANE = PREFIX + "variables_select_detail_pane_action_context"; //$NON-NLS-1$
 	public static final String SELECT_WORKING_SET_ACTION = PREFIX + "select_working_set_context"; //$NON-NLS-1$			
 	public static final String CLEAR_WORKING_SET_ACTION = PREFIX + "clear_working_set_context"; //$NON-NLS-1$
 	public static final String EDIT_LAUNCH_CONFIGURATION_ACTION = PREFIX + "edit_launch_configuration_action_context"; //$NON-NLS-1$
@@ -45,7 +46,16 @@ public interface IDebugHelpContextIds {
 	public static final String SKIP_ALL_BREAKPOINT_ACTION = PREFIX + "skip_all_breakpoints_context"; //$NON-NLS-1$
 	public static final String AUTO_MANAGE_VIEWS_ACTION = PREFIX + "auto_manage_views_context"; //$NON-NLS-1$
 	public static final String FIND_ELEMENT_ACTION = PREFIX + "find_element_context"; //$NON-NLS-1$
-    public static final String ASSIGN_VALUE_ACTION = PREFIX + "assign_value_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE = PREFIX + "detail_pane_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_ASSIGN_VALUE_ACTION = PREFIX + "detail_pane_assign_value_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_CONTENT_ASSIST_ACTION = PREFIX + "detail_pane_content_assist_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_CUT_ACTION = PREFIX + "detail_pane_cut_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_COPY_ACTION = PREFIX + "detail_pane_copy_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_PASTE_ACTION = PREFIX + "detail_pane_paste_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_SELECT_ALL_ACTION = PREFIX + "detail_pane_select_all_action_context"; //$NON-NLS-1$
+	public static final String DETAIL_PANE_FIND_REPLACE_ACTION = PREFIX + "detail_pane_find_replace_action_context"; //$NON-NLS-1$
+    public static final String DETAIL_PANE_WORD_WRAP_ACTION = PREFIX + "detail_pane_word_wrap_action_context"; //$NON-NLS-1$
+    public static final String DETAIL_PANE_MAX_LENGTH_ACTION = PREFIX + "detail_pane_max_length_action_context"; //$NON-NLS-1$
     public static final String CONSOLE_TERMINATE_ACTION = PREFIX + "console_terminate_action_context"; //$NON-NLS-1$
     public static final String CONSOLE_REMOVE_ALL_TERMINATED = PREFIX + "console_remove_all_terminated_context"; //$NON-NLS-1$
     public static final String CONSOLE_REMOVE_LAUNCH = PREFIX + "console_remove_launch_context"; //$NON-NLS-1$;
@@ -95,7 +105,6 @@ public interface IDebugHelpContextIds {
 	public static final String CONFIGURE_COLUMNS_DIALOG = PREFIX + "configure_columns_dialog_context"; //$NON-NLS-1$;
 	public static final String GROUP_BREAKPOINTS_DIALOG = PREFIX + "group_breakpoints_dialog_context"; //$NON-NLS-1$
 	public static final String ORGANIZE_FAVORITES_DIALOG = PREFIX + "organize_favorites_dialog_context"; //$NON-NLS-1$
-	public static final String MAX_DETAILS_LENGTH_DIALOG = PREFIX + "max_details_length_dialog_context"; //$NON-NLS-1$
 	public static final String SELECT_DEFAULT_WORKINGSET_DIALOG = PREFIX + "select_breakpoint_workingset_dialog"; //$NON-NLS-1$
 	public static final String DELETE_ASSOCIATED_LAUNCH_CONFIGS_DIALOG = PREFIX + "delete_associated_launch_configs_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCH_MODES_DIALOG = PREFIX + "select_launch_modes_dialog"; //$NON-NLS-1$

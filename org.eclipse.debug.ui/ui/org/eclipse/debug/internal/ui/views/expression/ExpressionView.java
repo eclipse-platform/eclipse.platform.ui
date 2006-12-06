@@ -12,26 +12,24 @@ package org.eclipse.debug.internal.ui.views.expression;
 
  
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.variables.AvailableLogicalStructuresAction;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages;
+import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchActionConstants;
  
 /**
  * Displays expressions and their values with a detail
- * area.
+ * pane.
  */
 public class ExpressionView extends VariablesView {
 	
@@ -70,12 +68,17 @@ public class ExpressionView extends VariablesView {
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
-		menu.add(getAction(FIND_ELEMENT));
+		menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
         if (action.isEnabled()) {
             menu.add(action);
         }
+		action = new AvailableDetailPanesAction(this);
+		if (isDetailPaneVisible() && action.isEnabled()) {
+			menu.add(action);
+		}
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -86,27 +89,8 @@ public class ExpressionView extends VariablesView {
 		}
 		// update actions
 		updateAction("ContentAssist"); //$NON-NLS-1$
-		updateAction(FIND_ELEMENT);
+		updateAction(VARIABLES_FIND_ELEMENT_ACTION);
 		updateAction(FIND_ACTION);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#treeSelectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-	 */
-	protected void treeSelectionChanged(SelectionChangedEvent event) {
-		super.treeSelectionChanged(event);
-		ISelection selection = event.getSelection();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection ssel= (IStructuredSelection)selection;
-			if (ssel.size() == 1) {
-				Object input= ssel.getFirstElement();
-				if (input instanceof IDebugElement) {
-					getDetailViewer().setEditable(true);
-					return;
-				} 
-			}
-		}
-		getDetailViewer().setEditable(false);
 	}
 
 	/* (non-Javadoc)

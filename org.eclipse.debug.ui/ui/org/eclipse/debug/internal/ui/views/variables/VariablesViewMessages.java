@@ -15,6 +15,14 @@ import org.eclipse.osgi.util.NLS;
 public class VariablesViewMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.variables.VariablesViewMessages";//$NON-NLS-1$
 
+	public static String DetailPaneMaxLengthDialog_0;
+
+	public static String DetailPaneMaxLengthDialog_1;
+
+	public static String DetailPaneMaxLengthDialog_2;
+
+	public static String DetailPaneMaxLengthDialog_3;
+
 	public static String VariablesView__Copy_8;
 	public static String VariablesView__Paste_14;
 	public static String VariablesView_Co_ntent_Assist_3;
@@ -37,14 +45,6 @@ public class VariablesViewMessages extends NLS {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, VariablesViewMessages.class);
 	}
-
-	public static String MaxDetailsLengthDialog_0;
-
-	public static String MaxDetailsLengthDialog_1;
-
-	public static String MaxDetailsLengthDialog_2;
-
-	public static String MaxDetailsLengthDialog_3;
 
 	public static String VariablesView_40;
 

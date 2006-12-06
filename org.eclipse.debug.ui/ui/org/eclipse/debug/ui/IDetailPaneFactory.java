@@ -1,0 +1,85 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.debug.ui;
+
+import java.util.Set;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
+
+/**
+ * A detail pane factory creates one or more types of detail panes. 
+ * <p>
+ * Detail pane factories are contributed via the <code>org.eclipse.debug.ui.detailPaneFactories</code>
+ * extension point. Following is an example of a detail pane factory extension:
+ * <pre>
+ * &lt;extension point="org.eclipse.debug.ui.detailPaneFactories"&gt;
+ *     &lt;detailFactories
+ *           class="org.eclipse.temp.TableDetailPaneFactory"
+ *           name="Table Detail Factory"&gt;
+ *     &lt;/detailFactories&gt;
+ * &lt;/extension&gt;
+ * </pre>
+ * </p>
+ * <p>
+ * <p>
+ * Clients contributing a detail pane factory are intended to implement this interface.
+ * </p>
+ * <strong>EXPERIMENTAL</strong>. This interface has been added as
+ * part of a work in progress. There is no guarantee that this API will
+ * remain unchanged during the 3.3 release cycle. Please do not use this API
+ * without consulting with the Platform/Debug team.
+ * </p>
+ * @see IDetailPane  
+ * @since 3.3
+ *
+ */
+public interface IDetailPaneFactory {
+
+	/**
+	 * Returns all possible types detail panes that this factory can
+	 * create for the given selection, possibly empty. Detail panes are returned
+	 * as a set of detail pane identifiers.
+	 * 
+	 * @param selection The current selection
+	 * @return Set of String IDs for possible detail pane types, possibly empty
+	 */
+	public Set getDetailPaneTypes(IStructuredSelection selection);
+	
+	/**
+	 * Creates and returns a detail pane corresponding to the given detail pane
+	 * type identifier that this factory can produce (according to 
+	 * <code>getDetailPaneTypes(IStructuredSelection selection)</code>).
+	 *  
+	 * @param paneID The id of the detain pane type to be created
+	 * @return detail pane or <code>null</code> if one could not be created
+	 */
+	public IDetailPane createDetailPane(String paneID);
+	
+	/**
+	 * Returns a name for the detail pane type associated with the given ID
+	 * or <code>null</code> if none. Used to
+	 * populate the context menu with meaningful names of the pane types.
+	 * 
+	 * @param paneID detail pane type identifier
+	 * @return detail pane name or <code>null</code> if none
+	 */
+	public String getDetailPaneName(String paneID);
+	
+	/**
+	 * Returns a description for the detail pane type associated with the given ID
+	 * or <code>null</code> if none.
+	 * 
+	 * @param paneID detail pane type identifier
+	 * @return detail pane description or <code>null</code> if none
+	 */
+	public String getDetailPaneDescription(String paneID);
+	
+}

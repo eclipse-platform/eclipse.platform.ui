@@ -22,6 +22,8 @@
  	<type name="IBreakpointTypeCategory" />
  	<type name="IDebugEditorPresentation" />
  	<type name="IDebugModelPresentation" />
+ 	<type name="IDetailPane" />
+ 	<type name="IDetailPaneFactory" />
  	<type name="IDebugUIConstants" implement="false" />
  	<type name="IDebugView" />
 	<type name= "IInstructionPointerPresentation" />
