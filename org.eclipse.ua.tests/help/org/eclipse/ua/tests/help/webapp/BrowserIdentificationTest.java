@@ -11,7 +11,7 @@
 
 package org.eclipse.ua.tests.help.webapp;
 
-//import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 import junit.framework.TestCase;
 
@@ -22,13 +22,6 @@ import junit.framework.TestCase;
  */
 public class BrowserIdentificationTest extends TestCase {
 	
-	public void testPlaceholder() {
-		
-	}
-	
-	// TODO temporarily comment out tests until servlet jar is exported
-	// by org.eclipse.help.webapp
-	/*
 	public void testIE_6() {
 		final String agent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)";
 		assertTrue(UrlUtil.isIE(agent));
@@ -123,6 +116,5 @@ public class BrowserIdentificationTest extends TestCase {
 		assertEquals("6.0", UrlUtil.getIEVersion(agent));
 		assertTrue(UrlUtil.isAdvanced(agent));
 	} 
-	*/
 	
 }
