@@ -55,19 +55,14 @@ public class ApplyPatchOperation implements Runnable {
 	/**
 	 * Creates a new ApplyPatchOperation with the supplied compare configuration, patch and target.
 	 * The behaviour of the Apply Patch wizard is controlled by the number of parameters supplied:
-	 * - If a patch is supplied, the initial input page is skipped. If a patch is not supplied the wizard
-	 * will open on the input page.
-	 * 
-	 * - If the patch is a workspace patch, the target selection page is skipped and the preview page is 
-	 * displayed.
-	 * 
-	 * - If the patch is not a workspace patch and the target is specified, then the target page is skipped
-	 * and the preview page is displayed. If a target is not specified, the wizard will open on the target selection
-	 * page.
-	 * 
-	 * - The user can specify two compare configurations to use in the Apply Patch wizard. The previewHunkConfiguration is
-	 * used to provide UI elements on the PreviewPatchPage. The hunkMergeConfiguration is used to provide UI elements on the 
-	 * Manual Hunk Merge Page. In the absence of either of these configurations, the defaults will be used.  
+	 * <ul>
+	 * <li>If a patch is supplied, the initial input page is skipped. If a patch is not supplied the wizard
+	 * will open on the input page.</li>
+	 * <li>If the patch is a workspace patch, the target selection page is skipped and the preview page is 
+	 * displayed.</li>
+	 * <li>If the patch is not a workspace patch and the target is specified, the target page is still
+	 * shown with the target selected.</li>
+	 * </ul> 
 	 * 
 	 * @param part 	an IWorkbenchPart 
 	 * @param patch		an IStorage containing a patch in unified diff format or <code>null</code>

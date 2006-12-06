@@ -129,6 +129,22 @@ public class Patcher {
 		
 	//---- parsing patch files
 
+	public void parse(IStorage storage) throws IOException, CoreException {
+		BufferedReader reader = createReader(storage);
+		try {
+			parse(reader);
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) { //ignored
+			}
+		}
+	}
+	
+	private static BufferedReader createReader(IStorage storage) throws CoreException {
+		return new BufferedReader(new InputStreamReader(storage.getContents()));
+	}
+	
 	public void parse(BufferedReader reader) throws IOException {
 		PatchReader patchReader= new PatchReader();
 		patchReader.parse(reader);

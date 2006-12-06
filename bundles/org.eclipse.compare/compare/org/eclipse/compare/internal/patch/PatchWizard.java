@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
@@ -20,8 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -44,7 +43,7 @@ public class PatchWizard extends Wizard {
 	private IStorage patch;
 
 	private boolean patchReadIn = false;
-
+	
 	public PatchWizard(IStorage patch, IResource target, CompareConfiguration configuration) {
 		Assert.isNotNull(configuration);
 		this.fConfiguration = configuration;
@@ -52,8 +51,21 @@ public class PatchWizard extends Wizard {
 		setWindowTitle(PatchMessages.PatchWizard_title);
 		initializeDialogSettings();
 		fPatcher= new WorkspacePatcher(target);
-		if (patch != null)
-			readPatch(patch);
+		if (patch != null) {
+			try {
+				fPatcher.parse(patch);
+				this.patch = patch;
+				patchReadIn = true;
+			} catch (IOException e) {
+				MessageDialog.openError(null,
+						PatchMessages.InputPatchPage_PatchErrorDialog_title, 
+						PatchMessages.InputPatchPage_ParseError_message); 
+			} catch (CoreException e) {
+				ErrorDialog.openError(getShell(),
+						PatchMessages.InputPatchPage_PatchErrorDialog_title,	
+						PatchMessages.InputPatchPage_PatchFileNotFound_message, e.getStatus());
+			}
+		}
 	}
 	
 	private void initializeDialogSettings() {
@@ -65,54 +77,6 @@ public class PatchWizard extends Wizard {
 			fHasNewDialogSettings= false;
 			setDialogSettings(section);
 		}
-	}
-
-	private void readPatch(IStorage thePatch) {
-		//make sure that the reader always get closed
-		this.patch = thePatch;
-		Reader reader = null;
-		try{
-			reader = createPatchReader(patch);
-			if (reader != null){
-				readInPatch(reader);
-			}
-		} finally {
-			if (reader != null){
-				try {
-					reader.close();
-				} catch (IOException e) { //ignored
-				}
-			}
-		}
-	}
-	
-	private void readInPatch(Reader reader) {
-		if (reader != null) {
-			try {
-				fPatcher.parse(new BufferedReader(reader));
-				patchReadIn=true;
-			} catch (IOException ex) {
-				MessageDialog.openError(null,
-					PatchMessages.InputPatchPage_PatchErrorDialog_title, 
-					PatchMessages.InputPatchPage_ParseError_message); 
-			}
-		}
-	}
-
-	private Reader createPatchReader(IStorage file) {
-		String patchFilePath= file.getFullPath().toString();
-		Reader reader = null;
-		if (patchFilePath != null) {
-			try {
-				reader= new FileReader(patchFilePath);
-			} catch (FileNotFoundException ex) {
-				MessageDialog.openError(null,
-					PatchMessages.InputPatchPage_PatchErrorDialog_title,	
-					PatchMessages.InputPatchPage_PatchFileNotFound_message); 
-			}
-		}
-		
-		return reader;
 	}
 
 	WorkspacePatcher getPatcher() {
@@ -128,8 +92,10 @@ public class PatchWizard extends Wizard {
 	 * Method declared on IWizard.
 	 */
 	public void addPages() {
-		addPage(fPatchWizardPage = new InputPatchPage(this));
-		addPage(fPatchTargetPage = new PatchTargetPage(this));
+		if (patch == null)
+			addPage(fPatchWizardPage = new InputPatchPage(this));
+		if (patch == null || !fPatcher.isWorkspacePatch())
+			addPage(fPatchTargetPage = new PatchTargetPage(this));
 		fPreviewPage2 = new PreviewPatchPage2(fPatcher, fConfiguration);
 		addPage(fPreviewPage2);
 	}

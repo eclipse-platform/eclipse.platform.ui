@@ -10,10 +10,15 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
+import java.io.IOException;
+
+import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.BaseCompareAction;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.compare.patch.ApplyPatchOperation;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -36,7 +41,30 @@ public class CompareWithPatchAction extends BaseCompareAction implements IObject
 	protected void run(ISelection selection) {
 		IResource firstResource = Utilities.getFirstResource(selection);
 		
-		final ApplyPatchOperation patchOp = new ApplyPatchOperation( targetPart, firstResource);
+		boolean isPatch = false;
+		if (firstResource instanceof IFile) {
+			IFile file = (IFile)firstResource;
+			if (file.exists()) {
+				WorkspacePatcher patch = new WorkspacePatcher(null);
+				try {
+					patch.parse(file);
+					if (patch.getDiffs().length > 0) {
+						isPatch = true;
+					}
+				} catch (IOException e) {
+					// Ignore
+				} catch (CoreException e) {
+					// Ignore
+				}
+			}
+		}
+		
+		final ApplyPatchOperation patchOp;
+		if (isPatch) {
+			patchOp= new ApplyPatchOperation(targetPart, (IFile)firstResource, null, new CompareConfiguration());
+		} else {
+			patchOp= new ApplyPatchOperation(targetPart, firstResource);
+		}
 	
 		targetPart.getSite().getShell().getDisplay().asyncExec(new Runnable(){
 			public void run() {
