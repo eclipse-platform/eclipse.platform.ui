@@ -20,6 +20,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.text.*;
+import org.eclipse.swt.widgets.Shell;
 
 
 /**
@@ -47,7 +48,7 @@ import org.eclipse.jface.text.*;
  * @see Differencer
  */
 public class DocumentRangeNode
-		implements IDocumentRange, IStructureComparator, IEditableContent, IEncodedStreamContentAccessor, IAdaptable {
+		implements IDocumentRange, IStructureComparator, IEditableContent, IEncodedStreamContentAccessor, IAdaptable, IEditableContentExtension {
 
 	private static final String UTF_16= "UTF-16"; //$NON-NLS-1$
 		
@@ -435,6 +436,24 @@ public class DocumentRangeNode
 			return fParent.getAdapter(adapter);
 		
 		return Platform.getAdapterManager().getAdapter(this, adapter);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEditableContentExtension#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		if (fParent != null)
+			return fParent.isReadOnly();
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEditableContentExtension#validateEdit(org.eclipse.swt.widgets.Shell)
+	 */
+	public IStatus validateEdit(Shell shell) {
+		if (fParent != null)
+			return fParent.validateEdit(shell);
+		return Status.OK_STATUS;
 	}
 }
 

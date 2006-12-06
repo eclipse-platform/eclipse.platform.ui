@@ -25,7 +25,9 @@ import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -51,8 +53,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.IElementStateListener;
+import org.eclipse.ui.texteditor.*;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -188,8 +189,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private RGB OUTGOING_FILL;
 	
 	private RGB RESOLVED;
-
-	private IDocumentListener fDocumentListener;
 	
 	private IPreferenceStore fPreferenceStore;
 	private IPropertyChangeListener fPreferenceChangeListener;
@@ -279,7 +278,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private ActionContributionItem fNextChange;
 	private ActionContributionItem fPreviousChange;
 
-	class ContributorInfo implements IElementStateListener {
+	class ContributorInfo implements IElementStateListener, VerifyListener, IDocumentListener {
 		private final TextMergeViewer fViewer;
 		private final Object fElement;
 		private char fLeg;
@@ -288,6 +287,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		private IEditorInput fDocumentKey;
 		private ISelection fSelection;
 		private int fTopIndex = -1;
+		private boolean fNeedsValidation = false;
+		private MergeSourceViewer fSourceViewer;
 		
 		public ContributorInfo(TextMergeViewer viewer, Object element, char leg) {
 			fViewer = viewer;
@@ -328,8 +329,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return null;
 		}
 		
-		public void setDocument(MergeSourceViewer viewer) {
+		public void setDocument(MergeSourceViewer viewer, boolean isEditable) {
+			// Ensure that this method is only called once
+			Assert.isTrue(fSourceViewer == null);
+			fSourceViewer = viewer;
 			internalSetDocument(viewer);
+			viewer.setEditable(isEditable);
+			// Verify changes if the document is editable
+			if (isEditable) {
+				fNeedsValidation = true;
+				viewer.getTextWidget().addVerifyListener(this);
+			}
 		}
 		
 		/*
@@ -404,6 +414,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			} else {	// same document but different range
 				updateViewerDocumentRange(tp, range);
 			}
+			newDocument.addDocumentListener(this);
 			
 			tp.setEnabled(enabled);
 
@@ -429,7 +440,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		 * The viewer has a new document
 		 */
 		private void updateViewerDocument(MergeSourceViewer tp, IDocument document, Position range) {
-			this.fViewer.unsetDocument(tp);
+			unsetDocument(tp);
 			if (document == null)
 				return;
 			
@@ -453,8 +464,21 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				tp.setDocument(document);
 							
 			tp.rememberDocument(document);
-			document.addDocumentListener(this.fViewer.fDocumentListener);
-			//LeakTester.add(newDoc);
+		}
+		
+		private void unsetDocument(MergeSourceViewer tp) {
+			IDocument oldDoc= internalGetDocument(tp);
+			if (oldDoc != null) {
+				tp.rememberDocument(null);
+				try {
+					oldDoc.removePositionCategory(DIFF_RANGE_CATEGORY);
+				} catch (BadPositionCategoryException ex) {
+					// Ignore
+				}
+				if (fPositionUpdater != null)
+					oldDoc.removePositionUpdater(fPositionUpdater);
+				oldDoc.removeDocumentListener(this);
+			}
 		}
 		
 		private IDocument createDocument() {
@@ -548,6 +572,25 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				disconnect(provider, input);
 				provider.removeElementStateListener(this);
 			}
+			// If we have a listener registered with the widget, remove it
+			if (fSourceViewer != null && !fSourceViewer.getTextWidget().isDisposed()) {
+				if (fNeedsValidation) {
+					fSourceViewer.getTextWidget().removeVerifyListener(this);
+					fNeedsValidation = false;
+				}
+				IDocument oldDoc= internalGetDocument(fSourceViewer);
+				if (oldDoc != null) {
+					oldDoc.removeDocumentListener(this);
+				}
+			}
+		}
+		
+		private IDocument internalGetDocument(MergeSourceViewer tp) {
+			IDocument oldDoc= tp.getDocument();
+			if (oldDoc == null) {
+				oldDoc= tp.getRememberedDocument();
+			}
+			return oldDoc;
 		}
 		
 		/**
@@ -694,6 +737,64 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				fTopIndex = oldContributor.fTopIndex;
 			}
 				
+		}
+
+		public boolean validateChange() {
+			if (fDocumentProvider instanceof IDocumentProviderExtension) {
+				IDocumentProviderExtension ext = (IDocumentProviderExtension)fDocumentProvider;
+				if (ext.isReadOnly(fDocumentKey)) {
+					try {
+						ext.validateState(fDocumentKey, getControl().getShell());
+					} catch (CoreException e) {
+						ErrorDialog.openError(getControl().getShell(), "Element is Read Only", "The element being edited is read-only", e.getStatus());
+						return false;
+					}
+				}
+				return true;
+			}
+			IEditableContentExtension ext = (IEditableContentExtension)Utilities.getAdapter(fElement, IEditableContentExtension.class);
+			if (ext != null) {
+				if (ext.isReadOnly()) {
+					IStatus status = ext.validateEdit(getControl().getShell());
+					if (!status.isOK()) {
+						if (status.getSeverity() == IStatus.ERROR) {
+							ErrorDialog.openError(getControl().getShell(), "Element is Read Only", "The element being edited is read-only", status);
+							return false;
+						}
+						if (status.getSeverity() == IStatus.CANCEL)
+							return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
+		 */
+		public void verifyText(VerifyEvent e) {
+			if (!validateChange()) {
+				e.doit= false;
+			}
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentAboutToBeChanged(DocumentEvent e) {
+			// nothing to do
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
+		 */
+		public void documentChanged(DocumentEvent e) {
+			TextMergeViewer.this.documentChanged(e);
+			// Remove our verify listener since the document is now dirty
+			if (fNeedsValidation && fSourceViewer != null && !fSourceViewer.getTextWidget().isDisposed()) {
+				fSourceViewer.getTextWidget().removeVerifyListener(this);
+				fNeedsValidation = false;
+			}
 		}
 	}
 	
@@ -1114,17 +1215,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
-		fDocumentListener= new IDocumentListener() {
-			
-			public void documentAboutToBeChanged(DocumentEvent e) {
-				// nothing to do
-			}
-			
-			public void documentChanged(DocumentEvent e) {
-				TextMergeViewer.this.documentChanged(e);
-			}
-		};
-		
 		buildControl(parent);
 		
 		INavigatable nav= new INavigatable() {
@@ -1409,9 +1499,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fBirdsEyeCanvas= null;
 		fSummaryHeader= null;
 
-		unsetDocument(fAncestor);
-		unsetDocument(fLeft);
-		unsetDocument(fRight);
+		fAncestorContributor.unsetDocument(fAncestor);
+		fLeftContributor.unsetDocument(fLeft);
+		fRightContributor.unsetDocument(fRight);
 		
 		disconnect(fLeftContributor);
 		disconnect(fRightContributor);
@@ -2221,16 +2311,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		fAncestorContributor.setEncodingIfAbsent(fLeftContributor);
 		
 		// set new documents
-		fLeftContributor.setDocument(fLeft);
+		fLeftContributor.setDocument(fLeft, cc.isLeftEditable() && cp.isLeftEditable(input));
 		fLeftLineCount= fLeft.getLineCount();
 		
-		fRightContributor.setDocument(fRight);
+		fRightContributor.setDocument(fRight, cc.isRightEditable() && cp.isRightEditable(input));
 		fRightLineCount= fRight.getLineCount();
 		
-		fAncestorContributor.setDocument(fAncestor);
-		
-		fRight.setEditable(cc.isRightEditable() && cp.isRightEditable(input));
-		fLeft.setEditable(cc.isLeftEditable() && cp.isLeftEditable(input));
+		fAncestorContributor.setDocument(fAncestor, false);
 		
 		//if the input is part of a patch hunk, toggle synchronized scrolling
 		if (isPatchHunk()){
@@ -2489,24 +2576,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		case RIGHT_CONTRIBUTOR:
 			fNewRightRanges.put(input, range);
 			break;
-		}
-	}
-
-	private void unsetDocument(MergeSourceViewer tp) {
-		IDocument oldDoc= tp.getDocument();
-		if (oldDoc == null) {
-			oldDoc= tp.getRememberedDocument();
-		}
-		if (oldDoc != null) {
-			tp.rememberDocument(null);
-			try {
-				oldDoc.removePositionCategory(DIFF_RANGE_CATEGORY);
-			} catch (BadPositionCategoryException ex) {
-				// Ignore
-			}
-			if (fPositionUpdater != null)
-				oldDoc.removePositionUpdater(fPositionUpdater);
-			oldDoc.removeDocumentListener(fDocumentListener);
 		}
 	}
 	
@@ -4523,7 +4592,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 * Copy whole document from one side to the other.
 	 */
 	protected void copy(boolean leftToRight) {
-		
+		if (!validateChange(!leftToRight))
+			return;
 		if (showResolveUI()) {
 			copyAllUnresolved(leftToRight);
 			invalidateLines();
@@ -4591,7 +4661,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private boolean copy(Diff diff, boolean leftToRight) {
 		
 		if (diff != null && !diff.isResolved()) {
-
+			if (!validateChange(!leftToRight)) 
+				return false;
 			Position fromPos= null;
 			Position toPos= null;
 			IDocument fromDoc= null;
@@ -4654,6 +4725,16 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			return true;
 		}
 		return false;
+	}
+
+	private boolean validateChange(boolean left) {
+		ContributorInfo info;
+		if (left)
+			info = fLeftContributor;
+		else
+			info = fRightContributor;
+		
+		return info.validateChange();
 	}
 
 	//---- scrolling

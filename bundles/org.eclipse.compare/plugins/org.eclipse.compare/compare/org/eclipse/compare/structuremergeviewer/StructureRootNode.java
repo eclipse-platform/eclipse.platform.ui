@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.compare.structuremergeviewer;
 
-import org.eclipse.compare.ISharedDocumentAdapter;
-import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.*;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.services.IDisposable;
 
 /**
@@ -120,6 +121,28 @@ public class StructureRootNode extends DocumentRangeNode implements IDisposable,
 	 */
 	public String getType() {
 		return FOLDER_TYPE;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DocumentRangeNode#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		if (fInput instanceof IEditableContentExtension) {
+			IEditableContentExtension ext = (IEditableContentExtension) fInput;
+			return ext.isReadOnly();
+		}
+		return super.isReadOnly();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.DocumentRangeNode#validateEdit(org.eclipse.swt.widgets.Shell)
+	 */
+	public IStatus validateEdit(Shell shell) {
+		if (fInput instanceof IEditableContentExtension) {
+			IEditableContentExtension ext = (IEditableContentExtension) fInput;
+			return ext.validateEdit(shell);
+		}
+		return super.validateEdit(shell);
 	}
 
 }

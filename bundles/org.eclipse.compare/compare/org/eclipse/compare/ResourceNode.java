@@ -18,6 +18,7 @@ import org.eclipse.compare.structuremergeviewer.IStructureComparator;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * A <code>ResourceNode</code> wraps an <code>IResources</code> so that it can be used
@@ -31,7 +32,7 @@ import org.eclipse.swt.graphics.Image;
  */
 public class ResourceNode extends BufferedContent
 			implements IEncodedStreamContentAccessor, IStructureComparator, ITypedElement,
-							IEditableContent, IModificationDate, IResourceProvider {
+							IEditableContent, IModificationDate, IResourceProvider, IEditableContentExtension {
 			
 	private IResource fResource;
 	private ArrayList fChildren;
@@ -203,6 +204,28 @@ public class ResourceNode extends BufferedContent
 	 */
 	public String getCharset() {
 		return Utilities.getCharset(fResource);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEditableContentExtension#isReadOnly()
+	 */
+	public boolean isReadOnly() {
+		if (fResource.getType() == IResource.FILE) {
+			ResourceAttributes attrs = fResource.getResourceAttributes();
+			if (attrs != null) {
+				return attrs.isReadOnly();
+			}
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.IEditableContentExtension#validateEdit(org.eclipse.swt.widgets.Shell)
+	 */
+	public IStatus validateEdit(Shell shell) {
+		if (isReadOnly())
+			return ResourcesPlugin.getWorkspace().validateEdit(new IFile[] { (IFile)fResource}, shell);
+		return Status.OK_STATUS;
 	}
 }
 
