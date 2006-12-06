@@ -4938,7 +4938,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				if (viewHeight <= 0) {
 					v= 0;
 				} else {
-					v= (v*viewHeight)/virtualHeight;
+					v= (int) (v * ((double)viewHeight/virtualHeight));
 				}
 				return viewPos+v;
 			}
