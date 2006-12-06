@@ -22,6 +22,7 @@
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.test.performance"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.resources"/>
    </requires>
 
 </plugin>
