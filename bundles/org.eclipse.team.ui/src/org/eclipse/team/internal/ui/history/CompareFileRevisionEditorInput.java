@@ -121,7 +121,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 			} catch (CoreException e) {
 			}
 		} else {
-			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), element.getContentIdentifier()});
+			label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_repository, new Object[]{ element.getName(), element.getContentIdentifier(), element.getAuthor()});
 		}
 	
 		return label;
