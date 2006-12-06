@@ -116,7 +116,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					return super.belongsTo(family);
 				}
 			};
-			workerJob.setModal(false);
 			return workerJob;
 		}
 		
