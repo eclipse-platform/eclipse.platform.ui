@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.statushandling.StatusManager;
 
 public class EditorReference extends WorkbenchPartReference implements
         IEditorReference {
@@ -388,13 +389,9 @@ public class EditorReference extends WorkbenchPartReference implements
             IStatus logStatus = StatusUtil.newStatus(originalStatus, 
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
                             getId(), originalStatus.getMessage()));
-            WorkbenchPlugin.log(logStatus);
+            StatusManager.getManager().handle(logStatus);
             
-            IStatus displayStatus = StatusUtil.newStatus(originalStatus,
-                    NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
-                            originalStatus.getMessage()));
-            
-            ErrorEditorPart part = new ErrorEditorPart(displayStatus);
+            ErrorEditorPart part = new ErrorEditorPart();
             
             IEditorInput input;
             try {
@@ -413,23 +410,25 @@ public class EditorReference extends WorkbenchPartReference implements
             
             site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
             try {
-                part.init(site, input);
-            } catch (PartInitException e) {
-                WorkbenchPlugin.log(e);
-                return null;
-            }
+				part.init(site, input);
+			} catch (PartInitException e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				return null;
+			}
 
             Composite parent = (Composite)pane.getControl();
             Composite content = new Composite(parent, SWT.NONE);
             content.setLayout(new FillLayout());
             
             try {
-                part.createPartControl(content);
-            } catch (Exception e) {
-                content.dispose();
-                WorkbenchPlugin.log(e);
-                return null;
-            }
+				part.createPartControl(content);
+			} catch (Exception e) {
+				content.dispose();
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				return null;
+			}
 
             result = part;
         }
@@ -513,23 +512,26 @@ public class EditorReference extends WorkbenchPartReference implements
      * @param string
      */
     private void reportMalfunction(String string) {
-        if (!reportedMalfunctioningEditor) {
-            reportedMalfunctioningEditor = true;
-            
-            String errorMessage = "Problem detected with part " + getId(); //$NON-NLS-1$
-            if (part != null) {
-                errorMessage += " (class = " + part.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            
-            errorMessage += ": " + string; //$NON-NLS-1$
-            
-            WorkbenchPlugin.log(StatusUtil.newStatus(getDescriptor().getPluginId(), errorMessage, null));
-        }
-    }
+		if (!reportedMalfunctioningEditor) {
+			reportedMalfunctioningEditor = true;
+
+			String errorMessage = "Problem detected with part " + getId(); //$NON-NLS-1$
+			if (part != null) {
+				errorMessage += " (class = " + part.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			errorMessage += ": " + string; //$NON-NLS-1$
+
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(getDescriptor().getPluginId(),
+							errorMessage, null));
+		}
+	}
 
     private IEditorPart createPartHelper() throws PartInitException {
         
-        // Things that will need to be disposed if an exception occurs (listed in the order they
+        // Things that will need to be disposed if an exception occurs (listed
+		// in the order they
         // need to be disposed, and set to null if they haven't been created yet)
         Composite content = null;
         IEditorPart part = null;
@@ -622,34 +624,42 @@ public class EditorReference extends WorkbenchPartReference implements
             // Dispose anything which we allocated in the try block
             if (content != null) {
                 try {
-                    content.dispose();
-                } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
+					content.dispose();
+				} catch (RuntimeException re) {
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
+				}
             }
     
             if (part != null) {
                 try {
                     part.dispose();
                 } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
+				}
             }
             
             if (actionBars != null) {
                 try {
                     manager.disposeEditorActionBars(actionBars);
                 } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
+				}
             }
             
             if (site != null) {
                 try {
                     site.dispose();
                 } catch (RuntimeException re) {
-                    WorkbenchPlugin.log(re);
-                }
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
+				}
             }
             
             throw new PartInitException(StatusUtil.getLocalizedMessage(e), StatusUtil.getCause(e));

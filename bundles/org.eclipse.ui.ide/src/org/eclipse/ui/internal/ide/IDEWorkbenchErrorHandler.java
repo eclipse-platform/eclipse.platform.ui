@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.ide;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
@@ -19,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.internal.ide.dialogs.InternalErrorDialog;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.statushandling.StatusHandlingState;
 import org.eclipse.ui.statushandling.WorkbenchErrorHandler;
 
@@ -42,7 +46,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 
 	private InternalErrorDialog dialog;
 
-	private Shell defaultParent = new Shell();
+	private Shell defaultParent;
 
 	private boolean closing = false;
 
@@ -76,12 +80,35 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	 * 
 	 * @see org.eclipse.ui.errors.AbstractErrorHandler#handle(org.eclipse.ui.errors.HandlingStatusState)
 	 */
-	public void handle(StatusHandlingState handlingState) {
+	public void handle(final StatusHandlingState handlingState) {
 		if (handlingState.getStatus().getException() != null) {
-			handleException(handlingState.getStatus().getException());
+			UIJob handlingExceptionJob = new UIJob("IDE Exception Handler") //$NON-NLS-1$
+			{
+				/* (non-Javadoc)
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					handleException(handlingState.getStatus().getException());
+					return new Status(IStatus.OK,
+							IDEWorkbenchPlugin.IDE_WORKBENCH,
+							IDEWorkbenchMessages.IDEExceptionHandler_ExceptionHandledMessage);
+				}
+
+			};
+
+			handlingExceptionJob.setSystem(true);
+			handlingExceptionJob.schedule();
 		}
 
 		super.handle(handlingState);
+	}
+
+	private Shell getParentShell() {
+		if (defaultParent == null) {
+			defaultParent = new Shell();
+		}
+
+		return defaultParent;
 	}
 
 	/**
@@ -97,7 +124,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 				if (closing) {
 					return;
 				}
-				Shell parent = defaultParent;
+				Shell parent = getParentShell();
 				if (dialog != null && dialog.getShell() != null
 						&& !dialog.getShell().isDisposed()) {
 					parent = dialog.getShell();
@@ -206,27 +233,4 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 			return true;
 		}
 	}
-
-	// private boolean openQuestion2(Shell parent, String title, String message,
-	// Throwable detail, int defaultIndex) {
-	// String[] labels;
-	// if (detail == null) {
-	// labels = new String[] { IDialogConstants.YES_LABEL,
-	// IDialogConstants.NO_LABEL };
-	// } else {
-	// labels = new String[] { IDialogConstants.YES_LABEL,
-	// IDialogConstants.NO_LABEL,
-	// IDialogConstants.SHOW_DETAILS_LABEL };
-	// }
-	//
-	// dialog = new InternalErrorDialog(parent, title, null, message, detail,
-	// MessageDialog.QUESTION, labels, defaultIndex);
-	//
-	// if (detail != null) {
-	// dialog.setDetailButton(2);
-	// }
-	// boolean result = dialog.open() == Window.OK;
-	// dialog = null;
-	// return result;
-	// }
 }

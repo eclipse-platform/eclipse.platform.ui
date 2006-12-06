@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -214,9 +215,6 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		// If unable to create the part, create an error part instead
 		if (exception != null) {
 			IStatus partStatus = exception.getStatus();
-			IStatus displayStatus = StatusUtil.newStatus(partStatus, NLS.bind(
-					WorkbenchMessages.ViewFactory_initException, partStatus
-							.getMessage()));
 
 			IStatus logStatus = StatusUtil
 					.newStatus(
@@ -224,7 +222,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 							NLS
 									.bind(
 											"Unable to create view ID {0}: {1}", getId(), partStatus.getMessage())); //$NON-NLS-1$
-			WorkbenchPlugin.log(logStatus);
+			
+			StatusManager.getManager().handle(logStatus);
 
 			IViewDescriptor desc = factory.viewReg.find(getId());
 			String label = getId();
@@ -232,7 +231,7 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				label = desc.getLabel();
 			}
 
-			ErrorViewPart part = new ErrorViewPart(displayStatus);
+			ErrorViewPart part = new ErrorViewPart();
 
 			PartPane pane = getPane();
 			ViewSite site = new ViewSite(this, part, factory.page, getId(),
@@ -242,7 +241,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			try {
 				part.init(site);
 			} catch (PartInitException e) {
-				WorkbenchPlugin.log(e);
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
 				return null;
 			}
 			part.setPartName(label);
@@ -255,7 +255,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				part.createPartControl(content);
 			} catch (Exception e) {
 				content.dispose();
-				WorkbenchPlugin.log(e);
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
 				return null;
 			}
 
@@ -420,7 +421,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				try {
 					content.dispose();
 				} catch (RuntimeException re) {
-					WorkbenchPlugin.log(re);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
 				}
 			}
 
@@ -428,7 +431,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				try {
 					initializedView.dispose();
 				} catch (RuntimeException re) {
-					WorkbenchPlugin.log(re);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
 				}
 			}
 
@@ -436,7 +441,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				try {
 					site.dispose();
 				} catch (RuntimeException re) {
-					WorkbenchPlugin.log(re);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
 				}
 			}
 
@@ -444,7 +451,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				try {
 					actionBars.dispose();
 				} catch (RuntimeException re) {
-					WorkbenchPlugin.log(re);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									re));
 				}
 			}
 

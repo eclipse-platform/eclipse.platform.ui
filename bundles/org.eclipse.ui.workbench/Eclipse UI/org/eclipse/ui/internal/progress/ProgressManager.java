@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -408,13 +409,20 @@ public class ProgressManager extends ProgressProvider implements
 					next.decrementBusy(event.getJob());
 				}
 				JobInfo info = getJobInfo(event.getJob());
-				if (event.getResult() != null
-						&& event.getResult().getSeverity() == IStatus.ERROR) {
-					errorManager.addError(event.getResult(), event.getJob());
-				}
+
 				jobs.remove(event.getJob());
 				// Only refresh if we are showing it
 				removeJobInfo(info);
+
+				if (event.getResult() != null
+						&& event.getResult().getSeverity() == IStatus.ERROR) {
+					// the error status is passed to the status handling
+					// facility
+					StatusManager.getManager().handle(event.getResult());
+
+					// the status is removed from the finished jobs list
+					FinishedJobs.getInstance().remove(info);
+				}
 			}
 
 			/*

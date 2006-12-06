@@ -11,49 +11,95 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.part.StatusPart;
 import org.eclipse.ui.part.EditorPart;
 
+/**
+ * This part is shown instead the editors with errors.
+ * 
+ * @since 3.3
+ */
 public class ErrorEditorPart extends EditorPart {
 
-    private IStatus msg;
-    
-    public ErrorEditorPart(IStatus errorMessage) {
-        msg = errorMessage;
-    }
-    
-    public void doSave(IProgressMonitor monitor) {
-    }
+	/**
+	 * Creates instance of the class
+	 */
+	public ErrorEditorPart() {
+	}
 
-    public void doSaveAs() {
-    }
-        
-    public void createPartControl(Composite parent) {
-        new StatusPart(parent, msg);
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+	}
 
-    public void init(IEditorSite site, IEditorInput input)
-            throws PartInitException {
-        setSite(site);
-        setInput(input);
-        setPartName(input.getName());
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#doSaveAs()
+	 */
+	public void doSaveAs() {
+	}
 
-    public boolean isDirty() {
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+	}
 
-    public boolean isSaveAsAllowed() {
-        return false;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#init(org.eclipse.ui.IEditorSite,
+	 *      org.eclipse.ui.IEditorInput)
+	 */
+	public void init(IEditorSite site, IEditorInput input)
+			throws PartInitException {
+		setSite(site);
+		setInput(input);
+		setPartName(input.getName());
+	}
 
-    public void setFocus() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#isDirty()
+	 */
+	public boolean isDirty() {
+		return false;
+	}
 
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return false;
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.EditorPart#setPartName(java.lang.String)
+	 */
+	public void setPartName(String newName) {
+		super.setPartName(newName);
+	}
 }

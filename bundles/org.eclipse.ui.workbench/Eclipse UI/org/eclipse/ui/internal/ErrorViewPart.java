@@ -10,29 +10,46 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.part.StatusPart;
 import org.eclipse.ui.part.ViewPart;
 
+/**
+ * This part is shown instead the views with errors.
+ * 
+ * @since 3.3
+ */
 public class ErrorViewPart extends ViewPart {
-    
-    private IStatus msg;
-    
-    public ErrorViewPart(IStatus errorMessage) {
-        msg = errorMessage;
-    }
-    
-    public void createPartControl(Composite parent) {
-        new StatusPart(parent, msg);
-    }
 
-    public void setPartName(String newName) {
-        super.setPartName(newName);
-    }
-    
-    public void setFocus() {
+	/**
+	 * Creates instance of the class
+	 */
+	public ErrorViewPart() {
+	}
 
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createPartControl(Composite parent) {
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.ViewPart#setPartName(java.lang.String)
+	 */
+	public void setPartName(String newName) {
+		super.setPartName(newName);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.part.WorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
+
+	}
 
 }

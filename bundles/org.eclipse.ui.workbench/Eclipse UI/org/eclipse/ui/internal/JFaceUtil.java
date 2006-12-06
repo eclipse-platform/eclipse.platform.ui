@@ -18,10 +18,13 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.util.ILogDialog;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Utility class for setting up JFace for use by Eclipse.
@@ -45,10 +48,24 @@ final class JFaceUtil {
 			}
 		});
 
-		// Log all errors to the main runtime log
+		// Pass all errors and warnings to the status handling facility
+		// and the rest to the main runtime log
 		Policy.setLog(new ILogger() {
 			public void log(IStatus status) {
-				WorkbenchPlugin.getDefault().getLog().log(status);
+				if (status.getSeverity() == IStatus.WARNING
+						|| status.getSeverity() == IStatus.ERROR) {
+					StatusManager.getManager().handle(status);
+				} else {
+					WorkbenchPlugin.log(status);
+				}
+			}
+		});
+
+		// All JFace errors and warnings are forwarded
+		// to the status handling facility instead of showing them in a dialog
+		Policy.setLogDialog(new ILogDialog() {
+			public void log(Shell parent, String title, IStatus status) {
+				StatusManager.getManager().handle(status);
 			}
 		});
 

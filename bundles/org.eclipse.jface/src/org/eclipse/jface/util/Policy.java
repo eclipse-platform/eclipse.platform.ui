@@ -16,147 +16,218 @@ import java.util.Comparator;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.AnimatorFactory;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 
 /**
- * The Policy class handles settings for behaviour, debug flags and logging within JFace.
+ * The Policy class handles settings for behaviour, debug flags and logging
+ * within JFace.
  * 
  * @since 3.0
  */
 public class Policy {
 
-    /**
-     * Constant for the the default setting for debug options.
-     */
-    public static final boolean DEFAULT = false;
-
-    /**
-     * The unique identifier of the JFace plug-in.
-     */
-    public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
-
-    private static ILogger log;
-
-    private static Comparator viewerComparator;
-    
-    private static AnimatorFactory animatorFactory;
-    
-    /**
-     * A flag to indicate whether unparented dialogs should
-     * be checked.
-     */
-    public static boolean DEBUG_DIALOG_NO_PARENT = DEFAULT;
-
-    /**
-     * A flag to indicate whether actions are being traced.
-     */
-    public static boolean TRACE_ACTIONS = DEFAULT;
-    
-    /**
-     * A flag to indicate whether toolbars are being traced.
-     */
-
-    public static boolean TRACE_TOOLBAR = DEFAULT;
-
-
-    /**
-     * Returns the dummy log to use if none has been set
-     */
-    private static ILogger getDummyLog() {
-        return new ILogger() {
-            public void log(IStatus status) {
-                System.err.println(status.getMessage());
-            }
-        };
-    }
-
-    /**
-     * Sets the logger used by JFace to log errors.
-     * 
-     * @param logger the logger to use, or <code>null</code> to use the default logger
-     * @since 3.1
-     */
-    public static void setLog(ILogger logger) {
-        log = logger;
-    }
-
-    /**
-     * Returns the logger used by JFace to log errors.
-     * <p>
-     * The default logger prints the status to <code>System.err</code>.
-     * </p>
-     * 
-     * @return the logger
-     * @since 3.1
-     */
-    public static ILogger getLog() {
-        if (log == null) {
-			log = getDummyLog();
-		}
-        return log;
-    }
-    
 	/**
-	 * Return the default comparator used by JFace to sort strings.
-	 *  
-	 * @return a default comparator used by JFace to sort strings
+	 * Constant for the the default setting for debug options.
 	 */
-	private static Comparator getDefaultComparator(){
-		return new Comparator(){
-			/**
-			 * Compares string s1 to string s2.  
-			 * 
-			 * @param s1 string 1
-			 * @param s2 string 2
-			 * @return Returns an integer value. Value is less than zero if source is
-			 *         less than target, value is zero if source and target are equal,
-			 *         value is greater than zero if source is greater than target.
-			 * @exception ClassCastException the arguments cannot be cast to Strings.
-			 */
-			public int compare(Object s1, Object s2) {
-				return ((String)s1).compareTo((String)s2);
+	public static final boolean DEFAULT = false;
+
+	/**
+	 * The unique identifier of the JFace plug-in.
+	 */
+	public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
+
+	private static ILogger log;
+
+	private static Comparator viewerComparator;
+
+	private static AnimatorFactory animatorFactory;
+
+	/**
+	 * A flag to indicate whether unparented dialogs should be checked.
+	 */
+	public static boolean DEBUG_DIALOG_NO_PARENT = DEFAULT;
+
+	/**
+	 * A flag to indicate whether actions are being traced.
+	 */
+	public static boolean TRACE_ACTIONS = DEFAULT;
+
+	/**
+	 * A flag to indicate whether toolbars are being traced.
+	 */
+
+	public static boolean TRACE_TOOLBAR = DEFAULT;
+
+	private static ILogDialog logDialog;
+
+	/**
+	 * Returns the dummy log to use if none has been set
+	 */
+	private static ILogger getDummyLog() {
+		return new ILogger() {
+			public void log(IStatus status) {
+				System.err.println(status.getMessage());
 			}
 		};
 	}
-	
-    /**
-     * Return the comparator used by JFace to sort strings.
-     *  
-     * @return the comparator used by JFace to sort strings
-     * @since 3.2 
-     */
-    public static Comparator getComparator(){
-    	if (viewerComparator == null) {
+
+	/**
+	 * Get the default dialog for JFace errors and warnings.
+	 * 
+	 * @return {@link ILogDialog}
+	 */
+	private static ILogDialog getJFaceLogDialog() {
+		return new ILogDialog() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.util.ILogger#log(org.eclipse.core.runtime.IStatus)
+			 */
+			public void log(Shell parent, String title, IStatus status) {
+				MessageDialog dialog = new MessageDialog(
+						parent,
+						title,
+						null, // accept
+						// the
+						// default
+						// window
+						// icon
+						status.getMessage(), status.getSeverity(),
+						new String[] { IDialogConstants.OK_LABEL }, 0); // ok
+				// is
+				// the
+				// default
+				dialog.open();
+			}
+		};
+	}
+
+	/**
+	 * Sets the logger used by JFace to log errors.
+	 * 
+	 * @param logger
+	 *            the logger to use, or <code>null</code> to use the default
+	 *            logger
+	 * @since 3.1
+	 */
+	public static void setLog(ILogger logger) {
+		log = logger;
+	}
+
+	/**
+	 * Sets the dialog used by JFace to show errors and warnings.
+	 * 
+	 * @param dialog
+	 *            the dialog to use, or <code>null</code> to use the default
+	 *            dialog
+	 * @since 3.3
+	 */
+	public static void setLogDialog(ILogDialog dialog) {
+		logDialog = dialog;
+	}
+
+	/**
+	 * Returns the logger used by JFace to log errors.
+	 * <p>
+	 * The default logger prints the status to <code>System.err</code>.
+	 * </p>
+	 * 
+	 * @return the logger
+	 * @since 3.1
+	 */
+	public static ILogger getLog() {
+		if (log == null) {
+			log = getDummyLog();
+		}
+		return log;
+	}
+
+	/**
+	 * Returns the dialog used by JFace to show errors and warnings.
+	 * <p>
+	 * The default dialog shows the status in JFace MessageDialog 
+	 * </p>
+	 * 
+	 * @return the dialog
+	 * @since 3.3
+	 */
+	public static ILogDialog getLogDialog() {
+		if (logDialog == null) {
+			logDialog = getJFaceLogDialog();
+		}
+		return logDialog;
+	}
+
+	/**
+	 * Return the default comparator used by JFace to sort strings.
+	 * 
+	 * @return a default comparator used by JFace to sort strings
+	 */
+	private static Comparator getDefaultComparator() {
+		return new Comparator() {
+			/**
+			 * Compares string s1 to string s2.
+			 * 
+			 * @param s1
+			 *            string 1
+			 * @param s2
+			 *            string 2
+			 * @return Returns an integer value. Value is less than zero if
+			 *         source is less than target, value is zero if source and
+			 *         target are equal, value is greater than zero if source is
+			 *         greater than target.
+			 * @exception ClassCastException
+			 *                the arguments cannot be cast to Strings.
+			 */
+			public int compare(Object s1, Object s2) {
+				return ((String) s1).compareTo((String) s2);
+			}
+		};
+	}
+
+	/**
+	 * Return the comparator used by JFace to sort strings.
+	 * 
+	 * @return the comparator used by JFace to sort strings
+	 * @since 3.2
+	 */
+	public static Comparator getComparator() {
+		if (viewerComparator == null) {
 			viewerComparator = getDefaultComparator();
 		}
-    	return viewerComparator;
-    }
-    
-    /**
-     * Sets the comparator used by JFace to sort strings.
-     * 
-     * @param comparator comparator used by JFace to sort strings
-     * @since 3.2
-     */
-    public static void setComparator(Comparator comparator){
-    	org.eclipse.core.runtime.Assert.isTrue(viewerComparator == null);
-    	viewerComparator = comparator;
-    }
-    
-    /**
-	 * Sets the animator factory used by JFace to create control animator
-	 * instances. 
+		return viewerComparator;
+	}
+
+	/**
+	 * Sets the comparator used by JFace to sort strings.
 	 * 
-	 * @param factory the AnimatorFactory to use.
+	 * @param comparator
+	 *            comparator used by JFace to sort strings
+	 * @since 3.2
+	 */
+	public static void setComparator(Comparator comparator) {
+		org.eclipse.core.runtime.Assert.isTrue(viewerComparator == null);
+		viewerComparator = comparator;
+	}
+
+	/**
+	 * Sets the animator factory used by JFace to create control animator
+	 * instances.
+	 * 
+	 * @param factory
+	 *            the AnimatorFactory to use.
 	 * @since 3.2
 	 * @deprecated this is no longer in use as of 3.3
 	 */
-	public static void setAnimatorFactory(AnimatorFactory factory){
+	public static void setAnimatorFactory(AnimatorFactory factory) {
 		animatorFactory = factory;
 	}
 
 	/**
 	 * Returns the animator factory used by JFace to create control animator
-	 * instances. 
+	 * instances.
 	 * 
 	 * @return the animator factory used to create control animator instances.
 	 * @since 3.2

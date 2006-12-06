@@ -656,7 +656,7 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String Workspace_refreshing;
 
-
+	public static String IDEExceptionHandler_ExceptionHandledMessage;
 	// ==============================================================================
 	// Keys with references but don't show in the UI
 	// ==============================================================================

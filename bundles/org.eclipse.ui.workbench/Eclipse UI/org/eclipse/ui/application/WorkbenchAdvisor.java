@@ -43,17 +43,17 @@ import org.eclipse.ui.statushandling.WorkbenchErrorHandler;
  * 
  * <pre>
  * <code>
- *          public class MyApplication implements IPlatformRunnable {
- *            public Object run(Object args) {
- *              WorkbenchAdvisor workbenchAdvisor = new MyWorkbenchAdvisor();
- *              Display display = PlatformUI.createDisplay();
- *              int returnCode = PlatformUI.createAndRunWorkbench(display, workbenchAdvisor);
- *              if (returnCode == PlatformUI.RETURN_RESTART) {
- *                 return IPlatformRunnable.EXIT_RESTART;
- *              } else {
- *                 return IPlatformRunnable.EXIT_OK;
- *            }
- *          }
+ *           public class MyApplication implements IPlatformRunnable {
+ *             public Object run(Object args) {
+ *               WorkbenchAdvisor workbenchAdvisor = new MyWorkbenchAdvisor();
+ *               Display display = PlatformUI.createDisplay();
+ *               int returnCode = PlatformUI.createAndRunWorkbench(display, workbenchAdvisor);
+ *               if (returnCode == PlatformUI.RETURN_RESTART) {
+ *                  return IPlatformRunnable.EXIT_RESTART;
+ *               } else {
+ *                  return IPlatformRunnable.EXIT_OK;
+ *             }
+ *           }
  * </code>
  * </pre>
  * 
@@ -318,12 +318,6 @@ public abstract class WorkbenchAdvisor {
 		}
 
 		try {
-			// WorkbenchPlugin.log("Unhandled event loop exception",
-			// //$NON-NLS-1$
-			// //$NON-NLS-1$
-			// new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, msg,
-			// exception));
-
 			StatusManager.getManager().handle(
 					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
 							"Unhandled event loop exception", exception)); //$NON-NLS-1$

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
@@ -300,39 +303,31 @@ public class MessageDialog extends IconAndMessageDialog {
     }
 
     /**
-     * Convenience method to open a standard error dialog.
-     * 
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
-    public static void openError(Shell parent, String title, String message) {
-        MessageDialog dialog = new MessageDialog(parent, title, null, // accept
-                // the
-                // default
-                // window
-                // icon
-                message, ERROR, new String[] { IDialogConstants.OK_LABEL }, 0); // ok
-        // is
-        // the
-        // default
-        dialog.open();
-        return;
-    }
+	 * It was a convenience method to open a standard error dialog. Since 3.3 it
+	 * creates an error status and passes it to a dialog from the policy.
+	 * 
+	 * @param parent
+	 *            the parent shell of the dialog, or <code>null</code> if none
+	 * @param title
+	 *            the dialog's title, or <code>null</code> if none
+	 * @param message
+	 *            the message
+	 */
+	public static void openError(Shell parent, String title, String message) {
+		IStatus status = new Status(IStatus.ERROR, Policy.JFACE, message);
+		Policy.getLogDialog().log(parent, title, status);
+	}
 
     /**
-     * Convenience method to open a standard information dialog.
-     * 
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
+	 * Convenience method to open a standard information dialog.
+	 * 
+	 * @param parent
+	 *            the parent shell of the dialog, or <code>null</code> if none
+	 * @param title
+	 *            the dialog's title, or <code>null</code> if none
+	 * @param message
+	 *            the message
+	 */
     public static void openInformation(Shell parent, String title,
             String message) {
         MessageDialog dialog = new MessageDialog(parent, title, null, // accept
@@ -372,33 +367,26 @@ public class MessageDialog extends IconAndMessageDialog {
     }
 
     /**
-     * Convenience method to open a standard warning dialog.
-     * 
-     * @param parent
-     *            the parent shell of the dialog, or <code>null</code> if none
-     * @param title
-     *            the dialog's title, or <code>null</code> if none
-     * @param message
-     *            the message
-     */
-    public static void openWarning(Shell parent, String title, String message) {
-        MessageDialog dialog = new MessageDialog(parent, title, null, // accept
-                // the
-                // default
-                // window
-                // icon
-                message, WARNING, new String[] { IDialogConstants.OK_LABEL }, 0); // ok
-        // is
-        // the
-        // default
-        dialog.open();
-        return;
-    }
+	 * It was a convenience method to open a standard warning dialog. Since 3.3
+	 * it creates a warning status and passes it to a dialog from the policy.
+	 * 
+	 * @param parent
+	 *            the parent shell of the dialog, or <code>null</code> if
+	 *            none,
+	 * @param title
+	 *            the dialog's title, or <code>null</code> if none
+	 * @param message
+	 *            the message
+	 */
+	public static void openWarning(Shell parent, String title, String message) {
+		IStatus status = new Status(IStatus.WARNING, Policy.JFACE, message);
+		Policy.getLogDialog().log(parent, title, status);
+	}
 
     /*
-     * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite,
-     *      int, java.lang.String, boolean)
-     */
+	 * @see org.eclipse.jface.dialogs.Dialog#createButton(org.eclipse.swt.widgets.Composite,
+	 *      int, java.lang.String, boolean)
+	 */
     protected Button createButton(Composite parent, int id, String label,
             boolean defaultButton) {
         Button button = super.createButton(parent, id, label, defaultButton);
