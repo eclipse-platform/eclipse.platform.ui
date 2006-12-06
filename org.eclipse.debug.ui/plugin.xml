@@ -2043,6 +2043,13 @@ M4 = Platform-specific fourth key
             class="org.eclipse.debug.internal.ui.views.console.ProcessTypePropertyTester"
             properties="processTypeTest"
             id="org.eclipse.jdt.debug.ui.JavaConsolePropertyTester"/>
+      <propertyTester
+            class="org.eclipse.debug.internal.ui.DebugModelPropertyTester"
+            id="org.eclipse.debug.ui.debugElementProperties"
+            namespace="org.eclipse.debug.ui"
+            properties="getModelIdentifier,isTerminatedOrDisconnected"
+            type="org.eclipse.core.runtime.IAdaptable">
+      </propertyTester>
    </extension>
 <!-- Context extensions -->
   <extension
