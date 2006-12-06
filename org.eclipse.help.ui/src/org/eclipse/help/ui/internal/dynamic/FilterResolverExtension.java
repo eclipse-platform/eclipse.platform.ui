@@ -49,23 +49,35 @@ public class FilterResolverExtension implements Extension {
 	 * Evaluates the "category" filter.
 	 */
 	private static boolean filterByCategory(String categoryId) {
-		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-		if (activityManager.getCategory(categoryId).isDefined()) {
-			return !WorkbenchActivityHelper.isEnabled(activityManager, categoryId);
+		try {
+			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+			if (activityManager.getCategory(categoryId).isDefined()) {
+				return !WorkbenchActivityHelper.isEnabled(activityManager, categoryId);
+			}
+			return true;
 		}
-		return true;
+		catch (Exception e) {
+			// no workbench available (standalone mode)
+			return false;
+		}
 	}
 
 	/*
 	 * Evaluates the "activity" filter.
 	 */
 	private static boolean filterByActivity(String activityId) {
-		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-		if (activityManager.getActivity(activityId).isDefined()) {
-			return !activityManager.getActivity(activityId).isEnabled();
+		try {
+			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
+			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
+			if (activityManager.getActivity(activityId).isDefined()) {
+				return !activityManager.getActivity(activityId).isEnabled();
+			}
+			return true;
 		}
-		return true;
+		catch (Exception e) {
+			// no workbench available (standalone mode)
+			return false;
+		}
 	}
 }
