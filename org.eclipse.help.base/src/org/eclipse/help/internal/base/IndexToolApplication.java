@@ -10,38 +10,28 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Locale;
-import java.util.zip.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.util.NLS;
 
 /**
  * application org.eclipse.help.indexTool
  */
-public class IndexToolApplication implements IPlatformRunnable,
-		IExecutableExtension {
-
-	/**
-	 * Constructor for IndexToolApplication.
+public class IndexToolApplication implements IApplication {
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
-	public IndexToolApplication() {
-		super();
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
-	 *      java.lang.String, java.lang.Object)
-	 */
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-	}
-
-	/**
-	 * @see org.eclipse.core.runtime.IPlatformRunnable#run(java.lang.Object)
-	 */
-	public Object run(Object args) throws Exception {
+	public synchronized Object start(IApplicationContext context) throws Exception {
 		try {
 			String directory = System.getProperty("indexOutput"); //$NON-NLS-1$
 			if (directory == null || directory.length() == 0) {
@@ -53,20 +43,26 @@ public class IndexToolApplication implements IPlatformRunnable,
 			}
 			Locale locale;
 			if (localeStr.length() >= 5) {
-				locale = new Locale(localeStr.substring(0, 2), localeStr
-						.substring(3, 5));
-			} else {
+				locale = new Locale(localeStr.substring(0, 2), localeStr.substring(3, 5));
+			}
+			else {
 				locale = new Locale(localeStr.substring(0, 2), ""); //$NON-NLS-1$
 			}
 			preindex(directory, locale);
-		} catch (Exception e) {
-			System.out.println(e);
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			HelpBasePlugin.logError("Preindexing failed.", e); //$NON-NLS-1$
 		}
 		return EXIT_OK;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#stop()
+	 */
+	public synchronized void stop() {
+	}
+	
 	private void preindex(String outputDir, Locale locale) throws Exception {
 		File indexPath = new File(HelpBasePlugin.getConfigurationDirectory(),
 				"index/" + locale); //$NON-NLS-1$

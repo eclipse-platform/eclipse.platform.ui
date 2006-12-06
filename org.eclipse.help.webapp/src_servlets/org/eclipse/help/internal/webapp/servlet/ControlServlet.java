@@ -296,7 +296,7 @@ public class ControlServlet extends HttpServlet {
 	 */
 	private void shutdown() {
 		shuttingDown = true;
-		HelpApplication.stop();
+		HelpApplication.stopHelp();
 	}
 
 	/**
