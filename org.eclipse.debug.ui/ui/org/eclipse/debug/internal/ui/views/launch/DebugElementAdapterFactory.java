@@ -26,23 +26,12 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.ExpressionContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.ExpressionLabelAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.ExpressionManagerContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.LauchManagerContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.LaunchContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemorySegmentLabelAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.ProcessContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.RegisterGroupContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.StackFrameContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.ThreadContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnFactoryAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableContentAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableLabelAdapter;
 import org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider;
@@ -73,9 +62,6 @@ import org.eclipse.debug.internal.ui.viewers.update.DefaultModelProxyFactory;
 import org.eclipse.debug.internal.ui.viewers.update.DefaultModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.views.memory.renderings.MemorySegment;
 import org.eclipse.debug.ui.sourcelookup.ISourceDisplay;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.model.IWorkbenchAdapter2;
-import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 
 /**
  * DebugElementAdapterFactory
@@ -87,8 +73,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
 	private static IModelSelectionPolicyFactoryAdapter fgModelSelectionPolicyFactoryAdapter = new DefaultModelSelectionPolicyFactory();
     
     private static IAsynchronousLabelAdapter fgDebugLabelAdapter = new AsynchronousDebugLabelAdapter();
-    private static IAsynchronousLabelAdapter fgVariableLabelAdapter = new VariableLabelAdapter();
-    private static IAsynchronousLabelAdapter fgExpressionLabelAdapter = new ExpressionLabelAdapter();
     private static IAsynchronousLabelAdapter fgMemoryBlockLabelAdapter = new MemoryBlockLabelAdapter();
     private static IAsynchronousLabelAdapter fgTableRenderingLineLabelAdapter = new MemorySegmentLabelAdapter();
     
@@ -99,16 +83,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     
     private static IElementEditor fgEEVariable = new VariableEditor();
     
-    private static IAsynchronousContentAdapter fgAsyncLaunchManager = new LauchManagerContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncLaunch = new LaunchContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncTarget = new DebugTargetContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncProcess = new ProcessContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncThread = new ThreadContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncFrame = new StackFrameContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncVariable = new VariableContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncRegisterGroup = new RegisterGroupContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncExpressionManager = new ExpressionManagerContentAdapter();
-    private static IAsynchronousContentAdapter fgAsyncExpression = new ExpressionContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
     
@@ -137,12 +112,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
 		}
         
         if (adapterType.equals(IAsynchronousContentAdapter.class)) {
-            if (adaptableObject instanceof ILaunchManager) {
-                return fgAsyncLaunchManager;
-            }
-            if (adaptableObject instanceof ILaunch) {
-                return fgAsyncLaunch;
-            }
             if (adaptableObject instanceof IDebugTarget) {
                 return fgAsyncTarget;
             }
@@ -151,27 +120,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof IMemoryBlock) {
             	return fgAsyncMemoryBlock;
-            }
-            if (adaptableObject instanceof IProcess) {
-                return fgAsyncProcess;
-            }
-            if (adaptableObject instanceof IThread) {
-                return fgAsyncThread;
-            }
-            if (adaptableObject instanceof IStackFrame) {
-                return fgAsyncFrame;
-            }
-            if (adaptableObject instanceof IVariable) {
-                return fgAsyncVariable;
-            }
-            if (adaptableObject instanceof IRegisterGroup) {
-            		return fgAsyncRegisterGroup;
-            }
-            if (adaptableObject instanceof IExpressionManager) {
-            	return fgAsyncExpressionManager;
-            }
-            if (adaptableObject instanceof IExpression) {
-            	return fgAsyncExpression;
             }
         }
         
@@ -206,12 +154,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         }        
         
         if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
-            if (adaptableObject instanceof IExpression) {
-                return fgExpressionLabelAdapter;
-            }
-            if (adaptableObject instanceof IVariable) {
-                return fgVariableLabelAdapter;
-            }
         	if (adaptableObject instanceof IMemoryBlock) {
         		return fgMemoryBlockLabelAdapter;
         	}
@@ -291,9 +233,18 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
      * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
      */
     public Class[] getAdapterList() {
-        return new Class[] {IWorkbenchAdapter.class, IWorkbenchAdapter2.class, IDeferredWorkbenchAdapter.class, IAsynchronousLabelAdapter.class, IAsynchronousContentAdapter.class,
-        		IModelProxyFactoryAdapter.class, ISourceDisplay.class, IModelSelectionPolicyFactoryAdapter.class, IColumnPresentationFactoryAdapter.class, IColumnEditorFactoryAdapter.class,
-        		IElementContentProvider.class, IElementLabelProvider.class, IElementMementoProvider.class, IElementEditor.class};
+        return new Class[] {
+        		IAsynchronousLabelAdapter.class,
+        		IAsynchronousContentAdapter.class,
+        		IModelProxyFactoryAdapter.class,
+        		ISourceDisplay.class,
+        		IModelSelectionPolicyFactoryAdapter.class,
+        		IColumnPresentationFactoryAdapter.class,
+        		IColumnEditorFactoryAdapter.class,
+        		IElementContentProvider.class,
+        		IElementLabelProvider.class,
+        		IElementMementoProvider.class,
+        		IElementEditor.class};
     }
 
 }

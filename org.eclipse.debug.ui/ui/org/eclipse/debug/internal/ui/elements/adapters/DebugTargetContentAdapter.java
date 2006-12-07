@@ -13,7 +13,6 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
@@ -28,9 +27,7 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
      */
 	protected Object[] getChildren(Object parent, IPresentationContext context) throws CoreException {
 		String id = context.getId();
-		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
-			return ((IDebugTarget) parent).getThreads();
-		else if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
+		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (parent instanceof IMemoryBlockRetrieval)
 			{
@@ -46,8 +43,6 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
      */
 	protected boolean hasChildren(Object element, IPresentationContext context) throws CoreException {
 		String id = context.getId();
-		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))
-			return ((IDebugTarget)element).hasThreads();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {
 			if (element instanceof IMemoryBlockRetrieval)
@@ -65,7 +60,7 @@ public class DebugTargetContentAdapter extends AsynchronousContentAdapter {
      * @see org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter#supportsPartId(java.lang.String)
      */
 	protected boolean supportsPartId(String id) {
-		return IDebugUIConstants.ID_DEBUG_VIEW.equals(id) || IDebugUIConstants.ID_MEMORY_VIEW.equals(id);
+		return IDebugUIConstants.ID_MEMORY_VIEW.equals(id);
 	}
 
 }
