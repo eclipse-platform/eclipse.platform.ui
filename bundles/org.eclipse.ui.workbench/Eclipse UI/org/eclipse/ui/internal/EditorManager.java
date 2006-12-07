@@ -733,7 +733,7 @@ public class EditorManager implements IExtensionChangeHandler {
 		final CoreException ex[] = new CoreException[1];
 
 		final IPathEditorInput pathInput = getPathEditorInput(input);
-		if (pathInput != null) {
+		if (pathInput != null && pathInput.getPath() != null) {
 			BusyIndicator.showWhile(getDisplay(), new Runnable() {
 				public void run() {
 					try {
