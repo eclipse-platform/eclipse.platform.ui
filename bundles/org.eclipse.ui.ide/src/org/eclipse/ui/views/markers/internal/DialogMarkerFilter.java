@@ -519,7 +519,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 	 * (non-Javadoc) Method declared on Dialog.
 	 */
 	protected void buttonPressed(int buttonId) {
-		
+
 		switch (buttonId) {
 		case RESET_ID:
 			resetPressed();
@@ -648,7 +648,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 		createResetArea(dialogArea);
 		createSeparatorLine(dialogArea);
-		
+
 		applyDialogFont(dialogArea);
 		return dialogArea;
 	}
@@ -673,21 +673,24 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 	/**
 	 * Create the area for the user to select thier filters.
+	 * 
 	 * @param listArea
 	 */
 	void createUserFiltersArea(Composite listArea) {
-		
-		Composite userComposite = new Composite(listArea,SWT.NONE);
-		userComposite.setLayout(new GridLayout(2,false));
-		userComposite.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
-		
+
+		Composite userComposite = new Composite(listArea, SWT.NONE);
+		userComposite.setLayout(new GridLayout(2, false));
+		userComposite
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		Label title = new Label(userComposite, SWT.NONE);
 		title.setText(MarkerMessages.MarkerFilter_filtersTitle);
 		GridData titleData = new GridData();
 		titleData.horizontalSpan = 2;
-		title.setLayoutData(titleData);		
-		
-		filtersList = CheckboxTableViewer.newCheckList(userComposite, SWT.BORDER);
+		title.setLayoutData(titleData);
+
+		filtersList = CheckboxTableViewer.newCheckList(userComposite,
+				SWT.BORDER);
 		filtersList.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
@@ -780,8 +783,15 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 							 * @see org.eclipse.jface.dialogs.IInputValidator#isValid(java.lang.String)
 							 */
 							public String isValid(String newText) {
-								if (newText.length() == 0) {
+								if (newText.length() == 0)
 									return MarkerMessages.MarkerFilterDialog_emptyMessage;
+								for (int i = 0; i < filters.length; i++) {
+									if (filters[i].getName().equals(newText))
+										return NLS
+												.bind(
+														MarkerMessages.filtersDialog_conflictingName,
+														newText);
+
 								}
 								return null;
 							}
@@ -897,7 +907,6 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		rightComposite.setLayout(new GridLayout());
 		rightComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 				true));
-
 
 		return selectedComposite;
 	}
@@ -1461,6 +1470,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 
 	/**
 	 * Create the buttons for selecting the filters.
+	 * 
 	 * @param listArea
 	 */
 	protected void createFilterSelectButtons(Composite listArea) {
@@ -1468,7 +1478,7 @@ public abstract class DialogMarkerFilter extends TrayDialog {
 		GridLayout buttonLayout = new GridLayout(2, false);
 		buttonLayout.marginWidth = 0;
 		buttons.setLayout(buttonLayout);
-	
+
 		createButton(buttons, SELECT_ALL_FILTERS_ID,
 				MarkerMessages.filtersDialog_selectAll, false);
 		createButton(buttons, DESELECT_ALL_FILTERS_ID,
