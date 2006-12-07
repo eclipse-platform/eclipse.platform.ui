@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.io.*;
-import org.eclipse.core.runtime.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import org.eclipse.compare.internal.ContentChangeNotifier;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Abstract implementation for a buffered <code>IStreamContentAccessor</code>.
@@ -32,7 +34,7 @@ import org.eclipse.swt.widgets.Display;
 public abstract class BufferedContent implements IContentChangeNotifier, IStreamContentAccessor {
 	
 	byte[] fContent;
-	private ListenerList fListenerList;
+	private ContentChangeNotifier fChangeNotifier;
 	
 	/**
 	 * Creates a buffered stream content accessor.
@@ -100,19 +102,19 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 	 * see IContentChangeNotifier.addChangeListener
 	 */
 	public void addContentChangeListener(IContentChangeListener listener) {
-		if (fListenerList == null)
-			fListenerList= new ListenerList();
-		fListenerList.add(listener);
+		if (fChangeNotifier == null)
+			fChangeNotifier= new ContentChangeNotifier(this);
+		fChangeNotifier.addContentChangeListener(listener);
 	}
 	
 	/* (non-Javadoc)
 	 * see IContentChangeNotifier.removeChangeListener
 	 */
 	public void removeContentChangeListener(IContentChangeListener listener) {
-		if (fListenerList != null) {
-			fListenerList.remove(listener);
-			if (fListenerList.isEmpty())
-				fListenerList= null;
+		if (fChangeNotifier != null) {
+			fChangeNotifier.removeContentChangeListener(listener);
+			if (fChangeNotifier.isEmpty())
+				fChangeNotifier= null;
 		}
 	}
 	
@@ -120,31 +122,10 @@ public abstract class BufferedContent implements IContentChangeNotifier, IStream
 	 * Notifies all registered <code>IContentChangeListener</code>s of a content change.
 	 */
 	protected void fireContentChanged() {
-		if (fListenerList == null || fListenerList.isEmpty()) {
+		if (fChangeNotifier == null || fChangeNotifier.isEmpty()) {
 			return;
 		}
-		// Legacy listeners may expect to be notified in the UI thread.
-		Runnable runnable = new Runnable() {
-			public void run() {
-				Object[] listeners= fListenerList.getListeners();
-				for (int i= 0; i < listeners.length; i++) {
-					final IContentChangeListener contentChangeListener = (IContentChangeListener)listeners[i];
-					SafeRunner.run(new ISafeRunnable() {
-						public void run() throws Exception {
-							(contentChangeListener).contentChanged(BufferedContent.this);
-						}
-						public void handleException(Throwable exception) {
-							// Logged by safe runner
-						}
-					});
-				}
-			}
-		};
-		if (Display.getCurrent() == null) {
-			Display.getDefault().syncExec(runnable);
-		} else {
-			runnable.run();
-		}
+		fChangeNotifier.fireContentChanged();
 	}
 }
 

@@ -209,7 +209,7 @@ public abstract class BackgroundEventHandler {
 				return ! isQueueEmpty();
 			}
 			public boolean belongsTo(Object family) {
-				return family == getJobFamiliy();
+				return BackgroundEventHandler.this.belongsTo(family);
 			}
 		};
 		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
@@ -219,6 +219,16 @@ public abstract class BackgroundEventHandler {
 		});
 		eventHandlerJob.setSystem(true);
 		eventHandlerJob.setPriority(Job.SHORT);
+	}
+	
+	/**
+	 * Return whether this background handler belongs to the given job family.
+	 * @param family the job family
+	 * @return whether this background handler belongs to the given job family.
+	 * @see Job#belongsTo(Object)
+	 */
+	protected boolean belongsTo(Object family) {
+		return getJobFamiliy() == family;
 	}
 
 	/**

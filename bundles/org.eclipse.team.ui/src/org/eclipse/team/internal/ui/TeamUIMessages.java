@@ -21,7 +21,11 @@ public class TeamUIMessages extends NLS {
 		NLS.initializeMessages(BUNDLE_NAME, TeamUIMessages.class);
 	}
 	
-    public static String DiffTreeChangesSection_10;
+    public static String CompareInputChangeNotifier_0;
+
+	public static String CompareInputChangeNotifier_1;
+
+	public static String DiffTreeChangesSection_10;
 
 	public static String DiffTreeChangesSection_11;
 

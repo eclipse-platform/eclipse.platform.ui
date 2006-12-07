@@ -10,19 +10,22 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.mapping;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.diff.IDiff;
-import org.eclipse.team.core.diff.IDiffChangeEvent;
+import org.eclipse.team.core.ICache;
+import org.eclipse.team.core.ICacheListener;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
@@ -32,10 +35,12 @@ import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 /**
  * A change notifier for resource-based compare inputs.
  */
-public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifier {
+public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifier implements IDiffChangeListener {
 
 	static final String RESOURCE_CHANGE_NOTIFIER_PROPERTY = "org.eclipse.team.ui.ResourceChangeNotifier"; //$NON-NLS-1$
 
+	private ISynchronizationContext context;
+	
 	private class CompareInputLabelProvider extends BaseLabelProvider implements ICompareInputLabelProvider {
 
 		public Image getAncestorImage(Object input) {
@@ -162,36 +167,29 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 	 * @param context a synchronization context
 	 */
 	public ResourceCompareInputChangeNotifier(ISynchronizationContext context) {
-		super(context);
+		super();
+		this.context = context;
+		// We can initialize in the constructor since the context will allow us to dispose
+		initialize();
 	}
 	
-	protected void handleDispose() {
-		super.handleDispose();
-		labelProvider.dispose();
+	public void initialize() {
+		context.getDiffTree().addDiffChangeListener(this);
+		context.getCache().addCacheListener(new ICacheListener() {
+			public void cacheDisposed(ICache cache) {
+				dispose();
+			}
+		});
+		super.initialize();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 * @see org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier#dispose()
 	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		List changedInputs = new ArrayList();
-		ICompareInput[] inputs = getConnectedInputs();
-		for (int i = 0; i < inputs.length; i++) {
-			ICompareInput input = inputs[i];
-			IResource resource = getResource(input);
-			if (resource != null) {
-				IResourceDelta delta = event.getDelta().findMember(resource.getFullPath());
-				if (delta != null) {
-					if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.REMOVED)) > 0
-							|| (delta.getKind() & (IResourceDelta.CHANGED)) > 0 
-								&& (delta.getFlags() & (IResourceDelta.CONTENT | IResourceDelta.REPLACED)) > 0) {
-						changedInputs.add(input);
-					}
-				}
-			}
-		}
-		if (!changedInputs.isEmpty())
-			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]), true);
+	public void dispose() {
+		super.dispose();
+		context.getDiffTree().removeDiffChangeListener(this);
+		labelProvider.dispose();
 	}
 
 	/* (non-Javadoc)
@@ -225,6 +223,23 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]), false);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(org.eclipse.team.core.diff.IDiffTree, int, org.eclipse.core.runtime.IPath[])
+	 */
+	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
+		// Property changes are not interesting w.r.t. state changes
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier#getResources(org.eclipse.compare.structuremergeviewer.ICompareInput)
+	 */
+	protected IResource[] getResources(ICompareInput input) {
+		IResource resource = getResource(input);
+		if (resource == null)
+			return new IResource[0];
+		return new IResource[] { resource };
+	}
+	
 	private IResource getResource(ICompareInput input) {
 		if (input instanceof IResourceProvider) {
 			IResourceProvider rp = (IResourceProvider) input;
@@ -255,40 +270,6 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Handle the input changes by notifying any listeners of the changed inputs.
-	 * @param inputs the changed inputs
-	 */
-	private void handleInputChanges(ICompareInput[] inputs, boolean force) {
-		List realChanges = getRealChanges(inputs, force);
-		if (! realChanges.isEmpty())
-			inputsChanged((ICompareInput[]) realChanges.toArray(new ICompareInput[realChanges.size()]));
-	}
-	
-	private List getRealChanges(ICompareInput[] inputs, boolean force) {
-		List realChanges = new ArrayList();
-		for (int i = 0; i < inputs.length; i++) {
-			ICompareInput input = inputs[i];
-			if (input instanceof ResourceDiffCompareInput) {
-				ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-				if (force || rdci.needsUpdate()) {
-					realChanges.add(rdci);
-				}
-			}
-		}
-		return realChanges;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier#fireChange(org.eclipse.compare.structuremergeviewer.ICompareInput)
-	 */
-	protected void fireChange(ICompareInput input) {
-		if (input instanceof ResourceDiffCompareInput) {
-			ResourceDiffCompareInput rdci = (ResourceDiffCompareInput) input;
-			rdci.update();
-		}
 	}
 	
 	/* (non-Javadoc)
@@ -336,5 +317,17 @@ public class ResourceCompareInputChangeNotifier extends CompareInputChangeNotifi
 
 	private void fireLabelProviderChange(Object input) {
 		labelProvider.fireChangeEvent(input);
+	}
+	
+	/**
+	 * Return the synchronization context to which this notifier is associated.
+	 * @return the synchronization context to which this notifier is associated
+	 */
+	public final ISynchronizationContext getContext() {
+		return context;
+	}
+	
+	protected boolean belongsTo(Object family) {
+		return family == getContext();
 	}
 }

@@ -14,15 +14,15 @@ import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.*;
-import org.eclipse.team.core.diff.IDiffChangeListener;
-import org.eclipse.team.core.diff.IDiffTree;
-import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 import org.eclipse.team.internal.core.BackgroundEventHandler.Event;
 import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 
 /**
  * An abstract class that 
@@ -38,9 +38,8 @@ import org.eclipse.team.internal.ui.Policy;
  * @since 3.3
  */
 public abstract class CompareInputChangeNotifier implements
-		IResourceChangeListener, IDiffChangeListener {
+		IResourceChangeListener {
 
-	private ISynchronizationContext context;
 	private Map inputs = new HashMap();
 	private InputChangeEventHandler eventHandler;
 
@@ -86,7 +85,7 @@ public abstract class CompareInputChangeNotifier implements
 		private final List pendingRunnables = new ArrayList();
 		
 		protected InputChangeEventHandler() {
-			super("Updating Compare Editor", "Error updating compare editor");
+			super(TeamUIMessages.CompareInputChangeNotifier_0, TeamUIMessages.CompareInputChangeNotifier_1);
 		}
 
 		protected boolean doDispatchEvents(IProgressMonitor monitor)
@@ -166,18 +165,16 @@ public abstract class CompareInputChangeNotifier implements
 			return 250;
 		}
 		
-		protected Object getJobFamiliy() {
-			return getContext();
+		protected boolean belongsTo(Object family) {
+			return CompareInputChangeNotifier.this.belongsTo(family);
 		}
 	}
 	
 	/**
 	 * Create a change notifier for the given synchronization context.
-	 * @param context the synchronization context.
 	 */
-	public CompareInputChangeNotifier(ISynchronizationContext context) {
+	public CompareInputChangeNotifier() {
 		super();
-		initialize(context);
 	}
 
 	/**
@@ -186,18 +183,9 @@ public abstract class CompareInputChangeNotifier implements
 	 * synchronization context. It also registers a listener with the context
 	 * cache which will unregister the listeners when the context is disposed.
 	 * Subclasses may extend this method.
-	 * 
-	 * @param context the synchronization context
 	 */
-	protected void initialize(ISynchronizationContext context) {
-		this.context = context;
+	public void initialize() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
-		context.getDiffTree().addDiffChangeListener(this);
-		context.getCache().addCacheListener(new ICacheListener() {
-			public void cacheDisposed(ICache cache) {
-				handleDispose();
-			}
-		});
 		eventHandler = new InputChangeEventHandler();
 	}
 	
@@ -206,9 +194,8 @@ public abstract class CompareInputChangeNotifier implements
 	 * to which the change notifier is associated is disposed.
 	 * Subclasses may extend this method.
 	 */
-	protected void handleDispose() {
+	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		context.getDiffTree().removeDiffChangeListener(this);
 		eventHandler.shutdown();
 	}
 
@@ -249,21 +236,6 @@ public abstract class CompareInputChangeNotifier implements
 	 */
 	protected ICompareInput[] getConnectedInputs() {
 		return (ICompareInput[])inputs.keySet().toArray(new ICompareInput[inputs.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.core.diff.IDiffChangeListener#propertyChanged(org.eclipse.team.core.diff.IDiffTree, int, org.eclipse.core.runtime.IPath[])
-	 */
-	public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
-		// Property changes are not interesting w.r.t. state changes
-	}
-
-	/**
-	 * Return the synchronization context to which this notifier is associated.
-	 * @return the synchronization context to which this notifier is associated
-	 */
-	public final ISynchronizationContext getContext() {
-		return context;
 	}
 	
 	/**
@@ -329,14 +301,6 @@ public abstract class CompareInputChangeNotifier implements
 			fireChange(input);
 		}
 	}
-
-	/**
-	 * Update the compare input and fire the change event.
-	 * This method is called from {@link #fireChanges(ICompareInput[])}
-	 * for each changed input.
-	 * @param input the changed compare input
-	 */
-	protected abstract void fireChange(ICompareInput input);
 	
 	/**
 	 * Run the given runnable in the background.
@@ -344,6 +308,103 @@ public abstract class CompareInputChangeNotifier implements
 	 */
 	protected void runInBackground(IWorkspaceRunnable runnable) {
 		eventHandler.queueEvent(new BackgroundEventHandler.RunnableEvent(runnable, false));
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
+	 */
+	public void resourceChanged(IResourceChangeEvent event) {
+		List changedInputs = new ArrayList();
+		ICompareInput[] inputs = getConnectedInputs();
+		for (int i = 0; i < inputs.length; i++) {
+			ICompareInput input = inputs[i];
+			IResource[] resources = getResources(input);
+			for (int j = 0; j < resources.length; j++) {
+				IResource resource = resources[j];
+				if (resource != null) {
+					IResourceDelta delta = event.getDelta().findMember(resource.getFullPath());
+					if (delta != null) {
+						if ((delta.getKind() & (IResourceDelta.ADDED | IResourceDelta.REMOVED)) > 0
+								|| (delta.getKind() & (IResourceDelta.CHANGED)) > 0 
+								&& (delta.getFlags() & (IResourceDelta.CONTENT | IResourceDelta.REPLACED)) > 0) {
+							changedInputs.add(input);
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (!changedInputs.isEmpty())
+			handleInputChanges((ICompareInput[]) changedInputs.toArray(new ICompareInput[changedInputs.size()]), true);
+	}
+	
+	/**
+	 * Return the resources covered by the given compare input.
+	 * This method is used by the {@link #resourceChanged(IResourceChangeEvent)}
+	 * method to determine if a workspace change affects the compare input.
+	 * @param input the compare input
+	 * @return the resources covered by the given compare input
+	 */
+	protected abstract IResource[] getResources(ICompareInput input);
+
+	/**
+	 * Handle the input changes by notifying any listeners of the changed inputs.
+	 * @param inputs the changed inputs
+	 */
+	protected void handleInputChanges(ICompareInput[] inputs, boolean force) {
+		ICompareInput[] realChanges;
+		if (force) {
+			realChanges = inputs;
+		} else {
+			List result = new ArrayList();
+			for (int i = 0; i < inputs.length; i++) {
+				ICompareInput input = inputs[i];
+				if (isChanged(input)) {
+					result.add(input);
+				}
+			}
+			realChanges = (ICompareInput[]) result.toArray(new ICompareInput[result.size()]);
+		}
+		if (realChanges.length > 0)
+			inputsChanged(realChanges);
+	}
+	
+	/**
+	 * Return whether the given compare input has changed and requires
+	 * a compare input change event to be fired.
+	 * @param input the compare input
+	 * @return whether the given compare input has changed
+	 */
+	protected boolean isChanged(ICompareInput input) {
+		if (input instanceof AbstractCompareInput) {
+			AbstractCompareInput ci = (AbstractCompareInput) input;
+			return ci.needsUpdate();
+		}
+		return false;
+	}
+	
+	/**
+	 * Update the compare input and fire the change event.
+	 * This method is called from {@link #fireChanges(ICompareInput[])}
+	 * for each changed input.
+	 * @param input the changed compare input
+	 */
+	protected void fireChange(ICompareInput input) {
+		if (input instanceof AbstractCompareInput) {
+			AbstractCompareInput ci = (AbstractCompareInput) input;
+			ci.update();
+		}
+	}
+	
+	/**
+	 * Return whether the background handler for this notifier belongs to the
+	 * given job family.
+	 * @param family the job family
+	 * @return whether the background handler belongs to the given job family.
+	 * @see Job#belongsTo(Object)
+	 */
+	protected boolean belongsTo(Object family) {
+		return false;
 	}
 
 }

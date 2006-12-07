@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * A helper clas for managing content change notification.
+ * A helper class for managing content change notification.
  */
 public class ContentChangeNotifier implements IContentChangeNotifier {
 
@@ -51,7 +51,7 @@ public class ContentChangeNotifier implements IContentChangeNotifier {
 	 * Notifies all registered <code>IContentChangeListener</code>s of a content change.
 	 */
 	public void fireContentChanged() {
-		if (fListenerList == null || fListenerList.isEmpty()) {
+		if (isEmpty()) {
 			return;
 		}
 		// Legacy listeners may expect to be notified in the UI thread.
@@ -76,6 +76,14 @@ public class ContentChangeNotifier implements IContentChangeNotifier {
 		} else {
 			runnable.run();
 		}
+	}
+
+	/**
+	 * Return whether this notifier is empty (i.e. has no listeners).
+	 * @return whether this notifier is empty 
+	 */
+	public boolean isEmpty() {
+		return fListenerList == null || fListenerList.isEmpty();
 	}
 
 }

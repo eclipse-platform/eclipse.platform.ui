@@ -75,7 +75,7 @@ public class CompareRevisionAction extends BaseSelectionListenerAction {
 			FileRevisionTypedElement left = new FileRevisionTypedElement(file1);
 			FileRevisionTypedElement right = new FileRevisionTypedElement(file2);
 			
-		   CompareEditorInput input = new CompareFileRevisionEditorInput(left, right);
+		   CompareEditorInput input = new CompareFileRevisionEditorInput(left, right, page.getSite().getPage());
 		   IWorkbenchPage workBenchPage = page.getSite().getPage();
 		   IEditorPart editor = findReusableCompareEditor(workBenchPage);
 		     if(editor != null) {

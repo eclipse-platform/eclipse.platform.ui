@@ -159,4 +159,12 @@ public class LocalFileRevision extends FileRevision {
 		
 		return URIUtil.toURI(state.getFullPath());
 	}
+
+	public IFile getFile() {
+		return file;
+	}
+
+	public IFileState getState() {
+		return state;
+	}
 }
