@@ -12,9 +12,12 @@ package org.eclipse.team.internal.ui.history;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.ui.history.HistoryPageSource;
+import org.eclipse.team.ui.history.IHistoryPageSource;
 import org.eclipse.ui.part.Page;
 
 public class LocalHistoryPageSource extends HistoryPageSource {
+
+	private static LocalHistoryPageSource instance;
 
 	public boolean canShowHistoryFor(Object object) {
 		return (object instanceof IResource && ((IResource) object).getType() == IResource.FILE);
@@ -23,6 +26,12 @@ public class LocalHistoryPageSource extends HistoryPageSource {
 	public Page createPage(Object object) {
 		LocalHistoryPage page = new LocalHistoryPage();
 		return page;
+	}
+
+	public synchronized static IHistoryPageSource getInstance() {
+		if (instance == null)
+			instance = new LocalHistoryPageSource();
+		return instance;
 	}
 
 }

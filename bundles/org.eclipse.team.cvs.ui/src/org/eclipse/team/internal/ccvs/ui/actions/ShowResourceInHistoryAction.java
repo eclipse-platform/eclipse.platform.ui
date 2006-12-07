@@ -32,7 +32,7 @@ public class ShowResourceInHistoryAction extends WorkspaceAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				if (resources.length != 1) return;
-				TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resources[0]);
+				TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resources[0], null);
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
 	}

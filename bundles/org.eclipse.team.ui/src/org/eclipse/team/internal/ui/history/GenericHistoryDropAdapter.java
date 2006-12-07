@@ -57,7 +57,7 @@ public class GenericHistoryDropAdapter extends PluginDropAdapter {
 			IResource resource = sources[0];
 			//Allow all resources types through to the view, the individual pages can decide
 			//which ones to handle
-			view.itemDropped(resource, true);
+			view.showHistoryPageFor(resource, true, true, null);
 
 			return true;
 		}

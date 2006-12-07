@@ -126,7 +126,7 @@ public class ShowAnnotationOperation extends CVSOperation {
      * @throws PartInitException
      */
     private IHistoryView showHistoryView(IWorkbenchPage page) throws PartInitException {
-    	IHistoryView historyView= TeamUI.showHistoryFor(page, fCVSResource.getIResource());
+    	IHistoryView historyView= TeamUI.showHistoryFor(page, fCVSResource.getIResource(), null);
     	IHistoryPage historyPage = historyView.getHistoryPage();
     	if (historyPage instanceof CVSHistoryPage){
     		CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;

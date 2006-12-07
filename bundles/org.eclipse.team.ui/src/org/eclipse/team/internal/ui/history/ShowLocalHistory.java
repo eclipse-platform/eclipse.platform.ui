@@ -43,7 +43,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {
-							IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource);
+							IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource,  LocalHistoryPageSource.getInstance());
 							IHistoryPage page = view.getHistoryPage();
 							if (page instanceof LocalHistoryPage){
 								LocalHistoryPage historyPage = (LocalHistoryPage) page;

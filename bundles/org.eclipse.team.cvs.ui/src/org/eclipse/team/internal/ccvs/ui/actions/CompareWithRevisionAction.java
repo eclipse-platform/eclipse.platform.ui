@@ -47,7 +47,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 					IFile file = (IFile) getSelectedResources()[0];
 					showCompareInDialog(getShell(), file);
 				} else {
-					IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), (IFile)getSelectedResources()[0]);
+					IHistoryView view = TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), (IFile)getSelectedResources()[0], null);
 					IHistoryPage page = view.getHistoryPage();
 					if (page instanceof CVSHistoryPage){
 						CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) page;

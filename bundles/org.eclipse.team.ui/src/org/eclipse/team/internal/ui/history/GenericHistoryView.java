@@ -40,12 +40,18 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	private static final String NAVIGATION_GROUP = "org.eclipse.team.ui.navigation"; //$NON-NLS-1$
 	private static final int MAX_NAVIGATION_HISTORY_ENTRIES = 15;
 
+	static boolean sameSource(IHistoryPageSource source1, IHistoryPageSource source2) {
+		return source1 == source2 || (source1 != null && source2 != null && source1.equals(source2));
+	}
+	
 	class PageContainer {
 		private Page page;
 		private SubActionBars subBars;
+		private final IHistoryPageSource source;
 
-		public PageContainer(Page page) {
+		public PageContainer(Page page, IHistoryPageSource source) {
 			this.page = page;
+			this.source = source;
 		}
 
 		public Page getPage() {
@@ -62,6 +68,26 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 		public void setSubBars(SubActionBars subBars) {
 			this.subBars = subBars;
+		}
+
+		public IHistoryPageSource getSource() {
+			return source;
+		}
+		
+		public boolean matches(Object object, IHistoryPageSource pageSource) {
+			if (page instanceof IHistoryPage) {
+				Object input = ((IHistoryPage)page).getInput();
+				if (input != null)
+					return input.equals(object) && sameSource(source, pageSource);
+			}
+			return false;
+		}
+
+		public boolean canShow(Object object, IHistoryPageSource pageSource) {
+			if (page instanceof IHistoryPage && sameSource(source, pageSource)) {
+				return ((IHistoryPage)page).isValidInput(object);
+			}
+			return false;
 		}
 	}
 	
@@ -84,7 +110,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		private void gotoEntry() {
 			try {
 				navigating = true;
-				itemDropped(getCurrentEntry().object, true, true);
+				NavigationHistoryEntry currentEntry = getCurrentEntry();
+				showHistoryPageFor(currentEntry.object, true, true, currentEntry.source);
 			} finally {
 				navigating = false;
 			}
@@ -98,9 +125,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				gotoEntry();
 			}
 		}
-		public void addEntry(Object object, String name) {
+		public void addEntry(Object object, String name, IHistoryPageSource source) {
 			if (!navigating) {
-				NavigationHistoryEntry navigationHistoryEntry = new NavigationHistoryEntry(object, name);
+				NavigationHistoryEntry navigationHistoryEntry = new NavigationHistoryEntry(object, name, source);
 				if (history.contains(navigationHistoryEntry)) {
 					history.remove(navigationHistoryEntry);
 				}
@@ -146,17 +173,20 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	static class NavigationHistoryEntry {
 		Object object;
 		String name;
-		public NavigationHistoryEntry(Object object, String name) {
+		IHistoryPageSource source;
+		public NavigationHistoryEntry(Object object, String name, IHistoryPageSource source) {
 			this.object = object;
 			this.name = name;
+			this.source = source;
 		}
 		public boolean equals(Object obj) {
 			if (obj instanceof NavigationHistoryEntry) {
 				NavigationHistoryEntry other = (NavigationHistoryEntry) obj;
-				return other.object.equals(this.object);
+				return other.object.equals(this.object) && sameSource(source, other.source);
 			}
 			return false;
 		}
+		
 		public int hashCode() {
 			return object.hashCode();
 		}
@@ -374,9 +404,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				if (lastSelectedElement != null){
 					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					if (resource != null)
-						itemDropped((IResource) resource, false);
+						showHistoryPageFor((IResource) resource, false, false, null);
 					else
-						itemDropped(lastSelectedElement, false);
+						showHistoryPageFor(lastSelectedElement, false, false, null);
 					//reset lastSelectedElement
 					lastSelectedElement = null;
 				}
@@ -546,9 +576,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				} else {
 					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					if (resource != null)
-						itemDropped((IResource) resource, false);
+						showHistoryPageFor((IResource) resource, false, false, null);
 					else
-						itemDropped(lastSelectedElement, false);
+						showHistoryPageFor(lastSelectedElement, false, false, null);
 				}
 				//reset lastSelectedElement to null to prevent updating history view if it just gets focus
 				lastSelectedElement  = null;
@@ -607,7 +637,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		if (currentPageContainer != null) {
 			Object input = ((IHistoryPage)currentPageContainer.getPage()).getInput();
 			if (input != null)
-				navigationHistory.addEntry(input, ((IHistoryPage)currentPageContainer.getPage()).getName());
+				navigationHistory.addEntry(input, ((IHistoryPage)currentPageContainer.getPage()).getName(), currentPageContainer.getSource());
 		}
 	}
 
@@ -635,152 +665,107 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 	
 	public IHistoryPage showHistoryFor(Object object, boolean force) {
-		return itemDropped(object, true, force);
+		return showHistoryPageFor(object, true, force, null);
 	}
 	
-	public IHistoryPage itemDropped(Object object, boolean refresh) {
-		return itemDropped(object, refresh, false);
-	}
-	
-	public IHistoryPage itemDropped(Object object, boolean refresh, boolean force) {
+	public IHistoryPage showHistoryPageFor(Object object, boolean refresh, boolean force, IHistoryPageSource pageSource) {
 		
-		//check to see if history view is visible - if it's not, don't bother
-		//going to the trouble of fetching the history
+		// Check to see if history view is visible - if it's not, don't bother
+		// going to the trouble of fetching the history
 		if (!this.getSite().getPage().isPartVisible(this))
 			return null;
 		
+		// Ensure that there is a page source available
+		pageSource = getPageSourceFor(object, pageSource);
+		if (pageSource == null)
+			return null;
 		
+		// Check to see if the object is already being displayed in another page
+		IHistoryPage existingPage = checkForExistingPage(object, refresh, force, pageSource);
+		if (existingPage != null){
+			return existingPage;
+		}
+		
+		// Now check to see if this view is pinned
+		if (isViewPinned() && !force) {
+			return handlePinnedView(object, refresh, pageSource);
+		}
+		
+		// If a current page exists, see if it can handle the dropped item.
+		// Otherwise, create a new page
+		PageContainer tempPageContainer = null;
+		if (currentPageContainer!= null && currentPageContainer.canShow(object, pageSource)) {
+			tempPageContainer = currentPageContainer;
+		} else {
+			tempPageContainer = createPage(pageSource, object);
+		}
+		
+		// Set the new page to the current page for the view
+		IHistoryPage historyPage = ((IHistoryPage)tempPageContainer.getPage());
+		historyPage.setInput(object);
+		((HistoryPage)historyPage).setHistoryView(this);
+		setContentDescription(historyPage.getName());
+		showPageRec(tempPageContainer);
+		return historyPage;
+	}
+
+	private IHistoryPageSource getPageSourceFor(Object object, IHistoryPageSource pageSource) {
+		if (pageSource != null)
+			return pageSource;
 		IResource resource = Utils.getResource(object);
-		if (resource != null) {
-			
-			//check to see if this resource is already being displayed in another page
-			IHistoryPage existingPage = checkForExistingPage(object, resource.getName(), refresh, force);
-			if (existingPage != null){
-				return existingPage;
-			}
-			
-			//now check to see if this view is pinned
-			IHistoryPage pinnedPage = checkForPinnedView(object, resource.getName(), refresh, force);
-			if (pinnedPage != null)
-				return pinnedPage;
-		
+		if (resource == null) {
+			return (IHistoryPageSource) Utils.getAdapter(object, IHistoryPageSource.class);
+		} else {
 			//check to see if resource is managed
 			RepositoryProvider teamProvider = RepositoryProvider.getProvider(resource.getProject());
-			//couldn't find a repo provider; try showing it in a local page
-			Object tempPageSource = null;
 			if (teamProvider == null){
-				tempPageSource = new LocalHistoryPageSource();
+				// couldn't find a repository provider; try showing it in a local page
+				return LocalHistoryPageSource.getInstance();
 			} else {
 				IFileHistoryProvider fileHistory = teamProvider.getFileHistoryProvider();
 				
 				if (fileHistory != null) {
-					tempPageSource = Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
+					IHistoryPageSource source = (IHistoryPageSource)Utils.getAdapter(fileHistory, IHistoryPageSource.class,true);
+					if (source != null)
+						return source;
 				}
-				if (tempPageSource == null) {
-					tempPageSource = Utils.getAdapter(teamProvider, IHistoryPageSource.class,true);
-				}
-			}
-			
-			if (tempPageSource instanceof IHistoryPageSource) {
-				IHistoryPageSource pageSource = (IHistoryPageSource) tempPageSource;
-
-				//If a current page exists, see if it can handle the dropped item
-				if (currentPageContainer.getPage() instanceof IHistoryPage) {
-					PageContainer tempPageContainer = currentPageContainer;
-					IHistoryPage page = (IHistoryPage) tempPageContainer.getPage();
-					if (!page.isValidInput(resource)) {
-						tempPageContainer = createPage(pageSource, resource);
-						if (tempPageContainer == null)
-							page = null;
-						else
-							page = (IHistoryPage) tempPageContainer.getPage();
-					}
-					if (page != null) {
-						if (page.setInput(resource)){
-							((HistoryPage) page).setHistoryView(this);
-							setContentDescription(page.getName());
-							showPageRec(tempPageContainer);
-							return page;
-						}
-					} else {
-						showPageRec(defaultPageContainer);
-					}
-				}
+				return (IHistoryPageSource)Utils.getAdapter(teamProvider, IHistoryPageSource.class,true);
 			}
 		}
-		else if (object != null){
-			IHistoryPageSource historyPageSource = (IHistoryPageSource) Utils.getAdapter(object, IHistoryPageSource.class);
-			//Check to see that this object can be adapted to an IHistoryPageSource, else
-			//we don't know how to display it
-			if (historyPageSource == null)
-				return null;
-			
-			//If a current page exists, see if it can handle the dropped item
-			if (currentPageContainer.getPage() instanceof IHistoryPage) {
-				PageContainer tempPageContainer = currentPageContainer;
-				if (!((IHistoryPage) tempPageContainer.getPage()).isValidInput(object)) {
-					tempPageContainer = createPage(historyPageSource, object);
-				}
-				if (tempPageContainer != null) {
-					
-					//check to see if this resource is already being displayed in another page
-					IHistoryPage existingPage = checkForExistingPage(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, force);
-					if (existingPage != null){
-						return existingPage;
-					}
-					
-					IHistoryPage pinnedPage = checkForPinnedView(object, ((IHistoryPage) tempPageContainer.getPage()).getName(), refresh, force);
-					if (pinnedPage != null)
-						return pinnedPage;
-					
-					if (((IHistoryPage) tempPageContainer.getPage()).setInput(object)){
-						((HistoryPage) tempPageContainer.getPage()).setHistoryView(this);
-						setContentDescription(((IHistoryPage) tempPageContainer.getPage()).getName());
-						showPageRec(tempPageContainer);
-						return (IHistoryPage) tempPageContainer.getPage();
-					}
-				} else {
-					showPageRec(defaultPageContainer);
-				}
-			}
-		}
-
-		return null;
 	}
 
-	private IHistoryPage checkForPinnedView(Object object, String objectName, boolean refresh, boolean thisView) {
-		if (isViewPinned() && !thisView) {
-			try {
-				IViewPart view = null;
-				//check to see if a view already contains this object
-				String id = VIEW_ID + System.currentTimeMillis();
-				IHistoryPage page = searchHistoryViewsForObject(object, refresh);
-				if (page != null)
-					return page;
-				
-				//check to see if an unpinned version of the history view exists
-				GenericHistoryView historyView = findUnpinnedHistoryView();
-				if (historyView != null){
-					getSite().getPage().activate(historyView);
-					return historyView.itemDropped(object, refresh);
-				}
-				
-				view = getSite().getPage().showView(VIEW_ID, id, IWorkbenchPage.VIEW_CREATE);
-				getSite().getPage().activate(view);
-				if (view instanceof GenericHistoryView)
-					return ((GenericHistoryView) view).itemDropped(object, refresh);
-		
-			} catch (PartInitException e) {
+	private IHistoryPage handlePinnedView(Object object, boolean refresh, IHistoryPageSource source) {
+		try {
+			// Check to see if an unpinned version of the history view exists
+			GenericHistoryView historyView = findUnpinnedHistoryView();
+			if (historyView != null){
+				getSite().getPage().activate(historyView);
+				return historyView.showHistoryPageFor(object, refresh, true, source);
 			}
+			// Otherwise, open another instance of theview
+			String id = VIEW_ID + System.currentTimeMillis();
+			IViewPart view = getSite().getPage().showView(VIEW_ID, id, IWorkbenchPage.VIEW_CREATE);
+			getSite().getPage().activate(view);
+			if (view instanceof GenericHistoryView)
+				return ((GenericHistoryView) view).showHistoryPageFor(object, refresh, true, source);
+	
+		} catch (PartInitException e) {
 		}
 		return null;
 	}
 
-	private IHistoryPage checkForExistingPage(Object object, String objectName, boolean refresh, boolean thisView) {
+	private IHistoryPage checkForExistingPage(Object object, boolean refresh, boolean thisViewOnly, IHistoryPageSource pageSource) {
 		//first check to see if the main history view contains the current resource
-		if (currentPageContainer != null && 
-			((IHistoryPage)currentPageContainer.getPage()).getInput() != null){
-			if (((IHistoryPage)currentPageContainer.getPage()).getInput().equals(object)){ 
+		IHistoryPage tempPage = checkForExistingPage(object, refresh, pageSource);
+		if (tempPage != null || thisViewOnly)
+			return tempPage;
+		return searchHistoryViewsForObject(object, refresh, pageSource);
+	}
+	
+	private IHistoryPage checkForExistingPage(Object object, boolean refresh, IHistoryPageSource pageSource) {
+		//first check to see if the main history view contains the current resource
+		if (currentPageContainer != null) {
+			if (currentPageContainer.matches(object, pageSource)){ 
 				//current page contains object, so just refresh it
 				IHistoryPage tempPage =((IHistoryPage)currentPageContainer.getPage());
 				if (refresh)
@@ -789,31 +774,25 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				return tempPage;
 			}
 		}
-		if (thisView)
-			return null;
-		return searchHistoryViewsForObject(object, refresh);
+		return null;
 	}
 
-	private IHistoryPage searchHistoryViewsForObject(Object object, boolean  refresh) {
+	private IHistoryPage searchHistoryViewsForObject(Object object, boolean  refresh, IHistoryPageSource pageSource) {
 		IWorkbenchPage page = getSite().getPage();
 		IViewReference[] historyViews = page.getViewReferences();
 		for (int i = 0; i < historyViews.length; i++) {
 			if (historyViews[i].getId().equals(VIEW_ID)){
 				IViewPart historyView = historyViews[i].getView(true);
-				if (historyView != null){
-					IHistoryPage historyPage = ((IHistoryView)historyView).getHistoryPage();
-					if (historyPage != null){
-						Object input = historyPage.getInput();
-						if (input != null && input.equals(object)){
-							//this view already contains the file, so just reuse it
-							getSite().getPage().bringToTop(historyView);
-							return ((GenericHistoryView) historyView).itemDropped(object, refresh);
-						}
+				if (historyView instanceof GenericHistoryView) {
+					GenericHistoryView ghv = (GenericHistoryView)historyView;
+					IHistoryPage historyPage = ghv.checkForExistingPage(object, true, pageSource);
+					if (historyPage != null) {
+						getSite().getPage().bringToTop(historyView);
+						return historyPage;
 					}
 				}
 			}
 		}
-		
 		return null;
 	}
 	
@@ -827,7 +806,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 					return (GenericHistoryView) historyView;
 			}
 		}
-		
 		return null;
 	}
 	
@@ -835,12 +813,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		return viewPinned;
 	}
 
-	private PageContainer createPage(IHistoryPageSource participant, Object object) {
-		Page page = participant.createPage(object);
+	private PageContainer createPage(IHistoryPageSource source, Object object) {
+		Page page = source.createPage(object);
 		PageSite site = initPage(page);
 		((IHistoryPage) page).setSite(new WorkbenchHistoryPageSite(this, page.getSite()));
 		page.createControl(book);
-		PageContainer container = new PageContainer(page);
+		PageContainer container = new PageContainer(page, source);
 		container.setSubBars((SubActionBars) site.getActionBars());
 		return container;
 	}
@@ -849,7 +827,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		GenericHistoryViewDefaultPage page = new GenericHistoryViewDefaultPage();
 		PageSite site = initPage(page);
 		page.createControl(book);
-		PageContainer container = new PageContainer(page);
+		PageContainer container = new PageContainer(page, null);
 		container.setSubBars((SubActionBars) site.getActionBars());
 		return container;
 	}
@@ -874,13 +852,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 		IFile file = ResourceUtil.getFile(input);
 		if (file != null) {
-			itemDropped(file, false); /* don't fetch if already cached */
+			showHistoryPageFor(file, false, false, null); /* don't fetch if already cached */
 		}
 		
 		//see if it adapts to an IHistoryPageSource
 		Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
 		if (pageSource != null)
-			itemDropped(input, false);
+			showHistoryPageFor(input, false, false, null);
 	}
 
 	private boolean checkIfPageIsVisible() {

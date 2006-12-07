@@ -155,7 +155,7 @@ public class AnnotateView extends ViewPart implements ISelectionChangedListener 
 		}
 
 		// Show the history in the history view
-		historyView = TeamUI.showHistoryFor(page, CVSWorkspaceRoot.getRemoteResourceFor(cvsResource));
+		historyView = TeamUI.showHistoryFor(page, CVSWorkspaceRoot.getRemoteResourceFor(cvsResource), null);
 	}
 	
 	protected void disconnect() {

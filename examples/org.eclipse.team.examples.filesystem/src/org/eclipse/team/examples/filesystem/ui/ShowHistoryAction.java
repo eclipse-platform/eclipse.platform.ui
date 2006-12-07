@@ -30,7 +30,7 @@ public class ShowHistoryAction extends ActionDelegate implements IObjectActionDe
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
 						public void run() {
-							TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource);
+							TeamUI.showHistoryFor(TeamUIPlugin.getActivePage(), resource, null);
 						}
 					};
 
