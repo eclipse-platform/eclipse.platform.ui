@@ -15,6 +15,8 @@ import org.eclipse.osgi.util.NLS;
 public class DebugPreferencesMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.preferences.DebugPreferencesMessages";//$NON-NLS-1$
 
+	public static String ConsolePreferencePage_11;
+
 	public static String ConsolePreferencePage_Console_settings;
 	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_error_3;
 	public static String ConsolePreferencePage_Show__Console_View_when_there_is_program_output_3;

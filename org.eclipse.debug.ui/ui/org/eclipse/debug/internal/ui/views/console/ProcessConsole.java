@@ -112,6 +112,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         this(process, colorProvider, null);
     }
 
+    /**
+     * Constructor
+     * @param process the process to associate with this console
+     * @param colorProvider the colour provider for this console
+     * @param encoding the desired encoding for this console
+     */
     public ProcessConsole(IProcess process, IConsoleColorProvider colorProvider, String encoding) {
         super("", IDebugUIConstants.ID_PROCESS_CONSOLE_TYPE, null, encoding, true); //$NON-NLS-1$
         fProcess = process;
@@ -254,9 +260,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         return label;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
     public void propertyChange(PropertyChangeEvent evt) {
@@ -310,16 +314,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             if (fInput != null) {
                 fInput.setColor(fColorProvider.getColor(IDebugUIConstants.ID_STANDARD_INPUT_STREAM));
             }
-        } else if (property.equals(IDebugPreferenceConstants.CONSOLE_FONT)) {
-            setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+        } else if (property.equals(IDebugUIConstants.PREF_CONSOLE_FONT)) {
+            setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
         } else if (property.equals(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR)) {
         	setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsole#getStream(java.lang.String)
      */
     public IOConsoleOutputStream getStream(String streamIdentifier) {
@@ -332,19 +334,15 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         return null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsole#getProcess()
      */
     public IProcess getProcess() {
         return fProcess;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.console.AbstractConsole#dispose()
+    /**
+     * @see org.eclipse.ui.console.IOConsole#dispose()
      */
     protected void dispose() {
         super.dispose();
@@ -356,6 +354,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         JFaceResources.getFontRegistry().removeListener(this);
     }
 
+    /**
+     * cleanup method to clsoe all of the open stream to this console 
+     */
     private synchronized void closeStreams() {
         if (fStreamsClosed) {
             return;
@@ -380,6 +381,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         fStreamsClosed  = true;
     }
 
+    /**
+     * disposes ofthe listeners for each of the stream associated with this console
+     */
     private synchronized void disposeStreams() {
         for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
             StreamListener listener = (StreamListener) i.next();
@@ -389,9 +393,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         fInput = null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.ui.console.AbstractConsole#init()
      */
     protected void init() {
@@ -418,7 +420,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
         DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
             public void run() {
-                setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));
+                setFont(JFaceResources.getFont(IDebugUIConstants.PREF_CONSOLE_FONT));
                 setBackgrond(DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_BAKGROUND_COLOR));
             }
         });
@@ -444,6 +446,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
+    /**
+     * resets the name of this console to the original computed name 
+     */
     private void resetName() {
         final String newName = computeName();
         String name = getName();
@@ -458,13 +463,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
+    /**
+     * send notification of a change of content in this console
+     */
     private void warnOfContentChange() {
         ConsolePlugin.getDefault().getConsoleManager().warnOfContentChange(DebugUITools.getConsole(fProcess));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamsProxy)
      */
     public void connect(IStreamsProxy streamsProxy) {
@@ -490,11 +496,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         readJob.schedule();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamMonitor,
-     *      java.lang.String)
+    /**
+     * @see org.eclipse.debug.ui.console.IConsole#connect(org.eclipse.debug.core.model.IStreamMonitor, java.lang.String)
      */
     public void connect(IStreamMonitor streamMonitor, String streamIdentifier) {
         IOConsoleOutputStream stream = null;
@@ -503,19 +506,14 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             Color color = fColorProvider.getColor(streamIdentifier);
             stream.setColor(color);
         }
-
         synchronized (streamMonitor) {
             StreamListener listener = new StreamListener(streamIdentifier, streamMonitor, stream);
             fStreamListeners.add(listener);
         }
-
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.debug.ui.console.IConsoleHyperlink,
-     *      int, int)
+    /**
+     * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.debug.ui.console.IConsoleHyperlink, int, int)
      */
     public void addLink(IConsoleHyperlink link, int offset, int length) {
         try {
@@ -525,11 +523,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.ui.console.IHyperlink,
-     *      int, int)
+    /**
+     * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.ui.console.IHyperlink, int, int)
      */
     public void addLink(IHyperlink link, int offset, int length) {
         try {
@@ -539,15 +534,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
+    /**
      * @see org.eclipse.debug.ui.console.IConsole#getRegion(org.eclipse.debug.ui.console.IConsoleHyperlink)
      */
     public IRegion getRegion(IConsoleHyperlink link) {
         return super.getRegion(link);
     }
 
+    /**
+     * This class listens to a specified IO stream
+     */
     private class StreamListener implements IStreamListener {
 
         private IOConsoleOutputStream fStream;
@@ -564,8 +560,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             this.fStreamId = streamIdentifier;
             this.fStreamMonitor = monitor;
             this.fStream = stream;
-            fStreamMonitor.addListener(this);
-            
+            fStreamMonitor.addListener(this);  
             //fix to bug 121454. Ensure that output to fast processes is processed.
             streamAppended(null, monitor);
         }
@@ -827,8 +822,5 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 */
 	public String getHelpContextId() {
 		return IDebugHelpContextIds.PROCESS_CONSOLE;
-	}
-    
-    
-
+	} 
 }
