@@ -151,8 +151,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				
 				// Attempt the load a cache to avoid failing retries
 				if (!dynamicFactories.containsKey(items[i])) {
-					String clsSpec = items[i].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-					clsSpec.codePointAt(0);
 					AbstractDynamicContribution newFactory = 
 						(AbstractDynamicContribution) Util.safeLoadExecutableExtension(items[i],
 								IWorkbenchRegistryConstants.ATT_CLASS,
