@@ -203,6 +203,12 @@ function focusOnItem(treeItem, isSelected) {
         if (isSelected) {
             highlightItem(treeItem);
   		}
+  		var expander = getExpander(treeItem);
+  		if (expander !== null) {
+  		    scrollIntoView(anchor.parentNode);
+  		} else {
+  		    scrollIntoView(anchor);
+  		}
     }
 }
 

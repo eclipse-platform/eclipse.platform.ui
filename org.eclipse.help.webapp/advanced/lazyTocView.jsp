@@ -30,6 +30,7 @@
 <script language="JavaScript" src="helptreechildren.js"></script>
 <script language="JavaScript" src="xmlajax.js"></script>
 <script language="JavaScript" src="tocTree.js"></script>
+<script language="JavaScript" src="scrollintoview.js"></script>
 
 <script language="JavaScript">
 
