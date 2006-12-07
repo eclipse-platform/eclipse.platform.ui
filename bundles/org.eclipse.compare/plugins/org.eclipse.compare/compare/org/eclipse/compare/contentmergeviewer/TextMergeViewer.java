@@ -740,6 +740,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		}
 
 		public boolean validateChange() {
+			if (fElement == null)
+				return true;
 			if (fDocumentProvider instanceof IDocumentProviderExtension) {
 				IDocumentProviderExtension ext = (IDocumentProviderExtension)fDocumentProvider;
 				if (ext.isReadOnly(fDocumentKey)) {
