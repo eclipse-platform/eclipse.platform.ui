@@ -329,7 +329,7 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 		}
 		TreeItem[] items = tree.getItems();
 		for (int i = 0; i < items.length; i++) {
-			buildViewerState(delta, items[i], set);
+			buildViewerState(EMPTY_TREE_PATH, delta, items[i], set, i);
 		}
 	}
 
@@ -337,8 +337,9 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 	 * @param delta parent delta to build on
 	 * @param item item
 	 * @param set set of selected tree items
+	 * @param index the item's index relative to it's parent
 	 */
-	private void buildViewerState(ModelDelta delta, TreeItem item, Set set) {
+	private void buildViewerState(TreePath parentPath, ModelDelta delta, TreeItem item, Set set, int index) {
 		Object element = item.getData();
 		if (element != null) {
 			boolean expanded = item.getExpanded();
@@ -351,11 +352,14 @@ class TreeModelContentProvider extends ModelContentProvider implements ILazyTree
 				if (selected) {
 					flags = flags | IModelDelta.SELECT;
 				}
-				ModelDelta childDelta = delta.addNode(element, flags);
+				int modelIndex = viewToModelIndex(parentPath, index);
+				TreePath elementPath = parentPath.createChildPath(element);
+				int numChildren = viewToModelCount(elementPath, item.getItemCount());
+				ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
 				if (expanded) {
 					TreeItem[] items = item.getItems();
 					for (int i = 0; i < items.length; i++) {
-						buildViewerState(childDelta, items[i], set);
+						buildViewerState(elementPath, childDelta, items[i], set, i);
 					}
 				}
 			}
