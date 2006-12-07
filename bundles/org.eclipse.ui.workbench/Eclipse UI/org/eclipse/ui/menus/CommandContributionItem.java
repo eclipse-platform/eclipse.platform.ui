@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2006 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.menus;
 
 import java.util.ArrayList;
@@ -30,6 +40,21 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
+ * A contribution item which delegates to a command. It can be used in
+ * {@link AbstractContributionFactory#createContributionItems(IMenuService, java.util.List)}.
+ * <p>
+ * It currently supports placement in menus and toolbars.
+ * </p>
+ * <p>
+ * This class may be instantiated; it is not intended to be subclassed.
+ * </p>
+ * <p>
+ * <strong>PROVISIONAL</strong>. This class or interface has been added as part
+ * of a work in progress. There is a guarantee neither that this API will work
+ * nor that it will remain the same. Please do not use this API without
+ * consulting with the Platform/UI team.
+ * </p>
+ * 
  * @since 3.3
  */
 public final class CommandContributionItem extends ContributionItem {
@@ -55,19 +80,25 @@ public final class CommandContributionItem extends ContributionItem {
 	private String tooltip;
 
 	/**
+	 * Create a CommandContributionItem to place in a ContributionManager.
+	 * 
 	 * @param id
-	 *            The id for this item. May be <code>null</code>.
+	 *            The id for this item. May be <code>null</code>. Items
+	 *            without an id cannot be referenced later.
 	 * @param commandId
-	 *            The commandId. Must not be <code>null</code>.
+	 *            A command id for a defined command. Must not be
+	 *            <code>null</code>.
 	 * @param parameters
-	 *            A map of strings to strings. Parameters names to values. This
-	 *            may be <code>null</code>.
+	 *            A map of strings to strings which represent parameter names to
+	 *            values. The parameter names must match those in the command
+	 *            definition.
 	 * @param icon
 	 *            An icon for this item. May be <code>null</code>.
 	 * @param label
 	 *            A label for this item. May be <code>null</code>.
 	 * @param tooltip
-	 *            A tooltip for this item. May be <code>null</code>.
+	 *            A tooltip for this item. May be <code>null</code>. Tooltips
+	 *            are currently only valid for toolbar contributions.
 	 */
 	public CommandContributionItem(String id, String commandId, Map parameters,
 			ImageDescriptor icon, String label, String tooltip) {
@@ -133,6 +164,12 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.Menu,
+	 *      int)
+	 */
 	public void fill(Menu parent, int index) {
 		if (command == null) {
 			return;
@@ -155,6 +192,12 @@ public final class CommandContributionItem extends ContributionItem {
 		widget = newItem;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#fill(org.eclipse.swt.widgets.ToolBar,
+	 *      int)
+	 */
 	public void fill(ToolBar parent, int index) {
 		if (command == null) {
 			return;
@@ -176,7 +219,7 @@ public final class CommandContributionItem extends ContributionItem {
 			newItem.setToolTipText(tooltip);
 		else if (label != null)
 			newItem.setToolTipText(label);
-		// TBD...Listener support
+
 		newItem.addListener(SWT.Selection, getItemListener());
 		newItem.addListener(SWT.Dispose, getItemListener());
 
@@ -270,6 +313,12 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	/**
+	 * Update the icon on this command contribution item.
+	 * 
+	 * @param desc
+	 *            The descriptor for the new icon to display.
+	 */
 	public void setIcon(ImageDescriptor desc) {
 		icon = desc;
 		if (widget instanceof MenuItem) {
@@ -293,6 +342,12 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	/**
+	 * Update the label on this command contribution item.
+	 * 
+	 * @param text
+	 *            The new label to display.
+	 */
 	public void setLabel(String text) {
 		label = text;
 		if (widget instanceof MenuItem) {
@@ -302,6 +357,13 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	/**
+	 * Update the tooltip on this command contribution item. Tooltips are
+	 * currently only valid for toolbar contributions.
+	 * 
+	 * @param text
+	 *            The new tooltip to display.
+	 */
 	public void setTooltip(String text) {
 		tooltip = text;
 		if (widget instanceof ToolItem) {
