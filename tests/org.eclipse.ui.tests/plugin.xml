@@ -3017,12 +3017,10 @@
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <item
-               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+            <dynamicContribution
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
-               id="MenuText.popup.DynamicItem"
-                label="Dynamic Item">
-            </item>
+               id="MenuText.popup.DynamicItem">
+            </dynamicContribution>
          </menu>
       </menuAddition>
 
@@ -3070,16 +3068,18 @@
                   checkEnabled="false">
             </visibleWhen>
          </item>
+            <dynamicContribution
+               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+               id="MenuText.popup.DynamicItem">
+            </dynamicContribution>
          <menu
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <item
-               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+            <dynamicContribution
                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
-               id="MenuText.popup.DynamicItem"
-                label="Dynamic Item">
-            </item>
+               id="MenuText.popup.DynamicItem">
+            </dynamicContribution>
          </menu>
       </menuAddition>
       
@@ -3131,12 +3131,10 @@
                icon="icons/dynamic.gif"
                id="MenuTest.popup.dynamicMenu"
                label="Dynamic Menu">
-            <item
-               commandId="org.eclipse.ui.tests.menus.enabledWorld"
-               id="MenuText.popup.DynamicItem"
-                class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
-                label="Dynamic Item">
-            </item>
+            <dynamicContribution
+               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+               id="MenuText.popup.DynamicItem">
+            </dynamicContribution>
          </menu>
       </menuAddition>
       <menuAddition

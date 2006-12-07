@@ -25,20 +25,23 @@ This extension point allows the plug-in developer to add (contribute) a variety 
 It provides a common implementation for and acts as a replacement of the following (legacy) eclipse extension points:
 &lt;ul&gt;
 &lt;li&gt;org.eclipse.ui.ActionSets&lt;/li&gt;
-&lt;li&gt;org.eclipse.ui.EditorActions.popupMenus (? Do we handle this?)&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.EditorActions&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.popupMenus (including &apos;objectContributions&apos;)&lt;/li&gt;
 &lt;li&gt;org.eclipse.ui.viewActions&lt;/li&gt;
-&lt;li&gt;org.eclipse.ui.objectContributions (where are they defined?)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
-Each conribution first defines it&apos;s &apos;insertion&apos; location through a Menu URI (link?), a string (loosely) formatted according to the jave.net.URI format: &quot;[Scheme}:[Path}?[ArgList]&quot;. Here
-the &apos;Scheme&apos; represents the &apos;type&apos; of the item &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar&quot;. The arbitrary distinction between &apos;menu&apos; and &apos;popup&apos; (which are, admittedly, both menus) is made to allow clients using the legacy API&apos;s to more easily adopt this mechanism and to facilitate the support of the legacy extension points.
+The general strategy for this mechanism is to separate the &apos;location&apos; where the contributions should be inserted from the visibility state of the element. Each conribution first defines it&apos;s &apos;insertion&apos; location through a Menu URI (link?), a string (loosely) formatted according to the jave.net.URI format:
+&lt;/p&gt;&lt;p&gt;
+&lt;b&gt;&quot;[Scheme]:[Path]?[ArgList]&quot;&lt;/b&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;Scheme&lt;/b&gt; - The &apos;type&apos; of the UI component into which the contributions will be added. It may be either &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar&quot;. While &apos;popup&apos; is indeed a form of menu it is provided to allow a distinction between a view&apos;s &apos;chevron&apos; menu (for which we use the &quot;menu&quot; scheme) and its default context menu which, by convention, should be registered using the &quot;popup&quot; scheme.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Path&lt;/b&gt; - This is the id of menu or toolbar into which the contributions should be added. By convention views should use their view id as the id of the root of their chevron and default popup menu. Note that there is no explicit discinction between contributions supporting editors and &apos;normal&apos; contributions into the Menu Menu or Toolbar; both would use the &quot;org.eclipse.ui.main.menu&quot; path (with the Scheme identifying whether the addition is to the main menu or the main toolar). A special id, &quot;AnyContextMenu&quot;, is reserved to handle contributions which are candidates to appear on any (top level) context menu. Note that these contributions are expected to implement a &apos;visibleWhen&apos; expression sufficient to limit their visibility to appropriate menus&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Query&lt;/b&gt; - This field allows fine-grained definition of the specific location &lt;i&gt;within&lt;/i&gt; a given menu. It has the form &quot;[placement]=[id]&quot; where placement is one of &quot;before&quot;, &quot;after&quot; or &quot;endof&quot; and the id is expected to be the id of some IContributionItem in the menu.&lt;/li&gt;
+&lt;/ul&gt; 
 &lt;p&gt;
+This will define the location at which the contributions will appear in the eclipse UI. Once the isertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at build time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).
 &lt;/p&gt;
-&lt;p&gt;
-&lt;/p&gt;
-This will define the location at which the contributions will appear in the eclipse UI. Once the isertion point has been located 
-
       </documentation>
    </annotation>
 
@@ -49,7 +52,7 @@ This will define the location at which the contributions will appear in the ecli
          <sequence>
             <element ref="group" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="menuAddition" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="menuContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -96,8 +99,6 @@ This element is deprecated. Groups are now expressed as id&apos;d &apos;separato
 &lt;p&gt;
 See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAddition&apos; for more details on how to define insertion points adn how they relate to the menu structure.
 &lt;/p&gt;
-
-
          </documentation>
       </annotation>
       <complexType>
@@ -121,6 +122,42 @@ See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAdd
       </complexType>
    </element>
 
+   <element name="dynamicContribution">
+      <annotation>
+         <documentation>
+            The element provides a mechanism that will call back into the defined class which fills a list with the list of IContributionItems to be shown when the menu is built.
+
+[We need to define the conditions under which a dynamic item gets re-evaluated. It will always be done during the &apos;build&apos; but we feel that there are other conditions under which the contents may change. Perhaps we can use a core expression &apos;evaluateWhen&apos;??]
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="class"/>
+            <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this widget.  It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.  For example, a widget contributed by &lt;code&gt;org.eclipse.ui&lt;/code&gt; might be called &lt;code&gt;org.eclipse.ui.widget1&lt;/code&gt;.
+&lt;p&gt;
+If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endof&apos; value).
+&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  This class is expected to be a subclass of AbstractDynamicContribution. When an addition of this type is encountered the specified class is instantiated and used to retrieve a list of the IContributionItems to be placed into the menu. The resulting list may be empty if there are no appropriate items to be shown in the current context.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractDynamicContribution"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="widget">
       <annotation>
          <documentation>
@@ -139,6 +176,9 @@ See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAdd
             <annotation>
                <documentation>
                   A unique identifier for this widget.  It is recommended that the identifier be prefixed by the plug-in name, to guarantee uniqueness.  For example, a widget contributed by &lt;code&gt;org.eclipse.ui&lt;/code&gt; might be called &lt;code&gt;org.eclipse.ui.widget1&lt;/code&gt;.
+&lt;p&gt;
+If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endof&apos; value).
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -267,7 +307,6 @@ By positioning the trim contribution within or with respect to these groups, the
             <annotation>
                <documentation>
                   This represents the id of a group that the widget is to be placed into.
-
                </documentation>
             </annotation>
          </attribute>
@@ -466,10 +505,13 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
       </complexType>
    </element>
 
-   <element name="menuAddition">
+   <element name="menuContribution">
       <annotation>
          <documentation>
-            Defines an ordered set of additions to the command UI structure. The defined elements will be added into the command UI structure at the location specified by the &lt;code&gt;commandURI&lt;/code&gt;.
+            &lt;p&gt;Defines an ordered set of additions to the command UI structure. The defined elements will be added into the command UI structure at the location specified by the &lt;code&gt;locationURI&lt;/code&gt; element.
+&lt;/p&gt;&lt;p&gt;
+This should be the starting point for &lt;i&gt;all&lt;/i&gt; contributions into menus, toolbars or trim, wherever they occur in the trim
+&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -478,6 +520,7 @@ In the event of conflicts, Eclipse will chose an arbitrary order.  The only guar
             <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dynamicContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="locationURI" type="string" use="required">
             <annotation>
@@ -514,21 +557,21 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  The &apos;id&apos; of this menu contribution. If defined then it can be extended through other &apos;menuAddition&apos; elements or the id can be used as a reference in the Query part of the location defining whether the additions are to go before or after this element.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="mnemonic" type="string">
             <annotation>
                <documentation>
-                  
+                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;&apos; character...).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  A plugin relative path to the image to be used as the icon for this menu in either a menu or a toolbar.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -538,14 +581,14 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="tooltip" type="string">
             <annotation>
                <documentation>
-                  
+                  The tooltip to be displayed for this element when it is placed in a toolbar. This value should be translatable.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
                </documentation>
             </annotation>
          </attribute>
@@ -566,28 +609,28 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="commandId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  This is the id of the Command (link?) that is to be bound to this element. This is the hook into the Commands/Handlers/Key binding services that actually do the work should this item be selected. In many cases this command will have been defined
                </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="mnemonic" type="string">
             <annotation>
                <documentation>
-                  
+                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;&apos; character...).
                </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
             <annotation>
                <documentation>
-                  
+                  A plugin relative path to the image to be used as the icon for this menu in either a menu or a toolbar.
                </documentation>
                <appInfo>
                   <meta.attribute kind="resource"/>
@@ -597,25 +640,15 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The label to be displayed for this element when it is placed in either a menu. This value should be translatable.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="tooltip" type="string">
             <annotation>
                <documentation>
-                  
+                  The tooltip to be displayed for this element when it is placed in a toolbar. This value should be translatable.
                </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractDynamicMenuItem"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -626,7 +659,12 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  
+                  The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
+&lt;p&gt;
+Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next id&apos;d separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
+&lt;/p&gt;
+
+&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>

@@ -22,7 +22,7 @@ import java.util.List;
  * @since 3.3
  *
  */
-public abstract class AbstractDynamicMenuItem {
+public abstract class AbstractDynamicContribution {
 	/**
 	 * Fill in the given list with the set of
 	 * <code>IContributionItem</code>s that will

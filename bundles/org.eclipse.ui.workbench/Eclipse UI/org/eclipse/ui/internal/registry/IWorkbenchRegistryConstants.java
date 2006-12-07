@@ -945,6 +945,14 @@ public interface IWorkbenchRegistryConstants {
 	public static String TAG_DYNAMIC = "dynamic"; //$NON-NLS-1$
 
 	/**
+	 * The name of the dynamic menu element, which appears in a group or menu
+	 * definition.
+	 * 
+	 * @since 3.3
+	 */
+	public static String TAG_DYNAMIC_CONTRIBUTION = "dynamicContribution"; //$NON-NLS-1$
+
+	/**
 	 * Editor tag. Value <code>editor</code>.
 	 */
 	public static String TAG_EDITOR = "editor";//$NON-NLS-1$

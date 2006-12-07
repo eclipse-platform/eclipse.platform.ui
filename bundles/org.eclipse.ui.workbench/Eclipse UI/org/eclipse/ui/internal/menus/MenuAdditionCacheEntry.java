@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.internal.menus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.CommandContributionItem;
@@ -48,6 +51,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 * Maps an IConfigurationElement to its parsed Expression
 	 */
 	private HashMap visWhenMap = new HashMap();
+	
+	private HashMap dynamicFactories = new HashMap();
 
 	private IMenuService menuService;
 
@@ -139,6 +144,34 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 				} else
 					newItem = createItemAdditionContribution(items[i]);
+			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC_CONTRIBUTION.equals(itemType)) {
+				// ** Special Case ** Load the defined class and populate with
+				// any items it returns. We leave 'newItem' as null since we are
+				// -replacing- this element with a set of items
+				
+				// Attempt the load a cache to avoid failing retries
+				if (!dynamicFactories.containsKey(items[i])) {
+					String clsSpec = items[i].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
+					clsSpec.codePointAt(0);
+					AbstractDynamicContribution newFactory = 
+						(AbstractDynamicContribution) Util.safeLoadExecutableExtension(items[i],
+								IWorkbenchRegistryConstants.ATT_CLASS,
+								AbstractDynamicContribution.class);
+					dynamicFactories.put(items[i], newFactory);					
+				}
+
+				// If we get null now it means that the load failed...
+				AbstractDynamicContribution dynamicFactory = (AbstractDynamicContribution) dynamicFactories.get(items[i]);
+				if (dynamicFactory != null) {
+					List dynamicContributions = new ArrayList();
+					dynamicFactory.createContributionItems(dynamicContributions);
+					for (Iterator iterator = dynamicContributions.iterator(); iterator
+							.hasNext();) {
+						IContributionItem ici = (IContributionItem) iterator.next();
+						additions.add(ici);
+					}
+				}
+				
 			} else if (IWorkbenchRegistryConstants.TAG_WIDGET.equals(itemType)) {
 				newItem = createWidgetAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR

@@ -18,7 +18,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.AbstractDynamicMenuItem;
+import org.eclipse.ui.internal.menus.AbstractDynamicContribution;
 
 /**
  * Test implementation for dynamic menu item support.
@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.menus.AbstractDynamicMenuItem;
  * @since 3.3
  *
  */
-public class DynamicItem extends AbstractDynamicMenuItem {
+public class DynamicItem extends AbstractDynamicContribution {
 
 	private Action action1;
 	private Action action2;
@@ -66,9 +66,9 @@ public class DynamicItem extends AbstractDynamicMenuItem {
 		action2.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 				getImageDescriptor(ISharedImages.IMG_OBJS_INFO_TSK));
 	}
-	
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.AbstractDynamicMenuItem#fillItems(java.util.List)
+	 * @see org.eclipse.ui.internal.menus.AbstractDynamicContribution#createContributionItems(java.util.List)
 	 */
 	public void createContributionItems(List items) {
 		items.clear();
