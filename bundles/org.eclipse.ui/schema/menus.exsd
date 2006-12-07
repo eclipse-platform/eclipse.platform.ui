@@ -7,14 +7,38 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-This extension point allows the plug-in developer to define menus, separators, logical groups and menu items -- appearing anywhere within the application, from status lines to context menus.  It also allows sets of such contributions to be defined (i.e., action sets); these action sets can be turned on or off by the end user.  In brief, the menus extension point contains all of the presentation elements (except the icons) for contributing to any menu or trim area in Eclipse.
+This extension point allows the plug-in developer to add (contribute) a variety of custom additions to the eclipse framework (pic):
+&lt;ul&gt;
+  &lt;li&gt;Main Menu&lt;/li&gt;
+  &lt;li&gt;Main Toolbars&lt;/li&gt;
+  &lt;li&gt;View Menus/Toolbars:
+  &lt;ul&gt;
+    &lt;li&gt;Chevron Menu&lt;/li&gt;
+    &lt;li&gt;View Toolbar&lt;/li&gt;
+    &lt;li&gt;Context Menu(s)&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Trim&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
-Every element within this extension point is given a unique identifier.  This is so that these elements can be referred to elsewhere without having to restate the element.  For example, the identifier might be required for ordering or for defining an action set.  Also, this allows third-party plug-in developers to place these elements in new locations within the interface, as appropriate.
+It provides a common implementation for and acts as a replacement of the following (legacy) eclipse extension points:
+&lt;ul&gt;
+&lt;li&gt;org.eclipse.ui.ActionSets&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.EditorActions.popupMenus (? Do we handle this?)&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.viewActions&lt;/li&gt;
+&lt;li&gt;org.eclipse.ui.objectContributions (where are they defined?)&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/p&gt;
 &lt;p&gt;
-&lt;b&gt;NOTE: For 3.2 the only part of this extension mechanism that has been implemented is that part associated with &apos;trim&apos; contributions. Attempting to add items, menus, toolbars or status line entries will act as a NO-OP.
-&lt;/b&gt;&lt;/p&gt;
+Each conribution first defines it&apos;s &apos;insertion&apos; location through a Menu URI (link?), a string (loosely) formatted according to the jave.net.URI format: &quot;[Scheme}:[Path}?[ArgList]&quot;. Here
+the &apos;Scheme&apos; represents the &apos;type&apos; of the item &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar&quot;. The arbitrary distinction between &apos;menu&apos; and &apos;popup&apos; (which are, admittedly, both menus) is made to allow clients using the legacy API&apos;s to more easily adopt this mechanism and to facilitate the support of the legacy extension points.
+&lt;p&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;/p&gt;
+This will define the location at which the contributions will appear in the eclipse UI. Once the isertion point has been located 
+
       </documentation>
    </annotation>
 
@@ -66,6 +90,14 @@ A logical group.  It can either be visible (e.g., separators are drawn before an
 &lt;p&gt;
 A group can contain menus, items and other groups.
 &lt;/p&gt;
+&lt;p&gt;
+This element is deprecated. Groups are now expressed as id&apos;d &apos;separator&apos; elements. The menu insertion URI can be used to define an insertion point either &apos;before&apos; or &apos;after&apos; &lt;b&gt;any&lt;/b&gt; id&apos;d element and placing it after the separator is the same as contibuting it to the group. The &apos;endOf&apos; value may be used to place the insertion point at the end of the logical group containing the id&apos;d element. The end of a logical group is defined as &apos;before&apos; the next id&apos;d separator or at the end of the menu if there is none.
+&lt;/p&gt;
+&lt;p&gt;
+See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAddition&apos; for more details on how to define insertion points adn how they relate to the menu structure.
+&lt;/p&gt;
+
+
          </documentation>
       </annotation>
       <complexType>
@@ -92,7 +124,7 @@ A group can contain menus, items and other groups.
    <element name="widget">
       <annotation>
          <documentation>
-            A menu or trim element that is given direct access to the widgets.  For example, this can be used to render a combo box.  Unfortunately, this means that if a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;  This also will cause problems for things like macro support, scripting and pretty much any other command-based mechanism.
+            A menu or trim element that is given direct access to the widgets.  For example, this can be used to render a combo box.  &lt;b&gt;NOTE:&lt;/b&gt; If a widget element becomes visible in the user interface, this will lead to plug-in loading.  &lt;strong&gt;Use this element with caution, as it can cause performance problems.&lt;/strong&gt;
             When used as trim the widget will only cause the plug-in to load when it becomes visible in the UI.
          </documentation>
       </annotation>
@@ -113,7 +145,7 @@ A group can contain menus, items and other groups.
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  This class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt;. Clients may choose to use the default implementation; &lt;code&gt;AbstractWorkbenchTrimWidget&lt;/code&gt;. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
+                  This class is loaded to fill the appropriate spot in the menu or trim when it shows.  While, strictly speaking, this class must implement &lt;code&gt;IWorkbenchWidget&lt;/code&gt; you should use the default implementation; &lt;code&gt;AbstractWorkbenchTrimWidget&lt;/code&gt; as the base from which to derive your widget implementation. This implementation handles the &apos;init&apos; method and caches the result for use through its &lt;code&gt;getWorkbenchWindow&lt;/code&gt; method.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.IWorkbenchWidget"/>
@@ -125,9 +157,6 @@ A group can contain menus, items and other groups.
 
    <element name="layout">
       <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
          <documentation>
             This element can be used to specify various layout options for elements added into  &lt;code&gt;trim&lt;/code&gt; locations.
          </documentation>
@@ -157,6 +186,9 @@ A group can contain menus, items and other groups.
          </appInfo>
          <documentation>
             A location in which a &lt;code&gt;menu&lt;/code&gt;, &lt;code&gt;group&lt;/code&gt;, &lt;code&gt;item&lt;/code&gt; or &lt;code&gt;widget&lt;/code&gt; can appear.  This element is used to control location-specific information.
+&lt;p&gt;
+This element is deprecated. Users of this extension point should now define the location at which their contributions should appear using the &apos;locationURI&apos; specification.
+&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -201,7 +233,12 @@ A group can contain menus, items and other groups.
          <attribute name="type" use="required">
             <annotation>
                <documentation>
-                  What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.
+                  &lt;p&gt;
+&lt;b&gt;NOTE:&lt;/b&gt; This is not only deprecated but has no value in the current implementation (the only acceptable value is &apos;trim&apos; which is the default. You may safely remove this from any declarations.
+&lt;/p&gt;
+&lt;p&gt;
+What type of bar to contribute to.  This can be &lt;code&gt;menu&lt;/code&gt; or &lt;code&gt;trim&lt;/code&gt;.  If contributing to the menu, then the item will be parented to some widget structure.  In general, this means using widget elements does not make much sense, and an icon for an item&apos;s command is not strictly necessary.  The default value is &lt;code&gt;menu&lt;/code&gt;.
+&lt;/p&gt;
 &lt;p&gt;
 &lt;p&gt;If contributing to the &lt;code&gt;trim&lt;/code&gt;, then the bar will generally not require a command or an icon, it should be filled with a widget that displays the trim information.
 &lt;p&gt;
@@ -229,7 +266,8 @@ By positioning the trim contribution within or with respect to these groups, the
          <attribute name="path" type="string">
             <annotation>
                <documentation>
-                  The path from the root of the bar, including menus and groups.  This path uses &lt;code&gt;&apos;/&apos;&lt;/code&gt; as a separator character.
+                  This represents the id of a group that the widget is to be placed into.
+
                </documentation>
             </annotation>
          </attribute>
@@ -262,7 +300,7 @@ By positioning the trim contribution within or with respect to these groups, the
    <element name="visibleWhen">
       <annotation>
          <documentation>
-            Controls the visibility of the given element.
+            A core Expression that ontrols the visibility of the given element.
          </documentation>
       </annotation>
       <complexType>
@@ -356,7 +394,10 @@ Only one of &lt;code&gt;id&lt;/code&gt; and &lt;code&gt;class&lt;/code&gt; can b
             <meta.element deprecated="true"/>
          </appInfo>
          <documentation>
-            Controls the position of a menu, group, item or widget within a particular location.
+            &lt;b&gt;NOTE:&lt;/b&gt; This element is deprecated in favor of using the &apos;locationURI&apos; to specify the location at which contributions should be placed.
+&lt;p&gt;
+Controls the position of a  widget within a particular group.
+&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
@@ -604,7 +645,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.2
+         3.3
       </documentation>
    </annotation>
 
