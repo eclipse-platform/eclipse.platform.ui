@@ -287,8 +287,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {
-		if (getActiveWorkbenchWindow() != null) {
-			return getActiveWorkbenchWindow().getShell();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) {
+			IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 0) {
+				return windows[0].getShell();
+			}
+		} 
+		else {
+			return window.getShell();
 		}
 		return null;
 	}
@@ -604,6 +611,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Returns the standard display to be used. The method first checks, if
 	 * the thread calling this method has an associated display. If so, this
 	 * display is returned. Otherwise the method returns the default display.
+	 * 
 	 */
 	public static Display getStandardDisplay() {
 		Display display= Display.getCurrent();

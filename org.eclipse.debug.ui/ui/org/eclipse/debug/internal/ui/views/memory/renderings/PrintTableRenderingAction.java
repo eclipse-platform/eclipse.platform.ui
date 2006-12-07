@@ -16,6 +16,7 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -172,7 +173,7 @@ public class PrintTableRenderingAction extends Action
 		if (!(fViewer.getControl() instanceof Table))
 			return;
 		
-		PrintDialog printDialog = new PrintDialog(fViewer.getControl().getDisplay().getActiveShell());
+		PrintDialog printDialog = new PrintDialog(DebugUIPlugin.getShell());
 		PrinterData printerData = printDialog.open();	// pop up a system print dialog
 		if (printerData == null) {setChecked(false); return;}
 		Printer printer = new Printer(printerData);

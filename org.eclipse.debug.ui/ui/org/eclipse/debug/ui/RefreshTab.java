@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.jface.window.Window;
@@ -199,13 +200,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * Prompts the user to select the resources to refresh.
 	 */
 	private void selectResources() {
-		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		
 		if (fWorkingSet == null){
 			fWorkingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_40, new IAdaptable[0]); 
 		}
-		IWorkingSetEditWizard wizard= workingSetManager.createWorkingSetEditWizard(fWorkingSet);
-		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getStandardDisplay().getActiveShell(), wizard);
+		IWorkingSetEditWizard wizard = workingSetManager.createWorkingSetEditWizard(fWorkingSet);
+		WizardDialog dialog = new WizardDialog(((LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog()).getShell(), wizard);
 		dialog.create();		
 		
 		if (dialog.open() == Window.CANCEL) {

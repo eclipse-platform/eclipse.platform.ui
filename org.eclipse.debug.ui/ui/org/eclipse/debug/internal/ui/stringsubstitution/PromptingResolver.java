@@ -109,11 +109,7 @@ abstract class PromptingResolver implements IDynamicVariableResolver {
 	}
 	
 	protected Shell getShell() {
-		Shell shell = DebugUIPlugin.getStandardDisplay().getActiveShell();
-		if (shell == null) {
-			shell = DebugUIPlugin.getShell();
-		}
-		return shell;
+		return DebugUIPlugin.getShell();
 	}
 
 }
