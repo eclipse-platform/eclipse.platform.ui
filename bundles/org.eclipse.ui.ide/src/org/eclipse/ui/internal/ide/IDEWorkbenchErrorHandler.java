@@ -78,7 +78,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.errors.AbstractErrorHandler#handle(org.eclipse.ui.errors.HandlingStatusState)
+	 * @see org.eclipse.ui.statushandling.AbstractStatusHandler#handle(org.eclipse.ui.statushandling.StatusHandlingState)
 	 */
 	public void handle(final StatusHandlingState handlingState) {
 		if (handlingState.getStatus().getException() != null) {

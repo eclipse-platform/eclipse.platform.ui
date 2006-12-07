@@ -16,8 +16,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * This is a default workbench error handler. The instance of this handler is
- * returned from {@link WorkbenchAdvisor#getWorkbenchErrorHandler()} All handled
- * statuses are logged using logging facility.
+ * returned from {@link WorkbenchAdvisor#getWorkbenchErrorHandler()}. All
+ * handled statuses are logged using logging facility.
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -30,7 +30,7 @@ public class WorkbenchErrorHandler extends AbstractStatusHandler {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.errors.AbstractErrorHandler#handle(org.eclipse.ui.errors.HandlingStatusState)
+	 * @see org.eclipse.ui.statushandling.AbstractStatusHandler#handle(org.eclipse.ui.statushandling.StatusHandlingState)
 	 */
 	public void handle(StatusHandlingState handlingState) {
 		WorkbenchPlugin.log(handlingState.getStatus());

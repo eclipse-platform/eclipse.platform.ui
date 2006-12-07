@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="statusHandler" name="Status handler"/>
+         <meta.schema plugin="org.eclipse.ui" id="statusHandlers" name="Status handlers"/>
       </appInfo>
       <documentation>
          &lt;p&gt;
@@ -26,20 +26,16 @@ There is one default policy and it can&apos;t be overriden.
  &lt;/p&gt;
  
  &lt;p&gt;
- Default handler can be set for product using &quot;statusHandlerProductBinding&quot; element in 
- extension for &quot;statusHandler&quot; ext. point.
+ Default handler can be set for product using &quot;statusHandlerProductBinding&quot; element in extension for &quot;statusHandlers&quot; ext. point.
  &lt;/p&gt;
  
  &lt;p&gt;
- Each status handler defined as &quot;statusHandler&quot; extension can have package prefix assigned to it. 
- During step 2 status manager looks for the most specific handler for given status checking
- status pluginId against these prefixes. If handler is the default one it is not used in this step. 
+ Each status handler defined in &quot;statusHandlers&quot; extension can have package prefix assigned to it. During step 2 status manager looks for the most specific handler for given status checking status pluginId against these prefixes. If handler is the default one it is not used in this step. 
  &lt;/p&gt;
  
  &lt;p&gt;
  Workbench handler is the &lt;code&gt;org.eclipse.ui.internal.WorkbenchErrorHandlerProxy&lt;/code&gt; object
- which passes handling to handler assigned to the workbench advisor. This handler doesn&apos;t have to
- be added as &quot;statusHandler&quot; extension.
+ which passes handling to handler assigned to the workbench advisor. This handler doesn&apos;t have to be added in &quot;statusHandlers&quot; extension.
  &lt;/p&gt;
       </documentation>
    </annotation>
@@ -171,7 +167,7 @@ These bindings determine which handler is appropriate for the current product (a
          <attribute name="handlerId" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique id of an status handler.
+                  The unique id of a status handler.
                </documentation>
             </annotation>
          </attribute>
@@ -198,7 +194,7 @@ The following is an example of the definition for handler with prefix parameter.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandlers&quot;&gt;
  &lt;statusHandler
  class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
@@ -211,13 +207,12 @@ The following is an example of the definition for handler with prefix parameter.
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
-The following is an example of the definition for default (product) handler.
-The handler defined in the example will be default for product with id &quot;productId&quot;.
+The following is an example of the definition for default (product) handler. The handler defined in the example will be default for product with id &quot;productId&quot;.
 &lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandlers&quot;&gt;
  &lt;statusHandler
  class=&quot;org.eclipse.ui.statushandling.SampleStatusHandler&quot;
  id=&quot;sampleStatusHandler&quot;&gt;
@@ -236,7 +231,7 @@ The handler can be defined in other plugin.
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
- point=&quot;org.eclipse.ui.statusHandler&quot;&gt;
+ point=&quot;org.eclipse.ui.statusHandlers&quot;&gt;
  &lt;statusHandlerProductBinding
  handlerId=&quot;sampleStatusHandler&quot;
  productId=&quot;productId&quot;&gt;
@@ -255,7 +250,7 @@ The handler can be defined in other plugin.
          &lt;p&gt;
 All status handlers are &lt;code&gt;AbstractStatusHandler&lt;/code&gt; subclasses.
 Each handler has to have &lt;code&gt;handle(StatusHandlingState status)&lt;/code&gt; implemented. 
-This method handles the status due to handling hint The hint indicates
+This method handles the status due to handling hint. The hint indicates
 how status handler should handle a status but this is only a suggestion.
 &lt;/p&gt;
 
@@ -280,8 +275,7 @@ method or &lt;code&gt;StatusManager.getManager().handle(IStatus, HandlingMode)&l
 &lt;/p&gt;
 
 &lt;p&gt;
-In the default policy new error handlers are put into status handling flow by adding
-new &quot;statusHandler&quot; extension.
+In the default policy new error handlers are put into status handling flow using &quot;statusHandlers&quot; extension.
 &lt;/p&gt;
       </documentation>
    </annotation>

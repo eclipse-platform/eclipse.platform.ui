@@ -417,8 +417,10 @@ public class ProgressManager extends ProgressProvider implements
 				if (event.getResult() != null
 						&& event.getResult().getSeverity() == IStatus.ERROR) {
 					// the error status is passed to the status handling
-					// facility
-					StatusManager.getManager().handle(event.getResult());
+					// facility, SHOW hint is used because the status is logged
+					// anyway in core
+					StatusManager.getManager().handle(event.getResult(),
+							StatusManager.SHOW);
 
 					// the status is removed from the finished jobs list
 					FinishedJobs.getInstance().remove(info);

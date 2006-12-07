@@ -15,15 +15,42 @@ import java.util.Map;
 
 /**
  * <p>
- * A base class for status handlers used in status handling facility. Each
- * handler has to have <code>handle(StatusHandlingState)</code> implemented.
- * {@link StatusHandlingState} objects contains status and mode which is a hint
- * for handler how to handle the problem.
+ * All status handlers are <code>AbstractStatusHandler</code> subclasses. Each
+ * handler has to have <code>handle(StatusHandlingState status)</code>
+ * implemented. This method handles the status due to handling hint. The hint
+ * indicates how status handler should handle a status but this is only a
+ * suggestion.
+ * </p>
  * 
  * <p>
- * Each status handler can be set and configured in
- * <code>org.eclipse.ui.statusHandler</code> extension-point.
+ * Hint values are defined in {@link StatusManager}.
  * </p>
+ * 
+ * <p>
+ * Handlers shoudn't be used directly but through the <code>StatusManager</code>
+ * singleton which keeps the status handling policy and chooses handlers due to
+ * it.
+ * </p>
+ * 
+ * <p>
+ * A status handler has a set of parameters. The handler can use these
+ * parameters during handling. These parameters are used by status manager too.
+ * In default policy the status manager checks "prefix" parameter. See
+ * {@link StatusManager}.
+ * </p>
+ * 
+ * <p>
+ * Each status handler can be set and configured using
+ * <code>org.eclipse.ui.statusHandlers</code> extension-point.
+ * </p>
+ * 
+ * <p>
+ * Handler parameters can be defined in the extension. The id parameter is set
+ * using id attribute of statusHandler element from statusHandlers extension.
+ * All handlers are instantiated during the status handling facility
+ * initialization. Handlers shouldn't be instantiated in different way,
+ * </p>
+ * 
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -35,13 +62,11 @@ public abstract class AbstractStatusHandler {
 
 	private Map params;
 
-	private String contributorName;
-
 	private String id;
 
 	/**
 	 * Handles {@link StatusHandlingState} objects. This method can modify
-	 * status and hint of them.
+	 * status and hint.
 	 * 
 	 * @param handlingState
 	 *            the handling state
@@ -73,21 +98,6 @@ public abstract class AbstractStatusHandler {
 	 */
 	public void setParams(Map params) {
 		this.params = params;
-	}
-
-	/**
-	 * @return Returns the contributorName.
-	 */
-	public String getContributorName() {
-		return contributorName;
-	}
-
-	/**
-	 * @param contributorName
-	 *            The contributorName to set.
-	 */
-	public void setContributorName(String contributorName) {
-		this.contributorName = contributorName;
 	}
 
 	/**

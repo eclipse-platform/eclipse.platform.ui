@@ -36,36 +36,48 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Handlers shoudn't be used directly but through the StatusManager singleton
  * which keeps the status handling policy and chooses handlers due to it.
- * StatusManager.getManager().handle(IStatus) method is one point of entry for
- * all problems to report.
+ * <code>StatusManager.getManager().handle(IStatus)</code> and
+ * <code>handle(IStatus status, int
+ * hint)</code> methods are used for passing
+ * all problems to the facility.
+ * </p>
+ * 
+ * <p>
+ * Handling hints
+ * <ul>
+ * <li>IGNORE - status should be ignored</li>
+ * <li>LOG - the status should be logged</li>
+ * <li>SHOW - the status should be shown to an user</li>
+ * <li>SHOWANDLOG - the status should be logged and shown to an user</li>
+ * </ul>
  * </p>
  * 
  * <p>
  * Default policy (steps):
  * <ul>
- * <li>manager tries to handle the problem with default handler</li>
- * <li>manager tries to find a right handler for status plugin </li>
- * <li>manager delegates the problem to workbench handler</li>
+ * <li>manager tries to handle the status with a default handler</li>
+ * <li>manager tries to find a right handler for the status</li>
+ * <li>manager delegates the status to workbench handler</li>
  * </ul>
  * </p>
  * 
  * <p>
- * Each status handler defined as "statusHandler" extension can have package
- * prefix assigned to it. During step 2 status manager looks for the most
+ * Each status handler defined in "statusHandlers" extension can have package
+ * prefix assigned to it. During step 2 status manager is looking for the most
  * specific handler for given status checking status pluginId against these
- * prefixes. If handler is the default one it is not used in this step.
+ * prefixes. The default handler is not used in this step.
  * </p>
  * 
  * <p>
- * Default handler can be set for product using "statusHandlerProductBinding"
- * element in extension for "statusHandler" ext. point.
+ * The default handler can be set for product using
+ * "statusHandlerProductBinding" element in "statusHandlers" extension.
  * </p>
  * 
  * <p>
  * Workbench handler is the
  * {@link org.eclipse.ui.internal.WorkbenchErrorHandlerProxy} object which
  * passes handling to handler assigned to the workbench advisor. This handler
- * doesn't have to be added as "statusHandler" extension.
+ * doesn't have to be added as "statusHandlers" extension.
  * </p>
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
@@ -76,23 +88,23 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class StatusManager {
 	/**
-	 * Constant indicating that a problem should be ignored
+	 * A handling hint indicating that a problem should be ignored
 	 */
 	public static final int IGNORE = 0;
 
 	/**
-	 * Constant indicating that handlers should log a problem
+	 * A handling hint indicating that handlers should log a problem
 	 */
 	public static final int LOG = 1;
 
 	/**
-	 * Constant indicating that handlers should log and show a problem to an
-	 * user
+	 * A handling hint indicating that handlers should log and show a problem to
+	 * an user
 	 */
 	public static final int SHOWANDLOG = 2;
 
 	/**
-	 * Constant indicating that handlers should show a problem to an user
+	 * A handling hint indicating that handlers should show a problem to an user
 	 */
 	public static final int SHOW = 3;
 
@@ -120,19 +132,19 @@ public class StatusManager {
 
 	private StatusManager() {
 		statusHandlersMap = new StatusHandlersMap();
-		Platform.addLogListener(new EHLogListener());
+		Platform.addLogListener(new StatusManagerLogListener());
 	}
 
-	private AbstractStatusHandler createErrorHandler(
+	private AbstractStatusHandler createStatusHandler(
 			IConfigurationElement configElement) {
 		try {
 
 			configElement.getName();
 
-			AbstractStatusHandler errorHandler = (AbstractStatusHandler) configElement
+			AbstractStatusHandler statusHandler = (AbstractStatusHandler) configElement
 					.createExecutableExtension("class"); //$NON-NLS-1$
 
-			errorHandler.setId(configElement.getAttribute("id")); //$NON-NLS-1$
+			statusHandler.setId(configElement.getAttribute("id")); //$NON-NLS-1$
 
 			IConfigurationElement parameters[] = configElement
 					.getChildren("parameter"); //$NON-NLS-1$
@@ -144,16 +156,13 @@ public class StatusManager {
 						parameters[i].getAttribute("value")); //$NON-NLS-1$
 			}
 
-			errorHandler.setParams(params);
+			statusHandler.setParams(params);
 
-			errorHandler.setContributorName(configElement.getContributor()
-					.getName());
-
-			return errorHandler;
+			return statusHandler;
 		} catch (CoreException ex) {
-			WorkbenchPlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
-							IStatus.ERROR, "EH initialization problem", ex)); //$NON-NLS-1$
+			WorkbenchPlugin.log(new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
+					"EH initialization problem", ex)); //$NON-NLS-1$
 		}
 
 		return null;
@@ -170,7 +179,7 @@ public class StatusManager {
 
 		IExtension[] extensions = Platform
 				.getExtensionRegistry()
-				.getExtensionPoint("org.eclipse.ui.statusHandler").getExtensions(); //$NON-NLS-1$
+				.getExtensionPoint("org.eclipse.ui.statusHandlers").getExtensions(); //$NON-NLS-1$
 
 		for (int i = 0; i < extensions.length; i++) {
 			IConfigurationElement[] configElements = extensions[i]
@@ -178,7 +187,7 @@ public class StatusManager {
 
 			for (int j = 0; j < configElements.length; j++) {
 				if (configElements[j].getName().equals("statusHandler")) { //$NON-NLS-1$
-					AbstractStatusHandler handler = createErrorHandler(configElements[j]);
+					AbstractStatusHandler handler = createStatusHandler(configElements[j]);
 					if (handler != null) {
 						allHandlers.add(handler);
 					}
@@ -209,7 +218,7 @@ public class StatusManager {
 	}
 
 	/**
-	 * @return the workbech error handler
+	 * @return the workbech status handler
 	 */
 	private AbstractStatusHandler getWorkbenchHandler() {
 		if (workbenchHandler == null) {
@@ -223,7 +232,7 @@ public class StatusManager {
 	 * Handles status due to the prefix policy.
 	 * 
 	 * @param status
-	 *            error status to handle
+	 *            status to handle
 	 * @param hint
 	 *            handling hint
 	 */
@@ -264,7 +273,7 @@ public class StatusManager {
 	 * Handles status due to the prefix policy.
 	 * 
 	 * @param status
-	 *            error status to handle
+	 *            status to handle
 	 */
 	public void handle(IStatus status) {
 		handle(status, LOG);
@@ -382,7 +391,7 @@ public class StatusManager {
 		}
 	}
 
-	private class EHLogListener implements ILogListener {
+	private class StatusManagerLogListener implements ILogListener {
 
 		/*
 		 * (non-Javadoc)

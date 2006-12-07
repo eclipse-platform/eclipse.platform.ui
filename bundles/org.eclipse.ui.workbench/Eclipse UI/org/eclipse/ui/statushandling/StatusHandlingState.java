@@ -15,12 +15,16 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
 /**
+ * <p>
  * Contains an instance of IStatus subclass and its handling hint. Used during
- * status handling process. During the process both status and mode can be
+ * status handling process. During the process both status and hint can be
  * changed, so a subsequent handler can receive different status or handling
  * hint.
+ * </p>
  * 
- * Hint values are defined in {@link StatusManager}
+ * <p>
+ * Hint values are defined in {@link StatusManager}.
+ * </p>
  * 
  * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
  * of a work in progress. This API may change at any given time. Please do not
@@ -38,6 +42,8 @@ public class StatusHandlingState {
 	 * @param status
 	 *            not null
 	 * @param handlingHint
+	 *            one of the values defined in {@link StatusManager}, for
+	 *            instance StatusManager.SHOW
 	 */
 	public StatusHandlingState(IStatus status, int handlingHint) {
 		Assert.isNotNull(status);
@@ -62,7 +68,8 @@ public class StatusHandlingState {
 	}
 
 	/**
-	 * @return Returns the handlingHint.
+	 * @return Returns one of the values defined in {@link StatusManager}, for
+	 *         instance StatusManager.SHOW
 	 */
 	public int getHandlingHint() {
 		return handlingHint;
