@@ -409,6 +409,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 				public void widgetSelected(SelectionEvent event) {
 					if (!fInitializingTabs) {
 						handleTabSelected();
+						refresh();
 					}
 				}
 			});	
@@ -487,7 +488,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			return;
 		}
 		ILaunchConfigurationTab[] tabs = getTabs();
-		if (!fInitializingTabs && tabs != null) {
+		if (tabs != null) {
 			// update the working copy from the active tab
 			getActiveTab().performApply(getWorkingCopy());
 			updateButtons();
@@ -496,20 +497,20 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			boolean error = false;
 			Image image = null;
 			for (int i = 0; i < tabs.length; i++) {
-				error = tabs[i].getErrorMessage() != null && !tabs[i].isValid(getWorkingCopy());
-				image = tabs[i].getImage();
 				item = fTabFolder.getItem(i);
-				if(error) {
-					item.setImage(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getErrorTabImage(tabs[i]));
-				}
-				else {
-					item.setImage(image);
+				image = tabs[i].getImage();
+				item.setImage(image);
+				if(!tabs[i].isValid(getWorkingCopy())) {
+					error = tabs[i].getErrorMessage() != null;
+					if(error) {
+						item.setImage(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getErrorTabImage(tabs[i]));
+					}
 				}
 			}
 			showLink();
 		}
 	}
-
+	
 	/**
 	 * Shows the link for either multiple launch delegates or bad launch mode combinations
 	 * 
@@ -1332,12 +1333,16 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if (!name.equals(trimmed)) {
 				widget.setText(trimmed);
 			}
-			getWorkingCopy().rename(trimmed);
-			getTabGroup().performApply(getWorkingCopy());
+			ILaunchConfigurationWorkingCopy copy = getWorkingCopy();
+			if(copy == null) {
+				copy = fOriginal.getWorkingCopy();
+			}
+			copy.rename(trimmed);
+			getTabGroup().performApply(copy);
 			fInitializingTabs = false;
 
 			if (isDirty()) {
-				getWorkingCopy().doSave();
+				copy.doSave();
 			}
 			updateButtons();
 		} catch (CoreException e) {
