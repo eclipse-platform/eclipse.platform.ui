@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -444,11 +446,11 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			return;
 		}
 		
-		FileInputStream stream= null;
+		InputStream stream= null;
 		Element rootHistoryElement= null;
 		try {
 			// Parse the history file
-			stream = new FileInputStream(file);
+			stream = new BufferedInputStream(new FileInputStream(file));
 			try {
 				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				parser.setErrorHandler(new DefaultHandler());

@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.core;
 
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -766,7 +767,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 				//read piped data on Win 95, 98, and ME
 				Properties p= new Properties();
 				File file= new File(fileName);
-				FileInputStream stream= new FileInputStream(file);
+				InputStream stream = new BufferedInputStream(new FileInputStream(file));
 				p.load(stream);
 				stream.close();
 				if (!file.delete()) {
@@ -1231,7 +1232,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					if (config.isLocal()) {
 						IPath path = config.getLocation();
 						File file = path.toFile();				
-						stream = new FileInputStream(file);
+						stream = new BufferedInputStream(new FileInputStream(file));
 					} else {
 						IFile file = ((LaunchConfiguration) config).getFile();
 						if (file == null) {
