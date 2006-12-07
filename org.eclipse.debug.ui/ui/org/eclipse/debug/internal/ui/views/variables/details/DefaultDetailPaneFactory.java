@@ -44,6 +44,14 @@ public class DefaultDetailPaneFactory implements IDetailPaneFactory {
 		possibleIDs.add(DefaultDetailPane.ID);
 		return possibleIDs;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDetailPaneFactory#getDefaultDetailPane(java.util.Set, org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	public String getDefaultDetailPane(IStructuredSelection selection) {
+		// Return null so that any contributed detail pane can override the default
+		return null;
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.IDetailsFactory#getName(java.lang.String)

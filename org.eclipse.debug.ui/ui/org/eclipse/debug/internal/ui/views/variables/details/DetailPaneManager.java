@@ -54,7 +54,7 @@ public class DetailPaneManager {
 	
 	/**
 	 * Acts as a proxy between the detail pane manager and the factories contributed
-	 * to the extension point.  Only loads information from the plugin xml and only 
+	 * to the extension point.  Only loads information from the plug-in xml and only 
 	 * instantiates the specified factory if required (lazy loading).
 	 */
 	private class DetailPaneFactoryExtension implements IDetailPaneFactory{
@@ -79,8 +79,8 @@ public class DetailPaneManager {
 		}
 
 		/** 
-		 * Instantiates the factory and asks it to produce the IDetailPane for
-		 * the given ID.
+		 * Instantiates the factory and asks it for the set of detail pane
+		 * IDs that the factory can produce for the given selection.
 		 */
 		public Set getDetailPaneTypes(IStructuredSelection selection){
 			if (getFactory() != null){
@@ -88,6 +88,17 @@ public class DetailPaneManager {
 			}
 			return new HashSet(0);			
 		}
+		
+		/** 
+		 * Instantiates the factory and asks it for the detail pane ID
+		 * that the factory considers the default for the given selection.
+		 */
+		public String getDefaultDetailPane(IStructuredSelection selection) {
+			if (getFactory() != null){
+				return getFactory().getDefaultDetailPane(selection);
+			}
+			return null;
+		}	
 
 		/** 
 		 * Instantiates the factory and asks it to produce the name of the detail pane
@@ -155,8 +166,8 @@ public class DetailPaneManager {
 		/**
 		 * Evaluate the given expression within the given context and return
 		 * the result. Returns <code>true</code> iff result is either TRUE or NOT_LOADED.
-		 * This allows optimistic inclusion of shortcuts before plugins are loaded.
-		 * Returns <code>false</code> if exp is <code>null</code>.
+		 * This allows optimistic inclusion of shortcuts before plug-ins are loaded.
+		 * Returns <code>false</code> if expression is <code>null</code>.
 		 * 
 		 * @param exp the enablement expression to evaluate or <code>null</code>
 		 * @param context the context of the evaluation. Usually, the
@@ -198,8 +209,8 @@ public class DetailPaneManager {
 				}
 			}
 			return fEnablementExpression;
-		}	
-		
+		}
+	
 	}
 	
 	/**
@@ -214,7 +225,7 @@ public class DetailPaneManager {
 	private Map fFactoriesByPaneID;
 	
 	/**
-	 * Maps a Set of detail pane ids to the one detail pane id that is preferred.
+	 * Maps a Set of detail pane id's to the one detail pane id that is preferred.
 	 */
 	private Map fPreferredDetailPanes;
 	
@@ -240,14 +251,15 @@ public class DetailPaneManager {
 	}
 
 	/**
-	 * Determines the set of all possible detail panes that can display the given
-	 * selection.  Selects the preferred pane out of that set and returns it.
+	 * Returns the ID of the preferred detail pane for the given selection.
 	 * 
 	 * @param selection The selection to display in the detail pane
 	 * @return The ID of the preferred detail pane or null
 	 */
 	public String getPreferredPaneFromSelection(IStructuredSelection selection){
-		return chooseDetailsAreaIDInSet(getAvailablePaneIDs(selection));
+		Collection possibleFactories = getEnabledFactories(selection);
+		Set possiblePaneIDs = getPossiblePaneIDs(possibleFactories, selection);
+		return chooseDetailsAreaIDInSet(possiblePaneIDs, possibleFactories, selection);
 	}
 	
 	/**
@@ -362,27 +374,36 @@ public class DetailPaneManager {
 	 * preferred and should be used to display the selection.  This method chooses a pane
 	 * by storing previous choices and can be set using a context menu.
 	 * 
-	 * @param possiblePaneIDs Teh set of possible detail pane IDs
+	 * @param possiblePaneIDs The set of possible detail pane IDs
 	 * @return The preferred detail pane ID or null
 	 */
-	private String chooseDetailsAreaIDInSet(Set possiblePaneIDs){
+	private String chooseDetailsAreaIDInSet(Set possiblePaneIDs, Collection enabledFactories, IStructuredSelection selection){
 		if (possiblePaneIDs == null || possiblePaneIDs.isEmpty()){
 			return null;
 		}
 		
-		String preferredID = getPreferredDetailPane(possiblePaneIDs);
+		String preferredID = getUserPreferredDetailPane(possiblePaneIDs);
 		
 		if (preferredID == null){
-			// If there is no preferred pane already set, choose the default pane if possible, or the first in the list
-			Iterator iter = possiblePaneIDs.iterator();
-			preferredID = (String)iter.next();
-			while (iter.hasNext() && preferredID != DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID) {
-				String currentID = (String) iter.next();
-				if (currentID.equals(DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID)){
-					preferredID = currentID;
+			// If there is no preferred pane already set, check the factories to see there is a default pane
+			Iterator factoryIterator = enabledFactories.iterator();
+			while (factoryIterator.hasNext()) {
+				IDetailPaneFactory currentFactory = (IDetailPaneFactory) factoryIterator.next();
+				preferredID = currentFactory.getDefaultDetailPane(selection);
+			}
+			// If the factories don't have a default, try to choose the DefaultDetailPane
+			if (preferredID == null){			
+				Iterator paneIterator = possiblePaneIDs.iterator();
+				// If the DefaultDetailPane is not in the set, just use the first in the set
+				preferredID = (String)paneIterator.next();
+				while (paneIterator.hasNext() && preferredID != DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID) {
+					String currentID = (String) paneIterator.next();
+					if (currentID.equals(DefaultDetailPaneFactory.DEFAULT_DETAIL_PANE_ID)){
+						preferredID = currentID;
+					}
 				}
 			}
-			setPreferredDetailPane(possiblePaneIDs, preferredID);	
+			setPreferredDetailPane(possiblePaneIDs, preferredID);
 		}
 
 		return preferredID;
@@ -410,7 +431,7 @@ public class DetailPaneManager {
 	 * @param possibleDetailsAreaIDs Set of possible pane IDs
 	 * @return The preferred ID or null
 	 */
-	public String getPreferredDetailPane(Set possibleDetailsAreaIDs){
+	public String getUserPreferredDetailPane(Set possibleDetailsAreaIDs){
 		if (fPreferredDetailPanes == null){
 			loadPreferredDetailsAreas();
 		}

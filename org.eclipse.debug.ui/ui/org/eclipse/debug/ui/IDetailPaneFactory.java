@@ -54,6 +54,17 @@ public interface IDetailPaneFactory {
 	public Set getDetailPaneTypes(IStructuredSelection selection);
 	
 	/**
+	 * Returns the identifier of the default detail pane type to use for the given 
+	 * selection, or <code>null</code> if this factory has no preference. 
+	 * A factory can override the platform's default detail pane by returning
+	 * a non-<code>null</code> value.  
+	 * 
+	 * @param selection The current selection
+	 * @return a detail pane type identifier or <code>null</code>
+	 */
+	public String getDefaultDetailPane(IStructuredSelection selection);
+	
+	/**
 	 * Creates and returns a detail pane corresponding to the given detail pane
 	 * type identifier that this factory can produce (according to 
 	 * <code>getDetailPaneTypes(IStructuredSelection selection)</code>).
