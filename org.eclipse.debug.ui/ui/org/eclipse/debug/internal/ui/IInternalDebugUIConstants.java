@@ -111,6 +111,8 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ELCL_TERMINATE_ALL = "IMG_ELCL_TERMINATE_ALL"; //$NON-NLS-1$
     public static final String IMG_ELCL_TERMINATE_AND_RELAUNCH = "IMG_ELCL_TERMINATE_AND_RELAUNCH"; //$NON-NLS-1$
     public static final String IMG_ELCL_TOGGLE_STEP_FILTERS = "IMG_ELCL_TOGGLE_STEP_FILTERS"; //$NON-NLS-1$
+    public static final String IMG_ELCL_STANDARD_OUT = "IMG_ELCL_STANDARD_OUT"; //$NON-NLS-1$
+    public static final String IMG_ELCL_STANDARD_ERR = "IMG_ELCL_STANDARD_ERR"; //$NON-NLS-1$
     
     public static final String IMG_OBJS_COMMON_TAB = "IMG_OBJS_COMMON_TAB"; //$NON-NLS-1$
     public static final String IMG_OBJS_REFRESH_TAB = "IMG_OBJS_REFRESH_TAB"; //$NON-NLS-1$

@@ -63,6 +63,8 @@ public interface IDebugHelpContextIds {
     public static final String SHOW_COLUMNS_ACTION = PREFIX + "show_columns_context"; //$NON-NLS-1$;
     public static final String CONFIGURE_COLUMNS_ACTION = PREFIX + "configure_columns_context"; //$NON-NLS-1$;
     public static final String MEMORY_VIEW_PANE_ORIENTATION_ACTION = PREFIX + "memory_view_pane_orientation_action_context"; //$NON-NLS-1$
+    public static final String SHOW_WHEN_STDOUT_CHANGES_ACTION = PREFIX + "show_stdout_action_context"; //$NON-NLS-1$
+    public static final String SHOW_WHEN_STDERR_CHANGES_ACTION = PREFIX + "show_stderr_action_context"; //$NON-NLS-1$
     
 	// Views
 	public static final String DEBUG_VIEW = PREFIX + "debug_view_context"; //$NON-NLS-1$

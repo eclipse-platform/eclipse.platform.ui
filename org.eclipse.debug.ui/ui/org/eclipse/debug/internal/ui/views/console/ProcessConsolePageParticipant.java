@@ -56,6 +56,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	private ConsoleTerminateAction fTerminate;
     private ConsoleRemoveLaunchAction fRemoveTerminated;
 	private ConsoleRemoveAllTerminatedAction fRemoveAllTerminated;
+	private ShowWhenContentChangesAction fStdOut;
+	private ShowWhenContentChangesAction fStdErr;
 
     private ProcessConsole fConsole;
 
@@ -95,6 +97,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fRemoveTerminated = new ConsoleRemoveLaunchAction(fConsole.getProcess().getLaunch());
         fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(fConsole);
+        fStdOut = new ShowStandardOutAction();
+        fStdErr = new ShowStandardErrorAction();
         
         fView = (IConsoleView) fPage.getSite().getPage().findView(IConsoleConstants.ID_CONSOLE_VIEW);
         
@@ -128,6 +132,14 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		    fTerminate.dispose();
 		    fTerminate = null;
 		}
+		if (fStdOut != null) {
+			fStdOut.dispose();
+			fStdOut = null;
+		}
+		if (fStdErr != null) {
+			fStdErr.dispose();
+			fStdErr = null;
+		}
 		fConsole = null;
     }
 
@@ -138,6 +150,8 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveAllTerminated);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fStdOut);
+		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fStdErr);
     }
 
     /* (non-Javadoc)
