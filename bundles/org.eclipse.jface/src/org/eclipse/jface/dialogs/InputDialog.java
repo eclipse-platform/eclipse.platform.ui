@@ -171,7 +171,7 @@ public class InputDialog extends Dialog {
                 validateInput();
             }
         });
-        errorMessageText = new Text(composite, SWT.READ_ONLY);
+        errorMessageText = new Text(composite, SWT.READ_ONLY | SWT.WRAP);
         errorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
                 | GridData.HORIZONTAL_ALIGN_FILL));
         errorMessageText.setBackground(errorMessageText.getDisplay()
@@ -260,7 +260,7 @@ public class InputDialog extends Dialog {
     public void setErrorMessage(String errorMessage) {
     	this.errorMessage = errorMessage;
     	if (errorMessageText != null && !errorMessageText.isDisposed()) {
-    		errorMessageText.setText(errorMessage == null ? "" : errorMessage); //$NON-NLS-1$
+    		errorMessageText.setText(errorMessage == null ? " \n " : errorMessage); //$NON-NLS-1$
     		errorMessageText.getParent().update();
     		// Access the ok button by id, in case clients have overridden button creation.
     		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=113643
