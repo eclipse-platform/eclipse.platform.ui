@@ -230,6 +230,13 @@ public interface IDebugUIConstants {
 	public static final String PREF_MANAGE_VIEW_PERSPECTIVES= PLUGIN_ID + ".manage_view_perspectives"; //$NON-NLS-1$
 	
 	/**
+	 * Font preference setting for the process console.
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_CONSOLE_FONT= "org.eclipse.debug.ui.consoleFont"; //$NON-NLS-1$
+	
+	/**
 	 * Debug view identifier (value <code>"org.eclipse.debug.ui.DebugView"</code>).
 	 */
 	public static final String ID_DEBUG_VIEW= "org.eclipse.debug.ui.DebugView"; //$NON-NLS-1$
