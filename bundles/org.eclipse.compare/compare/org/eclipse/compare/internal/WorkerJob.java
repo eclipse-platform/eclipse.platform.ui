@@ -45,7 +45,7 @@ public class WorkerJob extends Job {
 			Throwable throwable = errors[i];
 			statii.add(new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, errors[0].getMessage(), throwable));
 		}
-		return new MultiStatus(CompareUIPlugin.PLUGIN_ID, 0, (IStatus[]) statii.toArray(new IStatus[statii.size()]), "Multiple errors occurred while processing compare editor events", null);
+		return new MultiStatus(CompareUIPlugin.PLUGIN_ID, 0, (IStatus[]) statii.toArray(new IStatus[statii.size()]), CompareMessages.WorkerJob_0, null);
 	}
 	
 	public boolean shouldRun() {

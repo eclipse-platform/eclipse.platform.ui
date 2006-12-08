@@ -748,7 +748,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					try {
 						ext.validateState(fDocumentKey, getControl().getShell());
 					} catch (CoreException e) {
-						ErrorDialog.openError(getControl().getShell(), "Element is Read Only", "The element being edited is read-only", e.getStatus());
+						ErrorDialog.openError(getControl().getShell(), CompareMessages.TextMergeViewer_12, CompareMessages.TextMergeViewer_13, e.getStatus());
 						return false;
 					}
 				}
@@ -760,7 +760,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 					IStatus status = ext.validateEdit(getControl().getShell());
 					if (!status.isOK()) {
 						if (status.getSeverity() == IStatus.ERROR) {
-							ErrorDialog.openError(getControl().getShell(), "Element is Read Only", "The element being edited is read-only", status);
+							ErrorDialog.openError(getControl().getShell(), CompareMessages.TextMergeViewer_14, CompareMessages.TextMergeViewer_15, status);
 							return false;
 						}
 						if (status.getSeverity() == IStatus.CANCEL)

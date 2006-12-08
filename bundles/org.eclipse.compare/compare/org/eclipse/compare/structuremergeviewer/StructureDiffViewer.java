@@ -58,7 +58,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private IRunnableWithProgress diffTask = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException,
 				InterruptedException {
-			monitor.beginTask("Generating Structure Differences", 100);
+			monitor.beginTask(CompareMessages.StructureDiffViewer_0, 100);
 			diff(new SubProgressMonitor(monitor, 100));
 			monitor.done();
 		}
@@ -67,7 +67,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	private IRunnableWithProgress inputChangedTask = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) throws InvocationTargetException,
 				InterruptedException {
-			monitor.beginTask("Computing Structure Differences", 100);
+			monitor.beginTask(CompareMessages.StructureDiffViewer_1, 100);
 			// TODO: Should we always force
 			compareInputChanged((ICompareInput)getInput(), true, new SubProgressMonitor(monitor, 100));
 			monitor.done();
@@ -509,7 +509,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		try {
 			getCompareConfiguration().getContainer().run(true, true, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask("Generating Structure Differences", 100);
+					monitor.beginTask(CompareMessages.StructureDiffViewer_2, 100);
 					diffTask.run(new SubProgressMonitor(monitor, 100));
 					monitor.done();
 				}
@@ -520,7 +520,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			handleFailedRefresh(e.getTargetException().getMessage());
 		} catch (InterruptedException e) {
 			// Canceled by user
-			handleFailedRefresh("Refresh Canceled");
+			handleFailedRefresh(CompareMessages.StructureDiffViewer_3);
 		}
 	}
 	

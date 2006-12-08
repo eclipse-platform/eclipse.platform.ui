@@ -103,7 +103,7 @@ public class CompareContainer implements ICompareContainer {
 	}
 
 	protected String getWorkerJobName() {
-		return "Updating Comparison State";
+		return CompareMessages.CompareContainer_0;
 	}
 
 }

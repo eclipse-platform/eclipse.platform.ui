@@ -123,7 +123,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		 * @see org.eclipse.compare.internal.CompareContainer#getWorkerJobName()
 		 */
 		protected String getWorkerJobName() {
-			return NLS.bind("Update comparison {0}", getTitle());
+			return NLS.bind(CompareMessages.CompareEditor_11, getTitle());
 		}
 	}
 	

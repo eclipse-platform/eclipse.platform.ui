@@ -62,6 +62,11 @@ public class CVSUIMessages extends NLS {
 	public static String CVSHistoryPage_ValidateChangeMessage;
 	public static String CVSHistoryPage_ValidateChangeTitle;
 	public static String CVSPreferencesPage_46;
+	public static String CVSPreferencesPage_47;
+	public static String CVSPreferencesPage_48;
+	public static String CVSPreferencesPage_49;
+	public static String CVSPreferencesPage_50;
+	public static String CVSPreferencesPage_51;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
 	public static String PasswordManagementPreferencePage_2;
 	public static String PasswordManagementPreferencePage_3;

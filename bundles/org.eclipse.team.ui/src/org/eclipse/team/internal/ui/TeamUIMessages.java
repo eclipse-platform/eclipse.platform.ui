@@ -142,6 +142,12 @@ public class TeamUIMessages extends NLS {
 
 	public static String MergeAllActionHandler_3;
 
+	public static String ModelCompareEditorInput_0;
+
+	public static String ModelCompareEditorInput_1;
+
+	public static String ModelCompareEditorInput_2;
+
 	public static String ModelElementSelectionPage_AllModelsDisabledMessage;
 
 	public static String ModelElementSelectionPage_AllModelsDisabledTitle;

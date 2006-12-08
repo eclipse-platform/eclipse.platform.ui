@@ -189,7 +189,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		StructuredSelection selection = new StructuredSelection(((ResourceDiffCompareInput)getCompareInput()).getResource());
 		final ResourceMarkAsMergedHandler markAsMergedHandler = new ResourceMarkAsMergedHandler(getSynchronizeConfiguration());
 		markAsMergedHandler.updateEnablement(selection);
-		Action markAsMergedAction = new Action("Mark &as Merged") {
+		Action markAsMergedAction = new Action(TeamUIMessages.ModelCompareEditorInput_0) {
 			public void run() {
 				try {
 					markAsMergedHandler.execute(new ExecutionEvent());
@@ -204,7 +204,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		
 		final ResourceMergeHandler mergeHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), false);
 		mergeHandler.updateEnablement(selection);
-		Action mergeAction = new Action("&Merge") {
+		Action mergeAction = new Action(TeamUIMessages.ModelCompareEditorInput_1) {
 			public void run() {
 				try {
 					mergeHandler.execute(new ExecutionEvent());
@@ -219,7 +219,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		
 		final ResourceMergeHandler overwriteHandler = new ResourceMergeHandler(getSynchronizeConfiguration(), true);
 		overwriteHandler.updateEnablement(selection);
-		Action overwriteAction = new Action("&Overwrite") {
+		Action overwriteAction = new Action(TeamUIMessages.ModelCompareEditorInput_2) {
 			public void run() {
 				try {
 					overwriteHandler.execute(new ExecutionEvent());
@@ -233,10 +233,10 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		overwriteAction.setEnabled(markAsMergedAction.isEnabled());
 		
 		manager.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS, new Separator("merge")); //$NON-NLS-1$
-		manager.insertAfter("merge", new Separator("overwrite"));
-		manager.insertAfter("merge", markAsMergedAction);
-		manager.insertAfter("merge", mergeAction);
-		manager.insertAfter("overwrite", overwriteAction);
+		manager.insertAfter("merge", new Separator("overwrite")); //$NON-NLS-1$ //$NON-NLS-2$
+		manager.insertAfter("merge", markAsMergedAction); //$NON-NLS-1$
+		manager.insertAfter("merge", mergeAction); //$NON-NLS-1$
+		manager.insertAfter("overwrite", overwriteAction); //$NON-NLS-1$
 	}
 
 	protected ISynchronizePageConfiguration getSynchronizeConfiguration() {

@@ -20,12 +20,14 @@ public final class CompareMessages extends NLS {
 		// Do not instantiate
 	}
 
+	public static String CompareContainer_0;
 	public static String CompareDialog_commit_button;
 	public static String CompareDialog_error_message;
 	public static String CompareDialog_error_title;
 	public static String CompareEditor_0;
 	public static String CompareEditor_1;
 	public static String CompareEditor_10;
+	public static String CompareEditor_11;
 	public static String CompareEditor_2;
 	public static String CompareEditor_3;
 	public static String CompareEditor_4;
@@ -47,12 +49,21 @@ public final class CompareMessages extends NLS {
 	public static String CompareViewerSwitchingPane_Titleformat;
 	public static String NavigationEndDialog_0;
 	public static String NavigationEndDialog_1;
+	public static String RangeComparatorLCS_0;
+	public static String StructureDiffViewer_0;
+	public static String StructureDiffViewer_1;
+	public static String StructureDiffViewer_2;
+	public static String StructureDiffViewer_3;
 	public static String StructureDiffViewer_NoStructuralDifferences;
 	public static String StructureDiffViewer_StructureError;
 	public static String TextMergeViewer_0;
 	public static String TextMergeViewer_1;
 	public static String TextMergeViewer_10;
 	public static String TextMergeViewer_11;
+	public static String TextMergeViewer_12;
+	public static String TextMergeViewer_13;
+	public static String TextMergeViewer_14;
+	public static String TextMergeViewer_15;
 	public static String TextMergeViewer_2;
 	public static String TextMergeViewer_3;
 	public static String TextMergeViewer_4;
@@ -85,6 +96,7 @@ public final class CompareMessages extends NLS {
 	public static String CompareNavigator_atEnd_message;
 	public static String CompareNavigator_atBeginning_title;
 	public static String CompareNavigator_atBeginning_message;
+	public static String WorkerJob_0;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);

@@ -419,7 +419,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
         new TextField(
         		textComposite, 
         		ICVSUIConstants.PREF_COMMIT_COMMENTS_MAX_HISTORY, 
-        		"Maximum number of comments on &history:", 
+        		CVSUIMessages.CVSPreferencesPage_47, 
         		null) {
         	protected void modifyText(Text text) {
         		try {
@@ -428,11 +428,11 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
         				setErrorMessage(null);
         				setValid(true);
         			} else {
-        				setErrorMessage("Maximum number of comments must be positive"); 
+        				setErrorMessage(CVSUIMessages.CVSPreferencesPage_48); 
         				setValid(false);
         			}
         		} catch (NumberFormatException ex) {
-        			setErrorMessage("Maximum number of comments must be a number"); 
+        			setErrorMessage(CVSUIMessages.CVSPreferencesPage_49); 
         			setValid(false);
         		}
         	}
@@ -556,7 +556,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    new StringRadioButtons(
 	    		composite, 
 	    		ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_WARNINGS, 
-	    		"Commit resources with warnings", 
+	    		CVSUIMessages.CVSPreferencesPage_50, 
 	    		IHelpContextIds.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT,
 	    		YES_NO_PROMPT,
 	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }
@@ -565,7 +565,7 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	    new StringRadioButtons(
 	    		composite, 
 	    		ICVSUIConstants.PREF_ALLOW_COMMIT_WITH_ERRORS, 
-	    		"Commit resources with errors", 
+	    		CVSUIMessages.CVSPreferencesPage_51, 
 	    		IHelpContextIds.PREF_INCLUDE_CHANGE_SETS_IN_COMMIT,
 	    		YES_NO_PROMPT,
 	    		new String [] { MessageDialogWithToggle.ALWAYS, MessageDialogWithToggle.NEVER,	MessageDialogWithToggle.PROMPT }

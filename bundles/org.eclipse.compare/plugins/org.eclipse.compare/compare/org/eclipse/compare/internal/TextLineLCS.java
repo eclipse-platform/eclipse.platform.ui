@@ -67,7 +67,7 @@ public class TextLineLCS extends LCS {
 	 * TODO: investigate what to do about comments. shifting either up or down
 	 * hurts them
 	 * 
-	 * @param lcs A subsequence of original, presumably it is the LCS of it and
+	 * @param lcsSide A subsequence of original, presumably it is the LCS of it and
 	 *            some other collection of lines
 	 * @param len The number of non-null entries in lcs
 	 * @param original The original sequence of lines of which lcs is a
@@ -76,7 +76,7 @@ public class TextLineLCS extends LCS {
 	 * @return The subsequence lcs compacted and chunks shifted towards the
 	 *         front
 	 */
-	private TextLine[] compactAndShiftLCS(TextLine[] lcs, int len,
+	private TextLine[] compactAndShiftLCS(TextLine[] lcsSide, int len,
 			TextLine[] original) {
 		TextLine[] result = new TextLine[len];
 
@@ -86,22 +86,22 @@ public class TextLineLCS extends LCS {
 
 		int j = 0;
 
-		while (lcs[j] == null) {
+		while (lcsSide[j] == null) {
 			j++;
 		}
 
-		result[0] = lcs[j];
+		result[0] = lcsSide[j];
 		j++;
 
 		for (int i = 1; i < len; i++) {
-			while (lcs[j] == null) {
+			while (lcsSide[j] == null) {
 				j++;
 			}
 
-			if (original[result[i - 1].lineNumber() + 1].sameText(lcs[j])) {
+			if (original[result[i - 1].lineNumber() + 1].sameText(lcsSide[j])) {
 				result[i] = original[result[i - 1].lineNumber() + 1];
 			} else {
-				result[i] = lcs[j];
+				result[i] = lcsSide[j];
 			}
 			j++;
 		}
@@ -201,7 +201,7 @@ public class TextLineLCS extends LCS {
 		}
 
 		public String toString() {
-			return "" + number + " " + text + "\n";
+			return "" + number + " " + text + "\n"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 }
