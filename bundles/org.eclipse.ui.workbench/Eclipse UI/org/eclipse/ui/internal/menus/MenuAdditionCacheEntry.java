@@ -13,9 +13,10 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -25,13 +26,14 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.AbstractDynamicContribution;
-import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.IWorkbenchWidget;
+import org.eclipse.ui.menus.WidgetContributionItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -49,11 +51,17 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	Map iciToConfigElementMap = new HashMap();
 
 	/**
+	 * If an {@link IConfigurationElement} is in the Set then we have
+	 * already tried (and failed) to load the associated ExecutableExtension.
+	 * 
+	 *  This is used to prevent multiple retries which would spam the Log.
+	 */
+	Set failedLoads = new HashSet();
+	
+	/**
 	 * Maps an IConfigurationElement to its parsed Expression
 	 */
 	private HashMap visWhenMap = new HashMap();
-	
-	private HashMap dynamicFactories = new HashMap();
 
 	private IMenuService menuService;
 
@@ -141,36 +149,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			IContributionItem newItem = null;
 
 			if (IWorkbenchRegistryConstants.TAG_ITEM.equals(itemType)) {
-				if (isDynamic(items[i])) {
-
-				} else
-					newItem = createItemAdditionContribution(items[i]);
-			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC_CONTRIBUTION.equals(itemType)) {
-				// ** Special Case ** Load the defined class and populate with
-				// any items it returns. We leave 'newItem' as null since we are
-				// -replacing- this element with a set of items
-				
-				// Attempt the load a cache to avoid failing retries
-				if (!dynamicFactories.containsKey(items[i])) {
-					AbstractDynamicContribution newFactory = 
-						(AbstractDynamicContribution) Util.safeLoadExecutableExtension(items[i],
-								IWorkbenchRegistryConstants.ATT_CLASS,
-								AbstractDynamicContribution.class);
-					dynamicFactories.put(items[i], newFactory);					
-				}
-
-				// If we get null now it means that the load failed...
-				AbstractDynamicContribution dynamicFactory = (AbstractDynamicContribution) dynamicFactories.get(items[i]);
-				if (dynamicFactory != null) {
-					List dynamicContributions = new ArrayList();
-					dynamicFactory.createContributionItems(dynamicContributions);
-					for (Iterator iterator = dynamicContributions.iterator(); iterator
-							.hasNext();) {
-						IContributionItem ici = (IContributionItem) iterator.next();
-						additions.add(ici);
-					}
-				}
-				
+				newItem = createItemAdditionContribution(items[i]);
+			} else if (IWorkbenchRegistryConstants.TAG_DYNAMIC_CONTRIBUTION
+					.equals(itemType)) {
+				newItem = createDynamicAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_WIDGET.equals(itemType)) {
 				newItem = createWidgetAdditionContribution(items[i]);
 			} else if (IWorkbenchRegistryConstants.TAG_SEPARATOR
@@ -215,9 +197,63 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	/**
 	 * @return
 	 */
+	private IContributionItem createDynamicAdditionContribution(
+			final IConfigurationElement dynamicAddition) {
+		// If we've already tried (and failed) to load the
+		// executable extension then skip this addition.
+		if (failedLoads.contains(dynamicAddition))
+			return null;
+		
+		// Attempt to load the addition's EE (creates a new instance)
+		final AbstractDynamicContribution loadedDynamicContribution = (AbstractDynamicContribution) Util
+				.safeLoadExecutableExtension(dynamicAddition,
+				IWorkbenchRegistryConstants.ATT_CLASS,
+				AbstractDynamicContribution.class);
+
+		// Cache failures
+		if (loadedDynamicContribution == null) {
+			failedLoads.add(loadedDynamicContribution);
+			return null;
+		}
+		
+		// Return a CompoundContribution item wrapping the extension
+		return new CompoundContributionItem(getId(dynamicAddition)) {
+			protected IContributionItem[] getContributionItems() {
+				List dynamicItems = new ArrayList();
+				loadedDynamicContribution.createContributionItems(dynamicItems);
+				return (IContributionItem[]) dynamicItems.toArray(new IContributionItem[dynamicItems.size()]);
+			}
+		};
+	}
+
+	/**
+	 * @return
+	 */
 	private IContributionItem createWidgetAdditionContribution(
 			final IConfigurationElement widgetAddition) {
-		return new WidgetContributionItem(getId(widgetAddition), widgetAddition);
+		// If we've already tried (and failed) to load the
+		// executable extension then skip this addirion.
+		if (failedLoads.contains(widgetAddition))
+			return null;
+		
+		// Attempt to load the addition's EE (creates a new instance)
+		final IWorkbenchWidget loadedWidget = (IWorkbenchWidget) Util
+				.safeLoadExecutableExtension(widgetAddition,
+				IWorkbenchRegistryConstants.ATT_CLASS,
+				IWorkbenchWidget.class);
+
+		// Cache failures
+		if (loadedWidget == null) {
+			failedLoads.add(widgetAddition);
+			return null;
+		}
+		
+		return new WidgetContributionItem(getId(widgetAddition)) {
+			public IWorkbenchWidget createWidget() {
+				return loadedWidget;
+			}
+
+		};
 	}
 
 	/**
@@ -273,29 +309,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		return null;
 	}
 
-	public static AbstractWorkbenchTrimWidget getWidget(
-			IConfigurationElement element) {
-		return loadWidget(element);
-	}
-
-	/**
-	 * @param element
-	 * @return
-	 */
-	private static AbstractWorkbenchTrimWidget loadWidget(
-			IConfigurationElement element) {
-		AbstractWorkbenchTrimWidget widget = null;
-		try {
-			widget = (AbstractWorkbenchTrimWidget) element
-					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return widget;
-	}
-
 	public static boolean isSeparatorVisible(IConfigurationElement element) {
 		String val = element
 				.getAttribute(IWorkbenchRegistryConstants.ATT_VISIBLE);
@@ -304,11 +317,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 
 	public static String getClassSpec(IConfigurationElement element) {
 		return element.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
-	}
-
-	public static boolean isDynamic(IConfigurationElement element) {
-		return getClassSpec(element) != null
-				&& getClassSpec(element).length() > 0;
 	}
 
 	/**

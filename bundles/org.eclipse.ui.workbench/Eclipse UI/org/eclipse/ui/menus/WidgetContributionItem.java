@@ -1,32 +1,40 @@
-package org.eclipse.ui.internal.menus;
+package org.eclipse.ui.menus;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 
 /**
+ * An {@link IContributionItem} abstraction that allows the contribution
+ * of widgets into a toolbar.
+ *  
  * @since 3.3
  * 
  */
-public abstract class WidgetDataContributionItem extends ContributionItem {
+public abstract class WidgetContributionItem extends ContributionItem {
 
 	/**
 	 * @param id
 	 */
-	public WidgetDataContributionItem(String id) {
+	public WidgetContributionItem(String id) {
 		super(id);
 	}
 
 	public void fill(ToolBar parent, int index) {
-		AbstractWorkbenchTrimWidget widget = createWidget();
+		IWorkbenchWidget widget = createWidget();
 		if (widget != null) {
 			Composite widgetContainer = new Composite(parent, SWT.NONE);
 			widget.fill(widgetContainer);
-			Point prefSize = widget.getPreferredSize();
+			
+			Point prefSize;
+			if (widget instanceof AbstractWorkbenchTrimWidget)
+				prefSize = ((AbstractWorkbenchTrimWidget)widget).getPreferredSize();
+			else
+				prefSize = widgetContainer.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 
 			ToolItem sepItem = new ToolItem(parent, SWT.SEPARATOR, index);
 			sepItem.setControl(widgetContainer);
@@ -34,5 +42,5 @@ public abstract class WidgetDataContributionItem extends ContributionItem {
 		}
 	}
 
-	public abstract AbstractWorkbenchTrimWidget createWidget();
+	public abstract IWorkbenchWidget createWidget();
 }

@@ -23,11 +23,11 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.WidgetDataContributionItem;
 import org.eclipse.ui.menus.AbstractContributionFactory;
-import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.IWorkbenchWidget;
+import org.eclipse.ui.menus.WidgetContributionItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.TextWidget;
 import org.eclipse.ui.tests.decorators.BackgroundColorDecorator;
@@ -198,10 +198,10 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
 						"Item X25", null);
 				additions.add(item);
-				WidgetDataContributionItem widget = new WidgetDataContributionItem(
+				WidgetContributionItem widget = new WidgetContributionItem(
 						"org.eclipse.ui.tests.menus.itemX26") {
 
-					public AbstractWorkbenchTrimWidget createWidget() {
+					public IWorkbenchWidget createWidget() {
 						return new TextWidget();
 					}
 
