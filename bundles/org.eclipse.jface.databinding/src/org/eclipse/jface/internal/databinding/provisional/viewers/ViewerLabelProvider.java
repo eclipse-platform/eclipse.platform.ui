@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.jface.internal.databinding.internal.swt.SWTUtil;
+import org.eclipse.jface.internal.databinding.provisional.swt.SWTUtil;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IViewerLabelProvider;

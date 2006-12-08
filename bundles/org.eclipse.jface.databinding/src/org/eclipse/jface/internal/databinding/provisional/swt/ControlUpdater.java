@@ -13,7 +13,6 @@ package org.eclipse.jface.internal.databinding.provisional.swt;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.jface.internal.databinding.internal.swt.SWTUtil;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;

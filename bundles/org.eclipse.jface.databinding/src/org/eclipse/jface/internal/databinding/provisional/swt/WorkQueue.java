@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.jface.internal.databinding.internal.swt;
+package org.eclipse.jface.internal.databinding.provisional.swt;
 
 import java.util.HashSet;
 import java.util.LinkedList;
