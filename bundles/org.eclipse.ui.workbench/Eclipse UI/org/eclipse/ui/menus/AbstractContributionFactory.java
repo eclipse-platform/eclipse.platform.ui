@@ -60,8 +60,8 @@ import java.util.List;
  * 
  * @since 3.3
  * @see org.eclipse.ui.menus.IMenuService
- * @see org.eclipse.jface.actions.MenuManager
- * @see org.eclipse.jface.actions.ToolBarManager
+ * @see org.eclipse.jface.action.MenuManager
+ * @see org.eclipse.jface.action.ToolBarManager
  */
 public abstract class AbstractContributionFactory {
 	private String location = null;
