@@ -18,7 +18,7 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.AbstractDynamicContribution;
+import org.eclipse.ui.menus.AbstractDynamicContribution;
 
 /**
  * Test implementation for dynamic menu item support.

@@ -151,7 +151,7 @@ If defined then it can be  used as a reference in the Query part of the location
                   This class is expected to be a subclass of AbstractDynamicContribution. When an addition of this type is encountered the specified class is instantiated and used to retrieve a list of the IContributionItems to be placed into the menu. The resulting list may be empty if there are no appropriate items to be shown in the current context.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.ui.internal.menus.AbstractDynamicContribution"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.menus.AbstractDynamicContribution"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -664,7 +664,6 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
 Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next id&apos;d separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
 &lt;/p&gt;
 
-&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
