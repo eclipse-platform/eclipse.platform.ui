@@ -178,6 +178,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected static final String VARIABLES_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Variables"; //$NON-NLS-1$
 	
+	/**
+	 * Key for "Select All" action.
+	 */
+	protected static final String VARIABLES_COPY_ACTION = COPY_ACTION + ".Variables"; //$NON-NLS-1$	
+	
     /**
      * Visits deltas to determine if details should be displayed
      */
@@ -432,8 +437,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 				fTreeHasFocus = true;
 				getViewSite().setSelectionProvider(variablesViewer);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
-				// TODO Copy action is not in the map, added through XML, see bug 166794
-//				setAction(COPY_ACTION, getAction(IDebugView.COPY_ACTION));
+				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
 				getViewSite().getActionBars().updateActionBars();
 			}
@@ -596,6 +600,17 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		setAction(VARIABLES_FIND_ELEMENT_ACTION, action);
 	} 	
 	
+	/* (non-Javadoc)
+	 * 
+	 * Save the copy action so we can restore it on focus lost/gain
+	 * 
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createContextMenu(org.eclipse.swt.widgets.Control)
+	 */
+	protected void createContextMenu(Control menuControl) {
+		super.createContextMenu(menuControl);
+		setAction(VARIABLES_COPY_ACTION, getAction(COPY_ACTION));
+	}
+
 	private void createOrientationActions(TreeModelViewer viewer) {
 		IActionBars actionBars = getViewSite().getActionBars();
 		IMenuManager viewMenu = actionBars.getMenuManager();
