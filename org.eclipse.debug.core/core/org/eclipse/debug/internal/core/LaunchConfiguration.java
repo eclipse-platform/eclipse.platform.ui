@@ -101,6 +101,16 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public static final String ATTR_LAUNCH_MODES = DebugPlugin.getUniqueIdentifier() + ".LAUNCH_MODES"; //$NON-NLS-1$
 	
 	/**
+	 * Launch configuration attribute storing a list 
+	 * of preferred launchers for associated mode sets.
+	 * This attribute is a list of launchers stored by mode set
+	 * and relating to the id of the preferred launcher, which happens to be an <code>ILaunchDelegate</code>
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$	
+	
+	/**
 	 * Status handler to prompt in the UI thread
 	 * 
 	 * @since 3.3
@@ -125,7 +135,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * is the key for a launch configuration handle.
 	 */
 	private IPath fLocation;
-	
+
 	/**
 	 * Constructs a launch configuration in the given location.
 	 * 
@@ -796,7 +806,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#getPreferredDelegate(java.util.Set)
 	 */
 	public ILaunchDelegate getPreferredDelegate(Set modes) throws CoreException {
-		Map delegates = getAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
+		Map delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
 		if(delegates != null) {
 			String id = (String) delegates.get(modes.toString());
 			if(id != null) {

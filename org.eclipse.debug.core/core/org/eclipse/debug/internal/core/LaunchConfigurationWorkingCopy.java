@@ -618,7 +618,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	public void setPreferredLaunchDelegate(Set modes, String delegateId) {
 		if(modes != null) {
 			try {
-				Map delegates = getAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
+				Map delegates = getAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, (Map)null);
 					//copy map to avoid pointer issues
 					Map map = new HashMap();
 					if(delegates != null) {
@@ -630,7 +630,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					else {
 						map.put(modes.toString(), delegateId);
 					}
-					setAttribute(ILaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, map);
+					setAttribute(LaunchConfiguration.ATTR_PREFERRED_LAUNCHERS, map);
 			}
 			catch (CoreException ce) {DebugPlugin.log(ce);}
 		}

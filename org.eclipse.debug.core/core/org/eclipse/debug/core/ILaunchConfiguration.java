@@ -89,16 +89,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	
 	/**
-	 * Launch configuration attribute storing a list 
-	 * of preferred launchers for associated mode sets.
-	 * This attribute is a list of launchers stored by mode set
-	 * and relating to the id of the preferred launcher, which happens to be an <code>ILaunchDelegate</code>
-	 * 
-	 * @since 3.3
-	 */
-	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$
-	
-	/**
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
 	 * 
