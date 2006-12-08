@@ -13,6 +13,8 @@ package org.eclipse.ui.statushandling;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.IStatus;
+
 /**
  * <p>
  * All status handlers are <code>AbstractStatusHandler</code> subclasses. Each
@@ -113,5 +115,19 @@ public abstract class AbstractStatusHandler {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * This method is used for collecting statuses which were already handled
+	 * and logged by the handler. Because the status handling facility handles
+	 * statuses from plug-in's log, it prevents handling logged statuses again.
+	 * 
+	 * This method should be called before each status logging in handlers.
+	 * 
+	 * @param status
+	 *            already handled and logged status
+	 */
+	protected void addLoggedStatus(IStatus status) {
+		StatusManager.getManager().addLoggedStatus(status);
 	}
 }

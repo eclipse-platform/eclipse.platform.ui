@@ -116,6 +116,8 @@ public class StatusManager {
 
 	private AbstractStatusHandler workbenchHandler;
 
+	private List loggedStauses = new ArrayList();
+
 	/**
 	 * Returns StatusManager singleton instance
 	 * 
@@ -391,6 +393,25 @@ public class StatusManager {
 		}
 	}
 
+	/**
+	 * This method informs the StatusManager that this IStatus is being handled
+	 * by the WorkbenchErrorHandler and to ignore it when it shows up in our
+	 * ILogListener.
+	 * 
+	 * @param status
+	 *            already handled and logged status
+	 */
+	void addLoggedStatus(IStatus status) {
+		loggedStauses.add(status);
+	}
+
+	/**
+	 * This log listener handles statuses added to a plug-in's log. If our own
+	 * WorkbenchErrorHandler inserts it into the log, then ignore it.
+	 * 
+	 * @see #addLoggedStatus(IStatus)
+	 * @since 3.3
+	 */
 	private class StatusManagerLogListener implements ILogListener {
 
 		/*
@@ -400,7 +421,11 @@ public class StatusManager {
 		 *      java.lang.String)
 		 */
 		public void logging(IStatus status, String plugin) {
-			// System.out.println(status.getMessage());
+			if (!loggedStauses.contains(status)) {
+				handle(status, SHOW);
+			} else {
+				loggedStauses.remove(status);
+			}
 		}
 	}
 }
