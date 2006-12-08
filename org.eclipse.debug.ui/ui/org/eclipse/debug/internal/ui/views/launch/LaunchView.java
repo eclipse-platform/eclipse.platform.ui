@@ -153,15 +153,17 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		class Visitor implements IModelDeltaVisitor {
 			public boolean visit(IModelDelta delta, int depth) {
 				Object element = delta.getElement();
-				if ((delta.getFlags() & IModelDelta.STATE) > 0) {
-					if ((delta.getFlags() & (IModelDelta.CONTENT | IModelDelta.SELECT)) == 0) {
-						// state change without content/select - possible state change of active context
-						possibleChange(element, DebugContextEvent.STATE);
-					}
-				} else if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
+				if ((delta.getFlags() & (IModelDelta.STATE | IModelDelta.CONTENT)) > 0) {
+					// state and/or content change
 					if ((delta.getFlags() & IModelDelta.SELECT) == 0) {
-						// content change without select > possible activation
-						possibleChange(element, DebugContextEvent.ACTIVATED);
+						// no select flag
+						if ((delta.getFlags() & IModelDelta.CONTENT) > 0) {
+							// content has changed without select >> possible re-activation
+							possibleChange(element, DebugContextEvent.ACTIVATED);
+						} else if ((delta.getFlags() & IModelDelta.STATE) > 0) {
+							// state has changed without select >> possible state change of active context
+							possibleChange(element, DebugContextEvent.STATE);
+						}
 					}
 				}
 				return true;
