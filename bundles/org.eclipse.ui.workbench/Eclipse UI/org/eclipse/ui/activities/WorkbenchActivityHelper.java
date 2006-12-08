@@ -511,10 +511,12 @@ public final class WorkbenchActivityHelper {
 	public static boolean isEnabled(IActivityManager activityManager,
 			String categoryId) {
 
-		Set activityIds = getActivityIdsForCategory(activityManager
-				.getCategory(categoryId));
-		if (activityManager.getEnabledActivityIds().containsAll(activityIds)) {
-			return true;
+		ICategory category = activityManager.getCategory(categoryId);
+		if (category.isDefined()) {
+			Set activityIds = getActivityIdsForCategory(category);
+			if (activityManager.getEnabledActivityIds().containsAll(activityIds)) {
+				return true;
+			}
 		}
 
 		return false;

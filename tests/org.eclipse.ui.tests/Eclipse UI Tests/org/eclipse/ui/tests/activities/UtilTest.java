@@ -261,7 +261,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testPropertyTester1() {
 		enableAll();
-		EvaluationContext context = new EvaluationContext(null, new Object());
+		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
 
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
 				.getWorkbench().getActivitySupport();
@@ -301,7 +301,7 @@ public class UtilTest extends TestCase {
 	 */
 	public void testPropertyTester2() {
 		enableAll();
-		EvaluationContext context = new EvaluationContext(null, new Object());
+		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
 
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
 				.getWorkbench().getActivitySupport();

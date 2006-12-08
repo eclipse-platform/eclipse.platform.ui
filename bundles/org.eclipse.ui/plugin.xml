@@ -1307,7 +1307,7 @@
               id="org.eclipse.ui.activityPropertyTester"
               namespace="org.eclipse.ui"
               properties="isActivityEnabled,isCategoryEnabled"
-              type="java.lang.Object">
+              type="org.eclipse.ui.IWorkbench">
         </propertyTester>
      </extension>
    <extension
