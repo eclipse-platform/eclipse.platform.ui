@@ -139,6 +139,73 @@
 	</element>
 
 	
+	<element>
+		<enablement>
+			<not>
+				<systemTest property="osgi.os" value="invalid"></systemTest>
+			</not>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<not>
+				<systemTest property="osgi.ws" value="invalid"></systemTest>
+			</not>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<not>
+				<systemTest property="osgi.arch" value="invalid"></systemTest>
+			</not>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<not>
+				<systemTest property="eclipse.product" value="org.eclipse.ua.invalid"></systemTest>
+			</not>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<with variable="platform">
+				<test args="org.eclipse.help" property="org.eclipse.core.runtime.isBundleInstalled"></test>
+				<not>
+					<test args="org.eclipse.ua.invalid" property="org.eclipse.core.runtime.isBundleInstalled"></test>
+				</not>
+			</with>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<with variable="workbench">
+				<not>
+					<test args="invalid" property="org.eclipse.ui.isActivityEnabled"></test>
+				</not>
+			</with>
+		</enablement>
+	</element>
+	<element>
+		<enablement>
+			<with variable="workbench">
+				<not>
+					<test args="invalid" property="org.eclipse.ui.isCategoryEnabled"></test>
+				</not>
+			</with>
+		</enablement>
+	</element>
+
+	
+	
+	
+	
+	
+	
+	
+	
+
+	
 
 	
 	<element filter=""></element>

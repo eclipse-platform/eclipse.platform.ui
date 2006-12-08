@@ -29,6 +29,7 @@ import org.eclipse.help.Node;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
 
@@ -437,6 +438,6 @@ public class IndexData extends ActivitiesData {
 	}
 	
 	private boolean isEnabled(Object obj) {
-		return !UAContentFilter.isFiltered(obj);
+		return !UAContentFilter.isFiltered(obj, HelpEvaluationContext.getContext());
 	}
 }

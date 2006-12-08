@@ -16,6 +16,7 @@ import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -84,7 +85,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		}
 
 		private boolean isEnabled(IIndexEntry entry) {
-			if (!UAContentFilter.isFiltered(entry)) {
+			if (!UAContentFilter.isFiltered(entry, HelpEvaluationContext.getContext())) {
 				IHelpResource[] topics = entry.getTopics();
 				for (int i = 0; i < topics.length; i++) {
 					if (isEnabled(topics[i]))
@@ -100,7 +101,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		}
 
 		private boolean isEnabled(Object obj) {
-			return !UAContentFilter.isFiltered(obj);
+			return !UAContentFilter.isFiltered(obj, HelpEvaluationContext.getContext());
 		}
 
 		private boolean isEnabled(IHelpResource topic) {

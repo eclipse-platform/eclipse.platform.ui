@@ -27,6 +27,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 
 /**
@@ -279,7 +280,7 @@ public class TocData extends ActivitiesData {
 			return true;
 		}
 		return HelpBasePlugin.getActivitySupport().isEnabled(toc.getHref()) &&
-			!UAContentFilter.isFiltered(toc);
+			!UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext());
 	}
 
 	private void loadTocs() {
@@ -619,7 +620,7 @@ public class TocData extends ActivitiesData {
 				// container
 				if (((((ITopic) c).getHref() != null && ((ITopic) c)
 						.getHref().length() > 0) || getEnabledSubtopicList(c).size() > 0) &&
-						!UAContentFilter.isFiltered(c)) {
+						!UAContentFilter.isFiltered(c, HelpEvaluationContext.getContext())) {
 					childTopics.add(c);
 				}
 			} else {

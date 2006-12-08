@@ -13,6 +13,7 @@ package org.eclipse.ua.tests.help.util;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 
 public class TocModelSerializer {
 
@@ -26,7 +27,7 @@ public class TocModelSerializer {
 	}
 	
 	private static String serializeAux(IToc toc, String indent) {
-		if (!UAContentFilter.isFiltered(toc)) {
+		if (!UAContentFilter.isFiltered(toc, HelpEvaluationContext.getContext())) {
 			StringBuffer buf = new StringBuffer();
 			buf.append(indent + "<toc\n");
 			buf.append(indent + "      label=\"" + toc.getLabel() + "\"\n");
@@ -44,7 +45,7 @@ public class TocModelSerializer {
 	}
 	
 	private static String serializeAux(ITopic topic, String indent) {
-		if (!UAContentFilter.isFiltered(topic)) {
+		if (!UAContentFilter.isFiltered(topic, HelpEvaluationContext.getContext())) {
 			StringBuffer buf = new StringBuffer();
 			buf.append(indent + "<topic\n");
 			buf.append(indent + "      label=\"" + topic.getLabel() + "\"\n");

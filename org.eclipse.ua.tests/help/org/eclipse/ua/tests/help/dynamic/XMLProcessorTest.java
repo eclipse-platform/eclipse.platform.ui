@@ -17,12 +17,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.NodeHandler;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.help.internal.dynamic.XMLProcessor;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ua.tests.util.FileUtil;
 import org.eclipse.ua.tests.util.ResourceFinder;
@@ -38,12 +40,17 @@ public class XMLProcessorTest extends TestCase {
 		return new TestSuite(XMLProcessorTest.class);
 	}
 	
+	protected void setUp() throws Exception {
+		// activate the UI plug-in for UI filtering ability
+		HelpUIPlugin.getDefault();
+	}
+	
 	public void testXMLProcessor() throws Exception {
 		NodeReader reader = new NodeReader();
 		NodeHandler[] handlers = new NodeHandler[] {
 				new IncludeHandler(reader, Platform.getNL()),
 				new ExtensionHandler(reader, Platform.getNL()),
-				new FilterHandler(),
+				new FilterHandler(HelpEvaluationContext.getContext())
 		};
 		XMLProcessor processor = new XMLProcessor(handlers);
 		Bundle bundle = UserAssistanceTestPlugin.getDefault().getBundle();

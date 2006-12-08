@@ -20,6 +20,7 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
@@ -441,7 +442,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				addCategory(sbuf, null);
 			for (int i = 0; i < links.length; i++) {
 				IHelpResource link = links[i];
-				if (!UAContentFilter.isFiltered(link)) {
+				if (!UAContentFilter.isFiltered(link, HelpEvaluationContext.getContext())) {
 					if (context2 != null) {
 						String cat = context2.getCategory(link);
 						if (cat == null && category != null || cat != null

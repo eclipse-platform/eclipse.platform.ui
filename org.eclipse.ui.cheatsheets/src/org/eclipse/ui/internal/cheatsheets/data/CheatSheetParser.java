@@ -31,6 +31,7 @@ import org.eclipse.help.internal.dynamic.NodeProcessor;
 import org.eclipse.help.internal.dynamic.NodeReader;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetEvaluationContext;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -916,7 +917,7 @@ public class CheatSheetParser implements IStatusContainer {
 		if (processor == null) {
 			NodeReader reader = new NodeReader();
 			processor = new NodeProcessor(new NodeHandler[] {
-				new FilterHandler(),
+				new FilterHandler(CheatSheetEvaluationContext.getContext()),
 				new NormalizeHandler(),
 				new IncludeHandler(reader, Platform.getNL()),
 				new ExtensionHandler(reader, Platform.getNL())

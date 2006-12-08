@@ -16,6 +16,7 @@ import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.ui.internal.views.HelpTray;
 import org.eclipse.osgi.service.environment.Constants;
 import org.eclipse.swt.SWT;
@@ -327,7 +328,7 @@ public class ContextHelpDialog {
 		label.setLayoutData(data);
 		// Create related links
 		for (int i = 0; i < relatedTopics.length; i++) {
-			if (!UAContentFilter.isFiltered(relatedTopics[i])) {
+			if (!UAContentFilter.isFiltered(relatedTopics[i], HelpEvaluationContext.getContext())) {
 				createLink(composite, relatedTopics[i]);
 			}
 		}

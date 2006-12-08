@@ -32,6 +32,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.search.federated.IndexerJob;
@@ -627,7 +628,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	class UAFilter extends ViewerFilter {
 		public boolean select(Viewer viewer, Object parentElement,
 				Object element) {
-			return !UAContentFilter.isFiltered(element);
+			return !UAContentFilter.isFiltered(element, HelpEvaluationContext.getContext());
 		}
 	}
 

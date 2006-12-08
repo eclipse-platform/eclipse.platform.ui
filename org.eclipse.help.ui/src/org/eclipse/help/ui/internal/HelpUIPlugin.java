@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.dynamic.FilterResolverExtension;
@@ -88,6 +89,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		plugin = this;
 
 		FilterResolver.setExtension(new FilterResolverExtension());
+		HelpEvaluationContext.setContext(HelpUIEvaluationContext.getContext());
 
 		// bundleContext = context;
 		// Setup debugging options

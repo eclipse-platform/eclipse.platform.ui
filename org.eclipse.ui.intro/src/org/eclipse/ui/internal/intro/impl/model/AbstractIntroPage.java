@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
+import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
@@ -652,7 +653,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
         // filter the content
         if (domProcessor == null) {
-        	domProcessor = new NodeProcessor(new NodeHandler[] { new FilterHandler() });
+        	domProcessor = new NodeProcessor(new NodeHandler[] { new FilterHandler(IntroEvaluationContext.getContext()) });
         }
         DocumentNode node = new DocumentNode(dom);
         domProcessor.process(node, null);

@@ -17,6 +17,7 @@ import java.util.Vector;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
+import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.osgi.framework.Bundle;
@@ -366,7 +367,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     	Iterator iter = unfiltered.iterator();
     	while (iter.hasNext()) {
     		Object element = iter.next();
-    		if (!UAContentFilter.isFiltered(element)) {
+    		if (!UAContentFilter.isFiltered(element, IntroEvaluationContext.getContext())) {
         		filtered.add(element);
     		}
     	}

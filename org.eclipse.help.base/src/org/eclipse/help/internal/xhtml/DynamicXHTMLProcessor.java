@@ -20,6 +20,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.runtime.content.IContentDescriber;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.dynamic.ExtensionHandler;
 import org.eclipse.help.internal.dynamic.FilterHandler;
 import org.eclipse.help.internal.dynamic.IncludeHandler;
@@ -59,7 +60,7 @@ public class DynamicXHTMLProcessor {
 							new IncludeHandler(reader, locale),
 							new ExtensionHandler(reader, locale),
 							new XHTMLCharsetHandler(),
-							new FilterHandler()
+							new FilterHandler(HelpEvaluationContext.getContext())
 					});
 				}
 				return xmlProcessor.process(buf, href, charset);

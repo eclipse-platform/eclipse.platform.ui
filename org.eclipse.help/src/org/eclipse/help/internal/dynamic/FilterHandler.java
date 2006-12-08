@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
+import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.help.Node;
 import org.eclipse.help.UAContentFilter;
 
@@ -20,11 +21,17 @@ import org.eclipse.help.UAContentFilter;
  */
 public class FilterHandler extends NodeHandler {
 
+	private EvaluationContext context;
+	
+	public FilterHandler(EvaluationContext context) {
+		this.context = context;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.dynamic.NodeHandler#handle(org.eclipse.help.Node, java.lang.String)
 	 */
 	public short handle(Node node, String id) {
-		if (UAContentFilter.isFiltered(node)) {
+		if (UAContentFilter.isFiltered(node, context)) {
 			Node parent = node.getParentNode();
 			if (parent != null) {
 				parent.removeChild(node);
