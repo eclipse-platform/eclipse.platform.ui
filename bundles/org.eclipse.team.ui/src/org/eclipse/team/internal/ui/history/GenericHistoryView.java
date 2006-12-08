@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.history.IFileHistoryProvider;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
@@ -265,16 +266,16 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			if (forward) {
 				setEnabled(navigationHistory.hasNextEntry());
 				if (isEnabled()) {
-					setToolTipText(NLS.bind("Forward to {0}", navigationHistory.getNextEntry().name));
+					setToolTipText(NLS.bind(TeamUIMessages.GenericHistoryView_1, navigationHistory.getNextEntry().name));
 				} else {
-					setToolTipText("Forward");
+					setToolTipText(TeamUIMessages.GenericHistoryView_2);
 				}
 			} else {
 				setEnabled(navigationHistory.hasPreviousEntry());
 				if (isEnabled()) {
-					setToolTipText(NLS.bind("Back to {0}", navigationHistory.getPreviousEntry().name));
+					setToolTipText(NLS.bind(TeamUIMessages.GenericHistoryView_3, navigationHistory.getPreviousEntry().name));
 				} else {
-					setToolTipText("Back");
+					setToolTipText(TeamUIMessages.GenericHistoryView_4);
 				}
 			}
 			menuCreator.rebuildMenu();
@@ -402,7 +403,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				}
 				
 				if (lastSelectedElement != null){
-					Object resource = Utils.getAdapter(lastSelectedElement, IResource.class);
+					Object resource;
+					if (lastSelectedElement instanceof SyncInfoModelElement) {
+						SyncInfoModelElement syncInfoModelElement = (SyncInfoModelElement) lastSelectedElement;
+						resource = syncInfoModelElement.getSyncInfo().getLocal();
+					} else {
+						resource = Utils.getAdapter(lastSelectedElement, IResource.class);
+					}
 					if (resource != null)
 						showHistoryPageFor((IResource) resource, false, false, null);
 					else

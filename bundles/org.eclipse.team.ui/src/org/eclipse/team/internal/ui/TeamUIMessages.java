@@ -77,6 +77,14 @@ public class TeamUIMessages extends NLS {
 
 	public static String ExportProjectSetMainPage_WorkspaceDialogTitleMessage;
 
+	public static String GenericHistoryView_1;
+
+	public static String GenericHistoryView_2;
+
+	public static String GenericHistoryView_3;
+
+	public static String GenericHistoryView_4;
+
 	public static String ImportProjectSetMainPage_AddToWorkingSet;
 
 	public static String ImportProjectSetMainPage_Browse;
