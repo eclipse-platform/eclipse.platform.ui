@@ -1111,7 +1111,7 @@ final class MenuPersistence extends RegistryPersistence {
 
 		// Create a cache entry for every menu addition
 		for (int i = 0; i < menusExtensionPoint.length; i++) {
-			if (PL_MENU_ADDITION.equals(menusExtensionPoint[i].getName())) {
+			if (PL_MENU_CONTRIBUTION.equals(menusExtensionPoint[i].getName())) {
 				// Determine the insertion location by parsing the URI
 				String location = menusExtensionPoint[i]
 						.getAttribute(TAG_LOCATION_URI);

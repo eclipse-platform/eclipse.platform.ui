@@ -2949,7 +2949,7 @@
    <extension
          id="menusX1"
          point="org.eclipse.ui.menus">
-      <menuAddition
+      <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?before=MenuTest.Advanced">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -2958,8 +2958,8 @@
                label="Inserted Before"
                mnemonic="B">
          </item>
-      </menuAddition>
-      <menuAddition
+      </menuContribution>
+      <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness?after=MenuTest.Advanced">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -2968,8 +2968,8 @@
                label="Inserted After"
                mnemonic="A">
          </item>
-      </menuAddition>
-      <menuAddition
+      </menuContribution>
+      <menuContribution
             locationURI="popup:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -3022,9 +3022,9 @@
                id="MenuText.popup.DynamicItem">
             </dynamicContribution>
          </menu>
-      </menuAddition>
+      </menuContribution>
 
-      <menuAddition
+      <menuContribution
             locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -3081,9 +3081,9 @@
                id="MenuText.popup.DynamicItem">
             </dynamicContribution>
          </menu>
-      </menuAddition>
+      </menuContribution>
       
-      <menuAddition
+      <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -3136,8 +3136,8 @@
                id="MenuText.popup.DynamicItem">
             </dynamicContribution>
          </menu>
-      </menuAddition>
-      <menuAddition
+      </menuContribution>
+      <menuContribution
             locationURI="menu:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
@@ -3156,8 +3156,8 @@
                </with>
             </visibleWhen>
          </item>
-      </menuAddition>
-      <menuAddition
+      </menuContribution>
+      <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu?after=additions">
          <menu
                id="org.eclipse.ui.tests.mainMenu.MenuX2"
@@ -3190,7 +3190,7 @@
                   label="Menu Item X5">
             </item>
          </menu>
-      </menuAddition>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">

@@ -640,7 +640,7 @@ public interface IWorkbenchRegistryConstants {
 	 * 
 	 * @since 3.3
 	 */
-	public static String PL_MENU_ADDITION = "menuAddition"; //$NON-NLS-1$
+	public static String PL_MENU_CONTRIBUTION = "menuContribution"; //$NON-NLS-1$
 
 	public static String PL_NEW = "newWizards"; //$NON-NLS-1$
 
