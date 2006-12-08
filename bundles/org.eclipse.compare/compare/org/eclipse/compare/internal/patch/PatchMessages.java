@@ -28,6 +28,7 @@ public final class PatchMessages extends NLS {
 	public static String PatcherCompareEditorInput_LocalCopy;
 	public static String PatcherCompareEditorInput_NotIncluded;
 	public static String PatcherCompareEditorInput_PatchContents;
+	public static String PatchTargetPage_0;
 	public static String PatchWizard_title;
 	public static String PatchWizard_unexpectedException_message;
 	public static String InputPatchPage_title;
@@ -97,4 +98,6 @@ public final class PatchMessages extends NLS {
 	public static String PreviewPatchPage2_PatchedLocalFile;
 	public static String PreviewPatchPage2_RetargetAction;
 	public static String PreviewPatchPage2_RetargetTooltip;
+	public static String RetargetPatchElementDialog_0;
+	public static String RetargetPatchElementDialog_1;
 }

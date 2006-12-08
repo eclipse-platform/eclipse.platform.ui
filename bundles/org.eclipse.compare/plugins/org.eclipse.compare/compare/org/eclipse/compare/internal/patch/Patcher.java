@@ -406,10 +406,21 @@ public class Patcher {
 	 */
 	protected IFile createPath(IContainer container, IPath path) throws CoreException {
 		if (path.segmentCount() > 1) {
-			IFolder f= container.getFolder(path.uptoSegment(1));
-			if (!f.exists())
-				f.create(false, true, null);
-			return createPath(f, path.removeFirstSegments(1));
+			IContainer childContainer;
+			if (container instanceof IWorkspaceRoot) {
+				IProject project = ((IWorkspaceRoot)container).getProject(path.segment(0));
+				if (!project.exists())
+					project.create(null);
+				if (!project.isOpen())
+					project.open(null);
+				childContainer = project;
+			} else {
+				IFolder f= container.getFolder(path.uptoSegment(1));
+				if (!f.exists())
+					f.create(false, true, null);
+				childContainer = f;
+			}
+			return createPath(childContainer, path.removeFirstSegments(1));
 		}
 		// a leaf
 		return container.getFile(path);
@@ -715,5 +726,17 @@ public class Patcher {
 			mergedHunks.add(hunk);
 		else 
 			mergedHunks.remove(hunk);
+	}
+
+	public IProject getTargetProject(FileDiff diff) {
+		DiffProject dp = getProject(diff);
+		if (dp != null)
+			return dp.getProject();
+		IResource tr = getTarget();
+		if (tr instanceof IWorkspaceRoot) {
+			IWorkspaceRoot root = (IWorkspaceRoot) tr;
+			return root.getProject(diff.getPath(isReversed()).segment(0));
+		}
+		return tr.getProject();
 	}
 }

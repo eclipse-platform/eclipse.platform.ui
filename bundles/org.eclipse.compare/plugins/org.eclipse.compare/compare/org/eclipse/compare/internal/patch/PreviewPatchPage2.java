@@ -1,23 +1,18 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
-import org.eclipse.compare.structuremergeviewer.DiffNode;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
@@ -25,16 +20,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceComparator;
 
 
 public class PreviewPatchPage2 extends WizardPage {
 
 	protected final static String PREVIEWPATCHPAGE_NAME= "PreviewPatchPage";  //$NON-NLS-1$
 	
-	private final WorkspacePatcher fPatcher;
+	final WorkspacePatcher fPatcher;
 	private final CompareConfiguration fConfiguration;
 	private PatchCompareEditorInput fInput;
 	
@@ -47,185 +39,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	private Action fReversePatch;
 	private Action fMoveAction;
 	
-	private static final int DIFF_NODE = 0;
-	private static final int PROJECTDIFF_NODE = 1;
-	
 	protected boolean pageRecalculate= true;
-	
-	class RetargetPatchDialog extends Dialog {
-
-		private TreeViewer rpTreeViewer;
-		private DiffNode rpSelectedNode;
-		private DiffProject rpSelectedProject;
-		private IResource rpTargetResource;
-		private int mode;
-		
-		public RetargetPatchDialog(Shell shell, ISelection selection) {
-			super(shell);
-			setShellStyle(getShellStyle()|SWT.RESIZE);
-			if (selection instanceof IStructuredSelection) {
-				rpSelectedNode= (DiffNode) ((IStructuredSelection) selection).getFirstElement();
-			}
-		}
-
-		protected Control createButtonBar(Composite parent) {
-			Control control = super.createButtonBar(parent);
-			Button okButton = this.getButton(IDialogConstants.OK_ID);
-			okButton.setEnabled(false);
-			return control;
-		}
-		
-		protected Control createDialogArea(Composite parent) {
-			Composite composite= (Composite) super.createDialogArea(parent);
-
-			initializeDialogUnits(parent);
-
-			getShell().setText(PatchMessages.PreviewPatchPage_RetargetPatch);
-
-			GridLayout layout= new GridLayout();
-			layout.numColumns= 1;
-	        layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-	        layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);			
-			composite.setLayout(layout);
-			final GridData data= new GridData(SWT.FILL, SWT.FILL, true, true);
-			composite.setLayoutData(data);
-
-			//add controls to composite as necessary
-			Label label= new Label(composite, SWT.LEFT|SWT.WRAP);
-			label.setText(NLS.bind(PatchMessages.PreviewPatchPage_SelectProject, rpSelectedNode.getName()));
-			final GridData data2= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
-			label.setLayoutData(data2);
-
-			rpTreeViewer= new TreeViewer(composite, SWT.BORDER);
-			GridData gd= new GridData(SWT.FILL, SWT.FILL, true, true);
-			gd.widthHint= 0;
-			gd.heightHint= 0;
-			rpTreeViewer.getTree().setLayoutData(gd);
-
-			//determine what type of selection this is, project or diff/hunk
-			if (rpSelectedNode instanceof PatchFileDiffNode) {
-				PatchFileDiffNode node = (PatchFileDiffNode) rpSelectedNode;
-				rpTreeViewer.setSelection(new StructuredSelection(getPatcher().getTargetFile(node.getDiffResult().getDiff())));
-				mode = DIFF_NODE;
-			} else if (rpSelectedNode instanceof HunkDiffNode) {
-				HunkDiffNode node = (HunkDiffNode) rpSelectedNode;
-				rpTreeViewer.setSelection(new StructuredSelection(getPatcher().getTargetFile(node.getHunkResult().getDiffResult().getDiff())));
-				mode = DIFF_NODE;
-			} else if (rpSelectedNode instanceof PatchProjectDiffNode) {
-				PatchProjectDiffNode node = (PatchProjectDiffNode) rpSelectedNode;
-				rpSelectedProject = node.getDiffProject();
-				rpTreeViewer.setSelection(new StructuredSelection(rpSelectedProject.getProject()));
-				mode = PROJECTDIFF_NODE;
-			}
-			
-			rpTreeViewer.setContentProvider(new RetargetPatchContentProvider(mode));
-			rpTreeViewer.setLabelProvider(new WorkbenchLabelProvider());
-			rpTreeViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
-			rpTreeViewer.setInput(ResourcesPlugin.getWorkspace());
-			
-			setupListeners();
-
-			Dialog.applyDialogFont(composite);
-			
-			return parent;
-		}
-
-		protected void okPressed() {
-			if (rpSelectedNode != null){
-				if (rpSelectedNode instanceof PatchProjectDiffNode && rpTargetResource instanceof IProject) {
-					PatchProjectDiffNode node = (PatchProjectDiffNode) rpSelectedNode;
-					DiffProject project = node.getDiffProject();
-					getPatcher().retargetProject(project, (IProject)rpTargetResource);
-				} else if (rpSelectedNode instanceof PatchFileDiffNode && rpTargetResource instanceof IFile) {
-					PatchFileDiffNode node = (PatchFileDiffNode) rpSelectedNode;
-					//copy over all hunks to new target resource
-					FileDiff diff = node.getDiffResult().getDiff();
-					fPatcher.retargetDiff(diff, (IFile)rpTargetResource);
-				} else if (rpSelectedNode instanceof HunkDiffNode && rpTargetResource instanceof IFile) {
-					HunkDiffNode node = (HunkDiffNode) rpSelectedNode;
-					fPatcher.retargetHunk(node.getHunkResult().getHunk(), (IFile)rpTargetResource);
-				}
-			}
-			super.okPressed();	
-		}
-
-		void setupListeners() {
-			rpTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					IStructuredSelection s= (IStructuredSelection) event.getSelection();
-					Object obj= s.getFirstElement();
-					if (obj instanceof IResource){
-						rpTargetResource = (IResource) obj;
-						if (rpSelectedNode instanceof PatchProjectDiffNode) {
-							if (rpTargetResource instanceof IProject){
-								Button okButton = getButton(IDialogConstants.OK_ID);
-								okButton.setEnabled(true);
-							}
-						} else if (rpSelectedNode instanceof PatchFileDiffNode
-								|| rpSelectedNode instanceof HunkDiffNode) {
-							if (rpTargetResource instanceof IFile){
-								Button okButton = getButton(IDialogConstants.OK_ID);
-								okButton.setEnabled(true);
-							}
-						}
-					}
-				}
-			});
-
-			rpTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event) {
-					ISelection s= event.getSelection();
-					if (s instanceof IStructuredSelection) {
-						Object item= ((IStructuredSelection) s).getFirstElement();
-						if (rpTreeViewer.getExpandedState(item))
-							rpTreeViewer.collapseToLevel(item, 1);
-						else
-							rpTreeViewer.expandToLevel(item, 1);
-					}
-				}
-			});
-
-		}
-
-		protected Point getInitialSize() {
-			final Point size= super.getInitialSize();
-			size.x= convertWidthInCharsToPixels(75);
-			size.y+= convertHeightInCharsToPixels(20);
-			return size;
-		}
-	}
-
-	class RetargetPatchContentProvider extends BaseWorkbenchContentProvider {
-		//Never show closed projects
-		boolean showClosedProjects= false;
-		//Used to indicate what is being retargetted
-		int mode;
-		public RetargetPatchContentProvider(int mode) {
-			 this.mode = mode;
-		}
-
-		public Object[] getChildren(Object element) {
-			if (element instanceof IWorkspace) {
-				// check if closed projects should be shown
-				IProject[] allProjects= ((IWorkspace) element).getRoot().getProjects();
-				if (showClosedProjects)
-					return allProjects;
-
-				ArrayList accessibleProjects= new ArrayList();
-				for (int i= 0; i<allProjects.length; i++) {
-					if (allProjects[i].isOpen()) {
-						accessibleProjects.add(allProjects[i]);
-					}
-				}
-				return accessibleProjects.toArray();
-			}
-
-			if (element instanceof IProject && mode==PROJECTDIFF_NODE) {
-				return new Object[0];
-			}
-			return super.getChildren(element);
-		}
-	}
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
@@ -293,7 +107,16 @@ public class PreviewPatchPage2 extends WizardPage {
 			public void run() {
 				Shell shell = getShell();
 				ISelection selection = fInput.getViewer().getSelection();
-				final RetargetPatchDialog dialog = new RetargetPatchDialog(shell, selection);
+				PatchDiffNode node = null;
+				if (selection instanceof IStructuredSelection) {
+					IStructuredSelection ss = (IStructuredSelection) selection;
+					if (ss.getFirstElement() instanceof PatchDiffNode) {
+						node = (PatchDiffNode) ss.getFirstElement();
+					}
+				}
+				if (node == null)
+					return;
+				final RetargetPatchElementDialog dialog = new RetargetPatchElementDialog(shell, fPatcher, node);
 				int returnCode = dialog.open();
 				if (returnCode == Window.OK) {
 					// TODO: This could be a problem. We should only rebuild the affected nodes

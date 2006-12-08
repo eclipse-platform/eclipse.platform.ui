@@ -95,7 +95,7 @@ public class PatchWizard extends Wizard {
 		if (patch == null)
 			addPage(fPatchWizardPage = new InputPatchPage(this));
 		if (patch == null || !fPatcher.isWorkspacePatch())
-			addPage(fPatchTargetPage = new PatchTargetPage(this));
+			addPage(fPatchTargetPage = new PatchTargetPage(fPatcher));
 		fPreviewPage2 = new PreviewPatchPage2(fPatcher, fConfiguration);
 		addPage(fPreviewPage2);
 	}

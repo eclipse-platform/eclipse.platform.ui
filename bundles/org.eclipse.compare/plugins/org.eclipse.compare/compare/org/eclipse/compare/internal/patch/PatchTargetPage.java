@@ -10,37 +10,26 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
+
+import com.ibm.icu.text.MessageFormat;
 
 /***
  * This page only shows up if the user is trying to apply
@@ -51,16 +40,18 @@ public class PatchTargetPage extends WizardPage {
 	private boolean fShowError = false;
 
 	// SWT widgets
-	private CheckboxTreeViewer fPatchTargets;
+	private TreeViewer fPatchTargets;
+	private Button useWorkspaceAsTarget;
+	private Button selectTarget;
 
-	private PatchWizard fPatchWizard;
+	protected WorkspacePatcher fPatcher;
 
 	protected final static String PATCHTARGETPAGE_NAME = "PatchTargetPage"; //$NON-NLS-1$
 
-	PatchTargetPage(PatchWizard pw) {
+	PatchTargetPage(WorkspacePatcher patcher) {
 		super(PATCHTARGETPAGE_NAME, PatchMessages.PatchTargetPage_title, null);
-		fPatchWizard = pw;
 		setMessage(PatchMessages.PatchTargetPage_message);
+		fPatcher = patcher;
 	}
 
 	/*
@@ -77,30 +68,50 @@ public class PatchTargetPage extends WizardPage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
-
-		Label l = new Label(composite, SWT.NONE);
-		l.setText(PatchMessages.InputPatchPage_SelectInput);
-
+		
+		useWorkspaceAsTarget = createRadioButton(composite, PatchMessages.PatchTargetPage_0, 1); 
+		selectTarget = createRadioButton(composite, PatchMessages.InputPatchPage_SelectInput, 1); 
+		
 		buildInputGroup(composite);
 
 		updateWidgetEnablements();
 
 		Dialog.applyDialogFont(composite);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, ICompareContextIds.PATCH_INPUT_WIZARD_PAGE);
+		
+		useWorkspaceAsTarget.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event event) {
+            	fShowError = true;
+                if (useWorkspaceAsTarget.getSelection()) {
+                    fPatchTargets.getTree().setEnabled(false);
+                    fPatcher.setTarget(ResourcesPlugin.getWorkspace().getRoot());
+                } else {
+                	fPatchTargets.getTree().setEnabled(true);
+                	fPatcher.setTarget(Utilities.getFirstResource(fPatchTargets.getSelection()));
+                }
+                updateWidgetEnablements();
+            }
+        });
 	}
 
+	private Button createRadioButton(Composite parent, String label, int span) {
+		Button button = new Button(parent, SWT.RADIO);
+		button.setText(label);
+		GridData data = new GridData();
+		data.horizontalSpan = span;
+		button.setLayoutData(data);
+		return button;
+	}
+	
 	/* (non-JavaDoc)
 	 * Method declared in IWizardPage.
 	 */
 	public IWizardPage getNextPage() {
 
-		WorkspacePatcher patcher = ((PatchWizard) getWizard()).getPatcher();
-
 		// if selected target is file ensure that patch file
 		// contains only a patch for a single file
-		IResource target = fPatchWizard.getTarget();
-		if (target instanceof IFile && patcher.getDiffs().length > 1) {
-			InputPatchPage inputPage = (InputPatchPage) fPatchWizard.getPage(InputPatchPage.INPUTPATCHPAGE_NAME);
+		if (fPatcher.getTarget() instanceof IFile && fPatcher.getDiffs().length > 1) {
+			InputPatchPage inputPage = (InputPatchPage) getWizard().getPage(InputPatchPage.INPUTPATCHPAGE_NAME);
 			String source = ""; //$NON-NLS-1$
 			switch (inputPage.getInputMethod()) {
 				case InputPatchPage.CLIPBOARD :
@@ -134,21 +145,19 @@ public class PatchTargetPage extends WizardPage {
 	}
 
 	private void buildInputGroup(Composite parent) {
-
 		Tree tree = new Tree(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 200;
 		tree.setLayoutData(gd);
 
-		fPatchTargets = new CheckboxTreeViewer(tree);
+		fPatchTargets = new TreeViewer(tree);
 		fPatchTargets.setLabelProvider(new WorkbenchLabelProvider());
 		fPatchTargets.setContentProvider(new WorkbenchContentProvider());
-		fPatchTargets.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		fPatchTargets.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		fPatchTargets.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		
-		PatchWizard pw = (PatchWizard) getWizard();
-		IResource target = pw.getTarget();
-		if (target != null) {
+		IResource target = fPatcher.getTarget();
+		if (target != null && !(target instanceof IWorkspaceRoot)) {
 			fPatchTargets.expandToLevel(target, 0);
 			fPatchTargets.setSelection(new StructuredSelection(target));
 		}
@@ -156,14 +165,15 @@ public class PatchTargetPage extends WizardPage {
 		// register listeners
 		fPatchTargets.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				fPatchWizard.getPatcher().setTarget(Utilities.getFirstResource(event.getSelection()));
+				fShowError = true;
+				fPatcher.setTarget(Utilities.getFirstResource(event.getSelection()));
 				updateWidgetEnablements();
 			}
 		});
 		
 		fPatchTargets.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				fPatchWizard.showPage(getNextPage());
+				((PatchWizard)getWizard()).showPage(getNextPage());
 			}
 		});
 	}
@@ -174,14 +184,19 @@ public class PatchTargetPage extends WizardPage {
 	private void updateWidgetEnablements() {
 		String error = null;
 
-		ISelection selection = fPatchTargets.getSelection();
-		boolean anySelected = selection != null && !selection.isEmpty();
-		if (!anySelected)
+		if (fPatcher.getTarget() == null) {
+			useWorkspaceAsTarget.setSelection(false);
+			selectTarget.setSelection(true);
 			error = PatchMessages.InputPatchPage_NothingSelected_message;
-
-		setPageComplete(anySelected);
-		if (fShowError)
-			setErrorMessage(error);
+			setPageComplete(false);
+			if (fShowError)
+				setErrorMessage(error);
+			return;
+		}
+		setErrorMessage(null);
+		useWorkspaceAsTarget.setSelection(fPatcher.getTarget() instanceof IWorkspaceRoot);
+		selectTarget.setSelection(!useWorkspaceAsTarget.getSelection());
+		setPageComplete(true);
 	}
 
 	/**

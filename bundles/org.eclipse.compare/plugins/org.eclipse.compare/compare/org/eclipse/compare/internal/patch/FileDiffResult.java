@@ -14,6 +14,7 @@ import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.osgi.util.NLS;
 
@@ -55,8 +56,8 @@ public class FileDiffResult {
 		boolean create= false;
 		//If this diff is an addition, make sure that it doesn't already exist
 		if (fDiff.getDiffType(getPatcher().isReversed()) == Differencer.ADDITION) {
-			DiffProject project = fPatcher.getProject(fDiff);
-			if ((file == null || !file.exists() || isEmpty(file)) && project != null && project.getProject().isAccessible()) {
+			IProject project = fPatcher.getTargetProject(fDiff);
+			if ((file == null || !file.exists() || isEmpty(file)) && project != null && project.isAccessible()) {
 				fMatches= true;
 			} else {
 				// file already exists
@@ -66,7 +67,7 @@ public class FileDiffResult {
 			create= true;
 		} else { //This diff is not an addition, try to find a match for it
 			//Ensure that the file described by the path exists and is modifiable
-			if (file != null & file.isAccessible()) {
+			if (file != null && file.isAccessible()) {
 				fMatches= true;
 			} else {
 				// file doesn't exist

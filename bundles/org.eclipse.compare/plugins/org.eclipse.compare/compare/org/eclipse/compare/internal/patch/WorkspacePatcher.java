@@ -174,6 +174,14 @@ public class WorkspacePatcher extends Patcher {
 			return project.getFile(path);
 		return super.getTargetFile(diff);
 	}
+	
+	private IPath getFullPath(FileDiff diff) {
+		IPath path = diff.getStrippedPath(getStripPrefixSegments(), isReversed());
+		DiffProject project = getProject(diff);
+		if (project != null)
+			return project.getFile(path).getFullPath();
+		return getTarget().getFullPath().append(path);
+	}
 
 	public ISchedulingRule[] getTargetProjects() {
 		List projects= new ArrayList();
@@ -250,7 +258,7 @@ public class WorkspacePatcher extends Patcher {
 		DiffProject diffProject = null;
 		FileDiff[] diffsToCheck;
 		if (isWorkspacePatch()){
-			//see if the project already exists
+			// Check if the diff project already exists for the file
 			IProject project = file.getProject();
 			DiffProject[] diffProjects = getDiffProjects();
 			for (int i = 0; i < diffProjects.length; i++) {
@@ -259,34 +267,52 @@ public class WorkspacePatcher extends Patcher {
 					break;
 				}
 			}
+			// If the project doesn't exist yet, create it and add it to the project list
 			if (diffProject == null){
-				//create a new diff project
-				diffProject = new DiffProject(project);
-				//add the diffProject to the array
-				DiffProject[] newProjectArray = new DiffProject[diffProjects.length + 1];
-				System.arraycopy(diffProjects, 0, newProjectArray, 0, diffProjects.length);
-				//add the new project to the end
-				newProjectArray[diffProjects.length] = diffProject;
-				setDiffProjects(newProjectArray);
+				diffProject = addDiffProjectForProject(project);
 			}
 			diffsToCheck = diffProject.getFileDiffs();
 		} else {
 			diffsToCheck = getDiffs();
 		}
+		// Check to see if a diff already exists for the file
 		for (int i = 0; i < diffsToCheck.length; i++) {
 			FileDiff fileDiff = diffsToCheck[i];
-			if (getTargetFile(fileDiff).equals(file)) {
+			if (isDiffForFile(fileDiff, file)) {
 				return fileDiff;
 			}
 		}
 		
-		//Create a new diff
-		FileDiff newDiff = new FileDiff(file.getProjectRelativePath(), 0, file.getProjectRelativePath(), 0);
+		// Create a new diff for the file
+		IPath path = getDiffPath(file);
+		FileDiff newDiff = new FileDiff(path, 0, path, 0);
 		if (diffProject != null){
 			diffProject.add(newDiff);
 		}
 		addDiff(newDiff);
 		return newDiff;
+	}
+
+	private IPath getDiffPath(IFile file) {
+		DiffProject project = getDiffProject(file.getProject());
+		if (project != null) {
+			return file.getProjectRelativePath();
+		}
+		return file.getFullPath().removeFirstSegments(getTarget().getFullPath().segmentCount());
+	}
+
+	private boolean isDiffForFile(FileDiff fileDiff, IFile file) {
+		return getFullPath(fileDiff).equals(file.getFullPath());
+	}
+
+	private DiffProject addDiffProjectForProject(IProject project) {
+		DiffProject[] diffProjects = getDiffProjects();
+		DiffProject diffProject = new DiffProject(project);
+		DiffProject[] newProjectArray = new DiffProject[diffProjects.length + 1];
+		System.arraycopy(diffProjects, 0, newProjectArray, 0, diffProjects.length);
+		newProjectArray[diffProjects.length] = diffProject;
+		setDiffProjects(newProjectArray);
+		return diffProject;
 	}
 
 	public void retargetHunk(Hunk hunk, IFile file) {
@@ -298,6 +324,8 @@ public class WorkspacePatcher extends Patcher {
 		retargetedDiffs.put(project, project.getProject().getFullPath());
 		FileDiff[] diffs = project.getFileDiffs();
 		DiffProject selectedProject = getDiffProject(targetProject);
+		if (selectedProject == null)
+			selectedProject = addDiffProjectForProject(targetProject);
 		// Copy over the diffs to the new project
 		for (int i = 0; i < diffs.length; i++) {
 			selectedProject.add(diffs[i]);
@@ -306,21 +334,23 @@ public class WorkspacePatcher extends Patcher {
 		removeProject(project);
 	}
 	
+	/**
+	 * Return the diff project for the given project
+	 * or <code>null</code> if the diff project doesn't exist
+	 * or if the patch is not a workspace patch.
+	 * @param project the project
+	 * @return the diff project for the given project
+	 * or <code>null</code>
+	 */
 	private DiffProject getDiffProject(IProject project) {
+		if (!isWorkspacePatch())
+			return null;
 		DiffProject[] projects = getDiffProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (projects[i].getProject().equals(project))
 				return projects[i];
 		}
-		// Create a new diff project
-		DiffProject newProject = new DiffProject(project);
-		// Add the diffProject to the array
-		DiffProject[] newProjectArray = new DiffProject[projects.length + 1];
-		System.arraycopy(projects, 0, newProjectArray, 0, projects.length);
-		// Add the new project to the end
-		newProjectArray[projects.length] = newProject;
-		setDiffProjects(newProjectArray);
-		return newProject;
+		return null;
 	}
 	
 	int getStripPrefixSegments() {
