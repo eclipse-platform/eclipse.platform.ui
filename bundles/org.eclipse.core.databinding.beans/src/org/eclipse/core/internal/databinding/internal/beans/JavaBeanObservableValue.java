@@ -17,9 +17,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.eclipse.core.databinding.BindingException;
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
+import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @since 1.0
@@ -36,12 +41,13 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 	private final Class overrideType;
 
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param object
 	 * @param descriptor
-	 * @param overrideType 
+	 * @param overrideType
 	 */
-	public JavaBeanObservableValue(Realm realm, Object object, PropertyDescriptor descriptor, Class overrideType) {
+	public JavaBeanObservableValue(Realm realm, Object object,
+			PropertyDescriptor descriptor, Class overrideType) {
 		super(realm);
 		this.object = object;
 		this.propertyDescriptor = descriptor;
@@ -51,9 +57,15 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 	protected void firstListenerAdded() {
 		listener = new PropertyChangeListener() {
 			public void propertyChange(java.beans.PropertyChangeEvent event) {
-				if (!updating && event.getPropertyName().equals(propertyDescriptor.getName())) {
-					fireValueChange(Diffs.createValueDiff(event.getOldValue(), event
-							.getNewValue()));
+				if (!updating
+						&& event.getPropertyName().equals(
+								propertyDescriptor.getName())) {
+					final ValueDiff diff = Diffs.createValueDiff(event.getOldValue(),
+											event.getNewValue());
+					getRealm().exec(new Runnable(){
+						public void run() {
+							fireValueChange(diff);
+						}});
 				}
 			}
 		};
@@ -73,11 +85,35 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 						propertyDescriptor.getName(), listener });
 				return;
 			} catch (IllegalArgumentException e) {
-				// ignore
+				if (BeansObservables.DEBUG) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.WARNING,
+											Policy.JFACE_DATABINDING,
+											"Could not attach listener to " + object, e)); //$NON-NLS-1$
+				}
 			} catch (IllegalAccessException e) {
-				// ignore
+				if (BeansObservables.DEBUG) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.WARNING,
+											Policy.JFACE_DATABINDING,
+											"Could not attach listener to " + object, e)); //$NON-NLS-1$
+				}
 			} catch (InvocationTargetException e) {
-				// ignore
+				if (BeansObservables.DEBUG) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.WARNING,
+											Policy.JFACE_DATABINDING,
+											"Could not attach listener to " + object, e)); //$NON-NLS-1$
+				}
 			}
 		}
 		// set listener to null because we are not listening
@@ -95,8 +131,15 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 			writeMethod.invoke(object, new Object[] { value });
 			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
 		} catch (Exception e) {
-			// TODO log exception, or maybe throw runtime exception?
-			e.printStackTrace();
+			if (BeansObservables.DEBUG) {
+				Policy
+						.getLog()
+						.log(
+								new Status(
+										IStatus.WARNING,
+										Policy.JFACE_DATABINDING,
+										"Could not change value of " + object + "." + propertyDescriptor.getName(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		} finally {
 			updating = false;
 		}
@@ -114,7 +157,15 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 			}
 			return readMethod.invoke(object, null);
 		} catch (Exception e) {
-			e.printStackTrace();
+			if (BeansObservables.DEBUG) {
+				Policy
+						.getLog()
+						.log(
+								new Status(
+										IStatus.WARNING,
+										Policy.JFACE_DATABINDING,
+										"Could not read value of " + object + "." + propertyDescriptor.getName(), e)); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			return null;
 		}
 	}
@@ -129,9 +180,25 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 								new Class[] { String.class,
 										PropertyChangeListener.class });
 			} catch (SecurityException e) {
-				// best effort - ignore
+				if (BeansObservables.DEBUG) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.WARNING,
+											Policy.JFACE_DATABINDING,
+											"Could not remove listener from " + object, e)); //$NON-NLS-1$
+				}
 			} catch (NoSuchMethodException e) {
-				// best effort - ignore
+				if (BeansObservables.DEBUG) {
+					Policy
+							.getLog()
+							.log(
+									new Status(
+											IStatus.WARNING,
+											Policy.JFACE_DATABINDING,
+											"Could not remove listener from " + object, e)); //$NON-NLS-1$
+				}
 			}
 			if (removePropertyChangeListenerMethod != null) {
 				try {
@@ -139,11 +206,35 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 							new Object[] { propertyDescriptor.getName(),
 									listener });
 				} catch (IllegalArgumentException e) {
-					// best effort - ignore
+					if (BeansObservables.DEBUG) {
+						Policy
+								.getLog()
+								.log(
+										new Status(
+												IStatus.WARNING,
+												Policy.JFACE_DATABINDING,
+												"Could not remove listener from " + object, e)); //$NON-NLS-1$
+					}
 				} catch (IllegalAccessException e) {
-					// best effort - ignore
+					if (BeansObservables.DEBUG) {
+						Policy
+								.getLog()
+								.log(
+										new Status(
+												IStatus.WARNING,
+												Policy.JFACE_DATABINDING,
+												"Could not remove listener from " + object, e)); //$NON-NLS-1$
+					}
 				} catch (InvocationTargetException e) {
-					// best effort - ignore
+					if (BeansObservables.DEBUG) {
+						Policy
+								.getLog()
+								.log(
+										new Status(
+												IStatus.WARNING,
+												Policy.JFACE_DATABINDING,
+												"Could not remove listener from " + object, e)); //$NON-NLS-1$
+					}
 				}
 			}
 			// set listener to null because we are no longer listening
@@ -153,7 +244,8 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 
 	public Object getValueType() {
 		Class type = propertyDescriptor.getPropertyType();
-		if(type == Object.class && overrideType != null) type = overrideType;
+		if (type == Object.class && overrideType != null)
+			type = overrideType;
 		return type;
 	}
 }

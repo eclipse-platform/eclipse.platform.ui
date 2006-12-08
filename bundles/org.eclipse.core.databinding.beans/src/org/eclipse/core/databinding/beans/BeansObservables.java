@@ -40,6 +40,11 @@ import org.eclipse.core.internal.databinding.internal.beans.JavaBeanObservableVa
 final public class BeansObservables {
 
 	/**
+	 * 
+	 */
+	public static final boolean DEBUG = true;
+
+	/**
 	 * @param realm
 	 * @param bean
 	 * @param attributeName
