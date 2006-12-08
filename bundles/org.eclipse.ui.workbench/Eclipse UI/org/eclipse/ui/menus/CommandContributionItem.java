@@ -176,6 +176,7 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 		MenuItem newItem = new MenuItem(parent, SWT.PUSH, index);
 		newItem.setData(this);
+		newItem.setEnabled(isEnabled());
 
 		newItem.setText(label);
 
@@ -204,6 +205,7 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 		ToolItem newItem = new ToolItem(parent, SWT.PUSH, index);
 		newItem.setData(this);
+		newItem.setEnabled(isEnabled());
 
 		if (icon != null) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
@@ -241,6 +243,20 @@ public final class CommandContributionItem extends ContributionItem {
 	 * @see org.eclipse.jface.action.ContributionItem#update(java.lang.String)
 	 */
 	public void update(String id) {
+		if (widget != null) {
+			if (widget instanceof MenuItem) {
+				MenuItem item = (MenuItem) widget;
+				if (item.isEnabled() != isEnabled()) {
+					item.setEnabled(isEnabled());
+				}
+			} else if (widget instanceof ToolItem) {
+				ToolItem item = (ToolItem) widget;
+				if (item.isEnabled() != isEnabled()) {
+					item.setEnabled(isEnabled());
+				}
+			}
+		}
+		
 		if (getParent() != null) {
 			getParent().update(true);
 		}
@@ -369,5 +385,17 @@ public final class CommandContributionItem extends ContributionItem {
 		if (widget instanceof ToolItem) {
 			((ToolItem) widget).setToolTipText(text);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.action.ContributionItem#isEnabled()
+	 */
+	public boolean isEnabled() {
+		if (command != null) {
+			return command.getCommand().isEnabled();
+		}
+		return false;
 	}
 }
