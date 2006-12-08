@@ -564,7 +564,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="mnemonic" type="string">
             <annotation>
                <documentation>
-                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;&apos; character...).
+                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;amp;&apos; character...).
                </documentation>
             </annotation>
          </attribute>
@@ -623,7 +623,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
          <attribute name="mnemonic" type="string">
             <annotation>
                <documentation>
-                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;&apos; character...).
+                  The character of the Label that should be given the mnemonic affordance. This is to allow the menu system to re-define the value during translation without having to understand the various platforms&apos; conventions for menu label definition (i.e. using the &apos;&amp;amp;&apos; character...).
                </documentation>
             </annotation>
          </attribute>
@@ -663,7 +663,6 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
 &lt;p&gt;
 Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next id&apos;d separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
 &lt;/p&gt;
-
                </documentation>
             </annotation>
          </attribute>
