@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164134
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.tree;
@@ -96,9 +97,11 @@ public abstract class AbstractObservableTree extends AbstractObservable
 				update
 						.setStatus(new Status(
 								IStatus.WARNING,
-								Policy.JFACE_DATABINDING,
+								Policy.JFACE_DATABINDING, 
+								IStatus.OK,
 								BindingMessages
-										.getString(BindingMessages.INDEX_OUT_OF_RANGE)));
+										.getString(BindingMessages.INDEX_OUT_OF_RANGE), 
+										null));
 			}
 		}
 		update.done();
