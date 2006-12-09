@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164134
  ******************************************************************************/
 package org.eclipse.core.databinding.validation;
 
@@ -31,7 +32,7 @@ public class ValidationStatus extends Status {
 	 * @param exception
 	 */
 	private ValidationStatus(int severity, String message, Throwable exception) {
-		super(severity, Policy.JFACE_DATABINDING, message, exception);
+		super(severity, Policy.JFACE_DATABINDING, IStatus.OK, message, exception);
 	}
 
 	/**
@@ -41,7 +42,7 @@ public class ValidationStatus extends Status {
 	 * @param message
 	 */
 	private ValidationStatus(int severity, String message) {
-		super(severity, Policy.JFACE_DATABINDING, message);
+		super(severity, Policy.JFACE_DATABINDING,IStatus.OK, message, null);
 	}
 
 	/**

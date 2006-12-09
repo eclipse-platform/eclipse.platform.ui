@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 164134
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.internal.beans;
 
@@ -92,6 +93,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 									new Status(
 											IStatus.WARNING,
 											Policy.JFACE_DATABINDING,
+											IStatus.OK,
 											"Could not attach listener to " + object, e)); //$NON-NLS-1$
 				}
 			} catch (IllegalAccessException e) {
@@ -102,6 +104,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 									new Status(
 											IStatus.WARNING,
 											Policy.JFACE_DATABINDING,
+											IStatus.OK,
 											"Could not attach listener to " + object, e)); //$NON-NLS-1$
 				}
 			} catch (InvocationTargetException e) {
@@ -112,6 +115,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 									new Status(
 											IStatus.WARNING,
 											Policy.JFACE_DATABINDING,
+											IStatus.OK,
 											"Could not attach listener to " + object, e)); //$NON-NLS-1$
 				}
 			}
@@ -138,6 +142,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 								new Status(
 										IStatus.WARNING,
 										Policy.JFACE_DATABINDING,
+										IStatus.OK,
 										"Could not change value of " + object + "." + propertyDescriptor.getName(), e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		} finally {
@@ -164,6 +169,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 								new Status(
 										IStatus.WARNING,
 										Policy.JFACE_DATABINDING,
+										IStatus.OK,
 										"Could not read value of " + object + "." + propertyDescriptor.getName(), e)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			return null;
@@ -187,6 +193,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 									new Status(
 											IStatus.WARNING,
 											Policy.JFACE_DATABINDING,
+											IStatus.OK,
 											"Could not remove listener from " + object, e)); //$NON-NLS-1$
 				}
 			} catch (NoSuchMethodException e) {
@@ -197,6 +204,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 									new Status(
 											IStatus.WARNING,
 											Policy.JFACE_DATABINDING,
+											IStatus.OK,
 											"Could not remove listener from " + object, e)); //$NON-NLS-1$
 				}
 			}
@@ -213,6 +221,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 										new Status(
 												IStatus.WARNING,
 												Policy.JFACE_DATABINDING,
+												IStatus.OK,
 												"Could not remove listener from " + object, e)); //$NON-NLS-1$
 					}
 				} catch (IllegalAccessException e) {
@@ -223,6 +232,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 										new Status(
 												IStatus.WARNING,
 												Policy.JFACE_DATABINDING,
+												IStatus.OK,
 												"Could not remove listener from " + object, e)); //$NON-NLS-1$
 					}
 				} catch (InvocationTargetException e) {
@@ -233,6 +243,7 @@ public class JavaBeanObservableValue extends AbstractObservableValue {
 										new Status(
 												IStatus.WARNING,
 												Policy.JFACE_DATABINDING,
+												IStatus.OK,
 												"Could not remove listener from " + object, e)); //$NON-NLS-1$
 					}
 				}

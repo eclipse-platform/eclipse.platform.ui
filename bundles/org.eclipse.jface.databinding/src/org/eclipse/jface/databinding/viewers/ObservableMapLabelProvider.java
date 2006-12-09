@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164247
+ *     Brad Reynolds - bug 164134
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -17,9 +18,9 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.map.MapDiff;
-import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Image;
 
@@ -27,7 +28,7 @@ import org.eclipse.swt.graphics.Image;
  * @since 3.3
  * 
  */
-public class ObservableMapLabelProvider extends BaseLabelProvider
+public class ObservableMapLabelProvider extends LabelProvider
 		implements ILabelProvider, ITableLabelProvider {
 
 	private final IObservableMap[] attributeMaps;
