@@ -212,8 +212,9 @@ public abstract class AbstractObservable implements IObservable {
 	}
 	
 	/**
-	 * Checks the current realm for the current realm.
+	 * Asserts that the realm is the current realm.
 	 * 
+	 * @see Realm#isCurrent()
 	 * @throws AssertionFailedException if the realm is not the current realm
 	 */
 	protected void checkRealm() {

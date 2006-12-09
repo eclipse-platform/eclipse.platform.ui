@@ -19,8 +19,9 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
+import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -34,6 +35,10 @@ public class AbstractObservableTest extends TestCase {
 	protected void setUp() throws Exception {
         Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
 		observable = new ObservableStub(Realm.getDefault());
+	}
+	
+	protected void tearDown() throws Exception {
+		Realm.setDefault(null);
 	}
 	
 	public void testStaleListener() throws Exception {
@@ -163,61 +168,26 @@ public class AbstractObservableTest extends TestCase {
 		assertTrue(observable.lastListenerRemoved);
 	}
 	
-	public void testFireStaleInvalidRealm() throws Exception {		
-		RealmStub realm = new RealmStub();
-		realm.current = false;
-		observable = new ObservableStub(realm);
+	public void testFireStaleRealmChecks() throws Exception {
+		Realm.setDefault(new CurrentRealm(true));
 		
-		try {
-			observable.fireStale();
-			fail("exception should have been thrown");
-		} catch (AssertionFailedException e) {
-		}
-		
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				observable = new ObservableStub();
+				observable.fireStale();
+			}			
+		});
 	}
 	
-	public void testFireStaleCurrentRealm() throws Exception {
-		RealmStub realm = new RealmStub();
-		realm.current = true;
-		observable = new ObservableStub(realm);
+	public void testFireChangeRealmChecks() throws Exception {
+		Realm.setDefault(new CurrentRealm(true));
 		
-		try {
-			observable.fireStale();
-		} catch (AssertionFailedException e) {
-			fail("exception should not have been thrown");
-		}		
-	}
-	
-	public void testFireChangeInvalidRealm() throws Exception {
-		RealmStub realm = new RealmStub();
-		realm.current = false;
-		observable = new ObservableStub(realm);
-		
-		try {
-			observable.fireChange();
-			fail("exception should have been thrown");
-		} catch (AssertionFailedException e) {
-		}
-	}
-	
-	public void testFireChangeCurrentRealm() throws Exception {
-		RealmStub realm = new RealmStub();
-		realm.current = true;
-		observable = new ObservableStub(realm);
-		
-		try {
-			observable.fireChange();
-		} catch (AssertionFailedException e) {
-			fail("exception should not have been thrown");
-		}
-	}
-	
-	private static class RealmStub extends Realm {
-		boolean current;
-		
-		public boolean isCurrent() {
-			return current;
-		}		
+		RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				observable = new ObservableStub();
+				observable.fireChange();
+			}
+		});
 	}
 	
 	private class ChangeListener implements IChangeListener {
@@ -241,6 +211,10 @@ public class AbstractObservableTest extends TestCase {
 	}
 	
 	private static class ObservableStub extends AbstractObservable {
+		public ObservableStub() {
+			this(Realm.getDefault());
+		}
+		
 		/**
          * @param realm
          */

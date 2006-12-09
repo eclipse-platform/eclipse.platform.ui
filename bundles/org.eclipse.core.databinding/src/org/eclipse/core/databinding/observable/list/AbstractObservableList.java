@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -21,9 +22,16 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 
 /**
- * Subclasses should override at least get(int index) and size()
+ * Subclasses should override at least get(int index) and size().
+ * 
+ * <p>
+ * This class is thread safe. All state accessing methods must be invoked from
+ * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
+ * listeners may be invoked from any thread.
+ * </p>
  * 
  * @since 1.0
  * 
@@ -33,19 +41,19 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	/**
 	 * Points to an instance of IListChangeListener or a Collection of
-	 * IListChangeListener
+	 * IListChangeListener.  Access must be synchronized.
 	 */
 	private Object listChangeListeners;
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of
-	 * IChangeListener
+	 * IChangeListener.  Access must be synchronized.
 	 */
 	private Object changeListeners = null;
 
 	/**
 	 * Points to an instance of IChangeListener or a Collection of
-	 * IStaleListener
+	 * IStaleListener.  Access must be synchronized.
 	 */
 	private Object staleListeners = null;
 
@@ -71,7 +79,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		return false;
 	}
 
-	public void addListChangeListener(IListChangeListener listener) {
+	public synchronized void addListChangeListener(IListChangeListener listener) {
 		if (listChangeListeners == null) {
 			boolean hadListeners = hasListeners();
 			listChangeListeners = listener;
@@ -95,7 +103,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		listenerList.add(listener);
 	}
 
-	public void removeListChangeListener(IListChangeListener listener) {
+	public synchronized void removeListChangeListener(IListChangeListener listener) {
 
 		if (listChangeListeners == listener) {
 			listChangeListeners = null;
@@ -141,7 +149,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
-	public void addChangeListener(IChangeListener listener) {
+	public synchronized void addChangeListener(IChangeListener listener) {
 		if (changeListeners == null) {
 			boolean hadListeners = hasListeners();
 			changeListeners = listener;
@@ -165,7 +173,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		listenerList.add(listener);
 	}
 
-	public void removeChangeListener(IChangeListener listener) {
+	public synchronized void removeChangeListener(IChangeListener listener) {
 		if (changeListeners == listener) {
 			changeListeners = null;
 			if (!hasListeners()) {
@@ -186,7 +194,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
-	public void addStaleListener(IStaleListener listener) {
+	public synchronized void addStaleListener(IStaleListener listener) {
 		if (staleListeners == null) {
 			boolean hadListeners = hasListeners();
 			staleListeners = listener;
@@ -210,7 +218,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 		listenerList.add(listener);
 	}
 
-	public void removeStaleListener(IStaleListener listener) {
+	public synchronized void removeStaleListener(IStaleListener listener) {
 		if (staleListeners == listener) {
 			staleListeners = null;
 			if (!hasListeners()) {
@@ -231,7 +239,12 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
+	/**
+	 * Fires change event. Must be invoked from the current realm.
+	 */
 	protected void fireChange() {
+		checkRealm();
+
 		if (changeListeners == null) {
 			return;
 		}
@@ -250,7 +263,12 @@ public abstract class AbstractObservableList extends AbstractList implements
 		}
 	}
 
+	/**
+	 * Fires stale event. Must be invoked from the current realm.
+	 */
 	protected void fireStale() {
+		checkRealm();
+
 		if (staleListeners == null) {
 			return;
 		}
@@ -272,7 +290,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * @return true if this observable has listeners
 	 */
-	protected boolean hasListeners() {
+	protected synchronized boolean hasListeners() {
 		return changeListeners != null || staleListeners != null
 				|| listChangeListeners != null;
 	}
@@ -292,7 +310,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	/**
 	 * 
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		listChangeListeners = null;
 		changeListeners = null;
 		staleListeners = null;
@@ -418,5 +436,16 @@ public abstract class AbstractObservableList extends AbstractList implements
 
 	public Realm getRealm() {
 		return realm;
+	}
+	
+	/**
+	 * Asserts that the realm is the current realm.
+	 * 
+	 * @see Realm#isCurrent()
+	 * @throws AssertionFailedException
+	 *             if the realm is not the current realm
+	 */
+	protected void checkRealm() {
+		Assert.isTrue(realm.isCurrent());
 	}
 }

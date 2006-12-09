@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -34,8 +35,15 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	protected List wrappedList;
 
+	/**
+	 * Stale state of the list.  Access must occur in the current realm.
+	 */
 	private boolean stale = false;
 
+	/**
+	 * Points to an instance of IListChangeListener or a Collection of
+	 * IListChangeListeners.  Access must be synchronized.
+	 */
 	private Object listChangeListeners;
 
 	private Object elementType;
@@ -49,8 +57,8 @@ public abstract class ObservableList extends AbstractObservable implements
 		this.wrappedList = wrappedList;
 		this.elementType = elementType;
 	}
-	
-	public void addListChangeListener(IListChangeListener listener) {
+
+	public synchronized void addListChangeListener(IListChangeListener listener) {
 		if (listChangeListeners == null) {
 			boolean hadListeners = hasListeners();
 			listChangeListeners = listener;
@@ -74,8 +82,7 @@ public abstract class ObservableList extends AbstractObservable implements
 		listenerList.add(listener);
 	}
 
-	public void removeListChangeListener(IListChangeListener listener) {
-
+	public synchronized void removeListChangeListener(IListChangeListener listener) {
 		if (listChangeListeners == listener) {
 			listChangeListeners = null;
 			if (!hasListeners()) {
@@ -96,8 +103,8 @@ public abstract class ObservableList extends AbstractObservable implements
 		}
 	}
 
-	protected boolean hasListeners() {
-		return super.hasListeners() || listChangeListeners!=null;
+	protected synchronized boolean hasListeners() {
+		return super.hasListeners() || listChangeListeners != null;
 	}
 
 	protected void fireListChange(ListDiff diff) {
@@ -322,19 +329,26 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	/**
-	 * @return Returns the stale state.
+	 * Returns the stale state.  Must be invoked from the current realm.
+	 * 
+	 * @return stale state
 	 */
 	public boolean isStale() {
+		checkRealm();
 		return stale;
 	}
 
 	/**
+	 * Sets the stale state.  Must be invoked from the current realm.
+	 * 
 	 * @param stale
 	 *            The stale state to list. This will fire a stale event if the
 	 *            given boolean is true and this observable list was not already
 	 *            stale.
 	 */
 	public void setStale(boolean stale) {
+		checkRealm();
+
 		boolean wasStale = this.stale;
 		this.stale = stale;
 		if (!wasStale && stale) {
@@ -349,7 +363,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
 	 */
-	public void dispose() {
+	public synchronized void dispose() {
 		listChangeListeners = null;
 		super.dispose();
 	}

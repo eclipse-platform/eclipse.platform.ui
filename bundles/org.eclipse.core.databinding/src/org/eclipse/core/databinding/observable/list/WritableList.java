@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -19,7 +20,8 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
- * Mutable observable list backed by an ArrayList.
+ * Mutable observable list backed by an ArrayList. All mutators (e.g. set, add,
+ * remove, etc.) must be invoked from the current realm.
  * 
  * @since 1.0
  */
@@ -101,12 +103,14 @@ public class WritableList extends ObservableList {
 	}
 
 	public void add(int index, Object element) {
+		checkRealm();
 		wrappedList.add(index, element);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
 				true, element)));
 	}
 
 	public boolean addAll(Collection c) {
+		checkRealm();
 		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
 		int i = 0;
 		int addIndex = c.size();
@@ -120,6 +124,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public boolean addAll(int index, Collection c) {
+		checkRealm();
 		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
 		int i = 0;
 		int addIndex = index;
@@ -133,6 +138,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public boolean remove(Object o) {
+		checkRealm();
 		int index = wrappedList.indexOf(o);
 		if (index == -1) {
 			return false;
@@ -144,6 +150,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public boolean removeAll(Collection c) {
+		checkRealm();
 		List entries = new ArrayList();
 		for (Iterator it = c.iterator(); it.hasNext();) {
 			Object element = it.next();
@@ -160,6 +167,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public boolean retainAll(Collection c) {
+		checkRealm();
 		List entries = new ArrayList();
 		int removeIndex = 0;
 		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
@@ -179,6 +187,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public void clear() {
+		checkRealm();
 		List entries = new ArrayList();
 		for (Iterator it = wrappedList.iterator(); it.hasNext();) {
 			Object element = it.next();

@@ -16,25 +16,14 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractVetoableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
-import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.jface.tests.databinding.util.RealmTester;
+import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2
  */
 public class AbstractVetoableValueTest extends TestCase {
-	private RealmStub realm;
-	
-	protected void setUp() throws Exception {
-		realm = new RealmStub();
-		realm.current = true;
-	}
-	
-    /**
-     * Asserts that doSetVetoableValue is invoked.
-     * 
-     * @throws Exception
-     */
-    public void testDoSetApprovedValue() throws Exception {
+    public void testSetValueInvokesDoSetApprovedValue() throws Exception {
         class VetoableValue extends VetoableValueStub {
             int count;
             Object value;
@@ -49,7 +38,7 @@ public class AbstractVetoableValueTest extends TestCase {
             }      
         }
         
-        realm.current = true;
+        Realm realm = new CurrentRealm(true);
         VetoableValue vetoableValue = new VetoableValue(realm);
         assertEquals(0, vetoableValue.count);
         assertEquals(null, vetoableValue.value);
@@ -60,37 +49,20 @@ public class AbstractVetoableValueTest extends TestCase {
         assertEquals(value, vetoableValue.value);
     }
     
-    public void testFireValueChangingInvalidRealm() throws Exception {
-    	VetoableValueStub observable = new VetoableValueStub(realm);
-    	realm.current = false;
-    	
-    	try {
-    		observable.fireValueChanging(null);
-    		fail("exception should have been thrown");
-    	} catch (AssertionFailedException e) {
-    	}
+    public void testFireValueChangeRealmChecks() throws Exception {
+    	RealmTester.exerciseCurrent(new Runnable() {
+			public void run() {
+				VetoableValueStub observable = new VetoableValueStub();
+				observable.fireValueChanging(null);
+			}
+    	});
 	}
-    
-    public void testFireValueChangingCurrentRealm() throws Exception {
-		VetoableValueStub observable = new VetoableValueStub(realm);
-		realm.current = true;
-		
-		try {
-			observable.fireValueChanging(null);
-		} catch (AssertionFailedException e) {
-			fail("exception should not have been thrown");
-		}
-	}
-    
-    private static class RealmStub extends Realm {
-    	boolean current;
-    	
-		public boolean isCurrent() {
-			return current;
-		}    	
-    }
     
     private static class VetoableValueStub extends AbstractVetoableValue {
+    	VetoableValueStub() {
+    		this(Realm.getDefault());
+    	}
+    	
     	VetoableValueStub(Realm realm) {
     		super(realm);
     	}
