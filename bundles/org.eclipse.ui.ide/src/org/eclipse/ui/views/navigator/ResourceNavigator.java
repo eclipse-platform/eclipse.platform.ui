@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla - bug 105041
  *******************************************************************************/
 
 package org.eclipse.ui.views.navigator;
@@ -73,6 +74,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
@@ -708,7 +710,15 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         TreeViewer viewer = getTreeViewer();
         if (viewer.isExpandable(element)) {
             viewer.setExpandedState(element, !viewer.getExpandedState(element));
-        }
+		} else if (selection.size() == 1 && (element instanceof IResource)
+				&& ((IResource) element).getType() == IResource.PROJECT) {
+			OpenResourceAction ora = new OpenResourceAction(getSite()
+					.getShell());
+			ora.selectionChanged((IStructuredSelection) viewer.getSelection());
+			if (ora.isEnabled()) {
+				ora.run();
+			}
+		}
 
     }
 
