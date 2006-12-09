@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 167204
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -155,6 +156,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	public Iterator iterator() {
+		getterCalled();
 		final Iterator wrappedIterator = wrappedList.iterator();
 		return new Iterator() {
 
@@ -163,12 +165,10 @@ public abstract class ObservableList extends AbstractObservable implements
 			}
 
 			public boolean hasNext() {
-				ObservableTracker.getterCalled(ObservableList.this);
 				return wrappedIterator.hasNext();
 			}
 
 			public Object next() {
-				ObservableTracker.getterCalled(ObservableList.this);
 				return wrappedIterator.next();
 			}
 		};
@@ -231,16 +231,15 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @TrackedGetter
 	 */
     public ListIterator listIterator(int index) {
+    	getterCalled();
 		final ListIterator wrappedIterator = wrappedList.listIterator(index);
 		return new ListIterator() {
 
 			public int nextIndex() {
-				getterCalled();
 				return wrappedIterator.nextIndex();
 			}
 
 			public int previousIndex() {
-				getterCalled();
 				return wrappedIterator.previousIndex();
 			}
 
@@ -249,22 +248,18 @@ public abstract class ObservableList extends AbstractObservable implements
 			}
 
 			public boolean hasNext() {
-				getterCalled();
 				return wrappedIterator.hasNext();
 			}
 
 			public boolean hasPrevious() {
-				getterCalled();
 				return wrappedIterator.hasPrevious();
 			}
 
 			public Object next() {
-				getterCalled();
 				return wrappedIterator.next();
 			}
 
 			public Object previous() {
-				getterCalled();
 				return wrappedIterator.previous();
 			}
 

@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 167204
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -345,6 +346,7 @@ public abstract class AbstractObservableList extends AbstractList implements
 	}
 
 	public Iterator iterator() {
+		getterCalled();
 		final Iterator wrappedIterator = super.iterator();
 		return new Iterator() {
 			public void remove() {
@@ -352,12 +354,10 @@ public abstract class AbstractObservableList extends AbstractList implements
 			}
 
 			public boolean hasNext() {
-				getterCalled();
 				return wrappedIterator.hasNext();
 			}
 
 			public Object next() {
-				getterCalled();
 				return wrappedIterator.next();
 			}
 		};

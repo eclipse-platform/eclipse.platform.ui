@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 167204
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -76,7 +77,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public Object set(int index, Object element) {
-		getterCalled();
+		checkRealm();
 		Object oldElement = wrappedList.set(index, element);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
 				false, oldElement), Diffs.createListDiffEntry(index, true,
@@ -85,7 +86,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public Object remove(int index) {
-		getterCalled();
+		checkRealm();
 		Object oldElement = wrappedList.remove(index);
 		fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(index,
 				false, oldElement)));
@@ -93,7 +94,7 @@ public class WritableList extends ObservableList {
 	}
 
 	public boolean add(Object element) {
-		getterCalled();
+		checkRealm();
 		boolean added = wrappedList.add(element);
 		if (added) {
 			fireListChange(Diffs.createListDiff(Diffs.createListDiffEntry(

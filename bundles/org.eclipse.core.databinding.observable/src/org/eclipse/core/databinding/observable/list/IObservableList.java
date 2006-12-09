@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 167204
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -77,12 +78,12 @@ public interface IObservableList extends List, IObservableCollection {
     public Object[] toArray(Object a[]);
 
 	/**
-	 * @TrackedGetter because of the returned boolean
+	 * 
 	 */
     public boolean add(Object o);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
     public boolean remove(Object o);
 
@@ -92,22 +93,22 @@ public interface IObservableList extends List, IObservableCollection {
     public boolean containsAll(Collection c);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
     public boolean addAll(Collection c);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
     public boolean addAll(int index, Collection c);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
     public boolean removeAll(Collection c);
 
 	/**
-	 * @TrackedGetter
+	 *
 	 */
     public boolean retainAll(Collection c);
 
@@ -127,12 +128,12 @@ public interface IObservableList extends List, IObservableCollection {
     public Object get(int index);
 
 	/**
-	 * @TrackedGetter because of the returned object
+	 * 
 	 */
     public Object set(int index, Object element);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
     public Object remove(int index);
 

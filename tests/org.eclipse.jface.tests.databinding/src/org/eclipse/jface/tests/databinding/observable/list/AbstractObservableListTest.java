@@ -7,16 +7,20 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
+ *     Brad Reynolds - bug 167204
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.observable.list;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
+import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
 
 /**
  * @since 3.2
@@ -25,7 +29,7 @@ public class AbstractObservableListTest extends TestCase {
 	private AbstractObservableListStub list;
 
 	protected void setUp() throws Exception {
-		Realm.setDefault(new RealmTester.CurrentRealm());	
+		Realm.setDefault(new CurrentRealm(true));	
 		list = new AbstractObservableListStub();
 	}
 	
@@ -55,6 +59,32 @@ public class AbstractObservableListTest extends TestCase {
 				list.fireListChange(null);
 			}
 		});
+	}
+	
+	public void testIteratorGetterCalled() throws Exception {
+		final AbstractObservableListStub list = new  AbstractObservableListStub();
+
+		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
+			public void run() {
+				list.iterator();		
+			}
+		}, null, null);
+		
+		assertEquals("length", 1, observables.length);
+		assertEquals("observable", list, observables[0]);
+	}
+	
+	public void testListIteratorGetterCalled() throws Exception {
+		final AbstractObservableListStub list = new  AbstractObservableListStub();
+
+		IObservable[] observables = ObservableTracker.runAndMonitor(new Runnable() {
+			public void run() {
+				list.listIterator();		
+			}
+		}, null, null);
+		
+		assertEquals("length", 1, observables.length);
+		assertEquals("observable", list, observables[0]);
 	}
 
 	static class AbstractObservableListStub extends AbstractObservableList {
