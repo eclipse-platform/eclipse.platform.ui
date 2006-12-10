@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -26,6 +27,9 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public class ObservableMap extends AbstractObservable implements IObservableMap {
 
+	/**
+	 * List of {@link IMapChangeListener IMapChangeListeners}.  Access must be synchronized.
+	 */
 	private ListenerList mapChangeListeners = new ListenerList();
 	
 	protected Map wrappedMap;
@@ -49,15 +53,15 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		this.wrappedMap = wrappedMap;
 	}
 	
-	public void addMapChangeListener(IMapChangeListener listener) {
+	public synchronized void addMapChangeListener(IMapChangeListener listener) {
 		mapChangeListeners.add(listener);
 	}
 
-	public void removeMapChangeListener(IMapChangeListener listener) {
+	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
 		mapChangeListeners.remove(listener);
 	}
 
-	protected boolean hasListeners() {
+	protected synchronized boolean hasListeners() {
 		return super.hasListeners() || !mapChangeListeners.isEmpty();
 	}
 
@@ -66,6 +70,8 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	protected void fireMapChange(MapDiff diff) {
+		checkRealm();
+		
 		// fire general change event first
 		super.fireChange();
 
@@ -116,19 +122,25 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	/**
-	 * @return Returns the stale state.
+	 * Returns the stale state.  Must be invoked from the current realm.
+	 * 
+	 * @return stale state
 	 */
 	public boolean isStale() {
+		checkRealm();
 		return stale;
 	}
 
 	/**
+	 * Sets the stale state.  Must be invoked from the current realm.
+	 * 
 	 * @param stale
 	 *            The stale state to set. This will fire a stale event if the
 	 *            given boolean is true and this observable set was not already
 	 *            stale.
 	 */
 	public void setStale(boolean stale) {
+		checkRealm();
 		boolean wasStale = this.stale;
 		this.stale = stale;
 		if (!wasStale && stale) {
@@ -152,4 +164,9 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		throw new UnsupportedOperationException();
 	}
 
+	public synchronized void dispose() {
+		super.dispose();
+		
+		mapChangeListeners = null;
+	}
 }

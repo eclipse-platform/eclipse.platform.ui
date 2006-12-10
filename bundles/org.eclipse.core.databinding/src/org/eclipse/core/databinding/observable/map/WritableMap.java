@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -19,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
 /**
@@ -42,8 +42,11 @@ public class WritableMap extends ObservableMap {
 		super(realm, new HashMap());
 	}
 
+	/**
+	 * Associates the provided <code>value</code> with the <code>key</code>.  Must be invoked from the current realm.
+	 */
 	public Object put(Object key, Object value) {
-		ObservableTracker.getterCalled(this);
+		checkRealm();
 		Object result = wrappedMap.put(key, value);
 		if (result==null) {
 			fireMapChange(Diffs.createMapDiffSingleAdd(key, value));
@@ -53,8 +56,11 @@ public class WritableMap extends ObservableMap {
 		return result;
 	}
 
+	/**
+	 * Removes the value with the provide <code>key</code>.  Must be invoked from the current realm.
+	 */
 	public Object remove(Object key) {
-		ObservableTracker.getterCalled(this);
+		checkRealm();
 		Object result = wrappedMap.remove(key);
 		if (result!=null) {
 			fireMapChange(Diffs.createMapDiffSingleRemove(key, result));
@@ -62,14 +68,22 @@ public class WritableMap extends ObservableMap {
 		return result;
 	}
 
+	/**
+	 * Clears the map.  Must be invoked from the current realm.
+	 */
 	public void clear() {
+		checkRealm();
 		Map copy = new HashMap(wrappedMap.size());
 		copy.putAll(wrappedMap);
 		wrappedMap.clear();
 		fireMapChange(Diffs.createMapDiffRemoveAll(copy));
 	}
 
+	/**
+	 * Adds the provided <code>map</code>'s contents to this map.  Must be invoked from the current realm.
+	 */
 	public void putAll(Map map) {
+		checkRealm();
 		Set addedKeys = new HashSet(map.size());
 		Map changes = new HashMap(map.size());
 		for (Iterator it = map.entrySet().iterator(); it.hasNext();) {

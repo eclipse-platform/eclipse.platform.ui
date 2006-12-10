@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 164653
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -67,12 +68,12 @@ public interface IObservableMap extends Map, IObservable {
 	public Object get(Object key);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
 	public Object put(Object key, Object value);
 
 	/**
-	 * @TrackedGetter
+	 * 
 	 */
 	public Object remove(Object key);
 
