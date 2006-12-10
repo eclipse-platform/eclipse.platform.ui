@@ -149,18 +149,20 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
         BackgroundColorDecorator.color = null;
     }
     
-    public void addMenuContribution() {
+	public void addMenuContribution() {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
-		viewMenuAddition = new AbstractContributionFactory("menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions") {
-			public void createContributionItems(IMenuService menuService, List additions) {
+		viewMenuAddition = new AbstractContributionFactory(
+				"menu:org.eclipse.ui.tests.api.MenuTestHarness?after=additions") {
+			public void createContributionItems(IMenuService menuService,
+					List additions) {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX20",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						"Item X20", null);
+						null, null, "Item X20", null, null);
 				additions.add(item);
 
 				MenuManager submenu = new MenuManager("Menu X21",
@@ -168,12 +170,12 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX22",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
-						"Item X22", null);
+						null, null, "Item X22", null, null);
 				submenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX23",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						"Item X23", null);
+						null, null, "Item X23", null, null);
 				submenu.add(item);
 
 				additions.add(submenu);
@@ -181,22 +183,25 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX24",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						"Item X24", null);
+						null, null, "Item X24", null, null);
 				additions.add(item);
 			}
 
-			public void releaseContributionItems(IMenuService menuService, List items) {
+			public void releaseContributionItems(IMenuService menuService,
+					List items) {
 				// for us this is a no-op
 			}
 		};
 		menuService.addContributionFactory(viewMenuAddition);
 
-		viewToolbarAddition = new AbstractContributionFactory("toolbar:org.eclipse.ui.tests.api.MenuTestHarness") {
-			public void createContributionItems(IMenuService menuService, List additions) {
+		viewToolbarAddition = new AbstractContributionFactory(
+				"toolbar:org.eclipse.ui.tests.api.MenuTestHarness") {
+			public void createContributionItems(IMenuService menuService,
+					List additions) {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX25",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
-						"Item X25", null);
+						null, null, "Item X25", null, null);
 				additions.add(item);
 				WidgetContributionItem widget = new WidgetContributionItem(
 						"org.eclipse.ui.tests.menus.itemX26") {
@@ -204,12 +209,12 @@ public class TestPlugin extends AbstractUIPlugin implements IStartup {
 					public IWorkbenchWidget createWidget() {
 						return new TextWidget();
 					}
-
 				};
 				additions.add(widget);
 			}
 
-			public void releaseContributionItems(IMenuService menuService, List items) {
+			public void releaseContributionItems(IMenuService menuService,
+					List items) {
 				// for us this is a no-op
 			}
 		};

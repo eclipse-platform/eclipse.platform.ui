@@ -92,6 +92,10 @@ public abstract class AbstractContributionFactory {
 	 * contribute, and add them to the additions list. The menu service will
 	 * call this method at the appropriate time. It should always return new
 	 * instances of its contributions in the additions list.
+	 * <p>
+	 * This method is not meant to be called by clients. It will be called by
+	 * the menu service at the appropriate time.
+	 * </p>
 	 * 
 	 * @param menuService
 	 *            the service for callbacks, like accessing
@@ -110,6 +114,10 @@ public abstract class AbstractContributionFactory {
 	 * This method tells the factory that the menu service is finished with the
 	 * IContributionItems that were created. If the factory caches them
 	 * internally, it is time to remove them.
+	 * <p>
+	 * This method is not meant to be called by clients. It will be called by
+	 * the menu service at the appropriate time.
+	 * </p>
 	 * 
 	 * @param menuService
 	 *            the service for callbacks

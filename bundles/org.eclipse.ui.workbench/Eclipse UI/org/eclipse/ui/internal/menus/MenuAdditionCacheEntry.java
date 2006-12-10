@@ -52,13 +52,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	Map iciToConfigElementMap = new HashMap();
 
 	/**
-	 * If an {@link IConfigurationElement} is in the Set then we have
-	 * already tried (and failed) to load the associated ExecutableExtension.
+	 * If an {@link IConfigurationElement} is in the Set then we have already
+	 * tried (and failed) to load the associated ExecutableExtension.
 	 * 
-	 *  This is used to prevent multiple retries which would spam the Log.
+	 * This is used to prevent multiple retries which would spam the Log.
 	 */
 	Set failedLoads = new HashSet();
-	
+
 	/**
 	 * Maps an IConfigurationElement to its parsed Expression
 	 */
@@ -204,25 +204,26 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// executable extension then skip this addition.
 		if (failedLoads.contains(dynamicAddition))
 			return null;
-		
+
 		// Attempt to load the addition's EE (creates a new instance)
 		final AbstractDynamicContribution loadedDynamicContribution = (AbstractDynamicContribution) Util
 				.safeLoadExecutableExtension(dynamicAddition,
-				IWorkbenchRegistryConstants.ATT_CLASS,
-				AbstractDynamicContribution.class);
+						IWorkbenchRegistryConstants.ATT_CLASS,
+						AbstractDynamicContribution.class);
 
 		// Cache failures
 		if (loadedDynamicContribution == null) {
 			failedLoads.add(loadedDynamicContribution);
 			return null;
 		}
-		
+
 		// Return a CompoundContribution item wrapping the extension
 		return new CompoundContributionItem(getId(dynamicAddition)) {
 			protected IContributionItem[] getContributionItems() {
 				List dynamicItems = new ArrayList();
 				loadedDynamicContribution.createContributionItems(dynamicItems);
-				return (IContributionItem[]) dynamicItems.toArray(new IContributionItem[dynamicItems.size()]);
+				return (IContributionItem[]) dynamicItems
+						.toArray(new IContributionItem[dynamicItems.size()]);
 			}
 		};
 	}
@@ -236,19 +237,19 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		// executable extension then skip this addirion.
 		if (failedLoads.contains(widgetAddition))
 			return null;
-		
+
 		// Attempt to load the addition's EE (creates a new instance)
 		final IWorkbenchWidget loadedWidget = (IWorkbenchWidget) Util
 				.safeLoadExecutableExtension(widgetAddition,
-				IWorkbenchRegistryConstants.ATT_CLASS,
-				IWorkbenchWidget.class);
+						IWorkbenchRegistryConstants.ATT_CLASS,
+						IWorkbenchWidget.class);
 
 		// Cache failures
 		if (loadedWidget == null) {
 			failedLoads.add(widgetAddition);
 			return null;
 		}
-		
+
 		return new WidgetContributionItem(getId(widgetAddition)) {
 			public IWorkbenchWidget createWidget() {
 				return loadedWidget;
@@ -265,8 +266,8 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			final IConfigurationElement itemAddition) {
 		return new CommandContributionItem(getId(itemAddition),
 				getCommandId(itemAddition), getParameters(itemAddition),
-				getIconDescriptor(itemAddition), getLabel(itemAddition),
-				getTooltip(itemAddition));
+				getIconDescriptor(itemAddition), null, null,
+				getLabel(itemAddition), null, getTooltip(itemAddition));
 		// return new CommandContributionItem(getId(itemAddition),
 		// itemAddition);
 	}

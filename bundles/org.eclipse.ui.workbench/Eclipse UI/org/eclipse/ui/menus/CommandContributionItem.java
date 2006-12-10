@@ -79,6 +79,12 @@ public final class CommandContributionItem extends ContributionItem {
 
 	private String tooltip;
 
+	private final ImageDescriptor disabledIcon;
+
+	private final ImageDescriptor hoverIcon;
+
+	private final String mnemonic;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -94,17 +100,29 @@ public final class CommandContributionItem extends ContributionItem {
 	 *            definition.
 	 * @param icon
 	 *            An icon for this item. May be <code>null</code>.
+	 * @param disabledIcon
+	 *            A disabled icon for this item. May be <code>null</code>.
+	 * @param hoverIcon
+	 *            A hover icon for this item. May be <code>null</code>.
 	 * @param label
 	 *            A label for this item. May be <code>null</code>.
+	 * @param mnemonic
+	 *            A mnemonic for this item to be applied to the label. May be
+	 *            <code>null</code>.
 	 * @param tooltip
 	 *            A tooltip for this item. May be <code>null</code>. Tooltips
 	 *            are currently only valid for toolbar contributions.
 	 */
 	public CommandContributionItem(String id, String commandId, Map parameters,
-			ImageDescriptor icon, String label, String tooltip) {
+			ImageDescriptor icon, ImageDescriptor disabledIcon,
+			ImageDescriptor hoverIcon, String label, String mnemonic,
+			String tooltip) {
 		super(id);
 		this.icon = icon;
+		this.disabledIcon = disabledIcon;
+		this.hoverIcon = hoverIcon;
 		this.label = label;
+		this.mnemonic = mnemonic;
 		this.tooltip = tooltip;
 		commandService = (ICommandService) PlatformUI.getWorkbench()
 				.getService(ICommandService.class);
@@ -178,12 +196,16 @@ public final class CommandContributionItem extends ContributionItem {
 		newItem.setData(this);
 		newItem.setEnabled(isEnabled());
 
-		newItem.setText(label);
+		String text = label;
+		if (mnemonic != null) {
+			// convert label to have mnemonic
+		}
+		newItem.setText(text);
 
 		if (icon != null) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
 					.getResources());
-			newItem.setImage(m.createImage(icon));
+			newItem.setImage(icon == null ? null : m.createImage(icon));
 			disposeOldImages();
 			localResourceManager = m;
 		}
@@ -210,7 +232,11 @@ public final class CommandContributionItem extends ContributionItem {
 		if (icon != null) {
 			LocalResourceManager m = new LocalResourceManager(JFaceResources
 					.getResources());
-			newItem.setImage(m.createImage(icon));
+			newItem.setDisabledImage(disabledIcon == null ? null : m
+					.createImage(disabledIcon));
+			newItem.setHotImage(hoverIcon == null ? null : m
+					.createImage(hoverIcon));
+			newItem.setImage(icon == null ? null : m.createImage(icon));
 			disposeOldImages();
 			localResourceManager = m;
 		} else if (label != null) {
@@ -256,7 +282,7 @@ public final class CommandContributionItem extends ContributionItem {
 				}
 			}
 		}
-		
+
 		if (getParent() != null) {
 			getParent().update(true);
 		}

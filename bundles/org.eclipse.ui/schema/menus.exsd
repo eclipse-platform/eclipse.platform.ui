@@ -132,7 +132,7 @@ See the documentation for the &apos;locationURI&apos; attribute of &apos;menuAdd
       </annotation>
       <complexType>
          <sequence>
-            <element ref="class"/>
+            <element ref="class" minOccurs="0" maxOccurs="1"/>
             <element ref="visibleWhen" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -553,6 +553,7 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
             <element ref="item" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="widget" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="separator" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="dynamicContribution" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string">
             <annotation>
