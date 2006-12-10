@@ -1485,8 +1485,14 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// time to wipe our our populate
 			IMenuService menuService = (IMenuService) workbench
 					.getService(IMenuService.class);
-			menuService.releaseContributions(((ContributionManager) getActionBars()
-					.getMenuManager()));
+			menuService
+					.releaseContributions(((ContributionManager) getActionBars()
+							.getMenuManager()));
+			ICoolBarManager coolbar = getActionBars().getCoolBarManager();
+			if (coolbar != null) {
+				menuService
+						.releaseContributions(((ContributionManager) coolbar));
+			}
 
 			getActionBarAdvisor().dispose();
 			getWindowAdvisor().dispose();
@@ -3082,8 +3088,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			// 3.3 start
 			final IMenuService menuService = (IMenuService) serviceLocator
 					.getService(IMenuService.class);
-			menuService.populateContributionManager((ContributionManager) getActionBars()
-					.getMenuManager(), "menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$
+			menuService.populateContributionManager(
+					(ContributionManager) getActionBars().getMenuManager(),
+					"menu:org.eclipse.ui.main.menu"); //$NON-NLS-1$
+			ICoolBarManager coolbar = getActionBars().getCoolBarManager();
+			if (coolbar != null) {
+				menuService.populateContributionManager(
+						(ContributionManager) coolbar,
+						"toolbar:org.eclipse.ui.main.toolbar"); //$NON-NLS-1$
+			}
 			// 3.3 end
 		} finally {
 			workbench.largeUpdateEnd();

@@ -21,6 +21,7 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.util.Util;
@@ -144,8 +145,10 @@ public final class WorkbenchMenuService implements IMenuService {
 		}
 		caches.add(factory);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	public void removeContributionFactory(AbstractContributionFactory factory) {
@@ -229,9 +232,20 @@ public final class WorkbenchMenuService implements IMenuService {
 		IContributionItem[] curItems = mgr.getItems();
 		for (int i = 0; i < curItems.length; i++) {
 			if (curItems[i] instanceof ContributionManager) {
-				IContributionItem menuItem = curItems[i];
-				populateContributionManager((ContributionManager) curItems[i],
-						contributionLocation.getScheme() + ":" + menuItem.getId()); //$NON-NLS-1$
+				String id = curItems[i].getId();
+				if (id != null && id.length() > 0) {
+					populateContributionManager(
+							(ContributionManager) curItems[i],
+							contributionLocation.getScheme() + ":" + id); //$NON-NLS-1$
+				}
+			} else if (curItems[i] instanceof IToolBarContributionItem) {
+				IToolBarContributionItem tbci = (IToolBarContributionItem) curItems[i];
+				if (tbci.getId() != null && tbci.getId().length() > 0) {
+					populateContributionManager((ContributionManager) tbci
+							.getToolBarManager(), contributionLocation
+							.getScheme()
+							+ ":" + tbci.getId()); //$NON-NLS-1$
+				}
 			}
 		}
 	}
