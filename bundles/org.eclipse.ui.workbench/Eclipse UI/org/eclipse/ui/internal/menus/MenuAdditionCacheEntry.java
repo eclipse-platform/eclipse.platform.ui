@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -200,7 +201,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createSeparatorAdditionContribution(
 			final IConfigurationElement sepAddition) {
-		return new SeparatorContributionItem(getId(sepAddition), sepAddition);
+		Separator sep = new Separator(getId(sepAddition));
+		sep.setVisible(isSeparatorVisible(sepAddition));
+		return sep;
 	}
 
 	/**
