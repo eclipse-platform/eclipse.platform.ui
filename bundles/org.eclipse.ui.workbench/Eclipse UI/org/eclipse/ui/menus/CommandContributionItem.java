@@ -261,6 +261,16 @@ public final class CommandContributionItem extends ContributionItem {
 				MenuItem item = (MenuItem) widget;
 
 				String text = label;
+				if (text == null) {
+					if (command != null) {
+						try {
+							text = command.getCommand().getName();
+						} catch (NotDefinedException e) {
+							WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
+									+ getId(), e);
+						}
+					}
+				}
 				if (mnemonic != null) {
 					// convert label to have mnemonic
 				}
@@ -297,9 +307,23 @@ public final class CommandContributionItem extends ContributionItem {
 
 				if (tooltip != null)
 					item.setToolTipText(tooltip);
-				else if (label != null)
-					item.setToolTipText(label);
-				
+				else {
+					String text = label;
+					if (text == null) {
+						if (command != null) {
+							try {
+								text = command.getCommand().getName();
+							} catch (NotDefinedException e) {
+								WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
+										+ getId(), e);
+							}
+						}
+					}
+					if (text != null) {
+						item.setToolTipText(text);
+					}
+				}
+
 				if (item.isEnabled() != isEnabled()) {
 					item.setEnabled(isEnabled());
 				}
