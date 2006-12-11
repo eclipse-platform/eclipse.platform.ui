@@ -498,8 +498,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			return;
 		if (fParent != null)
 			fParent.setTitleArgument(message);
-			
+		
 		refresh(getRoot());
+		// Setting the auto-expand level doesn't do anything for refreshes
+		expandToLevel(3);
 	}
 	
 	/**
