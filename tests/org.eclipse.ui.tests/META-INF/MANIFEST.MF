@@ -21,7 +21,10 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.test.performance,
  org.eclipse.core.tests.harness,
  org.eclipse.ui.tests.harness,
- org.eclipse.core.filesystem
+ org.eclipse.core.filesystem,
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.jface.databinding
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.ui.tests.TestPlugin
 Export-Package: org.eclipse.ui.tests.menus

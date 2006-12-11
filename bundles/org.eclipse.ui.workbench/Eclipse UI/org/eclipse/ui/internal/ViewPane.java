@@ -40,7 +40,6 @@ import org.eclipse.ui.presentations.StackPresentation;
  * TODO: Delete ViewPane and EditorPane, and make PartPane non-abstract.
  */
 public class ViewPane extends PartPane {
-    private boolean busy = false;
 
     // create initially toolbarless bar manager so that actions may be added in the 
     // init method of the view.
@@ -546,25 +545,6 @@ public class ViewPane extends PartPane {
         }
 
         return toolbarManager.getItemCount() > 0;
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see org.eclipse.ui.internal.PartPane#setBusy(boolean)
-     */
-    public void setBusy(boolean isBusy) {
-        if (isBusy != busy) {
-            busy = isBusy;
-            firePropertyChange(IPresentablePart.PROP_BUSY);
-        }
-    }
-
-    /**
-     * Return the busy state of the receiver.
-     * @return boolean
-     */
-    public boolean isBusy() {
-        return busy;
     }
 
     /* (non-Javadoc)

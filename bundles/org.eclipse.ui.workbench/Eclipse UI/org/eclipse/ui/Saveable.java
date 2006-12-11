@@ -13,7 +13,16 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.InternalSaveable;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.progress.IJobRunnable;
 
 /**
  * A <code>Saveable</code> represents a unit of saveability, e.g. an editable
@@ -32,17 +41,25 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @see ISaveablesSource
  * @since 3.2
  */
-public abstract class Saveable {
-	
+public abstract class Saveable extends InternalSaveable {
+
+	private Cursor waitCursor;
+	private Cursor originalCursor;
+
 	/**
-	 * Attempts to show this saveable in the given page and returns <code>true</code>
-	 * on success. The default implementation does nothing and returns <code>false</code>.
+	 * Attempts to show this saveable in the given page and returns
+	 * <code>true</code> on success. The default implementation does nothing
+	 * and returns <code>false</code>.
 	 * 
-	 * @param page the workbench page in which to show this saveable  
+	 * @param page
+	 *            the workbench page in which to show this saveable
 	 * @return <code>true</code> if this saveable is now visible to the user
 	 * @since 3.3
 	 */
 	public boolean show(IWorkbenchPage page) {
+		if (page == null) {
+			// I wish it was easier to avoid warnings about unused parameters
+		}
 		return false;
 	}
 
@@ -133,13 +150,156 @@ public abstract class Saveable {
 	 * </p>
 	 * 
 	 * <pre>
-	 *   int PRIME = 31;
-	 *   int hash = ...; // compute the &quot;normal&quot; hash code, e.g. based on some identifier unique within the defining plug-in
-	 *   return hash * PRIME + MY_PLUGIN_ID.hashCode();
+	 *     int PRIME = 31;
+	 *     int hash = ...; // compute the &quot;normal&quot; hash code, e.g. based on some identifier unique within the defining plug-in
+	 *     return hash * PRIME + MY_PLUGIN_ID.hashCode();
 	 * </pre>
 	 * 
 	 * @return a hash code
 	 */
 	public abstract int hashCode();
 
+	/**
+	 * Saves this saveable, or prepares this saveable for a background save
+	 * operation. Returns null if this saveable has been successfully saved, or
+	 * a job runnable that needs to be run to complete the save in the
+	 * background. This method is called in the UI thread. If this saveable
+	 * supports saving in the background, it should do only minimal work.
+	 * However, since the job runnable returned by this method (if any) will not
+	 * run on the UI thread, this method should copy any state that can only be
+	 * accessed from the UI thread so that the job runnable will be able to
+	 * access it.
+	 * <p>
+	 * The supplied shell provider can be used from within this method and from
+	 * within the job runnable for the purpose of parenting dialogs. Care should
+	 * be taken not to open dialogs gratuitously and only if user input is
+	 * required for cases where the save cannot otherwise proceed - note that in
+	 * any given save operation, many saveable objects may be saved at the same
+	 * time. In particular, errors should be signaled by throwing an exception,
+	 * or if an error occurs while running the job runnable, an error status
+	 * should be returned.
+	 * </p>
+	 * <p>
+	 * If the foreground part of the save is cancelled through user action, or
+	 * for any other reason, the part should invoke <code>setCancelled</code>
+	 * on the <code>IProgressMonitor</code> to inform the caller. If the
+	 * background part of the save is cancelled, the job should return a
+	 * {@link IStatus#CANCEL} status.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided by
+	 * the given progress monitor.
+	 * </p>
+	 * <p>
+	 * The default implementation of this method calls
+	 * {@link #doSave(IProgressMonitor)} and returns <code>null</code>.
+	 * </p>
+	 * 
+	 * @param monitor
+	 *            a progress monitor used for reporting progress and
+	 *            cancellation
+	 * @param shellProvider
+	 *            an object that can provide a shell for parenting dialogs
+	 * @return <code>null</code> if this saveable has been saved successfully,
+	 *         or a job runnable that needs to be run to complete the save in
+	 *         the background.
+	 * 
+	 * @since 3.3
+	 */
+	public IJobRunnable doSave(IProgressMonitor monitor,
+			IShellProvider shellProvider) throws CoreException {
+		doSave(monitor);
+		return null;
+	}
+
+	/**
+	 * Disables the UI of the given parts containing this saveable if necessary.
+	 * This method is not intended to be called by clients. A corresponding call
+	 * to
+	 * <p>
+	 * Saveables that can be saved in the background should ensure that the user
+	 * cannot make changes to their data from the UI, for example by disabling
+	 * controls, unless they are prepared to handle this case. This method is
+	 * called on the UI thread after a job runnable has been returned from
+	 * {@link #doSave(IProgressMonitor, IShellProvider)} and before
+	 * spinning the event loop. The <code>closing</code> flag indicates that
+	 * this saveable is currently being saved in response to closing a workbench
+	 * part, in which case further changes to this saveable through the UI must
+	 * be prevented.
+	 * </p>
+	 * <p>
+	 * The default implementation calls setEnabled(false) on the given parts'
+	 * composites.
+	 * </p>
+	 * 
+	 * @param parts
+	 *            the workbench parts containing this saveable
+	 * @param closing
+	 *            a boolean flag indicating whether the save was triggered by a
+	 *            request to close a workbench part, and all of the given parts
+	 *            will be closed after the save operation finishes successfully.
+	 * 
+	 * @since 3.3
+	 */
+	public void disableUI(IWorkbenchPart[] parts, boolean closing) {
+		for (int i = 0; i < parts.length; i++) {
+			IWorkbenchPart workbenchPart = parts[i];
+			Composite paneComposite = (Composite) ((PartSite) workbenchPart
+					.getSite()).getPane().getControl();
+			Control[] paneChildren = paneComposite.getChildren();
+			Composite toDisable = ((Composite) paneChildren[0]);
+			toDisable.setEnabled(false);
+			if (waitCursor == null) {
+				waitCursor = new Cursor(workbenchPart.getSite().getWorkbenchWindow().getShell().getDisplay(), SWT.CURSOR_WAIT);
+			}
+			originalCursor = paneComposite.getCursor();
+			paneComposite.setCursor(waitCursor);
+		}
+	}
+
+	/**
+	 * Enables the UI of the given parts containing this saveable after a
+	 * background save operation has finished. This method is not intended to be
+	 * called by clients.
+	 * <p>
+	 * The default implementation calls setEnabled(true) on the given parts'
+	 * composites.
+	 * </p>
+	 * 
+	 * @param parts
+	 *            the workbench parts containing this saveable
+	 * 
+	 * @since 3.3
+	 */
+	public void enableUI(IWorkbenchPart[] parts) {
+		for (int i = 0; i < parts.length; i++) {
+			IWorkbenchPart workbenchPart = parts[i];
+			Composite paneComposite = (Composite) ((PartSite) workbenchPart
+					.getSite()).getPane().getControl();
+			Control[] paneChildren = paneComposite.getChildren();
+			Composite toEnable = ((Composite) paneChildren[0]);
+			paneComposite.setCursor(originalCursor);
+			if (waitCursor!=null && !waitCursor.isDisposed()) {
+				waitCursor.dispose();
+				waitCursor = null;
+			}
+			toEnable.setEnabled(true);
+		}
+	}
+
+	/**
+	 * EXPERIMENTAL / TEMPORARY: This method will very likely be removed before
+	 * 3.3 M5. As of 3.3 M4, clients must override this method and return true
+	 * if their implementation of
+	 * {@link #doSave(IProgressMonitor, IShellProvider)} may return a non-null
+	 * result.  The default implementation returns false.
+	 * 
+	 * @return <code>true</code> if this saveable may return a non-null value
+	 *         from {@link #doSave(IProgressMonitor, IShellProvider)}.
+	 * 
+	 * @since 3.3
+	 */
+	public boolean supportsBackgroundSave() {
+		return false;
+	}
 }

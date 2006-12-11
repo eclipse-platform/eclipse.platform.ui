@@ -2859,6 +2859,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	private ListenerList actionSetListeners = null;
 
+	private ListenerList backgroundSaveListeners = new ListenerList(ListenerList.IDENTITY);
+
 	private final void fireActionSetsChanged() {
 		if (actionSetListeners != null) {
 			final Object[] listeners = actionSetListeners.getListeners();
@@ -3675,5 +3677,21 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (getWindowConfigurer().getShowPerspectiveBar())
 			setPerspectiveBarVisible(!perspectivebarVisible);
 		getShell().layout();
+	}
+
+	/*package*/ void addBackgroundSaveListener(IBackgroundSaveListener listener) {
+		backgroundSaveListeners.add(listener);
+	}
+	
+	/*package*/ void fireBackgroundSaveStarted() {
+		Object[] listeners = backgroundSaveListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			IBackgroundSaveListener listener = (IBackgroundSaveListener) listeners[i];
+			listener.handleBackgroundSaveStarted();
+		}
+	}
+
+	/*package*/ void removeBackgroundSaveListener(IBackgroundSaveListener listener) {
+		backgroundSaveListeners.remove(listener);
 	}
 }

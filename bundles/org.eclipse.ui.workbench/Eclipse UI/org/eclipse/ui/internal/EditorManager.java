@@ -35,7 +35,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -1105,7 +1104,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @return <code>true</code> on success, <code>false</code> if the user
 	 *         canceled the save
 	 */
-	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
+	public static boolean saveAll(List dirtyParts, boolean confirm, final boolean closing,
 				boolean addNonPartSources, final IRunnableContext runnableContext, final IShellProvider shellProvider) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
@@ -1205,6 +1204,7 @@ public class EditorManager implements IExtensionChangeHandler {
             if (modelsToSave.isEmpty()) {
 				return true;
 			}
+			SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
             // Use a simpler dialog if there's only one
             if (modelsToSave.size() == 1) {
             	Saveable model = (Saveable) modelsToSave.get(0);
@@ -1276,11 +1276,7 @@ public class EditorManager implements IExtensionChangeHandler {
 						monitor.worked(1);
 						continue;
 					}
-					try {
-						model.doSave(new SubProgressMonitor(monitorWrap, 1));
-					} catch (CoreException e) {
-						ErrorDialog.openError(shellProvider.getShell(), WorkbenchMessages.Error, e.getMessage(), e.getStatus());
-					}
+					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), shellProvider, closing);
 					if (monitorWrap.isCanceled()) {
 						break;
 					}
@@ -1294,7 +1290,7 @@ public class EditorManager implements IExtensionChangeHandler {
 				WorkbenchMessages.Save_All, progressOp, runnableContext, shellProvider);
 	}
 
-    /**
+	/**
 	 * For each part (view or editor) in the given list, attempts to convert it
 	 * to one or more saveable models. Duplicate models are removed. If closing
 	 * is true, then models that will remain open in parts other than the given

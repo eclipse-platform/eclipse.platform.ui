@@ -663,6 +663,14 @@
             icon="icons/mockeditorpart1.gif"
             id="org.eclipse.ui.tests.multipageeditor.MultiVariablePageEditor"
             name="Multi Variable Page Editor"/>
+      <editor
+            class="org.eclipse.ui.tests.manual.TestBackgroundSaveEditor"
+            default="false"
+            extensions="background"
+            icon="icons/binary_co.gif"
+            id="org.eclipse.ui.tests.manual.TestBackgroundSaveEditor"
+            name="TestBackgroundSaveEditor">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

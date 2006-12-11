@@ -21,11 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
@@ -417,6 +415,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			final IWorkbenchWindow window, final boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
+			SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
 
 			IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 			boolean dontPrompt = stillOpenElsewhere && !apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN);
@@ -555,13 +554,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						monitor.worked(1);
 						continue;
 					}
-					try {
-						model.doSave(new SubProgressMonitor(monitorWrap, 1));
-					} catch (CoreException e) {
-						ErrorDialog.openError(window.getShell(),
-								WorkbenchMessages.Error, e.getMessage(), e
-										.getStatus());
-					}
+					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), (WorkbenchWindow)window, true);
 					if (monitorWrap.isCanceled())
 						break;
 				}
@@ -741,6 +734,21 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	public ISaveablesSource[] getNonPartSources() {
 		return (ISaveablesSource[]) nonPartSources
 				.toArray(new ISaveablesSource[nonPartSources.size()]);
+	}
+
+	/**
+	 * @param model
+	 */
+	public IWorkbenchPart[] getPartsForSaveable(Saveable model) {
+		List result = new ArrayList();
+		for (Iterator it = modelMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			Set values = (Set) entry.getValue();
+			if (values.contains(model) && entry.getKey() instanceof IWorkbenchPart) {
+				result.add(entry.getKey());
+			}
+		}
+		return (IWorkbenchPart[]) result.toArray(new IWorkbenchPart[result.size()]);
 	}
 
 }

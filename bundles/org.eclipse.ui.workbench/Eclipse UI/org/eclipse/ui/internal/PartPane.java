@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.dnd.SwtUtil;
 import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
  * Provides the common behavior for both views
@@ -93,6 +94,8 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
         }
 
     };
+
+	private boolean busy;
 
     public static class Sashes {
         public Sash left;
@@ -491,7 +494,10 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
      * Set the busy state of the pane.
      */
     public void setBusy(boolean isBusy) {
-        //Do nothing by default
+        if (isBusy != busy) {
+            busy = isBusy;
+            firePropertyChange(IPresentablePart.PROP_BUSY);
+        }
     }
 
     /**
@@ -524,7 +530,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
     }
     
     public boolean isBusy() {
-        return false;
+        return busy;
     }
 
     /**

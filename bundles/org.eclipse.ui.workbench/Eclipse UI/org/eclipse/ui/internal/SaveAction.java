@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Workbench common <code>Save</code> action.
  */
-public class SaveAction extends BaseSaveAction {
+public class SaveAction extends BaseSaveAction implements IBackgroundSaveListener {
 
     /**
      * Create an instance of this class
@@ -38,6 +38,12 @@ public class SaveAction extends BaseSaveAction {
         setDisabledImageDescriptor(WorkbenchImages
                 .getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_SAVE_EDIT_DISABLED));
         setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
+        ((WorkbenchWindow)window).addBackgroundSaveListener(this);
+    }
+    
+    public void dispose() {
+    	super.dispose();
+    	((WorkbenchWindow)getWorkbenchWindow()).removeBackgroundSaveListener(this);
     }
 
     /* (non-Javadoc)
@@ -88,4 +94,8 @@ public class SaveAction extends BaseSaveAction {
         }
         setEnabled(saveable != null && saveable.isDirty());
     }
+
+	public void handleBackgroundSaveStarted() {
+		updateState();
+	}
 }
