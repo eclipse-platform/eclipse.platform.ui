@@ -11,24 +11,22 @@
  */
 package org.eclipse.core.databinding.conversion;
 
-
-
-
 /**
  * ConvertString2Byte.
  */
 public class ConvertString2Byte extends ConvertString2BytePrimitive {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.binding.converter.IConverter#convert(java.lang.Object)
 	 */
 	public Object convert(Object source) {
 		String sourceString = (String) source;
 		if ("".equals(sourceString.trim())) { //$NON-NLS-1$
 			return null;
-		} else {
-			return super.convert(source);
-        }
+		}
+		return super.convert(source);
 	}
 
 	public Object getToType() {

@@ -12,7 +12,11 @@
 package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Data binding has three concerns, the target, the model, and the data flow
@@ -21,9 +25,55 @@ import org.eclipse.core.databinding.validation.IValidator;
  * model.
  * 
  * @since 1.0
- *
+ * 
  */
 public class BindSpec {
+
+	/**
+	 * @since 3.3
+	 * 
+	 */
+	static class DefaultValidator implements IValidator {
+		public IStatus validate(Object value) {
+			return Status.OK_STATUS;
+		}
+	}
+
+	/**
+	 * @since 3.3
+	 * 
+	 */
+	static class DefaultConverter implements IConverter {
+		/**
+		 * 
+		 */
+		private final Object toType;
+		/**
+		 * 
+		 */
+		private final Object fromType;
+
+		/**
+		 * @param fromType
+		 * @param toType
+		 */
+		DefaultConverter(Object fromType, Object toType) {
+			this.toType = toType;
+			this.fromType = fromType;
+		}
+
+		public Object convert(Object fromObject) {
+			return fromObject;
+		}
+
+		public Object getFromType() {
+			return fromType;
+		}
+
+		public Object getToType() {
+			return toType;
+		}
+	}
 
 	private IValidator domainValidator;
 
@@ -32,7 +82,7 @@ public class BindSpec {
 	private Integer modelUpdatePolicy;
 
 	private IValidator partialTargetValidator;
-	
+
 	private IConverter targetToModelConverter;
 
 	private Integer targetUpdatePolicy;
@@ -108,7 +158,7 @@ public class BindSpec {
 	}
 
 	/**
-	 * @return a validator for validation of partial target values 
+	 * @return a validator for validation of partial target values
 	 */
 	public IValidator getPartialTargetValidator() {
 		return partialTargetValidator;
@@ -250,7 +300,7 @@ public class BindSpec {
 		this.validatePolicy = validatePolicy;
 		return this;
 	}
-	
+
 	/**
 	 * Sets the validator.
 	 * 
@@ -259,9 +309,38 @@ public class BindSpec {
 	 *            validators.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public BindSpec setValidator(IValidator validator) {
+	public BindSpec setTargetValidator(IValidator validator) {
 		targetValidator = validator;
 		return this;
+	}
+
+	/**
+	 * Fills any values not explicitly set with defaults. This implementation of
+	 * {@link #fillBindSpecDefaults(IObservableValue, IObservableValue)} creates
+	 * validators that always return {@link Status#OK_STATUS}, and converters
+	 * that perform no conversion.
+	 * 
+	 * @param target
+	 * @param model
+	 */
+	protected void fillBindSpecDefaults(IObservable target, IObservable model) {
+		if (getTargetValidator() == null) {
+			setTargetValidator(new DefaultValidator());
+		}
+		if (getPartialTargetValidator() == null) {
+			setPartialTargetValidator(new DefaultValidator());
+		}
+		if (getDomainValidator() == null) {
+			setDomainValidator(new DefaultValidator());
+		}
+		if (getModelToTargetConverter() == null) {
+			setModelToTargetConverter(new DefaultConverter(Object.class,
+					Object.class));
+		}
+		if (getTargetToModelConverter() == null) {
+			setTargetToModelConverter(new DefaultConverter(Object.class,
+					Object.class));
+		}
 	}
 
 }

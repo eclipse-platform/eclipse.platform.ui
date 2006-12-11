@@ -70,7 +70,6 @@ public class WorkQueue {
 
             next.run();
         }
-        ;
     }
 
     /**

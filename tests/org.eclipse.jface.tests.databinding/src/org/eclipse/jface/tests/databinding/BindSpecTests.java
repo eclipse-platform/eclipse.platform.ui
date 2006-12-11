@@ -50,7 +50,7 @@ public class BindSpecTests extends TestCase {
 		DefaultBindSpec spec = new DefaultBindSpec();
 
 		IValidator v3 = new Validator();
-		spec.setValidator(v3);
+		spec.setTargetValidator(v3);
 		assertSame(v3, spec.getTargetValidator());
 	}
 
@@ -61,7 +61,7 @@ public class BindSpecTests extends TestCase {
 	 */
 	public void testGetNullValidator() {
 		DefaultBindSpec spec = new DefaultBindSpec();
-		spec.setValidator(null);
+		spec.setTargetValidator(null);
 		assertNull(spec.getTargetValidator());
 	}
 

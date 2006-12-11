@@ -14,13 +14,12 @@ package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.Method;
 
-import org.eclipse.core.databinding.BindSupportFactory;
-import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.validation.IValidator;
 
 /**
- * A BindSupportFactory that will automatically grab validators from an object's
+ * A BindSpec that will automatically grab validators from an object's
  * properties, if a get&lt;PropertyName>Validator method is defined. Makes it
  * easy to associate validators with the properties that they are responsible
  * for validating.
@@ -32,13 +31,7 @@ import org.eclipse.core.databinding.validation.IValidator;
  * 
  * @since 3.2
  */
-public class CustomBeanBindSupportFactory extends BindSupportFactory {
-
-	private final DataBindingContext parentContext;
-
-	public CustomBeanBindSupportFactory(DataBindingContext parentContext) {
-		this.parentContext = parentContext;
-	}
+public class CustomBeanBindSpec extends DefaultBindSpec {
 
 	public IConverter createConverter(Object fromType, Object toType) {
 		if (fromType instanceof CustomBeanModelType) {
@@ -49,7 +42,7 @@ public class CustomBeanBindSupportFactory extends BindSupportFactory {
 			CustomBeanModelType customBeanModelType = (CustomBeanModelType) toType;
 			toType = customBeanModelType.getType();
 		}
-		return parentContext.createConverter(fromType, toType);
+		return super.createConverter(fromType, toType);
 	}
 
 	public IValidator createDomainValidator(Object modelType) {
@@ -69,14 +62,14 @@ public class CustomBeanBindSupportFactory extends BindSupportFactory {
 			}
 
 			try {
-				IValidator result = (IValidator) getValidator
-						.invoke(property.getObject(), new Object[0]);
+				IValidator result = (IValidator) getValidator.invoke(property
+						.getObject(), new Object[0]);
 				return result;
 			} catch (Exception e) {
 				return null;
 			}
 		}
-		return null;
+		return super.createDomainValidator(modelType);
 	}
 
 	private String upperCaseFirstLetter(String name) {
@@ -91,6 +84,6 @@ public class CustomBeanBindSupportFactory extends BindSupportFactory {
 		if (toType instanceof CustomBeanModelType) {
 			toType = ((CustomBeanModelType) toType).getType();
 		}
-		return new Boolean(parentContext.isAssignableFromTo(fromType, toType));
+		return super.isAssignableFromTo(fromType, toType);
 	}
 }

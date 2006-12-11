@@ -46,6 +46,7 @@ public class ListBinding extends Binding {
 		super(context);
 		this.targetList = targetList;
 		this.modelList = modelList;
+		fillBindSpecDefaults(bindSpec, targetList, modelList);
 		partialValidationErrorObservable = new WritableValue(context
 				.getValidationRealm(), null);
 		validationErrorObservable = new WritableValue(context

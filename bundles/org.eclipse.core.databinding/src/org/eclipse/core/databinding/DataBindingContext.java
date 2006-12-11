@@ -15,11 +15,9 @@
 package org.eclipse.core.databinding;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -27,7 +25,6 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValidationStatusMap;
 import org.eclipse.core.internal.databinding.ValueBinding;
@@ -86,76 +83,32 @@ public class DataBindingContext {
      */
     private IObservableList unmodifiableBindings;
 
-	private List bindSupportFactories;
-
-	protected DataBindingContext parent;
-
-	private ComputedValue partialValidationStatus;
-
 	private ComputedValue validationStatus;
 
 	private IObservableMap validationStatusMap;
-
-	private List childContexts = new ArrayList();
 
 	private Realm validationRealm;
 
 	/**
 	 * Creates a data binding context, using the current default realm for the
-	 * validation observables, and set up with a
-	 * {@link DefaultBindSupportFactory}, supplying converters and validators
-	 * for common data types.
+	 * validation observables.
 	 */
 	public DataBindingContext() {
-		this(null, Realm.getDefault(),
-				new BindSupportFactory[] { new DefaultBindSupportFactory() });
+		this(Realm.getDefault());
 	}
 
 	/**
-	 * Creates a data binding context set up with a
-	 * {@link DefaultBindSupportFactory}, supplying converters and validators
-	 * for common data types.
+	 * Creates a data binding context using the given realm for the validation observables.
 	 * 
 	 * @param validationRealm
 	 *            the realm to be used for the validation observables
 	 */
 	public DataBindingContext(Realm validationRealm) {
-		this(null, validationRealm, new BindSupportFactory[]{new DefaultBindSupportFactory()});
-	}
-	
-	/**
-	 * @param parent
-	 *            may be null
-	 * @param validationRealm
-	 *            the realm to be used for the validation observables
-	 * @param factories
-	 *            an array of bind support factories that will be consulted in
-	 *            the given order when creating converters and validators.
-	 */
-	public DataBindingContext(DataBindingContext parent, Realm validationRealm, BindSupportFactory[] factories) {
 		Assert.isNotNull(validationRealm);
-		Assert.isNotNull(factories);
-		this.parent = parent;
-		if (parent != null) {
-			parent.addChild(this);
-		}
 		this.validationRealm = validationRealm;
-		this.bindSupportFactories = new ArrayList(Arrays.asList(factories));
 		bindings = new WritableList(validationRealm);
         
         unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
-		partialValidationStatus = new ComputedValue(validationRealm) {
-			protected Object calculate() {
-				for(Iterator it=bindings.iterator(); it.hasNext();) {
-					Binding binding = (Binding) it.next();
-					IStatus status = (IStatus) binding.getPartialValidationStatus().getValue();
-					if(!status.isOK()) {
-						return status;
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
 		validationStatus = new ComputedValue(validationRealm) {
 			protected Object calculate() {
 				for(Iterator it=bindings.iterator(); it.hasNext();) {
@@ -170,10 +123,6 @@ public class DataBindingContext {
 		};
 		validationStatusMap = new ValidationStatusMap(validationRealm, bindings,
 				false);
-	}
-
-	protected void addChild(DataBindingContext context) {
-		childContexts.add(context);
 	}
 
 	/**
@@ -204,8 +153,6 @@ public class DataBindingContext {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		fillBindSpecDefaults(this, bindSpec, targetObservableValue
-				.getValueType(), modelObservableValue.getValueType());
 		Binding result = new ValueBinding(this, targetObservableValue,
 				modelObservableValue, bindSpec);
         bindings.add(result);
@@ -228,90 +175,10 @@ public class DataBindingContext {
 		if (bindSpec == null) {
 			bindSpec = new DefaultBindSpec();
 		}
-		fillBindSpecDefaults(this, bindSpec, targetObservableList.getElementType(), modelObservableList.getElementType());
 		Binding result = new ListBinding(this, targetObservableList,
 				modelObservableList, bindSpec);
         bindings.add(result);
 		return result;
-	}
-
-	/**
-	 * Tries to create a converter that can convert from values of type
-	 * fromType. Returns <code>null</code> if no converter could be created.
-	 * Either toType or modelDescription can be <code>null</code>, but not
-	 * both. The implementation of this method will iterate over the registered
-	 * bind support factories in reverse order, passing the given arguments to
-	 * {@link BindSupportFactory#createConverter(Object, Object)}. The first
-	 * non-null converter will be returned.
-	 * 
-	 * @param fromType
-	 * @param toType
-	 * @return an IConverter, or <code>null</code> if unsuccessful
-	 */
-	public IConverter createConverter(Object fromType, Object toType) {
-		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
-					.get(i);
-			IConverter converter = bindSupportFactory.createConverter(fromType,
-					toType);
-			if (converter != null) {
-				return converter;
-			}
-		}
-		if (parent != null) {
-			return parent.createConverter(fromType, toType);
-		}
-		return null;
-	}
-
-	/**
-	 * @param modelType
-	 * @return an IValidator, or null if unsuccessful
-	 */
-	public IValidator createDomainValidator(Object modelType) {
-		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
-					.get(i);
-			IValidator validator = bindSupportFactory
-					.createDomainValidator(modelType);
-			if (validator != null) {
-				return validator;
-			}
-		}
-		if (parent != null) {
-			return parent.createDomainValidator(modelType);
-		}
-		return null;
-	}
-
-	/**
-	 * Tries to create a validator that can validate values of type fromType.
-	 * Returns <code>null</code> if no validator could be created. Either
-	 * toType or modelDescription can be <code>null</code>, but not both. The
-	 * implementation of this method will iterate over the registered bind
-	 * support factories in reverse order, passing the given arguments to
-	 * {@link BindSupportFactory#createValidator(Class, Class, Object)}. The
-	 * first non-null validator will be returned.
-	 * 
-	 * @param fromType
-	 * @param toType
-	 * @param modelDescription
-	 * @return an IValidator, or <code>null</code> if unsuccessful
-	 */
-	public IValidator createValidator(Object fromType, Object toType) {
-		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
-					.get(i);
-			IValidator validator = bindSupportFactory.createValidator(fromType,
-					toType);
-			if (validator != null) {
-				return validator;
-			}
-		}
-		if (parent != null) {
-			return parent.createValidator(fromType, toType);
-		}
-		return null;
 	}
 
 	/**
@@ -322,43 +189,6 @@ public class DataBindingContext {
 		for (Iterator it = bindings.iterator(); it.hasNext();) {
 			Binding binding = (Binding) it.next();
 			binding.dispose();
-		}
-		for (Iterator it = childContexts.iterator(); it.hasNext();) {
-			DataBindingContext context = (DataBindingContext) it.next();
-			context.dispose();
-		}
-	}
-
-	/**
-	 * @param dataBindingContext
-	 * @param bindSpec
-	 * @param targetType
-	 * @param modelType
-	 */
-	public void fillBindSpecDefaults(DataBindingContext dataBindingContext,
-			BindSpec bindSpec, Object targetType, Object modelType) {
-		if (bindSpec.getTargetValidator() == null) {
-			bindSpec.setValidator(dataBindingContext.createValidator(
-					targetType, modelType));
-		}
-		if (bindSpec.getPartialTargetValidator() == null) {
-			bindSpec.setPartialTargetValidator(new IValidator() {
-				public IStatus validate(Object value) {
-					return Status.OK_STATUS;
-				}
-			});
-		}
-		if (bindSpec.getDomainValidator() == null) {
-			bindSpec.setDomainValidator(dataBindingContext
-					.createDomainValidator(modelType));
-		}
-		if (bindSpec.getModelToTargetConverter() == null) {
-			bindSpec.setModelToTargetConverter(dataBindingContext
-					.createConverter(modelType, targetType));
-		}
-		if (bindSpec.getTargetToModelConverter() == null) {
-			bindSpec.setTargetToModelConverter(dataBindingContext
-					.createConverter(targetType, modelType));
 		}
 	}
 
@@ -387,16 +217,6 @@ public class DataBindingContext {
 
 	/**
 	 * Returns an observable value of type IStatus, containing the most
-	 * recent partial validation error
-	 * 
-	 * @return the validation error observable
-	 */
-	public IObservableValue getPartialValidationStatus() {
-		return partialValidationStatus;
-	}
-
-	/**
-	 * Returns an observable value of type IStatus, containing the most
 	 * recent full validation error, i.e. the last element of the list returned
 	 * by getValidationErrors().
 	 * 
@@ -414,28 +234,6 @@ public class DataBindingContext {
 	 */
 	public IObservableMap getValidationStatusMap() {
 		return validationStatusMap;
-	}
-
-	/**
-	 * @param fromType
-	 * @param toType
-	 * @return whether fromType is assignable to toType
-	 */
-	public boolean isAssignableFromTo(Object fromType, Object toType) {
-		for (int i = bindSupportFactories.size() - 1; i >= 0; i--) {
-			BindSupportFactory bindSupportFactory = (BindSupportFactory) bindSupportFactories
-					.get(i);
-			Boolean result = bindSupportFactory.isAssignableFromTo(fromType,
-					toType);
-			if (result != null) {
-				return result.booleanValue();
-			}
-		}
-		if (parent != null) {
-			return parent.isAssignableFromTo(fromType, toType);
-		}
-		// TODO does this default make sense?
-		return true;
 	}
 
 	/**

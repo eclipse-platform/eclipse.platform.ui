@@ -254,21 +254,21 @@ public class PropertyScenarios extends ScenariosTestCase {
                 .setTargetToModelConverter(new IdentityConverter(String.class))
                 .setPartialTargetValidator(validator);
 
-        getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
+        Binding binding = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
                 bindSpec);
 
         // no validation message
-        assertTrue(((IStatus)getDbc().getPartialValidationStatus().getValue()).isOK());
+        assertTrue(((IStatus)binding.getPartialValidationStatus().getValue()).isOK());
         enterText(text, "Invalid Value");
-        assertEquals(noSpacesMessage, ((IStatus) getDbc().getPartialValidationStatus().getValue()).getMessage());
+        assertEquals(noSpacesMessage, ((IStatus) binding.getPartialValidationStatus().getValue()).getMessage());
         assertEquals("ValidValue", text.getText());
         text.setText("InvalidValueBecauseTooLong");
         assertEquals(max15CharactersMessage,
-                ((IStatus) getDbc().getPartialValidationStatus().getValue()).getMessage());
+                ((IStatus) binding.getPartialValidationStatus().getValue()).getMessage());
         assertEquals("ValidValue", text.getText());
         enterText(text, "anothervalid");
-        assertTrue(((IStatus)getDbc().getPartialValidationStatus().getValue()).isOK());
+        assertTrue(((IStatus)binding.getPartialValidationStatus().getValue()).isOK());
         assertEquals("anothervalid", text.getText());
         assertEquals("anothervalid", adventure.getName());
     }
@@ -299,7 +299,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
-                new DefaultBindSpec().setValidator(validator));
+                new DefaultBindSpec().setTargetValidator(validator));
 
         assertEquals("5.0", text.getText());
         assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
@@ -364,7 +364,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(toCurrency)
                 .setTargetToModelConverter(toDouble)
-                .setValidator(validator);
+                .setTargetValidator(validator);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
                 bindSpec);

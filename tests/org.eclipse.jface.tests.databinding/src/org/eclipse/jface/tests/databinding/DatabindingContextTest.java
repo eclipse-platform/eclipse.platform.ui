@@ -16,10 +16,9 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.DefaultBindSpec;
-import org.eclipse.core.databinding.BindSupportFactory;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -57,21 +56,6 @@ public class DatabindingContextTest extends TestCase {
 				.isDisposed());
 	}
 
-	public void testDisposeChildContexts() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
-
-		DataBindingContext child = new DataBindingContext(dbc, Realm
-				.getDefault(), new BindSupportFactory[0]);
-		Binding binding = new BindingStub(child);
-		child.addBinding(binding);
-
-		assertFalse(binding.isDisposed());
-		dbc.dispose();
-		assertTrue(
-				"binding should be disposed when a parent context is disposed",
-				binding.isDisposed());
-	}
-
 	public void testBindValue() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 		IObservableValue target = new WritableValue(String.class);
@@ -92,12 +76,6 @@ public class DatabindingContextTest extends TestCase {
 				binding instanceof ListBinding);
 	}
 
-	public void testWithDefaults() throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
-		assertNotNull("context was not initialized with defaults", dbc
-				.createConverter(String.class, String.class));
-	}
-
 	/**
 	 * Asserts that IStatus is populated and change events are fired when a
 	 * Binding that is associated with a context is in error.
@@ -115,7 +93,7 @@ public class DatabindingContextTest extends TestCase {
 
 		IObservableValue error = dbc.getValidationStatus();
 		error.addValueChangeListener(errorCounter);
-		assertTrue(((IStatus)error.getValue()).isOK());
+		assertTrue(((IStatus) error.getValue()).isOK());
 
 		IObservableMap errors = dbc.getValidationStatusMap();
 		errors.addChangeListener(errorsCounter);
@@ -128,11 +106,11 @@ public class DatabindingContextTest extends TestCase {
 		};
 
 		dbc.bindValue(targetObservable, modelObservable, new DefaultBindSpec()
-				.setValidator(validator));
+				.setTargetValidator(validator));
 
 		targetObservable.setValue("");
-		assertFalse(((IStatus)error.getValue()).isOK());
-		assertEquals(errorMessage, ((IStatus)error.getValue()).getMessage());
+		assertFalse(((IStatus) error.getValue()).isOK());
+		assertEquals(errorMessage, ((IStatus) error.getValue()).getMessage());
 		assertEquals(1, errors.size());
 		assertEquals(1, errorsCounter.count);
 		assertEquals(1, errorCounter.count);
@@ -230,7 +208,7 @@ public class DatabindingContextTest extends TestCase {
 	 */
 	private static class ChangeCounter implements IChangeListener {
 		int count;
-		
+
 		public void handleChange(IObservable source) {
 			count++;
 		}

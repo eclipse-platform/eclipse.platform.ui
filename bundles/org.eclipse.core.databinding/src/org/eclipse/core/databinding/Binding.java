@@ -14,6 +14,7 @@ package org.eclipse.core.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -36,6 +37,18 @@ public abstract class Binding {
 	 */
 	public Binding(DataBindingContext context) {
 		this.context = context;
+	}
+	
+	/**
+	 * This method allows subclasses to fill bind spec defaults. Usually called
+	 * from subclass constructors.
+	 * 
+	 * @param bindSpec
+	 * @param target
+	 * @param model
+	 */
+	protected void fillBindSpecDefaults(BindSpec bindSpec, IObservable target, IObservable model) {
+		bindSpec.fillBindSpecDefaults(target, model);
 	}
 
 	/**

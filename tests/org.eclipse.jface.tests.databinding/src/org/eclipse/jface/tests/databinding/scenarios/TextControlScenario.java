@@ -11,10 +11,8 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
-import org.eclipse.core.databinding.BindSupportFactory;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.examples.databinding.model.Account;
 import org.eclipse.jface.examples.databinding.model.Adventure;
@@ -253,12 +251,9 @@ public class TextControlScenario extends ScenariosTestCase {
         // the
         // validator on the MaxNumberOfPeople property
 
-        DataBindingContext parentDbc = getDbc();
-        DataBindingContext childDbc = new DataBindingContext(parentDbc,
-                Realm.getDefault(),
-                new BindSupportFactory[] { new CustomBeanBindSupportFactory(parentDbc) });
+        DataBindingContext dbc = getDbc();
         
-        childDbc.bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), null);
+        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(adventure, "maxNumberOfPeople"), new CustomBeanBindSpec());
 
         // make sure we can set a value inside the validator's range
         text.setText("4");
@@ -266,7 +261,7 @@ public class TextControlScenario extends ScenariosTestCase {
         // Now try to set a value outside the validator's range
         text.setText("999");
         assertEquals(4, adventure.getMaxNumberOfPeople());
-        childDbc.dispose();
+        dbc.dispose();
     }
 
     public void testScenario09() {

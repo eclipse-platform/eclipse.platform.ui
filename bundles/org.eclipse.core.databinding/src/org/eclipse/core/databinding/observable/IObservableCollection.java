@@ -25,4 +25,9 @@ package org.eclipse.core.databinding.observable;
  */
 public interface IObservableCollection extends IObservable {
 
+	/**
+	 * @return
+	 */
+	Object getElementType();
+
 }

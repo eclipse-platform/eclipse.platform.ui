@@ -47,7 +47,7 @@ public class ObservableMapTest extends TestCase {
 			public void handleMapChange(IObservableMap source, MapDiff diff) {
 				count++;
 			}			
-		};
+		}
 		
 		MapChangeListener listener = new MapChangeListener();
 		map.addMapChangeListener(listener);

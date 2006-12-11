@@ -216,12 +216,10 @@ import org.eclipse.jface.viewers.TreePath;
 		if (parents == null) {
 			if (parent == null) {
 				return Collections.EMPTY_SET;
-			} else {
-				return Collections.singleton(parent);
 			}
-		} else {
-			return parents;
+			return Collections.singleton(parent);
 		}
+		return parents;
 	}
 
 	/**
