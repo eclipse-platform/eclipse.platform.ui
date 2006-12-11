@@ -48,10 +48,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.progress.IJobRunnable;
-import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * @since 3.3
@@ -105,8 +103,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 				setDirty(false);
 				return null;
 			}
-			WorkbenchSiteProgressService progressService = (WorkbenchSiteProgressService) getSite()
-					.getAdapter(IWorkbenchSiteProgressService.class);
 			IJobRunnable result = new IJobRunnable() {
 				public IStatus run(IProgressMonitor monitor) {
 					monitor.beginTask("Saving in the background",
@@ -190,14 +186,12 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 	private MySaveable mySaveable;
 	private Text inputText;
 	private IEditorInput input;
-	private Composite myComposite;
 
 	public TestBackgroundSaveEditor() {
 		mySaveable = new MySaveable();
 	}
 
 	public void createPartControl(Composite parent) {
-		myComposite = parent;
 		Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		final DataBindingContext dbc = new DataBindingContext(realm);
 		parent.addDisposeListener(new DisposeListener() {
@@ -212,8 +206,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 				.observeValue(realm, data, "output");
 
 		createInputGroup(parent, dbc, inputObservable);
-		createOptionsGroup(parent, realm, dbc, inputObservable,
-				outputObservable);
+		createOptionsGroup(parent, realm, dbc);
 		createOutputGroup(parent, dbc, outputObservable);
 
 		GridLayoutFactory.swtDefaults().numColumns(3).equalWidth(true)
@@ -234,9 +227,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 	}
 
 	private void createOptionsGroup(Composite parent, Realm realm,
-			final DataBindingContext dbc,
-			final IObservableValue inputObservable,
-			final IObservableValue outputObservable) {
+			final DataBindingContext dbc) {
 		Group optionsGroup = new Group(parent, SWT.NONE);
 		optionsGroup.setText("Options");
 
