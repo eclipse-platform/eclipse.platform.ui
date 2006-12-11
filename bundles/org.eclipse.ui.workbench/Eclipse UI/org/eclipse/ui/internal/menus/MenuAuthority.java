@@ -22,6 +22,7 @@ import java.util.Set;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
@@ -331,7 +332,11 @@ final public class MenuAuthority extends ExpressionAuthority {
 				IContributionItem menuItem = contribution.getContribution();
 				menuItem.setVisible(newVisible);
 				if (menuItem instanceof ContributionItem) {
-					((ContributionItem)menuItem).getParent().markDirty();
+					IContributionManager parent = ((ContributionItem) menuItem)
+							.getParent();
+					if (parent != null) {
+						parent.markDirty();
+					}
 				}
 			}
 		}
