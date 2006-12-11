@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
+import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -329,10 +330,9 @@ final public class MenuAuthority extends ExpressionAuthority {
 			if (newVisible != currentlyVisible) {
 				IContributionItem menuItem = contribution.getContribution();
 				menuItem.setVisible(newVisible);
-				menuItem.update();
-
-				// old code
-				// contribution.getMenuElement().setVisible(window, newVisible);
+				if (menuItem instanceof ContributionItem) {
+					((ContributionItem)menuItem).getParent().markDirty();
+				}
 			}
 		}
 	}

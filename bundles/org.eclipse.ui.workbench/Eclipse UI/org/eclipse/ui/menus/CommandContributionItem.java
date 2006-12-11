@@ -192,27 +192,23 @@ public final class CommandContributionItem extends ContributionItem {
 		if (command == null) {
 			return;
 		}
-		MenuItem newItem = new MenuItem(parent, SWT.PUSH, index);
-		newItem.setData(this);
-		newItem.setEnabled(isEnabled());
-
-		String text = label;
-		if (mnemonic != null) {
-			// convert label to have mnemonic
-		}
-		newItem.setText(text);
-
-		if (icon != null) {
-			LocalResourceManager m = new LocalResourceManager(JFaceResources
-					.getResources());
-			newItem.setImage(icon == null ? null : m.createImage(icon));
-			disposeOldImages();
-			localResourceManager = m;
+		if (widget != null || parent == null) {
+			return;
 		}
 
-		newItem.addListener(SWT.Dispose, getItemListener());
-		newItem.addListener(SWT.Selection, getItemListener());
-		widget = newItem;
+		MenuItem item = null;
+		if (index >= 0) {
+			item = new MenuItem(parent, SWT.PUSH, index);
+		} else {
+			item = new MenuItem(parent, SWT.PUSH);
+		}
+		item.setData(this);
+
+		item.addListener(SWT.Dispose, getItemListener());
+		item.addListener(SWT.Selection, getItemListener());
+		widget = item;
+
+		update(null);
 	}
 
 	/*
@@ -225,33 +221,24 @@ public final class CommandContributionItem extends ContributionItem {
 		if (command == null) {
 			return;
 		}
-		ToolItem newItem = new ToolItem(parent, SWT.PUSH, index);
-		newItem.setData(this);
-		newItem.setEnabled(isEnabled());
-
-		if (icon != null) {
-			LocalResourceManager m = new LocalResourceManager(JFaceResources
-					.getResources());
-			newItem.setDisabledImage(disabledIcon == null ? null : m
-					.createImage(disabledIcon));
-			newItem.setHotImage(hoverIcon == null ? null : m
-					.createImage(hoverIcon));
-			newItem.setImage(icon == null ? null : m.createImage(icon));
-			disposeOldImages();
-			localResourceManager = m;
-		} else if (label != null) {
-			newItem.setText(label);
+		if (widget != null || parent == null) {
+			return;
 		}
 
-		if (tooltip != null)
-			newItem.setToolTipText(tooltip);
-		else if (label != null)
-			newItem.setToolTipText(label);
+		ToolItem item = null;
+		if (index >= 0) {
+			item = new ToolItem(parent, SWT.PUSH, index);
+		} else {
+			item = new ToolItem(parent, SWT.PUSH);
+		}
 
-		newItem.addListener(SWT.Selection, getItemListener());
-		newItem.addListener(SWT.Dispose, getItemListener());
+		item.setData(this);
 
-		widget = newItem;
+		item.addListener(SWT.Selection, getItemListener());
+		item.addListener(SWT.Dispose, getItemListener());
+		widget = item;
+
+		update(null);
 	}
 
 	/*
@@ -272,19 +259,51 @@ public final class CommandContributionItem extends ContributionItem {
 		if (widget != null) {
 			if (widget instanceof MenuItem) {
 				MenuItem item = (MenuItem) widget;
+
+				String text = label;
+				if (mnemonic != null) {
+					// convert label to have mnemonic
+				}
+				if (text != null && !item.getText().equals(text)) {
+					item.setText(text);
+				}
+
+				if (icon != null) {
+					LocalResourceManager m = new LocalResourceManager(
+							JFaceResources.getResources());
+					item.setImage(icon == null ? null : m.createImage(icon));
+					disposeOldImages();
+					localResourceManager = m;
+				}
 				if (item.isEnabled() != isEnabled()) {
 					item.setEnabled(isEnabled());
 				}
 			} else if (widget instanceof ToolItem) {
 				ToolItem item = (ToolItem) widget;
+
+				if (icon != null) {
+					LocalResourceManager m = new LocalResourceManager(
+							JFaceResources.getResources());
+					item.setDisabledImage(disabledIcon == null ? null : m
+							.createImage(disabledIcon));
+					item.setHotImage(hoverIcon == null ? null : m
+							.createImage(hoverIcon));
+					item.setImage(icon == null ? null : m.createImage(icon));
+					disposeOldImages();
+					localResourceManager = m;
+				} else if (label != null) {
+					item.setText(label);
+				}
+
+				if (tooltip != null)
+					item.setToolTipText(tooltip);
+				else if (label != null)
+					item.setToolTipText(label);
+				
 				if (item.isEnabled() != isEnabled()) {
 					item.setEnabled(isEnabled());
 				}
 			}
-		}
-
-		if (getParent() != null) {
-			getParent().update(true);
 		}
 	}
 
@@ -333,7 +352,7 @@ public final class CommandContributionItem extends ContributionItem {
 			widget.removeListener(SWT.Selection, getItemListener());
 			widget.removeListener(SWT.Dispose, getItemListener());
 			widget = null;
-			dispose();
+			disposeOldImages();
 		}
 	}
 

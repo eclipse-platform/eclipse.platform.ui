@@ -42,8 +42,8 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
     }
     
     public void dispose() {
-    	super.dispose();
     	((WorkbenchWindow)getWorkbenchWindow()).removeBackgroundSaveListener(this);
+    	super.dispose();
     }
 
     /* (non-Javadoc)
