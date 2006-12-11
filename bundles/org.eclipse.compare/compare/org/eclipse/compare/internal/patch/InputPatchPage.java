@@ -645,11 +645,15 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 			String workspaceSetting= settings.get(STORE_WORKSPACE_PATH_ID);
 			if (workspaceSetting != null && workspaceSetting.length() > 0) {
 				// See if this resource still exists in the workspace
-				IPath path= new Path(workspaceSetting);
-				IFile targetFile= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-				if (fTreeViewer != null && targetFile.exists()){
-					fTreeViewer.expandToLevel(targetFile, 0);
-					fTreeViewer.setSelection(new StructuredSelection(targetFile));
+				try {
+					IPath path= new Path(workspaceSetting);
+					IFile targetFile= ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+					if (fTreeViewer != null && targetFile.exists()){
+						fTreeViewer.expandToLevel(targetFile, 0);
+						fTreeViewer.setSelection(new StructuredSelection(targetFile));
+					}
+				} catch (RuntimeException e) {
+					// Ignore. The setting was invalid
 				} 
 			} else {
 				//check to see if the current input is set to workspace - if it is switch it
