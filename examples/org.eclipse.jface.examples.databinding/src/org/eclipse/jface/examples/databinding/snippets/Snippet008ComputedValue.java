@@ -11,7 +11,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
@@ -60,7 +60,7 @@ public class Snippet008ComputedValue {
 
 		// Bind the formatted name Text to the formatted name observable.
 		dbc.bindValue(SWTObservables.observeText(ui.formattedName, SWT.None),
-				formattedName, new BindSpec().setUpdateModel(false));
+				formattedName, new DefaultBindSpec().setUpdateModel(false));
 
 		shell.pack();
 		shell.open();

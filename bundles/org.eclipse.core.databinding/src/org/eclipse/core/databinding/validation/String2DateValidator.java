@@ -25,11 +25,6 @@ import org.eclipse.core.runtime.Status;
 public class String2DateValidator extends DateConversionSupport implements
 		IValidator {
 
-	public IStatus validatePartial(Object fragment) {
-		// TODO: Can we do any sensible (locale-independent) checking here?
-		return Status.OK_STATUS;
-	}
-
 	public IStatus validate(Object value) {
 		return parse((String) value) != null ? Status.OK_STATUS
 				: ValidationStatus.error(getHint());

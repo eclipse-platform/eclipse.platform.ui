@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -213,7 +214,7 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        BindSpec bindSpec = new BindSpec().setModelToTargetConverter(converter1).setTargetToModelConverter(converter2);
+        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(converter1).setTargetToModelConverter(converter2);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
                 bindSpec);
@@ -237,10 +238,6 @@ public class PropertyScenarios extends ScenariosTestCase {
         adventure.setName("ValidValue");
 
         IValidator validator = new IValidator() {
-            public IStatus validatePartial(Object value) {
-                return validate(value);
-            }
-
             public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 if (stringValue.length() > 15) {
@@ -253,9 +250,9 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        BindSpec bindSpec = new BindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
+        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(new IdentityConverter(String.class))
                 .setTargetToModelConverter(new IdentityConverter(String.class))
-                .setValidator(validator);
+                .setPartialTargetValidator(validator);
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "name"),
@@ -286,10 +283,6 @@ public class PropertyScenarios extends ScenariosTestCase {
         final String mustBeCurrencyMessage = "Price must be a currency.";
 
         IValidator validator = new IValidator() {
-            public IStatus validatePartial(Object value) {
-                return Status.OK_STATUS;
-            }
-
             public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 try {
@@ -306,7 +299,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
-                new BindSpec().setValidator(validator));
+                new DefaultBindSpec().setValidator(validator));
 
         assertEquals("5.0", text.getText());
         assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
@@ -355,10 +348,6 @@ public class PropertyScenarios extends ScenariosTestCase {
         };
 
         IValidator validator = new IValidator() {
-            public IStatus validatePartial(Object value) {
-                return Status.OK_STATUS;
-            }
-
             public IStatus validate(Object value) {
                 String stringValue = (String) value;
                 try {
@@ -373,7 +362,7 @@ public class PropertyScenarios extends ScenariosTestCase {
             }
         };
 
-        BindSpec bindSpec = new BindSpec().setModelToTargetConverter(toCurrency)
+        BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(toCurrency)
                 .setTargetToModelConverter(toDouble)
                 .setValidator(validator);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
@@ -469,7 +458,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(checkbox1Selected,
                 checkbox2Selected,
-                new BindSpec().setModelToTargetConverter(negatingConverter)
+                new DefaultBindSpec().setModelToTargetConverter(negatingConverter)
                         .setTargetToModelConverter(negatingConverter));
         
         // bind the enabled state of the two text widgets to one of the
@@ -550,7 +539,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"), null);
         Text errorText = new Text(getComposite(), SWT.NONE);
         
-        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new BindSpec().setUpdateModel(false));
+        getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new DefaultBindSpec().setUpdateModel(false));
         assertTrue(((IStatus)b.getValidationStatus().getValue()).isOK());
         enterText(text, "foo");
         assertFalse(((IStatus)b.getValidationStatus().getValue()).isOK());

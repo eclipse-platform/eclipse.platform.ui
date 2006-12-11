@@ -12,7 +12,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
@@ -57,7 +57,7 @@ public class Snippet004DataBindingContextErrorLabel {
         // Bind the text to the value.
         dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
                 value,
-                new BindSpec().setDomainValidator(new FiveValidator()));
+                new DefaultBindSpec().setDomainValidator(new FiveValidator()));
 
         // Bind the error label to the validation error on the dbc.
         dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationStatus(), null);
@@ -79,9 +79,5 @@ public class Snippet004DataBindingContextErrorLabel {
         public IStatus validate(Object value) {
             return ("5".equals(value)) ? Status.OK_STATUS : ValidationStatus.error("the value was '" + value + "', not '5'");
         }
-
-		public IStatus validatePartial(Object value) {
-			return Status.OK_STATUS;
-		}
     }
 }

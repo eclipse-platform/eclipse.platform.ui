@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds (bug 135316)
- *     Brad Reynolds - bug 116920
- *******************************************************************************/
+ ******************************************************************************/
+
 package org.eclipse.core.databinding;
 
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -22,127 +21,34 @@ import org.eclipse.core.databinding.validation.IValidator;
  * model.
  * 
  * @since 1.0
+ *
  */
 public class BindSpec {
 
-	private IConverter[] modelToTargetConverters;
-
-	private IConverter[] targetToModelConverters;
-
-	private IValidator[] targetValidators;
-
 	private IValidator domainValidator;
+
+	private IConverter modelToTargetConverter;
 
 	private Integer modelUpdatePolicy;
 
-	private Integer validatePolicy;
+	private IValidator partialTargetValidator;
+	
+	private IConverter targetToModelConverter;
 
 	private Integer targetUpdatePolicy;
+
+	private IValidator targetValidator;
 
 	private boolean updateModel = true;
 
 	private boolean updateTarget = true;
 
-	private static final IValidator[] EMPTY_VALIDATORS = new IValidator[0];
-
-	private static final IConverter[] EMPTY_CONVERTERS = new IConverter[0];
+	private Integer validatePolicy;
 
 	/**
 	 * Default constructor that initializes all objects to their defaults.
 	 */
 	public BindSpec() {
-	}
-
-	/**
-	 * Creates a bind spec with the given converters, validators, and update
-	 * policies.
-	 * 
-	 * @param modelToTargetConverter
-	 * @param targetToModelConverter
-	 * @param targetValidator
-	 * @param domainValidator
-	 * @param modelUpdatePolicy
-	 * @param validatePolicy
-	 * @param targetUpdatePolicy
-	 * 
-	 */
-	protected BindSpec(IConverter[] modelToTargetConverter,
-			IConverter[] targetToModelConverter, IValidator[] targetValidator,
-			IValidator domainValidator, Integer modelUpdatePolicy,
-			Integer validatePolicy, Integer targetUpdatePolicy) {
-
-		this.modelToTargetConverters = modelToTargetConverter;
-		this.targetToModelConverters = targetToModelConverter;
-		this.targetValidators = targetValidator;
-		this.domainValidator = domainValidator;
-		this.modelUpdatePolicy = modelUpdatePolicy;
-		this.validatePolicy = validatePolicy;
-		this.targetUpdatePolicy = targetUpdatePolicy;
-	}
-
-	/**
-	 * Returns the converter to be used, or <code>null</code> if a default
-	 * converter should be used.
-	 * 
-	 * @return the converter, or <code>null</code>
-	 */
-	public IConverter getModelToTargetConverter() {
-		return (getModelToTargetConverters().length == 0) ? null
-				: getModelToTargetConverters()[0];
-	}
-
-	/**
-	 * Returns the converters to be used, or an empty array if a default
-	 * converter should be used.
-	 * 
-	 * @return the converters, or an empty array if none
-	 */
-	public IConverter[] getModelToTargetConverters() {
-		return (modelToTargetConverters == null) ? EMPTY_CONVERTERS
-				: modelToTargetConverters;
-	}
-
-	/**
-	 * Returns the converter to be used, or <code>null</code> if a default
-	 * converter should be used.
-	 * 
-	 * @return the converter, or <code>null</code>
-	 */
-	public IConverter getTargetToModelConverter() {
-		return (getTargetToModelConverters().length == 0) ? null
-				: getTargetToModelConverters()[0];
-	}
-
-	/**
-	 * Returns the converters to be used, or <code>null</code> if a default
-	 * converter should be used.
-	 * 
-	 * @return the converters, or an empty array if none
-	 */
-	public IConverter[] getTargetToModelConverters() {
-		return (targetToModelConverters == null) ? EMPTY_CONVERTERS
-				: targetToModelConverters;
-	}
-
-	/**
-	 * Returns the validator to be used, or <code>null</code> if a default
-	 * validator should be used.
-	 * 
-	 * @return the validator, or <code>null</code>
-	 */
-	public IValidator getTypeConversionValidator() {
-		return (getTypeConversionValidators().length == 0) ? null
-				: getTypeConversionValidators()[0];
-	}
-
-	/**
-	 * Returns the validators to be used, or an empty array if a default
-	 * validator should be used.
-	 * 
-	 * @return the validators or an empty array if none
-	 */
-	public IValidator[] getTypeConversionValidators() {
-		return (targetValidators == null) ? EMPTY_VALIDATORS : targetValidators;
 	}
 
 	/**
@@ -153,6 +59,16 @@ public class BindSpec {
 	 */
 	public IValidator getDomainValidator() {
 		return domainValidator;
+	}
+
+	/**
+	 * Returns the converter to be used, or <code>null</code> if a default
+	 * converter should be used.
+	 * 
+	 * @return the converter, or <code>null</code>
+	 */
+	public IConverter getModelToTargetConverter() {
+		return modelToTargetConverter;
 	}
 
 	/**
@@ -169,16 +85,13 @@ public class BindSpec {
 	}
 
 	/**
-	 * Returns the validate policy to be used for validating changes to the
-	 * target
+	 * Returns the converter to be used, or <code>null</code> if a default
+	 * converter should be used.
 	 * 
-	 * @return the update policy, or <code>null</code> if unspecified
-	 * 
-	 * @see DataBindingContext#POLICY_AUTOMATIC
-	 * @see DataBindingContext#POLICY_EXPLICIT
+	 * @return the converter, or <code>null</code>
 	 */
-	public Integer getValidatePolicy() {
-		return validatePolicy;
+	public IConverter getTargetToModelConverter() {
+		return targetToModelConverter;
 	}
 
 	/**
@@ -195,81 +108,47 @@ public class BindSpec {
 	}
 
 	/**
-	 * Sets the model to target converter.
-	 * 
-	 * @param converter
-	 *            <code>null</code> allowed and will remove all existing
-	 *            converters.
-	 * @return this BindSpec, to enable chaining of method calls
+	 * @return a validator for validation of partial target values 
 	 */
-	public BindSpec setModelToTargetConverter(IConverter converter) {
-		return (converter == null) ? setModelToTargetConverters(null)
-				: setModelToTargetConverters(new IConverter[] { converter });
+	public IValidator getPartialTargetValidator() {
+		return partialTargetValidator;
 	}
 
 	/**
-	 * Sets the model to target converters.
+	 * Returns the validator to be used, or <code>null</code> if a default
+	 * validator should be used.
 	 * 
-	 * @param converters
-	 *            <code>null</code> allowed and will remove all existing
-	 *            converters.
-	 * @return this BindSpec, to enable chaining of method calls
+	 * @return the validator, or <code>null</code>
 	 */
-	public BindSpec setModelToTargetConverters(IConverter[] converters) {
-		this.modelToTargetConverters = converters;
-		return this;
+	public IValidator getTargetValidator() {
+		return targetValidator;
 	}
 
 	/**
-	 * Sets the target to model converter.
+	 * Returns the validate policy to be used for validating changes to the
+	 * target
 	 * 
-	 * @param converter
-	 *            <code>null</code> allowed and will remove all existing
-	 *            converters.
-	 * @return this BindSpec, to enable chaining of method calls
+	 * @return the update policy, or <code>null</code> if unspecified
+	 * 
+	 * @see DataBindingContext#POLICY_AUTOMATIC
+	 * @see DataBindingContext#POLICY_EXPLICIT
 	 */
-	public BindSpec setTargetToModelConverter(IConverter converter) {
-		return (converter == null) ? setTargetToModelConverters(null)
-				: setTargetToModelConverters(new IConverter[] { converter });
+	public Integer getValidatePolicy() {
+		return validatePolicy;
 	}
 
 	/**
-	 * Sets the target to model converters.
-	 * 
-	 * @param converters
-	 *            <code>null</code> allowed and will remove all existing
-	 *            converters.
-	 * @return this BindSpec, to enable chaining of method calls
+	 * @return true if the model should be updated by the binding
 	 */
-	public BindSpec setTargetToModelConverters(IConverter[] converters) {
-		this.targetToModelConverters = converters;
-		return this;
+	public boolean isUpdateModel() {
+		return updateModel;
 	}
 
 	/**
-	 * Sets the validator.
-	 * 
-	 * @param validator
-	 *            <code>null</code> allowed and will remove all existing
-	 *            validators.
-	 * @return this BindSpec, to enable chaining of method calls
+	 * @return true if the target should be updated by the binding
 	 */
-	public BindSpec setValidator(IValidator validator) {
-		return (validator == null) ? setValidators(null)
-				: setValidators(new IValidator[] { validator });
-	}
-
-	/**
-	 * Sets the validators.
-	 * 
-	 * @param validators
-	 *            <code>null</code> allowed and will remove all existing
-	 *            validators.
-	 * @return this BindSpec, to enable chaining of method calls
-	 */
-	public BindSpec setValidators(IValidator[] validators) {
-		this.targetValidators = validators;
-		return this;
+	public boolean isUpdateTarget() {
+		return updateTarget;
 	}
 
 	/**
@@ -285,17 +164,61 @@ public class BindSpec {
 	}
 
 	/**
-	 * @return true if the model should be updated by the binding
+	 * Sets the model to target converter.
+	 * 
+	 * @param converter
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public boolean isUpdateModel() {
-		return updateModel;
+	public BindSpec setModelToTargetConverter(IConverter converter) {
+		modelToTargetConverter = converter;
+		return this;
 	}
 
 	/**
-	 * @return true if the target should be updated by the binding
+	 * @param modelUpdatePolicy
+	 *            The modelUpdatePolicy to set.
+	 * @return this BindSpec, to enable chaining of method calls
 	 */
-	public boolean isUpdateTarget() {
-		return updateTarget;
+	public BindSpec setModelUpdatePolicy(Integer modelUpdatePolicy) {
+		this.modelUpdatePolicy = modelUpdatePolicy;
+		return this;
+	}
+
+	/**
+	 * Sets the validator for validating partial target values.
+	 * 
+	 * @param validator
+	 *            the validator, or <code>null</code> for no validation.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setPartialTargetValidator(IValidator validator) {
+		partialTargetValidator = validator;
+		return this;
+	}
+
+	/**
+	 * Sets the target to model converter.
+	 * 
+	 * @param converter
+	 *            <code>null</code> allowed and will remove all existing
+	 *            converters.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setTargetToModelConverter(IConverter converter) {
+		targetToModelConverter = converter;
+		return this;
+	}
+
+	/**
+	 * @param targetUpdatePolicy
+	 *            The targetUpdatePolicy to set.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setTargetUpdatePolicy(Integer targetUpdatePolicy) {
+		this.targetUpdatePolicy = targetUpdatePolicy;
+		return this;
 	}
 
 	/**
@@ -319,32 +242,25 @@ public class BindSpec {
 	}
 
 	/**
-	 * @param modelUpdatePolicy
-	 *            The modelUpdatePolicy to set.
-	 * @return this BindSpec, to enable chaining of method calls
-	 */
-	public BindSpec setModelUpdatePolicy(Integer modelUpdatePolicy) {
-		this.modelUpdatePolicy = modelUpdatePolicy;
-		return this;
-	}
-
-	/**
-	 * @param targetUpdatePolicy
-	 *            The targetUpdatePolicy to set.
-	 * @return this BindSpec, to enable chaining of method calls
-	 */
-	public BindSpec setTargetUpdatePolicy(Integer targetUpdatePolicy) {
-		this.targetUpdatePolicy = targetUpdatePolicy;
-		return this;
-	}
-
-	/**
 	 * @param validatePolicy
 	 *            The validatePolicy to set.
 	 * @return this BindSpec, to enable chaining of method calls
 	 */
 	public BindSpec setValidatePolicy(Integer validatePolicy) {
 		this.validatePolicy = validatePolicy;
+		return this;
+	}
+	
+	/**
+	 * Sets the validator.
+	 * 
+	 * @param validator
+	 *            <code>null</code> allowed and will remove all existing
+	 *            validators.
+	 * @return this BindSpec, to enable chaining of method calls
+	 */
+	public BindSpec setValidator(IValidator validator) {
+		targetValidator = validator;
 		return this;
 	}
 

@@ -20,7 +20,6 @@ import org.eclipse.core.databinding.conversion.IdentityConverter;
 import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ObjectToPrimitiveValidator;
-import org.eclipse.core.databinding.validation.ReadOnlyValidator;
 import org.eclipse.core.databinding.validation.String2BytePrimitiveValidator;
 import org.eclipse.core.databinding.validation.String2ByteValidator;
 import org.eclipse.core.databinding.validation.String2DateValidator;
@@ -71,10 +70,6 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 	public IValidator createValidator(Object fromType, Object toType) {
 		if (fromType == null || toType == null) {
 			return new IValidator() {
-
-				public IStatus validatePartial(Object value) {
-					return Status.OK_STATUS;
-				}
 
 				public IStatus validate(Object value) {
 					return Status.OK_STATUS;
@@ -517,16 +512,16 @@ public final class DefaultBindSupportFactory extends BindSupportFactory {
 				return result;
 			if (fromClass != null && toClass != null && fromClass == toClass) {
 				return new IValidator() {
-					public IStatus validatePartial(Object value) {
-						return Status.OK_STATUS;
-					}
-
 					public IStatus validate(Object value) {
 						return Status.OK_STATUS;
 					}
 				};
 			}
-			return ReadOnlyValidator.getDefault();
+			return new IValidator() {
+				public IStatus validate(Object value) {
+					return Status.OK_STATUS;
+				}
+			};
 		}
 
 		/**

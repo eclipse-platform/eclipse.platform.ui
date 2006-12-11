@@ -15,7 +15,7 @@ package org.eclipse.jface.tests.internal.databinding.internal;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -50,7 +50,7 @@ public class ValueBindingTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testNoUpdateTargetFromModel() throws Exception {
-		BindSpec spec = new BindSpec();
+		DefaultBindSpec spec = new DefaultBindSpec();
 		spec.setUpdateModel(false);
 		spec.setUpdateTarget(false);
 
@@ -63,7 +63,7 @@ public class ValueBindingTest extends TestCase {
 	}
     
     public void testValuePropagation() throws Exception {
-        BindSpec spec = new BindSpec();
+        DefaultBindSpec spec = new DefaultBindSpec();
         String initialValue = "value";
         
         WritableValue target = new WritableValue(String.class);

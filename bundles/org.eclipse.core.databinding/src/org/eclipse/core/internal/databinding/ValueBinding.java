@@ -42,6 +42,8 @@ public class ValueBinding extends Binding {
 
 	private IValidator targetValidator;
 
+	private IValidator targetPartialValidator;
+	
 	private IConverter targetToModelConverter;
 
 	private IConverter modelToTargetConverter;
@@ -104,9 +106,13 @@ public class ValueBinding extends Binding {
 				throw new BindingException(
 						"target to model converter does convert to model type. Expected: " + model.getValueType() + ", actual: " + targetToModelConverter.getToType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			targetValidator = bindSpec.getTypeConversionValidator();
+			targetValidator = bindSpec.getTargetValidator();
 			if (targetValidator == null) {
 				throw new BindingException("Missing validator"); //$NON-NLS-1$
+			}
+			targetPartialValidator = bindSpec.getPartialTargetValidator();
+			if (targetPartialValidator == null) {
+				throw new BindingException("Missing partial validator"); //$NON-NLS-1$
 			}
 			domainValidator = bindSpec.getDomainValidator();
 			target.addValueChangeListener(targetChangeListener);
@@ -137,8 +143,8 @@ public class ValueBinding extends Binding {
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
 			Object value = diff.getNewValue();
-			IStatus partialValidationError = targetValidator
-					.validatePartial(value);
+			IStatus partialValidationError = targetPartialValidator
+					.validate(value);
 			partialValidationErrorObservable.setValue(partialValidationError);
 			return partialValidationError.isOK();
 		}

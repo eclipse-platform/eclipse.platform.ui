@@ -34,11 +34,13 @@ public class AbstractBindSupportFactoryTest extends TestCase {
 	}
 
 	protected void assertNoErrorsFound() {
-		assertTrue("No errors should be found.", ((IStatus)ctx.getValidationStatus().getValue()).isOK());
+		IStatus status = (IStatus)ctx.getValidationStatus().getValue();
+		assertTrue("No errors should be found, but found " + status , status.isOK());
 	}
 
 	protected void assertErrorsFound() {
-		assertFalse("Errors should be found.", ((IStatus)ctx.getValidationStatus().getValue()).isOK());
+		IStatus status = (IStatus) ctx.getValidationStatus().getValue();
+		assertFalse("Errors should be found, but found none.", status.isOK());
 	}
 
 }

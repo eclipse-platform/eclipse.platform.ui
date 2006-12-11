@@ -31,17 +31,6 @@ import org.eclipse.core.runtime.IStatus;
 public interface IValidator {
 
 	/**
-	 * Determines if the given value is partially valid. This method is used to
-	 * determine, for example, if keystrokes can still be applied to the value.
-	 * 
-	 * @param value
-	 *            the value to validate
-	 * @return a status object indicating whether the validation succeeded
-	 *         {@link IStatus#isOK()} or not. Never null.
-	 */
-	public IStatus validatePartial(Object value);
-
-	/**
 	 * Determines if the given value is valid.
 	 * 
 	 * @param value

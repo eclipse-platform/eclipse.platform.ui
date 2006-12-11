@@ -24,18 +24,6 @@ public class String2BytePrimitiveValidator implements IValidator {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.databinding.validator.IValidator#isPartiallyValid(java.lang.Object)
-	 */
-	public IStatus validatePartial(Object fragment) {
-		if (((String) fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-			return Status.OK_STATUS;
-
-		return ValidationStatus.error(getHint());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.core.databinding.validator.IValidator#isValid(java.lang.Object)
 	 */
 	public IStatus validate(Object value) {

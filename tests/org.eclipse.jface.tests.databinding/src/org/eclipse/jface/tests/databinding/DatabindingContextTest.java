@@ -16,14 +16,10 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.BindSupportFactory;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.conversion.ConvertString2Byte;
-import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.IdentityConverter;
-import org.eclipse.core.databinding.conversion.ToStringConverter;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
@@ -39,7 +35,6 @@ import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.ListBinding;
 import org.eclipse.core.internal.databinding.ValueBinding;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
 
@@ -97,43 +92,10 @@ public class DatabindingContextTest extends TestCase {
 				binding instanceof ListBinding);
 	}
 
-	public void testFillBindSpecDefaultsMultipleConvertersAndValidators()
-			throws Exception {
-		DataBindingContext dbc = new DataBindingContext();
-
-		BindSpec bs = new BindSpec();
-		bs.setModelToTargetConverters(new IConverter[] { null,
-				new ToStringConverter(), null });
-		bs.setTargetToModelConverters(new IConverter[] { null,
-				new ConvertString2Byte(), null });
-
-		dbc.fillBindSpecDefaults(dbc, bs, Object.class, Object.class);
-
-		assertConverterType(bs, 0, IdentityConverter.class, bs
-				.getModelToTargetConverters());
-		assertConverterType(bs, 1, ToStringConverter.class, bs
-				.getModelToTargetConverters());
-		assertConverterType(bs, 2, IdentityConverter.class, bs
-				.getModelToTargetConverters());
-
-		assertConverterType(bs, 0, IdentityConverter.class, bs
-				.getTargetToModelConverters());
-		assertConverterType(bs, 1, ConvertString2Byte.class, bs
-				.getTargetToModelConverters());
-		assertConverterType(bs, 2, IdentityConverter.class, bs
-				.getTargetToModelConverters());
-	}
-
 	public void testWithDefaults() throws Exception {
 		DataBindingContext dbc = new DataBindingContext();
 		assertNotNull("context was not initialized with defaults", dbc
 				.createConverter(String.class, String.class));
-	}
-
-	private void assertConverterType(BindSpec bs, int element, Class clazz,
-			IConverter[] converters) {
-		assertEquals("model2target[" + element + "] = identity", clazz,
-				converters[element].getClass());
 	}
 
 	/**
@@ -160,16 +122,12 @@ public class DatabindingContextTest extends TestCase {
 		assertEquals(0, errors.size());
 
 		IValidator validator = new IValidator() {
-			public IStatus validatePartial(Object value) {
-				return Status.OK_STATUS;
-			}
-
 			public IStatus validate(Object value) {
 				return ValidationStatus.error(errorMessage);
 			}
 		};
 
-		dbc.bindValue(targetObservable, modelObservable, new BindSpec()
+		dbc.bindValue(targetObservable, modelObservable, new DefaultBindSpec()
 				.setValidator(validator));
 
 		targetObservable.setValue("");
@@ -182,7 +140,7 @@ public class DatabindingContextTest extends TestCase {
 
 	/**
 	 * Asserts that then
-	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, org.eclipse.jface.databinding.BindSpec)}
+	 * {@link DataBindingContext#bindValue(IObservableValue, IObservableValue, org.eclipse.jface.databinding.DefaultBindSpec)}
 	 * if invoked the created binding is added to the internal list of bindings.
 	 * 
 	 * @throws Exception
@@ -204,7 +162,7 @@ public class DatabindingContextTest extends TestCase {
 
 	/**
 	 * Asserts that when
-	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, org.eclipse.jface.databinding.BindSpec)}
+	 * {@link DataBindingContext#bindList(IObservableList, IObservableList, org.eclipse.jface.databinding.DefaultBindSpec)}
 	 * is invoked the created binding is added to the intenal list of bindings.
 	 * 
 	 * @throws Exception

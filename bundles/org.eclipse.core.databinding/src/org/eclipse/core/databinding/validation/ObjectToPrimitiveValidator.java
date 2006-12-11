@@ -40,10 +40,6 @@ public class ObjectToPrimitiveValidator implements IValidator {
 		return this.toType;
 	}
 
-	public IStatus validatePartial(Object value) {
-		return doValidate(value);
-	}
-
 	public IStatus validate(Object value) {
 		return doValidate(value);
 	}

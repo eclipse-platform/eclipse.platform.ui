@@ -14,7 +14,7 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
@@ -30,57 +30,16 @@ public class BindSpecTests extends TestCase {
 	 * Asserts the BindSpec state when using the default constructor.
 	 */
 	public void testDefaultConstructor() {
-		BindSpec spec = new BindSpec();
+		DefaultBindSpec spec = new DefaultBindSpec();
 		assertNull(spec.getDomainValidator());
 		assertNull(spec.getModelToTargetConverter());
 		assertNull(spec.getModelUpdatePolicy());
 		assertNull(spec.getTargetToModelConverter());
 		assertNull(spec.getTargetUpdatePolicy());
-		assertNull(spec.getTypeConversionValidator());
+		assertNull(spec.getTargetValidator());
 		assertNull(spec.getValidatePolicy());
 		assertTrue(spec.isUpdateModel());
 		assertTrue(spec.isUpdateTarget());
-	}
-
-	/**
-	 * Asserts the BindSpec state when using the constructor that accepts
-	 * arrays.
-	 */
-	public void testArrayConstructor() {
-		Converter[] toTarget = new Converter[] { new Converter() };
-		Converter[] toModel = new Converter[] { new Converter() };
-		Validator[] validator = new Validator[] { new Validator() };
-		DomainValidator domainValidator = new DomainValidator();
-		Integer modelPolicy = new Integer(0);
-		Integer targetPolicy = new Integer(1);
-		Integer validatePolicy = new Integer(2);
-
-		BindSpec spec = new BindSpecExt(toTarget, toModel, validator,
-				domainValidator, modelPolicy, validatePolicy, targetPolicy);
-		assertEquals(toTarget, spec.getModelToTargetConverters());
-		assertEquals(toModel, spec.getTargetToModelConverters());
-		assertEquals(validator, spec.getTypeConversionValidators());
-		assertEquals(domainValidator, spec.getDomainValidator());
-		assertEquals(modelPolicy, spec.getModelUpdatePolicy());
-		assertEquals(targetPolicy, spec.getTargetUpdatePolicy());
-		assertEquals(validatePolicy, spec.getValidatePolicy());
-		assertTrue(spec.isUpdateModel());
-		assertTrue(spec.isUpdateTarget());
-	}
-
-	/**
-	 * Extension that makes the protected constructor visible to the test.
-	 */
-	private static class BindSpecExt extends BindSpec {
-		protected BindSpecExt(IConverter[] modelToTargetConverter,
-				IConverter[] targetToModelConverter,
-				IValidator[] targetValidator, IValidator domainValidator,
-				Integer modelUpdatePolicy, Integer validatePolicy,
-				Integer targetUpdatePolicy) {
-			super(modelToTargetConverter, targetToModelConverter,
-					targetValidator, domainValidator, modelUpdatePolicy,
-					validatePolicy, targetUpdatePolicy);
-		}
 	}
 
 	/**
@@ -88,19 +47,11 @@ public class BindSpecTests extends TestCase {
 	 * and will remove any existing validators.
 	 */
 	public void testSetValidator() {
-		BindSpec spec = new BindSpec();
-
-		IValidator v1 = new Validator();
-		IValidator v2 = new Validator();
-
-		spec.setValidators(new IValidator[] { v1, v2 });
-		assertEquals(2, spec.getTypeConversionValidators().length);
+		DefaultBindSpec spec = new DefaultBindSpec();
 
 		IValidator v3 = new Validator();
 		spec.setValidator(v3);
-		assertEquals(1, spec.getTypeConversionValidators().length);
-		assertSame(v3, spec.getTypeConversionValidator());
-		assertSame(v3, spec.getTypeConversionValidators()[0]);
+		assertSame(v3, spec.getTargetValidator());
 	}
 
 	/**
@@ -109,10 +60,9 @@ public class BindSpecTests extends TestCase {
 	 * empty array.
 	 */
 	public void testGetNullValidator() {
-		BindSpec spec = new BindSpec();
+		DefaultBindSpec spec = new DefaultBindSpec();
 		spec.setValidator(null);
-		assertNull(spec.getTypeConversionValidator());
-		assertEquals(0, spec.getTypeConversionValidators().length);
+		assertNull(spec.getTargetValidator());
 	}
 
 	/**
@@ -120,19 +70,11 @@ public class BindSpecTests extends TestCase {
 	 * the sole converter and will remove any existing converters.
 	 */
 	public void testSetModelToTargetConverter() {
-		BindSpec spec = new BindSpec();
-
-		IConverter c1 = new Converter();
-		IConverter c2 = new Converter();
-
-		spec.setModelToTargetConverters(new IConverter[] { c1, c2 });
-		assertEquals(2, spec.getModelToTargetConverters().length);
+		DefaultBindSpec spec = new DefaultBindSpec();
 
 		IConverter c3 = new Converter();
 		spec.setModelToTargetConverter(c3);
-		assertEquals(1, spec.getModelToTargetConverters().length);
 		assertSame(c3, spec.getModelToTargetConverter());
-		assertSame(c3, spec.getModelToTargetConverters()[0]);
 	}
 
 	/**
@@ -141,11 +83,10 @@ public class BindSpecTests extends TestCase {
 	 * empty array.
 	 */
 	public void testGetNullModelToTargetConverter() {
-		BindSpec spec = new BindSpec();
+		DefaultBindSpec spec = new DefaultBindSpec();
 
 		spec.setModelToTargetConverter(null);
 		assertNull(spec.getModelToTargetConverter());
-		assertEquals(0, spec.getModelToTargetConverters().length);
 	}
 
 	/**
@@ -153,19 +94,11 @@ public class BindSpecTests extends TestCase {
 	 * the sole converter and will remove any existing converters.
 	 */
 	public void testSetTargetToModelConverter() {
-		BindSpec spec = new BindSpec();
-
-		IConverter c1 = new Converter();
-		IConverter c2 = new Converter();
-
-		spec.setTargetToModelConverters(new IConverter[] { c1, c2 });
-		assertEquals(2, spec.getTargetToModelConverters().length);
+		DefaultBindSpec spec = new DefaultBindSpec();
 
 		IConverter c3 = new Converter();
 		spec.setTargetToModelConverter(c3);
-		assertEquals(1, spec.getTargetToModelConverters().length);
 		assertSame(c3, spec.getTargetToModelConverter());
-		assertSame(c3, spec.getTargetToModelConverters()[0]);
 	}
 
 	/**
@@ -175,10 +108,9 @@ public class BindSpecTests extends TestCase {
 	 * 
 	 */
 	public void testGetNullTargetToModelConverter() {
-		BindSpec spec = new BindSpec();
+		DefaultBindSpec spec = new DefaultBindSpec();
 		spec.setTargetToModelConverter(null);
 		assertNull(spec.getTargetToModelConverter());
-		assertEquals(0, spec.getTargetToModelConverters().length);
 	}
 
 	private class Converter implements IConverter {
@@ -196,20 +128,6 @@ public class BindSpecTests extends TestCase {
 	}
 
 	private class Validator implements IValidator {
-		public IStatus validatePartial(Object value) {
-			return Status.OK_STATUS;
-		}
-
-		public IStatus validate(Object value) {
-			return Status.OK_STATUS;
-		}
-	}
-
-	private class DomainValidator implements IValidator {
-		public IStatus validatePartial(Object value) {
-			return Status.OK_STATUS;
-		}
-
 		public IStatus validate(Object value) {
 			return Status.OK_STATUS;
 		}

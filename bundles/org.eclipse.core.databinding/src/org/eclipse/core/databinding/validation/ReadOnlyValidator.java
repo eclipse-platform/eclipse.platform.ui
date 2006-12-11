@@ -14,10 +14,9 @@ package org.eclipse.core.databinding.validation;
 
 import org.eclipse.core.internal.databinding.BindingMessages;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 /**
- * ReadOnlyValidator. The validator that can be used for read-only fields.
+ * ReadOnlyValidator. A validator that can be used as a partial validator for read-only fields.
  */
 public class ReadOnlyValidator implements IValidator {
 
@@ -35,14 +34,10 @@ public class ReadOnlyValidator implements IValidator {
 		return singleton;
 	}
 
-	public IStatus validatePartial(Object fragment) {
+	public IStatus validate(Object value) {
 		// No changes are allowed
 		return ValidationStatus.error(BindingMessages
 				.getString("Validate_NoChangeAllowedHelp")); //$NON-NLS-1$
-	}
-
-	public IStatus validate(Object value) {
-		return Status.OK_STATUS;
 	}
 
 }

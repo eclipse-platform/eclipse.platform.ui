@@ -31,24 +31,6 @@ public class ObjectToPrimitiveValidatorTest extends TestCase {
 
 	/**
 	 * Test method for
-	 * {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator#validatePartial(java.lang.Object)}.
-	 */
-	public void testIsPartiallyValid() {
-		IStatus result = this.objectToPrimitiveValidator.validatePartial(null);
-		assertEquals("The wrong validation error was found.", result
-				.getMessage(), this.objectToPrimitiveValidator.getNullHint());
-
-		result = this.objectToPrimitiveValidator
-				.validatePartial(new Integer(1));
-		assertTrue("No validation error should be found.", result.isOK());
-
-		result = this.objectToPrimitiveValidator.validatePartial(new Object());
-		assertEquals("The wrong validation error was found.", result
-				.getMessage(), this.objectToPrimitiveValidator.getClassHint());
-	}
-
-	/**
-	 * Test method for
 	 * {@link org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidator#isValid(java.lang.Object)}.
 	 */
 	public void testIsValid() {

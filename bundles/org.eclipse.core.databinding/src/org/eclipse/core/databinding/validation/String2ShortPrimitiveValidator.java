@@ -21,13 +21,6 @@ import org.eclipse.core.runtime.Status;
  */
 public class String2ShortPrimitiveValidator implements IValidator {
 
-	public IStatus validatePartial(Object fragment) {
-		if (((String) fragment).matches("\\-?[0-9]*")) //$NON-NLS-1$
-			return Status.OK_STATUS;
-
-		return ValidationStatus.error(getHint());
-	}
-
 	public IStatus validate(Object value) {
 		try {
 			Short.parseShort((String) value);
