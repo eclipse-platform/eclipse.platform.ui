@@ -25,8 +25,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -34,8 +32,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
@@ -68,13 +64,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private CompareSaveable fSaveable;
 
 	private Control initializingPage;
-	private Control noDiffFoundPage;
-	private Control canceledPage;
 	
-	private FormToolkit forms;
 	private int state = UNINITIALIZED;
 
-	private Composite errorPage;
 	private final EditorCompareContainer fContainer = new EditorCompareContainer();
 
 	private class EditorCompareContainer extends CompareContainer {
@@ -337,25 +329,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					}
 					fPageBook.showPage(initializingPage);
 				} else if (state == CANCELED) {
-					if (canceledPage == null) {
-						canceledPage = getCanceledMessagePane(fPageBook);
-					}
-					fPageBook.showPage(canceledPage);
 					// Close the editor when we are canceled
 					closeEditor();
 				} else if (state == NO_DIFF) {
-					if (noDiffFoundPage == null) {
-						noDiffFoundPage = getNoDifferenceMessagePane(fPageBook);
-					}
-					fPageBook.showPage(noDiffFoundPage);
-					// Prompt and close the editor as well
-					CompareUIPlugin.getDefault().handleNoDifference();
 					closeEditor();
 				} else if (state == ERROR) {
-					if (errorPage == null) {
-						errorPage = getErrorMessagePane(fPageBook);
-					}
-					fPageBook.showPage(errorPage);
 					// If an error occurred, close the editor 
 					// (the message would be displayed by the progress view)
 					closeEditor();
@@ -543,120 +521,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		composite.setLayout(layout);
 		
 		createDescriptionLabel(composite, CompareMessages.CompareEditor_1);
-		createSpacer(composite);
-		
-		final Button cancelButton = getForms().createButton(composite, CompareMessages.CompareEditor_2, SWT.PUSH);
-		cancelButton.setToolTipText(CompareMessages.CompareEditor_3);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.horizontalIndent=5;
-		data.verticalIndent=5;
-		cancelButton.setLayoutData(data);
-		cancelButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				Job.getJobManager().cancel(CompareEditor.this);
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Do nothing
-			}
-		});
 		return composite;
 	}
 	
-	private Composite getCanceledMessagePane(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor(parent));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		
-		createDescriptionLabel(composite, CompareMessages.CompareEditor_4);
-		createSpacer(composite);
-		
-		final Button initializeButton = getForms().createButton(composite, CompareMessages.CompareEditor_5, SWT.PUSH);
-		initializeButton.setToolTipText(CompareMessages.CompareEditor_6);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 1;
-		data.horizontalIndent=5;
-		data.verticalIndent=5;
-		initializeButton.setLayoutData(data);
-		initializeButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				CompareEditor.this.initializeInBackground((CompareEditorInput)getEditorInput());
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Do nothing
-			}
-		});
-		
-		data = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		data.horizontalSpan = 1;
-		data.horizontalIndent=5;
-		data.verticalIndent=5;
-		createCloseButton(composite, data);
-		return composite;
-	}
-
-	private void createSpacer(Composite composite) {
-		Label l = new Label(composite, SWT.NONE); // spacer
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 1;
-		l.setLayoutData(data);
-	}
-
-	private Composite getNoDifferenceMessagePane(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor(parent));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		createDescriptionLabel(composite, CompareMessages.CompareEditor_7);
-		createSpacer(composite);
-		createCloseButton(composite);
-		return composite;
-	}
-	
-	private Composite getErrorMessagePane(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getBackgroundColor(parent));
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
-		composite.setLayout(layout);
-		createDescriptionLabel(composite, getErrorMessage());
-		createSpacer(composite);
-		createCloseButton(composite);
-		return composite;
-	}
-
-	private void createCloseButton(Composite composite) {
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_END | GridData.GRAB_HORIZONTAL);
-		data.horizontalSpan = 2;
-		data.horizontalIndent=5;
-		data.verticalIndent=5;
-		createCloseButton(composite, data);
-	}
-	private void createCloseButton(Composite composite, GridData data) {
-		final Button closeButton = getForms().createButton(composite, CompareMessages.CompareEditor_8, SWT.PUSH);
-		closeButton.setToolTipText(CompareMessages.CompareEditor_9);
-		closeButton.setLayoutData(data);
-		closeButton.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				closeEditor();
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// Do nothing
-			}
-		});
-	}
-	
-	private String getErrorMessage() {
-		CompareEditorInput input = (CompareEditorInput)getEditorInput();
-		String message = input.getMessage();
-		if (message == null)
-			return CompareMessages.CompareEditor_10;
-		return message;
-	}
-
 	private Color getBackgroundColor(Composite parent) {
 		return parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 	}
@@ -671,16 +538,6 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		return description;
 	}
 	
-	private FormToolkit getForms() {
-		if (forms == null) {
-			forms = new FormToolkit(fPageBook.getDisplay());
-			forms.setBackground(getBackgroundColor(fPageBook));
-			HyperlinkGroup group = forms.getHyperlinkGroup();
-			group.setBackground(getBackgroundColor(fPageBook));
-		}
-		return forms;
-	}
-
 	private void closeEditor() {
 		getSite().getPage().closeEditor(CompareEditor.this, false);
 	}
