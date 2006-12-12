@@ -31,8 +31,10 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet015CustomTooltipsForTree {
 	private static class MyContentProvider implements ITreeContentProvider {
 
+		private static final String ROOT = "Root";
+
 		public Object[] getElements(Object inputElement) {
-			return new String[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
+			return new Object[]{ROOT};
 		}
 
 		public void dispose() {
@@ -45,7 +47,9 @@ public class Snippet015CustomTooltipsForTree {
 		}
 
 		public Object[] getChildren(Object parentElement) {
-			return null;
+			if(parentElement.equals(ROOT))
+				return new String[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
+			return new Object[0];
 		}
 
 		public Object getParent(Object element) {
@@ -53,7 +57,7 @@ public class Snippet015CustomTooltipsForTree {
 		}
 
 		public boolean hasChildren(Object element) {
-			return false;
+			return element.equals(ROOT);
 		}
 	}
 	
