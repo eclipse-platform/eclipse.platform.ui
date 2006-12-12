@@ -28,7 +28,7 @@ public interface ITextEditorExtension3 {
 	public static class InsertMode {
 		private InsertMode() {
 		}
-	};
+	}
 
 	/**
 	 * Represents the non-smart insert mode.

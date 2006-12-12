@@ -53,5 +53,5 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * Value: <code>"org.eclipse.ui.ChangeEncoding_action_context"</code>
 	 * @since 3.1
 	 */
-	public static final String CHANGE_ENCODING= PREFIX + ITextEditorActionConstants.CHANGE_ENCODING  + ACTION_POSTFIX;;
+	public static final String CHANGE_ENCODING= PREFIX + ITextEditorActionConstants.CHANGE_ENCODING  + ACTION_POSTFIX;
 }
