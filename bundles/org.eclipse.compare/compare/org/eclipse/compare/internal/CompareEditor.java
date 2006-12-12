@@ -332,6 +332,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					// Close the editor when we are canceled
 					closeEditor();
 				} else if (state == NO_DIFF) {
+					// Prompt and close the editor as well
+					CompareUIPlugin.getDefault().handleNoDifference();
 					closeEditor();
 				} else if (state == ERROR) {
 					// If an error occurred, close the editor 
