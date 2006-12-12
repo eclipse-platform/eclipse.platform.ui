@@ -38,7 +38,7 @@ public interface IDetailPane {
 	 * Initializes this detail pane for the given workbench part site. This is the first method
 	 * invoked on a detail pane after instantiation.
 	 * 
-	 * @param workbench The workbench part site that this detail pane has been created in
+	 * @param partSite The workbench part site that this detail pane has been created in
 	 */
 	public void init(IWorkbenchPartSite partSite);
 	
