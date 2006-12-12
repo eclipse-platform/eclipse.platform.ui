@@ -44,11 +44,11 @@ function mouseClickHandler(e) {
 	
 	if (clickedNode.className == "expander") {
 	    toggleExpandState(clickedNode);
-	} else if ( clickedNode.tagName == 'A') {
+	} else if ( clickedNode.tagName == 'A' || clickedNode.tagName == 'IMG') {
 	    var treeItem = getTreeItem(clickedNode);
 	    if (treeItem !== null) {
 	        highlightItem(getTreeItem(clickedNode), true); 
-	    }   
+	    } 
 	}
   	
   	if (isIE) {
