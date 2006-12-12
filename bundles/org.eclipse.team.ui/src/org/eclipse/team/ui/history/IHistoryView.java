@@ -61,6 +61,7 @@ public interface IHistoryView {
 	 * @param force whether this view should show the input even if it is pinned
 	 * @return returns the history page that the passed in object is being shown
 	 *         in or <code>null</code> if no appropriate page can be found.
+	 * @since 3.3
 	 */
 	public IHistoryPage showHistoryFor(Object object, boolean force);
 	
