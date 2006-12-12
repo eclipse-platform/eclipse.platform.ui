@@ -111,7 +111,7 @@ function goHome() {
     if (treeRoot === null) { 
         return; 
     }
-    focusOnItem(findChild(treeRoot, "DIV"), true);
+    focusOnItem(findChild(treeRoot, "DIV"), false);
 }
 
 function goToEnd() {    
@@ -119,7 +119,7 @@ function goToEnd() {
     if (treeRoot === null) { 
         return; 
     }
-    focusOnDeepestVisibleChild(treeRoot, true);
+    focusOnDeepestVisibleChild(treeRoot, false);
 }
 
 // Handle a left arrow key event
@@ -128,7 +128,7 @@ function goLeft(treeItem) {
     if (childClass == "visible") {
         toggleExpandState(treeItem);
      } else {
-         focusOnItem(getTreeItem(treeItem.parentNode), true);
+         focusOnItem(getTreeItem(treeItem.parentNode), false);
      }
 }
 
@@ -138,7 +138,7 @@ function goRight(treeItem) {
         toggleExpandState(treeItem);
         return;
      }       
-     focusOnItem(findChild(treeItem, "DIV"), true);
+     focusOnItem(findChild(treeItem, "DIV"), false);
 }
 
 function goUp(treeItem) {
@@ -147,40 +147,40 @@ function goUp(treeItem) {
   
    for (var prev = treeItem.previousSibling; prev !== null; prev = prev.previousSibling) {
         if (prev.tagName == "DIV") {
-            focusOnDeepestVisibleChild(prev, true);
+            focusOnDeepestVisibleChild(prev, false);
             return;
         }
     } 
-    focusOnItem(getTreeItem(treeItem.parentNode), true);
+    focusOnItem(getTreeItem(treeItem.parentNode), false);
 }
 
 function goDown(treeItem) {
     // If the node is expanded visit the first child       
     var childClass = getChildClass(treeItem);
     if (childClass == "visible") {
-        focusOnItem(findChild(treeItem, "DIV"), true);
+        focusOnItem(findChild(treeItem, "DIV"), false);
         return;
     }
     // visit the next sibling at this level, if not found try highter levels
     for (var level = treeItem; level !== null; level = getTreeItem(level.parentNode)) {
         for (var next = level.nextSibling; next !== null; next = next.nextSibling) {
             if (next.tagName == "DIV") {
-                focusOnItem(next, true);
+                focusOnItem(next, false);
                 return;
             }
         }
     }   
 }
 
-function focusOnDeepestVisibleChild(treeItem, isSelected) { 
+function focusOnDeepestVisibleChild(treeItem, isHighlighted) { 
         var childDiv = findLastChild(treeItem, "DIV");
         if (childDiv) {  
             if (childDiv.className == "visible" || childDiv.className == "root" ) {        
-                focusOnDeepestVisibleChild(childDiv, isSelected);
+                focusOnDeepestVisibleChild(childDiv, isHighlighted);
                 return;
             }
         }
-    focusOnItem(treeItem, isSelected);
+    focusOnItem(treeItem, isHighlighted);
 }
 
 function findAnchor(treeItem) {
@@ -196,11 +196,11 @@ function findAnchor(treeItem) {
 }
 
 // Focus on the anchor within a tree item
-function focusOnItem(treeItem, isSelected) {
+function focusOnItem(treeItem, isHighlighted) {
     var anchor = findAnchor(treeItem);
     if (anchor) {
         anchor.focus();
-        if (isSelected) {
+        if (isHighlighted) {
             highlightItem(treeItem);
   		}
   		var expander = getExpander(treeItem);
