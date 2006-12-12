@@ -79,7 +79,9 @@ public class ContextManager {
 				try {
 					Node node = provider.getContext(contextId, locale);
 					if (node != null) {
-						return node instanceof Context ? (Context)node : new Context(node);
+						Context context = node instanceof Context ? (Context)node : new Context(node);
+						context.setPluginId(pluginId);
+						return context;
 					}
 				}
 				catch (Throwable t) {

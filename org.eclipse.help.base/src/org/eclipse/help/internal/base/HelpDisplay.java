@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.io.*;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
-import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.appserver.*;
-import org.eclipse.help.internal.context.*;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IContext;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.IToc;
+import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.context.Context;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -192,8 +194,10 @@ public class HelpDisplay {
 	}
 
 	private String getContextID(IContext context) {
-		if (context instanceof Context)
-			return ((Context)context).getId();
+		if (context instanceof Context) {
+			Context c = (Context)context;
+			return c.getPluginId() + '.' + c.getId();
+		}
 		return HelpPlugin.getContextManager().addContext(context);
 	}
 

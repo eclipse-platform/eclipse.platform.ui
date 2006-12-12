@@ -26,6 +26,7 @@ public class Context extends NodeAdapter implements IContext {
 	public static final String NAME = "context"; //$NON-NLS-1$
 	public static final String ELEMENT_DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_PLUGIN_ID = "pluginId"; //$NON-NLS-1$
 	
 	/*
 	 * Constructs a new context adapter for an empty context node.
@@ -50,12 +51,19 @@ public class Context extends NodeAdapter implements IContext {
 	}
 	
 	/*
-	 * Returns the Context's unique id. 
+	 * Returns the Context's short id. 
 	 */
 	public String getId() {
 		return getAttribute(ATTRIBUTE_ID);
 	}
 	
+	/*
+	 * Returns the Context's source plug-in. 
+	 */
+	public String getPluginId() {
+		return getAttribute(ATTRIBUTE_PLUGIN_ID);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.IContext#getText()
 	 */
@@ -72,10 +80,17 @@ public class Context extends NodeAdapter implements IContext {
 	}
 
 	/*
-	 * Sets the Context's unique id.
+	 * Sets the Context's short id.
 	 */
 	public void setId(String id) {
 		setAttribute(ATTRIBUTE_ID, id);
+	}
+
+	/*
+	 * Sets the Context's source plug-in id.
+	 */
+	public void setPluginId(String pluginId) {
+		setAttribute(ATTRIBUTE_PLUGIN_ID, pluginId);
 	}
 
 	/*
