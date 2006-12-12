@@ -32,7 +32,7 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
 	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
-		return ((IExpressionManager) parent).getExpressions();
+		return getElements(((IExpressionManager) parent).getExpressions(), index, length);
 	}
 
 	/* (non-Javadoc)
