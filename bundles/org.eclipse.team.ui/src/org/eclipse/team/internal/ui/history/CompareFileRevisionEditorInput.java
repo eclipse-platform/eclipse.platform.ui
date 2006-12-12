@@ -69,6 +69,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		super(new CompareConfiguration(), page);
 		this.left = left;
 		this.right = right;
+		arrangeSides();
 	}
 
 	/* (non-Javadoc)
@@ -99,6 +100,11 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	}
 
 	private ICompareInput createCompareInput() {
+		MyDiffNode input = new MyDiffNode(left,right);
+		return input;
+	}
+
+	private void arrangeSides() {
 		IFile resource = getLocalFile(left);
 		if (resource == null) {
 			resource = getLocalFile(right);
@@ -109,8 +115,6 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		if (resource != null) {
 			left = SaveableCompareEditorInput.createFileElement((IFile)resource);
 		}
-		MyDiffNode input = new MyDiffNode(left,right);
-		return input;
 	}
 
 	private IFile getLocalFile(ITypedElement element) {
@@ -174,8 +178,12 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	 * @see org.eclipse.compare.CompareEditorInput#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		if (adapter == IFile.class || adapter == IResource.class)
-			return getResource(getCompareInput());
+		if (adapter == IFile.class || adapter == IResource.class) {
+			if (left instanceof IResourceProvider) {
+				return ((IResourceProvider) left).getResource();
+			}
+			return null;
+		}
 		return super.getAdapter(adapter);
 	}
 	
@@ -250,5 +258,9 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	protected void handleDispose() {
 		super.handleDispose();
 		notifier.dispose();
+		if (left instanceof LocalResourceTypedElement) {
+			LocalResourceTypedElement lrte = (LocalResourceTypedElement) left;
+			lrte.discardBuffer();
+		}
 	}
 }
