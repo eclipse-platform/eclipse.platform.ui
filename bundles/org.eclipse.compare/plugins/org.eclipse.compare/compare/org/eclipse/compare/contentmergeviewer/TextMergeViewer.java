@@ -747,12 +747,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				if (ext.isReadOnly(fDocumentKey)) {
 					try {
 						ext.validateState(fDocumentKey, getControl().getShell());
+						ext.updateStateCache(fDocumentKey);
 					} catch (CoreException e) {
 						ErrorDialog.openError(getControl().getShell(), CompareMessages.TextMergeViewer_12, CompareMessages.TextMergeViewer_13, e.getStatus());
 						return false;
 					}
 				}
-				return true;
+				return !ext.isReadOnly(fDocumentKey);
 			}
 			IEditableContentExtension ext = (IEditableContentExtension)Utilities.getAdapter(fElement, IEditableContentExtension.class);
 			if (ext != null) {
