@@ -640,6 +640,9 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		}
 		
 		/**
+		 * Returns the content assist processor that
+		 * suggests template variables.
+		 * 
 		 * @return the processor to suggest variables
 		 * @since 3.3
 		 */
