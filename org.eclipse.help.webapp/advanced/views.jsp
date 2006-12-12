@@ -123,7 +123,8 @@ function showAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", true);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
+		var newUrl = window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam;
+	    window.frames.toc.tocViewFrame.setShowAll(true, newUrl);
 	}catch(ex) {}
 	try{
 		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=on"+displayConfirmParam);
@@ -145,7 +146,8 @@ function dontShowAll(){
 		window.frames.search.searchToolbarFrame.setButtonState("show_all", false);
 	}catch(ex) {}
 	try{
-		window.frames.toc.tocViewFrame.location.replace(window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=off");
+		var newUrl = window.frames.toc.tocViewFrame.location.href.replace(regExp, "")+"&showAll=off";
+	    window.frames.toc.tocViewFrame.setShowAll(false, newUrl);
 	}catch(ex) {}
 	try{
 		window.frames.index.indexViewFrame.location.replace(window.frames.index.indexViewFrame.location.href.replace(regExp, "")+"&showAll=off");

@@ -37,6 +37,11 @@ function collapseAll() {
     return true;
 }
 
+function setShowAll(isShowAll, href) {
+    var showAllParam = isShowAll ? "on" : "off";
+    window.location.replace("tocView.jsp?showAll=" + showAllParam);
+}
+
 function setImage(imageNode, image) {
     var imageFile = imagesDirectory + "/" + image + ".gif";
     imageNode.src = imageFile;

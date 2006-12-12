@@ -750,6 +750,10 @@ function collapseAll() {
     return true;
 }
 
+function setShowAll(isShowAll, href) {
+    window.location.replace(href);
+}
+
 if (isIE){
   document.onclick = mouseClickHandler;
   document.ondblclick = mouseDblClickHandler;
