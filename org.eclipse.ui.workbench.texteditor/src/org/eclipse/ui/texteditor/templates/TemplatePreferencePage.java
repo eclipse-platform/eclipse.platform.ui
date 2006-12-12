@@ -96,6 +96,7 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -432,11 +433,10 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		
 		private SourceViewer createEditor(Composite parent, String pattern) {
 			SourceViewer viewer= createViewer(parent);
-
-			IDocument document= new Document(pattern);
 			viewer.setEditable(true);
-			viewer.setDocument(document);
-
+			
+			IDocument document = viewer.getDocument();
+			document.set(pattern);
 
 			int nLines= document.getNumberOfLines();
 			if (nLines < 5) {
@@ -639,6 +639,14 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			return fNewTemplate;
 		}
 		
+		/**
+		 * @return the processor to suggest variables
+		 * @since 3.3
+		 */
+		protected IContentAssistProcessor getTemplateProcessor() {
+			return fTemplateProcessor;
+		}
+
 		/*
 		 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
 		 * @since 3.2
