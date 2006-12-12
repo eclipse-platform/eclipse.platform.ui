@@ -68,6 +68,41 @@ var tocId = "";
 function onloadHandler()
 {
 	loadChildren(null);
+<%
+    if (request.getParameter("topic") != null) {
+        TocData data = new TocData(application,request, response);
+	    if (data.getSelectedToc() != -1) {
+%>
+	tocTitle = '<%=UrlUtil.JavaScriptEncode(data.getTocLabel(data.getSelectedToc()))%>';
+	var tocTopic = "<%=data.getTocDescriptionTopic(data.getSelectedToc())%>";
+	
+	// set title on the content toolbar
+	parent.parent.parent.setContentToolbarTitle(tocTitle);
+		
+	var topicSelected=false;
+	// select specified topic, or else the book
+	var topic = "<%=data.getSelectedTopic()%>";
+	if (topic != "about:blank" && topic != tocTopic) {
+		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
+			// remove the .. from topic
+			topic = topic.substring(2);
+			// remove advanced/tocView.jsp from path to obtain contextPath
+			var contextPath = window.location.pathname;
+			var slash = contextPath.lastIndexOf('/');
+			if(slash > 0) {
+				slash = contextPath.lastIndexOf('/', slash-1);
+				if(slash >= 0) {
+					contextPath = contextPath.substr(0, slash);
+					topic = window.location.protocol + "//" +window.location.host + contextPath + topic;
+				}
+			}			
+		}
+		topicSelected = selectTopic(topic);
+	} 
+<%
+	    }
+	}
+%>
 }
 
 var askShowAllDialog;
