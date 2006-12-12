@@ -127,7 +127,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * view. Used to give focus to the correct component if the user leaves the view.    
 	 * @since 3.3
 	 */
-	private boolean fTreeHasFocus;
+	private boolean fTreeHasFocus = true;
 	
 	/**
 	 * Various listeners used to update the enabled state of actions and also to
