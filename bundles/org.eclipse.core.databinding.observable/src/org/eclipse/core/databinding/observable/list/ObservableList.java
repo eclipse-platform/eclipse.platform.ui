@@ -13,7 +13,6 @@
 
 package org.eclipse.core.databinding.observable.list;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -41,12 +40,6 @@ public abstract class ObservableList extends AbstractObservable implements
 	 */
 	private boolean stale = false;
 
-	/**
-	 * Points to an instance of IListChangeListener or a Collection of
-	 * IListChangeListeners.  Access must be synchronized.
-	 */
-	private Object listChangeListeners;
-
 	private Object elementType;
 
 	protected ObservableList(List wrappedList, Object elementType) {
@@ -60,74 +53,17 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	public synchronized void addListChangeListener(IListChangeListener listener) {
-		if (listChangeListeners == null) {
-			boolean hadListeners = hasListeners();
-			listChangeListeners = listener;
-			if (!hadListeners) {
-				firstListenerAdded();
-			}
-			return;
-		}
-
-		Collection listenerList;
-		if (listChangeListeners instanceof Collection) {
-			listenerList = (Collection) listChangeListeners;
-		} else {
-			IListChangeListener l = (IListChangeListener) listChangeListeners;
-			
-			listenerList = new ArrayList();
-			listenerList.add(l);
-			listChangeListeners = listenerList;
-		}
-
-		listenerList.add(listener);
+		addListener(ListChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeListChangeListener(IListChangeListener listener) {
-		if (listChangeListeners == listener) {
-			listChangeListeners = null;
-			if (!hasListeners()) {
-				lastListenerRemoved();
-			}
-			return;
-		}
-
-		if (listChangeListeners instanceof Collection) {
-			Collection listenerList = (Collection) listChangeListeners;
-			listenerList.remove(listener);
-			if (listenerList.isEmpty()) {
-				listChangeListeners = null;
-				if (!hasListeners()) {
-					lastListenerRemoved();
-				}
-			}
-		}
-	}
-
-	protected synchronized boolean hasListeners() {
-		return super.hasListeners() || listChangeListeners != null;
+		removeListener(ListChangeEvent.TYPE, listener);
 	}
 
 	protected void fireListChange(ListDiff diff) {
 		// fire general change event first
 		super.fireChange();
-
-		if (listChangeListeners == null) {
-			return;
-		}
-		
-		if (listChangeListeners instanceof IListChangeListener) {
-			((IListChangeListener) listChangeListeners).handleListChange(this, diff);
-			return;
-		}
-		
-		Collection changeListenerCollection = (Collection) listChangeListeners;
-		
-		IListChangeListener[] listeners = (IListChangeListener[]) (changeListenerCollection)
-		.toArray(new IListChangeListener[changeListenerCollection.size()]);
-		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].handleListChange(this, diff);
-		}
+		fireEvent(new ListChangeEvent(this, diff));
 	}
 	
 	public boolean contains(Object o) {
@@ -359,7 +295,6 @@ public abstract class ObservableList extends AbstractObservable implements
 	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
 	 */
 	public synchronized void dispose() {
-		listChangeListeners = null;
 		super.dispose();
 	}
 	

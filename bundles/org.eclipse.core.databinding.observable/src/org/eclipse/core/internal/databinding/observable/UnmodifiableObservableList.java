@@ -11,11 +11,11 @@
 
 package org.eclipse.core.internal.databinding.observable;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 
 /**
@@ -44,14 +44,14 @@ public class UnmodifiableObservableList extends ObservableList {
 		this.wrappedList = wrappedList;
 
 		wrappedList.addListChangeListener(new IListChangeListener() {
-			public void handleListChange(IObservableList source, ListDiff diff) {
+			public void handleListChange(ListChangeEvent event) {
 				// Fires a Change and then ListChange event.
-				fireListChange(diff);
+				fireListChange(event.diff);
 			}
 		});
 
 		wrappedList.addStaleListener(new IStaleListener() {
-			public void handleStale(IObservable source) {
+			public void handleStale(StaleEvent event) {
 				fireStale();
 			}
 		});

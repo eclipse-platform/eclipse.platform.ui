@@ -14,9 +14,11 @@ package org.eclipse.core.internal.databinding.observable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.internal.databinding.IdentityWrapper;
 
 /**
@@ -32,12 +34,12 @@ public class StalenessTracker {
 	private final IStalenessConsumer stalenessConsumer;
 
 	private class ChildListener implements IStaleListener, IChangeListener {
-		public void handleStale(IObservable source) {
-			processStalenessChange(source, true);
+		public void handleStale(StaleEvent event) {
+			processStalenessChange((IObservable) event.getSource(), true);
 		}
 
-		public void handleChange(IObservable source) {
-			processStalenessChange(source, true);
+		public void handleChange(ChangeEvent event) {
+			processStalenessChange((IObservable) event.getSource(), true);
 		}
 	}
 

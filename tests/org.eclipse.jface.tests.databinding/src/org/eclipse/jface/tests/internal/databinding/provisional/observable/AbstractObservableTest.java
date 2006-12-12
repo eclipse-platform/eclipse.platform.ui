@@ -15,10 +15,12 @@ package org.eclipse.jface.tests.internal.databinding.provisional.observable;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
 import org.eclipse.jface.tests.databinding.util.RealmTester.CurrentRealm;
@@ -194,9 +196,9 @@ public class AbstractObservableTest extends TestCase {
 		int count;
 		IObservable source;
 		
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			count++;
-			this.source = source;
+			this.source = event.getObservable();
 		}
 	}
 	
@@ -204,9 +206,9 @@ public class AbstractObservableTest extends TestCase {
 		int count;
 		IObservable source;
 		
-		public void handleStale(IObservable source) {
+		public void handleStale(StaleEvent event) {
 			count++;
-			this.source = source;
+			this.source = event.getObservable();
 		}
 	}
 	

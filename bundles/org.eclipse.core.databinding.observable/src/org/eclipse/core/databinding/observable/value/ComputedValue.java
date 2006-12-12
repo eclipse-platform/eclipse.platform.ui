@@ -11,11 +11,13 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 
 /**
  * A Lazily calculated value that automatically computes and registers listeners
@@ -99,14 +101,14 @@ public abstract class ComputedValue extends AbstractObservableValue {
 			cachedValue = calculate();
 		}
 
-		public void handleStale(IObservable source) {
+		public void handleStale(StaleEvent event) {
 			if (!dirty && !stale) {
 				stale = true;
 				fireStale();
 			}
 		}
 
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			makeDirty();
 		}
 	}

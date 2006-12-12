@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
@@ -70,7 +71,7 @@ public abstract class MenuUpdater {
 		}
 		
 		// IChangeListener implementation (listening to the ComputedValue)
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			// Whenever this updator becomes dirty, schedule the run() method 
 			makeDirty();
 		}

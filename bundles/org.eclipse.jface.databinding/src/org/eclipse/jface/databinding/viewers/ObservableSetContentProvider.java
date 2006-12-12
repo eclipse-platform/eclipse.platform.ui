@@ -16,12 +16,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
-import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -68,21 +68,21 @@ public final class ObservableSetContentProvider implements
 
 	private ISetChangeListener listener = new ISetChangeListener() {
 
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
+		public void handleSetChange(SetChangeEvent event) {
 			boolean wasStale = knownElements.isStale();
 			if (isDisposed()) {
 				return;
 			}
-			doDiff(diff.getAdditions(), diff.getRemovals(), true);
-			if (!wasStale && source.isStale()) {
+			doDiff(event.diff.getAdditions(), event.diff.getRemovals(), true);
+			if (!wasStale && event.getObservableSet().isStale()) {
 				knownElements.doFireStale(true);
 			}
 		}
 	};
 
 	private IStaleListener staleListener = new IStaleListener() {
-		public void handleStale(IObservable source) {
-			knownElements.doFireStale(source.isStale());
+		public void handleStale(StaleEvent event) {
+			knownElements.doFireStale(event.getObservable().isStale());
 		}
 	};
 

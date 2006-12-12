@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
-import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.jface.tests.databinding.util.RealmTester;
@@ -44,7 +44,7 @@ public class ObservableMapTest extends TestCase {
 		class MapChangeListener implements IMapChangeListener {
 			int count;
 			
-			public void handleMapChange(IObservableMap source, MapDiff diff) {
+			public void handleMapChange(MapChangeEvent event) {
 				count++;
 			}			
 		}

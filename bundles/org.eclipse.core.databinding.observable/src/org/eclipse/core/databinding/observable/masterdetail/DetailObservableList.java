@@ -16,11 +16,11 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -33,9 +33,9 @@ import org.eclipse.core.runtime.Assert;
 	private boolean updating = false;
 
 	private IListChangeListener innerChangeListener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		public void handleListChange(ListChangeEvent event) {
 			if (!updating) {
-				fireListChange(diff);
+				fireListChange(event.diff);
 			}
 		}
 	};
@@ -66,7 +66,7 @@ import org.eclipse.core.runtime.Assert;
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			List oldList = new ArrayList(wrappedList);
 			updateInnerObservableValue(outerObservableValue);
 			fireListChange(Diffs.computeListDiff(oldList, wrappedList));

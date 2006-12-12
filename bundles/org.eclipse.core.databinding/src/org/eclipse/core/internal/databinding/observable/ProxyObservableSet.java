@@ -16,7 +16,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 
 /**
  * Wraps an observable set. This object acts like an exact copy of the original
@@ -32,8 +32,8 @@ public final class ProxyObservableSet extends AbstractObservableSet {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.internal.databinding.provisional.observable.set.ISetChangeListener#handleSetChange(org.eclipse.jface.internal.databinding.provisional.observable.set.IObservableSet, org.eclipse.jface.internal.databinding.provisional.observable.set.SetDiff)
 		 */
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
-			fireSetChange(diff);
+		public void handleSetChange(SetChangeEvent event) {
+			fireSetChange(event.diff);
 		}
 	};
 	

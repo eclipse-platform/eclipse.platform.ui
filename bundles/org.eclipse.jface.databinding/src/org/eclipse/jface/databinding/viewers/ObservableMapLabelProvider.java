@@ -17,7 +17,7 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapDiff;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -34,12 +34,12 @@ public class ObservableMapLabelProvider extends LabelProvider
 	private final IObservableMap[] attributeMaps;
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
-		public void handleMapChange(IObservableMap source, MapDiff diff) {
-			Set affectedElements = diff.getChangedKeys();
-			LabelProviderChangedEvent event = new LabelProviderChangedEvent(
+		public void handleMapChange(MapChangeEvent event) {
+			Set affectedElements = event.diff.getChangedKeys();
+			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(
 					ObservableMapLabelProvider.this, affectedElements
 							.toArray());
-			fireLabelProviderChanged(event);
+			fireLabelProviderChanged(newEvent);
 		}
 	};
 

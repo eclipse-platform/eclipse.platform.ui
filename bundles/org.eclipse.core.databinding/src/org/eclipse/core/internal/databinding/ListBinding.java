@@ -16,6 +16,7 @@ import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -69,12 +70,12 @@ public class ListBinding extends Binding {
 	}
 
 	private final IListChangeListener targetChangeListener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		public void handleListChange(ListChangeEvent event) {
 			if (updating) {
 				return;
 			}
 			// TODO validation
-			BindingEvent e = new BindingEvent(modelList, targetList, diff,
+			BindingEvent e = new BindingEvent(modelList, targetList, event.diff,
 					BindingEvent.EVENT_COPY_TO_MODEL,
 					BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {
@@ -105,12 +106,12 @@ public class ListBinding extends Binding {
 	};
 
 	private IListChangeListener modelChangeListener = new IListChangeListener() {
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		public void handleListChange(ListChangeEvent event) {
 			if (updating) {
 				return;
 			}
 			// TODO validation
-			BindingEvent e = new BindingEvent(modelList, targetList, diff,
+			BindingEvent e = new BindingEvent(modelList, targetList, event.diff,
 					BindingEvent.EVENT_COPY_TO_TARGET,
 					BindingEvent.PIPELINE_AFTER_GET);
 			if (failure(errMsg(fireBindingEvent(e)))) {

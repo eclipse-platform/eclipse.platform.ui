@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.MapDiff;
@@ -44,7 +44,7 @@ public class ValidationStatusMap extends ObservableMap {
 	private List dependencies = new ArrayList();
 
 	private IChangeListener markDirtyChangeListener = new IChangeListener() {
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			markDirty();
 		}
 	};

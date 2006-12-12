@@ -22,7 +22,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 
 /**
  * Maps objects to one of their attributes. Tracks changes to the underlying
@@ -33,9 +33,9 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	private final IObservableSet keySet;
 
 	private ISetChangeListener setChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
-			Set addedKeys = new HashSet(diff.getAdditions());
-			Set removedKeys = new HashSet(diff.getRemovals());
+		public void handleSetChange(SetChangeEvent event) {
+			Set addedKeys = new HashSet(event.diff.getAdditions());
+			Set removedKeys = new HashSet(event.diff.getRemovals());
 			Map oldValues = new HashMap();
 			Map newValues = new HashMap();
 			for (Iterator it = removedKeys.iterator(); it.hasNext();) {

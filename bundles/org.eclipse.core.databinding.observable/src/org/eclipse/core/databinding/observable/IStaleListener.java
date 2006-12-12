@@ -12,17 +12,18 @@
 package org.eclipse.core.databinding.observable;
 
 /**
- * Listener for staleness events. An observable object is stale if its state will change
- * eventually.
+ * Listener for staleness events. An observable object is stale if its state
+ * will change eventually.
  * 
  * @since 1.0
  */
-public interface IStaleListener {
-	
+public interface IStaleListener extends IObservablesListener {
+
 	/**
 	 * Handle the event that the given observable object is now stale.
-	 * @param source
+	 * 
+	 * @param staleEvent
 	 */
-	public void handleStale(IObservable source);
+	public void handleStale(StaleEvent staleEvent);
 
 }

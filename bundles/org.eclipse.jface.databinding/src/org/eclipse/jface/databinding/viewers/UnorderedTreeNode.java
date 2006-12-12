@@ -14,12 +14,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
-import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.jface.viewers.TreePath;
 
 /* package */ class UnorderedTreeNode implements ISetChangeListener, IStaleListener {
@@ -216,10 +216,10 @@ import org.eclipse.jface.viewers.TreePath;
     /**
      * Called when the child set changes. Should not be called directly by the viewer.
      */
-    public void handleSetChange(IObservableSet source, SetDiff diff) {
+    public void handleSetChange(SetChangeEvent event) {
         boolean shouldHavePendingNode = children.isEmpty() && children.isStale();
         
-        Set additions = diff.getAdditions();
+        Set additions = event.diff.getAdditions();
         // Check if we should add the pending node
         if (shouldHavePendingNode && !hasPendingNode) {
             HashSet newAdditions = new HashSet();
@@ -229,7 +229,7 @@ import org.eclipse.jface.viewers.TreePath;
             hasPendingNode = true;
         }
 
-        Set removals = diff.getRemovals();
+        Set removals = event.diff.getRemovals();
         // Check if we should remove the pending node
         if (!shouldHavePendingNode && hasPendingNode) {
             HashSet newRemovals = new HashSet();
@@ -248,7 +248,7 @@ import org.eclipse.jface.viewers.TreePath;
         updateStale();
     }
 
-    public void handleStale(IObservable source) {
+    public void handleStale(StaleEvent event) {
         boolean shouldHavePendingNode = children.isEmpty() && children.isStale();
         
         // Check if we should add the pending node

@@ -17,7 +17,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 
 /**
@@ -33,10 +33,10 @@ public class ListToSetAdapter extends ObservableSet {
 
 	private IListChangeListener listener = new IListChangeListener() {
 
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		public void handleListChange(ListChangeEvent event) {
 			Set added = new HashSet();
 			Set removed = new HashSet();
-			ListDiffEntry[] differences = diff.getDifferences();
+			ListDiffEntry[] differences = event.diff.getDifferences();
 			for (int i = 0; i < differences.length; i++) {
 				ListDiffEntry entry = differences[i];
 				Object element = entry.getElement();

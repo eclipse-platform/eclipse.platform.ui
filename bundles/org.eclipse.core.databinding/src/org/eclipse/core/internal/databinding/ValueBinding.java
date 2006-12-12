@@ -22,6 +22,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.IValueChangingListener;
 import org.eclipse.core.databinding.observable.value.IVetoableValue;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
+import org.eclipse.core.databinding.observable.value.ValueChangingEvent;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -118,22 +120,29 @@ public class ValueBinding extends Binding {
 	}
 
 	private final IValueChangingListener targetChangingListener = new IValueChangingListener() {
-		public boolean handleValueChanging(IVetoableValue source, ValueDiff diff) {
+		public void handleValueChanging(ValueChangingEvent event) {
 			if (updatingTarget)
-				return true;
+				return;
 			// we are notified of a pending change, do validation
 			// and veto the change if it is not valid
-			Object value = diff.getNewValue();
-			IStatus partialValidationError = targetPartialValidator
+			Object value = event.diff.getNewValue();
+			final IStatus partialValidationStatus = targetPartialValidator
 					.validate(value);
-			partialValidationErrorObservable.setValue(partialValidationError);
-			return partialValidationError.isOK();
+			partialValidationErrorObservable.getRealm().exec(new Runnable() {
+				public void run() {
+					partialValidationErrorObservable
+							.setValue(partialValidationStatus);
+				}
+			});
+			if (!partialValidationStatus.isOK()) {
+				event.veto = true;
+			}
 		}
 	};
 
 	private final IValueChangeListener targetChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source,
-				final ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
+			final ValueDiff diff = event.diff;
 			if (updatingTarget)
 				return;
 			// the target (usually a widget) has changed, validate
@@ -147,8 +156,8 @@ public class ValueBinding extends Binding {
 	};
 
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source,
-				final ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
+			final ValueDiff diff = event.diff;
 			if (updatingModel)
 				return;
 			// The model has changed so we must update the target

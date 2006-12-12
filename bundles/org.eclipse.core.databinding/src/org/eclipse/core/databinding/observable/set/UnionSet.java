@@ -58,8 +58,8 @@ public final class UnionSet extends ObservableSet {
 	}
 
 	private ISetChangeListener childSetChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
-			processAddsAndRemoves(diff.getAdditions(), diff.getRemovals());
+		public void handleSetChange(SetChangeEvent event) {
+			processAddsAndRemoves(event.diff.getAdditions(), event.diff.getRemovals());
 		}
 	};
 

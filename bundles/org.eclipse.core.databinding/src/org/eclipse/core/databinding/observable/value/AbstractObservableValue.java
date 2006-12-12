@@ -12,9 +12,6 @@
 
 package org.eclipse.core.databinding.observable.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
@@ -38,36 +35,12 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 		super(realm);
 	}
 
-	/**
-	 * Collection of {@link IValueChangeListener value change listeners}.
-	 * Access must be synchronized.
-	 */
-	private Collection valueChangeListeners = null;
-
 	public synchronized void addValueChangeListener(IValueChangeListener listener) {
-		if (valueChangeListeners == null) {
-			boolean hadListeners = hasListeners();
-			valueChangeListeners = new ArrayList();
-			valueChangeListeners.add(listener);
-			if (!hadListeners) {
-				firstListenerAdded();
-			}
-		} else {
-			valueChangeListeners.add(listener);
-		}
+		addListener(ValueChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeValueChangeListener(IValueChangeListener listener) {
-		if (valueChangeListeners == null) {
-			return;
-		}
-		valueChangeListeners.remove(listener);
-		if (valueChangeListeners.isEmpty()) {
-			valueChangeListeners = null;
-		}
-		if (!hasListeners()) {
-			lastListenerRemoved();
-		}
+		removeListener(ValueChangeEvent.TYPE, listener);
 	}
 
 	final public void setValue(Object value) {
@@ -88,14 +61,7 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 	protected void fireValueChange(ValueDiff diff) {
 		// fire general change event first
 		super.fireChange();
-		if (valueChangeListeners != null) {
-			IValueChangeListener[] listeners = (IValueChangeListener[]) valueChangeListeners
-					.toArray(new IValueChangeListener[valueChangeListeners
-							.size()]);
-			for (int i = 0; i < listeners.length; i++) {
-				listeners[i].handleValueChange(this, diff);
-			}
-		}
+		fireEvent(new ValueChangeEvent(this, diff));
 	}
 
 	public final Object getValue() {
@@ -109,22 +75,12 @@ abstract public class AbstractObservableValue extends AbstractObservable impleme
 		return false;
 	}
 
-	protected synchronized boolean hasListeners() {
-		return super.hasListeners() || valueChangeListeners != null;
-	}
-
 	protected void fireChange() {
 		throw new RuntimeException(
 				"fireChange should not be called, use fireValueChange() instead"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
-	 */
 	public synchronized void dispose() {
-		valueChangeListeners = null;
 		super.dispose();
 	}
 }

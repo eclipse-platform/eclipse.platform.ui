@@ -16,7 +16,7 @@ import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -28,9 +28,9 @@ public class DetailObservableValue extends AbstractObservableValue {
 	private boolean updating = false;
 
 	private IValueChangeListener innerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			if (!updating) {
-				fireValueChange(diff);
+				fireValueChange(event.diff);
 			}
 		}
 	};
@@ -63,7 +63,7 @@ public class DetailObservableValue extends AbstractObservableValue {
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			Object oldValue = doGetValue();
 			updateInnerObservableValue(outerObservableValue);
 			fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));

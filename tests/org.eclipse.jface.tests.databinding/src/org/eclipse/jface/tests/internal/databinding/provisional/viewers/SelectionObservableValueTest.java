@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.viewers.ViewersObservables;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ListViewer;
@@ -58,7 +58,7 @@ public class SelectionObservableValueTest extends TestCase {
     private static class ValueChangeListener implements IValueChangeListener {
         int count;
         
-        public void handleValueChange(IObservableValue source, ValueDiff diff) {
+        public void handleValueChange(ValueChangeEvent event) {
             count++;
         }        
     }

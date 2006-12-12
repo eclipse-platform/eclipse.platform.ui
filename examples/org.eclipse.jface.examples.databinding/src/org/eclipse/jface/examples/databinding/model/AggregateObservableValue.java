@@ -17,7 +17,7 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 
 /**
  * @since 3.2
@@ -34,7 +34,7 @@ public class AggregateObservableValue extends AbstractObservableValue {
 	private String currentValue;
 
 	private IValueChangeListener listener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			if (!updating) {
 				fireValueChange(Diffs.createValueDiff(currentValue,
 						doGetValue()));

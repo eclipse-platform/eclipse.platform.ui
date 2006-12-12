@@ -16,13 +16,16 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
@@ -123,18 +126,18 @@ public class UnmodifiableObservableListTest extends TestCase {
 		int count;
 		IObservable source;
 		
-		public void handleStale(IObservable source) {
+		public void handleStale(StaleEvent event) {
 			count++;
-			this.source = source;
+			this.source = event.getObservable();
 		}
 	}
 	
 	private static class ChangeCounter implements IChangeListener {
 		int count;
 		IObservable source;
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			count++;
-			this.source = source;
+			this.source = event.getObservable();
 		}
 	}
 	
@@ -143,10 +146,10 @@ public class UnmodifiableObservableListTest extends TestCase {
 		IObservableList source;
 		ListDiff diff;
 
-		public void handleListChange(IObservableList source, ListDiff diff) {
+		public void handleListChange(ListChangeEvent event) {
 			count++;
-			this.source = source;
-			this.diff = diff;
+			this.source = event.getObservableList();
+			this.diff = event.diff;
 		}
 	}
 	

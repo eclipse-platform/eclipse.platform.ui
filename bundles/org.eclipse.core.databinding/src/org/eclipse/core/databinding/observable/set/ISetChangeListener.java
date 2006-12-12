@@ -11,17 +11,17 @@
 
 package org.eclipse.core.databinding.observable.set;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
 
 /**
  * @since 1.0
- *
+ * 
  */
-public interface ISetChangeListener {
-	
+public interface ISetChangeListener extends IObservablesListener {
+
 	/**
-	 * @param source
-	 * @param diff
+	 * @param event
 	 */
-	void handleSetChange(IObservableSet source, SetDiff diff);
+	void handleSetChange(SetChangeEvent event);
 
 }

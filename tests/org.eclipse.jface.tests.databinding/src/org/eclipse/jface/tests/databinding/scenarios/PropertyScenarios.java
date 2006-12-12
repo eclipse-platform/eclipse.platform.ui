@@ -23,8 +23,8 @@ import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.Converter;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.conversion.IdentityConverter;
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -512,7 +512,7 @@ public class PropertyScenarios extends ScenariosTestCase {
         IObservableValue uv = BeansObservables.observeValue(adventure, "name");
         
         uv.addChangeListener(new IChangeListener() {
-            public void handleChange(IObservable source) {
+            public void handleChange(ChangeEvent event) {
                 // Count how many times adventure has changed
                 counter[0]++;
             }

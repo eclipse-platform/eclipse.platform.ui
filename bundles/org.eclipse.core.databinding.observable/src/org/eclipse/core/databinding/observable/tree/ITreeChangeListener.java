@@ -17,9 +17,8 @@ package org.eclipse.core.databinding.observable.tree;
  */
 public interface ITreeChangeListener {
 	/**
-	 * @param source
-	 * @param diff
+	 * @param event
 	 */
-	void handleTreeChange(IObservableTree source, TreeDiff diff);
+	void handleTreeChange(TreeChangeEvent event);
 
 }

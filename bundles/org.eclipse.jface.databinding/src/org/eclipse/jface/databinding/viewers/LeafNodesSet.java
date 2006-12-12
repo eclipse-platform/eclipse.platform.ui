@@ -17,11 +17,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.tree.IUnorderedTreeProvider;
 import org.eclipse.core.databinding.observable.tree.TreePath;
@@ -67,11 +68,11 @@ public class LeafNodesSet extends AbstractObservableSet {
 			count = 1;
 		}
 
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
-			processDiff(treePath, diff);
+		public void handleSetChange(SetChangeEvent event) {
+			processDiff(treePath, event.diff);
 		}
 
-		public void handleStale(IObservable source) {
+		public void handleStale(StaleEvent event) {
 			if (wasStale != children.isStale()) {
 				if (wasStale) {
 					staleCount--;

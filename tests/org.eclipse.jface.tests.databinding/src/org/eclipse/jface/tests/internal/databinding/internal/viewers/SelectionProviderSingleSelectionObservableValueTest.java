@@ -14,8 +14,8 @@ package org.eclipse.jface.tests.internal.databinding.internal.viewers;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.internal.databinding.internal.viewers.SelectionProviderSingleSelectionObservableValue;
@@ -122,10 +122,10 @@ public class SelectionProviderSingleSelectionObservableValueTest extends TestCas
          * @see org.eclipse.jface.databinding.observable.value.IValueChangeListener#handleValueChange(org.eclipse.jface.databinding.observable.value.IObservableValue,
          *      org.eclipse.jface.databinding.observable.value.ValueDiff)
          */
-        public void handleValueChange(IObservableValue source, ValueDiff diff) {
+        public void handleValueChange(ValueChangeEvent event) {
             count++;
-            this.source = source;
-            this.diff = diff;
+            this.source = event.getObservableValue();
+            this.diff = event.diff;
         }
     }
 

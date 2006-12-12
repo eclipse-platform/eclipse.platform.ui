@@ -10,20 +10,20 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
+
 /**
  * @since 1.0
  * 
  */
-public interface IValueChangingListener {
+public interface IValueChangingListener extends IObservablesListener {
 
 	/**
 	 * This method is called when the value is about to change and provides an
 	 * opportunity to veto the change.
 	 * 
-	 * @param source
-	 * @param diff
-	 * @return false if this listener is vetoing the change, true otherwise
+	 * @param event
 	 */
-	public boolean handleValueChanging(IVetoableValue source, ValueDiff diff);
+	public void handleValueChanging(ValueChangingEvent event);
 
 }

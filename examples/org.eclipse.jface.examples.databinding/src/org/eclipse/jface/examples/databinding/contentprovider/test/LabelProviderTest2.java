@@ -18,7 +18,7 @@ import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ListeningLabelProvider;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -146,8 +146,7 @@ public class LabelProviderTest2 {
 
 				selectedRenamable
 						.addValueChangeListener(new IValueChangeListener() {
-							public void handleValueChange(
-									IObservableValue source, ValueDiff diff) {
+							public void handleValueChange(ValueChangeEvent event) {
 								boolean shouldEnable = selectedRenamable
 										.getValue() != null;
 								removeButton.setEnabled(shouldEnable);

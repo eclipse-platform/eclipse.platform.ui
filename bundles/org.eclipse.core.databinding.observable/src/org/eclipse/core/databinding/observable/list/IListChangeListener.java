@@ -11,19 +11,20 @@
 
 package org.eclipse.core.databinding.observable.list;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
+
 
 /**
  * Listener for changes of observable lists.
  * 
  * @since 1.0
  */
-public interface IListChangeListener {
+public interface IListChangeListener extends IObservablesListener {
 	
 	/**
 	 * Handle a change to the given observable list. The change is described by the diff objects.
-	 * @param source
-	 * @param diff
+	 * @param event
 	 */
-	void handleListChange(IObservableList source, ListDiff diff);
+	void handleListChange(ListChangeEvent event);
 
 }

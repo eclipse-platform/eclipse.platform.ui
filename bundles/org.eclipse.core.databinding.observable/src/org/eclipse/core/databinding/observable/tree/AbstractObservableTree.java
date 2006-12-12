@@ -142,8 +142,9 @@ public abstract class AbstractObservableTree extends AbstractObservable
 		fireChange();
 
 		Object[] listeners = treeListeners.getListeners();
+		TreeChangeEvent event = new TreeChangeEvent(this, diff);
 		for (int i = 0; i < listeners.length; i++) {
-			((ITreeChangeListener) listeners[i]).handleTreeChange(this, diff);
+			((ITreeChangeListener) listeners[i]).handleTreeChange(event);
 		}
 	}
 

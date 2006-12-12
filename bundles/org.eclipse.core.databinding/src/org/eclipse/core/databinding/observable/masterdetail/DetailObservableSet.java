@@ -17,10 +17,10 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.ObservableSet;
-import org.eclipse.core.databinding.observable.set.SetDiff;
+import org.eclipse.core.databinding.observable.set.SetChangeEvent;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.runtime.Assert;
 
 /**
@@ -32,9 +32,9 @@ import org.eclipse.core.runtime.Assert;
 	private boolean updating = false;
 
 	private ISetChangeListener innerChangeListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
+		public void handleSetChange(SetChangeEvent event) {
 			if (!updating) {
-				fireSetChange(diff);
+				fireSetChange(event.diff);
 			}
 		}
 	};
@@ -63,7 +63,7 @@ import org.eclipse.core.runtime.Assert;
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			Set oldSet = new HashSet(wrappedSet);
 			updateInnerObservableValue(outerObservableValue);
 			fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));

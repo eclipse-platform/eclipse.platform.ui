@@ -14,9 +14,8 @@ package org.eclipse.jface.tests.databinding.observable.value;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
@@ -63,7 +62,7 @@ public class WritableValueTest extends TestCase {
     private static class ValueChangeCounter implements IValueChangeListener {
         int count;
 
-        public void handleValueChange(IObservableValue source, ValueDiff diff) {
+        public void handleValueChange(ValueChangeEvent event) {
             count++;
         }
     }

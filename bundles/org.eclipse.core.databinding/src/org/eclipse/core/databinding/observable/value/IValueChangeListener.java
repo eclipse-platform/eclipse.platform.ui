@@ -11,16 +11,17 @@
 
 package org.eclipse.core.databinding.observable.value;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
+
 /**
  * @since 1.0
  * 
  */
-public interface IValueChangeListener {
+public interface IValueChangeListener extends IObservablesListener {
 
 	/**
-	 * @param source
-	 * @param diff
+	 * @param event
 	 */
-	void handleValueChange(IObservableValue source, ValueDiff diff);
+	void handleValueChange(ValueChangeEvent event);
 
 }

@@ -21,6 +21,7 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 
 /**
@@ -37,9 +38,9 @@ public class MappedSet extends ObservableSet {
 	private Map valueCounts = new HashMap();
 
 	private ISetChangeListener domainListener = new ISetChangeListener() {
-		public void handleSetChange(IObservableSet source, SetDiff diff) {
+		public void handleSetChange(SetChangeEvent event) {
 			Set additions = new HashSet();
-			for (Iterator it = diff.getAdditions().iterator(); it.hasNext();) {
+			for (Iterator it = event.diff.getAdditions().iterator(); it.hasNext();) {
 				Object added = it.next();
 				Object mapValue = wrappedMap.get(added);
 				if (handleAddition(mapValue)) {
@@ -47,7 +48,7 @@ public class MappedSet extends ObservableSet {
 				}
 			}
 			Set removals = new HashSet();
-			for (Iterator it = diff.getRemovals().iterator(); it.hasNext();) {
+			for (Iterator it = event.diff.getRemovals().iterator(); it.hasNext();) {
 				Object removed = it.next();
 				Object mapValue = wrappedMap.get(removed);
 				if (handleRemoval(mapValue)) {
@@ -59,7 +60,8 @@ public class MappedSet extends ObservableSet {
 	};
 
 	private IMapChangeListener mapChangeListener = new IMapChangeListener() {
-		public void handleMapChange(IObservableMap source, MapDiff diff) {
+		public void handleMapChange(MapChangeEvent event) {
+			MapDiff diff = event.diff;
 			Set additions = new HashSet();
 			Set removals = new HashSet();
 			for (Iterator it = diff.getRemovedKeys().iterator(); it.hasNext();) {

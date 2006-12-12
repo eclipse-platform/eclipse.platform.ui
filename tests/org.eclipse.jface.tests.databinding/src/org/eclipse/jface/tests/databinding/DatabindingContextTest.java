@@ -19,15 +19,15 @@ import junit.framework.TestCase;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
@@ -196,7 +196,7 @@ public class DatabindingContextTest extends TestCase {
 	private static class ValueChangeCounter implements IValueChangeListener {
 		int count;
 
-		public void handleValueChange(IObservableValue source, ValueDiff diff) {
+		public void handleValueChange(ValueChangeEvent event) {
 			count++;
 		}
 	}
@@ -209,7 +209,7 @@ public class DatabindingContextTest extends TestCase {
 	private static class ChangeCounter implements IChangeListener {
 		int count;
 
-		public void handleChange(IObservable source) {
+		public void handleChange(ChangeEvent event) {
 			count++;
 		}
 	}

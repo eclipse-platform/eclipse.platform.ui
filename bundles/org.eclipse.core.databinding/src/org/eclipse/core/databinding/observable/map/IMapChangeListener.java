@@ -11,18 +11,18 @@
 
 package org.eclipse.core.databinding.observable.map;
 
+import org.eclipse.core.databinding.observable.IObservablesListener;
+
 
 /**
  * @since 1.1
  *
  */
-public interface IMapChangeListener {
+public interface IMapChangeListener extends IObservablesListener {
 
 	/**
-	 * @param source
-	 * @param diff
+	 * @param event
 	 */
-	void handleMapChange(IObservableMap source,
-			MapDiff diff);
+	void handleMapChange(MapChangeEvent event);
 
 }

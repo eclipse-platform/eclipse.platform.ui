@@ -11,13 +11,12 @@
 
 package org.eclipse.core.databinding.observable.set;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.AbstractObservable;
+import org.eclipse.core.databinding.observable.ChangeSupport;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 
@@ -31,9 +30,16 @@ import org.eclipse.core.databinding.observable.Realm;
 public abstract class AbstractObservableSet extends AbstractObservable implements
 		IObservableSet {
 
-	private boolean stale = false;
+	private ChangeSupport changeSupport = new ChangeSupport(null){
+		protected void firstListenerAdded() {
+			AbstractObservableSet.this.firstListenerAdded();
+		}
+		protected void lastListenerRemoved() {
+			AbstractObservableSet.this.lastListenerRemoved();
+		}
+	};
 
-	private Object setChangeListeners;
+	private boolean stale = false;
 
 	protected AbstractObservableSet() {
 		this(Realm.getDefault());
@@ -44,83 +50,20 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	}
 	
 	public void addSetChangeListener(ISetChangeListener listener) {
-		if (setChangeListeners == null) {
-			boolean hadListeners = hasListeners();
-			setChangeListeners = listener;
-			if (!hadListeners) {
-				firstListenerAdded();
-			}
-			return;
-		}
-
-		Collection listenerList;
-		if (setChangeListeners instanceof Collection) {
-			listenerList = (Collection) setChangeListeners;
-		} else {
-			ISetChangeListener l = (ISetChangeListener) setChangeListeners;
-			
-			listenerList = new ArrayList();
-			listenerList.add(l);
-			setChangeListeners = listenerList;
-		}
-
-		if (listenerList.size() > 16) {
-			HashSet listenerSet = new HashSet();
-			listenerSet.addAll(listenerList);
-			setChangeListeners = listenerList;
-		}
-
-		listenerList.add(listener);
+		changeSupport.addListener(SetChangeEvent.TYPE, listener);
 	}
 
 	public void removeSetChangeListener(ISetChangeListener listener) {
-
-		if (setChangeListeners == listener) {
-			setChangeListeners = null;
-			if (!hasListeners()) {
-				lastListenerRemoved();
-			}
-			return;
-		}
-
-		if (setChangeListeners instanceof Collection) {
-			Collection listenerList = (Collection) setChangeListeners;
-			listenerList.remove(listener);
-			if (listenerList.size() == 0) {
-				setChangeListeners = null;
-				if (!hasListeners()) {
-					lastListenerRemoved();
-				}
-			}
-		}
+		changeSupport.removeListener(SetChangeEvent.TYPE, listener);
 	}
 
 	protected abstract Set getWrappedSet();
 	
-	protected boolean hasListeners() {
-		return super.hasListeners() || setChangeListeners!=null;
-	}
-
 	protected void fireSetChange(SetDiff diff) {
 		// fire general change event first
 		super.fireChange();
 
-		if (setChangeListeners == null) {
-			return;
-		}
-		
-		if (setChangeListeners instanceof ISetChangeListener) {
-			((ISetChangeListener) setChangeListeners).handleSetChange(this, diff);
-			return;
-		}
-		
-		Collection changeListenerCollection = (Collection) setChangeListeners;
-		
-		ISetChangeListener[] listeners = (ISetChangeListener[]) (changeListenerCollection)
-		.toArray(new ISetChangeListener[changeListenerCollection.size()]);
-		for (int i = 0; i < listeners.length; i++) {
-			listeners[i].handleSetChange(this, diff);
-		}
+		changeSupport.fireEvent(new SetChangeEvent(this, diff));
 	}
 	
 	public boolean contains(Object o) {
@@ -246,8 +189,9 @@ public abstract class AbstractObservableSet extends AbstractObservable implement
 	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
 	 */
 	public void dispose() {
-		setChangeListeners = null;
 		super.dispose();
+		changeSupport.dispose();
+		changeSupport = null;
 	}
 	
 }

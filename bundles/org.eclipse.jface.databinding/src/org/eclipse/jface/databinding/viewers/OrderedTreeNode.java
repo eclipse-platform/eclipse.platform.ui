@@ -16,12 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListDiff;
+import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.jface.viewers.TreePath;
 
@@ -226,12 +226,12 @@ import org.eclipse.jface.viewers.TreePath;
 	 * Called when the child set changes. Should not be called directly by the
 	 * viewer.
 	 */
-	public void handleListChange(IObservableList source, ListDiff diff) {
+	public void handleListChange(ListChangeEvent event) {
 		boolean shouldHavePendingNode = children.isEmpty()
 				&& children.isStale();
 
 		List removals = new ArrayList();
-		ListDiffEntry[] differences = diff.getDifferences();
+		ListDiffEntry[] differences = event.diff.getDifferences();
 		for (int i = 0; i < differences.length; i++) {
 			ListDiffEntry diffEntry = differences[i];
 			if (diffEntry.isAddition()) {
@@ -262,7 +262,7 @@ import org.eclipse.jface.viewers.TreePath;
 		updateStale();
 	}
 
-	public void handleStale(IObservable source) {
+	public void handleStale(StaleEvent event) {
 		boolean shouldHavePendingNode = children.isEmpty()
 				&& children.isStale();
 

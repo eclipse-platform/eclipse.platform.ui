@@ -14,12 +14,14 @@ package org.eclipse.core.databinding.observable.map;
 
 import java.util.AbstractMap;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.ChangeSupport;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.core.runtime.ListenerList;
 
 /**
  * @since 3.3
@@ -28,24 +30,16 @@ import org.eclipse.core.runtime.ListenerList;
 public abstract class AbstractObservableMap extends AbstractMap implements
 		IObservableMap {
 
+	private ChangeSupport changeSupport = new ChangeSupport(null){
+		protected void firstListenerAdded() {
+			AbstractObservableMap.this.firstListenerAdded();
+		}
+		protected void lastListenerRemoved() {
+			AbstractObservableMap.this.lastListenerRemoved();
+		}
+	};
+
 	private Realm realm;
-
-	/**
-	 * List of {@link IMapChangeListener IMapChangeListeners}.  Access must be synchronized.
-	 */
-	private ListenerList mapListeners = new ListenerList(ListenerList.IDENTITY);
-
-	/**
-	 * List of {@link IChangeListener IChangeListeners}.  Access must by synchronized.
-	 */
-	private ListenerList changeListeners = new ListenerList(
-			ListenerList.IDENTITY);
-
-	/**
-	 * List of {@link IStaleListener IStaleListeners}.  Access must be synchronized.
-	 */
-	private ListenerList staleListeners = new ListenerList(
-			ListenerList.IDENTITY);
 
 	private boolean stale;
 
@@ -56,6 +50,18 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	/**
+	 * 
+	 */
+	protected void lastListenerRemoved() {
+	}
+
+	/**
+	 * 
+	 */
+	protected void firstListenerAdded() {
+	}
+
+	/**
 	 * @param realm
 	 */
 	public AbstractObservableMap(Realm realm) {
@@ -63,25 +69,24 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
-		mapListeners.add(listener);
+		changeSupport.addListener(MapChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
-		mapListeners.remove(listener);
+		changeSupport.removeListener(MapChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void addChangeListener(IChangeListener listener) {
-		changeListeners.add(listener);
+		changeSupport.addChangeListener(listener);
 	}
 
 	public synchronized void addStaleListener(IStaleListener listener) {
-		staleListeners.add(listener);
+		changeSupport.addStaleListener(listener);
 	}
 
 	public synchronized void dispose() {
-		mapListeners = null;
-		changeListeners = null;
-		staleListeners = null;
+		changeSupport.dispose();
+		changeSupport = null;
 	}
 
 	public Realm getRealm() {
@@ -94,11 +99,11 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public synchronized void removeChangeListener(IChangeListener listener) {
-		changeListeners.remove(listener);
+		changeSupport.removeChangeListener(listener);
 	}
 
 	public synchronized void removeStaleListener(IStaleListener listener) {
-		staleListeners.remove(listener);
+		changeSupport.removeStaleListener(listener);
 	}
 
 	/**
@@ -119,11 +124,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 */
 	protected void fireStale() {
 		checkRealm();
-		Object[] listeners = staleListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IStaleListener listener = (IStaleListener) listeners[i];
-			listener.handleStale(this);
-		}
+		changeSupport.fireEvent(new StaleEvent(this));
 	}
 
 	/**
@@ -131,11 +132,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 */
 	protected void fireChange() {
 		checkRealm();
-		Object[] listeners = changeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IChangeListener listener = (IChangeListener) listeners[i];
-			listener.handleChange(this);
-		}
+		changeSupport.fireEvent(new ChangeEvent(this));
 	}
 
 	/**
@@ -145,11 +142,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	 */
 	protected void fireMapChange(MapDiff diff) {
 		checkRealm();
-		Object[] listeners = mapListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IMapChangeListener listener = (IMapChangeListener) listeners[i];
-			listener.handleMapChange(this, diff);
-		}
+		changeSupport.fireEvent(new MapChangeEvent(this, diff));
 	}
 
 	/**

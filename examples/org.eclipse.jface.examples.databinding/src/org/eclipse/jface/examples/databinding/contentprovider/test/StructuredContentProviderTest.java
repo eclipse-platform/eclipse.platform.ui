@@ -19,7 +19,7 @@ import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableSetContentProvider;
@@ -202,8 +202,7 @@ public class StructuredContentProviderTest {
 		// mathFunction implements the selected function
 		mathFunction = new SomeMathFunction(inputSet);
 		currentFunction.addValueChangeListener(new IValueChangeListener() {
-			public void handleValueChange(IObservableValue source,
-					ValueDiff diff) {
+			public void handleValueChange(ValueChangeEvent event) {
 				mathFunction
 						.setOperation(((Integer) currentFunction.getValue())
 								.intValue());

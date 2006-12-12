@@ -15,9 +15,8 @@ package org.eclipse.jface.tests.databinding.observable;
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
-import org.eclipse.core.databinding.observable.value.ValueDiff;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.AssertionFailedException;
 
@@ -140,7 +139,7 @@ public class ThreadRealmTest extends TestCase {
 
         Thread changeEventThread;
 
-        public void handleValueChange(IObservableValue source, ValueDiff diff) {
+        public void handleValueChange(ValueChangeEvent event) {
             synchronized (this) {
                 count++;
                 changeEventThread = Thread.currentThread();

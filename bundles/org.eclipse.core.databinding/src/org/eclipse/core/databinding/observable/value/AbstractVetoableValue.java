@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 
@@ -37,51 +34,33 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	public AbstractVetoableValue(Realm realm) {
 		super(realm);
 	}
-	
+
 	final protected void doSetValue(Object value) {
-        Object currentValue = doGetValue();
-        ValueDiff diff = Diffs.createValueDiff(currentValue, value);
-        boolean okToProceed = fireValueChanging(diff);
-        if (!okToProceed) {
-            throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
-        }
-        doSetApprovedValue(value);
-        fireValueChange(diff);
-    }
-    
-    /**
-     * Sets the value.  Invoked after performing veto checks.
-     * 
-     * @param value
-     */
-    protected abstract void doSetApprovedValue(Object value);
-
-	private Collection valueChangingListeners = null;
-
-	public synchronized void addValueChangingListener(IValueChangingListener listener) {
-		if (valueChangingListeners == null) {
-			boolean hadListeners = hasListeners();
-			valueChangingListeners = new ArrayList();
-			valueChangingListeners.add(listener);
-			if (!hadListeners) {
-				firstListenerAdded();
-			}
-		} else {
-			valueChangingListeners.add(listener);
+		Object currentValue = doGetValue();
+		ValueDiff diff = Diffs.createValueDiff(currentValue, value);
+		boolean okToProceed = fireValueChanging(diff);
+		if (!okToProceed) {
+			throw new ChangeVetoException("Change not permitted"); //$NON-NLS-1$
 		}
+		doSetApprovedValue(value);
+		fireValueChange(diff);
 	}
 
-	public synchronized void removeValueChangingListener(IValueChangingListener listener) {
-		if (valueChangingListeners == null) {
-			return;
-		}
-		valueChangingListeners.remove(listener);
-		if (valueChangingListeners.isEmpty()) {
-			valueChangingListeners = null;
-		}
-		if (!hasListeners()) {
-			lastListenerRemoved();
-		}
+	/**
+	 * Sets the value. Invoked after performing veto checks.
+	 * 
+	 * @param value
+	 */
+	protected abstract void doSetApprovedValue(Object value);
+
+	public synchronized void addValueChangingListener(
+			IValueChangingListener listener) {
+		addListener(ValueChangingEvent.TYPE, listener);
+	}
+
+	public synchronized void removeValueChangingListener(
+			IValueChangingListener listener) {
+		removeListener(ValueChangingEvent.TYPE, listener);
 	}
 
 	/**
@@ -93,24 +72,10 @@ public abstract class AbstractVetoableValue extends AbstractObservableValue
 	 */
 	protected boolean fireValueChanging(ValueDiff diff) {
 		checkRealm();
-		
-		if (valueChangingListeners != null) {
-			IValueChangingListener[] listeners = (IValueChangingListener[]) valueChangingListeners
-					.toArray(new IValueChangingListener[valueChangingListeners
-							.size()]);
-			for (int i = 0; i < listeners.length; i++) {
-				boolean okToProceed = listeners[i].handleValueChanging(this,
-						diff);
-				if (!okToProceed) {
-					return false;
-				}
-			}
-		}
-		return true;
-	}
 
-	protected boolean hasListeners() {
-		return super.hasListeners();
+		ValueChangingEvent event = new ValueChangingEvent(this, diff);
+		fireEvent(event);
+		return !event.veto;
 	}
 
 	public void dispose() {

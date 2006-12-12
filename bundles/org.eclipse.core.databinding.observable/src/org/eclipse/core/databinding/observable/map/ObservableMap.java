@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.runtime.ListenerList;
 
 /**
  * @since 1.1
@@ -27,11 +26,6 @@ import org.eclipse.core.runtime.ListenerList;
  */
 public class ObservableMap extends AbstractObservable implements IObservableMap {
 
-	/**
-	 * List of {@link IMapChangeListener IMapChangeListeners}.  Access must be synchronized.
-	 */
-	private ListenerList mapChangeListeners = new ListenerList();
-	
 	protected Map wrappedMap;
 
 	private boolean stale = false;
@@ -54,15 +48,11 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 	
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
-		mapChangeListeners.add(listener);
+		addListener(MapChangeEvent.TYPE, listener);
 	}
 
 	public synchronized void removeMapChangeListener(IMapChangeListener listener) {
-		mapChangeListeners.remove(listener);
-	}
-
-	protected synchronized boolean hasListeners() {
-		return super.hasListeners() || !mapChangeListeners.isEmpty();
+		removeListener(MapChangeEvent.TYPE, listener);
 	}
 
 	protected void getterCalled() {
@@ -75,10 +65,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 		// fire general change event first
 		super.fireChange();
 
-		Object[] listeners = mapChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((IMapChangeListener) listeners[i]).handleMapChange(this, diff);
-		}
+		fireEvent(new MapChangeEvent(this, diff));
 	}
 
 	public boolean containsKey(Object key) {
@@ -166,7 +153,5 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	public synchronized void dispose() {
 		super.dispose();
-		
-		mapChangeListeners = null;
 	}
 }

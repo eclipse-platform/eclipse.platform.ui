@@ -28,13 +28,13 @@ import org.eclipse.core.databinding.observable.value.IValueChangeListener;
  * 
  * @since 1.0
  */
-public interface IChangeListener {
+public interface IChangeListener extends IObservablesListener {
 	
 	/**
 	 * Handle a generic change to the given observable.
 	 * 
-	 * @param source
+	 * @param event 
 	 */
-	public void handleChange(IObservable source);
+	public void handleChange(ChangeEvent event);
 
 }

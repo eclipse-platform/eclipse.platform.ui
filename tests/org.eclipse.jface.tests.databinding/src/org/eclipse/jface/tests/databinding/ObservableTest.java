@@ -13,6 +13,7 @@ package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
@@ -64,9 +65,9 @@ public class ObservableTest extends TestCase {
         /* (non-Javadoc)
          * @see org.eclipse.jface.databinding.observable.IChangeListener#handleChange(org.eclipse.jface.databinding.observable.IObservable)
          */
-        public void handleChange(IObservable source) {
+        public void handleChange(ChangeEvent event) {
             count++;
-            this.source = source;
+            this.source = event.getObservable();
         }        
     }
     

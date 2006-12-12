@@ -27,7 +27,8 @@ public class BidirectionalMap extends ObservableMap {
 
 	private IMapChangeListener mapListener = new IMapChangeListener() {
 
-		public void handleMapChange(IObservableMap source, MapDiff diff) {
+		public void handleMapChange(MapChangeEvent event) {
+			MapDiff diff = event.diff;
 			for (Iterator it = diff.getAddedKeys().iterator(); it.hasNext();) {
 				Object addedKey = it.next();
 				addMapping(addedKey, diff.getNewValue(addedKey));
