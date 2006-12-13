@@ -322,6 +322,10 @@ public final class WorkbenchMenuService implements IMenuService {
 			menuAuthority.removeContribition(items[i]);
 			if (items[i] instanceof ContributionManager) {
 				releaseContributions((ContributionManager) items[i]);
+			} else if (items[i] instanceof IToolBarContributionItem) {
+				IToolBarContributionItem tbci = (IToolBarContributionItem) items[i];
+				releaseContributions((ContributionManager) tbci
+						.getToolBarManager());
 			}
 		}
 	}
