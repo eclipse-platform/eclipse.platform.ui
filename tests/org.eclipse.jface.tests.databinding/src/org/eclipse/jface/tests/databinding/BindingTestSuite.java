@@ -35,7 +35,6 @@ import org.eclipse.jface.internal.databinding.provisional.factories.DefaultBindS
 import org.eclipse.jface.internal.databinding.provisional.validation.ObjectToPrimitiveValidatorTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskLexerAndTokenTest;
 import org.eclipse.jface.tests.databinding.mask.EditMaskParserTest;
-import org.eclipse.jface.tests.databinding.observable.ThreadRealmTest;
 import org.eclipse.jface.tests.databinding.observable.list.AbstractObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.ObservableListTest;
 import org.eclipse.jface.tests.databinding.observable.list.WritableListTest;
@@ -120,9 +119,6 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.databinding.mask
 		addTestSuite(EditMaskLexerAndTokenTest.class);
 		addTestSuite(EditMaskParserTest.class);
-
-		// org.eclipse.jface.tests.databinding.observable
-		addTestSuite(ThreadRealmTest.class);
 		
 		// org.eclipse.jface.tests.databinding.observable.list
 		addTestSuite(AbstractObservableListTest.class);
