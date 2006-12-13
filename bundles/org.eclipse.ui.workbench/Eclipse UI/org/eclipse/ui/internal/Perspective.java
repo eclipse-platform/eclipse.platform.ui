@@ -534,7 +534,11 @@ public class Perspective {
      * if not already created.
      */
     private ViewLayoutRec getViewLayoutRec(IViewReference ref, boolean create) {
-        return getViewLayoutRec(ViewFactory.getKey(ref), create);
+        ViewLayoutRec result = getViewLayoutRec(ViewFactory.getKey(ref), create);
+        if (result == null && create==false) {
+        	result = getViewLayoutRec(ref.getId(), false);
+        }
+        return result;
     }
 
     /**
