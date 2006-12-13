@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -84,7 +85,7 @@ public class ExamplesPlugin extends AbstractUIPlugin {
 			String fileName) {
 		try {
 			IPath path = new Path("icons/" + fileName);
-			URL url = find(path);
+			URL url = FileLocator.find(getBundle(), path, null);
 			if (url!=null) {
 				ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 				registry.put(key, desc);
