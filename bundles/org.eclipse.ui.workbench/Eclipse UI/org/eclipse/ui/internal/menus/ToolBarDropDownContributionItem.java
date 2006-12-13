@@ -178,10 +178,6 @@ public final class ToolBarDropDownContributionItem extends ContributionItem {
 				}
 			}
 		}
-		
-		if (getParent() != null) {
-			getParent().update(true);
-		}
 	}
 
 	/*
