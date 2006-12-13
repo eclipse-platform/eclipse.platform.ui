@@ -934,6 +934,11 @@ public class TreeViewer extends AbstractTreeViewer {
 		if (contentProviderIsTreeBased) {
 			TreePath treePath;
 			if (widget instanceof Item) {
+				if (widget.getData() == null) {
+					// temporary fix to avoid a NPE (the tree will still be screwed up)
+					// see bug 167668
+					return;
+				}
 				treePath = getTreePathFromItem((Item) widget);
 			} else {
 				treePath = TreePath.EMPTY;
