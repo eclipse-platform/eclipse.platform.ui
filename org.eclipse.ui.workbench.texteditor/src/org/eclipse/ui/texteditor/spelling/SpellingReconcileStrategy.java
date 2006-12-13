@@ -10,10 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor.spelling;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,6 +24,7 @@ import org.eclipse.core.runtime.content.IContentTypeManager;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.reconciler.DirtyRegion;
@@ -56,8 +58,8 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		/** Annotations to add. */
 		private Map fAddAnnotations;
 		
-		/** Annotations to remove. */
-		private Annotation[] fAnnotationsToRemove= new Annotation[0];
+		/** Lock object for modifying the annotations. */
+		private Object fLockObject;
 
 		/**
 		 * Initializes this collector with the given annotation model.
@@ -65,7 +67,12 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		 * @param annotationModel the annotation model
 		 */
 		public SpellingProblemCollector(IAnnotationModel annotationModel) {
+			Assert.isLegal(annotationModel != null);
 			fAnnotationModel= annotationModel;
+			if (fAnnotationModel instanceof ISynchronizable)
+				fLockObject= ((ISynchronizable)fAnnotationModel).getLockObject();
+			else
+				fLockObject= fAnnotationModel;
 		}
 
 		/*
@@ -86,19 +93,27 @@ public class SpellingReconcileStrategy implements IReconcilingStrategy, IReconci
 		 * @see org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector#endCollecting()
 		 */
 		public void endCollecting() {
-			if (fAnnotationModel instanceof IAnnotationModelExtension)
-				((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(fAnnotationsToRemove, fAddAnnotations);
-			else {
-				for (int i= 0; i < fAnnotationsToRemove.length; i++)
-					fAnnotationModel.removeAnnotation(fAnnotationsToRemove[i]);
-				for (Iterator iter= fAddAnnotations.keySet().iterator(); iter.hasNext();) {
-					Annotation annotation= (Annotation)iter.next();
-					fAnnotationModel.addAnnotation(annotation, (Position)fAddAnnotations.get(annotation));
+			
+			List toRemove= new ArrayList();
+			
+			synchronized (fLockObject) {
+				Iterator iter= fAnnotationModel.getAnnotationIterator();
+				while (iter.hasNext())
+					toRemove.add(iter.next());
+				Annotation[] annotationsToRemove= (Annotation[])toRemove.toArray(new Annotation[toRemove.size()]);
+
+				if (fAnnotationModel instanceof IAnnotationModelExtension)
+					((IAnnotationModelExtension)fAnnotationModel).replaceAnnotations(annotationsToRemove, fAddAnnotations);
+				else {
+					for (int i= 0; i < annotationsToRemove.length; i++)
+						fAnnotationModel.removeAnnotation(annotationsToRemove[i]);
+					for (iter= fAddAnnotations.keySet().iterator(); iter.hasNext();) {
+						Annotation annotation= (Annotation)iter.next();
+						fAnnotationModel.addAnnotation(annotation, (Position)fAddAnnotations.get(annotation));
+					}
 				}
 			}
 
-			Set toRemove= fAddAnnotations.keySet();
-			fAnnotationsToRemove= (Annotation[])toRemove.toArray(new Annotation[toRemove.size()]);
 			fAddAnnotations= null;
 		}
 	}
