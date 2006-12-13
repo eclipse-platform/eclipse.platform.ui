@@ -18,12 +18,10 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.util.ILogDialog;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandling.StatusManager;
 
 /**
@@ -63,11 +61,11 @@ final class JFaceUtil {
 
 		// All JFace errors and warnings are forwarded
 		// to the status handling facility instead of showing them in a dialog
-		Policy.setLogDialog(new ILogDialog() {
-			public void log(Shell parent, String title, IStatus status) {
-				StatusManager.getManager().handle(status);
-			}
-		});
+		// Policy.setLogDialog(new ILogDialog() {
+		// public void log(Shell parent, String title, IStatus status) {
+		// StatusManager.getManager().handle(status);
+		// }
+		//		});
 
 		// Get all debug options from Platform
 		if ("true".equalsIgnoreCase(Platform.getDebugOption("/debug"))) { //$NON-NLS-1$ //$NON-NLS-2$
