@@ -27,7 +27,6 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class EditorProvider extends AbstractProvider {
 
-	private AbstractElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public AbstractElement getElementForId(String id) {
@@ -36,18 +35,16 @@ public class EditorProvider extends AbstractProvider {
 	}
 
 	public AbstractElement[] getElements() {
-		if (cachedElements == null) {
-			IWorkbenchPage activePage = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
-			IEditorReference[] editors = activePage.getEditorReferences();
-			cachedElements = new AbstractElement[editors.length];
-			for (int i = 0; i < editors.length; i++) {
-				EditorElement editorElement = new EditorElement(editors[i], this);
-				cachedElements[i] = editorElement;
-				idToElement.put(editorElement.getId(), editorElement);
-			}
+		idToElement.clear();
+		IWorkbenchPage activePage = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
+		IEditorReference[] editors = activePage.getEditorReferences();
+		for (int i = 0; i < editors.length; i++) {
+			EditorElement editorElement = new EditorElement(editors[i], this);
+			idToElement.put(editorElement.getId(), editorElement);
 		}
-		return cachedElements;
+		return (AbstractElement[]) idToElement.values().toArray(
+				new AbstractElement[idToElement.values().size()]);
 	}
 
 	public String getId() {

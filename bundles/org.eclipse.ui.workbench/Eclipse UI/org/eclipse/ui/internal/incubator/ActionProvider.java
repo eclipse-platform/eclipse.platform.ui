@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
  */
 public class ActionProvider extends AbstractProvider {
 
-	private AbstractElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public String getId() {
@@ -45,24 +44,22 @@ public class ActionProvider extends AbstractProvider {
 	}
 
 	public AbstractElement[] getElements() {
-		if (cachedElements == null) {
-			WorkbenchWindow window = (WorkbenchWindow) PlatformUI
-					.getWorkbench().getActiveWorkbenchWindow();
-			if (window != null) {
-				MenuManager menu = window.getMenuManager();
-				Set result = new HashSet();
-				collectContributions(menu, result);
-				ActionContributionItem[] actions = (ActionContributionItem[]) result
-						.toArray(new ActionContributionItem[result.size()]);
-				cachedElements = new AbstractElement[actions.length];
-				for (int i = 0; i < actions.length; i++) {
-					ActionElement actionElement = new ActionElement(actions[i], this);
-					cachedElements[i] = actionElement;
-					idToElement.put(actionElement.getId(), actionElement);
-				}
+		idToElement.clear();
+		WorkbenchWindow window = (WorkbenchWindow) PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window != null) {
+			MenuManager menu = window.getMenuManager();
+			Set result = new HashSet();
+			collectContributions(menu, result);
+			ActionContributionItem[] actions = (ActionContributionItem[]) result
+					.toArray(new ActionContributionItem[result.size()]);
+			for (int i = 0; i < actions.length; i++) {
+				ActionElement actionElement = new ActionElement(actions[i],
+						this);
+				idToElement.put(actionElement.getId(), actionElement);
 			}
 		}
-		return cachedElements;
+		return (ActionElement[]) idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
 	}
 
 	private void collectContributions(MenuManager menu, Set result) {

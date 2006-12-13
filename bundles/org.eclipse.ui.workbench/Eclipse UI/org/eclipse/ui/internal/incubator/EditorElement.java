@@ -46,7 +46,7 @@ public class EditorElement extends AbstractElement {
 	}
 
 	public String getId() {
-		return editorReference.getId();
+		return editorReference.getId() + editorReference.getTitleToolTip();
 	}
 
 	public ImageDescriptor getImageDescriptor() {
