@@ -145,10 +145,6 @@ public class TocFragmentServlet extends HttpServlet {
 	
 			buf.append('\n' + "      image=\"toc_closed\""); //$NON-NLS-1$
 			
-			if (isSelected && requestKind == REQUEST_SHOW_CHILDREN) {
-				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
-		    }
-			
 			buf.append(">\n"); //$NON-NLS-1$
 			
 			if (requestKind != REQUEST_SHOW_TOCS) { 
@@ -196,11 +192,9 @@ public class TocFragmentServlet extends HttpServlet {
 			if (subtopics.length == 0 ) {
 				buf.append('\n' + "      is_leaf=\"true\"" ); //$NON-NLS-1$
 			}
-			if (isSelected) {
+			if (isSelected && requestKind == REQUEST_SHOW_IN_TOC) {
 				buf.append('\n' + "      is_selected=\"true\"" ); //$NON-NLS-1$
-				if (requestKind == REQUEST_SHOW_IN_TOC) {
-					buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
-				}
+				buf.append('\n' + "      is_highlighted=\"true\"" ); //$NON-NLS-1$	
 			}
 			String icon; 
 			if (subtopics.length == 0) {
