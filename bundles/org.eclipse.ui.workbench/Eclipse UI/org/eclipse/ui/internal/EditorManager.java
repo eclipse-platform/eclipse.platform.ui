@@ -62,7 +62,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorPersistable;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
@@ -1597,10 +1597,10 @@ public class EditorManager implements IExtensionChangeHandler {
 				persistable.saveState(inputMem);
 				
 				// any editors that want to persist state
-				if (editor instanceof IEditorPersistable) {
+				if (editor instanceof IPersistableEditor) {
 					IMemento editorState = editorMem
 							.createChild(IWorkbenchConstants.TAG_EDITOR_STATE);
-					((IEditorPersistable) editor).saveState(editorState);
+					((IPersistableEditor) editor).saveState(editorState);
 				}
 			}
 

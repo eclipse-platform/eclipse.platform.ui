@@ -19,13 +19,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorPersistable;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
 public class MockEditorWithState extends MockWorkbenchPart implements
-		IEditorPart, IEditorPersistable {
+		IEditorPart, IPersistableEditor {
 
 	public static final String ID = "org.eclipse.ui.tests.api.MockEditorStatePart";
 
@@ -162,7 +162,7 @@ public class MockEditorWithState extends MockWorkbenchPart implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.IEditorPersistable#restoreState(org.eclipse.ui.IMemento)
+	 * @see org.eclipse.ui.IPersistableEditor#restoreState(org.eclipse.ui.IMemento)
 	 */
 	public void restoreState(IMemento memento) {
 		callTrace.add("restoreState");

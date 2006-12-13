@@ -34,7 +34,7 @@ package org.eclipse.ui;
  * 
  * @since 3.3
  */
-public interface IEditorPersistable extends IPersistable {
+public interface IPersistableEditor extends IPersistable {
 	/**
 	 * Called with a memento for this editor. The editor can parse the data or
 	 * save the memento. This method may not be called.

@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorPersistable;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
@@ -591,8 +591,8 @@ public class EditorReference extends WorkbenchPartReference implements
             site = manager.createSite(this, part, desc, editorInput);
             
             // if there is saved state that's appropriate, pass it on
-            if (part instanceof IEditorPersistable && editorState != null) {
-				((IEditorPersistable) part).restoreState(editorState);
+            if (part instanceof IPersistableEditor && editorState != null) {
+				((IPersistableEditor) part).restoreState(editorState);
 			}
             
             // Remember the site and the action bars (now that we've created them, we'll need to dispose
