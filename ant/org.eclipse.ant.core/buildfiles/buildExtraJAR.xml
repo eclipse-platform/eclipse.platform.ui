@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Build Ant support JAR" default="build" basedir="..">
 
-	<property name="bootclasspath" value=""/>
-
 	<target name="build" description="Cleans, builds and refreshes the impacted resources" depends="clean, lib/antsupportlib.jar"/>
 
 	<target name="init" depends="properties">
@@ -22,7 +20,6 @@
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
 		<javac target="1.4" source="1.4" destdir="${destdir}" failonerror="true" verbose="false" debug="on">
-			<bootclasspath path="${bootclasspath}"/>
 			<classpath>
 				<dirset dir="${basedir}/..">
 					<include name="org.eclipse.core.runtime/bin"/>

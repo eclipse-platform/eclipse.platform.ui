@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="build tests support jar" default="build" basedir="..">
 
-	<property name="bootclasspath" value=""/>
-
 	<target name="build" description="Removes all build artifacts, recreates the support jar, and refreshes this plugin's resources" depends="clean, lib/antTestsSupport.jar"/>
 
 	<target name="init" depends="properties">
@@ -20,7 +18,7 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes" bootclasspath="${bootclasspath}">
+		<javac target="1.1" destdir="${destdir}" failonerror="false" verbose="false" debug="on" includeAntRuntime="yes">
 			<classpath>
 				<dirset dir="${basedir}">
 					<include name="../org.eclipse.core.runtime/bin"/>

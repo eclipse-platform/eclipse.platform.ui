@@ -6,7 +6,6 @@
 	<target name="init" depends="properties">
 		<property name="version.suffix" value="_3.1.0"/>
 		<property name="new.version.suffix" value="_3.2.0"/>
-		<property name="bootclasspath" value=""/>
 		<property name="temp.folder" value="${basedir}/temp.folder"/>
 		<property name="build.result.folder" value="${basedir}"/>
 	</target>
@@ -20,8 +19,7 @@
 		<delete dir="${destdir}"/>
 		<mkdir dir="${destdir}"/>
 		<!-- compile the source code -->
-		<javac target="1.3" source="1.3" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes"
-			 	bootclasspath="${bootclasspath}">
+		<javac target="1.3" source="1.3" destdir="${destdir}" failonerror="true" verbose="false" debug="on" includeJavaRuntime= "yes">
 			<classpath>
 				<dirset dir="${basedir}/..">
 					<include name="org.eclipse.core.runtime/bin"/>
