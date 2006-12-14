@@ -362,6 +362,17 @@ public class CreateLinkedResourceGroup {
 	public URI getLinkTargetURI() {
 		if (!createLink)
 			return null;
+		//resolve path variable if we have a relative path
+		if (!linkTarget.startsWith("/")) { //$NON-NLS-1$
+			IPathVariableManager pathVariableManager = ResourcesPlugin
+					.getWorkspace().getPathVariableManager();
+			IPath path = new Path(linkTarget);
+			IPath resolved = pathVariableManager.resolvePath(path);
+			if (path != resolved) {
+				return URIUtil.toURI(resolved);
+			}
+		}
+
 		FileSystemConfiguration configuration = getSelectedConfiguration();
 		if (configuration == null) {
 			return URIUtil.toURI(linkTarget);
