@@ -37,33 +37,60 @@ public class OpenCheatSheetTest extends PerformanceTestCase {
 		OpenIntroTest.closeIntro();
 	}
 	
-	public void testOpenCheatSheet() throws Exception {
-		tagAsSummary("Open cheat sheet", Dimension.ELAPSED_PROCESS);
+	public void testOpenSimpleCheatSheet() throws Exception {
+		tagAsSummary("Open simple cheat sheet", Dimension.ELAPSED_PROCESS);
 
 		// warm-up
 		for (int i=0;i<3;++i) {
 			closeCheatSheet();
-			openCheatSheet();
+			openSimpleCheatSheet();
 		}
 		
 		// run the tests
 		for (int i=0;i<50;++i) {
 			closeCheatSheet();
 			startMeasuring();
-			openCheatSheet();
+			openSimpleCheatSheet();
 			stopMeasuring();
 		}
 		
 		commitMeasurements();
 		assertPerformance();
 	}
-	
-	private void openCheatSheet() throws Exception {
-		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance");
+
+	public void testOpenCompositeCheatSheet() throws Exception {
+		tagAsSummary("Open composite cheat sheet", Dimension.ELAPSED_PROCESS);
+
+		// warm-up
+		for (int i=0;i<3;++i) {
+			closeCheatSheet();
+			openCompositeCheatSheet();
+		}
+		
+		// run the tests
+		for (int i=0;i<50;++i) {
+			closeCheatSheet();
+			startMeasuring();
+			openCompositeCheatSheet();
+			stopMeasuring();
+		}
+		
+		commitMeasurements();
+		assertPerformance();
+	}
+
+	private void openSimpleCheatSheet() throws Exception {
+		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.simple");
 		action.run();
 		flush();
 	}
-	
+
+	private void openCompositeCheatSheet() throws Exception {
+		OpenCheatSheetAction action = new OpenCheatSheetAction("org.eclipse.ua.tests.cheatsheet.performance.composite");
+		action.run();
+		flush();
+	}
+
 	private void closeCheatSheet() throws Exception {
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart view = page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);

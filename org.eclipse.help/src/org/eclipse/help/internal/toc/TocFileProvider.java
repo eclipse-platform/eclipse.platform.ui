@@ -56,7 +56,7 @@ public class TocFileProvider extends AbstractTocProvider {
 	/*
 	 * Returns all available TocFiles for the given locale.
 	 */
-	private TocFile[] getTocFiles(String locale) {
+	protected TocFile[] getTocFiles(String locale) {
 		List tocFiles = new ArrayList();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);

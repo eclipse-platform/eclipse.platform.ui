@@ -13,9 +13,9 @@ package org.eclipse.ua.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ua.tests.cheatsheet.performance.AllCheatSheetPerformanceTests;
-import org.eclipse.ua.tests.help.performance.AllHelpPerformanceTests;
-import org.eclipse.ua.tests.intro.performance.AllIntroPerformanceTests;
+import org.eclipse.ua.tests.cheatsheet.AllCheatSheetPerformanceTests;
+import org.eclipse.ua.tests.help.AllHelpPerformanceTests;
+import org.eclipse.ua.tests.intro.AllIntroPerformanceTests;
 
 /*
  * Tests all user assistance performance (automated).

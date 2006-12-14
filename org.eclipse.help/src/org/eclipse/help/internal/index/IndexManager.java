@@ -112,9 +112,9 @@ public class IndexManager {
 	}
 
 	/*
-	 * Returns all registered index providers (potentially cached).
+	 * Internal hook for unit testing.
 	 */
-	private AbstractIndexProvider[] getIndexProviders() {
+	public AbstractIndexProvider[] getIndexProviders() {
 		if (indexProviders == null) {
 			List providers = new ArrayList();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
@@ -145,7 +145,14 @@ public class IndexManager {
 	public boolean isIndexLoaded(String locale) {
 		return indexesByLocale.get(locale) != null;
 	}
-	
+
+	/*
+	 * Internal hook for unit testing.
+	 */
+	public void setIndexProviders(AbstractIndexProvider[] indexProviders) {
+		this.indexProviders = indexProviders;
+	}
+
 	/*
 	 * Filters the given contributions according to product preferences. If
 	 * either the contribution's id or its category's id is listed in the

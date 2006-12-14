@@ -157,6 +157,40 @@ public class TocManager {
 	}
 
 	/*
+	 * Internal hook for unit testing.
+	 */
+	public AbstractTocProvider[] getTocProviders() {
+		if (tocProviders == null) {
+			List providers = new ArrayList();
+			IExtensionRegistry registry = Platform.getExtensionRegistry();
+			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
+			for (int i=0;i<elements.length;++i) {
+				IConfigurationElement elem = elements[i];
+				if (elem.getName().equals(ELEMENT_NAME_TOC_PROVIDER)) {
+					try {
+						AbstractTocProvider provider = (AbstractTocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
+						providers.add(provider);
+					}
+					catch (CoreException e) {
+						// log and skip
+						String msg = "Error instantiating help table of contents provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
+						HelpPlugin.logError(msg, e);
+					}
+				}
+			}
+			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);
+		}
+		return tocProviders;
+	}
+
+	/*
+	 * Internal hook for unit testing.
+	 */
+	public void setTocProviders(AbstractTocProvider[] tocProviders) {
+		this.tocProviders = tocProviders;
+	}
+
+	/*
 	 * Filters the given contributions according to product preferences. If
 	 * either the contribution's id or its category's id is listed in the
 	 * ignoredTocs, filter the contribution.
@@ -206,33 +240,6 @@ public class TocManager {
 			}
 			return ignored;
 		}
-	}
-
-	/*
-	 * Returns all registered toc providers (potentially cached).
-	 */
-	private AbstractTocProvider[] getTocProviders() {
-		if (tocProviders == null) {
-			List providers = new ArrayList();
-			IExtensionRegistry registry = Platform.getExtensionRegistry();
-			IConfigurationElement[] elements = registry.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
-			for (int i=0;i<elements.length;++i) {
-				IConfigurationElement elem = elements[i];
-				if (elem.getName().equals(ELEMENT_NAME_TOC_PROVIDER)) {
-					try {
-						AbstractTocProvider provider = (AbstractTocProvider)elem.createExecutableExtension(ATTRIBUTE_NAME_CLASS);
-						providers.add(provider);
-					}
-					catch (CoreException e) {
-						// log and skip
-						String msg = "Error instantiating help table of contents provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
-						HelpPlugin.logError(msg, e);
-					}
-				}
-			}
-			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);
-		}
-		return tocProviders;
 	}
 
 	/*

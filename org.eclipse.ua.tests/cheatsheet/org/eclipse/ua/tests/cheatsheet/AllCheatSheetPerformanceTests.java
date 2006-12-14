@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.intro.performance;
+package org.eclipse.ua.tests.cheatsheet;
+
+import org.eclipse.ua.tests.cheatsheet.performance.OpenCheatSheetTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -16,19 +18,19 @@ import junit.framework.TestSuite;
 /*
  * Tests help performance (automated).
  */
-public class AllIntroPerformanceTests extends TestSuite {
+public class AllCheatSheetPerformanceTests extends TestSuite {
 
 	/*
 	 * Returns the entire test suite.
 	 */
 	public static Test suite() {
-		return new AllIntroPerformanceTests();
+		return new AllCheatSheetPerformanceTests();
 	}
 
 	/*
 	 * Constructs a new performance test suite.
 	 */
-	public AllIntroPerformanceTests() {
-		addTest(OpenIntroTest.suite());
+	public AllCheatSheetPerformanceTests() {
+		addTest(OpenCheatSheetTest.suite());
 	}
 }

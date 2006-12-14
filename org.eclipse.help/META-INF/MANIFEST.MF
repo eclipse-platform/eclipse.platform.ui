@@ -10,7 +10,7 @@ Export-Package: org.eclipse.help,
  org.eclipse.help.internal;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ui.intro,org.eclipse.ua.tests,org.eclipse.ui.cheatsheets",
  org.eclipse.help.internal.context;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.ua.tests,org.eclipse.help.webapp",
  org.eclipse.help.internal.dynamic;x-friends:="org.eclipse.ua.tests,org.eclipse.help.ui,org.eclipse.help.base,org.eclipse.ui.intro,org.eclipse.help.webapp,org.eclipse.ui.cheatsheets",
- org.eclipse.help.internal.extension;x-friends:="org.eclipse.help.webapp,org.eclipse.help.base",
+ org.eclipse.help.internal.extension;x-friends:="org.eclipse.help.webapp,org.eclipse.help.base,org.eclipse.ua.tests",
  org.eclipse.help.internal.index;x-friends:="org.eclipse.help.webapp,org.eclipse.ua.tests,org.eclipse.help.ui,org.eclipse.help.base",
  org.eclipse.help.internal.toc;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.util;x-friends:="org.eclipse.help.base,org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests,org.eclipse.ui.intro.universal"

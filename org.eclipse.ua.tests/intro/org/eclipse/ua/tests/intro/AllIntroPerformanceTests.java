@@ -8,7 +8,9 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help.performance;
+package org.eclipse.ua.tests.intro;
+
+import org.eclipse.ua.tests.intro.performance.OpenIntroTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -16,19 +18,19 @@ import junit.framework.TestSuite;
 /*
  * Tests help performance (automated).
  */
-public class AllHelpPerformanceTests extends TestSuite {
+public class AllIntroPerformanceTests extends TestSuite {
 
 	/*
 	 * Returns the entire test suite.
 	 */
 	public static Test suite() {
-		return new AllHelpPerformanceTests();
+		return new AllIntroPerformanceTests();
 	}
 
 	/*
 	 * Constructs a new performance test suite.
 	 */
-	public AllHelpPerformanceTests() {
-		addTest(OpenHelpTest.suite());
+	public AllIntroPerformanceTests() {
+		addTest(OpenIntroTest.suite());
 	}
 }

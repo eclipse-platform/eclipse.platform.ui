@@ -127,11 +127,21 @@
       <cheatsheet
             category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
             composite="false"
-            contentFile="data/cheatsheet/performance/HelloWorld.xml"
-            id="org.eclipse.ua.tests.cheatsheet.performance"
-            name="Performance Test Cheat Sheet">
+            contentFile="data/cheatsheet/performance/simple.xml"
+            id="org.eclipse.ua.tests.cheatsheet.performance.simple"
+            name="Performance test simple cheat sheet">
          <description>
-            This cheat sheet is used to measure cheat sheet view performance.
+            This cheat sheet is used to measure simple cheat sheet view performance.
+         </description>
+      </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            composite="true"
+            contentFile="data/cheatsheet/performance/composite.xml"
+            id="org.eclipse.ua.tests.cheatsheet.performance.composite"
+            name="Performance test composite cheat sheet">
+         <description>
+            This cheat sheet is used to measure composite cheat sheet view performance.
          </description>
       </cheatsheet>
    </extension>

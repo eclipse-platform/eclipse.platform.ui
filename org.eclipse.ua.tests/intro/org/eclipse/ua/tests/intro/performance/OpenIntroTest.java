@@ -29,22 +29,30 @@ public class OpenIntroTest extends PerformanceTestCase {
 	public static Test suite() {
 		return new TestSuite(OpenIntroTest.class);
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		closeIntro();
+	}
 
 	public void testOpenIntro() throws Exception {
 		tagAsSummary("Open welcome", Dimension.ELAPSED_PROCESS);
 
 		// warm-up
 		for (int i=0;i<3;++i) {
-			closeIntro();
 			openIntro();
+			closeIntro();
 		}
 		
 		// run the tests
 		for (int i=0;i<20;++i) {
-			closeIntro();
 			startMeasuring();
 			openIntro();
 			stopMeasuring();
+			closeIntro();
 		}
 		
 		commitMeasurements();
