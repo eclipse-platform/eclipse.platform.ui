@@ -73,7 +73,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 	}
 	
 	public void testOpenHelp() throws Exception {
-		tagAsSummary("Open help", Dimension.ELAPSED_PROCESS);
+		tagAsGlobalSummary("Open help", Dimension.ELAPSED_PROCESS);
 
 		// warm-up
 		for (int i=0;i<3;++i) {
