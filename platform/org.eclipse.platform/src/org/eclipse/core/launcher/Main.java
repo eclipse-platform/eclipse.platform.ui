@@ -355,7 +355,7 @@ public class Main {
      *   
      * @return a boolean indicating whether the checking passed 
      */
-    private boolean checkVersion(String availableVersion, String requiredVersion) {
+    protected boolean checkVersion(String availableVersion, String requiredVersion) {
         if (requiredVersion == null || availableVersion == null)
             return true;
         try {
