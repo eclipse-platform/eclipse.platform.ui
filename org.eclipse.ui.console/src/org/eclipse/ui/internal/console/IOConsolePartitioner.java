@@ -18,7 +18,6 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -601,7 +600,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
          * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
          */
         public IStatus runInUIThread(IProgressMonitor monitor) {
-            IJobManager jobManager = Platform.getJobManager();
+            IJobManager jobManager = Job.getJobManager();
             try {
                 jobManager.join(console, monitor);
             } catch (OperationCanceledException e1) {
