@@ -16,6 +16,11 @@ are directly managed by these pages.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="sorter" minOccurs="0" maxOccurs="unbounded"/>
@@ -50,7 +55,7 @@ are directly managed by these pages.
    <element name="sorter">
       <annotation>
          <appInfo>
-            <meta.element labelAttribute="label" icon="icon" deprecated="true"/>
+            <meta.element labelAttribute="label" icon="icon"/>
          </appInfo>
       </annotation>
       <complexType>
