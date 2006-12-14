@@ -105,7 +105,7 @@ public class ShowAnnotationOperation extends CVSOperation {
 						if (editor != null) {
 							editor.showRevisionInformation(information, "org.eclipse.quickdiff.providers.CVSReferenceProvider"); //$NON-NLS-1$
 							final IWorkbenchPage page= getPart().getSite().getPage();
-							showHistoryView(page);
+							showHistoryView(page, editor);
 						}
 					} catch (PartInitException e) {
 						CVSException.wrapException(e);
@@ -122,11 +122,15 @@ public class ShowAnnotationOperation extends CVSOperation {
      * Shows the history view, creating it if necessary, but does not give it focus.
      * 
      * @param page the workbench page to operate in
+     * @param editor the editor that is showing the file
      * @return the history view
      * @throws PartInitException
      */
-    private IHistoryView showHistoryView(IWorkbenchPage page) throws PartInitException {
-    	IHistoryView historyView= TeamUI.showHistoryFor(page, fCVSResource.getIResource(), null);
+    private IHistoryView showHistoryView(IWorkbenchPage page, AbstractDecoratedTextEditor editor) throws PartInitException {
+    	Object object = fCVSResource.getIResource();
+    	if (object == null)
+    		object = editor.getEditorInput();
+		IHistoryView historyView= TeamUI.showHistoryFor(page, object, null);
     	IHistoryPage historyPage = historyView.getHistoryPage();
     	if (historyPage instanceof CVSHistoryPage){
     		CVSHistoryPage cvsHistoryPage = (CVSHistoryPage) historyPage;

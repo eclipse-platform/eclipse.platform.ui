@@ -50,6 +50,7 @@ import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.filehistory.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.actions.MoveRemoteTagAction;
@@ -1780,7 +1781,19 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		if (path == null && previousPath == null)
 			return true;
 		
-		return (path != null && previousPath != null && path.equals(previousPath));
+		return (path != null && previousPath != null && path.equals(previousPath) && isSameRepository(file.getParent(), previousFile.getParent()));
+	}
+
+
+	private boolean isSameRepository(ICVSFolder parent1, ICVSFolder parent2) {
+		try {
+			FolderSyncInfo info1 = parent1.getFolderSyncInfo();
+			FolderSyncInfo info2 = parent2.getFolderSyncInfo();
+			return (info1 != null && info2 != null && info1.getRemoteLocation().equals(info2.getRemoteLocation()));
+		} catch (CVSException e) {
+			// Ignore
+		}
+		return false;
 	}
 
 	private void updateFilterMode(int mode) {
