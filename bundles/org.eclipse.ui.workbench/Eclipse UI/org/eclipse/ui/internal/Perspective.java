@@ -1463,23 +1463,47 @@ public class Perspective {
                     .getKey(ref));
         }
 
-        // Persist only the fast views from the 'real' FVB
-		WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
-		FastViewBar fvb = wbw.getFastViewBar();
-        if (fvb != null && fvb.getViewRefs().size() > 0) {
-            IMemento childMem = memento
-                    .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
-            itr = fvb.getViewRefs().iterator();
-            while (itr.hasNext()) {
-                IViewReference ref = (IViewReference) itr.next();
-                IMemento viewMemento = childMem
-                        .createChild(IWorkbenchConstants.TAG_VIEW);
-                String id = ViewFactory.getKey(ref);
-                viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
-                float ratio = getFastViewWidthRatio(ref);
-                viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
-            }
-        }
+        // Interim fix for defect 168057...ensure that the old
+        // state is persisted unless using the new presentation
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+    	if (!useNewMinMax) {
+    		// -All- fastviews must be in the FVB
+		    if (fastViews.size() > 0) {
+		        IMemento childMem = memento
+		                .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
+		        itr = fastViews.iterator();
+		        while (itr.hasNext()) {
+		            IViewReference ref = (IViewReference) itr.next();
+		            IMemento viewMemento = childMem
+		                    .createChild(IWorkbenchConstants.TAG_VIEW);
+		            String id = ViewFactory.getKey(ref);
+		            viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
+		            float ratio = getFastViewWidthRatio(ref);
+		            viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
+		        }
+		    }
+    	}
+    	else {
+	        // Persist only the fast views from the 'real' FVB
+    		// FIXME: This indices defect 168057 in the new presentation
+			WorkbenchWindow wbw = (WorkbenchWindow) page.getWorkbenchWindow();
+			FastViewBar fvb = wbw.getFastViewBar();
+	        if (fvb != null && fvb.getViewRefs().size() > 0) {
+	            IMemento childMem = memento
+	                    .createChild(IWorkbenchConstants.TAG_FAST_VIEWS);
+	            itr = fvb.getViewRefs().iterator();
+	            while (itr.hasNext()) {
+	                IViewReference ref = (IViewReference) itr.next();
+	                IMemento viewMemento = childMem
+	                        .createChild(IWorkbenchConstants.TAG_VIEW);
+	                String id = ViewFactory.getKey(ref);
+	                viewMemento.putString(IWorkbenchConstants.TAG_ID, id);
+	                float ratio = getFastViewWidthRatio(ref);
+	                viewMemento.putFloat(IWorkbenchConstants.TAG_RATIO, ratio);
+	            }
+	        }
+    	}
 
         // Save the view layout recs.
         for (Iterator i = mapIDtoViewLayoutRec.keySet().iterator(); i.hasNext();) {
@@ -1688,6 +1712,7 @@ public class Perspective {
     }
 
 	private ViewStackTrimPart getTrimPartForRef(IViewReference ref) {
+		// NOTE: Should I check only the trim stacks for this perspective??
 		// Is it in a minimized stack?
 		List trimParts = presentation.getLayout().getTrimForParts();
 		for (Iterator trimIter = trimParts.iterator(); trimIter.hasNext();) {
