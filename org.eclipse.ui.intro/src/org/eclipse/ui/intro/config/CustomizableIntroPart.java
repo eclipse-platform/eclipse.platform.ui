@@ -32,6 +32,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.ContentProviderManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.parts.StandbyPart;
+import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
 import org.eclipse.ui.internal.intro.impl.util.DialogUtil;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.intro.IIntroSite;
@@ -444,7 +445,11 @@ public final class CustomizableIntroPart extends IntroPart implements
 
     }
 
-
-
-
+    /*
+     * Internal test hook (Non-API).
+     */
+    public boolean internal_isFinishedLoading() {
+    	BrowserIntroPartImplementation impl = (BrowserIntroPartImplementation)presentation.getIntroPartImplementation();
+    	return impl.isFinishedLoading();
+    }
 }

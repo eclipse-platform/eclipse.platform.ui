@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.intro.config.CustomizableIntroPart;
 
 public class OpenIntroTest extends PerformanceTestCase {
 
@@ -73,7 +74,14 @@ public class OpenIntroTest extends PerformanceTestCase {
 	private static void openIntro() throws Exception {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IIntroManager manager = workbench.getIntroManager();
-		manager.showIntro(workbench.getActiveWorkbenchWindow(), false);
+		CustomizableIntroPart introPart = (CustomizableIntroPart)manager.showIntro(workbench.getActiveWorkbenchWindow(), false);
+
+		Display display = Display.getDefault();
+		while (!introPart.internal_isFinishedLoading()) {
+			if (!display.readAndDispatch()) {
+				display.sleep();
+			}
+		}
 		flush();
 	}
 	

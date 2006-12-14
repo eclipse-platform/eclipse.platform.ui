@@ -21,6 +21,8 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationAdapter;
+import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.widgets.Composite;
@@ -70,6 +72,8 @@ public class BrowserIntroPartImplementation extends
     protected BrowserIntroPartLocationListener urlListener = new BrowserIntroPartLocationListener(
         this);
 
+    // internal performance test hook
+    private boolean isFinishedLoading;
 
     protected void updateNavigationActionsState() {
         if (getModel().isDynamic()) {
@@ -235,6 +239,13 @@ public class BrowserIntroPartImplementation extends
             long start = 0;
             if (Log.logPerformance)
                 start = System.currentTimeMillis();
+            browser.addLocationListener(new LocationAdapter() {
+            	public void changed(LocationEvent event) {
+            		if (event.top) {
+            			isFinishedLoading = true;
+            		}
+            	}
+            });
             success = browser.setText(content);
             if (Log.logPerformance)
                 Util
@@ -686,7 +697,10 @@ public class BrowserIntroPartImplementation extends
         return browser;
     }
 
-
-
-
+    /*
+     * Internal performance test hook.
+     */
+    public boolean isFinishedLoading() {
+    	return isFinishedLoading;
+    }
 }

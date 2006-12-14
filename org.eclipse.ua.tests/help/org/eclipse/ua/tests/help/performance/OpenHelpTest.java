@@ -124,6 +124,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 				display.sleep();
 			}
 		}
+		flush();
 	}
 	
 	private void closeHelp() throws Exception {
@@ -136,6 +137,12 @@ public class OpenHelpTest extends PerformanceTestCase {
 		HelpPlugin.getContentExtensionManager().clearCache();
 	}
 	
+	private static void flush() {
+		Display display = Display.getCurrent();
+		while (display.readAndDispatch()) {
+		}
+	}
+
 	private static class TestTocFileProvider extends TocFileProvider {
 		protected TocFile[] getTocFiles(String locale) {
 			String id = UserAssistanceTestPlugin.getPluginId();
