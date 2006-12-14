@@ -82,7 +82,7 @@ public class OpenHelpTest extends PerformanceTestCase {
 		}
 		
 		// run the tests
-		for (int i=0;i<20;++i) {
+		for (int i=0;i<50;++i) {
 			startMeasuring();
 			openHelp();
 			stopMeasuring();
