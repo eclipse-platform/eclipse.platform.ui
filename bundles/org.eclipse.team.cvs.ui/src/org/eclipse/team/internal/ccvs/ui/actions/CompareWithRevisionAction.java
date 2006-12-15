@@ -42,8 +42,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 		// Show the compare viewer
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
-				
-				if(CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG)) {
+				if (isShowInDialog()) {
 					IFile file = (IFile) getSelectedResources()[0];
 					showCompareInDialog(getShell(), file);
 				} else {
@@ -116,5 +115,9 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	
 	protected boolean isEnabledForIgnoredResources() {
 		return true;
+	}
+
+	protected boolean isShowInDialog() {
+		return CVSUIPlugin.getPlugin().getPreferenceStore().getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_REVISION_IN_DIALOG);
 	}
 }

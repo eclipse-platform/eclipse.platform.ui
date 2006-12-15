@@ -72,4 +72,9 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 	protected String getActionTitle() {
 		return CVSUIMessages.ReplaceWithRevisionAction_1; 
 	}
+	
+	protected boolean isShowInDialog() {
+		// Always show a replace in a dialog
+		return true;
+	}
 }
