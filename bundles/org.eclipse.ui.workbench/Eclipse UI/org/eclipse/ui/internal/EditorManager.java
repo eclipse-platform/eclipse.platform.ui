@@ -1104,7 +1104,7 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * @return <code>true</code> on success, <code>false</code> if the user
 	 *         canceled the save
 	 */
-	public static boolean saveAll(List dirtyParts, boolean confirm, final boolean closing,
+	public static boolean saveAll(List dirtyParts, final boolean confirm, final boolean closing,
 				boolean addNonPartSources, final IRunnableContext runnableContext, final IShellProvider shellProvider) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
@@ -1276,7 +1276,7 @@ public class EditorManager implements IExtensionChangeHandler {
 						monitor.worked(1);
 						continue;
 					}
-					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), shellProvider, closing);
+					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), shellProvider, closing || confirm);
 					if (monitorWrap.isCanceled()) {
 						break;
 					}

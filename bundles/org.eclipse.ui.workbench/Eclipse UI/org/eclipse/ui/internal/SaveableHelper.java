@@ -131,7 +131,7 @@ public class SaveableHelper {
 		}
 
 		if (saveable instanceof ISaveablesSource) {
-			return saveModels((ISaveablesSource) saveable, window);
+			return saveModels((ISaveablesSource) saveable, window, confirm);
 		}
 
 		// Create save block.
@@ -151,10 +151,11 @@ public class SaveableHelper {
 	 * 
 	 * @param modelSource the model source
 	 * @param window the workbench window
+	 * @param confirm 
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
 	 *   was cancelled.
 	 */
-	private static boolean saveModels(ISaveablesSource modelSource, final IWorkbenchWindow window) {
+	private static boolean saveModels(ISaveablesSource modelSource, final IWorkbenchWindow window, final boolean confirm) {
 		Saveable[] selectedModels = modelSource.getActiveSaveables();
 		final ArrayList dirtyModels = new ArrayList();
 		for (int i = 0; i < selectedModels.length; i++) {
@@ -180,7 +181,7 @@ public class SaveableHelper {
 						continue;
 					}
 					doSaveModel(model, new SubProgressMonitor(monitorWrap, 1),
-							(WorkbenchWindow) window, false);
+							(WorkbenchWindow) window, confirm);
 					if (monitor.isCanceled()) {
 						break;
 					}
@@ -306,11 +307,11 @@ public class SaveableHelper {
 	 * @param model
 	 * @param progressMonitor
 	 * @param shellProvider
-	 * @param closing
+	 * @param blockUntilSaved
 	 */
 	public static void doSaveModel(final Saveable model,
 			IProgressMonitor progressMonitor,
-			final IShellProvider shellProvider, boolean closing) {
+			final IShellProvider shellProvider, boolean blockUntilSaved) {
 		final ISchedulingRule schedulingRule = ((InternalSaveable) model)
 				.getSchedulingRule();
 		boolean ruleTransferred = false;
@@ -329,7 +330,7 @@ public class SaveableHelper {
 				if (backgroundSaveRunnable[0] == null) {
 					return;
 				}
-				if (closing || !model.supportsBackgroundSave()) {
+				if (blockUntilSaved || !model.supportsBackgroundSave()) {
 					// for now, block on close by running the runnable in the UI
 					// thread
 					IStatus result = backgroundSaveRunnable[0].run(subMonitor
@@ -353,14 +354,7 @@ public class SaveableHelper {
 					// about to start the job - notify the save actions,
 					// this is done through the workbench windows, which
 					// we can get from the parts...
-					Set wwindows = new HashSet();
-					for (int i = 0; i < parts.length; i++) {
-						wwindows.add(parts[i].getSite().getWorkbenchWindow());
-					}
-					for (Iterator it = wwindows.iterator(); it.hasNext();) {
-						WorkbenchWindow wwin = (WorkbenchWindow) it.next();
-						wwin.fireBackgroundSaveStarted();
-					}
+					notifySaveAction(parts);
 				}
 				// for the job family, we use the model object because based on
 				// the family we can display the busy state with an animated tab
@@ -396,7 +390,7 @@ public class SaveableHelper {
 									IWorkbenchSiteProgressService.class);
 					progressService.showBusyForFamily(model);
 				}
-				model.disableUI(parts, closing);
+				model.disableUI(parts, blockUntilSaved);
 				// Add a listener for enabling the UI after the save job has
 				// finished, and for displaying an error dialog if
 				// necessary. We also use this to notify the UI thread that
@@ -407,11 +401,13 @@ public class SaveableHelper {
 				final Boolean[] latch = { Boolean.FALSE };
 				saveJob.addJobChangeListener(new JobChangeAdapter() {
 					public void done(final IJobChangeEvent event) {
+						latch[0] = Boolean.TRUE;
 						shellProvider.getShell().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
 										((InternalSaveable) model)
 												.setSavingInBackground(false);
+										notifySaveAction(parts);
 										model.enableUI(parts);
 										IStatus result = event.getResult();
 										if (!result.isOK()) {
@@ -445,7 +441,7 @@ public class SaveableHelper {
 						try {
 							latch.wait();
 						} catch (InterruptedException e) {
-							Thread.currentThread().interrupt();
+							// ignore
 						}
 					}
 				}
@@ -463,6 +459,17 @@ public class SaveableHelper {
 				Job.getJobManager().endRule(schedulingRule);
 			}
 			progressMonitor.done();
+		}
+	}
+
+	private static void notifySaveAction(final IWorkbenchPart[] parts) {
+		Set wwindows = new HashSet();
+		for (int i = 0; i < parts.length; i++) {
+			wwindows.add(parts[i].getSite().getWorkbenchWindow());
+		}
+		for (Iterator it = wwindows.iterator(); it.hasNext();) {
+			WorkbenchWindow wwin = (WorkbenchWindow) it.next();
+			wwin.fireBackgroundSaveStarted();
 		}
 	}
 
