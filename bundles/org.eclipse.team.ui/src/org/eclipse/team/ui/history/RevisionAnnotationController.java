@@ -91,11 +91,13 @@ public abstract class RevisionAnnotationController {
 	public static AbstractDecoratedTextEditor openEditor(IWorkbenchPage page, IFile file) throws PartInitException {
 		if (file == null)
 			return null;
-		IEditorPart[] openEditors = findOpenEditorsForFile(file);
+		FileEditorInput input = new FileEditorInput(file);
+		IEditorPart[] openEditors = findOpenEditorsForFile(page, input);
 		if (openEditors.length > 0) {
-			AbstractDecoratedTextEditor te= findTextEditor(openEditors);
-			if (te != null)
+			AbstractDecoratedTextEditor te= findTextEditor(page, openEditors, input);
+			if (te != null) {
 				return te;
+			}
 		}
 		
 		// No existing editor references found, try to open a new editor for the file	
@@ -104,19 +106,20 @@ public abstract class RevisionAnnotationController {
 			// Try to open the associated editor only if its an internal editor
 			// Also, if a non-text editor is already open, there is no need to try and open 
 			// an editor since the open will find the non-text editor
-			IEditorInput input = new FileEditorInput(file);
 			if (descrptr.isInternal() && openEditors.length == 0){
 				IEditorPart part = page.openEditor(input, IDE.getEditorDescriptor(file).getId(), true, IWorkbenchPage.MATCH_INPUT);
-				if (part instanceof AbstractDecoratedTextEditor)
-					return (AbstractDecoratedTextEditor)part;
+				AbstractDecoratedTextEditor te = findTextEditorPart(page, part, input);
+				if (te != null)
+					return te;
 				
 				//editor opened is not a text editor - close it
 				page.closeEditor(part, false);
 			}
 			//open file in default text editor	
-			IEditorPart part = page.openEditor(input, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_ID);
-			if (part != null && part instanceof AbstractDecoratedTextEditor)
-				return (AbstractDecoratedTextEditor)part;
+			IEditorPart part = page.openEditor(input, IDEWorkbenchPlugin.DEFAULT_TEXT_EDITOR_ID, true, IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
+			AbstractDecoratedTextEditor te = findTextEditorPart(page, part, input);
+			if (te != null)
+				return te;
 			
 		} catch (PartInitException e) {
 		}
@@ -198,50 +201,60 @@ public abstract class RevisionAnnotationController {
 		return false;
 	}
 	
-	private static AbstractDecoratedTextEditor findOpenTextEditorForFile(IFile file) {
+	private static AbstractDecoratedTextEditor findOpenTextEditorForFile(IWorkbenchPage page, IFile file) {
 		if (file == null)
 			return null;
-        IEditorPart[] editors = findOpenEditorsForFile(file);
-        return findTextEditor(editors);
+		FileEditorInput input = new FileEditorInput(file);
+        IEditorPart[] editors = findOpenEditorsForFile(page, input);
+		return findTextEditor(page, editors, input);
 	}
 	
-	private static AbstractDecoratedTextEditor findTextEditor(IEditorPart[] editors) {
+	private static AbstractDecoratedTextEditor findTextEditor(IWorkbenchPage page, IEditorPart[] editors, IEditorInput input) {
 		for (int i = 0; i < editors.length; i++) {
 			IEditorPart editor = editors[i];
-			if (editor instanceof AbstractDecoratedTextEditor)
-				return (AbstractDecoratedTextEditor) editor;
+			AbstractDecoratedTextEditor te = findTextEditorPart(page, editor, input);
+			if (te != null)
+				return te;
 		}
 		return null;
 	}
+
+	private static AbstractDecoratedTextEditor findTextEditorPart(IWorkbenchPage page, IEditorPart editor, IEditorInput input) {
+		if (editor instanceof AbstractDecoratedTextEditor)
+			return (AbstractDecoratedTextEditor) editor;
+//		if (editor instanceof MultiPageEditorPart) {
+//			MultiPageEditorPart mpep = (MultiPageEditorPart) editor;
+//			IEditorPart[] parts = mpep.findEditors(input);
+//			for (int i = 0; i < parts.length; i++) {
+//				IEditorPart editorPart = parts[i];
+//				if (editorPart instanceof AbstractDecoratedTextEditor) {
+//			        page.activate(mpep);
+//			        mpep.setActiveEditor(editorPart);
+//					return (AbstractDecoratedTextEditor) editorPart;
+//				}
+//			}
+//		}
+		return null;
+	}
 	
-	private static IEditorPart[] findOpenEditorsForFile(IFile file) {
-		if (file == null)
-			return new IEditorPart[0];
-        final IWorkbench workbench= PlatformUI.getWorkbench();
-        final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-        final IEditorReference[] references= window.getActivePage().getEditorReferences();
+	private static IEditorPart[] findOpenEditorsForFile(IWorkbenchPage page, FileEditorInput input) {
+        final IEditorReference[] references= page.findEditors(input, null, IWorkbenchPage.MATCH_INPUT);
         final List editors = new ArrayList();
 		for (int i= 0; i < references.length; i++) {
 			IEditorReference reference= references[i];
-			try {
-				if (file.equals(reference.getEditorInput().getAdapter(IFile.class))) {
-					IEditorPart editor= reference.getEditor(false);
-					editors.add(editor);
-				}
-			} catch (PartInitException e) {
-				// ignore
-			}
+			IEditorPart editor= reference.getEditor(false);
+			editors.add(editor);
 		}
 		
         return (IEditorPart[]) editors.toArray(new IEditorPart[editors.size()]);
 	}
 	
-	private static AbstractDecoratedTextEditor findOpenTextEditorFor(Object object) {
+	private static AbstractDecoratedTextEditor findOpenTextEditorFor(IWorkbenchPage page, Object object) {
 		if (object == null)
 			return null;
 		if (object instanceof IFile) {
 			IFile file = (IFile) object;
-			return findOpenTextEditorForFile(file);
+			return findOpenTextEditorForFile(page, file);
 		}
         final IWorkbench workbench= PlatformUI.getWorkbench();
         final IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
@@ -262,8 +275,8 @@ public abstract class RevisionAnnotationController {
         return null;
 	}
 	
-	private static ISelectionProvider findEditorRevisonSelectionProvider(Object object) {
-		ITextEditor editor= findOpenTextEditorFor(object);
+	private static ISelectionProvider findEditorRevisonSelectionProvider(IWorkbenchPage page, Object object) {
+		ITextEditor editor= findOpenTextEditorFor(page, object);
 		if (editor == null)
 			return null;
 
@@ -284,21 +297,23 @@ public abstract class RevisionAnnotationController {
 	
 	/**
 	 * Create a controller that links an editor on a local file to a history list.
+	 * @param page the workbench page
 	 * @param file the local file
 	 * @param historyList the history list selection provider
 	 */
-	public RevisionAnnotationController(IFile file, ISelectionProvider historyList) {
-		this(findEditorRevisonSelectionProvider(file), historyList);
+	public RevisionAnnotationController(IWorkbenchPage page, IFile file, ISelectionProvider historyList) {
+		this(findEditorRevisonSelectionProvider(page, file), historyList);
 	}
 	
 	/**
 	 * Create a controller that links an editor input on a remote file to a history list.
+	 * @param page the workbench page
 	 * @param editorInput the editor input for the remote file
 	 * @param historyList the history list selection provider
 	 */
-	public RevisionAnnotationController(IStorageEditorInput editorInput,
+	public RevisionAnnotationController(IWorkbenchPage page, IStorageEditorInput editorInput,
 			ISelectionProvider historyList) {
-		this(findEditorRevisonSelectionProvider(editorInput), historyList);
+		this(findEditorRevisonSelectionProvider(page, editorInput), historyList);
 	}
 
 	/**

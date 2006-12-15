@@ -1146,12 +1146,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	
 	private final class CVSRevisionAnnotationController extends
 			RevisionAnnotationController {
-		public CVSRevisionAnnotationController(IFile file) {
-			super(file, treeViewer);
+		public CVSRevisionAnnotationController(IWorkbenchPage page, IFile file) {
+			super(page, file, treeViewer);
 		}
 
-		public CVSRevisionAnnotationController(IStorageEditorInput editorInput) {
-			super(editorInput, treeViewer);
+		public CVSRevisionAnnotationController(IWorkbenchPage page, IStorageEditorInput editorInput) {
+			super(page, editorInput, treeViewer);
 		}
 
 		protected Object getHistoryEntry(Revision selected) {
@@ -1733,12 +1733,12 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		IResource resource = file.getIResource();
 		if (resource instanceof IFile) {
 			IFile file = (IFile) resource;
-			rulerSelectionListener= new CVSRevisionAnnotationController(file);
+			rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), file);
 		} else {
 			Object input = getInput();
 			if (input instanceof IStorageEditorInput) {
 				IStorageEditorInput editorInput = (IStorageEditorInput) input;
-				rulerSelectionListener= new CVSRevisionAnnotationController(editorInput);
+				rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), editorInput);
 			}
 		}
 	}
