@@ -101,7 +101,7 @@ function makeNodeRequest(parameters) {
     ajaxRequest(href, callback, errorCallback);
 }
 
-if (isIE){
+if (isInternetExplorer){
    document.onclick = mouseClickHandler;
    document.onmousemove = mouseMoveHandler;
    document.onkeydown = keyDownHandler;

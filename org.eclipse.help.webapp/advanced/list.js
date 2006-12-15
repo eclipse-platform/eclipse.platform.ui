@@ -10,29 +10,14 @@
  *******************************************************************************/
  
 // Common scripts for IE and Mozilla.
+// requires utils.js
 
 var isMozilla = navigator.userAgent.indexOf('Mozilla') != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-var isSafari = navigator.userAgent.indexOf('Safari') != -1;
 
 // selected node
 var active;
 var oldActive;
-
-/**
- * Returns the target node of an event
- */
-function getTarget(e) {
-	var target;
-  	if (isIE) {
-   		target = window.event.srcElement;
-   	} else { 	    
-  		target = e.target;
-   	}
-
-	return target;
-}
-
 
 /**
  * Returns the row of this click
@@ -144,7 +129,7 @@ function selectTopic(topic)
 			links[i].href.indexOf(topic+"/?toc=") == 0)
 		{
 			highlightTopic(links[i]);
-			scrollIntoView(links[i]);
+			scrollUntilVisible(links[i], SCROLL_VERTICAL);
 			links[i].scrollIntoView(true);
 			return true;
 		}
@@ -161,66 +146,10 @@ function selectTopicById(id)
 	if (topic)
 	{
 		highlightTopic(topic);
-		scrollIntoView(topic);
+		scrollUntilVisible(topic, SCROLL_VERTICAL);
 		return true;
 	}
 	return false;
-}
-
-
-/**
- * Scrolls the page to show the specified element
- */
-function scrollIntoView(node)
-{
-	var scroll = getVerticalScroll(node);
-	if (scroll != 0)
-		window.scrollBy(0, scroll);
-}
-
-/**
- * Scrolls the page to show the specified element
- */
-function getVerticalScroll(node)
-{
-	// Use the parent element for getting the offsetTop, as it appears
-	// that tables get their own layout measurements.
-
-	//var nodeTop = node.offsetTop;
-	var nodeTop = node.parentNode.offsetTop;
-		
-	//var nodeBottom = nodeTop + node.offsetHeight;
-	var nodeBottom = nodeTop + node.parentNode.offsetHeight;
-	
-	var pageTop = 0;
-	var pageBottom = 0;
-		
-	if (isIE)
-	{
-		pageTop = document.body.scrollTop; 
-		pageBottom = pageTop + document.body.clientHeight;
-	
-	} 
-	else if (isMozilla)
-	{
-		pageTop = window.pageYOffset;
-		pageBottom = pageTop + window.innerHeight - node.offsetHeight;
-	}
-	
-	var scroll = 0;
-	if (nodeTop >= pageTop )
-	{
-		if (nodeBottom <= pageBottom)
-			scroll = 0; // already in view
-		else
-			scroll = nodeBottom - pageBottom/2;
-	}
-	else
-	{
-		scroll = nodeTop - pageTop;
-	}
-	
-	return scroll;
 }
 
 function hidePopupMenu() {
@@ -294,7 +223,6 @@ function clearStatus() {
 
 /**
  * Popup a menu on right click over a bookmark.
- * This handler assumes the list.js script has been loaded.
  */
 function contextMenuHandler(e)
 {
@@ -304,11 +232,7 @@ function contextMenuHandler(e)
 	if (isIE)
 		e = window.event;
 		
-  	var clickedNode;
-  	if (isIE)
-   		clickedNode = e.srcElement;
-  	else
-  		clickedNode = e.target;
+  	var clickedNode = getEventTarget(e);
 
   	if (!clickedNode)
   		return true;
@@ -336,11 +260,7 @@ function mouseClickHandler(e) {
 	if (isIE || e && e.target && e.target != popupMenuTarget)
 		hidePopupMenu();
 		
-  	var clickedNode;
-  	if (isIE)
-   		clickedNode = window.event.srcElement;
-  	else 
-  		clickedNode = e.target;
+  	var clickedNode = getEventTarget(e);
   	
   	highlightTopic(clickedNode);
 }
@@ -369,39 +289,50 @@ function keyDownHandler(e)
 		key = e.keyCode;
 	}
 
-	if (key <37 || key > 40)
+	if (key != 38 && key != 40) {
 		return true;
-		
-  	if (isIE)
-  		window.event.cancelBubble = true;
-  	else 
-  		e.cancelBubble = true;
-  		
+	}
+	
+	var clickedNode = getEventTarget(e);
+    if (!clickedNode) {
+        return;
+    }
+	    
+  	cancelEventBubble(e);
+  	
   	if (key == 40 ) { // down arrow
-  		var clickedNode = getTarget(e);
-  		if (!clickedNode) return;
-
 		var next = getNextDown(clickedNode);
 		highlightTopic(next);
-		if (next)
+		if (next) {
+		    // Scroll a little beyond this element so the description
+		    // of a search result shows in full
+			var sibling1 = getTRNode(next).nextSibling;
+			if (sibling1 !== null) {
+			    var sibling2 = sibling1.nextSibling;
+			    if (sibling2 !== null) {
+			        scrollUntilVisible(sibling2, SCROLL_VERTICAL + SCROLL_LEFT);
+			    } else {		        
+			        scrollUntilVisible(sibling1, SCROLL_VERTICAL + SCROLL_LEFT);
+			    }
+			} else {
+			    scrollUntilVisible(next, SCROLL_VERTICAL + SCROLL_LEFT); 
+			}
+
 			next.focus();
-		else
-			return true;
-
+			return false;
+		} 
   	} else if (key == 38 ) { // up arrow
-  		var clickedNode = getTarget(e);
-  		if (!clickedNode) return;
-
 		var next = getNextUp(clickedNode);
 		highlightTopic(next);
-		if (next)
+		if (next) {
 			next.focus();
-		else
-			return true;
-  	} else
-  		return true;
+			scrollUntilVisible(getTRNode(next), SCROLL_VERTICAL + SCROLL_LEFT);
+			return false;
+		}
+  	}
+  	// Keystroke not consumed 
+  	return true;
   				
-  	return false;
 }
 
 

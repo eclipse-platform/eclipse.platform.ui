@@ -71,6 +71,7 @@ BUTTON {
 
 </style>
 
+<script language="JavaScript" src="utils.js"></script>
 <script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">
 

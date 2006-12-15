@@ -12,50 +12,27 @@
 // Code to handle the expansion, contraction and navigation
 // of nodes in a tree.
 
-var isIE = navigator.userAgent.indexOf('MSIE') != -1;
-var isSafari = (navigator.userAgent.indexOf('Safari/') != -1)
-			|| (navigator.userAgent.indexOf('AppleWebKit/') != -1);
 var oldActive;
 var oldActiveClass;
-
-/**
- * Returns the target node of an event
- */
-function getTarget(e) {
-	var target;
-  	if (isIE) {
-   		target = window.event.srcElement; 
-   	} else {  	
-  		target = e.target;
-  	}
-
-	return target;
-}
 
 /**
  * handler for expanding / collapsing topic tree
  */
 function mouseClickHandler(e) {
-
-  	var clickedNode = getTarget(e);
+  	var clickedNode = getEventTarget(e);
 	if (!clickedNode) { return; }
 	
 	// Is it an expander node?
 	
 	if (clickedNode.className == "expander") {
 	    toggleExpandState(clickedNode);
+	    cancelEventBubble(e);
 	} else if ( clickedNode.tagName == 'A' || clickedNode.tagName == 'IMG') {
 	    var treeItem = getTreeItem(clickedNode);
 	    if (treeItem !== null) {
 	        highlightItem(getTreeItem(clickedNode), true); 
 	    } 
-	}
-  	
-  	if (isIE) {
-  		window.event.cancelBubble = true;
-  	} else {	
-  		e.cancelBubble = true;
-  	}
+	} 	
 }
 
 /**
@@ -63,42 +40,32 @@ function mouseClickHandler(e) {
  */
 function keyDownHandler(e)
 {
-	var key;
-
-	if (isIE) {
-		key = window.event.keyCode;
-	} else {
-		key = e.keyCode;
-	}
+	var key = getKeycode(e);
 		
 	if ( key <35 || key > 40) {
 		return true;
-	}
-	
+	}	
 	
   	if (key == 35) { // End - go to last visible child
   	    goToEnd();
   	} else if (key == 36) { // Home - go to first element
   	    goHome();
   	}
+  	
+  	// Always cancel the event bubble for navigation keys
+  	cancelEventBubble(e);
 		
-	var clickedNode = getTarget(e);
+	var clickedNode = getEventTarget(e);
 	var treeItem = getTreeItem(clickedNode);
     if (!treeItem && key >= 37) { return true; }
-	
-  	if (isIE) {
-  		window.event.cancelBubble = true;
-  	} else {	
-  		e.cancelBubble = true;
-  	}
-  	
+	 	
   	if (key == 37) { // Left arrow, collapse
   	    goLeft(treeItem);
-  	} else if (key == 38 && !isSafari ) { // Up arrow, go up
+  	} else if (key == 38 ) { // Up arrow, go up
   	    goUp(treeItem);
   	} if (key == 39) { // Right arrow, expand
   	    goRight(treeItem);
-  	} else if (key == 40 && !isSafari ) { // Down arrow, go down
+  	} else if (key == 40 ) { // Down arrow, go down
   		goDown(treeItem);
   	}
   				
@@ -205,9 +172,9 @@ function focusOnItem(treeItem, isHighlighted) {
   		}
   		var expander = getExpander(treeItem);
   		if (expander !== null) {
-  		    scrollIntoView(anchor.parentNode);
+  		    scrollUntilVisible(anchor.parentNode, SCROLL_HORIZONTAL_AND_VERTICAL);
   		} else {
-  		    scrollIntoView(anchor);
+  		    scrollUntilVisible(anchor, SCROLL_HORIZONTAL_AND_VERTICAL);
   		}
     }
 }
@@ -325,7 +292,6 @@ function toggleExpandState(node) {
     
     if (oldChildClass == "unopened") {
         loadChildren(treeItem);
-        return;  // loadChildren is responsible for updating the expander image
     } else if (oldChildClass == "hidden") {
         newChildClass = "visible";
     } else if (oldChildClass == "visible") {
@@ -334,15 +300,20 @@ function toggleExpandState(node) {
         return;
     }
 
-    // set the childrens class to the new class
-    var children = treeItem.childNodes;
-    for (var i = 0; i < children.length; i++) {
-        if ("DIV" == children[i].tagName ) {
-            children[i].className = newChildClass;
-        }
+    if (oldChildClass != "unopened") {
+        // set the childrens class to the new class
+        var children = treeItem.childNodes;
+        for (var i = 0; i < children.length; i++) {
+            if ("DIV" == children[i].tagName ) {
+                children[i].className = newChildClass;
+            }
+        }   
+        changeExpanderImage(treeItem, newChildClass == "visible"); 
     }
     
-    changeExpanderImage(treeItem, newChildClass == "visible");    
+    if (newChildClass == "visible") {
+        scrollUntilVisible(treeItem, SCROLL_HORIZONTAL_AND_VERTICAL); 
+    } 
 }
 
 function changeExpanderImage(treeItem, isExpanded) {
