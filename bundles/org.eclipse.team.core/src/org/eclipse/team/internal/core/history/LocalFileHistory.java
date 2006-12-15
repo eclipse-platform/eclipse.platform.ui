@@ -93,17 +93,17 @@ public class LocalFileHistory extends FileHistory {
 		if (refetchRevisions) {
 			monitor.beginTask(Messages.LocalFileHistory_RefreshLocalHistory/*, file.getProjectRelativePath().toString())*/, 300);
 			try {
+				// Include the file's current state if and only if the file exists.
+				LocalFileRevision currentRevision =
+					(file.exists() ? new LocalFileRevision(file) : null);
 				IFileState[] fileStates = file.getHistory(monitor);
-				if (fileStates.length > 0) {
-					revisions = new LocalFileRevision[fileStates.length + 1];
-					for (int i = 0; i < fileStates.length; i++) {
-						revisions[i] = new LocalFileRevision(fileStates[i]);
-					}
-					revisions[fileStates.length] = new LocalFileRevision(file);
-				} else {
-					revisions = new LocalFileRevision[]{new LocalFileRevision(file)};
+				int numRevisions = fileStates.length + (currentRevision != null ? 1 : 0);
+				revisions = new LocalFileRevision[numRevisions];
+				for (int i = 0; i < fileStates.length; i++) {
+					revisions[i] = new LocalFileRevision(fileStates[i]);
 				}
-
+				if (currentRevision != null)
+					revisions[fileStates.length] = currentRevision;
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);
 			} finally {

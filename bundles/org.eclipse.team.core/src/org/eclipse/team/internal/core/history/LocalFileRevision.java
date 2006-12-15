@@ -126,6 +126,19 @@ public class LocalFileRevision extends FileRevision {
 		return state.getModificationTime();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.provider.FileRevision#exists()
+	 * A LocalFileRevision generally should exist, but if it doesn't, this
+	 * method should tell the truth.
+	 */
+	public boolean exists() {
+		if (file != null) {
+			return file.exists();
+		}
+		
+		return state.exists();
+	}
+
 	/*
 	 * Sets the base revision. Can be used to associate a base revision
 	 * with an IFile.
