@@ -20,12 +20,15 @@ import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.DisposeEvent;
@@ -120,6 +123,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @since 3.3
 	 */
 	public static final String PROP_TITLE_IMAGE= ICompareUIConstants.PROP_TITLE_IMAGE;
+	
+	/**
+	 * The name of the "selected edition" property. This property is fired when the selected
+	 * edition of the compare input changes.
+	 * @see #isEditionSelectionDialog()
+	 * @see #getSelectedEdition()
+	 * @since 3.3
+	 */
+	public static final String PROP_SELECTED_EDITION= ICompareUIConstants.PROP_SELECTED_EDITION;
 		
 	private static final String COMPARE_EDITOR_IMAGE_NAME= "eview16/compare_view.gif"; //$NON-NLS-1$
 	private static Image fgTitleImage;
@@ -506,6 +518,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					ISelection s= e.getSelection();
 					if (s == null || s.isEmpty())
 						feed1(s);
+					if (isEditionSelectionDialog())
+						firePropertyChange(new PropertyChangeEvent(this, PROP_SELECTED_EDITION, null, getSelectedEdition()));
 				}
 			}
 		);
@@ -990,6 +1004,108 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public boolean belongsTo(Object family) {
 		return family == this;
+	}
+	
+	/**
+	 * Return whether this input is intended to be used to select
+	 * a particular edition of an element in a dialog. The result
+	 * of this method is only consider if neither sides of the
+	 * input are editable. By default, <code>false</code> is returned.
+	 * @return whether this input is intended to be used to select
+	 * a particular edition of an element in a dialog
+	 * @see #getOKButtonLabel()
+	 * @see #okPressed()
+	 * @see #getSelectedEdition()
+	 * @since 3.3
+	 */
+	public boolean isEditionSelectionDialog() {
+		return false;
+	}
+	
+	/**
+	 * Return the label to be used for the <code>OK</code>
+	 * button when this input is displayed in a dialog.
+	 * By default, different labels are used depending on
+	 * whether the input is editable or is for edition selection
+	 * (see {@link #isEditionSelectionDialog()}.
+	 * @return the label to be used for the <code>OK</code>
+	 * button when this input is displayed in a dialog
+	 * @since 3.3
+	 */
+	public String getOKButtonLabel() {
+		if (isEditable())
+			return CompareMessages.CompareDialog_commit_button;
+		if (isEditionSelectionDialog())
+			return "&Select";
+		return IDialogConstants.OK_LABEL;
+	}
+
+	private boolean isEditable() {
+		return getCompareConfiguration().isLeftEditable() 
+			|| getCompareConfiguration().isRightEditable();
+	}
+	
+	/**
+	 * The <code>OK</code> button was pressed in a dialog. If one or both of
+	 * the sides of the input is editable then any changes will be saved. If the
+	 * input is for edition selection (see {@link #isEditionSelectionDialog()}),
+	 * it is up to subclasses to override this method in order to perform the
+	 * appropriate operation on the selected edition.
+	 * 
+	 * @return whether the dialog should be closed or not.
+	 * @since 3.3
+	 */
+	public boolean okPressed() {
+		if (isEditable()) {
+			if (!saveChanges())
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean saveChanges() {
+		try {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						saveChanges(monitor);
+					} catch (CoreException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			
+			});
+			return true;
+		} catch (InterruptedException x) {
+			// Ignore
+		} catch (OperationCanceledException x) {
+			// Ignore
+		} catch (InvocationTargetException x) {
+			ErrorDialog.openError(fComposite.getShell(), CompareMessages.CompareDialog_error_title, null, 
+				new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, 
+					NLS.bind(CompareMessages.CompareDialog_error_message, x.getTargetException().getMessage()), x.getTargetException()));
+		}
+		return false;
+	}
+	
+	/**
+	 * Return the selected edition or <code>null</code> if no edition is selected.
+	 * The result of this method should only be considered if {@link #isEditionSelectionDialog()}
+	 * returns <code>true</code>.
+	 * @return the selected edition or <code>null</code>
+	 * @since 3.3
+	 */
+	public Object getSelectedEdition() {
+		if (fStructureInputPane != null) {
+			ISelection selection = fStructureInputPane.getSelection();
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				if (!ss.isEmpty())
+					return ss.getFirstElement();
+				
+			}
+		}
+		return null;
 	}
 }
 

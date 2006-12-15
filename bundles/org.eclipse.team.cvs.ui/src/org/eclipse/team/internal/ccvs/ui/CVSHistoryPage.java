@@ -425,7 +425,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					if(confirmOverwrite() && validateChange()) {
 						CVSTag revisionTag = new CVSTag(remoteFile.getRevision(), CVSTag.VERSION);
 						
-						if(CVSAction.checkForMixingTags(getSite().getShell(), new IResource[] {file.getIResource()}, revisionTag)) {
+						if(CVSAction.checkForMixingTags(getHistoryPageSite().getShell(), new IResource[] {file.getIResource()}, revisionTag)) {
 							new UpdateOperation(
 									null, 
 									new IResource[] {file.getIResource()},
@@ -1498,6 +1498,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				final boolean hasRevision = cvsFileHistory.getFileRevision(revision) != null;
 				Display.getDefault().asyncExec(new Runnable() {
 					public void run() {
+						if (treeViewer.getControl().isDisposed())
+							return;
 						if (treeViewer.getControl().isVisible()) {
 							if (hasRevision)
 								refresh(CVSFileHistory.REFRESH_LOCAL);

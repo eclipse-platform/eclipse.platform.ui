@@ -14,13 +14,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -96,13 +95,23 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		if (isInputEditable()) {
-			fCommitButton= createButton(parent, IDialogConstants.OK_ID, CompareMessages.CompareDialog_commit_button, true);
-			fCommitButton.setEnabled(false);
+		fCommitButton= createButton(parent, IDialogConstants.OK_ID, getOKButtonLabel(), true);
+		fCommitButton.setEnabled(isOKEnabled());
+		if (isCancelable()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		} else {
-			createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
 		}
+	}
+
+	private boolean isCancelable() {
+		return isInputEditable() || isElementSelectionDialog();
+	}
+
+	private String getOKButtonLabel() {
+		return fCompareEditorInput.getOKButtonLabel();
+	}
+
+	private boolean isElementSelectionDialog() {
+		return fCompareEditorInput.isEditionSelectionDialog();
 	}
 
 	/**
@@ -123,16 +132,29 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(CompareEditorInput.DIRTY_STATE)) {
+		if (event.getProperty().equals(CompareEditorInput.DIRTY_STATE)
+				|| event.getProperty().equals(CompareEditorInput.PROP_SELECTED_EDITION)) {
 			if (fCommitButton != null && fCompareEditorInput != null)
-				fCommitButton.setEnabled(fCompareEditorInput.isSaveNeeded());
+				fCommitButton.setEnabled(isOKEnabled());
 		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE)) {
 			getShell().setText(fCompareEditorInput.getTitle());
 		} else if (event.getProperty().equals(CompareEditorInput.PROP_TITLE_IMAGE)) {
 			getShell().setImage(fCompareEditorInput.getTitleImage());
 		}
 	}
+
+	private boolean isOKEnabled() {
+		if (isInputEditable())
+			return fCompareEditorInput.isSaveNeeded();
+		if (isElementSelectionDialog())
+			return getSelectedElement() != null;
+		return true;
+	}
 	
+	private Object getSelectedElement() {
+		return fCompareEditorInput.getSelectedEdition();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
@@ -173,36 +195,11 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void buttonPressed(int buttonId) {
-		if (buttonId == OK && fCompareEditorInput.isSaveNeeded()) {
-			if (!saveChanges())
+		if (buttonId == OK) {
+			if (!fCompareEditorInput.okPressed())
 				return;
 		}
 		super.buttonPressed(buttonId);
-	}
-
-	private boolean saveChanges() {
-		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						fCompareEditorInput.saveChanges(monitor);
-					} catch (CoreException e) {
-						throw new InvocationTargetException(e);
-					}
-				}
-			
-			});
-			return true;
-		} catch (InterruptedException x) {
-			// Ignore
-		} catch (OperationCanceledException x) {
-			// Ignore
-		} catch (InvocationTargetException x) {
-			ErrorDialog.openError(getParentShell(), CompareMessages.CompareDialog_error_title, null, 
-				new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, 
-					NLS.bind(CompareMessages.CompareDialog_error_message, x.getTargetException().getMessage()), x.getTargetException()));
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)

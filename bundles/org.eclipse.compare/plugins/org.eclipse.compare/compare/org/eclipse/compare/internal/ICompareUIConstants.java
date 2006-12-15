@@ -25,6 +25,7 @@ public interface ICompareUIConstants {
 	public static final String PROP_IGNORE_ANCESTOR = PREFIX + "IgnoreAncestor"; //$NON-NLS-1$
 	public static final String PROP_TITLE = PREFIX + "Title"; //$NON-NLS-1$
 	public static final String PROP_TITLE_IMAGE = PREFIX + "TitleImage"; //$NON-NLS-1$
+	public static final String PROP_SELECTED_EDITION = PREFIX + "SelectedEdition"; //$NON-NLS-1$
 	
 	public static final int COMPARE_IMAGE_WIDTH= 22;
 	
