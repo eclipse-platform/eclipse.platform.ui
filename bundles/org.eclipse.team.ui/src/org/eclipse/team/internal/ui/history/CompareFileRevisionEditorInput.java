@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.AbstractCompareInput;
 import org.eclipse.team.internal.ui.mapping.CompareInputChangeNotifier;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
@@ -79,10 +78,31 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		ICompareInput input = createCompareInput();
 		getCompareConfiguration().setLeftEditable(isLeftEditable(input));
 		getCompareConfiguration().setRightEditable(false);
+		ensureContentsCached(left, right, monitor);
 		initLabels(input);
 		return input;
 	}
 
+	private static void ensureContentsCached(Object left, Object right,
+			IProgressMonitor monitor) {
+		if (left instanceof FileRevisionTypedElement) {
+			FileRevisionTypedElement fste = (FileRevisionTypedElement) left;
+			try {
+				fste.cacheContents(monitor);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+		if (right instanceof FileRevisionTypedElement) {
+			FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
+			try {
+				fste.cacheContents(monitor);
+			} catch (CoreException e) {
+				TeamUIPlugin.log(e);
+			}
+		}
+	}
+	
 	private boolean isLeftEditable(ICompareInput input) {
 		Object left = input.getLeft();
 		if (left instanceof IEditableContent) {
