@@ -1074,8 +1074,13 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 	private void doAddSeparator(Viewer viewer) {
 		Object obj = ((StructuredSelection) viewer.getSelection()).getFirstElement();
 		GroupData gd = (GroupData) viewer.getInput();
+		if (gd == null) {
+			gd = createTargetGd(viewer);
+			viewer.setInput(gd);
+		}
 		gd.addSeparator((BaseData)obj);
 		viewer.refresh();
+		updateColumnSizes((TableViewer)viewer);
 	}
 
 	private void doRemoveSeparators(Viewer viewer) {
@@ -1130,6 +1135,12 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 			return null;
 		TabItem[] items = tabFolder.getSelection();
 		PageData pd = (PageData) items[0].getData("pageData"); //$NON-NLS-1$
+		if (pd == null) {
+			String pageId = (String)items[0].getData();
+			pd = new PageData(pageId);
+			items[0].setData("pageData", pd); //$NON-NLS-1$
+			introRootPages.add(pageId);
+		}
 		pd.add(targetGd);
 		return targetGd;
 	}
