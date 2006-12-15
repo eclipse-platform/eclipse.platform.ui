@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK Overview Page. -->
+  <extensionContent id="org.eclipse.pde.2" name="PDE (test)" alt-style="css/swt.properties" style="css/overview.css" path="overview/@">
+     <enablement>
+        <systemTest property="org.eclipse.ua.tests.property.isTesting" value="true"/>
+     </enablement>
+    <group style-id="content-group" id="content-group">
+    	<link style-id="content-link" label="Eclipse plug-in development (test)" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/guide/intro/pde_overview.htm" id="pde">
+      		<text>Learn how to extend Eclipse by building new plug-ins (test)</text>
+    	</link>
+    </group>
+  </extensionContent>
+</introContent>

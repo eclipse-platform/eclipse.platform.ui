@@ -12,10 +12,12 @@
 package org.eclipse.ui.internal.intro.impl.model;
 
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.dynamic.DocumentNode;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
@@ -323,11 +325,15 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
      * resolved on a per container basis, when the container is resolved.
      */
     protected void resolveChildren() {
-        for (int i = 0; i < children.size(); i++) {
-            AbstractIntroElement child = (AbstractIntroElement) children
-                .elementAt(i);
-            if (child.getType() == AbstractIntroElement.INCLUDE)
+    	ListIterator iter = children.listIterator();
+        while (iter.hasNext()) {
+            AbstractIntroElement child = (AbstractIntroElement)iter.next();
+            if (UAContentFilter.isFiltered(new DocumentNode(child.getElement()), IntroEvaluationContext.getContext())) {
+            	iter.remove();
+            }
+            else if (child.getType() == AbstractIntroElement.INCLUDE) {
                 resolveInclude((IntroInclude) child);
+            }
         }
         resolved = true;
     }

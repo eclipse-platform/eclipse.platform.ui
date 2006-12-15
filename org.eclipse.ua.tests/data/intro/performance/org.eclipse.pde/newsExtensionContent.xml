@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK What's New Page. -->
+  <extensionContent id="org.eclipse.pde.changes.2" name="Plug-in Development Environment (test)" alt-style="css/swt.properties" path="whatsnew/@">
+     <enablement>
+        <systemTest property="org.eclipse.ua.tests.property.isTesting" value="true"/>
+     </enablement>
+    <group style-id="content-group" id="content-group">
+    	<link label="Plug-in Development Environment (test)" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.pde.doc.user/whatsNew/pde_whatsnew.htm" id="pde-noteworthy" style-id="content-link">
+      		<text>Learn about significant changes made to PDE for this release (test)</text>
+    	</link>
+    </group>
+  </extensionContent>
+</introContent>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK What's New Page. -->
+  <extensionContent id="org.eclipse.jdt.2" name="Java development tools (test)" path="whatsnew/@">
+     <enablement>
+        <systemTest property="org.eclipse.ua.tests.property.isTesting" value="true"/>
+     </enablement>
+     <group id="content-group" style-id="content-group">
+    	<link label="Java development tools (test)" url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.jdt.doc.user/whatsNew/jdt_whatsnew.html" id="jdt-noteworthy" style-id="content-link">
+           <text>Find out about significant changes made to the Java development tools (test)</text>
+        </link>
+     </group>
+  </extensionContent>
+</introContent>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<introContent>
+  <!-- Extension to the SDK Samples Page. -->
+  <extensionContent id="org.eclipse.pde.swt.2" name= "SWT samples (test)" alt-style="css/swt.properties" style="css/samples.css" path="samples/@">
+     <enablement>
+        <systemTest property="org.eclipse.ua.tests.property.isTesting" value="true"/>
+     </enablement>
+     <group label="SWT (test)" id="swt" style-id="content-group">
+     	<text style-id="group-description">Run SWT samples using either the standalone SWT launcher or as an integrated workbench view. (test)</text>
+        <link label="Workbench views and standalone applications (test)" url="http://org.eclipse.ui.intro/runAction?pluginId=org.eclipse.pde.ui&amp;class=org.eclipse.pde.internal.ui.samples.ShowSampleAction&amp;id=org.eclipse.sdk.samples.swt.examples" id="swt-examples" style-id="content-link">
+        	<text>The SWT Example launcher will allow you to launch a collection of SWT examples.  Some of the examples can be run independent of the eclipse platform and others will be available as views inside the workbench. (test)</text>
+		</link>
+        <anchor id="swtGroupAnchor"/>
+     </group>
+  </extensionContent>
+</introContent>

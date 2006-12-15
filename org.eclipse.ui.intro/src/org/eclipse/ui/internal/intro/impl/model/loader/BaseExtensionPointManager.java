@@ -11,7 +11,9 @@
 
 package org.eclipse.ui.internal.intro.impl.model.loader;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -46,7 +48,7 @@ public class BaseExtensionPointManager {
     protected Hashtable introModels = new Hashtable();
     protected IExtensionRegistry registry;
     protected SharedConfigExtensionsManager sharedConfigExtensionsManager;
-
+    private String extensionFilter;
 
     /*
      * Prevent creation.
@@ -147,6 +149,20 @@ public class BaseExtensionPointManager {
 
         IConfigurationElement[] configExtensionElements = registry
             .getConfigurationElementsFor(CONFIG_EXTENSION);
+        
+        /*
+         * Extension filter is used for performance testing to only load contributions
+         * from a specific plug-in (fixed data set).
+         */
+        if (extensionFilter != null) {
+        	List filtered = new ArrayList();
+        	for (int i=0;i<configExtensionElements.length;++i) {
+        		if (extensionFilter.equals(configExtensionElements[i].getContributor().getName())) {
+        			filtered.add(configExtensionElements[i]);
+        		}
+        	}
+        	configExtensionElements = (IConfigurationElement[])filtered.toArray(new IConfigurationElement[filtered.size()]);
+        }
 
         IConfigurationElement[] configExtensions = getConfigurationsFromAttribute(
             configExtensionElements, attrributeName, attributeValue);
@@ -245,5 +261,12 @@ public class BaseExtensionPointManager {
      */
     public Hashtable getIntroModels() {
         return introModels;
+    }
+    
+    /*
+     * Internal test hook for restricting which extensions to load.
+     */
+    public void setExtensionFilter(String pluginId) {
+    	extensionFilter = pluginId;
     }
 }

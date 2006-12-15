@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.dynamic.DocumentNode;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
@@ -29,6 +31,7 @@ import org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser;
 import org.eclipse.ui.internal.intro.impl.model.loader.ModelLoaderUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.BundleUtil;
 import org.eclipse.ui.internal.intro.impl.model.util.ModelUtil;
+import org.eclipse.ui.internal.intro.impl.util.IntroEvaluationContext;
 import org.eclipse.ui.internal.intro.impl.util.Log;
 import org.eclipse.ui.internal.intro.impl.util.StringUtil;
 import org.eclipse.ui.intro.config.IntroConfigurer;
@@ -476,7 +479,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
         if (extensionContentElement == null)
             // no extensionContent defined.
             return null;
-
+        if (UAContentFilter.isFiltered(new DocumentNode(extensionContentElement), IntroEvaluationContext.getContext())) {
+            // whole extension was filtered
+        	return null;
+        }
+        
         // Create the model class for extension content.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
             extensionContentElement, bundle, base);

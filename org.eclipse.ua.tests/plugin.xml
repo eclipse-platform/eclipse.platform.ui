@@ -249,6 +249,51 @@
             content="data/intro/dynamicXML/ext.xml"
             configId="org.eclipse.ua.tests.intro.config.dynamicXML">
       </configExtension>
+      
+      <!-- 3.2 welcome content used for open welcome performance test -->
+      <!-- filtered unless running test -->
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.jdt/overviewExtensionContent.xml"/>  
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.jdt/tutorialsExtensionContent.xml"/>  
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.jdt/samplesExtensionContent.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.jdt/newsExtensionContent.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig" 
+            content="data/intro/performance/org.eclipse.pde/overviewExtensionContent.xml"/>  
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.pde/tutorialsExtensionContent.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.pde/samplesExtensionContent.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.pde/samplesExtensionContent2.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.pde/newsExtensionContent.xml"/> 
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.platform/overviewEx.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.platform/tutorialsEx.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.platform/whatsnewEx1.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.platform/whatsnewEx2.xml"/>
+      <configExtension
+            configId="org.eclipse.ui.intro.universalConfig"
+            content="data/intro/performance/org.eclipse.platform/whatsnewEx3.xml"/>
    </extension>
 
    <!--
@@ -291,5 +336,15 @@
          point="org.eclipse.help.base.luceneSearchParticipants">
       <binding participantId="org.eclipse.help.base.xhtml"/>
    </extension>
+
+
+   <!--
+      A dummy product used to arrange the welcome contributions for the performance test.
+   -->
+   <extension id="dummy" point="org.eclipse.core.runtime.products"> 
+      <product name="dummyProductName" application="org.eclipse.ui.ide.workbench" description="dummyProductName"> 
+         <property name="preferenceCustomization" value="data/intro/performance/plugin_customization.ini"/>
+      </product> 
+   </extension> 
 
 </plugin>

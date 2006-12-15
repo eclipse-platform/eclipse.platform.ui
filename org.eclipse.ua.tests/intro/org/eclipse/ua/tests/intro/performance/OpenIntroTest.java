@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
+import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -38,6 +39,20 @@ public class OpenIntroTest extends PerformanceTestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		closeIntro();
+		// test extensions filter by this system property
+        System.setProperty("org.eclipse.ua.tests.property.isTesting", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+        ExtensionPointManager.getInst().setExtensionFilter(UserAssistanceTestPlugin.getPluginId());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		closeIntro();
+		// test extensions filter by this system property
+        System.setProperty("org.eclipse.ua.tests.property.isTesting", null); //$NON-NLS-1$ //$NON-NLS-2$
+        ExtensionPointManager.getInst().setExtensionFilter(null);
 	}
 
 	public void testOpenIntro() throws Exception {
