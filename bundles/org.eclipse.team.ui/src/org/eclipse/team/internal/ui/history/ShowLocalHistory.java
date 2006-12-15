@@ -12,33 +12,34 @@ package org.eclipse.team.internal.ui.history;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.history.IHistoryPage;
 import org.eclipse.team.ui.history.IHistoryView;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionDelegate;
 
 public class ShowLocalHistory extends ActionDelegate implements IObjectActionDelegate {
 
 	private IStructuredSelection fSelection;
+	private IWorkbenchPart targetPart;
 	
 	public void run(IAction action) {
-		final Shell shell= Display.getDefault().getActiveShell();
+		IFileState states[]= getLocalHistory();
+		if (states == null || states.length == 0)
+			return;
 		try {
-			new ProgressMonitorDialog(shell).run(true, true, new IRunnableWithProgress() {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					final IResource resource = (IResource) fSelection.getFirstElement();
 					Runnable r = new Runnable() {
@@ -55,7 +56,7 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 				}
 			});
 		} catch (InvocationTargetException exception) {
-			ErrorDialog.openError(shell, null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, TeamUIMessages.ShowLocalHistory_1, exception.getTargetException()));
+			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.PLUGIN_ID, IStatus.ERROR, TeamUIMessages.ShowLocalHistory_1, exception.getTargetException()));
 		} catch (InterruptedException exception) {
 		}
 	}
@@ -66,11 +67,42 @@ public class ShowLocalHistory extends ActionDelegate implements IObjectActionDel
 		}
 	}
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
-		// do nothing
+		this.targetPart = targetPart;
+	}
+	
+	protected Shell getShell() {
+		if (targetPart != null)
+			return targetPart.getSite().getShell();
+		return TeamUIPlugin.getActivePage().getActivePart().getSite().getShell();
 	}
 
 	protected boolean isCompare() {
 		return false;
+	}
+
+	public IStructuredSelection getSelection() {
+		return fSelection;
+	}
+	
+	protected IFileState[] getLocalHistory() {
+		final IFile file = (IFile) getSelection().getFirstElement();
+		IFileState states[];
+		try {
+			states= file.getHistory(null);
+		} catch (CoreException ex) {		
+			MessageDialog.openError(getShell(), getPromptTitle(), ex.getMessage());
+			return null;
+		}
+		
+		if (states == null || states.length <= 0) {
+			MessageDialog.openInformation(getShell(), getPromptTitle(), TeamUIMessages.ShowLocalHistory_0);
+			return states;
+		}
+		return states;
+	}
+
+	protected String getPromptTitle() {
+		return TeamUIMessages.ShowLocalHistory_2;
 	}
 
 }

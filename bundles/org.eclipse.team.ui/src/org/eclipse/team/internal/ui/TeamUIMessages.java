@@ -25,6 +25,8 @@ public class TeamUIMessages extends NLS {
 
 	public static String CompareInputChangeNotifier_1;
 
+	public static String CompareLocalHistory_0;
+
 	public static String DiffTreeChangesSection_10;
 
 	public static String DiffTreeChangesSection_11;
@@ -158,6 +160,10 @@ public class TeamUIMessages extends NLS {
 
 	public static String ModelMergeOperation_3;
 
+	public static String ReplaceLocalHistory_0;
+
+	public static String ReplaceLocalHistory_1;
+
 	public static String ResourceMarkAsMergedHandler_0;
 
 	public static String ResourceMarkAsMergedHandler_1;
@@ -183,6 +189,10 @@ public class TeamUIMessages extends NLS {
 	public static String ResourceModelPreferencePage_0;
 
 	public static String RevisionAnnotationController_0;
+
+	public static String ShowLocalHistory_0;
+
+	public static String ShowLocalHistory_2;
 
 	public static String simpleInternal;
 	public static String exception;

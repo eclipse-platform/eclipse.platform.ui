@@ -55,15 +55,16 @@ public abstract class PageCompareEditorInput extends CompareEditorInput implemen
 		pagePane = new CompareViewerPane(parent, SWT.BORDER | SWT.FLAT) {
 			public void selectionChanged(SelectionChangedEvent ev) {
 				ISelection selection = ev.getSelection();
-				StructuredSelection newSelection = convertSelection(selection);
+				StructuredSelection newSelection = convertSelection(selection, false);
 				SelectionChangedEvent newEv = new SelectionChangedEvent(pagePane, newSelection);
 				super.selectionChanged(newEv);
 			}
-			private StructuredSelection convertSelection(ISelection selection) {
+			private StructuredSelection convertSelection(ISelection selection, boolean prepare) {
 				ICompareInput ci = asCompareInput(selection);
 				StructuredSelection newSelection;
 				if (ci != null) {
-					prepareCompareInput(ci);
+					if (prepare)
+						prepareCompareInput(ci);
 					newSelection = new StructuredSelection(ci);
 				} else {
 					newSelection = StructuredSelection.EMPTY;
@@ -71,19 +72,19 @@ public abstract class PageCompareEditorInput extends CompareEditorInput implemen
 				return newSelection;
 			}
 			public ISelection getSelection() {
-				return convertSelection(getSelectionProvider().getSelection());
+				return convertSelection(getSelectionProvider().getSelection(), false);
 			}
 			public Object getInput() {
 				return PageCompareEditorInput.this.getCompareResult();
 			}
 			public void open(OpenEvent event) {
 				ISelection selection = event.getSelection();
-				StructuredSelection newSelection = convertSelection(selection);
+				StructuredSelection newSelection = convertSelection(selection, true);
 				super.open(new OpenEvent((Viewer)event.getSource(), newSelection));
 			}
 			public void doubleClick(DoubleClickEvent event) {
 				ISelection selection = event.getSelection();
-				StructuredSelection newSelection = convertSelection(selection);
+				StructuredSelection newSelection = convertSelection(selection, true);
 				super.doubleClick(new DoubleClickEvent((Viewer)event.getSource(), newSelection));
 			}
 			

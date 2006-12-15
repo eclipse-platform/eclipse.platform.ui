@@ -15,6 +15,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -40,15 +44,15 @@ import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
-import org.eclipse.team.ui.history.HistoryPage;
-import org.eclipse.team.ui.history.IHistoryPageSite;
+import org.eclipse.team.ui.history.*;
+import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.progress.IProgressConstants;
 
 import com.ibm.icu.util.Calendar;
 
-public class LocalHistoryPage extends HistoryPage {
+public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdapter {
 	
 	/* private */ IFile file;
 	/* private */ IFileRevision currentFileRevision;
@@ -227,17 +231,19 @@ public class LocalHistoryPage extends HistoryPage {
 		
 		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 		handler.addOpenListener(new IOpenEventListener() {
-		public void handleOpen(SelectionEvent e) {
-				StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
-				if (compareMode){
-					StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
-					compareAction.selectionChanged(sel);
-					compareAction.run();
-				} else {
-					//Pass in the entire structured selection to allow for multiple editor openings
-					StructuredSelection sel = tableStructuredSelection;
-					openAction.selectionChanged(sel);
-					openAction.run();
+			public void handleOpen(SelectionEvent e) {
+				if (getSite() != null) {
+					StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+					if (compareMode){
+						StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+						compareAction.selectionChanged(sel);
+						compareAction.run();
+					} else {
+						//Pass in the entire structured selection to allow for multiple editor openings
+						StructuredSelection sel = tableStructuredSelection;
+						openAction.selectionChanged(sel);
+						openAction.run();
+					}
 				}
 			}
 		});
@@ -415,7 +421,9 @@ public class LocalHistoryPage extends HistoryPage {
 	}
 
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
+		if(adapter == IHistoryCompareAdapter.class) {
+			return this;
+		}
 		return null;
 	}
 
@@ -685,6 +693,26 @@ public class LocalHistoryPage extends HistoryPage {
 		compareModeAction.run();
 	}
 
-	
+	public ICompareInput getCompareInput(Object object) {
+		if (object != null && object instanceof IStructuredSelection) {
+			IStructuredSelection ss= (IStructuredSelection) object;
+			if (ss.size() == 1) {
+				Object o = ss.getFirstElement();
+				if (o instanceof IFileRevision){
+					IFileRevision selectedFileRevision = (IFileRevision)o;
+					ITypedElement fileElement = SaveableCompareEditorInput.createFileElement((IFile) file);
+					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
+					DiffNode node = new DiffNode(fileElement, right);
+					return node;
+				}
+			}
+		}
+		return null;
+	}
+
+	public void prepareInput(ICompareInput input,
+			CompareConfiguration configuration, IProgressMonitor monitor) {
+		// Nothing to do
+	}
 	
 }

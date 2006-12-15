@@ -140,7 +140,7 @@
                overrideActionId="compareWithHistory"
                tooltip="%CompareLocalHistory.tooltip"/>
          <action
-               class="org.eclipse.team.internal.ui.history.CompareLocalHistory"
+               class="org.eclipse.team.internal.ui.history.ReplaceLocalHistory"
                id="org.eclipse.team.ui.replaceLocalHistory"
                label="%ReplaceLocalHistory.label"
                menubarPath="replaceWithMenu/replaceWithGroup"

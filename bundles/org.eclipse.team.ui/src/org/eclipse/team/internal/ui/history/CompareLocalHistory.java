@@ -10,9 +10,15 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.history;
 
+import org.eclipse.team.internal.ui.TeamUIMessages;
+
 public class CompareLocalHistory extends ShowLocalHistory {
 
 	protected boolean isCompare() {
 		return true;
+	}
+	
+	protected String getPromptTitle() {
+		return TeamUIMessages.CompareLocalHistory_0;
 	}
 }
