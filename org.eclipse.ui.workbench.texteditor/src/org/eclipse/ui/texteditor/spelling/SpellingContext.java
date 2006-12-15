@@ -8,10 +8,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.texteditor.spelling;
 
 import org.eclipse.core.runtime.content.IContentType;
+
 
 /**
  * A spelling context allows a {@link ISpellingEngine} to retrieve information
