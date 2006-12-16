@@ -183,7 +183,10 @@ public class Snippet007ColorLabelProvider {
 			return name;
 		}
 
-		void addPropertyChangeListener(PropertyChangeListener listener) {
+		/**
+		 * @param listener
+		 */
+		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.addPropertyChangeListener(listener);
 		}
 
