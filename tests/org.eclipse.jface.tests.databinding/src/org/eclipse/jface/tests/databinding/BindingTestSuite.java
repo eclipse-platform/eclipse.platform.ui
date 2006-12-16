@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.databinding.observable.masterdetail.DetailObservableValueTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
+import org.eclipse.core.tests.databinding.observable.RealmTest;
 import org.eclipse.core.tests.databinding.observable.map.AbstractObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.ObservableMapTest;
 import org.eclipse.core.tests.databinding.observable.map.WritableMapTest;
@@ -92,6 +93,9 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.core.tests.databinding.beans
 		addTestSuite(BeansObservablesTest.class);
 
+		//org.eclipse.core.tests.databinding.observable
+		addTestSuite(RealmTest.class);
+		
 		// org.eclipse.jface.internal.databinding.provisional.conversion
 		addTestSuite(IdentityConverterTest.class);
 

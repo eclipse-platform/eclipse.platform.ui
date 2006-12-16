@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 168153
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -159,6 +160,23 @@ public abstract class Realm {
 				hasRun = true;
 				this.notifyAll();
 			}
+		}
+	}
+
+	/**
+	 * Sets the provided <code>realm</code> as the default for the duration of
+	 * {@link Runnable#run()} and resets the previous realm after completion.
+	 * 
+	 * @param realm
+	 * @param runnable
+	 */
+	public static void setDefault(Realm realm, Runnable runnable) {
+		Realm oldRealm = Realm.getDefault();
+		try {
+			Realm.setDefault(realm);
+			runnable.run();
+		} finally {
+			Realm.setDefault(oldRealm);
 		}
 	}
 }
