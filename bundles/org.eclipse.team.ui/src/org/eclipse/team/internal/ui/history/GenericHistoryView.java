@@ -411,9 +411,9 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 						resource = Utils.getAdapter(lastSelectedElement, IResource.class);
 					}
 					if (resource != null)
-						showHistoryPageFor((IResource) resource, false, false, null);
+						showHistory((IResource) resource);
 					else
-						showHistoryPageFor(lastSelectedElement, false, false, null);
+						showHistory(lastSelectedElement);
 					//reset lastSelectedElement
 					lastSelectedElement = null;
 				}
@@ -690,7 +690,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		// Check to see if the object is already being displayed in another page
 		IHistoryPage existingPage = checkForExistingPage(object, refresh, force, pageSource);
 		if (existingPage != null){
-			getSite().getPage().bringToTop((IWorkbenchPart)existingPage.getHistoryView());
 			return existingPage;
 		}
 		
@@ -718,7 +717,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 
 	private IHistoryPageSource getPageSourceFor(Object object, IHistoryPageSource pageSource) {
-		if (pageSource != null)
+		if (object == null || pageSource != null)
 			return pageSource;
 		IResource resource = Utils.getResource(object);
 		if (resource == null) {
@@ -750,7 +749,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				getSite().getPage().activate(historyView);
 				return historyView.showHistoryPageFor(object, refresh, true, source);
 			}
-			// Otherwise, open another instance of theview
+			// Otherwise, open another instance of the view
 			String id = VIEW_ID + System.currentTimeMillis();
 			IViewPart view = getSite().getPage().showView(VIEW_ID, id, IWorkbenchPage.VIEW_CREATE);
 			getSite().getPage().activate(view);
@@ -767,7 +766,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		IHistoryPage tempPage = checkForExistingPage(object, refresh, pageSource);
 		if (tempPage != null || thisViewOnly)
 			return tempPage;
-		return searchHistoryViewsForObject(object, refresh, pageSource);
+		tempPage = searchHistoryViewsForObject(object, refresh, pageSource);
+		if (tempPage != null)
+			getSite().getPage().bringToTop((IWorkbenchPart)tempPage.getHistoryView());
+		return tempPage;
 	}
 	
 	private IHistoryPage checkForExistingPage(Object object, boolean refresh, IHistoryPageSource pageSource) {
@@ -859,13 +861,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 
 		IFile file = ResourceUtil.getFile(input);
 		if (file != null) {
-			showHistoryPageFor(file, false, false, null); /* don't fetch if already cached */
+			showHistory(file); /* don't fetch if already cached */
+		} else {
+			//see if it adapts to an IHistoryPageSource
+			Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
+			if (pageSource != null)
+				showHistory(input);
 		}
-		
-		//see if it adapts to an IHistoryPageSource
-		Object pageSource = Utils.getAdapter(input, IHistoryPageSource.class);
-		if (pageSource != null)
-			showHistoryPageFor(input, false, false, null);
 	}
 
 	private boolean checkIfPageIsVisible() {
@@ -929,5 +931,12 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			return page.getHistoryView();
 		}
 		return findUnpinnedHistoryView();
+	}
+	
+	private void showHistory(Object object) {
+		// Only show the history if the input differs
+		// (i.e. don't do the change if the input is the same but the page source differs; bug 167648)
+		if (getHistoryPage().getInput() != object)
+			showHistoryPageFor(object, false, false, null);
 	}
 }
