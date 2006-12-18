@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -32,11 +33,18 @@ public class PinEditorContributionItem extends ActionContributionItem {
     private IPropertyChangeListener prefListener = new IPropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent event) {
             if (event.getProperty().equals(
-                    IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+					IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+					|| event
+							.getProperty()
+							.equals(
+									IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
                 if (getParent() != null) {
-                    reuseEditors = WorkbenchPlugin.getDefault()
-                            .getPreferenceStore().getBoolean(
-                                    IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+                    IPreferenceStore store = WorkbenchPlugin.getDefault()
+                            .getPreferenceStore();
+					reuseEditors = store
+							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+							|| store
+									.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
                     setVisible(reuseEditors);
                     getParent().markDirty();
                     if (window.getShell() != null
@@ -65,8 +73,11 @@ public class PinEditorContributionItem extends ActionContributionItem {
         }
         this.window = window;
 
-        reuseEditors = WorkbenchPlugin.getDefault().getPreferenceStore()
-                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+        IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		reuseEditors = store
+				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+				|| store
+						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
         setVisible(reuseEditors);
         WorkbenchPlugin.getDefault().getPreferenceStore()
                 .addPropertyChangeListener(prefListener);

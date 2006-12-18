@@ -344,7 +344,9 @@ public class EditorReference extends WorkbenchPartReference implements
         IPreferenceStore prefStore = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
         boolean bUsePin = prefStore
-                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+				|| prefStore
+						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
 
         if (!bUsePin) {
 			return descriptor;

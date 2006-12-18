@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -144,8 +145,11 @@ public class EditorPane extends PartPane {
      * @param parent
      */
     protected void addPinEditorItem(Menu parent) {
-        boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
-                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+        IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean reuseEditor = store
+				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+				|| store
+						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
         if (!reuseEditor) {
             return;
         }

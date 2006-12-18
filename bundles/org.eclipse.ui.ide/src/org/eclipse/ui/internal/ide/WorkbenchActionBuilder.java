@@ -305,7 +305,11 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         propPrefListener = new IPropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent event) {
                 if (event.getProperty().equals(
-                        IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+						IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+						|| event
+								.getProperty()
+								.equals(
+										IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
                     if (window.getShell() != null
                             && !window.getShell().isDisposed()) {
                         // this property change notification could be from a non-ui thread

@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.internal.EditorPane;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -57,8 +58,11 @@ public class SystemMenuPinEditor extends Action implements ISelfUpdatingAction {
             return false;
         }
 
-        boolean reuseEditor = WorkbenchPlugin.getDefault().getPreferenceStore()
-                .getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
+        IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean reuseEditor = store
+				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+				| store
+						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
         return reuseEditor;
     }
 

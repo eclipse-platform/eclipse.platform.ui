@@ -27,7 +27,7 @@ public class PinEditorAction extends ActiveEditorAction {
                 setChecked(ref.isPinned());
             } else if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
         		if (WorkbenchPlugin.getDefault().getPreferenceStore()
-						.getBoolean(IPreferenceConstants.EDITOR_PIN_ON_DIRTY)) {
+						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 					WorkbenchPartReference ref = (WorkbenchPartReference) source;
 					ref.setPinned(true);
 				}

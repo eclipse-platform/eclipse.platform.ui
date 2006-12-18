@@ -220,6 +220,6 @@ public interface IPreferenceConstants {
      *  
      * @since 3.3
      */
-    public static final String EDITOR_PIN_ON_DIRTY = "editorPinOnDirty"; //$NON-NLS-1$
+    public static final String EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR = "EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR"; //$NON-NLS-1$
 
 }

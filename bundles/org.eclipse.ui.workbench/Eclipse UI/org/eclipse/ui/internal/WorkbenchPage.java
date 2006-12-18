@@ -3714,6 +3714,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public int getEditorReuseThreshold() {
         IPreferenceStore store = WorkbenchPlugin.getDefault()
                 .getPreferenceStore();
+        if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+        	return 1;
+        }
         return store.getInt(IPreferenceConstants.REUSE_EDITORS);
     }
 

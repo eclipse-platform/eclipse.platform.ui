@@ -190,7 +190,11 @@ public class EditorManager implements IExtensionChangeHandler {
 			editorPropChangeListnener = new IPropertyChangeListener() {
 				public void propertyChange(PropertyChangeEvent event) {
 					if (event.getProperty().equals(
-							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+							IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+							|| event
+									.getProperty()
+									.equals(
+											IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 						IEditorReference[] editors = getEditors();
 						for (int i = 0; i < editors.length; i++) {
 							((EditorReference) editors[i]).pinStatusUpdated();
@@ -214,9 +218,11 @@ public class EditorManager implements IExtensionChangeHandler {
 				public final Object execute(final ExecutionEvent event) {
 					// check if the "Close editors automatically" preference is
 					// set
-					if (WorkbenchPlugin.getDefault().getPreferenceStore()
-							.getBoolean(
-									IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
+					IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+					if (store
+							.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
+							|| store
+									.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 
 						IWorkbenchPartReference ref = editorPresentation
 								.getVisibleEditor();
@@ -600,6 +606,22 @@ public class EditorManager implements IExtensionChangeHandler {
 		IEditorReference editors[] = page.getSortedEditors();
 		IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
+		if (store
+				.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+			// allow only the active editor to be replaced, and only if it is
+			// not dirty or pinned
+			IEditorPart activeEditor = page.getActiveEditor();
+			if (activeEditor != null) {
+				EditorReference activeEditorReference = (EditorReference) page
+						.getReference(activeEditor);
+				if (activeEditorReference != null
+						&& !activeEditorReference.isDirty()
+						&& !activeEditorReference.isPinned()) {
+					return activeEditorReference;
+				}
+			}
+			return null;
+		}
 		boolean reuse = store
 				.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 		if (!reuse) {
