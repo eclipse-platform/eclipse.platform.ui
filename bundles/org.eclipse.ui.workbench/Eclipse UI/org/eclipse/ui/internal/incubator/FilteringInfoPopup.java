@@ -348,8 +348,13 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			public void modifyText(ModifyEvent e) {
 				String text= ((Text) e.widget).getText();
 				int length= text.length();
-				if (length > 0 && text.charAt(length -1 ) != '*') {
-					text= text + '*';
+				if (length > 0) {
+					if (text.charAt(length - 1) != '*') {
+						text = text + '*';
+					}
+					if (text.charAt(0) != '*') {
+						text = '*' + text;
+					}
 				}
 				setMatcherString(text, true);
 			}

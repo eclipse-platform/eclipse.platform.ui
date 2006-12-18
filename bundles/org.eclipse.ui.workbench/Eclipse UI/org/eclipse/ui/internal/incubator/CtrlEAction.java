@@ -44,6 +44,9 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
  */
 public class CtrlEAction extends AbstractHandler {
 
+static		final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
+static		final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
+
 	private IWorkbenchWindow window;
 
 	protected String rememberedText;
@@ -431,30 +434,49 @@ public class CtrlEAction extends AbstractHandler {
 	 * @param element
 	 */
 	private void addPreviousPick(Object element) {
-		// previousPicks: add selected element to front
-		// and remove existing so there are no duplicates
+		// previousPicksList:
+		// 	Remove element from previousPicksList so there are no duplicates
+		//	If list is max size, remove last(oldest) element 
+		//  Remove entries for removed element from elementMap and textMap
+		//	Add element to front of previousPicksList
 		previousPicksList.remove(element);
+		if (previousPicksList.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
+			Object removedElement = previousPicksList.removeLast();
+			ArrayList removedList = (ArrayList) textMap.remove(removedElement);
+			for(int i = 0; i < removedList.size(); i++) {
+				elementMap.remove(removedList.get(i));
+			}
+		}
 		previousPicksList.addFirst(element);
-
-		// elementMap: add element with text as key
-		Object replacedElement = elementMap.put(rememberedText, element);
-
-		// textList: add rememberedText to arrayList for given element
+				
+		// textMap:
+		//	Get list of strings for element from textMap
+		//	Create new list for element if there isn't one and put element->textList in textMap
+		//	Remove rememberedText from list
+		//	If list is max size, remove first(oldest) string
+		//  Remove text from elementMap
+		//	Add rememberedText to list of strings for element in textMap
 		ArrayList textList = (ArrayList) textMap.get(element);
-		if (textList == null) {
+		if(textList == null) {
 			textList = new ArrayList();
 			textMap.put(element, textList);
 		}
-		if (!textList.contains(rememberedText)) {
-			textList.add(rememberedText);
+		textList.remove(rememberedText);
+		if(textList.size() == MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT) {
+			Object removedText = textList.remove(0);
+			elementMap.remove(removedText);
 		}
-
-		// and remove from other elements arrayList if exists
-		if (replacedElement != null && !replacedElement.equals(element)) {
+		textList.add(rememberedText);
+				
+		// elementMap:
+		//	Put rememberedText->element in elementMap
+		//	If it replaced a different element update textMap and PreviousPicksList
+		Object replacedElement = elementMap.put(rememberedText, element);
+		if(replacedElement != null && !replacedElement.equals(element)) {
 			textList = (ArrayList) textMap.get(replacedElement);
-			if (textList != null) {
+			if(textList != null) {
 				textList.remove(rememberedText);
-				if (textList.isEmpty()) {
+				if(textList.isEmpty()) {
 					textMap.remove(replacedElement);
 					previousPicksList.remove(replacedElement);
 				}
