@@ -40,19 +40,12 @@ public class WorkingSetsDialog extends TitleAreaDialog {
 	
 	public WorkingSetsDialog(Shell shell) {
 		super(shell);
-	}
-
-	protected Control createContents(Composite parent) {
-		Control control = super.createContents(parent);
-		setTitle(TeamUIMessages.WorkingSetsDialog_Title);
-		setMessage(TeamUIMessages.WorkingSetsDialog_Message);
-		//no title image for now
-		setTitleImage(null);
-
-		return control;
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	protected Control createDialogArea(Composite parent) {
+		setTitle(TeamUIMessages.WorkingSetsDialog_Title);
+		setMessage(TeamUIMessages.WorkingSetsDialog_Message);
 		Composite composite = (Composite) super.createDialogArea(parent);
 		getShell().setText(TeamUIMessages.WorkingSetsDialog_TitleBar);
 
