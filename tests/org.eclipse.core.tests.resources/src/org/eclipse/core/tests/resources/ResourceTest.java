@@ -411,18 +411,8 @@ public abstract class ResourceTest extends CoreTest {
 		} catch (IOException e) {
 			return false;
 		} finally {
-			try {
-				if (a != null)
-					a.close();
-			} catch (IOException e) {
-				// ignore
-			}
-			try {
-				if (b != null)
-					b.close();
-			} catch (IOException e) {
-				// ignore
-			}
+			assertClose(a);
+			assertClose(b);
 		}
 	}
 
