@@ -494,7 +494,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			if (overlay == null)
 				return baseImage;
 			try {
-                return fImageCache.createImage(new DecorationOverlayIcon(baseImage, new ImageDescriptor[] {null, null, null, overlay, null}, new Point(baseImage.getBounds().width, baseImage.getBounds().height)));
+                return fImageCache.createImage(new DecorationOverlayIcon(baseImage, overlay, IDecoration.BOTTOM_RIGHT));
             } catch (DeviceResourceException e) {
                 CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, "Error creating decorator image", e)); //$NON-NLS-1$
             }
