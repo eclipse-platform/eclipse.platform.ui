@@ -53,7 +53,6 @@ The resource navigator uses a working set to filter elements from the navigator 
    <element name="workingSet">
       <complexType>
          <sequence minOccurs="0" maxOccurs="unbounded">
-            <element ref="applicableType"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -95,7 +94,7 @@ The resource navigator uses a working set to filter elements from the navigator 
          <attribute name="updaterClass" type="string">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetUpdater&lt;/samp&gt;.
+                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetUpdater&lt;/samp&gt;.  Use of this attribute will not cause eager plug-in activation.  This class will only be instantiated when the declaring bundle is otherwise activated.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetUpdater"/>
@@ -105,43 +104,11 @@ The resource navigator uses a working set to filter elements from the navigator 
          <attribute name="elementAdapterClass" type="string">
             <annotation>
                <documentation>
-                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetElementAdapter&lt;/samp&gt;.
+                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetElementAdapter&lt;/samp&gt;.  Use of this attribute will not cause eager plug-in activation.  This class will only be instantiated when the declaring bundle is otherwise activated.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetElementAdapter"/>
                </appInfo>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="applicableType">
-      <annotation>
-         <appInfo>
-            <meta.element labelAttribute="class"/>
-         </appInfo>
-         <documentation>
-            Reference to classes that may be contained within a working set.  These are used by the workbench as a hint to determine whether the option to add a given element to a working set is presented within the UI.  These references are only a hint, however, and are not enforced by &lt;samp&gt;IWorkingSet.setElements()&lt;/samp&gt;.
-
-Since 3.3.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="class" type="string" use="required">
-            <annotation>
-               <documentation>
-                  the name of the class that is recommended as belonging to working sets of this type.  Any object which is directly assignable to this type will be considered recommended.  Additionally, if the adaptable attribute is true the platform adapter manager and getAdaptable will be consulted as well.  If there is an adapter between the target object and the specified class and that adapter is loaded then an attempt will be made to adapt the two.  If the adapter is not loaded it is assumed that it will be successful and a recommendation is made.  If there is no adapter factory present an effort to call getAdapter directly on the object will be undertaken.  This effort will only occur if the package of the class being tested for exists as an exported package in exactly ONE bundle and that bundle is active.
-               </documentation>
-               <appInfo>
-                  <meta.attribute kind="java"/>
-               </appInfo>
-            </annotation>
-         </attribute>
-         <attribute name="adaptable" type="string" use="default" value="false">
-            <annotation>
-               <documentation>
-                  whether or not candidate objects should be tested for adaptable compatibility or not.  If true then the object being tested will be first checked against the adapter manager for an applicable adapter and if one is not present an effort to call getAdapter directly on the object will be undertaken.  This effort will only occur if the package of the class being tested for exists as an exported package in exactly ONE bundle and that bundle is active.
-               </documentation>
             </annotation>
          </attribute>
       </complexType>
