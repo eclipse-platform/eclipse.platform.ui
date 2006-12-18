@@ -58,6 +58,13 @@ class BatchUpdate {
             return Status.OK_STATUS;
         }
     };	
+    
+    /**
+	 * Creates a new batch update.
+	 */
+	BatchUpdate() {
+		fViewerUpdateJob.setSystem(true);
+	}
 	
 	/**
 	 * Batch the given update with this group.
