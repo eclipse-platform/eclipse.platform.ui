@@ -19,9 +19,9 @@ import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
  * A proxy to an {@link ILaunchConfigurationDelegate}. Represents a
  * launch delegate contributed to the <code>org.eclipse.debug.core.launchDelegates</code>
  * extension point. 
- * 
+ * <p>
  * This interface is NOT to be implemented by clients
- * 
+ * </p>
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as
