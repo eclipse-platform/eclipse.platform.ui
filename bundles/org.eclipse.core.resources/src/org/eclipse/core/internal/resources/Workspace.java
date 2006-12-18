@@ -31,6 +31,44 @@ import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.xml.sax.InputSource;
 
+/**
+ * The workspace class is the monolithic nerve center of the resources plugin.
+ * All interesting functionality stems from this class.
+ * </p>
+ * <p>
+ * The lifecycle of the resources plugin is encapsulated by the {@link #open(IProgressMonitor)}
+ * and {@link #close(IProgressMonitor)} methods.  A closed workspace is completely
+ * unusable - any attempt to access or modify interesting workspace state on a closed
+ * workspace will fail.
+ * </p>
+ * <p>
+ * All modifications to the workspace occur within the context of a workspace operation.
+ * A workspace operation is implemented using the following sequence:
+ * <pre>
+ * 	try {
+ *		prepareOperation(...);
+ *		//check preconditions
+ *		beginOperation(...);
+ *		//perform changes
+ *	} finally {
+ *		endOperation(...);
+ *	}
+ * </pre>
+ * Workspace operations can be nested arbitrarily. A "top level" workspace operation
+ * is an operation that is not nested within another workspace operation in the current
+ * thread.
+ * See the javadoc of {@link #prepareOperation(ISchedulingRule, IProgressMonitor)},
+ * {@link #beginOperation(boolean)}, and {@link #endOperation(ISchedulingRule, boolean, IProgressMonitor)}
+ * for more details.
+ * </p>
+ * <p>
+ * Major areas of functionality are farmed off to various manager classes.  Open a
+ * type hierarchy on {@link IManager} to see all the different managers. Each
+ * manager is typically referenced three times in this class: Once in {@link #startup(IProgressMonitor)}
+ * when it is instantiated, once in {@link #shutdown(IProgressMonitor)} when it
+ * is destroyed, and once in a manager accessor method.
+ * </p>
+ */
 public class Workspace extends PlatformObject implements IWorkspace, ICoreConstants {
 	public static final boolean caseSensitive = Platform.OS_MACOSX.equals(Platform.getOS()) ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 	// whether the resources plugin is in debug mode.
@@ -1818,6 +1856,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// do nothing
 	}
 
+	/**
+	 * Shuts down the workspace managers.
+	 */
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
@@ -1866,6 +1907,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return natureManager.sortNatureSet(natureIds);
 	}
 
+	/**
+	 * Starts all the workspace manager classes.
+	 */
 	protected void startup(IProgressMonitor monitor) throws CoreException {
 		// ensure the tree is locked during the startup notification
 		try {
