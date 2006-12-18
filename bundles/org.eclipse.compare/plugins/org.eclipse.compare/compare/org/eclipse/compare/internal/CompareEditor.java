@@ -51,6 +51,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private static final int CANCELED = 3;
 	private static final int INITIALIZED = 4;
 	private static final int ERROR = 5;
+	private static final int STILL_INITIALIZING = 6;
 	
 	private IActionBars fActionBars;
 	
@@ -217,7 +218,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (input instanceof IPropertyChangeNotifier)
 			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
 			
-		state = cei.getCompareResult() == null ? INITIALIZING : INITIALIZED;
+		setState(cei.getCompareResult() == null ? INITIALIZING : INITIALIZED);
 		Point oldSize = null;
 		if (oldInput != null) {
 			if (fControl != null && !fControl.isDisposed()) {
@@ -253,7 +254,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					status = CompareUIPlugin.getDefault().prepareInput(cei, monitor);
 					if (status.isOK()) {
 						// We need to update the saveables list
-						state = INITIALIZED;
+						setState(INITIALIZED);
 						Saveable[] saveables = getSaveables();
 						if (saveables.length > 0) {
 							ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
@@ -265,16 +266,16 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 						return Status.OK_STATUS;
 					}
 					if (status.getCode() == CompareUIPlugin.NO_DIFFERENCE) {
-						state = NO_DIFF;
+						setState(NO_DIFF);
 						return Status.OK_STATUS;
 					}
-					state = ERROR;
+					setState(ERROR);
 				} catch (OperationCanceledException e) {
-					state= CANCELED;
+					setState(CANCELED);
 					status = Status.CANCEL_STATUS;
 				} finally {
 					if (monitor.isCanceled())
-						state= CANCELED;
+						setState(CANCELED);
 					Display.getDefault().asyncExec(new Runnable() {
 						public void run() {
 							createCompareControl();
@@ -323,19 +324,21 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (input instanceof CompareEditorInput) {
 			CompareEditorInput ci = (CompareEditorInput) input;
 			if (ci.getCompareResult() == null) {
-				if (state == INITIALIZING) {
+				if (getState() == INITIALIZING) {
+					setPageLater();
+				} else if (getState() == STILL_INITIALIZING) {
 					if (initializingPage == null) {
 						initializingPage = getInitializingMessagePane(fPageBook);
 					}
 					fPageBook.showPage(initializingPage);
-				} else if (state == CANCELED) {
+				} else if (getState() == CANCELED) {
 					// Close the editor when we are canceled
 					closeEditor();
-				} else if (state == NO_DIFF) {
+				} else if (getState() == NO_DIFF) {
 					// Prompt and close the editor as well
 					CompareUIPlugin.getDefault().handleNoDifference();
 					closeEditor();
-				} else if (state == ERROR) {
+				} else if (getState() == ERROR) {
 					// If an error occurred, close the editor 
 					// (the message would be displayed by the progress view)
 					closeEditor();
@@ -348,6 +351,18 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		}
 	}
 	
+	private void setPageLater() {
+		Display.getCurrent().timerExec(1000, new Runnable() {
+			public void run() {
+				synchronized(CompareEditor.this) {
+					if (getState() == INITIALIZING)
+						setState(STILL_INITIALIZING);
+				}
+				createCompareControl();
+			}
+		});
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
@@ -542,6 +557,14 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	
 	private void closeEditor() {
 		getSite().getPage().closeEditor(CompareEditor.this, false);
+	}
+
+	private synchronized void setState(int state) {
+		this.state = state;
+	}
+
+	private int getState() {
+		return state;
 	}
 	
 }
