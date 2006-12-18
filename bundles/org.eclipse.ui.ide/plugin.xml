@@ -240,11 +240,12 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.core.resources.IResource;adapt=true"
+            icon="$nl$/icons/full/obj16/workset.gif"
+            id="org.eclipse.ui.resourceWorkingSetPage"
             name="%WorkingSets.resource"
             pageClass="org.eclipse.ui.internal.ide.dialogs.ResourceWorkingSetPage"
-            updaterClass="org.eclipse.ui.internal.ide.ResourceWorkingSetUpdater"
-            icon="$nl$/icons/full/obj16/workset.gif"
-            id="org.eclipse.ui.resourceWorkingSetPage">
+            updaterClass="org.eclipse.ui.internal.ide.ResourceWorkingSetUpdater">
       </workingSet>
    </extension>
    <extension
