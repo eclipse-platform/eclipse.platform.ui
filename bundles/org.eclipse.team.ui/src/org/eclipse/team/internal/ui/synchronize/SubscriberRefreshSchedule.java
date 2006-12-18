@@ -15,8 +15,7 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
@@ -52,7 +51,7 @@ public class SubscriberRefreshSchedule {
 		public void refreshStarted(IRefreshEvent event) {
 		}
 		public ActionFactory.IWorkbenchAction refreshDone(final IRefreshEvent event) {
-			if (event.getParticipant() == refreshable) {
+			if (getRefreshable(event.getParticipant()) == refreshable) {
 				lastRefreshEvent = event;
 				if(enabled && event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH) {
 					RefreshUserNotificationPolicy policy = new RefreshUserNotificationPolicy(refreshable.getParticipant());
@@ -60,6 +59,9 @@ public class SubscriberRefreshSchedule {
 				}
 			}
 			return null;
+		}
+		private IRefreshable getRefreshable(ISynchronizeParticipant participant) {
+			return (IRefreshable)Utils.getAdapter(participant, IRefreshable.class);
 		}
 	};
 	
