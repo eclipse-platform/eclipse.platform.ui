@@ -79,18 +79,23 @@ structure merge viewer and implements &lt;samp&gt;org.eclipse.compare.IViewerCre
    </element>
 
    <element name="contentTypeBinding">
+      <annotation>
+         <documentation>
+            A &lt;code&gt;contentTypeBinding&lt;/code&gt; binds a structure merge viewer to a content type.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="contentTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The id of a content type defined using the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="structureMergeViewerId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The id of a structure merge viewer defined using the &lt;code&gt;viewer&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.compare.structureMergeViewers&lt;/code&gt;)
                </documentation>
             </annotation>
          </attribute>

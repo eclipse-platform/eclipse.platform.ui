@@ -14,6 +14,14 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            Deprecated. The &lt;code&gt;org.eclipse.team.core.storageMergers&lt;/code&gt; extension poitn should be used instead.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="streamMerger" minOccurs="0" maxOccurs="unbounded"/>
@@ -76,18 +84,23 @@ The extension point must implement the interface &lt;samp&gt;org.eclipse.compare
    </element>
 
    <element name="contentTypeBinding">
+      <annotation>
+         <documentation>
+            A &lt;code&gt;contentTypeBinding&lt;/code&gt; binds a stream merger to a content type.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="contentTypeId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The id of a content type defined using the &lt;code&gt;org.eclipse.core.runtime.contentTypes&lt;/code&gt; extension point.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="streamMergerId" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  The id of a stram merger defined using the &lt;code&gt;streamMerger&lt;/code&gt; element of this extension point (i.e. &lt;code&gt;org.eclipse.compare.streamMergers&lt;/code&gt;)
                </documentation>
             </annotation>
          </attribute>
