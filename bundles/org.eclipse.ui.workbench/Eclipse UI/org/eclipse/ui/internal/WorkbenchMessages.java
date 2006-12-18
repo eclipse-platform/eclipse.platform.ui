@@ -292,6 +292,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WindowWorkingSets;
 	public static String NoWorkingSet;
 	public static String SelectedWorkingSets;
+	public static String NoApplicableWorkingSets;
 
 	// ==============================================================================
 	// Drill Actions

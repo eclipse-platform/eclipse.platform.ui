@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -36,6 +37,7 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.QuickMenuCreator;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * @since 3.3
@@ -85,11 +87,7 @@ public class ModifyWorkingSetDelegate extends
 		}
 	};
 
-	private static final Object SEPERATORMARKER = new Object();
-
 	private boolean add = true;
-
-	private List menuItems = new ArrayList();
 
 	private IPropertyChangeListener listener = new IPropertyChangeListener() {
 
@@ -154,24 +152,100 @@ public class ModifyWorkingSetDelegate extends
 	}
 	
 	public void fillMenu(Menu menu) {
+		List menuItems = getItems();
 		for (int i = 0; i < menuItems.size(); i++) {
 			Object object = menuItems.get(i);
 			if (object instanceof IAction) {
 				ActionContributionItem item = new ActionContributionItem((IAction) object);
 				item.fill(menu, -1);
 			} else {
-				Separator item = new Separator();
+				IContributionItem item = (IContributionItem) object;
 				item.fill(menu, -1);
 			}
 		}
 	}
+	/**
+	 * Return the list of items to show in the submenu.
+	 * 
+	 * @return the items to show in the submenu
+	 */
+	private List getItems() {
+		List menuItems = new ArrayList();
+		ISelection selection = getSelection();
+		if (!(selection instanceof IStructuredSelection)) {
+			IAction emptyAction = new Action(WorkbenchMessages.NoApplicableWorkingSets) {};
+			emptyAction.setEnabled(false);
+			menuItems.add(emptyAction);
+			return menuItems;
+		}
+		
+		IWorkingSet[][] typedSets = splitSets();
+		Object [] selectedElements = ((IStructuredSelection)selection).toArray();
+		
+		for (int i = 0; i < typedSets.length; i++) {
+			// add a seperator only if the last item is not a seperator
+			if (menuItems.size() > 0
+					&& !(menuItems.get(menuItems.size() - 1) instanceof Separator)) {
+				Separator item = new Separator();
+				menuItems.add(item);
+			}
+			IWorkingSet[] sets = typedSets[i];
+			for (int j = 0; j < sets.length; j++) {
+				IWorkingSet set = sets[j];
+
+				Set existingElements = new HashSet();
+				existingElements.addAll(Arrays
+						.asList(set.getElements()));
+
+				boolean visible = false;
+				IAdaptable [] adaptables = new IAdaptable[selectedElements.length];
+				System.arraycopy(selectedElements, 0, adaptables, 0, selectedElements.length);
+				adaptables = set.adaptElements(adaptables);
+				if (adaptables.length > 0 && add) {
+					for (int k = 0; k < adaptables.length; k++) {
+						if (!existingElements.contains(adaptables[k])) {
+							// show if any element is not present in
+							// addition
+							visible = true;
+							break;
+						}
+					}
+				}
+				else if (adaptables.length > 0) {
+					for (int k = 0; k < adaptables.length; k++) {
+						if (existingElements.contains(adaptables[k]))
+							visible = true; // show if any element
+											// ispresent in removal
+						break;
+					}
+				}
+				
+				if (visible) {
+					ModifyAction action = new ModifyAction(set,
+							adaptables);
+					menuItems.add(action);
+				}
+			}
+		}
+		if (menuItems.isEmpty()) {
+			IAction emptyAction = new Action(
+					WorkbenchMessages.NoApplicableWorkingSets) {
+			};
+			emptyAction.setEnabled(false);
+			menuItems.add(emptyAction);
+		}
+		return menuItems;
+	}
+
 	private void fillMenu(IMenuManager menu) {
+		List menuItems = getItems();
 		for (int i = 0; i < menuItems.size(); i++) {
 			Object object = menuItems.get(i);
 			if (object instanceof IAction) {
 				menu.add((IAction) object);
 			} else {
-				menu.add(new Separator());
+				IContributionItem item = (IContributionItem) object;
+				menu.add(item);
 			}
 		}
 	}
@@ -184,7 +258,6 @@ public class ModifyWorkingSetDelegate extends
 	 */
 	public void selectionChanged(IAction actionProxy, ISelection selection) {
 		super.selectionChanged(actionProxy, selection);
-		menuItems.clear();
 		if (selection instanceof IStructuredSelection) {
 			Object[] selectedElements = ((IStructuredSelection) getSelection())
 					.toArray();
@@ -197,58 +270,11 @@ public class ModifyWorkingSetDelegate extends
 					break;
 				}
 			}
-			// only do this work if the selection is adaptable
-			if (minimallyOkay) {
-				IWorkingSet[][] typedSets = splitSets();
-
-				for (int i = 0; i < typedSets.length; i++) {
-					// add a seperator only if the last item is not a seperator
-					if (menuItems.size() > 0
-							&& menuItems.get(menuItems.size() - 1) != SEPERATORMARKER)
-						menuItems.add(SEPERATORMARKER);
-					IWorkingSet[] sets = typedSets[i];
-					for (int j = 0; j < sets.length; j++) {
-						IWorkingSet set = sets[j];
-
-						Set existingElements = new HashSet();
-						existingElements.addAll(Arrays
-								.asList(set.getElements()));
-
-						boolean visible = false;
-						IAdaptable [] adaptables = new IAdaptable[selectedElements.length];
-						System.arraycopy(selectedElements, 0, adaptables, 0, selectedElements.length);
-						adaptables = set.adaptElements(adaptables);
-						if (adaptables.length > 0 && add) {
-							for (int k = 0; k < adaptables.length; k++) {
-								if (!existingElements.contains(adaptables[k])) {
-									// show if any element is not present in
-									// addition
-									visible = true;
-									break;
-								}
-							}
-						}
-						else if (adaptables.length > 0) {
-							for (int k = 0; k < adaptables.length; k++) {
-								if (existingElements.contains(adaptables[k]))
-									visible = true; // show if any element
-													// ispresent in removal
-								break;
-							}
-						}
-						
-						if (visible) {
-							ModifyAction action = new ModifyAction(set,
-									adaptables);
-							menuItems.add(action);
-						}
-					}
-				}
-			}
+			actionProxy.setEnabled(minimallyOkay);
+			
 		}
-		actionProxy.setEnabled(!menuItems.isEmpty()); // enable the item if
-		// there are children to
-		// show
+		else
+			actionProxy.setEnabled(false);
 	}
 
 	/*
