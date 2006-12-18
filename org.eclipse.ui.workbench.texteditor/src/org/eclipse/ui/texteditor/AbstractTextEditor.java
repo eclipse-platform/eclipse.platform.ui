@@ -120,6 +120,7 @@ import org.eclipse.jface.text.IUndoManagerExtension;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextEvent;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.revisions.RevisionInformation;
 import org.eclipse.jface.text.source.Annotation;
@@ -141,17 +142,23 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.INavigationLocation;
 import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveablesLifecycleListener;
+import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
@@ -195,7 +202,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
  * If no id is set while in compatibility mode, the menu is registered under
  * {@link #DEFAULT_RULER_CONTEXT_MENU_ID}.</p>
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension, ITextEditorExtension2, ITextEditorExtension3, ITextEditorExtension4, INavigationLocationProvider, ISaveablesSource, IPersistableEditor {
 
 	/**
 	 * Tag used in xml configuration files to specify editor action contributions.
@@ -203,6 +210,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
+	
+	/**
+	 * Tags used in the {@link IMemento} when saving and
+	 * restoring editor state.
+	 * 
+	 * @see #saveState(IMemento)
+	 * @see #restoreState(IMemento)
+	 * @since 3.3
+	 */
+	protected static final String TAG_SELECTION_OFFSET= "selectionOffset"; //$NON-NLS-1$
+	protected static final String TAG_SELECTION_LENGTH= "selectionLength"; //$NON-NLS-1$
+	
 
 	/**
 	 * The caret width for the wide (double) caret.
@@ -848,6 +867,26 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 		 */
 		public void partOpened(IWorkbenchPart part) {
+			if (part != AbstractTextEditor.this)
+				return;
+			
+			// Restore the saved state if any
+			// FIXME does not work due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=168429
+//			if (fMementoToRestore != null && containsSavedState(fMementoToRestore)) {
+//				boolean postAsync= false;
+//				if (postAsync) {
+//					final IMemento memento= fMementoToRestore;
+//					getSite().getShell().getDisplay().asyncExec(new Runnable() {
+//						public void run() {
+//							doRestoreState(memento);
+//						}
+//						
+//					});
+//				} else
+//					doRestoreState(fMementoToRestore);
+//			}
+			
+			fMementoToRestore= null;
 		}
 
 		/**
@@ -2120,6 +2159,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.1
 	 */
 	private IOperationApprover fLinearUndoViolationApprover;
+	/**
+	 * This editor's memento holding data for restoring it after restart.
+	 * @since 3.3
+	 */
+	private IMemento fMementoToRestore;
+	
+	/**
+	 * This editor's savable.
+	 * @since 3.3
+	 */
+	private Saveable fSavable;
 
 
 	/**
@@ -3305,12 +3355,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 *            provider
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
-
-		if (input == null)
-
+		ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+		
+		if (input == null) {
 			close(isSaveOnCloseNeeded());
-
-		else {
+			
+			if (fSavable != null) {
+				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+				fSavable= null;
+			}
+			
+		} else {
+			
+			if (fSavable != null) {
+				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	new Saveable[] { fSavable }, false));
+				fSavable= null;
+			}
 
 			IEditorInput oldInput= getEditorInput();
 			if (oldInput != null)
@@ -3360,6 +3420,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (ruler instanceof CompositeRuler)
 				updateContributedRulerColumns((CompositeRuler) ruler);
 			
+			// Send savable life-cycle event
+			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
+			
+		}
+		
+	}
+
+	/**
+	 * The input has changed. Force recreation of savable, and notify
+	 * the ISaveablesLifecycleListener.
+	 * 
+	 * @since 3.3
+	 */
+	private void updateSavable() {
+		if (fSavable != null) {
+			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	new Saveable[] { fSavable }, false));
+
+			fSavable= null;
+			// Get new savable
+			getSaveables();
+			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { fSavable }, false));
 		}
 	}
 	
@@ -5998,4 +6080,177 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	public void showRevisionInformation(RevisionInformation info, String quickDiffProviderId) {
 		// no implementation
 	}
+	
+	/*
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @see org.eclipse.ui.IEditorPersistable#restoreState(org.eclipse.ui.IMemento)
+	 * @since 3.3
+	 */
+	public void restoreState(IMemento memento) {
+		fMementoToRestore= memento;
+	}
+	
+	/*
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @see org.eclipse.ui.IPersistable#saveState(org.eclipse.ui.IMemento)
+	 * @since 3.3
+	 */
+	public void saveState(IMemento memento) {
+		ISelection selection= doGetSelection();
+		if (selection instanceof ITextSelection) {
+			memento.putInteger(TAG_SELECTION_OFFSET, ((ITextSelection)selection).getOffset());
+			memento.putInteger(TAG_SELECTION_LENGTH, ((ITextSelection)selection).getLength());
+		}
+	}
+	
+	/**
+	 * Returns whether the given memento contains saved state
+	 * <p>
+	 * Subclasses may extend or override this method.</p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @param memento the saved state of this editor
+	 * @return <code>true</code> if the given memento contains saved state
+	 * @since 3.3
+	 */
+	protected boolean containsSavedState(IMemento memento) {
+		return memento.getInteger(TAG_SELECTION_OFFSET) != null && memento.getInteger(TAG_SELECTION_LENGTH) != null;
+	}
+	
+	/**
+	 * Restores this editor's state using the given memento.
+	 * <p>
+	 * Subclasses may extend or override this method.</p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @param memento the saved state of this editor
+	 * @since 3.3
+	 */
+	protected void doRestoreState(IMemento memento) {
+		Integer offset= memento.getInteger(TAG_SELECTION_OFFSET);
+		if (offset == null)
+			return;
+		
+		Integer length= memento.getInteger(TAG_SELECTION_LENGTH);
+		if (length == null)
+			return;
+		
+		doSetSelection(new TextSelection(offset.intValue(), length.intValue()));
+	}
+	
+	/*
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
+	 * @since 3.3
+	 */
+	public Saveable[] getSaveables() {
+		if (fSavable == null)
+			fSavable= new TextEditorSavable();
+
+		return new Saveable[] { fSavable };
+	}
+
+	/*
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
+	 * @since 3.3
+	 */
+	public Saveable[] getActiveSaveables() {
+		return getSaveables();
+	}
+	
+	/**
+	 * This text editor's savable.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @since 3.3
+	 */
+	protected class TextEditorSavable extends Saveable {
+		
+		/** The cached editor input. */
+		private IEditorInput fEditorInput;
+
+		/**
+		 * Creates a new savable for this text editor.
+		 */
+		public TextEditorSavable() {
+			fEditorInput= getEditorInput();
+			Assert.isLegal(fEditorInput != null);
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#getName()
+		 */
+		public String getName() {
+			return fEditorInput.getName();
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#getToolTipText()
+		 */
+		public String getToolTipText() {
+			return fEditorInput.getToolTipText();
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#getImageDescriptor()
+		 */
+		public ImageDescriptor getImageDescriptor() {
+			return fEditorInput.getImageDescriptor();
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#doSave(org.eclipse.core.runtime.IProgressMonitor)
+		 * @since 3.3
+		 */
+		public void doSave(IProgressMonitor monitor) throws CoreException {
+			AbstractTextEditor.this.doSave(monitor);
+		}
+
+		public boolean isDirty() {
+			return AbstractTextEditor.this.isDirty();
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#supportsBackgroundSave()
+		 */
+		public boolean supportsBackgroundSave() {
+			return false;
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#hashCode()
+		 */
+		public int hashCode() {
+			return fEditorInput.hashCode();
+		}
+
+		/*
+		 * @see org.eclipse.ui.Saveable#equals(java.lang.Object)
+		 */
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			
+			if (obj == null || !(obj instanceof TextEditorSavable))
+				return false;
+			
+			return fEditorInput.equals(((TextEditorSavable)obj).fEditorInput);
+		}
+	}
+	
 }
