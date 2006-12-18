@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
@@ -145,38 +141,34 @@ public class SynchronizeModelElementLabelProvider extends LabelProvider implemen
 	}
 
 	private Image propagateConflicts(Image base, ISynchronizeModelElement element) {
-		// if the folder is already conflicting then don't bother propagating
-		// the conflict
-		List overlays = new ArrayList();
-		List locations = new ArrayList();
+
+		ImageDescriptor[] overlayImages = new ImageDescriptor[4];
+		boolean hasOverlay = false;
 		
 		// Decorate with the busy indicator
 		if (element.getProperty(ISynchronizeModelElement.BUSY_PROPERTY)) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR));
-			locations.add(new Integer(OverlayIcon.TOP_LEFT));
+			overlayImages[IDecoration.TOP_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR);
+			hasOverlay = true;
 		}
 		// Decorate with propagated conflicts and problem markers
 		int kind = element.getKind();
 		if ((kind & SyncInfo.DIRECTION_MASK) != SyncInfo.CONFLICTING) {
+			// if the folder is already conflicting then don't bother propagating
+			// the conflict
 			if (hasDecendantConflicts(element)) {
-				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR));
-				locations.add(new Integer(OverlayIcon.BOTTOM_RIGHT));
+				overlayImages[IDecoration.BOTTOM_RIGHT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR);
+				hasOverlay = true;
 			}
 		}
 		if (hasErrorMarker(element)) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
-			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			overlayImages[IDecoration.BOTTOM_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR);
+			hasOverlay = true;
 		} else if (hasWarningMarker(element)) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
-			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			overlayImages[IDecoration.BOTTOM_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR);
+			hasOverlay = true;
 		}
-		if (!overlays.isEmpty()) {
-			ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
-			int[] locationInts = new int[locations.size()];
-			for (int i = 0; i < locations.size(); i++) {
-				locationInts[i] = ((Integer) locations.get(i)).intValue();
-			}
-			ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
+		if (hasOverlay) {
+			ImageDescriptor overlay = new DecorationOverlayIcon(base, overlayImages, new Point(base.getBounds().width, base.getBounds().height));
 			if (fgImageCache == null) {
 				fgImageCache = new HashMap(10);
 			}

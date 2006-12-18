@@ -11,13 +11,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;
@@ -38,7 +32,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
-import org.eclipse.team.internal.ui.OverlayIcon;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -501,7 +494,7 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 			if (overlay == null)
 				return baseImage;
 			try {
-                return fImageCache.createImage(new OverlayIcon(baseImage, new ImageDescriptor[] {overlay}, new int[] {OverlayIcon.BOTTOM_RIGHT}, new Point(baseImage.getBounds().width, baseImage.getBounds().height)));
+                return fImageCache.createImage(new DecorationOverlayIcon(baseImage, new ImageDescriptor[] {null, null, null, overlay, null}, new Point(baseImage.getBounds().width, baseImage.getBounds().height)));
             } catch (DeviceResourceException e) {
                 CVSUIPlugin.log(new Status(IStatus.ERROR, CVSUIPlugin.ID, 0, "Error creating decorator image", e)); //$NON-NLS-1$
             }

@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IMarker;
@@ -248,38 +245,33 @@ public abstract class AbstractSynchronizeLabelProvider implements ILabelProvider
 	private Image addOverlays(Image base, Object element) {
 		if (!isIncludeOverlays())
 			return base;
-		// if the folder is already conflicting then don't bother propagating
-		// the conflict
-		List overlays = new ArrayList();
-		List locations = new ArrayList();
+		
+		ImageDescriptor[] overlayImages = new ImageDescriptor[4];
+		boolean hasOverlay = false;
 		
 		// Decorate with the busy indicator
 		if (isBusy(element)) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR));
-			locations.add(new Integer(OverlayIcon.TOP_LEFT));
+			overlayImages[IDecoration.TOP_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_HOURGLASS_OVR);
+			hasOverlay = true;
 		}
 		// Decorate with propagated conflicts and problem markers
 		if (!isConflicting(element)) {
+			// if the folder is already conflicting then don't bother propagating
 			if (hasDecendantConflicts(element)) {
-				overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR));
-				locations.add(new Integer(OverlayIcon.BOTTOM_RIGHT));
+				overlayImages[IDecoration.BOTTOM_RIGHT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CONFLICT_OVR);
+				hasOverlay = true;
 			}
 		}
 		int severity = getMarkerSeverity(element);
 		if (severity == IMarker.SEVERITY_ERROR) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR));
-			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			overlayImages[IDecoration.BOTTOM_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_ERROR_OVR);
+			hasOverlay = true;
 		} else if (severity == IMarker.SEVERITY_WARNING) {
-			overlays.add(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR));
-			locations.add(new Integer(OverlayIcon.BOTTOM_LEFT));
+			overlayImages[IDecoration.BOTTOM_LEFT] = TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_WARNING_OVR);
+			hasOverlay = true;
 		}
-		if (!overlays.isEmpty()) {
-			ImageDescriptor[] overlayImages = (ImageDescriptor[]) overlays.toArray(new ImageDescriptor[overlays.size()]);
-			int[] locationInts = new int[locations.size()];
-			for (int i = 0; i < locations.size(); i++) {
-				locationInts[i] = ((Integer) locations.get(i)).intValue();
-			}
-			ImageDescriptor overlay = new OverlayIcon(base, overlayImages, locationInts, new Point(base.getBounds().width, base.getBounds().height));
+		if (hasOverlay) {
+			ImageDescriptor overlay = new DecorationOverlayIcon(base, overlayImages, new Point(base.getBounds().width, base.getBounds().height));
 			return getImageManager().getImage(overlay);
 		}
 		return base;
