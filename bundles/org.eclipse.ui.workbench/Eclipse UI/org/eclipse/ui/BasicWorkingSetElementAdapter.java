@@ -36,6 +36,9 @@ import org.osgi.util.tracker.ServiceTracker;
  * ... &lt;/workingSet&gt;</code>
  * </p>
  * 
+ * Please see the {@link #adaptElements(IWorkingSet, IAdaptable[])} method for
+ * details on behavior of this implementation.
+ * 
  * @since 3.3
  */
 public final class BasicWorkingSetElementAdapter implements
@@ -52,11 +55,27 @@ public final class BasicWorkingSetElementAdapter implements
 
 	private ServiceTracker packageTracker;
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * When invoked this method will iterate over all classes specified as
+	 * IExecutableExtension arguements to this class in order and compare with
+	 * the elements. If the element is directly assignable to the provided class
+	 * then it is added to the result array as is. If the class has specified
+	 * "adapt=true" as an argument and there is an available adapter in the
+	 * platform IAdapterManager then it is returned. Finally, if "adapt=true"
+	 * and the class is already loaded (determined by inspecting exported
+	 * bundles via the platform PackageAdmin) a direct query for the adapter is
+	 * made on the object and if it is not <code>null</code> then it is
+	 * returned.
+	 * <p>
+	 * A consequence of the above is that it is possible for this method to
+	 * return differing results based on the state of bundles loaded within the
+	 * system.
+	 * </p>
 	 * 
 	 * @see org.eclipse.ui.IWorkingSetElementAdapter#adaptElements(org.eclipse.ui.IWorkingSet,
 	 *      org.eclipse.core.runtime.IAdaptable[])
+	 * @see org.eclipse.core.runtime.IAdapterManager#getAdapter(Object, String)
+	 * @see org.osgi.service.packageadmin.PackageAdmin#getExportedPackage(String)
 	 */
 	public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
 		List adaptedElements = new ArrayList();
@@ -71,8 +90,13 @@ public final class BasicWorkingSetElementAdapter implements
 	}
 
 	/**
+	 * Adapt the given adaptable. Compares the given adaptable against the list
+	 * of desired types and returns the first type that generates a match.
+	 * 
 	 * @param adaptable
-	 * @return
+	 *            the adaptable to adapt
+	 * @return the resultant adaptable. May be the same adaptable, a new
+	 *         adaptable, or <code>null</code>.
 	 */
 	private IAdaptable adapt(IAdaptable adaptable) {
 		for (int i = 0; i < preferredTypes.length; i++) {
@@ -84,9 +108,14 @@ public final class BasicWorkingSetElementAdapter implements
 	}
 
 	/**
-	 * @param string
+	 * Adapt the given adaptable given the reference type.
+	 * 
+	 * @param type
+	 *            the reference type
 	 * @param adaptable
-	 * @return
+	 *            the adaptable to adapt
+	 * @return the resultant adaptable. May be the same adaptable, a new
+	 *         adaptable, or <code>null</code>.
 	 */
 	private IAdaptable adapt(Type type, IAdaptable adaptable) {
 		IAdapterManager adapterManager = Platform.getAdapterManager();
