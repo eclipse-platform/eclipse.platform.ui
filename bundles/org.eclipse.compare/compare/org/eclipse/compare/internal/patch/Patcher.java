@@ -570,7 +570,7 @@ public class Patcher {
 			for (int i= 0; i<diffs.length; i++) {
 				FileDiff d= diffs[i];
 				IFile file= getTargetFile(d);
-				if (file != null) {
+				if (file != null && file.exists()) {
 					List lines= load(file, false);
 					FileDiffResult result = getDiffResult(d);
 					int f = result.calculateFuzz(lines, monitor);
