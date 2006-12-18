@@ -55,7 +55,7 @@ public class EditorElement extends AbstractElement {
 
 	public String getLabel() {
 		boolean dirty = editorReference.isDirty();
-		return (dirty ? DIRTY_MARK : "") + editorReference.getName() + separator + editorReference.getTitleToolTip(); //$NON-NLS-1$
+		return (dirty ? DIRTY_MARK : "") + editorReference.getTitle() + separator + editorReference.getTitleToolTip(); //$NON-NLS-1$
 	}
 
 	public String getSortLabel() {
