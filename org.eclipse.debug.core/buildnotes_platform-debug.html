@@ -159,6 +159,16 @@ The launch framework has been enhanced to support the following:
   <li><code> ISuspendCommand</code></li>
   <li><code> ITerminateCommand</code></li>
 </ul>
+<p>Note that the &quot;use step filters&quot; setting has been moved to the <code>org.eclipse.debug.core</code> 
+  plug-in from <code>org.eclipse.debug.ui</code>. This is to allow the toggle 
+  step filters command to work properly in absence of the UI plug-in. The following 
+  API methods have been added to <code>DebugPlugin</code>:</p>
+<ul>
+  <li><code>setUseStepFilters(boolean useStepFilters)</code></li>
+  <li><code>isUseStepFilters()</code></li>
+</ul>
+<p>The same methods that existed in <code>DebugUITools</code> now delegate to 
+  these new methods.</p>
 <h3>Pluggable Detail Panes</h3>
 <p>The variables, registers, and expressions views in Eclipse 3.3 support pluggable 
   detail panes. A new extension point - <code>org.eclipse.debug.ui.detailPaneFactories</code> 
