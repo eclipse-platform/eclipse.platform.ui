@@ -11,19 +11,37 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.PlatformURLResourceConnection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
+/**
+ * Test suites for {@link org.eclipse.core.internal.resources.PlatformURLResourceConnection}
+ */
 public class ResourceURLTest extends ResourceTest {
-	static boolean noSideEffects = false;
+	private static final String CONTENT = "content";
+	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
 	protected static Set nonExistingResources = new HashSet();
+	static boolean noSideEffects = false;
+
 	protected static Map unsynchronizedResources = new HashMap();
-	protected static IPath[] interestingPaths;
+
+	public static Test suite() {
+		TestSuite suite = new TestSuite(ResourceURLTest.class.getName());
+		suite.addTest(new ResourceURLTest("testNonExistantURLs"));
+		suite.addTest(new ResourceURLTest("testBasicURLs"));
+		suite.addTest(new ResourceURLTest("testExternalURLs"));
+		suite.addTest(new ResourceURLTest("testSpaces"));
+		suite.addTest(new ResourceURLTest("doCleanup"));
+		return suite;
+	}
 
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
@@ -38,8 +56,11 @@ public class ResourceURLTest extends ResourceTest {
 		super(name);
 	}
 
-	public void doCleanup() throws Throwable {
-		getWorkspace().getRoot().delete(true, true, null);
+	private void checkURL(IResource resource) throws Throwable {
+		URL url = getURL(resource);
+		IPath file = new Path(Platform.resolve(url).getFile());
+		IPath metric = resource.getLocation();
+		assertEquals(metric, file);
 	}
 
 	/**
@@ -53,25 +74,16 @@ public class ResourceURLTest extends ResourceTest {
 		return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1", "/2/2", "/2/3", "/3/", "/3/1", "/3/2", "/3/3", "/4/", "/5"};
 	}
 
+	public void doCleanup() throws CoreException {
+		getWorkspace().getRoot().delete(true, true, null);
+	}
+
 	protected IProject getTestProject() {
 		return getWorkspace().getRoot().getProject("testProject");
 	}
 
 	protected IProject getTestProject2() {
 		return getWorkspace().getRoot().getProject("testProject2");
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ResourceURLTest.class.getName());
-		suite.addTest(new ResourceURLTest("testNonExistantURLs"));
-		suite.addTest(new ResourceURLTest("testBasicURLs"));
-		suite.addTest(new ResourceURLTest("testExternalURLs"));
-		suite.addTest(new ResourceURLTest("doCleanup"));
-		return suite;
-	}
-
-	protected void tearDown() throws Exception {
-		// overwrite the superclass and do nothing since our test methods build on each other
 	}
 
 	private URL getURL(IPath path) throws Throwable {
@@ -82,15 +94,25 @@ public class ResourceURLTest extends ResourceTest {
 		return getURL(resource.getFullPath());
 	}
 
-	private void checkURL(IResource resource) throws Throwable {
-		URL url = getURL(resource);
-		IPath file = new Path(Platform.resolve(url).getFile());
-		IPath metric = resource.getLocation();
-		assertEquals(metric, file);
+	protected void tearDown() throws Exception {
+		// overwrite the superclass and do nothing since our test methods build on each other
 	}
 
 	public void testBasicURLs() throws Throwable {
 		IResource[] resources = buildResources();
+		ensureExistsInWorkspace(resources, true);
+		for (int i = 0; i < resources.length; i++) {
+			checkURL(resources[i]);
+		}
+	}
+
+	public void testExternalURLs() throws Throwable {
+		IProject project = getWorkspace().getRoot().getProject("test");
+		IProjectDescription desc = getWorkspace().newProjectDescription("test");
+		desc.setLocation(Platform.getLocation().append("../testproject"));
+		project.create(desc, null);
+		project.open(null);
+		IResource[] resources = buildResources(project, defineHierarchy());
 		ensureExistsInWorkspace(resources, true);
 		for (int i = 0; i < resources.length; i++) {
 			checkURL(resources[i]);
@@ -109,16 +131,23 @@ public class ResourceURLTest extends ResourceTest {
 		}
 	}
 
-	public void testExternalURLs() throws Throwable {
-		IProject project = getWorkspace().getRoot().getProject("test");
-		IProjectDescription desc = getWorkspace().newProjectDescription("test");
-		desc.setLocation(Platform.getLocation().append("../testproject"));
-		project.create(desc, null);
-		project.open(null);
-		IResource[] resources = buildResources(project, defineHierarchy());
-		ensureExistsInWorkspace(resources, true);
-		for (int i = 0; i < resources.length; i++) {
-			checkURL(resources[i]);
+	/**
+	 * Tests decoding of normalized URLs containing spaces
+	 * @throws CoreException
+	 */
+	public void testSpaces() {
+		IProject project = getWorkspace().getRoot().getProject("My Project");
+		IFile file = project.getFile("a.txt");
+		ensureExistsInWorkspace(file, CONTENT);
+		try {
+			URL url = new URL(PlatformURLResourceConnection.RESOURCE_URL_STRING + "My%20Project/a.txt");
+			InputStream stream = url.openStream();
+			assertTrue("1.0", compareContent(stream, getContents(CONTENT)));
+		} catch (MalformedURLException e) {
+			fail("0.99", e);
+		} catch (IOException e) {
+			fail("1.99", e);
 		}
+
 	}
 }
