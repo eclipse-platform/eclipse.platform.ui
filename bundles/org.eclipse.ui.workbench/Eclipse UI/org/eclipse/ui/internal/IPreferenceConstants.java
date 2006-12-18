@@ -215,4 +215,11 @@ public interface IPreferenceConstants {
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
+    /**
+     * Experimental preference ID for automatic pinning editors on dirty.
+     *  
+     * @since 3.3
+     */
+    public static final String EDITOR_PIN_ON_DIRTY = "editorPinOnDirty"; //$NON-NLS-1$
+
 }

@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -24,6 +25,12 @@ public class PinEditorAction extends ActiveEditorAction {
             if (propId == WorkbenchPartReference.INTERNAL_PROPERTY_PINNED) {
                 WorkbenchPartReference ref = (WorkbenchPartReference)source;
                 setChecked(ref.isPinned());
+            } else if (propId == IWorkbenchPartConstants.PROP_DIRTY) {
+        		if (WorkbenchPlugin.getDefault().getPreferenceStore()
+						.getBoolean(IPreferenceConstants.EDITOR_PIN_ON_DIRTY)) {
+					WorkbenchPartReference ref = (WorkbenchPartReference) source;
+					ref.setPinned(true);
+				}
             }
         }
     };
