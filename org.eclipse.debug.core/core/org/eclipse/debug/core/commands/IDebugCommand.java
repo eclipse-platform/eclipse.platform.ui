@@ -62,8 +62,8 @@ public interface IDebugCommand {
 	 * </p>
 	 * <p>
 	 * Clients are expected to poll the progress monitor (using <code>isCanceled</code>)
-	 * periodically and abort at their earliest convenience by setting
-	 * a cancel status and calling <code>done()</code> on the collector.
+	 * periodically and abort at their earliest convenience calling <code>done()</code>
+	 * on the collector.
 	 * </p>
 	 * @param element element for which this command may be enabled
 	 * @param monitor progress monitor
@@ -85,8 +85,8 @@ public interface IDebugCommand {
 	 * </p>
 	 * <p>
 	 * Clients are expected to poll the progress monitor (using <code>isCanceled</code>)
-	 * periodically and abort at their earliest convenience by setting
-	 * a cancel status and calling <code>done()</code> on the collector.
+	 * periodically and abort at their earliest convenience calling <code>done()</code>
+	 * on the collector.
 	 * </p>
 	 * @param element element to execute command on
 	 * @param monitor progress monitor
