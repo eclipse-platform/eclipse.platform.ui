@@ -35,6 +35,15 @@ import org.osgi.util.tracker.ServiceTracker;
  * elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:class1.to.adapt.to[;option1=value1][;option2=value2],class2.to.adapt.to[;option1=value1][;option2=value2],..."&gt;
  * ... &lt;/workingSet&gt;</code>
  * </p>
+ * <p>
+ * The valid options are:<br/>
+ * <dl>
+ * <dt>adapt</dt>
+ * <dd>Values: <code>true</code> or <code>true</code>. Specifies whether
+ * or not the platform {@link org.eclipse.core.runtime.IAdapterManager} and the
+ * {@link org.eclipse.core.runtime.IAdaptable} interface should be consulted.</dd>
+ * </dl>
+ * </p>
  * 
  * Please see the {@link #adaptElements(IWorkingSet, IAdaptable[])} method for
  * details on behavior of this implementation.
