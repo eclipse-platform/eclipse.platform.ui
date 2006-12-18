@@ -309,14 +309,6 @@ public interface IInternalDebugUIConstants {
      * @since 3.0
      */
     public static final String PREF_TRACK_VIEWS= IDebugUIConstants.PLUGIN_ID + ".track_views"; //$NON-NLS-1$
-  
-	/**
-	 * Boolean preference specifying whether step filters
-	 * are used.
-	 * 
-	 * @since 3.0
-	 */
-	public static final String PREF_USE_STEP_FILTERS = IDebugUIConstants.PLUGIN_ID + ".USE_STEP_FILTERS"; //$NON-NLS-1$ 
 	
     /**
      * Comma separated list of view ids closed by the user, that have view context bindings.

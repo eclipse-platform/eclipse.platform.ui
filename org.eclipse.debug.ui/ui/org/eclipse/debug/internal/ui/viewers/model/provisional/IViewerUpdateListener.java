@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
-import org.eclipse.debug.ui.commands.IStatusMonitor;
 
 /**
  * Notified of viewer updates.

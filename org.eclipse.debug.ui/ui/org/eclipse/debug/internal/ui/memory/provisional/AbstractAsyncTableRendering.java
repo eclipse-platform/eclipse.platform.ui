@@ -37,6 +37,7 @@ import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractVirtualContentTableModel;
@@ -61,7 +62,6 @@ import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingConte
 import org.eclipse.debug.internal.ui.views.memory.renderings.TableRenderingLine;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.debug.ui.memory.AbstractTableRendering;
 import org.eclipse.debug.ui.memory.IMemoryBlockTablePresentation;
 import org.eclipse.debug.ui.memory.IMemoryRendering;

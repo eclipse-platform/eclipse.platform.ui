@@ -16,9 +16,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.commands.IBooleanCollector;
+import org.eclipse.debug.core.commands.IDebugCommand;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.commands.IBooleanStatusMonitor;
-import org.eclipse.debug.ui.commands.IDebugCommand;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
@@ -107,11 +108,11 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param monitor
 	 */
-	public void postUpdateCommand(Class commandType, IBooleanStatusMonitor monitor) {
+	public void postUpdateCommand(Class commandType, IBooleanCollector monitor) {
 		synchronized (fCommandUpdates) {
-			ProxyBooleanRequestMonitor proxy = (ProxyBooleanRequestMonitor) fCommandUpdates.get(commandType);
+			ProxyBooleanCollector proxy = (ProxyBooleanCollector) fCommandUpdates.get(commandType);
 			if (proxy == null) {
-				proxy = new ProxyBooleanRequestMonitor();
+				proxy = new ProxyBooleanCollector();
 				fCommandUpdates.put(commandType, proxy);
 			}
 			proxy.addMonitor(monitor);					
@@ -124,15 +125,15 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param requestMonitor
 	 */
-	public void updateCommand(Class commandType, IBooleanStatusMonitor requestMonitor) {
+	public void updateCommand(Class commandType, IBooleanCollector requestMonitor) {
 		ISelection context = fContextService.getActiveContext();
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			ProxyBooleanRequestMonitor monitor = new ProxyBooleanRequestMonitor();
+			ProxyBooleanCollector monitor = new ProxyBooleanCollector();
 			monitor.addMonitor(requestMonitor);
 			updateCommand(commandType, elements, monitor);
 		} else {
-			requestMonitor.setCanceled(true);
+			requestMonitor.setResult(false);
 			requestMonitor.done();
 		}
 	}	
@@ -149,14 +150,14 @@ public class DebugCommandService implements IDebugContextListener {
 			while (iterator.hasNext()) {
 				Entry entry = (Entry) iterator.next();
 				Class commandType = (Class)entry.getKey();
-				ProxyBooleanRequestMonitor monitor = (ProxyBooleanRequestMonitor) entry.getValue();
+				ProxyBooleanCollector monitor = (ProxyBooleanCollector) entry.getValue();
 				updateCommand(commandType, elements, monitor);
 			}
 		} else {
 			Iterator iterator = commands.values().iterator();
 			while (iterator.hasNext()) {
-				ProxyBooleanRequestMonitor monitor = (ProxyBooleanRequestMonitor) iterator.next();
-				monitor.setCanceled(true);
+				ProxyBooleanCollector monitor = (ProxyBooleanCollector) iterator.next();
+				monitor.setResult(false);
 				monitor.done();
 			}
 		}
@@ -170,7 +171,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param elements elements to update for
 	 * @param monitor status monitor
 	 */
-	private void updateCommand(Class commandType, Object[] elements, ProxyBooleanRequestMonitor monitor) {
+	private void updateCommand(Class commandType, Object[] elements, ProxyBooleanCollector monitor) {
 		IDebugCommand[] commands = new IDebugCommand[elements.length];
 		int numVoters = 0;
 		for (int i = 0; i < elements.length; i++) {
@@ -181,17 +182,17 @@ public class DebugCommandService implements IDebugContextListener {
 					commands[i] = command;
 					numVoters++;
 				} else {
-					monitor.setCanceled(true);
+					monitor.setResult(false);
 					monitor.done();
 					return;
 				}
 			}
 		}
-		if (!monitor.isCanceled()) {
+		if (monitor.isEnabled()) {
 			monitor.setNumVoters(numVoters);
 			for (int i = 0; i < commands.length; i++) {
 				IDebugCommand command = commands[i];
-				command.canExecute(elements[i], monitor);
+				command.canExecute(elements[i], new NullProgressMonitor(), monitor);
 			}
 		}
 	}

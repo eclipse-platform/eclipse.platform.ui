@@ -32,6 +32,7 @@ import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,7 +45,14 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IDisconnect;
+import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStep;
+import org.eclipse.debug.core.model.IStepFilters;
+import org.eclipse.debug.core.model.ISuspendResume;
+import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
@@ -53,6 +61,8 @@ import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.core.MemoryBlockManager;
+import org.eclipse.debug.internal.core.StepFilterManager;
+import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
 import org.eclipse.osgi.service.environment.Constants;
@@ -619,6 +629,18 @@ public class DebugPlugin extends Plugin {
 					public void prepareToSave(ISaveContext saveContext) throws CoreException {}
 					public void doneSaving(ISaveContext saveContext) {}
 				});
+		//command adapters
+		IAdapterManager manager= Platform.getAdapterManager();
+		CommandAdapterFactory actionFactory = new CommandAdapterFactory();
+		manager.registerAdapters(actionFactory, IDisconnect.class);
+		manager.registerAdapters(actionFactory, IDropToFrame.class);
+		manager.registerAdapters(actionFactory, IStep.class);
+		manager.registerAdapters(actionFactory, IStepFilters.class);
+		manager.registerAdapters(actionFactory, ISuspendResume.class);
+		manager.registerAdapters(actionFactory, ITerminate.class);
+		manager.registerAdapters(actionFactory, ILaunch.class);
+		manager.registerAdapters(actionFactory, IProcess.class);
+		manager.registerAdapters(actionFactory, IDebugElement.class);		
 	}
 
 	/**
@@ -1371,6 +1393,40 @@ public class DebugPlugin extends Plugin {
 		
 		return res;
 	}	
+	
+	/**
+	 * Sets whether step filters should be applied to step commands. This
+	 * setting is a global option applied to all registered debug targets. 
+	 * 
+	 * @param useStepFilters whether step filters should be applied to step
+	 *  commands
+	 * @since 3.3
+	 * @see org.eclipse.debug.core.model.IStepFilters
+	 */
+	public static void setUseStepFilters(boolean useStepFilters) {
+		getStepFilterManager().setUseStepFilters(useStepFilters);
+	}
+		
+	/**
+	 * Returns whether step filters are applied to step commands.
+	 * 
+	 * @return whether step filters are applied to step commands
+	 * @since 3.3
+	 * @see org.eclipse.debug.core.model.IStepFilters
+	 * @see org.eclipse.debug.core.commands.IStepFiltersCommand
+	 */
+	public static boolean isUseStepFilters() {
+		return getStepFilterManager().isUseStepFilters();
+	}	
+	
+	/**
+	 * Returns the step filter manager.
+	 * 
+	 * @return step filter manager
+	 */
+	private static StepFilterManager getStepFilterManager() {
+		return ((LaunchManager)getDefault().getLaunchManager()).getStepFilterManager();
+	}
 	
 }
 

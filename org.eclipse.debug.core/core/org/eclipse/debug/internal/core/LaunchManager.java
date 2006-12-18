@@ -166,6 +166,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	protected static final IStatus deleteAssociatedLaunchConfigs = new Status(IStatus.INFO, DEBUG_CORE, 225, EMPTY_STRING, null);
 	
+	/**
+	 * Step filter manager
+	 */
+	private StepFilterManager fStepFilterManager = null;
 	
 	/**
 	 * Notifies a launch config listener in a safe runnable to handle
@@ -1856,6 +1860,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return whether the launch was added
 	 */
 	protected boolean internalAddLaunch(ILaunch launch) {
+		// ensure the step filter manager is created on the first launch
+		getStepFilterManager();
 		synchronized (fLaunches) {
 			if (fLaunches.contains(launch)) {
 				return false;
@@ -2189,7 +2195,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 		persistPreferredLaunchDelegates();
 		clearAllLaunchConfigurations();
-
+		fStepFilterManager = null;
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
@@ -2336,4 +2342,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
         }
         return title;
     }	
+    
+	/**
+	 * Returns the singleton step filter manager.
+	 * 
+	 * @return the step filter manager
+	 */
+	public synchronized StepFilterManager getStepFilterManager() {
+		if (fStepFilterManager == null) {
+			fStepFilterManager = new StepFilterManager();
+		}
+		return fStepFilterManager;
+	}    
 }

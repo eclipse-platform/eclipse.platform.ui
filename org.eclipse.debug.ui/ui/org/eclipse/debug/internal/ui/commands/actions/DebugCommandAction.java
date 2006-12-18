@@ -14,9 +14,10 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.debug.core.commands.IDebugCommand;
+import org.eclipse.debug.core.commands.IStatusCollector;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.commands.IDebugCommand;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
@@ -86,7 +87,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 			IAdaptable adaptable = (IAdaptable) target;
 			IDebugCommand capability = (IDebugCommand) adaptable.getAdapter(getCommandType());
 			if (capability != null) {
-				return capability.execute(target, createStatusMonitor(target));
+				return capability.execute(target, new NullProgressMonitor(), createStatusMonitor(target));
 			}
 		}
     	return false;
@@ -98,8 +99,8 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @param target target of the command
      * @return status monitor to execute with
      */
-    protected IStatusMonitor createStatusMonitor(Object target) {
-    	return new ActionRequestMonitor();
+    protected IStatusCollector createStatusMonitor(Object target) {
+    	return new ActionStatusCollector();
     }
     
     /**
@@ -113,7 +114,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * @param context
      */
     public void update(ISelection context) {
-    	fUpdateService.postUpdateCommand(getCommandType(), new CommandMonitor(this));
+    	fUpdateService.postUpdateCommand(getCommandType(), new CommandStateCollector(this));
     }    
 
     /**
@@ -147,7 +148,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 		service.addDebugContextListener(this, partId);
         ISelection activeContext = service.getActiveContext(partId);
         if (activeContext != null) {
-        	fUpdateService.updateCommand(getCommandType(), new CommandMonitor(this));
+        	fUpdateService.updateCommand(getCommandType(), new CommandStateCollector(this));
         } else {
         	setEnabled(getInitialEnablement());
         }
@@ -164,7 +165,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 		contextService.addDebugContextListener(this);
         ISelection activeContext = contextService.getActiveContext();
         if (activeContext != null) {
-        	fUpdateService.updateCommand(getCommandType(), new BooleanRequestMonitor(this, 1));
+        	fUpdateService.updateCommand(getCommandType(), new BooleanCollector(this, 1));
         } else {
         	setEnabled(getInitialEnablement());
         }

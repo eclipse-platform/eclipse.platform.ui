@@ -13,13 +13,13 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.ITerminateCommand;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
-import org.eclipse.debug.ui.commands.ITerminateCommand;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -30,7 +30,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class TerminateAndRemoveAction extends DebugCommandAction {
 
     
-    class TerminateAndRemoveMonitor extends ActionRequestMonitor {
+    class TerminateAndRemoveMonitor extends ActionStatusCollector {
         private Object fElement;
         TerminateAndRemoveMonitor(Object element) {
             fElement = element;
@@ -86,7 +86,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		return ITerminateCommand.class;
 	}
 
-	protected IStatusMonitor createStatusMonitor(Object target) {
+	protected IStatusCollector createStatusMonitor(Object target) {
 		return new TerminateAndRemoveMonitor(target);
 	}
 

@@ -11,14 +11,14 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.ITerminateCommand;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
-import org.eclipse.debug.ui.commands.ITerminateCommand;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -29,7 +29,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 	
-	class RequestMonitor extends ActionRequestMonitor {
+	class RequestMonitor extends ActionStatusCollector {
 		
 		private ILaunch fLaunch;
 
@@ -50,7 +50,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		
 	}
 
-	protected IStatusMonitor createStatusMonitor(Object target) {
+	protected IStatusCollector createStatusMonitor(Object target) {
 		ILaunch launch = RelaunchActionDelegate.getLaunch(target);
 		return new RequestMonitor(launch);
 	}

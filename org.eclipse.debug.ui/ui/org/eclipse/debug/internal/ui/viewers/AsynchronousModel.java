@@ -28,12 +28,12 @@ import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAda
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.AsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousContentAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IAsynchronousLabelAdapter;
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
 import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerSorter;
 

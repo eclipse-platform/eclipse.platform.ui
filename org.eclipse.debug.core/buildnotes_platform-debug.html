@@ -142,16 +142,16 @@ The launch framework has been enhanced to support the following:
   registering adapters for the command interfaces on debug model elements. The 
   command interfaces are to be implemented in a non-blocking fashion, and are 
   designed with an asynchronous API, allowing clients to cancel a command or report 
-  failure via a status monitor.</p>
-<p>The package<code> org.eclipse.debug.ui.commands</code> has been added with 
+  failure via a status result collector.</p>
+<p>The package<code> org.eclipse.debug.core.commands</code> has been added with 
   the following types:</p>
 <ul>
-  <li><code>IBooleanStatusMonitor</code></li>
+  <li><code>IBooleanCollector</code></li>
   <li><code>IDebugCommand</code></li>
   <li><code>IDisconnectCommand</code></li>
   <li><code>IDropToFrameCommand</code></li>
   <li><code>IResumeCommand</code></li>
-  <li><code>IStatusMonitor</code></li>
+  <li><code>IStatusCollector</code></li>
   <li><code>IStepFiltersCommand</code></li>
   <li><code>IStepIntoCommand</code></li>
   <li><code>IStepOverCommand</code></li>

@@ -12,12 +12,13 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.debug.core.commands.IStepFiltersCommand;
+import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.commands.IStepFiltersCommand;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -162,7 +163,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 * @see org.eclipse.core.runtime.Preferences$IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS)) {
+		if (event.getProperty().equals(StepFilterManager.PREF_USE_STEP_FILTERS)) {
 			boolean checked = DebugUITools.isUseStepFilters();
 			setChecked(checked);
 			DebugCommandActionDelegate delegate = getDelegate();

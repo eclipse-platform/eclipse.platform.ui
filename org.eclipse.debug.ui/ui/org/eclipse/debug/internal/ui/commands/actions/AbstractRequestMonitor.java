@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 
 /**
  * Common function for request monitors

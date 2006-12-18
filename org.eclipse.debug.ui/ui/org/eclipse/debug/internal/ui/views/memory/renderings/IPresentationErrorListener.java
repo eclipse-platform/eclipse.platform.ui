@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 
 public interface IPresentationErrorListener {
 	

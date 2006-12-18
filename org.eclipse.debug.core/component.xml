@@ -39,6 +39,20 @@
  	<type name="IStreamListener" />
  	<type name="Launch" />
  </package>
+ <package name="org.eclipse.debug.core.commands">
+ 	<type name="IBooleanCollector" implement="false" />
+ 	<type name="IDebugCommand" />
+ 	<type name="IDisconnectCommand" />
+ 	<type name="IDropToFrameCommand" />
+ 	<type name="IResumeCommand" />
+ 	<type name="IStatusCollector"  implement="false" />
+ 	<type name="IStepFiltersCommand" />
+ 	<type name="IStepIntoCommand" />
+ 	<type name="IStepOverCommand" />
+ 	<type name="IStepReturnCommand" />
+ 	<type name="ISuspendCommand" />
+ 	<type name="ITerminateCommand" />
+ </package>
  <package name="org.eclipse.debug.core.model">
  	<type name="Breakpoint" />
  	<type name="DebugElement" />

@@ -56,21 +56,14 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IDisconnect;
-import org.eclipse.debug.core.model.IDropToFrame;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IRegister;
 import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IStep;
-import org.eclipse.debug.core.model.IStepFilters;
-import org.eclipse.debug.core.model.ISuspendResume;
-import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.commands.actions.ActionAdapterFactory;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
@@ -167,11 +160,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Launch configuration manager
 	 */
 	private LaunchConfigurationManager fLaunchConfigurationManager = null;
-	
-	/**
-	 * Step filter manager
-	 */
-	private StepFilterManager fStepFilterManager = null;
     
     /**
      * Image descriptor registry used for images with common overlays.
@@ -365,10 +353,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				fLaunchConfigurationManager.shutdown();
 			}
 			
-			if (fStepFilterManager != null) {
-				fStepFilterManager.shutdown();
-			}
-			
 			ColorManager.getDefault().dispose();
 			
 			if (fgPresentation != null) {
@@ -442,18 +426,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		manager.registerAdapters(uiFactory, ILaunchConfigurationType.class);
 		SuspendTriggerAdapterFactory factory = new SuspendTriggerAdapterFactory();
 		manager.registerAdapters(factory, ILaunch.class);
-		
-		//action adapters
-		ActionAdapterFactory actionFactory = new ActionAdapterFactory();
-		manager.registerAdapters(actionFactory, IDisconnect.class);
-		manager.registerAdapters(actionFactory, IDropToFrame.class);
-		manager.registerAdapters(actionFactory, IStep.class);
-		manager.registerAdapters(actionFactory, IStepFilters.class);
-		manager.registerAdapters(actionFactory, ISuspendResume.class);
-		manager.registerAdapters(actionFactory, ITerminate.class);
-		manager.registerAdapters(actionFactory, ILaunch.class);
-		manager.registerAdapters(actionFactory, IProcess.class);
-		manager.registerAdapters(actionFactory, IDebugElement.class);
 		
 		getStandardDisplay().asyncExec(
 			new Runnable() {
@@ -701,10 +673,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		getProcessConsoleManager().startup();
 		
-		if (fStepFilterManager == null) {
-			getStepFilterManager().launchAdded(launch);
-		}
-		
 		getLaunchConfigurationManager().startup();
 		SourceLookupManager.getDefault();
 	}
@@ -716,18 +684,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	public PerspectiveManager getPerspectiveManager() {
 		return fPerspectiveManager;
-	}
-	
-	/**
-	 * Returns the singleton step filter manager.
-	 * 
-	 * @return the step filter manager
-	 */
-	public StepFilterManager getStepFilterManager() {
-		if (fStepFilterManager == null) {
-			fStepFilterManager = new StepFilterManager();
-		}
-		return fStepFilterManager;
 	}
 
 	/**

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.provisional;
 
-import org.eclipse.debug.ui.commands.IStatusMonitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
 
 /**
  * A request monitor that collects whether an element contains

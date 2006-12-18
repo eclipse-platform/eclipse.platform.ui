@@ -634,25 +634,29 @@ public class DebugUITools {
 	/**
 	 * Sets whether step filters should be applied to step commands. This
 	 * setting is a global option applied to all registered debug targets. 
-	 * 
+	 * <p>
+	 * Since 3.3, this is equivalent to calling <code>DebugPlugin.setUseStepFilters(boolean)</code>.
+	 * </p>
 	 * @param useStepFilters whether step filters should be applied to step
 	 *  commands
 	 * @since 3.0
 	 * @see org.eclipse.debug.core.model.IStepFilters
 	 */
 	public static void setUseStepFilters(boolean useStepFilters) {
-		DebugUIPlugin.getDefault().getStepFilterManager().setUseStepFilters(useStepFilters);
+		DebugPlugin.setUseStepFilters(useStepFilters);
 	}
 		
 	/**
 	 * Returns whether step filters are applied to step commands.
-	 * 
+	 * <p>
+	 * Since 3.3, this is equivalent to calling <code>DebugPlugin.isUseStepFilters()</code>.
+	 * </p>
 	 * @return whether step filters are applied to step commands
 	 * @since 3.0
 	 * @see org.eclipse.debug.core.model.IStepFilters
 	 */
 	public static boolean isUseStepFilters() {
-		return DebugUIPlugin.getDefault().getStepFilterManager().isUseStepFilters();
+		return DebugPlugin.isUseStepFilters();
 	}
 		
 	/**
