@@ -102,6 +102,16 @@ The resource navigator uses a working set to filter elements from the navigator 
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="elementAdapterClass" type="string">
+            <annotation>
+               <documentation>
+                  the fully qualified name of a Java class implementing &lt;samp&gt;org.eclipse.ui.IWorkingSetElementAdapter&lt;/samp&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.IWorkingSetElementAdapter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

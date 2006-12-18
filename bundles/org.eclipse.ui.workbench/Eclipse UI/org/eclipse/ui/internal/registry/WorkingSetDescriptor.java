@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
+import org.eclipse.ui.IWorkingSetElementAdapter;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -65,8 +66,11 @@ public class WorkingSetDescriptor implements IPluginContribution {
     private static final String ATT_PAGE_CLASS = "pageClass"; //$NON-NLS-1$
     
     private static final String ATT_UPDATER_CLASS = "updaterClass";  //$NON-NLS-1$
+    
+    private static final String ATT_ELEMENT_ADAPTER_CLASS = "elementAdapterClass";  //$NON-NLS-1$
 
-private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1$
+    private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1$
+    
     /**
      * Creates a descriptor from a configuration element.
      * 
@@ -203,11 +207,31 @@ private static final String TAG_APPLICABLE_TYPE = "applicableType"; //$NON-NLS-1
     }
     
     /**
-     * Creates a working set updater.
-     * 
-     * @return the working set updater or <code>null</code> if no
-     *  updater has been declared
-     */
+	 * Creates a working set element adapter.
+	 * 
+	 * @return the element adapter or <code>null</code> if no adapter has been
+	 *         declared
+	 */
+	public IWorkingSetElementAdapter createWorkingSetElementAdapter() {
+		if (!WorkbenchPlugin.hasExecutableExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS))
+			return null;
+		IWorkingSetElementAdapter result = null;
+		try {
+			result = (IWorkingSetElementAdapter) WorkbenchPlugin
+					.createExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS);
+		} catch (CoreException exception) {
+			WorkbenchPlugin.log("Unable to create working set element adapter: " + //$NON-NLS-1$
+					result, exception.getStatus());
+		}
+		return result;
+	}
+    
+    /**
+	 * Creates a working set updater.
+	 * 
+	 * @return the working set updater or <code>null</code> if no updater has
+	 *         been declared
+	 */
     public IWorkingSetUpdater createWorkingSetUpdater() {
     	if (updaterClassName == null) {
 			return null;

@@ -190,11 +190,17 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	public boolean isEmpty();
 	
 	/**
-	 * Tests whether this working set is suitable to contain the provided object.
+	 * Transforms the supplied elements into elements that are suitable for
+	 * containment in this working set. This is useful for UI elements which
+	 * wish to filter contributions to working sets based on applicability. This
+	 * is a hint, however, and is not considered when the
+	 * {@link #setElements(IAdaptable[])} method is invoked.
 	 * 
-	 * @param object the object to test
-	 * @return whether the working set is suitable to contain the provided object
+	 * @param objects
+	 *            the objects to transform
+	 * @return an array of transformed elements that be empty if no elements
+	 *         from the original array are suitable
 	 * @since 3.3
 	 */
-	public boolean isApplicable(IAdaptable object);
+	public IAdaptable[] adaptElements(IAdaptable[] objects);
 }

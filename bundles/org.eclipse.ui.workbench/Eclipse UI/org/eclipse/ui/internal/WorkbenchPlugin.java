@@ -257,19 +257,45 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
                     IStatus.ERROR, WorkbenchMessages.WorkbenchPlugin_extension,e));
         }
     }
+    
+    /**
+	 * Answers whether the provided element either has an attribute with the
+	 * given name or a child element with the given name with an attribute
+	 * called class.
+	 * 
+	 * @param element
+	 *            the element to test
+	 * @param extensionName
+	 *            the name of the extension to test for
+	 * @return whether or not the extension is declared
+	 * @since 3.3
+	 */
+	public static boolean hasExecutableExtension(IConfigurationElement element,
+			String extensionName) {
+
+		if (element.getAttribute(extensionName) != null)
+			return true;
+		IConfigurationElement [] children = element.getChildren(extensionName);
+		if (children.length == 1) {
+			if (children[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null)
+				return true;
+		}
+		return false;
+	}
 
     /**
-     * Returns the image registry for this plugin.
-     *
-     * Where are the images?  The images (typically gifs) are found in the 
-     * same plugins directory.
-     *
-     * @see ImageRegistry
-     *
-     * Note: The workbench uses the standard JFace ImageRegistry to track its images. In addition 
-     * the class WorkbenchGraphicResources provides convenience access to the graphics resources 
-     * and fast field access for some of the commonly used graphical images.
-     */
+	 * Returns the image registry for this plugin.
+	 * 
+	 * Where are the images? The images (typically gifs) are found in the same
+	 * plugins directory.
+	 * 
+	 * @see ImageRegistry
+	 * 
+	 * Note: The workbench uses the standard JFace ImageRegistry to track its
+	 * images. In addition the class WorkbenchGraphicResources provides
+	 * convenience access to the graphics resources and fast field access for
+	 * some of the commonly used graphical images.
+	 */
     protected ImageRegistry createImageRegistry() {
         return WorkbenchImages.getImageRegistry();
     }

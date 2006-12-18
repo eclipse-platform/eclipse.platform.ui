@@ -1632,23 +1632,11 @@
    <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
+            icon="icons/anything.gif"
+            id="org.eclipse.ui.tests.api.MockWorkingSet"
             name="Mock Working Set"
             pageClass="org.eclipse.ui.tests.api.MockWorkingSetPage"
-            icon="icons/anything.gif"
-            id="org.eclipse.ui.tests.api.MockWorkingSet">
-         <applicableType
-               adaptable="false"
-               class="org.eclipse.ui.tests.api.IWorkingSetTest$Foo">
-         </applicableType>
-         <applicableType
-               adaptable="true"
-               class="org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon">
-         </applicableType>
-         <applicableType
-               adaptable="false"
-               class="org.eclipse.core.resources.IResource">
-         </applicableType>
-      </workingSet>
+            elementAdapterClass="org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.ui.tests.api.IWorkingSetTest$Foo;adapt=true,org.eclipse.ui.tests.menus.ObjectContributionClasses$ICommon;adapt=true,org.eclipse.core.resources.IResource;adapt=false"/>
    </extension>
 <!-- Preference tests -->
    <extension

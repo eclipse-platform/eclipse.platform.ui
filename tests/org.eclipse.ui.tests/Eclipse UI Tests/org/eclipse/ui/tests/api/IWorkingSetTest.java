@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkingSet;
@@ -45,6 +46,8 @@ public class IWorkingSetTest extends UITestCase {
         fWorkspace = ResourcesPlugin.getWorkspace();
         fWorkingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
                 new IAdaptable[] { fWorkspace.getRoot() });
+        workingSetManager.removeWorkingSet(fWorkingSet);
+        workingSetManager.addWorkingSet(fWorkingSet);
     }
 
     public void testGetElements() throws Throwable {
@@ -130,34 +133,43 @@ public class IWorkingSetTest extends UITestCase {
 		fWorkingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
 		assertEquals("org.eclipse.ui.resourceWorkingSetPage", fWorkingSet
 				.getId());
-		assertTrue(fWorkingSet.isApplicable(ResourcesPlugin.getWorkspace()
-				.getRoot()));
+		IAdaptable[] adapted = fWorkingSet.adaptElements(new IAdaptable[] {ResourcesPlugin.getWorkspace()
+				.getRoot()});
+		assertEquals(1, adapted.length);
+		assertTrue(adapted[0] instanceof IWorkspaceRoot);
     }
     
     public void testApplicableTo_DirectComparison() {
 
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		Foo myFoo = new Foo();
-		assertTrue(fWorkingSet.isApplicable(myFoo));
+		IAdaptable[] adapted = fWorkingSet.adaptElements(new IAdaptable[] {myFoo});
+		assertEquals(1, adapted.length);
+		assertTrue(adapted[0] instanceof Foo);
     }
     
     public void testApplicableTo_Inheritance() {
     	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		Bar myBar = new Bar();
-		
-		assertTrue(fWorkingSet.isApplicable(myBar));
+		IAdaptable[] adapted = fWorkingSet.adaptElements(new IAdaptable[] {myBar});
+		assertEquals(1, adapted.length);
+		assertTrue(adapted[0] instanceof Bar);
 	}
     
     public void testApplicableTo_Adapter1() {
     	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
-    	ToCommon tc = new ToCommon();
-    	assertTrue(fWorkingSet.isApplicable(tc));
+    	ToFoo tc = new ToFoo();
+    	IAdaptable[] adapted = fWorkingSet.adaptElements(new IAdaptable[] {tc});
+		assertEquals(1, adapted.length);
+		assertTrue(adapted[0] instanceof Foo);
     }
     
     public void testApplicableTo_AdapterManager1() {
     	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
     	IAImpl ia = new IAImpl();
-    	assertTrue(fWorkingSet.isApplicable(ia));
+    	IAdaptable[] adapted = fWorkingSet.adaptElements(new IAdaptable[] {ia});
+		assertEquals(1, adapted.length);
+		assertTrue(adapted[0] instanceof ICommon);
     }
     
     /**
@@ -166,7 +178,7 @@ public class IWorkingSetTest extends UITestCase {
     public void testApplicableTo_AdapterManager2() {
     	fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
     	ModelElement element = new ModelElement();
-    	assertFalse(fWorkingSet.isApplicable(element));
+    	assertTrue(fWorkingSet.adaptElements(new IAdaptable[] {element}).length == 0);
     }
     
     public static class Foo implements IAdaptable {
@@ -184,14 +196,14 @@ public class IWorkingSetTest extends UITestCase {
     	
     }
     
-    public class ToCommon implements IAdaptable {
+    public class ToFoo implements IAdaptable {
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {
-			if (adapter == ICommon.class) {
-				return new ICommon() {};
+			if (adapter == Foo.class) {
+				return new Foo() {};
 			}
 			return null;
 		}

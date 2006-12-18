@@ -26,10 +26,17 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	
 	public static final String PROJECT_NAME = "testContributorResourceAdapter";
 	
-	public static interface ICommon {
+	public static interface ICommon extends IAdaptable {
 	}
 	
-	public static class Common implements ICommon {		
+	public static class Common implements ICommon {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			return null;
+		}	
 	}
 	
 	public static interface IA {
@@ -57,6 +64,13 @@ public class ObjectContributionClasses implements IAdapterFactory {
 	}
 	
 	public static class C implements ICommon {
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			return null;
+		}
 	}
 	
 	public static class CResource implements IAdaptable {

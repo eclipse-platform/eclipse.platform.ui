@@ -27,4 +27,4 @@ Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.jface.databinding
 Eclipse-AutoStart: true
 Plugin-Class: org.eclipse.ui.tests.TestPlugin
-Export-Package: org.eclipse.ui.tests.menus
+Export-Package: org.eclipse.ui.tests.api

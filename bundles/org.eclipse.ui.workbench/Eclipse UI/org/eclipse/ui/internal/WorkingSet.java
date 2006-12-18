@@ -238,16 +238,6 @@ public class WorkingSet extends AbstractWorkingSet {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#isApplicable(org.eclipse.core.runtime.IAdaptable)
-	 */
-	public boolean isApplicable(IAdaptable object) {		
-		WorkingSetDescriptor descriptor = getDescriptor(null);		
-		return descriptor == null || descriptor.isApplicable(object);
-	}
-
 	/**
 	 * Return the working set descriptor for this working set.
 	 * 
@@ -268,5 +258,22 @@ public class WorkingSet extends AbstractWorkingSet {
 			return null;
 
 		return registry.getWorkingSetDescriptor(id);
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkingSet#adaptElements(org.eclipse.core.runtime.IAdaptable[])
+	 */
+	public IAdaptable[] adaptElements(IAdaptable[] objects) {
+		IWorkingSetManager manager = getManager();
+		if (manager instanceof WorkingSetManager) {
+			WorkingSetDescriptor descriptor = getDescriptor(null);
+			if (descriptor != null) {
+				return ((WorkingSetManager) manager).getElementAdapter(
+						descriptor).adaptElements(this, objects);
+			}
+		}
+		return objects;
 	}
 }

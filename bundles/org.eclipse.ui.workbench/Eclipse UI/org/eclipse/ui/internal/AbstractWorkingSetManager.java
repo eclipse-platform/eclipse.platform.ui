@@ -33,6 +33,7 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetElementAdapter;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.PlatformUI;
@@ -68,6 +69,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 
     private BundleContext bundleContext;
     private Map/*<String, IWorkingSetUpdater>*/ updaters= new HashMap();
+
+	private Map/*<String, IWorkingSetElementAdapter>*/ elementAdapters = new HashMap();
     
     private static final IWorkingSetUpdater NULL_UPDATER= new IWorkingSetUpdater() {
 		public void add(IWorkingSet workingSet) {
@@ -81,7 +84,17 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		public void dispose() {
 		}
 	};
-    
+	
+	private static final IWorkingSetElementAdapter IDENTITY_ADAPTER = new IWorkingSetElementAdapter() {
+
+		public IAdaptable[] adaptElements(IWorkingSet ws, IAdaptable[] elements) {
+			return elements;
+		}
+
+		public void dispose() {
+		}
+	};
+		
     /**
      * Returns the descriptors for the given editable working set ids. If an id
      * refers to a missing descriptor, or one that is non-editable, it is
@@ -122,6 +135,10 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     	bundleContext.removeBundleListener(this);
     	for (Iterator iter= updaters.values().iterator(); iter.hasNext();) {
 			((IWorkingSetUpdater)iter.next()).dispose();
+		}
+    	
+    	for (Iterator iter= elementAdapters.values().iterator(); iter.hasNext();) {
+			((IWorkingSetElementAdapter)iter.next()).dispose();
 		}
     }
     
@@ -553,31 +570,44 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     //---- working set delta handling -------------------------------------------------
     
 	public void bundleChanged(BundleEvent event) {
-		if (event.getBundle().getState() != Bundle.ACTIVE) {
-			return;
-		}		
 		if (event.getBundle().getSymbolicName() == null)
 			return;
 		// If the workbench isn't running anymore simply return.
 		if (!Workbench.getInstance().isRunning()) {
 			return;
 		}
-		WorkingSetDescriptor[] descriptors= WorkbenchPlugin.getDefault()
-        	.getWorkingSetRegistry().getDescriptorsForNamespace(event.getBundle().getSymbolicName());
-		synchronized(updaters) {
-			for (int i= 0; i < descriptors.length; i++) {
-				WorkingSetDescriptor descriptor= descriptors[i];
-				List workingSets= getWorkingSetsForId(descriptor.getId());
-				if (workingSets.size() == 0) {
-					continue;
-				}
-				IWorkingSetUpdater updater= getUpdater(descriptor);
-				for (Iterator iter= workingSets.iterator(); iter.hasNext();) {
-					IWorkingSet workingSet= (IWorkingSet)iter.next();
-					if (!updater.contains(workingSet)) {
-						updater.add(workingSet);
+		
+		if (event.getBundle().getState() == Bundle.ACTIVE) {
+			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
+					.getWorkingSetRegistry().getDescriptorsForNamespace(
+							event.getBundle().getSymbolicName());
+			synchronized (updaters) {
+				for (int i = 0; i < descriptors.length; i++) {
+					WorkingSetDescriptor descriptor = descriptors[i];
+					List workingSets = getWorkingSetsForId(descriptor.getId());
+					if (workingSets.size() == 0) {
+						continue;
+					}
+					IWorkingSetUpdater updater = getUpdater(descriptor);
+					for (Iterator iter = workingSets.iterator(); iter.hasNext();) {
+						IWorkingSet workingSet = (IWorkingSet) iter.next();
+						if (!updater.contains(workingSet)) {
+							updater.add(workingSet);
+						}
 					}
 				}
+			}
+		} else if (event.getBundle().getState() == Bundle.STOPPING) {
+			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
+					.getWorkingSetRegistry().getDescriptorsForNamespace(
+							event.getBundle().getSymbolicName());
+			synchronized (elementAdapters) {
+				for (int i = 0; i < descriptors.length; i++) {
+					WorkingSetDescriptor descriptor = descriptors[i];
+					IWorkingSetElementAdapter adapter = (IWorkingSetElementAdapter) elementAdapters.remove(descriptor.getId());
+					if (adapter != null)
+						adapter.dispose();
+				}	
 			}
 		}
 	}
@@ -619,6 +649,20 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         	updaters.put(descriptor.getId(), updater);
     	}
 		return updater;
+	}
+    
+    IWorkingSetElementAdapter getElementAdapter(WorkingSetDescriptor descriptor) {
+		IWorkingSetElementAdapter elementAdapter = (IWorkingSetElementAdapter) elementAdapters
+				.get(descriptor.getId());
+		if (elementAdapter == null) {
+			elementAdapter = descriptor.createWorkingSetElementAdapter();
+			if (elementAdapter == null) {
+				elementAdapter = IDENTITY_ADAPTER;
+			} else {
+				elementAdapters.put(descriptor.getId(), elementAdapter);
+			}
+		}
+		return elementAdapter;
 	}
 
 	private void removeFromUpdater(IWorkingSet workingSet) {

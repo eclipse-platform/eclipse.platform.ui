@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -49,14 +48,14 @@ public class ModifyWorkingSetDelegate extends
 
 		private IWorkingSet set;
 
-		private Collection selectedElements;
+		private IAdaptable [] selectedElements;
 
 		/**
 		 * @param set
 		 * @param selectedElements
 		 * @param add
 		 */
-		private ModifyAction(IWorkingSet set, Collection selectedElements) {
+		private ModifyAction(IWorkingSet set, IAdaptable [] selectedElements) {
 			super(set.getLabel(), IAction.AS_CHECK_BOX);
 			this.set = set;
 			this.selectedElements = selectedElements;
@@ -67,12 +66,13 @@ public class ModifyWorkingSetDelegate extends
 
 			Collection oldElements = Arrays.asList(set.getElements());
 			Set newElements = new HashSet(oldElements.size()
-					+ selectedElements.size());
+					+ selectedElements.length);
 			newElements.addAll(oldElements);
+			List selectedAsList = Arrays.asList(selectedElements);
 			if (add) {
-				newElements.addAll(selectedElements);
+				newElements.addAll(selectedAsList);
 			} else {
-				newElements.removeAll(selectedElements);
+				newElements.removeAll(selectedAsList);
 			}
 			set.setElements((IAdaptable[]) newElements
 					.toArray(new IAdaptable[newElements.size()]));
@@ -186,13 +186,12 @@ public class ModifyWorkingSetDelegate extends
 		super.selectionChanged(actionProxy, selection);
 		menuItems.clear();
 		if (selection instanceof IStructuredSelection) {
-			Collection selectedElements = ((IStructuredSelection) getSelection())
-			.toList();
+			Object[] selectedElements = ((IStructuredSelection) getSelection())
+					.toArray();
 			// ensure every item is of type IAdaptable and is NOT an IWorkingSet (minimal fix for 157799)
 			boolean minimallyOkay = true;
-			for (Iterator i = selectedElements.iterator(); i
-					.hasNext();) {
-				Object object = i.next();
+			for (int i = 0; i < selectedElements.length; i++) {
+				Object object = selectedElements[i];
 				if (!(object instanceof IAdaptable) || object instanceof IWorkingSet) {
 					minimallyOkay = false;
 					break;
@@ -216,31 +215,31 @@ public class ModifyWorkingSetDelegate extends
 								.asList(set.getElements()));
 
 						boolean visible = false;
-						for (Iterator k = selectedElements.iterator(); k
-								.hasNext();) {
-							IAdaptable object = (IAdaptable) k.next();
-							if (add) {
-								if (!existingElements.contains(object)) {
-									if (set.isApplicable(object)) {
-										// show if any element is not present in
-										// addition
-										visible = true;
-									}
-									
-									break;
-								}
-							} else {
-								if (existingElements.contains(object)) {
-									visible = true; // show if any element is
-									// present in
-									// removal
+						IAdaptable [] adaptables = new IAdaptable[selectedElements.length];
+						System.arraycopy(selectedElements, 0, adaptables, 0, selectedElements.length);
+						adaptables = set.adaptElements(adaptables);
+						if (adaptables.length > 0 && add) {
+							for (int k = 0; k < adaptables.length; k++) {
+								if (!existingElements.contains(adaptables[k])) {
+									// show if any element is not present in
+									// addition
+									visible = true;
 									break;
 								}
 							}
 						}
+						else if (adaptables.length > 0) {
+							for (int k = 0; k < adaptables.length; k++) {
+								if (existingElements.contains(adaptables[k]))
+									visible = true; // show if any element
+													// ispresent in removal
+								break;
+							}
+						}
+						
 						if (visible) {
 							ModifyAction action = new ModifyAction(set,
-									selectedElements);
+									adaptables);
 							menuItems.add(action);
 						}
 					}
