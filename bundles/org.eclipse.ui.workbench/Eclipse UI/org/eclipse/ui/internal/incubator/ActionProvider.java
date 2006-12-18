@@ -71,7 +71,7 @@ public class ActionProvider extends AbstractProvider {
 			}
 			if (item instanceof MenuManager) {
 				collectContributions((MenuManager) item, result);
-			} else if (item instanceof ActionContributionItem) {
+			} else if (item instanceof ActionContributionItem && item.isEnabled()) {
 				result.add(item);
 			}
 		}

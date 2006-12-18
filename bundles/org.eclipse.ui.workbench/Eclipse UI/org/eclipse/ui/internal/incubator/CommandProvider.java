@@ -31,7 +31,6 @@ import org.eclipse.ui.keys.IBindingService;
  */
 public class CommandProvider extends AbstractProvider {
 
-	private AbstractElement[] cachedElements;
 	private Map idToElement = new HashMap();
 
 	public String getId() {
@@ -44,29 +43,28 @@ public class CommandProvider extends AbstractProvider {
 	}
 
 	public AbstractElement[] getElements() {
-		if (cachedElements == null) {
-			BindingService bindingService = (BindingService) PlatformUI
-					.getWorkbench().getService(IBindingService.class);
-			Binding[] bindings = bindingService.getBindings();
-			SortedSet commandSet = new TreeSet();
-			for (int i = 0; i < bindings.length; i++) {
-				Binding binding = bindings[i];
-				ParameterizedCommand command = binding
-						.getParameterizedCommand();
-				if (command != null && command.getCommand().isHandled()) {
-					commandSet.add(command);
-				}
-			}
-			ParameterizedCommand[] commands = (ParameterizedCommand[]) commandSet
-					.toArray(new ParameterizedCommand[commandSet.size()]);
-			cachedElements = new AbstractElement[commands.length];
-			for (int i = 0; i < commands.length; i++) {
-				CommandElement commandElement = new CommandElement(commands[i], this);
-				cachedElements[i] = commandElement;
-				idToElement.put(commandElement.getId(), commandElement);
+		idToElement.clear();
+		BindingService bindingService = (BindingService) PlatformUI
+				.getWorkbench().getService(IBindingService.class);
+		Binding[] bindings = bindingService.getBindings();
+		SortedSet commandSet = new TreeSet();
+		for (int i = 0; i < bindings.length; i++) {
+			Binding binding = bindings[i];
+			ParameterizedCommand command = binding.getParameterizedCommand();
+			if (command != null && command.getCommand().isHandled()
+					&& command.getCommand().isEnabled()) {
+				commandSet.add(command);
 			}
 		}
-		return cachedElements;
+		ParameterizedCommand[] commands = (ParameterizedCommand[]) commandSet
+				.toArray(new ParameterizedCommand[commandSet.size()]);
+		for (int i = 0; i < commands.length; i++) {
+			CommandElement commandElement = new CommandElement(commands[i],
+					this);
+			idToElement.put(commandElement.getId(), commandElement);
+		}
+		return (AbstractElement[]) idToElement.values().toArray(
+				new AbstractElement[idToElement.values().size()]);
 	}
 
 	public ImageDescriptor getImageDescriptor() {
