@@ -123,7 +123,7 @@ public class TeamUI {
 				view = (IHistoryView) TeamUIPlugin.getActivePage().findView(IHistoryView.VIEW_ID);
 				return showInputInView(page, input, view, pageSource);
 			} else {
-				view = ((GenericHistoryView)view).findUnpinnedHistoryView();
+				view = ((GenericHistoryView)view).findAppropriateHistoryViewFor(input, pageSource);
 				if (view == null) {
 					view = (IHistoryView) page.showView(IHistoryView.VIEW_ID, IHistoryView.VIEW_ID + System.currentTimeMillis(), IWorkbenchPage.VIEW_CREATE);
 					return showInputInView(page, input, view, pageSource);

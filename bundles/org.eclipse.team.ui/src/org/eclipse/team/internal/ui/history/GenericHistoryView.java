@@ -79,13 +79,13 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			if (page instanceof IHistoryPage) {
 				Object input = ((IHistoryPage)page).getInput();
 				if (input != null)
-					return input.equals(object) && sameSource(source, pageSource);
+					return input.equals(object) && sameSource(getPageSourceFor(object, pageSource), getPageSourceFor(input, source));
 			}
 			return false;
 		}
 
 		public boolean canShow(Object object, IHistoryPageSource pageSource) {
-			if (page instanceof IHistoryPage && sameSource(source, pageSource)) {
+			if (page instanceof IHistoryPage && sameSource(getPageSourceFor(object, pageSource), getPageSourceFor(((IHistoryPage)page).getInput(), source))) {
 				return ((IHistoryPage)page).isValidInput(object);
 			}
 			return false;
@@ -690,6 +690,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		// Check to see if the object is already being displayed in another page
 		IHistoryPage existingPage = checkForExistingPage(object, refresh, force, pageSource);
 		if (existingPage != null){
+			getSite().getPage().bringToTop((IWorkbenchPart)existingPage.getHistoryView());
 			return existingPage;
 		}
 		
@@ -792,9 +793,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				IViewPart historyView = historyViews[i].getView(true);
 				if (historyView instanceof GenericHistoryView) {
 					GenericHistoryView ghv = (GenericHistoryView)historyView;
-					IHistoryPage historyPage = ghv.checkForExistingPage(object, true, pageSource);
+					IHistoryPage historyPage = ghv.checkForExistingPage(object, refresh, pageSource);
 					if (historyPage != null) {
-						getSite().getPage().bringToTop(historyView);
 						return historyPage;
 					}
 				}
@@ -919,5 +919,15 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				// We don't show the description
 			}
 		}
+	}
+
+	public IHistoryView findAppropriateHistoryViewFor(Object input,
+			IHistoryPageSource pageSource) {
+		// First, check to see if the input and pageSource of this view match the input
+		IHistoryPage page = searchHistoryViewsForObject(input, false, pageSource);
+		if (page != null) {
+			return page.getHistoryView();
+		}
+		return findUnpinnedHistoryView();
 	}
 }
