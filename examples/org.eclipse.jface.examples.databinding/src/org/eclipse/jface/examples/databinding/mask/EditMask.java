@@ -15,6 +15,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
+import org.eclipse.jface.examples.databinding.mask.internal.SWTUtil;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
@@ -348,7 +349,11 @@ public class EditMask {
    			if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
    			   replacedSelectedText = true;
    			}
-				Display.getCurrent().asyncExec(updateTextField);
+            // If the machine is loaded down (ie: spyware, malware), we might
+            // get another keystroke before asyncExec can process, so we use 
+            // greedyExec instead.
+            SWTUtil.greedyExec(Display.getCurrent(), updateTextField);
+//				Display.getCurrent().asyncExec(updateTextField);
          }
 		}
 	};
