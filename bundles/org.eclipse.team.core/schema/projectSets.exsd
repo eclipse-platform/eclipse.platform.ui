@@ -16,6 +16,11 @@ A project set file may be used to provide team memebers with a simple way of cre
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="projectSets" minOccurs="0" maxOccurs="unbounded"/>
@@ -38,11 +43,6 @@ A project set file may be used to provide team memebers with a simple way of cre
    </element>
 
    <element name="projectSets">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
