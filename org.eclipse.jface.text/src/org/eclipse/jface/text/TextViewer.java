@@ -1322,8 +1322,10 @@ public class TextViewer extends Viewer implements
 		 * @see KeyListener#keyPressed(org.eclipse.swt.events.KeyEvent)
 		 */
 		public void keyReleased(KeyEvent e) {
-			if (fTextWidget.getSelectionCount() == 0)
+			if (fTextWidget.getSelectionCount() == 0) {
+				fLastSentSelectionChange= null;
 				queuePostSelectionChanged(false);
+			}
 		}
 
 		/*
