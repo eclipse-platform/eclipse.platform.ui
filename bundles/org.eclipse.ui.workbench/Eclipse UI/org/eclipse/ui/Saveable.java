@@ -12,6 +12,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -41,7 +42,7 @@ import org.eclipse.ui.progress.IJobRunnable;
  * @see ISaveablesSource
  * @since 3.2
  */
-public abstract class Saveable extends InternalSaveable {
+public abstract class Saveable extends InternalSaveable implements IAdaptable {
 
 	private Cursor waitCursor;
 	private Cursor originalCursor;
@@ -301,5 +302,18 @@ public abstract class Saveable extends InternalSaveable {
 	 */
 	public boolean supportsBackgroundSave() {
 		return false;
+	}
+	
+	/**
+	 * This implementation of {@link IAdaptable#getAdapter(Class)} returns
+	 * <code>null</code>. Subclasses may override. This allows two unrelated
+	 * subclasses of Saveable to implement {@link #equals(Object)} and
+	 * {@link #hashCode()} based on an underlying implementation class that is
+	 * shared by both Saveable subclasses.
+	 * 
+	 * @since 3.3
+	 */
+	public Object getAdapter(Class adapter) {
+		return null;
 	}
 }
