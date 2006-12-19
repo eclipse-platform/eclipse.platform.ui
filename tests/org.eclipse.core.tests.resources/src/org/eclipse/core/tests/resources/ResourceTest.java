@@ -736,6 +736,22 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
+	 * Returns whether the local file system supports accessing and modifying
+	 * the given attribute.
+	 */
+	protected boolean isAttributeSupported(int attribute) {
+		return (EFS.getLocalFileSystem().attributes() & attribute) != 0;
+	}
+
+	/**
+	 * Returns whether the local file system supports accessing and modifying
+	 * the read only flag.
+	 */
+	protected boolean isReadOnlySupported() {
+		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
+	}
+
+	/**
 	 * Modifies the content of the given file in the file system by
 	 * appending an 'f'.
 	 * @param file
@@ -887,22 +903,6 @@ public abstract class ResourceTest extends CoreTest {
 		// Ensure everything is in a clean state for next one.
 		// Session tests should overwrite it.		
 		cleanup();
-	}
-
-	/**
-	 * Returns whether the local file system supports accessing and modifying
-	 * the read only flag.
-	 */
-	protected boolean isReadOnlySupported() {
-		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
-	}
-
-	/**
-	 * Returns whether the local file system supports accessing and modifying
-	 * the given attribute.
-	 */
-	protected boolean isAttributeSupported(int attribute) {
-		return (EFS.getLocalFileSystem().attributes() & attribute) != 0;
 	}
 
 	/**
