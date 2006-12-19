@@ -840,6 +840,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IPartListener#partActivated(org.eclipse.ui.IWorkbenchPart)
 		 */
 		public void partActivated(IWorkbenchPart part) {
+			// Restore the saved state if any
+			if (part == AbstractTextEditor.this && fMementoToRestore != null && containsSavedState(fMementoToRestore))
+				doRestoreState(fMementoToRestore);
+			fMementoToRestore= null;
+			
 			fActivePart= part;
 			handleActivation();
 		}
@@ -867,26 +872,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see IPartListener#partOpened(org.eclipse.ui.IWorkbenchPart)
 		 */
 		public void partOpened(IWorkbenchPart part) {
-			if (part != AbstractTextEditor.this)
-				return;
-			
-			// Restore the saved state if any
-			// FIXME does not work due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=168429
-//			if (fMementoToRestore != null && containsSavedState(fMementoToRestore)) {
-//				boolean postAsync= false;
-//				if (postAsync) {
-//					final IMemento memento= fMementoToRestore;
-//					getSite().getShell().getDisplay().asyncExec(new Runnable() {
-//						public void run() {
-//							doRestoreState(memento);
-//						}
-//						
-//					});
-//				} else
-//					doRestoreState(fMementoToRestore);
-//			}
-			
-			fMementoToRestore= null;
 		}
 
 		/**
