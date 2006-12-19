@@ -117,13 +117,15 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
     protected void handleDispose() {
     	super.handleDispose();
     	saveable.dispose();
-    	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
-    	if (navigator != null && navigator == super.getNavigator()) {
-    		synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, new CompareNavigator() {
-				protected INavigatable[] getNavigatables() {
-					return new INavigatable[0];
-				}
-			});
+    	if (synchronizeConfiguration != null) {
+	    	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
+	    	if (navigator != null && navigator == super.getNavigator()) {
+	    		synchronizeConfiguration.setProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR, new CompareNavigator() {
+					protected INavigatable[] getNavigatables() {
+						return new INavigatable[0];
+					}
+				});
+	    	}
     	}
     }
 	/* (non-Javadoc)
