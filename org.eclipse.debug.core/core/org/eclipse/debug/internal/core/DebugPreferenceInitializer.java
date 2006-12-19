@@ -15,9 +15,11 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
+ * Initializes preferences for debug.core
+ * 
  * @since 3.3
  */
-public class DebugPreferencInitializer extends AbstractPreferenceInitializer {
+public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()

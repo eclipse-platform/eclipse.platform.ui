@@ -163,7 +163,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="org.eclipse.debug.inernal.core.DebugPreferenceInitializer">
+            class="org.eclipse.debug.internal.core.DebugPreferenceInitializer">
       </initializer>
    </extension>
 
