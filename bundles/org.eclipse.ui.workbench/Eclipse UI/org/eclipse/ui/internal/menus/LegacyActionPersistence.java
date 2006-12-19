@@ -675,10 +675,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param warningsToLog
 	 *            The collection of warnings while parsing this extension point;
 	 *            must not be <code>null</code>.
-	 * @param locationInfo
-	 *            The information required to create the non-leaf portion of the
-	 *            location element; may be <code>null</code> if there is no
-	 *            non-leaf component.
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
@@ -689,11 +685,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @return References to the created menu elements; may be <code>null</code>,
 	 *         and may be empty.
 	 */
-	private final SReference[] readActions(final String primaryId,
+	private final void readActions(final String primaryId,
 			final IConfigurationElement[] elements, final List warningsToLog,
-			final LegacyLocationInfo locationInfo,
 			final Expression visibleWhenExpression, final String viewId) {
-		final Collection references = new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			final IConfigurationElement element = elements[i];
 
@@ -720,11 +714,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 			convertActionToBinding(element, command);
 
-			references.add(new SReference(SReference.TYPE_ITEM, id));
 		}
-
-		return (SReference[]) references.toArray(new SReference[references
-				.size()]);
 	}
 
 	/**
@@ -742,10 +732,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 * @param warningsToLog
 	 *            The list of warnings already logged for this extension point;
 	 *            must not be <code>null</code>.
-	 * @param locationInfo
-	 *            The information required to create the non-leaf portion of the
-	 *            location element; may be <code>null</code> if there is no
-	 *            non-leaf component.
 	 * @param visibleWhenExpression
 	 *            The expression controlling visibility of the corresponding
 	 *            menu elements; may be <code>null</code>.
@@ -757,19 +743,17 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 	 *         may be <code>null</code> if there was a problem parsing the
 	 *         configuration element.
 	 */
-	private final SReference[] readActionsAndMenus(
+	private final void readActionsAndMenus(
 			final IConfigurationElement element, final String id,
-			final List warningsToLog, final LegacyLocationInfo locationInfo,
+			final List warningsToLog, 
 			final Expression visibleWhenExpression, final String viewId) {
 
 		// Read its child elements.
 		final IConfigurationElement[] actionElements = element
 				.getChildren(TAG_ACTION);
-		final SReference[] itemReferences = readActions(id, actionElements,
-				warningsToLog, locationInfo, visibleWhenExpression, viewId);
+		readActions(id, actionElements,
+				warningsToLog, visibleWhenExpression, viewId);
 
-		// There were neither menus nor groups.
-		return itemReferences;
 	}
 
 	/**
@@ -822,12 +806,8 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 
 
 			// Read all of the child elements.
-			final SReference[] references = readActionsAndMenus(element, id,
-					warningsToLog, null, expression, null);
-			if ((references == null) || (references.length == 0)) {
-				continue;
-			}
-
+			readActionsAndMenus(element, id,
+					warningsToLog, expression, null);
 			// Define the action set.
 		}
 
@@ -875,7 +855,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					targetId, window);
 
 			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog, null,
+			readActionsAndMenus(element, id, warningsToLog,
 					visibleWhenExpression, null);
 		}
 
@@ -930,7 +910,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			// ATT_ADAPTABLE,
 			// false);
 
-			final LegacyLocationInfo locationInfo = new LegacyLocationInfo();
 
 			// TODO Read the filter elements.
 			// TODO Read the enablement elements.
@@ -941,7 +920,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					id, warningsToLog);
 
 			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog, locationInfo,
+			readActionsAndMenus(element, id, warningsToLog,
 					visibleWhenExpression, null);
 		}
 
@@ -987,11 +966,9 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			}
 			final Expression visibleWhenExpression = new LegacyViewContributionExpression(
 					targetId, window);
-			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
-					targetId);
 
 			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog, locationInfo,
+			readActionsAndMenus(element, id, warningsToLog,
 					visibleWhenExpression, targetId);
 		}
 
@@ -1035,8 +1012,6 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 			if (targetId == null) {
 				continue;
 			}
-			final LegacyLocationInfo locationInfo = new LegacyLocationInfo(
-					targetId, true);
 
 			// Read the visibility element, if any.
 			final Expression visibleWhenExpression = readVisibility(element,
@@ -1045,7 +1020,7 @@ public final class LegacyActionPersistence extends RegistryPersistence {
 					targetId, window, visibleWhenExpression);
 
 			// Read all of the child elements from the registry.
-			readActionsAndMenus(element, id, warningsToLog, locationInfo,
+			readActionsAndMenus(element, id, warningsToLog,
 					menuVisibleWhenExpression, targetId);
 		}
 

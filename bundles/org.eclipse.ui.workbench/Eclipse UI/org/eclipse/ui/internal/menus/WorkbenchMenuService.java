@@ -23,7 +23,6 @@ import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.ui.ISourceProvider;
-import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
@@ -55,17 +54,10 @@ public final class WorkbenchMenuService implements IMenuService {
 	/**
 	 * Constructs a new instance of <code>MenuService</code> using a menu
 	 * manager.
-	 * 
-	 * @param menuManager
-	 *            The menu manager to use; must not be <code>null</code>.
-	 * @param commandService
-	 *            The command service to use; must not be <code>null</code>.
 	 */
-	public WorkbenchMenuService(final SMenuManager menuManager,
-			final ICommandService commandService) {
-		this.menuAuthority = new MenuAuthority(null);
-		this.menuPersistence = new MenuPersistence(menuManager, this,
-				commandService);
+	public WorkbenchMenuService() {
+		this.menuAuthority = new MenuAuthority();
+		this.menuPersistence = new MenuPersistence(this);
 	}
 
 	public final void addSourceProvider(final ISourceProvider provider) {

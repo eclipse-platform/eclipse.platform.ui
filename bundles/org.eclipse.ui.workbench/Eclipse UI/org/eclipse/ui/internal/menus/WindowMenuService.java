@@ -15,7 +15,6 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.IMenuService;
@@ -35,12 +34,6 @@ import org.eclipse.ui.menus.IMenuService;
 public final class WindowMenuService implements IMenuService {
 
 	/**
-	 * The central authority for determining which menus are visible within this
-	 * window.
-	 */
-	private final MenuAuthority menuAuthority;
-
-	/**
 	 * The parent menu service for this window. This parent must track menu
 	 * definitions and the regsitry. Must not be <code>null</code>
 	 */
@@ -54,81 +47,100 @@ public final class WindowMenuService implements IMenuService {
 	 *            The parent menu service for this window. This parent must
 	 *            track menu definitions and the regsitry. Must not be
 	 *            <code>null</code>
-	 * @param window
-	 *            The workbench window to use; must not be <code>null</code>.
 	 */
-	public WindowMenuService(final IMenuService parent, final Window window) {
+	public WindowMenuService(final IMenuService parent) {
 		if (parent == null) {
 			throw new NullPointerException(
 					"The parent service must not be null"); //$NON-NLS-1$
 		}
-		if (window == null) {
-			throw new NullPointerException("The window must not be null"); //$NON-NLS-1$
-		}
 
-		this.menuAuthority = new MenuAuthority(window);
 		this.parent = parent;
 	}
 
-	public final void addSourceProvider(final ISourceProvider provider) {
-		menuAuthority.addSourceProvider(provider);
-	}
-
-	public final void dispose() {
-		menuAuthority.dispose();
-	}
-
-	public final void removeSourceProvider(final ISourceProvider provider) {
-		menuAuthority.removeSourceProvider(provider);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.MenuManager, org.eclipse.ui.internal.menus.MenuLocationURI)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#populateMenu(org.eclipse.jface.action.MenuManager,
+	 *      org.eclipse.ui.internal.menus.MenuLocationURI)
 	 */
 	public void populateContributionManager(ContributionManager mgr, String uri) {
 		parent.populateContributionManager(mgr, uri);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#getCurrentState()
 	 */
 	public IEvaluationContext getCurrentState() {
 		return parent.getCurrentState();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI, org.eclipse.ui.internal.menus.MenuCacheEntry)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#addCacheForURI(org.eclipse.ui.internal.menus.MenuLocationURI,
+	 *      org.eclipse.ui.internal.menus.MenuCacheEntry)
 	 */
 	public void addContributionFactory(AbstractContributionFactory cache) {
 		parent.addContributionFactory(cache);
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem, org.eclipse.core.expressions.Expression)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.internal.menus.IMenuService#registerVisibleWhen(org.eclipse.jface.action.IContributionItem,
+	 *      org.eclipse.core.expressions.Expression)
 	 */
 	public void registerVisibleWhen(IContributionItem item,
 			Expression visibleWhen) {
 		parent.registerVisibleWhen(item, visibleWhen);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#unregisterVisibleWhen(org.eclipse.jface.action.IContributionItem)
 	 */
 	public void unregisterVisibleWhen(IContributionItem item) {
 		parent.unregisterVisibleWhen(item);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.menus.IMenuService#releaseMenu(org.eclipse.jface.action.ContributionManager)
 	 */
 	public void releaseContributions(ContributionManager mgr) {
 		parent.releaseContributions(mgr);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.menus.IMenuService#removeContributionFactory(org.eclipse.ui.menus.AbstractContributionFactory)
 	 */
 	public void removeContributionFactory(AbstractContributionFactory factory) {
 		parent.removeContributionFactory(factory);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IDisposable#dispose()
+	 */
+	public void dispose() {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IServiceWithSources#addSourceProvider(org.eclipse.ui.ISourceProvider)
+	 */
+	public void addSourceProvider(ISourceProvider provider) {
+		throw new RuntimeException("addSourceProvider"); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.services.IServiceWithSources#removeSourceProvider(org.eclipse.ui.ISourceProvider)
+	 */
+	public void removeSourceProvider(ISourceProvider provider) {
+		throw new RuntimeException("removeSourceProvider"); //$NON-NLS-1$
 	}
 }

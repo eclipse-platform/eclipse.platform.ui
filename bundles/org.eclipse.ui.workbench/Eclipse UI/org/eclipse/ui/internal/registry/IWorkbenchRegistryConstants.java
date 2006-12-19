@@ -13,7 +13,6 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.menus.SOrder;
 
 /**
  * Interface containing various registry constants (tag and attribute names).

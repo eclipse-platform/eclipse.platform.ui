@@ -127,7 +127,6 @@ import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
 import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.keys.BindingService;
-import org.eclipse.ui.internal.menus.SMenuManager;
 import org.eclipse.ui.internal.menus.WorkbenchMenuService;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -1281,9 +1280,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 		serviceLocator.registerService(ICommandImageService.class,
 				commandImageService);
 		
-		serviceMenuManager = new SMenuManager();
-		WorkbenchMenuService menuService = new WorkbenchMenuService(
-				serviceMenuManager, commandService);
+		WorkbenchMenuService menuService = new WorkbenchMenuService();
 		menuService.readRegistry();
 		serviceLocator.registerService(IMenuService.class, menuService);
 
@@ -2967,7 +2964,6 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private MenuSourceProvider menuSourceProvider;
 
-	private SMenuManager serviceMenuManager;
 
 	/**
 	 * Adds the ids of a menu that is now showing to the menu source provider.
@@ -2993,12 +2989,5 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public final void removeShowingMenus(final Set menuIds) {
 		menuSourceProvider.removeShowingMenus(menuIds);
-	}
-
-	/**
-	 * @return
-	 */
-	public SMenuManager getSMenuManager() {
-		return serviceMenuManager;
 	}
 }

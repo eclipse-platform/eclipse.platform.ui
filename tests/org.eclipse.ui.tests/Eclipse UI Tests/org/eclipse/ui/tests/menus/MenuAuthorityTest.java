@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.window.Window;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -161,7 +160,7 @@ public class MenuAuthorityTest extends UITestCase {
 					IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
 		}
 
-		menuAuth = new MenuAuthority((Window) window);
+		menuAuth = new MenuAuthority();
 		ISourceProviderService sp = (ISourceProviderService) window
 				.getService(ISourceProviderService.class);
 		ISourceProvider[] sourceProviders = sp.getSourceProviders();

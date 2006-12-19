@@ -114,7 +114,6 @@ import org.eclipse.ui.internal.layout.LayoutUtil;
 import org.eclipse.ui.internal.layout.TrimLayout;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
-import org.eclipse.ui.internal.menus.TrimBarManager;
 import org.eclipse.ui.internal.menus.TrimBarManager2;
 import org.eclipse.ui.internal.menus.WindowMenuService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -172,7 +171,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	ProgressRegion progressRegion = null;
 	
-	private TrimBarManager trimMgr = null;
 	private TrimBarManager2 trimMgr2 = null;
 	
 	/**
@@ -1508,12 +1506,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			DragUtil.removeDragTarget(null, trimDropTarget);
 			DragUtil.removeDragTarget(getShell(), trimDropTarget);
 			trimDropTarget = null;
-			
-			if (trimMgr != null) {
-				trimMgr.dispose();
-				trimMgr = null;
-			}
-			
+						
 			if (trimMgr2 != null) {
 				trimMgr2.dispose();
 				trimMgr2 = null;
@@ -2572,8 +2565,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 			// get the trim manager to re-locate any -newly contributed-
 			// trim widgets
-			if (trimMgr != null)
-				trimMgr.updateLocations(knownIds);
 			if (trimMgr2 != null)
 				trimMgr2.updateLocations(knownIds);
 		}
@@ -3370,8 +3361,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		defaultLayout.setCenterControl(getPageComposite());
 
 		// Re-populate the trim elements
-		if (trimMgr != null)
-			trimMgr.update(true, false, !topBar.getVisible());
 		if (trimMgr2 != null)
 			trimMgr2.update(true, false, !topBar.getVisible());
 	}
@@ -3627,7 +3616,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final IMenuService parentMenuService = (IMenuService) serviceLocator
 				.getService(IMenuService.class);
 		final IMenuService menuService = new WindowMenuService(
-				parentMenuService, this);
+				parentMenuService);
 		serviceLocator.registerService(IMenuService.class, menuService);
 
 //		final ISourceProviderService sourceProviderService = (ISourceProviderService) serviceLocator
