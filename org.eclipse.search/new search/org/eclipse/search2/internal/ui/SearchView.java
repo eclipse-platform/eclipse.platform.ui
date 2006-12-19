@@ -21,6 +21,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -44,6 +46,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ContributionItemFactory;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
@@ -508,13 +511,26 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 				if (context != null) {
 					ISelection sel= context.getSelection();
 					if (sel != null && !sel.isEmpty()) {
-						MenuManager showInSubMenu= new MenuManager(SearchMessages.SearchView_showIn_menu);
+						MenuManager showInSubMenu= new MenuManager(getShowInMenuLabel());
 						showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
 						menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
 					}
 				}
 			}
 		}
+	}
+	
+	private String getShowInMenuLabel() {
+		String keyBinding= null;
+		
+		IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
+		if (bindingService != null)
+			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+		
+		if (keyBinding == null)
+			keyBinding= ""; //$NON-NLS-1$
+		
+		return NLS.bind(SearchMessages.SearchView_showIn_menu, keyBinding);
 	}
 
 	
