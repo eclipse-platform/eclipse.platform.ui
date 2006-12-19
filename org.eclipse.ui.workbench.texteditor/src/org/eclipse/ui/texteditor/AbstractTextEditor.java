@@ -6231,10 +6231,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (this == obj)
 				return true;
 			
-			if (obj == null || !(obj instanceof TextEditorSavable))
+			if (obj == null || !(obj instanceof Saveable))
 				return false;
+				
+			IEditorInput editorInput= (IEditorInput)((Saveable)obj).getAdapter(IEditorInput.class);
 			
-			return fEditorInput.equals(((TextEditorSavable)obj).fEditorInput);
+			return fEditorInput.equals(editorInput);
+		}
+		
+		/*
+		 * @see org.eclipse.ui.Saveable#getAdapter(java.lang.Class)
+		 */
+		public Object getAdapter(Class adapter) {
+			if (adapter == IEditorInput.class)
+				return fEditorInput;
+			return super.getAdapter(adapter);
 		}
 	}
 	
