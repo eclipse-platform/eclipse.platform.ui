@@ -136,7 +136,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteOpenProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IProject project = null;
@@ -272,7 +272,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteClosedProjectLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IProject project = null;
@@ -396,7 +396,7 @@ public class Bug_026294 extends ResourceTest {
 	 * Works only for Linux with natives.
 	 */
 	public void testDeleteFolderLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IProject project = null;

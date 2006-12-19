@@ -850,7 +850,7 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	protected void setReadOnly(IFileStore target, boolean value) {
-		assertTrue("setReadOnly.1", usingNatives());
+		assertTrue("setReadOnly.1", isReadOnlySupported());
 		IFileInfo fileInfo = target.fetchInfo();
 		fileInfo.setAttribute(EFS.ATTRIBUTE_READ_ONLY, value);
 		try {
@@ -889,9 +889,20 @@ public abstract class ResourceTest extends CoreTest {
 		cleanup();
 	}
 
-	protected boolean usingNatives() {
-		return false;
-		//return LocalFileNatives.usingNatives();
+	/**
+	 * Returns whether the local file system supports accessing and modifying
+	 * the read only flag.
+	 */
+	protected boolean isReadOnlySupported() {
+		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
+	}
+
+	/**
+	 * Returns whether the local file system supports accessing and modifying
+	 * the given attribute.
+	 */
+	protected boolean isAttributeSupported(int attribute) {
+		return (EFS.getLocalFileSystem().attributes() & attribute) != 0;
 	}
 
 	/**

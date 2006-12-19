@@ -13,6 +13,7 @@ package org.eclipse.core.tests.resources.regression;
 import java.io.InputStream;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -98,8 +99,8 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	public void testBug28790() {
-		//test only applicable on windows
-		if (!isWindows())
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE))
 			return;
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("a.txt");

@@ -870,7 +870,7 @@ public class IWorkspaceTest extends ResourceTest {
 	public void testValidateEdit() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		IFile file = project.getFile("myfile.txt");

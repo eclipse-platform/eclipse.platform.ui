@@ -307,7 +307,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testFileBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IFileStore roFolderStore = null;
@@ -387,7 +387,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testFolderBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IFileStore roFolderLocation = null, destinationROFolderLocation = null;
@@ -484,7 +484,7 @@ public class Bug_032076 extends ResourceTest {
 	}
 
 	public void testProjectBugOnLinux() {
-		if (!(Platform.getOS().equals(Platform.OS_LINUX) && usingNatives()))
+		if (!(Platform.getOS().equals(Platform.OS_LINUX) && isReadOnlySupported()))
 			return;
 
 		IWorkspace workspace = getWorkspace();

@@ -362,13 +362,8 @@ public class LocalFile extends FileStore {
 
 	public void putInfo(IFileInfo info, int options, IProgressMonitor monitor) throws CoreException {
 		if ((options & EFS.SET_ATTRIBUTES) != 0) {
-			if (LocalFileNatives.usingNatives()) {
+			if (LocalFileNatives.usingNatives())
 				LocalFileNatives.setFileInfo(filePath, info, options);
-			} else {
-				//non-native implementation
-				if (info.getAttribute(EFS.ATTRIBUTE_READ_ONLY))
-					file.setReadOnly();
-			}
 		}
 		//native does not currently set last modified
 		if ((options & EFS.SET_LAST_MODIFIED) != 0)

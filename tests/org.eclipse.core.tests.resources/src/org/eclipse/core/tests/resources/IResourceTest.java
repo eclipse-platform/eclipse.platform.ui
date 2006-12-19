@@ -1627,7 +1627,7 @@ public class IResourceTest extends ResourceTest {
 	public void testReadOnly() {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");

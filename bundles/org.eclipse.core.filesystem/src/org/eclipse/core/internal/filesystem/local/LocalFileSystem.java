@@ -35,7 +35,8 @@ public class LocalFileSystem extends FileSystem {
 	private static final boolean caseSensitive = MACOSX ? false : new java.io.File("a").compareTo(new java.io.File("A")) != 0; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
-	 * The attributes of this file system
+	 * The attributes of this file system. The initial value of -1 is used
+	 * to indicate that the attributes have not yet been computed.
 	 */
 	private int attributes = -1;
 	/**
@@ -76,12 +77,17 @@ public class LocalFileSystem extends FileSystem {
 	public int attributes() {
 		if (attributes != -1)
 			return attributes;
-		attributes = EFS.ATTRIBUTE_READ_ONLY;
-		//intern so we can compare with constants using identity
-		String os = getOS().intern();
-		if (os == Platform.OS_WIN32)
+		attributes = 0;
+		if (!LocalFileNatives.usingNatives())
+			return attributes;
+
+		//all known platforms support the read only flag
+		attributes |= EFS.ATTRIBUTE_READ_ONLY;
+
+		String os = getOS();
+		if (os.equals(Platform.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if (os == Platform.OS_LINUX || os == Platform.OS_MACOSX)
+		else if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_MACOSX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 		return attributes;
 	}

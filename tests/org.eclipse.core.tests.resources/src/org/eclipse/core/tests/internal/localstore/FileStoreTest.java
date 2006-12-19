@@ -160,7 +160,7 @@ public class FileStoreTest extends LocalStoreTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this part of the test.
-		if (usingNatives()) {
+		if (isReadOnlySupported()) {
 			/* make source read-only and try the copy temp\target -> temp\copy of target */
 			copyOfTarget = temp.getChild("copy of target");
 			setReadOnly(target, true);
@@ -430,7 +430,7 @@ public class FileStoreTest extends LocalStoreTest {
 	public void testReadOnly() throws CoreException {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 
 		IPath root = getWorkspace().getRoot().getLocation().append("" + new Date().getTime());

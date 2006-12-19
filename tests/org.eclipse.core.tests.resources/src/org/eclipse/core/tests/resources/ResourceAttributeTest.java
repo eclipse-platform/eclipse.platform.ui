@@ -55,24 +55,22 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeArchive() {
-		// archive bit only implemented on windows
-		if (!isWindows())
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_ARCHIVE))
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());
 
 		try {
-			// file 
-			// bit is set already for a new file
+			// file bit is set already for a new file
 			assertTrue("1.0", file.getResourceAttributes().isArchive());
 			setArchive(file, false);
 			assertTrue("1.2", !file.getResourceAttributes().isArchive());
 			setArchive(file, true);
 			assertTrue("1.4", file.getResourceAttributes().isArchive());
 
-			// folder
-			// bit is not set already for a new folder
+			// folder bit is not set already for a new folder
 			assertTrue("2.0", !project.getResourceAttributes().isArchive());
 			setArchive(project, true);
 			assertTrue("2.2", project.getResourceAttributes().isArchive());
@@ -82,7 +80,7 @@ public class ResourceAttributeTest extends ResourceTest {
 			fail("2.99", e1);
 		}
 
-		/* remove trash */
+		// remove trash
 		try {
 			project.delete(true, getMonitor());
 		} catch (CoreException e) {
@@ -91,8 +89,8 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeExecutable() {
-		// executable bit not implemented on windows
-		if (isWindows())
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_EXECUTABLE))
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
@@ -117,7 +115,7 @@ public class ResourceAttributeTest extends ResourceTest {
 			fail("2.99", e1);
 		}
 
-		/* remove trash */
+		// remove trash
 		try {
 			project.delete(true, getMonitor());
 		} catch (CoreException e) {
@@ -126,8 +124,8 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeHidden() {
-		// hidden bit only implemented on windows
-		if (!isWindows())
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_HIDDEN))
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
@@ -160,6 +158,9 @@ public class ResourceAttributeTest extends ResourceTest {
 	}
 
 	public void testAttributeReadOnly() {
+		// only activate this test on platforms that support it
+		if (!isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY))
+			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFile file = project.getFile("target");
 		ensureExistsInWorkspace(file, getRandomContents());

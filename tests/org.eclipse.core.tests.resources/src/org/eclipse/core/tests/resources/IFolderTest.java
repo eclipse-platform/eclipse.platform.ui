@@ -357,7 +357,7 @@ public class IFolderTest extends ResourceTest {
 	public void testReadOnlyFolderCopy() throws Exception {
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 		IProject project = getWorkspace().getRoot().getProject("Project");
 		IFolder source = project.getFolder("Folder1");

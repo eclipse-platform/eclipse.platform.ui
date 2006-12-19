@@ -46,7 +46,7 @@ public class IFolderTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 
 		// Only run this test on Linux for now since Windows lets you create

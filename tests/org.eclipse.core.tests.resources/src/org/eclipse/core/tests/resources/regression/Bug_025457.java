@@ -85,7 +85,8 @@ public class Bug_025457 extends ResourceTest {
 
 	public void testFolder() {
 		//this test only works on windows
-		if (!isWindows())
+		//native code must also be present so move can detect the case change
+		if (!isWindows() || !isReadOnlySupported())
 			return;
 		IProject source = getWorkspace().getRoot().getProject("SourceProject");
 		IFolder sourceFolder = source.getFolder("folder");

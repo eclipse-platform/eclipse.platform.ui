@@ -44,7 +44,7 @@ public class IFileTest extends ResourceTest {
 	 */
 	public void testBug25658() {
 
-		// This test is no longer valid since the error code is dependant on whether 
+		// This test is no longer valid since the error code is dependent on whether 
 		// or not the parent folder is marked as read-only. We need to write a different
 		// test to make the file.create fail.	
 		if (true)
@@ -52,7 +52,7 @@ public class IFileTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 
 		// Don't test this on Windows
@@ -87,7 +87,7 @@ public class IFileTest extends ResourceTest {
 
 		// We need to know whether or not we can unset the read-only flag
 		// in order to perform this test.
-		if (!usingNatives())
+		if (!isReadOnlySupported())
 			return;
 
 		// Only run this test on Linux for now since Windows lets you create
