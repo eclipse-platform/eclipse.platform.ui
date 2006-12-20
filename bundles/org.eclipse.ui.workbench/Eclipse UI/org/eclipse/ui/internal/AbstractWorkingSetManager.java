@@ -579,7 +579,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		
 		if (event.getBundle().getState() == Bundle.ACTIVE) {
 			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
-					.getWorkingSetRegistry().getDescriptorsForNamespace(
+					.getWorkingSetRegistry().getUpdaterDescriptorsForNamespace(
 							event.getBundle().getSymbolicName());
 			synchronized (updaters) {
 				for (int i = 0; i < descriptors.length; i++) {
@@ -599,7 +599,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 			}
 		} else if (event.getBundle().getState() == Bundle.STOPPING) {
 			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
-					.getWorkingSetRegistry().getDescriptorsForNamespace(
+					.getWorkingSetRegistry().getElementAdapterDescriptorsForNamespace(
 							event.getBundle().getSymbolicName());
 			synchronized (elementAdapters) {
 				for (int i = 0; i < descriptors.length; i++) {
@@ -626,7 +626,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     private void addToUpdater(IWorkingSet workingSet) {
     	WorkingSetDescriptor descriptor= WorkbenchPlugin.getDefault()
 			.getWorkingSetRegistry().getWorkingSetDescriptor(workingSet.getId());
-    	if (descriptor == null || !descriptor.isDeclaringPluginActive()) {
+    	if (descriptor == null || !descriptor.isUpdaterClassLoaded()) {
 			return;
 		}
 		synchronized(updaters) {

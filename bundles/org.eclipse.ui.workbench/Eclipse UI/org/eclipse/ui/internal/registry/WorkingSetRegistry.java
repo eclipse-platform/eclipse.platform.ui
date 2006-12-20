@@ -17,13 +17,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 
 /**
  * Stores working set descriptors for working set extensions.
  */
-public class WorkingSetRegistry {
+public class WorkingSetRegistry implements IExtensionChangeHandler {
     // used in Workbench plugin.xml for default workingSet extension
     // @issue this is an IDE specific working set page!
     private static final String DEFAULT_PAGE_ID = "org.eclipse.ui.resourceWorkingSetPage"; //$NON-NLS-1$
@@ -31,22 +38,49 @@ public class WorkingSetRegistry {
     private HashMap/*<String, WorkingSetDescriptor>*/ workingSetDescriptors = new HashMap();
 
     /**
+	 * 
+	 */
+	public WorkingSetRegistry() {
+		IExtensionTracker tracker = PlatformUI.getWorkbench()
+				.getExtensionTracker();
+		tracker.registerHandler(this, ExtensionTracker
+				.createExtensionPointFilter(getExtensionPointFilter()));
+
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @since 3.3
+	 */
+	private IExtensionPoint getExtensionPointFilter() {
+		return Platform.getExtensionRegistry().getExtensionPoint(
+				PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_WORKINGSETS);
+	}
+	
+    /**
      * Adds a working set descriptor.
      * 
      * @param descriptor working set descriptor to add. Must not 
      * 	exist in the registry yet.
      */
     public void addWorkingSetDescriptor(WorkingSetDescriptor descriptor) {
-        Assert.isTrue(!workingSetDescriptors.containsValue(descriptor),
-                "working set descriptor already registered"); //$NON-NLS-1$
-        workingSetDescriptors.put(descriptor.getId(), descriptor);
-    }
+		Assert.isTrue(!workingSetDescriptors.containsValue(descriptor),
+				"working set descriptor already registered"); //$NON-NLS-1$
+		IExtensionTracker tracker = PlatformUI.getWorkbench()
+				.getExtensionTracker();
+		tracker.registerObject(descriptor.getConfigurationElement()
+				.getDeclaringExtension(), descriptor,
+				IExtensionTracker.REF_WEAK);
+		workingSetDescriptors.put(descriptor.getId(), descriptor);
+	}
 
     /**
-     * Returns the default, resource based, working set page
-     * 
-     * @return the default working set page.
-     */
+	 * Returns the default, resource based, working set page
+	 * 
+	 * @return the default working set page.
+	 */
     public IWorkingSetPage getDefaultWorkingSetPage() {
         // @issue this will return the IDE resource working set page... not good for generic workbench
         WorkingSetDescriptor descriptor = (WorkingSetDescriptor) workingSetDescriptors
@@ -114,17 +148,35 @@ public class WorkingSetRegistry {
     	return false;
     }
     
-    public WorkingSetDescriptor[] getDescriptorsForNamespace(String namespace) {
-    	Collection descriptors= workingSetDescriptors.values();
-    	List result= new ArrayList();
-    	for (Iterator iter= descriptors.iterator(); iter.hasNext();) {
-			WorkingSetDescriptor descriptor= (WorkingSetDescriptor)iter.next();
+    public WorkingSetDescriptor[] getUpdaterDescriptorsForNamespace(
+			String namespace) {
+		Collection descriptors = workingSetDescriptors.values();
+		List result = new ArrayList();
+		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter
+					.next();
+			if (namespace.equals(descriptor.getUpdaterNamespace())) {
+				result.add(descriptor);
+			}
+		}
+		return (WorkingSetDescriptor[]) result
+				.toArray(new WorkingSetDescriptor[result.size()]);
+	}
+    
+    public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(
+			String namespace) {
+		Collection descriptors = workingSetDescriptors.values();
+		List result = new ArrayList();
+		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter
+					.next();
 			if (namespace.equals(descriptor.getDeclaringNamespace())) {
 				result.add(descriptor);
 			}
 		}
-    	return (WorkingSetDescriptor[])result.toArray(new WorkingSetDescriptor[result.size()]);
-    }
+		return (WorkingSetDescriptor[]) result
+				.toArray(new WorkingSetDescriptor[result.size()]);
+	}
 
     /**
      * Returns the working set page with the given id.
@@ -150,8 +202,26 @@ public class WorkingSetRegistry {
         reader.readWorkingSets(Platform.getExtensionRegistry(), this);
     }
 
-    //for dynamic UI
-    public void removeWorkingSetDescriptor(String id) {
-        workingSetDescriptors.remove(id);
-    }
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+	 */
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
+		WorkingSetRegistryReader reader = new WorkingSetRegistryReader(this);
+		IConfigurationElement[] elements = extension.getConfigurationElements();
+        for (int i = 0; i < elements.length; i++) {
+			reader.readElement(elements[i]);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+	 */
+	public void removeExtension(IExtension extension, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+            if (objects[i] instanceof WorkingSetDescriptor) {
+                WorkingSetDescriptor desc = (WorkingSetDescriptor) objects[i];
+                workingSetDescriptors.remove(desc.getId());
+            }
+        }
+	}
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin
+   id="newWorkingSet1"
+   name="New WorkingSet One Plug-In"
+   version="3.0.0"
+   provider-name="">
+
+   <runtime>
+      <library name="workingSet.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.core.runtime"/>
+   </requires>
+
+   <extension
+         point="org.eclipse.ui.workingSets"
+         id="testDynamicWorkingSetAddition1">
+      <workingSet
+            icon="icons/anything.gif"
+            id="org.eclipse.newWorkingSet1.WorkingSet1"
+            name="Dynamic Working Set 1"
+            pageClass="org.eclipse.ui.dynamic.DynamicWorkingSetPage"
+            updaterClass="org.eclipse.ui.dynamic.DynamicWorkingSetUpdater"
+            elementAdapterClass="org.eclipse.ui.dynamic.DynamicWorkingSetElementAdapter"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.workingSets"
+         id="testDynamicWorkingSetAddition2">
+      <workingSet
+            icon="icons/anything.gif"
+            id="org.eclipse.newWorkingSet1.WorkingSet2"
+            name="Dynamic Working Set 2"
+            pageClass="org.eclipse.ui.dynamic.DynamicWorkingSetPage"
+            updaterClass="org.eclipse.ui.dynamic.DynamicWorkingSetUpdater"
+            elementAdapterClass="org.eclipse.ui/org.eclipse.ui.BasicWorkingSetElementAdapter:org.eclipse.core.resources.IResource;adapt=true"/>
+   </extension>
+</plugin>

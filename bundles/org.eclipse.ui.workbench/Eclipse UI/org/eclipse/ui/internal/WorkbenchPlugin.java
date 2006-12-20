@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal;
 
 import java.io.OutputStream;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Locale;
 
 import org.eclipse.core.runtime.CoreException;
@@ -68,6 +67,8 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class represents the TOP of the workbench UI world
@@ -275,12 +276,108 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 		if (element.getAttribute(extensionName) != null)
 			return true;
+		String elementText = element.getValue();
+		if (elementText != null && !elementText.equals("")) //$NON-NLS-1$
+			return true;
 		IConfigurationElement [] children = element.getChildren(extensionName);
 		if (children.length == 1) {
 			if (children[0].getAttribute(IWorkbenchRegistryConstants.ATT_CLASS) != null)
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Checks to see if the provided element has the syntax for an executable
+	 * extension with a given name that resides in a bundle that is already
+	 * active. Determining the bundle happens in one of two ways:<br/>
+	 * <ul>
+	 * <li>The element has an attribute with the specified name or element text
+	 * in the form <code>bundle.id/class.name[:optional attributes]</code></li>
+	 * <li>The element has a child element with the specified name that has a
+	 * <code>plugin</code> attribute</li>
+	 * </ul>
+	 * 
+	 * @param element
+	 *            the element to test
+	 * @param extensionName
+	 *            the name of the extension to test for
+	 * @return whether or not the bundle expressed by the above criteria is
+	 *         active. If the bundle cannot be determined then the state of the
+	 *         bundle that declared the element is returned.
+	 * @since 3.3
+	 */
+	public static boolean isBundleLoadedForExecutableExtension(
+			IConfigurationElement element, String extensionName) {
+		Bundle bundle = getBundleForExecutableExtension(element, extensionName);
+
+		if (bundle == null)
+			return true;
+		return bundle.getState() == Bundle.ACTIVE;
+	}
+	
+	/**
+	 * Returns the bundle that contains the class referenced by an executable
+	 * extension. Determining the bundle happens in one of two ways:<br/>
+	 * <ul>
+	 * <li>The element has an attribute with the specified name or element text
+	 * in the form <code>bundle.id/class.name[:optional attributes]</code></li>
+	 * <li>The element has a child element with the specified name that has a
+	 * <code>plugin</code> attribute</li>
+	 * </ul>
+	 * 
+	 * @param element
+	 *            the element to test
+	 * @param extensionName
+	 *            the name of the extension to test for
+	 * @return the bundle referenced by the extension. If that bundle cannot be
+	 *         determined the bundle that declared the element is returned. Note
+	 *         that this may be <code>null</code>.
+	 * @since 3.3
+	 */
+	public static Bundle getBundleForExecutableExtension(IConfigurationElement element, String extensionName) {
+		// this code is derived heavily from
+		// ConfigurationElement.createExecutableExtension.  
+		String prop = null;
+		String executable;
+		String contributorName = null;
+		int i;
+
+		if (extensionName != null)
+			prop = element.getAttribute(extensionName);
+		else {
+			// property not specified, try as element value
+			prop = element.getValue();
+			if (prop != null) {
+				prop = prop.trim();
+				if (prop.equals("")) //$NON-NLS-1$
+					prop = null;
+			}
+		}
+
+		if (prop == null) {
+			// property not defined, try as a child element
+			IConfigurationElement[] exec = element.getChildren(extensionName);
+			if (exec.length != 0) 
+				contributorName = exec[0].getAttribute("plugin"); //$NON-NLS-1$
+		} else {
+			// simple property or element value, parse it into its components
+			i = prop.indexOf(':');
+			if (i != -1) 
+				executable = prop.substring(0, i).trim();
+			else
+				executable = prop;
+
+			i = executable.indexOf('/');
+			if (i != -1)
+				contributorName = executable.substring(0, i).trim();
+				
+		}
+		
+		if (contributorName == null)
+			contributorName = element.getContributor().getName();
+		
+		return Platform.getBundle(contributorName);
 	}
 
     /**

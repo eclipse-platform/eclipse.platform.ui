@@ -30,8 +30,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
@@ -138,10 +136,6 @@ class ExtensionEventHandler implements IRegistryChangeListener {
     
     private void appear(IExtensionPoint extPt, IExtension ext) {
         String name = extPt.getSimpleIdentifier();
-        if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_WORKINGSETS)) {
-            loadWorkingSets(ext);
-            return;
-        }
         if (name.equalsIgnoreCase(IWorkbenchRegistryConstants.PL_FONT_DEFINITIONS)) {
             loadFontDefinitions(ext);
             return;
@@ -242,15 +236,5 @@ class ExtensionEventHandler implements IRegistryChangeListener {
             }
         });
 
-    }
-
-    private void loadWorkingSets(IExtension ext) {
-        WorkingSetRegistry wReg = WorkbenchPlugin.getDefault()
-				.getWorkingSetRegistry();
-        WorkingSetRegistryReader reader = new WorkingSetRegistryReader(wReg);
-        IConfigurationElement[] elements = ext.getConfigurationElements();
-        for (int i = 0; i < elements.length; i++) {
-			reader.readElement(elements[i]);
-		}
     }
 }

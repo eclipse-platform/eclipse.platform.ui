@@ -269,10 +269,10 @@ public class WorkingSet extends AbstractWorkingSet {
 		IWorkingSetManager manager = getManager();
 		if (manager instanceof WorkingSetManager) {
 			WorkingSetDescriptor descriptor = getDescriptor(null);
-			if (descriptor != null) {
-				return ((WorkingSetManager) manager).getElementAdapter(
+			if (descriptor == null || !descriptor.isElementAdapterClassLoaded()) 
+				return objects;
+			return ((WorkingSetManager) manager).getElementAdapter(
 						descriptor).adaptElements(this, objects);
-			}
 		}
 		return objects;
 	}

@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPluginContribution;
@@ -29,7 +28,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandling.StatusManager;
-import org.osgi.framework.Bundle;
 
 /**
  * A working set descriptor stores the plugin registry data for 
@@ -126,13 +124,38 @@ public class WorkingSetDescriptor implements IPluginContribution {
     public String getDeclaringNamespace() {
     	return configElement.getNamespace();
     }
+    
+    /**
+	 * Return the namespace that contains the class referenced by the
+	 * updaterClass. May be the bundle that declared this extension or another
+	 * bundle that contains the referenced class.
+	 * 
+	 * @return the namespace
+	 * @since 3.3
+	 */
+	public String getUpdaterNamespace() {
+		return WorkbenchPlugin.getBundleForExecutableExtension(configElement,
+				ATT_UPDATER_CLASS).getSymbolicName();
+	}
+    
+    /**
+	 * Return the namespace that contains the class referenced by the
+	 * elementAdapterClass. May be the bundle that declared this extension or
+	 * another bundle that contains the referenced class.
+	 * 
+	 * @return the namespace
+	 * @since 3.3
+	 */
+	public String getElementAdapterNamespace() {
+		return WorkbenchPlugin.getBundleForExecutableExtension(configElement,
+				ATT_UPDATER_CLASS).getSymbolicName();
+	}
 
     /**
-     * Creates a working set page from this extension descriptor.
-     * 
-     * @return a working set page created from this extension 
-     * 	descriptor.
-     */
+	 * Creates a working set page from this extension descriptor.
+	 * 
+	 * @return a working set page created from this extension descriptor.
+	 */
     public IWorkingSetPage createWorkingSetPage() {
         Object page = null;
 
@@ -249,9 +272,12 @@ public class WorkingSetDescriptor implements IPluginContribution {
         return result;   	
     }
     
-    public boolean isDeclaringPluginActive() {
-    	Bundle bundle= Platform.getBundle(configElement.getNamespace());
-    	return bundle.getState() == Bundle.ACTIVE;
+    public boolean isUpdaterClassLoaded() {
+    	return WorkbenchPlugin.isBundleLoadedForExecutableExtension(configElement, ATT_UPDATER_CLASS);
+    }
+    
+    public boolean isElementAdapterClassLoaded() {
+    	return WorkbenchPlugin.isBundleLoadedForExecutableExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS);
     }
     
     /**
@@ -272,5 +298,15 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
 	public String getPluginId() {
 		return getDeclaringNamespace();
+	}
+	
+	/**
+	 * Return the config element for this descriptor.
+	 * 
+	 * @return the config element
+	 * @since 3.3
+	 */
+	IConfigurationElement getConfigurationElement() {
+		return configElement;
 	}
 }
