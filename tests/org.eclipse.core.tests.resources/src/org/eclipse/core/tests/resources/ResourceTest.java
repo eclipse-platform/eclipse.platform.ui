@@ -748,7 +748,10 @@ public abstract class ResourceTest extends CoreTest {
 	 * the read only flag.
 	 */
 	protected boolean isReadOnlySupported() {
-		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
+		//TODO MUST FIX
+		//XXX MUST FIX
+		return false;
+//		return isAttributeSupported(EFS.ATTRIBUTE_READ_ONLY);
 	}
 
 	/**
