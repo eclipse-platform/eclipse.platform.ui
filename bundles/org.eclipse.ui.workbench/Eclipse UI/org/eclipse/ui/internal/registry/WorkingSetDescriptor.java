@@ -15,8 +15,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
@@ -32,9 +30,6 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.ServiceReference;
-import org.osgi.service.packageadmin.ExportedPackage;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * A working set descriptor stores the plugin registry data for 
@@ -277,95 +272,5 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
 	public String getPluginId() {
 		return getDeclaringNamespace();
-	}
-	
-	/**
-	 * Determines whether the given object can reasonably be contained by
-	 * working sets of this type.
-	 * 
-	 * @param object
-	 *            the object to test
-	 * @return whether the given object can reasonably be contained by working
-	 *         sets of this type
-	 * @since 3.3
-	 */
-	public boolean isApplicable(IAdaptable object) {
-		if (classTypes == null || classTypes.length == 0)
-			return true;
-
-		IAdapterManager adapterManager = Platform.getAdapterManager();
-		Class[] directClasses = adapterManager.computeClassOrder(object
-				.getClass());
-		for (int i = 0; i < directClasses.length; i++) {
-			Class clazz = directClasses[i];
-			if (Arrays.binarySearch(classTypes, clazz.getName()) >= 0)
-				return true;
-		}
-
-		if (adapterTypes != null && adapterTypes.length > 0) {
-			for (int i = 0; i < adapterTypes.length; i++) {
-				String type = adapterTypes[i];
-				int query = adapterManager.queryAdapter(object, type);
-				if (query == IAdapterManager.LOADED) {
-					if (adapterManager.getAdapter(object, type) != null)
-						return true;
-				}
-				else if (query == IAdapterManager.NOT_LOADED) {
-					if (adapterManager.hasAdapter(object, type))
-						return true;
-				}
-			}
-
-			ServiceReference reference = WorkbenchPlugin.getDefault()
-					.getBundleContext().getServiceReference(
-							PackageAdmin.class.getName());
-
-			if (reference != null) {
-				PackageAdmin admin = (PackageAdmin) WorkbenchPlugin
-						.getDefault().getBundleContext().getService(reference);
-
-				try {
-					for (int i = 0; i < adapterTypes.length; i++) {
-						String type = adapterTypes[i];
-						int lastDot = type.lastIndexOf('.');
-						if (lastDot > 0) { // this lives in a package
-							String packageName = type.substring(0, lastDot);
-							ExportedPackage[] packages = admin
-									.getExportedPackages(packageName);
-							if (packages != null && packages.length == 1) {
-								// if there is exactly one exporter of this
-								// package
-								// we can go further
-								if (packages[0].getExportingBundle().getState() == Bundle.ACTIVE) {
-									try {
-										// if the bundle is loaded we can safely
-										// get
-										// the class object and check for an
-										// adapter
-										// on the object directly
-										if (object.getAdapter(packages[0]
-												.getExportingBundle()
-												.loadClass(type)) != null)
-											return true;
-									} catch (ClassNotFoundException e) {
-										IStatus status = StatusUtil
-												.newStatus(
-														WorkbenchPlugin.PI_WORKBENCH,
-														e);
-										StatusManager.getManager().handle(
-												status);
-									}
-								}
-							}
-						}
-					}
-				} finally {
-					WorkbenchPlugin.getDefault().getBundleContext()
-							.ungetService(reference);
-				}
-			}
-		}
-
-		return false;
 	}
 }
