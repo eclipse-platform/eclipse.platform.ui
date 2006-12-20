@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -337,6 +338,34 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 	}
 	
+	
+	private class SerialByObjectRule implements ISchedulingRule
+	{
+    	private Object fObject = null;
+    	
+    	public SerialByObjectRule(Object lock) {
+    		fObject = lock;
+    	}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+		 */
+		public boolean isConflicting(ISchedulingRule rule) {
+			if (rule instanceof SerialByObjectRule) {
+				SerialByObjectRule rRule = (SerialByObjectRule) rule;
+				return fObject == rRule.fObject;
+			}
+			return false;
+		}
+	}
+	
 	private PageBook fPageBook;
 	private AsyncTableRenderingViewer fTableViewer;
 	private TextViewer fTextViewer;
@@ -380,6 +409,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	// list of menu listeners for popupMenuMgr.  
 	private ArrayList fMenuListeners;
 	private MenuManager fMenuMgr;
+	
+	private ISchedulingRule serialByRenderingRule = new SerialByObjectRule(this);
 	
 	/** 
 	 * Identifier for an empty group preceding all context menu actions 
@@ -1716,6 +1747,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 				return Status.OK_STATUS;
 			}};
 		job.setSystem(true);
+		job.setRule(serialByRenderingRule);
 		job.schedule();
 	}
 	
@@ -2038,7 +2070,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		UIJob job = new UIJob("updateLabels"){ //$NON-NLS-1$
 
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				
+							
 				// do not handle if the rendering is already disposed
 				if (fPageBook.isDisposed())
 					return Status.OK_STATUS;
@@ -2244,8 +2276,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#becomesHidden()
 	 */
-	public void becomesHidden() {
-		
+	public void becomesHidden() {		
 		// creates new object for storing potential changes in sync properties
 		fPendingSyncProperties = new PendingPropertyChanges();		
 		super.becomesHidden();
@@ -2261,6 +2292,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 		if (!fIsCreated)
 		{
+			// label can still be constructed even though the rendering has not finished being
+			// initialized
+			updateRenderingLabel(true);
 			super.becomesVisible();
 			return;
 		}
