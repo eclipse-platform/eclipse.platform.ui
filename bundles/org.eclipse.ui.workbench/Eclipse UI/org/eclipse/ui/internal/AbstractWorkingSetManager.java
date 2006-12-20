@@ -25,6 +25,14 @@ import java.util.TreeSet;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
@@ -45,8 +53,11 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetNewWizard;
 import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -57,7 +68,7 @@ import org.osgi.framework.BundleListener;
  * Abstract implementation of <code>IWorkingSetManager</code>.
  */
 public abstract class AbstractWorkingSetManager extends EventManager implements
-		IWorkingSetManager, BundleListener {
+		IWorkingSetManager, BundleListener, IExtensionChangeHandler {
 	
     private SortedSet workingSets = new TreeSet(WorkingSetComparator.INSTANCE);
     
@@ -129,6 +140,19 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     protected AbstractWorkingSetManager(BundleContext context) {
     	bundleContext= context;
     	bundleContext.addBundleListener(this);
+    	PlatformUI.getWorkbench().getExtensionTracker().registerHandler(this, ExtensionTracker
+				.createExtensionPointFilter(getExtensionPointFilter()));
+	}
+    
+    /**
+	 * 
+	 * @return
+	 * @since 3.3
+	 */
+	private IExtensionPoint getExtensionPointFilter() {
+		return Platform.getExtensionRegistry().getExtensionPoint(
+				PlatformUI.PLUGIN_ID,
+				IWorkbenchRegistryConstants.PL_WORKINGSETS);
 	}
     
     public void dispose() {
@@ -597,18 +621,6 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 					}
 				}
 			}
-		} else if (event.getBundle().getState() == Bundle.STOPPING) {
-			WorkingSetDescriptor[] descriptors = WorkbenchPlugin.getDefault()
-					.getWorkingSetRegistry().getElementAdapterDescriptorsForNamespace(
-							event.getBundle().getSymbolicName());
-			synchronized (elementAdapters) {
-				for (int i = 0; i < descriptors.length; i++) {
-					WorkingSetDescriptor descriptor = descriptors[i];
-					IWorkingSetElementAdapter adapter = (IWorkingSetElementAdapter) elementAdapters.remove(descriptor.getId());
-					if (adapter != null)
-						adapter.dispose();
-				}	
-			}
 		}
 	}
 
@@ -645,6 +657,11 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
     			updater= NULL_UPDATER;
     		} else {
     			firePropertyChange(CHANGE_WORKING_SET_UPDATER_INSTALLED, null, updater);
+    			PlatformUI.getWorkbench().getExtensionTracker().registerObject(
+						descriptor.getConfigurationElement()
+								.getDeclaringExtension(), updater,
+						IExtensionTracker.REF_WEAK);
+    			
     		}
         	updaters.put(descriptor.getId(), updater);
     	}
@@ -700,5 +717,79 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 		memento.save(writer);
 		writer.close();
 	
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#addExtension(org.eclipse.core.runtime.dynamichelpers.IExtensionTracker, org.eclipse.core.runtime.IExtension)
+	 */
+	public void addExtension(IExtensionTracker tracker, IExtension extension) {
+		// nothing - this is handled lazily.  These items are only created as needed by the getUpdater() and getElementAdapter() methods
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler#removeExtension(org.eclipse.core.runtime.IExtension, java.lang.Object[])
+	 */
+	public void removeExtension(IExtension extension, Object[] objects) {
+		for (int i = 0; i < objects.length; i++) {
+			Object object = objects[i];
+			if (object instanceof IWorkingSetUpdater) {
+				removeUpdater((IWorkingSetUpdater)object);
+				
+			}
+			if (object instanceof IWorkingSetElementAdapter) {
+				removeElementAdapter((IWorkingSetElementAdapter) object);
+			}
+		} 
+	}
+
+	/**
+	 * Remove the element adapter from the manager and dispose of it.
+	 * 
+	 * @param elementAdapter
+	 * @since 3.3
+	 */
+	private void removeElementAdapter(
+			final IWorkingSetElementAdapter elementAdapter) {
+		SafeRunner.run(new ISafeRunnable() {
+
+			public void handleException(Throwable exception) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(PlatformUI.PLUGIN_ID, exception));
+			}
+
+			public void run() throws Exception {
+				elementAdapter.dispose();
+
+			}
+		});
+		synchronized (elementAdapters) {
+			elementAdapters.values().remove(elementAdapter);
+		}
+	}
+
+	/**
+	 * Remove the updater from the manager and dispose of it.
+	 * 
+	 * @param updater
+	 * @since 3.3
+	 */
+	private void removeUpdater(final IWorkingSetUpdater updater) {
+		SafeRunner.run(new ISafeRunnable() {
+
+			public void handleException(Throwable exception) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(PlatformUI.PLUGIN_ID, exception));
+			}
+
+			public void run() throws Exception {
+				updater.dispose();
+
+			}
+		});
+		synchronized (updaters) {
+			updaters.values().remove(updater);			
+		}
+		firePropertyChange(IWorkingSetManager.CHANGE_WORKING_SET_UPDATER_UNINSTALLED, updater, null);
 	}
 }

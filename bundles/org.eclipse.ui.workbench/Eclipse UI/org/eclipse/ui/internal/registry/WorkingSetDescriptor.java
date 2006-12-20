@@ -306,7 +306,7 @@ public class WorkingSetDescriptor implements IPluginContribution {
 	 * @return the config element
 	 * @since 3.3
 	 */
-	IConfigurationElement getConfigurationElement() {
+	public IConfigurationElement getConfigurationElement() {
 		return configElement;
 	}
 }
