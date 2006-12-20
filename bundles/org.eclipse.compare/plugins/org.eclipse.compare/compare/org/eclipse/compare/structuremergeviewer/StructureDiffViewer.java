@@ -158,9 +158,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		}
 
 		public void dispose() {
-			if (fStructureComparator instanceof IDisposable) {
-				IDisposable disposable = (IDisposable) fStructureComparator;
-				disposable.dispose();
+			if (fStructureComparator != null && fStructureCreator instanceof IStructureCreator2) {
+				IStructureCreator2 sc2 = (IStructureCreator2) fStructureCreator;
+				sc2.destroy(fStructureComparator);
 			}
 		}
 

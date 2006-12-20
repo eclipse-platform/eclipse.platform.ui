@@ -12,8 +12,7 @@ package org.eclipse.team.internal.ui.history;
 
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.ITypedElement;
@@ -30,13 +29,16 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.*;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.TeamStatus;
 import org.eclipse.team.core.history.IFileHistory;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileHistory;
@@ -44,6 +46,7 @@ import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.actions.OpenRevisionAction;
+import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.history.*;
 import org.eclipse.team.ui.synchronize.SaveableCompareEditorInput;
 import org.eclipse.ui.*;
@@ -59,19 +62,18 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	
 	// cached for efficiency
 	/* private */ LocalFileHistory localFileHistory;
-	/* private */IFileRevision[] entries;
 	
 	/* private */ TreeViewer treeViewer;
 	
 	/* private */boolean shutdown = false;
 	
 	//grouping on
-	private boolean groupingOn;
+	private boolean groupingOn = true;
 
 	//toggle constants for default click action
 	private boolean compareMode = false;
 	
-	protected LocalHistoryTableProvider historyTableProvider;
+	protected LocalFileHistoryTableProvider historyTableProvider;
 	private RefreshFileHistory refreshFileHistoryJob;
 	private Composite localComposite;
 	private Action groupByDateMode;
@@ -85,6 +87,143 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	
 	private IFileRevision currentSelection;
 	
+	private final class LocalHistoryContentProvider implements ITreeContentProvider {
+		public Object[] getElements(Object inputElement) {
+			if (inputElement instanceof IFileHistory) {
+				// The entries of already been fetch so return them
+				IFileHistory fileHistory = (IFileHistory) inputElement;
+				return fileHistory.getFileRevisions();
+			}
+			if (inputElement instanceof IFileRevision[]) {
+				return (IFileRevision[]) inputElement;
+			}
+			if (inputElement instanceof AbstractHistoryCategory[]){
+				return (AbstractHistoryCategory[]) inputElement;
+			}
+			return new Object[0];
+		}
+
+		public void dispose() {
+			// Nothing to do
+		}
+
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			// Nothing to do
+		}
+
+		public Object[] getChildren(Object parentElement) {
+			if (parentElement instanceof AbstractHistoryCategory){
+				return ((AbstractHistoryCategory) parentElement).getRevisions();
+			}
+			
+			return new Object[0];
+		}
+
+		public Object getParent(Object element) {
+			return null;
+		}
+
+		public boolean hasChildren(Object element) {
+			if (element instanceof AbstractHistoryCategory){
+				return ((AbstractHistoryCategory) element).hasRevisions();
+			}
+			return false;
+		}
+	}
+
+	private class LocalFileHistoryTableProvider extends LocalHistoryTableProvider {
+		protected IFileRevision adaptToFileRevision(Object element) {
+			// Get the log entry for the provided object
+			IFileRevision entry = null;
+			if (element instanceof IFileRevision) {
+				entry = (IFileRevision) element;
+			} else if (element instanceof IAdaptable) {
+				entry = (IFileRevision) ((IAdaptable) element).getAdapter(IFileRevision.class);
+			} else if (element instanceof AbstractHistoryCategory){
+				IFileRevision[] revisions = ((AbstractHistoryCategory) element).getRevisions();
+				if (revisions.length > 0)
+					entry = revisions[0]; 
+			}
+			return entry;
+		}
+		private long getCurrentRevision() {
+			if (file != null) {
+				return file.getLocalTimeStamp();
+			}
+			return -1;
+		}
+		
+		protected long getModificationDate(Object element) {
+			IFileRevision entry = adaptToFileRevision(element);
+			if (entry != null)
+				return entry.getTimestamp();
+			return -1;
+		}
+		
+		protected boolean isCurrentEdition(Object element) {
+			IFileRevision entry = adaptToFileRevision(element);
+			if (entry == null)
+				return false;
+			long timestamp = entry.getTimestamp();
+			long tempCurrentTimeStamp = getCurrentRevision();
+			return (tempCurrentTimeStamp != -1 && tempCurrentTimeStamp==timestamp);
+		}
+		
+		protected boolean isDeletedEdition(Object element) {
+			IFileRevision entry = adaptToFileRevision(element);
+			return (!entry.exists());
+		}
+	}
+	
+	private class RefreshFileHistory extends Job {
+		public RefreshFileHistory() {
+			super(TeamUIMessages.LocalHistoryPage_FetchLocalHistoryMessage);
+		}
+		public IStatus run(IProgressMonitor monitor)  {
+			try {
+				IStatus status = Status.OK_STATUS;
+				// Assign the instance variable to a local so it does not get cleared well we are refreshing
+				LocalFileHistory fileHistory = localFileHistory;
+				if (fileHistory == null || shutdown)
+					return status;
+				try {
+					fileHistory.refresh(Policy.subMonitorFor(monitor, 50));
+				} catch (CoreException ex) {
+					status = new TeamStatus(ex.getStatus().getSeverity(), TeamUIPlugin.ID, ex.getStatus().getCode(), ex.getMessage(), ex, file);
+				}
+	
+				update(fileHistory.getFileRevisions(), Policy.subMonitorFor(monitor, 50));
+	
+				if (status != Status.OK_STATUS ) {
+					this.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+					this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
+				}
+				
+				return status;
+			} finally {
+				monitor.done();
+			}
+		}
+	}
+	
+	private class HistoryResourceListener implements IResourceChangeListener {
+		public void resourceChanged(IResourceChangeEvent event) {
+			IResourceDelta root = event.getDelta();
+		
+			if (file == null)
+				 return;
+			
+			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
+			if (resourceDelta != null){
+				Display.getDefault().asyncExec(new Runnable() {
+					public void run() {
+						refresh();
+					}
+				});
+			}
+		}
+	}
+	
 	public boolean inputSet() {
 		currentFileRevision = null;
 		IFile tempFile = getFile();
@@ -96,7 +235,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		//to fetch history for
 		this.treeViewer.setInput(null);
 		
-		localFileHistory = new LocalFileHistory(file);
+		localFileHistory = new LocalFileHistory(file, !getHistoryPageSite().isModal());
 		
 		if (refreshFileHistoryJob == null)
 			refreshFileHistoryJob = new RefreshFileHistory();
@@ -106,7 +245,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		return true;
 	}
 
-	private IFile getFile() {
+	protected IFile getFile() {
 		Object obj = getInput();
 		if (obj instanceof IFile)
 			return (IFile) obj;
@@ -118,8 +257,6 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		if (refreshFileHistoryJob.getState() != Job.NONE){
 			refreshFileHistoryJob.cancel();
 		}
-		refreshFileHistoryJob.setFileHistory(localFileHistory);
-		refreshFileHistoryJob.setGrouping(groupingOn);
 		IHistoryPageSite parentSite = getHistoryPageSite();
 		Utils.schedule(refreshFileHistoryJob, getWorkbenchSite(parentSite));
 	}
@@ -180,94 +317,94 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		collapseAll.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COLLAPSE_ALL));
 		collapseAll.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COLLAPSE_ALL));
 		
-		//Compare Mode Action
-		compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
-			public void run() {
-				compareMode = !compareMode;
-				compareModeAction.setChecked(compareMode);
-			}
-		};
-		compareModeAction.setToolTipText(TeamUIMessages.LocalHistoryPage_CompareModeTip); 
-		compareModeAction.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
-		compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
-		compareModeAction.setChecked(false);
-		
-		getContentsAction = getContextMenuAction(TeamUIMessages.LocalHistoryPage_GetContents, true /* needs progress */, new IWorkspaceRunnable() { 
-			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask(null, 100);
-				try {
-					if(confirmOverwrite()) {
-						IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
-						InputStream in = currentStorage.getContents();
-						(file).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
-					}
-				} catch (TeamException e) {
-					throw new CoreException(e.getStatus());
-				} finally {
-					monitor.done();
+		IHistoryPageSite historyPageSite = getHistoryPageSite();
+		if (!historyPageSite.isModal()) {
+			//Compare Mode Action
+			compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
+				public void run() {
+					compareMode = !compareMode;
+					compareModeAction.setChecked(compareMode);
 				}
-			}
-		});
-		//TODO: Doc help
-        //PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, );	
-
-		// Click Compare action
-		compareAction = new CompareRevisionAction(TeamUIMessages.LocalHistoryPage_CompareAction);
-		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				compareAction.setCurrentFileRevision(getCurrentFileRevision());
-				compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
-			}
-		});
-		compareAction.setPage(this);
-		
-		openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
-		treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
-			public void widgetSelected(SelectionEvent e) {
-				openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
-			}
-		});
-		openAction.setPage(this);
-		
-		OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
-		handler.addOpenListener(new IOpenEventListener() {
-			public void handleOpen(SelectionEvent e) {
-				if (getSite() != null) {
-					StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
-					if (compareMode){
-						StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
-						compareAction.selectionChanged(sel);
-						compareAction.run();
-					} else {
-						//Pass in the entire structured selection to allow for multiple editor openings
-						StructuredSelection sel = tableStructuredSelection;
-						openAction.selectionChanged(sel);
-						openAction.run();
+			};
+			compareModeAction.setToolTipText(TeamUIMessages.LocalHistoryPage_CompareModeTip); 
+			compareModeAction.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+			compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+			compareModeAction.setChecked(false);
+			
+			getContentsAction = getContextMenuAction(TeamUIMessages.LocalHistoryPage_GetContents, true /* needs progress */, new IWorkspaceRunnable() { 
+				public void run(IProgressMonitor monitor) throws CoreException {
+					monitor.beginTask(null, 100);
+					try {
+						if(confirmOverwrite()) {
+							IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
+							InputStream in = currentStorage.getContents();
+							(file).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+						}
+					} catch (TeamException e) {
+						throw new CoreException(e.getStatus());
+					} finally {
+						monitor.done();
 					}
 				}
-			}
-		});
-		
-		//Contribute actions to popup menu
-		MenuManager menuMgr = new MenuManager();
-		Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager menuMgr) {
-				fillTableMenu(menuMgr);
-			}
-		});
-		menuMgr.setRemoveAllWhenShown(true);
-		treeViewer.getTree().setMenu(menu);
-		
-		//Don't add the object contribution menu items if this page is hosted in a dialog
-		IHistoryPageSite parentSite = getHistoryPageSite();
-		if (!parentSite.isModal()) {
-			IWorkbenchPart part = parentSite.getPart();
+			});
+			//TODO: Doc help
+	        //PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, );	
+	
+			// Click Compare action
+			compareAction = new CompareRevisionAction(TeamUIMessages.LocalHistoryPage_CompareAction);
+			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					compareAction.setCurrentFileRevision(getCurrentFileRevision());
+					compareAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+				}
+			});
+			compareAction.setPage(this);
+			
+			openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
+			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+				public void widgetSelected(SelectionEvent e) {
+					openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+				}
+			});
+			openAction.setPage(this);
+			
+			OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
+			handler.addOpenListener(new IOpenEventListener() {
+				public void handleOpen(SelectionEvent e) {
+					if (getSite() != null) {
+						StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
+						if (compareMode){
+							StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
+							compareAction.selectionChanged(sel);
+							compareAction.run();
+						} else {
+							//Pass in the entire structured selection to allow for multiple editor openings
+							StructuredSelection sel = tableStructuredSelection;
+							openAction.selectionChanged(sel);
+							openAction.run();
+						}
+					}
+				}
+			});
+			
+			//Contribute actions to popup menu
+			MenuManager menuMgr = new MenuManager();
+			Menu menu = menuMgr.createContextMenu(treeViewer.getTree());
+			menuMgr.addMenuListener(new IMenuListener() {
+				public void menuAboutToShow(IMenuManager menuMgr) {
+					fillTableMenu(menuMgr);
+				}
+			});
+			menuMgr.setRemoveAllWhenShown(true);
+			treeViewer.getTree().setMenu(menu);
+			
+			//Don't add the object contribution menu items if this page is hosted in a dialog
+			IWorkbenchPart part = historyPageSite.getPart();
 			if (part != null) {
 				IWorkbenchPartSite workbenchPartSite = part.getSite();
 				workbenchPartSite.registerContextMenu(menuMgr, treeViewer);
 			}
-			IPageSite pageSite = parentSite.getWorkbenchPageSite();
+			IPageSite pageSite = historyPageSite.getWorkbenchPageSite();
 			if (pageSite != null) {
 				IActionBars actionBars = pageSite.getActionBars();
 				// Contribute toggle text visible to the toolbar drop-down
@@ -280,7 +417,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		}
 
 		//Create the local tool bar
-		IToolBarManager tbm = parentSite.getToolBarManager();
+		IToolBarManager tbm = historyPageSite.getToolBarManager();
 		if (tbm != null) {
 			String fileNameQualifier = getFileNameQualifier();
 			//Add groups
@@ -288,7 +425,8 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 			tbm.appendToGroup(fileNameQualifier+"grouping", groupByDateMode); //$NON-NLS-1$
 			tbm.add(new Separator(fileNameQualifier+"collapse")); //$NON-NLS-1$
 			tbm.appendToGroup(fileNameQualifier+"collapse", collapseAll); //$NON-NLS-1$
-			tbm.appendToGroup(fileNameQualifier+"collapse", compareModeAction);  //$NON-NLS-1$
+			if (compareModeAction != null)
+				tbm.appendToGroup(fileNameQualifier+"collapse", compareModeAction);  //$NON-NLS-1$
 			tbm.update(false);
 		}
 		
@@ -329,58 +467,9 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	 * @return the group control
 	 */
 	protected TreeViewer createTree(Composite parent) {
-
-		historyTableProvider = new LocalHistoryTableProvider();
+		historyTableProvider = new LocalFileHistoryTableProvider();
 		TreeViewer viewer = historyTableProvider.createTree(parent);
-
-		viewer.setContentProvider(new ITreeContentProvider() {
-			public Object[] getElements(Object inputElement) {
-
-				// The entries of already been fetch so return them
-				if (entries != null)
-					return entries;
-				
-				if (!(inputElement instanceof IFileHistory) &&
-					!(inputElement instanceof AbstractHistoryCategory[]))
-					return new Object[0];
-
-				if (inputElement instanceof AbstractHistoryCategory[]){
-					return (AbstractHistoryCategory[]) inputElement;
-				}
-				
-				final IFileHistory fileHistory = (IFileHistory) inputElement;
-				entries = fileHistory.getFileRevisions();
-			
-				return entries;
-			}
-
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-				entries = null;
-			}
-
-			public Object[] getChildren(Object parentElement) {
-				if (parentElement instanceof AbstractHistoryCategory){
-					return ((AbstractHistoryCategory) parentElement).getRevisions();
-				}
-				
-				return null;
-			}
-
-			public Object getParent(Object element) {
-				return null;
-			}
-
-			public boolean hasChildren(Object element) {
-				if (element instanceof AbstractHistoryCategory){
-					return ((AbstractHistoryCategory) element).hasRevisions();
-				}
-				return false;
-			}
-		});
-
+		viewer.setContentProvider(new LocalHistoryContentProvider());
 		return viewer;
 	}
 
@@ -393,27 +482,19 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	public String getDescription() {
-		if (file != null)
-			return file.getFullPath().toString();
-		
+		if (getFile() != null)
+			return getFile().getFullPath().toString();
 		return null;
 	}
 
 	public String getName() {
-		if (file != null)
-			return file.getName();
-		
+		if (getFile() != null)
+			return getFile().getName();
 		return ""; //$NON-NLS-1$
 	}
 
 	public boolean isValidInput(Object object) {
-		//true if object is an unshared file
-		if (object instanceof IFile) {
-			if (!RepositoryProvider.isShared(((IFile) object).getProject()))
-				return true;
-		}
-		
-		return false;
+		return (object instanceof IFile);
 	}
 
 	public void refresh() {
@@ -441,181 +522,17 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 				refreshFileHistoryJob.cancel();
 			}
 		}
-		
-		
-    }
+	}
     
 	public IFileRevision getCurrentFileRevision() {
 		if (currentFileRevision != null)
 			return currentFileRevision;
-
+		
 		if (file != null) 
 			currentFileRevision = new LocalFileRevision(file);
-				
+		
 		return currentFileRevision;
-	}
-	
-	private class RefreshFileHistory extends Job {
-		private final static int NUMBER_OF_CATEGORIES = 4;
-		
-		private LocalFileHistory fileHistory;
-		private AbstractHistoryCategory[] categories;
-		private boolean grouping;
-		private Object[] elementsToExpand;
-	
-		public RefreshFileHistory() {
-			super(TeamUIMessages.LocalHistoryPage_FetchLocalHistoryMessage);
-		}
-		
-		public void setFileHistory(LocalFileHistory fileHistory) {
-			this.fileHistory = fileHistory;
-		}
-	
-		public void setGrouping (boolean value){
-			this.grouping = value;
-		}
-
-		public IStatus run(IProgressMonitor monitor)  {
-		
-			IStatus status = Status.OK_STATUS;
-			
-			if (fileHistory != null && !shutdown) {
-				//If fileHistory termintates in a bad way, try to fetch the local
-				//revisions only
-				try {
-					fileHistory.refresh(monitor);
-				} catch (CoreException ex) {
-					status = new TeamStatus(ex.getStatus().getSeverity(), TeamUIPlugin.ID, ex.getStatus().getCode(), ex.getMessage(), ex, file);
-				}
-
-				if (grouping)
-					sortRevisions();
-
-				Utils.asyncExec(new Runnable() {
-					public void run() {
-						historyTableProvider.setFile(file);
-						if (grouping) {
-							mapExpandedElements(treeViewer.getExpandedElements());
-							treeViewer.getTree().setRedraw(false);
-							treeViewer.setInput(categories);
-							//if user is switching modes and already has expanded elements
-							//selected try to expand those, else expand all
-							if (elementsToExpand.length > 0)
-								treeViewer.setExpandedElements(elementsToExpand);
-							else {
-								treeViewer.expandAll();
-								Object[] el = treeViewer.getExpandedElements();
-								if (el != null && el.length > 0) {
-									treeViewer.setSelection(new StructuredSelection(el[0]));
-									treeViewer.getTree().deselectAll();
-								}
-							}
-							treeViewer.getTree().setRedraw(true);
-						} else {
-							if (fileHistory.getFileRevisions().length > 0) {
-								treeViewer.setInput(fileHistory);
-							} else {
-								categories = new AbstractHistoryCategory[] {getErrorMessage()};
-								treeViewer.setInput(categories);
-							}
-						}
-					}
-				}, treeViewer);
-			}
-
-			if (status != Status.OK_STATUS ) {
-				this.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-				this.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
-			}
-			
-			return status;
-		}
-
-		private void mapExpandedElements(Object[] expandedElements) {
-			//store the names of the currently expanded categories in a map
-			HashMap elementMap = new HashMap();
-			for (int i=0; i<expandedElements.length; i++){
-				elementMap.put(((DateHistoryCategory)expandedElements[i]).getName(), null);
-			}
-			
-			//Go through the new categories and keep track of the previously expanded ones
-			ArrayList expandable = new ArrayList();
-			for (int i = 0; i<categories.length; i++){
-				//check to see if this category is currently expanded
-				if (elementMap.containsKey(categories[i].getName())){
-					expandable.add(categories[i]);
-				}
-			}
-			
-			elementsToExpand = new Object[expandable.size()];
-			elementsToExpand = (Object[]) expandable.toArray(new Object[expandable.size()]);
-		}
-
-		private boolean sortRevisions() {
-			IFileRevision[] fileRevision = fileHistory.getFileRevisions();
-			
-			//Create the 4 categories
-			DateHistoryCategory[] tempCategories = new DateHistoryCategory[NUMBER_OF_CATEGORIES];
-			//Get a calendar instance initialized to the current time
-			Calendar currentCal = Calendar.getInstance();
-			tempCategories[0] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Today, currentCal, null);
-			//Get yesterday 
-			Calendar yesterdayCal = Calendar.getInstance();
-			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
-			tempCategories[1] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Yesterday, yesterdayCal, null);
-			//Get this month
-			Calendar monthCal = Calendar.getInstance();
-			monthCal.set(Calendar.DAY_OF_MONTH, 1);
-			tempCategories[2] = new DateHistoryCategory(TeamUIMessages.HistoryPage_ThisMonth, monthCal, yesterdayCal);
-			//Everything before after week is previous
-			tempCategories[3] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Previous, null, monthCal);
-		
-			ArrayList finalCategories = new ArrayList();
-			for (int i = 0; i<NUMBER_OF_CATEGORIES; i++){
-				tempCategories[i].collectFileRevisions(fileRevision, false);
-				if (tempCategories[i].hasRevisions())
-					finalCategories.add(tempCategories[i]);
-			}
-			
-			//Assume that some revisions have been found
-			boolean revisionsFound = true;
-			
-			if (finalCategories.size() == 0){
-				//no revisions found for the current mode, so add a message category
-				finalCategories.add(getErrorMessage());
-				revisionsFound = false;
-			}
-			
-			categories = (AbstractHistoryCategory[])finalCategories.toArray(new AbstractHistoryCategory[finalCategories.size()]);
-			return revisionsFound;
-		}
-		
-		private MessageHistoryCategory getErrorMessage(){
-			MessageHistoryCategory messageCategory = new MessageHistoryCategory(TeamUIMessages.LocalHistoryPage_NoRevisionsFound);
-			return messageCategory;
-		}
-	}
-	
-	private class HistoryResourceListener implements IResourceChangeListener {
-		/**
-		 * @see IResourceChangeListener#resourceChanged(IResourceChangeEvent)
-		 */
-		public void resourceChanged(IResourceChangeEvent event) {
-			IResourceDelta root = event.getDelta();
-		
-			if (file == null)
-				 return;
-			
-			IResourceDelta resourceDelta = root.findMember(file.getFullPath());
-			if (resourceDelta != null){
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-						refresh();
-					}
-				});
-			}
-		}
-	}
+    }
 	
 	private Action getContextMenuAction(String title, final boolean needsProgressDialog, final IWorkspaceRunnable action) {
 		return new Action(title) {
@@ -690,29 +607,180 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		//toggleCompareAction is going to switch the mode
 		//so make sure that we're in the appropriate mode before
 		compareMode = !compare;
-		compareModeAction.run();
+		if (compareModeAction != null)
+			compareModeAction.run();
 	}
 
 	public ICompareInput getCompareInput(Object object) {
-		if (object != null && object instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) object;
-			if (ss.size() == 1) {
-				Object o = ss.getFirstElement();
-				if (o instanceof IFileRevision){
-					IFileRevision selectedFileRevision = (IFileRevision)o;
-					ITypedElement fileElement = SaveableCompareEditorInput.createFileElement((IFile) file);
-					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
-					DiffNode node = new DiffNode(fileElement, right);
-					return node;
-				}
-			}
+		if (object instanceof IFileRevision){
+			IFileRevision selectedFileRevision = (IFileRevision)object;
+			ITypedElement fileElement = SaveableCompareEditorInput.createFileElement((IFile) file);
+			FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
+			DiffNode node = new DiffNode(fileElement, right);
+			return node;
 		}
 		return null;
 	}
 
-	public void prepareInput(ICompareInput input,
-			CompareConfiguration configuration, IProgressMonitor monitor) {
-		// Nothing to do
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.history.IHistoryCompareAdapter#prepareInput(org.eclipse.compare.structuremergeviewer.ICompareInput, org.eclipse.compare.CompareConfiguration, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void prepareInput(ICompareInput input, CompareConfiguration configuration, IProgressMonitor monitor) {
+		Object right = input.getRight();
+		if (right != null) {
+			String label = getLabel(right);
+			if (label != null)
+				configuration.setRightLabel(label);
+			Image image = getImage(right);
+			if (image != null)
+				configuration.setRightImage(image);
+		}
+		Object left = input.getLeft();
+		if (left != null) {
+			String label = getLabel(left);
+			if (label != null)
+				configuration.setLeftLabel(label);
+			Image image = getImage(left);
+			if (image != null)
+				configuration.setLeftImage(image);
+		}
+	}
+
+	protected Image getImage(Object right) {
+		if (right instanceof FileRevisionTypedElement || right instanceof LocalFileRevision) {
+			return historyTableProvider.getRevisionImage();
+		}
+		if (right instanceof ITypedElement) {
+			ITypedElement te = (ITypedElement) right;
+			return te.getImage();
+		}
+		return null;
+	}
+
+	protected String getLabel(Object object) {
+		if (object instanceof IFileRevision) {
+			IFileRevision revision = (IFileRevision) object;
+			long timestamp = revision.getTimestamp();
+			if (timestamp > 0)
+			return NLS.bind(TeamUIMessages.LocalHistoryPage_0, historyTableProvider.getDateFormat().format(new Date(timestamp)));
+		}
+		if (object instanceof FileRevisionTypedElement) {
+			FileRevisionTypedElement e = (FileRevisionTypedElement) object;
+			return getLabel(e.getRevision());
+		}
+		if (object instanceof LocalResourceTypedElement) {
+			return TeamUIMessages.LocalHistoryPage_1;
+		}
+		return null;
+	}
+
+	/**
+	 * Method invoked from a background thread to update the viewer with the given revisions.
+	 * @param revisions the revisions for the file
+	 * @param monitor a progress monitor
+	 */
+	protected void update(final IFileRevision[] revisions, IProgressMonitor monitor) {
+		// Group the revisions (if appropriate) before running in the UI thread
+		final AbstractHistoryCategory[] categories = groupRevisions(revisions, monitor);
+		// Update the tree in the UI thread
+		Utils.asyncExec(new Runnable() {
+			public void run() {
+				if (categories != null) {
+					Object[] elementsToExpand = mapExpandedElements(categories, treeViewer.getExpandedElements());
+					treeViewer.getTree().setRedraw(false);
+					treeViewer.setInput(categories);
+					//if user is switching modes and already has expanded elements
+					//selected try to expand those, else expand all
+					if (elementsToExpand.length > 0)
+						treeViewer.setExpandedElements(elementsToExpand);
+					else {
+						treeViewer.expandAll();
+						Object[] el = treeViewer.getExpandedElements();
+						if (el != null && el.length > 0) {
+							treeViewer.setSelection(new StructuredSelection(el[0]));
+							treeViewer.getTree().deselectAll();
+						}
+					}
+					treeViewer.getTree().setRedraw(true);
+				} else {
+					if (revisions.length > 0) {
+						treeViewer.setInput(revisions);
+					} else {
+						treeViewer.setInput(new AbstractHistoryCategory[] {getErrorMessage()});
+					}
+				}
+			}
+		}, treeViewer);
+	}
+
+	private AbstractHistoryCategory[] groupRevisions(IFileRevision[] revisions, IProgressMonitor monitor) {
+		if (groupingOn)
+			return sortRevisions(revisions, monitor);
+		return null;
 	}
 	
+	private Object[] mapExpandedElements(AbstractHistoryCategory[] categories, Object[] expandedElements) {
+		//store the names of the currently expanded categories in a map
+		HashMap elementMap = new HashMap();
+		for (int i=0; i<expandedElements.length; i++){
+			elementMap.put(((DateHistoryCategory)expandedElements[i]).getName(), null);
+		}
+		
+		//Go through the new categories and keep track of the previously expanded ones
+		ArrayList expandable = new ArrayList();
+		for (int i = 0; i<categories.length; i++){
+			//check to see if this category is currently expanded
+			if (elementMap.containsKey(categories[i].getName())){
+				expandable.add(categories[i]);
+			}
+		}
+		return (Object[]) expandable.toArray(new Object[expandable.size()]);
+	}
+
+	private AbstractHistoryCategory[] sortRevisions(IFileRevision[] revisions, IProgressMonitor monitor) {
+		
+		try {
+			monitor.beginTask(null, 100);
+			//Create the 4 categories
+			DateHistoryCategory[] tempCategories = new DateHistoryCategory[4];
+			//Get a calendar instance initialized to the current time
+			Calendar currentCal = Calendar.getInstance();
+			tempCategories[0] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Today, currentCal, null);
+			//Get yesterday 
+			Calendar yesterdayCal = Calendar.getInstance();
+			yesterdayCal.roll(Calendar.DAY_OF_YEAR, -1);
+			tempCategories[1] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Yesterday, yesterdayCal, null);
+			//Get this month
+			Calendar monthCal = Calendar.getInstance();
+			monthCal.set(Calendar.DAY_OF_MONTH, 1);
+			tempCategories[2] = new DateHistoryCategory(TeamUIMessages.HistoryPage_ThisMonth, monthCal, yesterdayCal);
+			//Everything before after week is previous
+			tempCategories[3] = new DateHistoryCategory(TeamUIMessages.HistoryPage_Previous, null, monthCal);
+		
+			ArrayList finalCategories = new ArrayList();
+			for (int i = 0; i<tempCategories.length; i++){
+				tempCategories[i].collectFileRevisions(revisions, false);
+				if (tempCategories[i].hasRevisions())
+					finalCategories.add(tempCategories[i]);
+			}
+			
+			if (finalCategories.size() == 0){
+				//no revisions found for the current mode, so add a message category
+				finalCategories.add(getErrorMessage());
+			}
+			
+			return (AbstractHistoryCategory[])finalCategories.toArray(new AbstractHistoryCategory[finalCategories.size()]);
+		} finally {
+			monitor.done();
+		}
+	}
+	
+	private MessageHistoryCategory getErrorMessage(){
+		MessageHistoryCategory messageCategory = new MessageHistoryCategory(getNoChangesMessage());
+		return messageCategory;
+	}
+
+	protected String getNoChangesMessage() {
+		return TeamUIMessages.LocalHistoryPage_NoRevisionsFound;
+	}
 }

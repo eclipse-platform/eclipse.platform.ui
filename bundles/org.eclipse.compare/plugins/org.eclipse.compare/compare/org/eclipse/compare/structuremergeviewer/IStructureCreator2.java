@@ -11,9 +11,9 @@
 package org.eclipse.compare.structuremergeviewer;
 
 import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.services.IDisposable;
 
 /**
  * An extension to the {@link IStructureCreator} interface that supports the
@@ -38,11 +38,11 @@ public interface IStructureCreator2 extends IStructureCreator {
 	 * (e.g. a parsing error) the value <code>null</code> is returned.
 	 * <p>
 	 * This method is equivalent to
-	 * {@link IStructureCreator#getStructure(Object)} with the exception that if
-	 * the returned {@link IStructureComparator} also implements the
-	 * {@link IDisposable} interface, clients are expected to dispose of the
-	 * comparator when it is no longer used. This is done to allow structure creators
-	 * to make use of shared resources such a file buffers.
+	 * {@link IStructureCreator#getStructure(Object)} with the exception that 
+	 * the {@link #destroy(Object)} method must be called with the returned
+	 * comparator as a parameter when the comparator is no longer
+	 * needed. This is done to allow structure creators
+	 * to make use of shared resources such a file buffer.
 	 * <p>
 	 * Also, the node returned from this method should adapt to an 
 	 * {@link ISharedDocumentAdapter} if the provided input has 
@@ -59,6 +59,40 @@ public interface IStructureCreator2 extends IStructureCreator {
 	 *         error
 	 * @throws CoreException
 	 * @see IStructureCreator#getStructure(Object)
+	 * @see #destroy(Object)
 	 */
 	IStructureComparator createStructure(Object input, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Creates the single node specified by path from the given input object.
+	 * This method is equivalent to
+	 * {@link IStructureCreator#locate(Object, Object)} with the exception that 
+	 * the {@link #destroy(Object)} method must be called with the returned
+	 * element as a parameter when the element is no longer
+	 * needed. This is done to allow structure creators
+	 * to make use of shared resources such a file buffer.
+	 * 
+	 * @param element specifies a sub object within the input object
+	 * @param input the object from which to create the
+	 *            <code>ITypedElement</code>
+	 * @param monitor a progress monitor or <code>null</code> if progress is not desired
+	 * @return the single node specified by <code>path</code> or
+	 *         <code>null</code>
+	 * @throws CoreException if an error occurs while parsing the input
+	 * 
+	 * @see IStructureCreator#locate(Object, Object)
+	 * @see #destroy(Object)
+	 */
+	ITypedElement createElement(Object element, Object input, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Release any resources associated with the given object.
+	 * This method must be called for objects returned from either
+	 * {@link #createStructure(Object, IProgressMonitor)} or
+	 * {@link #createElement(Object, Object, IProgressMonitor)}.
+	 * @param object the object to be destroyed
+	 * @see #createElement(Object, Object, IProgressMonitor)
+	 * @see #createStructure(Object, IProgressMonitor)
+	 */
+	void destroy(Object object);
 }

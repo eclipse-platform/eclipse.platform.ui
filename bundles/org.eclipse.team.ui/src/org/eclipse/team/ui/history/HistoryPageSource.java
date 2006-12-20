@@ -25,7 +25,7 @@ public abstract class HistoryPageSource implements IHistoryPageSource {
 	/**
 	 * Convenience method that returns the history page source for the
 	 * given object. This method only finds a source. It does not query the source
-	 * to see if the source can display history for th egiven object.
+	 * to see if the source can display history for the given object.
 	 * @param object the object
 	 * @return he history page source for the
 	 * given object

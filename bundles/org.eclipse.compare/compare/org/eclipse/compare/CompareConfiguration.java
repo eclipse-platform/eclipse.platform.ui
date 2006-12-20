@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.compare;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
@@ -21,7 +20,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -105,12 +104,12 @@ public class CompareConfiguration {
 	private Image fRightImage;
 	private Image fLeftImage;
 	private Image[] fImages= new Image[16];
-	private boolean fCalculateDiffs = true;
 	private ICompareContainer fContainer;
 	private DefaultLabelProvider labelProvider = new DefaultLabelProvider();
 	
-	private class DefaultLabelProvider extends LabelProvider implements ICompareInputLabelProvider {
+	private class DefaultLabelProvider extends LabelProvider implements ICompareInputLabelProvider, ILabelProviderListener {
 		private Map labelProviders = new HashMap();
+		private ICompareInputLabelProvider defaultLabelProvider;
 		public Image getAncestorImage(Object input) {
 			ICompareInputLabelProvider provider = getLabelProvider(input);
 			if (provider != null) {
@@ -166,10 +165,17 @@ public class CompareConfiguration {
 			return fRightLabel;
 		}
 		public ICompareInputLabelProvider getLabelProvider(Object input) {
-			return (ICompareInputLabelProvider)labelProviders.get(input);
+			ICompareInputLabelProvider lp = (ICompareInputLabelProvider)labelProviders.get(input);
+			if (lp == null)
+				return defaultLabelProvider;
+			return lp;
 		}
 		public void setLabelProvider(ICompareInput input, ICompareInputLabelProvider labelProvider) {
+			ICompareInputLabelProvider old = (ICompareInputLabelProvider)labelProviders.get(input);
+			if (old != null)
+				old.removeListener(this);
 			labelProviders.put(input, labelProvider);
+			labelProvider.addListener(this);
 		}
 		public Image getImage(Object element) {
 			ICompareInputLabelProvider provider = getLabelProvider(element);
@@ -200,6 +206,28 @@ public class CompareConfiguration {
 					return label;
 			}
 			return super.getText(element);
+		}
+		
+		public void dispose() {
+			for (Iterator iterator = labelProviders.values().iterator(); iterator.hasNext();) {
+				ICompareInputLabelProvider lp = (ICompareInputLabelProvider) iterator.next();
+				lp.removeListener(this);
+			}
+			if (defaultLabelProvider != null)
+				defaultLabelProvider.removeListener(this);
+			defaultLabelProvider = null;
+			labelProviders.clear();
+		}
+			
+		public void labelProviderChanged(LabelProviderChangedEvent event) {
+			fireLabelProviderChanged(new LabelProviderChangedEvent(this, event.getElements()));
+		}
+		public void setDefaultLabelProvider(ICompareInputLabelProvider labelProvider) {
+			if (defaultLabelProvider != null)
+				defaultLabelProvider.removeListener(this);
+			defaultLabelProvider = labelProvider;
+			if (defaultLabelProvider != null)
+				defaultLabelProvider.addListener(this);
 		}
 	}
 
@@ -568,29 +596,11 @@ public class CompareConfiguration {
 	public Image getRightImage(Object element) {
 		return labelProvider.getRightImage(element);
 	}
-
-	/**
-	 * Returns whether a compare/merge viewer should calculate diffs
-	 * @return <code>true</code> if diffs are to be calculate, <code>false</code> otherwise
-	 * @since 3.3 
-	 */
-	public boolean getCalculateDiffs() {
-		return fCalculateDiffs;
-	}
-
-	/**
-	 * Used to specify if the compare/merge viewers should calculate the diffs between the
-	 * left and right sides. By default, it is initialized to <code>true</code>.
-	 * @param calculateDiffs
-	 * @since 3.3
-	 */
-	public void setCalculateDiffs(boolean calculateDiffs) {
-		fCalculateDiffs = calculateDiffs;
-	}
-
+	
 	/**
 	 * Return the container of the compare associated with this configuration.
 	 * @return the container of the compare associated with this configuration
+	 * @since 3.3
 	 */
 	public ICompareContainer getContainer() {
 		if (fContainer == null) {
@@ -603,22 +613,27 @@ public class CompareConfiguration {
 	/**
 	 * Set the container of the compare associated with this configuration.
 	 * @param container the container of the compare associated with this configuration.
+	 * @since 3.3
 	 */
 	public void setContainer(ICompareContainer container) {
 		fContainer = container;
 	}
 	
 	/**
-	 * Return the label provider for the given compare input or
-	 * <code>null</code> if there is no label provider. If there is
-	 * a label provider for an element, it is consulted to determine
-	 * the ancestor left and right labels and images.
-	 * 
-	 * @param input the compare input
-	 * @return the label provider for the given compare input
+	 * Return the label provider that is used to determine the
+	 * text and labels return by this compare configuration. 
+	 * @return the label provider that is used to determine the
+	 * text and labels return by this compare configuration
+	 * @see #getAncestorImage(Object)
+	 * @see #getAncestorLabel(Object)
+	 * @see #getLeftImage(Object)
+	 * @see #getLeftLabel(Object)
+	 * @see #getRightImage(Object)
+	 * @see #getRightLabel(Object)
+	 * @since 3.3
 	 */
-	public ICompareInputLabelProvider getLabelProvider(Object input) {
-		return labelProvider.getLabelProvider(input);
+	public ICompareInputLabelProvider getLabelProvider() {
+		return labelProvider;
 	}
 	
 	/**
@@ -628,9 +643,26 @@ public class CompareConfiguration {
 	 * disposed when it is no longer needed.
 	 * @param input the compare input
 	 * @param labelProvider the label provider for the compare input
+	 * @since 3.3
 	 */
 	public void setLabelProvider(ICompareInput input, ICompareInputLabelProvider labelProvider) {
 		this.labelProvider.setLabelProvider(input, labelProvider);
+	}
+	
+	/**
+	 * Set the default label provider for this configuration. The default label
+	 * provider is used when a particular label provider has not been assigned
+	 * using
+	 * {@link #setLabelProvider(ICompareInput, ICompareInputLabelProvider)}.
+	 * The compare configuration will not dispose of the label provider when the
+	 * configuration is disposed. It is up to the provider of the label provider
+	 * to ensure that it is disposed when it is no longer needed.
+	 * 
+	 * @param labelProvider the default label provider
+	 * @since 3.3
+	 */
+	public void setDefaultLabelProvider(ICompareInputLabelProvider labelProvider) {
+		this.labelProvider.setDefaultLabelProvider(labelProvider);
 	}
 	
 }

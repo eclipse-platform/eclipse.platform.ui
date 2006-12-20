@@ -571,7 +571,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected final void inputChanged(Object input, Object oldInput) {
 		
 		if (input != oldInput && oldInput != null) {
-			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(oldInput);
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider();
 			if (lp != null)
 				lp.removeListener(labelChangeListener);
 		}
@@ -589,7 +589,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 		}
 		
 		if (input != oldInput && input != null) {
-			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(input);
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider();
 			if (lp != null)
 				lp.addListener(labelChangeListener);
 		}
@@ -894,7 +894,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			container.removeCompareInputChangeListener((ICompareInput)input, fCompareInputChangeListener);
 		}
 		if (input != null) {
-			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider(input);
+			ICompareInputLabelProvider lp = getCompareConfiguration().getLabelProvider();
 			if (lp != null)
 				lp.removeListener(labelChangeListener);
 		}

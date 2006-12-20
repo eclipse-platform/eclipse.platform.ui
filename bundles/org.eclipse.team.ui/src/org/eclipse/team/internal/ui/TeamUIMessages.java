@@ -51,6 +51,12 @@ public class TeamUIMessages extends NLS {
 
 	public static String DiffTreeChangesSection_9;
 
+	public static String EditionHistoryPage_0;
+
+	public static String EditionHistoryPage_1;
+
+	public static String EditionHistoryPage_2;
+
 	public static String ExportProjectSetMainPage_Browse;
 
 	public static String ExportProjectSetMainPage_DeselectAll;
@@ -109,6 +115,10 @@ public class TeamUIMessages extends NLS {
 	public static String IgnorePreferencePage_patternExistsLong;
 	public static String IgnorePreferencePage_patternExistsShort;
 	public static String IgnorePreferencePage_remove;
+
+	public static String LocalHistoryPage_0;
+
+	public static String LocalHistoryPage_1;
 
 	public static String LocalHistoryPage_CollapseAllAction;
 

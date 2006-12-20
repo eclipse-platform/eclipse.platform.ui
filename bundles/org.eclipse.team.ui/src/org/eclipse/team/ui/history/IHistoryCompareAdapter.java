@@ -25,14 +25,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IHistoryCompareAdapter {
 	
 	/**
-	 * Returns an ICompareInput for the passed in object
-	 * @param object
+	 * Returns an ICompareInput for the passed in object.
+	 * @param object the object
 	 * @return returns an ICompareInput
 	 */
 	public ICompareInput getCompareInput(Object object);
 	
 	/**
-	 * Prepare the compare inpur for display. Clients can perform
+	 * Prepare the compare input for display. Clients can perform
 	 * any long running preparations and assign labels to the
 	 * compare configuration.
 	 * @param input the compare input

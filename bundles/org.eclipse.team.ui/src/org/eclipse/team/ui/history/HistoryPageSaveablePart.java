@@ -18,8 +18,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.Utils;
@@ -138,7 +137,13 @@ public class HistoryPageSaveablePart extends PageSaveablePart {
 			return compareInput;
 		IHistoryCompareAdapter compareAdapter = (IHistoryCompareAdapter) Utils.getAdapter(historyPage, IHistoryCompareAdapter.class);
 		if (compareAdapter != null){
-			return compareAdapter.getCompareInput(selection);
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss= (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+					Object o = ss.getFirstElement();
+					return compareAdapter.getCompareInput(o);
+				}
+			}
 		}
 		return null;
 	}

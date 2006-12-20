@@ -1573,20 +1573,13 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	}
 
 	public ICompareInput getCompareInput(Object object) {
-		
-		if (object != null && object instanceof IStructuredSelection) {
-			IStructuredSelection ss= (IStructuredSelection) object;
-			if (ss.size() == 1) {
-				Object o = ss.getFirstElement();
-				if (o instanceof IFileRevision){
-					IFileRevision selectedFileRevision = (IFileRevision)o;
-					if (fileElement == null)
-						fileElement = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
-					FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
-					DiffNode node = new DiffNode(fileElement, right);
-					return node;
-				}
-			}
+		if (object instanceof IFileRevision){
+			IFileRevision selectedFileRevision = (IFileRevision)object;
+			if (fileElement == null)
+				fileElement = SaveableCompareEditorInput.createFileElement((IFile) file.getIResource());
+			FileRevisionTypedElement right = new FileRevisionTypedElement(selectedFileRevision);
+			DiffNode node = new DiffNode(fileElement, right);
+			return node;
 		}
 		return null;
 	}
@@ -1730,15 +1723,17 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			rulerSelectionListener= null;
 		}
 
-		IResource resource = file.getIResource();
-		if (resource instanceof IFile) {
-			IFile file = (IFile) resource;
-			rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), file);
-		} else {
-			Object input = getInput();
-			if (input instanceof IStorageEditorInput) {
-				IStorageEditorInput editorInput = (IStorageEditorInput) input;
-				rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), editorInput);
+		if (!getHistoryPageSite().isModal()) {
+			IResource resource = file.getIResource();
+			if (resource instanceof IFile) {
+				IFile file = (IFile) resource;
+				rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), file);
+			} else {
+				Object input = getInput();
+				if (input instanceof IStorageEditorInput) {
+					IStorageEditorInput editorInput = (IStorageEditorInput) input;
+					rulerSelectionListener= new CVSRevisionAnnotationController(getHistoryPageSite().getWorkbenchPageSite().getPage(), editorInput);
+				}
 			}
 		}
 	}

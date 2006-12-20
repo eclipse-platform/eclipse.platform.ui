@@ -19,8 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
@@ -91,7 +90,8 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 		if (description == null)
 			description = ""; //$NON-NLS-1$
 		setPageDescription(description);
-		setTitle(historyPage.getName());
+		if (getTitle() == null)
+			setTitle(historyPage.getName());
 		historyPage.addPropertyChangeListener(changeListener);
 		return (IPage)historyPage;
 	}
@@ -105,7 +105,13 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 			return compareInput;
 		IHistoryCompareAdapter compareAdapter = (IHistoryCompareAdapter) Utils.getAdapter(historyPage, IHistoryCompareAdapter.class);
 		if (compareAdapter != null){
-			return compareAdapter.getCompareInput(selection);
+			if (selection instanceof IStructuredSelection) {
+				IStructuredSelection ss= (IStructuredSelection) selection;
+				if (ss.size() == 1) {
+					Object o = ss.getFirstElement();
+					return compareAdapter.getCompareInput(o);
+				}
+			}
 		}
 		return null;
 	}

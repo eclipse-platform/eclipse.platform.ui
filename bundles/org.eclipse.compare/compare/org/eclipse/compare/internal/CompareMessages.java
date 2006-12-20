@@ -36,6 +36,7 @@ public final class CompareMessages extends NLS {
 	public static String CompareEditor_7;
 	public static String CompareEditor_8;
 	public static String CompareEditor_9;
+	public static String CompareEditorInput_0;
 	public static String ComparePlugin_internal_error;
 	public static String ComparePreferencePage_0;
 	public static String ComparePreferencePage_1;

@@ -26,16 +26,19 @@ public class LocalFileHistory extends FileHistory {
 	protected IFile file;
 	//used to hold all revisions (changes based on filtering)
 	protected IFileRevision[] revisions;
-	protected boolean refetchRevisions;
+	private final boolean includeCurrent;
 
 	/*
 	 * Creates a new CVSFile history that will fetch remote revisions by default.
 	 */
-	public LocalFileHistory(IFile file) {
+	public LocalFileHistory(IFile file, boolean includeCurrent) {
 		this.file = file;
-		this.refetchRevisions = true;
+		this.includeCurrent = includeCurrent;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileHistory#getContributors(org.eclipse.team.core.history.IFileRevision)
+	 */
 	public IFileRevision[] getContributors(IFileRevision revision) {
 
 		IFileRevision[] revisions = getFileRevisions();
@@ -60,17 +63,33 @@ public class LocalFileHistory extends FileHistory {
 		return new IFileRevision[] {fileRevision};
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileHistory#getFileRevision(java.lang.String)
+	 */
 	public IFileRevision getFileRevision(String id) {
-		// TODO Auto-generated method stub
+		if (revisions != null) {
+			for (int i = 0; i < revisions.length; i++) {
+				IFileRevision revision = revisions[i];
+				if (revision.getContentIdentifier().equals(id)) {
+					return revision;
+				}
+			}
+		}
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileHistory#getFileRevisions()
+	 */
 	public IFileRevision[] getFileRevisions() {
 		if (revisions == null)
 			return new IFileRevision[0];
 		return revisions;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.history.IFileHistory#getTargets(org.eclipse.team.core.history.IFileRevision)
+	 */
 	public IFileRevision[] getTargets(IFileRevision revision) {
 		IFileRevision[] revisions = getFileRevisions();
 		ArrayList directDescendents = new ArrayList();
@@ -90,26 +109,28 @@ public class LocalFileHistory extends FileHistory {
 	 * @throws TeamException 
 	 */
 	public void refresh(IProgressMonitor monitor) throws TeamException {
-		if (refetchRevisions) {
-			monitor.beginTask(Messages.LocalFileHistory_RefreshLocalHistory/*, file.getProjectRelativePath().toString())*/, 300);
-			try {
-				// Include the file's current state if and only if the file exists.
-				LocalFileRevision currentRevision =
-					(file.exists() ? new LocalFileRevision(file) : null);
-				IFileState[] fileStates = file.getHistory(monitor);
-				int numRevisions = fileStates.length + (currentRevision != null ? 1 : 0);
-				revisions = new LocalFileRevision[numRevisions];
-				for (int i = 0; i < fileStates.length; i++) {
-					revisions[i] = new LocalFileRevision(fileStates[i]);
-				}
-				if (currentRevision != null)
-					revisions[fileStates.length] = currentRevision;
-			} catch (CoreException e) {
-				throw TeamException.asTeamException(e);
-			} finally {
-				monitor.done();
+		monitor.beginTask(Messages.LocalFileHistory_RefreshLocalHistory/*, file.getProjectRelativePath().toString())*/, 300);
+		try {
+			// Include the file's current state if and only if the file exists.
+			LocalFileRevision currentRevision =
+				(includeRevisionForFile() ? new LocalFileRevision(file) : null);
+			IFileState[] fileStates = file.getHistory(monitor);
+			int numRevisions = fileStates.length + (currentRevision != null ? 1 : 0);
+			revisions = new LocalFileRevision[numRevisions];
+			for (int i = 0; i < fileStates.length; i++) {
+				revisions[i] = new LocalFileRevision(fileStates[i]);
 			}
+			if (currentRevision != null)
+				revisions[fileStates.length] = currentRevision;
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
+		} finally {
+			monitor.done();
 		}
+	}
+
+	private boolean includeRevisionForFile() {
+		return file.exists() && includeCurrent;
 	}
 
 }

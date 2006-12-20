@@ -146,4 +146,8 @@ public class FileRevisionTypedElement extends StorageTypedElement {
 		}
 	}
 
+	public IFileRevision getRevision() {
+		return fileRevision;
+	}
+
 }

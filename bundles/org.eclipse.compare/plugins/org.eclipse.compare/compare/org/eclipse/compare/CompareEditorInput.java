@@ -161,6 +161,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private ICompareContainer fContainer;
 	private boolean fContainerProvided;
 
+	private String fHelpContextId;
+
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
 	 * compare configuration.
@@ -445,6 +447,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				handleDispose();
 			}
 		});
+		if (fHelpContextId != null)
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, fHelpContextId);
 		contentsCreated();
 		return fComposite;
 	}
@@ -1036,7 +1040,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (isEditable())
 			return CompareMessages.CompareDialog_commit_button;
 		if (isEditionSelectionDialog())
-			return "&Select";
+			return CompareMessages.CompareEditorInput_0;
 		return IDialogConstants.OK_LABEL;
 	}
 
@@ -1106,6 +1110,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Set the help context id for this input.
+	 * @param helpContextId the help context id.
+	 * @since 3.3
+	 */
+	public void setHelpContextId(String helpContextId) {
+		this.fHelpContextId = helpContextId;	
 	}
 }
 

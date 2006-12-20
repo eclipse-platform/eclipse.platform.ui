@@ -269,4 +269,139 @@ public abstract class StructureCreator implements IStructureCreator2 {
 			}
 		};
 	}
+	
+	/**
+	 * Default implementation of {@link #createElement(Object, Object, IProgressMonitor)}
+	 * that uses {@link #getPath(Object, Object)} to determine the
+	 * path for the element, {@link #createStructure(Object, IProgressMonitor)} to create the structure
+	 * and {@link #findElement(IStructureComparator, String[])} to find the
+	 * element in the structure. Subclasses may override.
+	 * @param element the element
+	 * @param input the containing input
+	 * @param monitor a progress monitor
+	 * @return the sub-structure element in the input for the given element
+	 * @throws CoreException if a parse error occurred
+	 */
+	public ITypedElement createElement(Object element, Object input, IProgressMonitor monitor)
+			throws CoreException {
+		String[] path= getPath(element, input);
+		if (path == null) {
+			// TODO: Temporary code until subclasses are updated
+			IStructureComparator locate = locate(element, input);
+			if (locate instanceof ITypedElement) {
+				return (ITypedElement)locate;
+			}
+			return null;
+		}
+
+		// Build the structure
+		IStructureComparator structure= createStructure(input, monitor);
+		if (structure == null)	// we couldn't parse the structure 
+			return null;		// so we can't find anything
+			
+		// find the path in the tree
+		return findElement(structure, path);
+	}
+	
+	/**
+	 * Default implementation of {@link #locate(Object, Object)} that
+	 * uses {@link #getPath(Object, Object)} to determine the
+	 * path for the element, {@link #getStructure(Object)} to create the structure
+	 * and {@link #findElement(IStructureComparator, String[])} to find the
+	 * element in the structure.  Subclasses may override.
+	 * @param element the element
+	 * @param input the containing input
+	 * @return the sub-structure element in the input for the given element
+	 */
+	public IStructureComparator locate(Object element, Object input) {
+		String[] path= getPath(element, input);
+		if (path == null)
+			return null;
+		// Build the structure
+		IStructureComparator structure= getStructure(input);
+		if (structure == null)	// we couldn't parse the structure 
+			return null;		// so we can't find anything
+			
+		// find the path in the tree
+		return (IStructureComparator)findElement(structure, path);
+	}
+	
+	/**
+	 * Find the element at the given path in the given structure.
+	 * This method is invoked from the {@link #createElement(Object, Object, IProgressMonitor)}
+	 * and {@link #locate(Object, Object)} methods to find the element for
+	 * the given path.
+	 * @param structure the structure
+	 * @param path the path of an element in the structure
+	 * @return the element at the given path in the structure or <code>null</code>
+	 */
+	protected ITypedElement findElement(IStructureComparator structure, String[] path) {
+		return (ITypedElement)find(structure, path, 0);
+	}
+
+	/**
+	 * Recursively extracts the given path from the tree.
+	 */
+	private IStructureComparator find(IStructureComparator tree, String[] path, int index) {
+		if (tree != null) {
+			Object[] children= tree.getChildren();
+			if (children != null) {
+				for (int i= 0; i < children.length; i++) {
+					IStructureComparator child= (IStructureComparator) children[i];
+					if (child instanceof ITypedElement && child instanceof DocumentRangeNode) {
+						String n1= null;
+						if (child instanceof DocumentRangeNode)
+							n1= ((DocumentRangeNode)child).getId();
+						if (n1 == null)
+							n1= ((ITypedElement)child).getName();
+						String n2= path[index];
+						if (n1.equals(n2)) {
+							if (index == path.length-1)
+								return child;
+							IStructureComparator result= find(child, path, index+1);
+							if (result != null)
+								return result;
+						}	
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Return the path of the element in the structure of it's containing input
+	 * or <code>null</code> if the element is not contained in the input. This method is
+	 * invoked from {@link #createElement(Object, Object, IProgressMonitor)} and
+	 * {@link #locate(Object, Object)} methods to determine
+	 * the path to be passed to {@link #findElement(IStructureComparator, String[])}.
+	 * By default, <code>null</code> is returned. Subclasses may override.
+	 * @param element the element
+	 * @param input the input
+	 * @return the path of the element in the structure of it's containing input
+	 * or <code>null</code>
+	 */
+	protected String[] getPath(Object element, Object input) {
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.structuremergeviewer.IStructureCreator2#destroy(java.lang.Object)
+	 */
+	public void destroy(Object object) {
+		IDisposable disposable = getDisposable(object);
+		if (disposable != null)
+			disposable.dispose();
+	}
+
+	private IDisposable getDisposable(Object object) {
+		if (object instanceof IDisposable) {
+			return (IDisposable) object;	
+		}
+		if (object instanceof DocumentRangeNode) {
+			DocumentRangeNode node = (DocumentRangeNode) object;
+			return getDisposable(node.getParentNode());
+		}
+		return null;
+	}
 }

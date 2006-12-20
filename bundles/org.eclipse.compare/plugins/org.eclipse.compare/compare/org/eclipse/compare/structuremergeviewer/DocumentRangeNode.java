@@ -455,5 +455,14 @@ public class DocumentRangeNode
 			return fParent.validateEdit(shell);
 		return Status.OK_STATUS;
 	}
+
+	/**
+	 * Return the parent of this node or <code>null</code>
+	 * if the node doesn't have a parent or the parent is not known.
+	 * @return the parent of this node or <code>null</code>
+	 */
+	public Object getParentNode() {
+		return fParent;
+	}
 }
 
