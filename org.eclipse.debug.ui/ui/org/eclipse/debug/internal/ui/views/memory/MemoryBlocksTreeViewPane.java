@@ -54,8 +54,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -79,7 +79,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
 	
 	private IViewPart fParent;
-	private AsynchronousTreeViewer fTreeViewer;
+	private MemoryViewTreeViewer fTreeViewer;
 	protected IMemoryBlockRetrieval fRetrieval;
 	private ViewPaneSelectionProvider fSelectionProvider;
 	private AddMemoryBlockAction fAddMemoryBlockAction;
@@ -89,7 +89,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	private boolean fVisible = true;
 	private TreeViewPaneContextListener fDebugContextListener;
 	private ViewPaneEventHandler fEvtHandler;
-	private Hashtable fViewerState = new Hashtable();			// for saving and restoring expansion and selection
 	private String fLabel;
 	
 	class TreeViewerRemoveMemoryBlocksAction extends Action
@@ -174,7 +173,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		 */
 		public void dispose() {
 			fDisposed = true;
-			fTreeViewer.dispose();
 			DebugPlugin.getDefault().getMemoryBlockManager().removeListener(this);
 			DebugPlugin.getDefault().removeDebugEventListener(this);
 		}
@@ -230,10 +228,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 						job.setSystem(true);
 						job.schedule();
 					}
-					
-					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(event.getSource());
-					if (retrieval != null)
-						fViewerState.remove(retrieval);
 				}
 			}
 		}
@@ -293,7 +287,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			
 			if (selection.isEmpty() && fRetrieval != null)
 			{
-				saveViewerState();
 				fRetrieval = null;
 				if (fTreeViewer != null)
 					fTreeViewer.setInput(fRetrieval);
@@ -310,35 +303,12 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 					IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
 					if (retrieval != null && fTreeViewer != null && retrieval != fRetrieval)
 					{
-						// save current setting
-						saveViewerState();
-						
 						// set new setting
 						fRetrieval = retrieval;
 						fTreeViewer.setInput(fRetrieval);
-						
-						MemoryViewerState newState = (MemoryViewerState)fViewerState.get(fRetrieval);
-						if (newState != null)
-						{
-							newState.restoreState(fTreeViewer);
-						}
 					}
 					updateActionsEnablement();
 				}
-			}
-		}
-
-		/**
-		 * 
-		 */
-		private void saveViewerState() {
-			if (fRetrieval != null && fTreeViewer != null)
-			{
-				MemoryViewerState state = (MemoryViewerState)fViewerState.get(fRetrieval);
-				if (state == null)
-					state = new MemoryViewerState(fTreeViewer);
-				state.saveState(fTreeViewer);
-				fViewerState.put(fRetrieval, state);
 			}
 		}
 
@@ -361,12 +331,13 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public Control createViewPane(Composite parent, String paneId, String label)
 	{
 		fPaneId = paneId;
-		fTreeViewer = new MemoryViewTreeViewer(parent);
+		int style = SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL;
+
 		fLabel = label;
 		
 		IMemoryRenderingSite site = getMemoryRenderingSite();
 		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(site, this, null);
-		fTreeViewer.setContext(presentationContext);
+		fTreeViewer = new MemoryViewTreeViewer(parent, style, presentationContext);
 		
 		IAdaptable context = DebugUITools.getDebugContext();
 		IMemoryBlockRetrieval retrieval = getMemoryBlockRetrieval(context);
@@ -435,14 +406,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			if (memoryBlocks.length > 0)
 				memoryBlock = memoryBlocks[0];
 		}
-		
-		TreePath[] paths = getTreePaths(memoryBlock);
-		
-		// Set selection if tree path is not empty
-		if (memoryBlock != null && paths != null && paths.length > 0)
-		{
-			fTreeViewer.setSelection(new TreeSelection(paths));
-		}
 	}
 	
 	private IMemoryBlock getMemoryBlock(ISelection selection)
@@ -495,6 +458,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		
+
 
 		if (selection instanceof IStructuredSelection)
 		{
@@ -512,34 +477,15 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 						if (((IStructuredSelection)treeSel).getFirstElement() == obj)
 							return;
 					}
-					
-					// fTreeViewer must take a TreeSelection
-					// When selection is set, the tree may not have been populated with the 
-					// selected object yet.  As a result, we will not be able to compute the tree
-					// path and create tree selection for client.
-					// As a work around, clients may create TreeSelection and set it as the selection
-					// in the Memory View.
-					// Need to think about if this is the way to go.  Added this code to make sure
-					// clients can set selections successfully.
-					if (selection instanceof TreeSelection)
-					{
-						// if already a tree selection, set selection
-						fTreeViewer.setSelection(selection);
-					}
-					else
-					{
-						// otherwise, try to convert to a tree selection
-						TreePath[] paths = getTreePaths(obj);
-						if (paths != null)
-							fTreeViewer.setSelection(new TreeSelection(paths));
-					}
+					// remove itself as selection listener when handling selection changed event
+					removeSelctionListener(this);
+					fTreeViewer.setSelection(selection);
+					// remove itself as selection listener when handling selection changed event
+					addSelectionListener(this);
 				}
 			}
 		}
-	}
-
-	private TreePath[] getTreePaths(Object selectedObj) {
-		return fTreeViewer.getTreePaths(selectedObj);
+		
 	}
 
 	private IMemoryBlockRetrieval getMemoryBlockRetrieval(Object obj) {
@@ -690,7 +636,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		}
 	}
 	
-	public AsynchronousTreeViewer getViewer()
+	public StructuredViewer getViewer()
 	{
 		return fTreeViewer;
 	}

@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
 /**
  * @since 3.3
  */
-class TreeModelLabelProvider extends ColumnLabelProvider {
+public class TreeModelLabelProvider extends ColumnLabelProvider {
 	
 	private InternalTreeModelViewer fViewer;
 	private List fComplete;

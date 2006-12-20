@@ -13,6 +13,9 @@ package org.eclipse.debug.internal.ui.viewers.update;
 
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IMemoryBlockListener;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -27,6 +30,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.progress.UIJob;
 
 public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryBlockListener {
 	private IMemoryBlockRetrieval fRetrieval;
@@ -38,8 +42,9 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 	}
 	
 	public void memoryBlocksAdded(IMemoryBlock[] memory) {
-		
-		ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
+		IMemoryBlock[] allMB = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks(fRetrieval);
+		int lastIndex = allMB.length - memory.length;
+		ModelDelta delta = new ModelDelta(fRetrieval, 0, IModelDelta.NO_CHANGE, allMB.length);
 		
 		for (int i=0; i<memory.length; i++){
 			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
@@ -50,8 +55,8 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 			{
 				if (retrieval == fRetrieval)
 				{
-					// select and take view's pinning state into account
-					delta.addNode(memory[i], IModelDelta.ADDED | IModelDelta.SELECT);
+					// select the newly added memory block
+					delta.addNode(memory[i], lastIndex+i, IModelDelta.ADDED | IModelDelta.SELECT, 0);
 				}
 			}
 		}
@@ -59,31 +64,39 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 		fireModelChanged(delta);
 	}
 
-	public void memoryBlocksRemoved(IMemoryBlock[] memory) {
-		ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
+	public void memoryBlocksRemoved(final IMemoryBlock[] memory) {
 		
-		// find a memory block to select
-		
-		for (int i=0; i<memory.length; i++){
-			IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
-			if (retrieval == null)
-				retrieval = memory[i].getDebugTarget();
-			
-			if (retrieval != null)
-			{
-				if (retrieval == fRetrieval)
-				{
-					// do not change selection if the memory block removed is not 
-					// currently selected
-					if (isMemoryBlockSelected(getCurrentSelection(), memory[i]))
-						addSelectDeltaNode(delta);
-					delta.addNode(memory[i], IModelDelta.REMOVED);
+		UIJob job = new UIJob("memory blocks removed"){ //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
+				
+				// find a memory block to select
+				
+				for (int i=0; i<memory.length; i++){
+					IMemoryBlockRetrieval retrieval = (IMemoryBlockRetrieval)memory[i].getAdapter(IMemoryBlockRetrieval.class);
+					if (retrieval == null)
+						retrieval = memory[i].getDebugTarget();
+					
+					if (retrieval != null)
+					{
+						if (retrieval == fRetrieval)
+						{
+							// do not change selection if the memory block removed is not 
+							// currently selected
+							// #getCurrentSelection must be run on the UI thread
+							if (isMemoryBlockSelected(getCurrentSelection(), memory[i]))
+								addSelectDeltaNode(delta);
+							delta.addNode(memory[i], IModelDelta.REMOVED);
+						}
+					}
 				}
-			}
-		}
-		
-		fireModelChanged(delta);
-		
+				
+				fireModelChanged(delta);
+				return Status.OK_STATUS;
+			}};
+		job.setSystem(true);
+		job.schedule();
 	}
 
 	public void init(IPresentationContext context) {

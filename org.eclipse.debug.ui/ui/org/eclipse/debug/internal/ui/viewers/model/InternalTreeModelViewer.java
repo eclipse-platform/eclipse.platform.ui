@@ -268,8 +268,24 @@ public class InternalTreeModelViewer extends TreeViewer {
 		setUseHashlookup(true);
 		fCellModifier = new CellModifierProxy();
 		fContext = context;
-		setContentProvider(new TreeModelContentProvider());
-		setLabelProvider(new TreeModelLabelProvider(this));
+		setContentProvider(createContentProvider());
+		setLabelProvider(createLabelProvider());
+	}
+	
+	/**
+	 * @return content provider for this tree viewer
+	 */
+	protected TreeModelContentProvider createContentProvider()
+	{
+		return new TreeModelContentProvider();
+	}
+	
+	/**
+	 * @return label provider for this tree viewer
+	 */
+	protected TreeModelLabelProvider createLabelProvider()
+	{
+		return new TreeModelLabelProvider(this);
 	}
 	
 	/* (non-Javadoc)

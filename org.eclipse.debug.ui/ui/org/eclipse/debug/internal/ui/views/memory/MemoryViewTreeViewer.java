@@ -11,14 +11,9 @@
 
 package org.eclipse.debug.internal.ui.views.memory;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.model.IMemoryBlock;
-import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
-import org.eclipse.debug.internal.ui.viewers.AbstractUpdatePolicy;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.viewers.PartPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.TreeUpdatePolicy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -33,92 +28,20 @@ import org.eclipse.swt.widgets.Composite;
  * not take the pinning state of the memory view into account. 
  *
  */
-public class MemoryViewTreeViewer extends AsynchronousTreeViewer {
-	
-	private class MemoryViewTreeUpdatePolicy extends TreeUpdatePolicy
-	{
-		protected void updateNodes(IModelDelta[] nodes) {                          
-	        AsynchronousTreeViewer viewer = (AsynchronousTreeViewer) getViewer();
-	        if (viewer == null) {
-	            return;
-	        }
+public class MemoryViewTreeViewer extends TreeModelViewer {
 
-	        for (int i = 0; i < nodes.length; i++) {
-	            IModelDelta node = nodes[i];
-	            int flags = node.getFlags();
-	            
-	            if ((flags & IModelDelta.ADDED) != 0)
-	           {
-	               if (node.getElement() instanceof IMemoryBlock)
-	               {
-		        	   if ((flags & IModelDelta.SELECT) != 0)
-		        	   {
-		        		   PartPresentationContext context = (PartPresentationContext) getViewer().getPresentationContext();
-		        		   if (context.getPart() instanceof MemoryView)
-		        		   {
-		        			   MemoryView view = (MemoryView)context.getPart();
-		        			   if (view.isPinMBDisplay())
-		        			   {
-		        				   // turn off select if the view is currently pinned
-		        				   flags |= IModelDelta.SELECT;
-		        				   flags ^= IModelDelta.SELECT;
-		        			   }
-		        		   }
-		        	   }
-		        	   
-		        	   // override and select the first memory block
-		     		   if (isFirstMemoryBlock())
-		    		   {
-		    			   flags |= IModelDelta.SELECT;
-		    		   }
-	               }
-	           }
-
-	            if ((flags & IModelDelta.ADDED) != 0) {
-	                handleAdd(viewer, node);
-	            }
-	            if ((flags & IModelDelta.REMOVED) != 0) {
-	                handleRemove(viewer, node);
-	            }
-	            if ((flags & IModelDelta.CONTENT) != 0) {
-	                handleContent(viewer, node);
-	            }
-	            if ((flags & IModelDelta.EXPAND) != 0) {
-	                handleExpand(viewer, node);
-	            }
-	            if ((flags & IModelDelta.SELECT) != 0) {
-	                handleSelect(viewer, node);
-	            }
-	            if ((flags & IModelDelta.STATE) != 0) {
-	                handleState(viewer, node);
-	            }
-	            if ((flags & IModelDelta.INSERTED) != 0) {
-	            }
-	            if ((flags & IModelDelta.REPLACED) != 0) {
-	            }
-
-	            updateNodes(node.getChildDeltas());
-	        }
-		}
-	}
-
-	public MemoryViewTreeViewer(Composite parent) {
-		super(parent);
-	}
-
-	public AbstractUpdatePolicy createUpdatePolicy() {
-		return new MemoryViewTreeUpdatePolicy();
+	public MemoryViewTreeViewer(Composite parent, int style,
+			IPresentationContext context) {
+		super(parent, style, context);
 	}
 	
-	private boolean isFirstMemoryBlock()
-	{
-		if (getInput() instanceof IMemoryBlockRetrieval)
-		{
-			IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks((IMemoryBlockRetrieval)getInput());
-			if (memoryBlocks.length == 1)
-				return true;
-		}
-		return false;
+	/* 
+	 * Need to have a customized content provider to define a special update policy for the Memory View
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer#createContentProvider()
+	 */
+	protected TreeModelContentProvider createContentProvider() {
+		return new MemoryViewTreeModelContentProvider();
 	}
 
 }

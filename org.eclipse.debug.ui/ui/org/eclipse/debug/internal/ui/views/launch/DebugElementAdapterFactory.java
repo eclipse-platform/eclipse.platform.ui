@@ -40,6 +40,10 @@ import org.eclipse.debug.internal.ui.model.elements.ExpressionManagerContentProv
 import org.eclipse.debug.internal.ui.model.elements.ExpressionsViewMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.LaunchManagerContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.MemoryBlockContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.MemoryBlockLabelProvider;
+import org.eclipse.debug.internal.ui.model.elements.MemoryRetrievalContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.MemoryViewElementMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.RegisterGroupLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.StackFrameContentProvider;
@@ -80,6 +84,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementLabelProvider fgLPVariable = new VariableLabelProvider();
     private static IElementLabelProvider fgLPExpression = new ExpressionLabelProvider();
     private static IElementLabelProvider fgLPRegisterGroup = new RegisterGroupLabelProvider();
+    private static IElementLabelProvider fgLPMemoryBlock = new MemoryBlockLabelProvider();
     
     private static IElementEditor fgEEVariable = new VariableEditor();
     
@@ -96,9 +101,12 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementContentProvider fgCPExpressionManager = new ExpressionManagerContentProvider();
     private static IElementContentProvider fgCPExpression = new ExpressionContentProvider();
     private static IElementContentProvider fgCPRegisterGroup = new RegisterGroupContentProvider();
+    private static IElementContentProvider fgCPMemoryRetrieval = new MemoryRetrievalContentProvider();
+    private static IElementContentProvider fgCPMemoryBlock = new MemoryBlockContentProvider();
     
     private static IElementMementoProvider fgMPFrame = new VariablesViewElementMementoProvider();
     private static IElementMementoProvider fgMPExpressions = new ExpressionsViewMementoProvider();
+    private static IElementMementoProvider fgMPMemory = new MemoryViewElementMementoProvider();
     
     private static IColumnPresentationFactoryAdapter fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
@@ -133,6 +141,10 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             if (adaptableObject instanceof IDebugTarget) {
             	return fgCPTarget;
             }
+            if (adaptableObject instanceof IMemoryBlockRetrieval)
+            {
+            	return fgCPMemoryRetrieval;
+            }
             if (adaptableObject instanceof IThread) {
             	return fgCPThread;
             }
@@ -151,6 +163,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             if (adaptableObject instanceof IRegisterGroup) {
             	return fgCPRegisterGroup;
             }
+            if (adaptableObject instanceof IMemoryBlock) {
+            	return fgCPMemoryBlock;
+            }
         }        
         
         if (adapterType.equals(IAsynchronousLabelAdapter.class)) {
@@ -161,7 +176,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof MemorySegment) {
         		return fgTableRenderingLineLabelAdapter;
         	}
-        	
         	return fgDebugLabelAdapter;
         }
         
@@ -174,6 +188,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         	if (adaptableObject instanceof IRegisterGroup) {
         		return fgLPRegisterGroup;
+        	}
+        	if (adaptableObject instanceof IMemoryBlock) {
+        		return fgLPMemoryBlock;
         	}
         	return fgLPDebugElement;
         }        
@@ -217,6 +234,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         	if (adaptableObject instanceof IExpressionManager) {
         		return fgMPExpressions;
+        	}
+        	if (adaptableObject instanceof IMemoryBlockRetrieval) {
+        		return fgMPMemory;
         	}
         }
         

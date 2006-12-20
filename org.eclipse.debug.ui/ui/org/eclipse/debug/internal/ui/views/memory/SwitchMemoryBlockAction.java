@@ -23,7 +23,6 @@ import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -36,6 +35,7 @@ import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
@@ -221,7 +221,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 		updateActionEnablement();
 	}
 	
-	private AsynchronousTreeViewer getViewer()
+	private StructuredViewer getViewer()
 	{
 		if (fView == null)
 			return null;
@@ -232,7 +232,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 			IMemoryViewPane pane = memView.getViewPane(MemoryBlocksTreeViewPane.PANE_ID);
 			if (pane instanceof MemoryBlocksTreeViewPane)
 			{
-				AsynchronousTreeViewer viewer = ((MemoryBlocksTreeViewPane)pane).getViewer();
+				 StructuredViewer viewer = ((MemoryBlocksTreeViewPane)pane).getViewer();
 				return viewer;
 			}
 		}
@@ -265,7 +265,7 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 				}
 				else if (getViewer() != null)
 				{
-					AsynchronousTreeViewer viewer = getViewer();
+					StructuredViewer viewer = getViewer();
 					if (viewer.getInput() != null && viewer.getInput() instanceof IMemoryBlockRetrieval)
 					{
 						retrieval = (IMemoryBlockRetrieval)viewer.getInput();

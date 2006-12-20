@@ -44,7 +44,7 @@ import org.eclipse.ui.progress.UIJob;
  * 
  * @since 3.3
  */
-class TreeModelContentProvider extends ModelContentProvider implements ILazyTreePathContentProvider {
+public class TreeModelContentProvider extends ModelContentProvider implements ILazyTreePathContentProvider {
 	
 	protected static final String[] STATE_PROPERTIES = new String[]{IBasicPropertyConstants.P_TEXT, IBasicPropertyConstants.P_IMAGE};
 	

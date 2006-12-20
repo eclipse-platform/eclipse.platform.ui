@@ -21,7 +21,7 @@ import org.eclipse.ui.IMemento;
  * </p>
  * @since 3.3
  */
-public final class TreeModelViewer extends InternalTreeModelViewer {
+public class TreeModelViewer extends InternalTreeModelViewer {
 
 	/**
 	 * Constructs a new viewer.
