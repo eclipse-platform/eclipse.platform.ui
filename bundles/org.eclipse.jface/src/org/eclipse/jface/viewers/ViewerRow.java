@@ -45,7 +45,7 @@ public abstract class ViewerRow {
 	 * 
 	 * @param item
 	 */
-	ViewerRow(final Item item) {
+	protected ViewerRow(final Item item) {
 		item.setData(ViewerRow.ROWPART_KEY, this);
 		item.addDisposeListener(new DisposeListener() {
 
