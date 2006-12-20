@@ -44,9 +44,6 @@ public class ActionMessages extends NLS {
 
     public static String DetailPaneWordWrapAction_0;
     public static String DetailPaneMaxLengthAction_0;
-    
-    public static String DisconnectActionDelegate_Disconnect_failed_1;
-    public static String DisconnectActionDelegate_Exceptions_occurred_attempting_to_disconnect__2;
 
     public static String EditLaunchConfigurationAction_1;
 
@@ -74,33 +71,11 @@ public class ActionMessages extends NLS {
     public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
     public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
 
-    public static String ResumeActionDelegate_Exceptions_occurred_attempting_to_resume__2;
-    public static String ResumeActionDelegate_Resume_failed__1;
-
     public static String ShowSupportedBreakpointsAction_Show_For_Selected;
     public static String ShowSupportedBreakpointsAction_tooltip;
 
     public static String ShowTypesAction_Show__Type_Names_1;
     public static String ShowTypesAction_Show_Type_Names;
-
-    public static String StepIntoActionDelegate_Exceptions_occurred_attempting_to_step_into_the_frame_2;
-    public static String StepIntoActionDelegate_Step_into_failed_1;
-
-    public static String StepOverActionDelegate_Exceptions_occurred_attempting_to_step_over_the_frame_2;
-    public static String StepOverActionDelegate_Step_over_failed_1;
-
-    public static String StepReturnActionDelegate_Exceptions_occurred_attempting_to_run_to_return_of_the_frame__2;
-    public static String StepReturnActionDelegate_Run_to_return_failed__1;
-
-    public static String SuspendActionDelegate_Exceptions_occurred_attempting_to_suspend__2;
-    public static String SuspendActionDelegate_Suspend_failed_1;
-
-    public static String TerminateActionDelegate_Exceptions_occurred_attempting_to_terminate__2;
-
-    public static String TerminateActionDelegate_Terminate_failed__1;
-
-    public static String TerminateAndRemoveActionDelegate_Exceptions_occurred_attempting_to_terminate_and_remove_2;
-    public static String TerminateAndRemoveActionDelegate_Terminate_and_remove_failed_1;
 
     public static String RelaunchLastAction_Cannot_relaunch_1;
     public static String RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2;
