@@ -79,8 +79,6 @@ public class LaunchConfigurationPresentationManager {
 	 */
 	private LaunchConfigurationPresentationManager() {
 		fgDefault = this;
-		initializeTabGroupExtensions();
-		initializeContributedTabExtensions();
 	}
 
 	/**
@@ -98,30 +96,28 @@ public class LaunchConfigurationPresentationManager {
 	 * defined in XML, and adds them to the table of tab group extensions.
 	 */
 	private void initializeTabGroupExtensions() {
-		fTabGroupExtensions = new Hashtable();
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS);
-		IConfigurationElement[] groups = extensionPoint.getConfigurationElements();
-		LaunchConfigurationTabGroupExtension group = null;
-		String typeId = null;
-		Map map = null;
-		Set modes = null;
-		for (int i = 0; i < groups.length; i++) {
-			group = new LaunchConfigurationTabGroupExtension(groups[i]);
-			typeId = group.getTypeIdentifier();
-			map = (Map)fTabGroupExtensions.get(typeId);
-			if (map == null) {
-				map = new Hashtable();
-				fTabGroupExtensions.put(typeId, map);
-			}
-			modes = group.getModes();
-			if (modes == null) {
-				// default tabs - store with "*"
-				map.put("*", group); //$NON-NLS-1$
-			} else {
-				// store per mode
-				Iterator iterator = modes.iterator();
-				while (iterator.hasNext()) {
-					map.put(iterator.next(), group);
+		if(fTabGroupExtensions == null) {
+			fTabGroupExtensions = new Hashtable();
+			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TAB_GROUPS);
+			IConfigurationElement[] groups = extensionPoint.getConfigurationElements();
+			LaunchConfigurationTabGroupExtension group = null;
+			String typeId = null;
+			Map map = null;
+			List modes = null;
+			for (int i = 0; i < groups.length; i++) {
+				group = new LaunchConfigurationTabGroupExtension(groups[i]);
+				typeId = group.getTypeIdentifier();
+				map = (Map)fTabGroupExtensions.get(typeId);
+				if (map == null) {
+					map = new Hashtable();
+					fTabGroupExtensions.put(typeId, map);
+				}
+				modes = group.getModes();
+				if(modes.isEmpty()) {
+					map.put("*", group); //$NON-NLS-1$
+				}
+				for(Iterator iter = modes.iterator(); iter.hasNext();) {
+					map.put(iter.next(), group);
 				}
 			}
 		}
@@ -165,7 +161,9 @@ public class LaunchConfigurationPresentationManager {
 	 * @exception CoreException if an exception occurs creating the group
 	 */
 	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfigurationType type, String mode) throws CoreException {
-		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
 			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null);  
@@ -183,7 +181,9 @@ public class LaunchConfigurationPresentationManager {
 	 * @throws CoreException
 	 */
 	public ILaunchConfigurationTabGroup getTabGroup(ILaunchConfiguration config, String mode) throws CoreException {
-		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), mode);
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		LaunchConfigurationTabGroupExtension ext = getExtension(config.getType().getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
 			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {config.getType().getIdentifier()})), null);  
@@ -204,6 +204,7 @@ public class LaunchConfigurationPresentationManager {
 	 * EXPERIMENTAL
 	 */
 	protected LaunchConfigurationTabExtension[] getTabExtensions(String groupid, ILaunchConfiguration config, String mode) throws CoreException {
+		initializeContributedTabExtensions();
 		Hashtable tabs = (Hashtable) fContributedTabs.get(groupid);
 		if(tabs != null) {
 			return filterLaunchTabExtensions((LaunchConfigurationTabExtension[]) tabs.values().toArray(new LaunchConfigurationTabExtension[tabs.size()]), config, mode);
@@ -274,12 +275,11 @@ public class LaunchConfigurationPresentationManager {
 	 * @param mode launch mode identifier
 	 * @return launch tab group extension or <code>null</code>
 	 */
-	protected LaunchConfigurationTabGroupExtension getExtension(String type, String mode) {
-		// get the map for the config type
+	protected LaunchConfigurationTabGroupExtension getExtension(String type, Set modes) {
+		initializeTabGroupExtensions();
 		Map map = (Map)fTabGroupExtensions.get(type);
 		if (map != null) {
-			// try the specific mode
-			Object extension = map.get(mode);
+			Object extension = map.get(modes);
 			if (extension == null) {
 				// get the default tabs
 				extension = map.get("*"); //$NON-NLS-1$
@@ -301,7 +301,9 @@ public class LaunchConfigurationPresentationManager {
 	 * @since 2.1
 	 */
 	public String getHelpContext(ILaunchConfigurationType type, String mode) throws CoreException {
-		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), mode);
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		LaunchConfigurationTabGroupExtension ext = getExtension(type.getIdentifier(), modes);
 		if (ext == null) {
 			IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, IDebugUIConstants.INTERNAL_ERROR,
 			 MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_No_tab_group_defined_for_launch_configuration_type__0__3, (new String[] {type.getIdentifier()})), null); 
@@ -319,9 +321,10 @@ public class LaunchConfigurationPresentationManager {
 	 * @return the description of the given configuration type, possible <code>null</code>
 	 */
 	public String getDescription(ILaunchConfigurationType configType, String mode) {
-		LaunchConfigurationPresentationManager manager = LaunchConfigurationPresentationManager.getDefault();
-		LaunchConfigurationTabGroupExtension extension = manager.getExtension(configType.getAttribute(IConfigurationElementConstants.ID), mode);
-		return (extension != null ? extension.getDescription(mode) : null);
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		LaunchConfigurationTabGroupExtension extension = getExtension(configType.getAttribute(IConfigurationElementConstants.ID), modes);
+		return (extension != null ? extension.getDescription(modes) : null);
 	}	
 	
 	/**

@@ -12,16 +12,14 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.io.IOException;
-import java.io.StringReader;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -32,13 +30,14 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.views.ViewContextManager;
 import org.eclipse.debug.internal.ui.views.ViewContextService;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.ISuspendTrigger;
 import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
@@ -57,9 +56,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The perspective manager manages the 'perspective' settings
@@ -74,39 +72,11 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListener {
 		
 	/**
-	 * Table of config types to tables of user specified perspective settings (mode ids
-	 * to perspective ids).
-	 */	
-	private Map fPreferenceMap;
-	
-	// XML tags
-	public static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
-	public static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
-	public static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
-	public static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
-	public static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
-
-	/**
-	 * Flag used to indicate that the user is already being prompted to
-	 * switch perspectives. This flag allows us to not open multiple
-	 * prompts at the same time.
-	 */
-	private boolean fPrompting;
-	private PerspectiveSwitchLock fPerspectiveSwitchLock = new PerspectiveSwitchLock();
-    
-    /**
-     * Maps each launch to its perspective context activation. These
-     * are disabled when a launch terminates.
-     */
-    private Map fLaunchToContextActivations = new HashMap();
-	
-	/**
 	 * Lock used to synchronize perspective switching with view activation.
 	 * Clients wanting to perform an action after a perspective switch should
 	 * schedule jobs with the perspective manager via #schedulePostSwitch(..)
 	 */
-	public class PerspectiveSwitchLock
-	{
+	public class PerspectiveSwitchLock {
 
 		private int fSwitch = 0;
 		private List fJobs = new ArrayList();
@@ -129,13 +99,161 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		public synchronized void schedulePostSwitch(Job job) {
 			if (fSwitch > 0) {
 				fJobs.add(job);	
-			} else {
+			} 
+			else {
 				job.schedule();
 			}
 		}
 	}
 	
+	/**
+	 * Describes exactly one perspective context, which is composed of an <code>ILaunchCOnfigurationType</code>, and set of modes
+	 * and an <code>ILaunchDelegate</code>. Perspective ids are then cached for a context based on mode set.
+	 * 
+	 * @since 3.3
+	 */
+	class PerspectiveContext {
+		
+		private ILaunchConfigurationType fType = null;
+		private ILaunchDelegate fDelegate = null;
+		private Map fPerspectives = null;
+		
+		/**
+		 * Constructor
+		 * @param type
+		 * @param delegate
+		 * @param modes
+		 */
+		public PerspectiveContext(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+			fType = type;
+			fDelegate = delegate;
+			fPerspectives = new HashMap();
+			fPerspectives.put(modes, null);
+		}
+		
+		/**
+		 * We can specially compare two cases:
+		 * <ol>
+		 * <li>a launch object</li>
+		 * <li>an object array of the form [IlaunchConfigurationType, ILaunchDelegate, Set]</li>
+		 * </ol>
+		 * @see java.lang.Object#equals(java.lang.Object)
+		 */
+		public boolean equals(Object object) {
+			if(object instanceof ILaunch) {
+				ILaunch launch = (ILaunch) object;
+				try {
+					ILaunchConfigurationType type = launch.getLaunchConfiguration().getType();
+					if(type.getIdentifier().equals(fType.getIdentifier())) {
+						Set modes = launch.getLaunchConfiguration().getModes();
+						modes.add(launch.getLaunchMode());
+						if(fPerspectives.keySet().contains(modes)) {
+							ILaunchDelegate delegate = resolveLaunchDelegate(launch);
+							if(delegate != null) {
+								return delegate.equals(fDelegate);
+							}
+							else {
+								//use the default, both must be null in this case to be equal
+								return fDelegate == null;
+							}
+						}
+					}
+				} 
+				catch (CoreException e) {
+					return false;
+				}
+			}
+			else if(object instanceof PerspectiveContext) {
+				PerspectiveContext context = (PerspectiveContext) object;
+				if(fType != null && fType.getIdentifier().equals(context.fType.getIdentifier())
+						&& fPerspectives.size() == context.fPerspectives.size() && fPerspectives.keySet().containsAll(context.fPerspectives.keySet())) {
+					if(fDelegate != null) {
+						if(context.getLaunchDelegate() == null) {
+							return true;
+						}
+						else {
+							return fDelegate.equals(context.getLaunchDelegate());
+						}
+					}
+					else {
+						//for them to be equal both must be null in this case
+						return context.getLaunchDelegate() == null;
+					}
+				}
+			}
+			return super.equals(object);
+		}
+		
+		public ILaunchConfigurationType getLaunchConfigurationType() {return fType;}
+		public ILaunchDelegate getLaunchDelegate() {return fDelegate;}
+		public Map getPersepctiveMap() {return fPerspectives;}
+		
+		/**
+		 * Creates a new mapping of the specified perspective id to the specified mode set.
+		 * If a mapping for the modeset already exists it is over-written.
+		 * @param modes the set of modes 
+		 * @param pid the id of the perspective
+		 */
+		public void setPerspective(Set modes, String pid) {
+			if(fPerspectives == null) {
+				fPerspectives = new HashMap();
+			}
+			fPerspectives.put(modes, pid);
+		}
+		
+		/**
+		 * Returns the perspective id associated with the given mode set
+		 * @param modes the set of mode
+		 * @return the perspective id associated with the given mode set, or
+		 * <code>null</code>, if there isn't one
+		 */
+		public String getPerspective(Set modes) {
+			if(fPerspectives != null) {
+				return (String) fPerspectives.get(modes);
+			}
+			return null;
+		}
+	}
 	
+	/**
+	 * A listing of <code>PerspectiveContext</code>s
+	 * 
+	 * @since 3.3
+	 */
+	private Set fPerspectiveContexts = null;
+	
+	// XML tags
+	public static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
+	public static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
+	public static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
+	public static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
+	public static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
+	
+	/**
+	 * id for the 'delegate' attribute
+	 * 
+	 * @since 3.3
+	 */
+	public static final String ATTR_DELEGATE_ID = "delegate"; //$NON-NLS-1$
+
+	/**
+	 * Flag used to indicate that the user is already being prompted to
+	 * switch perspectives. This flag allows us to not open multiple
+	 * prompts at the same time.
+	 */
+	private boolean fPrompting;
+	
+	/**
+	 * Lock to sync other jobs on the perspective switch
+	 */
+	private PerspectiveSwitchLock fPerspectiveSwitchLock = new PerspectiveSwitchLock();
+    
+    /**
+     * Maps each launch to its perspective context activation. These
+     * are disabled when a launch terminates.
+     */
+    private Map fLaunchToContextActivations = new HashMap();
+
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The perspective manager starts listening for
@@ -144,6 +262,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	public void startup() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getLaunchManager().addLaunchListener(this);
+		initPerspectives();
 	}
 
 	/**
@@ -153,9 +272,15 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	public void shutdown() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
+		try {
+			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, generatePerspectiveXML());			
+		} 
+		catch (IOException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$ 
+		catch (ParserConfigurationException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
+		catch (TransformerException e) {DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));}  //$NON-NLS-1$
 		plugin.getLaunchManager().removeLaunchListener(this);
 	}
-
+	
 	/**
 	 * If there are no launches, remove the Suspend Trigger Listener
 	 * 
@@ -185,8 +310,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * 
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
-	public void launchChanged(ILaunch launch) {
-	}	
+	public void launchChanged(ILaunch launch) {}	
 
 	/** 
 	 * Switch to the perspective specified by the
@@ -199,18 +323,16 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
         if (trigger != null) {
             trigger.addSuspendTriggerListener(this);
         }
-	    
 	    fPerspectiveSwitchLock.startSwitch();
-	    
 		String perspectiveId = null;
 		// check event filters
 		try {
 			perspectiveId = getPerspectiveId(launch);
-		} catch (CoreException e) {
+		} 
+		catch (CoreException e) {
 			String name = DebugUIPlugin.getModelPresentation().getText(launch);
 			switchFailed(e, name);
 		}
-		
 		// don't switch if a private config
 		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
 		if (configuration != null) {
@@ -218,20 +340,17 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 				perspectiveId = null;
 			}
 		}
-		
-		final String id= perspectiveId;
+		final String id = perspectiveId;
 		// switch
 		async(new Runnable() {
 			public void run() {
-				try
-				{
+				try {
 					IWorkbenchWindow window = getWindowForPerspective(id);
-					if (id != null && window != null && shouldSwitchPerspectiveForLaunch(window, id)) {
+					if (id != null && window != null && shouldSwitchPerspective(window, id, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE)) {
 						switchToPerspective(window, id);
 					}
 				}
-				finally
-				{
+				finally {
 					fPerspectiveSwitchLock.endSwitch();
 				}
 			}
@@ -310,9 +429,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		String perspectiveId = null;
 		try {
 			perspectiveId = getPerspectiveId(launch);
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
+		} 
+		catch (CoreException e) {DebugUIPlugin.log(e);}
 		// if no perspective specified, always switch to debug
 		// perspective 
 
@@ -329,17 +447,13 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 							return;
 						}
 						
-						if (shouldSwitchPerspectiveForSuspend(window, targetId)) {
+						if (shouldSwitchPerspective(window, targetId, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND)) {
 							switchToPerspective(window, targetId);
-							// Showing the perspective can open a new window
-							// (based on user prefs). So check again in case a
-							// new window has been opened.
 							window = getWindowForPerspective(targetId);
 							if (window == null) {
 								return;
 							}
 						}
-						// re-open the window if minimized 
 						Shell shell= window.getShell();
 						if (shell != null) {
 							if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
@@ -351,7 +465,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 						}
 					}
 					if (targetId != null) {
-						// enable the 'perspective contexts' for the suspended launch type
 						Object ca = fLaunchToContextActivations.get(launch);
 						if (ca == null) {
 							ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
@@ -404,12 +517,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 *  or <code>null</code> if there are no windows available
 	 */
 	private IWorkbenchWindow getWindowForPerspective(String perspectiveId) {
-		// Check the active window first
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (isWindowShowingPerspective(window, perspectiveId)) {
 			return window;
 		}
-		// Then check all other windows
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			window = windows[i];
@@ -417,8 +528,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 				return window;
 			}
 		}
-		// Finally, just return a window in which the perspective
-		// should be created
 		window = DebugUIPlugin.getActiveWorkbenchWindow();
 		if (window != null) {
 			return window;
@@ -429,6 +538,12 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		return null;
 	}
 	
+	/**
+	 * Returns if the specified window is showing the perspective denoted by the specified id
+	 * @param window the window to query
+	 * @param perspectiveId the perspective to ask about
+	 * @return true if the specified window is showing the perspective, false otherwise
+	 */
 	private boolean isWindowShowingPerspective(IWorkbenchWindow window, String perspectiveId) {
 		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
@@ -444,47 +559,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	
 	/**
 	 * Returns whether or not the user wishes to switch to the specified
-	 * perspective when a suspend occurs.
-	 * 
-	 * @param perspectiveName the name of the perspective that will be presented
-	 *  to the user for confirmation if they've asked to be prompted about
-	 *  perspective switching for suspension
-	 * @return whether or not the user wishes to switch to the specified perspective
-	 *  automatically when the given launch suspends
-	 */
-	protected boolean shouldSwitchPerspectiveForSuspend(IWorkbenchWindow window, String perspectiveId) {
-		String launchMessage;
-		if (getPerspectiveDescription(perspectiveId) != null)
-			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_suspend_description;
-		else
-			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_13;
-			
-		return shouldSwitchPerspective(window, perspectiveId, launchMessage, IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND); 
-	}
-
-	/**
-	 * Returns whether or not the user wishes to switch to the specified
-	 * perspective when a launch occurs.
-	 * 
-	 * @param perspectiveName the name of the perspective that will be presented
-	 *  to the user for confirmation if they've asked to be prompted about
-	 *  perspective switching
-	 * @return whether or not the user wishes to switch to the specified perspective
-	 *  automatically when a launch occurs
-	 */
-	protected boolean shouldSwitchPerspectiveForLaunch(IWorkbenchWindow window, String perspectiveId) {
-		String launchMessage;
-		if (getPerspectiveDescription(perspectiveId) != null)
-			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_launch_description;
-		else
-			launchMessage = LaunchConfigurationsMessages.PerspectiveManager_15;
-			
-
-		return shouldSwitchPerspective(window, perspectiveId, launchMessage, IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE); 
-	}
-	
-	/**
-	 * Returns whether or not the user wishes to switch to the specified
 	 * perspective when a launch occurs.
 	 * 
 	 * @param perspectiveName the name of the perspective that will be presented
@@ -496,21 +570,23 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @return whether or not the user wishes to switch to the specified perspective
 	 *  automatically
 	 */
-	private boolean shouldSwitchPerspective(IWorkbenchWindow window, String perspectiveId, String message, String preferenceKey) {
+	private boolean shouldSwitchPerspective(IWorkbenchWindow window, String perspectiveId, String preferenceKey) {
 		if (isCurrentPerspective(window, perspectiveId)) {
 			return false;
 		}
-		String perspectiveName= getPerspectiveLabel(perspectiveId);
+		String perspectiveName = getPerspectiveLabel(perspectiveId);
 		if (perspectiveName == null) {
 			return false;
 		}
 		String perspectiveDesc = getPerspectiveDescription(perspectiveId);
 		String[] args;
-		if (perspectiveDesc != null)
+		if (perspectiveDesc != null) {
 			args = new String[] { perspectiveName , perspectiveDesc };
-		else 
+		}
+		else { 
 			args = new String[] { perspectiveName };
-		String switchPerspective= DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
+		}
+		String switchPerspective = DebugUIPlugin.getDefault().getPreferenceStore().getString(preferenceKey);
 		if (MessageDialogWithToggle.ALWAYS.equals(switchPerspective)) {
 			return true;
 		} else if (MessageDialogWithToggle.NEVER.equals(switchPerspective)) {
@@ -529,6 +605,23 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH)) {
 			shell.forceActive();
 		}
+		String message = ""; //$NON-NLS-1$
+		if(IInternalDebugUIConstants.PREF_SWITCH_PERSPECTIVE_ON_SUSPEND.equals(preferenceKey)) {
+			if (getPerspectiveDescription(perspectiveId) != null) {
+				message = LaunchConfigurationsMessages.PerspectiveManager_suspend_description;
+			}
+			else {
+				message = LaunchConfigurationsMessages.PerspectiveManager_13;
+			}
+		}
+		else if(IInternalDebugUIConstants.PREF_SWITCH_TO_PERSPECTIVE.equals(preferenceKey)) {
+			if (getPerspectiveDescription(perspectiveId) != null) {
+				message = LaunchConfigurationsMessages.PerspectiveManager_launch_description;
+			}
+			else {
+				message = LaunchConfigurationsMessages.PerspectiveManager_15;
+			}
+		}
 		MessageDialogWithToggle dialog = MessageDialogWithToggle.openYesNoQuestion(shell, LaunchConfigurationsMessages.PerspectiveManager_12, MessageFormat.format(message, args), null, false, DebugUIPlugin.getDefault().getPreferenceStore(), preferenceKey); 
 		boolean answer = (dialog.getReturnCode() == IDialogConstants.YES_ID);
 		synchronized (this) {
@@ -536,10 +629,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			notifyAll();
 		}
 		if (isCurrentPerspective(window, perspectiveId)) {
-			// While prompting in response to one event (say, a launch),
-			// another event can occur which changes the perspective.
-			// Double-check that we're not in the right perspective.
-			answer= false;
+			answer = false;
 		}
 		return answer;
 	}
@@ -617,8 +707,9 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		if (config == null) {
 			return null;
 		}
-		String perspectiveId = null;
-		perspectiveId = DebugUITools.getLaunchPerspective(config.getType(), launch.getLaunchMode());
+		Set modes = launch.getLaunchConfiguration().getModes();
+		modes.add(launch.getLaunchMode());
+		String perspectiveId = getLaunchPerspective(config.getType(), modes, resolveLaunchDelegate(launch));
 		if (perspectiveId != null && perspectiveId.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
 			perspectiveId = null;
 		}
@@ -626,25 +717,49 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	}
 	
 	/**
+	 * Returns the id of the perspective associated with the given type and set of modes. Passing <code>null</code> for 
+	 * the launch delegate results in the default perspective id being returned (if there is one).
+	 * @param type the type we are launching
+	 * @param modes the set of modes the type was launched with
+	 * @param delegate the delegate performing the launch for this type and modeset
+	 * @return the id of the perspective for the given launch configuration type, modeset and launch delegate
+	 * 
+	 * @since 3.3
+	 */
+	public String getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate) {
+		String id = null;
+		PerspectiveContext context = findContext(new PerspectiveContext(type, delegate, modes));
+		if(context == null) {
+			//try with a null delegate, denoting the perspective for the type
+			context = findContext(new PerspectiveContext(type, null, modes));
+			if(context == null) {
+				//last resort, try the default perspective
+				return getDefaultLaunchPerspective(type, delegate, modes);
+			}
+		}
+		if(context != null) {
+			id = context.getPerspective(modes);
+		}
+		return id;
+	}
+	
+	/**
 	 * Returns the perspective to switch to when a configuration of the given type
 	 * is launched in the given mode, or <code>null</code> if no switch should take
 	 * place.
-	 * 
+	 * <p>
+	 * This method is equivalent to calling <code>getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate)</code>,
+	 * with the 'mode' parameter comprising a single element set and passing <code>null</code> as the launch delegate.
+	 * </p>
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
 	 * @return perspective identifier or <code>null</code>
 	 * @since 3.0
 	 */
 	public String getLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		String id = getUserSpecifiedLaunchPerspective(type, mode);
-		if (id == null) {
-			// get the default
-			id = getDefaultLaunchPerspective(type, mode);
-		} else if (id.equals(IDebugUIConstants.PERSPECTIVE_NONE)) {
-			// translate NONE to null
-			id = null;
-		}
-		return id;
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		return getLaunchPerspective(type, modes, null);
 	}
 	
 	/**
@@ -653,7 +768,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
 	 * a default perspective switch should take place, as defined by the associated
 	 * launch tab group extension.
-	 * 
+	 * <p>
+	 * Calling this method is equivalent to calling <code>setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid)</code>, 
+	 * with the parameter 'mode' used in the set modes, and null passed as the delegate
+	 * </p>
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
 	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
@@ -661,50 +779,64 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.0
 	 */
 	public void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
-		internalSetLaunchPerspective(type.getIdentifier(), mode, perspective);
-		// update preference
-		String xml;
-		try {
-			xml = generatePerspectiveXML();
-			DebugUIPlugin.getDefault().getPreferenceStore().putValue(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES, xml);			
-		} catch (IOException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
-		} catch (ParserConfigurationException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
-		} catch (TransformerException e) {
-			DebugUIPlugin.log(DebugUIPlugin.newErrorStatus("Exception occurred while generating launch perspectives preference XML", e));  //$NON-NLS-1$
-		}
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		setLaunchPerspective(type, modes, null, perspective);
 	}
 	
 	/**
-	 * Sets the perspective to switch to when a configuration of the given type
-	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
-	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
-	 * a default perspective switch should take place, as defined by the associated
-	 * launch tab group extension.
+	 * Sets the perspective that should be switched to when a configuration of the given type is launched with the 
+	 * specified modes set by the given launch delegate.
+	 * <p>
+	 * Passing <code>null</code> as a launch delegate will set the default perspective switch for that type and modeset, where
+	 * <code>PERSPECTIVE_NONE</code> indicates no perspective switch should take place.
+	 * </p>
+	 * @param type the type to set a perspective context for
+	 * @param modes the set of modes 
+	 * @param delegate the delegate, or <code>null</code> if the default perspective should be used
 	 * 
-	 * @param type launch configuration type identifier
-	 * @param mode launch mode identifier
-	 * @param perspective identifier, <code>PERSPECTIVE_NONE</code>, or
-	 *   <code>PERSPECTIVE_DEFAULT</code>
-	 * @since 3.0
+	 * @since 3.3
 	 */
-	private void internalSetLaunchPerspective(String type, String mode, String perspective) {
-		if (fPreferenceMap == null) {
-			initPerspectives();
-		}		
-		Map modeMap = (Map)fPreferenceMap.get(type);
-		if (modeMap == null) {
-			modeMap = new HashMap();
-			fPreferenceMap.put(type, modeMap);
+	public void setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid) {
+		PerspectiveContext context = new PerspectiveContext(type, delegate, modes);
+		String id = null;
+		if(!IDebugUIConstants.PERSPECTIVE_NONE.equals(perspectiveid)) {
+			if(IDebugUIConstants.PERSPECTIVE_DEFAULT.equals(perspectiveid)) {
+				id = getDefaultLaunchPerspective(type, delegate, modes);
+			}
+			else {
+				id = perspectiveid;
+			}
 		}
-		if (perspective.equals(IDebugUIConstants.PERSPECTIVE_DEFAULT)) {
-			// remove user preference setting
-			modeMap.remove(mode);
-		} else {
-			// override default setting
-			modeMap.put(mode, perspective);
+		PerspectiveContext item = findContext(context);
+		if(item != null) {
+			item.setPerspective(modes, id);
 		}
+		else {
+			context.setPerspective(modes, id);
+			item = context;
+		}
+		fPerspectiveContexts.add(item);
+	}
+	
+	/**
+	 * Searches the listing of perspective contexts to see if the specified one already exists
+	 * @param context the context to compare
+	 * @return the matching <code>PerspectiveContext</code> or <code>null</code> if none
+	 * 
+	 * @since 3.3
+	 */
+	private PerspectiveContext findContext(PerspectiveContext context) {
+		PerspectiveContext item = null;
+		Object o = null;
+		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
+			o = iter.next();
+			if(context.equals(o)) {
+				item = (PerspectiveContext) o;
+				return item;
+			}
+		}
+		return item;
 	}
 	
 	/**
@@ -716,29 +848,31 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
      * @exception ParserConfigurationException if unable to generate the XML
 	 */
 	private String generatePerspectiveXML() throws ParserConfigurationException, TransformerException, IOException {
-		
 		Document doc = DebugUIPlugin.getDocument();
-		Element configRootElement = doc.createElement(ELEMENT_PERSPECTIVES);
-		doc.appendChild(configRootElement);
-		
-		Iterator configTypes = fPreferenceMap.keySet().iterator();
-		while (configTypes.hasNext()) {
-			String type = (String)configTypes.next();
-			Map modeMap = (Map)fPreferenceMap.get(type);
-			if (modeMap != null && !modeMap.isEmpty()) {
-				Iterator modes = modeMap.keySet().iterator();
-				while (modes.hasNext()) {
-					String mode = (String)modes.next();
-					String perspective = (String)modeMap.get(mode);
-					Element element = doc.createElement(ELEMENT_PERSPECTIVE);
-					element.setAttribute(ATTR_TYPE_ID, type);
-					element.setAttribute(ATTR_MODE_ID, mode);
-					element.setAttribute(ATTR_PERSPECTIVE_ID, perspective);
-					configRootElement.appendChild(element);
+		Element root = doc.createElement(ELEMENT_PERSPECTIVES);
+		doc.appendChild(root);
+		PerspectiveContext context = null;
+		Map modesets = null;
+		Element element = null;
+		Set modes = null;
+		ILaunchDelegate delegate = null;
+		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
+			context = (PerspectiveContext) iter.next();
+			modesets = context.getPersepctiveMap();
+			for(Iterator iter2 = modesets.keySet().iterator(); iter2.hasNext();) {
+				element = doc.createElement(ELEMENT_PERSPECTIVE);
+				modes = (Set) iter2.next();
+				element.setAttribute(ATTR_MODE_ID, createModesetString(modes));
+				delegate = context.getLaunchDelegate();
+				if(delegate != null) {
+					element.setAttribute(ATTR_DELEGATE_ID, delegate.getId());
 				}
-			}			
+				element.setAttribute(ATTR_TYPE_ID, context.getLaunchConfigurationType().getIdentifier());
+				element.setAttribute(ATTR_PERSPECTIVE_ID, context.getPerspective(modes));
+				root.appendChild(element);
+			}
+			
 		}
-
 		return DebugUIPlugin.serializeDocument(doc);		
 	}
 
@@ -746,88 +880,148 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * Returns the default perspective to switch to when a configuration of the given
 	 * type is launched in the given mode, or <code>null</code> if none.
 	 * 
+	 * <p>
+	 * Calling this method is equivalent to using the new method <code>getDefaultLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes)</code>
+	 * with a null delegate and the specified mode comprising a set of one mode
+	 * </p>
+	 * 
 	 * @param type launch configuration type
 	 * @param mode launch mode
 	 * @return perspective identifier, or <code>null</code>
 	 */
 	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		LaunchConfigurationTabGroupExtension extension = LaunchConfigurationPresentationManager.getDefault().getExtension(type.getIdentifier(), mode);
-		if (extension != null) {
-			String id = extension.getPerspective(mode);
-			if (id == null) {
-				// revert to hard coded default (for backwards compatibility)
-				// since nothing is specified in XML
-				if (mode.equals(ILaunchManager.DEBUG_MODE)) {
-					return IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
-				}	
-			} else {
-				return id;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Returns the user specified perspective to switch to when a configuration of the
-	 * given type is launched in the given mode, or <code>null</code> if unspecified.
-	 * Returns <code>PERSPECTIVE_NONE</code> to indicate no switch
-	 * 
-	 * @param type launch configuration type
-	 * @param mode launch mode
-	 * @return perspective identifier, <code>PERSPECTIVE_NONE</code>, or <code>null</code>
-	 */
-	protected String getUserSpecifiedLaunchPerspective(ILaunchConfigurationType type, String mode) {
-		String id = null;
-		if (fPreferenceMap == null) {
-			initPerspectives();
-		}
-		Map modeMap = (Map)fPreferenceMap.get(type.getIdentifier());
-		if (modeMap != null) {
-			id = (String)modeMap.get(mode);
-		}
-		return id;
+		HashSet modes = new HashSet();
+		modes.add(mode);
+		return getDefaultLaunchPerspective(type, null, modes);
 	}
 
 	/**
-	 * Initialize the preference map with settings from user preference
+	 * Returns the default perspective to switch to when a configuration of the given type is launched by the specified
+	 * launch delegate in the given mode set, or <code>null</code> if none
+	 * @param type the type
+	 * @param delegate the associated delegate, or <code>null</code> to specify that the default perspective id for that given type and mode set should be returned
+	 * @param modes the set of modes this applies to
+	 * @return the default perspective id for the given type, delegate and mode set combination, or <code>null</code> if none
+	 * 
+	 * @since 3.3
 	 */
-	private void initPerspectives() {
-		fPreferenceMap = new HashMap();
-		String xml = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
-		if (xml != null && xml.length() > 0) {
-			try {
-				Element root = null;
-				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-				parser.setErrorHandler(new DefaultHandler());
-				StringReader reader = new StringReader(xml);
-				InputSource source = new InputSource(reader);
-				root = parser.parse(source).getDocumentElement();
-				
-				NodeList list = root.getChildNodes();
-				int length = list.getLength();
-				for (int i = 0; i < length; ++i) {
-					Node node = list.item(i);
-					short nt = node.getNodeType();
-					if (nt == Node.ELEMENT_NODE) {
-						Element element = (Element) node;
-						String nodeName = element.getNodeName();
-						if (nodeName.equalsIgnoreCase(ELEMENT_PERSPECTIVE)) {
-							String type = element.getAttribute(ATTR_TYPE_ID);
-							String mode = element.getAttribute(ATTR_MODE_ID);
-							String perpsective = element.getAttribute(ATTR_PERSPECTIVE_ID);
-							internalSetLaunchPerspective(type, mode, perpsective);
-						}
-					}
-				}				
-			} catch (ParserConfigurationException e) {
-				DebugUIPlugin.log(e);			
-			} catch (SAXException e) {
-				DebugUIPlugin.log(e);
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
+	public String getDefaultLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+		String id = null;
+		if(delegate != null) {
+			id = delegate.getPerspectiveId(modes);
+		}
+		if(id == null) {
+			LaunchConfigurationTabGroupExtension extension = LaunchConfigurationPresentationManager.getDefault().getExtension(type.getIdentifier(), modes);
+			if (extension != null) {
+				id = extension.getPerspective(modes);
+				if (id == null) {
+					if (modes.contains(ILaunchManager.DEBUG_MODE)) {
+						id = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+					}	
+				} 
 			}
 		}
-		
+		return id;
+	}
+	
+	/**
+	 * Resolves the <code>ILaunchDelegate</code> from the given <code>ILaunch</code>
+	 * @param launch the launch
+	 * @return
+	 * @throws CoreException
+	 */
+	private ILaunchDelegate resolveLaunchDelegate(ILaunch launch) throws CoreException {
+		Set modes = launch.getLaunchConfiguration().getModes();
+		modes.add(launch.getLaunchMode());
+		ILaunchConfigurationType type = launch.getLaunchConfiguration().getType();
+		ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(type, modes);
+		ILaunchDelegate delegate = null;
+		if(delegates.length == 1) {
+			delegate = delegates[0];
+		}
+		else if(delegates.length > 1) {
+			delegate = launch.getLaunchConfiguration().getPreferredDelegate(modes);
+			if(delegate == null) {
+				delegate = type.getPreferredDelegate(modes);
+			}
+		}
+		return delegate;
+	}
+	
+	/**
+	 * Initialize the preference set with settings from user preferences
+	 */
+	private void initPerspectives() {
+		if(fPerspectiveContexts == null) {
+			fPerspectiveContexts = new HashSet();
+			String xml = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_LAUNCH_PERSPECTIVES);
+			if (xml != null && xml.length() > 0) {
+				try {
+					Element root = DebugPlugin.parseDocument(xml);
+					NodeList list = root.getChildNodes();
+					LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+					ILaunchConfigurationType lctype = null;
+					ILaunchDelegate ldelegate = null;
+					Set modes = null;
+					Node node = null;
+					Element element = null;
+					for (int i = 0; i < list.getLength(); ++i) {
+						node = list.item(i);
+						if (node.getNodeType() == Node.ELEMENT_NODE) {
+							element = (Element) node;
+							String nodeName = element.getNodeName();
+							if (nodeName.equalsIgnoreCase(ELEMENT_PERSPECTIVE)) {
+								String type = element.getAttribute(ATTR_TYPE_ID);
+								String mode = element.getAttribute(ATTR_MODE_ID);
+								String perspective = element.getAttribute(ATTR_PERSPECTIVE_ID);
+								String delegate = element.getAttribute(ATTR_DELEGATE_ID);
+								lctype = lm.getLaunchConfigurationType(type);
+								ldelegate = lm.getLaunchDelegate(delegate);
+								modes = parseModes(mode);
+								if(lctype != null && !modes.isEmpty() && !"".equals(perspective)) { //$NON-NLS-1$
+									setLaunchPerspective(lctype, modes, ldelegate, perspective);
+								}
+							}
+						}
+					}				
+				} 
+				catch (CoreException e) {DebugUIPlugin.log(e);} 
+			}
+		}
+	}
+	
+	/**
+	 * Parses a string argument into a set of modes
+	 * @param modes the string to parse
+	 * @return a set of modes parsed fomr the specified string of the empty set, never null
+	 * 
+	 * @since 3.3
+	 */
+	private Set parseModes(String modes) {
+		HashSet modeset = new HashSet();
+		String[] ms = modes.split(","); //$NON-NLS-1$
+		for(int i = 0; i < ms.length; i++) {
+			modeset.add(ms[i].trim());
+		}
+		return modeset;
+	}
+	
+	/**
+	 * Creates a standard comma seprerated list of the modes from the specified set
+	 * @param modes the set to write to string
+	 * @return the 
+	 */
+	private String createModesetString(Set modes) {
+		String str = ""; //$NON-NLS-1$
+		if(modes != null) {
+			for(Iterator iter = modes.iterator(); iter.hasNext();) {
+				str += iter.next();
+				if(iter.hasNext()) {
+					str += ","; //$NON-NLS-1$
+				}
+			}
+		}
+		return str;
 	}
 	
 	/**

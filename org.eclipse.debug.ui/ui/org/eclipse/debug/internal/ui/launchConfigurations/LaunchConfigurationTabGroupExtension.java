@@ -11,8 +11,11 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
  
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,18 +33,24 @@ public class LaunchConfigurationTabGroupExtension {
 	/**
 	 * The configuration element defining this tab group.
 	 */
-	private IConfigurationElement fConfig;
+	private IConfigurationElement fConfig = null;
 	
 	/**
-	 * Modes this tab group is applicable to or, <code>null</code> if
-	 * default.
+	 * A list of sets of modes that this tab group supports
+	 * @since 3.3
 	 */
-	private Set fModes;
+	private List fModes = null;
+	
+	/**
+	 * A map of mode sets to descriptions
+	 * @since 3.3
+	 */
+	private Map fDescriptions = null;
 	
 	/**
 	 * Perspectives for each mode
 	 */
-	private Map fPerspectives;
+	private Map fPerspectives = null;
 		
 	/**
 	 * Constructs a launch configuration tab extension based
@@ -83,22 +92,24 @@ public class LaunchConfigurationTabGroupExtension {
 	 * @return the set of modes specified in the configuration data, or
 	 *  <code>null</code>
 	 */
-	protected Set getModes() {
+	protected List getModes() {
 		if (fModes == null) {
-			IConfigurationElement[] modes= getConfigurationElement().getChildren(IConfigurationElementConstants.LAUNCH_MODE);
+			fModes = new ArrayList();
+			fPerspectives = new Hashtable();
+			IConfigurationElement[] modes = getConfigurationElement().getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			if (modes.length > 0) {
-				fModes = new HashSet(modes.length);
-				fPerspectives = new Hashtable(modes.length);
 				IConfigurationElement element = null;
-				String perspective = null;
-				String mode = null;
+				String perspective = null, mode = null;
+				Set mset = null;
 				for (int i = 0; i < modes.length; i++) {
 					element = modes[i];
 					mode = element.getAttribute(IConfigurationElementConstants.MODE);
-					fModes.add(mode);
+					mset = new HashSet();
+					mset.add(mode);
+					fModes.add(mset);
 					perspective = element.getAttribute(IConfigurationElementConstants.PERSPECTIVE);
 					if (perspective != null) {
-						fPerspectives.put(mode, perspective);
+						fPerspectives.put(mset, perspective);
 					}
 				}
 			}
@@ -110,17 +121,12 @@ public class LaunchConfigurationTabGroupExtension {
 	 * Returns the perspective associated with the given launch
 	 * mode, as specified in plug-in XML, or <code>null</code> if none.
 	 * 
-	 * @param mode launch mode
+	 * @param modes the set of launch modes
 	 * @return perspective identifier, or <code>null</code>
 	 */
-	protected String getPerspective(String mode) {
-		// ensure modes are initialized
+	protected String getPerspective(Set modes) {
 		getModes();
-		String id = null;
-		if (fPerspectives != null) {
-			id = (String)fPerspectives.get(mode);
-		}
-		return id;
+		return (String)fPerspectives.get(modes);
 	}
 	
 	/**
@@ -168,33 +174,36 @@ public class LaunchConfigurationTabGroupExtension {
 	}
 
 	/**
-	 * Returns this tab group's description in the given mode.
+	 * Returns this tab group's description in the given mode set.
 	 *
-	 * @param mode the mode
+	 * @param modes the set of modes
 	 * @return a description of the Launch Mode if available. If not available, attempts to return
 	 * a description of the Launch Configuration. If no appropriate description is found an empty string is returned.
 	 */
-	public String getDescription(String mode) {
-		String description = null;
-		
-		IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
-		if (children!= null && children.length != 0) {
-			IConfigurationElement child = null;
-			for (int i=0; i<children.length; i++) {
-				child = children[i];
-				if (child.getAttribute("mode").equals(mode)) { //$NON-NLS-1$
-					description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+	public String getDescription(Set modes) {
+		if(fDescriptions == null) {
+			fDescriptions = new HashMap();
+			String description = null;
+			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
+			if (children!= null && children.length != 0) {
+				IConfigurationElement child = null;
+				for (int i=0; i<children.length; i++) {
+					child = children[i];
+					if (modes.contains(child.getAttribute(IConfigurationElementConstants.MODE))) { 
+						description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+						break;
+					}
+				}
+			} 
+			if (description == null) {
+				description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+				if (description == null) {
+					description = ""; //$NON-NLS-1$
 				}
 			}
+			fDescriptions.put(modes, description);
 		} 
-		if (description == null){
-			description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
-		}
-		
-		if (description == null)
-			description = ""; //$NON-NLS-1$
-		
-		return description;
+		return (String) fDescriptions.get(modes);
 	}
 	
 }

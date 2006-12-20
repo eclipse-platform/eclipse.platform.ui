@@ -11,6 +11,7 @@
 package org.eclipse.debug.core;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -87,5 +88,12 @@ public interface ILaunchDelegate {
 	 * @return the id of the plug-in that contributed this launch delegate
 	 */
 	public String getPluginIdentifier();
+	
+	/**
+	 * Returns the specified perspective id for the given mode set, or null if one is not provided 
+	 * @param modes the set of modes to get the perspective id
+	 * @return the perspective id associated with the given mode set, or <code>null</code> if none provided
+	 */
+	public String getPerspectiveId(Set modes);
 	
 }

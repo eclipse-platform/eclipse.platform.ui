@@ -11,6 +11,8 @@
 package org.eclipse.debug.ui;
 
 
+import java.util.Set;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -24,6 +26,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -591,6 +594,9 @@ public class DebugUITools {
 	 * is launched in the given mode, or <code>null</code> if no switch should take
 	 * place.
 	 * 
+	 * In 3.3 this method is equivalent to calling <code>getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate)</code>,
+	 * with the 'mode' parameter comprising a single element set and passing <code>null</code> as the launch delegate.
+	 * 
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
 	 * @return perspective identifier or <code>null</code>
@@ -601,11 +607,28 @@ public class DebugUITools {
 	}
 	
 	/**
+	 * Returns the perspective id to switch to when a configuration of the given type launched with the specified delegate
+	 * is launched in the given mode set, or <code>null</code> if no switch should occurr.
+	 * @param type the configuration type
+	 * @param delegate the launch delegate
+	 * @param modes the set of modes
+	 * @return the perspective id or <code>null</code> if no switch should occur
+	 * 
+	 * @since 3.3
+	 */
+	public static String getLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes) {
+		return DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, modes, delegate);
+	}
+	
+	/**
 	 * Sets the perspective to switch to when a configuration of the given type
 	 * is launched in the given mode. <code>PERSPECTIVE_NONE</code> indicates no
 	 * perspective switch should take place. <code>PERSPECTIVE_DEFAULT</code> indicates
 	 * a default perspective switch should take place, as defined by the associated
 	 * launch tab group extension.
+	 * 
+	 * In 3.3 this method is equivalent to calling <code>setLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate, String perspectiveid)</code>, 
+	 * with the parameter 'mode' used in the set modes, and null passed as the delegate
 	 * 
 	 * @param type launch configuration type
 	 * @param mode launch mode identifier
@@ -616,7 +639,25 @@ public class DebugUITools {
 	public static void setLaunchPerspective(ILaunchConfigurationType type, String mode, String perspective) {
 		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, mode, perspective);
 	}	
-		
+	
+	/**
+	 * Sets the perspective to switch to when a configuration of the specified type and launched using the 
+	 * specified launch delegate is launched in the specified modeset. <code>PERSPECTIVE_NONE</code> indicates no
+	 * perspective switch should take place.
+	 * 
+	 * Passing <code>null</code> for the launch delegate is quivalent to using the default perspective for the specified 
+	 * type.
+	 * @param type the configuration type
+	 * @param delegate the launch delegate
+	 * @param modes the set of modes
+	 * @param perspectiveid identifier or <code>PERSPECTIVE_NONE</code>
+	 * 
+	 * @since 3.3
+	 */
+	public static void setLaunchPerspective(ILaunchConfigurationType type, ILaunchDelegate delegate, Set modes, String perspectiveid) {
+		DebugUIPlugin.getDefault().getPerspectiveManager().setLaunchPerspective(type, modes, delegate, perspectiveid);
+	}
+	
 	/**
 	 * Returns whether the given launch configuration is private. Generally,
 	 * private launch configurations should not be displayed to the user. The

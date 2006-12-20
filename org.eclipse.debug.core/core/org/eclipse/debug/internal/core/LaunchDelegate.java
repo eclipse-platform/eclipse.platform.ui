@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,10 @@ import com.ibm.icu.text.MessageFormat;
             modes="run, debug"
             name="%localJavaApplication"
             type="org.eclipse.jdt.launching.localJavaApplication">
+          <modeCombination 
+    		modes="run, profile">
+    		perspective="com.example.Perspective">
+   		  </modeCombination>
       </launchDelegate>
  * </pre>
  * 
@@ -60,6 +65,7 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	//a listing of sets of 
 	private List fLaunchModes = null;
 	private String fType = null;
+	private HashMap fPerspectiveIds = null;
 	
 	/**
 	 * Constructor
@@ -131,16 +137,20 @@ public final class LaunchDelegate implements ILaunchDelegate {
 	public List getModes() {
 		if(fLaunchModes == null) {
 			fLaunchModes = new ArrayList();
+			fPerspectiveIds = new HashMap();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.MODE_COMBINATION);
+			Set modeset = null;
 			for (int i = 0; i < children.length; i++) {
-				fLaunchModes.add(parseModes(children[i]));
+				modeset = parseModes(children[i]);
+				fLaunchModes.add(modeset);
+				fPerspectiveIds.put(modeset, children[i].getAttribute(IConfigurationElementConstants.PERSPECTIVE));
 			}
 			//try to get the modes from the old definition and make each one
 			//a seperate set of one element
+			modeset = null;
 			String modes = fElement.getAttribute(IConfigurationElementConstants.MODES); 
 			if (modes != null) {
 				String[] strings = modes.split(","); //$NON-NLS-1$
-				HashSet modeset = null;
 				for (int i = 0; i < strings.length; i++) {
 					modeset = new HashSet();
 					modeset.add(strings[i].trim());
@@ -215,5 +225,15 @@ public final class LaunchDelegate implements ILaunchDelegate {
 			return false;
 		}
 		return obj instanceof ILaunchDelegate && getId() != null && getId().equals(((ILaunchDelegate)obj).getId());
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchDelegate#getPerspectiveId(java.util.Set)
+	 */
+	public String getPerspectiveId(Set modes) {
+		if(fPerspectiveIds == null) {
+			getModes();
+		}
+		return (String) fPerspectiveIds.get(modes);
 	}
 }

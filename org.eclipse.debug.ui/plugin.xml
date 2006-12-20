@@ -134,7 +134,7 @@
       </page>
       <page
             category="org.eclipse.debug.ui.DebugPreferencePage"
-            class="org.eclipse.debug.internal.ui.preferences.PerspectivePreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.LaunchPerspectivePreferencePage"
             id="org.eclipse.debug.ui.PerspectivePreferencePage"
             name="%PerspectivePreferencePage.name">
          <keywordReference id="org.eclipse.debug.ui.perspectivesPref"/>

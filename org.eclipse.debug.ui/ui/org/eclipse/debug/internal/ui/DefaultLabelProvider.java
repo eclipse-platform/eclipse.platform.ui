@@ -12,8 +12,6 @@
 package org.eclipse.debug.internal.ui;
 
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -23,6 +21,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -47,6 +46,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class DefaultLabelProvider implements ILabelProvider {
 
@@ -198,6 +199,13 @@ public class DefaultLabelProvider implements ILabelProvider {
 					label.append(((ILaunchConfiguration)element).getName());
 				} else if (element instanceof ILaunchConfigurationType) {
 					label.append(((ILaunchConfigurationType)element).getName());
+				} else if(element instanceof ILaunchDelegate) {
+					ILaunchDelegate delegate = (ILaunchDelegate) element;
+					String name = delegate.getName();
+					if(name == null) {
+						name = delegate.getContributorName();
+					}
+					label.append(name);
 				} else if (element instanceof String) {
 					label.append(element);
 				} else {

@@ -1383,7 +1383,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}
 	
 	/**
-	 * Returns all of the launch delegates. The rturned listing of delegates cannot be directly used to launch,
+	 * Returns all of the launch delegates. The returned listing of delegates cannot be directly used to launch,
 	 * instead the method <code>IlaunchDelegate.getDelegate</code> must be used to acquire an executable form of
 	 * the delegate, allowing us to maintain lazy loading of the delegates themselves.
 	 * @return all of the launch delegates

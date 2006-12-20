@@ -46,7 +46,7 @@
          </appInfo>
       </annotation>
       <complexType>
-         <sequence minOccurs="0" maxOccurs="unbounded">
+         <sequence minOccurs="0" maxOccurs="1">
             <element ref="modeCombination" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
@@ -148,6 +148,13 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="perspective" type="string">
+            <annotation>
+               <documentation>
+                  a string representing the id of a persepctive to switch to when launching. This attribute was added in the 3.3 release. EXPERIMENTAL.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -171,18 +178,21 @@ Unlike the modes attribute of the &lt;code&gt;launchDeleaget&lt;/code&gt; elemen
 &lt;pre&gt;
  &lt;extension point=&quot;org.eclipse.debug.core.launchDelegates&quot;&gt;
   &lt;launchDelegate
-   id=&quot;com.example.ExampleProfileDelegate&quot;
-   delegate=&quot;com.example.ExampleProfileDelegate&quot;
-   type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
-   name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
+   	id=&quot;com.example.ExampleProfileDelegate&quot;
+   	delegate=&quot;com.example.ExampleProfileDelegate&quot;
+   	type=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;
+   	name=&quot;Eclipse JDT Java Profile Tooling&quot;&gt;
+  	&lt;modeCombination 
+  		modes=&quot;run, profile&quot;&gt;
+  		perspective=&quot;com.example.Perspective&quot;&gt;
+  	&lt;/modeCombination&gt;
+  	&lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
   &lt;/launchDelegate&gt;
-  &lt;modeCombination modes=&quot;run, profile&quot;&gt;&lt;/modeCombination&gt;
-  &lt;modeCombination modes=&quot;debug, profile, coverage&quot;&gt;&lt;/modeCombination&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 
-In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode, with code coverage in debug mode only.
+In the example above, the specified launch delegate is contributed to launch Java applications in profile mode. The delegate supports mixed mode launching. The delegate supports profiling when launching in run or debug mode, with code coverage in debug mode only. When the mode combination or run and profile is used, in this example, the perspective com.example.Perspective can also be opened.
       </documentation>
    </annotation>
 
