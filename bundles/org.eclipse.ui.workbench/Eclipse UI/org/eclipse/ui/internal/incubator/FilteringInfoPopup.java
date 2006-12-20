@@ -170,8 +170,10 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 			}
 			public void widgetDefaultSelected(SelectionEvent e) {
 				Object selectedElement = getSelectedElement();
-				close();
-                handleElementSelected(selectedElement);
+				if (isMatchable(selectedElement)) {
+					close();
+					handleElementSelected(selectedElement);
+				}
 			}
 		});
 
@@ -220,8 +222,10 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 					TreeItem selection= tree.getSelection()[0];
 					if (selection.equals(o)) {
 						Object selectedElement = getSelectedElement();
-						close();
-                        handleElementSelected(selectedElement);
+						if (isMatchable(selectedElement)) {
+							close();
+							handleElementSelected(selectedElement);
+						}
 					}
 				}
 			}
