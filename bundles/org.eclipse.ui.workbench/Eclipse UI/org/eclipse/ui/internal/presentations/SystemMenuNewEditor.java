@@ -12,11 +12,15 @@ package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -65,9 +69,20 @@ public final class SystemMenuNewEditor extends Action implements ISelfUpdatingAc
 						String editorId = editor.getSite().getId();
 						if (editorId != null) {
 							try {
-								page.openEditor(editor
-										.getEditorInput(), editorId, true,
-										IWorkbenchPage.MATCH_NONE);
+								if (editor instanceof IPersistableEditor) {
+									XMLMemento editorState = XMLMemento
+											.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
+									((IPersistableEditor) editor)
+											.saveState(editorState);
+									((WorkbenchPage) page).openEditor(editor
+											.getEditorInput(), editorId, true,
+											IWorkbenchPage.MATCH_NONE,
+											editorState);
+								} else {
+									page.openEditor(editor.getEditorInput(),
+											editorId, true,
+											IWorkbenchPage.MATCH_NONE);
+								}
 							} catch (PartInitException e) {
 								DialogUtil.openError(page.getWorkbenchWindow()
 										.getShell(), WorkbenchMessages.Error, e

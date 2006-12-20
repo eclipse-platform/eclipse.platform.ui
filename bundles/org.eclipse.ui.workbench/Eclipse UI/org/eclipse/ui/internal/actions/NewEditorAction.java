@@ -12,11 +12,15 @@
 package org.eclipse.ui.internal.actions;
 
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ActiveEditorAction;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
@@ -52,8 +56,17 @@ public class NewEditorAction extends ActiveEditorAction {
 			return;
 		}
 		try {
-			page.openEditor(editor.getEditorInput(), editorId, true, IWorkbenchPage.MATCH_NONE);
-        } catch (PartInitException e) {
+			if (editor instanceof IPersistableEditor) {
+				XMLMemento editorState = XMLMemento
+						.createWriteRoot(IWorkbenchConstants.TAG_EDITOR_STATE);
+				((IPersistableEditor) editor).saveState(editorState);
+				((WorkbenchPage) page).openEditor(editor.getEditorInput(),
+						editorId, true, IWorkbenchPage.MATCH_NONE, editorState);
+			} else {
+				page.openEditor(editor.getEditorInput(), editorId, true,
+						IWorkbenchPage.MATCH_NONE);
+			}
+		} catch (PartInitException e) {
             DialogUtil.openError(page.getWorkbenchWindow().getShell(),
                     WorkbenchMessages.Error,
                     e.getMessage(), e);

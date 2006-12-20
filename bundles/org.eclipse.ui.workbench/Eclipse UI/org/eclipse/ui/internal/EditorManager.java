@@ -690,6 +690,24 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	public IEditorReference openEditor(String editorId, IEditorInput input,
 			boolean setVisible) throws PartInitException {
+		return openEditor(editorId, input, setVisible, null);
+	}
+
+	/**
+	 * @param editorId
+	 *            the editor part id
+	 * @param input
+	 *            the input
+	 * @param setVisible
+	 *            if this is to be created visible ... not used
+	 * @param editorState
+	 *            an {@link IMemento} &lt;editorState&gt; for persistable
+	 *            editors. Can be <code>null</code>.
+	 * @return a created editor reference
+	 * @throws PartInitException
+	 */
+	public IEditorReference openEditor(String editorId, IEditorInput input,
+			boolean setVisible, IMemento editorState) throws PartInitException {
 		if (editorId == null || input == null) {
 			throw new IllegalArgumentException();
 		}
@@ -702,7 +720,7 @@ public class EditorManager implements IExtensionChangeHandler {
 					editorId));
 		}
 
-		IEditorReference result = openEditorFromDescriptor(desc, input);
+		IEditorReference result = openEditorFromDescriptor(desc, input, editorState);
 		return result;
 	}
 
@@ -710,12 +728,12 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * Open a new editor
 	 */
 	private IEditorReference openEditorFromDescriptor(EditorDescriptor desc,
-			IEditorInput input) throws PartInitException {
+			IEditorInput input, IMemento editorState) throws PartInitException {
 		IEditorReference result = null;
 		if (desc.isInternal()) {
 			result = reuseInternalEditor(desc, input);
 			if (result == null) {
-				result = new EditorReference(this, input, desc);
+				result = new EditorReference(this, input, desc, editorState);
 			}
 		} else if (desc.getId()
 				.equals(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID)) {

@@ -58,7 +58,7 @@ public class EditorReference extends WorkbenchPartReference implements
 
     private IMemento editorMemento;
 
-	private IMemento editorState;
+	private IMemento editorState = null;
 
     /**
      * Flag that lets us detect malfunctioning editors that don't fire PROP_INPUT events.
@@ -91,16 +91,43 @@ public class EditorReference extends WorkbenchPartReference implements
 	private IEditorReference[] multiEditorChildren = null;
 
     
-    public EditorReference(EditorManager manager, IEditorInput input, EditorDescriptor desc) {
-        this.manager = manager;
-        initListenersAndHandlers();
-        restoredInput = input;
-        init(desc.getId(), desc.getLabel(), "", desc.getImageDescriptor(), desc.getLabel(), "");  //$NON-NLS-1$//$NON-NLS-2$
-    }
+    /**
+	 * @param manager
+	 *            The editor manager for this reference
+	 * @param input
+	 *            our input
+	 * @param desc
+	 *            the descriptor from the declaration
+	 */
+	public EditorReference(EditorManager manager, IEditorInput input,
+			EditorDescriptor desc) {
+		this(manager, input, desc, null);
+	}
     
     /**
-     * Constructs a new editor reference for use by editors being restored from a memento.
-     */
+	 * @param manager
+	 *            The editor manager for this reference
+	 * @param input
+	 *            our input
+	 * @param desc
+	 *            the descriptor from the declaration
+	 * @param editorState
+	 *            propogate state from another editor. Can be <code>null</code>.
+	 */
+	public EditorReference(EditorManager manager, IEditorInput input,
+			EditorDescriptor desc, IMemento editorState) {
+		this.manager = manager;
+		initListenersAndHandlers();
+		restoredInput = input;
+		this.editorState = editorState;
+		init(desc.getId(), desc.getLabel(),
+				"", desc.getImageDescriptor(), desc.getLabel(), ""); //$NON-NLS-1$//$NON-NLS-2$
+	}
+    
+    /**
+	 * Constructs a new editor reference for use by editors being restored from
+	 * a memento.
+	 */
     EditorReference(EditorManager manager, IMemento memento) {
         this.manager = manager;
         initListenersAndHandlers();

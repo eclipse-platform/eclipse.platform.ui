@@ -2469,6 +2469,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     public IEditorPart openEditor(final IEditorInput input,
             final String editorID, final boolean activate, final int matchFlags)
             throws PartInitException {
+    	return openEditor(input, editorID, activate, matchFlags, null);
+    }
+	
+    /**
+     * This is not public API but for use internally.  editorState can be <code>null</code>.
+     */
+    public IEditorPart openEditor(final IEditorInput input,
+            final String editorID, final boolean activate, final int matchFlags,
+            final IMemento editorState)
+            throws PartInitException {
         if (input == null || editorID == null) {
             throw new IllegalArgumentException();
         }
@@ -2480,7 +2490,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     public void run() {
                         try {
                             result[0] = busyOpenEditor(input, editorID,
-                                    activate, matchFlags);
+                                    activate, matchFlags, editorState);
                         } catch (PartInitException e) {
                             ex[0] = e;
                         }
@@ -2496,14 +2506,14 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see #openEditor(IEditorInput, String, boolean, int)
 	 */
     private IEditorPart busyOpenEditor(IEditorInput input, String editorID,
-            boolean activate, int matchFlags) throws PartInitException {
+            boolean activate, int matchFlags, IMemento editorState) throws PartInitException {
 
         final Workbench workbench = (Workbench) getWorkbenchWindow()
                 .getWorkbench();
         workbench.largeUpdateStart();
 
         try {
-            return busyOpenEditorBatched(input, editorID, activate, matchFlags);
+            return busyOpenEditorBatched(input, editorID, activate, matchFlags, editorState);
 
         } finally {
             workbench.largeUpdateEnd();
@@ -2516,7 +2526,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * @see IWorkbenchPage#openEditor(IEditorInput, String, boolean)
      */
     private IEditorPart busyOpenEditorBatched(IEditorInput input,
-            String editorID, boolean activate,  int matchFlags) throws PartInitException {
+            String editorID, boolean activate,  int matchFlags, IMemento editorState) throws PartInitException {
 
         // If an editor already exists for the input, use it.
 		IEditorPart editor = getEditorManager().findEditor(editorID, input, matchFlags);
@@ -2568,7 +2578,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // Otherwise, create a new one. This may cause the new editor to
         // become the visible (i.e top) editor.
         IEditorReference ref = null;
-        ref = getEditorManager().openEditor(editorID, input, true);
+        ref = getEditorManager().openEditor(editorID, input, true, editorState);
         if (ref != null) {
             editor = ref.getEditor(true);
         }
