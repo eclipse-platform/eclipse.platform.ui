@@ -441,7 +441,7 @@ public abstract class FilteringInfoPopup extends PopupDialog implements DisposeL
 				parentElement = parentItem.getData();
 			}
 
-			if (element != null) {
+			if (element != null && isMatchable(element)) {
 				String[] label= getMatchNames(element, parentElement);
 				for(int j = 0; j < label.length; j++) {
 					if (matcher.match(label[j]))
