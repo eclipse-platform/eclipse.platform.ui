@@ -14,8 +14,6 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.util.Policy;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -47,18 +45,6 @@ public abstract class ViewerRow {
 	 */
 	protected ViewerRow(final Item item) {
 		item.setData(ViewerRow.ROWPART_KEY, this);
-		item.addDisposeListener(new DisposeListener() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
-			public void widgetDisposed(DisposeEvent e) {
-				item.setData(ROWPART_KEY, null);
-			}
-
-		});
 	}
 
 	/**
