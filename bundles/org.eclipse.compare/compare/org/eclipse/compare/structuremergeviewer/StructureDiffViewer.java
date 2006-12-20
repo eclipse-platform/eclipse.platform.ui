@@ -310,7 +310,10 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			compareInputChanged(input, force, null);
 			return;
 		}
-		getCompareConfiguration().getContainer().runAsynchronously(inputChangedTask);
+		CompareConfiguration cc = getCompareConfiguration();
+		// The compare configuration is nulled when the viewer is disposed
+		if (cc != null)
+			cc.getContainer().runAsynchronously(inputChangedTask);
 	}
 
 	/* package */ void compareInputChanged(ICompareInput input, boolean force, IProgressMonitor monitor) {
