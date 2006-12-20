@@ -28,7 +28,9 @@ import org.eclipse.ui.IWorkingSetElementAdapter;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.packageadmin.ExportedPackage;
@@ -144,8 +146,10 @@ public class WorkingSetDescriptor implements IPluginContribution {
                 page = WorkbenchPlugin.createExtension(configElement,
                         ATT_PAGE_CLASS);
             } catch (CoreException exception) {
-                WorkbenchPlugin.log("Unable to create working set page: " + //$NON-NLS-1$
-                        pageClassName, exception.getStatus());
+                IStatus status = StatusUtil.newStatus(exception.getStatus(),
+						"Unable to create working set page: " + //$NON-NLS-1$
+								pageClassName);
+				StatusManager.getManager().handle(status);
             }
         }
         return (IWorkingSetPage) page;
@@ -220,8 +224,10 @@ public class WorkingSetDescriptor implements IPluginContribution {
 			result = (IWorkingSetElementAdapter) WorkbenchPlugin
 					.createExtension(configElement, ATT_ELEMENT_ADAPTER_CLASS);
 		} catch (CoreException exception) {
-			WorkbenchPlugin.log("Unable to create working set element adapter: " + //$NON-NLS-1$
-					result, exception.getStatus());
+			IStatus status = StatusUtil.newStatus(exception.getStatus(),
+					"Unable to create working set element adapter: " + //$NON-NLS-1$		
+							result);
+			StatusManager.getManager().handle(status);
 		}
 		return result;
 	}
@@ -240,8 +246,10 @@ public class WorkingSetDescriptor implements IPluginContribution {
         try {
             result = (IWorkingSetUpdater)WorkbenchPlugin.createExtension(configElement, ATT_UPDATER_CLASS);
         } catch (CoreException exception) {
-            WorkbenchPlugin.log("Unable to create working set updater: " + //$NON-NLS-1$
-            	updaterClassName, exception.getStatus());
+            IStatus status = StatusUtil.newStatus(exception.getStatus(),
+					"Unable to create working set updater: " + //$NON-NLS-1$
+							updaterClassName);
+			StatusManager.getManager().handle(status);
         }
         return result;   	
     }
@@ -340,7 +348,12 @@ public class WorkingSetDescriptor implements IPluginContribution {
 												.loadClass(type)) != null)
 											return true;
 									} catch (ClassNotFoundException e) {
-										WorkbenchPlugin.log(e);
+										IStatus status = StatusUtil
+												.newStatus(
+														WorkbenchPlugin.PI_WORKBENCH,
+														e);
+										StatusManager.getManager().handle(
+												status);
 									}
 								}
 							}

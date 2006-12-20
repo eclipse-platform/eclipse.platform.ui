@@ -18,7 +18,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  *	Template implementation of a registry reader that creates objects
@@ -50,16 +53,18 @@ public abstract class RegistryReader {
      */
     protected static void logError(IConfigurationElement element, String text) {
         IExtension extension = element.getDeclaringExtension();
-        StringBuffer buf = new StringBuffer();
-        buf
-                .append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
-        buf.append("\n" + text);//$NON-NLS-1$
-        WorkbenchPlugin.log(buf.toString());
+		StringBuffer buf = new StringBuffer();
+		buf
+				.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier());//$NON-NLS-2$//$NON-NLS-1$
+		buf.append("\n" + text);//$NON-NLS-1$
+		IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, buf.toString());
+		StatusManager.getManager().handle(status);
     }
 
     /**
-     * Logs a very common registry error when a required attribute is missing.
-     */
+	 * Logs a very common registry error when a required attribute is missing.
+	 */
     protected static void logMissingAttribute(IConfigurationElement element,
             String attributeName) {
         logError(element,

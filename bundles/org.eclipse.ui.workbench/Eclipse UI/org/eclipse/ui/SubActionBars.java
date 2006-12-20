@@ -21,6 +21,8 @@ import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -39,6 +41,7 @@ import org.eclipse.ui.internal.handlers.CommandLegacyActionWrapper;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.services.SourcePriorityNameMapping;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Generic implementation of the <code>IActionBars</code> interface.
@@ -456,16 +459,17 @@ public class SubActionBars extends EventManager implements IActionBars {
 			 * but some people still did it. Handle this case by trapping the
 			 * exception and logging it.
 			 */
-			WorkbenchPlugin
-					.log("Cannot set the global action handler for a null action id"); //$NON-NLS-1$
+
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, "Cannot set the global action handler for a null action id"); //$NON-NLS-1$ 
+			StatusManager.getManager().handle(status);
 			return;
 		}
 		
 		if (handler instanceof CommandLegacyActionWrapper) {
         	// this is a registration of a fake action for an already
 			// registered handler
-			WorkbenchPlugin
-					.log("Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, "Cannot feed a CommandLegacyActionWrapper back into the system"); //$NON-NLS-1$ 
+			StatusManager.getManager().handle(status);
 			return;
 		}
 		

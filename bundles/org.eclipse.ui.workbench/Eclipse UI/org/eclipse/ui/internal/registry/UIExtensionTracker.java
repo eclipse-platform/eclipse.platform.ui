@@ -11,10 +11,13 @@
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * @since 3.1
@@ -45,7 +48,9 @@ public class UIExtensionTracker extends ExtensionTracker {
                 try {
                     handler.removeExtension(removedExtension, objects);
                 } catch (Exception e) {
-                    WorkbenchPlugin.log(getClass(), "doRemove", e); //$NON-NLS-1$
+                    IStatus status = StatusUtil.newStatus(
+							WorkbenchPlugin.PI_WORKBENCH, getClass().getName() + ".doRemove", e); //$NON-NLS-1$
+					StatusManager.getManager().handle(status);
                 }
             }
         });
@@ -57,7 +62,9 @@ public class UIExtensionTracker extends ExtensionTracker {
                 try {
                     handler.addExtension(UIExtensionTracker.this, addedExtension);
                 } catch (Exception e) {
-                    WorkbenchPlugin.log(getClass(), "doAdd", e); //$NON-NLS-1$
+                	IStatus status = StatusUtil.newStatus(
+							WorkbenchPlugin.PI_WORKBENCH, getClass().getName() + ".doAdd", e); //$NON-NLS-1$
+					StatusManager.getManager().handle(status);
                 }
             }
         });

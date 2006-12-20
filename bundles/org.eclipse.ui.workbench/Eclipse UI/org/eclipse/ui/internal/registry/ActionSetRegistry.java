@@ -19,12 +19,16 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The registry of action set extensions.
@@ -172,8 +176,10 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
             if (actionSet != null) {
 				actionSets.add(actionSet);
 			} else {
-               WorkbenchPlugin.log("Unable to associate action set with part: " + //$NON-NLS-1$
-                        partId + ". Action set " + actionSetId + " not found."); //$NON-NLS-2$ //$NON-NLS-1$
+				String message = "Unable to associate action set with part: " + //$NON-NLS-1$
+                partId + ". Action set " + actionSetId + " not found."; //$NON-NLS-2$ //$NON-NLS-1$
+				IStatus status = new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, message); 
+		    	StatusManager.getManager().handle(status);
             }
         }
         
@@ -240,9 +246,11 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
                             
                         }
                     } else {
-                        WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
+                    	String message = "Unable to process element: " + //$NON-NLS-1$
                                 child.getName() + " in action set part associations extension: " + //$NON-NLS-1$
-                                extension.getUniqueIdentifier());
+                                extension.getUniqueIdentifier();
+                    	IStatus status = new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, message); 
+                    	StatusManager.getManager().handle(status);
                     }
                 }
             }
@@ -268,9 +276,9 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 
                 } catch (CoreException e) {
                     // log an error since its not safe to open a dialog here
-                    WorkbenchPlugin
-                            .log(
-                                    "Unable to create action set descriptor.", e.getStatus());//$NON-NLS-1$
+					IStatus status = StatusUtil.newStatus(e.getStatus(),
+							"Unable to create action set descriptor."); //$NON-NLS-1$
+					StatusManager.getManager().handle(status);
                 }
             } 
         }   

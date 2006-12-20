@@ -21,8 +21,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -259,8 +262,10 @@ public final class XMLMemento implements IMemento {
         try {
             return new Float(strValue);
         } catch (NumberFormatException e) {
-            WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
-                    + key + " value: " + strValue, e); //$NON-NLS-1$
+            String message = "Memento problem - Invalid float for key: " //$NON-NLS-1$
+                    + key + " value: " + strValue; //$NON-NLS-1$
+            IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
+        	StatusManager.getManager().handle(status);
             return null;
         }
     }
@@ -284,9 +289,10 @@ public final class XMLMemento implements IMemento {
         try {
             return new Integer(strValue);
         } catch (NumberFormatException e) {
-            WorkbenchPlugin
-                    .log("Memento problem - invalid integer for key: " + key //$NON-NLS-1$
-                            + " value: " + strValue, e); //$NON-NLS-1$
+            String message = "Memento problem - invalid integer for key: " + key //$NON-NLS-1$
+                            + " value: " + strValue; //$NON-NLS-1$
+            IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
+        	StatusManager.getManager().handle(status);
             return null;
         }
     }

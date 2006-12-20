@@ -34,18 +34,17 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
@@ -65,7 +64,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandling.StatusManager;
 
 import com.ibm.icu.text.Collator;
 
@@ -602,23 +603,29 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             if (extEditor.length() < 3 || index <= 0
                     || index >= (extEditor.length() - 1)) {
                 //Extension and id must have at least one char.
-                WorkbenchPlugin
-                        .log("Error setting default editor. Could not parse '" + extEditor + "'. Default editors should be specified as '*.ext1:editorId1;*.ext2:editorId2'"); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
+                String message = "Error setting default editor. Could not parse '" + extEditor + "'. Default editors should be specified as '*.ext1:editorId1;*.ext2:editorId2'"; //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, message);
+				StatusManager.getManager().handle(status);
+				return;
             }
             String ext = extEditor.substring(0, index).trim();
             String editorId = extEditor.substring(index + 1).trim();
             FileEditorMapping mapping = getMappingFor(ext);
             if (mapping == null) {
-                WorkbenchPlugin
-                        .log("Error setting default editor. Could not find mapping for '" + ext + "'."); //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
+                String message = "Error setting default editor. Could not find mapping for '" + ext + "'."; //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, message);
+				StatusManager.getManager().handle(status);
+				continue;
             }
             EditorDescriptor editor = (EditorDescriptor) findEditor(editorId);
             if (editor == null) {
-                WorkbenchPlugin
-                        .log("Error setting default editor. Could not find editor: '" + editorId + "'."); //$NON-NLS-1$ //$NON-NLS-2$
-                continue;
+                String message = "Error setting default editor. Could not find editor: '" + editorId + "'."; //$NON-NLS-1$ //$NON-NLS-2$
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, message);
+				StatusManager.getManager().handle(status);
+				continue;
             }
             mapping.setDefaultEditor(editor);
         }
@@ -702,9 +709,9 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             //Ignore this as the workbench may not yet have saved any state
             return false;
         } catch (WorkbenchException e) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
-                    WorkbenchMessages.EditorRegistry_errorMessage, 
-                    e.getStatus());
+            IStatus status = StatusUtil.newStatus(e.getStatus(),
+					WorkbenchMessages.EditorRegistry_errorMessage);
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
             return false;
         }
 
@@ -887,14 +894,16 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            MessageDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
-                    WorkbenchMessages.EditorRegistry_errorMessage);
+            IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH,
+					WorkbenchMessages.EditorRegistry_errorMessage);
+			StatusManager.getManager().handle(status);
             return false;
         } catch (WorkbenchException e) {
-            ErrorDialog.openError((Shell) null, WorkbenchMessages.EditorRegistry_errorTitle,
-                    WorkbenchMessages.EditorRegistry_errorMessage,
-                    e.getStatus());
-            return false;
+        	IStatus status = StatusUtil.newStatus(e.getStatus(),
+					WorkbenchMessages.EditorRegistry_errorMessage);
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
+			return false;
         }
         return true;
 
@@ -1035,9 +1044,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            MessageDialog.openError((Shell) null, "Saving Problems", //$NON-NLS-1$
-                    "Unable to save resource associations."); //$NON-NLS-1$
-            return;
+            IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH,
+					"Unable to save resource associations."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
+			return;
         }
 
         memento = XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_EDITORS);
@@ -1062,9 +1073,11 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            MessageDialog.openError((Shell) null,
-                    "Error", "Unable to save resource associations."); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
+            IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH,
+					"Unable to save resource associations."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
+			return;
         }
     }
 

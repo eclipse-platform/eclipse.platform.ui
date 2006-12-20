@@ -13,12 +13,13 @@ package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Command handler to show a particular view.
@@ -59,9 +60,9 @@ public final class ShowViewHandler extends AbstractHandler {
 		try {
 			activePage.showView(viewId);
 		} catch (PartInitException e) {
-			ErrorDialog.openError(activePage.getWorkbenchWindow().getShell(),
-					WorkbenchMessages.ShowView_errorTitle, e.getMessage(), e
-							.getStatus());
+			IStatus status = StatusUtil
+					.newStatus(e.getStatus(), e.getMessage());
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
 		}
 
 		return null;

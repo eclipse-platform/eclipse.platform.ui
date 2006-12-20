@@ -22,12 +22,14 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardCollectionElement;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandling.StatusManager;
 
 import com.ibm.icu.text.Collator;
 
@@ -192,8 +194,10 @@ public class WizardsRegistryReader extends RegistryReader {
         try {
             category = new Category(config);
         } catch (CoreException e) {
-            WorkbenchPlugin.log("Cannot create category: ", e.getStatus());//$NON-NLS-1$
-            return;
+            IStatus status = StatusUtil.newStatus(e.getStatus(),
+					"Cannot create category."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status);
+			return;
         }
 
         // Defer for later processing.

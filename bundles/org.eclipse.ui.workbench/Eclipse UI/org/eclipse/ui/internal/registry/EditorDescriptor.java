@@ -16,6 +16,8 @@ import java.io.Serializable;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
@@ -30,8 +32,10 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * @see IEditorDescriptor
@@ -193,8 +197,9 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
                     .createExtension(configurationElement,
                             IWorkbenchRegistryConstants.ATT_CONTRIBUTOR_CLASS);
         } catch (CoreException e) {
-            WorkbenchPlugin.log("Unable to create editor contributor: " + //$NON-NLS-1$
-                    id, e.getStatus());
+        	IStatus status = StatusUtil.newStatus(e.getStatus(),
+					"Unable to create editor contributor."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status);
         }
         return contributor;
     }
@@ -429,9 +434,11 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
         }
         if (openMode != OPEN_EXTERNAL && openMode != OPEN_INTERNAL
                 && openMode != OPEN_INPLACE) {
-            WorkbenchPlugin
-                    .log("Ignoring editor descriptor with invalid openMode: " + this); //$NON-NLS-1$
-            return false;
+            String message = "Ignoring editor descriptor with invalid openMode: " + this; //$NON-NLS-1$
+			IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, message);
+			StatusManager.getManager().handle(status);
+			return false;
         }
 
         String programName = memento
@@ -617,7 +624,10 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable,
                     try {
                         matchingStrategy = (IEditorMatchingStrategy) WorkbenchPlugin.createExtension(configurationElement, IWorkbenchRegistryConstants.ATT_MATCHING_STRATEGY);
                     } catch (CoreException e) {
-                        WorkbenchPlugin.log("Error creating editor management policy for editor id " + getId(), e); //$NON-NLS-1$
+                    	String message = "Error creating editor management policy for editor id " + getId(); //$NON-NLS-1$
+						IStatus status = StatusUtil.newStatus(e.getStatus(),
+								message);
+						StatusManager.getManager().handle(status);
                     }
                 }
             }

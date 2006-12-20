@@ -49,13 +49,13 @@ import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ActivityManagerFactory;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
@@ -432,7 +432,9 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExt
 				try {
 					advisor = descriptor.createAdvisor();					
 				} catch (CoreException e) {
-					WorkbenchPlugin.log("could not create trigger point advisor", e); //$NON-NLS-1$
+					IStatus status = StatusUtil.newStatus(e.getStatus(),
+							"Could not create trigger point advisor"); //$NON-NLS-1$ 
+					StatusManager.getManager().handle(status);
 				}
 			}
         }

@@ -19,13 +19,16 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.DirtyPerspectiveMarker;
 import org.eclipse.ui.internal.PageLayout;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A strategy to read perspective extension from the registry.
@@ -125,11 +128,14 @@ public class PerspectiveExtensionReader extends RegistryReader {
 					result = processShowInPart(child);
 				}
                 if (!result) {
-                    WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
-                            type
-                            + " in perspective extension: " + //$NON-NLS-1$
-                            element.getDeclaringExtension()
-                                    .getUniqueIdentifier());
+                    String message = "Unable to process element: " + //$NON-NLS-1$
+							type
+							+ " in perspective extension: " + //$NON-NLS-1$
+							element.getDeclaringExtension()
+									.getUniqueIdentifier();
+					IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, message);
+					StatusManager.getManager().handle(status);
                 }
             }
         }
@@ -137,8 +143,8 @@ public class PerspectiveExtensionReader extends RegistryReader {
     }
 
     /**
-     * Process a perspective shortcut
-     */
+	 * Process a perspective shortcut
+	 */
     private boolean processPerspectiveShortcut(IConfigurationElement element) {
         String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
         if (id != null) {

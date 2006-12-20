@@ -13,8 +13,10 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A strategy to read view extensions from the registry.
@@ -42,8 +44,9 @@ public class ViewRegistryReader extends RegistryReader {
             viewRegistry.add(new Category(element));
         } catch (CoreException e) {
             // log an error since its not safe to show a dialog here
-            WorkbenchPlugin.log(
-                    "Unable to create view category.", e.getStatus());//$NON-NLS-1$
+			IStatus status = StatusUtil.newStatus(e.getStatus(),
+					"Unable to create view category."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status);
         }
     }
 
@@ -76,9 +79,9 @@ public class ViewRegistryReader extends RegistryReader {
             viewRegistry.add(new StickyViewDescriptor(element));
         } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
-            WorkbenchPlugin.log(
-                    "Unable to create sticky view descriptor.", e.getStatus());//$NON-NLS-1$
-
+			IStatus status = StatusUtil.newStatus(e.getStatus(),
+					"Unable to create sticky view descriptor."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status);
         }
     }
 
@@ -90,8 +93,9 @@ public class ViewRegistryReader extends RegistryReader {
             viewRegistry.add(new ViewDescriptor(element));
         } catch (CoreException e) {
             // log an error since its not safe to open a dialog here
-            WorkbenchPlugin.log(
-                    "Unable to create view descriptor.", e.getStatus());//$NON-NLS-1$
+			IStatus status = StatusUtil.newStatus(e.getStatus(),
+					"Unable to create view descriptor."); //$NON-NLS-1$
+			StatusManager.getManager().handle(status);
         }
     }
 

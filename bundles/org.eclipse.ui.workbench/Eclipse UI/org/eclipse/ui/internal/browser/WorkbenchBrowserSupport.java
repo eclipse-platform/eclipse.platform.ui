@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -26,7 +27,9 @@ import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Implements the support interface and delegates the calls to the active
@@ -226,8 +229,9 @@ public class WorkbenchBrowserSupport extends AbstractWorkbenchBrowserSupport {
 									activeSupport, IExtensionTracker.REF_WEAK);
 					return true;
 				} catch (CoreException e) {
-					WorkbenchPlugin
-							.log("Unable to instantiate browser support" + e.getStatus(), e);//$NON-NLS-1$
+					IStatus errStatus = StatusUtil.newStatus(e.getStatus(),
+							"Unable to instantiate browser support"); //$NON-NLS-1$
+					StatusManager.getManager().handle(errStatus);
 				}
 				return false;
 			}

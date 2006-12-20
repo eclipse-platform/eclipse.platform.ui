@@ -29,16 +29,14 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -54,7 +52,9 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Perspective registry.
@@ -502,12 +502,13 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 	 * @param status
 	 */
 	private void unableToLoadPerspective(IStatus status) {
-		String title = WorkbenchMessages.Perspective_problemLoadingTitle;
 		String msg = WorkbenchMessages.Perspective_errorLoadingState;
 		if (status == null) {
-			MessageDialog.openError((Shell) null, title, msg);
+			IStatus errStatus = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, msg); 
+	    	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 		} else {
-			ErrorDialog.openError((Shell) null, title, msg, status);
+			IStatus errStatus = StatusUtil.newStatus(status, msg); 
+	    	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 		}
 	}
 
