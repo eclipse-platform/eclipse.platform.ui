@@ -388,4 +388,15 @@ public abstract class AbstractTabFolder {
     public void setVisible(boolean visible) {
 		getControl().setVisible(visible);
 	}
+
+	/**
+	 * Cause the folder to hide or show its
+	 * Minimize and Maximize affordances.
+	 * 
+	 * @param show
+	 *            <code>true</code> - the min/max buttons are visible.
+	 * @since 3.3
+	 */
+	public void showMinMax(boolean show) {
+	}
 }

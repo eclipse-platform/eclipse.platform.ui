@@ -18,15 +18,19 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.layout.ITrimManager;
 import org.eclipse.ui.internal.presentations.PresentationSerializer;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.presentations.StackPresentation;
 
 /**
@@ -61,7 +65,59 @@ public class EditorSashContainer extends PartSashContainer {
         stack.add(pane);
     }
 
+    /* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartSashContainer#addChild(org.eclipse.ui.internal.PartSashContainer.RelationshipInfo)
+	 */
+	protected void addChild(RelationshipInfo info) {
+		super.addChild(info);
+		
+		updateStackButtons();
+	}
+	
     /**
+	 * Hides the min/max buttons for all editor stacks
+	 * -except- for the upper/left one.
+	 */
+	private void updateStackButtons() {
+		 // This is applicable only when the new
+		 // min/max behaviour is being used
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean useNewMinMax = preferenceStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
+        if (!useNewMinMax)
+        	return;
+        
+		LayoutPart[] stacks = getChildren();
+		if (stacks.length == 0)
+			return;
+		
+		// Find the upper Right editor stack
+		EditorStack winner = null;
+		Rectangle winnerRect = null;
+		for (int i = 0; i < stacks.length; i++) {
+			if (!(stacks[i] instanceof EditorStack))
+				continue;
+			
+			EditorStack stack = (EditorStack) stacks[i];
+			Rectangle bb = stack.getBounds();
+			if (winnerRect == null ||
+				bb.y < winnerRect.y ||
+				(bb.y == winnerRect.y && bb.x > winnerRect.x)) {
+				winner = stack;
+				winnerRect = bb;
+			}
+		}
+		
+		// Now hide the buttons for all but the winner
+		for (int i = 0; i < stacks.length; i++) {
+			if (!(stacks[i] instanceof EditorStack))
+				continue;
+			
+			((EditorStack)stacks[i]).showMinMax(stacks[i] == winner);
+		}
+	}
+
+
+	/**
      * Notification that a child layout part has been
      * added to the container. Subclasses may override
      * this method to perform any container specific
@@ -89,6 +145,8 @@ public class EditorSashContainer extends PartSashContainer {
             if (activeEditorWorkbook == child) {
 				setActiveWorkbook(null, false);
 			}
+            
+            updateStackButtons();
         }
     }
 

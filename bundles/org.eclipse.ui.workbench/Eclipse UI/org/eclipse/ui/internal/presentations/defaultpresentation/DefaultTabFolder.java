@@ -503,4 +503,11 @@ public class DefaultTabFolder extends AbstractTabFolder {
 		super.setVisible(visible);
 		getFolder().setVisible(visible);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#showMinMax(boolean)
+	 */
+	public void showMinMax(boolean show) {
+        paneFolder.showMinMax(show);
+	}
 }

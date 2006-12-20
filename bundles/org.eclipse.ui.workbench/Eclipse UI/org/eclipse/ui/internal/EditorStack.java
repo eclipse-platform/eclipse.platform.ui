@@ -26,6 +26,7 @@ import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
+import org.eclipse.ui.internal.presentations.util.TabbedStackPresentation;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
@@ -291,4 +292,21 @@ public class EditorStack extends PartStack {
 
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
+
+	/**
+	 * Cause the folder to hide or show its
+	 * Minimize and Maximize affordances.
+	 * 
+	 * @param show
+	 *            <code>true</code> - the min/max buttons are visible.
+	 * @since 3.3
+	 */
+	public void showMinMax(boolean show) {
+		StackPresentation pres = getPresentation();
+		if (pres == null)
+			return;
+		
+		if (pres instanceof TabbedStackPresentation)
+			((TabbedStackPresentation)pres).showMinMax(show);
+	}
 }

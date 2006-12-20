@@ -204,8 +204,8 @@ public final class PaneFolder {
         }
     };
 
+    private boolean showButtons = true;
     private boolean minimizeVisible = false;
-
     private boolean maximizeVisible = false;
 
     /**
@@ -408,12 +408,26 @@ public final class PaneFolder {
         lastWidth = getControl().getBounds().width;
     }
 
+	/**
+	 * Cause the folder to hide or show its
+	 * Minimize and Maximize affordances.
+	 * 
+	 * @param show
+	 *            <code>true</code> - the min/max buttons are visible.
+	 * @since 3.3
+	 */
+    public void showMinMax(boolean show) {
+    	showButtons = show;
+    	setMaximizeVisible(show);
+    	setMinimizeVisible(show);
+    	layout(true);    	
+    }
+    
     public void layout(boolean flushCache) {
     	if (inLayout) {
     		return;
     	}
     	
-        boolean showButtons = true;
         inLayout = true;
 		try {
 	        
