@@ -6221,7 +6221,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 * @see org.eclipse.ui.Saveable#hashCode()
 		 */
 		public int hashCode() {
-			return fEditorInput.hashCode();
+			Object document= getAdapter(IDocument.class);
+			if (document == null)
+				return 0;
+			return document.hashCode();
 		}
 
 		/*
@@ -6231,20 +6234,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (this == obj)
 				return true;
 			
-			if (obj == null || !(obj instanceof Saveable))
+			if (!(obj instanceof Saveable))
 				return false;
-				
-			IEditorInput editorInput= (IEditorInput)((Saveable)obj).getAdapter(IEditorInput.class);
 			
-			return fEditorInput.equals(editorInput);
+			Object thisDocument= getAdapter(IDocument.class);
+			Object otherDocument= ((Saveable)obj).getAdapter(IDocument.class);
+			
+			if (thisDocument == null && otherDocument == null)
+				return true;
+			
+			return thisDocument != null && thisDocument.equals(otherDocument);
 		}
 		
 		/*
 		 * @see org.eclipse.ui.Saveable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {
-			if (adapter == IEditorInput.class)
-				return fEditorInput;
+			if (adapter == IDocument.class) {
+				IDocumentProvider documentProvider= getDocumentProvider();
+				if (documentProvider == null)
+					return null;
+				return documentProvider.getDocument(fEditorInput);
+			}
 			return super.getAdapter(adapter);
 		}
 	}
