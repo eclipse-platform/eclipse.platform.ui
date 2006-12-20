@@ -78,12 +78,13 @@ public abstract class ViewerColumn {
 	}
 
 	/**
-	 * Set the label provider for the column.
+	 * Set the label provider for the column. Subclasses may extend but must
+	 * call the super implementation.
 	 * 
 	 * @param labelProvider
 	 *            the new {@link CellLabelProvider}
 	 */
-	public final void setLabelProvider(CellLabelProvider labelProvider) {
+	public void setLabelProvider(CellLabelProvider labelProvider) {
 		setLabelProvider(labelProvider, true);
 	}
 
@@ -116,12 +117,13 @@ public abstract class ViewerColumn {
 	}
 
 	/**
-	 * Set the editing support.
+	 * Set the editing support. Subclasses may extend but must call the super
+	 * implementation.
 	 * 
 	 * @param editingSupport
 	 *            The {@link EditingSupport} to set.
 	 */
-	public final void setEditingSupport(EditingSupport editingSupport) {
+	public void setEditingSupport(EditingSupport editingSupport) {
 		this.editingSupport = editingSupport;
 	}
 
