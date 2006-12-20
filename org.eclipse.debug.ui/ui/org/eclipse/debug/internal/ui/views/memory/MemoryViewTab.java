@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ErrorRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -23,10 +25,10 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Represents a tab in the Memory View.  This is where memory renderings
@@ -186,13 +188,12 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		
 		// make sure this runs on the UI thread, otherwise, it
 		// will get to a swt exception
-		Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
 		
-		display.asyncExec(new Runnable() {
-			public void run() {
-				
+		WorkbenchJob job = new WorkbenchJob("MemoryViewTab PropertyChanged") { //$NON-NLS-1$
+
+			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (isDisposed())
-					return;
+					return Status.OK_STATUS;
 					
 				if (event.getSource() == fRendering)
 				{
@@ -224,7 +225,11 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 						}
 					}
 				}
-			}});
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	}
 	
 	private MemoryViewTab getInstance()
