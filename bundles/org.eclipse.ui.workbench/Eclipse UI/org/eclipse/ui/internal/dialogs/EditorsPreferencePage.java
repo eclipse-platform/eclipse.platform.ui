@@ -50,7 +50,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 
     private Button reuseEditors;
 
-    private Button showMultipleEditorTabs;
+    protected Button showMultipleEditorTabs;
 
     private Composite editorReuseIndentGroup;
 
@@ -85,6 +85,7 @@ public class EditorsPreferencePage extends PreferencePage implements
 		if (PrefUtil.getInternalPreferenceStore().getBoolean(
 				IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 			editorReuseGroup.setVisible(false);
+			showMultipleEditorTabs.setVisible(false);
 		}
 
         updateValidState();

@@ -61,6 +61,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		if (PrefUtil.getInternalPreferenceStore().getBoolean(
 				IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 			editorReuseGroup.setVisible(false);
+			showMultipleEditorTabs.setVisible(false);
 		}
 
 		applyDialogFont(composite);

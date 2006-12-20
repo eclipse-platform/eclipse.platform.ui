@@ -696,6 +696,7 @@ public class ViewsPreferencePage extends PreferencePage implements
         // Turn -on- experimental tab behaviour
         IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
 		internalStore.setValue(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR, true);
+		internalStore.setValue(IPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS, true);
 	}
 
 	private void setR30Preferences() {
