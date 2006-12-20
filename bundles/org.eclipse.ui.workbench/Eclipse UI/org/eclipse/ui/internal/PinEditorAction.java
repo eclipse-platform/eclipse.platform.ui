@@ -29,7 +29,9 @@ public class PinEditorAction extends ActiveEditorAction {
         		if (WorkbenchPlugin.getDefault().getPreferenceStore()
 						.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
 					WorkbenchPartReference ref = (WorkbenchPartReference) source;
-					ref.setPinned(true);
+					if (ref.isDirty()) {
+						ref.setPinned(true);
+					}
 				}
             }
         }

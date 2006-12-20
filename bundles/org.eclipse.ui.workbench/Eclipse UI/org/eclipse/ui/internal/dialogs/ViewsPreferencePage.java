@@ -11,8 +11,6 @@
 
 package org.eclipse.ui.internal.dialogs;
 
-import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
@@ -63,6 +61,9 @@ import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+
+import com.ibm.icu.text.Collator;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the 
@@ -692,6 +693,9 @@ public class ViewsPreferencePage extends PreferencePage implements
 		// Turn -on- the new Min/Max behaviour
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
         apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, true);
+        // Turn -on- experimental tab behaviour
+        IPreferenceStore internalStore = PrefUtil.getInternalPreferenceStore();
+		internalStore.setValue(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR, true);
 	}
 
 	private void setR30Preferences() {
@@ -700,6 +704,8 @@ public class ViewsPreferencePage extends PreferencePage implements
 
 		// Turn -off- the new min/max behaviour
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+        // Turn -off- experimental tab behaviour
+		internalStore.setValue(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR, false);
 
 		setEditorAlignDefault(internalStore);
 		setViewAlignDefault(internalStore);

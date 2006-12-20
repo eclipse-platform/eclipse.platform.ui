@@ -18,7 +18,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,6 +58,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -66,6 +66,8 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.util.Util;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -147,6 +149,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
     };
 
 	private RelatedRegistry relatedRegistry;
+
+	public static final String EMPTY_EDITOR_ID = "org.eclipse.ui.internal.emptyEditorTab"; //$NON-NLS-1$
 
     /**
      * Return an instance of the receiver. Adds listeners into the extension
@@ -531,6 +535,14 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
             // @issue we need a real icon for this editor?
             map.put(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID, editor);
         }
+        
+		EditorDescriptor emptyEditorDescriptor = new EditorDescriptor();
+		emptyEditorDescriptor.setID(EMPTY_EDITOR_ID);
+		emptyEditorDescriptor.setName("(Empty)"); //$NON-NLS-1$
+		emptyEditorDescriptor
+				.setImageDescriptor(WorkbenchImages
+						.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ELEMENT));
+		map.put(EMPTY_EDITOR_ID, emptyEditorDescriptor);
     }
 
     /**
@@ -1598,6 +1610,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
         return (IFileEditorMapping []) allMappings
 				.toArray(new IFileEditorMapping [allMappings.size()]);
 	}
+	
 }
 
 

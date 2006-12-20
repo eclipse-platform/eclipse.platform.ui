@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.util.Collections;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -56,6 +58,7 @@ import org.eclipse.ui.internal.ide.actions.QuickMenuAction;
 import org.eclipse.ui.internal.ide.actions.RetargetActionWithDefault;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.menus.CommandContributionItem;
 
 /**
  * Adds actions to a workbench window.
@@ -248,6 +251,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
      * Indicates if the action builder has been disposed
      */
     private boolean isDisposed = false;
+
+	private CommandContributionItem newTabItem;
     
     /**
      * Constructs a new action builder which contributes actions
@@ -310,11 +315,18 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 								.getProperty()
 								.equals(
 										IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+                	final boolean experimentalTabBehaviour = WorkbenchPlugin
+							.getDefault()
+							.getPreferenceStore()
+							.getBoolean(
+									IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
                     if (window.getShell() != null
                             && !window.getShell().isDisposed()) {
                         // this property change notification could be from a non-ui thread
                         window.getShell().getDisplay().syncExec(new Runnable() {
                             public void run() {
+                            	newTabItem.setVisible(experimentalTabBehaviour);
+                            	newTabItem.getParent().markDirty();
                                 updatePinActionToolbar();
                             }
                         });
@@ -480,6 +492,12 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             menu.add(newMenu);
         }
 
+        newTabItem = new CommandContributionItem(
+				"org.eclipse.ui.ide.main.file.newTab", //$NON-NLS-1$
+				"org.eclipse.ui.window.openEmptyEditorTab", //$NON-NLS-1$
+				Collections.EMPTY_MAP, null, null, null, null, null, null);
+		menu.add(newTabItem);
+		
         menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
         menu.add(new Separator());
 

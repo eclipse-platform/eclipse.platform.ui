@@ -90,12 +90,15 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalEditor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
+import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.part.MultiEditor;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Manage a group of element editors. Prevent the creation of two editors on the
@@ -1676,5 +1679,23 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		// Nothing to do
+	}
+
+	/**
+	 * @return
+	 */
+	/*package*/ IEditorReference openEmptyTab() {
+		IEditorInput input = new NullEditorInput();
+		EditorDescriptor desc = (EditorDescriptor) ((EditorRegistry) getEditorRegistry())
+				.findEditor(EditorRegistry.EMPTY_EDITOR_ID);
+		EditorReference result = new EditorReference(this, input, desc);
+		try {
+			createEditorTab(result, ""); //$NON-NLS-1$
+			return result;
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+		}
+		return null;
 	}
 }

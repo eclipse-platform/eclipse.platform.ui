@@ -41,6 +41,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.IWorkbenchPartOrientation;
 import org.eclipse.ui.part.MultiEditor;
@@ -370,7 +371,9 @@ public class EditorReference extends WorkbenchPartReference implements
      * @return
      */
     protected IWorkbenchPart createPart() {
-                
+        if (EditorRegistry.EMPTY_EDITOR_ID.equals(getId())) {
+        	return getEmptyEditor(getDescriptor());
+        }
         PartInitException exception = null;
         
         IWorkbenchPart result = null;
@@ -680,5 +683,63 @@ public class EditorReference extends WorkbenchPartReference implements
     public boolean isMultiReference() {
     	return multiEditorChildren!=null || restoredInput instanceof MultiEditorInput;
     }
+
+	/**
+	 * @param b
+	 * @return
+	 */
+	public IEditorPart getEmptyEditor(EditorDescriptor descr) {
+        ErrorEditorPart part = new ErrorEditorPart();
+        
+        IEditorInput input;
+        try {
+            input = getEditorInput();
+        } catch (PartInitException e1) {
+            input = new NullEditorInput();
+        }
+        
+        EditorPane pane = (EditorPane)getPane();
+        
+        pane.createControl((Composite) manager.page.getEditorPresentation().getLayoutPart().getControl());
+        
+        EditorSite site = new EditorSite(this, part, manager.page, descr);
+        
+        site.setActionBars(new EditorActionBars(manager.page, site.getWorkbenchWindow(), getId()));
+        try {
+			part.init(site, input);
+		} catch (PartInitException e) {
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+			return null;
+		}
+
+        Composite parent = (Composite)pane.getControl();
+        Composite content = new Composite(parent, SWT.NONE);
+        content.setLayout(new FillLayout());
+        
+        try {
+			part.createPartControl(content);
+		} catch (Exception e) {
+			content.dispose();
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+			return null;
+		}
+
+        this.part = part;
+        // Add a dispose listener to the part. This dispose listener does nothing but log an exception
+        // if the part's widgets get disposed unexpectedly. The workbench part reference is the only
+        // object that should dispose this control, and it will remove the listener before it does so.
+
+        part.setPartName("(Empty)"); //$NON-NLS-1$
+        refreshFromPart();
+        releaseReferences();
+        
+        if (((WorkbenchPage)getPage()).getActiveEditorReference()!=this) {
+        	fireInternalPropertyChange(INTERNAL_PROPERTY_OPENED);
+        }
+        
+        return part;
+	}
 }
 

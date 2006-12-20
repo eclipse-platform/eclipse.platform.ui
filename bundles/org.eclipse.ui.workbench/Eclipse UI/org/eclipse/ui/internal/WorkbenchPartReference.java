@@ -340,7 +340,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         internalPropChangeListeners.remove(listener);
     }
 
-    private void fireInternalPropertyChange(int id) {
+    protected void fireInternalPropertyChange(int id) {
         Object listeners[] = internalPropChangeListeners.getListeners();
         for (int i = 0; i < listeners.length; i++) {
             ((IPropertyListener) listeners[i]).propertyChanged(this, id);

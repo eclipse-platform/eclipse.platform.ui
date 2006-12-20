@@ -95,6 +95,8 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
@@ -2589,6 +2591,26 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         return editor;
+    }
+    
+    public void openEmptyTab() {
+    	IEditorPart editor = null;
+        EditorReference ref = null;
+        ref = (EditorReference) getEditorManager().openEmptyTab();
+        if (ref != null) {
+            editor = ref.getEmptyEditor((EditorDescriptor) ((EditorRegistry) WorkbenchPlugin
+					.getDefault().getEditorRegistry())
+					.findEditor(EditorRegistry.EMPTY_EDITOR_ID));
+        }
+
+        if (editor != null) {
+            setEditorAreaVisible(true);
+			activate(editor);
+            window.firePerspectiveChanged(this, getPerspective(), ref,
+                    CHANGE_EDITOR_OPEN);
+            window.firePerspectiveChanged(this, getPerspective(),
+                    CHANGE_EDITOR_OPEN);
+        }
     }
 
     private void showEditor(boolean activate, IEditorPart editor) {

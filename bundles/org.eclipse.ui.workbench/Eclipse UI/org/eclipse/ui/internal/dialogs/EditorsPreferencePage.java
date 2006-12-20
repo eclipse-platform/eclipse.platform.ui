@@ -46,7 +46,7 @@ public class EditorsPreferencePage extends PreferencePage implements
         IWorkbenchPreferencePage {
     private static final int REUSE_INDENT = 10;
 
-    private Composite editorReuseGroup;
+    protected Composite editorReuseGroup;
 
     private Button reuseEditors;
 
@@ -81,7 +81,11 @@ public class EditorsPreferencePage extends PreferencePage implements
 
         createSpace(composite);
         createShowMultipleEditorTabsPref(composite);
-        createEditorReuseGroup(composite);
+		createEditorReuseGroup(composite);
+		if (PrefUtil.getInternalPreferenceStore().getBoolean(
+				IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+			editorReuseGroup.setVisible(false);
+		}
 
         updateValidState();
 

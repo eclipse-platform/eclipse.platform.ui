@@ -738,6 +738,12 @@
             id="org.eclipse.ui.window.quickAccess"
             name="%command.quickAccess.name"/>
       <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.internal.OpenEmptyEditorTabHandler"
+            description="%command.openEmptyEditorTab.description"
+            id="org.eclipse.ui.window.openEmptyEditorTab"
+            name="%command.openEmptyEditorTab.name"/>
+      <command
             name="%command.switchToEditor.name"
             description="%command.switchToEditor.description"
             categoryId="org.eclipse.ui.category.window"
