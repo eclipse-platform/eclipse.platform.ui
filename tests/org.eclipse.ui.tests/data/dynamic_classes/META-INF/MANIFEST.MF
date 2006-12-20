@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: DynamicCode
+Bundle-SymbolicName: org.eclipse.ui.dynamicCode
+Bundle-Version: 1.0.0
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.commands,
+ org.eclipse.jface,
+ org.eclipse.help,
+ org.eclipse.ui.ide,
+ org.eclipse.ui,
+ org.eclipse.ui.views
