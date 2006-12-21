@@ -29,6 +29,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -222,18 +223,18 @@ public abstract class RevisionAnnotationController {
 	private static AbstractDecoratedTextEditor findTextEditorPart(IWorkbenchPage page, IEditorPart editor, IEditorInput input) {
 		if (editor instanceof AbstractDecoratedTextEditor)
 			return (AbstractDecoratedTextEditor) editor;
-//		if (editor instanceof MultiPageEditorPart) {
-//			MultiPageEditorPart mpep = (MultiPageEditorPart) editor;
-//			IEditorPart[] parts = mpep.findEditors(input);
-//			for (int i = 0; i < parts.length; i++) {
-//				IEditorPart editorPart = parts[i];
-//				if (editorPart instanceof AbstractDecoratedTextEditor) {
-//			        page.activate(mpep);
-//			        mpep.setActiveEditor(editorPart);
-//					return (AbstractDecoratedTextEditor) editorPart;
-//				}
-//			}
-//		}
+		if (editor instanceof MultiPageEditorPart) {
+			MultiPageEditorPart mpep = (MultiPageEditorPart) editor;
+			IEditorPart[] parts = mpep.findEditors(input);
+			for (int i = 0; i < parts.length; i++) {
+				IEditorPart editorPart = parts[i];
+				if (editorPart instanceof AbstractDecoratedTextEditor) {
+			        page.activate(mpep);
+			        mpep.setActiveEditor(editorPart);
+					return (AbstractDecoratedTextEditor) editorPart;
+				}
+			}
+		}
 		return null;
 	}
 	
