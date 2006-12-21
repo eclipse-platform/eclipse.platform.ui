@@ -44,8 +44,8 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
  */
 public class CtrlEAction extends AbstractHandler {
 
-static		final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
-static		final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
+	static final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
+	static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
 
 	private IWorkbenchWindow window;
 
@@ -78,7 +78,7 @@ static		final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
 					new EditorProvider(), new ViewProvider(),
 					new PerspectiveProvider(), new CommandProvider(),
 					new ActionProvider(), new WizardProvider(),
-					new PreferenceProvider() };
+					new PreferenceProvider(), new PropertiesProvider() };
 
 			providerMap = new HashMap();
 			for (int i = 0; i < providers.length; i++) {
