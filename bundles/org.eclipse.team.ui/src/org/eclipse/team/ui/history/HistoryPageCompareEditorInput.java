@@ -15,12 +15,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareViewerPane;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.DialogHistoryPageSite;
 import org.eclipse.team.ui.PageCompareEditorInput;
@@ -44,6 +46,7 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 			handlePropertyChange(event);
 		}
 	};
+	private boolean isReplace;
 	
 	/**
 	 * Create a history page compare editor input for the given page and object.
@@ -164,6 +167,71 @@ public class HistoryPageCompareEditorInput extends PageCompareEditorInput {
 				});
 			}
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#isEditionSelectionDialog()
+	 */
+	public boolean isEditionSelectionDialog() {
+		return isReplaceDialog();
+	}
+
+	/**
+	 * Return whether this compare editor input is being used in a replace
+	 * dialog.
+	 * @return whether this compare editor input is being used in a replace
+	 * dialog
+	 */
+	protected boolean isReplaceDialog() {
+		return isReplace;
+	}
+
+	/**
+	 * Set whether this compare editor input is being used in a replace
+	 * dialog.
+	 * @param isReplace whether this compare editor input is being used in a replace
+	 * dialog
+	 */
+	public void setReplace(boolean isReplace) {
+		this.isReplace = isReplace;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#getOKButtonLabel()
+	 */
+	public String getOKButtonLabel() {
+		if (isReplaceDialog())
+			return TeamUIMessages.HistoryPageCompareEditorInput_0;
+		return super.getOKButtonLabel();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.compare.CompareEditorInput#okPressed()
+	 */
+	public boolean okPressed() {
+		if (!isReplaceDialog())
+			return super.okPressed();
+		try {
+			Object o = getSelectedEdition();
+			performReplace(((ICompareInput)o).getRight());
+		} catch (CoreException e) {
+			Utils.handle(e);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * A replace has been requested. This method will be
+	 * invoked if {@link #isReplaceDialog()} is <code>true</code>
+	 * and the user has clicked the "Replace" button. 
+	 * By default, this method does nothing.
+	 * Subclasses may override.
+	 * @param selectedObject the selected object
+	 * @throws CoreException if an error occurs performing the replace
+	 */
+	protected void performReplace(Object selectedObject) throws CoreException {
+		// By default, do nothing
 	}
 	
 }

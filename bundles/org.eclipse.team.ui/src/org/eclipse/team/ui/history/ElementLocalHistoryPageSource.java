@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.ui.history;
 
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.history.EditionHistoryPage;
 import org.eclipse.ui.part.Page;
 
@@ -20,6 +22,18 @@ import org.eclipse.ui.part.Page;
  */
 public abstract class ElementLocalHistoryPageSource extends HistoryPageSource {
 
+	/**
+	 * Return the previous edition from the local history of the given element located in the given 
+	 * file. A <code>null</code> is returned if a previous edition could not be found.
+	 * @param file the file containing the element
+	 * @param element the element
+	 * @return the previous edition of the element from the local history or <code>null</code>
+	 * @throws TeamException
+	 */
+	public static ITypedElement getPreviousEdition(IFile file, Object element) throws TeamException {
+		return EditionHistoryPage.getPreviousState(file, element);
+	}
+	
 	/**
 	 * Create an instance of the page source.
 	 */

@@ -12,14 +12,12 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
-import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.ui.CVSHistoryPage;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.history.FileRevisionTypedElement;
 import org.eclipse.team.ui.history.*;
 
@@ -44,25 +42,13 @@ public class ReplaceWithRevisionAction extends CompareWithRevisionAction {
 					((CVSHistoryPage)getHistoryPage()).saveChanges(monitor);
 					setDirty(false);
 				}
-				public boolean isEditionSelectionDialog() {
-					return true;
-				}
-				public String getOKButtonLabel() {
-					return CVSUIMessages.ReplaceWithRevisionAction_0;
-				}
-				public boolean okPressed() {
-					try {
-						Object o = getSelectedEdition();
-						FileRevisionTypedElement right = (FileRevisionTypedElement) ((ICompareInput)o).getRight();
-						IFile file = (IFile)getCompareResult();
-						file.setContents(right.getContents(), false, true, null);
-					} catch (CoreException e) {
-						Utils.handle(e);
-						return false;
-					}
-					return true;
+				protected void performReplace(Object o) throws CoreException {
+					FileRevisionTypedElement right = (FileRevisionTypedElement)o;
+					IFile file = (IFile)getCompareResult();
+					file.setContents(right.getContents(), false, true, null);
 				}
 			};
+			input.setReplace(true);
 			CompareUI.openCompareDialog(input);
 		}
 	}

@@ -20,7 +20,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 
@@ -36,17 +38,50 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	private Map editions = new HashMap();
 	private ITypedElement localEdition;
 	
+	public static ITypedElement getPreviousState(IFile file, Object element) throws TeamException {
+		LocalResourceTypedElement localFileElement= new LocalResourceTypedElement(file);
+		IStructureCreator structureCreator = getStructureCreator(localFileElement);
+		if (structureCreator == null)
+			return null;
+		LocalFileHistory history = new LocalFileHistory(file, false);
+		history.refresh(new NullProgressMonitor());
+		IFileRevision[] revisions = history.getFileRevisions();
+		if (revisions.length == 0)
+			return null;
+		sortDescending(revisions);
+		ITypedElement localEdition = null;
+		try {
+			localEdition = createLocalEdition(structureCreator, localFileElement, element);
+			for (int i = 0; i < revisions.length; i++) {
+				IFileRevision revision = revisions[i];
+				ITypedElement edition = createEdition(structureCreator, element, new FileRevisionTypedElement(revision));
+				if (edition != null && !contentsEqual(structureCreator, localEdition, edition)) {
+					return edition;
+				}
+			}
+		} finally {
+			if (localEdition != null)
+				destroyLocalEdition(structureCreator, localFileElement, localEdition);
+		}
+		return null;
+	}
+
+	private static IStructureCreator getStructureCreator(ITypedElement element) {
+		StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(element.getType());
+		if (scd != null) {
+			return scd.createStructureCreator();
+		}
+		return null;
+	}
+	
 	public EditionHistoryPage(IFile file, Object element) {
 		Assert.isNotNull(file);
 		Assert.isNotNull(element);
 		this.file = file;
 		this.element = element;
 		this.localFileElement= new LocalResourceTypedElement(getFile());
-		StructureCreatorDescriptor scd= CompareUIPlugin.getDefault().getStructureCreator(localFileElement.getType());
-		if (scd != null) {
-			structureCreator= scd.createStructureCreator();
-		}
-		localEdition = createLocalEdition();
+		structureCreator = getStructureCreator(localFileElement);
+		localEdition = createLocalEdition(structureCreator, localFileElement, element);
 	}
 
 	/* (non-Javadoc)
@@ -78,13 +113,13 @@ public class EditionHistoryPage extends LocalHistoryPage {
 
 	private IFileRevision[] filterRevisions(IFileRevision[] revisions,
 			IProgressMonitor monitor) {
-		ITypedElement previousEdition = null;
+		ITypedElement previousEdition = localEdition;
 		List result = new ArrayList();
 		sortDescending(revisions);
 		for (int i = 0; i < revisions.length; i++) {
 			IFileRevision revision = revisions[i];
-			ITypedElement edition = getEditionFor(new FileRevisionTypedElement(revision));
-			if (edition != null && !contentsEqual(previousEdition, edition)) {
+			ITypedElement edition = createEdition(new FileRevisionTypedElement(revision));
+			if (edition != null && !contentsEqual(structureCreator, previousEdition, edition)) {
 				editions.put(revision, edition);
 				previousEdition = edition;
 				result.add(revision);
@@ -93,7 +128,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		return (IFileRevision[]) result.toArray(new IFileRevision[result.size()]);
 	}
 	
-	private void sortDescending(IFileRevision[] revisions) {
+	private static void sortDescending(IFileRevision[] revisions) {
 		Arrays.sort(revisions, new Comparator() {
 			public int compare(Object o1, Object o2) {
 				IFileRevision d1= (IFileRevision) o1;
@@ -108,12 +143,12 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		});
 	}
 
-	private boolean contentsEqual(ITypedElement previousEdition,
+	private static boolean contentsEqual(IStructureCreator creator, ITypedElement previousEdition,
 			ITypedElement edition) {
 		if (previousEdition == null)
 			return false;
-		String contents1 = structureCreator.getContents(previousEdition, false /* TODO: Ignore whitespace */);
-		String contents2 = structureCreator.getContents(edition, false /* TODO: Ignore whitespace */);
+		String contents1 = creator.getContents(previousEdition, false /* TODO: Ignore whitespace */);
+		String contents2 = creator.getContents(edition, false /* TODO: Ignore whitespace */);
 		return (contents1 != null && contents2 != null && contents1.equals(contents2));
 	}
 
@@ -121,33 +156,39 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#getCompareInput(java.lang.Object)
 	 */
 	public ICompareInput getCompareInput(Object object) {
-		ITypedElement edition = (ITypedElement)editions.get(object);
+		ITypedElement edition = getEditionFor(object);
 		if (edition != null && localEdition != null)
 			return new DiffNode(localEdition, edition);
 		return null;
 	}
+
+	public ITypedElement getEditionFor(Object object) {
+		return (ITypedElement)editions.get(object);
+	}
 	
-	private ITypedElement createLocalEdition() {
-		IStructureCreator creator = structureCreator;
+	private static ITypedElement createLocalEdition(IStructureCreator creator, ITypedElement input, Object element) {
 		if (creator == null)
 			return null;
 		ITypedElement result = null;
 		if (creator instanceof IStructureCreator2) {
 			IStructureCreator2 sc2 = (IStructureCreator2) creator;
 			try {
-				result = sc2.createElement(element, localFileElement, null);
+				result = sc2.createElement(element, input, null);
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
 		}
 		if (result == null) {
-			result = getEditionFor(localFileElement);
+			result = createEdition(creator, element, input);
 		}
 		return result;
 	}
 	
-	private ITypedElement getEditionFor(ITypedElement input) {
-		IStructureCreator creator = structureCreator;
+	private ITypedElement createEdition(ITypedElement input) {
+		return createEdition(structureCreator, element, input);
+	}
+	
+	private static ITypedElement createEdition(IStructureCreator creator, Object element, ITypedElement input) {
 		if (creator == null)
 			return null;
 		IStructureComparator edition = creator.locate(element, input);
@@ -184,6 +225,16 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		}
 		localEdition = null;
 		structureCreator = null;
+	}
+	
+	private static void destroyLocalEdition(
+			IStructureCreator structureCreator, LocalResourceTypedElement localFileElement, ITypedElement localEdition) {
+		if (localFileElement != null)
+			localFileElement.discardBuffer();
+		if (localEdition != null && structureCreator instanceof IStructureCreator2) {
+			IStructureCreator2 sc2 = (IStructureCreator2) structureCreator;
+			sc2.destroy(localEdition);
+		}
 	}
 	
 	/* (non-Javadoc)
