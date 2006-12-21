@@ -116,7 +116,7 @@ public abstract class Realm {
 					}
 				}
 			};
-			workerThread.run();
+			workerThread.start();
 		}
 	}
 
