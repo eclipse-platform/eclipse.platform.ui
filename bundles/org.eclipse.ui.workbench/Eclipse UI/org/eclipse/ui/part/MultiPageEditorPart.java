@@ -12,6 +12,7 @@ package org.eclipse.ui.part;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -818,5 +819,45 @@ public abstract class MultiPageEditorPart extends EditorPart {
 			}
 		}
 		return result;
+	}
+	
+	/**
+	 * Find the editors contained in this multi-page editor
+	 * whose editor input match the provided input.
+	 * @param input the editor input
+	 * @return the editors contained in this multi-page editor
+	 * whose editor input match the provided input
+	 * @since 3.3
+	 */
+	public final IEditorPart[] findEditors(IEditorInput input) {
+		List result = new ArrayList();
+		int count = getPageCount();
+		for (int i = 0; i < count; i++) {
+			IEditorPart editor = getEditor(i);
+			if (editor != null 
+					&& editor.getEditorInput() != null
+					&& editor.getEditorInput().equals(input)) {
+				result.add(editor);
+			}
+		}
+		return (IEditorPart[]) result.toArray(new IEditorPart[result.size()]);
+	}
+	
+	/**
+	 * Set the active page of this multi-page editor to the
+	 * page that contains the given editor part. This method has
+	 * no effect of the given editor part is not contained in this
+	 * multi-page editor.
+	 * @param editorPart the editor part
+	 * @since 3.3
+	 */
+	public final void setActiveEditor(IEditorPart editorPart) {
+		int count = getPageCount();
+		for (int i = 0; i < count; i++) {
+			IEditorPart editor = getEditor(i);
+			if (editor == editorPart) {
+				setActivePage(i);
+			}
+		}
 	}
 }
