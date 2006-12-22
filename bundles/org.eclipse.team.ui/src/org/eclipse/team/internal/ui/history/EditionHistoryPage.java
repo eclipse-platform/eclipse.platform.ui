@@ -17,6 +17,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.StructureCreatorDescriptor;
 import org.eclipse.compare.structuremergeviewer.*;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
@@ -24,7 +25,9 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * A history page for a sub-element of a file. 
@@ -37,6 +40,72 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	private IStructureCreator structureCreator;
 	private Map editions = new HashMap();
 	private ITypedElement localEdition;
+	
+	class CompareEditionAction extends CompareRevisionAction {
+		
+		protected ITypedElement getElementFor(IResource resource) {
+			if (resource.equals(file))
+				return localFileElement;
+			return super.getElementFor(resource);
+		}
+		
+		protected CompareFileRevisionEditorInput createCompareEditorInput(ITypedElement left, ITypedElement right, IWorkbenchPage page) {
+			ITypedElement leftEdition = getEdition(left);
+			ITypedElement rightEdition = getEdition(right);
+			return new CompareEditionsEditorInput(left, right, leftEdition, rightEdition, page);
+		}
+
+		private ITypedElement getEdition(ITypedElement input) {
+			if (input instanceof FileRevisionTypedElement) {
+				FileRevisionTypedElement te = (FileRevisionTypedElement) input;
+				return getEditionFor(te.getRevision());
+			}
+			if (input instanceof LocalResourceTypedElement) {
+				return localEdition;
+			}
+			return null;
+		}
+	}
+	
+	static class CompareEditionsEditorInput extends CompareFileRevisionEditorInput {
+
+		private final ITypedElement leftRevision;
+		private final ITypedElement rightRevision;
+
+		public CompareEditionsEditorInput(ITypedElement left,
+				ITypedElement right, ITypedElement leftEdition,
+				ITypedElement rightEdition, IWorkbenchPage page) {
+			super(leftEdition, rightEdition, page);
+			leftRevision = left;
+			rightRevision = right;
+		}
+		
+		public LocalResourceTypedElement getLocalElement() {
+			if (leftRevision instanceof LocalResourceTypedElement) {
+				return (LocalResourceTypedElement) leftRevision;
+			}
+			return super.getLocalElement();
+		}
+		
+		protected FileRevisionTypedElement getRightRevision() {
+			if (rightRevision instanceof FileRevisionTypedElement) {
+				return (FileRevisionTypedElement) rightRevision;
+			}
+			return null;
+		}
+
+		protected FileRevisionTypedElement getLeftRevision() {
+			if (leftRevision instanceof FileRevisionTypedElement) {
+				return (FileRevisionTypedElement) leftRevision;
+			}
+			return null;
+		}
+		public Object getAdapter(Class adapter) {
+			if (adapter == IFile.class)
+				return null;
+			return super.getAdapter(adapter);
+		}
+	}
 	
 	public static ITypedElement getPreviousState(IFile file, Object element) throws TeamException {
 		LocalResourceTypedElement localFileElement= new LocalResourceTypedElement(file);
@@ -75,6 +144,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	}
 	
 	public EditionHistoryPage(IFile file, Object element) {
+		super(ON | ALWAYS);
 		Assert.isNotNull(file);
 		Assert.isNotNull(element);
 		this.file = file;
@@ -145,7 +215,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 
 	private static boolean contentsEqual(IStructureCreator creator, ITypedElement previousEdition,
 			ITypedElement edition) {
-		if (previousEdition == null)
+		if (previousEdition == null || creator == null || edition == null)
 			return false;
 		String contents1 = creator.getContents(previousEdition, false /* TODO: Ignore whitespace */);
 		String contents2 = creator.getContents(edition, false /* TODO: Ignore whitespace */);
@@ -290,6 +360,13 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		if (localEdition != null)
 			return NLS.bind(TeamUIMessages.EditionHistoryPage_2, localEdition.getName());
 		return super.getDescription();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#createCompareAction()
+	 */
+	protected CompareRevisionAction createCompareAction() {
+		return new CompareEditionAction();
 	}
 
 }

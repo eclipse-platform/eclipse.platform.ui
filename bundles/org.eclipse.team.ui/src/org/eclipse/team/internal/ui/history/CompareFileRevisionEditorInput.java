@@ -13,11 +13,11 @@ package org.eclipse.team.internal.ui.history;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.compare.structuremergeviewer.Differencer;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.team.core.history.IFileRevision;
 import org.eclipse.team.internal.core.history.LocalFileRevision;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.AbstractCompareInput;
@@ -30,6 +30,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	
 	private ITypedElement left;
 	private ITypedElement right;
+	
 	CompareInputChangeNotifier notifier = new CompareInputChangeNotifier() {
 		protected IResource[] getResources(ICompareInput input) {
 			IResource resource = getResource(input);
@@ -64,11 +65,10 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	 * @param right 
 	 * @param page 
 	 */
-	public CompareFileRevisionEditorInput(FileRevisionTypedElement left, FileRevisionTypedElement right, IWorkbenchPage page) {
+	public CompareFileRevisionEditorInput(ITypedElement left, ITypedElement right, IWorkbenchPage page) {
 		super(new CompareConfiguration(), page);
 		this.left = left;
 		this.right = right;
-		arrangeSides();
 	}
 
 	/* (non-Javadoc)
@@ -78,25 +78,37 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		ICompareInput input = createCompareInput();
 		getCompareConfiguration().setLeftEditable(isLeftEditable(input));
 		getCompareConfiguration().setRightEditable(false);
-		ensureContentsCached(left, right, monitor);
+		ensureContentsCached(getLeftRevision(), getRightRevision(), monitor);
 		initLabels(input);
 		return input;
 	}
 
-	private static void ensureContentsCached(Object left, Object right,
-			IProgressMonitor monitor) {
+	protected FileRevisionTypedElement getRightRevision() {
+		if (right instanceof FileRevisionTypedElement) {
+			return (FileRevisionTypedElement) right;
+		}
+		return null;
+	}
+
+	protected FileRevisionTypedElement getLeftRevision() {
 		if (left instanceof FileRevisionTypedElement) {
-			FileRevisionTypedElement fste = (FileRevisionTypedElement) left;
+			return (FileRevisionTypedElement) left;
+		}
+		return null;
+	}
+
+	private static void ensureContentsCached(FileRevisionTypedElement left, FileRevisionTypedElement right,
+			IProgressMonitor monitor) {
+		if (left != null) {
 			try {
-				fste.cacheContents(monitor);
+				left.cacheContents(monitor);
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
 		}
-		if (right instanceof FileRevisionTypedElement) {
-			FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
+		if (right != null) {
 			try {
-				fste.cacheContents(monitor);
+				right.cacheContents(monitor);
 			} catch (CoreException e) {
 				TeamUIPlugin.log(e);
 			}
@@ -112,9 +124,8 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	}
 
 	private IResource getResource(ICompareInput input) {
-		Object left = input.getLeft();
-		if (left instanceof IResourceProvider) {
-			return ((IResourceProvider) left).getResource();
+		if (getLocalElement() instanceof IResourceProvider) {
+			return ((IResourceProvider) getLocalElement()).getResource();
 		}
 		return null;
 	}
@@ -124,39 +135,19 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		return input;
 	}
 
-	private void arrangeSides() {
-		IFile resource = getLocalFile(left);
-		if (resource == null) {
-			resource = getLocalFile(right);
-			if (resource != null) {
-				right = left;
-			}
-		}
-		if (resource != null) {
-			left = SaveableCompareEditorInput.createFileElement((IFile)resource);
-		}
-	}
-
-	private IFile getLocalFile(ITypedElement element) {
-		IFileRevision revision = ((FileRevisionTypedElement)element).getFileRevision();
-		if (revision instanceof LocalFileRevision) {
-			LocalFileRevision local = (LocalFileRevision) revision;
-			return local.getFile();
-		}
-		return null;
-	}
-
 	private void initLabels(ICompareInput input) {
 		CompareConfiguration cc = getCompareConfiguration();
-		if (input.getLeft() instanceof FileRevisionTypedElement) {
-			String leftLabel = getFileRevisionLabel((FileRevisionTypedElement) input.getLeft());
+		if (getLeftRevision() != null) {
+			String leftLabel = getFileRevisionLabel(getLeftRevision());
 			cc.setLeftLabel(leftLabel);
 		} else if (getResource(input) != null) {
 			String label = NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_workspace, new Object[]{ input.getLeft().getName() });
 			cc.setLeftLabel(label);
 		}
-		String rightLabel = getFileRevisionLabel((FileRevisionTypedElement) input.getRight());
-		cc.setRightLabel(rightLabel);
+		if (getRightRevision() != null) {
+			String rightLabel = getFileRevisionLabel(getRightRevision());
+			cc.setRightLabel(rightLabel);
+		}
 	}
 
 	private String getFileRevisionLabel(FileRevisionTypedElement element) {
@@ -178,8 +169,8 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	public String getToolTipText() {
 		Object[] titleObject = new Object[3];
 		titleObject[0] = getLongName(left);
-		titleObject[1] = getContentIdentifier(left);
-		titleObject[2] = getContentIdentifier(right);
+		titleObject[1] = getContentIdentifier(getLeftRevision());
+		titleObject[2] = getContentIdentifier(getRightRevision());
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
 	}
 	
@@ -189,8 +180,8 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	public String getTitle() {
 		Object[] titleObject = new Object[3];
 		titleObject[0] = getShortName(left);
-		titleObject[1] = getContentIdentifier(left);
-		titleObject[2] = getContentIdentifier(right);
+		titleObject[1] = getContentIdentifier(getLeftRevision());
+		titleObject[2] = getContentIdentifier(getRightRevision());
 		return NLS.bind(TeamUIMessages.CompareFileRevisionEditorInput_compareResourceAndVersions, titleObject);	 
 	}
 	
@@ -199,8 +190,8 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	 */
 	public Object getAdapter(Class adapter) {
 		if (adapter == IFile.class || adapter == IResource.class) {
-			if (left instanceof IResourceProvider) {
-				return ((IResourceProvider) left).getResource();
+			if (getLocalElement() != null) {
+				return getLocalElement().getResource();
 			}
 			return null;
 		}
@@ -216,7 +207,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 			LocalResourceTypedElement typedContent = (LocalResourceTypedElement) element;
 			return typedContent.getResource().getName();
 		}
-		return ""; //$NON-NLS-1$
+		return element.getName();
 	}
 	
 	private String getLongName(ITypedElement element) {
@@ -228,7 +219,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 			LocalResourceTypedElement typedContent = (LocalResourceTypedElement) element;
 			return typedContent.getResource().getFullPath().toString();
 		}
-		return ""; //$NON-NLS-1$
+		return element.getName();
 	}
 	
 	private String getContentIdentifier(ITypedElement element){
@@ -251,10 +242,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 				return fileRevisionElement.getContentIdentifier();
 			}
 		}
-		else if (element instanceof LocalResourceTypedElement){
-			return TeamUIMessages.CompareFileRevisionEditorInput_2;
-		}
-		return ""; //$NON-NLS-1$
+		return TeamUIMessages.CompareFileRevisionEditorInput_2;
 	}
 
 	/* (non-Javadoc)
@@ -278,9 +266,15 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	protected void handleDispose() {
 		super.handleDispose();
 		notifier.dispose();
-		if (left instanceof LocalResourceTypedElement) {
-			LocalResourceTypedElement lrte = (LocalResourceTypedElement) left;
-			lrte.discardBuffer();
+		if (getLocalElement() != null) {
+			getLocalElement().discardBuffer();
 		}
+	}
+
+	public LocalResourceTypedElement getLocalElement() {
+		if (left instanceof LocalResourceTypedElement) {
+			return (LocalResourceTypedElement) left;
+		}
+		return null;
 	}
 }

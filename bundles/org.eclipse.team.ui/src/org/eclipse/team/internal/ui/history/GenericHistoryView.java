@@ -684,7 +684,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		
 		// Ensure that there is a page source available
 		pageSource = getPageSourceFor(object, pageSource);
-		if (pageSource == null)
+		if (pageSource == null || !pageSource.canShowHistoryFor(object))
 			return null;
 		
 		// Check to see if the object is already being displayed in another page

@@ -27,6 +27,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.history.CompareFileRevisionEditorInput;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceSaveableComparison;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
 import org.eclipse.team.ui.mapping.SaveableComparison;
@@ -69,10 +70,21 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		return new LocalResourceTypedElement(file);
 	}
 	
+	private static ITypedElement getFileElement(ICompareInput input,
+			CompareEditorInput editorInput) {
+		if (input.getLeft() instanceof LocalResourceTypedElement) {
+			return (LocalResourceTypedElement) input.getLeft();
+		}
+		if (editorInput instanceof CompareFileRevisionEditorInput) {
+			return ((CompareFileRevisionEditorInput) editorInput).getLocalElement();
+		}
+		return null;
+	}
+	
 	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison {
 		public InternalResourceSaveableComparison(
 				ICompareInput input, CompareEditorInput editorInput) {
-			super(input, editorInput);
+			super(input, editorInput, SaveableCompareEditorInput.getFileElement(input, editorInput));
 		}
 
 		protected void fireInputChange() {

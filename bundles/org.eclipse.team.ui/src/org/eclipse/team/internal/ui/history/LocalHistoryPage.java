@@ -57,6 +57,10 @@ import com.ibm.icu.util.Calendar;
 
 public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdapter {
 	
+	public static final int ON = 1;
+	public static final int OFF = 2;
+	public static final int ALWAYS = 4;
+	
 	/* private */ IFile file;
 	/* private */ IFileRevision currentFileRevision;
 	
@@ -71,7 +75,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	private boolean groupingOn = true;
 
 	//toggle constants for default click action
-	private boolean compareMode = false;
+	private int compareMode = OFF;
 	
 	protected LocalFileHistoryTableProvider historyTableProvider;
 	private RefreshFileHistory refreshFileHistoryJob;
@@ -224,6 +228,15 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		}
 	}
 	
+	public LocalHistoryPage(int compareMode) {
+		super();
+		this.compareMode = compareMode;
+	}
+	
+	public LocalHistoryPage() {
+		super();
+	}
+	
 	public boolean inputSet() {
 		currentFileRevision = null;
 		IFile tempFile = getFile();
@@ -320,38 +333,44 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		IHistoryPageSite historyPageSite = getHistoryPageSite();
 		if (!historyPageSite.isModal()) {
 			//Compare Mode Action
-			compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
-				public void run() {
-					compareMode = !compareMode;
-					compareModeAction.setChecked(compareMode);
-				}
-			};
-			compareModeAction.setToolTipText(TeamUIMessages.LocalHistoryPage_CompareModeTip); 
-			compareModeAction.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
-			compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
-			compareModeAction.setChecked(false);
-			
-			getContentsAction = getContextMenuAction(TeamUIMessages.LocalHistoryPage_GetContents, true /* needs progress */, new IWorkspaceRunnable() { 
-				public void run(IProgressMonitor monitor) throws CoreException {
-					monitor.beginTask(null, 100);
-					try {
-						if(confirmOverwrite()) {
-							IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
-							InputStream in = currentStorage.getContents();
-							(file).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
-						}
-					} catch (TeamException e) {
-						throw new CoreException(e.getStatus());
-					} finally {
-						monitor.done();
+			if ((compareMode & ALWAYS) == 0) {
+				compareModeAction = new Action(TeamUIMessages.LocalHistoryPage_CompareModeAction,TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW)) {
+					public void run() {
+						if (compareMode == ON)
+							compareMode = OFF;
+						else
+							compareMode = ON;
+						compareModeAction.setChecked(compareMode == ON);
 					}
-				}
-			});
+				};
+				compareModeAction.setToolTipText(TeamUIMessages.LocalHistoryPage_CompareModeTip); 
+				compareModeAction.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+				compareModeAction.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_COMPARE_VIEW));
+				compareModeAction.setChecked(compareMode == ON);
+				
+				getContentsAction = getContextMenuAction(TeamUIMessages.LocalHistoryPage_GetContents, true /* needs progress */, new IWorkspaceRunnable() { 
+					public void run(IProgressMonitor monitor) throws CoreException {
+						monitor.beginTask(null, 100);
+						try {
+							if(confirmOverwrite()) {
+								IStorage currentStorage = currentSelection.getStorage(new SubProgressMonitor(monitor, 50));
+								InputStream in = currentStorage.getContents();
+								(file).setContents(in, false, true, new SubProgressMonitor(monitor, 50));				
+							}
+						} catch (TeamException e) {
+							throw new CoreException(e.getStatus());
+						} finally {
+							monitor.done();
+						}
+					}
+				});
+			}
+			
 			//TODO: Doc help
 	        //PlatformUI.getWorkbench().getHelpSystem().setHelp(getContentsAction, );	
 	
 			// Click Compare action
-			compareAction = new CompareRevisionAction(TeamUIMessages.LocalHistoryPage_CompareAction);
+			compareAction = createCompareAction();
 			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent e) {
 					compareAction.setCurrentFileRevision(getCurrentFileRevision());
@@ -360,28 +379,33 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 			});
 			compareAction.setPage(this);
 			
-			openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
-			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
-				public void widgetSelected(SelectionEvent e) {
-					openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
-				}
-			});
-			openAction.setPage(this);
+			// Only add the open action if compare mode is not always on
+			if (!((compareMode & (ALWAYS | ON)) == (ALWAYS | ON))) {
+				openAction = new OpenRevisionAction(TeamUIMessages.LocalHistoryPage_OpenAction);
+				treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
+					public void widgetSelected(SelectionEvent e) {
+						openAction.selectionChanged((IStructuredSelection) treeViewer.getSelection());
+					}
+				});
+				openAction.setPage(this);
+			}
 			
 			OpenStrategy handler = new OpenStrategy(treeViewer.getTree());
 			handler.addOpenListener(new IOpenEventListener() {
 				public void handleOpen(SelectionEvent e) {
 					if (getSite() != null) {
 						StructuredSelection tableStructuredSelection = (StructuredSelection) treeViewer.getSelection();
-						if (compareMode){
+						if ((compareMode & ON) > 0){
 							StructuredSelection sel = new StructuredSelection(new Object[] {getCurrentFileRevision(), tableStructuredSelection.getFirstElement()});
 							compareAction.selectionChanged(sel);
 							compareAction.run();
 						} else {
 							//Pass in the entire structured selection to allow for multiple editor openings
 							StructuredSelection sel = tableStructuredSelection;
-							openAction.selectionChanged(sel);
-							openAction.run();
+							if (openAction != null) {
+								openAction.selectionChanged(sel);
+								openAction.run();
+							}
 						}
 					}
 				}
@@ -432,6 +456,10 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		
 	}
 
+	protected CompareRevisionAction createCompareAction() {
+		return new CompareRevisionAction();
+	}
+
 	private String getFileNameQualifier() {
 		if (file != null)
 			return file.getFullPath().toString();
@@ -445,15 +473,19 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		
 		if (file != null && !parentSite.isModal()){
-			manager.add(openAction);
-			manager.add(compareAction);
-			ISelection sel = treeViewer.getSelection();
-			if (!sel.isEmpty()) {
-				if (sel instanceof IStructuredSelection) {
-					IStructuredSelection tempSelection = (IStructuredSelection) sel;
-					if (tempSelection.size() == 1) {
-						manager.add(new Separator("getContents")); //$NON-NLS-1$
-						manager.add(getContentsAction);
+			if (openAction != null)
+				manager.add(openAction);
+			if (compareAction != null)
+				manager.add(compareAction);
+			if (getContentsAction != null) {
+				ISelection sel = treeViewer.getSelection();
+				if (!sel.isEmpty()) {
+					if (sel instanceof IStructuredSelection) {
+						IStructuredSelection tempSelection = (IStructuredSelection) sel;
+						if (tempSelection.size() == 1) {
+							manager.add(new Separator("getContents")); //$NON-NLS-1$
+							manager.add(getContentsAction);
+						}
 					}
 				}
 			}
@@ -606,7 +638,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	public void setClickAction(boolean compare) {
 		//toggleCompareAction is going to switch the mode
 		//so make sure that we're in the appropriate mode before
-		compareMode = !compare;
+		compareMode = compare ? ON : OFF;
 		if (compareModeAction != null)
 			compareModeAction.run();
 	}
@@ -647,7 +679,7 @@ public class LocalHistoryPage extends HistoryPage implements IHistoryCompareAdap
 	}
 
 	protected Image getImage(Object right) {
-		if (right instanceof FileRevisionTypedElement || right instanceof LocalFileRevision) {
+		if (right instanceof FileRevisionTypedElement || right instanceof LocalFileRevision || right instanceof IFileRevision) {
 			return historyTableProvider.getRevisionImage();
 		}
 		if (right instanceof ITypedElement) {

@@ -36,7 +36,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	private final CompareEditorInput editorInput;
 	private boolean isSaving;
 	private IContentChangeListener contentChangeListener;
-
+    private ITypedElement fileElement;
 	
 	/**
 	 * Create the resource-based saveable comparison.
@@ -44,15 +44,26 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 * @param editorInput the editor input containing the comparison
 	 */
 	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput) {
+		this(input, editorInput, input.getLeft());
+	}
+	
+	/**
+	 * Create the resource-based saveable comparison.
+	 * @param input the compare input to be save
+	 * @param editorInput the editor input containing the comparison
+	 * @param fileElement the file element that handles the saving and change notification
+	 */
+	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput, ITypedElement fileElement) {
 		this.input = input;
 		this.editorInput = editorInput;
 		initializeContentChangeListeners();
+		this.fileElement = fileElement;
 	}
 	
 	private void initializeContentChangeListeners() {
 		// We need to listen to saves to the input to catch the case
 		// where Save was picked from the context menu
-		ITypedElement te = input.getLeft();
+		ITypedElement te = getFileElement();
 		if (te instanceof IContentChangeNotifier) {
 			if (contentChangeListener == null) {
 				contentChangeListener = new IContentChangeListener() {
@@ -76,15 +87,19 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 */
 	public void dispose() {
 		if (contentChangeListener != null) {
-			ITypedElement te = input.getLeft();
+			ITypedElement te = getFileElement();
 			if (te instanceof IContentChangeNotifier) {
 				((IContentChangeNotifier) te).removeContentChangeListener(contentChangeListener);
 			}
 		}
 		// Discard of the left buffer
-		ITypedElement left = input.getLeft();
+		ITypedElement left = getFileElement();
 		if (left instanceof LocalResourceTypedElement)
 			 ((LocalResourceTypedElement) left).discardBuffer();
+	}
+
+	private ITypedElement getFileElement() {
+		return fileElement;
 	}
 	
 	/* (non-Javadoc)
@@ -102,7 +117,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 			flushViewers(Policy.subMonitorFor(monitor, 40));
 			// Then we tell the input to commit its changes
 			// Only the left is ever saveable
-			ITypedElement left = input.getLeft();
+			ITypedElement left = getFileElement();
 			if (left instanceof LocalResourceTypedElement) {
 				LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 				te.commit(Policy.subMonitorFor(monitor, 60));
@@ -164,7 +179,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	}
 
 	private boolean hasSaveConflict() {
-		ITypedElement left = input.getLeft();
+		ITypedElement left = getFileElement();
 		if (left instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement te = (LocalResourceTypedElement) left;
 			return !te.isSynchronized();
@@ -195,7 +210,7 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	 */
 	protected void performRevert(IProgressMonitor monitor) {
 		// Only the left is ever editable
-		ITypedElement left = input.getLeft();
+		ITypedElement left = getFileElement();
 		if (left instanceof LocalResourceTypedElement)
 			 ((LocalResourceTypedElement) left).discardBuffer();
 	}
