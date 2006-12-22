@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -57,7 +58,7 @@ public abstract class ToolTip {
 
 	private boolean respectDisplayBounds = true;
 
-	private boolean respectMonitorBounds = false;
+	private boolean respectMonitorBounds = true;
 
 	/**
 	 * Create new instance which add TooltipSupport to the widget
@@ -182,7 +183,7 @@ public abstract class ToolTip {
 	 * overlap the monitors bounds. The monitor the tooltip belongs to is the
 	 * same is control's monitor the tooltip is shown for.
 	 * <p>
-	 * Default is <code>false</code>
+	 * Default is <code>true</code>
 	 * </p>
 	 * 
 	 * @param respectMonitorBounds
@@ -240,9 +241,24 @@ public abstract class ToolTip {
 			Rectangle bounds;
 			Point rightBounds = new Point(tipSize.x + location.x, tipSize.y
 					+ location.y);
-
-			if (respectMonitorBounds) {
+			
+			Monitor[] ms = control.getDisplay().getMonitors();
+			
+			if (respectMonitorBounds && ms.length > 1) {
+				// By default present in the monitor of the control
 				bounds = control.getMonitor().getBounds();
+				Point p = new Point(location.x,location.y);
+				
+				// Search on which monitor the event occurred
+				Rectangle tmp;
+				for( int i = 0; i < ms.length; i++ ) {
+					tmp = ms[i].getBounds();
+					if( tmp.contains(p) ) {
+						bounds = tmp;
+						break;
+					}
+				}
+				
 			} else {
 				bounds = control.getDisplay().getBounds();
 			}
