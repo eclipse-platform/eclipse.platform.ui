@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2006 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -61,16 +61,23 @@ BUTTON {
 }
 
 #workingSetContainer {
-	background:Window;
 	color:WindowText; 
 	border: 2px inset ThreeDHighlight;
 	margin:0px 5px;
 	padding:5px;
 	overflow:auto;
+	height:140px;
+	background:<%=prefs.getViewBackground()%>;
+}
+
+#buttonBar {
+    height:3em; 
+    background:Window;
 }
 
 </style>
 
+<script language="JavaScript" src="resize.js"></script>
 <script language="JavaScript" src="utils.js"></script>
 <script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">
@@ -95,6 +102,7 @@ if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
 	sizeButtons();
 <%}%>
 	enableButtons();
+	sizeList();
 	document.getElementById("alldocs").focus();
 }
 
@@ -236,13 +244,16 @@ function closeWorkingSetDialog()
 	catch(e) {}
 }
 
+function sizeList() {
+    resizeVertical("workingSetContainer", "filterTable", "buttonArea", 100, 30);
+}
+
 </script>
 
 </head>
 
-<body dir="<%=direction%>" onload="onloadHandler()" onunload="closeWorkingSetDialog()">
+<body dir="<%=direction%>" onload="onloadHandler()" onunload="closeWorkingSetDialog()" onresize = "sizeList()">
 <form onsubmit="selectWorkingSet();return false;">
-<div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
 		<tr><td class="radio">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs" accesskey="<%=ServletResources.getAccessKey("selectAll", request)%>"><%=ServletResources.getLabel("selectAll", request)%></label>
@@ -250,8 +261,8 @@ function closeWorkingSetDialog()
 		<tr><td class="radio">
 			<input id="selectws" type="radio" name="workingSet"  onclick="enableButtons()"><label for="selectws" accesskey="<%=ServletResources.getAccessKey("selectWorkingSet", request)%>"><%=ServletResources.getLabel("selectWorkingSet", request)%>:</label>	
 		</td></tr>
-		<tr><td>
-			<div id="workingSetContainer" style="overflow:auto; height:140px; background:<%=prefs.getViewBackground()%>;">
+	</table>
+<div id="workingSetContainer" >
 
 <table id='list'  cellspacing='0' style="width:100%;">
 <% 
@@ -279,9 +290,9 @@ for (int i=0; i<wsets.length; i++)
 %>
 
 </table>
-			</div>
-		</td></tr>
-		<tr id="actionsTable" valign="bottom"><td>
+</div>
+			
+<div id="buttonArea">
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
@@ -295,10 +306,6 @@ for (int i=0; i<wsets.length; i++)
 					</td>
 				</tr>
   			</table>
-		</td></tr>
-	</table>
-</div>
-<div style="height:50px;">
 	<table valign="bottom" align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">

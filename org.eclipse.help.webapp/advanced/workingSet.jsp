@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2006 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -52,7 +52,6 @@ TD, TR {
 	border:0px;
 }
 
-
 #workingSet {
 	width:100%;
 	font:<%=prefs.getViewFont()%>;
@@ -76,8 +75,12 @@ if (data.isIE()) {
 %>
 }
 
+#buttonBar {
+    height:3em; 
+}
+
 .book {
-	margin:0xp;
+	margin:0px;
 	border:0px;
 	padding:0px;
 	white-space: nowrap;
@@ -111,7 +114,7 @@ if (data.isMozilla()) {
 %>
 input[type="checkbox"] {
 	border:2px solid WindowText; 
-	margin:0xp; 
+	margin:0px; 
 	padding:0px;	
 	height:12px;
 	width:12px;
@@ -124,7 +127,7 @@ input[type="checkbox"] {
 }
 %>
 </style>
-
+<script language="JavaScript" src="resize.js"></script>
 <script language="JavaScript">
 
 // Preload images
@@ -143,6 +146,7 @@ function onloadHandler() {
 %>
 	sizeButtons();
 <%}%>
+    sizeBookContainer();
 	document.getElementById("workingSet").focus();
 	enableOK();
 <%-- event handlers that call enableOK() are not invoked properly on Japanese --%>
@@ -159,6 +163,10 @@ function sizeButtons() {
 	if(document.getElementById("cancel").offsetWidth < minWidth){
 		document.getElementById("cancel").style.width = minWidth+"px";
 	}
+}
+
+function sizeBookContainer() {
+    resizeVertical("booksContainer", "wsTable", "buttonBar", 100, 20);
 }
 
 function doSubmit()
@@ -361,7 +369,7 @@ function enableOK() {
 
 </head>
 
-<body dir="<%=direction%>" onload="onloadHandler()">
+<body dir="<%=direction%>" onload="onloadHandler()"  onresize = "sizeBookContainer()">
 <form onsubmit="doSubmit();return false;">
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%>:</label>
@@ -425,7 +433,7 @@ for (int i=0; i<data.getTocCount(); i++)
 %>
 
 </div>
-<div style="height:50px;">
+<div id="buttonBar" >
 	<table valign="bottom" align="<%=isRTL?"left":"right"%>">
 		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
   			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
