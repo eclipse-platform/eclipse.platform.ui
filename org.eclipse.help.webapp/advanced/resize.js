@@ -34,6 +34,9 @@ function resizeVertical(expandableId, fixed1Id, fixed2Id, minSize, padding) {
 	if (padding) {
 	    newHeight = newHeight - padding;
 	}
+	if (newHeight < minSize) {
+	    newHeight = minSize;
+	}
 	var expandable = document.getElementById(expandableId);
 	if (expandable) {
 	    expandable.style.height = newHeight + "px";
