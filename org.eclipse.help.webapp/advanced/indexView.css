@@ -7,20 +7,88 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation 2006, refactored index view into a single frame
  *******************************************************************************/
 
 BODY {
 	background-color:<%=prefs.getViewBackground()%>;
 	font:<%=prefs.getViewFont()%>;
+	margin-top:5px;
+	margin-<%=isRTL?"right":"left"%>:5px;
+	padding:0px;
+	border:0px;	
+	cursor:default;
+	overflow:hidden;
+}
+
+TABLE, TR, TD, P {
+	margin:0px;
+	padding:0px;
+	border:0px;
+}
+
+TABLE {
+	font:<%=prefs.getViewFont()%>;
+	width:100%;
+}
+
+TR {
+	height:21px;
+}
+
+
+INPUT {
+	font:<%=prefs.getViewFont()%>;
 	margin:0;
 	padding:0;
-	border:0;
-	cursor:default;
+	border:1px solid ThreeDShadow;
 }
+
+#instruction {
+	white-space:nowrap;
+}
+
+#indexList {
+    overflow:auto;
+    width: 100%;
+}
+
+#typein {
+	width:100%;
+}
+
+#typeinTable {
+	width:100%;
+	height: 4em;
+}
+
+#button {
+	background:ThreeDShadow;
+	color:Window;
+	font-weight:bold;
+	margin-left:1px;
+}
+
+<%
+	if (data.isIE()) {
+%>
+#go {
+	padding-<%=isRTL?"right":"left"%>:1px;
+}
+<%
+	}
+%>
 
 UL {
 	border-width:0; 
 	margin-<%=isRTL?"right":"left"%>:20px;
+<%
+	if (!data.isMozilla()) {
+%>
+	padding-<%=isRTL?"right":"left"%>:0px;
+<%
+	}
+%>
 }
 
 #root {
@@ -79,7 +147,6 @@ A.nolink:hover {
 
 A.active{ 
 	color:HighlightText;
-	width:100%;
 }
 
 A.active:link, A.active:visited {
@@ -106,7 +173,6 @@ A.active{
 }
 %>
 
-
 <%if (data.isMozilla()) {%>
 UL {
 	margin-<%=isRTL?"right":"left"%>:-20px;
@@ -121,3 +187,10 @@ UL {
 .h {
 	visibility:hidden;
 }
+
+DIV {
+    padding: 0px;
+    margin:  0px;
+    overflow: auto;
+}
+

@@ -8,6 +8,8 @@
  Contributors:
      Intel Corporation - initial API and implementation
      IBM Corporation - 122967 [Help] Remote help system (improve responsiveness)
+     IBM Corporation - 166695 [Webapp] Index View truncates button if large fonts are used
+     IBM Corporation 2006, refactored index view into a single frame
 --%>
 <%@ include file="fheader.jsp"%>
 
@@ -22,18 +24,52 @@
 
 <title><%=ServletResources.getString("IndexViewTitle", request)%></title>
 
+<style type="text/css">
+<%@ include file="indexView.css"%>
+</style>
+
+<base target="ContentViewFrame">
+
+<script language="JavaScript">
+var ids = [<%data.generateIds(out);%>];
+minus = new Image();
+minus.src = "<%=prefs.getImagesDirectory()%>" + "/minus.gif";
+plus = new Image();
+plus.src = "<%=prefs.getImagesDirectory()%>" + "/plus.gif";
+altExpandTopicTitles = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("expandTopicTitles", request))%>";
+altCollapseTopicTitles = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("collapseTopicTitles", request))%>";
+usePlusMinus = <%=prefs.isIndexPlusMinus()%>;
+</script>
+
 <script language="JavaScript" src="indexView.js"></script>
+<script language="JavaScript" src="indexList.js"></script>
+<script language="JavaScript" src="indexTypein.js"></script>
+<script language="JavaScript" src="utils.js"></script>
+<script language="JavaScript" src="resize.js"></script>
 </head>
 
-<frameset id="indexViewFrameset"
-<%if (prefs.isIndexInstruction()){%>
-		rows="52,*"
-<%} else {%>
-		rows="32,*"
+<body dir="<%=direction%>" onload="onloadHandler()" onresize = "sizeList()">
+
+<table id="typeinTable">
+<%if (prefs.isIndexInstruction()) {%>
+	<tr>
+		<td colspan="2"><p id="instruction"><%=ServletResources.getString("IndexTypeinInstructions", request)%></p></td>
+	</tr>
 <%}%>
-		frameborder="0" framespacing="0" border="0">
-	<frame name="IndexTypeinFrame" src="indexTypein.jsp" title='<%=ServletResources.getString("IndexTypeinTitle", request)%>' frameborder="0" marginheight="0" marginwidth="0" noresize scrolling="no">
-	<frame name="IndexListFrame" src="indexList.jsp" title='<%=ServletResources.getString("IndexListTitle", request)%>' frameborder="0" marginheight="0" marginwidth="0">
-</frameset>
+	<tr>
+		<td width="100%"><input type="text" id="typein"></td>
+	<%if (prefs.isIndexButton()) {%>
+		<td><input type="button" id="button" value="<%=ServletResources.getString("IndexTypeinButton", request)%>" onclick="this.blur();parent.doDisplay()"></td>
+	<%}%>
+	</tr>
+</table>
+<div id = "indexList">
+	<ul dir="<%=direction%>" id="root" class="expanded">
+<%
+		data.generateIndex(out);
+%>
+	</ul>
+</div>
+</body>
 
 </html>

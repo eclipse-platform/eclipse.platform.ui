@@ -210,6 +210,7 @@ function closeConfirmShowAllDialog(){
  		    name="<%=views[i].getName()%>"
  		    title="<%=ServletResources.getString("ignore", views[i].getName(), request)%>"
  		    id="<%=views[i].getName()%>" 
+ 		    scrolling="no"
  		    src='<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+request.getQueryString()))%>'>
  	</iframe> 
 <%

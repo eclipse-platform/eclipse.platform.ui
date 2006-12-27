@@ -7,37 +7,21 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation 2006, refactored index view into a single frame
  *******************************************************************************/
  
 var isMozilla = navigator.userAgent.indexOf("Mozilla") != -1 && parseInt(navigator.appVersion.substring(0,1)) >= 5;
 var isIE = navigator.userAgent.indexOf("MSIE") != -1;
 
 /**
- * Global references to IndexTypein and IndexList child frames.
- * Are intialized by the child frames on theirs load.
- */
-var typeinFrame;
-var listFrame;
-
-/**
- * Selects a topic in the index list
- */
-function selectTopicById(id) {
-	if (!listFrame) return false;
-
-	return listFrame.selectTopicById(id);
-}
-
-/**
  * Selects the next index list node "up" from current one
  */
 function selectNextUp() {
-	if (!listFrame) return false;
 
-	var next = listFrame.getNextUp(listFrame.oldActive);
+	var next = getNextUp(oldActive);
 	if (next) {
-		listFrame.highlightTopic(next);
-		listFrame.scrollIntoView(next);
+		highlightTopic(next);
+		scrollIntoView(next);
 		setTypeinValue(next);
 	}
 }
@@ -46,12 +30,11 @@ function selectNextUp() {
  * Selects the next index list node "down" from current one
  */
 function selectNextDown() {
-	if (!listFrame) return false;
 
-	var next = listFrame.getNextDown(listFrame.oldActive);
+	var next = getNextDown(oldActive);
 	if (next) {
-		listFrame.highlightTopic(next);
-		listFrame.scrollIntoView(next);
+		highlightTopic(next);
+		scrollIntoView(next);
 		setTypeinValue(next);
 	}
 }
@@ -60,9 +43,7 @@ function selectNextDown() {
  * Returns selected list item
  */
 function getSelection() {
-	if (!listFrame) return null;
-
-	return listFrame.oldActive;
+	return oldActive;
 }
 
 /**
@@ -70,15 +51,14 @@ function getSelection() {
  * The value can be anchor's id or anchor's text.
  */
 function setTypeinValue(anchor) {
-	if (!typeinFrame) return;
 
 	if (!anchor) return;
 
 	var value = anchor.getAttribute("id");
 	if (value) {
-		typeinFrame.currentId = value;
+		currentId = value;
 	} else {
-		typeinFrame.currentId = "";
+		currentId = "";
 		if (isIE)
 			value = anchor.innerText;
 		else 
@@ -86,16 +66,40 @@ function setTypeinValue(anchor) {
 		if (!value)
 			value = "";
 	}
-	typeinFrame.typein.value = value;
-	typeinFrame.typein.previous = value;
+	typein.value = value;
+	typein.previous = value;
 }
 
 /**
  * Open current selected item in the content frame
  */
 function doDisplay() {
-	if (!listFrame) return;
-	if (!listFrame.oldActive) return;
+	if (!oldActive) return;
 
-	parent.parent.parent.parent.ContentFrame.ContentViewFrame.location.replace(listFrame.oldActive);
+	parent.parent.parent.parent.ContentFrame.ContentViewFrame.location.replace(oldActive);
 }
+
+function onloadHandler() {
+
+	//var node = document.getElementsByTagName("A").item(0);
+	//highlightTopic(node);
+	//scrollToViewTop(node);
+	typein = document.getElementById("typein");
+
+	typein.value = "";
+	typein.previous = "";
+
+	currentId = "";
+	
+	if (isIE) {
+		document.onclick = mouseClickHandler;
+		document.onkeydown = keyDownHandler;
+	} else {
+		document.addEventListener('click', mouseClickHandler, true);
+		document.addEventListener('keydown', keyDownHandler, true);
+	}
+		
+	setInterval("intervalHandler()", 200);
+	sizeList();
+}
+

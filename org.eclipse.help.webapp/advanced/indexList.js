@@ -7,10 +7,8 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM Corporation 2006, refactored index view into a single frame
  *******************************************************************************/
- 
-var isMozilla = parent.isMozilla;
-var isIE = parent.isIE;
 
 var oldActive;
 var oldActiveClass = "";
@@ -381,6 +379,9 @@ function focusHandler(e)
 	catch(e){}
 }
 
+function sizeList() {
+    resizeVertical("indexList", "typeinTable", null, 100, 5);
+}
 
 /**
  * display topic label in the status line on mouse over topic
@@ -426,7 +427,7 @@ function mouseClickHandler(e) {
 	var anchorNode = getAnchorNode(clickedNode);
 	if (anchorNode) {
 		highlightTopic(anchorNode);
-		parent.setTypeinValue(anchorNode);
+		setTypeinValue(anchorNode);
 	}
 
 	if (isIE) {
@@ -440,12 +441,11 @@ function mouseClickHandler(e) {
  * Handler for key down (arrows)
  */
 function keyDownHandler(e) {
-	var key;
-
-	if (isIE) {
-		key = window.event.keyCode;
-	} else {
-		key = e.keyCode;
+	var key = getKeycode(e);	
+	var target = getEventTarget(e);
+	if (target === null) return;
+	if (target.id == "typein") {
+	    return typeinKeyDownHandler(e);
 	}
 
 	if (key <37 || key > 40)
@@ -460,16 +460,6 @@ function keyDownHandler(e) {
 	if (key == 39) { // Right arrow, expand
 		var clickedNode = getTarget(e);
 		if (!clickedNode) return;
-		if (isIE) {
-			if (clickedNode.id != null) {
-				if (clickedNode.id.charAt(0) == 'b') {
-					if (clickedNode.name != "opened") {
-						loadTOC(clickedNode.name);
-						return true;
-					}
-				}
-			}
-		}
 
 		var plus_minus = getPlusMinus(clickedNode);
 		if (plus_minus != null)
@@ -483,18 +473,6 @@ function keyDownHandler(e) {
 	} else if (key == 37) { // Left arrow,collapse
 		var clickedNode = getTarget(e);
 		if (!clickedNode) return;
-
-		if (clickedNode.id != null){
-			if (clickedNode.id.charAt(0) == 'b'){
-				if(clickedNode.name == "opened"){
-					loadTOC(" ");
-					return true;
-				} else {
-					return true;
-				}
-			}
-		}
-
 		var plus_minus = getPlusMinus(clickedNode);
 		if (plus_minus != null) {
 			if (isExpanded(plus_minus))
@@ -510,7 +488,7 @@ function keyDownHandler(e) {
 		var next = getNextDown(clickedNode);
 		if (next) {
 			highlightTopic(next);
-			parent.setTypeinValue(next);
+			setTypeinValue(next);
 			next.focus();
 		}
 
@@ -521,34 +499,12 @@ function keyDownHandler(e) {
 		var next = getNextUp(clickedNode);
 		if (next) {
 			highlightTopic(next);
-			parent.setTypeinValue(next);
+			setTypeinValue(next);
 			next.focus();
 		}
 	}
 
-
 	return true;
 }
 
-/**
- * IndexListFrame onload handler
- */
-function onloadHandler() {
-	parent.listFrame = window;
 
-	var node = document.getElementsByTagName("A").item(0);
-	highlightTopic(node);
-	scrollToViewTop(node);
-
-	
-	if (isIE) {
-		document.onclick = mouseClickHandler;
-		document.onmousemove = mouseMoveHandler;
-		document.onkeydown = keyDownHandler;
-		//window.onfocus = focusHandler;
-	} else {
-		document.addEventListener('click', mouseClickHandler, true);
-		document.addEventListener('mousemove', mouseMoveHandler, true);
-		document.addEventListener('keydown', keyDownHandler, true);
-	}
-}

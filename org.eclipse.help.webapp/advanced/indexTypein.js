@@ -7,10 +7,8 @@
  * 
  * Contributors:
  *     Intel Corporation - initial API and implementation
+ *     IBM 2006, refactored index view into a single frame
  *******************************************************************************/
- 
-var isMozilla = parent.isMozilla;
-var isIE = parent.isIE;
 
 var typein;
 var currentId;
@@ -38,25 +36,24 @@ function compare(keyword, pattern) {
 }
 
 function searchPattern(pattern) {
-    if (!parent.listFrame) return null;
 
 	var from = 0;
-	var to = parent.listFrame.ids.length;
+	var to = ids.length;
 	var i;
 	var res;
 
 	while (to > from) {
 		i = Math.floor((to + from) / 2);
-		res = compare(parent.listFrame.ids[i], pattern);
+		res = compare(ids[i], pattern);
 		if (res == 0) {
 			while (i > 0) {
-				res = compare(parent.listFrame.ids[--i], pattern);
+				res = compare(ids[--i], pattern);
 				if (res != 0) {
 					i++;
 					break;
 				}
 			}
-			return parent.listFrame.ids[i];
+			return ids[i];
 		} else if (res < 0) {
 			from = i + 1;
 		} else {
@@ -67,14 +64,8 @@ function searchPattern(pattern) {
 	return null;
 }
 
-function keyDownHandler(e) {
-	var key;
-
-	if (isIE) {
-		key = window.event.keyCode;
-	} else {
-		key = e.keyCode;
-	}
+function typeinKeyDownHandler(e) {
+	var key = getKeycode(e);	
 
 	if (key != 13 && key != 38 && key != 40)
 		return true;
@@ -87,12 +78,12 @@ function keyDownHandler(e) {
 
 	if (key == 13) { // enter
 		// display topic corresponded to selected list item
-		parent.setTypeinValue(parent.getSelection());
-		parent.doDisplay();
+		setTypeinValue(getSelection());
+		doDisplay();
 	} if (key == 38) { // up arrow
-		parent.selectNextUp();
+		selectNextUp();
 	} else if (key == 40) { // down arrow
-		parent.selectNextDown();
+		selectNextDown();
 	}
 
 	return false;
@@ -109,31 +100,9 @@ function intervalHandler() {
 		var id = searchPattern(typein.value);
 		if (id && id != currentId) {
 			// the value has became to fit to other item
-			if (parent.selectTopicById(id)) {
+			if (selectTopicById(id)) {
 				currentId = id;
 			}
 		}
 	}
-}
-
-/**
- * IndexTypeinFrame onload handler
- */
-function onloadHandler() {
-	parent.typeinFrame = window;
-
-	typein = document.getElementById("typein");
-
-	typein.value = "";
-	typein.previous = "";
-
-	currentId = "";
-
-	if (isIE) {
-		document.onkeydown = keyDownHandler;
-	} else {
-		document.addEventListener("keydown", keyDownHandler, true);
-	}
-
-	setInterval("intervalHandler()", 200);
 }
