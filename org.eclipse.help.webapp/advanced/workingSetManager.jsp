@@ -45,6 +45,8 @@ BODY {
 
 TABLE {
 	width:auto;
+	margin:0px;
+	padding:0px;
 }
 
 TD, TR {
@@ -58,6 +60,12 @@ TD.radio {
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
+	margin:5px;
+}
+
+FORM {
+    margin: 0px;
+    border: 0px;
 }
 
 #workingSetContainer {
@@ -70,9 +78,8 @@ BUTTON {
 	background:<%=prefs.getViewBackground()%>;
 }
 
-#buttonBar {
-    height:3em; 
-    background:Window;
+#buttonArea {
+    height:4em; 
 }
 
 </style>
@@ -254,7 +261,7 @@ function sizeList() {
 
 <body dir="<%=direction%>" onload="onloadHandler()" onunload="closeWorkingSetDialog()" onresize = "sizeList()">
 <form onsubmit="selectWorkingSet();return false;">
-  	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
+  	<table id="filterTable" cellspacing=0 cellpadding=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>; font:<%=prefs.getToolbarFont()%>;margin-top:5px;width:100%;">
 		<tr><td class="radio">
 			<input id="alldocs" type="radio" name="workingSet" onclick="enableButtons()"><label for="alldocs" accesskey="<%=ServletResources.getAccessKey("selectAll", request)%>"><%=ServletResources.getLabel("selectAll", request)%></label>
 		</td></tr>
@@ -293,7 +300,7 @@ for (int i=0; i<wsets.length; i++)
 </div>
 			
 <div id="buttonArea">
-  			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
+  			<table cellspacing=0 cellpadding=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
 						<button type="button" onclick="newWorkingSet()" id="new" accesskey="<%=ServletResources.getAccessKey("NewWorkingSetButton", request)%>"><%=ServletResources.getLabel("NewWorkingSetButton", request)%>...</button>
@@ -306,9 +313,9 @@ for (int i=0; i<wsets.length; i++)
 					</td>
 				</tr>
   			</table>
-	<table valign="bottom" align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
-		<tr id="buttonsTable" valign="bottom"><td valign="bottom" align="<%=isRTL?"left":"right"%>">
-  			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
+	<table align="<%=isRTL?"left":"right"%>" style="background:<%=prefs.getToolbarBackground()%>">
+		<tr id="buttonsTable"><td align="<%=isRTL?"left":"right"%>">
+  			<table cellspacing=0 cellpadding=0 border=0 style="background:transparent;">
 				<tr>
 					<td>
 						<button type="submit" id="ok"><%=ServletResources.getString("OK", request)%></button>
