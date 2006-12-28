@@ -176,15 +176,16 @@ public abstract class AbstractTask implements ICompositeCheatSheetTask {
 	 */
 	public URL getInputUrl(String path) throws MalformedURLException {
 		int index = path.indexOf('/', 1);
-		String bundleName = path.substring(1, index);
-		String relativePath = path.substring(index + 1);
-		Bundle bundle = Platform.getBundle(bundleName);
-		if (bundle != null) {
-			return bundle.getEntry(relativePath);
+		if (index >= 1) {
+			String bundleName = path.substring(1, index);
+			String relativePath = path.substring(index + 1);
+			Bundle bundle = Platform.getBundle(bundleName);
+			if (bundle != null) {
+				return bundle.getEntry(relativePath);
+			}
 		}
-		else {
-			return new URL(model.getContentUrl(), path);
-		}
+		return new URL(model.getContentUrl(), path);
+
 	}
 
 	public ICompositeCheatSheet getCompositeCheatSheet() {
