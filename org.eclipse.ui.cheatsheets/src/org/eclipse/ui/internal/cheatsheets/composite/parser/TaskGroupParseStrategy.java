@@ -53,12 +53,7 @@ public class TaskGroupParseStrategy implements ITaskParseStrategy {
 		} else if (ITaskGroup.SET.equals(kind)) {
 			checkForChildren(parentTask, status);
 		} else if (ITaskGroup.CHOICE.equals(kind)) {
-			if (parentTask.getSubtasks().length < 2) {
-				String message = NLS.bind(
-						Messages.ERROR_PARSING_NO_CHOICE,
-						(new Object[] { parentTask.getName()}));
-			    status.addStatus(IStatus.ERROR, message, null);
-			}
+			checkForChildren(parentTask, status);
 		} else {
 			String message = NLS.bind(
 					Messages.ERROR_PARSING_TASK_INVALID_KIND,

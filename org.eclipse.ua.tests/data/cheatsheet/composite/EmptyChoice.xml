@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<compositeCheatsheet name="Test Guide">
+    <taskGroup kind="choice" name= "Choice with no child">
+    </taskGroup>
+</compositeCheatsheet>

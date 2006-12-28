@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<compositeCheatsheet name="Test Guide">
-    <taskGroup kind="choice" name= "Choice with single child">
-        <task kind = "ua.junit" name="This is Task2" id = "task2" /> 
-    </taskGroup>
-</compositeCheatsheet>

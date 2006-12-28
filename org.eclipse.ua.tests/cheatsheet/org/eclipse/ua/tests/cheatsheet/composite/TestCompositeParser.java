@@ -202,10 +202,10 @@ public class TestCompositeParser extends TestCase {
 		StatusCheck.assertStatusContains(parser.getStatus(), "has no children");
 	}
 	
-	public void testChoiceOneChild() {
-		assertNull(parseTestFile("SingleChoice.xml"));
+	public void testChoiceNoChild() {
+		assertNull(parseTestFile("EmptyChoice.xml"));
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
-		StatusCheck.assertStatusContains(parser.getStatus(), "must have at least two child tasks");
+		StatusCheck.assertStatusContains(parser.getStatus(), "has no children");
 	}
 	
 	

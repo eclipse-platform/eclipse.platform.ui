@@ -95,6 +95,10 @@ public class TestTaskGroups extends TestCase {
 		assertEquals(NOT_STARTED, getGroupState(ITaskGroup.CHOICE, new int[] {NOT_STARTED, NOT_STARTED}));
 	}
 	
+	public void testSingleChoiceNotStarted() {
+		assertEquals(NOT_STARTED, getGroupState(ITaskGroup.CHOICE, new int[] {NOT_STARTED}));
+	}
+	
 	public void testChoiceInProgress() {
 		assertEquals(IN_PROGRESS, getGroupState(ITaskGroup.CHOICE, new int[] {IN_PROGRESS}));
 	}
@@ -105,6 +109,10 @@ public class TestTaskGroups extends TestCase {
 
 	public void testChoiceCompleted() {
 		assertEquals(COMPLETED, getGroupState(ITaskGroup.CHOICE, new int[] {COMPLETED, SKIPPED}));
+	}
+	
+	public void testSingleChoiceCompleted() {
+		assertEquals(COMPLETED, getGroupState(ITaskGroup.CHOICE, new int[] {COMPLETED}));
 	}
 	
 	public void testChoiceSkipped() {
