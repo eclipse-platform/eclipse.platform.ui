@@ -44,8 +44,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.DND;
@@ -532,7 +532,7 @@ public class WelcomeCustomizationPreferencePage extends PreferencePage implement
 		label = new Label(pageContainer, SWT.NULL);
 		label.setText(Messages.WelcomeCustomizationPreferencePage_right);
 		available = createTableViewer(pageContainer, "hidden"); //$NON-NLS-1$
-		available.setSorter(new ViewerSorter());
+		available.setComparator(new ViewerComparator());
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_FILL);
 		gd.verticalSpan = 2;
 		gd.widthHint = 100;

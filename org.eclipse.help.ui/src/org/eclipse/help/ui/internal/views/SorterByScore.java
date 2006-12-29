@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,16 @@
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.internal.search.SearchHit;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-public class SorterByScore extends ViewerSorter {
+public class SorterByScore extends ViewerComparator {
 	public SorterByScore() {
 		super(ReusableHelpPart.SHARED_COLLATOR);
 	}
-	/**
-	 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer,java.lang.Object,java.lang.Object)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
 	 */
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		try {

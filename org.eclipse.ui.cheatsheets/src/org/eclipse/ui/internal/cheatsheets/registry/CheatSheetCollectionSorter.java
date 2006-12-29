@@ -10,17 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
-import com.ibm.icu.text.Collator;
-
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.model.WorkbenchAdapter;
+
+import com.ibm.icu.text.Collator;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
  *	Note that capitalization differences are not considered by this
  *	sorter, so a < B < c.
  */
-public class CheatSheetCollectionSorter extends ViewerSorter {
+public class CheatSheetCollectionSorter extends ViewerComparator {
 	public final static CheatSheetCollectionSorter INSTANCE = new CheatSheetCollectionSorter();
 	private Collator collator = Collator.getInstance();
 

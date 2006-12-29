@@ -245,7 +245,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		treeViewer.getTree().setLayoutData(data);
 		treeViewer.setContentProvider(getCheatSheetProvider());
 		treeViewer.setLabelProvider(new CheatsheetLabelProvider());
-		treeViewer.setSorter(CheatSheetCollectionSorter.INSTANCE);
+		treeViewer.setComparator(CheatSheetCollectionSorter.INSTANCE);
 		treeViewer.addFilter(activityViewerFilter);
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setInput(cheatsheetCategories);
