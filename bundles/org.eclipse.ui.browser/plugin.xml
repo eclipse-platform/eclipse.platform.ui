@@ -233,5 +233,12 @@
             commandId="org.eclipse.ui.browser.openBrowser"
             icon="$nl$/icons/obj16/internal_browser.gif"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.ui.internal.browser.WebBrowserEditorInput"
+            id="org.eclipse.ui.browser.elementFactory">
+      </factory>
+   </extension>
 
 </plugin>

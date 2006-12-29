@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -52,6 +53,10 @@ public class WebBrowserEditorInput implements IEditorInput,
 	private static final String MEMENTO_STYLE = "style"; //$NON-NLS-1$
 
 	private static final String MEMENTO_ID = "id"; //$NON-NLS-1$
+
+	private static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
+
+	private static final String MEMENTO_TOOLTIP = "tooltip"; //$NON-NLS-1$
 
 	private URL url;
 
@@ -145,28 +150,32 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 *         created
 	 */
 	public IAdaptable createElement(IMemento memento) {
-		URL url2 = null;
-		int newStyle = 0;
-
-		try {
-			newStyle = memento.getInteger(MEMENTO_STYLE).intValue();
-
-			if (newStyle != 0)
-				url = new URL(memento.getString(MEMENTO_URL));
-		} catch (Exception e) {
-			// could not determine the style
+		int style = 0;
+		Integer integer = memento.getInteger(MEMENTO_STYLE);
+		if (integer != null) {
+			style = integer.intValue();
 		}
 
-		String id2 = null;
-		try {
-			id2 = memento.getString(MEMENTO_ID);
-			if (id2 != null && id2.length() < 1)
-				id2 = null;
-		} catch (Exception e) {
-			// ignore
+		URL url = null;
+		String str = memento.getString(MEMENTO_URL);
+		if (str != null) {
+			try {
+				url = new URL(str);
+			}
+			catch (MalformedURLException e) {
+				String msg = "Malformed URL while initializing browser editor"; //$NON-NLS-1$
+				WebBrowserUIPlugin.logError(msg, e);
+			}
 		}
 
-		return new WebBrowserEditorInput(url2, newStyle, id2);
+		String id = memento.getString(MEMENTO_ID);
+		String name = memento.getString(MEMENTO_NAME);
+		String tooltip = memento.getString(MEMENTO_TOOLTIP);
+		
+		WebBrowserEditorInput input = new WebBrowserEditorInput(url, style, id);
+		input.setName(name);
+		input.setToolTipText(tooltip);
+		return input;
 	}
 
 	/**
@@ -330,13 +339,19 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 *            the storage area for element state
 	 */
 	public void saveState(IMemento memento) {
-		if ((style & IWorkbenchBrowserSupport.PERSISTENT) != 0 && url != null)
-			memento.putString(MEMENTO_URL, url.toExternalForm());
-
 		memento.putInteger(MEMENTO_STYLE, style);
-
-		if (id != null)
+		if ((style & IWorkbenchBrowserSupport.PERSISTENT) != 0 && url != null) {
+			memento.putString(MEMENTO_URL, url.toExternalForm());
+		}
+		if (id != null) {
 			memento.putString(MEMENTO_ID, id);
+		}
+		if (name != null) {
+			memento.putString(MEMENTO_NAME, name);
+		}
+		if (tooltip != null) {
+			memento.putString(MEMENTO_TOOLTIP, tooltip);
+		}
 	}
 
 	/**
