@@ -51,12 +51,6 @@ body {
 	background-color : #6d7e85;
 }
 
-#branding {
-	position: absolute;
-	bottom : 20px;
-	left : 20px;
-}
-
 .page {
 	background-repeat : no-repeat;
 	background-position : bottom left;
