@@ -39,13 +39,11 @@ public interface IConverter {
 	public Object getToType();
 
 	/**
-	 * Returns the result of the conversion of the given object. The given
-	 * object must be an instance of getTargetType(), and the result must be an
-	 * instance of getModelType().
+	 * Returns the result of the conversion of the given object.
 	 * 
 	 * @param fromObject
-	 *            the object to convert
-	 * @return the converted object
+	 *            the object to convert, must be of type {@link #getFromType()}
+	 * @return the converted object, must be of type {@link #getToType()}
 	 */
 	public Object convert(Object fromObject);
 }
