@@ -12,15 +12,16 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A proxy for a preference page to avoid creation of preference page just to
@@ -48,9 +49,8 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 		} catch (CoreException e) {
 			// Just inform the user about the error. The details are
 			// written to the log by now.
-			ErrorDialog.openError((Shell) null, WorkbenchMessages.PreferenceNode_errorTitle, 
-					WorkbenchMessages.PreferenceNode_errorMessage, 
-					e.getStatus());
+			IStatus errStatus = StatusUtil.newStatus(e.getStatus(), WorkbenchMessages.PreferenceNode_errorMessage); 
+			StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 			page = new ErrorPreferencePage();
 		}
 

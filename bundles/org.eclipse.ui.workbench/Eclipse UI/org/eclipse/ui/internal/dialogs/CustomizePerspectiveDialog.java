@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.IAction;
@@ -101,6 +102,7 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.intro.IIntroConstants;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
@@ -109,6 +111,7 @@ import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
@@ -982,9 +985,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
             actionSet = (PluginActionSet) actionSetDesc.createActionSet();
             actionSet.init(null, bars);
         } catch (CoreException ex) {
-            WorkbenchPlugin
-                    .log("Unable to create action set " + actionSetDesc.getId(), ex); //$NON-NLS-1$
-            return;
+        	String message = "Unable to create action set " + actionSetDesc.getId(); //$NON-NLS-1$ 
+			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+					message, ex);
+			StatusManager.getManager().handle(status);
+			return;
         }
         builder.buildMenuAndToolBarStructure(actionSet, window);
     }

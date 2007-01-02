@@ -12,11 +12,13 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Utility class to help with dialogs.
@@ -46,24 +48,28 @@ public class DialogUtil {
         if (status != null && status.getException() instanceof CoreException) {
 			nestedException = (CoreException) status.getException();
 		}
+        
+        IStatus errorStatus = null;
 
-        if (nestedException != null) {
-            // Open an error dialog and include the extra
-            // status information from the nested CoreException
-            ErrorDialog.openError(parent, title, message, nestedException
-                    .getStatus());
-        } else {
-            // Open a regular error dialog since there is no
-            // extra information to display
-            MessageDialog.openError(parent, title, message);
-        }
+		if (nestedException != null) {
+			// Open an error dialog and include the extra
+			// status information from the nested CoreException
+			errorStatus = StatusUtil.newStatus(nestedException.getStatus(),
+					message);
+		} else {
+			// Open a regular error dialog since there is no
+			// extra information to displa
+			errorStatus = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, message);
+		}
+
+		StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
     }
 
     /**
-     * Removes the '&' accelerator indicator from a label, if any.
-     * Also removes the () accelerators which are used in Asian
-     * languages.
-     */
+	 * Removes the '&' accelerator indicator from a label, if any. Also removes
+	 * the () accelerators which are used in Asian languages.
+	 */
     public static String removeAccel(String label) {
 
         int startBracket = label.indexOf("(&"); //$NON-NLS-1$

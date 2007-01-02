@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -54,9 +53,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Preference page that allows manipulation of core content types. Unlike most
@@ -364,8 +363,9 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                     getSelectedContentType().setDefaultCharset(text);
                     setButton.setEnabled(false);
                 } catch (CoreException e1) {
-                    ErrorDialog.openError(parent.getShell(), null, null, e1.getStatus());
-                }
+					StatusManager.getManager().handle(e1.getStatus(),
+							StatusManager.SHOW);
+				}
             }
         });
 
@@ -469,8 +469,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 										IContentType.FILE_NAME_SPEC);
 							}
 						} catch (CoreException ex) {
-							ErrorDialog.openError(shell, null, null, ex.getStatus());
-							WorkbenchPlugin.log(ex);
+							StatusManager.getManager().handle(ex.getStatus(),
+									StatusManager.SHOWANDLOG);
 						}
 						finally {
 							fileAssociationViewer.setInput(selectedContentType);
@@ -515,7 +515,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements
                         }
                     }
                     if (!result.isOK()) {
-                        ErrorDialog.openError(composite.getShell(), null, null, result);
+                        StatusManager.getManager().handle(result, StatusManager.SHOW);
                     }
                     fileAssociationViewer.setInput(contentType);
                 }

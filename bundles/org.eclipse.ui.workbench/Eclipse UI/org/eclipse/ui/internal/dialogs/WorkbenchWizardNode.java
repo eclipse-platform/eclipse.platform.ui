@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
@@ -26,7 +25,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
 /**
@@ -158,10 +159,8 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
         if (statuses[0] != null) {
             parentWizardPage.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
-            ErrorDialog
-                    .openError(parentWizardPage.getShell(), WorkbenchMessages.WorkbenchWizard_errorTitle,
-                            WorkbenchMessages.WorkbenchWizard_errorMessage,
-                            statuses[0]);
+            IStatus errStatus = StatusUtil.newStatus(statuses[0], WorkbenchMessages.WorkbenchWizard_errorMessage); 
+            StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
             return null;
         }
 

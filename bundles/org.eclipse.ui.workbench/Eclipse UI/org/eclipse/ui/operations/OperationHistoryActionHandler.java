@@ -23,9 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
@@ -42,6 +40,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.operations.TimeTriggeredProgressMonitorDialog;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.part.MultiPageEditorSite;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -487,19 +486,16 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		Throwable nestedException = StatusUtil.getCause(t);
 		Throwable exception = (nestedException == null) ? t : nestedException;
 
-		// Title and messages
-		String title = WorkbenchMessages.Error;
+		// Messages
 		String exceptionMessage = exception.getMessage();
 		if (exceptionMessage == null) {
 			exceptionMessage = WorkbenchMessages.WorkbenchWindow_exceptionMessage;
 		}
-		IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, 
+				exceptionMessage, exception);
 
-		// Log the problem and then show an error dialog
-		WorkbenchPlugin.log(exceptionMessage, status);
-		ErrorDialog.openError(getWorkbenchWindow().getShell(), title, null,
-				status);
+		// Log and show the problem
+    	StatusManager.getManager().handle(status, StatusManager.SHOWANDLOG);
 	}
 
 	/*

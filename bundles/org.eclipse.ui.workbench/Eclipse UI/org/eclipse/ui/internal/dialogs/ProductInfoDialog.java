@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.osgi.util.NLS;
@@ -42,6 +41,8 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutItem;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Abstract superclass of about dialogs 
@@ -308,14 +309,9 @@ public abstract class ProductInfoDialog extends TrayDialog {
      * display an error message
      */
     private void openWebBrowserError(final String href, final Throwable t) {
-        getShell().getDisplay().asyncExec(new Runnable() {
-            public void run() {
-				String title = WorkbenchMessages.ProductInfoDialog_errorTitle;
-				String msg = NLS.bind(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, href);
-				IStatus status = WorkbenchPlugin.getStatus(t);
-                ErrorDialog.openError(getShell(), title, msg, status);
-            }
-        });
+        String msg = NLS.bind(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, href);
+        IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, msg, t); 
+		StatusManager.getManager().handle(status, StatusManager.SHOW);
     }
 
     /**

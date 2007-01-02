@@ -18,10 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -43,6 +44,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
 import org.eclipse.ui.internal.about.AboutData;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
 
 /**
@@ -289,8 +291,11 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
         // only report ini problems if the -debug command line argument is used
         if (infoURL == null && WorkbenchPlugin.DEBUG) {
-			WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
-                    + bundleInfo.getName());
+			String message = "Problem reading plugin info for: " //$NON-NLS-1$
+					+ bundleInfo.getName();
+			IStatus status = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, message);
+			StatusManager.getManager().handle(status);
 		}
 
         return infoURL != null;
@@ -325,8 +330,12 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 		}
 
         if (!openBrowser(getMoreInfoURL(bundleInfo, true))) {
-			MessageDialog.openError(getShell(), WorkbenchMessages.AboutPluginsDialog_errorTitle,
-                    NLS.bind(WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,PLUGININFO, bundleInfo.getId()));
+			String message = NLS.bind(
+					WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,
+					PLUGININFO, bundleInfo.getId());
+			IStatus errStatus = new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, message);
+			StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 		}
     }
 

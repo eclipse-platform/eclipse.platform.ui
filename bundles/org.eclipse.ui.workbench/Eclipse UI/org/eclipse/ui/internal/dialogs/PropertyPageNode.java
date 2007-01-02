@@ -11,13 +11,14 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Property page node allows us to achieve presence in the property page dialog
@@ -56,9 +57,8 @@ public class PropertyPageNode extends WorkbenchPreferenceExtensionNode {
         } catch (CoreException e) {
             // Just inform the user about the error. The details are
             // written to the log by now.
-            ErrorDialog.openError((Shell) null, WorkbenchMessages.PropertyPageNode_errorTitle, 
-                    WorkbenchMessages.PropertyPageNode_errorMessage, 
-                    e.getStatus());
+            IStatus errStatus = StatusUtil.newStatus(e.getStatus(), WorkbenchMessages.PropertyPageNode_errorMessage); 
+            StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
             page = new EmptyPropertyPage();
         }
         setPage(page);

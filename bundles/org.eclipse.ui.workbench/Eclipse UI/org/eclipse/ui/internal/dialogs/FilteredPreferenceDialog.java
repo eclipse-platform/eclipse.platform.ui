@@ -15,10 +15,8 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -48,9 +46,11 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
@@ -388,14 +388,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 				if (msg == null) {
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
 				}
-				IStatus errorStatus = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, msg, e);
-				ErrorDialog
-						.openError(
-								getShell(),
-								WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle,
-								WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed,
-								errorStatus);
+				IStatus status = StatusUtil.newStatus(
+						WorkbenchPlugin.PI_WORKBENCH, msg, e);
+				StatusManager.getManager().handle(status, StatusManager.SHOW);
 			}
 		}
 
