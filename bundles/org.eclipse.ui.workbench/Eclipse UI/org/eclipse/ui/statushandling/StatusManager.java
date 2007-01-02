@@ -45,7 +45,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Handling hints
  * <ul>
- * <li>IGNORE - status should be ignored</li>
+ * <li>NONE - nothing should be done with the status</li>
  * <li>LOG - the status should be logged</li>
  * <li>SHOW - the status should be shown to an user</li>
  * <li>SHOWANDLOG - the status should be logged and shown to an user</li>
@@ -88,9 +88,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class StatusManager {
 	/**
-	 * A handling hint indicating that a problem should be ignored
+	 * A handling hint indicating that nothing should be done with a problem
 	 */
-	public static final int IGNORE = 0;
+	public static final int NONE = 0;
 
 	/**
 	 * A handling hint indicating that handlers should log a problem
@@ -116,7 +116,7 @@ public class StatusManager {
 
 	private AbstractStatusHandler workbenchHandler;
 
-	private List loggedStauses = new ArrayList();
+	private List loggedStatuses = new ArrayList();
 
 	/**
 	 * Returns StatusManager singleton instance
@@ -162,9 +162,9 @@ public class StatusManager {
 
 			return statusHandler;
 		} catch (CoreException ex) {
-			WorkbenchPlugin.log(new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR,
-					"EH initialization problem", ex)); //$NON-NLS-1$
+			WorkbenchPlugin.getDefault().getLog().log(
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+							IStatus.ERROR, "Status handling initialization problem", ex)); //$NON-NLS-1$
 		}
 
 		return null;
@@ -244,9 +244,9 @@ public class StatusManager {
 
 		// tries to handle the problem with default (product) handler
 		if (defaultHandler != null) {
-			defaultHandler.handle(handlingState);
+			boolean shouldContinue = defaultHandler.handle(handlingState);
 
-			if (handlingState.getHandlingHint() == IGNORE) {
+			if (!shouldContinue) {
 				return;
 			}
 		}
@@ -259,9 +259,9 @@ public class StatusManager {
 
 			for (Iterator it = okHandlers.iterator(); it.hasNext();) {
 				handler = (AbstractStatusHandler) it.next();
-				handler.handle(handlingState);
+				boolean shouldContinue = handler.handle(handlingState);
 
-				if (handlingState.getHandlingHint() == IGNORE) {
+				if (!shouldContinue) {
 					return;
 				}
 			}
@@ -402,7 +402,7 @@ public class StatusManager {
 	 *            already handled and logged status
 	 */
 	void addLoggedStatus(IStatus status) {
-		loggedStauses.add(status);
+		loggedStatuses.add(status);
 	}
 
 	/**
@@ -421,10 +421,10 @@ public class StatusManager {
 		 *      java.lang.String)
 		 */
 		public void logging(IStatus status, String plugin) {
-			if (!loggedStauses.contains(status)) {
-				handle(status, SHOW);
+			if (!loggedStatuses.contains(status)) {
+				handle(status, NONE);
 			} else {
-				loggedStauses.remove(status);
+				loggedStatuses.remove(status);
 			}
 		}
 	}
