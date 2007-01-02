@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,17 +74,14 @@ public class CoreItem extends ViewItem {
 		buttonComposite.setBackground(itemColor);
 
 	}
-	
 
 	private void createButtons(AbstractExecutable executable) {
 		/*
-		 * When the cheat sheet is displayed in a dialog's tray, hide
-		 * the executable that was just invoked to open the dialog.
+		 * Actions are disabled while inside dialogs.
 		 */
-		boolean inDialog = isInDialogMode();
-		boolean isDialogAction = getItem().isDialog();
-		boolean hideAction = isDialogAction && inDialog;
-		if (executable != null && !hideAction) {
+		boolean isActionShown = false;
+		if (executable != null && !isInDialogMode()) {
+			isActionShown = true;
 			final ImageHyperlink startButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			startButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 			page.getToolkit().adapt(startButton, true, true);
@@ -94,21 +91,21 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
+		if (!isActionShown || executable.isConfirm()) {
+			final ImageHyperlink completeButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
+			page.getToolkit().adapt(completeButton, true, true);
+			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.advanceItem(completeButton, true);
+				}
+			});
+		}
 		if (item.isSkip()) {
 			final ImageHyperlink skipButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP), this, itemColor, Messages.SKIP_TASK_TOOLTIP);
 			page.getToolkit().adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceItem(skipButton, false);
-				}
-			});
-		}
-		if (executable == null || executable.isConfirm()) {
-			final ImageHyperlink completeButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			page.getToolkit().adapt(completeButton, true, true);
-			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					viewer.advanceItem(completeButton, true);
 				}
 			});
 		}
@@ -170,16 +167,31 @@ public class CoreItem extends ViewItem {
 			subExecutable = sub.getExecutable();
 		}
 		
+		/*
+		 * Actions are disabled while inside dialogs.
+		 */
 		final int fi = index;
 		ImageHyperlink startButton = null;
-		if (subExecutable != null) {
+		boolean isActionShown = false;
+		if (subExecutable != null && !isInDialogMode()) {
 			added++;
+			isActionShown = true;
 			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, Messages.PERFORM_TASK_TOOLTIP);
 			final ImageHyperlink finalStartButton = startButton;
 			page.getToolkit().adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.runSubItemPerformExecutable(finalStartButton, fi);
+				}
+			});
+		}
+		if (!isActionShown || subExecutable.isConfirm()) {
+			added++;
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
+			page.getToolkit().adapt(completeButton, true, true);
+			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
+				public void linkActivated(HyperlinkEvent e) {
+					viewer.advanceSubItem(completeButton, true, fi);
 				}
 			});
 		}
@@ -190,16 +202,6 @@ public class CoreItem extends ViewItem {
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					viewer.advanceSubItem(skipButton, false, fi);
-				}
-			});
-		}
-		if (subExecutable == null || subExecutable.isConfirm()) {
-			added++;
-			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
-			page.getToolkit().adapt(completeButton, true, true);
-			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					viewer.advanceSubItem(completeButton, true, fi);
 				}
 			});
 		}
