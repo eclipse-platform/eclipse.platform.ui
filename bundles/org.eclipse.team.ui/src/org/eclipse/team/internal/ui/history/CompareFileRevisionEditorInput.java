@@ -277,4 +277,8 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 		}
 		return null;
 	}
+
+	public ITypedElement getLeft() {
+		return left;
+	}
 }

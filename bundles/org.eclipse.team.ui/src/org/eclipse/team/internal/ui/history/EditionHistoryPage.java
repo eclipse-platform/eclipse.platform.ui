@@ -27,10 +27,16 @@ import org.eclipse.team.internal.core.history.LocalFileHistory;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.actions.CompareRevisionAction;
 import org.eclipse.team.internal.ui.synchronize.LocalResourceTypedElement;
+import org.eclipse.team.ui.history.IHistoryPageSite;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * A history page for a sub-element of a file. 
+ * <p>
+ * If the site is modal, the local edition is created up-front and destroyed when the page is destroyed.
+ * Otherwise, the local edition is only created when needed. The {@link #getCompareInput(Object)} and
+ * {@link #prepareInput(ICompareInput, org.eclipse.compare.CompareConfiguration, IProgressMonitor)}
+ * methods are only used when the site is modal so they can use the localEdition.
  */
 public class EditionHistoryPage extends LocalHistoryPage {
 	
@@ -40,6 +46,7 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	private IStructureCreator structureCreator;
 	private Map editions = new HashMap();
 	private ITypedElement localEdition;
+	private String name;
 	
 	class CompareEditionAction extends CompareRevisionAction {
 		
@@ -51,17 +58,19 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		
 		protected CompareFileRevisionEditorInput createCompareEditorInput(ITypedElement left, ITypedElement right, IWorkbenchPage page) {
 			ITypedElement leftEdition = getEdition(left);
+			boolean leftIsLocal = false;
+			if (leftEdition == null && left instanceof LocalResourceTypedElement) {
+				leftEdition = createLocalEdition(structureCreator, localFileElement, element);
+				leftIsLocal = true;
+			}
 			ITypedElement rightEdition = getEdition(right);
-			return new CompareEditionsEditorInput(left, right, leftEdition, rightEdition, page);
+			return new CompareEditionsEditorInput(structureCreator, left, right, leftEdition, rightEdition, leftIsLocal, page);
 		}
 
 		private ITypedElement getEdition(ITypedElement input) {
 			if (input instanceof FileRevisionTypedElement) {
 				FileRevisionTypedElement te = (FileRevisionTypedElement) input;
 				return getEditionFor(te.getRevision());
-			}
-			if (input instanceof LocalResourceTypedElement) {
-				return localEdition;
 			}
 			return null;
 		}
@@ -71,13 +80,17 @@ public class EditionHistoryPage extends LocalHistoryPage {
 
 		private final ITypedElement leftRevision;
 		private final ITypedElement rightRevision;
+		private final boolean leftIsLocal;
+		private IStructureCreator structureCreator;
 
-		public CompareEditionsEditorInput(ITypedElement left,
+		public CompareEditionsEditorInput(IStructureCreator structureCreator, ITypedElement left,
 				ITypedElement right, ITypedElement leftEdition,
-				ITypedElement rightEdition, IWorkbenchPage page) {
+				ITypedElement rightEdition, boolean leftIsLocal, IWorkbenchPage page) {
 			super(leftEdition, rightEdition, page);
+			this.structureCreator = structureCreator;
 			leftRevision = left;
 			rightRevision = right;
+			this.leftIsLocal = leftIsLocal;
 		}
 		
 		public LocalResourceTypedElement getLocalElement() {
@@ -104,6 +117,13 @@ public class EditionHistoryPage extends LocalHistoryPage {
 			if (adapter == IFile.class)
 				return null;
 			return super.getAdapter(adapter);
+		}
+		
+		protected void handleDispose() {
+			if (leftIsLocal && structureCreator != null)
+				internalDestroy(structureCreator, getLeft());
+			structureCreator = null;
+			super.handleDispose();
 		}
 	}
 	
@@ -151,24 +171,21 @@ public class EditionHistoryPage extends LocalHistoryPage {
 		this.element = element;
 		this.localFileElement= new LocalResourceTypedElement(getFile());
 		structureCreator = getStructureCreator(localFileElement);
-		localEdition = createLocalEdition(structureCreator, localFileElement, element);
 	}
 
+	public void setSite(IHistoryPageSite site) {
+		super.setSite(site);
+		// If the site is modal, create the local edition
+		if (site.isModal()) {
+			localEdition = createLocalEdition(structureCreator, localFileElement, element);
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#getFile()
 	 */
 	protected IFile getFile() {
 		return file;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#inputSet()
-	 */
-	public boolean inputSet() {
-		if (super.inputSet()) {
-			return localEdition != null;	
-		}
-		return false;
 	}
 
 	/* (non-Javadoc)
@@ -176,12 +193,24 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 */
 	protected void update(IFileRevision[] revisions, IProgressMonitor monitor) {
 		monitor.beginTask(null, 100);
-		IFileRevision[] filtered = filterRevisions(revisions, Policy.subMonitorFor(monitor, 75));
-		super.update(filtered, Policy.subMonitorFor(monitor, 25));
-		monitor.done();
+		ITypedElement te = null;
+		try {
+			if (localEdition == null) {
+				te = createLocalEdition(structureCreator, localFileElement, element);
+			} else {
+				te = localEdition;
+			}
+			name = te.getName();
+			IFileRevision[] filtered = filterRevisions(te, revisions, Policy.subMonitorFor(monitor, 75));
+			super.update(filtered, Policy.subMonitorFor(monitor, 25));
+		} finally {
+			if (localEdition == null && te != null)
+				internalDestroy(structureCreator, te);
+			monitor.done();
+		}
 	}
 
-	private IFileRevision[] filterRevisions(IFileRevision[] revisions,
+	private IFileRevision[] filterRevisions(ITypedElement localEdition, IFileRevision[] revisions,
 			IProgressMonitor monitor) {
 		ITypedElement previousEdition = localEdition;
 		List result = new ArrayList();
@@ -289,12 +318,16 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	private void disconnect() {
 		if (localFileElement != null)
 			localFileElement.discardBuffer();
-		if (localEdition != null && structureCreator instanceof IStructureCreator2) {
-			IStructureCreator2 sc2 = (IStructureCreator2) structureCreator;
-			sc2.destroy(localEdition);
-		}
+		internalDestroy(structureCreator, localEdition);
 		localEdition = null;
 		structureCreator = null;
+	}
+
+	private static void internalDestroy(IStructureCreator creator, ITypedElement te) {
+		if (te != null && creator instanceof IStructureCreator2) {
+			IStructureCreator2 sc2 = (IStructureCreator2) creator;
+			sc2.destroy(te);
+		}
 	}
 	
 	private static void destroyLocalEdition(
@@ -311,8 +344,8 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#getNoChangesMessage()
 	 */
 	protected String getNoChangesMessage() {
-		if (localEdition != null)
-			return NLS.bind(TeamUIMessages.EditionHistoryPage_0, localEdition.getName());
+		if (name != null)
+			return NLS.bind(TeamUIMessages.EditionHistoryPage_0, name);
 		return TeamUIMessages.EditionHistoryPage_1;
 	}
 	
@@ -348,8 +381,8 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#getName()
 	 */
 	public String getName() {
-		if (localEdition != null)
-			return localEdition.getName();
+		if (name != null)
+			return name;
 		return super.getName();
 	}
 	
@@ -357,8 +390,8 @@ public class EditionHistoryPage extends LocalHistoryPage {
 	 * @see org.eclipse.team.internal.ui.history.LocalHistoryPage#getDescription()
 	 */
 	public String getDescription() {
-		if (localEdition != null)
-			return NLS.bind(TeamUIMessages.EditionHistoryPage_2, localEdition.getName());
+		if (name != null)
+			return NLS.bind(TeamUIMessages.EditionHistoryPage_2, name);
 		return super.getDescription();
 	}
 	

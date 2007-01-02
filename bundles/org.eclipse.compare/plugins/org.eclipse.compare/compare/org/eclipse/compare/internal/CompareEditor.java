@@ -343,7 +343,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					// (the message would be displayed by the progress view)
 					closeEditor();
 				}
-			} else {
+			} else if (fControl == null) {
 				fControl= (ci).createContents(fPageBook);
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
