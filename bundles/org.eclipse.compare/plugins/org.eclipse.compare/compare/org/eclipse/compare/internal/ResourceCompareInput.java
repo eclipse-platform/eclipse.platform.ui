@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -18,10 +19,16 @@ import java.util.Set;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.window.Window;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.structuremergeviewer.*;
@@ -138,28 +145,88 @@ class ResourceCompareInput extends CompareEditorInput {
 		return fDiffViewer;
 	}
 
-	void setSelection(ISelection s) {
+	class SelectAncestorDialog extends MessageDialog {
+		private IResource[] theResources;
+		IResource ancestorResource;
+		IResource leftResource;
+		IResource rightResource;
+		
+		private Button[] buttons;
+		
+		public SelectAncestorDialog(Shell parentShell, IResource[] theResources) {
+			super(parentShell, CompareMessages.SelectAncestorDialog_title,
+				null, CompareMessages.SelectAncestorDialog_message,
+				MessageDialog.QUESTION,
+				new String[] { IDialogConstants.OK_LABEL,
+					IDialogConstants.CANCEL_LABEL }, 0);
+			this.theResources = theResources;
+		}
+		
+		protected Control createCustomArea(Composite parent) {
+			Composite composite = new Composite(parent, SWT.NONE);
+			composite.setLayout(new GridLayout());
+			buttons = new Button[3];
+			for (int i = 0; i < 3; i++) {
+				buttons[i] = new Button(composite, SWT.RADIO);
+				buttons[i].addSelectionListener(selectionListener);
+				buttons[i].setText(NLS.bind(CompareMessages.SelectAncestorDialog_option,
+					theResources[i].getFullPath().toPortableString()));
+				buttons[i].setFont(parent.getFont());
+				// set initial state
+				buttons[i].setSelection(i == 0);
+			}
+			pickAncestor(0);
+			return composite;
+		}
+
+		private void pickAncestor(int i) {
+			ancestorResource = theResources[i];
+			leftResource = theResources[i == 0 ? 1 : 0];
+			rightResource = theResources[i == 2 ? 1 : 2];
+		}
+		
+		private SelectionListener selectionListener = new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				Button selectedButton = (Button) e.widget;
+				if (!selectedButton.getSelection())
+					return;
+				for (int i = 0; i < 3; i++)
+					if (selectedButton == buttons[i])
+						pickAncestor(i);
+			}
+		};
+	}
+
+	// If the compare is three-way, this method asks the user which resource
+	// to use as the ancestor.  Returns false if the user cancels the prompt,
+	// true otherwise.
+	boolean setSelection(ISelection s, Shell shell) {
 		
 		IResource[] selection= Utilities.getResources(s);
 
 		fThreeWay= selection.length == 3;
 		
-		fAncestorResource= null;
-		fLeftResource= selection[0];
-		fRightResource= selection[1];
 		if (fThreeWay) {
-			fLeftResource= selection[1];		
-			fRightResource= selection[2];
+			SelectAncestorDialog dialog =
+				new SelectAncestorDialog(shell, selection);
+			int code = dialog.open();
+			if (code == Window.CANCEL)
+				return false;
+			
+			fAncestorResource= dialog.ancestorResource;
+			fAncestor= getStructure(fAncestorResource);
+			fLeftResource= dialog.leftResource;
+			fRightResource= dialog.rightResource;
+		} else {
+			fAncestorResource= null;
+			fAncestor= null;
+			fLeftResource= selection[0];
+			fRightResource= selection[1];
 		}
-		
-		fAncestor= null;
+
 		fLeft= getStructure(fLeftResource);
 		fRight= getStructure(fRightResource);
-					
-		if (fThreeWay) {
-			fAncestorResource= selection[0];
-			fAncestor= getStructure(fAncestorResource);
-		}
+		return true;
 	}
 	
 	/*
@@ -171,26 +238,16 @@ class ResourceCompareInput extends CompareEditorInput {
 		if (selection.length < 2 || selection.length > 3)
 			return false;
 
-		fThreeWay= selection.length == 3;
+		boolean threeWay= selection.length == 3;
 		
-		fLeftResource= selection[0];
-		fRightResource= selection[1];
-		if (fThreeWay) {
-			fLeftResource= selection[1];		
-			fRightResource= selection[2];
-		}
-							
-		if (!comparable(fLeftResource, fRightResource))
-			return false;
-
-		if (fThreeWay) {
-			fAncestorResource= selection[0];
-			
-			if (!comparable(fLeftResource, fRightResource))
-				return false;
-		}
-
-		return true;
+		if (threeWay)
+			// It only makes sense if they're all mutually comparable.
+			// If not, the user should compare two of them.
+			return comparable(selection[0], selection[1])
+				&& comparable(selection[0], selection[2])
+				&& comparable(selection[1], selection[2]);
+		
+		return comparable(selection[0], selection[1]);
 	}
 	
 	/**

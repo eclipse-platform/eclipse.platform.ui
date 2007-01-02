@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -31,7 +32,11 @@ public class CompareAction extends BaseCompareAction implements IObjectActionDel
 
 	public void run(ISelection selection) {
 		if (fInput != null) {
-			fInput.setSelection(selection);
+			// Pass the shell so setSelection can prompt the user for which
+			// resource should be the ancestor
+			boolean ok = fInput.setSelection(selection,
+				fWorkbenchPage.getWorkbenchWindow().getShell());
+			if (!ok) return;
 			fInput.initializeCompareConfiguration();
 			CompareUI.openCompareEditorOnPage(fInput, fWorkbenchPage);
 			fInput= null;	// don't reuse this input!

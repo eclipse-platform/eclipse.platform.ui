@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
@@ -98,6 +99,9 @@ public final class CompareMessages extends NLS {
 	public static String CompareNavigator_atBeginning_title;
 	public static String CompareNavigator_atBeginning_message;
 	public static String WorkerJob_0;
+	public static String SelectAncestorDialog_title;
+	public static String SelectAncestorDialog_message;
+	public static String SelectAncestorDialog_option;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, CompareMessages.class);
