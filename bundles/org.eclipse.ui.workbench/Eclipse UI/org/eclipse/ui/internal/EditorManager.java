@@ -685,14 +685,6 @@ public class EditorManager implements IExtensionChangeHandler {
 		return dirtyEditor;
 	}
 
-	/*
-	 * See IWorkbenchPage.
-	 */
-	public IEditorReference openEditor(String editorId, IEditorInput input,
-			boolean setVisible) throws PartInitException {
-		return openEditor(editorId, input, setVisible, null);
-	}
-
 	/**
 	 * @param editorId
 	 *            the editor part id
