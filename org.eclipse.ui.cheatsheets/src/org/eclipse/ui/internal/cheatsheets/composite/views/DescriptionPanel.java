@@ -200,7 +200,7 @@ public class DescriptionPanel {
 	private String createParagraph(String text, String imageTag) {
 		String result = ""; //$NON-NLS-1$
 		String trimmed = text.trim();
-		boolean addParagraphTags = trimmed.length() == 0 || trimmed.charAt(0)!='<';
+		boolean addParagraphTags = trimmed.length() < 3 || trimmed.charAt(0)!='<' || trimmed.charAt(1)!='p';
 		if (addParagraphTags) {
 			result +=  "<p>"; //$NON-NLS-1$
 		} 
