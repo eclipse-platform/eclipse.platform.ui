@@ -2529,7 +2529,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             String editorID, boolean activate,  int matchFlags, IMemento editorState) throws PartInitException {
 
         // If an editor already exists for the input, use it.
-		IEditorPart editor = getEditorManager().findEditor(editorID, input, matchFlags);
+		IEditorPart editor = null;
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		// Reuse an existing open editor, unless we are in "new editor tab management" mode
+		if (!store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+			editor = getEditorManager().findEditor(editorID, input, matchFlags);
+		}
         if (editor != null) {
             if (IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID.equals(editorID)) {
                 if (editor.isDirty()) {
