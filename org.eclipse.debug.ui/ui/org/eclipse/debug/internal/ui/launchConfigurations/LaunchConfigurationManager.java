@@ -593,6 +593,27 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
+	 * Returns a listing of all applicable <code>LaunchShortcutExtension</code>s for the given
+	 * launch configuration type id.
+	 * @param typeid the id of the launch configuraiton
+	 * @return a listing of <code>LaunchShortcutExtension</code>s that are associated with the specified launch configuration
+	 * type id or an empty list, never <code>null</code>
+	 * 
+	 * @since 3.3
+	 */
+	public List getApplicableLaunchShortcuts(String typeid) {
+		List list = new ArrayList();
+		LaunchShortcutExtension ext = null;
+		for(int i = 0; i < fLaunchShortcuts.size(); i++) {
+			ext = (LaunchShortcutExtension) fLaunchShortcuts.get(i);
+			if(ext.getAssociatedConfigurationTypes().contains(typeid)) {
+				list.add(ext);
+			}
+		}
+		return list;
+	}
+	
+	/**
 	 * Returns all launch shortcuts for the given category
 	 *
 	 * @return all launch shortcuts
@@ -630,6 +651,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * empty list if none.
 	 * 
 	 * @param perpsective perspective identifier
+	 * @param category the category for the shortcut
 	 * @return all launch shortcuts defined for the given perspective,
 	 * empty list if none.
 	 */
@@ -746,7 +768,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @param mode
 	 * @return launch group
 	 */
-	public LaunchGroupExtension getDefaultLanuchGroup(String mode) {
+	public LaunchGroupExtension getDefaultLaunchGroup(String mode) {
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
 			return getLaunchGroup(IDebugUIConstants.ID_DEBUG_LAUNCH_GROUP);
 		}

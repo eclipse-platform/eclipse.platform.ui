@@ -29,6 +29,7 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
@@ -51,6 +52,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	private List fPerspectives = null;
 	private ILaunchShortcut fDelegate = null;
 	private Set fModes = null;
+	private Set fAssociatedTypes = null;
 	private IConfigurationElement fContextualLaunchConfigurationElement = null;
 	private Expression fContextualLaunchExpr = null;
 	private Expression fStandardLaunchExpr = null;
@@ -148,7 +150,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 *  specified
 	 */
 	public String getLabel() {
-		return getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.LABEL);
 	}
 	
 	/**
@@ -158,7 +160,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public IConfigurationElement getContextualLaunchConfigurationElement() {
 		if (fContextualLaunchConfigurationElement == null) {
-			IConfigurationElement[] elements = getConfigurationElement().getChildren("contextualLaunch"); //$NON-NLS-1$
+			IConfigurationElement[] elements = getConfigurationElement().getChildren(IConfigurationElementConstants.CONTEXTUAL_LAUNCH);
 			if (elements.length > 0) {
 				// remember so we don't have to hunt again
 				fContextualLaunchConfigurationElement = elements[0];
@@ -189,11 +191,11 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			if (context == null) {
 				return null;
 			}
-			IConfigurationElement[] labels = context.getChildren("contextLabel"); //$NON-NLS-1$
+			IConfigurationElement[] labels = context.getChildren(IConfigurationElementConstants.CONTEXT_LABEL);
 			fContextLabels = new ArrayList(labels.length);
 			for (int i = 0; i < labels.length; i++) {
-				fContextLabels.add(new Pair(labels[i].getAttribute("mode"), //$NON-NLS-1$
-						labels[i].getAttribute("label"))); //$NON-NLS-1$
+				fContextLabels.add(new Pair(labels[i].getAttribute(IConfigurationElementConstants.MODE),
+						labels[i].getAttribute(IConfigurationElementConstants.LABEL)));
 			}
 		}
 		// pick out the first occurance of the "name" bound to "mode"
@@ -205,6 +207,27 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 			}
 		}
 		return getLabel();
+	}
+	
+	/**
+	 * Returns the set of associated launch configuraiton type ids.
+	 * 
+	 * @return the set of associated launch configuration type ids
+	 * @since 3.3
+	 */
+	public Set getAssociatedConfigurationTypes() {
+		if(fAssociatedTypes == null) {
+			fAssociatedTypes = new HashSet();
+			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.CONFIGURATION_TYPES);
+			String id = null;
+			for (int i = 0; i < children.length; i++) {
+				id = children[i].getAttribute(IConfigurationElementConstants.ID);
+				if(id != null) {
+					fAssociatedTypes.add(id);
+				}
+			}
+		}
+		return fAssociatedTypes;
 	}
 	
 	/**
@@ -278,7 +301,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @return the id of this shortcut, or <code>null</code> if not specified
 	 */
 	public String getId() {
-		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.ID);
 	}
 	
 	/**
@@ -290,7 +313,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @since 2.1
 	 */	
 	public String getHelpContextId() {
-		return getConfigurationElement().getAttribute("helpContextId"); //$NON-NLS-1$		
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.HELP_CONTEXT_ID);		
 	}
 	
 	/**
@@ -300,7 +323,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 *  specified
 	 */
 	public String getCategory() {
-		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.CATEGORY);
 	}	
 	
 	/**
@@ -325,10 +348,10 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public List getPerspectives() {
 		if (fPerspectives == null) {
-			IConfigurationElement[] perspectives = getConfigurationElement().getChildren("perspective"); //$NON-NLS-1$
+			IConfigurationElement[] perspectives = getConfigurationElement().getChildren(IConfigurationElementConstants.PERSPECTIVE);
 			fPerspectives = new ArrayList(perspectives.length);
 			for (int i = 0; i < perspectives.length; i++) {
-				fPerspectives.add(perspectives[i].getAttribute("id")); //$NON-NLS-1$
+				fPerspectives.add(perspectives[i].getAttribute(IConfigurationElementConstants.ID)); 
 			}
 		}
 		return fPerspectives;
@@ -342,7 +365,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	protected ILaunchShortcut getDelegate() {
 		if (fDelegate == null) {
 			try {
-				fDelegate = (ILaunchShortcut)fConfig.createExecutableExtension("class"); //$NON-NLS-1$
+				fDelegate = (ILaunchShortcut)fConfig.createExecutableExtension(IConfigurationElementConstants.CLASS);
 			} catch (CoreException e) {
 				DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.LaunchShortcutExtension_Error_4, LaunchConfigurationsMessages.LaunchShortcutExtension_Unable_to_use_launch_shortcut_5, e.getStatus()); // 
 			}
@@ -377,7 +400,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 */
 	public Set getModes() {
 		if (fModes == null) {
-			String modes= getConfigurationElement().getAttribute("modes"); //$NON-NLS-1$
+			String modes= getConfigurationElement().getAttribute(IConfigurationElementConstants.MODES);
 			if (modes == null) {
 				return new HashSet(0);
 			}
@@ -397,7 +420,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 * @since 3.0.1
 	 */
 	public String getMenuPath() {
-		return getConfigurationElement().getAttribute("path"); //$NON-NLS-1$
+		return getConfigurationElement().getAttribute(IConfigurationElementConstants.PATH);
 	}	
 	
 	/*

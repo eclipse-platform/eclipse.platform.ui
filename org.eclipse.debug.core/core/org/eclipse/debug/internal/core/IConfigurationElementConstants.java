@@ -42,6 +42,11 @@ public interface IConfigurationElementConstants {
 	public static final String AFTER = "after"; //$NON-NLS-1$
 	
 	/**
+	 * the path node name for a configuraiton element
+	 */
+	public static final String PATH = "path"; //$NON-NLS-1$
+	
+	/**
 	 * the placement node name for a configuration element
 	 */
 	public static final String PLACEMENT = "placement"; //$NON-NLS-1$
@@ -125,6 +130,21 @@ public interface IConfigurationElementConstants {
 	 * the class node name for a configuration element
 	 */
 	public static final String CLASS = "class"; //$NON-NLS-1$
+	
+	/**
+	 * the configurationTypes node name for a configuration element
+	 */
+	public static final String CONFIGURATION_TYPES = "configurationType"; //$NON-NLS-1$
+	
+	/**
+	 * the contextLabel node name for a configuration element
+	 */
+	public static final String CONTEXT_LABEL = "contextLabel"; //$NON-NLS-1$
+	
+	/**
+	 * the contextualLaunch node name for a configuration element
+	 */
+	public static final String CONTEXTUAL_LAUNCH = "contextualLaunch"; //$NON-NLS-1$
 	
 	/**
 	 * the sourcePathComputerId node name for a configuration element

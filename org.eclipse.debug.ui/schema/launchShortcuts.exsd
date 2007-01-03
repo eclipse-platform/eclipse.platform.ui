@@ -53,6 +53,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
             <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="contextualLaunch" minOccurs="0" maxOccurs="1"/>
             <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+            <element ref="configurationType" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -191,6 +192,23 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       </complexType>
    </element>
 
+   <element name="configurationType">
+      <annotation>
+         <documentation>
+            This element allows more that one associated launch configuration type to be specified for this launch shortcut. Since 3.3M5
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  This attribute is the identifier of an existing launch configuration type that is to be associated with this launch shortcut. This association is then used to determine what launch shortcuts apply to what types for context sensitive launching. Since 3.3M5
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <annotation>
       <appInfo>
          <meta.section type="examples"/>
@@ -222,9 +240,13 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
         &lt;/or&gt;
       &lt;/iterate&gt;
      &lt;/with&gt;
-    &lt;/enablement&gt;
+  &lt;/enablement&gt;
   &lt;/contextualLaunch&gt;
-&lt;/shortcut&gt;
+  &lt;configurationType
+    id=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;&gt;
+  &lt;/configurationType&gt;
+  &lt;/shortcut&gt;
+&lt;extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;
