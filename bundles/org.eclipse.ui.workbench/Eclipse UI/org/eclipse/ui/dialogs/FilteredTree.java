@@ -44,7 +44,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -459,8 +458,8 @@ public class FilteredTree extends Composite {
      * @param parent parent <code>Composite</code> of toolbar button 
      */
     private void createClearText(Composite parent) {
-        ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
-        filterToolBar = new ToolBarManager(toolBar);
+        filterToolBar = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL);
+        filterToolBar.createControl(parent);
 
         IAction clearTextAction = new Action("", IAction.AS_PUSH_BUTTON) {//$NON-NLS-1$
             /*
