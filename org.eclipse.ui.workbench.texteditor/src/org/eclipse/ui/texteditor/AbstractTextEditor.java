@@ -3341,6 +3341,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+		if (listener == null)
+			fSavable= null;
 		
 		if (input == null) {
 			close(isSaveOnCloseNeeded());
@@ -3353,7 +3355,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} else {
 			
 			if (fSavable != null) {
-				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	new Saveable[] { fSavable }, false));
+				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
 				fSavable= null;
 			}
 
@@ -3406,30 +3408,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				updateContributedRulerColumns((CompositeRuler) ruler);
 			
 			// Send savable life-cycle event
-			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
+			if (listener != null)
+				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
 			
 		}
 		
 	}
 
-	/**
-	 * The input has changed. Force recreation of savable, and notify
-	 * the ISaveablesLifecycleListener.
-	 * 
-	 * @since 3.3
-	 */
-	private void updateSavable() {
-		if (fSavable != null) {
-			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
-			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	new Saveable[] { fSavable }, false));
-
-			fSavable= null;
-			// Get new savable
-			getSaveables();
-			listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, new Saveable[] { fSavable }, false));
-		}
-	}
-	
 	/**
 	 * Returns this editor's viewer's undo manager undo context.
 	 *
