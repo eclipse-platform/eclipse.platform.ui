@@ -250,7 +250,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 *
 	 * @param parent the parent of the viewer's control
 	 * @param ruler the vertical ruler used by this source viewer
-	 * @param styles the SWT style bits
+	 * @param styles the SWT style bits for the viewer's control,
+	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()} 
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		this(parent, ruler, null, false, styles);
@@ -265,7 +266,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 * @param verticalRuler the vertical ruler used by this source viewer
 	 * @param overviewRuler the overview ruler
 	 * @param showAnnotationsOverview <code>true</code> if the overview ruler should be visible, <code>false</code> otherwise
-	 * @param styles the SWT style bits
+	 * @param styles the SWT style bits for the viewer's control,
+	 * 			<em>if <code>SWT.WRAP</code> is set then a custom document adapter needs to be provided, see {@link #createDocumentAdapter()} 
 	 * @since 2.1
 	 */
 	public SourceViewer(Composite parent, IVerticalRuler verticalRuler, IOverviewRuler overviewRuler, boolean showAnnotationsOverview, int styles) {
