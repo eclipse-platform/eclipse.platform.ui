@@ -465,7 +465,8 @@ public interface ILaunchManager {
 	 * resource. There is only one default configuration per resource and this replaces
 	 * any previously existing launch configuration for the resource, if any. Specifying
 	 * a configuration of <code>null</code> clears the default configuration for the
-	 * given resource. 
+	 * given resource. If the configuration to be mapped is an <code>ILaunchConfigurationWorkingCopy</code>
+	 * no mapping takes place, as the state of a working copy cannot be guaranteed.
 	 * 
 	 * @param resource resource
 	 * @param configuration launch configuration or <code>null</code>

@@ -165,8 +165,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();
 			
-			String localString = root.getAttribute("local"); //$NON-NLS-1$
-			String path = root.getAttribute("path"); //$NON-NLS-1$
+			String localString = root.getAttribute(IConfigurationElementConstants.LOCAL); 
+			String path = root.getAttribute(IConfigurationElementConstants.PATH);
 
 			String message = null;				
 			if (path == null) {
@@ -500,10 +500,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		Exception e= null;
 		try {
 			Document doc = LaunchManager.getDocument();
-			Element node = doc.createElement("launchConfiguration"); //$NON-NLS-1$
+			Element node = doc.createElement(IConfigurationElementConstants.LAUNCH_CONFIGURATION);
 			doc.appendChild(node);
-			node.setAttribute("local", (Boolean.valueOf(isLocal())).toString()); //$NON-NLS-1$
-			node.setAttribute("path", relativePath.toString()); //$NON-NLS-1$
+			node.setAttribute(IConfigurationElementConstants.LOCAL, (Boolean.valueOf(isLocal())).toString());
+			node.setAttribute(IConfigurationElementConstants.PATH, relativePath.toString());
 			return LaunchManager.serializeDocument(doc);
 		} catch (IOException ioe) {
 			e= ioe;

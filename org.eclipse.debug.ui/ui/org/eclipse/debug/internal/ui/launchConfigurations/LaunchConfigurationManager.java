@@ -32,6 +32,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ISaveParticipant;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,7 +41,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -50,6 +55,7 @@ import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -64,6 +70,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.osgi.service.prefs.BackingStoreException;
+import org.osgi.service.prefs.Preferences;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -120,15 +128,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	private static final String LAUNCH_CONFIGURATION_HISTORY_FILENAME = "launchConfigurationHistory.xml"; //$NON-NLS-1$
 	
 	/**
-	 * The 'HISTORY_' fields are constants that represent node & attribute names used when
-	 * writing out the launch history XML file.
+	 * performs initialization of the manager when it is started 
 	 */
-	private static final String HISTORY_ROOT_NODE = "launchHistory"; //$NON-NLS-1$
-	private static final String HISTORY_LAUNCH_NODE = "launch"; //$NON-NLS-1$
-	private static final String HISTORY_LAST_LAUNCH_NODE = "lastLaunch"; //$NON-NLS-1$
-	private static final String HISTORY_MEMENTO_ATT = "memento"; //$NON-NLS-1$
-	private static final String HISTORY_MODE_ATT = "mode"; //$NON-NLS-1$
-	
 	public void startup() {				
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
@@ -137,7 +138,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		} 
 		catch (CoreException e) {DebugUIPlugin.log(e);}
 		//update histories for launches already registered
-		ILaunch[] launches= launchManager.getLaunches();
+		ILaunch[] launches = launchManager.getLaunches();
 		for (int i = 0; i < launches.length; i++) {
 			launchAdded(launches[i]);
 		}
@@ -359,7 +360,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 */
 	protected String getHistoryAsXML() throws CoreException, ParserConfigurationException, TransformerException, IOException {
 		Document doc = DebugUIPlugin.getDocument();
-		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
+		Element historyRootElement = doc.createElement(IConfigurationElementConstants.LAUNCH_HISTORY); 
 		doc.appendChild(historyRootElement);
 		
 		Iterator histories = fLaunchHistories.values().iterator();
@@ -372,9 +373,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			ILaunchConfiguration configuration = history.getRecentLaunch();
 			if (configuration != null) {
 				if(configuration.exists()) {
-					last = doc.createElement(HISTORY_LAST_LAUNCH_NODE);
-					last.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
-					last.setAttribute(HISTORY_MODE_ATT, history.getLaunchGroup().getMode());
+					last = doc.createElement(IConfigurationElementConstants.LAST_LAUNCH);
+					last.setAttribute(IConfigurationElementConstants.MEMENTO, configuration.getMemento());
+					last.setAttribute(IConfigurationElementConstants.MODE, history.getLaunchGroup().getMode());
 					historyRootElement.appendChild(last);
 				}
 			}
@@ -395,9 +396,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		for (int i = 0; i < configurations.length; i++) {
 			ILaunchConfiguration configuration = configurations[i];
 			if (configuration.exists()) {
-				Element launch = doc.createElement(HISTORY_LAUNCH_NODE);
-				launch.setAttribute(HISTORY_MEMENTO_ATT, configuration.getMemento());
-				launch.setAttribute(HISTORY_MODE_ATT, mode);
+				Element launch = doc.createElement(IConfigurationElementConstants.LAUNCH);
+				launch.setAttribute(IConfigurationElementConstants.MEMENTO, configuration.getMemento());
+				launch.setAttribute(IConfigurationElementConstants.MODE, mode);
 				historyRootElement.appendChild(launch);
 			}
 		}
@@ -470,7 +471,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		
 		// If root node isn't what we expect, return
-		if (!rootHistoryElement.getNodeName().equalsIgnoreCase(HISTORY_ROOT_NODE)) { 
+		if (!rootHistoryElement.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH_HISTORY)) { 
 			return;
 		}
 
@@ -487,9 +488,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			short type = node.getNodeType();
 			if (type == Node.ELEMENT_NODE) {
 				entry = (Element) node;
-				if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAUNCH_NODE)) { 
+				if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAUNCH)) { 
 					createHistoryElement(entry, histories);
-				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) {
+				} else if (entry.getNodeName().equalsIgnoreCase(IConfigurationElementConstants.LAST_LAUNCH)) {
 					createRecentElement(entry, histories);
 				}
 			}
@@ -501,8 +502,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * element, and place it in the appropriate history.
 	 */
 	private void createHistoryElement(Element entry, LaunchHistory[] histories) {
-		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
-		String mode = entry.getAttribute(HISTORY_MODE_ATT);     
+		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
+		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
@@ -524,8 +525,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * element, and place it in the appropriate history's recent launch
 	 */
 	private void createRecentElement(Element entry, LaunchHistory[] histories) {
-		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
-		String mode = entry.getAttribute(HISTORY_MODE_ATT);     
+		String memento = entry.getAttribute(IConfigurationElementConstants.MEMENTO); 
+		String mode = entry.getAttribute(IConfigurationElementConstants.MODE);     
 		try {
 			ILaunchConfiguration launchConfig = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
 			if (launchConfig.exists()) {
@@ -549,16 +550,18 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * Load all registered extensions of the 'launch shortcut' extension point.
 	 */
 	private void loadLaunchShortcuts() {
-		// Get the configuration elements
-		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
-		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
-
-		// Load the configuration elements into a Map 
-		fLaunchShortcuts = new ArrayList(infos.length);
-		for (int i = 0; i < infos.length; i++) {
-			fLaunchShortcuts.add(new LaunchShortcutExtension(infos[i]));
+		if(fLaunchShortcuts == null) {
+			// Get the configuration elements
+			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
+			IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+	
+			// Load the configuration elements into a Map 
+			fLaunchShortcuts = new ArrayList(infos.length);
+			for (int i = 0; i < infos.length; i++) {
+				fLaunchShortcuts.add(new LaunchShortcutExtension(infos[i]));
+			}
+			Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 		}
-		Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 	}
 	
 	/**
@@ -683,6 +686,29 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
+	 * Returns the <code>LaunchShortcutExtension</code> that has the specified id
+	 * or <code>null</code>.
+	 * @param id the id of the <code>LaunchShortcutExtension</code> to look for
+	 * @return the <code>LaunchShortcutExtension</code> that has the specified id
+	 * or <code>null</code>
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public LaunchShortcutExtension getLaunchShortcut(String id) {
+		loadLaunchShortcuts();
+		LaunchShortcutExtension ext = null;
+		for(int i = 0; i < fLaunchShortcuts.size(); i++) {
+			ext = (LaunchShortcutExtension) fLaunchShortcuts.get(i);
+			if(ext.getId().equals(id)) {
+				return ext;
+			}
+		}
+		return null;
+	}
+	
+	/**
 	 * Returns the image used to display an error in the given tab
 	 */
 	public Image getErrorTabImage(ILaunchConfigurationTab tab) {
@@ -763,6 +789,74 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
+	 * This method allows a default launch shortcut to be specified for the given resource. This sets
+	 * a default way of <i>how</i> something should be launched, not what specific <code>ILaunchConfiguration</code>
+	 * will do the launching. Passing in <code>null</code> for a shortcut will remove the attribute.
+	 * 
+	 * @see {@link ILaunchManager#setDefaultConfiguration(IResource, ILaunchConfiguration)}
+	 * @param resource the resource to map the specified launch shortcut to
+	 * @param shortcut the shortcut to map
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public void setDefaultLaunchShortcut(IResource resource, LaunchShortcutExtension shortcut) throws CoreException {
+		IProject project = resource.getProject();
+		if (project == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					DebugPlugin.INTERNAL_ERROR, "Illegal argument: can only set default launch shortcut on and within projects.", null)); //$NON-NLS-1$ (internal error)
+		}
+		Preferences node = getInstanceNode(resource);
+		if(shortcut != null) {
+			node.put(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT, shortcut.getId());
+		}
+		else {
+			node.remove(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT);
+		}
+		try {
+			node.flush();
+		} 
+		catch (BackingStoreException e) {DebugUIPlugin.log(e);}
+	}
+	
+	/**
+	 * This method allows access to the default <code>LaunchShortcutExtension</code> for
+	 * the specified <code>IResource</code>.
+	 * 
+	 * @see {@link ILaunchManager#getDefaultConfiguration(IResource)}
+	 * @param resource the resource
+	 * @return the corresponding <code>LaunchShortcutExtension</code> for the guven <code>IResource</code>,
+	 * or <code>null</code> if there is not one.
+	 * 
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public LaunchShortcutExtension getDefaultLaunchShortcut(IResource resource) {
+		IProject project = resource.getProject();
+		if (project != null) {
+			Preferences node = getInstanceNode(resource);
+			String id = node.get(IConfigurationElementConstants.DEFAULT_LAUNCH_SHORTCUT, null);
+			if(id != null) {
+				return getLaunchShortcut(id);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns the node for instance project preferences
+	 * @param resource the resource to get the node for
+	 * @return the instance node for debug UI
+	 */
+	private org.osgi.service.prefs.Preferences getInstanceNode(IResource resource) {
+		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
+		node = node.node(InstanceScope.SCOPE).node(DebugUIPlugin.getUniqueIdentifier());
+		return node.node(resource.getFullPath().makeRelative().toString());
+	}
+	
+	/**
 	 * Returns the default launch group for the given mode.
 	 * 
 	 * @param mode
@@ -801,9 +895,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 					}
 				}
 			}
-		} catch (CoreException e) {
-			DebugUIPlugin.log(e);
-		}
+		} 
+		catch (CoreException e) {DebugUIPlugin.log(e);}
 		return null;
 	}
 

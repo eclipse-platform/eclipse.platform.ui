@@ -81,7 +81,6 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -2422,9 +2421,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if (configuration.isLocal()) {
 				// for local configurations, use workspace (instance) scope preferences
 				node = instanceNode;
-				if (configuration.isWorkingCopy()) {
-					configurationValue = ((ILaunchConfigurationWorkingCopy)configuration).getOriginal().getMemento();
-				} else {
+				if (!configuration.isWorkingCopy()) {
 					configurationValue = configuration.getMemento();
 				}
 			} else {
@@ -2438,15 +2435,28 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 	}	
 	
+	/**
+	 * Writes out the specified preference node to disk
+	 * @param node the node to persist
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
 	private void flush(org.osgi.service.prefs.Preferences node) {
 		try {
 			node.flush();
-		} catch (BackingStoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
+		catch (BackingStoreException e) {DebugPlugin.log(e);}
 	}
 	
+	/**
+	 * Returns the local project settings node set on a project scope
+	 * @param resource the resource to get the node for
+	 * @return the project scoped preference node for debug
+	 *  @since 3.3
+	 *  
+	 *  EXPERIMENTAL
+	 */
 	private org.osgi.service.prefs.Preferences getProjectNode(IResource resource) {
 		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
 		ProjectScope scope = new ProjectScope(resource.getProject());
@@ -2458,6 +2468,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		return node;
 	}
 	
+	/**
+	 * Returns the node for instance project preferences
+	 * @param resource the resource to get the node for
+	 * @return the instance node for debug
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
 	private org.osgi.service.prefs.Preferences getInstanceNode(IResource resource) {
 		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
 		node = node.node(InstanceScope.SCOPE).node(DebugPlugin.getUniqueIdentifier());

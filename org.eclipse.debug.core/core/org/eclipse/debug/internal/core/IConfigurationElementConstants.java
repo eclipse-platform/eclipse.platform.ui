@@ -32,9 +32,39 @@ public interface IConfigurationElementConstants {
 	public static final String CATEGORY = "category"; //$NON-NLS-1$
 	
 	/**
+	 * the local node name for a configuration element
+	 */
+	public static final String LOCAL = "local"; //$NON-NLS-1$
+	
+	/**
+	 * the shortcutId node name for a configuration element
+	 */
+	public static final String LAUNCH_SHORTCUT_ID = "shortcutID"; //$NON-NLS-1$
+	
+	/**
+	 * the launchConfiguration node name for a configuration element
+	 */
+	public static final String LAUNCH_CONFIGURATION = "launchConfiguration"; //$NON-NLS-1$
+	
+	/**
 	 * the launchMode node name for a configuration element
 	 */
 	public static final String LAUNCH_MODE = "launchMode"; //$NON-NLS-1$
+	
+	/**
+	 * the lastLaunch node name for a configuration element
+	 */
+	public static final String LAST_LAUNCH = "lastLaunch"; //$NON-NLS-1$
+	
+	/**
+	 * the launch node name for a configuration element
+	 */
+	public static final String LAUNCH = "launch"; //$NON-NLS-1$
+	
+	/**
+	 * the launchHistory node name for a configuration element
+	 */
+	public static final String LAUNCH_HISTORY = "launchHistory"; //$NON-NLS-1$
 	
 	/**
 	 * the after node name for a configuration element
@@ -117,6 +147,11 @@ public interface IConfigurationElementConstants {
 	public static final String DELEGATE = "delegate"; //$NON-NLS-1$
 	
 	/**
+	 * the defaultShortcut node name for a configuration element
+	 */
+	public static final String DEFAULT_LAUNCH_SHORTCUT = "defaultShortcut"; //$NON-NLS-1$
+	
+	/**
 	 * the delegatename node name for a configuration element
 	 */
 	public static final String DELEGATE_NAME = "delegateName"; //$NON-NLS-1$
@@ -165,4 +200,9 @@ public interface IConfigurationElementConstants {
 	 * the migrationDelegate node name for a configuration element
 	 */
 	public static final String MIGRATION_DELEGATE = "migrationDelegate";  //$NON-NLS-1$
+	
+	/**
+	 * the memento node name for a configuration element
+	 */
+	public static final String MEMENTO = "memento"; //$NON-NLS-1$
 }
