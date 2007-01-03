@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.cheatsheets.composite.parser;
 
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -30,6 +31,21 @@ public class MarkupParser {
 			} else if (childNode.getNodeType() == Node.ELEMENT_NODE) {
 				text.append('<');
 				text.append(childNode.getNodeName());
+				// Add the attributes
+				NamedNodeMap attributes = childNode.getAttributes();
+				if (attributes != null) {
+					for (int x = 0; x < attributes.getLength(); x++) {
+						Node attribute = attributes.item(x);
+						String attributeName = attribute.getNodeName();
+						if (attributeName == null)
+							continue;
+						text.append(' ');
+						text.append(attributeName);
+						text.append(" = \""); //$NON-NLS-1$
+						text.append(attribute.getNodeValue());
+						text.append('"');					
+					}
+				}
 				text.append('>');
 				text.append(parseMarkup(childNode));
 				text.append("</"); //$NON-NLS-1$
@@ -70,6 +86,32 @@ public class MarkupParser {
 				return " "; //$NON-NLS-1$
 		}
 		return null;
+	}
+	
+	/*
+	 * Add paragraph tags if not already present
+	 */
+	public static String createParagraph(String text, String imageTag) {
+		String result = ""; //$NON-NLS-1$
+		String trimmed = text.trim();
+		boolean addParagraphTags = trimmed.length() < 3 || trimmed.charAt(0)!='<' || 
+		  (trimmed.charAt(1)!='p' && trimmed.charAt(1) != 'l');
+		if (addParagraphTags) {
+			result +=  "<p>"; //$NON-NLS-1$
+		} 
+
+		if (imageTag != null) {
+			result += "<img href=\""; //$NON-NLS-1$
+			result += imageTag;
+			result += "\"/> "; //$NON-NLS-1$
+		}
+
+		result += trimmed;
+
+		if (addParagraphTags) {
+			result += "</p>"; //$NON-NLS-1$ 
+		}
+		return result;
 	}
 
 }

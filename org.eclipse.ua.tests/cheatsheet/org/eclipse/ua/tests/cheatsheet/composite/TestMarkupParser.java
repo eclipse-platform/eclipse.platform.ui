@@ -65,9 +65,38 @@ public class TestMarkupParser extends TestCase {
 	public void testEscapeAmpersand() {
 		assertEquals("a&amp;c", parse("<root>a&amp;c</root>"));
 	}
-	
+
 	public void testNoEscapeQuotes() {
 		assertEquals("a'b'\"c\"", parse("<root>a'b'\"c\"</root>"));
+	}
+	
+	public void testAttributes() {
+		assertEquals("a<b attr1 = \"true\" attr2 = \"false\">c</b>d<b>e</b>", 
+			   parse("<root>a<b attr1 = \"true\" attr2=\"false\">c</b>d<b>e</b></root>"));
+	}
+
+	public void testCreateParagraphEmptyString() {
+		assertEquals("<p></p>", MarkupParser.createParagraph("", null));
+	}
+
+	public void testCreateParagraphNoTags() {
+		assertEquals("<p>abc</p>", MarkupParser.createParagraph("abc", null));
+	}
+
+	public void testCreateParagraphTag_p() {
+		assertEquals("<p>abc</p>", MarkupParser.createParagraph("<p>abc</p>", null));
+	}
+
+	public void testCreateParagraphTag_br() {
+		assertEquals("<p><br>abc</p>", MarkupParser.createParagraph("<br>abc", null));
+	}
+
+	public void testCreateParagraphTag_li() {
+		assertEquals("<li>abc</li>", MarkupParser.createParagraph("<li>abc</li>", null));
+	}
+	
+	public void testCreateParagraphWithImage_li() {
+		assertEquals("<p><img href=\"def\"/> abc</p>", MarkupParser.createParagraph("abc", "def"));
 	}
 
 }

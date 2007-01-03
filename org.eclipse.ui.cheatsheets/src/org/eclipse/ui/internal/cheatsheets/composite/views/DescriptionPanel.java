@@ -123,7 +123,7 @@ public class DescriptionPanel {
 		upperMessage.append("<p><span color=\"title\" font=\"header\">"); //$NON-NLS-1$
 		upperMessage.append(MarkupParser.escapeText(task.getName()));
 		upperMessage.append("</span></p>"); //$NON-NLS-1$		
-		upperMessage.append(createParagraph(task.getDescription(), null));
+		upperMessage.append(MarkupParser.createParagraph(task.getDescription(), null));
 		upperMessage.append("</form>"); //$NON-NLS-1$
         upperText.setText(upperMessage.toString(), true, false);
 	
@@ -135,22 +135,22 @@ public class DescriptionPanel {
         boolean isSkippable = ((AbstractTask)task).isSkippable();
 		
 		if (task.getState() == ICompositeCheatSheetTask.COMPLETED) {
-			buf.append(createParagraph(task.getCompletionMessage(), null));
+			buf.append(MarkupParser.createParagraph(task.getCompletionMessage(), null));
 			isSkippable = false;
 		} else if (task.getState() == ICompositeCheatSheetTask.SKIPPED) {
-			buf.append(createParagraph(Messages.THIS_TASK_SKIPPED, INFORMATION_IMAGE));
+			buf.append(MarkupParser.createParagraph(Messages.THIS_TASK_SKIPPED, INFORMATION_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findSkippedAncestor(task) != null) {
 			ICompositeCheatSheetTask skipped = TaskStateUtilities.findSkippedAncestor(task);
 			String skipParentMsg = NLS.bind(Messages.PARENT_SKIPPED, 
 				(new Object[] {MarkupParser.escapeText((skipped.getName()))}));	
-			buf.append(createParagraph(skipParentMsg, WARNING_IMAGE));
+			buf.append(MarkupParser.createParagraph(skipParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (TaskStateUtilities.findCompletedAncestor(task) != null) {
 			ICompositeCheatSheetTask completed = TaskStateUtilities.findCompletedAncestor(task);
 			String completedParentMsg = NLS.bind(Messages.PARENT_COMPLETED, 
 			   (new Object[] {MarkupParser.escapeText(completed.getName())}));	
-			buf.append(createParagraph(completedParentMsg, WARNING_IMAGE));
+			buf.append(MarkupParser.createParagraph(completedParentMsg, WARNING_IMAGE));
 			isSkippable = false;
 		} else if (!task.requiredTasksCompleted()) {
 			isBlocked = true;
@@ -192,31 +192,6 @@ public class DescriptionPanel {
 		lowerText.setText(buf.toString(), true, false);
 		getControl().setData(ICompositeCheatsheetTags.TASK, task);
 		form.reflow(true);
-	}
-
-	/*
-	 * Add paragraph tags if not already present
-	 */
-	private String createParagraph(String text, String imageTag) {
-		String result = ""; //$NON-NLS-1$
-		String trimmed = text.trim();
-		boolean addParagraphTags = trimmed.length() < 3 || trimmed.charAt(0)!='<' || trimmed.charAt(1)!='p';
-		if (addParagraphTags) {
-			result +=  "<p>"; //$NON-NLS-1$
-		} 
-
-		if (imageTag != null) {
-			result += "<img href=\""; //$NON-NLS-1$
-			result += imageTag;
-			result += "\"/> "; //$NON-NLS-1$
-		}
-
-		result += trimmed;
-
-		if (addParagraphTags) {
-			result += "</p>"; //$NON-NLS-1$ 
-		}
-		return result;
 	}
 
 	private void showBlockingTasks(String message, final ICompositeCheatSheetTask task, StringBuffer buf) {
