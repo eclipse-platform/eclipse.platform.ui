@@ -58,6 +58,7 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -66,11 +67,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -78,6 +81,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
@@ -95,6 +99,7 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 import org.eclipse.debug.internal.core.sourcelookup.SourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourcePathComputer;
 import org.eclipse.osgi.service.environment.Constants;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -170,6 +175,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Step filter manager
 	 */
 	private StepFilterManager fStepFilterManager = null;
+	
+	/**
+	 * Preference key for a resource's default configuration.
+	 * 
+	 * @since 3.3
+	 */
+	private static final String DEFAULT_CONFIGURATION = "defaultConfiguration"; //$NON-NLS-1$
+
 	
 	/**
 	 * Notifies a launch config listener in a safe runnable to handle
@@ -2354,4 +2367,100 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		return fStepFilterManager;
 	}    
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getDefaultConfiguration(org.eclipse.core.resources.IResource)
+	 */
+	public ILaunchConfiguration getDefaultConfiguration(IResource resource) throws CoreException {
+		IProject project = resource.getProject();
+		if (project != null) {
+			org.osgi.service.prefs.Preferences projectNode = getProjectNode(resource);
+			String configValue = projectNode.get(DEFAULT_CONFIGURATION, null);
+			if (configValue != null) {
+				// shared config
+				IFile file = project.getFile(Path.fromPortableString(configValue));
+				return getLaunchConfiguration(file);
+			} else {
+				org.osgi.service.prefs.Preferences instanceNode = getInstanceNode(resource);
+				configValue = instanceNode.get(DEFAULT_CONFIGURATION, null);
+				if (configValue != null) {
+					// local config
+					return getLaunchConfiguration(configValue);
+				}
+			}
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#setDefaultConfiguration(org.eclipse.core.resources.IResource, org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void setDefaultConfiguration(IResource resource, ILaunchConfiguration configuration) throws CoreException {
+		IProject project = resource.getProject();
+		if (project == null) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+					DebugPlugin.INTERNAL_ERROR, "Illegal argument: can only set default launch configuration on and within projects.", null)); //$NON-NLS-1$ (internal error)
+		}
+		if (configuration != null && !configuration.isLocal()) {
+			if (!configuration.getFile().getProject().equals(project)) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						DebugPlugin.INTERNAL_ERROR, DebugCoreMessages.LaunchManager_29, null));
+			}
+		}
+		
+		// remove previous settings, if any
+		org.osgi.service.prefs.Preferences projectNode = getProjectNode(resource);
+		projectNode.remove(DEFAULT_CONFIGURATION);
+		flush(projectNode);
+		org.osgi.service.prefs.Preferences instanceNode = getInstanceNode(resource);
+		instanceNode.remove(DEFAULT_CONFIGURATION);
+		flush(instanceNode);
+		
+		if (configuration != null) {
+			org.osgi.service.prefs.Preferences node = null;
+			String configurationValue = null;
+			if (configuration.isLocal()) {
+				// for local configurations, use workspace (instance) scope preferences
+				node = instanceNode;
+				if (configuration.isWorkingCopy()) {
+					configurationValue = ((ILaunchConfigurationWorkingCopy)configuration).getOriginal().getMemento();
+				} else {
+					configurationValue = configuration.getMemento();
+				}
+			} else {
+				// for shared configurations, use project scope preferences
+				node = projectNode;
+				configurationValue = configuration.getFile().getProjectRelativePath().toPortableString();
+			}
+			node.put(DEFAULT_CONFIGURATION, configurationValue);
+			flush(node);
+		}
+		
+	}	
+	
+	private void flush(org.osgi.service.prefs.Preferences node) {
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private org.osgi.service.prefs.Preferences getProjectNode(IResource resource) {
+		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
+		ProjectScope scope = new ProjectScope(resource.getProject());
+		node = scope.getNode(DebugPlugin.getUniqueIdentifier());
+		IProject project = resource.getProject();
+		if (!resource.equals(project)) {
+			node = node.node(resource.getProjectRelativePath().toString());
+		}
+		return node;
+	}
+	
+	private org.osgi.service.prefs.Preferences getInstanceNode(IResource resource) {
+		org.osgi.service.prefs.Preferences node = Platform.getPreferencesService().getRootNode();
+		node = node.node(InstanceScope.SCOPE).node(DebugPlugin.getUniqueIdentifier());
+		return node.node(resource.getFullPath().makeRelative().toString());
+	}
 }

@@ -14,6 +14,7 @@ package org.eclipse.debug.core;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IPersistableSourceLocator;
@@ -459,6 +460,42 @@ public interface ILaunchManager {
 	 */
 	public void removeLaunchListener(ILaunchListener listener);
 	
+	/**
+	 * Sets the given launch configuration as the default configuration for the specified
+	 * resource. There is only one default configuration per resource and this replaces
+	 * any previously existing launch configuration for the resource, if any. Specifying
+	 * a configuration of <code>null</code> clears the default configuration for the
+	 * given resource. 
+	 * 
+	 * @param resource resource
+	 * @param configuration launch configuration or <code>null</code>
+	 * @exception CoreException if unable to set as default
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public void setDefaultConfiguration(IResource resource, ILaunchConfiguration configuration) throws CoreException;
+	
+	/**
+	 * Returns the default launch configuration for the specified resource, or <code>null</code>
+	 * if none.
+	 * 
+	 * @param configuration launch configuration
+	 * @return launch configuration or <code>null</code>
+	 * @exception CoreException if an error occurs retrieving the configuration
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public ILaunchConfiguration getDefaultConfiguration(IResource resource) throws CoreException;
 }
 
 

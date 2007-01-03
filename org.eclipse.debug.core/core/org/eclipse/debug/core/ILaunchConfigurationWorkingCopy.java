@@ -50,7 +50,12 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * a handle to the resulting launch configuration.
 	 * Has no effect if this configuration does not need saving.
 	 * Creates the underlying file if not yet created.
-	 * 
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong> - Since 3.3, if this is a nested
+	 * working copy, the contents of this working copy are saved to the
+	 * parent working copy and the parent working copy is returned without
+	 * effecting the original launch configuration.
+	 * </p>
 	 * @exception CoreException if an exception occurs while 
 	 *  writing this configuration to its underlying file.
 	 */
@@ -247,4 +252,43 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.3
 	 */
 	public void removeModes(Set modes);
+	
+	/**
+	 * Returns a working copy of this working copy. Changes to the working copy will
+	 * be applied to this working copy when saved. The working copy will
+	 * refer to this launch configuration as its parent. Changes are only
+	 * saved to the underlying original configuration when the root working
+	 * copy is saved.
+	 * 
+	 * @return a working copy of this working copy
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurs while initializing the contents of the
+	 * working copy from this configuration's underlying storage.</li>
+	 * </ul>
+	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
+	 * @see ILaunchConfigurationWorkingCopy#getParent()
+	 * @since 3.3
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public ILaunchConfigurationWorkingCopy getNestedWorkingCopy() throws CoreException;	
+	
+	/**
+	 * Returns the parent of this working copy or <code>null</code> if this working
+	 * copy is not a nested copy of another working copy.
+	 * 
+	 * @return parent or <code>null</code>
+	 * <p>
+	 * <strong>EXPERIMENTAL</strong>. This method has been added as
+	 * part of a work in progress. There is no guarantee that this API will
+	 * remain unchanged during the 3.3 release cycle. Please do not use this API
+	 * without consulting with the Platform/Debug team.
+	 * </p>
+	 */
+	public ILaunchConfigurationWorkingCopy getParent();
 }

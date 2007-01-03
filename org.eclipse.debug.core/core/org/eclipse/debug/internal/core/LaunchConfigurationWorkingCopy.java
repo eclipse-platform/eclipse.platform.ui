@@ -87,6 +87,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	private IContainer fContainer;
 	
 	/**
+	 * Parent working copy.
+	 * @since 3.3
+	 */
+	private LaunchConfigurationWorkingCopy fParent = null;
+	
+	/**
 	 * Constructs a working copy of the specified launch 
 	 * configuration.
 	 * 
@@ -102,6 +108,23 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		setOriginal(original);
 		fSuppressChange = false;
 	}
+	
+	/**
+	 * Constructs a working copy of the specified launch configuration as its parent.
+	 * 
+	 * @param parent launch configuration to make
+	 *  a working copy of
+	 * @exception CoreException if unable to initialize this
+	 *  working copy's attributes based on the original configuration
+	 */
+	protected LaunchConfigurationWorkingCopy(LaunchConfigurationWorkingCopy parent) throws CoreException {
+		super(parent.getLocation());
+		setName(parent.getName());
+		copyFrom(parent);
+		setOriginal((LaunchConfiguration) parent.getOriginal());
+		fParent = parent;
+		fSuppressChange = false;
+	}	
 	
 	/**
 	 * Constructs a copy of the specified launch 
@@ -150,35 +173,42 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see ILaunchConfigurationWorkingCopy#doSave()
 	 */
 	public synchronized ILaunchConfiguration doSave() throws CoreException {
-		if (isDirty()) {
-			boolean useRunnable= true;
-			if (isLocal()) {
-				if (isMoved()) {
-					// If this config was moved from a shared location, saving
-					// it will delete the original from the workspace. Use runnable.
-					useRunnable= !isNew() && !getOriginal().isLocal();
-				} else {
-					useRunnable= false;
-				}
-			}
-
-			if (useRunnable) {
-				IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-					public void run(IProgressMonitor pm) throws CoreException {
-						doSave0();
+		if (fParent == null) {
+			if (isDirty()) {
+				boolean useRunnable= true;
+				if (isLocal()) {
+					if (isMoved()) {
+						// If this config was moved from a shared location, saving
+						// it will delete the original from the workspace. Use runnable.
+						useRunnable= !isNew() && !getOriginal().isLocal();
+					} else {
+						useRunnable= false;
 					}
-				};
-				
-				ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
-			} else {
-				//file is persisted in the metadata not the workspace
-				doSave0();
+				}
+	
+				if (useRunnable) {
+					IWorkspaceRunnable wr = new IWorkspaceRunnable() {
+						public void run(IProgressMonitor pm) throws CoreException {
+							doSave0();
+						}
+					};
+					
+					ResourcesPlugin.getWorkspace().run(wr, null, 0, null);
+				} else {
+					//file is persisted in the metadata not the workspace
+					doSave0();
+				}
+	
+				getLaunchManager().setMovedFromTo(null, null);
 			}
-
-			getLaunchManager().setMovedFromTo(null, null);
+	
+			return new LaunchConfiguration(getLocation());
+		} else {
+			// save to parent working copy
+			fParent.setName(getName());
+			fParent.copyFrom(this);
+			return fParent;
 		}
-
-		return new LaunchConfiguration(getLocation());
 	}
 
 	
@@ -635,6 +665,30 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			catch (CoreException ce) {DebugPlugin.log(ce);}
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.LaunchConfiguration#getWorkingCopy()
+	 */
+	public ILaunchConfigurationWorkingCopy getWorkingCopy() throws CoreException {
+		if (fParent == null) {
+			return super.getWorkingCopy();
+		} else {
+			return getNestedWorkingCopy();
+		}
+	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#getNestedWorkingCopy()
+	 */
+	public ILaunchConfigurationWorkingCopy getNestedWorkingCopy() throws CoreException {
+		return new LaunchConfigurationWorkingCopy(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#getParent()
+	 */
+	public ILaunchConfigurationWorkingCopy getParent() {
+		return fParent;
+	}
 }
 
