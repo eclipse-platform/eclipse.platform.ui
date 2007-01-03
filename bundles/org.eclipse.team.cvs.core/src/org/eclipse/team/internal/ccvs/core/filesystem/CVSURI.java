@@ -14,8 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
@@ -204,7 +203,8 @@ public class CVSURI {
 			}
 			return new URI(SCHEME, authority, pathString, query, null);
 		} catch (URISyntaxException e) {
-			throw new Error(e.getMessage());
+			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("An error occurred while creating a URI for {0} {1}", repository, path), e); //$NON-NLS-1$
+			throw new IllegalStateException(e.getMessage());
 		}
 	}
 
