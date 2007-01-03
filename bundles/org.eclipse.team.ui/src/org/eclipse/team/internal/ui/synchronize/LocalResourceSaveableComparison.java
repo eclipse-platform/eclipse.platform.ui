@@ -56,8 +56,8 @@ public abstract class LocalResourceSaveableComparison extends SaveableComparison
 	public LocalResourceSaveableComparison(ICompareInput input, CompareEditorInput editorInput, ITypedElement fileElement) {
 		this.input = input;
 		this.editorInput = editorInput;
-		initializeContentChangeListeners();
 		this.fileElement = fileElement;
+		initializeContentChangeListeners();
 	}
 	
 	private void initializeContentChangeListeners() {
