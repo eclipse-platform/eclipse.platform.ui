@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.ObjectContributorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The LightweightDecoratorManager is a decorator manager
@@ -56,12 +57,12 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
          * @see ISafeRunnable.handleException(Throwable).
          */
         public void handleException(Throwable exception) {
-            IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
-                    .getMessage(), exception);
-            WorkbenchPlugin.log("Exception in Decorator", status); //$NON-NLS-1$
-            if (decorator != null) {
+           
+            IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, "Exception in Decorator", exception); //$NON-NLS-1$ 
+        	StatusManager.getManager().handle(status);
+            
+            if (decorator != null) 
             	decorator.crashDisable();
-            }
         }
 
         /*

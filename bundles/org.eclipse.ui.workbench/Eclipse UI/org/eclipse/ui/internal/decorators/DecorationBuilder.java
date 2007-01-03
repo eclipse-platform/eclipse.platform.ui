@@ -15,6 +15,8 @@ package org.eclipse.ui.internal.decorators;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.DecorationContext;
 import org.eclipse.jface.viewers.IDecoration;
@@ -22,6 +24,7 @@ import org.eclipse.jface.viewers.IDecorationContext;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The Decoration builder is the object that builds a decoration.
@@ -94,8 +97,9 @@ public class DecorationBuilder implements IDecoration {
 			}
 			valueSet = true;
 		} else {
-			WorkbenchPlugin
-					.log("Unable to apply decoration for " + currentDefinition.getId() + " invalid quadrant: " + quadrant); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = "Unable to apply decoration for " + currentDefinition.getId() + " invalid quadrant: " + quadrant; //$NON-NLS-1$ //$NON-NLS-2$
+			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message); 
+			StatusManager.getManager().handle(status);
 		}
 	}
 

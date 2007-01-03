@@ -29,9 +29,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ExceptionHandler;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The ErrorNotificationManager is the class that manages the display of
@@ -98,7 +99,8 @@ public class ErrorNotificationManager {
         
         if (!PlatformUI.isWorkbenchRunning()) {
             //We are shutdown so just log
-            WorkbenchPlugin.log(errorInfo.getJob().getName(), errorInfo.getErrorStatus());
+            IStatus status = StatusUtil.newStatus(errorInfo.getErrorStatus(), errorInfo.getJob().getName());
+	    	StatusManager.getManager().handle(status);
             return;
         }
 

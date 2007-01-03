@@ -15,6 +15,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -36,6 +37,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -79,7 +81,10 @@ public class ProgressManagerUtil {
 	 * @param exception
 	 */
 	static void logException(Throwable exception) {
-		BundleUtility.log(PlatformUI.PLUGIN_ID, exception);
+		IStatus status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR,
+                exception.getMessage() == null ? "" : exception.getMessage(), //$NON-NLS-1$
+                exception);
+		StatusManager.getManager().handle(status);
 	}
 
 	// /**

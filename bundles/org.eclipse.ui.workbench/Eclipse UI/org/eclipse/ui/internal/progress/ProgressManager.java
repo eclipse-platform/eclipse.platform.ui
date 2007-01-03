@@ -64,6 +64,7 @@ import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -1249,7 +1250,9 @@ public class ProgressManager extends ProgressProvider implements
 			Job job = (Job) jobsToCheck[i];
 			if (checkForStaleness(job)) {
 				if (Policy.DEBUG_STALE_JOBS) {
-					WorkbenchPlugin.log("Stale Job " + job.getName()); //$NON-NLS-1$
+					String message = "Stale Job " + job.getName(); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message); 
+			    	StatusManager.getManager().handle(status);
 				}
 				pruned = true;
 			}

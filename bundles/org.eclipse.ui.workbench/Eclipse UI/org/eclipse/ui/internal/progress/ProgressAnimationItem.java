@@ -16,7 +16,6 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -38,7 +37,9 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The ProgressAnimationItem is the animation items that uses
@@ -111,8 +112,8 @@ public class ProgressAnimationItem extends AnimationItem implements
                             // In other words, it shouldn't happen but may so it is
                             // better to show the user something and clean up
                             // than fail silently.
-		                    ErrorDialog.openError(toolbar.getShell(), title, msg,
-		                            status);
+                        	IStatus errStatus = StatusUtil.newStatus(status, msg); 
+                        	StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 		                    JobTreeElement topElement = (JobTreeElement) ji
 		                            .getParent();
 		                    if (topElement == null) {

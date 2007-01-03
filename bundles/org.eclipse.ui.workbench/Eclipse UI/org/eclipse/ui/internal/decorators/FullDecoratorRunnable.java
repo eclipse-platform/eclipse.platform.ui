@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The FullDecoratorRunnable is the ISafeRunnable that runs
@@ -39,10 +40,9 @@ abstract class FullDecoratorRunnable implements ISafeRunnable {
      * @see ISafeRunnable.handleException(Throwable).
      */
     public void handleException(Throwable exception) {
-        IStatus status = StatusUtil.newStatus(IStatus.ERROR, exception
-                .getMessage(), exception);
-        WorkbenchPlugin.log("Exception in Decorator", status); //$NON-NLS-1$
-        decorator.crashDisable();
+        IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, "Exception in Decorator", exception); //$NON-NLS-1$ 
+    	StatusManager.getManager().handle(status);
+    	decorator.crashDisable();
     }
 
 }

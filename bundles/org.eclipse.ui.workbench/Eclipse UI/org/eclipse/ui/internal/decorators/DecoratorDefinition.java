@@ -12,11 +12,14 @@ package org.eclipse.ui.internal.decorators;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.ui.internal.ActionExpression;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.RegistryReader;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The DecoratorDefinition is the class that holds onto
@@ -242,7 +245,8 @@ public abstract class DecoratorDefinition {
     protected void handleCoreException(CoreException exception) {
 
         //If there is an error then reset the enabling to false
-        WorkbenchPlugin.log(exception);
+    	IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, exception);  
+    	StatusManager.getManager().handle(status);
         crashDisable();
     }
 
