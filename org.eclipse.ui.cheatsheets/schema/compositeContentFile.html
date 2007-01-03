@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Composite Cheat Sheets</title>
+<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-I20061213-0800-win32/eclipse/plugins/org.eclipse.sdk_3.3.0.v20061211/book.css");</style>
+<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-I20061213-0800-win32/eclipse/configuration/org.eclipse.osgi/bundles/74/1/.cp/schema.css");</style>
+</HEAD>
+<BODY>
+<H1><CENTER>Composite Cheat Sheets</CENTER></H1>
+<p></p>
+<h6 class=CaptionFigColumn id=header>Identifier: </h6>org.eclipse.ui.cheatsheets.composite_schema<p></p>
+<h6 class=CaptionFigColumn id=header>Since: </h6>3.2
+<p></p>
+
+<p>
+<h6 class=CaptionFigColumn id=header>Description: </h6>The schema definition for a composite cheat sheet content file. A composite cheat sheet consists of a set of tasks organized into task groups. Each task can be a simple cheat sheet or a user contributed task kind.</p>
+<p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.compositeCheatsheet">compositeCheatsheet</a> (<a href="#e.taskGroup">taskGroup</a> | <a href="#e.task">task</a>)&gt;</p>
+<p class=code id=dtd>&lt;!ATTLIST compositeCheatsheet</p>
+<p class=code id=dtdAttlist>name&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+The root element of a composite cheatsheet</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc>
+<li><b>name</b> - The name of the composite cheat sheet which will be displayed in large font when the composite cheat sheet is opened.</li>
+</ul>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.taskGroup">taskGroup</a> ((<a href="#e.task">task</a> | <a href="#e.taskGroup">taskGroup</a>)+ , <a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.dependency">dependency</a>*)&gt;</p>
+<p class=code id=dtd>&lt;!ATTLIST taskGroup</p>
+<p class=code id=dtdAttlist>kind&nbsp;CDATA "set"<p class=code id=dtdAttlist>name&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>skip&nbsp;(true | false) "false"&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+A task group represents a collection of related tasks. If the kind is "choice" only one of the child tasks need to be completed. If the kind is "set" or "sequence" all children must be completed.</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc>
+<li><b>kind</b> - The kind of this task group which can be "set", "sequence" or "choice". If the kind is set or sequence this task group is complete when all of its child tasks/task groups have been completed. In addition the subtasks of a sequence must be completed in order. A choice is complete when any of its subtasks has been completed.</li>
+<li><b>name</b> - The name of this task group which will be displayed in the task explorer.</li>
+<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependency element.</li>
+<li><b>skip</b> - If true this group of tasks may be skipped.</li>
+</ul>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.task">task</a> (<a href="#e.intro">intro</a>? , <a href="#e.onCompletion">onCompletion</a>? , <a href="#e.param">param</a>* , <a href="#e.dependency">dependency</a>*)&gt;</p>
+<p class=code id=dtd>&lt;!ATTLIST task</p>
+<p class=code id=dtdAttlist>kind&nbsp;CDATA "set"<p class=code id=dtdAttlist>name&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>id&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>skip&nbsp;(true | false) "false"&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+A leaf task within a composite cheat sheet. A task does not have children, but it does have a task editor which shows in the lower/right hand pane of the cheat sheet view. The task kind determines which task editor will be opened, a task kind of "cheatsheet" represents a simple cheatsheet. Other task kinds may be contributed.</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc>
+<li><b>kind</b> - The task kind. A task kind of "cheatsheet" represents a simple cheatsheet, other task kinds can be contributed using the extension point org.eclipse.ui.cheatsheets.cheatSheetContent.</li>
+<li><b>name</b> - The name of this task which will be displayed in the task explorer.</li>
+<li><b>id</b> - An id for this task group which is required if this task group is referenced by a dependency element.</li>
+<li><b>skip</b> - If true this task may be skipped.</li>
+</ul>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.param">param</a> EMPTY&gt;</p>
+<p class=code id=dtd>&lt;!ATTLIST param</p>
+<p class=code id=dtdAttlist>name&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>value&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+A parameter to a task within a composite cheatsheet. Each parameter has a name and value, both of which are strings. A task may have any number of parameters, two parameters for a single task may not share the same name.</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc>
+<li><b>name</b> - The name of this parameter.</li>
+<li><b>value</b> - The value of this parameter.</li>
+</ul>
+<br><p class=code id=dtd>&lt;!ELEMENT <a name="e.intro">intro</a> (#PCDATA)&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+Contains the text which will be displayed before this task has been started. May contain 
+<a href="../../../org.eclipse.platform.doc.isv/guide/forms_controls_text_markup.htm">form text markup</a>.</p>
+<br><br>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.onCompletion">onCompletion</a> (#PCDATA)&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+Contains the text which will be displayed in the completion panel for this task. May contain 
+<a href="../../../org.eclipse.platform.doc.isv/guide/forms_controls_text_markup.htm">form text markup</a>.</p>
+<br><br>
+<p class=code id=dtd>&lt;!ELEMENT <a name="e.dependency">dependency</a> EMPTY&gt;</p>
+<p class=code id=dtd>&lt;!ATTLIST dependency</p>
+<p class=code id=dtdAttlist>task&nbsp;CDATA #REQUIRED&gt;</p>
+<p></p>
+<p class=ConfigMarkup id=elementDesc>
+Creates a dependency between two tasks or subtasks.</p>
+<br>
+<ul class=ConfigMarkup id=attlistDesc>
+<li><b>task</b> - The id of the task or task group which must be completed before this task can be started.</li>
+</ul>
+<br><br>
+<p class=note id=copyright>
+Copyright (c) 2006 IBM Corporation and others.<br>
+All rights reserved. This program and the accompanying materials are made 
+available under the terms of the Eclipse Public License v1.0 which accompanies 
+this distribution, and is available at <a href="http://www.eclipse.org/legal/epl-v10.html">http://www.eclipse.org/legal/epl-v10.html</a>
+<p></p>
+
+</p>
+</BODY>
+</HTML>
