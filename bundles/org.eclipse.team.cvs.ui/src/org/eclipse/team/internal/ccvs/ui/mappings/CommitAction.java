@@ -11,11 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.mappings;
 
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -57,9 +57,32 @@ public class CommitAction extends AbstractCommitAction implements IPropertyChang
 		}
 	}
 
-	protected ResourceTraversal[] getResourceTraversals(IProgressMonitor monitor)
+	protected ResourceTraversal[] getCommitTraversals(IStructuredSelection selection, IProgressMonitor monitor)
 			throws CoreException {
-		return getResourceTraversals(getStructuredSelection(), monitor);
+		return getResourceTraversals(selection, monitor);
+	}
+
+	protected IStructuredSelection getActualSelection() {
+		IStructuredSelection selection = getStructuredSelection();
+		IStructuredSelection actualSelection = internalGetActualSelection();
+		if (!equal(selection, actualSelection)) {
+			CVSUIPlugin.log(IStatus.ERROR, "Commit action selection did not match actual selection", null);
+			return actualSelection;
+		}
+		return selection;
+	}
+
+	private boolean equal(IStructuredSelection selection,
+			IStructuredSelection actualSelection) {
+		return selection.equals(actualSelection);
+	}
+
+	private IStructuredSelection internalGetActualSelection() {
+		ISelection s = getConfiguration().getSite().getSelectionProvider().getSelection();
+		if (s instanceof IStructuredSelection) {
+			return (IStructuredSelection) s;	
+		}
+		return StructuredSelection.EMPTY;
 	}
 
 }

@@ -85,7 +85,7 @@ public class WorkspaceCommitAction extends AbstractCommitAction implements IDiff
 		return getSynchronizationContext().getScope().getRoots();
 	}
 
-	protected ResourceTraversal[] getResourceTraversals(IProgressMonitor monitor)
+	protected ResourceTraversal[] getCommitTraversals(IStructuredSelection selection, IProgressMonitor monitor)
 			throws CoreException {
 		return getSynchronizationContext().getScope().getTraversals();
 	}

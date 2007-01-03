@@ -19,6 +19,7 @@ import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IThreeWayDiff;
@@ -42,11 +43,12 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 	 */
 	public void execute() {
     	final List resources = new ArrayList();
+    	final IStructuredSelection selection = getActualSelection();
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 					try {
-						ResourceTraversal[] traversals = getResourceTraversals(monitor);
+						ResourceTraversal[] traversals = getCommitTraversals(selection, monitor);
 						resources.add(getOutgoingChanges(getSynchronizationContext().getDiffTree(), traversals, monitor));
 					} catch (CoreException e) {
 						throw new InvocationTargetException(e);
@@ -68,7 +70,11 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 		}
 	}
 	
-	protected abstract ResourceTraversal[] getResourceTraversals(IProgressMonitor monitor) throws CoreException;
+	protected IStructuredSelection getActualSelection() {
+		return getStructuredSelection();
+	}
+
+	protected abstract ResourceTraversal[] getCommitTraversals(IStructuredSelection selection, IProgressMonitor monitor) throws CoreException;
 	
     protected IResource[] getOutgoingChanges(final IResourceDiffTree tree, ResourceTraversal[] traversals, IProgressMonitor monitor) {
     	final List resources = new ArrayList();
