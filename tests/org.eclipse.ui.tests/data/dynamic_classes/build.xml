@@ -105,12 +105,12 @@
 		</target>
 		
 	<target name="self">
-		<delete file="dynamic_classes.zip"/>
+		<!--<delete file="dynamic_classes.zip"/>
 		<zip destfile="dynamic_classes.zip" basedir="." update="true">
 			<exclude name="**/*.jar" />
 			<exclude name="dynamic_classes.zip" />
 			<exclude name="**/*bin*/**" />
-		</zip>
+		</zip>-->
 	</target>
 	
 	<target name="finish">
