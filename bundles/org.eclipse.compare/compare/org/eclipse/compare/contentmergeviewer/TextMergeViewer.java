@@ -5062,6 +5062,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	}
 	
 	/* package */ void update(boolean includeControls) {
+		if (getControl().isDisposed())
+			return;
 		if (fHasErrors) {
 			resetDiffs();
 		} else {
