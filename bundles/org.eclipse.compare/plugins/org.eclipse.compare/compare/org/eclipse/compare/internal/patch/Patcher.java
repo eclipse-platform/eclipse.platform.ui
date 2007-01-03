@@ -39,8 +39,7 @@ public class Patcher {
 	//	private static final int ED= 1;
 	//	private static final int NORMAL= 2;
 	//	private static final int UNIFIED= 3;
-		
-	private String fName;
+	
 	private FileDiff[] fDiffs;
 	private IResource fTarget;
 	// patch options
@@ -60,16 +59,6 @@ public class Patcher {
 	
 	public Patcher() {
 		// nothing to do
-	}
-	
-	//---- options
-	
-	void setName(String name) {
-		fName= name;
-	}
-	
-	String getName() {
-		return fName;
 	}
 	
 	/*

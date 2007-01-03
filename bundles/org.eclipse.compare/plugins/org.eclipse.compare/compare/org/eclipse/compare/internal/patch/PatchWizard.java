@@ -112,7 +112,6 @@ public class PatchWizard extends Wizard {
 		}
 		
 		if (fPatchWizardPage != null){
-			fPatcher.setName(fPatchWizardPage.getPatchName());
 			// make sure that the patch has been read
 			if (!fPatchWizardPage.isPatchRead())
 				fPatchWizardPage.readInPatch();
@@ -120,7 +119,6 @@ public class PatchWizard extends Wizard {
 			//either we have a patch from the patch input page or one has
 			//been specified; double check this
 			Assert.isNotNull(patch);
-			fPatcher.setName(patch.getFullPath().toString());
 			//make sure that the patch has been read in
 			Assert.isTrue(patchReadIn);
 		}
