@@ -427,6 +427,15 @@ public class TrimLayout extends Layout implements ICachingLayout, ITrimManager {
 			result.y = innerSize.y + verticalTrim;
 		}
 
+		/*
+		 * We -can't- determine the correct size for the shell because
+		 * of it's underlying 'big lie' structure and the fact that most of the
+		 * UI elements don't really exist until shown (meaning that
+		 * the normal 'computeSize' mechanism won't work).
+		 *
+		 * See bug 166619 for details but we'll keep returning the
+		 * current value (and the code above for legacy reasons...
+		 */
 		return new Point(0, 0);
 	}
 
