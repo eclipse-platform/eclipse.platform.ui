@@ -40,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
@@ -415,14 +414,14 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 	 */
 	Control getContainerToolBar(Composite composite) {
 	
-		ToolBar historyBar = new ToolBar(composite, SWT.HORIZONTAL | SWT.FLAT);
-		ToolBarManager historyManager = new ToolBarManager(historyBar);
+		ToolBarManager historyManager = new ToolBarManager(SWT.HORIZONTAL | SWT.FLAT);
+		historyManager.createControl(composite);
 	
-		history.createHistoryControls(historyBar, historyManager);
+		history.createHistoryControls(historyManager.getControl(), historyManager);
 		
 		historyManager.update(false);
 	
-		return historyBar;
+		return historyManager.getControl();
 	}
 
 

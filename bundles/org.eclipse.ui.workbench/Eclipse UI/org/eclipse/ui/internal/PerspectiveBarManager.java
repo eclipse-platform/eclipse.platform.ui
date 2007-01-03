@@ -50,14 +50,6 @@ public class PerspectiveBarManager extends ToolBarManager {
         return control;
     }
 
-    public PerspectiveBarManager(ToolBar toolbar) {
-        super(toolbar);
-
-        if (toolbar != null && !toolbar.isDisposed()) {
-			toolbar.setFont(getFont());
-		}
-    }
-
     // TODO begin refactor this out? it is not good that we know we are inside a
     // CoolBar
     private CoolBar coolBar;

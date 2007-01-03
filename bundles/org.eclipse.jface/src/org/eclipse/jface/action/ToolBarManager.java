@@ -55,7 +55,8 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Creates a new tool bar manager with the default SWT button style. Use the
-	 * <code>createControl</code> method to create the tool bar control.
+	 * {@link #createControl(Composite)} method to create the tool bar control.
+	 * 
 	 */
 	public ToolBarManager() {
 		//Do nothing if there are no parameters
@@ -77,6 +78,11 @@ public class ToolBarManager extends ContributionManager implements
 	 * Creates a tool bar manager for an existing tool bar control. This manager
 	 * becomes responsible for the control, and will dispose of it when the
 	 * manager is disposed.
+	 * <strong>NOTE</strong> When creating a ToolBarManager from an existing
+	 * {@link ToolBar} you will not get the accessible listener provided by
+	 * JFace.
+	 * @see #ToolBarManager()
+	 * @see #ToolBarManager(int)
 	 * 
 	 * @param toolbar
 	 *            the tool bar control
@@ -88,7 +94,8 @@ public class ToolBarManager extends ContributionManager implements
 
 	/**
 	 * Creates and returns this manager's tool bar control. Does not create a
-	 * new control if one already exists.
+	 * new control if one already exists. Also create an {@link AccessibleListener}
+	 * for the {@link ToolBar}.
 	 * 
 	 * @param parent
 	 *            the parent control

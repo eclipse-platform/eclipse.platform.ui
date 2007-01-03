@@ -25,8 +25,6 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
@@ -318,18 +316,4 @@ class PreferencePageHistory {
 		
 	}
 
-	/**
-	 * Create the history control in the parent
-	 * 
-	 * @param parent
-	 * @return Control
-	 */
-	public Control createHistoryControls(Composite parent) {
-		ToolBar historyBar = new ToolBar(parent, SWT.FLAT | SWT.HORIZONTAL);
-
-		ToolBarManager historyManager = new ToolBarManager(historyBar);
-
-		createHistoryControls(historyBar, historyManager);
-		return historyBar;
-	}
 }
