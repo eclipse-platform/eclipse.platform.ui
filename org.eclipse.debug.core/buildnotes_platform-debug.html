@@ -24,6 +24,12 @@ The launch framework has been enhanced to support the following:
   <li>Read-only launch configurations - for example, if a launch configuration 
     is stored in the file system in a read-only state, the launch configuration 
     cannot be edited in the launch dialog</li>
+  <li>A default launch configuration setting for a resource - allows to set and 
+    get a default configuration for a resource, used for simplified launching 
+    support </li>
+  <li>Nested launch configuration working copies - allows a working copy to be 
+    created from a working copy that saves back to the parent working copy instead 
+    of file system</li>
 </ul>
 <p>The following extension points have been added: </p>
 <ul>
@@ -89,6 +95,15 @@ The launch framework has been enhanced to support the following:
       <li>added method addModes(Set modes)</li>
       <li>added method setModes(Set modes)</li>
       <li>added method removeModes(Set modes)</li>
+      <li>added method getNestedWorkingCopy()</li>
+      <li>added method getParent()</li>
+    </ul>
+  </li>
+  <li>org.eclipse.debug.core.ILaunchManager 
+    <ul>
+      <li>added method setDefaultConfiguration(IResource resource, ILaunchConfiguration 
+        configuration)</li>
+      <li>added method getDefaultConfiguration(IResource resource)</li>
     </ul>
   </li>
   <li>org.eclipse.debug.ui.DebugUITools 
