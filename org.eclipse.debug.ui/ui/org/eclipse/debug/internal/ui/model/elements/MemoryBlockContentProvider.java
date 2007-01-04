@@ -11,8 +11,8 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -31,12 +31,12 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 public class MemoryBlockContentProvider extends ElementContentProvider {
 
 	protected int getChildCount(Object element, IPresentationContext context,
-			IProgressMonitor monitor) throws CoreException {
+			IViewerUpdate monitor) throws CoreException {
 		return 0;
 	}
 
 	protected Object[] getChildren(Object parent, int index, int length,
-			IPresentationContext context, IProgressMonitor monitor)
+			IPresentationContext context, IViewerUpdate monitor)
 			throws CoreException {
 		return EMPTY;
 	}

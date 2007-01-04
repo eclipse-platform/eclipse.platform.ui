@@ -11,28 +11,28 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 public class MemoryRetrievalContentProvider extends ElementContentProvider {
 
 	protected int getChildCount(Object element, IPresentationContext context,
-			IProgressMonitor monitor) throws CoreException {
+			IViewerUpdate monitor) throws CoreException {
 		return getAllChildren(element, context, monitor).length;
 	}
 
 	protected Object[] getChildren(Object parent, int index, int length,
-			IPresentationContext context, IProgressMonitor monitor)
+			IPresentationContext context, IViewerUpdate monitor)
 			throws CoreException {
 		
 		return getElements(getAllChildren(parent, context, monitor), index, length);
 		
 	}
 	
-	protected Object[] getAllChildren(Object parent, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_MEMORY_VIEW))
         {

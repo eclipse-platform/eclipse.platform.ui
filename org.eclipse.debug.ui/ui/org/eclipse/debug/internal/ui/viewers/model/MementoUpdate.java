@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.debug.internal.ui.commands.actions.AbstractRequestMonitor;
+import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
@@ -19,7 +19,7 @@ import org.eclipse.ui.IMemento;
 /**
  * @since 3.3
  */
-abstract class MementoUpdate extends AbstractRequestMonitor implements IViewerUpdate {
+abstract class MementoUpdate extends Request implements IViewerUpdate {
 	
 	private IPresentationContext fContext;
 	private Object fElement;

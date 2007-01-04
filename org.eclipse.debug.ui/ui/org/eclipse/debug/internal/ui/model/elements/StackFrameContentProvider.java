@@ -11,9 +11,9 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
@@ -24,14 +24,14 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildCount(java.lang.Object, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
-	protected int getChildCount(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getAllChildren(element, context, monitor).length;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.elements.ElementContentProvider#getChildren(java.lang.Object, int, int, org.eclipse.debug.internal.ui.viewers.provisional.IPresentationContext)
 	 */
-	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getElements(getAllChildren(parent, context, monitor), index, length);
 	}
 	
@@ -43,7 +43,7 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	 * @return the collection of children, or an empty collection, never <code>null</code>
 	 * @throws CoreException
 	 */
-	protected Object[] getAllChildren(Object parent, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (parent instanceof IStackFrame) {
 	        String id = context.getId();
 	        IStackFrame frame = (IStackFrame) parent;
@@ -53,7 +53,7 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	            return frame.getRegisterGroups();
 	        }
 		} else {
-			monitor.setCanceled(true);
+			monitor.cancel();
 		}
 	    return EMPTY;
 	}
@@ -68,7 +68,7 @@ public class StackFrameContentProvider extends ElementContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.model.elements.ElementContentProvider#hasChildren(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected boolean hasChildren(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		 String id = context.getId();
         IStackFrame frame = (IStackFrame) element;
         if (id.equals(IDebugUIConstants.ID_VARIABLE_VIEW)) {

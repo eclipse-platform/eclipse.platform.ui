@@ -373,7 +373,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						Iterator iterator = allRequests.iterator();
 						while (iterator.hasNext()) {
 							IElementMementoRequest req = (IElementMementoRequest) iterator.next();
-							req.setCanceled(true);
+							req.cancel();
 						}
 						requestMap.clear();
 						allRequests.clear();
@@ -894,7 +894,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			for (int i = 0; i < fUpdatesInProgress.size(); i++) {
 				ViewerUpdateMonitor update = (ViewerUpdateMonitor) fUpdatesInProgress.get(i);
 				if (update.isContained(path)) {
-					update.setCanceled(true);
+					update.cancel();
 				}
 			}
 		}

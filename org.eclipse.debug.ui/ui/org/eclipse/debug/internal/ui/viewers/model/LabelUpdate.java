@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
-import org.eclipse.debug.internal.ui.commands.actions.AbstractRequestMonitor;
+import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.TreeItem;
 /**
  * @since 3.3
  */
-class LabelUpdate extends AbstractRequestMonitor implements ILabelUpdate {
+class LabelUpdate extends Request implements ILabelUpdate {
 	
 	private TreePath fElementPath;
 	private String[] fColumnIds;

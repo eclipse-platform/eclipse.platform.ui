@@ -11,11 +11,11 @@
 package org.eclipse.debug.internal.ui.model.elements;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IErrorReportingExpression;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * @since 3.3
@@ -39,7 +39,7 @@ public class ExpressionContentProvider extends VariableContentProvider {
         return EMPTY;	
 	}
 	
-	protected boolean hasChildren(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		if (element instanceof IErrorReportingExpression) {
 			IErrorReportingExpression expression = (IErrorReportingExpression) element;
 			if (expression.hasErrors()) {

@@ -70,7 +70,7 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 					IElementMementoRequest request = requests[i];
 					try {
 						if (!encodeElement(request.getElement(), request.getMemento(), request.getPresentationContext())) {
-							request.setCanceled(true);
+							request.cancel();
 						}
 					} catch (CoreException e) {
 						request.setStatus(e.getStatus());

@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * @since 3.3
@@ -134,7 +135,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
      * @return child or <code>null</code>
      * @throws CoreException if an exception occurs retrieving child
      */
-    protected abstract Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IProgressMonitor monitor) throws CoreException;
+    protected abstract Object[] getChildren(Object parent, int index, int length, IPresentationContext context, IViewerUpdate monitor) throws CoreException;
     
     /**
      * Returns the number of children for the given element.
@@ -144,7 +145,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
      * @return number of children
      * @throws CoreException if an exception occurs determining child count
      */
-    protected abstract int getChildCount(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException;    
+    protected abstract int getChildCount(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException;    
 
     /**
      * Returns whether this adapter supports the given context.
@@ -238,7 +239,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 	 * @param monitor
 	 * @return
 	 */
-	protected boolean hasChildren(Object element, IPresentationContext context, IProgressMonitor monitor) throws CoreException {
+	protected boolean hasChildren(Object element, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		return getChildCount(element, context, monitor) > 0;
 	}
     

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.debug.internal.ui.commands.actions.AbstractRequestMonitor;
+import org.eclipse.debug.internal.core.commands.Request;
 import org.eclipse.debug.internal.ui.viewers.AsynchronousSchedulingRuleFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -24,7 +24,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * @since 3.3
  */
-abstract class ViewerUpdateMonitor extends AbstractRequestMonitor implements IViewerUpdate {
+abstract class ViewerUpdateMonitor extends Request implements IViewerUpdate {
 
 	private ModelContentProvider fContentProvider;
 	

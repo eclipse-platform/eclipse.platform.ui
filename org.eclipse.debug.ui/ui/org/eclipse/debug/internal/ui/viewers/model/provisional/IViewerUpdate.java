@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
+import org.eclipse.debug.core.IRequest;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
@@ -19,7 +20,7 @@ import org.eclipse.jface.viewers.TreePath;
  * </p>
  * @since 3.3
  */
-public interface IViewerUpdate extends IStatusMonitor {
+public interface IViewerUpdate extends IRequest {
 
 	/**
 	 * Returns the context this update was requested in.
