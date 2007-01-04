@@ -15,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,8 +68,11 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.DeletedProjectFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationEditDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationTypeFilter;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.WorkingSetsFilter;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
@@ -94,6 +98,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
@@ -513,6 +518,73 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return new Status(IStatus.ERROR, getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, message, exception);
 	}
 	
+	/**
+     * Open the launch configuration dialog on the specified launch
+     * configuration. The dialog displays the tabs for a single configuration
+     * only (a tree of launch configuration is not displayed)
+     * <p>
+     * If a status is specified, a status handler is consulted to handle the
+     * status. The status handler is passed the instance of the launch
+     * configuration dialog that is opened. This gives the status handler an
+     * opportunity to perform error handling/initialization as required.
+     * </p>
+     * @param shell the parent shell for the launch configuration dialog
+     * @param configuration the configuration to display
+     * @param groupIdentifier group identifier of the launch group the launch configuration
+     * belongs to
+     * @param status the status to display, or <code>null</code> if none 
+     * @param showCancel if the cancel button should be shown in the particular instance of the dialog
+     * @return the return code from opening the launch configuration dialog -
+     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+     *  
+     * @since 3.3
+     * 
+     * EXPERIMENTAL
+     */
+    public static int openLaunchConfigurationEditDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, IStatus status, boolean showCancel) {
+    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+    	if (group != null) {
+    		LaunchConfigurationEditDialog dialog = new LaunchConfigurationEditDialog(shell, configuration, group, showCancel);
+    		dialog.setInitialStatus(status);
+    		return dialog.open();
+    	} 
+    	return Window.CANCEL;
+    }
+	
+    /**
+     * Open the launch configuration dialog on the specified launch
+     * configuration. The dialog displays the tabs for a single configuration
+     * only (a tree of launch configuration is not displayed)
+     * <p>
+     * If a status is specified, a status handler is consulted to handle the
+     * status. The status handler is passed the instance of the launch
+     * configuration dialog that is opened. This gives the status handler an
+     * opportunity to perform error handling/initialization as required.
+     * </p>
+     * @param shell the parent shell for the launch configuration dialog
+     * @param configuration the configuration to display
+     * @param groupIdentifier group identifier of the launch group the launch configuration
+     * belongs to
+     * @param reservednames a set of launch configuraiotn names that cannot be used when creating or renaming
+     * the specified launch configuration
+     * @param status the status to display, or <code>null</code> if none 
+     * @return the return code from opening the launch configuration dialog -
+     *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
+     *  
+     * @since 3.3
+     * 
+     * EXPERIMENTAL
+     */
+    public static int openLaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration configuration, String groupIdentifier, Set reservednames, IStatus status) {
+    	LaunchGroupExtension group = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier);
+    	if (group != null) {
+    		LaunchConfigurationPropertiesDialog dialog = new LaunchConfigurationPropertiesDialog(shell, configuration, group, reservednames);
+    		dialog.setInitialStatus(status);
+    		return dialog.open();
+    	} 
+    	return Window.CANCEL;
+    }
+    
 	/**
 	 * Save all dirty editors in the workbench.
 	 * Returns whether the operation succeeded.

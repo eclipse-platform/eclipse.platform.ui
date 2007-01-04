@@ -233,7 +233,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private DeletedProjectFilter fDeletedProjectFilter;
 	private LaunchConfigurationTypeFilter fLCTFilter;
 	private WorkingSetsFilter fWorkingSetsFilter;
-
+	
+	/**
+	 * set of reserved names that should not be considered when generating a new name for a launch configuration
+	 */
+	protected Set fReservedNames = null;
+	
 	/**
 	 * Constructs a new launch configuration dialog on the given
 	 * parent shell.
@@ -815,6 +820,17 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	}
 	
 	/**
+	 * Returns the reserved name set (if there is one), <code>null</code> otherwise
+	 * @return the reserved nameset or <code>null</code>
+	 * @since 3.3
+	 * 
+	 * EXPERIMENTAL
+	 */
+	public Set getReservedNameSet() {
+		return null;
+	}
+	
+	/**
 	 * returns the open mode
 	 * 
 	 * @return the open mode
@@ -1338,7 +1354,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	public void setOpenMode(int mode) {
 		fOpenMode = mode;
 	}
-
+	
 	/**
  	 * Increase the size of this dialog's <code>Shell</code> by the specified amounts.
  	 * Do not increase the size of the Shell beyond the bounds of the Display.

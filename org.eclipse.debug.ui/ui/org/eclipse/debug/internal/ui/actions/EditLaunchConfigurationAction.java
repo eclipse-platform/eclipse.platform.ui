@@ -145,7 +145,7 @@ public class EditLaunchConfigurationAction extends SelectionListenerAction {
 					group.getIdentifier(), null);
 			}
 			else {
-				DebugUITools.openLaunchConfigurationEditDialog(
+				DebugUIPlugin.openLaunchConfigurationEditDialog(
 						DebugUIPlugin.getShell(), getLaunchConfiguration(),
 						group.getIdentifier(), null, false);
 			}

@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
-import com.ibm.icu.text.MessageFormat;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
@@ -26,6 +26,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+
+import com.ibm.icu.text.MessageFormat;
  
 
 /**
@@ -51,6 +53,24 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 		super(shell, group);
 		fLaunchConfiguration = launchConfiguration;
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
+	}
+	
+	/**
+	 * Constructs a new launch configuration dialog on the given
+	 * parent shell.
+	 * 
+	 * @param shell the parent shell
+	 * @param selection the selection used to initialize this dialog, typically the 
+	 *  current workbench selection
+	 * @param reservednames a set of names of virtual launch configurations that need to be considered 
+	 *  when configuration names are generated
+	 * @param group launch group
+	 */
+	public LaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group, Set reservednames) {
+		super(shell, group);
+		fLaunchConfiguration = launchConfiguration;
+		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(this);
+		fReservedNames = reservednames;
 	}
 	
 	/**

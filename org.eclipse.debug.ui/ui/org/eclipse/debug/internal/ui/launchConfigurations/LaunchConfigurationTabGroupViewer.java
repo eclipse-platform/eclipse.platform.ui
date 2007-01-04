@@ -1252,7 +1252,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	
 			// Otherwise, if there's already a config with the same name, complain
 			if (!getOriginal().getName().equals(currentName)) {
-				if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(currentName)) {
+				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
+				if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,
@@ -1323,16 +1324,11 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	 */
 	protected void handleApplyPressed() {
 		try {
-			// trim name
-			Text widget = fNameWidget;
-			String name = widget.getText();
-			String trimmed = name.trim();
-
 			// update launch config
 			fInitializingTabs = true;
-			if (!name.equals(trimmed)) {
-				widget.setText(trimmed);
-			}
+			// trim name
+			String trimmed = fNameWidget.getText().trim();
+			fNameWidget.setText(trimmed);
 			ILaunchConfigurationWorkingCopy copy = getWorkingCopy();
 			if(copy == null) {
 				copy = fOriginal.getWorkingCopy();

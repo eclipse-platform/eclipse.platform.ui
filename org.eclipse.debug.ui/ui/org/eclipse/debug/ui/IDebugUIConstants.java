@@ -616,27 +616,6 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ID_PROFILE_LAUNCH_GROUP = PLUGIN_ID + ".launchGroup.profile"; //$NON-NLS-1$	
 	
-	/**
-	 * Constant to describe the 'list' action for duplicate launch delegate resolution
-	 * @since 3.3
-	 * EXPERIMENTAL
-	 */
-	public static final String DELEGATE_ACTION_ID_LIST = "list"; //$NON-NLS-1$
-	
-	/**
-	 * Constant to describe the 'dialog' action for duplicate delegate resolution 
-	 * @since 3.3
-	 * EXPERIMENTAL
-	 */
-	public static final String DELEGATE_ACTION_ID_DIALOG = "dialog"; //$NON-NLS-1$
-	
-	/**
-	 * Constant to describe the 'page' action for duplicate delegate resolution
-	 * @since 3.3
-	 * EXPERIMENTAL
-	 */
-	public static final String DELEGATE_ACTION_ID_PAGE = "page"; //$NON-NLS-1$
-	
 	// menus 
 	
 	/** 
