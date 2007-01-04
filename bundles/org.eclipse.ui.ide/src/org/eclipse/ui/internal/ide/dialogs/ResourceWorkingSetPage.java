@@ -31,6 +31,8 @@ import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
@@ -48,6 +50,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
@@ -367,16 +371,37 @@ public class ResourceWorkingSetPage extends WizardPage implements
      * working set, if any.
      */
     private void initializeCheckedState() {
-        if (workingSet == null) {
-			return;
-		}
-
         BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
             public void run() {
-                IAdaptable[] items = workingSet.getElements();
+            	Object[] items = null;
+            	if (workingSet == null) {
+
+            		IWorkbenchPage page = IDEWorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            		if(page == null) {
+            			return;
+            		}
+            		IWorkbenchPart part = page.getActivePart();
+            		if(part == null) {
+            			return;
+            		}
+            		ISelection selection = page.getSelection();
+            		if(selection instanceof IStructuredSelection) {
+            			items = ((IStructuredSelection)selection).toArray();
+            		}
+
+        		} else {
+        			items = workingSet.getElements();
+        		}
+            	if(items == null) {
+            		return;
+            	}
                 tree.setCheckedElements(items);
                 for (int i = 0; i < items.length; i++) {
-                    IAdaptable item = items[i];
+                	IAdaptable item = null;
+                	if(!(items[i] instanceof IAdaptable)) {
+                		continue;
+                	}
+                	item = (IAdaptable)items[i];
                     IContainer container = null;
                     IResource resource = null;
 
