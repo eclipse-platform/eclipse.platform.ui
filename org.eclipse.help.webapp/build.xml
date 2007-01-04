@@ -60,7 +60,7 @@
 		<mkdir dir="${temp.folder}/webapp.jar.bin"/>
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/webapp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
-			<compilerarg line="${compilerArg}"/>
+			<compilerarg line="${compilerArg}" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 			<classpath>
 				<pathelement path="../org.eclipse.help.base/bin"/>
 				<pathelement path="../org.eclipse.help.base/@dot"/>
@@ -75,6 +75,7 @@
 				<pathelement path="../org.eclipse.core.expressions/@dot"/>
 				<pathelement path="../org.eclipse.equinox.common"/>
 				<pathelement path="../org.eclipse.equinox.common/@dot"/>
+				<pathelement path="../org.eclipse.equinox.common/bin"/>
 				<pathelement path="../org.eclipse.equinox.preferences"/>
 				<pathelement path="../org.eclipse.equinox.preferences/@dot"/>	
 				<pathelement path="../org.eclipse.osgi"/>
@@ -116,7 +117,7 @@
 		<mkdir dir="${temp.folder}/WEB-INF/lib/servlets.jar.bin"/>
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/WEB-INF/lib/servlets.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
-			<compilerarg line="${compilerArg}"/>
+			<compilerarg line="${compilerArg}" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 			<classpath>
 				<pathelement path="../org.eclipse.help.base/bin"/>
 				<pathelement path="../org.eclipse.help.base/@dot"/>
@@ -129,8 +130,10 @@
 				<pathelement path="../org.eclipse.core.runtime/@dot"/>
 				<pathelement path="../org.eclipse.core.expressions"/>
 				<pathelement path="../org.eclipse.core.expressions/@dot"/>
+				<pathelement path="../org.eclipse.core.expressions/bin"/>
 				<pathelement path="../org.eclipse.equinox.common"/>
 				<pathelement path="../org.eclipse.equinox.common/@dot"/>
+				<pathelement path="../org.eclipse.equinox.common/bin"/>
 				<pathelement path="../org.eclipse.equinox.preferences"/>
 				<pathelement path="../org.eclipse.equinox.preferences/@dot"/>	
 				<pathelement path="../org.eclipse.osgi"/>
@@ -198,7 +201,7 @@
 <!-- custom end -->	
 		<!-- compile the source code -->
 		<javac destdir="${temp.folder}/WEB-INF/lib/jsp.jar.bin" failonerror="${javacFailOnError}" verbose="${javacVerbose}" debug="${javacDebugInfo}" includeAntRuntime="no" bootclasspath="${bootclasspath}" source="${javacSource}" target="${javacTarget}"		>
-			<compilerarg line="${compilerArg}"/>
+			<compilerarg line="${compilerArg}" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 			<classpath>
 				<pathelement path="../org.eclipse.help.base/bin"/>
 				<pathelement path="../org.eclipse.help.base/@dot"/>
@@ -234,7 +237,7 @@
 			<src path="${temp.folder}/jsp.jar.src/"			/>
 			<compilerarg line="-log ${temp.folder}/WEB-INF/lib/jsp.jar.bin${logExtension}" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/> 
 <!-- custom begin -->
-			<compilerarg value="-warn:-serial" />
+			<compilerarg value="-warn:-serial" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 <!-- custom end -->	
 			</javac>
 		<!-- Copy necessary resources -->
