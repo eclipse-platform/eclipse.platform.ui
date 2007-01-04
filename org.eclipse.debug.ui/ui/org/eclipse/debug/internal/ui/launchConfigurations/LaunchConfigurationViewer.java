@@ -28,6 +28,8 @@ import org.eclipse.swt.widgets.TreeItem;
  */
 public class LaunchConfigurationViewer extends TreeViewer {
 
+	private int fTotalCount = 0;
+	
 	/**
 	 * Constructor
 	 * @param tree the tree to create the viewer on
@@ -112,6 +114,58 @@ public class LaunchConfigurationViewer extends TreeViewer {
 			return 0;
 		}
 		return -1;
+	}
+	
+	/**
+	 * Returns the total count of all of the children that <i>could</i> be visible at 
+	 * the time the input was set to the viewer
+	 * @return the total number of elements
+	 * 
+	 * @since 3.3
+	 */
+	protected int getTotalChildCount() {
+		return fTotalCount;
+	}
+	
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
+	 */
+	protected void inputChanged(Object input, Object oldInput) {
+		super.inputChanged(input, oldInput);
+		//calc the total number of items that could be visible in the view
+		LaunchConfigurationTreeContentProvider cp = (LaunchConfigurationTreeContentProvider) getContentProvider();
+		Object[] types = cp.getElements(null);
+		LaunchGroupFilter filter = new LaunchGroupFilter(((LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog()).getLaunchGroup());
+		for(int i = 0; i < types.length; i++) {
+			if(filter.select(this, types[i], null)) {
+				fTotalCount += cp.getChildren(types[i]).length + 1; //+1 for the type
+			}
+		}
+	}
+
+	/**
+	 * returns the number of children that are remaining in the view.
+	 * Note that this method will force the loading of all children
+	 * @return the count of all children in the viewer
+	 * 
+	 * @since 3.3
+	 */
+	protected int getNonFilteredChildCount() {
+		int count = 0;
+		getTree().setRedraw(false);
+		TreeItem[] items = getTree().getItems();
+		count += items.length;
+		boolean expanded = false;
+		TreeItem item = null;
+		for(int i = 0; i < items.length; i++) {
+			item = items[i];
+			expanded = item.getExpanded();
+			setExpandedState(item.getData(), true);
+			count += item.getItems().length;
+			item.setExpanded(expanded);
+		}
+		getTree().setRedraw(true);
+		return count;
 	}
 	
 	/**

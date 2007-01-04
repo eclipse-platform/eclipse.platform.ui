@@ -49,6 +49,11 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	private Shell fShell;
 	
+	/**
+	 * Constructor
+	 * @param mode the mode
+	 * @param shell the parent shell
+	 */
 	public LaunchConfigurationTreeContentProvider(String mode, Shell shell) {
 		setMode(mode);
 		setShell(shell);

@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
@@ -39,10 +40,13 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A tree view of launch configurations
@@ -81,6 +85,13 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 * @since 3.2
 	 */
 	private FilterLaunchConfigurationAction fFilterAction;
+	
+	/**
+	 * This label is used to notify users that items (possibly) have been filtered from the 
+	 * launch configuration view
+	 * @since 3.3
+	 */
+	private Label fFilteredNotice = null;
 	
 	/**
 	 * Whether to automatically select configs that are added
@@ -131,10 +142,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		return fTree.getLaunchConfigurationViewer();
 	}
 	
-	/*
-	 * Adds support for dynamic help
+	/**
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getAdapter(java.lang.Class)
 	 */
-	
 	public Object getAdapter(Class key) {
 		if (key == IContextProvider.class) {
 			return new IContextProvider () {
@@ -275,6 +285,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
                 if (isAutoSelect()) {
     				viewer.setSelection(new StructuredSelection(configuration), true);
     			}
+                updateFilterLabel();
 			} 
 			catch (CoreException e) {}
         }
@@ -355,6 +366,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 				viewer.setSelection(newSelection);
 			}
 		}
+		updateFilterLabel();
     }
 
     /**
@@ -376,6 +388,8 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		if (getViewer() instanceof StructuredViewer) {
 			((StructuredViewer)getViewer()).addDoubleClickListener(this);
 		}
+		fFilteredNotice = SWTUtil.createLabel(parent, "", 1); //$NON-NLS-1$
+		fFilteredNotice.setBackground(parent.getBackground());
 	}
 	
 	/**
@@ -383,6 +397,15 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 	 */
 	public Viewer getViewer() {
 		return fTree.getLaunchConfigurationViewer();
+	}
+	
+	/**
+	 * Updates the filter notification label
+	 * @since 3.3
+	 */
+	public void updateFilterLabel() {
+		LaunchConfigurationViewer viewer = (LaunchConfigurationViewer) getViewer();
+		fFilteredNotice.setText(MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationView_0, new String[] {Integer.toString(viewer.getNonFilteredChildCount()), Integer.toString(viewer.getTotalChildCount())}));
 	}
 	
 	/**

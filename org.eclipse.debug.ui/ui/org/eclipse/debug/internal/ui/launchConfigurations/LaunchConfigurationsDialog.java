@@ -446,6 +446,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
 		addContent(dialogComp);
+		fLaunchConfigurationView.updateFilterLabel();
 		return dialogComp;
 	}
 			
@@ -1471,8 +1472,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 				else if(event.getProperty().equals(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST)) {
 					if(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES)) {
 						viewer.refresh();
+						fLaunchConfigurationView.updateFilterLabel();
 					}
 				}
+				
 				return Status.OK_STATUS;
 			}
 		};
@@ -1492,5 +1495,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		else {
 			viewer.removeFilter(filter);
 		}
+		fLaunchConfigurationView.updateFilterLabel();
 	}
 }
