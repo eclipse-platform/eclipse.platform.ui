@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.commands;
 
+import java.util.LinkedHashSet;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IDebugCommand;
-import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.IDebugCommandHandler;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.internal.core.DebugOptions;
 
 /**
@@ -27,7 +31,7 @@ import org.eclipse.debug.internal.core.DebugOptions;
  * @since 3.3
  *
  */
-public abstract class DebugCommand implements IDebugCommand {
+public abstract class DebugCommand implements IDebugCommandHandler {
 	
 	/**
 	 * Scheduling rule to serialize commands on an object
@@ -64,41 +68,36 @@ public abstract class DebugCommand implements IDebugCommand {
 
 	}
    
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.commands.IDebugCommand#performCapability(java.lang.Object,
-	 *      org.eclipse.debug.internal.ui.viewers.provisional.IStatusMonitor)
-	 */
-	public boolean execute(final Object element, final IProgressMonitor monitor, final IStatusCollector collector) {
+	public boolean execute(final IDebugCommandRequest request) {
 		Job job = new Job(getExecuteTaskName()) {
-			protected IStatus run(IProgressMonitor pm) {
+			protected IStatus run(IProgressMonitor monitor) {
 				if (DebugOptions.DEBUG_COMMANDS) {
 					System.out.println("execute: " + DebugCommand.this); //$NON-NLS-1$
 				}
-				Object target = getTarget(element);
-				if (target != null) {
-					try {
-						pm.beginTask(getExecuteTaskName(), 1);
-						monitor.beginTask(getExecuteTaskName(), 1);
-						doExecute(target, monitor, collector);
-						monitor.worked(1);
-						pm.worked(1);
-					} catch (CoreException e) {
-						collector.setStatus(e.getStatus());
-						if (DebugOptions.DEBUG_COMMANDS) {
-							System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
-						}
+				request.begin();
+				Object[] elements = request.getElements();
+				Object[] targets = new Object[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					targets[i]= getTarget(elements[i]);
+				}
+				targets = coalesce(targets);
+				monitor.beginTask(getExecuteTaskName(), targets.length);
+				try {
+					doExecute(targets, monitor, request);
+				} catch (CoreException e) {
+					request.setStatus(e.getStatus());
+					if (DebugOptions.DEBUG_COMMANDS) {
+						System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
 					}
 				}
-				collector.done();
-				pm.setCanceled(monitor.isCanceled());
+				request.done();
+				monitor.setCanceled(request.isCanceled());
 				monitor.done();
-				pm.done();
 				return Status.OK_STATUS;
 			}
 		};
 		job.setSystem(true);
+		// TODO: rule?
 		job.schedule();
 		return isRemainEnabled();
 	}	
@@ -112,46 +111,52 @@ public abstract class DebugCommand implements IDebugCommand {
 		return false;
 	}
 	
-	public void canExecute(final Object element, final IProgressMonitor monitor, final IBooleanCollector collector) {
+	public void canExecute(final IEnabledStateRequest request) {
 		Job job = new Job(getEnablementTaskName()) {
-			protected IStatus run(IProgressMonitor pm) {
+			protected IStatus run(IProgressMonitor monitor) {
 				if (DebugOptions.DEBUG_COMMANDS) {
 					System.out.print("can execute command: " + DebugCommand.this); //$NON-NLS-1$
 				}
-				Object target = getTarget(element);
-				if (target != null) {
-					pm.beginTask(getEnablementTaskName(), 1);
-					monitor.beginTask(getEnablementTaskName(), 1);
+				request.begin();
+				Object[] elements = request.getElements();
+				Object[] targets = new Object[elements.length];
+				for (int i = 0; i < elements.length; i++) {
+					targets[i] = getTarget(elements[i]);
+					if (targets[i] == null) {
+						request.setEnabled(false);
+						request.setCanceled(true);
+						if (DebugOptions.DEBUG_COMMANDS) {
+							System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
+						}
+					}
+				}
+				if (!request.isCanceled()) {
+					targets = coalesce(targets);
+					monitor.beginTask(getEnablementTaskName(), targets.length);
 					try {
-						boolean executable = isExecutable(target, monitor, collector);
+						boolean executable = isExecutable(targets, monitor, request);
 						if (DebugOptions.DEBUG_COMMANDS) {
 							System.out.println(" >> " + executable); //$NON-NLS-1$
 						}
-						collector.setResult(executable);
-						monitor.worked(1);
-						pm.worked(1);
+						request.setEnabled(executable);
 					} catch (CoreException e) {
-						collector.setStatus(e.getStatus());
+						request.setStatus(e.getStatus());
+						request.setEnabled(false);
 						if (DebugOptions.DEBUG_COMMANDS) {
 							System.out.println(" >> ABORTED"); //$NON-NLS-1$
 							System.out.println("\t" + e.getStatus().getMessage()); //$NON-NLS-1$
 						}
 					}
-				} else {
-					collector.setResult(false);
-					if (DebugOptions.DEBUG_COMMANDS) {
-						System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
-					}
 				}
-				collector.done();
-				pm.setCanceled(monitor.isCanceled());
+				monitor.setCanceled(request.isCanceled());
+				request.done();
 				monitor.done();
-				pm.done();
 				return Status.OK_STATUS;
 			}
 		};
 		job.setSystem(true);
-		job.setRule(createUpdateSchedulingRule(element));
+		// TODO: rule for all elements?
+		job.setRule(createUpdateSchedulingRule(request));
 		job.schedule();
 		
 	}
@@ -181,19 +186,20 @@ public abstract class DebugCommand implements IDebugCommand {
 	/**
 	 * Executes the actual operation.
 	 * 
-	 * @param target object to perform on
-	 * @param monitor progress monitor
+	 * @param targets objects to perform on
+	 * @param request request
 	 */
-	protected abstract void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException;
+	protected abstract void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException;
 
 	/**
 	 * Returns whether this command is executable.
 	 * 
-	 * @param target object to check command for
+	 * @param targets objects to check command for
 	 * @param monitor progress monitor
+	 * @param request request
 	 * @return whether this command can be executed
 	 */
-	protected abstract boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException;
+	protected abstract boolean isExecutable(Object[] targets, IProgressMonitor monitor, IEnabledStateRequest request) throws CoreException;
 	
 	/**
 	 * Returns the appropriate command adapter from the given object.
@@ -204,11 +210,38 @@ public abstract class DebugCommand implements IDebugCommand {
 	protected abstract Object getTarget(Object element); 
 	
 	/**
-	 * Scheduling rule for checking capability.
+	 * Scheduling rule for updating command enabled state.
 	 * 
 	 * @return scheduling rule or <code>null</code>
 	 */
-	protected ISchedulingRule createUpdateSchedulingRule(Object element) {
-		return new SerialPerObjectRule(element);
+	protected ISchedulingRule createUpdateSchedulingRule(IDebugCommandRequest request) {
+		return new SerialPerObjectRule(request.getElements()[0]);
+	}
+	
+	private IStatus merge(IStatus nextStatus, IStatus prevStatus) {
+		if (prevStatus == null) {
+			return nextStatus;
+		}
+		MultiStatus ms = null;
+		if (prevStatus.isMultiStatus()) {
+			ms = (MultiStatus) prevStatus;
+		} else {
+			ms = new MultiStatus(prevStatus.getPlugin(), prevStatus.getCode(), prevStatus.getMessage(), null);
+			ms.add(prevStatus);
+		}
+		ms.add(nextStatus);
+		return ms;
+	}
+	
+	private Object[] coalesce(Object[] objects) {
+		if (objects.length == 1) {
+			return objects;
+		} else {
+			LinkedHashSet set = new LinkedHashSet(objects.length);
+			for (int i = 0; i < objects.length; i++) {
+				set.add(objects[i]);
+			}
+			return set.toArray();
+		}
 	}
 }

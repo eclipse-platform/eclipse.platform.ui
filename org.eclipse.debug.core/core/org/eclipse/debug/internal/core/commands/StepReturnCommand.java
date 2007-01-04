@@ -11,10 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.IStepReturnCommand;
+import org.eclipse.debug.core.commands.IStepReturnHandler;
 import org.eclipse.debug.core.model.IStep;
 
 /**
@@ -22,13 +19,13 @@ import org.eclipse.debug.core.model.IStep;
  * 
  * @since 3.3
  */
-public class StepReturnCommand extends StepCommand implements IStepReturnCommand {
+public class StepReturnCommand extends StepCommand implements IStepReturnHandler {
 
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
+	protected boolean isSteppable(Object target) {
 		return ((IStep)target).canStepReturn();
 	}
 
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
+	protected void step(Object target) throws CoreException {
 		((IStep)target).stepReturn();
 	}
 

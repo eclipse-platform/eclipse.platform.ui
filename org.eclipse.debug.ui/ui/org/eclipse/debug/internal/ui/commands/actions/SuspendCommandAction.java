@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.ISuspendCommand;
+import org.eclipse.debug.core.commands.ISuspendHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -53,6 +53,6 @@ public class SuspendCommandAction extends DebugCommandAction {
     }
 
 	protected Class getCommandType() {
-		return ISuspendCommand.class;
+		return ISuspendHandler.class;
 	}
 }

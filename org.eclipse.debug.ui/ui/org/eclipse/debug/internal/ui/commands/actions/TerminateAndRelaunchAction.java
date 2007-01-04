@@ -11,8 +11,8 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.ITerminateCommand;
+import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -29,34 +29,40 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 	
-	class RequestMonitor extends ActionStatusCollector {
+	class Particiapnt implements ICommandParticipant {
 		
-		private ILaunch fLaunch;
+		private Object[] fTargets;
 
-		public RequestMonitor(ILaunch launch) {
-			fLaunch = launch;
+		public Particiapnt(Object[] targets) {
+			fTargets = targets;
 		}
-		
-		public void done() {
-			super.done();
-	        DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-	            public void run() {
-	                // Must be run in the UI thread since the launch can require
-	                // prompting to proceed
-	                RelaunchActionDelegate.relaunch(fLaunch.getLaunchConfiguration(), fLaunch.getLaunchMode());
-	            }
-	        });			
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant#requestDone(org.eclipse.debug.core.commands.IRequest)
+		 */
+		public void requestDone(IRequest request) {
+			if (request.getStatus() == null || request.getStatus().isOK()) {
+				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+		            public void run() {
+		                // Must be run in the UI thread since the launch can require
+		                // prompting to proceed
+		            	for (int i = 0; i < fTargets.length; i++) {
+		            		ILaunch launch = RelaunchActionDelegate.getLaunch(fTargets[i]);
+		            		RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+						}
+		            }
+		        });	
+			}
 		}
 		
 	}
 
-	protected IStatusCollector createStatusMonitor(Object target) {
-		ILaunch launch = RelaunchActionDelegate.getLaunch(target);
-		return new RequestMonitor(launch);
+	protected ICommandParticipant getCommandParticipant(Object[] targets) {
+		return new Particiapnt(targets);
 	}
 
 	protected Class getCommandType() {
-		return ITerminateCommand.class;
+		return ITerminateHandler.class;
 	}
 
 	public void debugContextChanged(DebugContextEvent event) {

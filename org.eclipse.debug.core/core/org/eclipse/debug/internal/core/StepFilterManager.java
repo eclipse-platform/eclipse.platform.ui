@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
-import org.eclipse.debug.core.commands.IStepFiltersCommand;
-import org.eclipse.debug.internal.core.commands.StatusCollector;
+import org.eclipse.debug.core.commands.IStepFiltersHandler;
+import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
 
 /**
  * As targets are launched, this manager sets its step filter
@@ -52,9 +51,9 @@ public class StepFilterManager implements ILaunchListener {
 	 * @see org.eclipse.debug.core.ILaunchListener#launchChanged(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchChanged(ILaunch launch) {
-		IStepFiltersCommand command = (IStepFiltersCommand)launch.getAdapter(IStepFiltersCommand.class);
+		IStepFiltersHandler command = (IStepFiltersHandler)launch.getAdapter(IStepFiltersHandler.class);
 		if (command != null) {
-			command.execute(launch, new NullProgressMonitor(), new StatusCollector());
+			command.execute(new DebugCommandRequest(new Object[]{launch}));
 		}
 	}
 	

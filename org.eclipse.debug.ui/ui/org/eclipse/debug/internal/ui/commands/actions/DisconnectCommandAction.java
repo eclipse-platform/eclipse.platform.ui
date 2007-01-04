@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.IDisconnectCommand;
+import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -52,6 +52,6 @@ public class DisconnectCommandAction extends DebugCommandAction{
     }
 
 	protected Class getCommandType() {
-		return IDisconnectCommand.class;
+		return IDisconnectHandler.class;
 	}
 }

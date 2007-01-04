@@ -4,20 +4,18 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- *
+ * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.core.commands;
 
+
+
 /**
- * A resume command typically resumes execution of a suspended program.
+ * A request to update the enabled state of a command.
  * <p>
- * Clients may implement this interface. The debug platform provides a
- * resume action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the resume command registered
- * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.ISuspendResume}.
+ * Clients are not intended to implement this interface.
  * </p>
  * @since 3.3
  * <p>
@@ -27,6 +25,12 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IResumeCommand extends IDebugCommand {
+public interface IEnabledStateRequest extends IDebugCommandRequest {
 
+	/**
+	 * Sets the enabled state of a command handler.
+	 * 
+	 * @param result whether enabled
+	 */
+	public void setEnabled(boolean result);
 }

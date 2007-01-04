@@ -11,10 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IResumeCommand;
-import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.IResumeHandler;
 import org.eclipse.debug.core.model.ISuspendResume;
 
 /**
@@ -22,14 +19,14 @@ import org.eclipse.debug.core.model.ISuspendResume;
  * 
  * @since 3.3
  */
-public class ResumeCommand extends SuspendCommand implements IResumeCommand {
+public class ResumeCommand extends SuspendCommand implements IResumeHandler {
 
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((ISuspendResume)target).canResume();
+	protected void execute(Object target) throws CoreException {
+		((ISuspendResume)target).resume();
 	}
 
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((ISuspendResume)target).resume();
+	protected boolean isExecutable(Object target) {
+		return ((ISuspendResume)target).canResume();
 	}
 
 }

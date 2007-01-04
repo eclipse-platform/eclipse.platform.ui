@@ -12,10 +12,7 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.ISuspendCommand;
+import org.eclipse.debug.core.commands.ISuspendHandler;
 import org.eclipse.debug.core.model.ISuspendResume;
 
 /**
@@ -23,15 +20,7 @@ import org.eclipse.debug.core.model.ISuspendResume;
  * 
  * @since 3.3
  */
-public class SuspendCommand extends DebugCommand implements ISuspendCommand {
-
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((ISuspendResume)target).canSuspend();
-	}
-
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((ISuspendResume)target).suspend();
-	}
+public class SuspendCommand extends ForEachCommand implements ISuspendHandler {
 
 	protected Object getTarget(Object element) {
 		if (element instanceof ISuspendResume) {
@@ -40,5 +29,13 @@ public class SuspendCommand extends DebugCommand implements ISuspendCommand {
 			return ((IAdaptable) element).getAdapter(ISuspendResume.class);
 		}
 		return null;
+	}
+
+	protected void execute(Object target) throws CoreException {
+		((ISuspendResume)target).suspend();
+	}
+	
+	protected boolean isExecutable(Object target) {
+		return ((ISuspendResume)target).canSuspend();
 	}
 }

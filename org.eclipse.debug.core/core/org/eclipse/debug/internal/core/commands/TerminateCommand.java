@@ -12,10 +12,7 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.ITerminateCommand;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.ITerminate;
 
 /**
@@ -23,15 +20,7 @@ import org.eclipse.debug.core.model.ITerminate;
  * 
  * @since 3.3
  */
-public class TerminateCommand extends DebugCommand implements ITerminateCommand {
-
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((ITerminate)target).canTerminate();
-	}
-
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((ITerminate)target).terminate();
-	}
+public class TerminateCommand extends ForEachCommand implements ITerminateHandler {
 
 	protected Object getTarget(Object element) {
 		if (element instanceof ITerminate) {
@@ -40,5 +29,13 @@ public class TerminateCommand extends DebugCommand implements ITerminateCommand 
 			return ((IAdaptable) element).getAdapter(ITerminate.class);
 		}
 		return null;
+	}
+
+	protected void execute(Object target) throws CoreException {
+		((ITerminate)target).terminate();
+	}
+
+	protected boolean isExecutable(Object target) {
+		return ((ITerminate)target).canTerminate();
 	}
 }

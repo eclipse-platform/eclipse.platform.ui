@@ -14,7 +14,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
-import org.eclipse.debug.core.commands.ITerminateCommand;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -92,7 +92,7 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 	}
 
 	protected Class getCommandType() {
-		return ITerminateCommand.class;
+		return ITerminateHandler.class;
 	}
 
 	/* (non-Javadoc)

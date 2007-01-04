@@ -13,8 +13,8 @@ package org.eclipse.debug.internal.ui.commands.actions;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.ITerminateCommand;
+import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -30,27 +30,34 @@ import org.eclipse.jface.resource.ImageDescriptor;
 public class TerminateAndRemoveAction extends DebugCommandAction {
 
     
-    class TerminateAndRemoveMonitor extends ActionStatusCollector {
-        private Object fElement;
-        TerminateAndRemoveMonitor(Object element) {
-            fElement = element;
+    class TerminateAndRemoveParticipant implements ICommandParticipant {
+        private Object[] fElements;
+        
+        TerminateAndRemoveParticipant(Object[] elements) {
+            fElements = elements;
         }
-        public void done() {
-            IStatus status = getStatus();
+        
+		/* (non-Javadoc)
+		 * @see org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant#requestDone(org.eclipse.debug.core.commands.IRequest)
+		 */
+		public void requestDone(IRequest request) {
+			IStatus status = request.getStatus();
 			if(status == null || status.isOK()) {
-                ILaunch launch= null;
-                if (fElement instanceof ILaunch) {
-                    launch= (ILaunch) fElement;
-                } else if (fElement instanceof IDebugElement) {
-                    launch= ((IDebugElement) fElement).getLaunch();
-                } else if (fElement instanceof IProcess) {
-                    launch= ((IProcess) fElement).getLaunch();
-                }   
-                if (launch != null)
-                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
+				for (int i = 0; i < fElements.length; i++) {
+					Object element = fElements[i];
+	                ILaunch launch= null;
+	                if (element instanceof ILaunch) {
+	                    launch= (ILaunch) element;
+	                } else if (element instanceof IDebugElement) {
+	                    launch= ((IDebugElement) element).getLaunch();
+	                } else if (element instanceof IProcess) {
+	                    launch= ((IProcess) element).getLaunch();
+	                }   
+	                if (launch != null)
+	                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);					
+				}
             }
-            super.done();
-        }
+		}
         
     }
 
@@ -83,11 +90,11 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
     }
 
     protected Class getCommandType() {
-		return ITerminateCommand.class;
+		return ITerminateHandler.class;
 	}
 
-	protected IStatusCollector createStatusMonitor(Object target) {
-		return new TerminateAndRemoveMonitor(target);
+	protected ICommandParticipant getCommandParticipant(Object[] targets) {
+		return new TerminateAndRemoveParticipant(targets);
 	}
 
     

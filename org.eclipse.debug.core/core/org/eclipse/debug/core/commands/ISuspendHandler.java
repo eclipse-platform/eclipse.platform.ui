@@ -11,14 +11,13 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A drop to frame command typically resets a program's instruction pointer
- * to the first executable line of code associated with a stack frame.
+ * A suspend handler typically suspends an executing program.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * drop to frame action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the drop to frame command registered
+ * suspend action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the suspend handler registered
  * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.IDropToFrame}.
+ * {@link org.eclipse.debug.core.model.ISuspendResume}.
  * </p>
  * @since 3.3
  * <p>
@@ -28,6 +27,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IDropToFrameCommand extends IDebugCommand {
+public interface ISuspendHandler extends IDebugCommandHandler {
 
 }

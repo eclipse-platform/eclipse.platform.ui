@@ -11,13 +11,14 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A terminate command typically terminates an executing program.
+ * A step filters handler typically toggles the use of step filters
+ * in a debug session.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * terminate action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the terminate command registered
+ * toggle step filters action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the step filters handler registered
  * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.ITerminate}.
+ * {@link org.eclipse.debug.core.model.IStepFilters}.
  * </p>
  * @since 3.3
  * <p>
@@ -27,6 +28,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface ITerminateCommand extends IDebugCommand {
+public interface IStepFiltersHandler extends IDebugCommandHandler {
 
 }

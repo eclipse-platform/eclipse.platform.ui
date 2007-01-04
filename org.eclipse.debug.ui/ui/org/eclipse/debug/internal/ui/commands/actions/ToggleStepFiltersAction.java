@@ -12,10 +12,10 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.debug.core.commands.IStepFiltersCommand;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.commands.IStepFiltersHandler;
 import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.DebugUITools;
@@ -92,7 +92,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandAction#getCommandType()
 	 */
 	protected Class getCommandType() {
-		return IStepFiltersCommand.class;
+		return IStepFiltersHandler.class;
 	}
 
     /**
@@ -148,7 +148,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
      * Initializes the state, by adding this action as a property listener 
      */
     protected void initState() {
-    	DebugUIPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+    	DebugPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
     }
 
 	/**
@@ -156,7 +156,7 @@ public class ToggleStepFiltersAction extends DebugCommandAction implements IProp
 	 */
 	public void dispose() {
 		super.dispose();
-		DebugUIPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
+		DebugPlugin.getDefault().getPluginPreferences().removePropertyChangeListener(this);
 	}
 
 	/**

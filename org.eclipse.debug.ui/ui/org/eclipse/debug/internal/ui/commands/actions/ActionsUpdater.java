@@ -10,48 +10,44 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.internal.core.commands.StatusCollector;
 import org.eclipse.jface.action.IAction;
 
 /**
- * Boolean collector that collects boolean results from a number of voters.
- * Request is cancelled when one voter votes false.
+ * Collects votes from handler update requests.
  * 
  * @since 3.3
  *
  */
-public class BooleanCollector extends StatusCollector implements IBooleanCollector {
+public class ActionsUpdater {
 	
-	private IAction fAction;
+	private IAction[] fActions;
 	private int fNumVoters;
 	private int fNumOfVotes = 0;
+	private boolean fDone = false;
 	private boolean fEnabled = true;
 	
-	public BooleanCollector(IAction action, int numVoters) {
-		fAction = action;
+	public ActionsUpdater(IAction[] actions, int numVoters) {
+		fActions = actions;
 		fNumVoters = numVoters;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.actions.provisional.IBooleanRequestMonitor#setResult(boolean)
-	 */
-	public void setResult(boolean result) {
+	public synchronized void setEnabled(boolean result) {
 		fNumOfVotes++;
 		if (fEnabled) {
 			fEnabled = result;
 		}
+		done();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
-	 */
-	public void done() {
-		if (!fEnabled) {
-			fAction.setEnabled(false);
-		} else {
-			fAction.setEnabled(fNumOfVotes == fNumVoters);
-		} 
+	private synchronized void done() {
+		if (!fDone) {
+			if (!fEnabled || fNumOfVotes == fNumVoters) {
+				fDone = true;
+				for (int i = 0; i < fActions.length; i++) {
+					fActions[i].setEnabled(fEnabled);
+				}
+			}
+		}
 	}
 
 }

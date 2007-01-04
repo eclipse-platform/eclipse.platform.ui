@@ -12,15 +12,15 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.commands.IDisconnectCommand;
-import org.eclipse.debug.core.commands.IDropToFrameCommand;
-import org.eclipse.debug.core.commands.IResumeCommand;
-import org.eclipse.debug.core.commands.IStepFiltersCommand;
-import org.eclipse.debug.core.commands.IStepIntoCommand;
-import org.eclipse.debug.core.commands.IStepOverCommand;
-import org.eclipse.debug.core.commands.IStepReturnCommand;
-import org.eclipse.debug.core.commands.ISuspendCommand;
-import org.eclipse.debug.core.commands.ITerminateCommand;
+import org.eclipse.debug.core.commands.IDisconnectHandler;
+import org.eclipse.debug.core.commands.IDropToFrameHandler;
+import org.eclipse.debug.core.commands.IResumeHandler;
+import org.eclipse.debug.core.commands.IStepFiltersHandler;
+import org.eclipse.debug.core.commands.IStepIntoHandler;
+import org.eclipse.debug.core.commands.IStepOverHandler;
+import org.eclipse.debug.core.commands.IStepReturnHandler;
+import org.eclipse.debug.core.commands.ISuspendHandler;
+import org.eclipse.debug.core.commands.ITerminateHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IDropToFrame;
@@ -38,21 +38,21 @@ import org.eclipse.debug.core.model.ITerminate;
 public class CommandAdapterFactory implements IAdapterFactory {
 	
 	
-	private static ITerminateCommand fgTerminateCommand = new TerminateCommand();
-	private static IStepOverCommand fgStepOverCommand = new StepOverCommand();
-	private static IStepIntoCommand fgStepIntoCommand = new StepIntoCommand();
-	private static IStepReturnCommand fgStepReturnCommand = new StepReturnCommand();
-	private static IDropToFrameCommand fgDropToFrameCommand = new DropToFrameCommand();
-	private static IDisconnectCommand fgDisconnectCommand = new DisconnectCommand();
-	private static ISuspendCommand fgSuspendCommand = new SuspendCommand();
-	private static IResumeCommand fgResumeCommand = new ResumeCommand();
-	private static IStepFiltersCommand fgStepFiltersCommand = new StepFiltersCommand();
+	private static ITerminateHandler fgTerminateCommand = new TerminateCommand();
+	private static IStepOverHandler fgStepOverCommand = new StepOverCommand();
+	private static IStepIntoHandler fgStepIntoCommand = new StepIntoCommand();
+	private static IStepReturnHandler fgStepReturnCommand = new StepReturnCommand();
+	private static IDropToFrameHandler fgDropToFrameCommand = new DropToFrameCommand();
+	private static IDisconnectHandler fgDisconnectCommand = new DisconnectCommand();
+	private static ISuspendHandler fgSuspendCommand = new SuspendCommand();
+	private static IResumeHandler fgResumeCommand = new ResumeCommand();
+	private static IStepFiltersHandler fgStepFiltersCommand = new StepFiltersCommand();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
 	 */
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
-		if (IStepFiltersCommand.class.equals(adapterType)) {
+		if (IStepFiltersHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IDebugElement ||
 				adaptableObject instanceof ILaunch || 
 				adaptableObject instanceof IProcess) {
@@ -60,42 +60,42 @@ public class CommandAdapterFactory implements IAdapterFactory {
 			}
 		}
 		
-		if (ITerminateCommand.class.equals(adapterType)) {
+		if (ITerminateHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof ITerminate) {
 				return fgTerminateCommand;
 			}
 		}
-		if (IStepOverCommand.class.equals(adapterType)) {
+		if (IStepOverHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IStep) {
 				return fgStepOverCommand;
 			}
 		}
-		if (IStepIntoCommand.class.equals(adapterType)) {
+		if (IStepIntoHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IStep) {
 				return fgStepIntoCommand;
 			}
 		}
-		if (IStepReturnCommand.class.equals(adapterType)) {
+		if (IStepReturnHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IStep) {
 				return fgStepReturnCommand;
 			}
 		}
-		if (ISuspendCommand.class.equals(adapterType)) {
+		if (ISuspendHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof ISuspendResume) {
 				return fgSuspendCommand;
 			}
 		}
-		if (IResumeCommand.class.equals(adapterType)) {
+		if (IResumeHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof ISuspendResume) {
 				return fgResumeCommand;
 			}
 		}
-		if (IDisconnectCommand.class.equals(adapterType)) {
+		if (IDisconnectHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IDisconnect) {
 				return fgDisconnectCommand;
 			}
 		}
-		if (IDropToFrameCommand.class.equals(adapterType)) {
+		if (IDropToFrameHandler.class.equals(adapterType)) {
 			if (adaptableObject instanceof IDropToFrame) {
 				return fgDropToFrameCommand;
 			}
@@ -108,15 +108,15 @@ public class CommandAdapterFactory implements IAdapterFactory {
 	 */
 	public Class[] getAdapterList() {
 		return new Class[]{
-				ITerminateCommand.class,
-				IStepOverCommand.class,
-				IStepIntoCommand.class,
-				IStepReturnCommand.class,
-				ISuspendCommand.class,
-				IResumeCommand.class,
-				IDropToFrameCommand.class,
-				IDisconnectCommand.class,
-				IStepFiltersCommand.class};
+				ITerminateHandler.class,
+				IStepOverHandler.class,
+				IStepIntoHandler.class,
+				IStepReturnHandler.class,
+				ISuspendHandler.class,
+				IResumeHandler.class,
+				IDropToFrameHandler.class,
+				IDisconnectHandler.class,
+				IStepFiltersHandler.class};
 	}
 
 }

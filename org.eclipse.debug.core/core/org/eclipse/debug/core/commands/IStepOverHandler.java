@@ -11,13 +11,14 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A suspend command typically suspends an executing program.
+ * A step over handler typically steps over the next instruction or line
+ * of code to be executed.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * suspend action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the suspend command registered
+ * step over action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the step over handler registered
  * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.ISuspendResume}.
+ * {@link org.eclipse.debug.core.model.IStep}.
  * </p>
  * @since 3.3
  * <p>
@@ -27,6 +28,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface ISuspendCommand extends IDebugCommand {
+public interface IStepOverHandler extends IDebugCommandHandler {
 
 }

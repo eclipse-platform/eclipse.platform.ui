@@ -12,10 +12,7 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IDropToFrameCommand;
-import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.IDropToFrameHandler;
 import org.eclipse.debug.core.model.IDropToFrame;
 
 /**
@@ -23,15 +20,7 @@ import org.eclipse.debug.core.model.IDropToFrame;
  * 
  * @since 3.3
  */
-public class DropToFrameCommand extends DebugCommand implements IDropToFrameCommand {
-
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((IDropToFrame)target).canDropToFrame();
-	}
-
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((IDropToFrame)target).dropToFrame();
-	}
+public class DropToFrameCommand extends StepCommand implements IDropToFrameHandler {
 
 	protected Object getTarget(Object element) {
 		if (element instanceof IDropToFrame) {
@@ -40,5 +29,19 @@ public class DropToFrameCommand extends DebugCommand implements IDropToFrameComm
 			return ((IAdaptable) element).getAdapter(IDropToFrame.class);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.StepCommand#isSteppable(java.lang.Object)
+	 */
+	protected boolean isSteppable(Object target) throws CoreException {
+		return ((IDropToFrame)target).canDropToFrame();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.StepCommand#step(java.lang.Object)
+	 */
+	protected void step(Object target) throws CoreException {
+		((IDropToFrame)target).dropToFrame();
 	}
 }

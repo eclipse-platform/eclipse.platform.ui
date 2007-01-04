@@ -11,14 +11,13 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A step into command typically steps into the next instruction to
- * be executed.
+ * A resume handler typically resumes execution of a suspended program.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * step into action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the step into command registered
+ * resume action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the resume handler registered
  * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.IStep}.
+ * {@link org.eclipse.debug.core.model.ISuspendResume}.
  * </p>
  * @since 3.3
  * <p>
@@ -28,6 +27,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IStepIntoCommand extends IDebugCommand {
+public interface IResumeHandler extends IDebugCommandHandler {
 
 }

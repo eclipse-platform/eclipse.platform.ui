@@ -10,34 +10,25 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core.commands;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 
 /**
  * @since 3.3
  */
-public class StatusCollector implements IStatusCollector {
+public class DebugCommandRequest extends Request implements IDebugCommandRequest {
 	
-	private IStatus fStatus;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#done()
-	 */
-	public void done() {
+	private Object[] fElements;
+	
+	public DebugCommandRequest(Object[] elements) {
+		fElements = elements;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#getStatus()
+	 * @see org.eclipse.debug.core.commands.IDebugCommandRequest#getElements()
 	 */
-	public IStatus getStatus() {
-		return fStatus;
+	public Object[] getElements() {
+		return fElements;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#setStatus(org.eclipse.core.runtime.IStatus)
-	 */
-	public void setStatus(IStatus status) {
-		fStatus = status;
-	}
-
+	
 }

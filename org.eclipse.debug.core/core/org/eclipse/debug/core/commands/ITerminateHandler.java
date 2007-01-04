@@ -11,14 +11,13 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A step over command typically steps over the next instruction or line
- * of code to be executed.
+ * A terminate handler typically terminates an executing program.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * step over action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the step over command registered
+ * terminate action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the terminate handler registered
  * as an adapter on objects that implement
- * {@link org.eclipse.debug.core.model.IStep}.
+ * {@link org.eclipse.debug.core.model.ITerminate}.
  * </p>
  * @since 3.3
  * <p>
@@ -28,6 +27,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IStepOverCommand extends IDebugCommand {
+public interface ITerminateHandler extends IDebugCommandHandler {
 
 }

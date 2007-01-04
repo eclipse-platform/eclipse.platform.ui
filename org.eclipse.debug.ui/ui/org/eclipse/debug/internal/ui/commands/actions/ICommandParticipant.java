@@ -8,19 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.core.commands;
+package org.eclipse.debug.internal.ui.commands.actions;
+
+import org.eclipse.debug.core.IRequest;
 
 /**
- * A disconnect command disconnects the debug user interface from
- * a debug session. Typically a disconnect command is supported by remote
- * debuggers allowing the debug user interface to disconnect and the
- * remote process to continue.
- * <p>
- * Clients may implement this interface. The debug platform provides a
- * disconnect action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the disconnect command registered
- * as an adapter on objects that implement {@link org.eclipse.debug.core.model.IDisconnect}.
- * </p>
+ * Adds function to a command on completion.
+ *
  * @since 3.3
  * <p>
  * <strong>EXPERIMENTAL</strong>. This interface has been added as
@@ -29,6 +23,7 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IDisconnectCommand extends IDebugCommand {
-
+public interface ICommandParticipant {
+	
+	public void requestDone(IRequest request);
 }

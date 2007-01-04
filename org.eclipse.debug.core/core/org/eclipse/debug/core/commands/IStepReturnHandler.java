@@ -11,12 +11,12 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A step return command typically steps out of the current method or function
+ * A step return handler typically steps out of the current method or function
  * that the debugger is suspended in.
  * <p>
  * Clients may implement this interface. The debug platform provides a
- * step return action that delegates to this command interface. As well, the
- * debug platform provides an implementation of the step return command registered
+ * step return action that delegates to this handler interface. As well, the
+ * debug platform provides an implementation of the step return handler registered
  * as an adapter on objects that implement
  * {@link org.eclipse.debug.core.model.IStep}.
  * </p>
@@ -28,6 +28,6 @@ package org.eclipse.debug.core.commands;
  * without consulting with the Platform/Debug team.
  * </p>
  */
-public interface IStepReturnCommand extends IDebugCommand {
+public interface IStepReturnHandler extends IDebugCommandHandler {
 
 }

@@ -12,12 +12,9 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.IStepFiltersCommand;
+import org.eclipse.debug.core.commands.IStepFiltersHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -28,26 +25,7 @@ import org.eclipse.debug.core.model.IStepFilters;
  * 
  * @since 3.3
  */
-public class StepFiltersCommand extends DebugCommand implements IStepFiltersCommand {
-
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		IStepFilters[] filters = (IStepFilters[]) target;
-		for (int i = 0; i < filters.length; i++) {
-			IStepFilters filter = filters[i];
-			if (filter == null || !filter.supportsStepFilters()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		IStepFilters[] filters = (IStepFilters[]) target;
-		for (int i = 0; i < filters.length; i++) {
-			IStepFilters filter = filters[i];
-			filter.setStepFiltersEnabled(DebugPlugin.isUseStepFilters());
-		}
-	}
+public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHandler {
 
 	protected Object getTarget(Object element) {
 		IDebugTarget[] targets = getDebugTargets(element);
@@ -82,5 +60,33 @@ public class StepFiltersCommand extends DebugCommand implements IStepFiltersComm
 		} else {
 			return new IDebugTarget[0];
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#execute(java.lang.Object)
+	 */
+	protected void execute(Object target) throws CoreException {
+		if (target == null) {
+			return;
+		}
+		IStepFilters[] filters = (IStepFilters[]) target;
+		for (int i = 0; i < filters.length; i++) {
+			IStepFilters filter = filters[i];
+			filter.setStepFiltersEnabled(DebugPlugin.isUseStepFilters());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#isExecutable(java.lang.Object)
+	 */
+	protected boolean isExecutable(Object target) {
+		IStepFilters[] filters = (IStepFilters[]) target;
+		for (int i = 0; i < filters.length; i++) {
+			IStepFilters filter = filters[i];
+			if (filter == null || !filter.supportsStepFilters()) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

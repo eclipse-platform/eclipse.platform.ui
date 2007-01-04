@@ -11,7 +11,7 @@
 
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.IStepOverCommand;
+import org.eclipse.debug.core.commands.IStepOverHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -57,7 +57,7 @@ public class StepOverCommandAction extends DebugCommandAction {
     }
  
 	protected Class getCommandType() {
-		return IStepOverCommand.class;
+		return IStepOverHandler.class;
 	}
 
 }

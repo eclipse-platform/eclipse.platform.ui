@@ -11,7 +11,7 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.debug.internal.core.commands.StatusCollector;
+import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,14 +22,19 @@ import org.eclipse.jface.dialogs.MessageDialog;
  * @since 3.3
  * 
  */
-public class ActionStatusCollector extends StatusCollector {
+public class ExecuteActionRequest extends DebugCommandRequest {
+	
+	private ICommandParticipant fParticipant = null;
+	
+	public ExecuteActionRequest(Object[] elements) {
+		super(elements);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.core.runtime.IProgressMonitor#done()
-     */
     public void done() {
+    	if (fParticipant != null) {
+			fParticipant.requestDone(this);
+			fParticipant = null;
+		}
         final IStatus status = getStatus();
         if (status != null) {
             switch (status.getSeverity()) {
@@ -57,5 +62,9 @@ public class ActionStatusCollector extends StatusCollector {
             }
         }
     }
+    
+	public void setCommandParticipant(ICommandParticipant participant) {
+		fParticipant = participant;
+	}
 
 }

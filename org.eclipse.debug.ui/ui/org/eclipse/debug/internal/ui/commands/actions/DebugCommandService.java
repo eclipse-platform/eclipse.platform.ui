@@ -10,19 +10,21 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IDebugCommand;
+import org.eclipse.debug.core.commands.IDebugCommandHandler;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWindowListener;
@@ -37,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 public class DebugCommandService implements IDebugContextListener {
 	
 	/**
-	 * Maps command types to update monitors
+	 * Maps command types to actions to update
 	 */
 	private Map fCommandUpdates = new HashMap();
 	
@@ -108,14 +110,14 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param monitor
 	 */
-	public void postUpdateCommand(Class commandType, IBooleanCollector monitor) {
+	public void postUpdateCommand(Class commandType, Action action) {
 		synchronized (fCommandUpdates) {
-			ProxyBooleanCollector proxy = (ProxyBooleanCollector) fCommandUpdates.get(commandType);
-			if (proxy == null) {
-				proxy = new ProxyBooleanCollector();
-				fCommandUpdates.put(commandType, proxy);
+			List actions = (List) fCommandUpdates.get(commandType);
+			if (actions == null) {
+				actions = new ArrayList();
+				fCommandUpdates.put(commandType, actions);
 			}
-			proxy.addMonitor(monitor);					
+			actions.add(action);					
 		}
 	}
 	
@@ -125,16 +127,13 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param requestMonitor
 	 */
-	public void updateCommand(Class commandType, IBooleanCollector requestMonitor) {
+	public void updateCommand(Class commandType, IAction action) {
 		ISelection context = fContextService.getActiveContext();
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			ProxyBooleanCollector monitor = new ProxyBooleanCollector();
-			monitor.addMonitor(requestMonitor);
-			updateCommand(commandType, elements, monitor);
+			updateCommand(commandType, elements, new IAction[]{action});
 		} else {
-			requestMonitor.setResult(false);
-			requestMonitor.done();
+			action.setEnabled(false);
 		}
 	}	
 	
@@ -150,15 +149,17 @@ public class DebugCommandService implements IDebugContextListener {
 			while (iterator.hasNext()) {
 				Entry entry = (Entry) iterator.next();
 				Class commandType = (Class)entry.getKey();
-				ProxyBooleanCollector monitor = (ProxyBooleanCollector) entry.getValue();
-				updateCommand(commandType, elements, monitor);
+				List actions = (List) entry.getValue();
+				updateCommand(commandType, elements, (IAction[]) actions.toArray(new IAction[actions.size()]));
 			}
 		} else {
 			Iterator iterator = commands.values().iterator();
 			while (iterator.hasNext()) {
-				ProxyBooleanCollector monitor = (ProxyBooleanCollector) iterator.next();
-				monitor.setResult(false);
-				monitor.done();
+				List actionList = (List) iterator.next();
+				Iterator actions = actionList.iterator();
+				while (actions.hasNext()) {
+					((IAction)actions.next()).setEnabled(false);
+				}
 			}
 		}
 		commands.clear();		
@@ -171,35 +172,111 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param elements elements to update for
 	 * @param monitor status monitor
 	 */
-	private void updateCommand(Class commandType, Object[] elements, ProxyBooleanCollector monitor) {
-		IDebugCommand[] commands = new IDebugCommand[elements.length];
-		int numVoters = 0;
-		for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
-			if (element instanceof IAdaptable) {
-				IDebugCommand command = (IDebugCommand) ((IAdaptable)element).getAdapter(commandType);
-				if (command != null) {
-					commands[i] = command;
-					numVoters++;
-				} else {
-					monitor.setResult(false);
-					monitor.done();
-					return;
+	private void updateCommand(Class handlerType, Object[] elements, IAction[] actions) {
+		if (elements.length == 1) {
+			// usual case - one element
+			Object element = elements[0];
+			IDebugCommandHandler handler = getHandler(element, handlerType);
+			if (handler != null) {
+				UpdateActionsRequest request = new UpdateActionsRequest(elements, actions);
+				handler.canExecute(request);
+				return;
+			}
+		} else {
+			Map map = collate(elements, handlerType);
+			if (map != null) {
+				ActionsUpdater updater = new ActionsUpdater(actions, map.size());
+				Iterator entries = map.entrySet().iterator();
+				while (entries.hasNext()) {
+					Entry entry = (Entry) entries.next();
+					IDebugCommandHandler handler = (IDebugCommandHandler) entry.getKey();
+					List list = (List) entry.getValue();
+					UpdateHandlerRequest request = new UpdateHandlerRequest(list.toArray(), updater);
+					handler.canExecute(request);
 				}
+				return;
 			}
 		}
-		if (monitor.isEnabled()) {
-			monitor.setNumVoters(numVoters);
-			for (int i = 0; i < commands.length; i++) {
-				IDebugCommand command = commands[i];
-				command.canExecute(elements[i], new NullProgressMonitor(), monitor);
-			}
+		// ABORT - no command processors
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].setEnabled(false);
 		}
 	}
+	
+	/**
+	 * Updates the given command type for the specified elements.
+	 * 
+	 * @param commandType command class to update
+	 * @param elements elements to update for
+	 * @param monitor status monitor
+	 */
+	public boolean executeCommand(Class handlerType, Object[] elements, ICommandParticipant participant) {
+		if (elements.length == 1) {
+			// usual case - one element
+			Object element = elements[0];
+			IDebugCommandHandler handler = getHandler(element, handlerType);
+			if (handler != null) {
+				ExecuteActionRequest request = new ExecuteActionRequest(elements);
+				request.setCommandParticipant(participant);
+				return handler.execute(request);
+			}
+		} else {
+			Map map = collate(elements, handlerType);
+			if (map != null) {
+				boolean enabled = true;
+				Iterator entries = map.entrySet().iterator();
+				while (entries.hasNext()) {
+					Entry entry = (Entry) entries.next();
+					IDebugCommandHandler handler = (IDebugCommandHandler) entry.getKey();
+					List list = (List) entry.getValue();
+					ExecuteActionRequest request = new ExecuteActionRequest(list.toArray());
+					request.setCommandParticipant(participant);
+					// specifically use & so handler is executed
+					enabled = enabled & handler.execute(request);
+				}
+				return enabled;
+			}
+		}
+		// ABORT - no command processors
+		return false;
+	}	
 
 	public void debugContextChanged(DebugContextEvent event) {
 		postUpdate(event.getContext());
 	}	
 	
+	/**
+	 * Returns a map of command handlers to associated elements, or <code>null</code> if 
+	 * one is missing.
+	 * 
+	 * @param elements
+	 * @return map of command handlers to associated elements or <code>null</code>
+	 */
+	private Map collate(Object[] elements, Class handlerType) {
+		Map map = new HashMap();
+ 		for (int i = 0; i < elements.length; i++) {
+ 			Object element = elements[i];
+ 			IDebugCommandHandler handler = getHandler(element, handlerType);
+			if (handler == null) {
+				return null;
+			} else {
+				List list = (List) map.get(handler);
+				if (list == null) {
+					list = new ArrayList();
+					map.put(handler, list);
+	 				}
+				list.add(element);
+	 			}
+	 		}
+		return map;
+	}
 	
+	private IDebugCommandHandler getHandler(Object element, Class handlerType) {
+		IDebugCommandHandler handler = null;
+		if (element instanceof IAdaptable) {
+			handler = (IDebugCommandHandler)((IAdaptable)element).getAdapter(handlerType);
+		}
+		return handler;
+	}
+
 }

@@ -11,12 +11,6 @@
 
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import java.util.Iterator;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.commands.IDebugCommand;
-import org.eclipse.debug.core.commands.IStatusCollector;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -82,25 +76,17 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * 
      * @param target the target to perform the action on
      */
-    protected boolean execute(Object target) {
-    	if (target instanceof IAdaptable) {
-			IAdaptable adaptable = (IAdaptable) target;
-			IDebugCommand capability = (IDebugCommand) adaptable.getAdapter(getCommandType());
-			if (capability != null) {
-				return capability.execute(target, new NullProgressMonitor(), createStatusMonitor(target));
-			}
-		}
-    	return false;
+    protected boolean execute(Object[] targets) {
+    	return fUpdateService.executeCommand(getCommandType(), targets, getCommandParticipant(targets));
     }
     
     /**
-     * Creates and returns the status monitor to execute this action with.
+     * Creates and returns the command participant or <code>null</code>.
      * 
-     * @param target target of the command
-     * @return status monitor to execute with
+     * @return command participant to use on command completion
      */
-    protected IStatusCollector createStatusMonitor(Object target) {
-    	return new ActionStatusCollector();
+    protected ICommandParticipant getCommandParticipant(Object[] targets) {
+    	return null;
     }
     
     /**
@@ -108,20 +94,13 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
      * 
      * @return command class.
      */
-    abstract protected Class getCommandType();
-    
-    /**
-     * @param context
-     */
-    public void update(ISelection context) {
-    	fUpdateService.postUpdateCommand(getCommandType(), new CommandStateCollector(this));
-    }    
+    abstract protected Class getCommandType();  
 
     /**
      * @see org.eclipse.debug.ui.contexts.IDebugContextListener#debugContextChanged(org.eclipse.debug.ui.contexts.DebugContextEvent)
      */
     public void debugContextChanged(DebugContextEvent event) {
-		update(event.getContext());
+    	fUpdateService.postUpdateCommand(getCommandType(), this);
 	}
 
     /**
@@ -148,7 +127,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 		service.addDebugContextListener(this, partId);
         ISelection activeContext = service.getActiveContext(partId);
         if (activeContext != null) {
-        	fUpdateService.updateCommand(getCommandType(), new CommandStateCollector(this));
+        	fUpdateService.updateCommand(getCommandType(), this);
         } else {
         	setEnabled(getInitialEnablement());
         }
@@ -165,7 +144,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 		contextService.addDebugContextListener(this);
         ISelection activeContext = contextService.getActiveContext();
         if (activeContext != null) {
-        	fUpdateService.updateCommand(getCommandType(), new BooleanCollector(this, 1));
+        	fUpdateService.updateCommand(getCommandType(), this);
         } else {
         	setEnabled(getInitialEnablement());
         }
@@ -201,11 +180,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
         ISelection selection = getContext();
         if (selection instanceof IStructuredSelection && isEnabled()) {
             IStructuredSelection ss = (IStructuredSelection) selection;
-            boolean enabled = true;
-            for (Iterator iter = ss.iterator(); iter.hasNext();) {
-                Object element = iter.next();
-                enabled = execute(element) & enabled;
-            }
+            boolean enabled = execute(ss.toArray());
             // disable the action according to the command
             setEnabled(enabled);
         }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.debug.core.commands.IResumeCommand;
+import org.eclipse.debug.core.commands.IResumeHandler;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -56,6 +56,6 @@ public class ResumeCommandAction extends DebugCommandAction{
     }
 
 	protected Class getCommandType() {
-		return IResumeCommand.class;
+		return IResumeHandler.class;
 	}
 }

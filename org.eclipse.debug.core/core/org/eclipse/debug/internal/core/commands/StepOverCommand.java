@@ -11,10 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IStatusCollector;
-import org.eclipse.debug.core.commands.IStepOverCommand;
+import org.eclipse.debug.core.commands.IStepOverHandler;
 import org.eclipse.debug.core.model.IStep;
 
 /**
@@ -22,14 +19,18 @@ import org.eclipse.debug.core.model.IStep;
  * 
  * @since 3.3
  */
-public class StepOverCommand extends StepCommand implements IStepOverCommand {
+public class StepOverCommand extends StepCommand implements IStepOverHandler {
 
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((IStep)target).canStepOver();
+
+	protected void step(Object target) throws CoreException {
+		((IStep)target).stepOver();
 	}
 
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((IStep)target).stepOver();
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.StepCommand#isSteppable(java.lang.Object)
+	 */
+	protected boolean isSteppable(Object target) {
+		return ((IStep)target).canStepOver();
 	}
 
 }

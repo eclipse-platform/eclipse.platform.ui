@@ -12,10 +12,7 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.debug.core.commands.IBooleanCollector;
-import org.eclipse.debug.core.commands.IDisconnectCommand;
-import org.eclipse.debug.core.commands.IStatusCollector;
+import org.eclipse.debug.core.commands.IDisconnectHandler;
 import org.eclipse.debug.core.model.IDisconnect;
 
 /**
@@ -23,15 +20,7 @@ import org.eclipse.debug.core.model.IDisconnect;
  * 
  * @since 3.3
  */
-public class DisconnectCommand extends DebugCommand implements IDisconnectCommand {
-
-	protected boolean isExecutable(Object target, IProgressMonitor monitor, IBooleanCollector collector) throws CoreException {
-		return ((IDisconnect)target).canDisconnect();
-	}
-
-	protected void doExecute(Object target, IProgressMonitor monitor, IStatusCollector collector) throws CoreException {
-		((IDisconnect)target).disconnect();
-	}
+public class DisconnectCommand extends ForEachCommand implements IDisconnectHandler {
 
 	protected Object getTarget(Object element) {
 		if (element instanceof IDisconnect) {
@@ -40,5 +29,19 @@ public class DisconnectCommand extends DebugCommand implements IDisconnectComman
 			return ((IAdaptable) element).getAdapter(IDisconnect.class);
 		}
 		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#execute(java.lang.Object)
+	 */
+	protected void execute(Object target) throws CoreException {
+		((IDisconnect)target).disconnect();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.commands.ForEachCommand#isExecutable(java.lang.Object)
+	 */
+	protected boolean isExecutable(Object target) {
+		return ((IDisconnect)target).canDisconnect();
 	}
 }
