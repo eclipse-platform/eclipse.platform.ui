@@ -448,7 +448,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected Control createDialogArea(Composite parent) {
 		Composite dialogComp = (Composite)super.createDialogArea(parent);
 		addContent(dialogComp);
-		fLaunchConfigurationView.updateFilterLabel();
+		if(fLaunchConfigurationView != null) {
+			fLaunchConfigurationView.updateFilterLabel();
+		}
 		return dialogComp;
 	}
 			
