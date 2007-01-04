@@ -79,7 +79,7 @@ public interface IRequest {
      * this request with more details. Callers must still call <code>done()</code> to
      * indicate the request is complete.
      */
-    public void setCanceled(boolean canceled);
+    public void cancel();
     
     /**
      * Returns whether this request has been canceled.

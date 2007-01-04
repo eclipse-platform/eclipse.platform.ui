@@ -124,7 +124,7 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 					targets[i] = getTarget(elements[i]);
 					if (targets[i] == null) {
 						request.setEnabled(false);
-						request.setCanceled(true);
+						request.cancel();
 						if (DebugOptions.DEBUG_COMMANDS) {
 							System.out.println(" >> false (no adapter)"); //$NON-NLS-1$
 						}

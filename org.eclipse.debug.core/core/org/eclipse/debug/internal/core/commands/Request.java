@@ -50,7 +50,7 @@ public class Request implements IRequest {
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IRequest#cancel()
 	 */
-	public synchronized void setCanceled(boolean canceled) {
+	public synchronized void cancel() {
 		fCanceled = true;
 	}
 
