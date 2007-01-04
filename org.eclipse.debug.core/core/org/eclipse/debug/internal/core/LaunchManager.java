@@ -1049,7 +1049,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		String newname = base;
 		StringBuffer buffer = null;
 		while (isExistingLaunchConfigurationName(newname) || reservednames.contains(newname)) {
-			buffer = new StringBuffer(basename);
+			buffer = new StringBuffer(base);
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(String.valueOf(index));
 			index++;	
