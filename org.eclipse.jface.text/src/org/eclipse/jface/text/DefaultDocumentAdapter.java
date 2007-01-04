@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.Assert;
 /**
  * Default implementation of {@link org.eclipse.jface.text.IDocumentAdapter}.
  * <p>
- * <em>Note:</em>: This adapter does work if the widget auto-wraps the text.
+ * <strong>Note:</strong> This adapter does not work if the widget auto-wraps the text.
  * </p>
  */
 class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDocumentAdapterExtension {

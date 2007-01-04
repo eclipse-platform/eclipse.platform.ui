@@ -44,8 +44,8 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	/**
 	 * Installs quick assist support on the given source viewer.
 	 * <p>
-	 * <em>Note: This quick assist assistant will only be able to query the invocation context
-	 * if <code>sourceViewer</code> also implements {@link ISourceViewerExtension3}.</em> 
+	 * <strong>Note:</strong> This quick assist assistant will only be able to query the invocation context
+	 * if <code>sourceViewer</code> also implements {@link ISourceViewerExtension3}. 
 	 * </p>
 	 *
 	 * @param sourceViewer the source viewer on which quick assist will work
@@ -91,8 +91,8 @@ import org.eclipse.jface.text.source.ISourceViewerExtension3;
 	/**
 	 * Tells whether this assistant has a fix for the given annotation.
 	 * <p>
-	 * <em>Note: this test must be fast and optimistic i.e. it is OK to return
-	 * <code>true</code> even though there might be no quick fix.</em>
+	 * <strong>Note:</strong> This test must be fast and optimistic i.e. it is OK to return
+	 * <code>true</code> even though there might be no quick fix.
 	 * </p>
 	 * 
 	 * @param annotation the annotation
