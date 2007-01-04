@@ -1386,9 +1386,13 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int widgetClippingStartOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y));
 			int firstWidgetLine= fTextWidget.getLineAtOffset(widgetClippingStartOffset);
 			widgetOffset= fTextWidget.getOffsetAtLine(firstWidgetLine);
-		} catch (IllegalArgumentException x) {
-			int firstVisibleLine= JFaceTextUtil.getPartialTopIndex(fTextWidget);
-			widgetOffset= fTextWidget.getOffsetAtLine(firstVisibleLine);
+		} catch (IllegalArgumentException ex1) {
+			try {
+				int firstVisibleLine= JFaceTextUtil.getPartialTopIndex(fTextWidget);
+				widgetOffset= fTextWidget.getOffsetAtLine(firstVisibleLine);
+			} catch (IllegalArgumentException ex2) { // above try code might fail too
+				widgetOffset= 0;
+			}
 		}
 		
 		int widgetEndOffset;
@@ -1396,14 +1400,18 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			int widgetClippingEndOffset= fTextWidget.getOffsetAtLocation(new Point(0, event.y + event.height));
 			int lastWidgetLine= fTextWidget.getLineAtOffset(widgetClippingEndOffset);
 			widgetEndOffset= fTextWidget.getOffsetAtLine(lastWidgetLine + 1);
-		} catch (IllegalArgumentException x) {
+		} catch (IllegalArgumentException ex1) {
 			// happens if the editor is not "full", e.g. the last line of the document is visible in the editor
-			int lastVisibleLine= JFaceTextUtil.getPartialBottomIndex(fTextWidget);
-			if (lastVisibleLine == fTextWidget.getLineCount() - 1)
-				// last line
+			try {
+				int lastVisibleLine= JFaceTextUtil.getPartialBottomIndex(fTextWidget);
+				if (lastVisibleLine == fTextWidget.getLineCount() - 1)
+					// last line
+					widgetEndOffset= fTextWidget.getCharCount();
+				else
+					widgetEndOffset= fTextWidget.getOffsetAtLine(lastVisibleLine + 1) - 1;
+			} catch (IllegalArgumentException ex2) { // above try code might fail too
 				widgetEndOffset= fTextWidget.getCharCount();
-			else
-				widgetEndOffset= fTextWidget.getOffsetAtLine(lastVisibleLine + 1) - 1;
+			}
 		}
 		
 		IRegion clippingRegion= getModelRange(widgetOffset, widgetEndOffset - widgetOffset);
