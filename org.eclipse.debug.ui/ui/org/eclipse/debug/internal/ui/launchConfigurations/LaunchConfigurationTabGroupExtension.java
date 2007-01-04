@@ -96,7 +96,7 @@ public class LaunchConfigurationTabGroupExtension {
 		if (fModes == null) {
 			fModes = new ArrayList();
 			fPerspectives = new Hashtable();
-			IConfigurationElement[] modes = getConfigurationElement().getChildren(IConfigurationElementConstants.LAUNCH_MODE);
+			IConfigurationElement[] modes = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
 			if (modes.length > 0) {
 				IConfigurationElement element = null;
 				String perspective = null, mode = null;
@@ -181,29 +181,33 @@ public class LaunchConfigurationTabGroupExtension {
 	 * a description of the Launch Configuration. If no appropriate description is found an empty string is returned.
 	 */
 	public String getDescription(Set modes) {
+		String description = null;
 		if(fDescriptions == null) {
 			fDescriptions = new HashMap();
-			String description = null;
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.LAUNCH_MODE);
-			if (children!= null && children.length != 0) {
-				IConfigurationElement child = null;
-				for (int i=0; i<children.length; i++) {
-					child = children[i];
-					if (modes.contains(child.getAttribute(IConfigurationElementConstants.MODE))) { 
-						description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
-						break;
-					}
+			IConfigurationElement child = null;
+			String mode = null;
+			HashSet set = null;
+			for (int i = 0; i < children.length; i++) {
+				child = children[i];
+				mode = child.getAttribute(IConfigurationElementConstants.MODE);
+				if(mode != null) {
+					set = new HashSet();
+					set.add(mode);
 				}
-			} 
-			if (description == null) {
-				description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
-				if (description == null) {
-					description = ""; //$NON-NLS-1$
+				description = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+				if(description != null) {
+					fDescriptions.put(set, description);
 				}
 			}
-			fDescriptions.put(modes, description);
+			
 		} 
-		return (String) fDescriptions.get(modes);
+		description = (String) fDescriptions.get(modes);
+		if(description == null) {
+			description = fConfig.getAttribute(IConfigurationElementConstants.DESCRIPTION);
+			
+		}
+		return (description == null ? "" : description); //$NON-NLS-1$
 	}
 	
 }
