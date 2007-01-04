@@ -991,6 +991,9 @@
                id="org.eclipse.team.ccvs.ui.AnnotateView"
                relationship="stack">
          </view>
+         <showInPart
+               id="org.eclipse.team.ui.GenericHistoryView">
+         </showInPart>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">

@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.history.*;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
@@ -995,18 +996,35 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 	}
 	
-	private ICVSFile getCVSFile(Object object) {
-		if (object instanceof IFile) {
-			RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)object).getProject());
+	protected static ICVSFile getCVSFile(Object object) {
+		// First, adapt to IResource and ensure mapped to CVS
+		IResource resource = (IResource)Utils.getAdapter(object, IResource.class);
+		if (resource instanceof IFile) {
+			RepositoryProvider provider = RepositoryProvider.getProvider(((IResource)resource).getProject());
 			if (provider instanceof CVSTeamProvider)
-				return CVSWorkspaceRoot.getCVSFileFor((IFile) object);
+				return CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
 			return null;
 		}
-		
-		//Adapt object to ICVSFile
-		Object cvsFileAdapter = Utils.getAdapter(object, ICVSFile.class);
-		if (cvsFileAdapter != null)
-			return (ICVSFile) cvsFileAdapter;
+		// Second, try ICVSFile
+		ICVSFile remoteFile = (ICVSFile)Utils.getAdapter(object, ICVSFile.class);
+		if (remoteFile != null) {
+			return remoteFile;
+		}
+		// Next, try ICVSResource
+		ICVSResource remote = (ICVSResource)Utils.getAdapter(object, ICVSResource.class);
+		if (remote instanceof RemoteFile) {
+			return (ICVSFile)remote;
+		}
+		// Next, try IResourceVariant
+		IResourceVariant variant = (IResourceVariant)Utils.getAdapter(object, IResourceVariant.class);
+		if (variant instanceof RemoteFile) {
+			return (ICVSFile)remote;
+		}
+		// Finally, try IFileRevision
+		IFileRevision revision = (IFileRevision)Utils.getAdapter(object, IFileRevision.class);
+		if (revision instanceof CVSFileRevision) {
+			return ((CVSFileRevision)revision).getCVSRemoteFile();
+		}
 		
 		return null;
 	}

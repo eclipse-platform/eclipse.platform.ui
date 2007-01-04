@@ -11,8 +11,6 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.ui.history.HistoryPageSource;
 import org.eclipse.ui.part.Page;
 
@@ -24,12 +22,7 @@ public class CVSHistoryPageSource extends HistoryPageSource {
 	}
 
 	public boolean canShowHistoryFor(Object object) {
-		if (object instanceof IResource && ((IResource) object).getType() == IResource.FILE)
-			return true;
-		if (object instanceof RemoteFile) {
-			return true;
-		}
-		return false;
+		return CVSHistoryPage.getCVSFile(object) != null;
 	}
 
 }
