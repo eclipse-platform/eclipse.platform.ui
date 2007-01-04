@@ -792,7 +792,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
-			TextMergeViewer.this.documentChanged(e);
+			boolean dirty = true;
+			if (fDocumentProvider != null && fDocumentKey != null) {
+				dirty = fDocumentProvider.canSaveDocument(fDocumentKey);
+			}
+			TextMergeViewer.this.documentChanged(e, dirty);
 			// Remove our verify listener since the document is now dirty
 			if (fNeedsValidation && fSourceViewer != null && !fSourceViewer.getTextWidget().isDisposed()) {
 				fSourceViewer.getTextWidget().removeVerifyListener(this);
@@ -2447,14 +2451,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	 * Sets the dirty state of this viewer and updates the lines.
 	 * Implements IDocumentListener.
 	 */
-	private void documentChanged(DocumentEvent e) {
+	private void documentChanged(DocumentEvent e, boolean dirty) {
 		
 		IDocument doc= e.getDocument();
 		
 		if (doc == fLeft.getDocument()) {
-			setLeftDirty(true);
+			setLeftDirty(dirty);
 		} else if (doc == fRight.getDocument()) {
-			setRightDirty(true);
+			setRightDirty(dirty);
 		}
 
 		updateLines(doc);
