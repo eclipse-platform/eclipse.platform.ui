@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -29,7 +28,6 @@ import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -42,7 +40,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
 
@@ -324,48 +321,7 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
      * @param configuration the deleted configuration
      */
     private void handleConfigurationRemoved(ILaunchConfiguration configuration) {
-        ILaunchConfigurationType type = null;
-        TreeViewer viewer = getTreeViewer();
-		int typeIndex = -1; 
-		int configIndex = -1; 		
-		TreeItem[] types = viewer.getTree().getItems();
-		TreeItem[] configs = null;
-		for (int i= 0, numTypes = types.length; (i < numTypes && type == null); i++) {
-			typeIndex = i;
-			configs = types[i].getItems();
-			for (int j= 0, numConfigs= configs.length; j < numConfigs; j++) {
-				if (configuration.equals(configs[j].getData())) {
-					configIndex = j;
-					type = (ILaunchConfigurationType)types[i].getData();
-					break;
-				}
-			}
-		}
-		viewer.remove(configuration);
-		if (getViewer().getSelection().isEmpty()) {
-			IStructuredSelection newSelection= null;
-			if (typeIndex != -1 && configIndex != -1) {
-				// Reset selection to the next config
-				TreeItem[] configItems = viewer.getTree().getItems()[typeIndex].getItems();
-				int numItems= configItems.length;
-				Object data= null;
-				if (numItems > configIndex) { // Select the item at the same index as the deleted
-					data= configItems[configIndex].getData();
-				} else if (numItems > 0) { // Deleted the last item(s). Select the last item
-					data= configItems[numItems - 1].getData();
-				}
-				if (data != null) {
-					newSelection= new StructuredSelection(data);
-				}
-			}
-			if (newSelection == null && type != null) {
-				// Reset selection to the config type of the first selected configuration
-				newSelection = new StructuredSelection(type);
-			}
-			if(isAutoSelect()) {
-				viewer.setSelection(newSelection);
-			}
-		}
+        getTreeViewer().remove(configuration);
 		updateFilterLabel();
     }
 

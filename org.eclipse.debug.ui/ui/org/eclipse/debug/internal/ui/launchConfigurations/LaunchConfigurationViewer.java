@@ -20,6 +20,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * This class allow the notion of the viewer to be abstracted from the launch configuration view, as well as allowing the over-riding of 
@@ -80,11 +81,14 @@ public class LaunchConfigurationViewer extends TreeViewer {
 						//pick best child, or default to parent
 						index = selectIndex(pitem.getItemCount(), indices[1]);
 						if(index > -1) {
-							o = pitem.getItem(index);
+							o = pitem.getItem(index).getData();
 						}
 						else {
 							if(pitem.getItemCount() > 0) {
 								o = pitem.getItem((indices[1]-1 > -1 ? indices[1]-1 : 0)).getData();
+								if(o == null) {
+									o = pitem.getData();
+								}
 							}
 						}
 					}
@@ -120,13 +124,27 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	 * Returns the total count of all of the children that <i>could</i> be visible at 
 	 * the time the input was set to the viewer
 	 * @return the total number of elements
-	 * 
-	 * @since 3.3
 	 */
 	protected int getTotalChildCount() {
 		return fTotalCount;
 	}
 	
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object)
+	 */
+	public void remove(Object elementsOrTreePaths) {
+		super.remove(elementsOrTreePaths);
+		fTotalCount--;
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.TreeViewer#internalAdd(org.eclipse.swt.widgets.Widget, java.lang.Object, java.lang.Object[])
+	 */
+	protected void internalAdd(Widget widget, Object parentElement, Object[] childElements) {
+		super.internalAdd(widget, parentElement, childElements);
+		fTotalCount++;
+	}
+
 	/**
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
