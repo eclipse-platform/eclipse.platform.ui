@@ -286,6 +286,9 @@ public class CompareConfiguration {
 	 * @since 2.0
 	 */
 	public Image getImage(int kind) {
+		if (fImages == null)
+			// The configuration has been disposed
+			return null;
 		Image image= fImages[kind & 15];
 		if (image == null) {
 			ImageDescriptor id= fgImages[kind & 15];
