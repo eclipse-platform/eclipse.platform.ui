@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Brad Reynolds - bug 167204
+ *     Gautam Saggar - bug 169529
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -114,7 +115,7 @@ public class WritableList extends ObservableList {
 		checkRealm();
 		ListDiffEntry[] entries = new ListDiffEntry[c.size()];
 		int i = 0;
-		int addIndex = c.size();
+		int addIndex = wrappedList.size();
 		for (Iterator it = c.iterator(); it.hasNext();) {
 			Object element = it.next();
 			entries[i++] = Diffs.createListDiffEntry(addIndex++, true, element);
