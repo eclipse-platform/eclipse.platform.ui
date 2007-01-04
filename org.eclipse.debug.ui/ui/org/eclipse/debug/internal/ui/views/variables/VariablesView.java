@@ -435,7 +435,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {
 				fTreeHasFocus = true;
-				getViewSite().setSelectionProvider(variablesViewer);
+				getSite().setSelectionProvider(variablesViewer);
 				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
 				setAction(COPY_ACTION, getAction(VARIABLES_COPY_ACTION));
 				setAction(FIND_ACTION, getAction(VARIABLES_FIND_ELEMENT_ACTION));
@@ -443,7 +443,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 			
 			public void focusLost(FocusEvent e){
-				getViewSite().setSelectionProvider(null);
+				getSite().setSelectionProvider(null);
 				setAction(SELECT_ALL_ACTION, null);
 				setAction(COPY_ACTION,null);
 				setAction(FIND_ACTION, null);
@@ -462,6 +462,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 					}
 				});
 		
+		getSite().setSelectionProvider(variablesViewer);
 		variablesViewer.addPostSelectionChangedListener(getTreeSelectionChangedListener());
 		DebugUITools.getDebugContextManager().getContextService(getSite().getWorkbenchWindow()).addDebugContextListener(this);
 		return variablesViewer;
