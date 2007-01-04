@@ -14,6 +14,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,6 +28,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -629,6 +631,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			name = EMPTY_STRING;
 		}
 		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+	}
+	
+	/**
+	 * Generates and returns a unique name using the specified name as a prefix in the event 
+	 * the specified name already exists or is contained in the set of reserved names.
+	 * @param name the name to use as a prefix for generating a new name
+	 * @param reservednames a listing of names that should be considered as 'taken' and cannot be generated
+	 * by this method
+	 * @return a new name based on the specified name.
+	 * 
+	 * @since 3.3
+	 */
+	public String generateName(String name, Set reservednames) {
+		if(name == null) {
+			name = EMPTY_STRING;
+		}
+		return ((LaunchManager)getLaunchManager()).generateUniqueLaunchConfigurationNameFrom(name, reservednames);
 	}
 	
 	/* (non-Javadoc)

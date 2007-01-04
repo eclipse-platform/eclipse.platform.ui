@@ -979,7 +979,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	public void fireUpdate(ILaunch[] launches, int update) {
 		new LaunchesNotifier().notify(launches, update);
 	}
-							
+	
 	/**
 	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
 	 */
@@ -998,18 +998,65 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		} 
 		String newName = baseName;
-		
+			StringBuffer buffer = null;
+			while (isExistingLaunchConfigurationName(newName)) {
+				buffer = new StringBuffer(baseName);
+				buffer.append(" ("); //$NON-NLS-1$
+				buffer.append(String.valueOf(index));
+				index++;
+				buffer.append(')');
+				newName = buffer.toString();
+			}		
+			
+		return newName;
+	}
+	
+	/**
+	 * Return a String that can be used as the name of a launch configuration.  The name
+	 * is guaranteed to be unique (no existing or temporary launch configurations will have this name).
+	 * The name that is returned uses the <code>basename</code> as a starting point.  If 
+	 * there is no existing launch configuration with this name, then <code>basename</code>
+	 * is returned.  Otherwise, the value returned consists of the specified base plus
+	 * some suffix that guarantees uniqueness. Passing <code>null</code> as the set of reserved names will cause this
+	 * method to return <code>generateUniqueLaunchConfigurationNameFrom(String baseName)</code>.
+	 * 
+	 * By specifying a set of reserved names, you can further constrain the name that wil be generated
+	 * by this method. For example you can give a base name of 'test' and a reserved set of [test(1), test(2)],
+	 * which will result in a name of 'test(3)' being returned iff a configuration with the name 'test' already exists.
+	 * 
+	 * @param basename the String that the returned name must begin with
+	 * @param reservednames a set of strings that is further used to constrain what names can be generated
+	 * @since 3.3
+	 */
+	public String generateUniqueLaunchConfigurationNameFrom(String basename, Set reservednames) {
+		if(reservednames == null) {
+			return generateUniqueLaunchConfigurationNameFrom(basename);
+		}
+ 		int index = 1;
+		int length= basename.length();
+		String base = basename;
+		int copyIndex = base.lastIndexOf(" ("); //$NON-NLS-1$
+		if (copyIndex > -1 && length > copyIndex + 2 && base.charAt(length - 1) == ')') {
+			String trailer = base.substring(copyIndex + 2, length -1);
+			if (isNumber(trailer)) {
+				try {
+					index = Integer.parseInt(trailer);
+					base = base.substring(0, copyIndex);
+				} 
+				catch (NumberFormatException nfe) {}
+			}
+		} 
+		String newname = base;
 		StringBuffer buffer = null;
-		while (isExistingLaunchConfigurationName(newName)) {
-			buffer = new StringBuffer(baseName);
+		while (isExistingLaunchConfigurationName(newname) || reservednames.contains(newname)) {
+			buffer = new StringBuffer(basename);
 			buffer.append(" ("); //$NON-NLS-1$
 			buffer.append(String.valueOf(index));
-			index++;
+			index++;	
 			buffer.append(')');
-			newName = buffer.toString();		
+			newname = buffer.toString();
 		}		
-		
-		return newName;
+		return newname;
 	}
 	
 	/**
