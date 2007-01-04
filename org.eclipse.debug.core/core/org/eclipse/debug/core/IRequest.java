@@ -28,8 +28,7 @@ import org.eclipse.core.runtime.IStatus;
  * fulfilling a request. 
  * </p>
  * <p>
- * This interface is not intended to be implemented by clients. The debug platform
- * provides implementations of this interface to clients fulfilling requests. 
+ * Clients that invoke request handlers may implemented this interface.
  * </p>
  * @since 3.3
  * <p>

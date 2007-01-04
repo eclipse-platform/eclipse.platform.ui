@@ -15,7 +15,7 @@ package org.eclipse.debug.core.commands;
 /**
  * A request to update the enabled state of a command.
  * <p>
- * Clients are not intended to implement this interface.
+ * Clients than invoke command handlers may implement this interface.
  * </p>
  * @since 3.3
  * <p>

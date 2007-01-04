@@ -15,7 +15,7 @@ import org.eclipse.debug.core.IRequest;
 /**
  * A request to execute a command on specific elements.
  * <p>
- * Clients are not intended to implement this interface.
+ * Clients that invoke command handlers may implement this interface.
  * </p>
  * @since 3.3
  */
