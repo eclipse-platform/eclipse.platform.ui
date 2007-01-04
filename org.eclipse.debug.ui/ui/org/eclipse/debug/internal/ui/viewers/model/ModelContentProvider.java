@@ -42,7 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisito
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactoryAdapter;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IStatusMonitor;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -818,7 +818,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param update
 	 */
-	void updateStarted(IStatusMonitor update) {
+	void updateStarted(IViewerUpdate update) {
 		boolean begin = false;
 		synchronized (fUpdatesInProgress) {
 			begin = fUpdatesInProgress.isEmpty();
@@ -841,7 +841,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param update
 	 */
-	void updateComplete(IStatusMonitor update) {
+	void updateComplete(IViewerUpdate update) {
 		boolean end = false;
 		synchronized (fUpdatesInProgress) {
 			fUpdatesInProgress.remove(update);
@@ -859,7 +859,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		}
 	}
 	
-	protected void notifyUpdate(final int type, final IStatusMonitor update) {
+	protected void notifyUpdate(final int type, final IViewerUpdate update) {
 		if (!fUpdateListeners.isEmpty()) {
 			Object[] listeners = fUpdateListeners.getListeners();
 			for (int i = 0; i < listeners.length; i++) {

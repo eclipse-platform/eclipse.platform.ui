@@ -35,7 +35,7 @@ public interface IViewerUpdateListener {
 	 * 
 	 * @param update update
 	 */
-	public void updateStarted(IStatusMonitor update);
+	public void updateStarted(IViewerUpdate update);
 	
 	/**
 	 * Notification that a specific update has completed within a
@@ -43,5 +43,5 @@ public interface IViewerUpdateListener {
 	 * 
 	 * @param update update
 	 */
-	public void updateComplete(IStatusMonitor update);
+	public void updateComplete(IViewerUpdate update);
 }
