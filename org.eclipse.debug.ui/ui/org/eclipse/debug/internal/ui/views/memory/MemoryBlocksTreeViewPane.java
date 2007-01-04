@@ -12,15 +12,12 @@
 package org.eclipse.debug.internal.ui.views.memory;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugEvent;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IMemoryBlockListener;
@@ -33,8 +30,6 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
-import org.eclipse.debug.internal.ui.views.variables.ViewerState;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -55,13 +50,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -237,47 +230,6 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			{
 				doHandleDebugEvent(events[i]);
 			}
-		}
-	}
-	
-	class MemoryViewerState extends ViewerState implements Cloneable
-	{
-		private Hashtable fPathMap = new Hashtable(); 
-		private AsynchronousTreeViewer fViewer;
-		
-		public MemoryViewerState() {}
-		public MemoryViewerState(AsynchronousTreeViewer viewer) {
-			super(viewer);
-			fViewer = viewer;
-		}
-
-		protected IPath encodeElement(TreeItem item) throws DebugException {
-			if (fViewer != null)
-			{
-				IPath path = super.encodeElement(item);
-				TreePath[] paths = fViewer.getTreePaths(item.getData());
-				if (paths.length > 0)
-				{
-					fPathMap.put(path, paths[0]);
-				}
-				return path;
-			}
-			
-			return null;
-		}
-
-		protected TreePath decodePath(IPath path, AsynchronousTreeViewer viewer) throws DebugException {
-			return (TreePath)fPathMap.get(path);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.views.AbstractViewerState#clone()
-		 */
-		public Object clone() {
-			MemoryViewerState clone = (MemoryViewerState) super.clone();
-			clone.fViewer = fViewer;
-			clone.fPathMap = fPathMap;
-			return clone;
 		}
 	}
 	

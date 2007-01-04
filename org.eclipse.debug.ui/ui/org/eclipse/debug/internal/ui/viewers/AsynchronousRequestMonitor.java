@@ -28,7 +28,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor {
     
 	/**
-	 * Model node the upadte is rooted at
+	 * Model node the update is rooted at
 	 */
     private ModelNode fNode;
     
@@ -38,7 +38,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     private AsynchronousModel fModel;
     
     /**
-     * Wehther this request's 'done' method has been called.
+     * Whether this request's 'done' method has been called.
      */
     private boolean fDone = false;
     
@@ -46,7 +46,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
         public IStatus runInUIThread(IProgressMonitor monitor) {
             // necessary to check if widget is disposed. The item may
             // have been removed from the tree when another children update
-            // occured.
+            // occurred.
         	getModel().viewerUpdateScheduled(AsynchronousRequestMonitor.this);
         	if (fDone) {
         		getModel().requestComplete(AsynchronousRequestMonitor.this);
@@ -65,7 +65,7 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     };
     
     /**
-     * Constructs an udpate rooted at the given item.
+     * Constructs an update rooted at the given item.
      * 
      * @param node model node
      * @param model model the node is in
@@ -88,9 +88,9 @@ public abstract class AsynchronousRequestMonitor extends AbstractRequestMonitor 
     }
     
     /**
-     * Returns the model this update is being peformed for
+     * Returns the model this update is being performed for
      * 
-     * @return the model this update is being peformed for
+     * @return the model this update is being performed for
      */
     protected AsynchronousModel getModel() {
         return fModel;

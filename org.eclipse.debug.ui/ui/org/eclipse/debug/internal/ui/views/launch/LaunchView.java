@@ -48,7 +48,6 @@ import org.eclipse.debug.internal.ui.commands.actions.TerminateCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.ToggleStepFiltersAction;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
 import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
-import org.eclipse.debug.internal.ui.viewers.AsynchronousTreeViewer;
 import org.eclipse.debug.internal.ui.viewers.model.InternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualFindAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
@@ -453,10 +452,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    Viewer viewer = getViewer();
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(this);
-			if (viewer instanceof AsynchronousTreeViewer) {
-				AsynchronousTreeViewer asyncTreeViewer = (AsynchronousTreeViewer) viewer;
-				asyncTreeViewer.dispose();
-			}
 		}
 		IWorkbenchPage page = getSite().getPage();
 		page.removePartListener((IPartListener2) this);

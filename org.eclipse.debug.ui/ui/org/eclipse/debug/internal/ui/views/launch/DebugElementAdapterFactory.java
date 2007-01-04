@@ -25,7 +25,6 @@ import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
-import org.eclipse.debug.internal.ui.elements.adapters.DebugTargetContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryRetrievalContentAdapter;
@@ -88,7 +87,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     
     private static IElementEditor fgEEVariable = new VariableEditor();
     
-    private static IAsynchronousContentAdapter fgAsyncTarget = new DebugTargetContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
     private static IAsynchronousContentAdapter fgAsyncMemoryBlock = new MemoryBlockContentAdapter();
     
@@ -120,9 +118,6 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
 		}
         
         if (adapterType.equals(IAsynchronousContentAdapter.class)) {
-            if (adaptableObject instanceof IDebugTarget) {
-                return fgAsyncTarget;
-            }
             if (adaptableObject instanceof IMemoryBlockRetrieval) {
             	return fgAsyncMemoryRetrieval;
             }
