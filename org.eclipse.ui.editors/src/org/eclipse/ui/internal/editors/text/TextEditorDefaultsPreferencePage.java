@@ -452,6 +452,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SMART_HOME_END));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED));
 
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -537,6 +538,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
 		Preference showWhitespaceCharacters= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_WHITESPACE_CHARACTERS, label, null);
 		addCheckBox(appearanceComposite, showWhitespaceCharacters, new BooleanDomain(), 0);
+		
+		label= TextEditorMessages.TextEditorDefaultsPreferencePage_textDragAndDrop;
+		Preference textDragAndDrop= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TEXT_DRAG_AND_DROP_ENABLED, label, null);
+		addCheckBox(appearanceComposite, textDragAndDrop, new BooleanDomain(), 0);
 		
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_warn_if_derived;
 		Preference warnIfDerived= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_WARN_IF_INPUT_DERIVED, label, null);

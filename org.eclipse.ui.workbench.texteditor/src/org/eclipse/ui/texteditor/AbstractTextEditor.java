@@ -30,7 +30,14 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -160,6 +167,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
@@ -1821,6 +1829,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	public static final String PREFERENCE_SHOW_WHITESPACE_CHARACTERS= "showWhitespaceCharacters"; //$NON-NLS-1$
+	/**
+	 * A named preference that controls whether text drag and drop is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED= "textDragAndDropEnabled"; //$NON-NLS-1$
 
 
 	/** Menu id for the editor context menu. */
@@ -2149,12 +2166,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.3
 	 */
 	private IMemento fMementoToRestore;
-	
 	/**
 	 * This editor's savable.
 	 * @since 3.3
 	 */
 	private Saveable fSavable;
+	/**
+	 * Tells whether text drag and drop is enabled.
+	 * <p>
+	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192.
+	 * </p>
+	 * @since 3.3
+	 */
+	private boolean fIsTextDragAndDropEnabled;
 
 
 	/**
@@ -2769,6 +2793,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.0
 	 */
 	protected void initializeDragAndDrop(ISourceViewer viewer) {
+		IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		if (dndService == null)
+			return;
+		
 		ITextEditorDropTargetListener listener= (ITextEditorDropTargetListener) getAdapter(ITextEditorDropTargetListener.class);
 
 		if (listener == null) {
@@ -2777,11 +2805,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				listener= (ITextEditorDropTargetListener)object;
 		}
 
-		if (listener != null) {
-			DropTarget dropTarget= new DropTarget(viewer.getTextWidget(), DND.DROP_COPY | DND.DROP_MOVE);
-			dropTarget.setTransfer(listener.getTransfers());
-			dropTarget.addDropListener(listener);
-		}
+		if (listener != null)
+			dndService.addMergedDropTarget(viewer.getTextWidget(), DND.DROP_MOVE | DND.DROP_COPY, listener.getTransfers(), listener);
+
+		IPreferenceStore store= getPreferenceStore();
+		if (store != null && store.getBoolean(PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED))
+			installTextDragAndDrop(viewer);
+
 	}
 
 	/**
@@ -2992,7 +3022,135 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			updateContributedRulerColumns((CompositeRuler) ruler);
 		
 	}
+	
+	/**
+	 * Installs text drag and drop.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @param viewer the viewer
+	 * @since 3.3
+	 */
+	protected void installTextDragAndDrop(ISourceViewer viewer) {
+		final IDragAndDropService dndService= (IDragAndDropService)getSite().getService(IDragAndDropService.class);
+		if (dndService == null || viewer == null)
+			return;
 
+		// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
+		fIsTextDragAndDropEnabled= true;
+		
+		final StyledText st= viewer.getTextWidget();
+
+		// Install drag source
+		final DragSource source= new DragSource(st, DND.DROP_COPY | DND.DROP_MOVE);
+		source.setTransfer(new Transfer[] {TextTransfer.getInstance()});
+		source.addDragListener(new DragSourceAdapter() {
+			String selectedText;
+			Point selection;
+			public void dragStart(DragSourceEvent event) {
+				
+				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
+				if (!fIsTextDragAndDropEnabled) {
+					event.doit= false;
+					event.feedback= DND.FEEDBACK_NONE;
+					return;
+				}
+				
+				try {
+					selection= st.getSelection();
+					int offset= st.getOffsetAtLocation(new Point(event.x, event.y));
+					Point p= st.getLocationAtOffset(offset);
+					if (p.x > event.x)
+						offset--;
+					event.doit= offset > selection.x && offset < selection.y;
+					selectedText= st.getSelectionText();
+				} catch (IllegalArgumentException ex) {
+					event.doit= false;
+				}
+			}
+			
+			public void dragSetData(DragSourceEvent event) {
+				event.data= selectedText;
+			}
+			
+			public void dragFinished(DragSourceEvent event) {
+				if (event.detail == DND.DROP_MOVE) {
+					Point newSelection= st.getSelection();
+					int length= selection.y - selection.x;
+					int delta= 0;
+					if (newSelection.x < selection.x)
+						delta= length; 
+					st.replaceTextRange(selection.x + delta, length, ""); //$NON-NLS-1$
+				}
+			}
+		});
+		
+		// Install drag target
+		DropTargetListener dropTargetListener= new DropTargetAdapter() {
+			public void dragEnter(DropTargetEvent event) {
+				
+				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
+				if (!fIsTextDragAndDropEnabled) {
+					event.detail= DND.DROP_NONE;
+					event.feedback= DND.FEEDBACK_NONE;
+					return;
+				}
+
+				if (event.detail == DND.DROP_DEFAULT)
+					event.detail= DND.DROP_MOVE;
+			}
+			
+			public void dragOperationChanged(DropTargetEvent event) {
+				if (!fIsTextDragAndDropEnabled) {
+					event.detail= DND.DROP_NONE;
+					event.feedback= DND.FEEDBACK_NONE;
+					return;
+				}
+				
+				if (event.detail == DND.DROP_DEFAULT)
+					event.detail= DND.DROP_MOVE;
+			}
+			
+			public void dragOver(DropTargetEvent event) {
+				
+				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
+				if (!fIsTextDragAndDropEnabled) {
+					event.feedback= DND.FEEDBACK_NONE;
+					return;
+				}
+				
+				event.feedback |= DND.FEEDBACK_SCROLL;
+			}
+			
+			public void drop(DropTargetEvent event) {
+				if (!fIsTextDragAndDropEnabled)
+					return;
+				
+				String text= (String)event.data;
+				Point newSelection= st.getSelection();
+				st.insert(text);
+				st.setSelectionRange(newSelection.x, text.length());
+			}
+		};
+		
+		dndService.addMergedDropTarget(st, DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, dropTargetListener);
+
+	}
+	
+	/**
+	 * Uninstalls text drag and drop.
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 * 
+	 * @param viewer the viewer
+	 * @since 3.3
+	 */
+	protected void uninstallTextDragAndDrop(ISourceViewer viewer) {
+		fIsTextDragAndDropEnabled= false;
+	}
+	
 	/**
      * Tells whether the editor input should be included when adding object
      * contributions to this editor's context menu.
@@ -3774,6 +3932,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			IAction action= getAction(ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS);
 			if (action instanceof IUpdate)
 				((IUpdate)action).update();
+			return;
+		}
+		
+		if (PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED.equals(property)) {
+			IPreferenceStore store= getPreferenceStore();
+			if (store != null && store.getBoolean(PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED))
+				installTextDragAndDrop(getSourceViewer());
+			else
+				uninstallTextDragAndDrop(getSourceViewer());
 			return;
 		}
 		
@@ -6230,8 +6397,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			return thisDocument != null && thisDocument.equals(otherDocument);
 		}
-		
-		/*
+
+		/**
+		 * Explicit comment needed to suppress wrong waning caused
+		 * by http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4848177
+		 * 
 		 * @see org.eclipse.ui.Saveable#getAdapter(java.lang.Class)
 		 */
 		public Object getAdapter(Class adapter) {

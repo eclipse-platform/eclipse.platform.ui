@@ -119,6 +119,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorDefaultsPreferencePage_smartHomeEnd;
 	public static String TextEditorDefaultsPreferencePage_warn_if_derived;
 	public static String TextEditorDefaultsPreferencePage_showWhitespaceCharacters;
+	public static String TextEditorDefaultsPreferencePage_textDragAndDrop;
 	public static String LinkedModeConfigurationBlock_annotationPresentationOptions;
 	public static String LinkedModeConfigurationBlock_SQUIGGLES;
 	public static String LinkedModeConfigurationBlock_UNDERLINE;

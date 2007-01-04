@@ -427,6 +427,19 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * @since 3.3
 	 */
 	public static final String REVISION_RULER_SHOW_REVISION= "revisionRulerShowRevision"; //$NON-NLS-1$
+	
+	/**
+	 * A named preference that controls whether text drag and drop is enabled.
+	 * <p>
+	 * Value is of type <code>Boolean</code>.
+	 * </p>
+	 * <p>
+	 * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+	 * </p>
+	 *
+	 * @since 3.3
+	 */
+	public static final String EDITOR_TEXT_DRAG_AND_DROP_ENABLED= AbstractTextEditor.PREFERENCE_TEXT_DRAG_AND_DROP_ENABLED;
 
 	/**
   	* Initializes the given preference store with the default values.
@@ -498,6 +511,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 		store.setDefault(EDITOR_WARN_IF_INPUT_DERIVED, true);
 		store.setDefault(EDITOR_SMART_HOME_END, true);
 		store.setDefault(EDITOR_SHOW_WHITESPACE_CHARACTERS, false);
+		store.setDefault(EDITOR_TEXT_DRAG_AND_DROP_ENABLED, true);
 		
 		MarkerAnnotationPreferences.initializeDefaultValues(store);
 	}
