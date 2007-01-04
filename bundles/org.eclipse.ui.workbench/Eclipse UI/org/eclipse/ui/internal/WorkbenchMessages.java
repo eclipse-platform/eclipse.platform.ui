@@ -929,19 +929,27 @@ public class WorkbenchMessages extends NLS {
     public static String TrimCommon_StatusLine_TrimName;
 		
     // FilteredItemsSelectionDialog
+    public static String FilteredItemsSelectionDialog_cacheSearchJob_taskName;
     public static String FilteredItemsSelectionDialog_menu;
 	public static String FilteredItemsSelectionDialog_refreshJob;
+	public static String FilteredItemsSelectionDialog_progressRefreshJob;
+	public static String FilteredItemsSelectionDialog_cacheRefreshJob;
+	public static String FilteredItemsSelectionDialog_cacheRefreshJob_checkDuplicates;
+	public static String FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements;
 	public static String FilteredItemsSelectionDialog_patternLabel;
 	public static String FilteredItemsSelectionDialog_listLabel;
 	public static String FilteredItemsSelectionDialog_toggleStatusAction;
 	public static String FilteredItemsSelectionDialog_removeItemsFromHistoryAction;
+	public static String FilteredItemsSelectionDialog_searchJob_taskName;
 	public static String FilteredItemsSelectionDialog_separatorLabel;
-    
-    // AbstractSeracher
+    public static String FilteredItemsSelectionDialog_storeError;
+    public static String FilteredItemsSelectionDialog_restoreError;
+	
+    // AbstractSearcher
     public static String FilteredItemsSelectionDialog_jobLabel; 
     public static String FilteredItemsSelectionDialog_jobError;
     public static String FilteredItemsSelectionDialog_jobCancel;
-		
+    	
     static {
 		// load message values from bundle file
 		NLS.initializeMessages(BUNDLE_NAME, WorkbenchMessages.class);

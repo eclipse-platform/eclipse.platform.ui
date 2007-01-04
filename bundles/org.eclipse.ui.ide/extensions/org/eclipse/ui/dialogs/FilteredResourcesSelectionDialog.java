@@ -57,12 +57,14 @@ import org.eclipse.ui.ResourceWorkingSetFilter;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
+import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.eclipse.ui.statushandling.StatusManager;
 
 import com.ibm.icu.text.Collator;
 
@@ -195,7 +197,9 @@ public class FilteredResourcesSelectionDialog extends
 			memento.save(writer);
 			settings.put(WORKINGS_SET_SETTINGS, writer.getBuffer().toString());
 		} catch (IOException e) {
-			IDEWorkbenchPlugin.log("", e); //$NON-NLS-1$
+			StatusManager.getManager().handle(
+					new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+							IStatus.ERROR, "", e)); //$NON-NLS-1$
 			// don't do anything. Simply don't store the settings
 		}
 	}
@@ -219,11 +223,13 @@ public class FilteredResourcesSelectionDialog extends
 						setting));
 				workingSetFilterActionGroup.restoreState(memento);
 			} catch (WorkbenchException e) {
-				IDEWorkbenchPlugin.log("", e); //$NON-NLS-1$
+				StatusManager.getManager().handle(
+						new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+								IStatus.ERROR, "", e)); //$NON-NLS-1$
 				// don't do anything. Simply don't restore the settings
 			}
 		}
-		
+
 		addListFilter(workingSetFilter);
 
 		applyFilter();
@@ -276,7 +282,7 @@ public class FilteredResourcesSelectionDialog extends
 								setSubtitle(null);
 							}
 
-							scheduleRefresh();
+							scheduleRefresh(true);
 						}
 					}
 				});
@@ -424,12 +430,10 @@ public class FilteredResourcesSelectionDialog extends
 	protected void fillContentProvider(AbstractContentProvider contentProvider,
 			ItemsFilter itemsFilter, IProgressMonitor progressMonitor)
 			throws CoreException {
-
 		if (itemsFilter instanceof ResourceFilter)
 			container.accept(new ResourceProxyVisitor(contentProvider,
 					(ResourceFilter) itemsFilter, progressMonitor),
 					IResource.NONE);
-
 		if (progressMonitor != null)
 			progressMonitor.done();
 
@@ -508,7 +512,7 @@ public class FilteredResourcesSelectionDialog extends
 			}
 
 			IResource res = (IResource) element;
-			
+
 			String str = res.getName();
 
 			// extra info for duplicates
@@ -685,7 +689,7 @@ public class FilteredResourcesSelectionDialog extends
 		 * Creates new ResourceProxyVisitor instance.
 		 * 
 		 * @param contentProvider
-		 * @param itemsFilter
+		 * @param resourceFilter
 		 * @param progressMonitor
 		 * @throws CoreException
 		 */
@@ -700,7 +704,10 @@ public class FilteredResourcesSelectionDialog extends
 			this.projects = new ArrayList(Arrays.asList(resources));
 
 			if (progressMonitor != null)
-				progressMonitor.beginTask("", projects.size()); //$NON-NLS-1$
+				progressMonitor
+						.beginTask(
+								WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
+								projects.size());
 		}
 
 		/*
@@ -809,6 +816,20 @@ public class FilteredResourcesSelectionDialog extends
 				return false;
 			if (filter instanceof ResourceFilter)
 				if (this.showDerived == ((ResourceFilter) filter).showDerived)
+					return true;
+			return false;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter#equalsFilter(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.ItemsFilter)
+		 */
+		public boolean equalsFilter(ItemsFilter iFilter) {
+			if (!super.equals(iFilter))
+				return false;
+			if (iFilter instanceof ResourceFilter)
+				if (this.showDerived == ((ResourceFilter) iFilter).showDerived)
 					return true;
 			return false;
 		}

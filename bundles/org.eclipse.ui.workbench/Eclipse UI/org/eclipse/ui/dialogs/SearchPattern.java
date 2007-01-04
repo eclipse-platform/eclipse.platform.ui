@@ -57,6 +57,11 @@ public class SearchPattern {
 	public static final int RULE_CASE_SENSITIVE = 0x0008;
 
 	/**
+	 * Match rule: The search pattern is blank.
+	 */
+	public static final int RULE_BLANK_MATCH = 0x0020;
+
+	/**
 	 * Match rule: The search pattern contains a Camel Case expression. <br>
 	 * Examples:
 	 * <ul>
@@ -88,6 +93,8 @@ public class SearchPattern {
 
 	private String stringPattern;
 
+	private String initialPattern;
+
 	private StringMatcher stringMatcher;
 
 	private static final char END_SYMBOL = '<';
@@ -102,11 +109,11 @@ public class SearchPattern {
 	 * Creates new instance of SearchPattern Default allowedRules for it is
 	 * result of belong logic operation: ( RULE_EXACT_MATCH | RULE_PREFIX_MATCH |
 	 * RULE_PATTERN_MATCH | RULE_CAMELCASE_MATCH )
-	 *
+	 * 
 	 */
 	public SearchPattern() {
 		this(RULE_EXACT_MATCH | RULE_PREFIX_MATCH | RULE_PATTERN_MATCH
-				| RULE_CAMELCASE_MATCH);
+				| RULE_CAMELCASE_MATCH | RULE_BLANK_MATCH);
 	}
 
 	/**
@@ -146,11 +153,12 @@ public class SearchPattern {
 	 *            The stringPattern to set.
 	 */
 	public void setPattern(String stringPattern) {
+		this.initialPattern = stringPattern;
 		this.stringPattern = stringPattern;
 		initializePatternAndMatchRule(stringPattern);
 		matchRule = matchRule & this.allowedRules;
 		if (matchRule == RULE_PATTERN_MATCH) {
-			stringMatcher = new StringMatcher(stringPattern, true, false);
+			stringMatcher = new StringMatcher(this.stringPattern, true, false);
 		}
 	}
 
@@ -162,6 +170,8 @@ public class SearchPattern {
 	 */
 	public boolean matches(String text) {
 		switch (matchRule) {
+		case RULE_BLANK_MATCH:
+			return true;
 		case RULE_PATTERN_MATCH:
 			return stringMatcher.match(text);
 		case RULE_EXACT_MATCH:
@@ -178,7 +188,7 @@ public class SearchPattern {
 	private void initializePatternAndMatchRule(String pattern) {
 		int length = pattern.length();
 		if (length == 0) {
-			matchRule = RULE_EXACT_MATCH;
+			matchRule = RULE_BLANK_MATCH;
 			stringPattern = pattern;
 			return;
 		}
@@ -268,27 +278,27 @@ public class SearchPattern {
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NPE&quot;
-	 *        name = NullPointerException / NoPermissionException
-	 *        result =&gt; true
+	 *                 pattern = &quot;NPE&quot;
+	 *                 name = NullPointerException / NoPermissionException
+	 *                 result =&gt; true
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NuPoEx&quot;
-	 *        name = NullPointerException
-	 *        result =&gt; true
+	 *                 pattern = &quot;NuPoEx&quot;
+	 *                 name = NullPointerException
+	 *                 result =&gt; true
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;npe&quot;
-	 *        name = NullPointerException
-	 *        result =&gt; false
+	 *                 pattern = &quot;npe&quot;
+	 *                 name = NullPointerException
+	 *                 result =&gt; false
 	 * </pre>
 	 * 
 	 * </li>
@@ -338,65 +348,65 @@ public class SearchPattern {
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NPE&quot;
-	 *        patternStart = 0
-	 *        patternEnd = 3
-	 *        name = NullPointerException
-	 *        nameStart = 0
-	 *        nameEnd = 20
-	 *        result =&gt; true
+	 *                 pattern = &quot;NPE&quot;
+	 *                 patternStart = 0
+	 *                 patternEnd = 3
+	 *                 name = NullPointerException
+	 *                 nameStart = 0
+	 *                 nameEnd = 20
+	 *                 result =&gt; true
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NPE&quot;
-	 *        patternStart = 0
-	 *        patternEnd = 3
-	 *        name = NoPermissionException
-	 *        nameStart = 0
-	 *        nameEnd = 21
-	 *        result =&gt; true
+	 *                 pattern = &quot;NPE&quot;
+	 *                 patternStart = 0
+	 *                 patternEnd = 3
+	 *                 name = NoPermissionException
+	 *                 nameStart = 0
+	 *                 nameEnd = 21
+	 *                 result =&gt; true
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NuPoEx&quot;
-	 *        patternStart = 0
-	 *        patternEnd = 6
-	 *        name = NullPointerException
-	 *        nameStart = 0
-	 *        nameEnd = 20
-	 *        result =&gt; true
+	 *                 pattern = &quot;NuPoEx&quot;
+	 *                 patternStart = 0
+	 *                 patternEnd = 6
+	 *                 name = NullPointerException
+	 *                 nameStart = 0
+	 *                 nameEnd = 20
+	 *                 result =&gt; true
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;NuPoEx&quot;
-	 *        patternStart = 0
-	 *        patternEnd = 6
-	 *        name = NoPermissionException
-	 *        nameStart = 0
-	 *        nameEnd = 21
-	 *        result =&gt; false
+	 *                 pattern = &quot;NuPoEx&quot;
+	 *                 patternStart = 0
+	 *                 patternEnd = 6
+	 *                 name = NoPermissionException
+	 *                 nameStart = 0
+	 *                 nameEnd = 21
+	 *                 result =&gt; false
 	 * </pre>
 	 * 
 	 * </li>
 	 * <li>
 	 * 
 	 * <pre>
-	 *        pattern = &quot;npe&quot;
-	 *        patternStart = 0
-	 *        patternEnd = 3
-	 *        name = NullPointerException
-	 *        nameStart = 0
-	 *        nameEnd = 20
-	 *        result =&gt; false
+	 *                 pattern = &quot;npe&quot;
+	 *                 patternStart = 0
+	 *                 patternEnd = 3
+	 *                 name = NullPointerException
+	 *                 nameStart = 0
+	 *                 nameEnd = 20
+	 *                 result =&gt; false
 	 * </pre>
 	 * 
 	 * </li>
@@ -625,9 +635,47 @@ public class SearchPattern {
 	 * Check if charater is valid camelCase character
 	 * 
 	 * @param ch
+	 *            character to be validated
 	 * @return true if cahracter is valid
 	 */
 	protected boolean isValidCamelCaseChar(char ch) {
 		return true;
 	}
+
+	/**
+	 * Tells whether the given <code>SearchPattern</code> equals this pattern.
+	 * 
+	 * @param pattern
+	 *            pattern to be checked
+	 * @return true if the given pattern equals this search pattern
+	 */
+	public boolean equalsPattern(SearchPattern pattern) {
+		return trimWildcardCharacters(pattern.initialPattern).equals(
+				trimWildcardCharacters(this.initialPattern));
+	}
+
+	/**
+	 * Tells whether the given <code>SearchPattern</code> is a subpattern of
+	 * this pattern.
+	 * 
+	 * @param pattern
+	 *            pattern to be checked
+	 * @return true if the given pattern is a sub pattern of this search pattern
+	 */
+	public boolean isSubPattern(SearchPattern pattern) {
+		return trimWildcardCharacters(pattern.initialPattern).startsWith(
+				trimWildcardCharacters(this.initialPattern));
+	}
+
+	/**
+	 * Trims sequences of '*' characters
+	 * 
+	 * @param pattern
+	 *            string to be trimmed
+	 * @return trimmed pattern
+	 */
+	private String trimWildcardCharacters(String pattern) {
+		return pattern.replaceAll("\\*+", "\\*"); //$NON-NLS-1$ //$NON-NLS-2$		}
+	}
+
 }

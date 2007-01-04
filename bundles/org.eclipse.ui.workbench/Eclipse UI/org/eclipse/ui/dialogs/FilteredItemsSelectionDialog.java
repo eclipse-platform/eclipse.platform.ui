@@ -14,14 +14,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -46,6 +48,7 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -80,7 +83,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -92,6 +94,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.statushandling.StatusManager;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -118,9 +121,27 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 
+	/**
+	 * Represents an empty selection in the pattern input field (used only for
+	 * initial pattern).
+	 */
+	public static final int NONE = 0;
+
+	/**
+	 * Pattern input field selection where carret is at the beginning (used only
+	 * for initial pattern).
+	 */
+	public static final int CARET_BEGINNING = 1;
+
+	/**
+	 * Represents a full selection in the pattern input field (used only for
+	 * initial pattern).
+	 */
+	public static final int FULL_SELECTION = 2;
+
 	private Text pattern;
 
-	private ItemsTableViewer list;
+	private TableViewer list;
 
 	private DetailsContentViewer details;
 
@@ -149,13 +170,19 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	private IStatus status;
 
-	private RefreshJob refreshJob = new RefreshJob();
+	private RefreshJob refreshJob;
+
+	private RefreshCacheJob refreshCacheJob;
+
+	private ProgressMessageRefreshJob refreshProgressMessageJob = new ProgressMessageRefreshJob();
 
 	private Object[] lastSelection;
 
 	private ContentProvider contentProvider;
 
 	private AbstractFilterJob filterJob;
+
+	private AbstractFilterJob previousFilterJob;
 
 	private ItemsFilter filter;
 
@@ -164,6 +191,10 @@ public abstract class FilteredItemsSelectionDialog extends
 	private ItemsFilter lastCompletedFilter;
 
 	private String initialPatternText;
+
+	private int selectionMode;
+
+	private Object[] lastRefreshSelection;
 
 	/**
 	 * Creates a new instance of the class
@@ -178,6 +209,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		this.multi = multi;
 		contentProvider = new ContentProvider();
+		refreshCacheJob = new RefreshCacheJob();
+		refreshJob = new RefreshJob(refreshCacheJob);
+		selectionMode = NONE;
 	}
 
 	/**
@@ -197,7 +231,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	 *            the new filter
 	 */
 	protected void addListFilter(ViewerFilter filter) {
-		list.addFilter(filter);
+		contentProvider.addFilter(filter);
 	}
 
 	/**
@@ -300,7 +334,15 @@ public abstract class FilteredItemsSelectionDialog extends
 				this.contentProvider.loadHistory(memento);
 			} catch (WorkbenchException e) {
 				// Simply don't restore the settings
-				WorkbenchPlugin.log(e);
+				StatusManager
+						.getManager()
+						.handle(
+								new Status(
+										IStatus.ERROR,
+										WorkbenchPlugin.PI_WORKBENCH,
+										IStatus.ERROR,
+										WorkbenchMessages.FilteredItemsSelectionDialog_restoreError,
+										e));
 			}
 		}
 	}
@@ -332,7 +374,15 @@ public abstract class FilteredItemsSelectionDialog extends
 			settings.put(HISTORY_SETTINGS, writer.getBuffer().toString());
 		} catch (IOException e) {
 			// Simply don't store the settings
-			WorkbenchPlugin.log(e);
+			StatusManager
+					.getManager()
+					.handle(
+							new Status(
+									IStatus.ERROR,
+									WorkbenchPlugin.PI_WORKBENCH,
+									IStatus.ERROR,
+									WorkbenchMessages.FilteredItemsSelectionDialog_storeError,
+									e));
 		}
 	}
 
@@ -490,11 +540,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
 
-		list = new ItemsTableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
-				| SWT.BORDER | SWT.V_SCROLL);
+		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE)
+				| SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
 		list.setContentProvider(contentProvider);
 		list.setLabelProvider(getItemsListLabelProvider());
 		list.setInput(new Object[0]);
+		list.setItemCount(contentProvider.getElements(null).length);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		list.getTable().setLayoutData(gd);
@@ -561,8 +612,19 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		if (initialPatternText != null) {
 			pattern.setText(initialPatternText);
-			pattern.setSelection(0, initialPatternText.length());
 		}
+
+		switch (selectionMode) {
+		case CARET_BEGINNING:
+			pattern.setSelection(0, 0);
+			break;
+		case FULL_SELECTION:
+			pattern.setSelection(0, initialPatternText.length());
+			break;
+		}
+
+		// apply filter even if pattern is empty (display history)
+		applyFilter();
 
 		return dialogArea;
 	}
@@ -689,34 +751,100 @@ public abstract class FilteredItemsSelectionDialog extends
 	protected abstract IDialogSettings getDialogSettings();
 
 	/**
-	 * Refreshes the dialog
+	 * Refreshes the dialog - have to be called in UI thread.
 	 */
 	public void refresh() {
 		if (list != null && !list.getTable().isDisposed()) {
-			list.getTable().setRedraw(false);
+
+			if (list != null) {
+				// preserve selection
+				lastRefreshSelection = ((StructuredSelection) list
+						.getSelection()).toArray();
+			}
+
+			list.setItemCount(contentProvider.getElements(null).length);
 			list.refresh();
-			list.getTable().setRedraw(true);
 
 			if (list.getTable().getItemCount() > 0) {
-				list
-						.setSelection(new StructuredSelection(list
-								.getElementAt(0)));
+				// preserve previous selection
+				if (lastRefreshSelection != null
+						&& lastRefreshSelection.length > 0)
+					list.setSelection(new StructuredSelection(
+							lastRefreshSelection));
+
+				if (list.getTable().getSelectionIndices().length == 0) {
+					list.setSelection(new StructuredSelection(contentProvider
+							.getElements(null)[0]));
+				}
 			} else {
 				list.setSelection(StructuredSelection.EMPTY);
 			}
 		}
 
+		updateProgressLabel();
+	}
+
+	/**
+	 * Updates the progress label - should be called in UI thread.
+	 */
+	public void updateProgressLabel() {
 		if (!progressLabel.isDisposed()) {
 			progressLabel.setText(contentProvider.getProgressMessage());
 		}
 	}
 
 	/**
-	 * Schedule refresh job
+	 * Notifies the content provider - fires filtering of content provider
+	 * elements. During the filtering a separator between history and workspace
+	 * matches is added. (It is a rather long action - should be called in a
+	 * job.)
+	 * 
+	 * @param checkDuplicates
+	 *            true if data concerning elements duplication should be
+	 *            computed - it takes much more time than the standard filtering
+	 * @param monitor
+	 *            a progress monitor or null if no monitor's available
 	 */
-	public void scheduleRefresh() {
-		refreshJob.cancel();
-		refreshJob.schedule();
+	public void reloadCache(boolean checkDuplicates,
+			GranualProgressMonitor monitor) {
+		if (list != null && !list.getTable().isDisposed()
+				&& contentProvider != null) {
+			contentProvider.reloadCache(checkDuplicates, monitor);
+		}
+	}
+
+	/**
+	 * Schedule refresh job.
+	 * 
+	 * @param checkDuplicates
+	 *            true if data concerning elements duplication should be
+	 *            computed - it takes much more time than standard filtering
+	 */
+	public void scheduleRefresh(boolean checkDuplicates) {
+
+		boolean allJobsCancelled = refreshCacheJob.cancel();
+
+		boolean refreshJobCancelled = refreshJob.cancel();
+
+		allJobsCancelled = allJobsCancelled && refreshJobCancelled;
+
+		if (!allJobsCancelled) {
+			Job old = refreshCacheJob;
+			refreshCacheJob = new RefreshCacheJob(old);
+			RefreshJob oldRefreshJob = refreshJob;
+			refreshJob = new RefreshJob(refreshCacheJob, oldRefreshJob);
+		}
+
+		refreshCacheJob.setCheckDuplicates(checkDuplicates);
+		refreshCacheJob.schedule();
+	}
+
+	/**
+	 * Schedules progerss message refresh.
+	 */
+	public void scheduleProgressMessageRefresh() {
+		if (refreshProgressMessageJob.cancel())
+			refreshProgressMessageJob.schedule();
 	}
 
 	/*
@@ -765,13 +893,32 @@ public abstract class FilteredItemsSelectionDialog extends
 
 	/**
 	 * Sets the initial pattern used by the filter. This text is copied into the
-	 * selection input on the dialog.
+	 * selection input on the dialog. A full selection is used in the pattern
+	 * input field.
 	 * 
 	 * @param text
 	 *            initial pattern for the filter
+	 * @see FilteredItemsSelectionDialog#FULL_SELECTION
 	 */
 	public void setInitialPattern(String text) {
+		setInitialPattern(text, FULL_SELECTION);
+	}
+
+	/**
+	 * Sets the initial pattern used by the filter. This text is copied into the
+	 * selection input on the dialog. The <code>selectioMode</code> is used to
+	 * choose selection type for the input field.
+	 * 
+	 * @param text
+	 *            initial pattern for the filter
+	 * @param selectionMode
+	 *            one of: {@link FilteredItemsSelectionDialog#NONE},
+	 *            {@link FilteredItemsSelectionDialog#CARET_BEGINNING},
+	 *            {@link FilteredItemsSelectionDialog#FULL_SELECTION}
+	 */
+	public void setInitialPattern(String text, int selectionMode) {
 		this.initialPatternText = text;
+		this.selectionMode = selectionMode;
 	}
 
 	/**
@@ -815,19 +962,22 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * items list. It causes refiltering.
 	 */
 	protected void applyFilter() {
+
+		ItemsFilter newFilter = createFilter();
+
+		// get rid of similiar patterns, for example: *a**b and ***a*b
+		if (filter != null && filter.equalsFilter(newFilter)) {
+			return;
+		}
+
 		stopCurrentFilterJob();
 
-		this.filter = createFilter();
-		this.contentProvider.reset();
+		this.filter = newFilter;
 
 		if (this.filter != null) {
-			if (this.filter.getPattern().length() == 0) {
-				filter = null;
-				this.contentProvider.refresh();
-			} else {
-				scheduleFilterJob();
-			}
+			scheduleFilterJob();
 		}
+
 	}
 
 	/**
@@ -926,25 +1076,31 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * the last one, a full search is scheduled.
 	 */
 	private synchronized void scheduleFilterJob() {
-		if (lastCompletedFilter != null
+
+		if (filter.getPattern().length() == 0) {
+			filterJob = new HistoryResultFilterJob(contentProvider, filter);
+		} else if (lastCompletedFilter != null
 				&& lastCompletedFilter.isSubFilter(filter)) {
 			filterJob = new CachedResultFilterJob(contentProvider, filter,
 					lastCompletedResult);
 		} else {
-			lastCompletedFilter = null;
-			lastCompletedResult = null;
 			filterJob = new FilterJob(contentProvider, filter);
 		}
 		filterJob.schedule();
+
 	}
 
 	/**
 	 * Stops current filtered job
 	 */
 	private void stopCurrentFilterJob() {
+
 		if (filterJob != null) {
 			filterJob.stop();
+			previousFilterJob = filterJob;
 			filterJob = null;
+		} else {
+			previousFilterJob = null;
 		}
 	}
 
@@ -995,24 +1151,245 @@ public abstract class FilteredItemsSelectionDialog extends
 		}
 	}
 
+	/**
+	 * Only refreshes UI on the basis of an already sorted and filtered set of
+	 * items.
+	 * 
+	 * Standard invocation scenario: filtering job (AbstractFilterJob class -
+	 * Job class) -> cache refresh without checking for duplicates
+	 * (CacheRefreshJob class - Job class)-> ui refresh (RefreshJob class -
+	 * UIJob class) -> cache refresh with checking for duplicates
+	 * (CacheRefreshJob class - Job class) -> ui refresh (RefreshJob class -
+	 * UIJob class). The scenario is rather complicated, but it had to be
+	 * applied, because:
+	 * <ul>
+	 * <li> refreshing cache is rather a long action and cannot be run in the UI -
+	 * cannot be run in a UIJob</li>
+	 * <li> refreshing cache checking for duplicates is twice as long as
+	 * refreshing cache without checking for duplicates; results of the search
+	 * could be displayed earlier</li>
+	 * <li> refreshing the UI have to be run in a UIJob</li>
+	 * </ul>
+	 */
 	private class RefreshJob extends UIJob {
+
+		private boolean cancelling = false;
+
+		private RefreshJob previousJob;
+
+		private RefreshCacheJob associatedRefreshCacheJob;
+
+		/**
+		 * Creates a new instance of the class
+		 * 
+		 * @param associatedRefreshCacheJob
+		 *            cache refresh job which run before this UI job
+		 */
+		public RefreshJob(RefreshCacheJob associatedRefreshCacheJob) {
+			this(associatedRefreshCacheJob, null);
+		}
+
+		/**
+		 * Creates a new instance of the class
+		 * 
+		 * @param associatedRefreshCacheJob
+		 *            cache refresh job which run before this UI job
+		 * @param previousJob
+		 *            previous Ui refresh job (which is being cancelled)
+		 */
+		public RefreshJob(RefreshCacheJob associatedRefreshCacheJob,
+				RefreshJob previousJob) {
+			super(FilteredItemsSelectionDialog.this.getParentShell()
+					.getDisplay(),
+					WorkbenchMessages.FilteredItemsSelectionDialog_refreshJob);
+			this.associatedRefreshCacheJob = associatedRefreshCacheJob;
+			this.previousJob = previousJob;
+			setSystem(true);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			cancelling = false;
+			if (previousJob != null) {
+				try {
+					previousJob.join();
+				} catch (InterruptedException e) {
+				}
+				previousJob = null;
+			}
+
+			if (cancelling)
+				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
+						IStatus.OK, "", null); //$NON-NLS-1$
+
+			if (FilteredItemsSelectionDialog.this != null) {
+				FilteredItemsSelectionDialog.this.refresh();
+			}
+			// prevent changing state of newly created (refresh cache) jobs
+			if (!cancelling
+					&& this.associatedRefreshCacheJob == FilteredItemsSelectionDialog.this.refreshCacheJob) {
+				if (!associatedRefreshCacheJob.isCheckDuplicates()) {
+					associatedRefreshCacheJob.setCheckDuplicates(true);
+					associatedRefreshCacheJob.schedule(100);
+				}
+			}
+
+			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
+					IStatus.OK, "", null); //$NON-NLS-1$
+		}
+
+		protected void canceling() {
+			super.canceling();
+			cancelling = true;
+		}
+	}
+
+	/**
+	 * Refreshes the progress message.
+	 * 
+	 */
+	private class ProgressMessageRefreshJob extends UIJob {
+
+		private boolean cancelling = false;
 
 		/**
 		 * Creates a new instance of the class
 		 */
-		public RefreshJob() {
-			super(FilteredItemsSelectionDialog.this.getParentShell()
-					.getDisplay(),
-					WorkbenchMessages.FilteredItemsSelectionDialog_refreshJob);
+		public ProgressMessageRefreshJob() {
+			super(
+					FilteredItemsSelectionDialog.this.getParentShell()
+							.getDisplay(),
+					WorkbenchMessages.FilteredItemsSelectionDialog_progressRefreshJob);
+			setSystem(true);
 		}
 
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+
+			cancelling = false;
+
 			if (FilteredItemsSelectionDialog.this != null) {
-				FilteredItemsSelectionDialog.this.refresh();
+				FilteredItemsSelectionDialog.this.updateProgressLabel();
 			}
+
+			if (cancelling)
+				refreshProgressMessageJob.schedule();
+
 			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
 					IStatus.OK, "", null); //$NON-NLS-1$
 		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
+		 */
+		protected void canceling() {
+			super.canceling();
+			this.cancelling = true;
+		}
+	}
+
+	/**
+	 * A job responsible for computing filtered items list presented using
+	 * <code>RefreshJob</code>.
+	 * 
+	 * @see RefreshJob
+	 * 
+	 */
+	private class RefreshCacheJob extends Job {
+
+		private boolean checkDuplicates = true;
+
+		private boolean cancelling = false;
+
+		private Job previousJob = null;
+
+		/**
+		 * Creates a new instance of the class
+		 */
+		public RefreshCacheJob() {
+			this(null);
+		}
+
+		/**
+		 * Creates a new instance of the class
+		 * 
+		 * @param previousJob
+		 *            previous job to be cancelled/joined
+		 */
+		public RefreshCacheJob(Job previousJob) {
+			super(
+					WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob);
+			this.previousJob = previousJob;
+			setSystem(true);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			cancelling = false;
+			if (previousJob != null) {
+				try {
+					previousJob.join();
+				} catch (InterruptedException e) {
+				}
+				previousJob = null;
+			}
+			if (cancelling)
+				return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
+						IStatus.OK, "", null); //$NON-NLS-1$
+
+			if (FilteredItemsSelectionDialog.this != null) {
+				GranualProgressMonitor wrappedMonitor = new GranualProgressMonitor(
+						monitor, contentProvider, true);
+				FilteredItemsSelectionDialog.this.reloadCache(checkDuplicates,
+						wrappedMonitor);
+			}
+
+			if (!cancelling) {
+				refreshJob.schedule();
+			}
+
+			return new Status(IStatus.OK, WorkbenchPlugin.PI_WORKBENCH,
+					IStatus.OK, "", null); //$NON-NLS-1$
+
+		}
+
+		/**
+		 * 
+		 * @param checkDuplicates
+		 *            true if data concerning elements duplication should be
+		 *            computed - it takes much more time than standard filtering
+		 */
+		public void setCheckDuplicates(boolean checkDuplicates) {
+			this.checkDuplicates = checkDuplicates;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
+		 */
+		protected void canceling() {
+			super.canceling();
+			cancelling = true;
+			contentProvider.stopReloadingCache();
+		}
+
+		/**
+		 * @return Returns the checkDuplicates.
+		 */
+		public boolean isCheckDuplicates() {
+			return checkDuplicates;
+		}
+
 	}
 
 	private class RemoveHistoryItemAction extends Action {
@@ -1025,6 +1402,11 @@ public abstract class FilteredItemsSelectionDialog extends
 					WorkbenchMessages.FilteredItemsSelectionDialog_removeItemsFromHistoryAction);
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.action.Action#run()
+		 */
 		public void run() {
 			List selectedElements = ((StructuredSelection) list.getSelection())
 					.toList();
@@ -1136,10 +1518,24 @@ public abstract class FilteredItemsSelectionDialog extends
 
 			String str = provider.getText(element);
 
-			if (selectionDecorator != null
-					&& ((StructuredSelection) list.getSelection()).toList()
-							.contains(element)) {
-				str = selectionDecorator.decorateText(str, element);
+			if (selectionDecorator != null && element != null) {
+
+				// ((StructuredSelection)list.getSelection()).toList().contains(element))
+				// cannot be used - virtual tables produce cycles in
+				// update item - get selection invocation scenarios
+
+				int[] selectionIndices = list.getTable().getSelectionIndices();
+				List elements = Arrays
+						.asList(contentProvider.getElements(null));
+				for (int i = 0; i < selectionIndices.length; i++) {
+					if (elements.size() > i
+							&& element
+									.equals(elements.get(selectionIndices[i]))) {
+						str = selectionDecorator.decorateText(str, element);
+						break;
+					}
+				}
+
 			}
 
 			return str;
@@ -1293,12 +1689,12 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * FilteringProgressMonitor to monitoring progress of filtering process. It
-	 * updates progress message and refresh dialog after concrete part of work.
-	 * State of this monitor illustrate state of filtering process.
+	 * GranualProgressMonitor is used for monitoring progress of filtering
+	 * process. It updates progress message and refreshes dialog after concrete
+	 * part of work. State of this monitor illustrates state of filtering or
+	 * cache refreshing process.
 	 */
-	private static class FilteringProgressMonitor extends
-			ProgressMonitorWrapper {
+	private static class GranualProgressMonitor extends ProgressMonitorWrapper {
 
 		private ContentProvider contentProvider;
 
@@ -1310,16 +1706,26 @@ public abstract class FilteredItemsSelectionDialog extends
 
 		private boolean done;
 
+		private boolean isFiltering;
+
 		/**
 		 * Creates instance of FilteringProgressMonitor
 		 * 
 		 * @param monitor
+		 *            progress to be wrapped
 		 * @param contentProvider
+		 * @param isFiltering
+		 *            if this progress monitor is attached to a filtering job;
+		 *            if false the job ought to be a cache/UI refresh job;
+		 *            filtering jobs have higher priority - if there's a running
+		 *            filtering jobs progress updates triggered from a
+		 *            non-filtering job will not be displayed on UI !
 		 */
-		public FilteringProgressMonitor(IProgressMonitor monitor,
-				ContentProvider contentProvider) {
+		public GranualProgressMonitor(IProgressMonitor monitor,
+				ContentProvider contentProvider, boolean isFiltering) {
 			super(monitor);
 			this.contentProvider = contentProvider;
+			this.isFiltering = isFiltering;
 		}
 
 		/*
@@ -1362,7 +1768,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public void done() {
 			done = true;
-			contentProvider.setProgressMessage(""); //$NON-NLS-1$
+			contentProvider.setProgressMessage("", isFiltering); //$NON-NLS-1$
 			super.done();
 		}
 
@@ -1386,7 +1792,8 @@ public abstract class FilteredItemsSelectionDialog extends
 			if ((((int) (((worked - work) * 10) / totalWork)) < ((int) ((worked * 10) / totalWork)))
 					|| (((int) ((worked * 10) / totalWork)) == 0))
 				if (!isCanceled())
-					contentProvider.setProgressMessage(getMessage());
+					contentProvider.setProgressMessage(getMessage(),
+							isFiltering);
 		}
 
 		private String getMessage() {
@@ -1444,8 +1851,8 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 		 */
 		protected final IStatus run(IProgressMonitor parent) {
-			FilteringProgressMonitor monitor = new FilteringProgressMonitor(
-					parent, contentProvider);
+			GranualProgressMonitor monitor = new GranualProgressMonitor(parent,
+					contentProvider, true);
 			return doRun(monitor);
 		}
 
@@ -1464,12 +1871,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            progress monitor
 		 * @return result of the exceution
 		 */
-		protected IStatus doRun(FilteringProgressMonitor monitor) {
+		protected IStatus doRun(GranualProgressMonitor monitor) {
 			try {
 				internalRun(monitor);
 			} catch (CoreException e) {
 				this.stop();
-				WorkbenchPlugin.log(e);
 				return new Status(
 						IStatus.ERROR,
 						WorkbenchPlugin.PI_WORKBENCH,
@@ -1489,7 +1895,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            for monitoring progress
 		 * @throws CoreException
 		 */
-		protected abstract void filterContent(FilteringProgressMonitor monitor)
+		protected abstract void filterContent(GranualProgressMonitor monitor)
 				throws CoreException;
 
 		/**
@@ -1498,19 +1904,19 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param monitor
 		 * @throws CoreException
 		 */
-		private void internalRun(FilteringProgressMonitor monitor)
+		private void internalRun(GranualProgressMonitor monitor)
 				throws CoreException {
 
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 
-			filterContent(monitor);
+			this.contentProvider.reset();
 
-			contentProvider.refresh();
+			filterContent(monitor);
 
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
-
+			contentProvider.refresh(false);
 		}
 
 		private IStatus canceled(Exception e) {
@@ -1549,13 +1955,28 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
 		 */
-		protected void filterContent(FilteringProgressMonitor monitor) {
-			for (Iterator iter = this.lastResult.iterator(); iter.hasNext();) {
-				Object item = iter.next();
-				if (monitor.isCanceled())
-					break;
-				this.contentProvider.add(item, itemsFilter);
+		protected void filterContent(GranualProgressMonitor monitor) {
+			if (lastResult != null) {
+
+				int length = this.lastResult.size() / 500;
+				monitor
+						.beginTask(
+								WorkbenchMessages.FilteredItemsSelectionDialog_cacheSearchJob_taskName,
+								length);
+
+				for (int pos = 0; pos < this.lastResult.size(); pos++) {
+
+					Object item = this.lastResult.get(pos);
+					if (monitor.isCanceled())
+						break;
+					this.contentProvider.add(item, itemsFilter);
+
+					if ((pos % 500) == 0)
+						monitor.worked(1);
+
+				}
 			}
+			monitor.done();
 		}
 	}
 
@@ -1581,16 +2002,76 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
 		 */
-		protected void filterContent(FilteringProgressMonitor monitor)
+		protected void filterContent(GranualProgressMonitor monitor)
 				throws CoreException {
+
+			try {
+				// some dialog implementation could keep state - prevents
+				// crashes of the filtering process
+				if (previousFilterJob != null)
+					previousFilterJob.join();
+			} catch (InterruptedException e) {
+				// ignore
+			}
+
+			if (monitor != null && monitor.isCanceled())
+				return;
+
+			lastCompletedFilter = null;
+			lastCompletedResult = null;
 
 			this.contentProvider.addHistoryItems(this.itemsFilter);
 
-			fillContentProvider(this.contentProvider, this.itemsFilter, monitor);
+			SubProgressMonitor subMonitor = null;
+			if (monitor != null) {
+				monitor
+						.beginTask(
+								WorkbenchMessages.FilteredItemsSelectionDialog_searchJob_taskName,
+								1000);
+				subMonitor = new SubProgressMonitor(monitor, 500);
+
+			}
+
+			fillContentProvider(this.contentProvider, this.itemsFilter,
+					subMonitor);
+
+			if (monitor != null && !monitor.isCanceled()) {
+				monitor.worked(100);
+				this.contentProvider.rememberResult(this.itemsFilter);
+				monitor.worked(400);
+				monitor.done();
+			}
+
+		}
+	}
+
+	/**
+	 * Only filters hostory items.
+	 */
+	private class HistoryResultFilterJob extends AbstractFilterJob {
+
+		/**
+		 * Creates new instance of HistoryResultFilterJob
+		 * 
+		 * @param contentProvider
+		 * @param itemsFilter
+		 */
+		public HistoryResultFilterJob(ContentProvider contentProvider,
+				ItemsFilter itemsFilter) {
+			super(contentProvider, itemsFilter);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.AbstractFilterJob#filterContent(org.eclipse.ui.dialogs.FilteredItemsSelectionDialog.FilteringProgressMonitor)
+		 */
+		protected void filterContent(GranualProgressMonitor monitor) {
+
+			this.contentProvider.addHistoryItems(this.itemsFilter);
 
 			if (monitor != null && !monitor.isCanceled()) {
 				monitor.done();
-				this.contentProvider.rememberResult(this.itemsFilter);
 			}
 		}
 	}
@@ -1629,7 +2110,6 @@ public abstract class FilteredItemsSelectionDialog extends
 				 * @see java.util.LinkedList#add(java.lang.Object)
 				 */
 				public boolean add(Object arg0) {
-					// TODO Auto-generated method stub
 					if (this.size() > MAX_HISTORY_SIZE)
 						this.removeFirst();
 					if (!this.contains(arg0))
@@ -1710,8 +2190,9 @@ public abstract class FilteredItemsSelectionDialog extends
 			for (int i = 0; i < mementoElements.length; ++i) {
 				IMemento mementoElement = mementoElements[i];
 				Object object = restoreItemFromMemento(mementoElement);
-				if (object != null)
+				if (object != null) {
 					historyList.add(object);
+				}
 			}
 		}
 
@@ -1789,8 +2270,11 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		public ItemsFilter(SearchPattern searchPattern) {
 			patternMatcher = searchPattern;
-			patternMatcher.setPattern((pattern != null) ? pattern.getText()
-					: ""); //$NON-NLS-1$
+			String stringPattern = ""; //$NON-NLS-1$
+			if (pattern != null && !pattern.getText().equals("*")) { //$NON-NLS-1$
+				stringPattern = pattern.getText();
+			}
+			patternMatcher.setPattern(stringPattern);
 		}
 
 		/**
@@ -1803,8 +2287,23 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *         sub-filter
 		 */
 		public boolean isSubFilter(ItemsFilter filter) {
-			if (filter != null
-					&& filter.getPattern().startsWith(this.getPattern())) {
+			if (filter != null) {
+				return this.patternMatcher.isSubPattern(filter.patternMatcher);
+			}
+			return false;
+		}
+
+		/**
+		 * Checks whether the provided filter is equal to this filter.
+		 * 
+		 * @param iFilter
+		 *            filter to be checked
+		 * @return true if the given ItemsFilter is equal to this filter
+		 */
+		public boolean equalsFilter(ItemsFilter iFilter) {
+			if (iFilter != null
+					&& iFilter.patternMatcher
+							.equalsPattern(this.patternMatcher)) {
 				return true;
 			}
 			return false;
@@ -1889,16 +2388,63 @@ public abstract class FilteredItemsSelectionDialog extends
 	 * collecting filtered elements. All collected elements are sorted using
 	 * comparator. Comparator is return by getElementComparator() method. To
 	 * filtering elements it use implementation of ItemsFilter. The key function
-	 * of filter used in to filtering is matchsElement(AbstarctListItem item)
+	 * of filter used in to filtering is matchsElement(AbstarctListItem item).
+	 * 
+	 * The <code>ContentProvider</code> class also provides item filtering
+	 * methods. The filtering has beeen moved from the standard TableView
+	 * getFilteredItems() method to content provider, because
+	 * ILazyContentProvider and virtual tables are used. This class is
+	 * responsible for adding a separator below history items and marking each
+	 * items as duplicate if its name repeats more than once on the filtered
+	 * list.
 	 */
 	private class ContentProvider extends AbstractContentProvider implements
-			IStructuredContentProvider {
+			IStructuredContentProvider, ILazyContentProvider {
 
 		private SelectionHistory selectionHistory;
 
-		private SortedMap sortedItems;
+		/**
+		 * Raw result of the searching (unsorted, unfiltered)
+		 * 
+		 * Standard object flow: items -> lastSortedItems -> lastFilteredItems
+		 */
+		private Set items;
+
+		/**
+		 * Those of the items that are duplicates
+		 */
+		private Set duplicates;
 
 		private String progressMessage = ""; //$NON-NLS-1$
+
+		/**
+		 * List of <code>ViewerFilter</code>s to be used during filtering
+		 */
+		private List filters;
+
+		/**
+		 * Result of the last filtering.
+		 * 
+		 * Standard object flow: items -> lastSortedItems -> lastFilteredItems
+		 */
+		private List lastFilteredItems;
+
+		/**
+		 * Result of the last sorting.
+		 * 
+		 * Standard object flow: items -> lastSortedItems -> lastFilteredItems
+		 */
+		private List lastSortedItems;
+
+		/**
+		 * Used for getFilteredElements() method cancelling (when the job that
+		 * invoked the method was cancelled).
+		 * 
+		 * Method cancelling could be based (only) on monitor cancelling
+		 * unfortunately sometimes the method getFilteredElements() could be run
+		 * with a null monitor, the reset flag have to be left intact
+		 */
+		private boolean reset;
 
 		/**
 		 * Creates new instance of ContentProvider
@@ -1906,8 +2452,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param selectionHistory
 		 */
 		public ContentProvider(SelectionHistory selectionHistory) {
-			this.sortedItems = Collections.synchronizedSortedMap(new TreeMap(
-					getHistoryComparator()));
+			this();
 			this.selectionHistory = selectionHistory;
 		}
 
@@ -1916,8 +2461,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 */
 		public ContentProvider() {
-			this.sortedItems = Collections.synchronizedSortedMap(new TreeMap(
-					getHistoryComparator()));
+			this.items = Collections.synchronizedSet(new HashSet(2048));
+			this.duplicates = Collections.synchronizedSet(new HashSet(256));
+			this.lastFilteredItems = Collections
+					.synchronizedList(new ArrayList(2048));
+			this.lastSortedItems = Collections.synchronizedList(new ArrayList(
+					2048));
 		}
 
 		/**
@@ -1941,8 +2490,19 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * Remove all content items and resets progress message
 		 */
 		public void reset() {
-			this.sortedItems.clear();
+			reset = true;
+			this.items.clear();
+			this.duplicates.clear();
+			this.lastSortedItems.clear();
+			this.lastFilteredItems.clear();
 			this.progressMessage = ""; //$NON-NLS-1$
+		}
+
+		/**
+		 * Stops reloading cache - getFilteredItems() method.
+		 */
+		public void stopReloadingCache() {
+			reset = true;
 		}
 
 		/**
@@ -1952,14 +2512,15 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param itemsFilter
 		 */
 		public void add(Object item, ItemsFilter itemsFilter) {
-			if (itemsFilter == filter)
+			if (itemsFilter == filter) {
 				if (itemsFilter != null) {
 					if (itemsFilter.matchItem(item)) {
-						this.sortedItems.put(item, new Boolean(false));
+						this.items.add(item);
 					}
 				} else {
-					this.sortedItems.put(item, new Boolean(false));
+					this.items.add(item);
 				}
+			}
 		}
 
 		/**
@@ -1976,8 +2537,7 @@ public abstract class FilteredItemsSelectionDialog extends
 						if (itemsFilter != null) {
 							if (itemsFilter.matchItem(item)) {
 								if (itemsFilter.isConsistentItem(item)) {
-									this.sortedItems.put(item, new Boolean(
-											false));
+									this.items.add(item);
 								} else {
 									this.selectionHistory.remove(item);
 								}
@@ -1986,24 +2546,36 @@ public abstract class FilteredItemsSelectionDialog extends
 					}
 				}
 			}
-
 		}
 
 		/**
 		 * Refresh dialog.
+		 * 
+		 * @param checkDuplicates
+		 *            true if data concerning elements duplication should be
+		 *            computed - it takes much more time than standard filtering
 		 */
-		public void refresh() {
-			scheduleRefresh();
+		public void refresh(boolean checkDuplicates) {
+			scheduleRefresh(checkDuplicates);
 		}
 
 		/**
 		 * Sets progress message
 		 * 
 		 * @param progressMessage
+		 * @param isFiltering
+		 *            if this progress update was triggered by a filtering job
+		 *            or a refresh job; if it was triggered by a refresh job and
+		 *            a filtering job is running, the progress won't be
+		 *            displayed
 		 */
-		public void setProgressMessage(String progressMessage) {
+		public void setProgressMessage(String progressMessage,
+				boolean isFiltering) {
+			if (!isFiltering && filterJob != null
+					&& filterJob.getState() == Job.RUNNING)
+				return;
 			this.progressMessage = progressMessage;
-			this.refresh();
+			scheduleProgressMessageRefresh();
 		}
 
 		/**
@@ -2024,11 +2596,18 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return removed item
 		 */
 		public Object removeHistoryElement(Object item) {
-			Object isDuplicate = this.sortedItems.remove(item);
 			if (this.selectionHistory != null)
 				this.selectionHistory.remove(item);
-			this.sortedItems.put(item, isDuplicate);
-			this.refresh();
+			if (filter == null || filter.getPattern().length() == 0) {
+				items.remove(item);
+				duplicates.remove(item);
+				this.lastSortedItems.remove(item);
+			}
+
+			synchronized (lastSortedItems) {
+				Collections.sort(lastSortedItems, getHistoryComparator());
+			}
+			this.refresh(false);
 			return item;
 		}
 
@@ -2039,12 +2618,17 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            to add
 		 */
 		public void addHistoryElement(Object item) {
-			Object isDuplicate = this.sortedItems.remove(item);
-			if (filter != null && filter.matchItem(item))
-				this.sortedItems.put(item, isDuplicate);
 			if (this.selectionHistory != null)
 				this.selectionHistory.accessed(item);
-			this.refresh();
+			if (filter == null || !filter.matchItem(item)) {
+				this.items.remove(item);
+				this.duplicates.remove(item);
+				this.lastSortedItems.remove(item);
+			}
+			synchronized (lastSortedItems) {
+				Collections.sort(lastSortedItems, getHistoryComparator());
+			}
+			this.refresh(false);
 		}
 
 		/**
@@ -2063,7 +2647,12 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param isDuplicate
 		 */
 		public void setDuplicateElement(Object item, boolean isDuplicate) {
-			this.sortedItems.put(item, new Boolean(isDuplicate));
+			if (this.items.contains(item)) {
+				if (isDuplicate)
+					this.duplicates.add(item);
+				else
+					this.duplicates.remove(item);
+			}
 		}
 
 		/**
@@ -2071,10 +2660,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @return true if item is duplicate
 		 */
 		public boolean isDuplicateElement(Object item) {
-			Boolean isDuplicate = (Boolean) this.sortedItems.get(item);
-			if (isDuplicate != null)
-				return isDuplicate.booleanValue();
-			return false;
+			return duplicates.contains(item);
 		}
 
 		/**
@@ -2103,8 +2689,15 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * 
 		 * @return filtered items
 		 */
-		private Object[] getItems() {
-			return sortedItems.keySet().toArray();
+		private Object[] getItems(boolean sort) {
+			if (sort || lastSortedItems.size() != items.size()) {
+				synchronized (lastSortedItems) {
+					lastSortedItems.clear();
+					lastSortedItems.addAll(items);
+					Collections.sort(lastSortedItems, getHistoryComparator());
+				}
+			}
+			return lastSortedItems.toArray();
 		}
 
 		/**
@@ -2113,12 +2706,16 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @param itemsFilter
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
-			if (lastCompletedResult == null) {
+			if (itemsFilter == filter && lastCompletedFilter == null) {
+				lastCompletedResult = Collections.synchronizedList(Arrays
+						.asList(getItems(false)));
+				// synchronization
+				if (lastCompletedResult.size() == 0) {
+					lastCompletedFilter = null;
+				}
 				lastCompletedFilter = itemsFilter;
-				lastCompletedResult = Collections
-						.synchronizedList(new ArrayList(this.sortedItems
-								.keySet()));
 			}
+
 		}
 
 		/*
@@ -2127,7 +2724,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 		 */
 		public Object[] getElements(Object inputElement) {
-			return getItems();
+			if (lastFilteredItems.size() != items.size())
+				reloadCache(false, null);
+			return lastFilteredItems.toArray();
 		}
 
 		/*
@@ -2145,6 +2744,211 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *      java.lang.Object, java.lang.Object)
 		 */
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ILazyContentProvider#updateElement(int)
+		 */
+		public void updateElement(int index) {
+
+			if (lastFilteredItems.size() != items.size())
+				reloadCache(false, null);
+			FilteredItemsSelectionDialog.this.list.replace((lastFilteredItems
+					.size() > index) ? lastFilteredItems.get(index) : null,
+					index);
+
+		}
+
+		/**
+		 * Main method responsible for getting the filtered items and checking
+		 * for duplicates. It is based on the
+		 * {@link ContentProvider#getFilteredItems(Object, IProgressMonitor)}.
+		 * 
+		 * @param checkDuplicates
+		 *            true if data concerning elements duplication should be
+		 *            computed - it takes much more time than standard filtering
+		 * 
+		 * @param monitor
+		 *            progress monitor
+		 */
+		public void reloadCache(boolean checkDuplicates,
+				GranualProgressMonitor monitor) {
+
+			reset = false;
+
+			if (monitor != null) {
+				// the work is divided into two actions of the same length
+				int totalWork = 100;
+				if (checkDuplicates)
+					totalWork = 200;
+
+				monitor
+						.beginTask(
+								WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob,
+								totalWork);
+			}
+
+			// the TableViewer's root (the input) is treated as parent
+			lastFilteredItems.clear();
+			// if (reset)
+			// return;
+			lastFilteredItems.addAll(Arrays.asList(getFilteredItems(list
+					.getInput(), monitor != null ? new SubProgressMonitor(
+					monitor, 100) : null)));
+
+			if (reset || (monitor != null && monitor.isCanceled())) {
+				if (monitor != null)
+					monitor.done();
+				return;
+			}
+
+			if (checkDuplicates) {
+				checkDuplicates(monitor);
+			}
+
+			if (monitor != null)
+				monitor.done();
+
+		}
+
+		private void checkDuplicates(GranualProgressMonitor monitor) {
+			synchronized (lastFilteredItems) {
+				IProgressMonitor subMonitor = null;
+				int reportEvery = lastFilteredItems.size() / 20;
+				if (monitor != null) {
+					subMonitor = new SubProgressMonitor(monitor, 100);
+					subMonitor
+							.beginTask(
+									WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_checkDuplicates,
+									5);
+				}
+				HashMap helperMap = new HashMap();
+				for (int i = 0; i < lastFilteredItems.size(); i++) {
+					if (reset
+							|| (subMonitor != null && subMonitor.isCanceled()))
+						return;
+					Object item = lastFilteredItems.get(i);
+
+					if (!(item instanceof ItemsListSeparator)) {
+						Object previousItem = helperMap.put(
+								getElementName(item), item);
+						if (previousItem != null) {
+							setDuplicateElement(previousItem, true);
+							setDuplicateElement(item, true);
+						} else {
+							setDuplicateElement(item, false);
+						}
+					}
+
+					if (subMonitor != null && reportEvery != 0
+							&& (i + 1) % reportEvery == 0)
+						subMonitor.worked(1);
+				}
+				helperMap.clear();
+			}
+		}
+
+		/**
+		 * Returns an array of items filtered using the provided
+		 * <code>ViewerFilter</code>s with a separator added.
+		 * 
+		 * @param parent
+		 *            the parent
+		 * @param monitor
+		 *            progress monitor
+		 * @return an array of filtered items
+		 */
+		protected Object[] getFilteredItems(Object parent,
+				IProgressMonitor monitor) {
+			int ticks = 100;
+
+			if (monitor != null) {
+				monitor
+						.beginTask(
+								WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements,
+								ticks);
+				if (filters != null) {
+					ticks /= (filters.size() + 2);
+				} else {
+					ticks /= 2;
+				}
+			}
+
+			// get already sorted array
+			Object[] filteredElements = getItems(false);
+
+			if (monitor != null)
+				monitor.worked(ticks);
+
+			// filter the elements using provided ViewerFilters
+			if (filters != null && filteredElements != null) {
+				for (Iterator iter = filters.iterator(); iter.hasNext();) {
+					ViewerFilter f = (ViewerFilter) iter.next();
+					filteredElements = f.filter(list, parent, filteredElements);
+					if (monitor != null)
+						monitor.worked(ticks);
+				}
+			}
+
+			if (filteredElements == null) {
+				if (monitor != null)
+					monitor.done();
+				return new Object[0];
+			}
+
+			ArrayList preaparedElements = new ArrayList();
+			boolean hasHistory = false;
+
+			if (filteredElements.length > 0) {
+				if (isHistoryElement(filteredElements[0])) {
+					hasHistory = true;
+				}
+			}
+
+			int reportEvery = filteredElements.length / ticks;
+
+			// add separator
+			for (int i = 0; i < filteredElements.length; i++) {
+				Object item = filteredElements[i];
+
+				if (hasHistory && !isHistoryElement(item)) {
+					preaparedElements
+							.add(new ItemsListSeparator(
+									WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel));
+					hasHistory = false;
+				}
+
+				preaparedElements.add(item);
+
+				if (monitor != null && reportEvery != 0
+						&& ((i + 1) % reportEvery == 0))
+					monitor.worked(1);
+			}
+
+			if (monitor != null)
+				monitor.done();
+
+			return preaparedElements.toArray();
+		}
+
+		/**
+		 * Adds a filter to this content provider. For an example usage of such
+		 * filters look at the project org.eclipse.ui.ide, class
+		 * org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog.CustomWorkingSetFilter.
+		 * 
+		 * @param filter
+		 *            the filter to be added
+		 */
+		public void addFilter(ViewerFilter filter) {
+			if (filters == null) {
+				filters = new ArrayList();
+			}
+			filters.add(filter);
+			// currently filters are only added when dialog is restored
+			// if it is changed, refreshing the whole tableviewer should be
+			// added
 		}
 
 	}
@@ -2238,7 +3042,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 
 			refresh();
-			
+
 		}
 
 		/*
@@ -2332,89 +3136,7 @@ public abstract class FilteredItemsSelectionDialog extends
 	}
 
 	/**
-	 * Additional functionality comparing to the super class. It puts separator
-	 * below history items and marks each items as duplicate if its name repeats
-	 * more than once on the filtered list.
-	 */
-	private class ItemsTableViewer extends TableViewer {
-
-		/**
-		 * Creates new instance of ItemsTableViewer
-		 * 
-		 * @param parent
-		 */
-		public ItemsTableViewer(Composite parent) {
-			super(parent);
-		}
-
-		/**
-		 * Creates new instance of ItemsTableViewer
-		 * 
-		 * @param parent
-		 * @param style
-		 */
-		public ItemsTableViewer(Composite parent, int style) {
-			super(parent, style);
-		}
-
-		/**
-		 * Creates new instance of ItemsTableViewer
-		 * 
-		 * @param table
-		 */
-		public ItemsTableViewer(Table table) {
-			super(table);
-		}
-
-		/**
-		 * Additional functionality comparing to the overriden method. It puts
-		 * separator below history items and marks each items as duplicate if
-		 * its name repeats more than once on the filtered list.
-		 * 
-		 * @see org.eclipse.jface.viewers.StructuredViewer#getFilteredChildren(java.lang.Object)
-		 */
-		protected Object[] getFilteredChildren(Object parent) {
-			ArrayList preaparedElements = new ArrayList();
-			boolean hasHistory = false;
-			HashMap helperMap = new HashMap();
-
-			Object[] filteredElements = super.getFilteredChildren(parent);
-
-			if (filteredElements.length > 0) {
-				if (isHistoryElement(filteredElements[0])) {
-					hasHistory = true;
-				}
-			}
-
-			for (int i = 0; i < filteredElements.length; i++) {
-				Object item = filteredElements[i];
-
-				Object previousItem = helperMap.put(getElementName(item), item);
-				if (previousItem != null) {
-					contentProvider.setDuplicateElement(previousItem, true);
-					contentProvider.setDuplicateElement(item, true);
-				} else {
-					contentProvider.setDuplicateElement(item, false);
-				}
-
-				if (hasHistory && !isHistoryElement(item)) {
-					preaparedElements
-							.add(new ItemsListSeparator(
-									WorkbenchMessages.FilteredItemsSelectionDialog_separatorLabel));
-					hasHistory = false;
-				}
-
-				preaparedElements.add(item);
-			}
-
-			helperMap.clear();
-
-			return preaparedElements.toArray();
-		}
-	}
-	
-	/**
-	 * Compares items 
+	 * Compares items
 	 * 
 	 */
 	private class HistoryComparator implements Comparator {
