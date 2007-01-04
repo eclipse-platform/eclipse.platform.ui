@@ -208,9 +208,9 @@ public class DocumentRangeNode
 				fAppendPosition= p;
 			}
 		} catch (BadPositionCategoryException ex) {
-			CompareUIPlugin.log(ex);
+			// silently ignored
 		} catch (BadLocationException ex) {
-			CompareUIPlugin.log(ex);
+			// silently ignored
 		}
 	}
 
@@ -230,9 +230,9 @@ public class DocumentRangeNode
 				fAppendPosition= p;
 				return fAppendPosition;
 			} catch (BadPositionCategoryException ex) {
-				CompareUIPlugin.log(ex);
+				// silently ignored
 			} catch (BadLocationException ex) {
-				CompareUIPlugin.log(ex);
+				// silently ignored
 			}
 		}
 		return new Position(fBaseDocument.getLength());
