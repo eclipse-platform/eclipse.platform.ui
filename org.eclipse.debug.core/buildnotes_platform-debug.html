@@ -149,30 +149,30 @@ The launch framework has been enhanced to support the following:
 <p>Debug commands represent common debug operations implemented by debuggers - 
   for example, step over, suspend, resume, and terminate. The debug platform allows 
   debuggers to provide custom implementations of the operations by implementing 
-  the debug command interfaces. The platform provides a user interface and actions 
-  that delegate to the command implementations. As well, the platform provides 
-  a standard implementation of the commands for debuggers that are implementations 
-  of the standard debug model. Debuggers may override the standard implementation 
-  by directly implementing the command interfaces in debug model elements or by 
-  registering adapters for the command interfaces on debug model elements. The 
-  command interfaces are to be implemented in a non-blocking fashion, and are 
-  designed with an asynchronous API, allowing clients to cancel a command or report 
-  failure via a status result collector.</p>
+  debug command handler interfaces. The platform provides a user interface and 
+  actions that delegate to the command handlers. As well, the platform provides 
+  an implementation of the commands for debuggers that are implementations of 
+  the standard debug model. Debuggers may override the standard implementation 
+  by directly implementing the command handler interfaces in debug model elements 
+  or by registering adapters for the command handler interfaces on debug model 
+  elements. The command handler interfaces are to be implemented in a non-blocking 
+  fashion, and are designed with an asynchronous API, allowing clients to cancel 
+  a command or report failure via the asynchronous request.</p>
 <p>The package<code> org.eclipse.debug.core.commands</code> has been added with 
   the following types:</p>
 <ul>
-  <li><code>IBooleanCollector</code></li>
-  <li><code>IDebugCommand</code></li>
-  <li><code>IDisconnectCommand</code></li>
-  <li><code>IDropToFrameCommand</code></li>
-  <li><code>IResumeCommand</code></li>
-  <li><code>IStatusCollector</code></li>
-  <li><code>IStepFiltersCommand</code></li>
-  <li><code>IStepIntoCommand</code></li>
-  <li><code>IStepOverCommand</code></li>
-  <li><code>IStepReturnCommand</code></li>
-  <li><code> ISuspendCommand</code></li>
-  <li><code> ITerminateCommand</code></li>
+  <li><code>IDebugCommandHandler</code></li>
+  <li><code>IDebugCommandRequest</code></li>
+  <li><code>IDisconnectHandler</code></li>
+  <li><code>IDropToFrameHandler</code></li>
+  <li><code>IEnabledStateRequest</code></li>
+  <li><code>IResumeHandler</code></li>
+  <li><code>IStepFiltersHandler</code></li>
+  <li><code>IStepIntoHandler</code></li>
+  <li><code>IStepOverHandler</code></li>
+  <li><code>IStepReturnHandler</code></li>
+  <li><code> ISuspendHandler</code></li>
+  <li><code> ITerminateHandler</code></li>
 </ul>
 <p>Note that the &quot;use step filters&quot; setting has been moved to the <code>org.eclipse.debug.core</code> 
   plug-in from <code>org.eclipse.debug.ui</code>. This is to allow the toggle 
@@ -235,6 +235,10 @@ The launch framework has been enhanced to support the following:
     of breakpoints to allow for more efficient drag and drop operations in the 
     breakpoints view.</li>
 </ul>
+
+<h2>Jan 9, 2006</h2> 
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169066">169066</a>: Removing a watch from the Expressions fails<br>
 
 <h2>Dec 19, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
