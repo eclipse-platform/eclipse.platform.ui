@@ -63,8 +63,7 @@ public interface IDebugCommandHandler {
 	 * periodically and abort at their earliest convenience calling <code>done()</code>
 	 * on the request.
 	 * </p>
-	 * @param elements elements for which this handler may be enabled
-	 * @param request collects status and enabled state
+	 * @param request specifies elements to operate on and collects enabled state
 	 */
 	public void canExecute(IEnabledStateRequest request);
 	
@@ -85,8 +84,7 @@ public interface IDebugCommandHandler {
 	 * periodically and abort at their earliest convenience calling <code>done()</code>
 	 * on the request.
 	 * </p>
-	 * @param elements elements to execute command on
-	 * @param request collects the status of the executing the command
+	 * @param request specifies elements to operate on and collects execution status
 	 * @return whether this handler remains enabled while command is executing
 	 */
 	public boolean execute(IDebugCommandRequest request);

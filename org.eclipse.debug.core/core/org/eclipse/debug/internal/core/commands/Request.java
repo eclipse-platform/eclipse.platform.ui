@@ -42,12 +42,6 @@ public class Request implements IRequest {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IRequest#begin()
-	 */
-	public void begin() {
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.IRequest#cancel()
 	 */
 	public synchronized void cancel() {

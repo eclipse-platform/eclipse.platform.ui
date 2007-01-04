@@ -59,13 +59,6 @@ public interface IRequest {
     public IStatus getStatus();
     
     /**
-     * Indicates that a client has started to process this request.
-     * This method must be called when starting to process a request,
-     * unless a request has been canceled.
-     */
-    public void begin();
-    
-    /**
      * Indicates this request is complete. Clients must call this method
      * whether the request succeeds, fails, or is cancelled to indicate that
      * processing is complete.

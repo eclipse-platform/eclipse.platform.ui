@@ -74,7 +74,6 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 				if (DebugOptions.DEBUG_COMMANDS) {
 					System.out.println("execute: " + DebugCommand.this); //$NON-NLS-1$
 				}
-				request.begin();
 				Object[] elements = request.getElements();
 				Object[] targets = new Object[elements.length];
 				for (int i = 0; i < elements.length; i++) {
@@ -117,7 +116,6 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 				if (DebugOptions.DEBUG_COMMANDS) {
 					System.out.print("can execute command: " + DebugCommand.this); //$NON-NLS-1$
 				}
-				request.begin();
 				Object[] elements = request.getElements();
 				Object[] targets = new Object[elements.length];
 				for (int i = 0; i < elements.length; i++) {
