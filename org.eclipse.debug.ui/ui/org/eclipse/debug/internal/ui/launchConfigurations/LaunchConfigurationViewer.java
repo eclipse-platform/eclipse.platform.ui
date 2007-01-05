@@ -73,22 +73,22 @@ public class LaunchConfigurationViewer extends TreeViewer {
 				if(tree.getItemCount() > 0) {
 					int index = selectIndex(tree.getItemCount(), indices[0]);
 					if(index > -1) {
-						o = tree.getItem(index).getData();
-					}
-					else {
-						//parent index exists, so select child
-						TreeItem pitem = tree.getItem(indices[0]); 
+						TreeItem pitem = tree.getItem(indices[0]);
 						o = pitem.getData();
-						//pick best child, or default to parent
-						index = selectIndex(pitem.getItemCount(), indices[1]);
-						if(index > -1) {
-							o = pitem.getItem(index).getData();
-						}
-						else {
-							if(pitem.getItemCount() > 0) {
-								o = pitem.getItem((indices[1]-1 > -1 ? indices[1]-1 : 0)).getData();
-								if(o == null) {
-									o = pitem.getData();
+						if(indices[1] > -1) {
+							index = selectIndex(pitem.getItemCount(), indices[1]);
+							if(index > -1) {
+								Object d = pitem.getItem(index).getData();
+								if(d != null) {
+									o = d; 
+								}
+							}
+							else {
+								if(pitem.getItemCount() > 0) {
+									o = pitem.getItem((indices[1]-1 > -1 ? indices[1]-1 : 0)).getData();
+									if(o == null) {
+										o = pitem.getData();
+									}
 								}
 							}
 						}
@@ -112,6 +112,9 @@ public class LaunchConfigurationViewer extends TreeViewer {
 	 * @return the adjusted index in the event index is an outlier, or -1 if it falls within the 'count' range
 	 */
 	private int selectIndex(int count, int index) {
+		if(index < count) {
+			return index;
+		}
 		if(index > count-1) {
 			return count-1;
 		}
