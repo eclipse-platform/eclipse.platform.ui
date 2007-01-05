@@ -123,18 +123,6 @@ public class ChangeEncodingAction extends TextEditorAction {
 				composite.setLayoutData(data);
 				composite.setFont(parent.getFont());
 
-				if (resource != null) {
-					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
-				} else {
-					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", (Composite)composite); //$NON-NLS-1$
-					store= new PreferenceStore();
-					store.setDefault(ENCODING_PREF_KEY, encodingSupport.getDefaultEncoding());
-					fEncodingEditor.setPreferenceStore(store);
-					String encoding= encodingSupport.getEncoding();
-					if (encoding != null)
-						store.setValue(ENCODING_PREF_KEY, encoding);
-				}
-
 				DialogPage page= new MessageDialogPage((Composite)composite) {
 					public void setErrorMessage(String newMessage) {
 						super.setErrorMessage(newMessage);
@@ -149,8 +137,27 @@ public class ChangeEncodingAction extends TextEditorAction {
 					}
 				};
 
-				fEncodingEditor.setPage(page);
-				fEncodingEditor.load();
+				if (resource != null) {
+					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource); //$NON-NLS-1$
+					fEncodingEditor.setPage(page);
+					fEncodingEditor.load();
+				} else {
+					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", (Composite)composite); //$NON-NLS-1$
+					store= new PreferenceStore();
+					String defaultEncoding= encodingSupport.getDefaultEncoding();
+					store.setDefault(ENCODING_PREF_KEY, defaultEncoding);
+					String encoding= encodingSupport.getEncoding();
+					if (encoding != null)
+						store.setValue(ENCODING_PREF_KEY, encoding);
+					fEncodingEditor.setPreferenceStore(store);
+
+					fEncodingEditor.setPage(page);
+					fEncodingEditor.load();
+
+					// XXX: Cannot load defaults due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=169694 
+					if (encoding == null || encoding.equals(defaultEncoding) || encoding.length() == 0)
+						fEncodingEditor.loadDefault();
+				}
 
 				return composite;
 			}
