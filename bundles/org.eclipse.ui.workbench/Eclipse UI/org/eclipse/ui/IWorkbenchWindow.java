@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
@@ -53,7 +54,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see IWorkbenchPage
  */
 public interface IWorkbenchWindow extends IPageService, IRunnableContext,
-		IServiceLocator {
+		IServiceLocator, IShellProvider {
     /**
      * Closes this workbench window.
      * <p>
