@@ -136,7 +136,9 @@ public class LaunchConfigurationView extends AbstractDebugView implements ILaunc
 		fTree = new LaunchConfigurationFilteredTree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL, new PatternFilter(), fLaunchGroup, fFilters);
 		fTree.createViewControl();
 		getLaunchManager().addLaunchConfigurationListener(this);
-		return fTree.getLaunchConfigurationViewer();
+		LaunchConfigurationViewer viewer = fTree.getLaunchConfigurationViewer();
+		viewer.setLaunchConfigurationView(this);
+		return viewer;
 	}
 	
 	/**

@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 /**
- * Overrides the default filterd tree to use our own tree viewer which supports preserving selection after filtering
+ * Overrides the default filtered tree to use our own tree viewer which supports preserving selection after filtering
  * @since 3.3 
  */
 public final class LaunchConfigurationFilteredTree extends FilteredTree {
@@ -145,10 +145,23 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	
 	/**
 	 * Returns the launch configuration viewer for this filtered tree
-	 * @return the treeviewer appropriately cast
+	 * @return the tree viewer appropriately cast
 	 */
 	public LaunchConfigurationViewer getLaunchConfigurationViewer() {
 		return (LaunchConfigurationViewer) getViewer();
+	}
+
+	/* (non-Javadoc)
+	 * 
+	 * Called after a re-filter due to user typing text. Update the filter count
+	 * in the LCD
+	 * 
+	 * @see org.eclipse.ui.dialogs.FilteredTree#updateToolbar(boolean)
+	 */
+	protected void updateToolbar(boolean visible) {
+		super.updateToolbar(visible);
+		// update filter count
+		getLaunchConfigurationViewer().filterChanged();
 	}
 
 }

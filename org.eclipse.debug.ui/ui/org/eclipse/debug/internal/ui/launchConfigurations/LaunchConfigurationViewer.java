@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Widget;
 public class LaunchConfigurationViewer extends TreeViewer {
 
 	private int fTotalCount = 0;
+	private LaunchConfigurationView fView = null;
 	
 	/**
 	 * Constructor
@@ -224,5 +225,22 @@ public class LaunchConfigurationViewer extends TreeViewer {
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 * The filter changed due to text typing - update the filter count
+	 */
+	protected void filterChanged() {
+		if (fView != null) {
+			fView.updateFilterLabel();
+		}
+		
+	}
+
+	/**
+	 * @param launchConfigurationView
+	 */
+	protected void setLaunchConfigurationView(LaunchConfigurationView launchConfigurationView) {
+		fView = launchConfigurationView;
 	}
 }
