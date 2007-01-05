@@ -51,6 +51,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private static final int INITIALIZED = 4;
 	private static final int ERROR = 5;
 	private static final int STILL_INITIALIZING = 6;
+	private static final int DONE = 7;
 	
 	private IActionBars fActionBars;
 	
@@ -339,8 +340,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					closeEditor();
 				} else if (getState() == NO_DIFF) {
 					// Prompt and close the editor as well
-					CompareUIPlugin.getDefault().handleNoDifference();
+					setState(DONE);
 					closeEditor();
+					CompareUIPlugin.getDefault().handleNoDifference();
 				} else if (getState() == ERROR) {
 					// If an error occurred, close the editor 
 					// (the message would be displayed by the progress view)
