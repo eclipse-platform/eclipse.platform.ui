@@ -169,7 +169,16 @@ public final class LaunchDelegate implements ILaunchDelegate {
 		//try a delegateName attribute first, in the event this delegate was made from an ILaunchConfigurationType
 		String name = fElement.getAttribute(IConfigurationElementConstants.DELEGATE_NAME);
 		if(name == null) {
-			return fElement.getAttribute(IConfigurationElementConstants.NAME);
+			name = fElement.getAttribute(IConfigurationElementConstants.NAME);
+			if (name == null) {
+				name = getContributorName();
+			}
+			name = name.trim();
+			if (Character.isUpperCase(name.charAt(0))) {
+				name =  MessageFormat.format(DebugCoreMessages.LaunchDelegate_1, new String[]{name});
+			} else {
+				name = MessageFormat.format(DebugCoreMessages.LaunchDelegate_2, new String[]{name});
+			}
 		}
 		return name;
 	}
