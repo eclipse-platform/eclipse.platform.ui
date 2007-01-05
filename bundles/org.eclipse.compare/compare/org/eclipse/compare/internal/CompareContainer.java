@@ -19,8 +19,7 @@ import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class CompareContainer implements ICompareContainer {
@@ -104,6 +103,10 @@ public class CompareContainer implements ICompareContainer {
 
 	protected String getWorkerJobName() {
 		return CompareMessages.CompareContainer_0;
+	}
+
+	public IWorkbenchPart getWorkbenchPart() {
+		return null;
 	}
 
 }

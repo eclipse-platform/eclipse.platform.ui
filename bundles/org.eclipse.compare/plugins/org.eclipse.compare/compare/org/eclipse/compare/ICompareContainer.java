@@ -16,8 +16,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.*;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
@@ -105,5 +104,13 @@ public interface ICompareContainer extends IRunnableContext{
 	 * @param runnable the task to be performed
 	 */
 	public void runAsynchronously(IRunnableWithProgress runnable);
+
+	/**
+	 * Return the workbench part associated with this container or
+	 * <code>null</code> if there is no part or it is not available.
+	 * @return the workbench part associated with this container or
+	 * <code>null</code>
+	 */
+	public IWorkbenchPart getWorkbenchPart();
 	
 }

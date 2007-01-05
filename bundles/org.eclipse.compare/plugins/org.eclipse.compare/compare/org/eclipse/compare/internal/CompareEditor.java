@@ -118,6 +118,13 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		protected String getWorkerJobName() {
 			return NLS.bind(CompareMessages.CompareEditor_11, getTitle());
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.compare.internal.CompareContainer#getWorkbenchPart()
+		 */
+		public IWorkbenchPart getWorkbenchPart() {
+			return CompareEditor.this;
+		}
 	}
 	
 	/**
@@ -175,54 +182,32 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 * @see org.eclipse.ui.part.EditorPart#setInput(org.eclipse.ui.IEditorInput)
 	 */
 	public void setInput(IEditorInput input) {
-		try {
-	        doSetInput(input);
-	        // Need to refresh the contributor (see #67888)
-	        IEditorSite editorSite= getEditorSite();
-	        if (editorSite != null) {
-		        IEditorActionBarContributor actionBarContributor= editorSite.getActionBarContributor();
-		        if (actionBarContributor != null) {
-		        		actionBarContributor.setActiveEditor(null);
-		        		actionBarContributor.setActiveEditor(this);
-		        }
-	        }
-		} catch (CoreException x) {
-			String title= Utilities.getString("CompareEditor.error.setinput.title"); //$NON-NLS-1$
-			String msg= Utilities.getString("CompareEditor.error.setinput.message"); //$NON-NLS-1$
-			ErrorDialog.openError(getSite().getShell(), title, msg, x.getStatus());
-		}				
-	}
-	
-	private void doSetInput(IEditorInput input) throws CoreException {
 		if (!(input instanceof CompareEditorInput)) {
 			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, Utilities.getString("CompareEditor.invalidInput"), null); //$NON-NLS-1$
-			throw new CoreException(s);
+			String title= Utilities.getString("CompareEditor.error.setinput.title"); //$NON-NLS-1$
+			String msg= Utilities.getString("CompareEditor.error.setinput.message"); //$NON-NLS-1$
+			ErrorDialog.openError(getSite().getShell(), title, msg, s);
+			return;
 		}
+        doSetInput(input);
+        // Need to refresh the contributor (see #67888)
+        refreshActionBarsContributor();
+	}
 
+	private void refreshActionBarsContributor() {
+		IEditorSite editorSite= getEditorSite();
+        if (editorSite != null) {
+	        IEditorActionBarContributor actionBarContributor= editorSite.getActionBarContributor();
+	        if (actionBarContributor != null) {
+	        		actionBarContributor.setActiveEditor(null);
+	        		actionBarContributor.setActiveEditor(this);
+	        }
+        }
+	}
+	
+	private void doSetInput(IEditorInput input) {
 		IEditorInput oldInput= getEditorInput();
-		if (oldInput instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
-
-		ISaveablesLifecycleListener lifecycleListener= null;
-		if (oldInput != null) {
-			lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
-			lifecycleListener.handleLifecycleEvent(
-				new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
-		}
-			
-		super.setInput(input);
-		
-		final CompareEditorInput cei= (CompareEditorInput) input;
-		cei.setContainer(fContainer);
-
-		setTitleImage(cei.getTitleImage());
-		setPartName(cei.getTitle());
-		setTitleToolTip(cei.getToolTipText());
-				
-		if (input instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
-			
-		setState(cei.getCompareResult() == null ? INITIALIZING : INITIALIZED);
+		disconnectFromInput(oldInput);
 		Point oldSize = null;
 		if (oldInput != null) {
 			if (fControl != null && !fControl.isDisposed()) {
@@ -231,6 +216,19 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				fControl = null;
 			}
 		}
+			
+		super.setInput(input);
+		
+		final CompareEditorInput cei= (CompareEditorInput) input;
+		cei.setContainer(fContainer);
+		setTitleImage(cei.getTitleImage());
+		setPartName(cei.getTitle());
+		setTitleToolTip(cei.getToolTipText());
+				
+		if (input instanceof IPropertyChangeNotifier)
+			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
+			
+		setState(cei.getCompareResult() == null ? INITIALIZING : INITIALIZED);
 		if (fPageBook != null)
 			createCompareControl();
 		if (fControl != null && oldSize != null)
@@ -243,10 +241,25 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
         
         firePropertyChange(IWorkbenchPartConstants.PROP_INPUT);
         
-        if (lifecycleListener != null) {
+        // We only need to notify of new Saveables if we are changing inputs
+        if (oldInput != null) {
+        	ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
         	lifecycleListener.handleLifecycleEvent(
         		new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
         }
+	}
+
+	private void disconnectFromInput(IEditorInput oldInput) {
+		if (oldInput != null) {
+			
+			if (oldInput instanceof IPropertyChangeNotifier)
+				((IPropertyChangeNotifier)oldInput).removePropertyChangeListener(this);
+			
+			// Let the workbench know that the old input's saveables are no longer needed
+			ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) getSite().getService(ISaveablesLifecycleListener.class);
+			lifecycleListener.handleLifecycleEvent(
+					new SaveablesLifecycleEvent(this, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(oldInput), false));
+		}
 	}
 	
 	protected void initializeInBackground(final CompareEditorInput cei) {
@@ -478,6 +491,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	 */
 	public Saveable[] getSaveables() {
 		IEditorInput input= getEditorInput();
+		return getSaveables(input);
+	}
+
+	private Saveable[] getSaveables(IEditorInput input) {
 		if (input instanceof ISaveablesSource) {
 			ISaveablesSource source= (ISaveablesSource) input;
 			return source.getSaveables();

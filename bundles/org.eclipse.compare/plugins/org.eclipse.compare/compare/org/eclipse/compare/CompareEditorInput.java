@@ -951,6 +951,13 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	/* (non-Javadoc)
+	 * @see org.eclipse.compare.ICompareContainer#getWorkbenchPart()
+	 */
+	public IWorkbenchPart getWorkbenchPart() {
+		return fContainer.getWorkbenchPart();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
 	 */
 	public void run(boolean fork, boolean cancelable,
