@@ -174,7 +174,7 @@ public class SWTUtil {
 	 * Creates a wrapping label
 	 * @param parent the parent composite to add this label to
 	 * @param text the text to be displayed in the label
-	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @param hspan the horizontal span that label should take up in the parent composite
 	 * @param wrapwidth the width hint that the label should wrap at
 	 * @return a new label that wraps at a specified width
 	 * @since 3.3
@@ -220,7 +220,7 @@ public class SWTUtil {
 	 * Creates a wrapping label
 	 * @param parent the parent composite to add this label to
 	 * @param text the text to be displayed in the label
-	 * @param hspan the horozontal span that label should take up in the parent composite
+	 * @param hspan the horizontal span that label should take up in the parent composite
 	 * @return a new label that wraps at a specified width
 	 * @since 3.3
 	 */
@@ -350,7 +350,7 @@ public class SWTUtil {
     }
 	
 	/**
-	 * Creates a composite that uses the parents' font and has a gridlayout
+	 * Creates a composite that uses the parents' font and has a grid layout
 	 * @param parent the parent to add the composite to
 	 * @param columns the number of columns the composite should have
 	 * @param hspan the horizontal span the new composite should take up in the parent
@@ -370,7 +370,7 @@ public class SWTUtil {
 	}
 	
 	/**
-	 * Creates a vertical spacer for seperating components. If applied to a 
+	 * Creates a vertical spacer for separating components. If applied to a 
 	 * <code>GridLayout</code>, this method will automatically span all of the columns of the parent
 	 * to make vertical space
 	 * 
@@ -390,7 +390,7 @@ public class SWTUtil {
 	}
 	
 	/**
-	 * creates a horizontal spacer for seperating components
+	 * creates a horizontal spacer for separating components
 	 * @param comp
 	 * @param numlines
 	 * @since 3.3
@@ -469,7 +469,7 @@ public class SWTUtil {
 	
 	/**
 	 * This method allows us to open the preference dialog on the specific page, in this case the perspective page
-	 * @param id the id of pref page to show
+	 * @param id the id of preference page to show
 	 * @param page the actual page to show
 	 * @since 3.2
 	 */

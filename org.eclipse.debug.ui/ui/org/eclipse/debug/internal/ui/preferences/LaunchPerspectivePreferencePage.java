@@ -278,7 +278,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 	 */
 	protected Control createContents(Composite parent) {
 		
-		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2);
+		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_0, 2, 300);
 		
 		SWTUtil.createVerticalSpacer(parent, 1);
 		
@@ -304,7 +304,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fSwitchSuspend.setPreferenceStore(getPreferenceStore());
 		
 		SWTUtil.createVerticalSpacer(parent, 1);
-		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2);
+		SWTUtil.createWrapLabel(parent, DebugPreferencesMessages.PerspectivePreferencePage_5, 2, 300);
 		Composite comp = SWTUtil.createComposite(parent, 2, 1, GridData.FILL_BOTH);
 		createTreeViewer(comp);
 		fPerspectivesPanel = new PerspectivesPanel(comp, DebugPreferencesMessages.PerspectivePreferencePage_2);
