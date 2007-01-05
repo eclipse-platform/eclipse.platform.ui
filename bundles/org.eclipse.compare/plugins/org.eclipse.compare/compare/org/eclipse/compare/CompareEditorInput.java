@@ -17,6 +17,7 @@ import java.util.ResourceBundle;
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.*;
@@ -37,6 +38,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
+import org.eclipse.ui.part.*;
 import org.eclipse.ui.services.IServiceLocator;
 
 
@@ -213,6 +215,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Object getAdapter(Class adapter) {
 		if (ICompareNavigator.class.equals(adapter) || CompareNavigator.class.equals(adapter)) {
 			return getNavigator();
+		}
+		if (adapter == IShowInSource.class) {
+			final IFile file = (IFile)Utilities.getAdapter(this, IFile.class);
+			if (file != null)
+				return new IShowInSource() {
+					public ShowInContext getShowInContext() {
+						return new ShowInContext(new FileEditorInput(file), StructuredSelection.EMPTY);
+					}
+				};
 		}
 		return null;
 	}
@@ -1120,5 +1131,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void setHelpContextId(String helpContextId) {
 		this.fHelpContextId = helpContextId;	
 	}
+	
 }
 

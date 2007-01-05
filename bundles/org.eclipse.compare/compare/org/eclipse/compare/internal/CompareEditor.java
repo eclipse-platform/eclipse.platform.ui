@@ -32,8 +32,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.part.EditorPart;
-import org.eclipse.ui.part.PageBook;
+import org.eclipse.ui.part.*;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
@@ -141,6 +140,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					return fOutlinePage;
 				}
 			}
+		}
+		
+		if (key.equals(IShowInSource.class)) {
+			return getEditorInput().getAdapter(key);
 		}
 		return super.getAdapter(key);
 	}
