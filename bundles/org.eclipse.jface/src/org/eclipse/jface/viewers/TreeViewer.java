@@ -898,31 +898,36 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * 
 	 * @since 3.3
 	 */
-	public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {
-		if (internalIsInputOrEmptyPath(elementOrTreePath)) {
-			if (hasChildren) {
-				virtualLazyUpdateChildCount(getTree(), getChildren(getTree()).length);
-			} else {
-				setChildCount(elementOrTreePath, 0);
-			}
-			return;
-		}
-		Widget[] items = internalFindItems(elementOrTreePath);
-		for (int i = 0; i < items.length; i++) {
-				TreeItem item = (TreeItem) items[i];
-				if (!hasChildren) {
-					item.setItemCount(0);
-				} else {
-					if (!item.getExpanded()) {
-						item.setItemCount(1);
-						TreeItem child = item.getItem(0);
-						if (child.getData() != null) {
-							disassociate(child);
+	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
+		preservingSelection(new Runnable() {
+			public void run() {
+				if (internalIsInputOrEmptyPath(elementOrTreePath)) {
+					if (hasChildren) {
+						virtualLazyUpdateChildCount(getTree(),
+								getChildren(getTree()).length);
+					} else {
+						setChildCount(elementOrTreePath, 0);
+					}
+					return;
+				}
+				Widget[] items = internalFindItems(elementOrTreePath);
+				for (int i = 0; i < items.length; i++) {
+					TreeItem item = (TreeItem) items[i];
+					if (!hasChildren) {
+						item.setItemCount(0);
+					} else {
+						if (!item.getExpanded()) {
+							item.setItemCount(1);
+							TreeItem child = item.getItem(0);
+							if (child.getData() != null) {
+								disassociate(child);
+							}
+							item.clear(0, true);
 						}
-						item.clear(0, true);
 					}
 				}
-		}
+			}
+		});
 	}
 
 	/**
