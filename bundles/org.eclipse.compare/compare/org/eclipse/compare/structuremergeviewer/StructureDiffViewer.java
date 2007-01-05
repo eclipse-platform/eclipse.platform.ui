@@ -92,7 +92,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			boolean changed = false;
 			if (force || newInput != fInput) {
 				removeDocumentRangeUpdaters();
-				if (fInput instanceof IContentChangeNotifier)
+				if (fInput instanceof IContentChangeNotifier && fContentChangedListener != null)
 					((IContentChangeNotifier)fInput).removeContentChangeListener(fContentChangedListener);
 				fInput= newInput;
 				if (fInput == null) {
@@ -105,7 +105,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 					refresh(monitor);
 					changed= true;
 				}
-				if (fInput instanceof IContentChangeNotifier)
+				if (fInput instanceof IContentChangeNotifier && fContentChangedListener != null)
 					((IContentChangeNotifier)fInput).addContentChangeListener(fContentChangedListener);
 			}
 			return changed;
