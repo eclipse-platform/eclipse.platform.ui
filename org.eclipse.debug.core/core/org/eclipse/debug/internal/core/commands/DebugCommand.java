@@ -95,7 +95,6 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 			}
 		};
 		job.setSystem(true);
-		// TODO: rule?
 		job.schedule();
 		return isRemainEnabled();
 	}	
@@ -152,7 +151,6 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 			}
 		};
 		job.setSystem(true);
-		// TODO: rule for all elements?
 		job.setRule(createUpdateSchedulingRule(request));
 		job.schedule();
 		
