@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,15 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * @since 3.0
  */
 public interface IJobManager {
+	/**
+	 * A system property key indicating whether the job manager should create
+	 * job threads as daemon threads.  Set to <code>true</code> to force all worker 
+	 * threads to be created as daemon threads. Set to <code>false</code> to force 
+	 * all worker threads to be created as non-daemon threads.
+	 * @since 3.3
+	 */
+	public static final String PROP_USE_DAEMON_THREADS = "eclipse.jobs.daemon"; //$NON-NLS-1$
+
 	/**
 	 * Registers a job listener with the job manager.  
 	 * Has no effect if an identical listener is already registered.

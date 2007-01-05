@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -26,7 +27,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * 
  * @since org.eclipse.core.jobs 3.2
  */
-public class JobOSGiUtils {
+class JobOSGiUtils {
 	private ServiceTracker debugTracker = null;
 	private ServiceTracker bundleTracker = null;
 
@@ -109,4 +110,29 @@ public class JobOSGiUtils {
 		return null;
 	}
 
+	/**
+	 * Calculates whether the job plugin should set worker threads to be daemon 
+	 * threads.  When workers are daemon threads, the job plugin does not need
+	 * to be explicitly shut down because the VM can exit while workers are still
+	 * alive.
+	 * @return <code>true</code> if all worker threads should be daemon threads,
+	 * and <code>false</code> otherwise.
+	 */
+	boolean useDaemonThreads() {
+		BundleContext context = JobActivator.getContext();
+		if (context == null) {
+			//we are running stand-alone, so consult global system property
+			String value = System.getProperty(IJobManager.PROP_USE_DAEMON_THREADS);
+			//default to use daemon threads if property is absent
+			if (value == null)
+				return true;
+			return "true".equalsIgnoreCase(value); //$NON-NLS-1$
+		}
+		//only use daemon threads if the property is defined
+		final String value = context.getProperty(IJobManager.PROP_USE_DAEMON_THREADS);
+		//if value is absent, don't use daemon threads to maintain legacy behaviour
+		if (value == null)
+			return false;
+		return "true".equalsIgnoreCase(value); //$NON-NLS-1$
+	}
 }

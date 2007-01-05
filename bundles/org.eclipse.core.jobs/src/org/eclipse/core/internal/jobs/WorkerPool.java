@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,11 @@ class WorkerPool {
 	 * The default context class loader to use when creating worker threads.
 	 */
 	protected final ClassLoader defaultContextLoader;
+
+	/**
+	 * Records whether new worker threads should be daemon threads.
+	 */
+	private boolean isDaemon = false;
 
 	private JobManager manager;
 	/**
@@ -134,6 +139,7 @@ class WorkerPool {
 		//if the job is high priority, we start a thread no matter what
 		if (busyThreads >= numThreads) {
 			Worker worker = new Worker(this);
+			worker.setDaemon(isDaemon);
 			add(worker);
 			if (JobManager.DEBUG)
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
@@ -155,6 +161,13 @@ class WorkerPool {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Sets whether threads created in the worker pool should be daemon threads.
+	 */
+	void setDaemon(boolean value) {
+		this.isDaemon = value;
 	}
 
 	protected synchronized void shutdown() {

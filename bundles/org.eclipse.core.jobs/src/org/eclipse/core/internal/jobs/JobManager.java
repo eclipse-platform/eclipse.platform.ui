@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,6 +186,12 @@ public class JobManager implements IJobManager {
 		return "UNKNOWN"; //$NON-NLS-1$
 	}
 
+	/**
+	 * Note that although this method is not API, clients have historically used
+	 * it to force jobs shutdown in cases where OSGi shutdown does not occur.
+	 * For this reason, this method should be considered near-API and should not 
+	 * be changed if at all possible. 
+	 */
 	public static void shutdown() {
 		if (instance != null) {
 			instance.doShutdown();
@@ -202,6 +208,7 @@ public class JobManager implements IJobManager {
 			running = new HashSet(10);
 			pool = new WorkerPool(this);
 		}
+		pool.setDaemon(JobOSGiUtils.getDefault().useDaemonThreads());
 	}
 
 	/* (non-Javadoc)
