@@ -275,7 +275,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fNameWidget.addModifyListener(new ModifyListener() {
     				public void modifyText(ModifyEvent e) {
-    					handleNameModified();
+    					if(!fInitializingTabs) {
+    						handleNameModified();
+    					}
     				}
     			}
     		);
@@ -744,8 +746,6 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		}
 		// show the name area
 		updateVisibleControls(true);
-		// Update the name field before to avoid verify error
-		fNameWidget.setText(getWorkingCopy().getName());
 
 		// Retrieve the current tab group.  If there is none, clean up and leave
 		ILaunchConfigurationTabGroup tabGroup = getTabGroup();
@@ -760,7 +760,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		// Update the tabs with the new working copy
 		tabGroup.initializeFrom(getWorkingCopy());
 
-		// Update the name field after in case client changed it
+		// Update the name field
 		fNameWidget.setText(getWorkingCopy().getName());
 		
 		fCurrentTabIndex = fTabFolder.getSelectionIndex();
@@ -1355,6 +1355,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			if(fTabGroup != null) {
 				fTabGroup.initializeFrom(fOriginal);
 				fWorkingCopy = fOriginal.getWorkingCopy();
+				fNameWidget.setText(fOriginal.getName());
 				refreshStatus();
 			}
 		} 
