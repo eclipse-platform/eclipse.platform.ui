@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
@@ -214,21 +213,6 @@ public abstract class DebugCommand implements IDebugCommandHandler {
 	 */
 	protected ISchedulingRule createUpdateSchedulingRule(IDebugCommandRequest request) {
 		return new SerialPerObjectRule(request.getElements()[0]);
-	}
-	
-	private IStatus merge(IStatus nextStatus, IStatus prevStatus) {
-		if (prevStatus == null) {
-			return nextStatus;
-		}
-		MultiStatus ms = null;
-		if (prevStatus.isMultiStatus()) {
-			ms = (MultiStatus) prevStatus;
-		} else {
-			ms = new MultiStatus(prevStatus.getPlugin(), prevStatus.getCode(), prevStatus.getMessage(), null);
-			ms.add(prevStatus);
-		}
-		ms.add(nextStatus);
-		return ms;
 	}
 	
 	private Object[] coalesce(Object[] objects) {
