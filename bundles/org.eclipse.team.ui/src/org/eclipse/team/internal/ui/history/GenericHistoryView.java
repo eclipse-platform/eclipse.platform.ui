@@ -35,7 +35,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.*;
 
-public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener {
+public class GenericHistoryView extends ViewPart implements IHistoryView, IPropertyChangeListener, IShowInTarget {
 
 	private static final String HISTORY_VIEW_GROUP = "org.eclipse.team.ui.historyView"; //$NON-NLS-1$
 	private static final String NAVIGATION_GROUP = "org.eclipse.team.ui.navigation"; //$NON-NLS-1$
@@ -938,5 +938,19 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		// (i.e. don't do the change if the input is the same but the page source differs; bug 167648)
 		if (getHistoryPage().getInput() != object)
 			showHistoryPageFor(object, false, false, null);
+	}
+
+	public boolean show(ShowInContext context) {
+		ISelection selection = context.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection ss = (IStructuredSelection) selection;
+			if (ss.size() == 1) {
+				return (showHistoryFor(ss.getFirstElement()) != null);
+			}
+		}
+		if (context.getInput() != null) {
+			return (showHistoryFor(context.getInput()) != null);
+		}
+		return false;
 	}
 }

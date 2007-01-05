@@ -201,6 +201,9 @@
          <perspectiveShortcut
                id="org.eclipse.team.ui.TeamSynchronizingPerspective">
          </perspectiveShortcut>
+         <showInPart
+               id="org.eclipse.team.ui.GenericHistoryView">
+         </showInPart>
       </perspectiveExtension>
    </extension>
    
@@ -260,6 +263,9 @@
             targetID="org.eclipse.team.ui.TeamSynchronizingPerspective">
          <showInPart
                id="org.eclipse.ui.views.ResourceNavigator">
+         </showInPart>
+         <showInPart
+               id="org.eclipse.team.ui.GenericHistoryView">
          </showInPart>
       </perspectiveExtension>
    </extension>
