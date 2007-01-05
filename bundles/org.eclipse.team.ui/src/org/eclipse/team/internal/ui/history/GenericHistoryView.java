@@ -945,7 +945,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			if (ss.size() == 1) {
-				return (showHistoryFor(ss.getFirstElement()) != null);
+				// If we can show the selection, return.
+				// Otherwise, fall through and attempt to show the input
+				if ((showHistoryFor(ss.getFirstElement()) != null))
+					return true;
 			}
 		}
 		if (context.getInput() != null) {
