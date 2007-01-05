@@ -485,7 +485,7 @@ public interface ILaunchManager {
 	 * Returns the default launch configuration for the specified resource, or <code>null</code>
 	 * if none.
 	 * 
-	 * @param configuration launch configuration
+	 * @param resource resource
 	 * @return launch configuration or <code>null</code>
 	 * @exception CoreException if an error occurs retrieving the configuration
 	 * @since 3.3

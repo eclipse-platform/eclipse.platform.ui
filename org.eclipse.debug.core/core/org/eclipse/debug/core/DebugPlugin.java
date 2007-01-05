@@ -1413,7 +1413,7 @@ public class DebugPlugin extends Plugin {
 	 * @return whether step filters are applied to step commands
 	 * @since 3.3
 	 * @see org.eclipse.debug.core.model.IStepFilters
-	 * @see org.eclipse.debug.core.commands.IStepFiltersCommand
+	 * @see org.eclipse.debug.core.commands.IStepFiltersHandler
 	 */
 	public static boolean isUseStepFilters() {
 		return getStepFilterManager().isUseStepFilters();
