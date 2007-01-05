@@ -750,6 +750,8 @@
             contextId="org.eclipse.ui.textEditorScope"
             sequence="M4+."
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+
+      <!-- In the Chinese language M3+/ is already reserved for content assist -->
       <key   
             locale="zh"  
             contextId="org.eclipse.ui.textEditorScope"   
@@ -757,6 +759,32 @@
             sequence="M3+/"/> 
       <key
             locale="zh"
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
+
+      <!-- In the Japanese language M3+/ is already reserved for content assist -->
+      <key   
+            locale="ja"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="ja"
+            commandId="org.eclipse.ui.edit.text.hippieCompletion"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+M3+/"/>
+
+      <!-- In the Korean language M3+/ is already reserved for content assist -->
+      <key   
+            locale="ko"  
+            contextId="org.eclipse.ui.textEditorScope"   
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"   
+            sequence="M3+/"/> 
+      <key
+            locale="ko"
             commandId="org.eclipse.ui.edit.text.hippieCompletion"
             contextId="org.eclipse.ui.textEditorScope"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
