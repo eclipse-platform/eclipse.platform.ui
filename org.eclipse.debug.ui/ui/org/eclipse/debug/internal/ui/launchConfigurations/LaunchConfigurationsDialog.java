@@ -827,7 +827,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * EXPERIMENTAL
 	 */
 	public Set getReservedNameSet() {
-		return null;
+		return fReservedNames;
 	}
 	
 	/**
