@@ -412,9 +412,10 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 				else {
 					id = DebugUIPlugin.getDefault().getPerspectiveManager().getLaunchPerspective(type, modes, delegate);
 				}
-				if(id != null) {
-					tmp.add(id);
+				if(id == null) {
+					id = IDebugUIConstants.PERSPECTIVE_NONE;
 				}
+				tmp.add(id);
 			}
 			if(tmp.size() == 1) {
 				id = (String) tmp.iterator().next();
@@ -559,14 +560,17 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			//reset type
 			type = (ILaunchConfigurationType) items[i].getData();
 			modes = type.getSupportedModeCombinations();
+			delegates = fTreeViewer.getFilteredChildren(type);
 			for(Iterator iter = modes.iterator(); iter.hasNext();) {
 				modeset = (Set) iter.next();
 				fgChangeSet.add(new PerspectiveChange(type, null, modeset, pm.getDefaultLaunchPerspective(type, null, modeset)));
 			}
-			//reset child delegates
-			delegates = fTreeViewer.getFilteredChildren(type);
 			for(int j = 0; j < delegates.length; j++) {
-				fgChangeSet.add(new PerspectiveChange(type, (ILaunchDelegate) delegates[j], modeset, pm.getDefaultLaunchPerspective(type, (ILaunchDelegate) delegates[j], modeset))); 
+				modes = new HashSet(((ILaunchDelegate)delegates[j]).getModes());
+				for(Iterator iter = modes.iterator(); iter.hasNext();) {
+					modeset = (Set) iter.next();
+					fgChangeSet.add(new PerspectiveChange(type, (ILaunchDelegate) delegates[j], modeset, pm.getDefaultLaunchPerspective(type, (ILaunchDelegate) delegates[j], modeset)));
+				}
 			}
 		}
 		if(fTree.getItemCount() > 0) {

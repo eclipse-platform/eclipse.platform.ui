@@ -40,6 +40,16 @@ public interface IConfigurationElementConstants {
 	 * the shortcutId node name for a configuration element
 	 */
 	public static final String LAUNCH_SHORTCUT_ID = "shortcutID"; //$NON-NLS-1$
+
+	/**
+	 * the launchPerspectives node name for a configuration element
+	 */
+	public static final String LAUNCH_PERSPECTIVES = "launchPerspectives";  //$NON-NLS-1$
+	
+	/**
+	 * the launchPerspective node name for a configuration element
+	 */
+	public static final String LAUNCH_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
 	
 	/**
 	 * the launchConfiguration node name for a configuration element

@@ -33,6 +33,7 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -140,45 +141,27 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		public boolean equals(Object object) {
+			ILaunchDelegate delegate = null;
+			ILaunchConfigurationType type = null;
 			if(object instanceof ILaunch) {
-				ILaunch launch = (ILaunch) object;
 				try {
-					ILaunchConfigurationType type = launch.getLaunchConfiguration().getType();
-					if(type.getIdentifier().equals(fType.getIdentifier())) {
-						Set modes = launch.getLaunchConfiguration().getModes();
-						modes.add(launch.getLaunchMode());
-						if(fPerspectives.keySet().contains(modes)) {
-							ILaunchDelegate delegate = resolveLaunchDelegate(launch);
-							if(delegate != null) {
-								return delegate.equals(fDelegate);
-							}
-							else {
-								//use the default, both must be null in this case to be equal
-								return fDelegate == null;
-							}
-						}
-					}
+					ILaunch launch = (ILaunch) object;
+					type = launch.getLaunchConfiguration().getType();
+					delegate = resolveLaunchDelegate(launch);
 				} 
-				catch (CoreException e) {
-					return false;
-				}
+				catch (CoreException e) {return false;}
 			}
 			else if(object instanceof PerspectiveContext) {
 				PerspectiveContext context = (PerspectiveContext) object;
-				if(fType != null && fType.getIdentifier().equals(context.fType.getIdentifier())
-						&& fPerspectives.size() == context.fPerspectives.size() && fPerspectives.keySet().containsAll(context.fPerspectives.keySet())) {
-					if(fDelegate != null) {
-						if(context.getLaunchDelegate() == null) {
-							return true;
-						}
-						else {
-							return fDelegate.equals(context.getLaunchDelegate());
-						}
-					}
-					else {
-						//for them to be equal both must be null in this case
-						return context.getLaunchDelegate() == null;
-					}
+				type = context.getLaunchConfigurationType();
+				delegate = context.getLaunchDelegate();
+			}
+			if(fType != null && type != null && fType.getIdentifier().equals(type.getIdentifier())) {
+				if(fDelegate == null) {
+					return delegate == null;
+				}
+				else {
+					return fDelegate.equals(delegate);
 				}
 			}
 			return super.equals(object);
@@ -221,13 +204,6 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 * @since 3.3
 	 */
 	private Set fPerspectiveContexts = null;
-	
-	// XML tags
-	public static final String ELEMENT_PERSPECTIVES = "launchPerspectives"; //$NON-NLS-1$
-	public static final String ELEMENT_PERSPECTIVE = "launchPerspective"; //$NON-NLS-1$
-	public static final String ATTR_TYPE_ID = "configurationType"; //$NON-NLS-1$
-	public static final String ATTR_MODE_ID = "mode"; //$NON-NLS-1$
-	public static final String ATTR_PERSPECTIVE_ID = "perspective";  //$NON-NLS-1$
 	
 	/**
 	 * id for the 'delegate' attribute
@@ -729,10 +705,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	public String getLaunchPerspective(ILaunchConfigurationType type, Set modes, ILaunchDelegate delegate) {
 		String id = null;
 		PerspectiveContext context = findContext(new PerspectiveContext(type, delegate, modes));
-		if(context == null) {
+		if(context == null || (context != null && !context.getPersepctiveMap().containsKey(modes))) {
 			//try with a null delegate, denoting the perspective for the type
 			context = findContext(new PerspectiveContext(type, null, modes));
-			if(context == null) {
+			if(context == null || (context != null && !context.getPersepctiveMap().containsKey(modes))) {
 				//last resort, try the default perspective
 				return getDefaultLaunchPerspective(type, delegate, modes);
 			}
@@ -849,27 +825,31 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private String generatePerspectiveXML() throws ParserConfigurationException, TransformerException, IOException {
 		Document doc = DebugUIPlugin.getDocument();
-		Element root = doc.createElement(ELEMENT_PERSPECTIVES);
+		Element root = doc.createElement(IConfigurationElementConstants.LAUNCH_PERSPECTIVES);
 		doc.appendChild(root);
 		PerspectiveContext context = null;
 		Map modesets = null;
 		Element element = null;
 		Set modes = null;
+		String id = null;
 		ILaunchDelegate delegate = null;
 		for(Iterator iter = fPerspectiveContexts.iterator(); iter.hasNext();) {
 			context = (PerspectiveContext) iter.next();
 			modesets = context.getPersepctiveMap();
 			for(Iterator iter2 = modesets.keySet().iterator(); iter2.hasNext();) {
-				element = doc.createElement(ELEMENT_PERSPECTIVE);
 				modes = (Set) iter2.next();
-				element.setAttribute(ATTR_MODE_ID, createModesetString(modes));
-				delegate = context.getLaunchDelegate();
-				if(delegate != null) {
-					element.setAttribute(ATTR_DELEGATE_ID, delegate.getId());
+				id = context.getPerspective(modes);
+				if(id != null) {
+					element = doc.createElement(IConfigurationElementConstants.LAUNCH_PERSPECTIVE);
+					element.setAttribute(IConfigurationElementConstants.MODE, createModesetString(modes));
+					delegate = context.getLaunchDelegate();
+					if(delegate != null) {
+						element.setAttribute(ATTR_DELEGATE_ID, delegate.getId());
+					}
+					element.setAttribute(IConfigurationElementConstants.CONFIGURATION_TYPES, context.getLaunchConfigurationType().getIdentifier());
+					element.setAttribute(IConfigurationElementConstants.PERSPECTIVE, id);
+					root.appendChild(element);
 				}
-				element.setAttribute(ATTR_TYPE_ID, context.getLaunchConfigurationType().getIdentifier());
-				element.setAttribute(ATTR_PERSPECTIVE_ID, context.getPerspective(modes));
-				root.appendChild(element);
 			}
 			
 		}
@@ -970,10 +950,10 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 						if (node.getNodeType() == Node.ELEMENT_NODE) {
 							element = (Element) node;
 							String nodeName = element.getNodeName();
-							if (nodeName.equalsIgnoreCase(ELEMENT_PERSPECTIVE)) {
-								String type = element.getAttribute(ATTR_TYPE_ID);
-								String mode = element.getAttribute(ATTR_MODE_ID);
-								String perspective = element.getAttribute(ATTR_PERSPECTIVE_ID);
+							if (nodeName.equalsIgnoreCase(IConfigurationElementConstants.LAUNCH_PERSPECTIVE)) {
+								String type = element.getAttribute(IConfigurationElementConstants.CONFIGURATION_TYPES);
+								String mode = element.getAttribute(IConfigurationElementConstants.MODE);
+								String perspective = element.getAttribute(IConfigurationElementConstants.PERSPECTIVE);
 								String delegate = element.getAttribute(ATTR_DELEGATE_ID);
 								lctype = lm.getLaunchConfigurationType(type);
 								ldelegate = lm.getLaunchDelegate(delegate);
