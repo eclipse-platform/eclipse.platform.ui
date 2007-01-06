@@ -14,6 +14,15 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.ui.IViewPart;
 
+/**
+ * Base implementation of the 'remove' action for a debug view
+ * 
+ * This class is intended to be extended by clients
+ * @see {@link AbstractSelectionActionDelegate}
+ * @see {@link org.eclipse.ui.IViewActionDelegate}
+ * @see {@link org.eclipse.ui.IActionDelegate2}
+ *
+ */
 public abstract class AbstractRemoveActionDelegate extends AbstractSelectionActionDelegate {
 	
 	/* (non-Javadoc)

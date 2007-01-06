@@ -20,8 +20,19 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
+/**
+ * This class is a base implementation of a 'remove all' debug action
+ * 
+ * This class is intended to be extended by clients
+ * @see {@link IViewActionDelegate}
+ * @see {@link IActionDelegate2}}
+ * @see {@link IWorkbenchWindowActionDelegate}
+ */
 public abstract class AbstractRemoveAllActionDelegate implements IViewActionDelegate, IActionDelegate2, IWorkbenchWindowActionDelegate {
 	
+	/**
+	 * The underlying <code>IAction</code>
+	 */
 	private IAction fAction;
 
 	/**
@@ -46,7 +57,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/**
 	 * Returns this delegate's action.
 	 * 
-	 * @return
+	 * @return the underlying <code>IAction</code>
 	 */
 	protected IAction getAction() {
 		return fAction;
@@ -93,7 +104,7 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	/**
 	 * Returns whether this action is enabled
 	 * 
-	 * @return
+	 * @return true if this action is enabled, false otherwise
 	 */
 	protected abstract boolean isEnabled();
 	
@@ -103,5 +114,4 @@ public abstract class AbstractRemoveAllActionDelegate implements IViewActionDele
 	public void selectionChanged(IAction action, ISelection s) {
 		// do nothing
 	}
-	
 }

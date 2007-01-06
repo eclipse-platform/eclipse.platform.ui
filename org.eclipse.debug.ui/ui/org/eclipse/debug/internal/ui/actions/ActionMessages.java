@@ -14,6 +14,12 @@ import org.eclipse.osgi.util.NLS;
 public class ActionMessages extends NLS {
     private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.actions.ActionMessages";//$NON-NLS-1$
 
+    public static String AbstractLaunchHistoryAction_0;
+    public static String AbstractLaunchHistoryAction_1;
+    public static String AbstractLaunchHistoryAction_2;
+    public static String AbstractLaunchHistoryAction_3;
+    public static String AbstractLaunchHistoryAction_4;
+    
     public static String AddToFavoritesAction_1;
     public static String AddToFavoritesAction_2;
     public static String AddToFavoritesAction_3;
@@ -29,19 +35,18 @@ public class ActionMessages extends NLS {
 
     public static String CollapseAllAction_0;
 
+    public static String ConfigureColumnsAction_0;
+	public static String ConfigureColumnsAction_1;
+	public static String ConfigureColumnsAction_2;
+    
     public static String CopyToClipboardActionDelegate_Problem_Copying_to_Clipboard_1;
     public static String CopyToClipboardActionDelegate_There_was_a_problem_when_accessing_the_system_clipboard__Retry__2;
 
 	public static String DetailPaneAssignValueAction_0;
-
 	public static String DetailPaneAssignValueAction_1;
-
 	public static String DetailPaneAssignValueAction_2;
-
 	public static String DetailPaneAssignValueAction_3;
-
 	public static String DetailPaneAssignValueAction_4;
-
     public static String DetailPaneWordWrapAction_0;
     public static String DetailPaneMaxLengthAction_0;
 
@@ -58,16 +63,22 @@ public class ActionMessages extends NLS {
 
     public static String RelaunchActionDelegate_An_exception_occurred_while_launching_2;
     public static String RelaunchActionDelegate_Launch_Failed_1;
-
+    public static String RelaunchLastAction_Cannot_relaunch_1;
+    public static String RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2;
+    public static String RelaunchLastAction_Error_relaunching_3;
+    public static String RelaunchLastAction_Error_encountered_attempting_to_relaunch_4;
+    
     public static String RemoveAllBreakpointsAction_0;
     public static String RemoveAllBreakpointsAction_1;
     public static String RemoveAllBreakpointsAction_2;
-
 	public static String RemoveAllBreakpointsAction_3;
-
     public static String RemoveBreakpointAction_0;
     public static String RemoveBreakpointAction_1;
     public static String RemoveBreakpointAction_2;
+    public static String RemoveBreakpointAction_3;
+	public static String RemoveBreakpointAction_4;
+	public static String RemoveBreakpointAction_5;
+	public static String RemoveBreakpointAction_6;
     public static String RemoveBreakpointAction_Exceptions_occurred_attempting_to_remove_a_breakpoint__5;
     public static String RemoveBreakpointAction_Removing_a_breakpoint_4;
 
@@ -77,17 +88,15 @@ public class ActionMessages extends NLS {
     public static String ShowTypesAction_Show__Type_Names_1;
     public static String ShowTypesAction_Show_Type_Names;
 
-    public static String RelaunchLastAction_Cannot_relaunch_1;
-    public static String RelaunchLastAction_Cannot_relaunch___0___because_it_does_not_support__2__mode_2;
-    public static String RelaunchLastAction_Error_relaunching_3;
-    public static String RelaunchLastAction_Error_encountered_attempting_to_relaunch_4;
-
-    public static String AbstractLaunchHistoryAction_0;
-    public static String AbstractLaunchHistoryAction_1;
-    public static String AbstractLaunchHistoryAction_2;
-    public static String AbstractLaunchHistoryAction_3;
-    public static String AbstractLaunchHistoryAction_4;
-
+    public static String SkipAllBreakpointsAction_0;
+    public static String SkipAllBreakpointsAction_2;
+    
+    public static String TerminateAndRelaunchAction_0;
+    public static String TerminateAndRelaunchAction_3;
+    public static String TerminateAndRelaunchAction_4;
+    public static String TerminateAndRemoveAction_0;
+    public static String TerminateAndRemoveAction_3;
+    
     public static String ToggleDetailPaneAction_1;
     public static String ToggleDetailPaneAction_2;
     public static String ToggleDetailPaneAction_3;
@@ -99,7 +108,6 @@ public class ActionMessages extends NLS {
     public static String ToggleBreakpointAction_0;
     public static String ToggleBreakpointAction_1;
     public static String ToggleBreakpointAction_2;
-
 	public static String ToggleStepFiltersAction_0;
 
     public static String WatchExpressionDialog_0;
@@ -109,8 +117,7 @@ public class ActionMessages extends NLS {
     public static String WatchExpressionDialog_4;
     public static String WatchAction_0;
     public static String WatchAction_1;
-    public static String SkipAllBreakpointsAction_0;
-    public static String SkipAllBreakpointsAction_2;
+    
     public static String RunToLineAction_0;
     public static String RunToLineAction_1;
     public static String RunToLineHandler_0;
@@ -120,6 +127,8 @@ public class ActionMessages extends NLS {
     public static String RetargetAction_3;
     public static String ModifyWatchpointAction_0;
     public static String ModifyWatchpointAction_1;
+    public static String RemoveAllExpressionsAction_0;
+    public static String RemoveAllExpressionsAction_1;
     public static String LaunchShortcutsAction_1;
     public static String FindDialog_1;
     public static String FindDialog_3;
@@ -133,90 +142,37 @@ public class ActionMessages extends NLS {
     public static String AbstractDebugActionDelegate_0;
 
     public static String RetargetAddMemoryBlockAction_0;
-
     public static String RetargetAddMemoryBlockAction_1;
-
     public static String AddMemoryRenderingActionDelegate_0;
-
     public static String AddMemoryRenderingActionDelegate_1;
-
     public static String AddMemoryRenderingActionDelegate_2;
 
     public static String RulerEnableDisableBreakpointAction_0;
-
     public static String RulerEnableDisableBreakpointAction_1;
-
     public static String RulerEnableDisableBreakpointAction_2;
-
     public static String RulerEnableDisableBreakpointAction_3;
 
-    public static String RemoveAllExpressionsAction_0;
-
-    public static String RemoveAllExpressionsAction_1;
-
-    public static String TerminateAndRelaunchAction_0;
-
-    public static String TerminateAndRelaunchAction_3;
-
-    public static String TerminateAndRelaunchAction_4;
-
-    public static String StepReturnAction_2;
-
-    public static String StepReturnAction_3;
-
-    public static String TerminateAndRemoveAction_0;
-
-    public static String TerminateAndRemoveAction_3;
-
-    public static String ResumeAction_0;
-
-    public static String ResumeAction_3;
-
     public static String DisconnectAction_0;
-
     public static String DisconnectAction_3;
-
-    public static String StepIntoAction_0;
-
-    public static String StepIntoAction_3;
-
     public static String DropToFrameAction_0;
-
     public static String DropToFrameAction_3;
-
+    public static String ResumeAction_0;
+    public static String ResumeAction_3;
+    public static String StepIntoAction_0;
+    public static String StepIntoAction_3;
+    public static String StepOverAction_0;
+    public static String StepOverAction_3;
+    public static String StepReturnAction_2;
+    public static String StepReturnAction_3;
+    public static String SuspendAction_0;
+    public static String SuspendAction_3;
+    public static String TerminateAction_0;
+    public static String TerminateAction_3;
     public static String TerminateAllAction_2;
-
     public static String TerminateAllAction_3;
 
-    public static String SuspendAction_0;
-
-    public static String SuspendAction_3;
-
-    public static String StepOverAction_0;
-
-    public static String StepOverAction_3;
-
-    public static String TerminateAction_0;
-
-    public static String TerminateAction_3;
-
-	public static String ConfigureColumnsAction_0;
-
-	public static String ConfigureColumnsAction_1;
-
-	public static String ConfigureColumnsAction_2;
-
 	public static String DeleteWorkingsetsMessageDialog_0;
-
 	public static String DeleteWorkingsetsMessageDialog_1;
-
-	public static String RemoveBreakpointAction_3;
-
-	public static String RemoveBreakpointAction_4;
-
-	public static String RemoveBreakpointAction_5;
-
-	public static String RemoveBreakpointAction_6;
 
 	public static String ShowTypesAction_0;
 }

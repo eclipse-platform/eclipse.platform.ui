@@ -28,6 +28,13 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
+/**
+ * This class is an abstract implementation of common features for a debug <code>IViewActionDelegate</code>
+ *
+ * This class is intended to be extended by clients
+ * @see {@link IViewActionDelegate}
+ * @see {@link IActionDelegate2}
+ */
 public abstract class AbstractDebugActionDelegate implements IViewActionDelegate, IActionDelegate2 {
 	
 	/**
@@ -55,8 +62,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
 	 */
-	public AbstractDebugActionDelegate() {
-	}
+	public AbstractDebugActionDelegate() {}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
@@ -104,6 +110,10 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		reportErrors(status);
 	}
 
+	/**
+	 * Reports the specified <code>MultiStatus</code> in an error dialog
+	 * @param ms the specified <code>MultiStatus</code>
+	 */
 	private void reportErrors(final MultiStatus ms) {
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -127,6 +137,12 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		}
 	}
 	
+	/**
+	 * Updates the specified selection based on the selection, as well as setting the selection
+	 * for this action
+	 * @param action the action to update
+	 * @param s the selection
+	 */
 	protected void update(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection)s;
@@ -216,18 +232,34 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		fSelection = selection;
 	}	
 	
+	/**
+	 * Allows the underlying <code>IAction</code> to be set to the specified <code>IAction</code>
+	 * @param action the action to set
+	 */
 	protected void setAction(IAction action) {
 		fAction = action;
 	}
 
+	/**
+	 * Allows access to the underlying <code>IAction</code>
+	 * @return the underlying <code>IAction</code>
+	 */
 	protected IAction getAction() {
 		return fAction;
 	}
 	
+	/**
+	 * Returns if this action has been initialized or not
+	 * @return if this action has been initialized or not
+	 */
 	protected boolean isInitialized() {
 		return fInitialized;
 	}
 
+	/**
+	 * Sets the initialized state of this aciton to the specified boolean value
+	 * @param initialized the value to set the initialized state to
+	 */
 	protected void setInitialized(boolean initialized) {
 		fInitialized = initialized;
 	}
@@ -249,6 +281,11 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 		return true;		
 	}
 
+	/**
+	 * Returns if this action is enabled for the specified object context
+	 * @param element the context
+	 * @return true if it is, false otherwise
+	 */
 	protected boolean isEnabledFor(Object element) {
 		return true;
 	}

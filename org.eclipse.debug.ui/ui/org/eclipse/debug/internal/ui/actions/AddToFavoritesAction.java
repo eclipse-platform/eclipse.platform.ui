@@ -110,26 +110,50 @@ public class AddToFavoritesAction extends SelectionListenerAction {
 		return false;
 	}
 
+	/**
+	 * Allows the underlying <code>ILaunchConfiguration</code> to be set
+	 * @param configuration the new configuration to set
+	 */
 	protected void setLaunchConfiguration(ILaunchConfiguration configuration) {
 		fConfiguration = configuration;
 	}
 	
+	/**
+	 * Returns the underlying <code>ILaunchConfiguration</code>
+	 * @return the underlying <code>ILaunchConfiguration</code>
+	 */
 	protected ILaunchConfiguration getLaunchConfiguration() {
 		return fConfiguration;
 	}
 	
+	/**
+	 * Sets the mode this action applies to
+	 * @param mode the modes to set
+	 */
 	protected void setMode(String mode) {
 		fMode = mode;
 	}
 	
+	/**
+	 * Returns the mode this action applies to
+	 * @return
+	 */
 	protected String getMode() {
 		return fMode;
 	}
 	
+	/**
+	 * Sets the <code>ILaunchGroup</code> this action applies to
+	 * @param group the new <code>ILaunchGroup</code>
+	 */
 	protected void setGroup(ILaunchGroup group) {
 		fGroup = group;
 	}
 	
+	/**
+	 * Returns the underlying <code>ILaunchGroup</code>
+	 * @return the underlying <code>ILaunchGroup</code>
+	 */
 	protected ILaunchGroup getGroup() {
 		return fGroup;
 	}
