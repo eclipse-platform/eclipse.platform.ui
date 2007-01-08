@@ -25,7 +25,7 @@ public class RealmTest extends TestCase {
 		final Realm newRealm = new CurrentRealm(true);
 		
 		Realm.setDefault(oldRealm);
-		Realm.setDefault(newRealm, new Runnable() {
+		Realm.runWithDefault(newRealm, new Runnable() {
 			public void run() {
 				assertEquals("new realm should be default", newRealm, Realm.getDefault());
 			}
