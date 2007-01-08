@@ -18,15 +18,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,15 +49,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
-import org.eclipse.ui.internal.about.AboutData;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
@@ -55,6 +69,71 @@ import org.osgi.framework.Bundle;
  */
 public class AboutPluginsDialog extends ProductInfoDialog {
 
+	public class BundleTableLabelProvider extends LabelProvider implements ITableLabelProvider  {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
+		 */
+		public Image getColumnImage(Object element, int columnIndex) {
+			if (columnIndex == 0) {
+				if (element instanceof AboutBundleData) {
+					final AboutBundleData data = (AboutBundleData) element;
+					if (data.isSignedDetermined()) {
+						return WorkbenchImages
+								.getImage(data.isSigned() ? IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES
+										: IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO);
+					} 
+					Job resolveJob = new Job(data.getId()){ 
+
+						protected IStatus run(IProgressMonitor monitor) {
+							
+							data.isSigned();
+							Shell dialogShell = getShell();
+							if (dialogShell == null || dialogShell.isDisposed())
+								return Status.OK_STATUS;
+								
+							dialogShell.getDisplay().asyncExec(new Runnable() {
+
+								public void run() {
+									fireLabelProviderChanged(new LabelProviderChangedEvent(
+											BundleTableLabelProvider.this, data));
+								}
+							});
+
+
+							return Status.OK_STATUS;
+						}
+					}; 
+					resolveJob.setSystem(true);
+					resolveJob.schedule();
+					return WorkbenchImages
+							.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN);
+				}
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
+		 */
+		public String getColumnText(Object element, int columnIndex) {
+			if (element instanceof AboutBundleData) {
+				AboutBundleData data = (AboutBundleData) element;
+				switch (columnIndex) {
+				case 1:
+					return data.getProviderName();
+				case 2:
+					return data.getName();
+				case 3:
+					return data.getVersion();
+				case 4:
+					return data.getId();
+				}
+			}
+			return ""; //$NON-NLS-1$
+		}		
+	}
+	
     /**
      * Table height in dialog units (value 200).
      */
@@ -65,33 +144,30 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     private static final String PLUGININFO = "about.html"; //$NON-NLS-1$
 
     private final static int MORE_ID = IDialogConstants.CLIENT_ID + 1;
+    private final static int SIGNING_ID = MORE_ID + 1;
 
-    private Table vendorInfo;
+    private TableViewer vendorInfo;
 
-    private Button moreInfo;
+    private Button moreInfo, signingInfo;
 
     private String title;
 
     private String message;
-
+    
     private String helpContextId;
 
     private String columnTitles[] = {
+    		WorkbenchMessages.AboutPluginsDialog_signed,
             WorkbenchMessages.AboutPluginsDialog_provider,
             WorkbenchMessages.AboutPluginsDialog_pluginName,
             WorkbenchMessages.AboutPluginsDialog_version, 
-            WorkbenchMessages.AboutPluginsDialog_pluginId, 
+            WorkbenchMessages.AboutPluginsDialog_pluginId,
+            
     };
 
     private String productName;
 
     private AboutBundleData[] bundleInfos;
-
-    private int lastColumnChosen = 0; // initially sort by provider
-
-    private boolean reverseSort = false; // initially sort ascending
-
-    private AboutBundleData lastSelection = null;
 
     /**
      * Constructor for AboutPluginsDialog.
@@ -102,6 +178,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     public AboutPluginsDialog(Shell parentShell, String productName) {
         this(parentShell, productName, WorkbenchPlugin.getDefault()
                 .getBundles(), null, null, IWorkbenchHelpContextIds.ABOUT_PLUGINS_DIALOG);
+        WorkbenchPlugin.class.getSigners();
     }
 
     /**
@@ -128,7 +205,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         this.message = message;
         this.helpContextId = helpContextId;
         this.productName = productName;
-
+        
         // create a data object for each bundle, remove duplicates, and include only resolved bundles (bug 65548)
         Map map = new HashMap();
         for (int i = 0; i < bundles.length; ++i) {
@@ -139,8 +216,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         }
         bundleInfos = (AboutBundleData[]) map.values().toArray(
                 new AboutBundleData[0]);
-
-        AboutData.sortByProvider(reverseSort, bundleInfos);
     }
 
     /*
@@ -151,19 +226,48 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         case MORE_ID:
             handleMoreInfoPressed();
             break;
+        case SIGNING_ID:
+        	handleSigningInfoPressed();
+        	break;
         default:
             super.buttonPressed(buttonId);
             break;
         }
     }
 
-    /*
+    /**
+	 */
+	private void handleSigningInfoPressed() {
+		DialogTray existingTray = getTray();
+		if (existingTray instanceof BundleSigningTray) {
+			// hide
+			getButton(SIGNING_ID).setText(WorkbenchMessages.AboutPluginsDialog_signingInfo_show); 
+			closeTray();
+		}
+		else {
+			//show
+			getButton(SIGNING_ID).setText(WorkbenchMessages.AboutPluginsDialog_signingInfo_hide);
+			if (existingTray != null)
+				closeTray();
+			AboutBundleData bundleInfo = (AboutBundleData) ((IStructuredSelection) vendorInfo
+					.getSelection()).getFirstElement();
+			BundleSigningTray tray = new BundleSigningTray(this);
+			tray.setData(bundleInfo);
+			openTray(tray);
+		}
+		
+	}
+
+	/*
      * (non-Javadoc) Method declared on Window.
      */
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
+        
+        //signImage = new Image( this.getParentShell().getDisplay(), AboutPluginsDialog.class.getResourceAsStream("Signed.gif")); //$NON-NLS-1$
+        
         if (title == null && productName != null) {
-			title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName );
+			title = NLS.bind(WorkbenchMessages.AboutPluginsDialog_shellTitle, productName);
 		}
 
         if (title != null) {
@@ -173,7 +277,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         PlatformUI.getWorkbench().getHelpSystem().setHelp(newShell,
 				helpContextId);
     }
-
+    
     /**
      * Add buttons to the dialog's button bar.
      * 
@@ -186,7 +290,10 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         moreInfo = createButton(parent, MORE_ID, WorkbenchMessages.AboutPluginsDialog_moreInfo, false); 
-        moreInfo.setEnabled(tableHasSelection() && selectionHasInfo());
+        moreInfo.setEnabled(false);
+        
+        signingInfo = createButton(parent, SIGNING_ID, WorkbenchMessages.AboutPluginsDialog_signingInfo_show, false);
+        signingInfo.setEnabled(false);
 
         Label l = new Label(parent, SWT.NONE);
         l.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -229,64 +336,83 @@ public class AboutPluginsDialog extends ProductInfoDialog {
      *            the parent composite to contain the dialog area
      */
     protected void createTable(Composite parent) {
-        vendorInfo = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE
+        vendorInfo = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE
                 | SWT.FULL_SELECTION | SWT.BORDER);
-        vendorInfo.setHeaderVisible(true);
-        vendorInfo.setLinesVisible(true);
-        vendorInfo.setFont(parent.getFont());
-        vendorInfo.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(SelectionEvent e) {
-                // enable if there is an item selected and that
-                // item has additional info
-                moreInfo.setEnabled(e.item != null && selectionHasInfo());
-            }
-        });
+        vendorInfo.setUseHashlookup(true);
+        vendorInfo.getTable().setHeaderVisible(true);
+        vendorInfo.getTable().setLinesVisible(true);
+        vendorInfo.getTable().setFont(parent.getFont());
+        vendorInfo.addSelectionChangedListener(new ISelectionChangedListener() {
 
-        int[] columnWidths = { convertHorizontalDLUsToPixels(120),
+			public void selectionChanged(SelectionChangedEvent event) {
+				// enable if there is an item selected and that
+                // item has additional info
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				if (selection.getFirstElement() instanceof AboutBundleData) {
+					AboutBundleData selected = (AboutBundleData) selection.getFirstElement(); 
+					moreInfo.setEnabled(selectionHasInfo(selected));
+					signingInfo.setEnabled(true);
+					if (getTray() instanceof BundleSigningTray) {
+						((BundleSigningTray)getTray()).setData(selected);
+					}
+				}
+				else {
+					moreInfo.setEnabled(false);
+					signingInfo.setEnabled(false);
+				}
+			}});
+        
+        final TableComparator comparator = new TableComparator();
+        comparator.setSortColumn(1); // sort on name initially
+
+        int[] columnWidths = {
+        		convertHorizontalDLUsToPixels(30), //signature
+        		convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(120),
                 convertHorizontalDLUsToPixels(70),
-                convertHorizontalDLUsToPixels(130) };
+                convertHorizontalDLUsToPixels(130),
+                };
 
+        
         // create table headers
         for (int i = 0; i < columnTitles.length; i++) {
-            TableColumn column = new TableColumn(vendorInfo, SWT.NULL);
+            TableColumn column = new TableColumn(vendorInfo.getTable(), SWT.NULL);
             column.setWidth(columnWidths[i]);
             column.setText(columnTitles[i]);
             final int columnIndex = i;
             column.addSelectionListener(new SelectionAdapter() {
                 public void widgetSelected(SelectionEvent e) {
-                    sort(columnIndex);
+                	if (columnIndex == comparator.getSortColumn()) {
+                		comparator.setAscending(!comparator.isAscending());
+                	}
+                    comparator.setSortColumn(columnIndex);
+                    vendorInfo.refresh();
                 }
             });
         }
-
-        // create a row for each member of the bundleInfo array
-        for (int i = 0; i < bundleInfos.length; ++i) {
-            TableItem item = new TableItem(vendorInfo, SWT.NULL);
-            item.setText(createRow(bundleInfos[i]));
-            item.setData(bundleInfos[i]);
-        }
-
+        
+        vendorInfo.setComparator(comparator);
+        vendorInfo.setContentProvider(new ArrayContentProvider());        
+        vendorInfo.setLabelProvider(new BundleTableLabelProvider());
+       
         GridData gridData = new GridData(GridData.FILL, GridData.FILL, true,
                 true);
         gridData.heightHint = convertVerticalDLUsToPixels(TABLE_HEIGHT);
-        vendorInfo.setLayoutData(gridData);
+        vendorInfo.getTable().setLayoutData(gridData);
+        
+        vendorInfo.setInput(bundleInfos);
     }
 
     /**
      * Check if the currently selected plugin has additional information to
      * show.
+     * @param bundleInfo 
      * 
      * @return true if the selected plugin has additional info available to
      *         display
      */
-    private boolean selectionHasInfo() {
-        TableItem[] items = vendorInfo.getSelection();
-        if (items.length <= 0) {
-			return false;
-		}
-
-        AboutBundleData bundleInfo = bundleInfos[vendorInfo.getSelectionIndex()];
+    private boolean selectionHasInfo(AboutBundleData bundleInfo) {
+        
         URL infoURL = getMoreInfoURL(bundleInfo, false);
 
         // only report ini problems if the -debug command line argument is used
@@ -301,15 +427,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         return infoURL != null;
     }
 
-    /**
-     * Create the button to provide more info on the selected plugin.
-     * 
-     * @return true if there is an item selected in the table, false otherwise
-     */
-    private boolean tableHasSelection() {
-        return vendorInfo == null ? false : vendorInfo.getSelectionCount() > 0;
-    }
-
     /** 
      * The More Info button was pressed.  Open a browser showing the license information
      * for the selected bundle or an error dialog if the browser cannot be opened.
@@ -318,17 +435,13 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         if (vendorInfo == null) {
 			return;
 		}
-
-        TableItem[] items = vendorInfo.getSelection();
-        if (items.length <= 0) {
-			return;
-		}
-
-        AboutBundleData bundleInfo = (AboutBundleData) items[0].getData();
-        if (bundleInfo == null) {
-			return;
-		}
-
+        
+        if (vendorInfo.getSelection().isEmpty())
+        	return;
+        
+        AboutBundleData bundleInfo = (AboutBundleData) ((IStructuredSelection) vendorInfo
+				.getSelection()).getFirstElement();
+        
         if (!openBrowser(getMoreInfoURL(bundleInfo, true))) {
 			String message = NLS.bind(
 					WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,
@@ -337,89 +450,6 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 					WorkbenchPlugin.PI_WORKBENCH, message);
 			StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
 		}
-    }
-
-    /**
-     * Sort the rows of the table based on the selected column.
-     * 
-     * @param column
-     *            index of table column selected as sort criteria
-     */
-    private void sort(int column) {
-        if (lastColumnChosen == column) {
-			reverseSort = !reverseSort;
-		} else {
-            reverseSort = false;
-            lastColumnChosen = column;
-        }
-
-        if (vendorInfo.getItemCount() <= 1) {
-			return;
-		}
-
-        int sel = vendorInfo.getSelectionIndex();
-        if (sel != -1) {
-			lastSelection = bundleInfos[sel];
-		}
-
-        switch (column) {
-        case 0:
-            AboutData.sortByProvider(reverseSort, bundleInfos);
-            break;
-        case 1:
-            AboutData.sortByName(reverseSort, bundleInfos);
-            break;
-        case 2:
-            AboutData.sortByVersion(reverseSort, bundleInfos);
-            break;
-        case 3:
-            AboutData.sortById(reverseSort, bundleInfos);
-            break;
-        }
-
-        refreshTable(column);
-    }
-
-    /**
-     * Refresh the rows of the table based on the selected column. Maintain
-     * selection from before sort action request.
-     */
-    private void refreshTable(int col) {
-        TableItem[] items = vendorInfo.getItems();
-
-        // create new order of table items
-        for (int i = 0; i < items.length; i++) {
-            items[i].setText(createRow(bundleInfos[i]));
-            items[i].setData(bundleInfos[i]);
-        }
-
-        // maintain the original selection
-        int sel = -1;
-        if (lastSelection != null) {
-            String oldId = lastSelection.getId();
-            for (int k = 0; k < bundleInfos.length; k++) {
-				if (oldId.equalsIgnoreCase(bundleInfos[k].getId())) {
-					sel = k;
-				}
-			}
-
-            vendorInfo.setSelection(sel);
-            vendorInfo.showSelection();
-        }
-
-        moreInfo.setEnabled(tableHasSelection() && selectionHasInfo());
-    }
-
-    /**
-     * Return an array of strings containing the argument's information in the
-     * proper order for this table's columns.
-     * 
-     * @param info
-     *            the source information for the new row, must not be null
-     */
-    private static String[] createRow(AboutBundleData info) {
-        return new String[] { info.getProviderName(), info.getName(),
-                info.getVersion(), info.getId() };
     }
 
     /**
@@ -462,4 +492,58 @@ public class AboutPluginsDialog extends ProductInfoDialog {
         }
 		return null;
     }
+}
+
+
+class TableComparator extends ViewerComparator {
+
+	private int sortColumn = 0;
+	private boolean ascending = true;
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+	 */
+	public int compare(Viewer viewer, Object e1, Object e2) {
+		if (viewer instanceof TableViewer) {
+			TableViewer tableViewer = (TableViewer) viewer;
+			IBaseLabelProvider baseLabel = tableViewer.getLabelProvider();
+			if (baseLabel instanceof ITableLabelProvider) {
+				ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+				String e1p = tableProvider.getColumnText(e1, sortColumn);
+				String e2p = tableProvider.getColumnText(e2, sortColumn);
+				int result = getComparator().compare(e1p, e2p);
+				return ascending ?  result : (-1) * result;
+			}
+		}
+		
+		return super.compare(viewer, e1, e2);
+	}
+
+	/**
+	 * @return Returns the sortColumn.
+	 */
+	public int getSortColumn() {
+		return sortColumn;
+	}
+
+	/**
+	 * @param sortColumn The sortColumn to set.
+	 */
+	public void setSortColumn(int sortColumn) {
+		this.sortColumn = sortColumn;
+	}
+
+	/**
+	 * @return Returns the ascending.
+	 */
+	public boolean isAscending() {
+		return ascending;
+	}
+
+	/**
+	 * @param ascending The ascending to set.
+	 */
+	public void setAscending(boolean ascending) {
+		this.ascending = ascending;
+	}
 }

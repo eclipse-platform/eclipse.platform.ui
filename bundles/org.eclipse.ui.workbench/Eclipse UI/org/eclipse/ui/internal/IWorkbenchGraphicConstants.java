@@ -190,4 +190,25 @@ public interface IWorkbenchGraphicConstants {
      * Default icon for Quick Access elements.
      */
     public static final String IMG_OBJ_ELEMENT = "IMG_OBJ_ELEMENT"; //$NON-NLS-1$
+
+    /**
+     * Icon for signed objects (such as bundles).
+     * 
+     * @since 3.3
+     */
+	public static final String IMG_OBJ_SIGNED_YES = "IMG_OBJ_SIGNED_YES"; //$NON-NLS-1$
+
+	/**
+     * Icon for unsigned objects (such as bundles).
+     * 
+     * @since 3.3
+     */
+	public static final String IMG_OBJ_SIGNED_NO = "IMG_OBJ_SIGNED_NO"; //$NON-NLS-1$
+
+	/**
+     * Icon for objects whos signing state is not known (such as bundles).
+     * 
+     * @since 3.3
+     */
+	public static final String IMG_OBJ_SIGNED_UNKNOWN = "IMG_OBJ_SIGNED_UNKNOWN"; //$NON-NLS-1$
 }

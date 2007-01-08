@@ -21,6 +21,30 @@ public class WorkbenchMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.messages";//$NON-NLS-1$
 
 
+	public static String BundleSigningTray_Cant_Find_Service;
+
+
+	public static String BundleSigningTray_Determine_Signer_For;
+
+
+	public static String BundleSigningTray_Signing_Certificate;
+
+
+	public static String BundleSigningTray_Signing_Date;
+
+
+	public static String BundleSigningTray_Unget_Signing_Service;
+
+
+	public static String BundleSigningTray_Unknown;
+
+
+	public static String BundleSigningTray_Unsigned;
+
+
+	public static String BundleSigningTray_Working;
+
+
 	public static String PlatformUI_NoWorkbench;
 
 	public static String Workbench_CreatingWorkbenchTwice;
@@ -238,6 +262,7 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutPluginsDialog_pluginName;
 	public static String AboutPluginsDialog_pluginId;
 	public static String AboutPluginsDialog_version;
+	public static String AboutPluginsDialog_signed;
 	public static String AboutPluginsDialog_provider;
 	public static String AboutPluginsDialog_state_installed;
 	public static String AboutPluginsDialog_state_resolved;
@@ -247,12 +272,15 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutPluginsDialog_state_active;
 	public static String AboutPluginsDialog_state_unknown;
 	public static String AboutPluginsDialog_moreInfo;
+	public static String AboutPluginsDialog_signingInfo_show;
+	public static String AboutPluginsDialog_signingInfo_hide;
 	public static String AboutPluginsDialog_errorTitle;
 	public static String AboutPluginsDialog_unableToOpenFile;
 	public static String AboutFeaturesDialog_shellTitle;
 	public static String AboutFeaturesDialog_featureName;
 	public static String AboutFeaturesDialog_featureId;
 	public static String AboutFeaturesDialog_version;
+	public static String AboutFeaturesDialog_signed;
 	public static String AboutFeaturesDialog_provider;
 	public static String AboutFeaturesDialog_moreInfo;
 	public static String AboutFeaturesDialog_pluginsInfo;

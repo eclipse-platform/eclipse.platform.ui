@@ -384,6 +384,14 @@ public/*final*/class WorkbenchImages {
         declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_TOFASTVIEW_MASK,
                 PATH_POINTER + "tofastview_mask.bmp", true); //$NON-NLS-1$
         
+        // signed jar images
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_YES, PATH_OBJECT
+				+ "signed_yes.gif", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_NO, PATH_OBJECT
+				+ "signed_no.gif", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_OBJ_SIGNED_UNKNOWN,
+				PATH_OBJECT + "signed_unknown.gif", true); //$NON-NLS-1$
+        
         // Manually create the view menu
         
         Display d = Display.getCurrent();
