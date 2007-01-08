@@ -158,6 +158,8 @@ public class WorkspaceModelParticipant extends
 				Utils.initAction(action, "ConfirmMergedAction.", Policy.getActionBundle()); //$NON-NLS-1$
 			} else if (mergeActionId == MERGE_ALL_ACTION_ID) {
 				Utils.initAction(action, "WorkspaceToolbarUpdateAction.", Policy.getActionBundle()); //$NON-NLS-1$
+				action.setId(ICVSUIConstants.CMD_UPDATE_ALL);
+				action.setActionDefinitionId(ICVSUIConstants.CMD_UPDATE_ALL);
 			} else {
 				super.configureMergeAction(mergeActionId, action);
 			}

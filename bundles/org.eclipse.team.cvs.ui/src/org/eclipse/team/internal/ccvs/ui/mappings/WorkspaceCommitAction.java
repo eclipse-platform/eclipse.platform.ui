@@ -18,6 +18,7 @@ import org.eclipse.team.core.ICache;
 import org.eclipse.team.core.ICacheListener;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.ui.mapping.ITeamContentProviderManager;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
@@ -32,6 +33,8 @@ public class WorkspaceCommitAction extends AbstractCommitAction implements IDiff
 	 */
 	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration) {
 		super(configuration);
+		setId(ICVSUIConstants.CMD_COMMIT_ALL);
+		setActionDefinitionId(ICVSUIConstants.CMD_COMMIT_ALL);
 		final IDiffTree tree = getDiffTree();
 		tree.addDiffChangeListener(this);
 		getSynchronizationContext().getCache().addCacheListener(new ICacheListener() {

@@ -34,6 +34,8 @@ public class WorkspaceCommitAction extends CVSParticipantAction {
 
 	public WorkspaceCommitAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
 		super(configuration, provider, bundleKey);
+		setId(ICVSUIConstants.CMD_COMMIT_ALL);
+		setActionDefinitionId(ICVSUIConstants.CMD_COMMIT_ALL);
 	}
 	
 	/* (non-Javadoc)

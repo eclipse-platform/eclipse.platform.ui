@@ -229,8 +229,10 @@ public interface ICVSUIConstants {
 	
 	// Command Ids
 	public final String CMD_COMMIT = "org.eclipse.team.cvs.ui.commit"; //$NON-NLS-1$
+	public final String CMD_COMMIT_ALL = "org.eclipse.team.cvs.ui.commitAll"; //$NON-NLS-1$
 	public final String CMD_SYNCHRONIZE = "org.eclipse.team.ui.synchronizeLast"; //$NON-NLS-1$
 	public final String CMD_UPDATE = "org.eclipse.team.cvs.ui.update"; //$NON-NLS-1$
+	public final String CMD_UPDATE_ALL = "org.eclipse.team.cvs.ui.updateAll"; //$NON-NLS-1$
 	public final String CMD_CREATEPATCH = "org.eclipse.team.cvs.ui.GenerateDiff"; //$NON-NLS-1$
 	public final String CMD_TAGASVERSION = "org.eclipse.team.cvs.ui.tag"; //$NON-NLS-1$
 	public final String CMD_BRANCH = "org.eclipse.team.cvs.ui.branch"; //$NON-NLS-1$

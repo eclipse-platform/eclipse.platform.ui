@@ -31,6 +31,8 @@ public class WorkspaceUpdateAction extends CVSParticipantAction {
 
 	public WorkspaceUpdateAction(ISynchronizePageConfiguration configuration, ISelectionProvider provider, String bundleKey) {
 		super(configuration, provider, bundleKey);
+		setId(ICVSUIConstants.CMD_UPDATE_ALL);
+		setActionDefinitionId(ICVSUIConstants.CMD_UPDATE_ALL);
 	}
 
 	/* (non-Javadoc)

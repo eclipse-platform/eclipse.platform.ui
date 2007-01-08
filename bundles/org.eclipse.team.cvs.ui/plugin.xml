@@ -1236,6 +1236,11 @@
             name="%CommitAction.name"
             id="org.eclipse.team.cvs.ui.commit"/>
       <command
+            description="%CommitAllAction.tooltip"
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            name="%CommitAllAction.name"
+            id="org.eclipse.team.cvs.ui.commitAll"/>
+      <command
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             description="%ReplaceWithAction.tooltip"
             name="%ReplaceWithAction.name"
@@ -1270,6 +1275,11 @@
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             name="%UpdateAction.name"
             id="org.eclipse.team.cvs.ui.update"/>
+      <command
+            description="%UpdateAllAction.tooltip"
+            categoryId="org.eclipse.team.cvs.ui.actionSet"
+            id="org.eclipse.team.cvs.ui.updateAll"
+            name="%UpdateAllAction.name">
       <command
             description="%GenerateDiff.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
@@ -1324,7 +1334,8 @@
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             description="%Synchronize.tooltip"
             name="%Synchronize.name"
-            id="org.eclipse.team.cvs.ui.sync"/>   
+            id="org.eclipse.team.cvs.ui.sync"/>
+      </command>   
    </extension>
    
    <!-- Commented out awaiting menu support from UI
