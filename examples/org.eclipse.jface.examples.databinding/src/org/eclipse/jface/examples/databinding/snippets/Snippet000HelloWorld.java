@@ -85,6 +85,7 @@ public class Snippet000HelloWorld {
 	// The GUI view
 	static class View {
 		private ViewModel viewModel;
+		private Text name;
 
 		public View(ViewModel viewModel) {
 			this.viewModel = viewModel;
@@ -92,19 +93,16 @@ public class Snippet000HelloWorld {
 
 		public Shell createShell() {
 			// Build a UI
-			Display display = Display.getCurrent();
+			Display display = Display.getDefault();
 			Shell shell = new Shell(display);
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
-
-			final Text name = new Text(shell, SWT.BORDER);
-
+			name = new Text(shell, SWT.BORDER);
+			
 			// Bind it
 			Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 				public void run() {
 					DataBindingContext bindingContext = new DataBindingContext();
-					Person person = viewModel.getPerson();
-					bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
-							BeansObservables.observeValue(person, "name"), null);
+					bindGUI(bindingContext);
 				}
 			});
 
@@ -112,6 +110,13 @@ public class Snippet000HelloWorld {
 			shell.pack();
 			shell.open();
 			return shell;
+		}
+
+		protected void bindGUI(DataBindingContext bindingContext) {
+			// Called from inside the SWT threading realm)
+			Person person = viewModel.getPerson();
+			bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
+					BeansObservables.observeValue(person, "name"), null);
 		}
 	}
 
