@@ -104,6 +104,17 @@
 	</extension>
    
 <!-- commands and their bindings -->
+
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            name="%context.name"
+            description="%context.description"
+            parentId="org.eclipse.ui.contexts.window"
+            id="org.eclipse.compare.compareEditorScope">
+      </context>
+   </extension>
+   
    <extension
          point="org.eclipse.ui.commands">
       <category

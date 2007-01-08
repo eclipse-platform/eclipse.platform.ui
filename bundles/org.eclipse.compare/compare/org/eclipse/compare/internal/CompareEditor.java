@@ -332,6 +332,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		parent.setData(this);
 		fPageBook = new PageBook(parent, SWT.NONE);
 		createCompareControl();
+		getSite().getKeyBindingService().setScopes(new String[] { "org.eclipse.compare.compareEditorScope" }); //$NON-NLS-1$
 	}
 
 	private void createCompareControl() {
