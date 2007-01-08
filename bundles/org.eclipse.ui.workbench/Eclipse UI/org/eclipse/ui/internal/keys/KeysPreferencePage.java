@@ -35,9 +35,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -47,7 +45,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -92,10 +89,11 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.statushandling.StatusManager;
 
 import com.ibm.icu.text.Collator;
 import com.ibm.icu.text.MessageFormat;
@@ -1246,16 +1244,7 @@ public final class KeysPreferencePage extends PreferencePage implements
 	private final void logPreferenceStoreException(final Throwable exception) {
 		final String message = Util.translateString(RESOURCE_BUNDLE,
 				"PreferenceStoreError.Message"); //$NON-NLS-1$
-		final String title = Util.translateString(RESOURCE_BUNDLE,
-				"PreferenceStoreError.Title"); //$NON-NLS-1$
-		String exceptionMessage = exception.getMessage();
-		if (exceptionMessage == null) {
-			exceptionMessage = message;
-		}
-		final IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(tabFolder.getShell(), title, message, status);
+		StatusUtil.handleStatus(message, exception, StatusManager.SHOWANDLOG);
 	}
 
 	public final boolean performCancel() {

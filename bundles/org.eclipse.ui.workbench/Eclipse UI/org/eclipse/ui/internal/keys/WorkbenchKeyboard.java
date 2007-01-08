@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,14 +22,11 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
@@ -47,12 +43,15 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.misc.Policy;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.statushandling.StatusManager;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>
@@ -175,9 +174,8 @@ public final class WorkbenchKeyboard {
 			outOfOrderKeys = KeySequence.getInstance("ESC DEL"); //$NON-NLS-1$
 		} catch (ParseException e) {
 			outOfOrderKeys = KeySequence.getInstance();
-			String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
-			WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
+			String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$	    	
+	    	StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		}
 	}
 
@@ -694,16 +692,7 @@ public final class WorkbenchKeyboard {
 					"ExecutionError.Message"); //$NON-NLS-1$
 		}
 
-		String title = Util.translateString(RESOURCE_BUNDLE,
-				"ExecutionError.Title"); //$NON-NLS-1$
-		String exceptionMessage = exception.getMessage();
-		if (exceptionMessage == null) {
-			exceptionMessage = exception.getClass().getName();
-		}
-		IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(Util.getShellToParentOn(), title, message, status);
+		StatusUtil.handleStatus(message, exception, StatusManager.SHOWANDLOG);
 	}
 
 	/**

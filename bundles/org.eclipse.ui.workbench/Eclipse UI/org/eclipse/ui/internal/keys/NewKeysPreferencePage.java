@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.keys;
 
 import java.io.IOException;
 import java.net.URL;
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,8 +31,6 @@ import org.eclipse.core.commands.common.NamedHandleObjectComparator;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -42,7 +39,6 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.contexts.IContextIds;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
@@ -95,11 +91,14 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.statushandling.StatusManager;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * <p>
@@ -305,9 +304,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						} catch (final DeviceResourceException e) {
 							final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 									+ commandId + '\'';
-							final IStatus status = new Status(IStatus.ERROR,
-									WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-							WorkbenchPlugin.log(message, status);
+					    	StatusUtil.handleStatus(message, e, StatusManager.LOG);
 						}
 					}
 					return null;
@@ -335,9 +332,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					} catch (final DeviceResourceException e) {
 						final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 								+ commandId + '\'';
-						final IStatus status = new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-						WorkbenchPlugin.log(message, status);
+						StatusUtil.handleStatus(message, e, StatusManager.LOG);
 					}
 					return null;
 				}
@@ -355,9 +350,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					} catch (final DeviceResourceException e) {
 						final String message = "Problem retrieving image for groups of bindings: '" //$NON-NLS-1$
 								+ ICON_GROUP_OF_BINDINGS + '\'';
-						final IStatus status = new Status(IStatus.ERROR,
-								WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-						WorkbenchPlugin.log(message, status);
+						StatusUtil.handleStatus(message, e, StatusManager.LOG);
 					}
 				}
 
@@ -1351,16 +1344,7 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 */
 	private final void logPreferenceStoreException(final Throwable exception) {
 		final String message = NewKeysPreferenceMessages.PreferenceStoreError_Message;
-		final String title = NewKeysPreferenceMessages.PreferenceStoreError_Title; 
-		String exceptionMessage = exception.getMessage();
-		if (exceptionMessage == null) {
-			exceptionMessage = message;
-		}
-		final IStatus status = new Status(IStatus.ERROR,
-				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
-		WorkbenchPlugin.log(message, status);
-		ErrorDialog.openError(schemeCombo.getCombo().getShell(), title,
-				message, status);
+		StatusUtil.handleStatus(message, exception, StatusManager.SHOWANDLOG);
 	}
 
 	protected final void performDefaults() {

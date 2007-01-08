@@ -42,7 +42,6 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String GroupingCombo_When_Text;
 	
 	public static String PreferenceStoreError_Message;
-	public static String PreferenceStoreError_Title;
 	
 	public static String RestoreDefaultsMessageBoxText;
 	public static String RestoreDefaultsMessageBoxMessage;

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Utility class to create status objects.
@@ -200,4 +201,42 @@ public class StatusUtil {
         flatStatusCollection.toArray(stati);
         return newStatus(stati, message, exception);
     }
+    
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+    public static void handleStatus(Throwable e, int hint) {
+		StatusManager.getManager().handle(
+				newStatus(WorkbenchPlugin.PI_WORKBENCH, e), hint);
+	}
+
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+	public static void handleStatus(String message, Throwable e, int hint) {
+		StatusManager.getManager().handle(
+				newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e), hint);
+	}
+	
+	/**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+	public static void handleStatus(IStatus status, String message, int hint) {
+		StatusManager.getManager().handle(newStatus(status, message), hint);
+	}
+
+	/**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+	public static void handleStatus(String message, int hint) {
+		handleStatus(message, null, hint);
+	}
 }

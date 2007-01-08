@@ -15,11 +15,10 @@ import org.eclipse.core.commands.IStateListener;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.commands.PersistentState;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -197,18 +196,13 @@ public final class CommandStateProxy extends PersistentState {
 				return true;
 
 			} catch (final ClassCastException e) {
-				final String message = "The proxied state was the wrong class"; //$NON-NLS-1$
-				final IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-				WorkbenchPlugin.log(message, status);
+				final String message = "The proxied state was the wrong class"; //$NON-NLS-1$			
+				StatusUtil.handleStatus(message, e, StatusManager.LOG);
 				return false;
-
 			} catch (final CoreException e) {
 				final String message = "The proxied state for '" + configurationElement.getAttribute(stateAttributeName) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-				WorkbenchPlugin.log(message, status);
+						+ "' could not be loaded"; //$NON-NLS-1$           	
+				StatusUtil.handleStatus(message, e, StatusManager.LOG);
 				return false;
 			}
 		}
