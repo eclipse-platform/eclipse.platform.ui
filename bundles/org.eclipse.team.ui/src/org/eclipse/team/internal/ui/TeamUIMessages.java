@@ -267,7 +267,6 @@ public class TeamUIMessages extends NLS {
 	public static String ImportProjectSetMainPage_The_specified_file_does_not_exist_4;
 	public static String ImportProjectSetMainPage_You_have_specified_a_folder_5;
 	public static String ImportProjectSetMainPage_workingSetNameEmpty;
-	public static String ImportProjectSetMainPage_workingSetNameExists;
 	public static String ImportProjectSetMainPage_createWorkingSetLabel;
 	public static String ImportProjectSetMainPage_workingSetLabel;
 

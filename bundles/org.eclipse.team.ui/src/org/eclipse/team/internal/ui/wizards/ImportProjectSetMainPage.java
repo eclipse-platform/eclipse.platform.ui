@@ -24,8 +24,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.*;
-import org.eclipse.ui.IWorkingSet;
+import org.eclipse.team.internal.ui.IHelpContextIds;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.ui.PlatformUI;
 
 public class ImportProjectSetMainPage extends TeamWizardPage {
@@ -173,13 +173,6 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			if (workingSetName.length() == 0) {
 				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); 
 				return false;
-			} else {
-				// todo: verify name doesn't already exist
-				IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-				if (existingSet != null && !existingSet.getId().equals(WorkingSetsDialog.resourceWorkingSetId)) {
-					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, ERROR); 
-					return false;
-				}
 			}
 		}
 		setMessage(null);

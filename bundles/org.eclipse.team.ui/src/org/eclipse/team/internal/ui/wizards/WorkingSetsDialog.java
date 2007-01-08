@@ -78,24 +78,11 @@ public class WorkingSetsDialog extends TitleAreaDialog {
 
 		wsTableViewer.setContentProvider(new ArrayContentProvider());
 		wsTableViewer.setLabelProvider(new WorkingSetLabelProvider());
-		wsTableViewer.setInput(getResourceWorkingSets());
+		wsTableViewer.setInput(TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSets());
 
 		setupListeners();
 
 		return parent;
-	}
-
-	private Object getResourceWorkingSets() {
-		IWorkingSet[] allSets = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSets();
-		ArrayList resourceSets = new ArrayList();
-		for (int i = 0; i < allSets.length; i++) {
-			String id = allSets[i].getId();
-			if (id != null && id.equals(WorkingSetsDialog.resourceWorkingSetId)) {
-				resourceSets.add(allSets[i]);
-			}
-		}
-		return (IWorkingSet[]) resourceSets.toArray(new IWorkingSet[resourceSets.size()]);
-
 	}
 
 	protected void okPressed() {

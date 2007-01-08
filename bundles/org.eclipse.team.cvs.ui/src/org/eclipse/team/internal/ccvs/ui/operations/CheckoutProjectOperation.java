@@ -30,6 +30,7 @@ import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ui.wizards.WorkingSetsDialog;
 import org.eclipse.ui.*;
 /**
  * This class acts as an abstract class for checkout operations.
@@ -514,13 +515,15 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 		IWorkingSet oldSet = manager.getWorkingSet(workingSetName);
 		if (oldSet == null) {
 			IWorkingSet newSet = manager.createWorkingSet(workingSetName, projects);
+			newSet.setId(WorkingSetsDialog.resourceWorkingSetId);
 			manager.addWorkingSet(newSet);
-		}else {
+		} else {
 			//don't overwrite the old elements
 			IAdaptable[] tempElements = oldSet.getElements();
 			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + projects.length];
 			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
-			System.arraycopy(projects, 0,finalElementList, tempElements.length, projects.length);
+			IAdaptable[] adaptedProjects = oldSet.adaptElements(projects);
+			System.arraycopy(adaptedProjects, 0,finalElementList, tempElements.length, adaptedProjects.length);
 			oldSet.setElements(finalElementList);
 		}	
 	}

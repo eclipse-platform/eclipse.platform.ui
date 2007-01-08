@@ -24,9 +24,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.wizards.WorkingSetsDialog;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -342,13 +342,6 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 			if (workingSetName.length() == 0) {
 				setMessage(CVSUIMessages.CheckoutAsMainPage_EmptyWorkingSetErrorMessage, ERROR);
 				return false;
-			} else {
-				// todo: verify name doesn't already exist
-				IWorkingSet existingSet = CVSUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
-				if (existingSet != null && !existingSet.getId().equals(WorkingSetsDialog.resourceWorkingSetId)) {
-					setMessage(CVSUIMessages.CheckoutAsMainPage_WorkingSetExistsErrorMessage, ERROR);
-					return false;
-				}
 			}
 		}
 		setMessage(null);

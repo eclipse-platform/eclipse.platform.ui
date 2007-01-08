@@ -87,7 +87,8 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 			IAdaptable[] tempElements = oldSet.getElements();
 			IAdaptable[] finalElementList = new IAdaptable[tempElements.length + projects.length];
 			System.arraycopy(tempElements, 0, finalElementList, 0, tempElements.length);
-			System.arraycopy(projects, 0,finalElementList, tempElements.length, projects.length);
+			IAdaptable[] adaptedProjects = oldSet.adaptElements(projects);
+			System.arraycopy(adaptedProjects, 0,finalElementList, tempElements.length, adaptedProjects.length);
 			oldSet.setElements(finalElementList);
 		}	
 	}
