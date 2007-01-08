@@ -3713,6 +3713,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fSelectionListener= null;
 		}
 
+		if (fSavable != null) {
+			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+			if (listener != null)
+				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+			fSavable= null;
+		}
+		
 		disposeDocumentProvider();
 
 		if (fSourceViewer != null) {
