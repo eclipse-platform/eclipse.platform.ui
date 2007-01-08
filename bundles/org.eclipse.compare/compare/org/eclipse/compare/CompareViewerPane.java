@@ -298,4 +298,9 @@ public class CompareViewerPane extends ViewForm implements ISelectionProvider,
 	public Object getAdapter(Class adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
+	
+	public void dispose() {
+		setImage(null);
+		super.dispose();
+	}
 }
