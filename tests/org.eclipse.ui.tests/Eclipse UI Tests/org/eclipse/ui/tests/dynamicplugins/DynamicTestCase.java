@@ -160,6 +160,8 @@ public abstract class DynamicTestCase extends UITestCase implements
 		if (className == null)
 			return;		
 		
+		setName("testClass() for " + getClass().getName());
+		
 		Bundle bundle = getBundle();
 		
 		Class clazz = bundle.loadClass(className);
