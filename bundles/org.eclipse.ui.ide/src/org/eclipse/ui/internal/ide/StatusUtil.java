@@ -80,7 +80,9 @@ public class StatusUtil {
 
         String statusMessage = message;
         if (message == null || message.trim().length() == 0) {
-            if (exception.getMessage() == null) {
+            if (exception == null) {
+                throw new IllegalArgumentException();
+            } else if (exception.getMessage() == null) {
 				statusMessage = exception.toString();
 			} else {
 				statusMessage = exception.getMessage();
