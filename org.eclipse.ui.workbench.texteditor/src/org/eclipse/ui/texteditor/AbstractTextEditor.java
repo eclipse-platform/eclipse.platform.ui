@@ -6327,6 +6327,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/** The cached editor input. */
 		private IEditorInput fEditorInput;
+		/** The cached document. */
+		private IDocument fDocument;
 
 		/**
 		 * Creates a new savable for this text editor.
@@ -6413,10 +6415,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public Object getAdapter(Class adapter) {
 			if (adapter == IDocument.class) {
-				IDocumentProvider documentProvider= getDocumentProvider();
-				if (documentProvider == null)
-					return null;
-				return documentProvider.getDocument(fEditorInput);
+				if (fDocument == null) {
+					IDocumentProvider documentProvider= getDocumentProvider();
+					if (documentProvider != null)
+						fDocument= documentProvider.getDocument(fEditorInput);
+				}
+				return fDocument;
 			}
 			return super.getAdapter(adapter);
 		}
