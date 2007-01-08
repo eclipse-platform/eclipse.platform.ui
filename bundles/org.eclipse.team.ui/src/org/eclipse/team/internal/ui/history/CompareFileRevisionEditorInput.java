@@ -74,7 +74,7 @@ public class CompareFileRevisionEditorInput extends SaveableCompareEditorInput {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.LocalResourceCompareEditorInput#internalPrepareInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected ICompareInput internalPrepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	protected ICompareInput prepareCompareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		ICompareInput input = createCompareInput();
 		getCompareConfiguration().setLeftEditable(isLeftEditable(input));
 		getCompareConfiguration().setRightEditable(false);

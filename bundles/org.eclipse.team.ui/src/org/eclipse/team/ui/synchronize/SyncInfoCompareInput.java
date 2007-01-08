@@ -13,19 +13,18 @@ package org.eclipse.team.ui.synchronize;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.*;
+import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -45,13 +44,12 @@ import org.eclipse.ui.progress.UIJob;
  * @see SyncInfo
  * @since 3.0
  */
-public final class SyncInfoCompareInput extends CompareEditorInput implements IResourceChangeListener {
+public final class SyncInfoCompareInput extends SaveableCompareEditorInput implements IResourceChangeListener {
 
 	private MyDiffNode node;
 	private String description;
 	private IResource resource;
     private ISynchronizeParticipant participant;
-	private final LocalResourceSaveableComparison saveable;
 	private ISynchronizePageConfiguration synchronizeConfiguration;
 
 	/*
@@ -77,17 +75,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @param sync the <code>SyncInfo</code> used as the base for the compare input.
 	 */
 	public SyncInfoCompareInput(String description, SyncInfo sync) {
-		super(getDefaultCompareConfiguration());
+		super(getDefaultCompareConfiguration(), null);
 		Assert.isNotNull(sync);
 		Assert.isNotNull(description);
 		this.description = description;
 		this.resource = sync.getLocal();
 		this.node = new MyDiffNode(null, sync);
-		this.saveable = new LocalResourceSaveableComparison(node, this) {
-			protected void fireInputChange() {
-				node.fireChange();
-			}
-		};
 	}
 	
 	/**
@@ -116,7 +109,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
      */
     protected void handleDispose() {
     	super.handleDispose();
-    	saveable.dispose();
     	if (synchronizeConfiguration != null) {
 	    	ICompareNavigator navigator = (ICompareNavigator)synchronizeConfiguration.getProperty(SynchronizePageConfiguration.P_INPUT_NAVIGATOR);
 	    	if (navigator != null && navigator == super.getNavigator()) {
@@ -166,26 +158,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			}
 		}
 	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#getTitleImage()
-	 */
-	public Image getTitleImage() {
-		ImageRegistry reg = TeamUIPlugin.getPlugin().getImageRegistry();
-		Image image = reg.get(ITeamUIImages.IMG_SYNC_VIEW);
-		if (image == null) {
-			image = getImageDescriptor().createImage();
-			reg.put(ITeamUIImages.IMG_SYNC_VIEW, image);
-		}
-		return image;
-	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SaveableCompareEditorInput#internalPrepareInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected Object prepareInput(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+	protected ICompareInput prepareCompareInput(IProgressMonitor monitor)
+			throws InvocationTargetException, InterruptedException {
 		// update the title now that the remote revision number as been fetched
 		// from the server
 		setTitle(getTitle());
@@ -204,22 +182,6 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
             monitor.done();
         }
 		return node;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
-	 */
-	public String getTitle() {
-		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { node.getName() }); 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		return TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_SYNC_VIEW);
 	}
 
 	/*
@@ -284,5 +246,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			}
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.SaveableCompareEditorInput#fireInputChange()
+	 */
+	protected void fireInputChange() {
+		node.fireChange();
 	}
 }

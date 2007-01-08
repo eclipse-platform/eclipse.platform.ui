@@ -83,8 +83,8 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	
 	private class InternalResourceSaveableComparison extends LocalResourceSaveableComparison {
 		public InternalResourceSaveableComparison(
-				ICompareInput input, CompareEditorInput editorInput) {
-			super(input, editorInput, SaveableCompareEditorInput.getFileElement(input, editorInput));
+				ICompareInput input, CompareEditorInput editorInput, boolean connected) {
+			super(input, editorInput, SaveableCompareEditorInput.getFileElement(input, editorInput), connected);
 		}
 
 		protected void fireInputChange() {
@@ -127,6 +127,28 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			}
 		};
 		getCompareInput().addCompareInputChangeListener(compareInputChangeListener);
+		
+		if (getSaveable() instanceof LocalResourceSaveableComparison) {
+			LocalResourceSaveableComparison lrsc = (LocalResourceSaveableComparison) saveable;
+			if (lrsc.isConnectedToSharedDocument()) {
+				ICompareContainer container = getContainer();
+				IWorkbenchPart part = container.getWorkbenchPart();
+				if (part != null) {
+					ISaveablesLifecycleListener lifecycleListener= (ISaveablesLifecycleListener) part.getSite().getService(ISaveablesLifecycleListener.class);
+					lifecycleListener.handleLifecycleEvent(
+							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_CLOSE, getSaveables(), false));
+					if (saveable instanceof LocalResourceSaveableComparison) {
+						LocalResourceSaveableComparison rsc = (LocalResourceSaveableComparison) saveable;
+						rsc.dispose();
+					}
+					saveable = createConnectedSaveable();
+					lifecycleListener.handleLifecycleEvent(
+							new SaveablesLifecycleEvent(part, SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
+
+				}
+			}
+		}
+		
 		if (getSaveable() instanceof SaveableComparison) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			propertyListener = new IPropertyListener() {
@@ -162,12 +184,17 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		}
 	}
 	
-	/* (non-Javadoc)
+	/**
+	 * Prepare the compare input of this editor input. This method is not intended to be overridden of 
+	 * extended by subclasses (but is not final for backwards compatibility reasons). 
+	 * The implementation of this method in this class
+	 * delegates the creation of the compare input to the {@link #prepareCompareInput(IProgressMonitor)}
+	 * method which subclasses must implement.
 	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected final Object prepareInput(IProgressMonitor monitor)
+	protected Object prepareInput(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
-		final ICompareInput input = internalPrepareInput(monitor);
+		final ICompareInput input = prepareCompareInput(monitor);
 		setTitle(NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { input.getName() }));
 		return input;
 	}
@@ -180,7 +207,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
 	 */
-	protected abstract ICompareInput internalPrepareInput(IProgressMonitor monitor) 
+	protected abstract ICompareInput prepareCompareInput(IProgressMonitor monitor) 
 		throws InvocationTargetException, InterruptedException;
 	
 	/**
@@ -254,7 +281,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * The {@link #createSaveable()} is called to create the saveable if it does not yet exist.
 	 * This method cannot be called until after the input is prepared (i.e. until after
 	 * the {@link #run(IProgressMonitor)} method is called which will in turn will invoke 
-	 * {@link #internalPrepareInput(IProgressMonitor)}.
+	 * {@link #prepareCompareInput(IProgressMonitor)}.
 	 * @return saveable that provides the save behavior for this compare editor input.
 	 */
 	protected Saveable getSaveable() {
@@ -272,7 +299,11 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	protected Saveable createSaveable() {
 		Object compareResult = getCompareResult();
 		Assert.isNotNull(compareResult, "This method cannot be called until after prepareInput is called"); //$NON-NLS-1$
-		return new InternalResourceSaveableComparison((ICompareInput)compareResult, this);
+		return new InternalResourceSaveableComparison((ICompareInput)compareResult, this, false);
+	}
+	
+	private Saveable createConnectedSaveable() {
+		return new InternalResourceSaveableComparison((ICompareInput)getCompareResult(), this, true);
 	}
 
 	/* (non-Javadoc)

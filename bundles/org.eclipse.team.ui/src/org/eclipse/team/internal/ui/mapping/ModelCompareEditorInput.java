@@ -108,7 +108,7 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.compare.CompareEditorInput#prepareInput(org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected ICompareInput internalPrepareInput(IProgressMonitor monitor)
+	protected ICompareInput prepareCompareInput(IProgressMonitor monitor)
 			throws InvocationTargetException, InterruptedException {
         monitor.beginTask(TeamUIMessages.SyncInfoCompareInput_3, 100);
         monitor.setTaskName(TeamUIMessages.SyncInfoCompareInput_3);
