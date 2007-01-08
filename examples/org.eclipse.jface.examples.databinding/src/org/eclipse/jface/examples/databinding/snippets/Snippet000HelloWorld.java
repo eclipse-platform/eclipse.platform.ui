@@ -92,18 +92,21 @@ public class Snippet000HelloWorld {
 
 		public Shell createShell() {
 			// Build a UI
-			Shell shell = new Shell(Display.getCurrent());
-            Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
+			Display display = Display.getCurrent();
+			Shell shell = new Shell(display);
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
-			Text name = new Text(shell, SWT.BORDER);
+			final Text name = new Text(shell, SWT.BORDER);
 
 			// Bind it
-			DataBindingContext bindingContext = new DataBindingContext();
-
-			Person person = viewModel.getPerson();
-			bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
-					BeansObservables.observeValue(person, "name"), null);
+			Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+				public void run() {
+					DataBindingContext bindingContext = new DataBindingContext();
+					Person person = viewModel.getPerson();
+					bindingContext.bindValue(SWTObservables.observeText(name, SWT.Modify),
+							BeansObservables.observeValue(person, "name"), null);
+				}
+			});
 
 			// Open and return the Shell
 			shell.pack();
