@@ -28,7 +28,7 @@ public abstract class Realm {
 
 	private static ThreadLocal defaultRealm = new ThreadLocal();
 
-	/**
+	/** (non-API
 	 * Returns the default realm for the calling thread, or <code>null</code>
 	 * if no default realm has been set.
 	 * 
@@ -38,7 +38,7 @@ public abstract class Realm {
 		return (Realm) defaultRealm.get();
 	}
 
-	/**
+	/** (non-API)
 	 * Sets the default realm for the calling thread. Each thread can have its
 	 * own default realm.
 	 * 
@@ -170,7 +170,7 @@ public abstract class Realm {
 	 * @param realm
 	 * @param runnable
 	 */
-	public static void setDefault(Realm realm, Runnable runnable) {
+	public static void runWithDefault(Realm realm, Runnable runnable) {
 		Realm oldRealm = Realm.getDefault();
 		try {
 			Realm.setDefault(realm);
