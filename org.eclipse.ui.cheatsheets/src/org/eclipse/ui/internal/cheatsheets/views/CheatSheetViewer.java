@@ -1012,11 +1012,13 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				hookDialogListener();
 				dialogReturnCode = -1;
 				IStatus status = coreItem.runExecutable(getManager());
-				if (status.isOK() && !coreItem.hasConfirm() && dialogReturnCode != Window.CANCEL) {
+				if (status.isOK() && dialogReturnCode != Window.CANCEL) {
 					coreItem.setRestartImage();
-					//set that item as complete.
-					advanceItem(link, true);
-					saveCurrentSheet();
+					if (!coreItem.hasConfirm()) {
+					    //set that item as complete.
+					    advanceItem(link, true);
+					    saveCurrentSheet();
+					}
 				}
 				if ( status.getSeverity() == IStatus.ERROR) {
 					CheatSheetPlugin.getPlugin().getLog().log(status);
