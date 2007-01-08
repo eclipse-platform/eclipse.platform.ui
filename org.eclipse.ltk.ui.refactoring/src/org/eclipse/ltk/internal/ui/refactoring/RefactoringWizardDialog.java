@@ -58,22 +58,25 @@ public class RefactoringWizardDialog extends WizardDialog {
 			settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 			wizard.setDialogSettings(settings);
 		}
+		
+		int width= 600;
+		int height= 400;
+		
 		String settingsSectionId= DIALOG_SETTINGS + '.'+ wizard.getRefactoring().getName();
 		fSettings= settings.getSection(settingsSectionId);
 		if (fSettings == null) {
 			fSettings= new DialogSettings(settingsSectionId);
 			settings.addSection(fSettings);
-			fSettings.put(WIDTH, 100);
-			fSettings.put(HEIGHT, 100);
-			setMinimumPageSize(100, 100);
+			fSettings.put(WIDTH, width);
+			fSettings.put(HEIGHT, height);
 		} else {
-			try {
-				int width= fSettings.getInt(WIDTH);
-				int height= fSettings.getInt(HEIGHT);
-				setPageSize(width, height);
-			} catch (NumberFormatException e) {
-			}
+    		try {
+    			width= fSettings.getInt(WIDTH);
+    			height= fSettings.getInt(HEIGHT);
+    		} catch (NumberFormatException e) {
+    		}
 		}
+		setMinimumPageSize(width, height);
 	}
 	
 	/**
