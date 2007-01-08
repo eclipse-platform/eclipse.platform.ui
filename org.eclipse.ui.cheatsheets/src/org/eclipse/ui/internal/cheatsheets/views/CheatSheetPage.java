@@ -172,21 +172,8 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 				// blend with blue
 				rgb = FormColors.blend(rgb, new RGB(100, 100, 255), 90);
 			}
-			activeColor = new Color(display, rgb);
-
-			// alternate color is widget background + 40% white
-			rgb = toolkit.getColors().getSystemColor(
-					SWT.COLOR_WIDGET_BACKGROUND);
-			rgb = FormColors.blend(rgb, white, 60);
-			// test for bounds
-			if (FormColors.testTwoPrimaryColors(rgb, 209, 220)) {
-				// too dark - add 30% white
-				rgb = FormColors.blend(rgb, white, 70);
-			} else if (FormColors.testTwoPrimaryColors(rgb, 209, 230)) {
-				// too dark - add 20% white
-				rgb = FormColors.blend(rgb, white, 80);
-			}
-			inactiveColor1 = new Color(display, rgb);
+			introColor = new Color(display, rgb);
+			inactiveColor2 = new Color(display, rgb);
 		} else {
 			// colored background
 			rgb = toolkit.getColors().getSystemColor(SWT.COLOR_LIST_SELECTION);
@@ -204,34 +191,13 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 			// white by 70%
 			else if (FormColors.testTwoPrimaryColors(rgb, 240, 256))
 				rgb = FormColors.blend(rgb, black, 30);
-			activeColor = new Color(display, rgb);
-
-			// alternate color is widget background + 40% white
-			rgb = toolkit.getColors().getSystemColor(
-					SWT.COLOR_WIDGET_BACKGROUND);
-			rgb = FormColors.blend(rgb, white, 60);
-			// If these values are in the range of 201 to 215, then decrease
-			// white by 10%
-			if (FormColors.testTwoPrimaryColors(rgb, 200, 216))
-				rgb = FormColors.blend(rgb, black, 90);
-			// If these values are in the range of 216 to 220, then decrease
-			// white by 20%
-			else if (FormColors.testTwoPrimaryColors(rgb, 215, 221))
-				rgb = FormColors.blend(rgb, black, 80);
-			// If these values are in the range of 221 to 230, then decrease
-			// white by 40%
-			else if (FormColors.testTwoPrimaryColors(rgb, 220, 231))
-				rgb = FormColors.blend(rgb, black, 60);
-			// If these values are in the range of 231 to 255, then decrease
-			// white by 60%
-			else if (FormColors.testTwoPrimaryColors(rgb, 230, 256))
-				rgb = FormColors.blend(rgb, black, 40);
-			inactiveColor1 = new Color(display, rgb);
+			introColor = new Color(display, rgb);
+			inactiveColor2 = new Color(display, rgb);
 		}
-		rgb = activeColor.getRGB();
-		rgb = FormColors.blend(rgb, white, 40);
-		introColor = new Color(display, rgb);
-		inactiveColor2 = new Color(display, backgroundColor.getRGB());
+		rgb = inactiveColor2.getRGB();
+		rgb = FormColors.blend(rgb, backgroundColor.getRGB(), 40);
+		inactiveColor1 = new Color(display, rgb);
+		activeColor = new Color(display, backgroundColor.getRGB());
 	}
 
 	private void computeReverseVideoColors(Display display) {
