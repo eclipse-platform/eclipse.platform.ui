@@ -65,6 +65,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private CompareSaveable fSaveable;
 
 	private Control initializingPage;
+	private Control emptyPage;
 	
 	private int state = UNINITIALIZED;
 
@@ -212,6 +213,9 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (oldInput != null) {
 			if (fControl != null && !fControl.isDisposed()) {
 				oldSize= fControl.getSize();
+				if (emptyPage == null)
+					emptyPage = new Composite(fPageBook, SWT.NONE);
+				fPageBook.showPage(emptyPage);
 				fControl.dispose();
 				fControl = null;
 			}
