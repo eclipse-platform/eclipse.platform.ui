@@ -282,24 +282,21 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (ciws != null) {
 			list = ciws.getListOfSubItemCompositeHolders();
 			sich = (SubItemCompositeHolder) list.get(subItemIndex);
-			l = sich.getCheckDone();
+			l = sich.getCheckDoneLabel();
 		}
 
 		if (l != null) {
 			if (markAsCompleted) {
-				l.setImage(((ViewItem) ciws).getCompleteImage());
 				sich.setCompleted(true);
 				sich.setSkipped(false);
 				/* LP-subitem event */
 				// fireManagerSubItemEvent(ICheatSheetItemEvent.ITEM_COMPLETED, ciws, subItemID);
 			} else {
-				l.setImage(((ViewItem) ciws).getSkipImage());
 				sich.setSkipped(true);
 				sich.setCompleted(false);
 				/* LP-subitem event */
 				// fireManagerSubItemEvent(ICheatSheetItemEvent.ITEM_SKIPPED, ciws, subItemID);
 			}
-			l.setVisible(true);
 			ciws.refreshItem();
 		}
 
@@ -446,7 +443,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 								while (st.hasMoreTokens()) {
 									String token = st.nextToken();
 									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).setCompleted(true);
-									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).getCheckDone().setImage(item.getCompleteImage());
 									ArrayList l = subItemCompositeHolders;
 									SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
 									if (s != null && s.getStartButton() != null) {
@@ -466,7 +462,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 							while (st.hasMoreTokens()) {
 								String token = st.nextToken();
 								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setSkipped(true);
-								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getCheckDone().setImage(item.getSkipImage());
 							}
 						}
 					}

@@ -533,7 +533,7 @@ public class CoreItem extends ViewItem {
 			for(int j=0; j<l.size(); j++){
 				SubItemCompositeHolder s = (SubItemCompositeHolder)l.get(j);
 				if(s.isCompleted() || s.isSkipped())
-					s.getCheckDone().setVisible(false); //setImage(null);
+					s.getCheckDoneLabel().setVisible(false); //setImage(null);
 				if(s.startButton != null) {
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
 					s.getStartButton().setToolTipText(Messages.PERFORM_TASK_TOOLTIP);

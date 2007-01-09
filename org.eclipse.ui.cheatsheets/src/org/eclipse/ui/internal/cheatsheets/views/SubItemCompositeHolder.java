@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
+import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
 
 public class SubItemCompositeHolder {
@@ -33,7 +35,7 @@ public class SubItemCompositeHolder {
 	/**
 	 * @return Label
 	 */
-	/*package*/ Label getCheckDone() {
+	/*package*/ Label getCheckDoneLabel() {
 		return checkDoneLabel;
 	}
 
@@ -52,17 +54,25 @@ public class SubItemCompositeHolder {
 	}
 
 	/**
-	 * @param b
+	 * @param isCompleted
 	 */
-	/*package*/ void setCompleted(boolean b) {
-		completed = b;
+	/*package*/ void setCompleted(boolean isCompleted) {
+		completed = isCompleted;
+		if (isCompleted && checkDoneLabel != null) {
+			checkDoneLabel.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE));
+		}
+		checkDoneLabel.setVisible(completed || skipped);
 	}
 
 	/**
-	 * @param b
+	 * @param isSkipped
 	 */
-	/*package*/ void setSkipped(boolean b) {
-		skipped = b;
+	/*package*/ void setSkipped(boolean isSkipped) {
+		skipped = isSkipped;
+		if (isSkipped && checkDoneLabel != null) {
+			checkDoneLabel.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP));
+		}
+		checkDoneLabel.setVisible(completed || skipped);
 	}
 
 	/**
