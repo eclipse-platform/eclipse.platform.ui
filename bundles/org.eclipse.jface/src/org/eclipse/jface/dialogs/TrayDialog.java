@@ -323,7 +323,6 @@ public abstract class TrayDialog extends Dialog {
 		if (!isCompatibleLayout(getShell().getLayout())) {
 			throw new UnsupportedOperationException("Trays not supported with custom layouts"); //$NON-NLS-1$
 		}
-		this.tray = tray;
 		final Shell shell = getShell();
 		leftSeparator = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
 		leftSeparator.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -351,6 +350,7 @@ public abstract class TrayDialog extends Dialog {
 				}
 			}
 		});
+		this.tray = tray;
 	}
 	
 	/**
