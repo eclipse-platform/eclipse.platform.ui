@@ -22,18 +22,21 @@ public class SubItemCompositeHolder {
 	private String thisValue;
 	private SubItem subItem;
 	private Control[] buttons;
+	private Label subitemLabel;
 	
 	/**
 	 * @param buttonArray 
 	 * 
 	 */
-	/*package*/ SubItemCompositeHolder(Label iconLab, ImageHyperlink startb, String thisValue, SubItem subItem, Control[] buttonArray) {
+	/*package*/ SubItemCompositeHolder(Label iconLab, ImageHyperlink startb, String thisValue, SubItem subItem, 
+			        Label subitemLabel, Control[] buttonArray) {
 		super();
 		iconLabel = iconLab;
 		startButton = startb;
 		this.thisValue = thisValue;
 		this.subItem = subItem;
 		this.buttons = buttonArray;
+		this.subitemLabel = subitemLabel;
 	}
 
 	/**
@@ -114,5 +117,9 @@ public class SubItemCompositeHolder {
 		for (int b = 0; b < buttons.length; b++) {
 			buttons[b].setVisible(isVisible);
 		}
+	}
+
+	public Label getSubitemLabel() {
+		return subitemLabel;
 	}
 }

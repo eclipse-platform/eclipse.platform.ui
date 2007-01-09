@@ -152,11 +152,11 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Label label = page.getToolkit().createLabel(buttonComposite, ViewUtilities.escapeForLabel(labelText), SWT.WRAP);
+		Label subitemLabel = page.getToolkit().createLabel(buttonComposite, ViewUtilities.escapeForLabel(labelText), SWT.WRAP);
 		TableWrapData labelData = new TableWrapData();
 		labelData.indent = LABEL_MARGIN;
-		label.setLayoutData(labelData);
-		label.setBackground(itemColor);
+		subitemLabel.setLayoutData(labelData);
+		subitemLabel.setBackground(itemColor);
 		added++;
 		
 		// Add some space to the right of the label
@@ -227,7 +227,7 @@ public class CoreItem extends ViewItem {
 			added++;
 		}
 		Control[] buttonArray = (Control[])buttons.toArray(new Control[buttons.size()]);
-		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub, buttonArray));
+		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub, subitemLabel, buttonArray));
 	}
 
 	private AbstractExecutable getExecutable() {

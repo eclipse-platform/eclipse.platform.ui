@@ -311,9 +311,23 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		} else if (allAttempted && anySkipped) {
 			advanceItem(link, false);
 			return;
-		}
+		} 
+		
 
-		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
+    	Label subitemLabel = null;
+        if (list != null) {
+        	for (Iterator iter = list.iterator(); iter.hasNext() && subitemLabel == null ;) {
+        		SubItemCompositeHolder holder = sich = (SubItemCompositeHolder)iter.next();
+        		if (!holder.isCompleted() && !holder.isSkipped()) {
+        			subitemLabel = holder.getSubitemLabel();
+        		}
+        	}  	
+        }
+        if (subitemLabel != null) {
+    		FormToolkit.ensureVisible(subitemLabel);
+        } else {
+    		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
+        }
 		saveCurrentSheet();
 	}
 
