@@ -11,11 +11,12 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A menu for window creation in the workbench.  
@@ -74,9 +75,11 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
     protected void run(IPerspectiveDescriptor desc) {
         // Verify page input.
         if (pageInput == null) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewWindowMenu_dialogTitle,
-                    WorkbenchMessages.OpenNewWindowMenu_unknownInput); 
-            return;
+        	StatusUtil.handleStatus(
+					WorkbenchMessages.OpenNewWindowMenu_dialogTitle + ": " + //$NON-NLS-1$
+							WorkbenchMessages.OpenNewWindowMenu_unknownInput,
+					StatusManager.SHOW);
+			return;
         }
 
         // Open the page.
@@ -84,9 +87,10 @@ public class OpenNewWindowMenu extends PerspectiveMenu {
             getWindow().getWorkbench().openWorkbenchWindow(desc.getId(),
                     pageInput);
         } catch (WorkbenchException e) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewWindowMenu_dialogTitle, 
-                    e.getMessage());
-        }
+			StatusUtil.handleStatus(
+					WorkbenchMessages.OpenNewWindowMenu_dialogTitle + ": " + //$NON-NLS-1$
+							e.getMessage(), e, StatusManager.SHOW);
+		}
     }
 
     /**

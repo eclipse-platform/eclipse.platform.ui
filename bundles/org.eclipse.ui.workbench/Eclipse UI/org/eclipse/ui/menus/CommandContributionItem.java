@@ -37,7 +37,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A contribution item which delegates to a command. It can be used in
@@ -137,14 +138,16 @@ public final class CommandContributionItem extends ContributionItem {
 
 	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
-			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
-					+ "\", no command id"); //$NON-NLS-1$
+			String message = "Unable to create menu item \"" + getId() //$NON-NLS-1$
+					+ "\", no command id"; //$NON-NLS-1$
+			StatusUtil.handleStatus(message, StatusManager.LOG);
 			return;
 		}
 		Command cmd = commandService.getCommand(commandId);
 		if (!cmd.isDefined()) {
-			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
-					+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = "Unable to create menu item \"" + getId() //$NON-NLS-1$
+					+ "\", command \"" + commandId + "\" not defined"; //$NON-NLS-1$ //$NON-NLS-2$
+			StatusUtil.handleStatus(message, StatusManager.LOG);
 			return;
 		}
 
@@ -162,10 +165,10 @@ public final class CommandContributionItem extends ContributionItem {
 				IParameter parm;
 				parm = cmd.getParameter(parmName);
 				if (parm == null) {
-					WorkbenchPlugin
-							.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
+					String message = "Unable to create menu item \"" + getId() //$NON-NLS-1$
 									+ "\", parameter \"" + parmName + "\" for command \"" //$NON-NLS-1$ //$NON-NLS-2$
-									+ commandId + "\" is not defined"); //$NON-NLS-1$
+									+ commandId + "\" is not defined"; //$NON-NLS-1$
+					StatusUtil.handleStatus(message, StatusManager.LOG);
 					return;
 				}
 				parmList.add(new Parameterization(parm, (String) entry
@@ -177,8 +180,8 @@ public final class CommandContributionItem extends ContributionItem {
 		} catch (NotDefinedException e) {
 			// this shouldn't happen as we checked for !defined, but we
 			// won't take the chance
-			WorkbenchPlugin.log("Failed to create menu item " //$NON-NLS-1$
-					+ getId(), e);
+			String message = "Failed to create menu item " + getId(); //$NON-NLS-1$
+	    	StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		}
 	}
 
@@ -266,8 +269,9 @@ public final class CommandContributionItem extends ContributionItem {
 						try {
 							text = command.getCommand().getName();
 						} catch (NotDefinedException e) {
-							WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-									+ getId(), e);
+							String message = "Update item failed " //$NON-NLS-1$
+									+ getId();
+							StatusUtil.handleStatus(message, e, StatusManager.LOG);
 						}
 					}
 				}
@@ -314,8 +318,10 @@ public final class CommandContributionItem extends ContributionItem {
 							try {
 								text = command.getCommand().getName();
 							} catch (NotDefinedException e) {
-								WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-										+ getId(), e);
+								String message = "Update item failed " //$NON-NLS-1$
+										+ getId();
+								StatusUtil.handleStatus(message, e,
+										StatusManager.LOG);
 							}
 						}
 					}
@@ -384,17 +390,17 @@ public final class CommandContributionItem extends ContributionItem {
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			String message = "Failed to create menu item " + getId(); //$NON-NLS-1$
+			StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		} catch (NotDefinedException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			String message = "Failed to create menu item " + getId(); //$NON-NLS-1$
+			StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		} catch (NotEnabledException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			String message = "Failed to create menu item " + getId(); //$NON-NLS-1$
+			StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		} catch (NotHandledException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			String message = "Failed to create menu item " + getId(); //$NON-NLS-1$
+			StatusUtil.handleStatus(message, e, StatusManager.LOG);
 		}
 	}
 

@@ -12,13 +12,14 @@ package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Opens a new window. The initial perspective
@@ -103,9 +104,11 @@ public class OpenInNewWindowAction extends Action implements
 
             workbenchWindow.getWorkbench().openWorkbenchWindow(perspId,
                     pageInput);
-        } catch (WorkbenchException e) {
-            ErrorDialog.openError(workbenchWindow.getShell(), WorkbenchMessages.OpenInNewWindowAction_errorTitle, 
-                    e.getMessage(), e.getStatus());
+        } catch (WorkbenchException e) {			
+			StatusUtil.handleStatus(e.getStatus(),
+					WorkbenchMessages.OpenInNewWindowAction_errorTitle
+							+ ": " + e.getMessage(), //$NON-NLS-1$
+					StatusManager.SHOW);
         }
     }
 

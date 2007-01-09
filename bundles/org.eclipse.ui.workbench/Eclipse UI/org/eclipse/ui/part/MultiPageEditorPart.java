@@ -41,10 +41,11 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A multi-page editor is an editor with multiple pages, each of which may
@@ -612,12 +613,12 @@ public abstract class MultiPageEditorPart extends EditorPart {
 					provider.fireSelectionChanged(event);
 					provider.firePostSelectionChanged(event);
 				} else {
-					WorkbenchPlugin
-							.log(new Status(
-									IStatus.WARNING,
-									"org.eclipse.ui.workbench", IStatus.OK, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$ //$NON-NLS-2$
-											+ " did not propogate selection for " //$NON-NLS-1$
-											+ activeEditor.getTitle(), null));
+					IStatus status = new Status(
+							IStatus.WARNING,
+							"org.eclipse.ui.workbench", IStatus.OK, "MultiPageEditorPart " + getTitle() //$NON-NLS-1$ //$NON-NLS-2$
+									+ " did not propogate selection for " //$NON-NLS-1$
+									+ activeEditor.getTitle(), null);
+					StatusManager.getManager().handle(status);
 				}
 			}
 		}
@@ -733,8 +734,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
 				nestableService.activateKeyBindingService(null);
 			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = "MultiPageEditorPart.setFocus() " //$NON-NLS-1$
+					+ "Parent key binding service was not an instance of INestableKeyBindingService. " //$NON-NLS-1$
+					+ "It was an instance of " + service.getClass().getName() + " instead."; //$NON-NLS-1$ //$NON-NLS-2$
+				StatusUtil.handleStatus(message, StatusManager.LOG);
 			}
 			return;
 		}
@@ -752,9 +755,11 @@ public abstract class MultiPageEditorPart extends EditorPart {
 					nestableService.activateKeyBindingService(null);
 				}
 			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
-			}
+				String message = "MultiPageEditorPart.setFocus() " //$NON-NLS-1$
+					+ "Parent key binding service was not an instance of INestableKeyBindingService. " //$NON-NLS-1$
+					+ "It was an instance of " + service.getClass().getName() + " instead."; //$NON-NLS-1$ //$NON-NLS-2$
+				StatusUtil.handleStatus(message, StatusManager.LOG);
+			}	
 
 		} else {
 			// There is no selected editor, so deactivate the active service.
@@ -762,8 +767,10 @@ public abstract class MultiPageEditorPart extends EditorPart {
 				final INestableKeyBindingService nestableService = (INestableKeyBindingService) service;
 				nestableService.activateKeyBindingService(null);
 			} else {
-				WorkbenchPlugin
-						.log("MultiPageEditorPart.setFocus()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = "MultiPageEditorPart.setFocus() " //$NON-NLS-1$
+						+ "Parent key binding service was not an instance of INestableKeyBindingService. " //$NON-NLS-1$
+						+ "It was an instance of " + service.getClass().getName() + " instead."; //$NON-NLS-1$ //$NON-NLS-2$
+				StatusUtil.handleStatus(message, StatusManager.LOG);
 			}
 
 			// Give the page's control focus.

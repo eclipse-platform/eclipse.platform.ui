@@ -20,12 +20,12 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Page 1 of the base preference import Wizard
@@ -77,8 +77,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
             try {
                 fis = new FileInputStream(getDestinationValue());
             } catch (FileNotFoundException e) {
-                WorkbenchPlugin.log(e.getMessage(), e);
-                return new PreferenceTransferElement[0];
+                StatusUtil.handleStatus(e.getMessage(), e, StatusManager.LOG);
+				return new PreferenceTransferElement[0];
             }
             IPreferencesService service = Platform.getPreferencesService();
             try {
@@ -113,7 +113,8 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 try {
                     fis.close();
                 } catch (IOException e) {
-                    WorkbenchPlugin.log(e.getMessage(), e);
+                	StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
                 }
             }
         }
@@ -171,9 +172,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                 try {
                     fis = new FileInputStream(importFile);
                 } catch (FileNotFoundException e) {
-                    WorkbenchPlugin.log(e.getMessage(), e);
-                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
-                    return false;
+                	StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
+					return false;
                 }
                 IPreferencesService service = Platform.getPreferencesService();
                 try {
@@ -181,9 +184,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     
                     service.applyPreferences(prefs, filters);
                 } catch (CoreException e) {
-                    WorkbenchPlugin.log(e.getMessage(), e);
-                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
-                    return false;
+                	StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
+					return false;
                 }
             }
         } finally {
@@ -191,9 +196,11 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 				try {
                     fis.close();
                 } catch (IOException e) {
-                	WorkbenchPlugin.log(e.getMessage(), e);
-                	MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
-                }
+					StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
+				}
 			}
         }
         return true;

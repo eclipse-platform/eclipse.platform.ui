@@ -20,11 +20,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Page 1 of the base preference export Wizard
@@ -136,7 +136,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 			elements = new PreferenceTransferElement[count];
 			System.arraycopy(returnElements, 0, elements, 0, count);
 		} catch (CoreException e) {
-			WorkbenchPlugin.log(e.getMessage(), e);
+			StatusUtil.handleStatus(e.getMessage(), e, StatusManager.LOG);
 			return new PreferenceTransferElement[0];
 		}
 		return elements;
@@ -158,8 +158,10 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 				try {
 					fos = new FileOutputStream(exportFile);
 				} catch (FileNotFoundException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
 					return false;
 				}
 				IPreferencesService service = Platform.getPreferencesService();
@@ -167,8 +169,10 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					service.exportPreferences(service.getRootNode(), transfers,
 							fos);
 				} catch (CoreException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+			    	StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
 					return false;
 				}
 			}
@@ -177,8 +181,10 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 				try {
 					fos.close();
 				} catch (IOException e) {
-					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					StatusUtil.handleStatus(e.getMessage(), e,
+							StatusManager.LOG);
+					StatusUtil.handleStatus(e.getLocalizedMessage(), e,
+							StatusManager.SHOW);
 					return false;
 				}
 			}

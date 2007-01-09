@@ -35,14 +35,15 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.SlaveCommandService;
 import org.eclipse.ui.internal.contexts.NestableContextService;
 import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Site for a nested editor within a multi-page editor. Selection is handled by
@@ -278,8 +279,10 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 				 * client code. If you are thinking of copying this, DON'T DO
 				 * IT.
 				 */
-				WorkbenchPlugin
-						.log("MultiPageEditorSite.getKeyBindingService()   Parent key binding service was not an instance of INestableKeyBindingService.  It was an instance of " + service.getClass().getName() + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = "MultiPageEditorSite.getKeyBindingService() " //$NON-NLS-1$
+						+ "Parent key binding service was not an instance of INestableKeyBindingService. " //$NON-NLS-1$
+						+ "It was an instance of " + service.getClass().getName() + " instead."; //$NON-NLS-1$ //$NON-NLS-2$
+				StatusUtil.handleStatus(message, StatusManager.LOG);
 			}
 		}
 		return service;

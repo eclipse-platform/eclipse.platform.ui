@@ -11,11 +11,12 @@
 package org.eclipse.ui.actions;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * A menu for page creation in the workbench.  
@@ -74,18 +75,21 @@ public class OpenNewPageMenu extends PerspectiveMenu {
      */
     protected void run(IPerspectiveDescriptor desc) {
         // Verify page input.
-        if (pageInput == null) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewPageMenu_dialogTitle, 
-                    WorkbenchMessages.OpenNewPageMenu_unknownPageInput); 
-            return;
+        if (pageInput == null) {	
+			StatusUtil.handleStatus(
+					WorkbenchMessages.OpenNewPageMenu_dialogTitle + ": " + //$NON-NLS-1$
+							WorkbenchMessages.OpenNewPageMenu_unknownPageInput,
+					StatusManager.SHOW);
+			return;
         }
 
         // Open the page.
         try {
             getWindow().openPage(desc.getId(), pageInput);
         } catch (WorkbenchException e) {
-            MessageDialog.openError(getWindow().getShell(), WorkbenchMessages.OpenNewPageMenu_dialogTitle, 
-                    e.getMessage());
+        	StatusUtil.handleStatus(
+					WorkbenchMessages.OpenNewPageMenu_dialogTitle + ": " + //$NON-NLS-1$
+							e.getMessage(), e, StatusManager.SHOW);
         }
     }
 

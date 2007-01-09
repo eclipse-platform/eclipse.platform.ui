@@ -37,8 +37,9 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.SubActionBars;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Abstract superclass of all multi-page workbench views.
@@ -455,7 +456,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		try {
 			page.init(new PageSite(getViewSite()));
 		} catch (PartInitException e) {
-			WorkbenchPlugin.log(getClass(), "initPage", e); //$NON-NLS-1$
+			StatusUtil.handleStatus(getClass().getName() + ".initPage", e, //$NON-NLS-1$
+					StatusManager.LOG);
 		}
 	}
 
