@@ -51,7 +51,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 	private static final int INITIALIZED = 4;
 	private static final int ERROR = 5;
 	private static final int STILL_INITIALIZING = 6;
-	private static final int DONE = 7;
+	private static final int CREATING_CONTROL = 7;
+	private static final int DONE = 8;
 	
 	private IActionBars fActionBars;
 	
@@ -366,13 +367,16 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					// (the message would be displayed by the progress view)
 					closeEditor();
 				}
-			} else if (fControl == null) {
+			} else if (fControl == null && getState() != CREATING_CONTROL) {
+				// Set the state in case this method gets called again
+				setState(CREATING_CONTROL);
 				fControl= (ci).createContents(fPageBook);
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
 				if (isActive()) {
 					setFocus();
 				}
+				setState(INITIALIZED);
 			}
 		}
 	}
@@ -385,10 +389,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		Display.getCurrent().timerExec(1000, new Runnable() {
 			public void run() {
 				synchronized(CompareEditor.this) {
-					if (getState() == INITIALIZING)
+					if (getState() == INITIALIZING) {
 						setState(STILL_INITIALIZING);
+						createCompareControl();
+					}
 				}
-				createCompareControl();
 			}
 		});
 	}
