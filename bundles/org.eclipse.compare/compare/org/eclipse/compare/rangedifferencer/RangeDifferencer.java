@@ -13,9 +13,9 @@ package org.eclipse.compare.rangedifferencer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 
 /**
  * A <code>RangeDifferencer</code> finds the differences between two or three <code>IRangeComparator</code>s.
@@ -115,69 +115,78 @@ public final class RangeDifferencer {
 	 * @since 2.0
 	 */
 	public static RangeDifference[] findDifferences(IProgressMonitor pm, IRangeComparator ancestor, IRangeComparator left, IRangeComparator right) {
-
-		if (ancestor == null)
-			return findDifferences(pm, left, right);
-
-		RangeDifference[] leftAncestorScript= null;
-		RangeDifference[] rightAncestorScript= findDifferences(pm, ancestor, right);
-		if (rightAncestorScript != null)
-			leftAncestorScript= findDifferences(pm, ancestor, left);
-		if (rightAncestorScript == null || leftAncestorScript == null)
-			return null;
-
-		DifferencesIterator myIter= new DifferencesIterator(rightAncestorScript);
-		DifferencesIterator yourIter= new DifferencesIterator(leftAncestorScript);
-
-		List diff3= new ArrayList();
-		diff3.add(new RangeDifference(RangeDifference.ERROR)); // add a sentinel
-
-		int changeRangeStart= 0;
-		int changeRangeEnd= 0;
-		//
-		// Combine the two two-way edit scripts into one
-		//
-		while (myIter.fDifference != null || yourIter.fDifference != null) {
-
-			DifferencesIterator startThread;
-			myIter.removeAll();
-			yourIter.removeAll();
+		try {
+			if (ancestor == null)
+				return findDifferences(pm, left, right);
+			SubMonitor monitor = SubMonitor.convert(pm, CompareMessages.RangeComparatorLCS_0, 100);
+			RangeDifference[] leftAncestorScript= null;
+			RangeDifference[] rightAncestorScript= findDifferences(monitor.newChild(50), ancestor, right);
+			if (rightAncestorScript != null) {
+				monitor.setWorkRemaining(100);
+				leftAncestorScript= findDifferences(monitor.newChild(50), ancestor, left);
+			}
+			if (rightAncestorScript == null || leftAncestorScript == null)
+				return null;
+	
+			DifferencesIterator myIter= new DifferencesIterator(rightAncestorScript);
+			DifferencesIterator yourIter= new DifferencesIterator(leftAncestorScript);
+	
+			List diff3= new ArrayList();
+			diff3.add(new RangeDifference(RangeDifference.ERROR)); // add a sentinel
+	
+			int changeRangeStart= 0;
+			int changeRangeEnd= 0;
 			//
-			// take the next diff that is closer to the start
+			// Combine the two two-way edit scripts into one
 			//
-			if (myIter.fDifference == null)
-				startThread= yourIter;
-			else if (yourIter.fDifference == null)
-				startThread= myIter;
-			else { // not at end of both scripts take the lowest range
-				if (myIter.fDifference.fLeftStart <= yourIter.fDifference.fLeftStart) // 2 -> common (Ancestor) change range
-					startThread= myIter;
-				else
+			monitor.setWorkRemaining(rightAncestorScript.length + leftAncestorScript.length);
+			while (myIter.fDifference != null || yourIter.fDifference != null) {
+	
+				DifferencesIterator startThread;
+				myIter.removeAll();
+				yourIter.removeAll();
+				//
+				// take the next diff that is closer to the start
+				//
+				if (myIter.fDifference == null)
 					startThread= yourIter;
-			}
-			changeRangeStart= startThread.fDifference.fLeftStart;
-			changeRangeEnd= startThread.fDifference.leftEnd();
-
-			startThread.next();
-			//
-			// check for overlapping changes with other thread
-			// merge overlapping changes with this range
-			//
-			DifferencesIterator other= startThread.other(myIter, yourIter);
-			while (other.fDifference != null && other.fDifference.fLeftStart <= changeRangeEnd) {
-				int newMax= other.fDifference.leftEnd();
-				other.next();
-				if (newMax >= changeRangeEnd) {
-					changeRangeEnd= newMax;
-					other= other.other(myIter, yourIter);
+				else if (yourIter.fDifference == null)
+					startThread= myIter;
+				else { // not at end of both scripts take the lowest range
+					if (myIter.fDifference.fLeftStart <= yourIter.fDifference.fLeftStart) // 2 -> common (Ancestor) change range
+						startThread= myIter;
+					else
+						startThread= yourIter;
 				}
+				changeRangeStart= startThread.fDifference.fLeftStart;
+				changeRangeEnd= startThread.fDifference.leftEnd();
+	
+				startThread.next();
+				monitor.worked(1);
+				//
+				// check for overlapping changes with other thread
+				// merge overlapping changes with this range
+				//
+				DifferencesIterator other= startThread.other(myIter, yourIter);
+				while (other.fDifference != null && other.fDifference.fLeftStart <= changeRangeEnd) {
+					int newMax= other.fDifference.leftEnd();
+					other.next();
+					monitor.worked(1);
+					if (newMax >= changeRangeEnd) {
+						changeRangeEnd= newMax;
+						other= other.other(myIter, yourIter);
+					}
+				}
+				diff3.add(createRangeDifference3(myIter, yourIter, diff3, right, left, changeRangeStart, changeRangeEnd));
 			}
-			diff3.add(createRangeDifference3(myIter, yourIter, diff3, right, left, changeRangeStart, changeRangeEnd));
+	
+			// remove sentinel
+			diff3.remove(0);
+			return (RangeDifference[]) diff3.toArray(EMPTY_RESULT);
+		} finally {
+			if (pm != null)
+				pm.done();
 		}
-
-		// remove sentinel
-		diff3.remove(0);
-		return (RangeDifference[]) diff3.toArray(EMPTY_RESULT);
 	}
 
 	/**
