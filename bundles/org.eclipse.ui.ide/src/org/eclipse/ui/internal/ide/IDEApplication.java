@@ -19,13 +19,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
@@ -33,6 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -40,7 +41,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.0
  */
-public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
+public class IDEApplication implements IApplication, IExecutableExtension {
 
 	/**
 	 * The name of the folder containing metadata information for the workspace.
@@ -69,9 +70,9 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
     }
 
     /* (non-Javadoc)
-     * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
+     * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext context)
      */
-    public Object run(Object args) throws Exception {
+    public Object start(IApplicationContext appContext) throws Exception {
         Display display = createDisplay();
 
         try {
@@ -126,7 +127,7 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
      * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement, java.lang.String, java.lang.Object)
      */
     public void setInitializationData(IConfigurationElement config,
-            String propertyName, Object data) throws CoreException {
+            String propertyName, Object data) {
         // There is nothing to do for IDEApplication
     }
 
@@ -450,4 +451,20 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
             return null;
         }
     }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.equinox.app.IApplication#stop()
+     */
+	public void stop() {
+		final IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
+			return;
+		final Display display = workbench.getDisplay();
+		display.syncExec(new Runnable() {
+			public void run() {
+				if (!display.isDisposed())
+					workbench.close();
+			}
+		});
+	}
 }
