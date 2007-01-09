@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 import org.eclipse.ui.internal.ide.undo.FileDescription;
 import org.eclipse.ui.internal.ide.undo.IFileContentDescription;
-import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
  * A CreateFileOperation represents an undoable operation for creating a file in

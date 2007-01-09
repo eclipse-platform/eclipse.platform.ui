@@ -21,7 +21,6 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 import org.eclipse.ui.internal.ide.undo.UndoMessages;
 
 /**

@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 3.3
  * 
  */
-public class FileDescription extends ResourceDescription {
+public class FileDescription extends AbstractResourceDescription {
 
 	String name;
 

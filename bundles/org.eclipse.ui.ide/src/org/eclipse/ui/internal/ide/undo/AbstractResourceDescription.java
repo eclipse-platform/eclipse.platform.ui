@@ -12,19 +12,17 @@
 package org.eclipse.ui.internal.ide.undo;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.ide.undo.ResourceDescription;
 
 /**
- * ResourceDescription is a lightweight description that describes the common
+ * Base implementation of ResourceDescription that describes the common
  * attributes of a resource to be created.
  * 
  * This class is not intended to be instantiated or used by clients.
@@ -32,7 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @since 3.3
  * 
  */
-public abstract class ResourceDescription {
+abstract class AbstractResourceDescription extends ResourceDescription {
 	IContainer parent;
 
 	long modificationStamp = IResource.NULL_STAMP;
@@ -44,29 +42,9 @@ public abstract class ResourceDescription {
 	MarkerDescription[] markerDescriptions;
 
 	/**
-	 * Create a resource description given the specified resource. The resource
-	 * is assumed to exist.
-	 * 
-	 * @param resource
-	 *            the resource from which a description should be created
-	 * @return the resource description
-	 */
-	public static ResourceDescription fromResource(IResource resource) {
-		if (resource.getType() == IResource.PROJECT) {
-			return new ProjectDescription((IProject) resource);
-		} else if (resource.getType() == IResource.FOLDER) {
-			return new FolderDescription((IFolder) resource);
-		} else if (resource.getType() == IResource.FILE) {
-			return new FileDescription((IFile) resource);
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
-
-	/**
 	 * Create a resource description with no initial attributes
 	 */
-	protected ResourceDescription() {
+	protected AbstractResourceDescription() {
 		super();
 	}
 
@@ -76,7 +54,7 @@ public abstract class ResourceDescription {
 	 * @param resource
 	 *            the resource to be described
 	 */
-	protected ResourceDescription(IResource resource) {
+	protected AbstractResourceDescription(IResource resource) {
 		super();
 		parent = resource.getParent();
 		if (resource.isAccessible()) {
@@ -99,30 +77,9 @@ public abstract class ResourceDescription {
 		}
 	}
 
-	/**
-	 * Create a resource handle that can be used to create a resource from this
-	 * resource description. This handle can be used to create the actual
-	 * resource, or to describe the creation to a resource delta factory.
-	 * 
-	 * @return the resource handle that can be used to create a resource from
-	 *         this description
-	 */
-	public abstract IResource createResourceHandle();
-
-	/**
-	 * Get the name of this resource.
-	 * 
-	 * @return the name of the Resource
-	 */
-	public abstract String getName();
-
-	/**
-	 * Create an existent resource from this resource description.
-	 * 
-	 * @param monitor
-	 *            the progress monitor to use
-	 * @return a resource that has the attributes of this resource description
-	 * @throws CoreException
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.ResourceDescription#createResource(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public IResource createResource(IProgressMonitor monitor)
 			throws CoreException {
@@ -132,42 +89,12 @@ public abstract class ResourceDescription {
 		return resource;
 	}
 
-	/**
-	 * Given a resource handle, create an actual resource with the attributes of
-	 * the receiver resource description.
-	 * 
-	 * @param resource
-	 *            the resource handle
-	 * @param monitor
-	 *            the progress monitor to be used when creating the resource
-	 * @throws CoreException
-	 */
-	public abstract void createExistentResourceFromHandle(IResource resource,
-			IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Return a boolean indicating whether this resource description has enough
-	 * information to create a resource.
-	 * 
-	 * @return <code>true</code> if the resource can be created, and
-	 *         <code>false</code> if it does not have enough information
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.ResourceDescription#isValid()
 	 */
 	public boolean isValid() {
 		return parent == null || parent.exists();
 	}
-
-	/**
-	 * Record the appropriate state of this resource description using
-	 * any available resource history.
-	 * 
-	 * @param resource
-	 *            the resource whose state is to be recorded.
-	 * @param monitor
-	 *            the progress monitor to be used
-	 * @throws CoreException
-	 */
-	public abstract void recordStateFromHistory(IResource resource,
-			IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Restore any saved attributed of the specified resource. This method is
@@ -203,18 +130,8 @@ public abstract class ResourceDescription {
 		return ResourcesPlugin.getWorkspace();
 	}
 
-	/**
-	 * Return a boolean indicating whether this description represents an
-	 * existent resource.
-	 * 
-	 * @param checkMembers
-	 *            Use <code>true</code> if members should also exist in order
-	 *            for this description to be considered existent. A value of
-	 *            <code>false</code> indicates that the existence of members
-	 *            does not matter.
-	 * 
-	 * @return a boolean indicating whether this description represents an
-	 *         existent resource.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.ResourceDescription#verifyExistence(boolean)
 	 */
 	public boolean verifyExistence(boolean checkMembers) {
 		IContainer p = parent;

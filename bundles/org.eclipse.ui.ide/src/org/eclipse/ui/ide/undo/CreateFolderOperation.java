@@ -15,7 +15,6 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
-import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
  * A CreateFolderOperation represents an undoable operation for creating a

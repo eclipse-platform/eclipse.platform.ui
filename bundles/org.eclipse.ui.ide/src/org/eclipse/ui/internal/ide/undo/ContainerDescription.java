@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.ui.ide.undo.ResourceDescription;
 
 /**
  * ContainerDescription is a lightweight description that describes a container
@@ -35,7 +36,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * @since 3.3
  * 
  */
-public abstract class ContainerDescription extends ResourceDescription {
+public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	String name;
 
@@ -43,7 +44,7 @@ public abstract class ContainerDescription extends ResourceDescription {
 
 	String defaultCharSet;
 
-	ResourceDescription[] members;
+	AbstractResourceDescription[] members;
 
 	/**
 	 * Create a container description from the specified container handle that
@@ -131,9 +132,9 @@ public abstract class ContainerDescription extends ResourceDescription {
 			if (container.isAccessible()) {
 				defaultCharSet = container.getDefaultCharset(false);
 				IResource[] resourceMembers = container.members();
-				members = new ResourceDescription[resourceMembers.length];
+				members = new AbstractResourceDescription[resourceMembers.length];
 				for (int i = 0; i < resourceMembers.length; i++) {
-					members[i] = ResourceDescription
+					members[i] = (AbstractResourceDescription) ResourceDescription
 							.fromResource(resourceMembers[i]);
 				}
 			}
@@ -237,11 +238,11 @@ public abstract class ContainerDescription extends ResourceDescription {
 	 *            the resource description considered a member of this
 	 *            container.
 	 */
-	public void addMember(ResourceDescription member) {
+	public void addMember(AbstractResourceDescription member) {
 		if (members == null) {
-			members = new ResourceDescription[] { member };
+			members = new AbstractResourceDescription[] { member };
 		} else {
-			ResourceDescription[] expandedMembers = new ResourceDescription[members.length + 1];
+			AbstractResourceDescription[] expandedMembers = new AbstractResourceDescription[members.length + 1];
 			System.arraycopy(members, 0, expandedMembers, 0, members.length);
 			expandedMembers[members.length] = member;
 			members = expandedMembers;

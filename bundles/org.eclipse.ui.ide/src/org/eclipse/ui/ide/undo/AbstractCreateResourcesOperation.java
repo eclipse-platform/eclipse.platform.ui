@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.ui.internal.ide.undo.ResourceDescription;
 
 /**
  * A CreateResourcesOperation represents an undoable operation for creating
