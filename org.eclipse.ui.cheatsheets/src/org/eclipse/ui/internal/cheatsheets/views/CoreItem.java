@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
@@ -534,7 +535,7 @@ public class CoreItem extends ViewItem {
 				SubItemCompositeHolder s = (SubItemCompositeHolder)l.get(j);
 				if(s.isCompleted() || s.isSkipped())
 					s.getCheckDoneLabel().setVisible(false); //setImage(null);
-				if(s.startButton != null) {
+				if(s.getStartButton() != null) {
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
 					s.getStartButton().setToolTipText(Messages.PERFORM_TASK_TOOLTIP);
 				}
@@ -642,6 +643,31 @@ public class CoreItem extends ViewItem {
 		if (buttonComposite != null) {
 			refresh(buttonComposite);
 		}
+	}
+	
+	protected void setFocus() {
+		ArrayList list = getListOfSubItemCompositeHolders();
+		Label subitemLabel = null;
+		SubItemCompositeHolder holder = null;
+        if (list != null) {
+        	for (Iterator iter = list.iterator(); iter.hasNext() && subitemLabel == null ;) {
+        		holder = (SubItemCompositeHolder)iter.next();
+        		if (!holder.isCompleted() && !holder.isSkipped()) {
+        			subitemLabel = holder.getSubitemLabel();
+        		}
+        	}  	
+        }
+        if (subitemLabel != null) {
+    		FormToolkit.ensureVisible(subitemLabel);
+    		if (holder.getStartButton() != null) {
+    			holder.getStartButton().setFocus();
+    		} else if (holder.getCompleteButton() != null) {
+    			holder.getCompleteButton().setFocus();
+    		}
+        } else {
+    		FormToolkit.ensureVisible(getMainItemComposite());
+    		super.setFocus();
+        }
 	}
 		
 }

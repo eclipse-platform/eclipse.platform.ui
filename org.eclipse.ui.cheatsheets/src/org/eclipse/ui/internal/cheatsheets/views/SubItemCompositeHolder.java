@@ -20,7 +20,7 @@ public class SubItemCompositeHolder {
 	private Label checkDoneLabel;
 	private boolean skipped;
 	private boolean completed;
-	protected ImageHyperlink startButton;
+	private ImageHyperlink startButton;
 	private String thisValue;
 	private SubItem subItem;
 	private Control skipButton;

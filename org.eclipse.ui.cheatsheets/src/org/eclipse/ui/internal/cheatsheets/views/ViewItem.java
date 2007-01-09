@@ -404,7 +404,12 @@ public abstract class ViewItem {
 		setButtonsVisible(true);
 		setExpanded();
 		setBold(true);
+		setFocus();
+	}
+
+	protected void setFocus() {
 		mainItemComposite.setFocus();
+		FormToolkit.ensureVisible(getMainItemComposite());
 	}
 
 	/*package*/

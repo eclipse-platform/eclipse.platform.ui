@@ -311,21 +311,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			return;
 		} 
 		
-
-    	Label subitemLabel = null;
-        if (list != null) {
-        	for (Iterator iter = list.iterator(); iter.hasNext() && subitemLabel == null ;) {
-        		SubItemCompositeHolder holder = sich = (SubItemCompositeHolder)iter.next();
-        		if (!holder.isCompleted() && !holder.isSkipped()) {
-        			subitemLabel = holder.getSubitemLabel();
-        		}
-        	}  	
-        }
-        if (subitemLabel != null) {
-    		FormToolkit.ensureVisible(subitemLabel);
-        } else {
-    		FormToolkit.ensureVisible(currentItem.getMainItemComposite());
-        }
+		setFocus();
 		saveCurrentSheet();
 	}
 
@@ -500,7 +486,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				// fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, items[0]);
 			}
 	
-			FormToolkit.ensureVisible(currentItem.getMainItemComposite());
 			return true;
 		} catch(Exception e) {
 			// An exception while restoring the saved state data usually only occurs if
@@ -906,7 +891,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() after layout() call: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if (currentItem != null && !currentItem.isCompleted())
-			currentItem.getMainItemComposite().setFocus();
+			currentItem.setFocus();
 		CheatSheetStopWatch.printLapTime("CheatSheetViewer.initCheatSheetView()", "Time in CheatSheetViewer.initCheatSheetView() at end of method: "); //$NON-NLS-1$ //$NON-NLS-2$
 	    return true;
 	}
@@ -1167,7 +1152,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	public void setFocus() {
 		//need this to have current item selected. (Assumes that when you reactivate the view you will work with current item.)
 		if (currentItem != null) {
-			currentItem.getMainItemComposite().setFocus();
+			currentItem.setFocus();
 		} else {
 			getControl().setFocus();
 		}
