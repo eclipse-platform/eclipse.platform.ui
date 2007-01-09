@@ -128,6 +128,15 @@ public class CoreItem extends ViewItem {
 
 	private void createSubItemButtons(SubItem sub, String thisValue, int index) {
 		int added = 0;
+		if (index != 0) {
+			Composite separator = page.getToolkit().createCompositeSeparator(buttonComposite);			
+		    TableWrapData data = new TableWrapData();
+		    data.align = TableWrapData.FILL;
+		    data.grabHorizontal = true;
+		    data.maxHeight = 1;
+		    data.colspan = SUBITEM_COLUMNS;
+		    separator.setLayoutData(data);
+		}
 		final int LABEL_MARGIN = 5; // space to the left and right of the label
 		List buttons = new ArrayList();
 		
