@@ -154,11 +154,18 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			
 			for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
 				ICVSFile cvsFile = (ICVSFile) iter.next();
-				addFileToDiff(CVSWorkspaceRoot.getCVSFolderFor(cvsFile.getIResource().getProject()), cvsFile,stream,format);				
+				addFileToDiff(getNewFileRoot(cvsFile), cvsFile,stream,format);				
 			}
 		}
 		
 		monitor.done();
+	}
+
+	private ICVSFolder getNewFileRoot(ICVSFile cvsFile) {
+		ICVSFolder patchRootFolder = getPatchRootFolder();
+		if (patchRootFolder != null)
+			return patchRootFolder;
+		return CVSWorkspaceRoot.getCVSFolderFor(cvsFile.getIResource().getProject());
 	}
 	
 	protected IStatus executeCommand(Session session, CVSTeamProvider provider, ICVSResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
@@ -188,7 +195,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		return CVSUIMessages.DiffOperation_1;
 	}
 	
-	private void addFileToDiff(ICVSFolder cmdRoot, ICVSFile file, PrintStream printStream, int format) throws CVSException {
+	private void addFileToDiff(ICVSFolder patchRoot, ICVSFile file, PrintStream printStream, int format) throws CVSException {
 		
 		String nullFilePrefix = ""; //$NON-NLS-1$
 		String newFilePrefix = ""; //$NON-NLS-1$
@@ -199,7 +206,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 
 		
 		//get the path string for this file
-	    pathString= file.getRelativePath(cmdRoot);
+		pathString= file.getRelativePath(patchRoot);
 	
 		int lines = 0;
 		BufferedReader fileReader = new BufferedReader(new InputStreamReader(file.getContents()));
@@ -294,6 +301,13 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	 }
 	
 	protected ICVSFolder getLocalRoot(CVSTeamProvider provider) throws CVSException {
+		ICVSFolder root = getPatchRootFolder();
+		if (root != null)
+			return root;
+		return super.getLocalRoot(provider);
+	}
+
+	private ICVSFolder getPatchRootFolder() {
 		if (!isMultiPatch &&
 			!includeFullPathInformation){
 			//Check to see if the selected patchRoot has enough segments to consider it a folder/resource
@@ -313,8 +327,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			}
 			return (ICVSFolder) cvsResource;
 		}
-		
-		return super.getLocalRoot(provider);
+		return null;
 	}
 	
 	/* (non-Javadoc)
