@@ -366,10 +366,17 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 				fControl= (ci).createContents(fPageBook);
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
+				if (isActive()) {
+					setFocus();
+				}
 			}
 		}
 	}
 	
+	private boolean isActive() {
+		return getSite().getPage().getActivePart() == this;
+	}
+
 	private void setPageLater() {
 		Display.getCurrent().timerExec(1000, new Runnable() {
 			public void run() {

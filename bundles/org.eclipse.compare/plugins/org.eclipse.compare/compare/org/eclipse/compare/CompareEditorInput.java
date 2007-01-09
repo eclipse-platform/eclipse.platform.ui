@@ -499,7 +499,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		final Splitter h= new Splitter(parent, direction);
 
 		fStructureInputPane= createStructureInputPane(h);
-		fFocusPane= fStructureInputPane;
+		if (hasChildren(getCompareResult()))
+			fFocusPane= fStructureInputPane;
 		
 		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
@@ -581,16 +582,22 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			final Composite parent) {
 		return new CompareViewerSwitchingPane(parent, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof IDiffContainer) {
-					IDiffContainer dn= (IDiffContainer) input;
-					if (dn.hasChildren())
-						return createDiffViewer(this);
+				if (CompareEditorInput.this.hasChildren(input)) {
+					return createDiffViewer(this);
 				}
 				if (input instanceof ICompareInput)
 					return findStructureViewer(oldViewer, (ICompareInput)input, this);
 				return null;
 			}
 		};
+	}
+	
+	/* private */ boolean hasChildren(Object input) {
+		if (input instanceof IDiffContainer) {
+			IDiffContainer dn= (IDiffContainer) input;
+			return (dn.hasChildren());
+		}
+		return false;
 	}
 
 	private void feedInput() {
