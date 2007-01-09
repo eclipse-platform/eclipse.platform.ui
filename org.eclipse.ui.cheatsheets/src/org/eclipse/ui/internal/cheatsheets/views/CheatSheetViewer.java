@@ -282,7 +282,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		if (ciws != null) {
 			list = ciws.getListOfSubItemCompositeHolders();
 			sich = (SubItemCompositeHolder) list.get(subItemIndex);
-			l = sich.getIconLabel();
+			l = sich.getCheckDone();
 		}
 
 		if (l != null) {
@@ -299,6 +299,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				/* LP-subitem event */
 				// fireManagerSubItemEvent(ICheatSheetItemEvent.ITEM_SKIPPED, ciws, subItemID);
 			}
+			l.setVisible(true);
 			ciws.refreshItem();
 		}
 
@@ -445,7 +446,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 								while (st.hasMoreTokens()) {
 									String token = st.nextToken();
 									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).setCompleted(true);
-									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).getIconLabel().setImage(item.getCompleteImage());
+									((SubItemCompositeHolder) subItemCompositeHolders.get(Integer.parseInt(token))).getCheckDone().setImage(item.getCompleteImage());
 									ArrayList l = subItemCompositeHolders;
 									SubItemCompositeHolder s = (SubItemCompositeHolder) l.get(Integer.parseInt(token));
 									if (s != null && s.getStartButton() != null) {
@@ -465,7 +466,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 							while (st.hasMoreTokens()) {
 								String token = st.nextToken();
 								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).setSkipped(true);
-								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getIconLabel().setImage(item.getSkipImage());
+								((SubItemCompositeHolder) coreitemws.getListOfSubItemCompositeHolders().get(Integer.parseInt(token))).getCheckDone().setImage(item.getSkipImage());
 							}
 						}
 					}

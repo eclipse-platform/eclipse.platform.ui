@@ -12,7 +12,6 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
@@ -138,11 +137,14 @@ public class CoreItem extends ViewItem {
 		    separator.setLayoutData(data);
 		}
 		final int LABEL_MARGIN = 5; // space to the left and right of the label
-		List buttons = new ArrayList();
+		SubItemCompositeHolder holder = new SubItemCompositeHolder(sub);
 		
 		//Spacer label added.
 		Label checkDoneLabel = page.getToolkit().createLabel(buttonComposite, null);
+		checkDoneLabel.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE));
+		checkDoneLabel.setVisible(false);
 		checkDoneLabel.setBackground(itemColor);
+		holder.setCheckDoneLabel(checkDoneLabel);
 		added++;
 
 		//Now add the label.
@@ -157,6 +159,7 @@ public class CoreItem extends ViewItem {
 		labelData.indent = LABEL_MARGIN;
 		subitemLabel.setLayoutData(labelData);
 		subitemLabel.setBackground(itemColor);
+		holder.setSubitemLabel(subitemLabel);
 		added++;
 		
 		// Add some space to the right of the label
@@ -193,7 +196,7 @@ public class CoreItem extends ViewItem {
 					viewer.runSubItemPerformExecutable(finalStartButton, fi);
 				}
 			});
-			buttons.add(startButton);
+			holder.setStartButton(startButton);
 		}
 		if (!isActionShown || subExecutable.isConfirm()) {
 			added++;
@@ -204,7 +207,7 @@ public class CoreItem extends ViewItem {
 					viewer.advanceSubItem(completeButton, true, fi);
 				}
 			});
-			buttons.add(completeButton);
+			holder.setCompleteButton(completeButton);
 		}
 		if (sub.isSkip()) {
 			added++;
@@ -215,7 +218,7 @@ public class CoreItem extends ViewItem {
 					viewer.advanceSubItem(skipButton, false, fi);
 				}
 			});
-			buttons.add(skipButton);
+			holder.setSkipButton(skipButton);
 		}
 
 		while (added < SUBITEM_COLUMNS) {
@@ -226,8 +229,8 @@ public class CoreItem extends ViewItem {
 			filler.setLayoutData(fillerData);
 			added++;
 		}
-		Control[] buttonArray = (Control[])buttons.toArray(new Control[buttons.size()]);
-		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub, subitemLabel, buttonArray));
+		holder.setThisValue(thisValue);
+		listOfSubItemCompositeHolders.add(holder);
 	}
 
 	private AbstractExecutable getExecutable() {
@@ -530,7 +533,7 @@ public class CoreItem extends ViewItem {
 			for(int j=0; j<l.size(); j++){
 				SubItemCompositeHolder s = (SubItemCompositeHolder)l.get(j);
 				if(s.isCompleted() || s.isSkipped())
-					s.getIconLabel().setImage(null);
+					s.getCheckDone().setVisible(false); //setImage(null);
 				if(s.startButton != null) {
 					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
 					s.getStartButton().setToolTipText(Messages.PERFORM_TASK_TOOLTIP);

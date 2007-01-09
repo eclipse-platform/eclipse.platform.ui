@@ -15,35 +15,26 @@ import org.eclipse.ui.forms.widgets.ImageHyperlink;
 import org.eclipse.ui.internal.cheatsheets.data.SubItem;
 
 public class SubItemCompositeHolder {
-	private Label iconLabel;
+	private Label checkDoneLabel;
 	private boolean skipped;
 	private boolean completed;
 	protected ImageHyperlink startButton;
 	private String thisValue;
 	private SubItem subItem;
-	private Control[] buttons;
+	private Control skipButton;
+	private Control completeButton;
 	private Label subitemLabel;
 	
-	/**
-	 * @param buttonArray 
-	 * 
-	 */
-	/*package*/ SubItemCompositeHolder(Label iconLab, ImageHyperlink startb, String thisValue, SubItem subItem, 
-			        Label subitemLabel, Control[] buttonArray) {
+	SubItemCompositeHolder(SubItem subItem) {
 		super();
-		iconLabel = iconLab;
-		startButton = startb;
-		this.thisValue = thisValue;
 		this.subItem = subItem;
-		this.buttons = buttonArray;
-		this.subitemLabel = subitemLabel;
 	}
 
 	/**
 	 * @return Label
 	 */
-	/*package*/ Label getIconLabel() {
-		return iconLabel;
+	/*package*/ Label getCheckDone() {
+		return checkDoneLabel;
 	}
 
 	/**
@@ -75,13 +66,6 @@ public class SubItemCompositeHolder {
 	}
 
 	/**
-	 * @return
-	 */
-	/*package*/ ImageHyperlink getStartButton() {
-		return startButton;
-	}
-
-	/**
 	 * @return Returns the thisValue.
 	 */
 	public String getThisValue() {
@@ -101,25 +85,56 @@ public class SubItemCompositeHolder {
 	public SubItem getSubItem() {
 		return subItem;
 	}
-
-	/**
-	 * @param subItem The subItem to set.
-	 */
-	public void setSubItem(SubItem subItem) {
-		this.subItem = subItem;
-	}
 	
 	/**
 	 * Hide or reveal all the action/complete/skip buttons
 	 * @param isVisible
 	 */
 	public void setButtonsVisible(boolean isVisible) {
-		for (int b = 0; b < buttons.length; b++) {
-			buttons[b].setVisible(isVisible);
+		if (startButton != null) {
+			startButton.setVisible(isVisible);
+		}
+		if (skipButton != null) {
+			skipButton.setVisible(isVisible);
+		}
+		if (completeButton != null) {
+			completeButton.setVisible(isVisible);
 		}
 	}
 
+	public void setSubitemLabel(Label label) {
+		this.subitemLabel = label;
+	}
+	
 	public Label getSubitemLabel() {
 		return subitemLabel;
+	}
+	
+	public void setStartButton(ImageHyperlink startButton) {
+		this.startButton = startButton;
+	}
+
+	public ImageHyperlink getStartButton() {
+		return startButton;
+	}
+
+	public void setSkipButton(Control skipButton) {
+		this.skipButton = skipButton;
+	}
+
+	public Control getSkipButton() {
+		return skipButton;
+	}
+
+	public void setCompleteButton(Control completeButton) {
+		this.completeButton = completeButton;
+	}
+
+	public Control getCompleteButton() {
+		return completeButton;
+	}
+
+	public void setCheckDoneLabel(Label checkDoneLabel) {
+		this.checkDoneLabel = checkDoneLabel;		
 	}
 }
