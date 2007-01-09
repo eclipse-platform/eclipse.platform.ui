@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2005 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,16 +21,19 @@ public class SubItemCompositeHolder {
 	protected ImageHyperlink startButton;
 	private String thisValue;
 	private SubItem subItem;
+	private Control[] buttons;
 	
 	/**
+	 * @param buttonArray 
 	 * 
 	 */
-	/*package*/ SubItemCompositeHolder(Label l, ImageHyperlink startb, String thisValue, SubItem subItem) {
+	/*package*/ SubItemCompositeHolder(Label iconLab, ImageHyperlink startb, String thisValue, SubItem subItem, Control[] buttonArray) {
 		super();
-		iconLabel = l;
+		iconLabel = iconLab;
 		startButton = startb;
 		this.thisValue = thisValue;
 		this.subItem = subItem;
+		this.buttons = buttonArray;
 	}
 
 	/**
@@ -101,5 +104,15 @@ public class SubItemCompositeHolder {
 	 */
 	public void setSubItem(SubItem subItem) {
 		this.subItem = subItem;
+	}
+	
+	/**
+	 * Hide or reveal all the action/complete/skip buttons
+	 * @param isVisible
+	 */
+	public void setButtonsVisible(boolean isVisible) {
+		for (int b = 0; b < buttons.length; b++) {
+			buttons[b].setVisible(isVisible);
+		}
 	}
 }

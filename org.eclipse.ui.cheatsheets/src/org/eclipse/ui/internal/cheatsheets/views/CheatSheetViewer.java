@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -408,10 +408,10 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 						item.setCollapsed();
 					}
 					if (i > currentItemNum) {
-						item.setButtonsCollapsed();
+						item.setButtonsVisible(false);
 						item.setCompletionMessageCollapsed();
 					} else {
-						item.setButtonsExpanded();
+						item.setButtonsVisible(true);
 						if (i >currentItemNum || item.isCompleted()) {
 						    item.setCompletionMessageExpanded(i + 1 >= viewItemList.size());
 					    } else {
@@ -568,7 +568,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private void collapseAllButtons() {
 		for (Iterator iter = viewItemList.listIterator(1); iter.hasNext();) {
 			ViewItem item = (ViewItem) iter.next();
-			item.setButtonsCollapsed();
+			item.setButtonsVisible(false);
 			item.setCompletionMessageCollapsed();
 		}
 	}

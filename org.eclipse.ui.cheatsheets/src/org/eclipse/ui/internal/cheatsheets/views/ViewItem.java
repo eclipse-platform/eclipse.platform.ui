@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IContext;
@@ -84,6 +85,7 @@ public abstract class ViewItem {
 	private Font boldFont;
 	private Font regularFont;
 	private boolean initialized = false;
+	protected ArrayList listOfSubItemCompositeHolders;
 
 	/**
 	 * Constructor for ViewItem.
@@ -225,7 +227,7 @@ public abstract class ViewItem {
 		}
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after handleButtons(): "); //$NON-NLS-1$ //$NON-NLS-2$
 
-		setButtonsCollapsed();
+		setButtonsVisible(false);
 		setCollapsed();
 		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setting buttons and item collapsed: "); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -399,7 +401,7 @@ public abstract class ViewItem {
 
 	public void setAsCurrentActiveItem() {
 		setColorAsCurrent(true);
-		setButtonsExpanded();
+		setButtonsVisible(true);
 		setExpanded();
 		setBold(true);
 		mainItemComposite.setFocus();
@@ -454,32 +456,23 @@ public abstract class ViewItem {
 		bold = value;
 	}
 	
-	//collapses the item
+	//collapse or expand the item
 	/*package*/
-	void setButtonsCollapsed() {
-
-		if (buttonComposite != null)
-			if (buttonExpanded) {
-				buttonComposite.setVisible(false);
-
-				buttonExpanded = false;
-			}
-
-	}
-	
-	//expands the item
-	/*package*/
-	void setButtonsExpanded() {
-
-		if (!buttonExpanded) {
-			buttonComposite.setVisible(true);
-
-			buttonExpanded = true;
-
-			if(initialized) {
-				FormToolkit.ensureVisible(getMainItemComposite());
+	void setButtonsVisible(boolean isVisible) {
+		if (buttonExpanded != isVisible) {
+			if (listOfSubItemCompositeHolders != null) {
+				for (Iterator iter = listOfSubItemCompositeHolders.iterator(); iter.hasNext(); ){
+					((SubItemCompositeHolder)iter.next()).setButtonsVisible(isVisible);
+				}
+			} else if (buttonComposite != null) {
+				buttonComposite.setVisible(isVisible);
 			}
 		}
+		
+		if(isVisible && initialized) {
+			FormToolkit.ensureVisible(getMainItemComposite());
+		}
+		buttonExpanded = isVisible;
 	}
 	
 	protected void setCompletionMessageExpanded(boolean isFinalItem) {

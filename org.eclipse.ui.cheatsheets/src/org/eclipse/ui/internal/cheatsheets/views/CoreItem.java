@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IStatus;
@@ -47,8 +48,6 @@ public class CoreItem extends ViewItem {
 
 	protected boolean buttonsHandled = false;
 
-	private ArrayList listOfSubItemCompositeHolders;
-	
 	private static final int SUBITEM_COLUMNS = 6;
 
 	/**
@@ -130,6 +129,7 @@ public class CoreItem extends ViewItem {
 	private void createSubItemButtons(SubItem sub, String thisValue, int index) {
 		int added = 0;
 		final int LABEL_MARGIN = 5; // space to the left and right of the label
+		List buttons = new ArrayList();
 		
 		//Spacer label added.
 		Label checkDoneLabel = page.getToolkit().createLabel(buttonComposite, null);
@@ -184,6 +184,7 @@ public class CoreItem extends ViewItem {
 					viewer.runSubItemPerformExecutable(finalStartButton, fi);
 				}
 			});
+			buttons.add(startButton);
 		}
 		if (!isActionShown || subExecutable.isConfirm()) {
 			added++;
@@ -194,6 +195,7 @@ public class CoreItem extends ViewItem {
 					viewer.advanceSubItem(completeButton, true, fi);
 				}
 			});
+			buttons.add(completeButton);
 		}
 		if (sub.isSkip()) {
 			added++;
@@ -204,6 +206,7 @@ public class CoreItem extends ViewItem {
 					viewer.advanceSubItem(skipButton, false, fi);
 				}
 			});
+			buttons.add(skipButton);
 		}
 
 		while (added < SUBITEM_COLUMNS) {
@@ -214,7 +217,8 @@ public class CoreItem extends ViewItem {
 			filler.setLayoutData(fillerData);
 			added++;
 		}
-		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub));
+		Control[] buttonArray = (Control[])buttons.toArray(new Control[buttons.size()]);
+		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub, buttonArray));
 	}
 
 	private AbstractExecutable getExecutable() {
