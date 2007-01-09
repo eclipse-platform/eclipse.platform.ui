@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.ide.application;
 
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
@@ -17,6 +17,8 @@ import org.eclipse.ui.IPerspectiveFactory;
 /**
  */
 public class ResourcePerspective implements IPerspectiveFactory {
+	
+	private static String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
     /**
      * Constructs a new Default layout engine.
      */
@@ -75,7 +77,7 @@ public class ResourcePerspective implements IPerspectiveFactory {
         // Top left.
         IFolderLayout topLeft = layout.createFolder(
                 "topLeft", IPageLayout.LEFT, (float) 0.26, editorArea);//$NON-NLS-1$
-        topLeft.addView(IPageLayout.ID_RES_NAV);
+        topLeft.addView(ID_PROJECT_EXPLORER);
         topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
         // Bottom left.

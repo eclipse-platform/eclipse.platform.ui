@@ -13,36 +13,6 @@
    <extension-point id="filesystemSupport" name="%ExtPoint.fileSystemSupport" schema="schema/filesystemSupport.exsd"/>
 
    <extension
-         id="workbench"
-         point="org.eclipse.core.runtime.applications">
-      <application>
-         <run
-               class="org.eclipse.ui.internal.ide.IDEApplication">
-         </run>
-      </application>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectives">
-      <perspective
-            name="%Perspective.resourcePerspective"
-            icon="$nl$/icons/full/eview16/resource_persp.gif"
-            class="org.eclipse.ui.internal.ide.ResourcePerspective"
-            id="org.eclipse.ui.resourcePerspective">
-         <description>
-            %Perspective.resourceDescription
-         </description>
-      </perspective>
-   </extension>
-   <extension
-         point="org.eclipse.ui.perspectiveExtensions">
-      <perspectiveExtension
-            targetID="org.eclipse.ui.resourcePerspective">
-         <showInPart
-               id="org.eclipse.ui.views.ResourceNavigator">
-         </showInPart>
-      </perspectiveExtension>
-   </extension>
-   <extension
          point="org.eclipse.ui.importWizards">
 
       <category
@@ -477,14 +447,6 @@
             class="org.eclipse.ui.internal.ide.dialogs.LinkedResourcesPreferencePage"
             id="org.eclipse.ui.preferencePages.LinkedResources">
          <keywordReference id="org.eclipse.ui.ide.linked"/>
-      </page>
-      
-      <page
-            name="%PreferencePages.Startup"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.ide.dialogs.IDEStartupPreferencePage"
-            id="org.eclipse.ui.preferencePages.Startup">
-         <keywordReference id="org.eclipse.ui.ide.startupAndShutdown"/>
       </page>
       <page
             name="%PreferencePages.Keys"

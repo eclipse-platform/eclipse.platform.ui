@@ -8,10 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.ide;
+package org.eclipse.ui.internal.ide.application;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -56,6 +57,14 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ISelectionConversionService;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.ide.AboutInfo;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
+import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.eclipse.ui.internal.ide.IDESelectionConversionService;
+import org.eclipse.ui.internal.ide.IDEWorkbenchActivityHelper;
+import org.eclipse.ui.internal.ide.IDEWorkbenchErrorHandler;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
@@ -64,8 +73,6 @@ import org.eclipse.ui.statushandling.AbstractStatusHandler;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * IDE-specified workbench advisor which configures the workbench for use as an

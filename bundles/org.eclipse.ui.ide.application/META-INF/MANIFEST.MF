@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: IDE Application
+Bundle-SymbolicName: org.eclipse.ui.ide.application;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Plugin.providerName
+Bundle-Localization: plugin
+Require-Bundle: org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.jface,
+ org.eclipse.core.resources,
+ org.eclipse.update.core,
+ org.eclipse.update.configurator,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ org.eclipse.ui.navigator.resources
