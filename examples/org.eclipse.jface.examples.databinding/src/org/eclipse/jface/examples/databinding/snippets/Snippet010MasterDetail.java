@@ -11,8 +11,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import java.beans.PropertyChangeSupport;
-
+import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -44,7 +43,7 @@ public class Snippet010MasterDetail {
 		viewer.setContentProvider(new ArrayContentProvider());
 		viewer.setInput(persons);
 
-		Text name = new Text(shell, SWT.BORDER);
+		Text name = new Text(shell, SWT.BORDER | SWT.READ_ONLY);
 
 		Realm.setDefault(SWTObservables.getRealm(shell.getDisplay()));
 
@@ -59,7 +58,7 @@ public class Snippet010MasterDetail {
 		
 		// 3. Bind the Text widget to the name detail (selection's name).
 		new DataBindingContext().bindValue(SWTObservables.observeText(name,
-				SWT.Modify), detailObservable, null);
+				SWT.None), detailObservable, new BindSpec().setUpdateModel(false));
 
 		shell.open();
 		Display display = shell.getDisplay();
@@ -71,10 +70,7 @@ public class Snippet010MasterDetail {
 
 	public static class Person {
 		private String name;
-
-		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(
-				this);
-
+		
 		Person(String name) {
 			this.name = name;
 		}
@@ -84,15 +80,6 @@ public class Snippet010MasterDetail {
 		 */
 		public String getName() {
 			return name;
-		}
-
-		/**
-		 * @param name
-		 *            The name to set.
-		 */
-		public void setName(String name) {
-			changeSupport.firePropertyChange("name", this.name,
-					this.name = name);
 		}
 
 		public String toString() {
