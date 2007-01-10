@@ -248,6 +248,9 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		composite.setLayoutData(gd);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+		
 		PixelConverter pc= new PixelConverter(composite);
 		layout.verticalSpacing= pc.convertHeightInCharsToPixels(1) / 2;
 		composite.setLayout(layout);
@@ -272,10 +275,12 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		Label label= new Label(composite, SWT.CENTER);
 		gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
 		label.setLayoutData(gd);
-
+		
 		if (fProviderDescriptors.size() > 1) {
 			fComboGroup= new Composite(composite, SWT.NONE);
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.horizontalIndent= 10;
+			fComboGroup.setLayoutData(gd);
 			GridLayout gridLayout= new GridLayout(2, false);
 			gridLayout.marginWidth= 0;
 			fComboGroup.setLayout(gridLayout);
@@ -307,6 +312,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 		/* contributed provider preferences. */
 		fGroup= new Composite(groupComp, SWT.NONE);
 		gd= new GridData(SWT.FILL, SWT.FILL, true, true);
+		gd.horizontalIndent= 10;
 		fGroup.setLayoutData(gd);
 		fStackLayout= new StackLayout();
 		fGroup.setLayout(fStackLayout);
