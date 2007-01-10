@@ -86,17 +86,14 @@ public class Policy {
 			 * @see org.eclipse.jface.util.ILogger#log(org.eclipse.core.runtime.IStatus)
 			 */
 			public void log(Shell parent, String title, IStatus status) {
-				MessageDialog dialog = new MessageDialog(
-						parent,
-						title,
-						null, // accept
-						// the
-						// default
-						// window
-						// icon
-						status.getMessage(), status.getSeverity(),
-						new String[] { IDialogConstants.OK_LABEL }, 0); // ok
-				// is
+				int dialogConstant = MessageDialog.ERROR;
+				if (status.getSeverity() == IStatus.WARNING) {
+					dialogConstant = MessageDialog.WARNING;
+				}
+				MessageDialog dialog = new MessageDialog(parent, title,
+						null, // accept the default window icon
+						status.getMessage(), dialogConstant,
+						new String[] { IDialogConstants.OK_LABEL }, 0); // ok is
 				// the
 				// default
 				dialog.open();
