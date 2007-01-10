@@ -68,6 +68,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_50;
 	public static String CVSPreferencesPage_51;
 	public static String CVSPreferencesPage_QuickDiffAnnotate;
+	public static String GenerateDiffFileWizard_11;
+	public static String GenerateDiffFileWizard_12;
 	public static String PasswordManagementPreferencePage_2;
 	public static String PasswordManagementPreferencePage_3;
 	public static String PasswordManagementPreferencePage_4;

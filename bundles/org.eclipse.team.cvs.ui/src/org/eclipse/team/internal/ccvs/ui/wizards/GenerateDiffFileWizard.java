@@ -34,11 +34,19 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
@@ -920,6 +928,70 @@ public class GenerateDiffFileWizard extends Wizard {
 			job.schedule();
     		return fParticipant.getSyncInfoSet();
     	}
+
+		public boolean hasBinaryFiles() {
+			try {
+				final boolean[] found = new boolean[] { false };
+				fParticipant.getSubscriber().accept(resources, IResource.DEPTH_INFINITE, new IDiffVisitor() {
+					public boolean visit(IDiff diff) {
+						if (isBinaryFile(diff))
+							found[0] = true;
+						return true;
+					}
+				});
+				return found[0];
+			} catch (CoreException e) {
+				CVSUIPlugin.log(e);
+			}
+			return false;
+		}
+
+		protected boolean isBinaryFile(IDiff diff) {
+			IFile file = getFile(diff);
+			if (file != null) {
+				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
+				try {
+					byte[] bytes = cvsFile.getSyncBytes();
+					if (bytes != null) {
+						return ResourceSyncInfo.getKeywordMode(bytes).toMode().equals(
+								Command.KSUBST_BINARY.toMode());
+					}
+				} catch (CVSException e) {
+					CVSUIPlugin.log(e);
+				}
+				return (Team.getFileContentManager().getType(file) == Team.BINARY);
+			}
+			return false;
+		}
+		
+		protected IFile getFile(IDiff diff) {
+			IResource resource = ResourceDiffTree.getResourceFor(diff);
+			if (resource instanceof IFile) {
+				IFile file = (IFile) resource;
+				return file;
+			}
+			return null;
+		}
+
+		public void removeBinaryFiles() {
+			try {
+				final List nonBinaryFiles = new ArrayList();
+				fParticipant.getSubscriber().accept(resources, IResource.DEPTH_INFINITE, new IDiffVisitor() {
+					public boolean visit(IDiff diff) {
+						if (!isBinaryFile(diff)) {
+							IFile file = getFile(diff);
+							if (file != null)
+								nonBinaryFiles.add(file);
+						}
+						return true;
+					}
+				});
+				resources = (IResource[]) nonBinaryFiles
+						.toArray(new IResource[nonBinaryFiles.size()]);
+			} catch (CoreException e) {
+				CVSUIPlugin.log(e);
+			}
+		}
      
     }
         
@@ -1273,6 +1345,15 @@ public class GenerateDiffFileWizard extends Wizard {
         	optionsPage.unified_projectRelativeOption.getSelection())
         	useProjectRelativePaths=true;
         
+        // TODO: Check for binary files
+        if (locationPage.hasBinaryFiles()) {
+        	int result = promptToIncludeBinary();
+        	if (result == 2)
+        		return false;
+        	if (result == 1)
+        		locationPage.removeBinaryFiles();
+        }
+        
         /**
          * Perform diff operation.
          */
@@ -1319,6 +1400,17 @@ public class GenerateDiffFileWizard extends Wizard {
             return false;
         }
         return true;
+    }
+    
+    private int promptToIncludeBinary() {
+        MessageDialog dialog = new MessageDialog(getShell(), CVSUIMessages.GenerateDiffFileWizard_11, null, // accept
+                // the
+                // default
+                // window
+                // icon
+                CVSUIMessages.GenerateDiffFileWizard_12, MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL,
+                        IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL }, 1); // no is the default
+        return dialog.open();
     }
     
 	private void generateDiffToClipboard(boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
