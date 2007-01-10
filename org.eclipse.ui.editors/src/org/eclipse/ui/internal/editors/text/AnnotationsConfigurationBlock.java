@@ -240,6 +240,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		Composite composite= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 
 		Label label= new Label(composite, SWT.LEFT);

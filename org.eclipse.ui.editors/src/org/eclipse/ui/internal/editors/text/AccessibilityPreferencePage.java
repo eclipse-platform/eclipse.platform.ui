@@ -392,7 +392,11 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+
 		appearanceComposite.setLayout(layout);
 
 		String label= TextEditorMessages.TextEditorPreferencePage_accessibility_disableCustomCarets;
@@ -420,6 +424,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 		fOverlayStore.start();
 
 		fContents= createAppearancePage(parent);
+		
 		initialize();
 		Dialog.applyDialogFont(fContents);
 		return fContents;

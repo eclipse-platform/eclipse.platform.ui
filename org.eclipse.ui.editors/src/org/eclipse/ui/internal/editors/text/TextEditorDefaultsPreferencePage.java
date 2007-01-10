@@ -500,7 +500,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private Control createAppearancePage(Composite parent) {
 
 		Composite appearanceComposite= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout(); layout.numColumns= 2;
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
+
 		appearanceComposite.setLayout(layout);
 
 		String label= TextEditorMessages.TextEditorPreferencePage_displayedTabWidth;

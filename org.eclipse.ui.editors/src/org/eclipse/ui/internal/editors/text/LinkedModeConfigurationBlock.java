@@ -226,6 +226,8 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 
 		Label label= new Label(composite, SWT.LEFT);
