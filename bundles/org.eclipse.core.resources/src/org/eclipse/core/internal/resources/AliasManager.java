@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     manklu@web.de - fix for bug 156082
+ *     Bert Vingerhoets - fix for bug 169975
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -471,32 +473,43 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 			public int compare(Object o1, Object o2) {
 				IFileStore store1 = (IFileStore) o1;
 				IFileStore store2 = (IFileStore) o2;
-				String scheme1 = store1.getFileSystem().getScheme();
-				String scheme2 = store2.getFileSystem().getScheme();
-				if (scheme1 == null) {
-					if (scheme2 != null)
-						return -1;
-				} else {
-					if (scheme2 == null)
-						return 1;
-					int compare = scheme1.compareTo(scheme2);
-					if (compare != 0)
-						return compare;
-				}
-				// XXX ignore query part - if IFileStore URIs need not have paths, this is wrong 
-				IPath path1 = new Path(store1.toURI().getPath());
-				IPath path2 = new Path(store2.toURI().getPath());
+				//scheme takes precedence over all else
+				int compare = compareStringOrNull(store1.getFileSystem().getScheme(), store2.getFileSystem().getScheme());
+				if (compare != 0)
+					return compare;
+				// compare based on URI path segment values 
+				final URI uri1 = store1.toURI();
+				final URI uri2 = store2.toURI();
+				IPath path1 = new Path(uri1.getPath());
+				IPath path2 = new Path(uri2.getPath());
 				int segmentCount1 = path1.segmentCount();
 				int segmentCount2 = path2.segmentCount();
 				for (int i = 0; (i < segmentCount1) && (i < segmentCount2); i++) {
-					String segment1 = path1.segment(i);
-					String segment2 = path2.segment(i);
-					int compare = segment1.compareTo(segment2);
+					compare = path1.segment(i).compareTo(path2.segment(i));
 					if (compare != 0)
 						return compare;
 				}
-				//all segments are equal, so they are the same if they have the same number of segments
-				return segmentCount1 - segmentCount2;
+				//all segments are equal, so compare based on number of segments
+				compare = segmentCount1 - segmentCount2;
+				if (compare != 0)
+					return compare;
+				//same number of segments, so compare query
+				return compareStringOrNull(uri1.getQuery(), uri2.getQuery());
+			}
+
+			/**
+			 * Compares two strings that are possibly null.
+			 */
+			private int compareStringOrNull(String string1, String string2) {
+				if (string1 == null) {
+					if (string2 == null)
+						return 0;
+					return 1;
+				}
+				if (string2 == null)
+					return -1;
+				return string1.compareTo(string2);
+
 			}
 		};
 	}
