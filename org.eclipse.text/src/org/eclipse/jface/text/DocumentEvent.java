@@ -43,9 +43,9 @@ public class DocumentEvent {
 	public String fText= ""; //$NON-NLS-1$
 	/**
 	 * The modification stamp of the document when firing this event.
-	 * @since 3.1
+	 * @since 3.1 and public since 3.3
 	 */
-	protected long fModificationStamp;
+	public long fModificationStamp;
 
 	/**
 	 * Creates a new document event.
