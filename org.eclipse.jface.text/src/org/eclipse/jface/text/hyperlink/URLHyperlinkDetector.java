@@ -92,7 +92,7 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		urlOffsetInLine++;
 
 		// Right to "://"
-		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), "<>", false); //$NON-NLS-1$
+		StringTokenizer tokenizer= new StringTokenizer(line.substring(urlSeparatorOffset + 3), " \t\n\r\f<>", false); //$NON-NLS-1$
 		if (!tokenizer.hasMoreTokens())
 			return null;
 
