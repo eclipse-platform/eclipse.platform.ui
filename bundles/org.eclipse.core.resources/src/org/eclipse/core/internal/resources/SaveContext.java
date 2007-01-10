@@ -28,14 +28,14 @@ public class SaveContext implements ISaveContext {
 		this.project = project;
 		needDelta = false;
 		needSaveNumber = false;
-		String pluginId = plugin.getDescriptor().getUniqueIdentifier();
+		String pluginId = plugin.getBundle().getSymbolicName();
 		fileTable = new SafeFileTable(pluginId);
 		previousSaveNumber = getWorkspace().getSaveManager().getSaveNumber(pluginId);
 	}
 
 	public void commit() throws CoreException {
 		if (needSaveNumber) {
-			String pluginId = plugin.getDescriptor().getUniqueIdentifier();
+			String pluginId = plugin.getBundle().getSymbolicName();
 			IPath oldLocation = getWorkspace().getMetaArea().getSafeTableLocationFor(pluginId);
 			getWorkspace().getSaveManager().setSaveNumber(pluginId, getSaveNumber());
 			fileTable.setLocation(getWorkspace().getMetaArea().getSafeTableLocationFor(pluginId));
