@@ -303,6 +303,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 							createCompareControl();
 						}
 					});
+					monitor.done();
 				}
 				return status;
 			}

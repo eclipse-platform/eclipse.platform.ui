@@ -133,14 +133,18 @@ public class ResourceDiffCompareInput extends AbstractCompareInput implements IS
 	
 	private static void ensureContentsCached(Object ancestor, Object right,
 			IProgressMonitor monitor) throws CoreException {
+		SubMonitor sm = SubMonitor.convert(monitor, 100);
 		if (ancestor instanceof FileRevisionTypedElement) {
 			FileRevisionTypedElement fste = (FileRevisionTypedElement) ancestor;
-			fste.cacheContents(monitor);
+			fste.cacheContents(sm.newChild(50));
+		} else {
+			sm.setWorkRemaining(50);
 		}
 		if (right instanceof FileRevisionTypedElement) {
 			FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
-			fste.cacheContents(monitor);
+			fste.cacheContents(sm.newChild(50));
 		}
+		sm.done();
 	}
 	
 	/**
