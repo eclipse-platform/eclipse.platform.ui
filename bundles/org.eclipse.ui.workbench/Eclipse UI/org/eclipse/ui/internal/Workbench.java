@@ -439,18 +439,20 @@ public final class Workbench extends EventManager implements IWorkbench {
 		}
 
 		// create the display
-		Display newDisplay = null;
-		if (Policy.DEBUG_SWT_GRAPHICS || Policy.DEBUG_SWT_DEBUG) {
-			DeviceData data = new DeviceData();
-			if (Policy.DEBUG_SWT_GRAPHICS) {
-				data.tracking = true;
+		Display newDisplay = Display.getCurrent();
+		if(newDisplay == null) {
+			if (Policy.DEBUG_SWT_GRAPHICS || Policy.DEBUG_SWT_DEBUG) {
+				DeviceData data = new DeviceData();
+				if (Policy.DEBUG_SWT_GRAPHICS) {
+					data.tracking = true;
+				}
+				if (Policy.DEBUG_SWT_DEBUG) {
+					data.debug = true;
+				}
+				newDisplay = new Display(data);
+			} else {
+				newDisplay = new Display();
 			}
-			if (Policy.DEBUG_SWT_DEBUG) {
-				data.debug = true;
-			}
-			newDisplay = new Display(data);
-		} else {
-			newDisplay = new Display();
 		}
 
 		// workaround for 1GEZ9UR and 1GF07HN
