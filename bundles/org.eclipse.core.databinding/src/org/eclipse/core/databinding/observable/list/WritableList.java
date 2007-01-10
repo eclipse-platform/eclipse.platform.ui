@@ -77,6 +77,18 @@ public class WritableList extends ObservableList {
 		super(realm, toWrap, elementType);
 	}
 
+	/**
+	 * Creates a writable list containing elements of the given type,
+	 * wrapping an existing client-supplied list.
+	 * @param realm 
+	 * 
+	 * @param toWrap The java.utilList to wrap
+	 * @param elementType
+	 */
+	public WritableList(List toWrap, Object elementType) {
+		super(Realm.getDefault(), toWrap, elementType);
+	}
+
 	public Object set(int index, Object element) {
 		checkRealm();
 		Object oldElement = wrappedList.set(index, element);
