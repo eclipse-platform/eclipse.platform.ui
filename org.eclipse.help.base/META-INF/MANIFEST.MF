@@ -6,7 +6,8 @@ Bundle-Version: 3.3.0.qualifier
 Bundle-Activator: org.eclipse.help.internal.base.HelpBasePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.help.browser,
+Export-Package: org.apache.lucene.demo.html;x-friends:="org.eclipse.pde.ui",
+ org.eclipse.help.browser,
  org.eclipse.help.internal.base;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.base.remote;x-friends:="org.eclipse.ua.tests,org.eclipse.help.webapp,org.eclipse.help.ui",
  org.eclipse.help.internal.base.util;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
@@ -20,11 +21,12 @@ Export-Package: org.eclipse.help.browser,
  org.eclipse.help.internal.xhtml;x-friends:="org.eclipse.help.ui,org.eclipse.ua.tests,org.eclipse.ui.intro,org.eclipse.help.webapp",
  org.eclipse.help.search,
  org.eclipse.help.standalone
-Require-Bundle: org.apache.lucene;bundle-version="[1.4.3,1.5.0)";visibility:=reexport,
- org.eclipse.help;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
- org.eclipse.help.appserver;bundle-version="[3.1.0,4.0.0)",
+Require-Bundle: org.apache.lucene;bundle-version="[1.4.3,2.0.0)";visibility:=reexport,
+ org.apache.lucene.analysis;bundle-version="[1.9.1,2.0.0)";resolution:=optional;visibility:=reexport,
+ org.eclipse.ant.core;bundle-version="[3.1.0,4.0.0)";resolution:=optional,
  org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
- org.eclipse.ant.core;bundle-version="[3.1.0,4.0.0)";resolution:=optional
+ org.eclipse.help;bundle-version="[3.1.0,4.0.0)";visibility:=reexport,
+ org.eclipse.help.appserver;bundle-version="[3.1.0,4.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text
 Bundle-RequiredExecutionEnvironment: J2SE-1.4
