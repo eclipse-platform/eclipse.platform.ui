@@ -35,12 +35,12 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
 
-
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotationPreferences;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 import org.eclipse.ui.texteditor.quickdiff.ReferenceProviderDescriptor;
+import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 /**
  * Configures quick diff preferences
@@ -87,8 +87,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	private Button fQuickDiffOverviewRulerCheckBox;
 
+	/**
+	 * The enablement checkbox.
+	 * @since 3.3.
+	 */
+	private Button fEnablementCheckbox;
 
-
+	
 	public QuickDiffConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
 		fStore= store;
@@ -176,10 +181,24 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		Composite composite= new Composite(parent, SWT.NONE);
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		composite.setLayout(layout);
 
 		String label= TextEditorMessages.QuickDiffConfigurationBlock_showForNewEditors;
-		addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
+		fEnablementCheckbox= addCheckBox(composite, label, AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, 0);
+		fEnablementCheckbox.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				boolean enabled= fEnablementCheckbox.getSelection();
+				fStore.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, enabled);
+				updateEnablement();
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+		
+		addFiller(composite);
 
 		label= TextEditorMessages.QuickDiffConfigurationBlock_showInOverviewRuler;
 		fQuickDiffOverviewRulerCheckBox= new Button(composite, SWT.CHECK);
@@ -188,6 +207,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalIndent= 0;
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 10;
 		fQuickDiffOverviewRulerCheckBox.setLayoutData(gd);
 		fQuickDiffOverviewRulerCheckBox.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
@@ -204,6 +224,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		Label l= new Label(composite, SWT.LEFT );
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 10;
 		gd.heightHint= 5;
 		l.setLayoutData(gd);
 
@@ -214,6 +235,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		group.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 10;
 		group.setLayoutData(gd);
 
 		fQuickDiffColorEditors= new ColorSelector[3];
@@ -240,18 +262,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			});
 		}
 
-
-		// spacer
-		l= new Label(composite, SWT.LEFT );
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		gd.horizontalSpan= 2;
-		gd.heightHint= 5;
-		l.setLayoutData(gd);
+		addFiller(composite);
 
 		l= new Label(composite, SWT.LEFT);
 		l.setText(TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderTitle);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 10;
 		l.setLayoutData(gd);
 
 		Composite editorComposite= new Composite(composite, SWT.NONE);
@@ -262,6 +279,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		editorComposite.setLayout(layout);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
 		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 10;
 		editorComposite.setLayoutData(gd);
 
 		fQuickDiffProviderCombo= new Combo(editorComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -289,6 +307,24 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		});
 
 		return composite;
+	}
+	
+	private void addFiller(Composite composite) {
+		PixelConverter pixelConverter= new PixelConverter(composite);
+		
+		Label filler= new Label(composite, SWT.LEFT );
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
+	}
+	
+	private void updateEnablement() {
+		final boolean enabled= fEnablementCheckbox.getSelection();
+		fQuickDiffOverviewRulerCheckBox.setEnabled(enabled);
+		fQuickDiffProviderCombo.setEnabled(enabled);
+		for (int i= 0; i < fQuickDiffColorEditors.length; i++)
+			fQuickDiffColorEditors[i].setEnabled(enabled);
 	}
 
 	private void updateProviderList() {
