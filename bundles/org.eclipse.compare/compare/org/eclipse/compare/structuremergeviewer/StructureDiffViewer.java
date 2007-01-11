@@ -343,8 +343,9 @@ public class StructureDiffViewer extends DiffTreeViewer {
 				changed = true;
 			
 			// The compare configuration is nulled when the viewer is disposed
-			if (changed && getCompareConfiguration() != null)
-				getCompareConfiguration().getContainer().runAsynchronously(diffTask);
+			CompareConfiguration cc = getCompareConfiguration();
+			if (changed && cc != null)
+				cc.getContainer().runAsynchronously(diffTask);
 		} finally {
 			endWork(monitor);
 		}

@@ -904,7 +904,25 @@ public class Utils {
 			else
 				return label;
 		}
+		String desc = convertSelection(mappings);
+		if (desc.length() > 0)
+			return shortenText(30, desc);
 		return NLS.bind(TeamUIMessages.Utils_18, new Integer(mappings.length));
+	}
+	
+	public static String convertSelection(ResourceMapping[] mappings) {
+		StringBuffer  buffer = new StringBuffer();
+		boolean hadOne = false;
+		for (int i = 0; i < mappings.length; i++) {
+			ResourceMapping resourceMapping = mappings[i];
+			String label = getLabel(resourceMapping);
+			if (label != null) {
+				if(hadOne) buffer.append(", "); //$NON-NLS-1$
+				hadOne = true;
+				buffer.append(label);
+			}
+		}
+		return buffer.toString();
 	}
 
 	public static ResourceTraversal[] getTraversals(Object[] elements) throws CoreException {
