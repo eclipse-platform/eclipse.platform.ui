@@ -31,7 +31,10 @@ org.eclipse.core.resources/build/delta=false
 # and because of changes in which project.
 org.eclipse.core.resources/build/needbuild=false
 
-# Logs a stack trace every time a build API method is called
+# Prints a stack trace every time an operation finishes that requires a build
+org.eclipse.core.resources/build/needbuildstack=false
+
+# Prints a stack trace every time a build API method is called
 org.eclipse.core.resources/build/stacktrace=false
 
 # Reports configuration and deconfiguration of project natures

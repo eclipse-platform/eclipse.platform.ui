@@ -73,8 +73,10 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 		buildNeeded |= needsBuild;
 		long delay = Math.max(Policy.MIN_BUILD_DELAY, Policy.MAX_BUILD_DELAY + lastBuild - System.currentTimeMillis());
 		int state = getState();
-		if (Policy.DEBUG_NEEDS_BUILD)
+		if (Policy.DEBUG_BUILD_NEEDED)
 			Policy.debug("Build requested, needsBuild: " + needsBuild + " state: " + state + " delay: " + delay); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		if (needsBuild && Policy.DEBUG_BUILD_NEEDED_STACK && state != Job.RUNNING)
+			new RuntimeException("Build Needed").printStackTrace(); //$NON-NLS-1$
 		//don't mess with the interrupt flag if the job is still running
 		if (state != Job.RUNNING)
 			interrupted = false;

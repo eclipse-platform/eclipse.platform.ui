@@ -838,19 +838,19 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		long start = System.currentTimeMillis();
 		currentDelta = (DeltaDataTree) deltaTreeCache.getDelta(null, oldTree, newTree);
 		if (currentDelta == null) {
-			if (Policy.DEBUG_NEEDS_BUILD) {
+			if (Policy.DEBUG_BUILD_NEEDED) {
 				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug(message);
 			}
 			currentDelta = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getBuildComparator());
-			if (Policy.DEBUG_NEEDS_BUILD)
+			if (Policy.DEBUG_BUILD_NEEDED)
 				Policy.debug("End delta computation. (" + (System.currentTimeMillis() - start) + "ms)."); //$NON-NLS-1$ //$NON-NLS-2$
 			deltaTreeCache.cache(null, oldTree, newTree, currentDelta);
 		}
 
 		//search for the builder's project
 		if (currentDelta.findNodeAt(builder.getProject().getFullPath()) != null) {
-			if (Policy.DEBUG_NEEDS_BUILD)
+			if (Policy.DEBUG_BUILD_NEEDED)
 				Policy.debug(toString(builder) + " needs building because of changes in: " + builder.getProject().getName()); //$NON-NLS-1$
 			return true;
 		}
@@ -859,7 +859,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		IProject[] projects = builder.getInterestingProjects();
 		for (int i = 0; i < projects.length; i++) {
 			if (currentDelta.findNodeAt(projects[i].getFullPath()) != null) {
-				if (Policy.DEBUG_NEEDS_BUILD)
+				if (Policy.DEBUG_BUILD_NEEDED)
 					Policy.debug(toString(builder) + " needs building because of changes in: " + projects[i].getName()); //$NON-NLS-1$
 				return true;
 			}
