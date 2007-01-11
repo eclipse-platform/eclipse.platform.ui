@@ -3041,13 +3041,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fIsTextDragAndDropEnabled= true;
 		
 		final StyledText st= viewer.getTextWidget();
+		final ISelectionProvider selectionProvider= viewer.getSelectionProvider();
 
 		// Install drag source
 		final DragSource source= new DragSource(st, DND.DROP_COPY | DND.DROP_MOVE);
 		source.setTransfer(new Transfer[] {TextTransfer.getInstance()});
 		source.addDragListener(new DragSourceAdapter() {
-			String selectedText;
-			Point selection;
+			String fSelectedText;
+			Point fSelection;
 			public void dragStart(DragSourceEvent event) {
 				
 				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
@@ -3058,30 +3059,35 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 				
 				try {
-					selection= st.getSelection();
+					fSelection= st.getSelection();
 					int offset= st.getOffsetAtLocation(new Point(event.x, event.y));
 					Point p= st.getLocationAtOffset(offset);
 					if (p.x > event.x)
 						offset--;
-					event.doit= offset > selection.x && offset < selection.y;
-					selectedText= st.getSelectionText();
+					event.doit= offset > fSelection.x && offset < fSelection.y;
+
+					ISelection selection= selectionProvider.getSelection();
+					if (selection instanceof ITextSelection)
+						fSelectedText= ((ITextSelection)selection).getText();
+					else // fallback to widget
+						fSelectedText= st.getSelectionText();
 				} catch (IllegalArgumentException ex) {
 					event.doit= false;
 				}
 			}
 			
 			public void dragSetData(DragSourceEvent event) {
-				event.data= selectedText;
+				event.data= fSelectedText;
 			}
 			
 			public void dragFinished(DragSourceEvent event) {
 				if (event.detail == DND.DROP_MOVE) {
 					Point newSelection= st.getSelection();
-					int length= selection.y - selection.x;
+					int length= fSelection.y - fSelection.x;
 					int delta= 0;
-					if (newSelection.x < selection.x)
+					if (newSelection.x < fSelection.x)
 						delta= length; 
-					st.replaceTextRange(selection.x + delta, length, ""); //$NON-NLS-1$
+					st.replaceTextRange(fSelection.x + delta, length, ""); //$NON-NLS-1$
 				}
 			}
 		});
