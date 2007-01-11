@@ -3761,45 +3761,48 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
   </task>
   <task name="java">
     <description>
-    Launcher for Java applications. Allows use of
- the same JVM for the called application thus resulting in much
- faster operation.
+   Executes a Java class within the running (Ant) VM or forks another VM if specified.
   </description>
     <structure>
       <attributes>
         <attribute name="append" required="no">
           <description>
-          If true, append output to existing file.
+         Whether output and error files should be appended to or overwritten. Defaults to false.
         </description>
         </attribute>
         <attribute name="classname" required="either jar or classname">
           <description>
-          Sets the Java class to execute.
+           	The Java class to execute.
         </description>
         </attribute>
         <attribute name="classpath" required="no">
           <description>
-          Set the classpath to be used when running the Java class
+          The classpath to use.
         </description>
         </attribute>
         <attribute name="classpathref" required="no">
           <description>
-          Classpath to use, by reference.
+           	The classpath to use, given as reference to a PATH defined elsewhere.
+        </description>
+        </attribute>
+        <attribute name="clonevm" required="no">
+          <description>
+           	If set to true, then all system properties and the bootclasspath of the forked Java Virtual Machine will be the same as those of the Java VM running Ant. Default is false (ignored if fork is disabled). Since Ant 1.7.0
         </description>
         </attribute>
         <attribute name="dir" required="no">
           <description>
-          The working directory of the process
+          The directory to invoke the VM in (ignored if fork is disabled).
         </description>
         </attribute>
         <attribute name="failonerror" required="no">
           <description>
-          If true, then fail if the command exits with a returncode other than 0
+          Stop the buildprocess if the command exits with a returncode other than 0. Default is false.
         </description>
         </attribute>
         <attribute name="fork" required="no">
           <description>
-          If true, execute in a new VM.
+          If enabled triggers the class execution in another VM (disabled by default)
         </description>
         </attribute>
         <attribute name="jvmversion" required="NOTDEFINED">
@@ -3809,38 +3812,37 @@ accepts all formats accepted by the cvs command for -D date_spec arguments
         </attribute>
         <attribute name="jar" required="either jar or classname">
           <description>
-          The location of the JAR file to execute.
+          The location of the jar file to execute (must have a Main-Class entry in the manifest). Fork must be set to true if this option is selected.
         </description>
         </attribute>
         <attribute name="jvm" required="no">
           <description>
-          Set the command used to start the VM (only if not forking).
+          The command used to invoke the Java Virtual Machine. Default is 'java'. The command is resolved by java.lang.Runtime.exec(). Ignored if fork is disabled.
         </description>
         </attribute>
         <attribute name="jvmargs" required="no">
           <description>
-          Set the command line arguments for the JVM.
+          The arguments to pass to the forked VM (ignored if fork is disabled). Deprecated, use nested jvmarg elements instead.
         </description>
         </attribute>
         <attribute name="maxmemory" required="no">
           <description>
-          Corresponds to -mx or -Xmx depending on VM version.
+          Maximum amount of memory to allocate to the forked VM (ignored if fork is disabled)
         </description>
         </attribute>
         <attribute name="newenvironment" required="no">
           <description>
-          If true, use a completely new environment.
- &lt;p&gt;Will be ignored if we are not forking a new VM.
+          Do not propagate old environment when new environment variables are specified. Default is false (ignored if fork is disabled).
         </description>
         </attribute>
         <attribute name="output" required="no">
           <description>
-          File the output of the process is redirected to.
+          Name of a file to which to write the output. If the error stream is not also redirected to a file or property, it will appear in this output.
         </description>
         </attribute>
         <attribute name="timeout" required="no">
           <description>
-          Timeout in milliseconds after which the process will be killed.
+          Stop the command if it doesn't finish within the specified time (given in milliseconds). It is highly recommended to use this feature only if fork is enabled.
         </description>
         </attribute>
       </attributes>
