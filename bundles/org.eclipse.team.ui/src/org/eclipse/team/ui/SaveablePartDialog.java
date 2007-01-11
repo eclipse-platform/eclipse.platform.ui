@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.ui;
 
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -28,6 +30,8 @@ import org.eclipse.ui.PlatformUI;
  * @see ISaveableWorkbenchPart
  * @see SaveablePartAdapter
  * @since 3.0
+ * @deprecated Clients should use a subclass of {@link CompareEditorInput}
+ *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */
 public class SaveablePartDialog extends TrayDialog {
 		

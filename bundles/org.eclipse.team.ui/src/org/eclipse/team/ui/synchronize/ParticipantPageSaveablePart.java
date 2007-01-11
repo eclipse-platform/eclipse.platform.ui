@@ -24,8 +24,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.ui.PageCompareEditorInput;
 import org.eclipse.team.ui.PageSaveablePart;
-import org.eclipse.team.ui.mapping.*;
+import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
+import org.eclipse.team.ui.mapping.SaveableComparison;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
@@ -35,6 +37,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * or if the participant is a {@link ModelSynchronizeParticipant}.
  * 
  * @since 3.0
+ * @deprecated Clients should use a subclass of {@link PageCompareEditorInput}
+ *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */
 public class ParticipantPageSaveablePart extends PageSaveablePart implements IContentChangeListener {
 

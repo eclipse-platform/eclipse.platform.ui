@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -286,7 +287,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 								return;
 							}
 							try {
-								Platform.getJobManager().join(getContext(), monitor);
+								Job.getJobManager().join(getContext(), monitor);
 							} catch (InterruptedException e) {
 								// Ignore
 							}

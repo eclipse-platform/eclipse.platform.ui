@@ -1068,6 +1068,17 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			return CompareMessages.CompareEditorInput_0;
 		return IDialogConstants.OK_LABEL;
 	}
+	
+	/**
+	 * Return the label used for the <code>CANCEL</code>
+	 * button when this input is shown in a compare dialog
+	 * using {@link CompareUI#openCompareDialog(CompareEditorInput)}.
+	 * @return the label used for the <code>CANCEL</code> button
+	 * @since 3.3
+	 */
+	public String getCancelButtonLabel() {
+		return IDialogConstants.CANCEL_LABEL;
+	}
 
 	private boolean isEditable() {
 		return getCompareConfiguration().isLeftEditable() 
@@ -1090,6 +1101,15 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * The <code>CANCEL</code> button was pressed in a dialog.
+	 * By default, nothing is done. Subclasses may override.
+	 * @since 3.3
+	 */
+	public void cancelPressed() {
+		// Do nothing
 	}
 	
 	private boolean saveChanges() {

@@ -47,6 +47,8 @@ import org.eclipse.ui.progress.IProgressService;
  * This class is not intended to be subclassed by clients outside of the Team framework.
  * 
  * @since 3.2
+ * @deprecated Clients should use a subclass of {@link CompareEditorInput}
+ *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */
 public abstract class PageSaveablePart extends SaveablePartAdapter implements IContentChangeListener{
 	

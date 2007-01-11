@@ -111,9 +111,10 @@ public interface ISynchronizeManager {
 	/**
 	 * Returns the participant descriptor for the given participant type id or 
 	 * <code>null</code> if a descriptor is not found for that id.
+	 * @param id the participant id
 	 * 
 	 * @return the participant descriptor for the given participant id or 
 	 * <code>null</code> if a descriptor is not found for that id.
 	 */
-	public ISynchronizeParticipantDescriptor getParticipantDescriptor(String type);
+	public ISynchronizeParticipantDescriptor getParticipantDescriptor(String id);
 }

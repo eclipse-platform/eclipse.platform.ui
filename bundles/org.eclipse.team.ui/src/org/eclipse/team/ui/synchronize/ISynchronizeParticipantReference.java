@@ -58,6 +58,7 @@ public interface ISynchronizeParticipantReference {
 	 * if the participant cannot be de-referenced.
 	 * 
 	 * @return the participant referenced by this handle.
+	 * @throws TeamException if an error occurs
 	 */
 	public ISynchronizeParticipant getParticipant() throws TeamException;
 	

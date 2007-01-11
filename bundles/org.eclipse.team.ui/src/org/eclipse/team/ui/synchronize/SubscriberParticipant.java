@@ -13,7 +13,9 @@ package org.eclipse.team.ui.synchronize;
 import java.util.Arrays;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
@@ -147,9 +149,12 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Refresh this participants synchronization state and displays the result in a model dialog. 
+	 * @param shell 
 	 * 
 	 * @param resources
+	 * @param jobName 
 	 * @param taskName
+	 * @param configuration 
 	 * @param site
 	 */
 	public final void refreshInDialog(Shell shell, IResource[] resources, String jobName, String taskName, ISynchronizePageConfiguration configuration, IWorkbenchSite site) {
@@ -180,9 +185,13 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 
     /**
 	 * Refresh a participant. The returned status describes the result of the refresh.
+     * @param resources 
+     * @param taskName 
+     * @param monitor 
+     * @return a status
 	 */
 	public final IStatus refreshNow(IResource[] resources, String taskName, IProgressMonitor monitor) {
-		Platform.getJobManager().cancel(this);
+		Job.getJobManager().cancel(this);
 		RefreshParticipantJob job = new RefreshSubscriberParticipantJob(this, taskName, taskName, resources, null);
 		return job.run(monitor);
 	}
@@ -191,7 +200,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @see org.eclipse.team.ui.sync.AbstractSynchronizeViewPage#dispose()
 	 */
 	public void dispose() {
-		Platform.getJobManager().cancel(this);
+		Job.getJobManager().cancel(this);
 		refreshSchedule.dispose();				
 		TeamUI.removePropertyChangeListener(this);
 		collector.dispose();
@@ -482,7 +491,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 		    jobName = getShortTaskName();
 		if (taskName == null)
 		    taskName = getLongTaskName(resources);
-		Platform.getJobManager().cancel(this);
+		Job.getJobManager().cancel(this);
 		RefreshParticipantJob job = new RefreshSubscriberParticipantJob(this, jobName, taskName, resources, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);

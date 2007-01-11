@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.ui;
 
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.ui.*;
 
 /**
@@ -21,6 +23,8 @@ import org.eclipse.ui.*;
  * </p>
  * @see SaveablePartDialog
  * @since 3.0
+ * @deprecated Clients should use a subclass of {@link CompareEditorInput}
+ *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */
 public abstract class SaveablePartAdapter implements ISaveableWorkbenchPart {
 

@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
+import org.eclipse.compare.CompareUI;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -25,6 +26,8 @@ import org.eclipse.team.ui.*;
  * @see SaveablePartAdapter
  * @see ISynchronizeParticipant
  * @since 3.0
+ * @deprecated Clients should use {@link ParticipantPageCompareEditorInput} 
+ *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */
 public class ParticipantPageDialog extends SaveablePartDialog {
 		

@@ -98,8 +98,12 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		fCommitButton= createButton(parent, IDialogConstants.OK_ID, getOKButtonLabel(), true);
 		fCommitButton.setEnabled(isOKEnabled());
 		if (isCancelable()) {
-			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+			createButton(parent, IDialogConstants.CANCEL_ID, getCancelButtonLabel(), false);
 		}
+	}
+
+	private String getCancelButtonLabel() {
+		return fCompareEditorInput.getCancelButtonLabel();
 	}
 
 	private boolean isCancelable() {
@@ -198,6 +202,8 @@ public class CompareDialog extends TrayDialog implements IPropertyChangeListener
 		if (buttonId == OK) {
 			if (!fCompareEditorInput.okPressed())
 				return;
+		} else if (buttonId == CANCEL) {
+			fCompareEditorInput.cancelPressed();
 		}
 		super.buttonPressed(buttonId);
 	}

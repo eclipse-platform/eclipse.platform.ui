@@ -132,7 +132,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 		}
 		for (int i = 0; i < allListeners.length; i++) {
 			final IPropertyChangeListener listener = (IPropertyChangeListener)allListeners[i];
-			Platform.run(new SafeRunnable() {
+			SafeRunner.run(new SafeRunnable() {
 				public void run() throws Exception {
 					listener.propertyChange(event);
 				}
@@ -158,7 +158,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	}
 	
 	/**
-	 * Method invoked from the constructor which repopulates the fields of this scope
+	 * Method invoked from the constructor which populates the fields of this scope
 	 * 
 	 * @param memento the memento into which the scope was previously saved
 	 */
@@ -169,7 +169,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	/**
 	 * Return whether the given resource is within this scope.
 	 * By default, a resource is considered in the scope if
-	 * it is a root or a decendant of a root.
+	 * it is a root or a descendant of a root.
 	 * @param resource the resource
 	 * @return whether the given resource is within this scope
 	 * @since 3.2
@@ -189,7 +189,7 @@ public abstract class AbstractSynchronizeScope implements ISynchronizeScope {
 	/**
 	 * Return the resource mappings that define this scope.
 	 * By default, the mappings are just be deep traversals
-	 * of the roots of the scope but sublcasses may override.
+	 * of the roots of the scope but subclasses may override.
 	 * @return the resource mappings that define this scope
 	 * @since 3.2
 	 */

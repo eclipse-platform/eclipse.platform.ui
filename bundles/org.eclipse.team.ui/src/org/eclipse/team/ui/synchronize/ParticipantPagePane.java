@@ -24,7 +24,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
- * Standalone presentation of a participant page within a view pane. This
+ * Stand alone presentation of a participant page within a view pane. This
  * allows showing a participant page with it's toolbar in dialogs and embedded
  * in views and editors.
  * 

@@ -13,6 +13,7 @@ package org.eclipse.team.ui.synchronize;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.mapping.RemoteResourceMappingContext;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -20,7 +21,6 @@ import org.eclipse.team.core.mapping.ISynchronizationContext;
 import org.eclipse.team.core.mapping.ISynchronizationScopeManager;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ui.TeamUIMessages;
-import org.eclipse.team.internal.ui.mapping.ModelParticipantPageDialog;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
@@ -73,7 +73,7 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 			// Only wait if we are not going to preview or we are previewing in a dialog
 			if (!sentToSyncView)
 				try {
-					Platform.getJobManager().join(participant.getContext(), monitor);
+					Job.getJobManager().join(participant.getContext(), monitor);
 				} catch (InterruptedException e) {
 					// Ignore
 				}
@@ -114,8 +114,8 @@ public abstract class ModelParticipantMergeOperation extends ModelMergeOperation
 						pageConfiguration.setSupportedModes(ISynchronizePageConfiguration.INCOMING_MODE | ISynchronizePageConfiguration.CONFLICTING_MODE);
 						pageConfiguration.setMode(ISynchronizePageConfiguration.INCOMING_MODE);
 					}
-					ParticipantPageDialog dialog = new ModelParticipantPageDialog(getShell(), participant, cc, pageConfiguration);
-					dialog.open();
+					ParticipantPageCompareEditorInput input = new ParticipantPageCompareEditorInput(cc, pageConfiguration, participant);
+					CompareUI.openCompareDialog(input);
 				} else {				
 					ISynchronizeManager mgr = TeamUI.getSynchronizeManager();
 					ISynchronizeView view = mgr.showSynchronizeViewInActivePage();

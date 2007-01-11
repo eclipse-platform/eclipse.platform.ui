@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.osgi.util.NLS;
@@ -249,7 +250,7 @@ public class ModelSynchronizeParticipant extends
 	 */
 	public void dispose() {
 		context.dispose();
-		Platform.getJobManager().cancel(this);
+		Job.getJobManager().cancel(this);
 		refreshSchedule.dispose();
 	}
 	
@@ -345,7 +346,7 @@ public class ModelSynchronizeParticipant extends
 		    jobName = getShortTaskName();
 		if (taskName == null)
 		    taskName = getLongTaskName(mappings);
-		Platform.getJobManager().cancel(this);
+		Job.getJobManager().cancel(this);
 		RefreshParticipantJob job = new RefreshModelParticipantJob(this, jobName, taskName, mappings, listener);
 		job.setUser(true);
 		Utils.schedule(job, site);
