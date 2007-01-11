@@ -40,7 +40,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.services.IDisposable;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -262,7 +261,7 @@ public abstract class RegistryPersistence implements IDisposable,
 					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
 							.toArray(new IStatus[warningsToLog.size()]),
 					message, null);
-			StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(status);
 		}
 	}
 

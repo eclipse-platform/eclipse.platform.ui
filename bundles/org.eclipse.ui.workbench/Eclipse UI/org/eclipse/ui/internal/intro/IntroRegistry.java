@@ -20,10 +20,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Registry for introduction elements.
@@ -76,11 +75,9 @@ public class IntroRegistry implements IIntroRegistry {
 						list.add(descriptor);
 					} catch (CoreException e) {
 						// log an error since its not safe to open a dialog here
-						StatusUtil
-								.handleStatus(
-										e.getStatus(),
-										IntroMessages.Intro_could_not_create_descriptor,
-										StatusManager.LOG);
+						WorkbenchPlugin
+								.log(
+										IntroMessages.Intro_could_not_create_descriptor, e.getStatus());
 					}
 				}
 			}
@@ -145,8 +142,8 @@ public class IntroRegistry implements IIntroRegistry {
 								elements[j].getDeclaringExtension()
 										.getNamespace(),
 								IStatus.ERROR,
-								"Invalid intro binding: introId and productId must be defined", new IllegalArgumentException()); //$NON-NLS-1$
-						StatusManager.getManager().handle(status);
+								"introId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
+						WorkbenchPlugin.log("Invalid intro binding", status); //$NON-NLS-1$
 						continue;
 					}
 

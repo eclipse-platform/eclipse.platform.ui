@@ -31,6 +31,8 @@ import org.eclipse.core.commands.common.NamedHandleObjectComparator;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -91,6 +93,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.ICommandImageService;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -304,7 +307,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 						} catch (final DeviceResourceException e) {
 							final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 									+ commandId + '\'';
-					    	StatusUtil.handleStatus(message, e, StatusManager.LOG);
+							final IStatus status = new Status(IStatus.ERROR,
+									WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+							WorkbenchPlugin.log(message, status);
 						}
 					}
 					return null;
@@ -332,7 +337,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					} catch (final DeviceResourceException e) {
 						final String message = "Problem retrieving image for a command '" //$NON-NLS-1$
 								+ commandId + '\'';
-						StatusUtil.handleStatus(message, e, StatusManager.LOG);
+						final IStatus status = new Status(IStatus.ERROR,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+						WorkbenchPlugin.log(message, status);
 					}
 					return null;
 				}
@@ -350,7 +357,9 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 					} catch (final DeviceResourceException e) {
 						final String message = "Problem retrieving image for groups of bindings: '" //$NON-NLS-1$
 								+ ICON_GROUP_OF_BINDINGS + '\'';
-						StatusUtil.handleStatus(message, e, StatusManager.LOG);
+						final IStatus status = new Status(IStatus.ERROR,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+						WorkbenchPlugin.log(message, status);
 					}
 				}
 
@@ -1344,7 +1353,14 @@ public final class NewKeysPreferencePage extends PreferencePage implements
 	 */
 	private final void logPreferenceStoreException(final Throwable exception) {
 		final String message = NewKeysPreferenceMessages.PreferenceStoreError_Message;
-		StatusUtil.handleStatus(message, exception, StatusManager.SHOWANDLOG);
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage == null) {
+			exceptionMessage = message;
+		}
+		final IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		WorkbenchPlugin.log(message, status);
+		StatusUtil.handleStatus(message, exception, StatusManager.SHOW);
 	}
 
 	protected final void performDefaults() {

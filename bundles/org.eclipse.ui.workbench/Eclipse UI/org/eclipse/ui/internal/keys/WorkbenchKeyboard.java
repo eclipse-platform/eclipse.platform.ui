@@ -22,6 +22,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.util.Tracing;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -43,6 +45,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.handlers.HandlerService;
 import org.eclipse.ui.internal.misc.Policy;
@@ -174,8 +177,9 @@ public final class WorkbenchKeyboard {
 			outOfOrderKeys = KeySequence.getInstance("ESC DEL"); //$NON-NLS-1$
 		} catch (ParseException e) {
 			outOfOrderKeys = KeySequence.getInstance();
-			String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$	    	
-	    	StatusUtil.handleStatus(message, e, StatusManager.LOG);
+			String message = "Could not parse out-of-order keys definition: 'ESC DEL'.  Continuing with no out-of-order keys."; //$NON-NLS-1$
+			WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
+					WorkbenchPlugin.PI_WORKBENCH, 0, message, e));
 		}
 	}
 
@@ -692,7 +696,14 @@ public final class WorkbenchKeyboard {
 					"ExecutionError.Message"); //$NON-NLS-1$
 		}
 
-		StatusUtil.handleStatus(message, exception, StatusManager.SHOWANDLOG);
+		String exceptionMessage = exception.getMessage();
+		if (exceptionMessage == null) {
+			exceptionMessage = exception.getClass().getName();
+		}
+		IStatus status = new Status(IStatus.ERROR,
+				WorkbenchPlugin.PI_WORKBENCH, 0, exceptionMessage, exception);
+		WorkbenchPlugin.log(message, status);
+		StatusUtil.handleStatus(message, exception, StatusManager.SHOW);
 	}
 
 	/**
