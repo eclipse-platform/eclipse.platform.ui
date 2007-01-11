@@ -47,7 +47,7 @@ public class PropertiesProvider extends AbstractProvider {
 		if (activePage != null) {
 			PropertyPageManager pageManager = new PropertyPageManager();
 			ISelection selection = activePage.getSelection();
-			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				Object element = ((IStructuredSelection) selection).getFirstElement();
 				PropertyPageContributorManager.getManager().contribute(pageManager,
 						element);
