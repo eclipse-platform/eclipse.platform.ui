@@ -3081,7 +3081,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			public void dragFinished(DragSourceEvent event) {
-				if (event.detail == DND.DROP_MOVE) {
+				if (event.detail == DND.DROP_MOVE && validateEditorInputState()) {
 					Point newSelection= st.getSelection();
 					int length= fSelection.y - fSelection.x;
 					int delta= 0;
@@ -3132,6 +3132,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			public void drop(DropTargetEvent event) {
 				if (!fIsTextDragAndDropEnabled)
 					return;
+				
+				if (!validateEditorInputState()) {
+					event.detail= DND.DROP_NONE;
+					return;
+				}
 				
 				String text= (String)event.data;
 				Point newSelection= st.getSelection();
