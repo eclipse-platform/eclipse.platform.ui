@@ -18,15 +18,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * WorkbenchEncoding is a utility class for plug-ins that want to use the list
@@ -115,9 +112,7 @@ public class WorkbenchEncoding {
 		Iterator invalidIterator = invalid.iterator();
 		while (invalidIterator.hasNext()) {
 			String next = (String) invalidIterator.next();
-			String message = NLS.bind(WorkbenchMessages.WorkbenchEncoding_invalidCharset,  next );
-			IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message); 
-			StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(NLS.bind(WorkbenchMessages.WorkbenchEncoding_invalidCharset,  next ));
 			definedEncodings.remove(next);
 
 		}

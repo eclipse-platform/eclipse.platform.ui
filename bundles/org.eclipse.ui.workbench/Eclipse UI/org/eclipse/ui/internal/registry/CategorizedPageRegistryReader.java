@@ -19,10 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The CategorizedPageRegistryReader is the abstract super class
@@ -198,9 +195,8 @@ public abstract class CategorizedPageRegistryReader extends RegistryReader {
 				add(parent, node);
 			} else {
 				//Could not find the parent - log
-				String message = "Invalid preference page path: " + categoryNode.getFlatCategory(); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH, message); 
-				StatusManager.getManager().handle(status);
+				WorkbenchPlugin
+						.log("Invalid preference page path: " + categoryNode.getFlatCategory()); //$NON-NLS-1$
 				topLevelNodes.add(node);
 			}
 		}

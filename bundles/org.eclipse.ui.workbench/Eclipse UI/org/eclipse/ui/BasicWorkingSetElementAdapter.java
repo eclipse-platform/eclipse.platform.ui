@@ -19,11 +19,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.ExportedPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -168,8 +165,7 @@ public final class BasicWorkingSetElementAdapter implements
 									return (IAdaptable) adapted;
 
 							} catch (ClassNotFoundException e) {
-								IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e);
-			                	StatusManager.getManager().handle(status);
+								WorkbenchPlugin.log(e);
 							}
 						}
 					}

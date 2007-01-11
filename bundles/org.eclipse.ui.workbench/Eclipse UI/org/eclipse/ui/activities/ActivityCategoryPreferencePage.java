@@ -19,7 +19,6 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -67,9 +66,7 @@ import org.eclipse.ui.internal.OverlayIcon;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Activities preference page that primarily shows categories and can optionally
@@ -226,9 +223,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
 
                     return manager.createImage(descriptor);
                 } catch (DeviceResourceException e) {
-                	IStatus status = StatusUtil.newStatus(
-							WorkbenchPlugin.PI_WORKBENCH, e);
-					StatusManager.getManager().handle(status);
+                    WorkbenchPlugin.log(e);
                 }
             }  
             return null;

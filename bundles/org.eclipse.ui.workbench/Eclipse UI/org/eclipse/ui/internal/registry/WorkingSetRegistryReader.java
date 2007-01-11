@@ -13,10 +13,8 @@ package org.eclipse.ui.internal.registry;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A strategy to read working set extensions from the registry.
@@ -55,9 +53,9 @@ public class WorkingSetRegistryReader extends RegistryReader {
                 registry.addWorkingSetDescriptor(desc);
             } catch (CoreException e) {
                 // log an error since its not safe to open a dialog here
-				IStatus status = StatusUtil.newStatus(e.getStatus(),
-						"Unable to create working set descriptor."); //$NON-NLS-1$
-				StatusManager.getManager().handle(status);
+                WorkbenchPlugin
+                        .log(
+                                "Unable to create working set descriptor.", e.getStatus());//$NON-NLS-1$
             }
             return true;
         }

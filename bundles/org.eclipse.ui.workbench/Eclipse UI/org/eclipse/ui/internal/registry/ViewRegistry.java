@@ -21,10 +21,8 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -32,7 +30,6 @@ import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -365,12 +362,9 @@ public class ViewRegistry implements IViewRegistry, IExtensionChangeHandler {
 	                    // but give out a message (to the log only) indicating 
 	                    // this has been done.
 	                    String fmt = "Category {0} not found for view {1}.  This view added to ''{2}'' category."; //$NON-NLS-1$
-						String message = MessageFormat.format(fmt,
-								new Object[] { catPath[0], desc.getId(),
-										miscCategory.getLabel() });
-						IStatus status = new Status(IStatus.WARNING,
-								WorkbenchPlugin.PI_WORKBENCH, message);
-						StatusManager.getManager().handle(status);
+	                    WorkbenchPlugin.log(MessageFormat
+	                            .format(fmt, new Object[] { catPath[0],
+	                                    desc.getId(), miscCategory.getLabel() }));
 	                }
 	                miscCategory.addElement(desc);
 	            }

@@ -23,7 +23,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * @since 3.1
@@ -80,10 +79,10 @@ public class TriggerPointAdvisorRegistry {
 						list.add(descriptor);
 					} catch (IllegalArgumentException e) {
 						// log an error since its not safe to open a dialog here
-						IStatus status = StatusUtil.newStatus(
-								WorkbenchPlugin.PI_WORKBENCH,
-								"Invalid trigger point advisor extension", e); //$NON-NLS-1$ 
-						StatusManager.getManager().handle(status);
+						WorkbenchPlugin.log(
+								"invalid trigger point advisor extension", //$NON-NLS-1$
+								StatusUtil.newStatus(IStatus.ERROR, e
+										.getMessage(), e));
 					}
 				}
 			}
@@ -151,8 +150,9 @@ public class TriggerPointAdvisorRegistry {
 										.getNamespace(),
 								IStatus.ERROR,
 								"triggerPointAdvisorId and productId must be defined.", new IllegalArgumentException()); //$NON-NLS-1$
-						IStatus errStatus = StatusUtil.newStatus(status, "Invalid trigger point advisor binding"); //$NON-NLS-1$
-						StatusManager.getManager().handle(errStatus);
+						WorkbenchPlugin
+								.log(
+										"Invalid trigger point advisor binding", status); //$NON-NLS-1$
 						continue;
 					}
 
