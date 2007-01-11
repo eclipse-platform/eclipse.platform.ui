@@ -3511,10 +3511,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 		} else {
-			
+			boolean mustSendLifeCycleEvent= false;
 			if (fSavable != null) {
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
 				fSavable= null;
+				mustSendLifeCycleEvent= true;
 			}
 
 			IEditorInput oldInput= getEditorInput();
@@ -3565,8 +3566,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (ruler instanceof CompositeRuler)
 				updateContributedRulerColumns((CompositeRuler) ruler);
 			
-			// Send savable life-cycle event
-			if (listener != null)
+			// Send savable life-cycle if needed.
+			if (mustSendLifeCycleEvent && listener != null)
 				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_OPEN, getSaveables(), false));
 			
 		}
@@ -3714,9 +3715,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		if (fSavable != null) {
-			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
-			if (listener != null)
-				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
+//			ISaveablesLifecycleListener listener= (ISaveablesLifecycleListener)getSite().getService(ISaveablesLifecycleListener.class);
+//			if (listener != null)
+//				listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,	SaveablesLifecycleEvent.POST_CLOSE,	getSaveables(), false));
 			fSavable= null;
 		}
 		
