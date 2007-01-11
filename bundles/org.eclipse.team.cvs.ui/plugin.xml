@@ -1228,8 +1228,7 @@
             name="%CVSActionSet.checkoutLabel"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             description="%CVSActionSet.checkoutTooltip"
-            id="org.eclipse.team.cvs.ui.checkout">
-      </command>
+            id="org.eclipse.team.cvs.ui.checkout"/>
       <command
             description="%CommitAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
@@ -1279,7 +1278,7 @@
             description="%UpdateAllAction.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             id="org.eclipse.team.cvs.ui.updateAll"
-            name="%UpdateAllAction.name">
+            name="%UpdateAllAction.name"/>
       <command
             description="%GenerateDiff.tooltip"
             categoryId="org.eclipse.team.cvs.ui.actionSet"
@@ -1334,8 +1333,7 @@
             categoryId="org.eclipse.team.cvs.ui.actionSet"
             description="%Synchronize.tooltip"
             name="%Synchronize.name"
-            id="org.eclipse.team.cvs.ui.sync"/>
-      </command>   
+            id="org.eclipse.team.cvs.ui.sync"/> 
    </extension>
    
    <!-- Commented out awaiting menu support from UI
