@@ -52,8 +52,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -411,8 +409,8 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 				}
 				message.append("' could not be loaded"); //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message.toString(), e);
-		    	StatusManager.getManager().handle(status);
+						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
+				WorkbenchPlugin.log(message.toString(), status);
 			}
 
 			return false;
@@ -481,16 +479,18 @@ public final class ActionDelegateHandlerProxy implements ISelectionListener,
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied delegate was the wrong class"; //$NON-NLS-1$
-				IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
-		    	StatusManager.getManager().handle(status);
+				final IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied delegate for '" //$NON-NLS-1$
 						+ element.getAttribute(delegateAttributeName)
 						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
-		    	StatusManager.getManager().handle(status);
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 			}
 		}

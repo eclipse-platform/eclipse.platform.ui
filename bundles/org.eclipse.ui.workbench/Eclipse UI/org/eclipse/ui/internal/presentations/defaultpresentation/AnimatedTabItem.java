@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CTabFolder;
@@ -28,9 +27,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * @since 3.3
@@ -112,11 +109,9 @@ public class AnimatedTabItem extends CTabItem {
 					animateTimer.schedule(getTimerTask(background, display), 0);
 			}
 		} catch (SWTException ex) {
-			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, ex); 
-	    	StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(ex);
 		} catch (IOException e1) {
-			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e1); 
-	    	StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(e1);
 		}
 	}
 
@@ -240,8 +235,7 @@ public class AnimatedTabItem extends CTabItem {
 							repeatCount--;
 					}
 				} catch (SWTException ex) {
-					IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, ex); 
-			    	StatusManager.getManager().handle(status);
+					WorkbenchPlugin.log(ex);
 				} finally {
 					display.syncExec(new Runnable() {
 						/*

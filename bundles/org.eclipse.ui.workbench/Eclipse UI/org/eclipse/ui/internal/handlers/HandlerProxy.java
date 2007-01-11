@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -173,8 +171,8 @@ public final class HandlerProxy extends AbstractHandler {
 								.getAttribute(handlerAttributeName)
 						+ "' could not be loaded"; //$NON-NLS-1$
 				final IStatus status = new Status(IStatus.WARNING,
-						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
-		    	StatusManager.getManager().handle(status);
+						WorkbenchPlugin.PI_WORKBENCH, 0, e.getMessage(), e);
+				WorkbenchPlugin.log(message, status);
 			}
 
 			return false;
@@ -216,15 +214,17 @@ public final class HandlerProxy extends AbstractHandler {
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied handler was the wrong class"; //$NON-NLS-1$
-				final IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
-		    	StatusManager.getManager().handle(status);
+				final IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied handler for '" + configurationElement.getAttribute(handlerAttributeName) //$NON-NLS-1$
 						+ "' could not be loaded"; //$NON-NLS-1$
-				final IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
-		    	StatusManager.getManager().handle(status);
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 			}
 		}

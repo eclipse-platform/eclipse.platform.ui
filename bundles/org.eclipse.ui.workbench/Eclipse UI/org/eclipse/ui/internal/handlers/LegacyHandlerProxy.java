@@ -17,12 +17,11 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -124,8 +123,9 @@ public final class LegacyHandlerProxy extends AbstractHandler {
 				 */
 				final String message = "The proxied handler for '" + configurationElement.getAttribute(HANDLER_ATTRIBUTE_NAME) //$NON-NLS-1$
 						+ "' could not be loaded"; //$NON-NLS-1$
-				IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e); 
-		    	StatusManager.getManager().handle(status);
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 			}
 		}

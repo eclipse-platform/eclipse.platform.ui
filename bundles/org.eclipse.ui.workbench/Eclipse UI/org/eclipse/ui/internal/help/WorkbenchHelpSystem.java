@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -43,9 +42,7 @@ import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * This class represents a refactoring of the functionality previously contained
@@ -512,10 +509,8 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 									pluggableHelpUI, IExtensionTracker.REF_WEAK);
 					return true;
 				} catch (CoreException e) {
-					String message = "Unable to instantiate help UI" + e.getStatus();//$NON-NLS-1$
-					IStatus status = StatusUtil.newStatus(e.getStatus(),
-							message);
-					StatusManager.getManager().handle(status);
+					WorkbenchPlugin.log(
+							"Unable to instantiate help UI" + e.getStatus(), e);//$NON-NLS-1$
 				}
 				return false;
 			}
