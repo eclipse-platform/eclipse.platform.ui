@@ -52,6 +52,14 @@ public class StructureRootNode extends DocumentRangeNode implements IDisposable,
 	private final StructureCreator fCreator;
 	private ISharedDocumentAdapter fAdapter;
 	
+	/**
+	 * Create the structure root node.
+	 * @param document the document
+	 * @param input the input associated with the document
+	 * @param creator the structure creator that is creating the node
+	 * @param adapter the shared document adapter from which the document was obtained or <code>null</code>
+	 *    if the document was not obtained from an {@link ISharedDocumentAdapter}
+	 */
 	public StructureRootNode(IDocument document, Object input, StructureCreator creator, ISharedDocumentAdapter adapter) {
 		super(null, ROOT_TYPE, ROOT_ID, document, 0, document.getLength());
 		fInput = input;
