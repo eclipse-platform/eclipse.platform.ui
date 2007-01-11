@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
+import org.eclipse.ui.splash.BasicSplashHandler;
 
 /**
  * Parses the well known product constants and constructs a splash handler
