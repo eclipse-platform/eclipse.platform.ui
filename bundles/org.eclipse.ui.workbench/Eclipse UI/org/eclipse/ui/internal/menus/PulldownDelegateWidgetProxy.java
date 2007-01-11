@@ -16,7 +16,9 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -36,9 +38,8 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.services.IServiceLocator;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -397,13 +398,17 @@ final class PulldownDelegateWidgetProxy implements IWidget {
 
 			} catch (final ClassCastException e) {
 				final String message = "The proxied delegate was the wrong class"; //$NON-NLS-1$
-				StatusUtil.handleStatus(message, e, StatusManager.LOG);
+				final IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied delegate for '" + configurationElement.getAttribute(delegateAttributeName) //$NON-NLS-1$
-						+ "' could not be loaded"; //$NON-NLS-1$				
-				StatusUtil.handleStatus(message, e, StatusManager.LOG);
+						+ "' could not be loaded"; //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 				return false;
 			}
 		}

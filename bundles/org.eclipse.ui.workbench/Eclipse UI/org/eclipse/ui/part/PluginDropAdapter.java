@@ -23,9 +23,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Adapter for adding handling of the <code>PluginTransfer</code> drag and drop
@@ -71,8 +69,7 @@ public class PluginDropAdapter extends ViewerDropAdapter {
                 super.drop(event);
             }
         } catch (CoreException e) {
-        	StatusUtil.handleStatus(e.getStatus(),
-					"Drop Failed", StatusManager.LOG); //$NON-NLS-1$
+            WorkbenchPlugin.log("Drop Failed", e.getStatus());//$NON-NLS-1$
         }
     }
 

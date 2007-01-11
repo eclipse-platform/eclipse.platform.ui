@@ -19,11 +19,13 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.menus.IWidget;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.internal.WindowTrimProxy;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.layout.IWindowTrim;
 import org.eclipse.ui.internal.layout.TrimLayout;
@@ -31,7 +33,6 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.menus.IWorkbenchWidget;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -392,13 +393,17 @@ public class TrimBarManager2 {
     			TrimLayout tl = (TrimLayout) fWindow.getShell().getLayout();
     			tl.addTrim(side, proxy, beforeMe);
 	        } catch (Throwable e) {
-	        	String message = "Internal plug-in widget delegate error on dock: id" + proxy.getId(); //$NON-NLS-1$
-				if (e instanceof CoreException) {
-					StatusUtil.handleStatus(((CoreException) e).getStatus(),
-							message, StatusManager.LOG);
-				} else {
-					StatusUtil.handleStatus(message, e, StatusManager.LOG);
-				}
+	            IStatus status = null;
+	            if (e instanceof CoreException) {
+	                status = ((CoreException) e).getStatus();
+	            } else {
+	                status = StatusUtil
+	                        .newStatus(
+	                                IStatus.ERROR,
+	                                "Internal plug-in widget delegate error on dock.", e); //$NON-NLS-1$
+	            }
+	            WorkbenchPlugin.log(
+	                  "widget delegate failed on dock: id = " + proxy.getId(), status); //$NON-NLS-1$
 	        }
 		}
 

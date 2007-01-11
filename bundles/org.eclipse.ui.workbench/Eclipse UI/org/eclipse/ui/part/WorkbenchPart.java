@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
+import com.ibm.icu.text.MessageFormat;
+
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,12 +30,9 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.statushandling.StatusManager;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -118,7 +117,7 @@ public abstract class WorkbenchPart extends EventManager implements
             try {
                 l.propertyChanged(WorkbenchPart.this, propertyId);
             } catch (RuntimeException e) {
-            	StatusUtil.handleStatus(e, StatusManager.LOG);
+                WorkbenchPlugin.log(e);
             }
         }
     }

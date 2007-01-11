@@ -22,8 +22,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.Saveable;
-import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * A table label provider implementation for showing workbench views and
@@ -69,8 +68,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements
         			images.put(imageDesc, image);
         		}
         		catch (DeviceResourceException e) {
-        			StatusUtil.handleStatus(getClass().getName() + ".getImage", //$NON-NLS-1$
-							e, StatusManager.LOG);
+        			WorkbenchPlugin.log(getClass(), "getImage", e); //$NON-NLS-1$
         		}
         	}
         	return image;

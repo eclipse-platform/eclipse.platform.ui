@@ -52,10 +52,9 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 import org.eclipse.ui.internal.preferences.PreferenceTransferManager;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Base class for preference export/import pages.
@@ -616,8 +615,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				try {
 					filters[j] = element.getFilter();
 				} catch (CoreException e) {
-					StatusUtil.handleStatus(e.getMessage(), e,
-							StatusManager.LOG);
+					WorkbenchPlugin.log(e.getMessage(), e);
 				}
 			}
 		} else {

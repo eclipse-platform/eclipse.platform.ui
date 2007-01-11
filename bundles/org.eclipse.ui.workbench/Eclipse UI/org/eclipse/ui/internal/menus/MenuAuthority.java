@@ -22,9 +22,8 @@ import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.services.ExpressionAuthority;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -199,9 +198,8 @@ final public class MenuAuthority extends ExpressionAuthority {
 		Object obj = activationsByItem.get(item);
 		if (obj != null) {
 			String id = item.getId();
-			String message = "item is already registered: " //$NON-NLS-1$
-					+ (id == null ? "no id" : id); //$NON-NLS-1$
-			StatusUtil.handleStatus(message, StatusManager.LOG);
+			WorkbenchPlugin.log("item is already registered: " //$NON-NLS-1$
+					+ (id == null ? "no id" : id)); //$NON-NLS-1$
 			return;
 		}
 		MenuActivation activation = new MenuActivation(item, visibleWhen);

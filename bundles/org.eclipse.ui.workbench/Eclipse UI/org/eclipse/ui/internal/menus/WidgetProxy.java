@@ -13,15 +13,16 @@ package org.eclipse.ui.internal.menus;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.CoolBar;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.menus.AbstractWorkbenchTrimWidget;
 import org.eclipse.ui.menus.IWorkbenchWidget;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * <p>
@@ -162,11 +163,16 @@ final class WidgetProxy implements IWorkbenchWidget {
 				configurationElement = null;				
 			} catch (final ClassCastException e) {
 				final String message = "The proxied widget was the wrong class"; //$NON-NLS-1$
-				StatusUtil.handleStatus(message, e, StatusManager.LOG);
+				final IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
+
 			} catch (final CoreException e) {
 				final String message = "The proxied widget for '" + configurationElement.getAttribute(widgetAttributeName) //$NON-NLS-1$
 						+ "' could not be loaded"; //$NON-NLS-1$
-				StatusUtil.handleStatus(message, e, StatusManager.LOG);
+				IStatus status = new Status(IStatus.ERROR,
+						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
+				WorkbenchPlugin.log(message, status);
 			}
 		}
 
