@@ -1722,7 +1722,6 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		if (toggleSearchAction!= null && toggleSearchAction.isChecked()){
 			searchField.selectAll();
-			searchField.setFocus();
 		}
 		
 		return true;
