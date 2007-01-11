@@ -210,7 +210,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	}
 	
 	/**
-	 * Returns the set of associated launch configuraiton type ids.
+	 * Returns the set of associated launch configuration type ids.
 	 * 
 	 * @return the set of associated launch configuration type ids
 	 * @since 3.3
@@ -257,7 +257,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 *  expression tree is malformed.
 	 */
 	public Expression getContextualLaunchEnablementExpression() throws CoreException {
-		// all of this stuff is optional, so...tedius testing is required
+		// all of this stuff is optional, so...tedious testing is required
 		if (fContextualLaunchExpr == null) {
 			IConfigurationElement contextualLaunchElement = getContextualLaunchConfigurationElement();
 			if (contextualLaunchElement == null) {
@@ -284,7 +284,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut, IPluginContribu
 	 *  expression tree is malformed.
 	 */
 	public Expression getShortcutEnablementExpression() throws CoreException {
-		// all of this stuff is optional, so...tedius testing is required
+		// all of this stuff is optional, so...tedious testing is required
 		if (fStandardLaunchExpr == null) {
 			IConfigurationElement[] elements = getConfigurationElement().getChildren(ExpressionTagNames.ENABLEMENT);
 			IConfigurationElement enablement = elements.length > 0 ? elements[0] : null; 

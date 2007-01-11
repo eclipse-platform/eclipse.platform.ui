@@ -249,6 +249,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return PI_DEBUG_UI;
 	}
 
+	/**
+	 * Returns the default delegating model presentation
+	 * @return the default delegating model presentation
+	 */
 	public static IDebugModelPresentation getModelPresentation() {
 		if (fgPresentation == null) {
 			fgPresentation = new DelegatingModelPresentation();
@@ -256,6 +260,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fgPresentation;
 	}
 	
+	/**
+	 * Returns the launch configuration manager
+	 * @return the launch configuration manager
+	 */
 	public LaunchConfigurationManager getLaunchConfigurationManager() {
 		if (fLaunchConfigurationManager == null) {
 			fLaunchConfigurationManager = new LaunchConfigurationManager();
@@ -437,7 +445,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 				public void run() {
 					//initialize the selected resource `
 					SelectedResourceManager.getDefault();
-					// forces launch shortcuts to be intialized so their key-bindings work
+					// forces launch shortcuts to be initialized so their key-bindings work
 					getLaunchConfigurationManager().getLaunchShortcuts();
 				}
 			});	

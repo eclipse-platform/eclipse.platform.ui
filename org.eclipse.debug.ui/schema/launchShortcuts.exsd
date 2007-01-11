@@ -246,7 +246,7 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
     id=&quot;org.eclipse.jdt.launching.localJavaApplication&quot;&gt;
   &lt;/configurationType&gt;
   &lt;/shortcut&gt;
-&lt;extension&gt;
+&lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
 &lt;p&gt;

@@ -57,7 +57,7 @@ public class LaunchConfigurationTabGroupExtension {
 	 * on the given configuration element
 	 * 
 	 * @param element the configuration element defining the
-	 *  attribtues of this launch configuration tab extension
+	 *  attributes of this launch configuration tab extension
 	 * @return a new launch configuration tab extension
 	 */
 	public LaunchConfigurationTabGroupExtension(IConfigurationElement element) {

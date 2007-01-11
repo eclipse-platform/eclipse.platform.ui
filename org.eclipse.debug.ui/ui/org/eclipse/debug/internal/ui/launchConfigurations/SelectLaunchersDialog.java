@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Thsi dialog is used to select a preferred launcher, and alos provides access to the 
- * worspace defaults for preferred launchers
+ * This dialog is used to select a preferred launcher, and also provides access to the 
+ * workspace defaults for preferred launchers
  * 
  *  @since 3.3
  *  EXPERIMENTAL
