@@ -11,16 +11,20 @@
 
 package org.eclipse.ui.internal;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Dictionary;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -143,6 +147,7 @@ import org.eclipse.ui.internal.services.ISourceProviderService;
 import org.eclipse.ui.internal.services.MenuSourceProvider;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.SourceProviderService;
+import org.eclipse.ui.internal.splash.EclipseSplashHandler;
 import org.eclipse.ui.internal.testing.WorkbenchTestable;
 import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
@@ -156,10 +161,14 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.services.IDisposable;
+import org.eclipse.ui.splash.AbstractSplashHandler;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.Constants;
 import org.osgi.framework.SynchronousBundleListener;
 
 /**
@@ -257,6 +266,19 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	private static WorkbenchTestable testableObject;
+
+	/**
+	 * Signals that the workbench should create a splash implementation when
+	 * instantiated. Intial value is <code>false</code>.
+	 * 
+	 * @since 3.3
+	 */
+	private static boolean createSplash = false;
+
+	/**
+	 * The splash handler.
+	 */
+	private static AbstractSplashHandler splash;
 
 	/**
 	 * The display used for all UI interactions with this workbench.
@@ -453,6 +475,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 			} else {
 				newDisplay = new Display();
 			}
+			// we created the display, we create the splash
+			createSplash = true;
 		}
 
 		// workaround for 1GEZ9UR and 1GF07HN
@@ -466,6 +490,110 @@ public final class Workbench extends EventManager implements IWorkbench {
 		initializeImages();
 
 		return newDisplay;
+	}
+
+	/**
+	 * Create the splash wrapper and set it to work.
+	 * 
+	 * @since 3.3
+	 */
+	private void createSplashWrapper() {
+		final Display display = getDisplay();
+		String splashLoc = System.getProperty("org.eclipse.splash.bundle"); //$NON-NLS-1$
+		final Image background = loadImage(splashLoc);
+		
+		SafeRunnable run = new SafeRunnable() {
+
+			public void run() throws Exception {
+				String splashHandle = System.getProperty("org.eclipse.splash.handle"); //$NON-NLS-1$
+				if (splashHandle == null) {
+					createSplash = false;
+					return;
+				}
+				
+				// create the splash
+				getSplash();
+				if (splash == null) {
+					createSplash = false;
+					return;
+				}
+				
+				int handle = new Integer(splashHandle).intValue();
+									
+				Shell splashShell = Shell.internal_new(display, handle);
+				if (background != null)
+					splashShell.setBackgroundImage(background);
+				Dictionary properties = new Hashtable();
+				properties.put("name", "splashscreen"); //$NON-NLS-1$ //$NON-NLS-2$
+				properties.put(Constants.SERVICE_RANKING, Integer.toString(Integer.MAX_VALUE));
+				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
+				context.registerService(Runnable.class.getName(), new Runnable() {
+					/* (non-Javadoc)
+					 * @see java.lang.Runnable#run()
+					 */
+					public void run() {
+						splash.dispose();
+						if (background != null)
+							background.dispose();
+					}
+				}, properties);
+				
+				splash.init(splashShell);
+			}
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.util.SafeRunnable#handleException(java.lang.Throwable)
+			 */
+			public void handleException(Throwable e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+								"Could not instantiate splash", e)); //$NON-NLS-1$
+				createSplash = false;
+				splash = null;
+				if (background != null)
+					background.dispose();
+				
+			}
+			};
+			SafeRunner.run(run);
+	}
+
+	/**
+	 * Load an image from a filesystem path.
+	 * 
+	 * @param splashLoc the location to load from
+	 * @return the image or <code>null</code>
+	 * @since 3.3
+	 */
+	private Image loadImage(String splashLoc) {
+		Image background = null;
+		if (splashLoc != null) {
+			try {
+				InputStream input = new BufferedInputStream(
+						new FileInputStream(splashLoc));
+				background = new Image(display, input);
+			} catch (IOException e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+			}
+		} 
+		return background;
+	}
+
+	/**
+	 * Return the splash handler for this application. If none is specifically
+	 * provided the default Eclipse implementation is returned.
+	 * 
+	 * @return the splash handler for this application or <code>null</code>
+	 * @since 3.3
+	 */
+	private static AbstractSplashHandler getSplash() {
+		if (!createSplash)
+			return null;
+		
+		if (splash == null) {
+			splash = new EclipseSplashHandler(); 
+		}
+		return splash;
 	}
 
 	/**
@@ -1437,7 +1565,11 @@ public final class Workbench extends EventManager implements IWorkbench {
 		progressCount = 0;
 		final double cutoff = 0.95;
 
-		IProgressMonitor progressMonitor = StartupProgressMonitor.getInstance();
+		AbstractSplashHandler handler = getSplash();
+		IProgressMonitor progressMonitor = null;
+		if (handler != null)
+			progressMonitor = handler.getBundleProgressMonitor();
+		 
 		if (progressMonitor == null) {
 			// cannot report progress (e.g. if the splash screen is not showing)
 			// fall back to starting without showing progress.
@@ -1816,6 +1948,10 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 * @since 3.0
 	 */
 	private int runUI() {
+		// prime the splash nice and early
+		if (createSplash)
+			createSplashWrapper();
+
 		UIStats.start(UIStats.START_WORKBENCH, "Workbench"); //$NON-NLS-1$
 
 		// deadlock code
