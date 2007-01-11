@@ -146,15 +146,19 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		}
 		
 		private IStructureComparator createStructure(IProgressMonitor monitor) {
+			// Defend against concurrent disposal
+			Object input = fInput;
+			if (input == null)
+				return null;
 			if (fStructureCreator instanceof IStructureCreator2) {
 				IStructureCreator2 sc2 = (IStructureCreator2) fStructureCreator;
 				try {
-					return sc2.createStructure(fInput, monitor);
+					return sc2.createStructure(input, monitor);
 				} catch (CoreException e) {
 					CompareUIPlugin.log(e);
 				}
 			}
-			return fStructureCreator.getStructure(fInput);
+			return fStructureCreator.getStructure(input);
 		}
 
 		public void dispose() {
