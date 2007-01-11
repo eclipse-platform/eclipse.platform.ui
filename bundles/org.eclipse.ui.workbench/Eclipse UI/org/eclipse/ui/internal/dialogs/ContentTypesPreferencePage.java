@@ -53,6 +53,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.statushandling.StatusManager;
@@ -66,397 +67,398 @@ import org.eclipse.ui.statushandling.StatusManager;
  * @since 3.1
  */
 public class ContentTypesPreferencePage extends PreferencePage implements
-        IWorkbenchPreferencePage {
+		IWorkbenchPreferencePage {
 
-    private ListViewer fileAssociationViewer;
+	private ListViewer fileAssociationViewer;
 
-    private Button removeButton;
+	private Button removeButton;
 
-    private TreeViewer contentTypesViewer;
+	private TreeViewer contentTypesViewer;
 
-    private Button addButton;
+	private Button addButton;
 
-    private Text charsetField;
+	private Text charsetField;
 
-    private Button setButton;
+	private Button setButton;
 
 	private IWorkbench workbench;
 
-    private class Spec {
-        String name;
+	private class Spec {
+		String name;
 
-        String ext;
+		String ext;
 
-        boolean isPredefined;
-        
-        int sortValue;
+		boolean isPredefined;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#toString()
-         */
-        public String toString() {
-            String toString;
-            if (name != null) {
+		int sortValue;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see java.lang.Object#toString()
+		 */
+		public String toString() {
+			String toString;
+			if (name != null) {
 				toString = name;
 			} else {
 				toString = "*." + ext; //$NON-NLS-1$
 			}
 
-            if (isPredefined) {
+			if (isPredefined) {
 				toString = NLS.bind(
-                        WorkbenchMessages.ContentTypes_lockedFormat,
-                        toString);
+						WorkbenchMessages.ContentTypes_lockedFormat, toString);
 			}
 
-            return toString;
-        }
-    }
-
-    private class FileSpecComparator extends ViewerComparator {
-		public int category(Object element) {
-			// only Spec objects in here - unchecked cast
-			return ((Spec)element).sortValue;
+			return toString;
 		}
 	}
-    
-    private class FileSpecLabelProvider extends LabelProvider{
-    	/* (non-Javadoc)
-    	 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-    	 */
-    	public String getText(Object element) {
-    		String label = super.getText(element);
-    		return TextProcessor.process(label, "*.");	//$NON-NLS-1$
-    	}
-    }
-    
-    private class FileSpecContentProvider implements IStructuredContentProvider {
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
-        public void dispose() {
-        }
+	private class FileSpecComparator extends ViewerComparator {
+		public int category(Object element) {
+			// only Spec objects in here - unchecked cast
+			return ((Spec) element).sortValue;
+		}
+	}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-         *      java.lang.Object, java.lang.Object)
-         */
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        }
+	private class FileSpecLabelProvider extends LabelProvider {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			String label = super.getText(element);
+			return TextProcessor.process(label, "*."); //$NON-NLS-1$
+		}
+	}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
-        public Object[] getElements(Object inputElement) {
-            IContentType contentType = (IContentType) inputElement;
-            String[] userextfileSpecs = contentType
-                    .getFileSpecs(IContentType.FILE_EXTENSION_SPEC
-                            | IContentType.IGNORE_PRE_DEFINED);
-            String[] usernamefileSpecs = contentType
-                    .getFileSpecs(IContentType.FILE_NAME_SPEC
-                            | IContentType.IGNORE_PRE_DEFINED);
-            String[] preextfileSpecs = contentType
-                    .getFileSpecs(IContentType.FILE_EXTENSION_SPEC
-                            | IContentType.IGNORE_USER_DEFINED);
-            String[] prenamefileSpecs = contentType
-                    .getFileSpecs(IContentType.FILE_NAME_SPEC
-                            | IContentType.IGNORE_USER_DEFINED);
+	private class FileSpecContentProvider implements IStructuredContentProvider {
 
-            return createSpecs(userextfileSpecs, usernamefileSpecs,
-                    preextfileSpecs, prenamefileSpecs);
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
+		}
 
-        private Object[] createSpecs(String[] userextfileSpecs,
-                String[] usernamefileSpecs, String[] preextfileSpecs,
-                String[] prenamefileSpecs) {
-            List returnValues = new ArrayList();
-            for (int i = 0; i < usernamefileSpecs.length; i++) {
-                Spec spec = new Spec();
-                spec.name = usernamefileSpecs[i];
-                spec.isPredefined = false;
-                spec.sortValue = 0;
-                returnValues.add(spec);
-            }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		}
 
-            for (int i = 0; i < prenamefileSpecs.length; i++) {
-                Spec spec = new Spec();
-                spec.name = prenamefileSpecs[i];
-                spec.isPredefined = true;
-                spec.sortValue = 1;
-                returnValues.add(spec);
-            }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			IContentType contentType = (IContentType) inputElement;
+			String[] userextfileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC
+							| IContentType.IGNORE_PRE_DEFINED);
+			String[] usernamefileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_NAME_SPEC
+							| IContentType.IGNORE_PRE_DEFINED);
+			String[] preextfileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_EXTENSION_SPEC
+							| IContentType.IGNORE_USER_DEFINED);
+			String[] prenamefileSpecs = contentType
+					.getFileSpecs(IContentType.FILE_NAME_SPEC
+							| IContentType.IGNORE_USER_DEFINED);
 
-            for (int i = 0; i < userextfileSpecs.length; i++) {
-                Spec spec = new Spec();
-                spec.ext = userextfileSpecs[i];
-                spec.isPredefined = false;
-                spec.sortValue = 2;
-                returnValues.add(spec);
-            }
+			return createSpecs(userextfileSpecs, usernamefileSpecs,
+					preextfileSpecs, prenamefileSpecs);
+		}
 
-            for (int i = 0; i < preextfileSpecs.length; i++) {
-                Spec spec = new Spec();
-                spec.ext = preextfileSpecs[i];
-                spec.isPredefined = true;
-                spec.sortValue = 3;
-                returnValues.add(spec);
-            }
+		private Object[] createSpecs(String[] userextfileSpecs,
+				String[] usernamefileSpecs, String[] preextfileSpecs,
+				String[] prenamefileSpecs) {
+			List returnValues = new ArrayList();
+			for (int i = 0; i < usernamefileSpecs.length; i++) {
+				Spec spec = new Spec();
+				spec.name = usernamefileSpecs[i];
+				spec.isPredefined = false;
+				spec.sortValue = 0;
+				returnValues.add(spec);
+			}
 
-            return returnValues.toArray();
-        }
-    }
+			for (int i = 0; i < prenamefileSpecs.length; i++) {
+				Spec spec = new Spec();
+				spec.name = prenamefileSpecs[i];
+				spec.isPredefined = true;
+				spec.sortValue = 1;
+				returnValues.add(spec);
+			}
 
-    private class ContentTypesLabelProvider extends LabelProvider {
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
-         */
-        public String getText(Object element) {
-            IContentType contentType = (IContentType) element;
-            return contentType.getName();
-        }
-    }
+			for (int i = 0; i < userextfileSpecs.length; i++) {
+				Spec spec = new Spec();
+				spec.ext = userextfileSpecs[i];
+				spec.isPredefined = false;
+				spec.sortValue = 2;
+				returnValues.add(spec);
+			}
 
-    private class ContentTypesContentProvider implements ITreeContentProvider {
+			for (int i = 0; i < preextfileSpecs.length; i++) {
+				Spec spec = new Spec();
+				spec.ext = preextfileSpecs[i];
+				spec.isPredefined = true;
+				spec.sortValue = 3;
+				returnValues.add(spec);
+			}
 
-        private IContentTypeManager manager;
+			return returnValues.toArray();
+		}
+	}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-         */
-        public Object[] getChildren(Object parentElement) {
-            List elements = new ArrayList();
-            IContentType baseType = (IContentType) parentElement;
-            IContentType[] contentTypes = manager.getAllContentTypes();
-            for (int i = 0; i < contentTypes.length; i++) {
-                IContentType type = contentTypes[i];
-                if (Util.equals(type.getBaseType(), baseType)) {
+	private class ContentTypesLabelProvider extends LabelProvider {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
+		 */
+		public String getText(Object element) {
+			IContentType contentType = (IContentType) element;
+			return contentType.getName();
+		}
+	}
+
+	private class ContentTypesContentProvider implements ITreeContentProvider {
+
+		private IContentTypeManager manager;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
+		 */
+		public Object[] getChildren(Object parentElement) {
+			List elements = new ArrayList();
+			IContentType baseType = (IContentType) parentElement;
+			IContentType[] contentTypes = manager.getAllContentTypes();
+			for (int i = 0; i < contentTypes.length; i++) {
+				IContentType type = contentTypes[i];
+				if (Util.equals(type.getBaseType(), baseType)) {
 					elements.add(type);
 				}
-            }
-            return elements.toArray();
-        }
+			}
+			return elements.toArray();
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-         */
-        public Object getParent(Object element) {
-            IContentType contentType = (IContentType) element;
-            return contentType.getBaseType();
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
+		 */
+		public Object getParent(Object element) {
+			IContentType contentType = (IContentType) element;
+			return contentType.getBaseType();
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-         */
-        public boolean hasChildren(Object element) {
-            return getChildren(element).length > 0;
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
+		 */
+		public boolean hasChildren(Object element) {
+			return getChildren(element).length > 0;
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-         */
-        public Object[] getElements(Object inputElement) {
-            return getChildren(null);
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+		 */
+		public Object[] getElements(Object inputElement) {
+			return getChildren(null);
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-         */
-        public void dispose() {
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+		 */
+		public void dispose() {
 
-        }
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-         *      java.lang.Object, java.lang.Object)
-         */
-        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-            manager = (IContentTypeManager) newInput;
-        }
-    }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+		 *      java.lang.Object, java.lang.Object)
+		 */
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+			manager = (IContentTypeManager) newInput;
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-     */
-    protected Control createContents(Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(2, false);
-        layout.marginHeight = layout.marginWidth = 0;
-        composite.setLayout(layout);
-        
-        PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(
-                composite,
-                SWT.NONE,
-                "org.eclipse.ui.preferencePages.FileEditors", WorkbenchMessages.ContentTypes_FileEditorsRelatedLink,//$NON-NLS-1$
-                (IWorkbenchPreferenceContainer) getContainer(), null);
-                
-        GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
-        contentTypeArea.getControl().setLayoutData(data);
-        
-        createContentTypesTree(composite);
-        createFileAssociations(composite);
-        createCharset(composite);
-        
-        workbench.getHelpSystem().setHelp(parent,
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(2, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayout(layout);
+
+		PreferenceLinkArea contentTypeArea = new PreferenceLinkArea(
+				composite,
+				SWT.NONE,
+				"org.eclipse.ui.preferencePages.FileEditors", WorkbenchMessages.ContentTypes_FileEditorsRelatedLink,//$NON-NLS-1$
+				(IWorkbenchPreferenceContainer) getContainer(), null);
+
+		GridData data = new GridData(GridData.FILL_HORIZONTAL
+				| GridData.GRAB_HORIZONTAL);
+		contentTypeArea.getControl().setLayoutData(data);
+
+		createContentTypesTree(composite);
+		createFileAssociations(composite);
+		createCharset(composite);
+
+		workbench.getHelpSystem().setHelp(parent,
 				IWorkbenchHelpContextIds.CONTENT_TYPES_PREFERENCE_PAGE);
 
-        applyDialogFont(composite);
-        return composite;
-    }
+		applyDialogFont(composite);
+		return composite;
+	}
 
-    private void createCharset(final Composite parent) {
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout(3, false);
-        layout.marginHeight = layout.marginWidth = 0;
-        composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        composite.setLayout(layout);
+	private void createCharset(final Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginHeight = layout.marginWidth = 0;
+		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(layout);
 
-        Label label = new Label(composite, SWT.NONE);
-        label.setFont(parent.getFont());
-        label.setText(WorkbenchMessages.ContentTypes_characterSetLabel);
-        charsetField = new Text(composite, SWT.SINGLE | SWT.BORDER);
-        charsetField.setFont(parent.getFont());
-        charsetField.setEnabled(false);
-        GridData data = new GridData(GridData.FILL_HORIZONTAL);
-        charsetField.setLayoutData(data);
-        setButton = new Button(composite, SWT.PUSH);
-        setButton.setFont(parent.getFont());
-        setButton
-                .setText(WorkbenchMessages.ContentTypes_characterSetUpdateLabel);
-        setButton.setEnabled(false);
-        setButton.addSelectionListener(new SelectionAdapter() {
-            
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-             */
-            public void widgetSelected(SelectionEvent e) {
-                try {
-                    String text = charsetField.getText().trim();
-                    if (text.length() == 0) {
+		Label label = new Label(composite, SWT.NONE);
+		label.setFont(parent.getFont());
+		label.setText(WorkbenchMessages.ContentTypes_characterSetLabel);
+		charsetField = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		charsetField.setFont(parent.getFont());
+		charsetField.setEnabled(false);
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		charsetField.setLayoutData(data);
+		setButton = new Button(composite, SWT.PUSH);
+		setButton.setFont(parent.getFont());
+		setButton
+				.setText(WorkbenchMessages.ContentTypes_characterSetUpdateLabel);
+		setButton.setEnabled(false);
+		setButton.addSelectionListener(new SelectionAdapter() {
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					String text = charsetField.getText().trim();
+					if (text.length() == 0) {
 						text = null;
 					}
-                    getSelectedContentType().setDefaultCharset(text);
-                    setButton.setEnabled(false);
-                } catch (CoreException e1) {
+					getSelectedContentType().setDefaultCharset(text);
+					setButton.setEnabled(false);
+				} catch (CoreException e1) {
 					StatusManager.getManager().handle(e1.getStatus(),
 							StatusManager.SHOW);
 				}
-            }
-        });
+			}
+		});
 
-        charsetField.addKeyListener(new KeyAdapter() {
-            /*
-             * (non-Javadoc)
-             * 
-             * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
-             */
-            public void keyReleased(KeyEvent e) {
-                IContentType contentType = getSelectedContentType();
-                String charset = contentType.getDefaultCharset();
-                if (charset == null) {
+		charsetField.addKeyListener(new KeyAdapter() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.swt.events.KeyAdapter#keyReleased(org.eclipse.swt.events.KeyEvent)
+			 */
+			public void keyReleased(KeyEvent e) {
+				IContentType contentType = getSelectedContentType();
+				String charset = contentType.getDefaultCharset();
+				if (charset == null) {
 					charset = ""; //$NON-NLS-1$
 				}
-                setButton.setEnabled(!charset.equals(charsetField.getText()));
-            }
-        });
+				setButton.setEnabled(!charset.equals(charsetField.getText()));
+			}
+		});
 
-    }
+	}
 
-    /**
-     * @param composite
-     */
-    private void createFileAssociations(final Composite composite) {
-        {
-            Label label = new Label(composite, SWT.NONE);
-            label.setFont(composite.getFont());
-            label
-                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsLabel);
-            GridData data = new GridData();
-            data.horizontalSpan = 2;
-            label.setLayoutData(data);
-        }
-        {
-            fileAssociationViewer = new ListViewer(composite);
-            fileAssociationViewer.setComparator(new FileSpecComparator());
-            fileAssociationViewer.getControl().setFont(composite.getFont());
-            fileAssociationViewer
-                    .setContentProvider(new FileSpecContentProvider());
-            fileAssociationViewer.setLabelProvider(new FileSpecLabelProvider());
-            GridData data = new GridData(GridData.FILL_BOTH);
-            data.horizontalSpan = 1;
-            fileAssociationViewer.getControl().setLayoutData(data);
-            fileAssociationViewer
-                    .addSelectionChangedListener(new ISelectionChangedListener() {
+	/**
+	 * @param composite
+	 */
+	private void createFileAssociations(final Composite composite) {
+		{
+			Label label = new Label(composite, SWT.NONE);
+			label.setFont(composite.getFont());
+			label.setText(WorkbenchMessages.ContentTypes_fileAssociationsLabel);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			label.setLayoutData(data);
+		}
+		{
+			fileAssociationViewer = new ListViewer(composite);
+			fileAssociationViewer.setComparator(new FileSpecComparator());
+			fileAssociationViewer.getControl().setFont(composite.getFont());
+			fileAssociationViewer
+					.setContentProvider(new FileSpecContentProvider());
+			fileAssociationViewer.setLabelProvider(new FileSpecLabelProvider());
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.horizontalSpan = 1;
+			fileAssociationViewer.getControl().setLayoutData(data);
+			fileAssociationViewer
+					.addSelectionChangedListener(new ISelectionChangedListener() {
 
-                        public void selectionChanged(SelectionChangedEvent event) {
-                            IStructuredSelection selection = (IStructuredSelection) event
-                                    .getSelection();
-                            if (selection.isEmpty()) {
-                                removeButton.setEnabled(false);
-                                return;
-                            }
-                            boolean enabled = true;
-                            List elements = selection.toList();
-                            for (Iterator i = elements.iterator(); i.hasNext();) {
-                                Spec spec = (Spec) i.next();
-                                if (spec.isPredefined) {
+						public void selectionChanged(SelectionChangedEvent event) {
+							IStructuredSelection selection = (IStructuredSelection) event
+									.getSelection();
+							if (selection.isEmpty()) {
+								removeButton.setEnabled(false);
+								return;
+							}
+							boolean enabled = true;
+							List elements = selection.toList();
+							for (Iterator i = elements.iterator(); i.hasNext();) {
+								Spec spec = (Spec) i.next();
+								if (spec.isPredefined) {
 									enabled = false;
 								}
-                            }
-                            removeButton.setEnabled(enabled);
-                        }
-                    });
-        }
-        {
-            Composite buttonArea = new Composite(composite, SWT.NONE);
-            GridLayout layout = new GridLayout(1, false);
-            layout.marginHeight = layout.marginWidth = 0;
-            buttonArea.setLayout(layout);
-            GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-            buttonArea.setLayoutData(data);
+							}
+							removeButton.setEnabled(enabled);
+						}
+					});
+		}
+		{
+			Composite buttonArea = new Composite(composite, SWT.NONE);
+			GridLayout layout = new GridLayout(1, false);
+			layout.marginHeight = layout.marginWidth = 0;
+			buttonArea.setLayout(layout);
+			GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+			buttonArea.setLayoutData(data);
 
-            addButton = new Button(buttonArea, SWT.PUSH);
-            addButton.setFont(composite.getFont());
-            setButtonLayoutData(addButton);
-            addButton
-                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
-            addButton.setEnabled(false);
-            addButton.addSelectionListener(new SelectionAdapter() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
-                public void widgetSelected(SelectionEvent e) {
-                    Shell shell = composite.getShell();
-                    IContentType selectedContentType = getSelectedContentType();
-                    FileExtensionDialog dialog = new FileExtensionDialog(shell);
-                    if (dialog.open() == Window.OK) {
+			addButton = new Button(buttonArea, SWT.PUSH);
+			addButton.setFont(composite.getFont());
+			setButtonLayoutData(addButton);
+			addButton
+					.setText(WorkbenchMessages.ContentTypes_fileAssociationsAddLabel);
+			addButton.setEnabled(false);
+			addButton.addSelectionListener(new SelectionAdapter() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetSelected(SelectionEvent e) {
+					Shell shell = composite.getShell();
+					IContentType selectedContentType = getSelectedContentType();
+					FileExtensionDialog dialog = new FileExtensionDialog(shell);
+					if (dialog.open() == Window.OK) {
 						String name = dialog.getName();
 						String extension = dialog.getExtension();
 						try {
@@ -464,141 +466,143 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 								selectedContentType.addFileSpec(extension,
 										IContentType.FILE_EXTENSION_SPEC);
 							} else {
-								selectedContentType.addFileSpec(name + (extension.length() > 0 ? ('.'
-										+ extension) : ""), //$NON-NLS-1$
-										IContentType.FILE_NAME_SPEC);
+								selectedContentType
+										.addFileSpec(
+												name
+														+ (extension.length() > 0 ? ('.' + extension)
+																: ""), //$NON-NLS-1$
+												IContentType.FILE_NAME_SPEC);
 							}
 						} catch (CoreException ex) {
 							StatusManager.getManager().handle(ex.getStatus(),
-									StatusManager.SHOWANDLOG);
-						}
-						finally {
+									StatusManager.SHOW);
+							WorkbenchPlugin.log(ex);
+						} finally {
 							fileAssociationViewer.setInput(selectedContentType);
 						}
 					}
-                }
-            });
+				}
+			});
 
-            removeButton = new Button(buttonArea, SWT.PUSH);
-            removeButton.setFont(composite.getFont());
-            setButtonLayoutData(removeButton);
-            removeButton.setEnabled(false);
-            removeButton
-                    .setText(WorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
-            removeButton.addSelectionListener(new SelectionAdapter() {
-                /*
-                 * (non-Javadoc)
-                 * 
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
-                public void widgetSelected(SelectionEvent event) {
-                    IContentType contentType = getSelectedContentType();
-                    Spec[] specs = getSelectedSpecs();
-                    MultiStatus result = new MultiStatus(
-                            PlatformUI.PLUGIN_ID,
-                            0,
-                            new IStatus[0],
-                            WorkbenchMessages.ContentTypes_errorDialogMessage,
-                            null);
-                    for (int i = 0; i < specs.length; i++) {
-                        Spec spec = specs[i];
-                        try {
-                            if (spec.name != null) {
-                                contentType.removeFileSpec(spec.name,
-                                        IContentType.FILE_NAME_SPEC);
-                            } else if (spec.ext != null) {
-                                contentType.removeFileSpec(spec.ext,
-                                        IContentType.FILE_EXTENSION_SPEC);
-                            }
-                        } catch (CoreException e) {
-                            result.add(e.getStatus());
-                        }
-                    }
-                    if (!result.isOK()) {
-                        StatusManager.getManager().handle(result, StatusManager.SHOW);
-                    }
-                    fileAssociationViewer.setInput(contentType);
-                }
-            });
-        }
-    }
+			removeButton = new Button(buttonArea, SWT.PUSH);
+			removeButton.setFont(composite.getFont());
+			setButtonLayoutData(removeButton);
+			removeButton.setEnabled(false);
+			removeButton
+					.setText(WorkbenchMessages.ContentTypes_fileAssociationsRemoveLabel);
+			removeButton.addSelectionListener(new SelectionAdapter() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+				 */
+				public void widgetSelected(SelectionEvent event) {
+					IContentType contentType = getSelectedContentType();
+					Spec[] specs = getSelectedSpecs();
+					MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID,
+							0, new IStatus[0],
+							WorkbenchMessages.ContentTypes_errorDialogMessage,
+							null);
+					for (int i = 0; i < specs.length; i++) {
+						Spec spec = specs[i];
+						try {
+							if (spec.name != null) {
+								contentType.removeFileSpec(spec.name,
+										IContentType.FILE_NAME_SPEC);
+							} else if (spec.ext != null) {
+								contentType.removeFileSpec(spec.ext,
+										IContentType.FILE_EXTENSION_SPEC);
+							}
+						} catch (CoreException e) {
+							result.add(e.getStatus());
+						}
+					}
+					if (!result.isOK()) {
+						StatusManager.getManager().handle(result,
+								StatusManager.SHOW);
+					}
+					fileAssociationViewer.setInput(contentType);
+				}
+			});
+		}
+	}
 
-    protected Spec[] getSelectedSpecs() {
-        List list = ((IStructuredSelection) fileAssociationViewer
-                .getSelection()).toList();
-        return (Spec[]) list.toArray(new Spec[list.size()]);
-    }
+	protected Spec[] getSelectedSpecs() {
+		List list = ((IStructuredSelection) fileAssociationViewer
+				.getSelection()).toList();
+		return (Spec[]) list.toArray(new Spec[list.size()]);
+	}
 
-    protected IContentType getSelectedContentType() {
-        return (IContentType) ((IStructuredSelection) contentTypesViewer
-                .getSelection()).getFirstElement();
-    }
+	protected IContentType getSelectedContentType() {
+		return (IContentType) ((IStructuredSelection) contentTypesViewer
+				.getSelection()).getFirstElement();
+	}
 
-    /**
-     * @param composite
-     */
-    private void createContentTypesTree(Composite composite) {
-        {
-            Label label = new Label(composite, SWT.NONE);
-            label.setFont(composite.getFont());
-            label.setText(WorkbenchMessages.ContentTypes_contentTypesLabel);
-            GridData data = new GridData();
-            data.horizontalSpan = 2;
-            label.setLayoutData(data);
-        }
-        {
-            contentTypesViewer = new TreeViewer(composite, SWT.SINGLE
-                    | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-            contentTypesViewer.getControl().setFont(composite.getFont());
-            contentTypesViewer
-                    .setContentProvider(new ContentTypesContentProvider());
-            contentTypesViewer
-                    .setLabelProvider(new ContentTypesLabelProvider());
-            contentTypesViewer.setComparator(new ViewerComparator());
-            contentTypesViewer.setInput(Platform.getContentTypeManager());
-            GridData data = new GridData(GridData.FILL_BOTH);
-            data.horizontalSpan = 2;
-            contentTypesViewer.getControl().setLayoutData(data);
+	/**
+	 * @param composite
+	 */
+	private void createContentTypesTree(Composite composite) {
+		{
+			Label label = new Label(composite, SWT.NONE);
+			label.setFont(composite.getFont());
+			label.setText(WorkbenchMessages.ContentTypes_contentTypesLabel);
+			GridData data = new GridData();
+			data.horizontalSpan = 2;
+			label.setLayoutData(data);
+		}
+		{
+			contentTypesViewer = new TreeViewer(composite, SWT.SINGLE
+					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+			contentTypesViewer.getControl().setFont(composite.getFont());
+			contentTypesViewer
+					.setContentProvider(new ContentTypesContentProvider());
+			contentTypesViewer
+					.setLabelProvider(new ContentTypesLabelProvider());
+			contentTypesViewer.setComparator(new ViewerComparator());
+			contentTypesViewer.setInput(Platform.getContentTypeManager());
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.horizontalSpan = 2;
+			contentTypesViewer.getControl().setLayoutData(data);
 
-            contentTypesViewer
-                    .addSelectionChangedListener(new ISelectionChangedListener() {
+			contentTypesViewer
+					.addSelectionChangedListener(new ISelectionChangedListener() {
 
-                        /*
-                         * (non-Javadoc)
-                         * 
-                         * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-                         */
-                        public void selectionChanged(SelectionChangedEvent event) {
-                            IContentType contentType = (IContentType) ((IStructuredSelection) event
-                                    .getSelection()).getFirstElement();
-                            fileAssociationViewer.setInput(contentType);
+						/*
+						 * (non-Javadoc)
+						 * 
+						 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
+						 */
+						public void selectionChanged(SelectionChangedEvent event) {
+							IContentType contentType = (IContentType) ((IStructuredSelection) event
+									.getSelection()).getFirstElement();
+							fileAssociationViewer.setInput(contentType);
 
-                            if (contentType != null) {
-                                String charset = contentType
-                                        .getDefaultCharset();
-                                if (charset == null) {
+							if (contentType != null) {
+								String charset = contentType
+										.getDefaultCharset();
+								if (charset == null) {
 									charset = ""; //$NON-NLS-1$
 								}
-                                charsetField.setText(charset);
-                            } else {
+								charsetField.setText(charset);
+							} else {
 								charsetField.setText(""); //$NON-NLS-1$
 							}
 
-                            charsetField.setEnabled(contentType != null);
-                            addButton.setEnabled(contentType != null);
-                            setButton.setEnabled(false);
-                        }
-                    });
-        }
-    }
+							charsetField.setEnabled(contentType != null);
+							addButton.setEnabled(contentType != null);
+							setButton.setEnabled(false);
+						}
+					});
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-     */
-    public void init(IWorkbench workbench) {
-    		this.workbench = workbench;
-        noDefaultAndApplyButton();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
+	 */
+	public void init(IWorkbench workbench) {
+		this.workbench = workbench;
+		noDefaultAndApplyButton();
+	}
 }

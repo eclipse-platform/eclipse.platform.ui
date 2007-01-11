@@ -26,7 +26,6 @@ import java.util.Locale;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,9 +49,7 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Displays system information about the eclipse application.  The content of
@@ -157,10 +154,10 @@ public final class AboutSystemDialog extends ProductInfoDialog {
                 obj = WorkbenchPlugin.createExtension(element,
                         IWorkbenchConstants.TAG_CLASS);
             } catch (CoreException e) {
-				IStatus status = StatusUtil.newStatus(e.getStatus(),
-						"could not create class attribute for extension"); //$NON-NLS-1$ 
-				StatusManager.getManager().handle(status);
-			}
+                WorkbenchPlugin.log(
+                        "could not create class attribute for extension", //$NON-NLS-1$
+                        e.getStatus());
+            }
 
             writer.println();
             writer.println(NLS.bind(WorkbenchMessages.SystemSummary_sectionTitle, element.getAttribute("sectionTitle") )); //$NON-NLS-1$

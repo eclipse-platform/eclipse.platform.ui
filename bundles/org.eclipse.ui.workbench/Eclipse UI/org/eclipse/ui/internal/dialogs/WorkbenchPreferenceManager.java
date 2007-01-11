@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -30,7 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * The WorkbenchPreferenceManager is the manager that can handle categories and
@@ -139,9 +136,8 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements
 				}
 				if (parent == null) {
 					// Could not find the parent - log
-					String message = "Invalid preference page path: " + category; //$NON-NLS-1$
-					IStatus status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, message); 
-			    	StatusManager.getManager().handle(status);
+					WorkbenchPlugin
+							.log("Invalid preference page path: " + category); //$NON-NLS-1$
 					addToRoot(node);
 				} else {
 					parent.add(node);

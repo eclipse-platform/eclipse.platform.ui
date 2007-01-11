@@ -32,14 +32,12 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * This property page contributor is created from page entry in the registry.
@@ -260,8 +258,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 					new EvaluationContext(null, object)).equals(
 					EvaluationResult.FALSE);
 		} catch (CoreException e) {
-			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e); 
-	    	StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(e);
 			return false;
 		}
 	}
@@ -283,8 +280,7 @@ public class RegistryPageContributor implements IPropertyPageContributor,
 			enablementExpression = ExpressionConverter.getDefault().perform(
 					enablement[0]);
 		} catch (CoreException e) {
-			IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e); 
-	    	StatusManager.getManager().handle(status);
+			WorkbenchPlugin.log(e);
 		}
 
 	}
