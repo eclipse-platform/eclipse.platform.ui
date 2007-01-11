@@ -58,10 +58,13 @@ public abstract class StructureCreator implements IStructureCreator2 {
 				}			
 			}
 			
-			if (contents != null) {
-				doc= new Document(contents);
-				setupDocument(doc);				
+			if (contents == null) {
+				// Node has no contents
+				return null;
 			}
+			
+			doc= new Document(contents);
+			setupDocument(doc);				
 		}
 		
 		try {
