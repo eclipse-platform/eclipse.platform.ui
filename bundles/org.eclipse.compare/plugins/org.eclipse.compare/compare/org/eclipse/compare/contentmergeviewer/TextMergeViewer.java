@@ -4381,13 +4381,24 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			if (p != null) {
 				int startOffset= p.getOffset();
 				int endOffset= startOffset + p.getLength();
-				if (start > endOffset)
+				if (start > endOffset) {
+					if (deep && diff.fDiffs != null) {
+						// If we are going deep, find the last change in the diff
+						return findPrev(tp, diff.fDiffs, end, end, deep);
+					}
 					return diff;
+				}
 				if (deep && diff.fDiffs != null) {
 					Diff d= null;
 					if (start == startOffset && end == endOffset) {
-						d= findPrev(tp, diff.fDiffs, end, end, deep);
+						// A whole diff is selected so we'll fall through
+						// and go the the last change in the previous diff
 					} else if (start >= startOffset) {
+						// If we are at or before the first diff, select the 
+						// entire diff so next and previous are symmetrical
+						if (isFirstDiff(tp, startOffset, diff.fDiffs)) {
+							return diff;
+						}
 						d= findPrev(tp, diff.fDiffs, start, end, deep);
 					}
 					if (d != null)
@@ -4398,6 +4409,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		return null;
 	}
 		
+	private static boolean isFirstDiff(MergeSourceViewer tp, int startOffset,
+			ArrayList diffs) {
+		if (diffs.isEmpty())
+			return false;
+		Diff diff = (Diff)diffs.get(0);
+		Position p= diff.getPosition(tp);
+		return (p.getOffset() >= startOffset);
+	}
+
 	/*
 	 * Set the currently active Diff and update the toolbars controls and lines.
 	 * If <code>revealAndSelect</code> is <code>true</code> the Diff is revealed and
