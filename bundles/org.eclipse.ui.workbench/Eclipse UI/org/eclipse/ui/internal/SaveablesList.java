@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -55,6 +57,7 @@ import org.eclipse.ui.Saveable;
 import org.eclipse.ui.SaveablesLifecycleEvent;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
@@ -98,6 +101,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		if (modelsForSource.add(model)) {
 			result = incrementRefCount(modelRefCounts, model);
+		} else {
+			logWarning(
+					"Ignored attempt to add saveable that was already registered", source, model); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -145,22 +151,36 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		boolean result = false;
 		Set modelsForSource = (Set) modelMap.get(source);
 		if (modelsForSource == null) {
-			modelsForSource = new HashSet();
-			modelMap.put(source, modelsForSource);
-		}
-		if (modelsForSource.remove(model)) {
-			result = decrementRefCount(modelRefCounts, model);
-			if (modelsForSource.isEmpty()) {
-				modelMap.remove(source);
+			logWarning(
+					"Ignored attempt to remove a saveable when no saveables were known", source, model); //$NON-NLS-1$
+		} else {
+			if (modelsForSource.remove(model)) {
+				result = decrementRefCount(modelRefCounts, model);
+				if (modelsForSource.isEmpty()) {
+					modelMap.remove(source);
+				}
+			} else {
+				logWarning(
+						"Ignored attempt to remove a saveable that was not registered", source, model); //$NON-NLS-1$
 			}
 		}
 		return result;
 	}
 
+	private void logWarning(String message, Object source, Saveable model) {
+		// create a new exception 
+		AssertionFailedException assertionFailedException = new AssertionFailedException("unknown saveable: " + model //$NON-NLS-1$
+				+ " from part: " + source); //$NON-NLS-1$
+		// record the current stack trace to help with debugging
+		assertionFailedException.fillInStackTrace();
+		WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.WARNING, message,
+				assertionFailedException));
+	}
+
 	/**
 	 * This implementation of handleModelLifecycleEvent must be called by
-	 * implementers of ISaveablesSource whenever the list of models of the
-	 * model source changes, or when the dirty state of models changes. The
+	 * implementers of ISaveablesSource whenever the list of models of the model
+	 * source changes, or when the dirty state of models changes. The
 	 * ISaveablesSource instance must be passed as the source of the event
 	 * object.
 	 * <p>
