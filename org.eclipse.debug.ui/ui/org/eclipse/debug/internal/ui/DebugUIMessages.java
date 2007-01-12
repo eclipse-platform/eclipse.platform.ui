@@ -173,10 +173,16 @@ public class DebugUIMessages extends NLS {
 	public static String TableRenderingPropertiesPage_25;
 	public static String TableRenderingPropertiesPage_26;
 	public static String TableRenderingPrefAction_0;
-	public static String TableRenderingPreferencePage_1;
+	public static String TableRenderingPreferencePage_0;
 	public static String TableRenderingPreferencePage_2;
 	public static String TableRenderingPreferencePage_3;
 	public static String TableRenderingPreferencePage_4;
+	public static String TableRenderingPreferencePage_5;
+	public static String TableRenderingPreferencePage_6;
+	public static String TableRenderingPreferencePage_7;
+	public static String TableRenderingPreferencePage_8;
+	public static String TableRenderingPreferencePage_9;
+	public static String TableRenderingPreferencePage_10;
 	public static String TableRenderingContentProvider_0;
 	public static String TableRenderingContentProvider_1;
 	public static String TableRenderingContentProvider_2;

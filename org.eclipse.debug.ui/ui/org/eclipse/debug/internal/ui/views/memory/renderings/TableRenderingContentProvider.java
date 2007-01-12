@@ -128,6 +128,9 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			}
 		}
 		
+		if (lineCache.isEmpty())
+			return lineCache.toArray();
+		
 		// check to see if the row size has changed
 		TableRenderingLine line = (TableRenderingLine)lineCache.get(0);
 		int currentRowSize = line.getByteArray().length;
@@ -168,7 +171,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// get as much memory as the memory block can handle
 		fInput.setPreBuffer(0);
 		fInput.setPostBuffer(0);
-		fInput.setDefaultBufferSize(0);
 		long startAddress = fInput.getMemoryBlock().getStartAddress();
 		BigInteger address = BigInteger.valueOf(startAddress);
 		long length = fInput.getMemoryBlock().getLength();
@@ -180,6 +182,10 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 * @throws DebugException
 	 */
 	public void loadContentForExtendedMemoryBlock() throws DebugException {
+		
+		// do not load if number of lines needed is < 0
+		if (fInput.getNumLines() <= 0)
+			return;
 		
 		// calculate top buffered address
 		BigInteger loadAddress = fInput.getLoadAddress();
@@ -216,7 +222,17 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 				bufferStart = mbStart;
 			
 			if (bufferEnd.compareTo(mbEnd) > 0)
+			{
 				bufferEnd = mbEnd;
+				
+				int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue();
+				if (numLines < fInput.getNumLines())
+				{
+					// re-calculate buffer start since we may not have enough lines to popoulate the view
+					bufferStart = bufferEnd.subtract(BigInteger.valueOf(fInput.getNumLines()*addressableUnitsPerLine));
+					bufferStart = bufferStart.subtract(BigInteger.valueOf(fInput.getPreBuffer()*addressableUnitsPerLine));
+				}
+			}
 			
 			// buffer end must be greater than buffer start
 			if (bufferEnd.compareTo(bufferStart) <= 0)
@@ -773,7 +789,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 	 */
 	public boolean isAddressOutOfRange(BigInteger address)
 	{
-		if (lineCache != null)
+		if (lineCache != null && !lineCache.isEmpty())
 		{
 			TableRenderingLine first = (TableRenderingLine)lineCache.firstElement();
 			TableRenderingLine last = (TableRenderingLine) lineCache.lastElement();

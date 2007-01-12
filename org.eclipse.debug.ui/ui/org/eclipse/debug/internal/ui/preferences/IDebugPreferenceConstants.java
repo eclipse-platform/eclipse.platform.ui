@@ -253,6 +253,22 @@ public interface IDebugPreferenceConstants {
 	 * @since 3.2
 	 */
 	public static final String PREF_COL_SIZE_BY_MODEL = "org.eclipse.debug.ui.AbstractTableRendering.colSize"; //$NON-NLS-1$
+	
+	/**
+	 * Number of lines to preload before the visible region in the table rendering
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_TABLE_RENDERING_PRE_BUFFER_SIZE = "org.eclispe.debug.ui.memory.preBufferSize"; //$NON-NLS-1$
+	
+	/**
+	 * Number of lines to preload after the visible region in the table rendering
+	 * 
+	 * @since 3.3
+	 */
+	public static final String PREF_TABLE_RENDERING_POST_BUFFER_SIZE = "org.eclispe.debug.ui.memory.postBufferSize"; //$NON-NLS-1$
+
 }
+
 
 

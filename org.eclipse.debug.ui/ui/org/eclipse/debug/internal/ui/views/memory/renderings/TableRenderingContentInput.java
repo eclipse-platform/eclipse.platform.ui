@@ -29,7 +29,6 @@ public class TableRenderingContentInput extends PlatformObject {
 	private IMemoryRendering fRendering;
 	private int fPreBuffer;					// number of lines before the top visible line
 	private int fPostBuffer;				// number of lines after thes last visible line
-	private int fDefaultBufferSize;
 	private BigInteger fLoadAddress;		// Top address to load at the table
 	private int fNumLines;					// number of visible lines
 	private boolean fUpdateDelta;			// should the content provider calculate delta info
@@ -37,14 +36,13 @@ public class TableRenderingContentInput extends PlatformObject {
 	private BigInteger fStartAddress;
 	private BigInteger fEndAddress;
 	
-	public TableRenderingContentInput(IMemoryRendering rendering, int preBuffer, int postBuffer, int defaultBufferSize, BigInteger loadAddress, int numOfLines, boolean updateDelta, BigInteger contentBaseAddress)
+	public TableRenderingContentInput(IMemoryRendering rendering, int preBuffer, int postBuffer, BigInteger loadAddress, int numOfLines, boolean updateDelta, BigInteger contentBaseAddress)
 	{
 		fRendering = rendering;
 		fPreBuffer = preBuffer;
 		fPostBuffer = postBuffer;
 		fLoadAddress = loadAddress;
 		fNumLines = numOfLines;
-		fDefaultBufferSize = defaultBufferSize;
 		fUpdateDelta = updateDelta;
 
 		if (contentBaseAddress == null)
@@ -79,12 +77,6 @@ public class TableRenderingContentInput extends PlatformObject {
 	}
 	public void setPreBuffer(int preBuffer) {
 		fPreBuffer = preBuffer;
-	}
-	public int getDefaultBufferSize() {
-		return fDefaultBufferSize;
-	}
-	public void setDefaultBufferSize(int defaultBufferSize) {
-		fDefaultBufferSize = defaultBufferSize;
 	}
 	public boolean isUpdateDelta() {
 		return fUpdateDelta;

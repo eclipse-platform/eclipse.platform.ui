@@ -104,6 +104,8 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -115,7 +117,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -198,6 +202,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * This property is used for synchronization between renderings.
 	 */
 	public static final String PROPERTY_ROW_SIZE = AbstractTableRendering.PROPERTY_ROW_SIZE;
+
+	private static final int DEFAULT_BUFFER_THRESHOLD = 1;
 	
 	private boolean fActivated = false;
 	
@@ -379,6 +385,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private String fLabel;
 	private IWorkbenchAdapter fWorkbenchAdapter;
 	private int fPageSize;
+	private int fPreBufferSize = -1;
+	private int fPostBufferSize = -1;
 	private SashForm fSashForm;
 	private GoToAddressComposite fGoToAddressComposite;
 	
@@ -460,11 +468,14 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}};
 	
 	private IVirtualContentListener fViewerListener = new IVirtualContentListener() {
+		
+		private int startThreshold;
+		private int endThreshold;
 
 		public void handledAtBufferStart() {
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				if (isDynamicLoad())
+				if (isDynamicLoad() && startThreshold != 0)
 				{
 					BigInteger address = getTopVisibleAddress();
 					if (address != null && !isAtTopLimit())
@@ -476,7 +487,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		public void handleAtBufferEnd() {
 			if (getMemoryBlock() instanceof IMemoryBlockExtension)
 			{
-				if (isDynamicLoad())
+				if (isDynamicLoad() && endThreshold != 0)
 				{
 					BigInteger address = getTopVisibleAddress();
 					if (address != null && !isAtBottomLimit())
@@ -485,8 +496,31 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			}
 		}
 
-		public int getThreshold() {
-			return 3;
+		public int getThreshold(int bufferEndOrStart) {
+			
+			int threshold = DEFAULT_BUFFER_THRESHOLD;
+			
+			if (bufferEndOrStart == IVirtualContentListener.BUFFER_START)
+			{
+				if (threshold > getPreBufferSize())
+				{
+					threshold = getPreBufferSize();
+				}
+			}
+			else
+			{
+				if (threshold > getPostBufferSize())
+				{
+					threshold = getPostBufferSize();
+				}
+			}
+			
+			if (bufferEndOrStart == IVirtualContentListener.BUFFER_START)
+				startThreshold = threshold;
+			else
+				endThreshold = threshold;
+			
+			return threshold;
 		}};
 		
 	private IPresentationErrorListener fPresentationErrorListener = new IPresentationErrorListener() {
@@ -625,10 +659,21 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						int numberOfLines = getNumLinesToLoad();
 						fContentDescriptor.setNumLines(numberOfLines);
 						
+						if (numberOfLines == 0)
+						{
+							// if the table viewer is not initialized yet, add listener
+							// and load table when we can get the height of the table
+							fTableViewer.getTable().addPaintListener(new PaintListener() {
+								public void paintControl(PaintEvent e) {
+									fTableViewer.getTable().removePaintListener(this);
+									fContentDescriptor.setNumLines(getNumLinesToLoad());
+									refresh();
+								}});
+						}
+						
 						BigInteger baseAddress = finalMbBaseAddress;
 						if (baseAddress == null)
 							baseAddress = BigInteger.ZERO;
-						
 						
 						if (!(getMemoryBlock() instanceof IMemoryBlockExtension) || !isDynamicLoad())
 						{		
@@ -671,6 +716,15 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						
 						fTableViewer.addSelectionChangedListener(fViewerSelectionChangedListener);
 						fTableViewer.getTable().getVerticalBar().addSelectionListener(fScrollBarSelectionListener);
+						
+						// add resize listener to figure out number of visible lines 
+						// so that the viewer get refreshed with the correct number of lines on the
+						// next refresh request
+						fTableViewer.getTable().addListener(SWT.Resize, new Listener() {
+							public void handleEvent(Event event) {
+								if (!fTableViewer.getTable().isDisposed())
+									fContentDescriptor.setNumLines(getNumLinesToLoad());
+							}});
 						
 						createToolTip();
 						
@@ -915,7 +969,6 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
-		
 		if (!fIsCreated)
 			return;
 		
@@ -931,10 +984,20 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		}
 		
 		Object evtSrc = event.getSource();
-		
+
+		// always update page size, only refresh if the table is visible
 		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
-			// always update page size, only refresh if the table is visible
 			getPageSizeFromPreference();
+		}
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE))
+		{
+			getPreBufferSizeFromPreference();
+			fContentDescriptor.setPreBuffer(getPreBufferSize());
+		}
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE))
+		{
+			getPostBufferSizeFromPreference();
+			fContentDescriptor.setPostBuffer(getPostBufferSize());	
 		}
 		
 		// do not handle event if the rendering is displaying an error
@@ -954,6 +1017,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			if (!fIsDisposed)
 			{
 				fTableViewer.refresh(false);
+			}
+			return;
+		}
+		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE) ||
+			event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE))
+		{
+			if (!fIsDisposed)
+			{
+				fTableViewer.refresh(true);
 			}
 			return;
 		}
@@ -1111,7 +1184,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		int elementsCnt = fTableViewer.getVirtualContentModel().getElements().length;
 		int numLinesLeft = elementsCnt - bottomIdx;
 		
-		if (numLinesLeft <= 3)
+		if (numLinesLeft < fViewerListener.getThreshold(IVirtualContentListener.BUFFER_END))
 			return true;
 		
 		return false;
@@ -1120,7 +1193,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	private boolean isAtTopBuffer(BigInteger address)
 	{
 		int topIdx = fTableViewer.indexOf(address);
-		if (topIdx <= 3)
+		if (topIdx < fViewerListener.getThreshold(IVirtualContentListener.BUFFER_START))
 			return true;
 		
 		return false;
@@ -1419,6 +1492,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			height = fTableViewer.getTable().getParent().getSize().y;
 		}
 		
+		if (height == 0)
+		{
+			return 0;
+		}
+		
 		// height of border
 		int border = fTableViewer.getTable().getHeaderHeight();
 		
@@ -1434,7 +1512,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		int numberOfLines = height/lineHeight;
 		
 		if (numberOfLines <= 0)
-			return 20;
+			return 0;
 	
 		return numberOfLines;		
 	}
@@ -2142,6 +2220,16 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		fPageSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE);
 	}
 	
+	private void getPreBufferSizeFromPreference()
+	{
+		fPreBufferSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE);
+	}
+	
+	private void getPostBufferSizeFromPreference()
+	{
+		fPostBufferSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE);
+	}
+	
 	private void updateDynamicLoadProperty() {
 		
 		boolean value = DebugUIPlugin
@@ -2155,8 +2243,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		
 			if (!fIsDisposed) {
 				if (isDynamicLoad()) {
-					fContentDescriptor.setPostBuffer(20);
-					fContentDescriptor.setPreBuffer(20);
+					fContentDescriptor.setPostBuffer(getPostBufferSize());
+					fContentDescriptor.setPreBuffer(getPreBufferSize());
 					fContentDescriptor.setNumLines(getNumberOfVisibleLines());
 	
 				} else {
@@ -2854,8 +2942,8 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private void createContentDescriptor(final BigInteger topVisibleAddress) {
 		fContentDescriptor = new TableRenderingContentDescriptor(AbstractAsyncTableRendering.this);
-		fContentDescriptor.setPostBuffer(20);
-		fContentDescriptor.setPreBuffer(20);
+		fContentDescriptor.setPostBuffer(getPostBufferSize());
+		fContentDescriptor.setPreBuffer(getPreBufferSize());
 		fContentDescriptor.setLoadAddress(topVisibleAddress);
 		try {
 			fContentDescriptor.updateContentBaseAddress();
@@ -2889,7 +2977,30 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			if (fContentDescriptor.getAddressSize() <= 0)
 				fContentDescriptor.setAddressSize(4);
 		}
+	}
+	
+	/**
+	 * Return the number of lines to be bufferred before the top visible line of the memory rendering
+	 * @return number of lines to be buffered before the top visible line in the memory rendering
+	 */
+	private int getPreBufferSize()
+	{
+		if (fPreBufferSize < 0)
+			getPreBufferSizeFromPreference();
 		
+		return fPreBufferSize;
+	}
+	
+	/**
+	 * Returns the number of lines to be bufferred after the last visible line in the memory rendering
+	 * @return the number of lines to be bufferred after the last visible line in the memory rendering
+	 */
+	private int getPostBufferSize()
+	{
+		if (fPostBufferSize < 0)
+			getPostBufferSizeFromPreference();
+		
+		return fPostBufferSize;
 	}
 	
 	private TableRenderingContentDescriptor getContentDescriptor()

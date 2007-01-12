@@ -237,7 +237,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	 
 		for (int i = 0; i < listeners.length; i++) {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
-			if (topIdx <= listener.getThreshold())
+			if (topIdx < listener.getThreshold(IVirtualContentListener.BUFFER_START))
 			{
 				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {	
@@ -261,7 +261,7 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 	 
 		for (int i = 0; i < listeners.length; i++) {
 			final IVirtualContentListener listener = (IVirtualContentListener) listeners[i];
-			if (numLinesLeft <= listener.getThreshold())
+			if (numLinesLeft <= listener.getThreshold(IVirtualContentListener.BUFFER_END))
 			{
 				SafeRunner.run(new ISafeRunnable() {
 					public void run() throws Exception {

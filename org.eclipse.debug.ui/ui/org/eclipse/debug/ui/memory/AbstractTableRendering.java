@@ -27,11 +27,11 @@ import org.eclipse.debug.internal.ui.memory.IMemoryBlockConnection;
 import org.eclipse.debug.internal.ui.memory.IPersistableDebugElement;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
+import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.CopyTableRenderingToClipboardAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.FormatTableRenderingDialog;
 import org.eclipse.debug.internal.ui.views.memory.renderings.GoToAddressAction;
-import org.eclipse.debug.internal.ui.views.memory.renderings.AbstractBaseTableRendering;
 import org.eclipse.debug.internal.ui.views.memory.renderings.PrintTableRenderingAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ReformatAction;
 import org.eclipse.debug.internal.ui.views.memory.renderings.ResetToBaseAddressAction;
@@ -75,6 +75,8 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
@@ -165,6 +167,10 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	public static final String PROPERTY_ROW_SIZE = "rowSize"; //$NON-NLS-1$
 	
+	private static final int BUFFER_THRESHOLD = 1;			// threshold value
+	private static final int BUFFER_START = 0;				// flag to indicate asking for threshold at buffer start
+	private static final int BUFFER_END = 1;				// flat to indicate asking for threshold at buffer end
+	
 	private PageBook fPageBook;
 	private TableViewer fTableViewer;
 	private TextViewer fTextViewer;
@@ -216,6 +222,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	private FormatTableRenderingAction fFormatRenderingAction;
 
 	private IMenuListener fMenuListener;
+	
+	private int fPreBuffer;
+	private int fPostBuffer;
 	
 	private class EventHandleLock
 	{
@@ -351,7 +360,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		Object evtSrc = event.getSource();
 		
-		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE) ||
+			event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE) ||
+			event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE)) {
 			// always update page size, only refresh if the table is visible
 			getPageSizeFromPreference();
 		}
@@ -371,6 +382,16 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE)) {
 			if (!isDynamicLoad())
+			{
+				// only refresh if in non-autoload mode
+				refresh();
+			}
+			return;
+		}
+		
+		if (event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE) ||
+			event.getProperty().equals(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE)) {
+			if (isDynamicLoad())
 			{
 				// only refresh if in non-autoload mode
 				refresh();
@@ -456,13 +477,11 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 				if (isDynamicLoad()) {
 					fContentInput.setPostBuffer(20);
 					fContentInput.setPreBuffer(20);
-					fContentInput.setDefaultBufferSize(20);
 					fContentInput.setNumLines(getNumberOfVisibleLines());
 	
 				} else {
 					fContentInput.setPostBuffer(0);
 					fContentInput.setPreBuffer(0);
-					fContentInput.setDefaultBufferSize(0);
 					fContentInput.setNumLines(fPageSize);
 				}	
 			}
@@ -538,7 +557,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		{
 			Table table = fTableViewer.getTable();
 			int index = findAddressIndex(address);
-			if (index >= 3 && table.getItemCount() - (index+getNumberOfVisibleLines()) >= 3)
+			int startThreshold = getBufferThreshold(BUFFER_START);
+			int endThrreshold = getBufferThreshold(BUFFER_END);
+			if (index >= startThreshold && table.getItemCount() - (index+getNumberOfVisibleLines()) >= endThrreshold)
 			{
 				// update cursor position
 				setTopIndex(table, index);
@@ -546,7 +567,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			else
 			{
 				int numInBuffer = table.getItemCount();
-				if (index < 3)
+				if (index < getBufferThreshold(BUFFER_START))
 				{
 					if(isAtTopLimit())
 					{
@@ -554,15 +575,15 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 					}
 					else
 					{
-						if (isDynamicLoad())
+						if (isDynamicLoad() && getBufferThreshold(BUFFER_START) > 0)
 							reloadTable(address, false);
 						else
 							setTopIndex(table, index);
 					}
 				}
-				else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
+				else if ((numInBuffer-(index+getNumberOfVisibleLines())) <= getBufferThreshold(BUFFER_END))
 				{
-					if (!isAtBottomLimit() && isDynamicLoad())
+					if (!isAtBottomLimit() && isDynamicLoad() && getBufferThreshold(BUFFER_END) > 0)
 						reloadTable(address, false);
 					else
 						setTopIndex(table, index);
@@ -748,8 +769,25 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		getPageSizeFromPreference();
 		
+		
 		if (isDynamicLoad())
-			fContentInput = new TableRenderingContentInput(this, 20, 20, 20, topVisibleAddress, getNumberOfVisibleLines(), false, null);
+		{
+			int numLines = getNumberOfVisibleLines();
+			if (numLines <= 0)
+			{
+				// add listener to reload when we know the number of lines to load
+				fTableViewer.getTable().addPaintListener(new PaintListener() {
+					public void paintControl(PaintEvent e) {
+						fTableViewer.getTable().removePaintListener(this);
+						fContentInput.setNumLines(getNumberOfVisibleLines());
+						reloadTable(fContentInput.getLoadAddress(), false);
+						resizeColumnsToPreferredSize();
+						setCursorAtAddress(fSelectedAddress);
+						fTableCursor.setVisible(true);
+					}});
+			}
+			fContentInput = new TableRenderingContentInput(this, fPreBuffer, fPostBuffer,  topVisibleAddress, numLines, false, null);
+		}
 		else
 		{
 			BigInteger addressToLoad = topVisibleAddress;
@@ -760,7 +798,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			{
 				addressToLoad = (BigInteger)obj;
 			}
-			fContentInput = new TableRenderingContentInput(this, 0, 0, 0, addressToLoad, fPageSize, false, null);
+			fContentInput = new TableRenderingContentInput(this, 0, 0, addressToLoad, fPageSize, false, null);
 		}
 		
 		fTableViewer.setInput(fContentInput);
@@ -778,7 +816,6 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			// no scrolling
 			fContentInput.setPreBuffer(0);
 			fContentInput.setPostBuffer(0);
-			fContentInput.setDefaultBufferSize(0);
 		}
 		
 		// set up table cursor
@@ -1056,6 +1093,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	private void getPageSizeFromPreference()
 	{
 		fPageSize = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE);
+		fPreBuffer = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PRE_BUFFER_SIZE);
+		fPostBuffer = DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_TABLE_RENDERING_POST_BUFFER_SIZE);
 	}
 	
 	private void createCursor(Table table, BigInteger address)
@@ -1191,9 +1230,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		{
 			int row = fTableViewer.getTable().indexOf(item);
 			
-			if (row < 3)
+			if (row < getBufferThreshold(BUFFER_START))
 			{
-				if (!isAtTopLimit())
+				if (!isAtTopLimit() && getBufferThreshold(BUFFER_START) > 0)
 				{
 					if (isDynamicLoad())
 					{
@@ -1202,9 +1241,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 					}
 				}
 			}
-			else if (row >= fTableViewer.getTable().getItemCount() - 3)
+			else if (row >= fTableViewer.getTable().getItemCount() - getBufferThreshold(BUFFER_END))
 			{
-				if (!isAtBottomLimit())
+				if (!isAtBottomLimit() && getBufferThreshold(BUFFER_END) > 0)
 				{
 					if (isDynamicLoad())
 					{
@@ -1290,6 +1329,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	 */
 	private boolean setCursorAtAddress(BigInteger address)
 	{
+		if (fContentProvider.getBufferTopAddress() == null)
+			return false;
+		
 		// selected address is out of range, simply return false
 		if (address.compareTo(fContentProvider.getBufferTopAddress()) < 0)
 			return false;
@@ -1596,6 +1638,22 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			height = fTableViewer.getTable().getParent().getSize().y;
 		}
 		
+		int numberOfLines = doGetNumberOfVisibleLines(table, height);
+		
+		if (numberOfLines <= 0)
+		{
+			return 0;
+		}
+	
+		return numberOfLines;		
+	}
+
+	/**
+	 * @param table
+	 * @param height
+	 * @return
+	 */
+	private int doGetNumberOfVisibleLines(Table table, int height) {
 		// height of border
 		int border = fTableViewer.getTable().getHeaderHeight();
 		
@@ -1609,11 +1667,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		int lineHeight = getMinTableItemHeight(table);
 		
 		int numberOfLines = height/lineHeight;
-		
-		if (numberOfLines <= 0)
-			return 20;
-	
-		return numberOfLines;		
+		return numberOfLines;
 	}
 	
 	private static void  setTopIndex(Table table, int index)
@@ -2090,9 +2144,9 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			
 			TableRenderingContentInput input;
 			if (isDynamicLoad())
-				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, getNumberOfVisibleLines(), updateDelta, null);
+				input = new TableRenderingContentInput(this, fPreBuffer, fPostBuffer, topAddress, getNumberOfVisibleLines(), updateDelta, null);
 			else
-				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), fContentInput.getDefaultBufferSize(), topAddress, fPageSize, updateDelta, null);
+				input = new TableRenderingContentInput(this, fContentInput.getPreBuffer(), fContentInput.getPostBuffer(), topAddress, fPageSize, updateDelta, null);
 			
 			fContentInput = input;
 			fTableViewer.setInput(fContentInput);
@@ -2190,7 +2244,12 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	{
 		int index = table.getTopIndex();
 		
-		TableItem item = table.getItem(index);
+		TableItem item;
+		try {
+			item = table.getItem(index);
+		} catch (IllegalArgumentException e) {
+			return 0;
+		}
 		int cnt = table.getItemCount();
 		
 		while (item.getBounds(0).y < 0)
@@ -2480,20 +2539,21 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 						Table table = fTableViewer.getTable();
 						int numInBuffer = table.getItemCount();
 						int index = findAddressIndex(address);
-						if (index < 3)
+						if (index < getBufferThreshold(BUFFER_START))
 						{
 							if (isAtTopLimit())
 							{
 								setTopIndex(table, index);
 							}
-							else
+							else if (getBufferThreshold(BUFFER_START) > 0)
 							{
 								reloadTable(address, false);
 							}
 						}
-						else if ((numInBuffer-(index+getNumberOfVisibleLines())) < 3)
+						else if (getBufferThreshold(BUFFER_END) != 0 &&
+							(numInBuffer-(index+getNumberOfVisibleLines())) <= getBufferThreshold(BUFFER_END))
 						{
-							if (!isAtBottomLimit())
+							if (!isAtBottomLimit() && getBufferThreshold(BUFFER_END) > 0)
 								reloadTable(address, false);
 						}
 					}
@@ -2580,17 +2640,17 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			
 			// if there are only 3 lines left at the top, refresh
 			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(addressableUnit));
-			if (numTopLine.compareTo(BigInteger.valueOf(3)) <= 0 && (startAddress.compareTo(BigInteger.valueOf(0)) != 0))
+			if (numTopLine.compareTo(BigInteger.valueOf(getBufferThreshold(BUFFER_START))) <= 0 && (startAddress.compareTo(BigInteger.valueOf(0)) != 0))
 			{
-				if (!isAtTopLimit())
+				if (!isAtTopLimit() && getBufferThreshold(BUFFER_START) > 0)
 					return true;
 			}
 			
 			// if there are only 3 lines left at the bottom, refresh
 			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(addressableUnit));
-			if (numBottomLine.compareTo(BigInteger.valueOf(3)) <= 0)
+			if (numBottomLine.compareTo(BigInteger.valueOf(getBufferThreshold(BUFFER_END))) <= 0)
 			{
-				if (!isAtBottomLimit())
+				if (!isAtBottomLimit() && getBufferThreshold(BUFFER_END) > 0)
 					return true;
 			}
 			
@@ -3702,6 +3762,21 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		
 		col = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
 		return col;
+	}
+	
+	private int getBufferThreshold(int startOrEnd)
+	{
+		if (startOrEnd == BUFFER_START)
+		{
+			if (BUFFER_THRESHOLD > fPreBuffer)
+				return fPreBuffer;
+			return BUFFER_THRESHOLD;
+		}
+		
+		if (BUFFER_THRESHOLD > fPostBuffer)
+			return fPostBuffer;
+		
+		return BUFFER_THRESHOLD;
 	}
 
 	

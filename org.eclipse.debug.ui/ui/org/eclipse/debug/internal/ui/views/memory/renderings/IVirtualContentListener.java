@@ -13,6 +13,9 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 public interface IVirtualContentListener {
 	
+	public int BUFFER_START = 0;
+	public int BUFFER_END = 1;
+	
 	/**
 	 * Called when the viewer is at the beginning of its bufferred content
 	 */
@@ -26,6 +29,6 @@ public interface IVirtualContentListener {
 	/**
 	 * @return
 	 */
-	public int getThreshold();
+	public int getThreshold(int bufferEndOrStart);
 
 }

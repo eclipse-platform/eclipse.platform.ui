@@ -127,6 +127,9 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 			if (descriptor == null)
 				return new Object[0];
 			
+			if (descriptor.getNumLines() <= 0)
+				return new Object[0];
+			
 			// calculate top buffered address
 			BigInteger loadAddress = descriptor.getLoadAddress();
 			if (loadAddress == null)
@@ -164,7 +167,17 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 					bufferStart = mbStart;
 				
 				if (bufferEnd.compareTo(mbEnd) > 0)
+				{
 					bufferEnd = mbEnd;
+					
+					int numLines = bufferEnd.subtract(bufferStart).divide(BigInteger.valueOf(addressableUnitsPerLine)).intValue();
+					if (numLines < descriptor.getNumLines())
+					{
+						// re-calculate buffer start since we may not have enough lines to popoulate the view
+						bufferStart = bufferEnd.subtract(BigInteger.valueOf(descriptor.getNumLines()*addressableUnitsPerLine));
+						bufferStart = bufferStart.subtract(BigInteger.valueOf(descriptor.getPreBuffer()*addressableUnitsPerLine));
+					}
+				}
 				
 				// buffer end must be greater than buffer start
 				if (bufferEnd.compareTo(bufferStart) <= 0)
