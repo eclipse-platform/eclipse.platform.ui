@@ -129,13 +129,7 @@ public class CoreItem extends ViewItem {
 	private void createSubItemButtons(SubItem sub, String thisValue, int index) {
 		int added = 0;
 		if (index != 0) {
-			Composite separator = page.getToolkit().createCompositeSeparator(buttonComposite);			
-		    TableWrapData data = new TableWrapData();
-		    data.align = TableWrapData.FILL;
-		    data.grabHorizontal = true;
-		    data.maxHeight = 1;
-		    data.colspan = SUBITEM_COLUMNS;
-		    separator.setLayoutData(data);
+			addSeparator();
 		}
 		final int LABEL_MARGIN = 5; // space to the left and right of the label
 		SubItemCompositeHolder holder = new SubItemCompositeHolder(sub);
@@ -232,6 +226,25 @@ public class CoreItem extends ViewItem {
 		}
 		holder.setThisValue(thisValue);
 		listOfSubItemCompositeHolders.add(holder);
+	}
+
+	private void addSeparator() {
+		Label pad = page.getToolkit().createLabel(buttonComposite, null);
+		TableWrapData padData = new TableWrapData();
+		padData.maxWidth = 0;
+		pad.setLayoutData(padData);
+		Composite separator = page.getToolkit().createCompositeSeparator(buttonComposite);			
+		TableWrapData separatorData = new TableWrapData();
+		separatorData.align = TableWrapData.FILL;
+		separatorData.grabHorizontal = true;
+		separatorData.maxHeight = 1;
+		separator.setLayoutData(separatorData);
+		for (int i = 3; i <= SUBITEM_COLUMNS; i++) {
+		    Label filler = page.getToolkit().createLabel(buttonComposite, null);
+		    TableWrapData fillerData = new TableWrapData();
+		    fillerData.maxWidth = 0;
+		    filler.setLayoutData(fillerData);
+		}
 	}
 
 	private AbstractExecutable getExecutable() {
