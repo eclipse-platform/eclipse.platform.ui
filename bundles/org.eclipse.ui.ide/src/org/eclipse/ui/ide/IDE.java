@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
@@ -28,12 +29,16 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ModelProvider;
 import org.eclipse.core.resources.mapping.ModelStatus;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeMatcher;
@@ -49,12 +54,13 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
+import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.EditorManager;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.registry.MarkerHelpRegistry;
@@ -230,6 +236,123 @@ public final class IDE {
 
 	}
 
+	/**
+	 * A saveable filter that selects savables that contain resources that
+	 * are descendants of the roots of the filter.
+	 * @since 3.3
+	 *
+	 */
+	private static class SaveFilter implements ISaveableFilter {
+		private final IResource[] roots;
+
+		/**
+		 * Create the filter
+		 * @param roots the save roots
+		 */
+		public SaveFilter(IResource[] roots) {
+			this.roots = roots;
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.ISaveableFilter#select(org.eclipse.ui.Saveable, org.eclipse.ui.IWorkbenchPart[])
+		 */
+		public boolean select(Saveable saveable,
+				IWorkbenchPart[] containingParts) {
+			if (isDescendantOfRoots(saveable)) {
+				return true;
+			}
+			// For backwards compatibility, we need to check the parts
+			for (int i = 0; i < containingParts.length; i++) {
+				IWorkbenchPart workbenchPart = containingParts[i];
+				if (workbenchPart instanceof IEditorPart) {
+					IEditorPart editorPart = (IEditorPart) workbenchPart;
+					if (isEditingDescendantOf(editorPart)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Return whether the given saveable contains any resources that
+		 * are descendants of the root resources.
+		 * @param saveable the saveable
+		 * @return whether the given saveable contains any resources that
+		 * are descendants of the root resources
+		 */
+		private boolean isDescendantOfRoots(Saveable saveable) {
+			// First, try and adapt the saveable to a resource mapping.
+			ResourceMapping mapping = ResourceUtil.getResourceMapping(saveable);
+			if (mapping != null) {
+				try {
+					ResourceTraversal[] traversals = mapping.getTraversals(
+							ResourceMappingContext.LOCAL_CONTEXT, null);
+					for (int i = 0; i < traversals.length; i++) {
+						ResourceTraversal traversal = traversals[i];
+						IResource[] resources = traversal.getResources();
+						for (int j = 0; j < resources.length; j++) {
+							IResource resource = resources[j];
+							if (isDescendantOfRoots(resource)) {
+								return true;
+							}
+						}
+					}
+				} catch (CoreException e) {
+					IDEWorkbenchPlugin
+							.log(
+									NLS
+											.bind(
+													"An internal error occurred while determining the resources for {0}", saveable.getName()), e); //$NON-NLS-1$
+				}
+			} else {
+				// If there is no mapping, try to adapt to a resource or file directly
+				IFile file = ResourceUtil.getFile(saveable);
+				if (file != null) {
+					return isDescendantOfRoots(file);
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * Return whether the given resource is either equal to or a descendant of
+		 * one of the given roots.
+		 * 
+		 * @param roots the root resources
+		 * @param resource the resource to be tested
+		 * @return whether the given resource is either equal to or a descendant of
+		 *         one of the given roots
+		 */
+		private boolean isDescendantOfRoots(IResource resource) {
+			for (int l = 0; l < roots.length; l++) {
+				IResource root = roots[l];
+				if (root.getFullPath().isPrefixOf(resource.getFullPath())) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Return whether the given dirty editor part is editing resources that are
+		 * descendants of the given roots.
+		 * 
+		 * @param roots the root resources
+		 * @param part the dirty editor part
+		 * @return whether the given dirty editor part is editing resources that are
+		 *         descendants of the given roots
+		 */
+		private boolean isEditingDescendantOf(IEditorPart part) {
+			IFile file = ResourceUtil.getFile(part.getEditorInput());
+			if (file != null) {
+				return isDescendantOfRoots(file);
+			}
+			return false;
+		}
+		
+	}
+	
 	/**
 	 * Block instantiation.
 	 */
@@ -615,7 +738,7 @@ public final class IDE {
 	 * Returns an editor descriptor appropriate for opening the given file
 	 * resource.
 	 * <p>
-	 * The editor descriptor is determined using a multistep process. This
+	 * The editor descriptor is determined using a multi-step process. This
 	 * method will attempt to resolve the editor based on content-type bindings
 	 * as well as traditional name/extension bindings.
 	 * </p>
@@ -649,7 +772,7 @@ public final class IDE {
 	 * Returns an editor descriptor appropriate for opening the given file
 	 * resource.
 	 * <p>
-	 * The editor descriptor is determined using a multistep process. This
+	 * The editor descriptor is determined using a multi-step process. This
 	 * method will attempt to resolve the editor based on content-type bindings
 	 * as well as traditional name/extension bindings if
 	 * <code>determineContentType</code>is <code>true</code>.
@@ -694,7 +817,7 @@ public final class IDE {
 	 * Returns an editor descriptor appropriate for opening a file resource with
 	 * the given name.
 	 * <p>
-	 * The editor descriptor is determined using a multistep process. This
+	 * The editor descriptor is determined using a multi-step process. This
 	 * method will attempt to infer content type from the file name.
 	 * </p>
 	 * <ol>
@@ -728,7 +851,7 @@ public final class IDE {
 	 * Returns an editor descriptor appropriate for opening a file resource with
 	 * the given name.
 	 * <p>
-	 * The editor descriptor is determined using a multistep process. This
+	 * The editor descriptor is determined using a multi-step process. This
 	 * method will attempt to infer the content type of the file if
 	 * <code>inferContentType</code> is <code>true</code>.
 	 * </p>
@@ -930,67 +1053,40 @@ public final class IDE {
 	 * Save all dirty editors in the workbench whose editor input is a child
 	 * resource of one of the <code>IResource</code>'s provided. Opens a
 	 * dialog to prompt the user if <code>confirm</code> is true. Return true
-	 * if successful. Return false if the user has cancelled the command.
+	 * if successful. Return false if the user has canceled the command.
 	 * 
 	 * @since 3.0
 	 * 
-	 * @param resourceRoots
-	 *            the resource roots under which editor input should be saved,
-	 *            other will be left dirty
-	 * @param confirm
-	 *            prompt the user if true
-	 * @return boolean false if the operation was cancelled.
+	 * @param resourceRoots the resource roots under which editor input should
+	 *            be saved, other will be left dirty
+	 * @param confirm <code>true</code> to ask the user before saving unsaved
+	 *            changes (recommended), and <code>false</code> to save
+	 *            unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and
+	 *         <code>false</code> if the operation was canceled by the user or
+	 *         an error occurred while saving
 	 */
-	public static boolean saveAllEditors(IResource[] resourceRoots,
-			boolean confirm) {
-		final IResource[] finalResources = resourceRoots;
-		final boolean finalConfirm = confirm;
-		final boolean[] result = new boolean[1];
-		result[0] = true;
+	public static boolean saveAllEditors(final IResource[] resourceRoots,
+			final boolean confirm) {
 
 		if (resourceRoots.length == 0) {
-			return result[0];
+			return true;
 		}
 
-		Platform.run(new SafeRunnable(IDEWorkbenchMessages.ErrorClosing) {
+		final boolean[] result = new boolean[] { true };
+		SafeRunner.run(new SafeRunnable(IDEWorkbenchMessages.ErrorClosing) {
 			public void run() {
-				// Collect dirtyEditors
-				ArrayList dirtyEditors = new ArrayList();
-
-				IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-						.getWorkbenchWindows();
-				for (int i = 0; i < windows.length; i++) {
-					IWorkbenchWindow window = windows[i];
-					IWorkbenchPage[] pages = window.getPages();
-					for (int j = 0; j < pages.length; j++) {
-						IWorkbenchPage page = pages[j];
-						IEditorPart[] dirty = page.getDirtyEditors();
-						for (int k = 0; k < dirty.length; k++) {
-							IEditorPart part = dirty[k];
-							IFile file = ResourceUtil.getFile(part
-									.getEditorInput());
-							if (file != null) {
-								for (int l = 0; l < finalResources.length; l++) {
-									IResource resource = finalResources[l];
-									if (resource.getFullPath().isPrefixOf(
-											file.getFullPath())) {
-										dirtyEditors.add(part);
-										break;
-									}
-								}
-							}
-						}
-					}
-
-				}
-				if (dirtyEditors.size() > 0) {
-					IWorkbenchWindow w = Workbench.getInstance()
-							.getActiveWorkbenchWindow();
-					if (w == null) {
+				IWorkbenchWindow w = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow();
+				if (w == null) {
+					IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
+							.getWorkbenchWindows();
+					if (windows.length > 0)
 						w = windows[0];
-					}
-					result[0] = EditorManager.saveAll(dirtyEditors,
-							finalConfirm, false, false, w);
+				}
+				if (w != null) {
+					result[0] = PlatformUI.getWorkbench().saveAll(w, w,
+							new SaveFilter(resourceRoots), confirm);
 				}
 			}
 		});

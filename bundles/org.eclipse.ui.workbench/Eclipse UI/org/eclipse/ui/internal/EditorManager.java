@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
@@ -62,12 +62,12 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorLauncher;
 import org.eclipse.ui.IEditorMatchingStrategy;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPathEditorInput;
+import org.eclipse.ui.IPersistableEditor;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
@@ -105,11 +105,11 @@ import org.eclipse.ui.statushandling.StatusManager;
  * same element.
  * 
  * 06/12/00 - DS - Given the ambiguous editor input type, the manager delegates
- * a number of responsabilities to the editor itself.
+ * a number of responsibilities to the editor itself.
  * 
  * <ol>
  * <li>The editor should determine its own title.</li>
- * <li>The editor shoudl listen to resource deltas and close itself if the
+ * <li>The editor should listen to resource deltas and close itself if the
  * input is deleted. It may also choose to stay open if the editor has dirty
  * state.</li>
  * <li>The editor should persist its own state plus editor input.</li>
@@ -808,12 +808,12 @@ public class EditorManager implements IExtensionChangeHandler {
 	 * Create the part and reference for each inner editor.
 	 * 
 	 * @param ref
-	 *            the MultiEditor ref
+	 *            the MultiEditor reference
 	 * @param part
 	 *            the part
 	 * @param input
 	 *            the MultiEditor input
-	 * @return the array of inner references to store in the MultiEditor ref
+	 * @return the array of inner references to store in the MultiEditor reference
 	 */
 	IEditorReference[] openMultiEditor(final IEditorReference ref,
 			final MultiEditor part, final MultiEditorInput input)
@@ -1033,7 +1033,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			result.add(editorPresentation.restorePresentationState(areaMem));
 		}
 
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() {
 				// Update each workbook with its visible editor.
 				for (int i = 0; i < visibleEditors.size(); i++) {
@@ -1072,11 +1072,11 @@ public class EditorManager implements IExtensionChangeHandler {
 
 	/**
 	 * Save all of the editors in the workbench. Return true if successful.
-	 * Return false if the user has cancelled the command.
+	 * Return false if the user has canceled the command.
 	 * @param confirm true if the user should be prompted before the save
 	 * @param closing true if the page is being closed
 	 * @param addNonPartSources true if saveables from non-part sources should be saved too.
-	 * @return false if the user cancelled
+	 * @return false if the user canceled or an error occurred while saving
 	 */
 	public boolean saveAll(boolean confirm, boolean closing, boolean addNonPartSources) {
 		// Get the list of dirty editors and views. If it is
@@ -1111,11 +1111,11 @@ public class EditorManager implements IExtensionChangeHandler {
 	 *            the window to use as the parent for the dialog that prompts to
 	 *            save multiple dirty editors and views
 	 * @return <code>true</code> on success, <code>false</code> if the user
-	 *         canceled the save
+	 *         canceled the save or an error occurred while saving
 	 */
 	public static boolean saveAll(List dirtyParts, boolean confirm, boolean closing,
 			boolean addNonPartSources, final IWorkbenchWindow window) {
-		return saveAll(dirtyParts, confirm, closing, addNonPartSources, window, (WorkbenchWindow) window);
+		return saveAll(dirtyParts, confirm, closing, addNonPartSources, window, window);
 	}
 	
 	/**
@@ -1574,7 +1574,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			return;
 		}
 
-		Platform.run(new SafeRunnable() {
+		SafeRunner.run(new SafeRunnable() {
 			public void run() {
 				// Get the input.
 				IEditorInput input = editor.getEditorInput();

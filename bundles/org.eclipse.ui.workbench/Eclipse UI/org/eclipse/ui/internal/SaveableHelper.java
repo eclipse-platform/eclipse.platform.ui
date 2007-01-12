@@ -20,6 +20,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -90,7 +91,7 @@ public class SaveableHelper {
 	 * @param window the workbench window
 	 * @param confirm request confirmation
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
-	 * was cancelled.
+	 * was canceled.
 	 */
 	static boolean savePart(final ISaveablePart saveable, IWorkbenchPart part, 
 			IWorkbenchWindow window, boolean confirm) {
@@ -153,7 +154,7 @@ public class SaveableHelper {
 	 * @param window the workbench window
 	 * @param confirm 
 	 * @return <code>true</code> for continue, <code>false</code> if the operation
-	 *   was cancelled.
+	 *   was canceled or an error occurred while saving.
 	 */
 	private static boolean saveModels(ISaveablesSource modelSource, final IWorkbenchWindow window, final boolean confirm) {
 		Saveable[] selectedModels = modelSource.getActiveSaveables();
@@ -181,7 +182,7 @@ public class SaveableHelper {
 						continue;
 					}
 					doSaveModel(model, new SubProgressMonitor(monitorWrap, 1),
-							(WorkbenchWindow) window, confirm);
+							window, confirm);
 					if (monitor.isCanceled()) {
 						break;
 					}
@@ -243,27 +244,28 @@ public class SaveableHelper {
 	}
 	
 	/**
-	 * Runs a progress monitor operation.
-	 * Returns true if success, false if cancelled.
+	 * Runs a progress monitor operation. Returns true if success, false if
+	 * canceled.
 	 */
 	static boolean runProgressMonitorOperation(String opName,
 			IRunnableWithProgress progressOp, IWorkbenchWindow window) {
-		return runProgressMonitorOperation(opName, progressOp, window,
-				(WorkbenchWindow) window);
+		return runProgressMonitorOperation(opName, progressOp, window, window);
 	}
 	
 	/**
 	 * Runs a progress monitor operation.
-	 * Returns true if success, false if cancelled.
+	 * Returns true if success, false if canceled or an error occurred.
 	 */
 	static boolean runProgressMonitorOperation(String opName,
 			final IRunnableWithProgress progressOp,
 			final IRunnableContext runnableContext, final IShellProvider shellProvider) {
-		final boolean[] wasCanceled = new boolean[1];
+		final boolean[] success = new boolean[] { false };
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				progressOp.run(monitor);
-				wasCanceled[0] = monitor.isCanceled();
+				// Only indicate success if the monitor wasn't canceled
+				if (!monitor.isCanceled())
+					success[0] = true;
 			}
 		};
 
@@ -274,11 +276,13 @@ public class SaveableHelper {
 			Throwable targetExc = e.getTargetException();
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
 			MessageDialog.openError(shellProvider.getShell(), WorkbenchMessages.Error, title + ':' + targetExc.getMessage());
+			// Fall through to return failure
 		} catch (InterruptedException e) {
-			// Ignore.  The user pressed cancel.
-			wasCanceled[0] = true;
+			// The user pressed cancel. Fall through to return failure
+		} catch (OperationCanceledException e) {
+			// The user pressed cancel. Fall through to return failure
 		}
-		return !wasCanceled[0];
+		return success[0];
 	}
 
 	/**

@@ -689,13 +689,12 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * ISaveablePart and are dirty.
 	 * </p>
 	 * 
-	 * @param confirm
-	 *            <code>true</code> to ask the user before saving unsaved
+	 * @param confirm <code>true</code> to ask the user before saving unsaved
 	 *            changes (recommended), and <code>false</code> to save
 	 *            unsaved changes without asking
 	 * @return <code>true</code> if the command succeeded, and
-	 *         <code>false</code> if at least one editor with unsaved changes
-	 *         was not saved
+	 *         <code>false</code> if the operation was canceled by the user or
+	 *         an error occurred while saving
 	 */
 	public boolean saveAllEditors(boolean confirm);
 

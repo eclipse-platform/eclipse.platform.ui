@@ -29,11 +29,13 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -394,7 +396,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		}
 		
 		boolean shouldCancel = modelsToOptionallySave.isEmpty() ? false : promptForSaving(modelsToOptionallySave,
-				window, canCancel, true);
+				window, window, canCancel, true);
 		
 		if (shouldCancel) {
 			return true;
@@ -408,7 +410,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		return modelsToSave.isEmpty() ? false : promptForSaving(modelsToSave,
-				window, canCancel, false);
+				window, window, canCancel, false);
 	}
 
 	/**
@@ -425,14 +427,19 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	}
 
 	/**
-	 * @param modelsToSave
-	 * @param window
-	 * @param canCancel
-	 * @param b 
+	 * Prompt the user to save the given saveables.
+	 * @param modelsToSave the saveables to be saved
+	 * @param shellProvider the provider used to obtain a shell in prompting is
+	 *            required. Clients can use a workbench window for this.
+	 * @param runnableContext a runnable context that will be used to provide a
+	 *            progress monitor while the save is taking place. Clients can
+	 *            use a workbench window for this.
+	 * @param canCancel whether the operation can be canceled
+	 * @param stillOpenElsewhere whether the models are referenced by open parts
 	 * @return true if the user canceled
 	 */
-	private boolean promptForSaving(List modelsToSave,
-			final IWorkbenchWindow window, final boolean canCancel, boolean stillOpenElsewhere) {
+	public boolean promptForSaving(List modelsToSave,
+			final IShellProvider shellProvider, IRunnableContext runnableContext, final boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
 			SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
@@ -465,7 +472,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 							.bind(
 									WorkbenchMessages.EditorManager_saveChangesOptionallyQuestion,
 									model.getName());
-					MessageDialogWithToggle dialogWithToggle = new MessageDialogWithToggle(window.getShell(),
+					MessageDialogWithToggle dialogWithToggle = new MessageDialogWithToggle(shellProvider.getShell(),
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION, buttons, 0, WorkbenchMessages.EditorManager_closeWithoutPromptingOption, false) {
 						protected int getShellStyle() {
@@ -481,7 +488,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 							.bind(
 									WorkbenchMessages.EditorManager_saveChangesQuestion,
 									model.getName());
-					dialog = new MessageDialog(window.getShell(),
+					dialog = new MessageDialog(shellProvider.getShell(),
 							WorkbenchMessages.Save_Resource, null, message,
 							MessageDialog.QUESTION, buttons, 0) {
 						protected int getShellStyle() {
@@ -534,7 +541,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				}
 			} else {
 				MyListSelectionDialog dlg = new MyListSelectionDialog(
-						window.getShell(),
+						shellProvider.getShell(),
 						modelsToSave,
 						new ArrayContentProvider(),
 						new WorkbenchPartLabelProvider(),
@@ -560,7 +567,20 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			}
 		}
 		// Create save block.
-		final List finalModels = modelsToSave;
+		return saveModels(modelsToSave, shellProvider, runnableContext);
+	}
+
+	/**
+	 * Save the given models.
+	 * @param finalModels the list of models to be saved
+	 * @param shellProvider the provider used to obtain a shell in prompting is
+	 *            required. Clients can use a workbench window for this.
+	 * @param runnableContext a runnable context that will be used to provide a
+	 *            progress monitor while the save is taking place. Clients can
+	 *            use a workbench window for this.
+	 * @return <code>true</code> if the operation was canceled
+	 */
+	public boolean saveModels(final List finalModels, final IShellProvider shellProvider, IRunnableContext runnableContext) {
 		IRunnableWithProgress progressOp = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				IProgressMonitor monitorWrap = new EventLoopProgressMonitor(
@@ -574,7 +594,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						monitor.worked(1);
 						continue;
 					}
-					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), (WorkbenchWindow)window, true);
+					SaveableHelper.doSaveModel(model, new SubProgressMonitor(monitorWrap, 1), shellProvider, true);
 					if (monitorWrap.isCanceled())
 						break;
 				}
@@ -583,12 +603,9 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 		};
 
 		// Do the save.
-		if (!SaveableHelper.runProgressMonitorOperation(
-				WorkbenchMessages.Save_All, progressOp, window)) {
-			// cancelled
-			return true;
-		}
-		return false;
+		return !SaveableHelper.runProgressMonitorOperation(
+				WorkbenchMessages.Save_All, progressOp, runnableContext,
+				shellProvider);
 	}
 
 	private static class PostCloseInfo {

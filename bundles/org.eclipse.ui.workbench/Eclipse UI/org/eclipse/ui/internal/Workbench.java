@@ -92,6 +92,7 @@ import org.eclipse.ui.ILocalWorkingSetManager;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
@@ -99,10 +100,12 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.Saveable;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
@@ -3127,5 +3130,59 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	public final void removeShowingMenus(final Set menuIds) {
 		menuSourceProvider.removeShowingMenus(menuIds);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#saveAll(org.eclipse.jface.window.IShellProvider, org.eclipse.jface.operation.IRunnableContext, org.eclipse.ui.ISaveableFilter, boolean)
+	 */
+	public boolean saveAll(IShellProvider shellProvider,
+			IRunnableContext runnableContext, ISaveableFilter filter,
+			boolean confirm) {
+		SaveablesList saveablesList = (SaveablesList) PlatformUI.getWorkbench()
+				.getService(ISaveablesLifecycleListener.class);
+		Saveable[] saveables = saveablesList.getOpenModels();
+		List toSave = getFilteredSaveables(filter, saveables);
+		if (toSave.isEmpty())
+			return true;
+		
+		if (!confirm) {
+			return !saveablesList.saveModels(toSave, shellProvider, runnableContext);
+		}
+		
+		// We must negate the result since false is cancel saveAll
+		return !saveablesList.promptForSaving(toSave, shellProvider, runnableContext, true, false);
+	}
+
+	/*
+	 * Apply the given filter to the list of saveables
+	 */
+	private List getFilteredSaveables(ISaveableFilter filter, Saveable[] saveables) {
+		List toSave = new ArrayList();
+		if (filter == null) {
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty())
+					toSave.add(saveable);
+			}
+		} else {
+			SaveablesList saveablesList = (SaveablesList)getService(ISaveablesLifecycleListener.class);
+			for (int i = 0; i < saveables.length; i++) {
+				Saveable saveable = saveables[i];
+				if (saveable.isDirty()) {
+					IWorkbenchPart[] parts = saveablesList.getPartsForSaveable(saveable);
+					if (matchesFilter(filter, saveable, parts))
+						toSave.add(saveable);
+				}
+			}
+		}
+		return toSave;
+	}
+	
+	/*
+	 * Test whether the given filter matches the saveable
+	 */
+	private boolean matchesFilter(ISaveableFilter filter, Saveable saveable,
+			IWorkbenchPart[] parts) {
+		return filter == null || filter.select(saveable, parts);
 	}
 }

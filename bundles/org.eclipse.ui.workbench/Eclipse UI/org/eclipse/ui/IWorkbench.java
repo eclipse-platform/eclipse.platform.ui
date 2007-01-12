@@ -12,8 +12,10 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
@@ -336,7 +338,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * window is given focus and the perspective is shown. The page's input is
 	 * ignored.</li>
 	 * <li>If another window that has the workspace root as input and the
-	 * requested perpective open and active, then the window is given focus.
+	 * requested perspective open and active, then the window is given focus.
 	 * </li>
 	 * <li>Otherwise the requested perspective is opened and shown in the
 	 * specified window or in a new window depending on the current user
@@ -378,7 +380,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * same requested input, then the window is given focus and the perspective
 	 * is shown.</li>
 	 * <li>If another window has the requested input and the requested
-	 * perpective open and active, then that window is given focus.</li>
+	 * perspective open and active, then that window is given focus.</li>
 	 * <li>If the specified window has the same requested input but not the
 	 * requested perspective, then the window is given focus and the perspective
 	 * is opened and shown on condition that the user preference is not to open
@@ -436,11 +438,14 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	/**
 	 * Save all dirty editors in the workbench. Opens a dialog to prompt the
 	 * user if <code>confirm</code> is true. Return true if successful. Return
-	 * false if the user has cancelled the command.
+	 * false if the user has canceled the command.
 	 * 
-	 * @param confirm
-	 *            prompt the user if true
-	 * @return boolean false if the operation was cancelled.
+	 * @param confirm <code>true</code> to ask the user before saving unsaved
+	 *            changes (recommended), and <code>false</code> to save
+	 *            unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and
+	 *         <code>false</code> if the operation was canceled by the user or
+	 *         an error occurred while saving
 	 */
 	public boolean saveAllEditors(boolean confirm);
 
@@ -449,7 +454,7 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * 
 	 * @param factoryId
 	 *            the id of the element factory
-	 * @return the elment factory, or <code>null</code> if none
+	 * @return the element factory, or <code>null</code> if none
 	 * @see IElementFactory
 	 * @since 3.0
 	 */
@@ -580,4 +585,31 @@ public interface IWorkbench extends IAdaptable, IServiceLocator {
 	 * @since 3.1
 	 */
 	public IWizardRegistry getExportWizardRegistry();
+	
+	/**
+	 * Save all dirty saveables in the workbench that match the given filter.
+	 * Opens a dialog to prompt the user if <code>confirm</code> is true.
+	 * Return true if successful. Return false if the user has canceled the
+	 * command.
+	 * 
+	 * @since 3.3
+	 * 
+	 * @param shellProvider the provider used to obtain a shell in prompting is
+	 *            required. Clients can use a workbench window for this.
+	 * @param runnableContext a runnable context that will be used to provide a
+	 *            progress monitor while the save is taking place. Clients can
+	 *            use a workbench window for this.
+	 * @param filter the filter used to determine if a particular dirty saveable
+	 *            needs to be saved or <code>null</code> if all dirty
+	 *            saveables should be saved.
+	 * @param confirm <code>true</code> to ask the user before saving unsaved
+	 *            changes (recommended), and <code>false</code> to save
+	 *            unsaved changes without asking
+	 * @return <code>true</code> if the command succeeded, and
+	 *         <code>false</code> if the operation was canceled by the user or
+	 *         an error occurred while saving
+	 */
+	public boolean saveAll(IShellProvider shellProvider,
+			IRunnableContext runnableContext, ISaveableFilter filter,
+			boolean confirm);
 }
