@@ -15,7 +15,6 @@ import java.util.Map;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
@@ -27,6 +26,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
+import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.statushandling.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -103,9 +104,10 @@ public final class ShowViewHandler extends AbstractHandler {
 			try {
                 openView(descriptors[i].getId());
 			} catch (PartInitException e) {
-				ErrorDialog.openError(window.getShell(),
-						WorkbenchMessages.ShowView_errorTitle, e.getMessage(),
-						e.getStatus());
+				StatusUtil.handleStatus(e.getStatus(),
+						WorkbenchMessages.ShowView_errorTitle
+								+ ": " + e.getMessage(), //$NON-NLS-1$
+						StatusManager.SHOW);
 			}
 		}
 	}
