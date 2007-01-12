@@ -237,7 +237,7 @@
 			<src path="${temp.folder}/jsp.jar.src/"			/>
 			<compilerarg line="-log ${temp.folder}/WEB-INF/lib/jsp.jar.bin${logExtension}" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/> 
 <!-- custom begin -->
-			<compilerarg value="-warn:-serial" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+			<compilerarg value="-warn:-serial,unused" compiler="org.eclipse.jdt.core.JDTCompilerAdapter"/>
 <!-- custom end -->	
 			</javac>
 		<!-- Copy necessary resources -->
