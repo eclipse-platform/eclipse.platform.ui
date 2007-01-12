@@ -44,17 +44,6 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 		public Label getProgressText() {
 			return fLabel;
 		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String,
-		 *      int)
-		 */
-		public void beginTask(String name, int totalWork) {
-
-			super.beginTask(name, totalWork);
-		}
 	}
 
 	private Color foreground = null;
@@ -108,13 +97,23 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 	 * @param foregroundRGB
 	 *            the color
 	 */
-	public void setForeground(RGB foregroundRGB) {
+	protected void setForeground(RGB foregroundRGB) {
 		if (monitor != null)
 			return;
 		if (this.foreground != null)
 			this.foreground.dispose();
 		this.foreground = new Color(getSplash().getShell().getDisplay(),
 				foregroundRGB);
+	}
+	
+	/**
+	 * Get the foreground text color. This color should not be disposed by
+	 * callers.
+	 * 
+	 * @return the foreground color
+	 */
+	protected Color getForeground() {
+		return foreground;
 	}
 
 	/**
@@ -124,7 +123,7 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 	 * @param messageRect
 	 *            the location of the message text
 	 */
-	public void setMessageRect(Rectangle messageRect) {
+	protected void setMessageRect(Rectangle messageRect) {
 		this.messageRect = messageRect;
 	}
 
@@ -135,7 +134,18 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 	 * @param progressRect
 	 *            the location of the progress bar
 	 */
-	public void setProgressRect(Rectangle progressRect) {
+	protected void setProgressRect(Rectangle progressRect) {
 		this.progressRect = progressRect;
+	}
+	
+	/**
+	 * Get the composite on which any supplemental controls should be drawn.
+	 * This will not have a layout set and clients are responsible for setting
+	 * the location of child controls manually.
+	 * 
+	 * @return the composite
+	 */
+	protected Composite getContent() {
+		return (Composite) getBundleProgressMonitor();
 	}
 }

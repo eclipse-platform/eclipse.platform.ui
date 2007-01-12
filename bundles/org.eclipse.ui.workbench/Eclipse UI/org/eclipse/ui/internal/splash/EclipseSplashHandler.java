@@ -12,10 +12,15 @@ package org.eclipse.ui.internal.splash;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.splash.BasicSplashHandler;
 
 /**
@@ -61,7 +66,26 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 		setForeground(new RGB((foregroundColorInteger & 0xFF0000) >> 16,
 				(foregroundColorInteger & 0xFF00) >> 8,
 				foregroundColorInteger & 0xFF));
-
+		// the following code will be removed for release time
+		if (PrefUtil.getInternalPreferenceStore().getBoolean(
+				"SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
+			String buildId = System.getProperty("eclipse.buildId"); //$NON-NLS-1$
+			if (buildId == null)
+				buildId = "Unknown Build"; //$NON-NLS-1$
+			// Point versionLocation = new Point(322,200); // hardcoded to be
+			// sensible with our current Europa Graphic
+			Label label = new Label(getContent(), SWT.NONE);
+			label.setForeground(getForeground());
+			label.setText(buildId);
+			GC gc = new GC(label);
+			Point stringExtent = gc.stringExtent(buildId);
+			gc.dispose();
+			label.setBounds(new Rectangle(322, 190, stringExtent.x,
+					stringExtent.y)); // hardcoded to work with the eclipse
+										// "Europa" label
+			while (label.getDisplay().readAndDispatch())
+				; // force painting of the label
+		}
 	}
 
 	private Rectangle parseRect(String string) {
