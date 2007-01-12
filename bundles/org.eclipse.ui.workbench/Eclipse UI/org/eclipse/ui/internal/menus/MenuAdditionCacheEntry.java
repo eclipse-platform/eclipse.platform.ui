@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.menus;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +26,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.actions.CompoundContributionItem;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.AbstractContributionFactory;
@@ -229,14 +227,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		}
 		
 		// Return a CompoundContribution item wrapping the extension
-		return new CompoundContributionItem(getId(dynamicAddition)) {
-			protected IContributionItem[] getContributionItems() {
-				List dynamicItems = new ArrayList();
-				loadedDynamicContribution.createContributionItems(dynamicItems);
-				return (IContributionItem[]) dynamicItems
-						.toArray(new IContributionItem[dynamicItems.size()]);
-			}
-		};
+		return new DynamicContributionItem(getId(dynamicAddition), loadedDynamicContribution);
 	}
 
 	/**

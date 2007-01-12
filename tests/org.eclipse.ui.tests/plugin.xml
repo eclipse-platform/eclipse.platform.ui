@@ -3217,4 +3217,104 @@
             name="Hello">
       </command>
    </extension>
+  
+   <!-- org.eclipse.ui.menus extension point test input
+        do -NOT- change the structure of the contributions
+        without fixing the tests in 'MenusTestSuite' -->
+   <extension
+         id="org.eclipse.ui.menus.test"
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?before=MenuTest.Separator">
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               icon="icons/anything.gif"
+               id="MenuTest.BeforeSeparator"
+               label="Inserted Before"
+               mnemonic="B">
+         </item>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests?after=MenuTest.Separator">
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               icon="icons/anything.gif"
+               id="MenuTest.AfterSeparator"
+               label="Inserted After"
+               mnemonic="A">
+         </item>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               icon="icons/anything.gif"
+               id="MenuTest.BasicCmdItem"
+               label="Basic Cmd"
+               mnemonic="B">
+         </item>
+         <widget
+               class="non.existant.NonExistantClass"
+               id="MenuTest.brokenWidget">
+         </widget>
+         <menu
+               icon="icons/binary_co.gif"
+               id="MenuTest.BasicMenu"
+               label="Basic Menu">
+            <item
+                  commandId="org.eclipse.ui.tests.menus.enabledWorld"
+                  id="MenuTest.BasicMenu.SubItem"
+                  label="Sub Item">
+            </item>
+         </menu>
+         <separator
+               id="MenuTest.Separator"
+               visible="true">
+         </separator>
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               id="MenuTest.ParameterItem"
+               label="Parameter Cmd"
+               mnemonic="C">
+            <parameter
+                  name="Greeting"
+                  value="Hi There!">
+            </parameter>
+         </item>
+         <dynamicContribution
+            class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+            id="MenuTest.DynamicItem">
+         </dynamicContribution>
+         <menu
+               icon="icons/dynamic.gif"
+               id="MenuTest.DynamicMenu"
+               label="Dynamic Menu">
+            <dynamicContribution
+               class="org.eclipse.ui.tests.api.workbenchpart.DynamicItem"
+               id="MenuTest.DynamicSubItem">
+            </dynamicContribution>
+         </menu>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.IfYouChangeMe.FixTheTests">
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               id="MenuTest.ItemX1"
+               label="Menu Item X1">
+            <visibleWhen
+                  checkEnabled="false">
+               <with
+                     variable="activeContexts">
+                  <iterate
+                        operator="or">
+                     <equals
+                           value="org.eclipse.ui.menus.contexts.test1">
+                     </equals>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </item>
+      </menuContribution>
+   </extension>
+   <!-- END OF org.eclipse.ui.menus extension point test contributions -->
 </plugin>            
