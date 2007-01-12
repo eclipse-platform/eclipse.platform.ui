@@ -502,13 +502,13 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private void createSplashWrapper() {
 		final Display display = getDisplay();
-		String splashLoc = System.getProperty("org.eclipse.splash.bundle"); //$NON-NLS-1$
+		String splashLoc = System.getProperty("org.eclipse.equinox.launcher.splash.location"); //$NON-NLS-1$
 		final Image background = loadImage(splashLoc);
 		
 		SafeRunnable run = new SafeRunnable() {
 
 			public void run() throws Exception {
-				String splashHandle = System.getProperty("org.eclipse.splash.handle"); //$NON-NLS-1$
+				String splashHandle = System.getProperty("org.eclipse.equinox.launcher.splash.handle"); //$NON-NLS-1$
 				if (splashHandle == null) {
 					createSplash = false;
 					return;

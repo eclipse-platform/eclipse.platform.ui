@@ -83,6 +83,9 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			label.setBounds(new Rectangle(322, 190, stringExtent.x,
 					stringExtent.y)); // hardcoded to work with the eclipse
 										// "Europa" label
+			getContent().setBackgroundMode(SWT.INHERIT_NONE); // set the state to something new so that the next call actually does work on the label background
+			getContent().setBackgroundMode(SWT.INHERIT_FORCE); // reforce the background for GTK.  
+			getContent().setBackgroundImage(getContent().getShell().getBackgroundImage());
 			while (label.getDisplay().readAndDispatch())
 				; // force painting of the label
 		}
