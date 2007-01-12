@@ -64,7 +64,7 @@ public class JobsView extends ViewPart {
 		boolean unknown = unknownField.getSelection();
 		boolean user = userField.getSelection();
 		boolean reschedule = rescheduleField.getSelection();
-		final long rescheduleWait =  Long.parseLong(rescheduleDelay.getText());
+		final long rescheduleWait = Long.parseLong(rescheduleDelay.getText());
 		boolean keep = keepField.getSelection();
 		boolean keepOne = keepOneField.getSelection();
 		boolean gotoAction = gotoActionField.getSelection();
@@ -93,14 +93,14 @@ public class JobsView extends ViewPart {
 
 			result.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.valueOf(keep));
 			result.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.valueOf(keepOne));
-			
-			if(gotoAction)
+
+			if (gotoAction)
 				result.setProperty(IProgressConstants.ACTION_PROPERTY, new Action("Pop up a dialog") { //$NON-NLS-1$
-					public void run() {
-						MessageDialog.openInformation(getSite().getShell(), "Goto Action", "The job can have an action associated with it"); //$NON-NLS-1$ //$NON-NLS-2$
-					}
-				});
-			
+							public void run() {
+								MessageDialog.openInformation(getSite().getShell(), "Goto Action", "The job can have an action associated with it"); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+						});
+
 			result.setProgressGroup(group, groupIncrement);
 			result.setSystem(system);
 			result.setUser(user);
@@ -226,12 +226,12 @@ public class JobsView extends ViewPart {
 		wake.setToolTipText("Calls wakeUp() on all TestJobs"); //$NON-NLS-1$
 		wake.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		wake.addSelectionListener(new SelectionAdapter() {
-			
+
 			public void widgetSelected(SelectionEvent e) {
 				doWakeUp();
 			}
 		});
-		
+
 		//show in dialog
 		Button showInDialog = new Button(group, SWT.PUSH);
 		showInDialog.setText("showInDialog"); //$NON-NLS-1$
@@ -242,20 +242,19 @@ public class JobsView extends ViewPart {
 				showInDialog();
 			}
 		});
-		
+
 	}
-	
+
 	/**
 	 * Test the showInDialog API
 	 *
 	 */
 	protected void showInDialog() {
-		
-		Job showJob = 
-			new Job("Show In Dialog"){//$NON-NLS-1$
+
+		Job showJob = new Job("Show In Dialog") {//$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
-				monitor.beginTask("Run in dialog",100);//$NON-NLS-1$
-				
+				monitor.beginTask("Run in dialog", 100);//$NON-NLS-1$
+
 				for (int i = 0; i < 100; i++) {
 					if (monitor.isCanceled())
 						return Status.CANCEL_STATUS;
@@ -268,13 +267,12 @@ public class JobsView extends ViewPart {
 
 				}
 				return Status.OK_STATUS;
-			
-		}};
+
+			}
+		};
 		showJob.schedule();
-		PlatformUI.getWorkbench().getProgressService().
-			showInDialog(
-					getSite().getShell(),showJob);
-		
+		PlatformUI.getWorkbench().getProgressService().showInDialog(getSite().getShell(), showJob);
+
 	}
 
 	/**
@@ -283,6 +281,7 @@ public class JobsView extends ViewPart {
 	protected void doWakeUp() {
 		Platform.getJobManager().wakeUp(TestJob.FAMILY_TEST_JOB);
 	}
+
 	/**
 	 * Puts to sleep all waiting test jobs.
 	 */
@@ -326,7 +325,7 @@ public class JobsView extends ViewPart {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		quantityField.setLayoutData(data);
 		quantityField.setText("1"); //$NON-NLS-1$
-		
+
 		//reschedule delay
 		label = new Label(body, SWT.NONE);
 		label.setText("Reschedule Delay (ms):"); //$NON-NLS-1$
@@ -376,19 +375,19 @@ public class JobsView extends ViewPart {
 		groupField.setText("Run in Group"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		groupField.setLayoutData(data);
-		
+
 		//	reschedule
 		rescheduleField = new Button(group, SWT.CHECK);
 		rescheduleField.setText("Reschedule"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		rescheduleField.setLayoutData(data);
-		
+
 		//	keep
 		keepField = new Button(group, SWT.CHECK);
 		keepField.setText("Keep"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		keepField.setLayoutData(data);
-		
+
 		//	keep one
 		keepOneField = new Button(group, SWT.CHECK);
 		keepOneField.setText("KeepOne"); //$NON-NLS-1$
@@ -406,7 +405,7 @@ public class JobsView extends ViewPart {
 		userField.setText("User job"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		userField.setLayoutData(data);
-		
+
 		//	whether the job has a goto action
 		gotoActionField = new Button(group, SWT.CHECK);
 		gotoActionField.setText("Goto action"); //$NON-NLS-1$
@@ -482,16 +481,20 @@ public class JobsView extends ViewPart {
 			//note that when a null progress monitor is used when in the UI
 			//thread, the workbench will create a default progress monitor
 			//that reports progress in a modal dialog with details area
-			Platform.getJobManager().join(TestJob.FAMILY_TEST_JOB, null);
-		} catch (OperationCanceledException e) {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InterruptedException {
+					Job.getJobManager().join(TestJob.FAMILY_TEST_JOB, monitor);
+				}
+			});
+		} catch (InterruptedException e) {
 			//thrown if the user interrupts the join by canceling the progress monitor
 			//A UI component should swallow the exception and finish the action
 			//or operation. A lower level component should just propagate the
 			//exception
 			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// Thrown if Thread.interrupt is called on this thread
-			// This can either be ignored (repeat the join attempt until success), or propagated
+		} catch (InvocationTargetException e) {
+			// Thrown when the operation running within busyCursorWhile throws an
+			//exception. This should either be propagated or displayed to the user
 			e.printStackTrace();
 		}
 	}
