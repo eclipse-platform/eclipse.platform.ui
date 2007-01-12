@@ -601,14 +601,25 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 
 	private void feedInput() {
-		if (fStructureInputPane != null 
+		if (fStructureInputPane != null
 				&& (fInput instanceof ICompareInput 
-						|| !(fStructureInputPane instanceof CompareViewerSwitchingPane))) {
-			fStructureInputPane.setInput(fInput);
+						|| isCustomStructureInputPane())) {
+			if (structureCompareOnSingleClick() || hasChildren(fInput) || isCustomStructureInputPane()) {
+				fStructureInputPane.setInput(fInput);
+			} else if (!structureCompareOnSingleClick()) {
+				fContentInputPane.setInput(fInput);
+				if (fContentInputPane.isEmpty() || fContentInputPane.getViewer() instanceof BinaryCompareViewer) {
+					fStructureInputPane.setInput(fInput);
+				}
+			}
 			ISelection sel= fStructureInputPane.getSelection();
 			if (sel == null || sel.isEmpty())
 				feed1(sel);	// we only feed downstream viewers if the top left pane is empty
 		}
+	}
+
+	private boolean isCustomStructureInputPane() {
+		return !(fStructureInputPane instanceof CompareViewerSwitchingPane);
 	}
 
 	private void feed1(final ISelection selection) {
@@ -617,13 +628,14 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				public void run() {
 					if (selection == null || selection.isEmpty()) {
 						Object input= fStructureInputPane.getInput();
-						fContentInputPane.setInput(input);
+						if (input != null)
+							fContentInputPane.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
 						fStructurePane1.setInput(null);
 					} else {
 						Object input= getElement(selection);
 						fContentInputPane.setInput(input);
-						if (structureCompareOnSingleClick())
+						if (structureCompareOnSingleClick() || fContentInputPane.isEmpty())
 							fStructurePane1.setInput(input);
 						fStructurePane2.setInput(null); // clear downstream pane
 						if (fStructurePane1.getInput() != input)
