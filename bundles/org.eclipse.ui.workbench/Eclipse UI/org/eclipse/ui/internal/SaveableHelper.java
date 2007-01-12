@@ -12,6 +12,7 @@ package org.eclipse.ui.internal;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -44,8 +44,10 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IJobRunnable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.statushandling.StatusManager;
 
 /**
  * Helper class for prompting to save dirty views or editors.
@@ -316,15 +318,18 @@ public class SaveableHelper {
 	public static void doSaveModel(final Saveable model,
 			IProgressMonitor progressMonitor,
 			final IShellProvider shellProvider, boolean blockUntilSaved) {
-		final ISchedulingRule schedulingRule = ((InternalSaveable) model)
-				.getSchedulingRule();
-		boolean ruleTransferred = false;
 		try {
-			if (model.supportsBackgroundSave()) {
-				Job.getJobManager().beginRule(schedulingRule, null);
-			} else {
-				// To be safe for 3.3M4, don't lock if the saveable does not support background saves
-				ruleTransferred = true;
+			Job backgroundSaveJob = ((InternalSaveable)model).getBackgroundSaveJob();
+			if (backgroundSaveJob != null) {
+				boolean canceled = waitForBackgroundSaveJob(model);
+				if (canceled) {
+					progressMonitor.setCanceled(true);
+					return;
+				}
+				// return early if the saveable is no longer dirty
+				if (!model.isDirty()) {
+					return;
+				}
 			}
 			final IJobRunnable[] backgroundSaveRunnable = new IJobRunnable[1];
 			try {
@@ -332,9 +337,10 @@ public class SaveableHelper {
 				backgroundSaveRunnable[0] = model.doSave(
 						subMonitor.newChild(2), shellProvider);
 				if (backgroundSaveRunnable[0] == null) {
+					// no further work needs to be done
 					return;
 				}
-				if (blockUntilSaved || !model.supportsBackgroundSave()) {
+				if (blockUntilSaved) {
 					// for now, block on close by running the runnable in the UI
 					// thread
 					IStatus result = backgroundSaveRunnable[0].run(subMonitor
@@ -347,45 +353,31 @@ public class SaveableHelper {
 					}
 					return;
 				}
+				// for the job family, we use the model object because based on
+				// the family we can display the busy state with an animated tab
+				// (see the calls to showBusyForFamily() below).
+				Job saveJob = new Job(NLS.bind(
+						WorkbenchMessages.EditorManager_backgroundSaveJobName,
+						model.getName())) {
+					public boolean belongsTo(Object family) {
+						if (family instanceof DynamicFamily) {
+							return ((DynamicFamily)family).contains(model);
+						}
+						return family.equals(model);
+					}
+
+					protected IStatus run(IProgressMonitor monitor) {
+						return backgroundSaveRunnable[0].run(monitor);
+					}
+				};
 				// we will need the associated parts (for disabling their UI)
-				((InternalSaveable) model).setSavingInBackground(true);
+				((InternalSaveable) model).setBackgroundSaveJob(saveJob);
 				SaveablesList saveablesList = (SaveablesList) PlatformUI
 						.getWorkbench().getService(
 								ISaveablesLifecycleListener.class);
 				final IWorkbenchPart[] parts = saveablesList
 						.getPartsForSaveable(model);
-				{
-					// about to start the job - notify the save actions,
-					// this is done through the workbench windows, which
-					// we can get from the parts...
-					notifySaveAction(parts);
-				}
-				// for the job family, we use the model object because based on
-				// the family we can display the busy state with an animated tab
-				// (see the calls to showBusyForFamily() below).
-				// As a "lock", we use a scheduling rule obtained from the model.
-				// This lock is already held by the UI thread at this time. We
-				// will transfer it to the job. This lock is necessary so that
-				// saves or close-on-dirty that happen later, but still concurrent
-				// with the background save, are blocked until the background save
-				// is finished.
-				Job saveJob = new Job(NLS.bind(
-						WorkbenchMessages.EditorManager_backgroundSaveJobName,
-						model.getName())) {
-					public boolean belongsTo(Object family) {
-						return family.equals(model);
-					}
 
-					protected IStatus run(IProgressMonitor monitor) {
-						try {
-							Job.getJobManager().beginRule(schedulingRule, null);
-							return backgroundSaveRunnable[0].run(monitor);
-						} finally {
-							Job.getJobManager().endRule(schedulingRule);
-							Job.getJobManager().endRule(schedulingRule);
-						}
-					}
-				};
 				// this will cause the parts tabs to show the ongoing background operation
 				for (int i = 0; i < parts.length; i++) {
 					IWorkbenchPart workbenchPart = parts[i];
@@ -397,71 +389,31 @@ public class SaveableHelper {
 				model.disableUI(parts, blockUntilSaved);
 				// Add a listener for enabling the UI after the save job has
 				// finished, and for displaying an error dialog if
-				// necessary. We also use this to notify the UI thread that
-				// the job has started. This complicated dance is necessary
-				// to transfer the schedulingRule to the new job because we
-				// can only do that once we know the thread to transfer the
-				// rule to.
-				final Boolean[] latch = { Boolean.FALSE };
+				// necessary.
 				saveJob.addJobChangeListener(new JobChangeAdapter() {
 					public void done(final IJobChangeEvent event) {
-						latch[0] = Boolean.TRUE;
+						((InternalSaveable) model).setBackgroundSaveJob(null);
 						shellProvider.getShell().getDisplay().asyncExec(
 								new Runnable() {
 									public void run() {
-										((InternalSaveable) model)
-												.setSavingInBackground(false);
 										notifySaveAction(parts);
 										model.enableUI(parts);
-										IStatus result = event.getResult();
-										if (!result.isOK()) {
-											ErrorDialog
-													.openError(
-															shellProvider
-																	.getShell(),
-															WorkbenchMessages.Error,
-															result.getMessage(),
-															result);
-										}
 									}
 								});
 					}
-
-					public void running(IJobChangeEvent event) {
-						synchronized (latch) {
-							latch[0] = Boolean.TRUE;
-							latch.notifyAll();
-						}
-					}
 				});
 				// Finally, we are ready to schedule the job.
-				// The job will block on the "beginRule" call since
-				// we haven't transferred the rule to it yet. We can
-				// only do that 
 				saveJob.schedule();
-				// wait until the job has a thread...
-				synchronized (latch) {
-					while (!latch[0].booleanValue()) {
-						try {
-							latch.wait();
-						} catch (InterruptedException e) {
-							// ignore
-						}
-					}
-				}
-				Job.getJobManager().transferRule(schedulingRule,
-						saveJob.getThread());
-				ruleTransferred = true;
-				return;
+				// the job was started - notify the save actions,
+				// this is done through the workbench windows, which
+				// we can get from the parts...
+				notifySaveAction(parts);
 			} catch (CoreException e) {
 				ErrorDialog.openError(shellProvider.getShell(),
 						WorkbenchMessages.Error, e.getMessage(), e.getStatus());
 				progressMonitor.setCanceled(true);
 			}
 		} finally {
-			if (!ruleTransferred) {
-				Job.getJobManager().endRule(schedulingRule);
-			}
 			progressMonitor.done();
 		}
 	}
@@ -477,25 +429,53 @@ public class SaveableHelper {
 		}
 	}
 
-	public static void waitForBackgroundSaveJobs(List modelsToSave) {
+	/**
+	 * Waits for the background save job (if any) of the given saveable to complete.
+	 * This may open a progress dialog with the option to cancel.
+	 * 
+	 * @param modelToSave
+	 * @return true if the user canceled.
+	 */
+	private static boolean waitForBackgroundSaveJob(final Saveable model) {
+		List models = new ArrayList();
+		models.add(model);
+		return waitForBackgroundSaveJobs(models);
+	}
+	
+	/**
+	 * Waits for the background save jobs (if any) of the given saveables to complete.
+	 * This may open a progress dialog with the option to cancel.
+	 * 
+	 * @param modelsToSave
+	 * @return true if the user canceled.
+	 */
+	public static boolean waitForBackgroundSaveJobs(final List modelsToSave) {
 		// block if any of the saveables is still saving in the background
+		try {
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InterruptedException {
+					Job.getJobManager().join(new DynamicFamily(modelsToSave), monitor);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			StatusUtil.handleStatus(e, StatusManager.SHOWANDLOG);
+		} catch (InterruptedException e) {
+			return true;
+		}
+		// remove saveables that are no longer dirty from the list
 		for (Iterator it = modelsToSave.iterator(); it.hasNext();) {
 			Saveable model = (Saveable) it.next();
-			// Temporary safety check for 3.3M4: Only block if the saveable
-			// supports background save.
-			if (model.supportsBackgroundSave()) {
-				ISchedulingRule schedulingRule = ((InternalSaveable) model)
-						.getSchedulingRule();
-				try {
-					Job.getJobManager().beginRule(schedulingRule, null);
-					// if the saveable is no longer dirty, remove it from the list
-					if (!model.isDirty()) {
-						it.remove();
-					}
-				} finally {
-					Job.getJobManager().endRule(schedulingRule);
-				}
+			if (!model.isDirty()) {
+				it.remove();
 			}
+		}
+		return false;
+	}
+	
+	private static class DynamicFamily extends HashSet {
+		private static final long serialVersionUID = 1L;
+		public DynamicFamily(Collection collection) {
+			super(collection);
 		}
 	}
 

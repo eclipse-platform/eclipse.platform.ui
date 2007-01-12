@@ -289,22 +289,6 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	}
 
 	/**
-	 * EXPERIMENTAL / TEMPORARY: This method will very likely be removed before
-	 * 3.3 M5. As of 3.3 M4, clients must override this method and return true
-	 * if their implementation of
-	 * {@link #doSave(IProgressMonitor, IShellProvider)} may return a non-null
-	 * result.  The default implementation returns false.
-	 * 
-	 * @return <code>true</code> if this saveable may return a non-null value
-	 *         from {@link #doSave(IProgressMonitor, IShellProvider)}.
-	 * 
-	 * @since 3.3
-	 */
-	public boolean supportsBackgroundSave() {
-		return false;
-	}
-	
-	/**
 	 * This implementation of {@link IAdaptable#getAdapter(Class)} returns
 	 * <code>null</code>. Subclasses may override. This allows two unrelated
 	 * subclasses of Saveable to implement {@link #equals(Object)} and

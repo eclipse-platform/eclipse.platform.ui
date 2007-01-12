@@ -442,7 +442,10 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			final IShellProvider shellProvider, IRunnableContext runnableContext, final boolean canCancel, boolean stillOpenElsewhere) {
 		// Save parts, exit the method if cancel is pressed.
 		if (modelsToSave.size() > 0) {
-			SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
+			boolean canceled = SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
+			if (canceled) {
+				return true;
+			}
 
 			IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
 			boolean dontPrompt = stillOpenElsewhere && !apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.PROMPT_WHEN_SAVEABLE_STILL_OPEN);

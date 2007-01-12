@@ -1239,7 +1239,10 @@ public class EditorManager implements IExtensionChangeHandler {
             if (modelsToSave.isEmpty()) {
 				return true;
 			}
-			SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
+			boolean canceled = SaveableHelper.waitForBackgroundSaveJobs(modelsToSave);
+			if (canceled) {
+				return false;
+			}
             // Use a simpler dialog if there's only one
             if (modelsToSave.size() == 1) {
             	Saveable model = (Saveable) modelsToSave.get(0);

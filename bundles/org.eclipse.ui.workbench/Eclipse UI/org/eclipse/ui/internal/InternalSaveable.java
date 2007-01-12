@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @since 3.3
@@ -19,59 +19,32 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  */
 public class InternalSaveable {
 
-	static class SerialPerObjectRule implements ISchedulingRule {
-
-		private InternalSaveable lockObject = null;
-
-		public SerialPerObjectRule(InternalSaveable lock) {
-			lockObject = lock;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean contains(ISchedulingRule rule) {
-			return rule == this;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
-		 */
-		public boolean isConflicting(ISchedulingRule rule) {
-			if (rule instanceof SerialPerObjectRule) {
-				SerialPerObjectRule otherRule = (SerialPerObjectRule) rule;
-				return lockObject.equals(otherRule.lockObject);
-			}
-			return false;
-		}
-
-	}
-
-	private boolean savingInBackground;
+	private Job backgroundSaveJob;
 
 	/**
-	 * @return Returns the lock.
+	 * @return
 	 */
-	/* package */ISchedulingRule getSchedulingRule() {
-		return new SerialPerObjectRule(this);
+	/* package */Job getBackgroundSaveJob() {
+		return backgroundSaveJob;
+	}
+
+	/**
+	 * @param savingInBackground
+	 *            The savingInBackground to set.
+	 */
+	/* package */void setBackgroundSaveJob(Job backgroundSaveJob) {
+		this.backgroundSaveJob = backgroundSaveJob;
 	}
 
 	/**
 	 * @return
 	 */
 	/* package */ boolean isSavingInBackground() {
-		return savingInBackground;
-	}
-
-	/**
-	 * @param savingInBackground The savingInBackground to set.
-	 */
-	/* package */ void setSavingInBackground(boolean savingInBackground) {
-		this.savingInBackground = savingInBackground;
+		Job saveJob = backgroundSaveJob;
+		if (saveJob == null) {
+			return false;
+		}
+		return (backgroundSaveJob.getState() & (Job.WAITING | Job.RUNNING)) != 0;
 	}
 
 }
