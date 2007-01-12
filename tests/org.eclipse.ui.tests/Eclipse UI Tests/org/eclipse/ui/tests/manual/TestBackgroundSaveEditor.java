@@ -64,10 +64,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 
 		private boolean dirty;
 
-		public boolean supportsBackgroundSave() {
-			return true;
-		}
-		
 		public void doSave(IProgressMonitor monitor) throws CoreException {
 			SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
 			IJobRunnable runnable = doSave(subMonitor.newChild(1), getSite());
@@ -83,6 +79,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 					data.foregroundSaveTime);
 			data.setOutput("");
 			for (int i = 0; i < data.foregroundSaveTime; i++) {
+				if (monitor.isCanceled()) {
+					return null;
+				}
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
@@ -108,6 +107,9 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 					monitor.beginTask("Saving in the background",
 							data.backgroundSaveTime);
 					for (int i = 0; i < data.backgroundSaveTime; i++) {
+						if (monitor.isCanceled()) {
+							return Status.CANCEL_STATUS;
+						}
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
@@ -334,8 +336,8 @@ public class TestBackgroundSaveEditor extends EditorPart implements
 
 	public static class Data {
 		PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
-		public String input;
-		public String output;
+		public String input = "";
+		public String output = "";
 		public String buffer;
 		public boolean saveInBackground;
 		public boolean throwExceptionInForeground;
