@@ -11,7 +11,6 @@
 
 package org.eclipse.team.internal.ccvs.ui;
 
-import java.net.URI;
 import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
@@ -239,13 +238,10 @@ public class CVSHistoryTableProvider {
 				returnFont = getCurrentRevisionFont();
 			}
 			//Check to see if this is the local workspace file
-			if (workspaceFile != null){
-				URI entryURI = entry.getURI();
-				URI workspaceURI = workspaceFile.getLocationURI();
-				if (entryURI != null && workspaceURI != null){
-					if (entryURI.compareTo(workspaceURI) == 0)
-						return getCurrentRevisionFont();	
-				}
+			if (workspaceFile != null && entry instanceof LocalFileRevision) {
+				LocalFileRevision localRevision = (LocalFileRevision) entry;
+				if (localRevision.isCurrentState())
+					return getCurrentRevisionFont();	
 			}
 			
 			return returnFont;

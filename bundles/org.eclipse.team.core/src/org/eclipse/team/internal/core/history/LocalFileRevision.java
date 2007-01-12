@@ -180,4 +180,8 @@ public class LocalFileRevision extends FileRevision {
 	public IFileState getState() {
 		return state;
 	}
+	
+	public boolean isCurrentState() {
+		return file != null;
+	}
 }

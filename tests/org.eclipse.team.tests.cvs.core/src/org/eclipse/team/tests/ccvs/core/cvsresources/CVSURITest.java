@@ -39,7 +39,7 @@ public class CVSURITest extends EclipseTest {
 	}
 	
 	public void testURIParse() throws URISyntaxException, CVSException {
-		URI uri = new URI("cvs://:pserver:user@host.here:!root!path/project/path");
+		URI uri = new URI("cvs://_pserver_user~host.here_!root!path/project/path");
 		CVSURI cvsUri = CVSURI.fromUri(uri);
 		assertEquals("/project/path", cvsUri.getPath().toString());
 		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user@host.here:/root/path");
@@ -49,40 +49,50 @@ public class CVSURITest extends EclipseTest {
 	}
 	
 	public void testURIParse2() throws URISyntaxException, CVSException {
-		URI uri = new URI("cvs://:pserver:user:password@host.here:port!root!path/project/path");
+		URI uri = new URI("cvs://_pserver_user_password~host.here_1234!root!path/project/path");
 		CVSURI cvsUri = CVSURI.fromUri(uri);
 		assertEquals("/project/path", cvsUri.getPath().toString());
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:port/root/path");
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:1234/root/path");
 		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
 		assertEquals(cvsUri.getTag(), null);
 		assertEquals(cvsUri.toURI(), uri);
 	}
 	
 	public void testURIParse3() throws URISyntaxException, CVSException {
-		URI uri = new URI("cvs://:pserver:user:password@host.here:port!root!path/project/path?version=v1");
+		URI uri = new URI("cvs://_pserver_user_password~host.here_1234!root!path/project/path?version=v1");
 		CVSURI cvsUri = CVSURI.fromUri(uri);
 		assertEquals("/project/path", cvsUri.getPath().toString());
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:port/root/path");
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:1234/root/path");
 		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
 		assertEquals(cvsUri.getTag(), new CVSTag("v1", CVSTag.VERSION));
 		assertEquals(cvsUri.toURI(), uri);
 	}
 	
 	public void testURIParse4() throws URISyntaxException, CVSException {
-		URI uri = new URI("cvs://:pserver:user:password@host.here:port!root!path/project/path?branch=b1");
+		URI uri = new URI("cvs://_pserver_user_password~host.here_1234!root!path/project/path?branch=b1");
 		CVSURI cvsUri = CVSURI.fromUri(uri);
 		assertEquals("/project/path", cvsUri.getPath().toString());
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:port/root/path");
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:1234/root/path");
 		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
 		assertEquals(cvsUri.getTag(), new CVSTag("b1", CVSTag.BRANCH));
 		assertEquals(cvsUri.toURI(), uri);
 	}
 	
 	public void testURIParse5() throws URISyntaxException, CVSException {
-		URI uri = new URI("cvs://:pserver:user:password@host.here:port!root!path/project/path?revision=1.5");
+		URI uri = new URI("cvs://_pserver_user_password~host.here_1234!root!path/project/path?revision=1.5");
 		CVSURI cvsUri = CVSURI.fromUri(uri);
 		assertEquals("/project/path", cvsUri.getPath().toString());
-		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:port/root/path");
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:password@host.here:1234/root/path");
+		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
+		assertEquals(cvsUri.getRevision(), "1.5");
+		assertEquals(cvsUri.toURI(), uri);
+	}
+	
+	public void testURIParse6() throws URISyntaxException, CVSException {
+		URI uri = new URI("cvs://_pserver_user_pass~~word~host.here_1234!the__root!path!!/project/path?revision=1.5");
+		CVSURI cvsUri = CVSURI.fromUri(uri);
+		assertEquals("/project/path", cvsUri.getPath().toString());
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromString(":pserver:user:pass~word@host.here:1234/the_root/path!");
 		assertEquals(cvsUri.getRepository().getLocation(false), location.getLocation(false));
 		assertEquals(cvsUri.getRevision(), "1.5");
 		assertEquals(cvsUri.toURI(), uri);

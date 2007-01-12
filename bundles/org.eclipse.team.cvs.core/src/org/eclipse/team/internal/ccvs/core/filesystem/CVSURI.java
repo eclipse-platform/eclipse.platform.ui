@@ -120,8 +120,7 @@ public class CVSURI {
 			return null;
 		if (authority.indexOf('!') == -1)
 			return null;
-		authority = authority.replace('!', '/');
-		authority = authority.replaceAll("//", "!"); //$NON-NLS-1$ //$NON-NLS-2$
+		authority = decodeAuthority(authority);
 		return CVSRepositoryLocation.fromString(authority);
 	}
 
@@ -181,10 +180,7 @@ public class CVSURI {
 	public URI toURI() {
 		try {
 			String authority = repository.getLocation(false);
-			// Escape any existing !
-			authority = authority.replaceAll("!", "!!"); //$NON-NLS-1$ //$NON-NLS-2$
-			// Convert / to ! to avoid URI parsing part of the authority as the path
-			authority = authority.replace('/', '!');
+			authority = ensureRegistryBasedAuthority(authority);
 			String pathString = path.toString();
 			if (!pathString.startsWith("/")) { //$NON-NLS-1$
 				pathString = "/" + pathString; //$NON-NLS-1$
@@ -206,6 +202,42 @@ public class CVSURI {
 			CVSProviderPlugin.log(IStatus.ERROR, NLS.bind("An error occurred while creating a URI for {0} {1}", repository, path), e); //$NON-NLS-1$
 			throw new IllegalStateException(e.getMessage());
 		}
+	}
+
+	/*
+	 * Ensure that the authority will not be confused with a
+	 * server based authority. To do this, we need to convert 
+	 * any /, : and @ to another form.
+	 */
+	private String ensureRegistryBasedAuthority(String authority) {
+		// Encode / so the authority doesn't conflict with the path
+		authority = encode('/', '!', authority);
+		// Encode @ to avoid URI interpreting the authority as a server based authority
+		authority = encode('@', '~', authority);
+		// Encode : to avoid URI interpreting the authority as a server based authority
+		authority = encode(':', '_', authority);
+		return authority;
+	}
+	
+	private static String decodeAuthority(String authority) {
+		authority = decode('/', '!', authority);
+		authority = decode('@', '~', authority);
+		authority = decode(':', '_', authority);
+		return authority;
+	}
+	
+	private String encode(char charToEncode, char encoding, String string) {
+		// First, escape any occurrences of the encoding character
+		String result = string.replaceAll(new String(new char[] { encoding }), new String(new char[] { encoding, encoding }));
+		// Convert / to ! to avoid URI parsing part of the authority as the path
+		return result.replace(charToEncode, encoding);
+	}
+	
+	private static String decode(char encodedChar, char encoding, String string) {
+		// Convert the encoded char back
+		String reuslt = string.replace(encoding, encodedChar);
+		// Convert any double occurrences of the encoded char back to the encoding
+		return reuslt.replaceAll(new String(new char[] { encodedChar, encodedChar }), new String(new char[] { encoding }));
 	}
 
 	private static String getQueryType(CVSTag tag) {
