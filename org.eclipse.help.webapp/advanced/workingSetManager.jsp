@@ -39,6 +39,7 @@ HTML, BODY {
 }
 
 BODY {
+    font:<%=prefs.getViewFont()%>;
 	background-color: <%=prefs.getToolbarBackground()%>;
 	color:WindowText; 	
 }
@@ -61,6 +62,10 @@ TD.radio {
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
 	margin:5px;
+}
+
+BUTTON {
+    font-size:1.0em; 
 }
 
 FORM {

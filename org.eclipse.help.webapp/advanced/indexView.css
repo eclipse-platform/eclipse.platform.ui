@@ -44,6 +44,10 @@ INPUT {
 	border:1px solid ThreeDShadow;
 }
 
+INPUT {
+    font-size:1.0em;
+}
+
 #instruction {
 	white-space:nowrap;
 }
@@ -65,6 +69,7 @@ INPUT {
 #button {
 	background:ThreeDShadow;
 	color:Window;
+	font-size: 1.0em;
 	font-weight:bold;
 	margin-left:1px;
 }

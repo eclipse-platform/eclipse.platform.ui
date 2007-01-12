@@ -52,9 +52,13 @@ TD, TR {
 	border:0px;
 }
 
+INPUT {
+    font:<%=prefs.getViewFont()%>;
+}
+
 #workingSet {
 	width:100%;
-	font:<%=prefs.getViewFont()%>;
+	font-size:1.0em;
 }
 
 #booksContainer {
@@ -95,6 +99,10 @@ if (data.isIE()) {
 
 BUTTON {
 	font:<%=prefs.getViewFont()%>;
+}
+
+BUTTON {	
+	font-size:1.0em; 
 }
 
 .expanded {

@@ -59,6 +59,10 @@ INPUT {
 	padding:0px;
 }
 
+INPUT {
+    font-size: 1.0em;
+}
+
 A {
 	color:WindowText;
 	text-decoration:none;
@@ -85,6 +89,7 @@ A {
 	font-weight:bold;
 	border:1px solid ThreeDShadow;
 	margin-left:1px;
+	font-size 1.0em;
 }
 
 #scopeLabel {
