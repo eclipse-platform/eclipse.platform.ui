@@ -348,6 +348,15 @@
             id="org.eclipse.ui.ide.editors"
             label="%PreferenceKeywords.Editors"/>
       <keyword
+            id="org.eclipse.ui.ide.pin"
+            label="%PreferenceKeywords.Pin"/>
+      <keyword
+            id="org.eclipse.ui.ide.close"
+            label="%PreferenceKeywords.Close"/>
+      <keyword
+            id="org.eclipse.ui.ide.dirty"
+            label="%PreferenceKeywords.Dirty"/>
+      <keyword
             id="org.eclipse.ui.ide.keys"
             label="%PreferenceKeywords.Keys"/>
       <keyword
@@ -379,6 +388,9 @@
          <keywordReference id="org.eclipse.ui.ide.editing"/>
          <keywordReference id="org.eclipse.ui.ide.tabs"/>
          <keywordReference id="org.eclipse.ui.ide.editors"/>
+         <keywordReference id="org.eclipse.ui.ide.pin"/>
+         <keywordReference id="org.eclipse.ui.ide.dirty"/>
+         <keywordReference id="org.eclipse.ui.ide.close"/>
       </page>
       <page
             name="%PreferencePages.Perspectives"
