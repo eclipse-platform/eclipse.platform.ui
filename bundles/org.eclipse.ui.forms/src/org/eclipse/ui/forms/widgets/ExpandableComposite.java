@@ -147,6 +147,7 @@ public class ExpandableComposite extends Canvas {
 
 	private int VSPACE = 3;
 
+	protected int VGAP = 3;
 	protected int GAP = 4;
 
 	private int SEPARATOR_HEIGHT = 2;
@@ -204,7 +205,7 @@ public class ExpandableComposite extends Canvas {
 
 			if (hasTitleBar()) {
 				thmargin = GAP;
-				tvmargin = GAP;
+				tvmargin = VGAP;
 			}
 			int x = marginWidth + thmargin;
 			int y = marginHeight + tvmargin;
@@ -298,7 +299,7 @@ public class ExpandableComposite extends Canvas {
 					if (desc != null) {
 						dsize = descriptionCache.computeSize(areaWidth,
 								SWT.DEFAULT);
-						descriptionCache.setBounds(cx, y, dsize.x, dsize.y);
+						descriptionCache.setBounds(cx, y, areaWidth, dsize.y);
 						y += dsize.y + clientVerticalSpacing;
 					} else {
 						y += clientVerticalSpacing;
@@ -329,7 +330,7 @@ public class ExpandableComposite extends Canvas {
 
 			if (hasTitleBar()) {
 				thmargin = GAP;
-				tvmargin = GAP;
+				tvmargin = VGAP;
 			}
 			int innerwHint = wHint; 
 			if (innerwHint != SWT.DEFAULT)

@@ -502,7 +502,7 @@ public class FormToolkit {
 					.getColor(FormColors.TB_BORDER));
 			section.setTitleBarGradientBackground(colors
 					.getColor(FormColors.TB_GBG));
-			section.setTitleBarForeground(colors.getColor(FormColors.TB_FG));
+			section.setTitleBarForeground(colors.getColor(FormColors.TB_TOGGLE));
 		}
 		return section;
 	}
