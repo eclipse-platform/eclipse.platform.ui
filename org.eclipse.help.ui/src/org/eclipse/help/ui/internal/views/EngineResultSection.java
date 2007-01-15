@@ -41,7 +41,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -136,7 +136,7 @@ public class EngineResultSection {
 
 	private void createFormText(Composite parent, FormToolkit toolkit) {
 		searchResults = toolkit.createFormText(parent, false);
-		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(FormColors.TITLE));
+		searchResults.setColor(IFormColors.TITLE, toolkit.getColors().getColor(IFormColors.TITLE));
 		searchResults.marginHeight = 5;
 		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;

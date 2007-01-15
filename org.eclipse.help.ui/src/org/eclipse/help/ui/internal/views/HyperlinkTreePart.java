@@ -32,7 +32,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 
 	private String id;
 
-	private Composite container;
+	//private Composite container;
 
 	protected TreeViewer treeViewer;
 
@@ -48,6 +48,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	public HyperlinkTreePart(Composite parent, final FormToolkit toolkit,
 			IToolBarManager tbm) {
 		handCursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
+		/*
 		container = toolkit.createComposite(parent);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -60,6 +61,8 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		sep.setLayoutData(gd);
 
 		treeViewer = new TreeViewer(container, SWT.H_SCROLL | SWT.V_SCROLL);
+		*/
+		treeViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.getTree().setMenu(parent.getMenu());
 		treeViewer.getTree().setForeground(
 				toolkit.getHyperlinkGroup().getForeground());
@@ -113,7 +116,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 					}
 				}
 				if (selected)
-					e.gc.setForeground(container.getDisplay().getSystemColor(
+					e.gc.setForeground(e.display.getSystemColor(
 							SWT.COLOR_LIST_SELECTION_TEXT));
 				else
 					e.gc.setForeground(toolkit.getHyperlinkGroup()
@@ -157,7 +160,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 					IStructuredSelection ssel = (IStructuredSelection) treeViewer
 							.getSelection();
 					if (ssel.getFirstElement() == obj)
-						item.setForeground(container.getDisplay()
+						item.setForeground(e.display
 								.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 					else
 						item.setForeground(toolkit.getHyperlinkGroup()
@@ -195,7 +198,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	protected void contributeToToolBar(IToolBarManager tbm) {
 		Action collapseAllAction = new Action() {
 			public void run() {
-				BusyIndicator.showWhile(container.getDisplay(), new Runnable() {
+				BusyIndicator.showWhile(getControl().getDisplay(), new Runnable() {
 					public void run() {
 						doCollapseAll();
 					}
@@ -222,7 +225,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
 	 */
 	public Control getControl() {
-		return container;
+		return treeViewer.getControl();
 	}
 
 	/*
@@ -245,7 +248,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		container.setVisible(visible);
+		getControl().setVisible(visible);
 		if (visible)
 			treeViewer.refresh();
 	}
@@ -262,7 +265,7 @@ public abstract class HyperlinkTreePart extends AbstractFormPart implements
 		if (lastItem != null && !lastItem.isDisposed()) {
 			Object lastObj = lastItem.getData();
 			if (lastObj==obj)
-				lastItem.setForeground(container.getDisplay()
+				lastItem.setForeground(getControl().getDisplay()
 							.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT));
 			else
 				lastItem.setForeground(parent.getForm().getToolkit().getHyperlinkGroup()

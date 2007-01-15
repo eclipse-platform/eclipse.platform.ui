@@ -27,7 +27,6 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,6 +36,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -97,12 +97,15 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		form = toolkit.createScrolledForm(parent);		
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
 		FormColors colors = toolkit.getColors();
+		/*
 		colors.initializeSectionToolBarColors();
 		Color gbg = colors.getColor(FormColors.TB_GBG);
 		Color bg = colors.getBackground();
 		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
 		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
 		form.getForm().setSeparatorVisible(true);
+		*/
+		toolkit.decorateFormHeading(form.getForm());
 		mform = new ManagedForm(toolkit, form);
 		GridLayout glayout = new GridLayout();
 		glayout.marginHeight = 0;
@@ -123,10 +126,10 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 				updateSashPanelMargins(sash);
 			}
 		});
-		sash.setBackground(colors.getColor(FormColors.TB_GBG));
+		sash.setBackground(colors.getColor(IFormColors.TB_BG));
 		
 		Composite explorerPanel = new Composite(sash, SWT.NULL);
-		explorerPanel.setBackground(colors.getColor(FormColors.TB_BORDER));
+		explorerPanel.setBackground(colors.getColor(IFormColors.TB_BORDER));
 		GridLayout playout = new GridLayout();
 		playout.marginWidth = 0;
 		playout.marginHeight = 0;
@@ -138,7 +141,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		playout.marginWidth = 0;
 		playout.marginHeight = 0;
 		editorPanel.setLayout(playout);
-		editorPanel.setBackground(colors.getColor(FormColors.TB_BORDER));		
+		editorPanel.setBackground(colors.getColor(IFormColors.TB_BORDER));		
 		taskEditorContainer = new PageBook(editorPanel, SWT.NULL);
 		toolkit.adapt(taskEditorContainer);
 		taskEditorContainer.setLayoutData(new GridData(GridData.FILL_BOTH));

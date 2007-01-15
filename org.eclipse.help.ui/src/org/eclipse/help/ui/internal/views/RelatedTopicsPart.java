@@ -52,7 +52,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 					hHint, flushCache);
 			Point size = new Point(0, 0);
 			size.x = Math.max(topSize.x, botSize.x);
-			size.y = topSize.y + VSPACE + botSize.y;
+			size.y = VSPACE + topSize.y + VSPACE + botSize.y;
 			return size;
 		}
 
@@ -62,7 +62,7 @@ public class RelatedTopicsPart extends AbstractFormPart implements IHelpPart {
 					carea.width, SWT.DEFAULT, flushCache);
 			Point botSize = dynamicHelpPart.getControl().computeSize(
 					carea.width, SWT.DEFAULT, flushCache);
-			int y = 0;
+			int y = VSPACE;
 			contextHelpPart.getControl().setBounds(0, y, carea.width, topSize.y);
 			y += topSize.y + VSPACE;
 			dynamicHelpPart.getControl().setBounds(0, y, carea.width, botSize.y);

@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.forms.AbstractFormPart;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -178,7 +178,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 		searchWordChevron = new Chevron(searchWordText, SWT.NULL);
 		toolkit.adapt(searchWordChevron, true, true);
 		searchWordChevron.setHoverDecorationColor(toolkit.getHyperlinkGroup().getActiveForeground());
-		searchWordChevron.setDecorationColor(toolkit.getColors().getColor(FormColors.TB_TOGGLE));
+		searchWordChevron.setDecorationColor(toolkit.getColors().getColor(IFormColors.TB_TOGGLE));
 		searchWordText.setControl(HREF_TOGGLE, searchWordChevron);
 		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -398,7 +398,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			Label spacer = toolkit.createLabel(container, null);
 			spacer.setData(edesc);
 			Label dlabel = toolkit.createLabel(container, desc, SWT.WRAP);
-			dlabel.setForeground(toolkit.getColors().getColor(FormColors.TITLE));
+			dlabel.setForeground(toolkit.getColors().getColor(IFormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 			dlabel.setMenu(container.getMenu());
 			dlabel.setData(edesc);

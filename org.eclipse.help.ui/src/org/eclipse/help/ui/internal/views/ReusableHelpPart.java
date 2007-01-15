@@ -67,6 +67,7 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -828,6 +829,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 				.getImageDescriptor(IHelpUIConstants.IMAGE_ADD_BOOKMARK));
 		if (actionBars != null && actionBars.getMenuManager() != null)
 			contributeToDropDownMenu(actionBars.getMenuManager());
+		
 		roleFilter = new RoleFilter();
 		uaFilter = new UAFilter();
 		if (HelpBasePlugin.getActivitySupport().isUserCanToggleFiltering()) {
@@ -905,6 +907,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		form.getBody().setLayout(new HelpPartLayout());
 		mform = new ManagedForm(toolkit, form);
 		mform.getForm().setDelayedReflow(false);
+		toolkit.decorateFormHeading(mform.getForm().getForm());
 		MenuManager manager = new MenuManager();
 		IMenuListener listener = new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -915,6 +918,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(form.getForm());
 		form.getForm().setMenu(contextMenu);
+		//contributeToDropDownMenu(mform.getForm().getForm().getMenuManager());
 	}
 
 	public HelpPartPage showPage(String id) {
@@ -958,6 +962,12 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			oldPage.setVisible(false);
 		}
 		mform.getForm().setText(newPage.getText());
+		mform.getForm().getForm().setSeparatorVisible(newPage.getText()!=null);
+		Image newImage=null;
+		String iconId = newPage.getIconId();
+		if (iconId != null)
+			newImage = HelpUIResources.getImage(iconId);
+		mform.getForm().setImage(newImage);
 		newPage.setVisible(true);
 		toolBarManager.update(true);
 		currentPage = newPage;

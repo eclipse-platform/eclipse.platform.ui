@@ -48,7 +48,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -112,8 +112,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		text = toolkit.createFormText(container, false);
 		text.setWhitespaceNormalized(false);
 		text.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		text.setColor(FormColors.TITLE, toolkit.getColors().getColor(
-				FormColors.TITLE));
+		text.setColor(IFormColors.TITLE, toolkit.getColors().getColor(
+				IFormColors.TITLE));
 		codeFont = createCodeFont(parent.getDisplay(), parent.getFont(), JFaceResources.getTextFont());
 		text.setFont("code", codeFont); //$NON-NLS-1$
 		String key = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
@@ -477,7 +477,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (category == null)
 			category = Messages.ContextHelpPart_seeAlso;
 		sbuf.append("<p><span color=\""); //$NON-NLS-1$
-		sbuf.append(FormColors.TITLE);
+		sbuf.append(IFormColors.TITLE);
 		sbuf.append("\">"); //$NON-NLS-1$
 		sbuf.append(category);
 		sbuf.append("</span></p>"); //$NON-NLS-1$

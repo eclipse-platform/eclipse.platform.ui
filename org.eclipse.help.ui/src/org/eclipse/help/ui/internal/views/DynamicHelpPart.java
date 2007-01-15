@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.SectionPart;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
@@ -133,8 +133,8 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(section, false);
 		section.setClient(searchResults);
-		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
-				FormColors.TITLE));
+		searchResults.setColor(IFormColors.TITLE, toolkit.getColors().getColor(
+				IFormColors.TITLE));
 		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		String nwKey = IHelpUIConstants.IMAGE_NW;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
@@ -282,7 +282,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		StringBuffer buff = new StringBuffer();
 		buff.append("<form>"); //$NON-NLS-1$
 		buff.append("<p><span color=\""); //$NON-NLS-1$
-		buff.append(FormColors.TITLE);
+		buff.append(IFormColors.TITLE);
 		buff.append("\">"); //$NON-NLS-1$
 		buff.append(Messages.SearchResultsPart_progress); 
 		buff.append("</span>"); //$NON-NLS-1$
@@ -319,7 +319,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		if (hits.length > 0) {
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\""); //$NON-NLS-1$
-			buff.append(FormColors.TITLE);
+			buff.append(IFormColors.TITLE);
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append(Messages.SearchResultsPart_label); 
 			buff.append("</span></p>"); //$NON-NLS-1$
