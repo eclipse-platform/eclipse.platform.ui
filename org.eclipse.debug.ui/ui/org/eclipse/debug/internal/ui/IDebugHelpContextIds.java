@@ -111,6 +111,7 @@ public interface IDebugHelpContextIds {
 	public static final String DELETE_ASSOCIATED_LAUNCH_CONFIGS_DIALOG = PREFIX + "delete_associated_launch_configs_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCH_MODES_DIALOG = PREFIX + "select_launch_modes_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCHERS_DIALOG = PREFIX + "select_launchers_dialog"; //$NON-NLS-1$
+	public static final String SELECT_RESOURCES_TO_SAVE_DIALOG = PREFIX + "select_resources_to_save_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$

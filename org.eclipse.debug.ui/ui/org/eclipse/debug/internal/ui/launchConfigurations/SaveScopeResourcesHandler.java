@@ -22,6 +22,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -77,6 +78,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 			Composite ctrl = (Composite) super.createDialogArea(parent);
 			fSavePref = new Button(ctrl, SWT.CHECK);
 			fSavePref.setText(LaunchConfigurationsMessages.SaveScopeResourcesHandler_1);
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(ctrl, IDebugHelpContextIds.SELECT_RESOURCES_TO_SAVE_DIALOG);
 			return ctrl;
 		}
 		
