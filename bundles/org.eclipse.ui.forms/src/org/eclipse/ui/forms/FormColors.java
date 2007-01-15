@@ -30,53 +30,68 @@ import org.eclipse.swt.widgets.Display;
 public class FormColors {
 	/**
 	 * Key for the form title foreground color.
+	 * 
+	 * @deprecated use <code>IFormColors.TITLE</code>.
 	 */
-	public static final String TITLE = "org.eclipse.ui.forms.TITLE"; //$NON-NLS-1$
+	public static final String TITLE = IFormColors.TITLE;
 
 	/**
 	 * Key for the tree/table border color.
+	 * 
+	 * @deprecated use <code>IFormColors.BORDER</code>
 	 */
-	public static final String BORDER = "org.eclipse.ui.forms.BORDER"; //$NON-NLS-1$
+	public static final String BORDER = IFormColors.BORDER;
 
 	/**
 	 * Key for the section separator color.
+	 * 
+	 * @deprecated use <code>IFormColors.SEPARATOR</code>.
 	 */
-	public static final String SEPARATOR = "org.eclipse.ui.forms.SEPARATOR"; //$NON-NLS-1$
+	public static final String SEPARATOR = IFormColors.SEPARATOR;
 
 	/**
 	 * Key for the section title bar background.
+	 * 
+	 * @deprecated use <code>IFormColors.TB_BG
 	 */
-	public static final String TB_BG = "org.eclipse.ui.forms.TB_BG"; //$NON-NLS-1$
+	public static final String TB_BG = IFormColors.TB_BG;
 
 	/**
 	 * Key for the section title bar foreground.
 	 * 
-	 * 
+	 * @deprecated use <code>IFormColors.TB_FG</code>
 	 */
-	public static final String TB_FG = "org.eclipse.ui.forms.TB_FG"; //$NON-NLS-1$
+	public static final String TB_FG = IFormColors.TB_FG;
 
 	/**
 	 * Key for the section title bar gradient.
+	 * 
+	 * @deprecated use <code>IFormColors.TB_GBG</code>
 	 */
-	public static final String TB_GBG = "org.eclipse.ui.forms.TB_GBG"; //$NON-NLS-1$
+	public static final String TB_GBG = IFormColors.TB_GBG;
 
 	/**
 	 * Key for the section title bar border.
+	 * 
+	 * @deprecated use <code>IFormColors.TB_BORDER</code>.
 	 */
-	public static final String TB_BORDER = "org.eclipse.ui.forms.TB_BORDER"; //$NON-NLS-1$
+	public static final String TB_BORDER = IFormColors.TB_BORDER;
 
 	/**
 	 * Key for the section toggle color. Since 3.1, this color is used for all
 	 * section styles.
+	 * 
+	 * @deprecated use <code>IFormColors.TB_TOGGLE</code>.
 	 */
-	public static final String TB_TOGGLE = "org.eclipse.ui.forms.TB_TOGGLE"; //$NON-NLS-1$
+	public static final String TB_TOGGLE = IFormColors.TB_TOGGLE;
 
 	/**
 	 * Key for the section toggle hover color.
 	 * 
 	 * @since 3.1
+	 * @depracated use <code>IFormColors.TB_TOGGLE_HOVER</code>.
 	 */
-	public static final String TB_TOGGLE_HOVER = "org.eclipse.ui.forms.TB_TOGGLE_HOVER"; //$NON-NLS-1$	
+	public static final String TB_TOGGLE_HOVER = IFormColors.TB_TOGGLE_HOVER;
 
 	protected Map colorRegistry = new HashMap(10);
 
@@ -89,10 +104,6 @@ public class FormColors {
 	protected Display display;
 
 	protected Color border;
-
-	private static final RGB WHITE = new RGB(255, 255, 255);
-
-	private static final RGB BLACK = new RGB(0, 0, 0);
 
 	/**
 	 * Creates form colors using the provided display.
@@ -135,10 +146,10 @@ public class FormColors {
 	 */
 	protected void initializeColorTable() {
 		createTitleColor();
-		createTwistieColors();
-		createColor(SEPARATOR, getColor(TITLE).getRGB());
+		createColor(IFormColors.SEPARATOR, getColor(IFormColors.TITLE).getRGB());
+		RGB black = getSystemColor(SWT.COLOR_BLACK);
 		RGB borderRGB = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-		createColor(BORDER, blend(borderRGB, BLACK, 80));
+		createColor(IFormColors.BORDER, blend(borderRGB, black, 80));
 	}
 
 	/**
@@ -150,10 +161,28 @@ public class FormColors {
 	 * keys to ensure they are available.
 	 */
 	public void initializeSectionToolBarColors() {
-		if (getColor(FormColors.TB_BG) != null)
+		if (colorRegistry.containsKey(IFormColors.TB_BG))
 			return;
 		createTitleBarGradientColors();
 		createTitleBarOutlineColors();
+		createTwistieColors();
+	}
+
+	/**
+	 * Allocates additional colors for the form header, namely background
+	 * gradients, bottom separator keylines and DND highlights. Since these
+	 * colors are only needed for clients that want to use these particular
+	 * style of header rendering, they are not needed all the time and are
+	 * allocated on demand. Consequently, this method will do nothing if the
+	 * colors have been already initialized. Call this method prior to using
+	 * color keys with the H_ prefix to ensure they are available.
+	 * 
+	 * @since 3.3
+	 */
+	private void initializeFormHeaderColors() {
+		if (colorRegistry.containsKey(IFormColors.H_BOTTOM_KEYLINE2))
+			return;
+		createFormHeaderColors();
 	}
 
 	/**
@@ -240,7 +269,7 @@ public class FormColors {
 	 */
 	protected void updateBorderColor() {
 		if (isWhiteBackground())
-			border = getColor(BORDER);
+			border = getColor(IFormColors.BORDER);
 		else {
 			border = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 			Color bg = getImpliedBackground();
@@ -261,6 +290,7 @@ public class FormColors {
 	public void setBackground(Color bg) {
 		this.background = bg;
 		updateBorderColor();
+		updateFormHeaderColors();
 	}
 
 	/**
@@ -324,6 +354,10 @@ public class FormColors {
 	 * @return color object if found, or <samp>null </samp> if not.
 	 */
 	public Color getColor(String key) {
+		if (key.startsWith(IFormColors.TB_PREFIX))
+			initializeSectionToolBarColors();
+		else if (key.startsWith(IFormColors.H_PREFIX))
+			initializeFormHeaderColors();
 		return (Color) colorRegistry.get(key);
 	}
 
@@ -449,95 +483,249 @@ public class FormColors {
 	}
 
 	private void createTitleColor() {
-		RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION);
-		// test too light
-		if (testTwoPrimaryColors(rgb, 120, 151))
-			rgb = blend(rgb, BLACK, 80);
-		else if (testTwoPrimaryColors(rgb, 150, 256))
-			rgb = blend(rgb, BLACK, 50);
-		createColor(TITLE, rgb);
+		/*
+		 * RGB rgb = getSystemColor(SWT.COLOR_LIST_SELECTION); // test too light
+		 * if (testTwoPrimaryColors(rgb, 120, 151)) rgb = blend(rgb, BLACK, 80);
+		 * else if (testTwoPrimaryColors(rgb, 150, 256)) rgb = blend(rgb, BLACK,
+		 * 50); createColor(TITLE, rgb);
+		 */
+		RGB bg = getImpliedBackground().getRGB();
+		RGB listSelection = getSystemColor(SWT.COLOR_LIST_SELECTION);
+		RGB listForeground = getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		RGB rgb = listSelection;
+
+		// Group 1
+		// Rule: If at least 2 of the LIST_SELECTION RGB values are equal to or
+		// between 0 and 120, then use 100% LIST_SELECTION as it is (no
+		// additions)
+		// Examples: XP Default, Win Classic Standard, Win High Con White, Win
+		// Classic Marine
+		if (testTwoPrimaryColors(listSelection, -1, 121))
+			rgb = listSelection;
+		// Group 2
+		// When LIST_BACKGROUND = white (255, 255, 255) or not black, text
+		// colour = LIST_SELECTION @ 100% Opacity + 50% LIST_FOREGROUND over
+		// LIST_BACKGROUND
+		// Rule: If at least 2 of the LIST_SELECTION RGB values are equal to or
+		// between 121 and 255, then add 50% LIST_FOREGROUND to LIST_SELECTION
+		// foreground colour
+		// Examples: Win Vista, XP Silver, XP Olive , Win Classic Plum, OSX
+		// Aqua, OSX Graphite, Linux GTK
+		else if (testTwoPrimaryColors(listSelection, 120, 256)
+				|| (bg.red == 0 && bg.green == 0 && bg.blue == 0))
+			rgb = blend(listSelection, listForeground, 50);
+		// Group 3
+		// When LIST_BACKGROUND = black (0, 0, 0), text colour = LIST_SELECTION
+		// @ 100% Opacity + 50% LIST_FOREGROUND over LIST_BACKGROUND
+		// Rule: If LIST_BACKGROUND = 0, 0, 0, then add 50% LIST_FOREGROUND to
+		// LIST_SELECTION foreground colour
+		// Examples: Win High Con Black, Win High Con #1, Win High Con #2
+		// (covered in the second part of the OR clause above)
+		createColor(IFormColors.TITLE, rgb);
 	}
 
 	private void createTwistieColors() {
-		RGB rgb = getColor(TITLE).getRGB();
+		RGB rgb = getColor(IFormColors.TITLE).getRGB();
+		RGB white = getSystemColor(SWT.COLOR_WHITE);
 		createColor(TB_TOGGLE, rgb);
-
-		// hover twistie
-		rgb = blend(rgb, WHITE, 70);
-		// bounds
-		if (testTwoPrimaryColors(rgb, 215, 226))
-			rgb = blend(rgb, BLACK, 90);
-		else if (testTwoPrimaryColors(rgb, 225, 256))
-			rgb = blend(rgb, BLACK, 95);
+		rgb = blend(rgb, white, 60);
 		createColor(TB_TOGGLE_HOVER, rgb);
 	}
 
 	private void createTitleBarGradientColors() {
-		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		Color bg = getImpliedBackground();
-		RGB formBackground = bg.getRGB();
+		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB bg = getImpliedBackground().getRGB();
 
-		// blend 77% white with the title background gradient
-		tbBg = blend(formBackground, tbBg, 77);
+		// Group 1
+		// Rule: If at least 2 of the RGB values are equal to or between 180 and
+		// 255, then apply specified opacity for Group 1
+		// Examples: Vista, XP Silver, Wn High Con #2
+		// Gradient Bottom = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		if (testTwoPrimaryColors(tbBg, 179, 256))
+			tbBg = blend(tbBg, bg, 30);
 
-		if (isWhiteBackground()) {
-			// corrections
-			if (testTwoPrimaryColors(tbBg, 241, 256)) {
-				// too light
-				tbBg = blend(tbBg, BLACK, 90);
-			} else if (testTwoPrimaryColors(tbBg, 0, 231)) {
-				// too dark
-				if (testAnyPrimaryColor(tbBg, 214, 231))
-					tbBg = blend(tbBg, WHITE, 95);
-				else if (testAnyPrimaryColor(tbBg, 199, 215))
-					tbBg = blend(tbBg, WHITE, 90);
-			}
-		} else {
-			if (testTwoPrimaryColors(tbBg, 209, 256)) {
-				// too light
-				if (testAnyPrimaryColor(tbBg, 210, 236))
-					tbBg = blend(tbBg, BLACK, 60);
-				else if (testAnyPrimaryColor(tbBg, 235, 256))
-					tbBg = blend(tbBg, BLACK, 20);
-			}
-		}
-		createColor(FormColors.TB_BG, tbBg);
+		// Group 2
+		// Rule: If at least 2 of the RGB values are equal to or between 121 and
+		// 179, then apply specified opacity for Group 2
+		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+		// Gradient Bottom = TITLE_BACKGROUND @ 20% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(tbBg, 120, 180))
+			tbBg = blend(tbBg, bg, 20);
 
-		// blend 50 % white with the previous blend for half-way
-		RGB tbGbg = blend(formBackground, tbBg, 50);
-		createColor(FormColors.TB_GBG, tbGbg);
+		// Group 3
+		// Rule: If at least 2 of the RGB values are equal to or between 0 and
+		// 120, then apply specified opacity for Group 3
+		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+		// Aqua, Wn High Con White, Wn High Con #1
+		// Gradient Bottom = TITLE_BACKGROUND @ 10% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(tbBg, -1, 121))
+			tbBg = blend(tbBg, bg, 10);
+
+		createColor(IFormColors.TB_BG, tbBg);
 	}
 
 	private void createTitleBarOutlineColors() {
 		// title bar outline - border color
-		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-		// Perform adjustments for too bright
-		if (isWhiteBackground()) {
-			if (testTwoPrimaryColors(tbBorder, 215, 256)) {
-				// too bright
-				if (testAnyPrimaryColor(tbBorder, 215, 226))
-					// decrease white by 10%
-					tbBorder = blend(tbBorder, BLACK, 90);
-				else if (testAnyPrimaryColor(tbBorder, 225, 256))
-					// decrease white by 20%
-					tbBorder = blend(tbBorder, BLACK, 70);
-			} else if (testTwoPrimaryColors(tbBorder, 0, 186)) {
-				// too dark
-				if (testAnyPrimaryColor(tbBorder, 175, 186))
-					// add 5% white
-					tbBorder = blend(tbBorder, WHITE, 95);
-				else if (testTwoPrimaryColors(tbBorder, 154, 176))
-					// add 10% white
-					tbBorder = blend(tbBorder, WHITE, 90);
-				else if (testTwoPrimaryColors(tbBorder, 124, 155))
-					// add 20% white
-					tbBorder = blend(tbBorder, WHITE, 80);
-			}
-		} else {
-			if (testTwoPrimaryColors(tbBorder, 200, 256))
-				// too bright - decrease white by 50%
-				tbBorder = blend(tbBorder, BLACK, 50);
-		}
+		RGB tbBorder = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		RGB bg = getImpliedBackground().getRGB();
+		// Group 1
+		// Rule: If at least 2 of the RGB values are equal to or between 180 and
+		// 255, then apply specified opacity for Group 1
+		// Examples: Vista, XP Silver, Wn High Con #2
+		// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
+		if (testTwoPrimaryColors(tbBorder, 179, 256))
+			tbBorder = blend(tbBorder, bg, 70);
+
+		// Group 2
+		// Rule: If at least 2 of the RGB values are equal to or between 121 and
+		// 179, then apply specified opacity for Group 2
+		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+
+		// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(tbBorder, 120, 180))
+			tbBorder = blend(tbBorder, bg, 50);
+
+		// Group 3
+		// Rule: If at least 2 of the RGB values are equal to or between 0 and
+		// 120, then apply specified opacity for Group 3
+		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+		// Aqua, Wn High Con White, Wn High Con #1
+
+		// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(tbBorder, -1, 121))
+			tbBorder = blend(tbBorder, bg, 30);
 		createColor(FormColors.TB_BORDER, tbBorder);
+	}
+
+	private void updateFormHeaderColors() {
+		if (colorRegistry.containsKey(IFormColors.H_GRADIENT_TOP)) {
+			disposeIfFound(IFormColors.H_GRADIENT_TOP);
+			disposeIfFound(IFormColors.H_GRADIENT_BOTTOM);
+			disposeIfFound(IFormColors.H_BOTTOM_KEYLINE1);
+			disposeIfFound(IFormColors.H_BOTTOM_KEYLINE2);
+			disposeIfFound(IFormColors.H_HOVER_LIGHT);
+			disposeIfFound(IFormColors.H_HOVER_FULL);
+			initializeFormHeaderColors();
+		}
+	}
+
+	private void disposeIfFound(String key) {
+		Color color = getColor(key);
+		if (color != null) {
+			colorRegistry.remove(key);
+			color.dispose();
+		}
+	}
+
+	private void createFormHeaderColors() {
+		createFormHeaderGradientColors();
+		createFormHeaderKeylineColors();
+		createFormHeaderDNDColors();
+	}
+
+	private void createFormHeaderGradientColors() {
+		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		Color bgColor = getImpliedBackground();
+		RGB bg = bgColor.getRGB();
+		RGB bottom, top;
+		// Group 1
+		// Rule: If at least 2 of the RGB values are equal to or between 180 and
+		// 255, then apply specified opacity for Group 1
+		// Examples: Vista, XP Silver, Wn High Con #2
+		// Gradient Bottom = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		if (testTwoPrimaryColors(titleBg, 179, 256)) {
+			bottom = blend(titleBg, bg, 30);
+			top = bg;
+		}
+
+		// Group 2
+		// Rule: If at least 2 of the RGB values are equal to or between 121 and
+		// 179, then apply specified opacity for Group 2
+		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+		// Gradient Bottom = TITLE_BACKGROUND @ 20% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(titleBg, 120, 180)) {
+			bottom = blend(titleBg, bg, 20);
+			top = bg;
+		}
+
+		// Group 3
+		// Rule: If at least 2 of the RGB values are equal to or between 0 and
+		// 120, then apply specified opacity for Group 3
+		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+		// Aqua, Wn High Con White, Wn High Con #1
+		// Gradient Bottom = TITLE_BACKGROUND @ 10% Opacity over LIST_BACKGROUND
+		// Gradient Top = TITLE BACKGROUND @ 0% Opacity over LIST_BACKGROUND
+		else {
+			bottom = blend(titleBg, bg, 10);
+			top = bg;
+		}
+		createColor(IFormColors.H_GRADIENT_TOP, top);
+		createColor(IFormColors.H_GRADIENT_BOTTOM, bottom);
+	}
+
+	private void createFormHeaderKeylineColors() {
+		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND);
+		Color bgColor = getImpliedBackground();
+		RGB bg = bgColor.getRGB();
+		RGB keyline2;
+		// H_BOTTOM_KEYLINE1
+		createColor(IFormColors.H_BOTTOM_KEYLINE1, new RGB(255, 255, 255));
+
+		// H_BOTTOM_KEYLINE2
+		// Group 1
+		// Rule: If at least 2 of the RGB values are equal to or between 180 and
+		// 255, then apply specified opacity for Group 1
+		// Examples: Vista, XP Silver, Wn High Con #2
+		// Keyline = TITLE_BACKGROUND @ 70% Opacity over LIST_BACKGROUND
+		if (testTwoPrimaryColors(titleBg, 179, 256))
+			keyline2 = blend(titleBg, bg, 70);
+
+		// Group 2
+		// Rule: If at least 2 of the RGB values are equal to or between 121 and
+		// 179, then apply specified opacity for Group 2
+		// Examples: XP Olive, OSX Graphite, Linux GTK, Wn High Con Black
+		// Keyline = TITLE_BACKGROUND @ 50% Opacity over LIST_BACKGROUND
+		else if (testTwoPrimaryColors(titleBg, 120, 180))
+			keyline2 = blend(titleBg, bg, 50);
+
+		// Group 3
+		// Rule: If at least 2 of the RGB values are equal to or between 0 and
+		// 120, then apply specified opacity for Group 3
+		// Examples: XP Default, Wn Classic Standard, Wn Marine, Wn Plum, OSX
+		// Aqua, Wn High Con White, Wn High Con #1
+
+		// Keyline = TITLE_BACKGROUND @ 30% Opacity over LIST_BACKGROUND
+		else
+			keyline2 = blend(titleBg, bg, 30);
+		// H_BOTTOM_KEYLINE2
+		createColor(IFormColors.H_BOTTOM_KEYLINE2, keyline2);
+	}
+
+	private void createFormHeaderDNDColors() {
+		RGB titleBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
+		Color bgColor = getImpliedBackground();
+		RGB bg = bgColor.getRGB();
+		RGB light, full;
+		// ALL Themes
+		//
+		// Light Highlight
+		// When *near* the 'hot' area
+		// Rule: If near the title in the 'hot' area, show background highlight
+		// TITLE_BACKGROUND_GRADIENT @ 40%
+		light = blend(titleBg, bg, 40);
+		// Full Highlight
+		// When *on* the title area (regions 1 and 2)
+		// Rule: If near the title in the 'hot' area, show background highlight
+		// TITLE_BACKGROUND_GRADIENT @ 70%
+		full = blend(titleBg, bg, 70);
+		// H_DND_LIGHT
+		// H_DND_FULL
+		createColor(IFormColors.H_HOVER_LIGHT, light);
+		createColor(IFormColors.H_HOVER_FULL, full);
 	}
 }

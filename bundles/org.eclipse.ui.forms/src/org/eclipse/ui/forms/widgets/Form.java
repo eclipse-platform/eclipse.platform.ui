@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -21,6 +25,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.IMessageContainerWithDetails;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
@@ -36,8 +44,9 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * title image can be set and is rendered to the left of the title (since 3.2).
  * <p>
  * The form supports status messages. These messages can have various severity
- * (error, warning, info or none). Message tray can be minimized and later
- * restored by the user, but can only be closed programmatically.
+ * (error, warning, info or none). If status hyperlink handler is specified, the
+ * messages with the specified severity other than none will be rendered as
+ * hyperlinks.
  * <p>
  * Form can have a background image behind the title text. The image is tiled as
  * many times as needed to fill the title area. Alternatively, gradient
@@ -47,9 +56,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * replaced with an animation that lasts as long as the 'busy' state is active.
  * <p>
  * It is possible to create an optional head client control. When created, this
- * control is placed next to the title. If title tool bar is also present, a new
- * row is created in the header, and the tool bar is right-justified in the
- * second row.
+ * control is placed in the form heading as a second row.
  * <p>
  * Form has a custom layout manager that is wrap-enabled. If a form is placed in
  * a composite whose layout manager implements ILayoutExtension, the body of the
@@ -76,7 +83,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * 
  * @since 3.0
  */
-public class Form extends Composite {
+public class Form extends Composite implements IMessageContainerWithDetails {
 	private FormHeading head;
 
 	private Composite body;
@@ -236,14 +243,13 @@ public class Form extends Composite {
 	/**
 	 * Sets the text to be rendered at the top of the form above the body as a
 	 * title.
-	 * <p><strong>Note:</strong>
-	 * Mnemonics are indicated by an '&amp;' that causes the next
-	 * character to be the mnemonic. Mnemonics are not applicable
-	 * in the case of the form title but need to be taken into
-	 * acount due to the usage of the underlying widget that
-	 * renders mnemonics in the title area. The mnemonic indicator 
-	 * character '&amp;' can be escaped by doubling it in the string, 
-	 * causing a single '&amp;' to be displayed.
+	 * <p>
+	 * <strong>Note:</strong> Mnemonics are indicated by an '&amp;' that causes
+	 * the next character to be the mnemonic. Mnemonics are not applicable in
+	 * the case of the form title but need to be taken into acount due to the
+	 * usage of the underlying widget that renders mnemonics in the title area.
+	 * The mnemonic indicator character '&amp;' can be escaped by doubling it in
+	 * the string, causing a single '&amp;' to be displayed.
 	 * </p>
 	 * 
 	 * @param text
@@ -256,7 +262,14 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * Sets the image to be rendered to the left of the title.
+	 * Sets the image to be rendered to the left of the title. This image will
+	 * be temporarily hidden in two cases:
+	 * 
+	 * <ol>
+	 * <li>When the form is busy - replaced with a busy animation</li>
+	 * <li>When the form has message set - replaced with the image indicating
+	 * message severity</li>
+	 * </ol>
 	 * 
 	 * @param image
 	 *            the title image or <code>null</code> to show no image.
@@ -270,7 +283,9 @@ public class Form extends Composite {
 
 	/**
 	 * Sets the background colors to be painted behind the title text in a
-	 * gradient.
+	 * gradient. Note that this method will reset color previously set by
+	 * {@link #setBackground(Color)}. This is necessary for the simulated
+	 * transparency of the heading in all of its children control.
 	 * 
 	 * @param gradientColors
 	 *            the array of colors that form the gradient
@@ -319,6 +334,17 @@ public class Form extends Composite {
 	 */
 	public IToolBarManager getToolBarManager() {
 		return head.getToolBarManager();
+	}
+
+	/**
+	 * Returns the menu manager that is used to manage title area drop-down menu
+	 * items.
+	 * 
+	 * @return title area drop-down menu manager
+	 * @since 3.3
+	 */
+	public IMenuManager getMenuManager() {
+		return head.getMenuManager();
 	}
 
 	/**
@@ -385,6 +411,7 @@ public class Form extends Composite {
 	 * 
 	 * @return <code>true</code> if heading background image is tiled,
 	 *         <code>false</code> otherwise.
+	 * @deprecated since 3.2, always returns <code>true</code>.
 	 */
 	public boolean isBackgroundImageTiled() {
 		return true;
@@ -397,9 +424,9 @@ public class Form extends Composite {
 	 * @param backgroundImageTiled
 	 *            set <code>true</code> to tile the image, or
 	 *            <code>false</code> to paint the background image only once
+	 * @deprecated since 3.2, the background image is always tiled.
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
-		head.setBackgroundImageTiled(backgroundImageTiled);
 	}
 
 	/**
@@ -410,7 +437,7 @@ public class Form extends Composite {
 	 * @return SWT.LEFT
 	 */
 	public int getBackgroundImageAlignment() {
-		return head.getBackgroundImageAlignment();
+		return SWT.LEFT;
 	}
 
 	/**
@@ -449,13 +476,6 @@ public class Form extends Composite {
 	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
 	}
 
-	void setSelectionText(FormText text) {
-		if (selectionText != null && selectionText != text) {
-			selectionText.clearSelection();
-		}
-		this.selectionText = text;
-	}
-
 	/**
 	 * Tests if the form head separator is visible.
 	 * 
@@ -468,8 +488,9 @@ public class Form extends Composite {
 	}
 
 	/**
-	 * If set, adds a separator between the head and body. If gradient text
-	 * background is used, the separator will use gradient colors.
+	 * If set, adds a separator between the head and body. Since 3.3, the colors
+	 * that are used to render it are {@link IFormColors#H_BOTTOM_KEYLINE1} and
+	 * {@link IFormColors#H_BOTTOM_KEYLINE2}.
 	 * 
 	 * @param addSeparator
 	 *            <code>true</code> to make the separator visible,
@@ -487,10 +508,11 @@ public class Form extends Composite {
 	 * 
 	 * @return separator color or <code>null</code> if not set.
 	 * @since 3.2
+	 * @deprecated use {@link #getHeadColor(Form.BOTTOM_KEYLINE2)}
 	 */
 
 	public Color getSeparatorColor() {
-		return head.getSeparatorColor();
+		return head.getColor(IFormColors.H_BOTTOM_KEYLINE2);
 	}
 
 	/**
@@ -500,9 +522,38 @@ public class Form extends Composite {
 	 *            the color to render the head separator or <code>null</code>
 	 *            to use the default color.
 	 * @since 3.2
+	 * @deprecated use {@link #setHeadColor(Form.COLOR_BOTTOM_KEYLINE2, Color)}
 	 */
 	public void setSeparatorColor(Color separatorColor) {
-		head.setSeparatorColor(separatorColor);
+		head.putColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor);
+	}
+
+	/**
+	 * Sets the color used to paint an aspect of the form heading.
+	 * 
+	 * @param key
+	 *            a valid form heading color key as defined in
+	 *            {@link IFormColors}.
+	 * @param color
+	 *            the color to use for the provided key
+	 * @since 3.3
+	 */
+
+	public void setHeadColor(String key, Color color) {
+		head.putColor(key, color);
+	}
+
+	/**
+	 * Returns the color that is currently use to paint an aspect of the form
+	 * heading, or <code>null</code> if not defined.
+	 * 
+	 * @param key
+	 *            the color key
+	 * @return the color object or <code>null</code> if not set.
+	 */
+
+	public Color getHeadColor(String key) {
+		return head.getColor(key);
 	}
 
 	/**
@@ -512,10 +563,11 @@ public class Form extends Composite {
 	 * @param message
 	 *            the message, or <code>null</code> to clear the message
 	 * @see #setMessage(String, int)
+	 * @deprecated use {@link #setMessage(String, int)}
 	 * @since 3.2
 	 */
 	public void setMessage(String message) {
-		head.setMessage(message);
+		this.setMessage(message, 0);
 	}
 
 	/**
@@ -537,7 +589,30 @@ public class Form extends Composite {
 	 */
 
 	public void setMessage(String newMessage, int newType) {
-		head.setMessage(newMessage, newType);
+		setMessage(newMessage, null, null, newType);
+	}
+
+	/**
+	 * Adds a message hyperlink listener. If at least one listener is present,
+	 * messages will be rendered as hyperlinks.
+	 * 
+	 * @param listener
+	 * @see #removeMessageHyperlinkListener(IHyperlinkListener)
+	 * @since 3.3
+	 */
+	public void addMessageHyperlinkListener(IHyperlinkListener listener) {
+		head.addMessageHyperlinkListener(listener);
+	}
+
+	/**
+	 * Remove the message hyperlink listener.
+	 * 
+	 * @param listener
+	 * @see #addMessageHyperlinkListener(IHyperlinkListener)
+	 * @since 3.3
+	 */
+	public void removeMessageHyperlinkListener(IHyperlinkListener listener) {
+		head.removeMessageHyperlinkListener(listener);
 	}
 
 	/**
@@ -563,5 +638,84 @@ public class Form extends Composite {
 
 	public void setBusy(boolean busy) {
 		head.setBusy(busy);
+	}
+
+	/**
+	 * Adds support for dragging items out of the form title area via a user
+	 * drag-and-drop operation.
+	 * 
+	 * @param operations
+	 *            a bitwise OR of the supported drag and drop operation types (
+	 *            <code>DROP_COPY</code>,<code>DROP_LINK</code>, and
+	 *            <code>DROP_MOVE</code>)
+	 * @param transferTypes
+	 *            the transfer types that are supported by the drag operation
+	 * @param listener
+	 *            the callback that will be invoked to set the drag data and to
+	 *            cleanup after the drag and drop operation finishes
+	 * @see org.eclipse.swt.dnd.DND
+	 * @since 3.3
+	 */
+	public void addTitleDragSupport(int operations, Transfer[] transferTypes,
+			DragSourceListener listener) {
+		head.addDragSupport(operations, transferTypes, listener);
+	}
+
+	/**
+	 * Adds support for dropping items into the form title area via a user
+	 * drag-and-drop operation.
+	 * 
+	 * @param operations
+	 *            a bitwise OR of the supported drag and drop operation types (
+	 *            <code>DROP_COPY</code>,<code>DROP_LINK</code>, and
+	 *            <code>DROP_MOVE</code>)
+	 * @param transferTypes
+	 *            the transfer types that are supported by the drop operation
+	 * @param listener
+	 *            the callback that will be invoked after the drag and drop
+	 *            operation finishes
+	 * @see org.eclipse.swt.dnd.DND
+	 * @since 3.3
+	 */
+	public void addTitleDropSupport(int operations, Transfer[] transferTypes,
+			DropTargetListener listener) {
+		head.addDropSupport(operations, transferTypes, listener);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageContainerWithDetails#setMessage(java.lang.String,
+	 *      java.lang.String, org.eclipse.jface.dialogs.IMessage[], int)
+	 */
+	public void setMessage(String message, String details, IMessage[] messages,
+			int type) {
+		head.setMessage(message, details, messages, type);
+		layout();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
+	 */
+	public String getMessage() {
+		return head.getMessage();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
+	 */
+	public int getMessageType() {
+		return head.getMessageType();
+	}
+
+	void setSelectionText(FormText text) {
+		if (selectionText != null && selectionText != text) {
+			selectionText.clearSelection();
+		}
+		this.selectionText = text;
 	}
 }

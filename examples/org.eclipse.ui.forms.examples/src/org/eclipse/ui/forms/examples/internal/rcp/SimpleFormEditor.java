@@ -46,6 +46,7 @@ public class SimpleFormEditor extends FormEditor {
 	protected void addPages() {
 		try {
 		addPage(new NewStylePage(this));
+		addPage(new ErrorMessagesPage(this));
 		addPage(new FreeFormPage(this));
 		addPage(new SecondPage(this));
 		int index = addPage(new Composite(getContainer(), SWT.NULL));

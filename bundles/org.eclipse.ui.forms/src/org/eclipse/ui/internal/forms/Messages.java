@@ -27,4 +27,13 @@ public class Messages extends NLS {
 	public static String FormText_copy;
 	public static String Form_tooltip_minimize;
 	public static String Form_tooltip_restore;
-}
+	/* 
+	 * Message manager
+	 */
+	public static String MessageManager_sMessageSummary;
+	public static String MessageManager_sWarningSummary;
+	public static String MessageManager_sErrorSummary;
+	public static String MessageManager_pMessageSummary;
+	public static String MessageManager_pWarningSummary;
+	public static String MessageManager_pErrorSummary;		
+};

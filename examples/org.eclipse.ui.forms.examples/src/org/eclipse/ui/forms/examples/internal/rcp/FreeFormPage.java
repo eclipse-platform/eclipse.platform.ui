@@ -75,7 +75,7 @@ public class FreeFormPage extends FormPage {
 				);
 		exp.setActiveToggleColor(toolkit.getHyperlinkGroup()
 				.getActiveForeground());
-		exp.setToggleColor(toolkit.getColors().getColor(FormColors.SEPARATOR));
+		exp.setToggleColor(toolkit.getColors().getColor(IFormColors.SEPARATOR));
 		Composite client = toolkit.createComposite(exp);
 		exp.setClient(client);
 		TableWrapLayout elayout = new TableWrapLayout();
@@ -108,7 +108,7 @@ public class FreeFormPage extends FormPage {
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
-			toolkit.getColors().getColor(FormColors.SEPARATOR));
+			toolkit.getColors().getColor(IFormColors.SEPARATOR));
 		toolkit.createCompositeSeparator(section);
 		FormText rtext = toolkit.createFormText(section, false);
 		section.setClient(rtext);

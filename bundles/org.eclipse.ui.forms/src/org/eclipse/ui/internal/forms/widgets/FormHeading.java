@@ -10,87 +10,83 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetListener;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
-import org.eclipse.ui.forms.widgets.ImageHyperlink;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.SizeCache;
-import org.eclipse.ui.internal.forms.Messages;
 
 /**
  * Form header moved out of the form class.
  */
 public class FormHeading extends Canvas {
-	private int TITLE_HMARGIN = 10;
+	private static final int TITLE_HMARGIN = 1;
+	private static final int SPACING = 5;
+	private static final int VSPACING = 5;
+	private static final int HMARGIN = 6;
+	private static final int VMARGIN = 1;
+	private static final int CLIENT_MARGIN = 1;
 
-	private int TITLE_VMARGIN = 5;
-
-	private int TITLE_GAP = 5;
-
-	private int SEPARATOR_HEIGHT = 6;
-	
 	private static final int SEPARATOR = 1 << 1;
-	private static final int TILED = 1 << 2;
+	private static final int SEPARATOR_HEIGHT = 2;
+
+	public static final String COLOR_BASE_BG = "baseBg"; //$NON-NLS-1$
 
 	private Image gradientImage;
 
-	private Image image;
+	Hashtable colors = new Hashtable();
 
-	private Color baseBg;
-	
 	private int flags;
-	
-	private Color separatorColor;
 
 	private GradientInfo gradientInfo;
 
-	private String text;
-
 	private ToolBarManager toolBarManager;
-
-	private SizeCache titleCache = new SizeCache();
 
 	private SizeCache toolbarCache = new SizeCache();
 
 	private SizeCache clientCache = new SizeCache();
 
-	private BusyIndicator busyLabel;
+	private SizeCache messageCache = new SizeCache();
 
-	private Label titleLabel;
+	private TitleRegion titleRegion;
+
+	private MessageRegion messageRegion;
 
 	private Control headClient;
-
-	private MessageArea messageArea;
 
 	private class GradientInfo {
 		Color[] gradientColors;
@@ -98,224 +94,6 @@ public class FormHeading extends Canvas {
 		int[] percents;
 
 		boolean vertical;
-	}
-
-	private class MessageArea extends Composite {
-		static final int BUTTON_BORDER = SWT.COLOR_WIDGET_DARK_SHADOW;
-
-		static final int BUTTON_FILL = SWT.COLOR_LIST_BACKGROUND;
-
-		static final int BUTTON_SIZE = 18;
-
-		private Image normal;
-
-		private Image hot;
-
-		static final int CLOSED = 0;
-
-		static final int OPENNING = 1;
-
-		static final int OPEN = 2;
-
-		static final int CLOSING = 3;
-
-		private CLabel label;
-
-		private ImageHyperlink rlink;
-
-		private ImageHyperlink mlink;
-
-		private int state = CLOSED;
-
-		private boolean minimized;
-
-		private boolean animationStart;
-
-		public MessageArea(Composite parent, int style) {
-			super(parent, SWT.NULL);
-			Composite container = new Composite(this, SWT.NULL);
-			GridLayout glayout = new GridLayout();
-			glayout.numColumns = 2;
-			glayout.marginWidth = 0;
-			glayout.marginHeight = 0;
-			container.setLayout(glayout);
-			label = new CLabel(container, SWT.NULL);
-			label.setLayoutData(new GridData(GridData.FILL_BOTH));
-			mlink = new ImageHyperlink(container, SWT.NULL);
-			mlink.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					setMinimized(true);
-				}
-			});
-			mlink.setToolTipText(Messages.Form_tooltip_minimize);
-			rlink = new ImageHyperlink(this, SWT.NULL);
-			rlink.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					setMinimized(false);
-				}
-			});
-			if (gradientInfo == null && getBackgroundImage() == null)
-				rlink.setBackground(getBackground());
-			rlink.setVisible(false);
-			rlink.setToolTipText(Messages.Form_tooltip_restore);
-			createMinimizedImages();
-			addPaintListener(new PaintListener() {
-				public void paintControl(PaintEvent e) {
-					onPaint(e);
-				}
-			});
-			addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					disposeMinimizeImages();
-				}
-			});
-			super.setLayout(new Layout() {
-				public void layout(Composite parent, boolean changed) {
-					Rectangle carea = getClientArea();
-					if (minimized) {
-						rlink.setBounds(carea.x, carea.y, carea.width,
-								carea.height);
-					} else {
-						label.getParent().setBounds(carea.x + 2, carea.y + 2,
-								carea.width - 4, carea.height - 4);
-					}
-				}
-
-				public Point computeSize(Composite parent, int wHint,
-						int hHint, boolean changed) {
-					Point size = new Point(0, 0);
-					if (minimized)
-						size = rlink.computeSize(wHint, hHint, changed);
-					else
-						size = label.getParent().computeSize(wHint, hHint,
-								changed);
-					if (!minimized) {
-						size.x += 4;
-						size.y += 4;
-					}
-					return size;
-				}
-			});
-		}
-
-		public void setMinimized(boolean minimized) {
-			setBackground(minimized ? null : baseBg);
-			this.minimized = minimized;
-			if (minimized) {
-				rlink.setImage(label.getImage());
-			}
-			rlink.setVisible(minimized);
-			label.getParent().setVisible(!minimized);
-			layout();
-
-			FormHeading.this.layout();
-			FormHeading.this.redraw();
-		}
-
-		public boolean isMinimized() {
-			return minimized;
-		}
-
-		public synchronized void setState(int state) {
-			this.state = state;
-			if (state == OPENNING)
-				setVisible(true);
-			else if (state == CLOSED)
-				setVisible(false);
-		}
-
-		public int getState() {
-			return state;
-		}
-
-		public void setBackground(Color bg) {
-			super.setBackground(bg);
-			label.setBackground(bg);
-			mlink.setBackground(bg);
-			rlink.setBackground(bg);
-			label.getParent().setBackground(bg);
-			createMinimizedImages();
-		}
-
-		public void setText(String text) {
-			this.label.setText(text);
-		}
-
-		public void setImage(Image image) {
-			this.label.setImage(image);
-		}
-
-		public boolean isInTransition() {
-			return state == OPENNING || state == CLOSING;
-		}
-
-		private void onPaint(PaintEvent e) {
-			if (minimized)
-				return;
-			Rectangle carea = getClientArea();
-			e.gc.setForeground(getForeground());
-			e.gc.drawPolyline(new int[] { carea.x, carea.y + carea.height - 1,
-					carea.x, carea.y + 2, carea.x + 2, carea.y,
-					carea.x + carea.width - 3, carea.y,
-					carea.x + carea.width - 1, carea.y + 2,
-					carea.x + carea.width - 1, carea.y + carea.height - 1 });
-		}
-
-		public boolean isAnimationStart() {
-			return animationStart;
-		}
-
-		public void setAnimationStart(boolean animationStart) {
-			this.animationStart = animationStart;
-		}
-
-		private void createMinimizedImages() {
-			disposeMinimizeImages();
-			normal = new Image(getDisplay(), BUTTON_SIZE, BUTTON_SIZE);
-			GC gc = new GC(normal);
-			paintNormalImage(getDisplay(), gc);
-			gc.dispose();
-			hot = new Image(getDisplay(), BUTTON_SIZE, BUTTON_SIZE);
-			gc = new GC(hot);
-			paintHotImage(getDisplay(), gc);
-			gc.dispose();
-			mlink.setImage(normal);
-			mlink.setHoverImage(hot);
-		}
-
-		private void disposeMinimizeImages() {
-			if (normal != null) {
-				normal.dispose();
-				normal = null;
-			}
-			if (hot != null) {
-				hot.dispose();
-				hot = null;
-			}
-		}
-
-		private void paintNormalImage(Display display, GC gc) {
-			gc.setForeground(display.getSystemColor(BUTTON_BORDER));
-			// gc.setBackground(display.getSystemColor(BUTTON_FILL));
-			gc.setBackground(getBackground());
-			paintInnerContent(gc);
-		}
-
-		private void paintHotImage(Display display, GC gc) {
-			gc.setForeground(display.getSystemColor(BUTTON_BORDER));
-			// gc.setBackground(display.getSystemColor(BUTTON_FILL));
-			// gc.setBackground(getBackground());
-			// gc.fillRoundRectangle(0, 0, BUTTON_SIZE, BUTTON_SIZE, 6, 6);
-			gc.drawRoundRectangle(0, 0, BUTTON_SIZE - 1, BUTTON_SIZE - 1, 6, 6);
-			paintInnerContent(gc);
-		}
-
-		private void paintInnerContent(GC gc) {
-			int x = BUTTON_SIZE / 2 - 5;
-			int y = 2;
-			gc.fillRectangle(x, y, 9, 3);
-			gc.drawRectangle(x, y, 9, 3);
-		}
 	}
 
 	private class FormHeadingLayout extends Layout implements ILayoutExtension {
@@ -329,240 +107,333 @@ public class FormHeading extends Canvas {
 
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean flushCache) {
-			if (flushCache) {
-				titleCache.flush();
-				toolbarCache.flush();
-				clientCache.flush();
-			}
-
-			int width = 0;
-			int height = 0;
-			Point tbsize = null;
-
-			if (headClient != null) {
-				clientCache.setControl(headClient);
-				Point clsize = clientCache
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (text != null)
-					width += TITLE_GAP;
-				width += clsize.x;
-				height += clsize.y;
-			}
-
-			if (toolBarManager != null) {
-				ToolBar toolBar = toolBarManager.getControl();
-				if (toolBar != null) {
-					toolbarCache.setControl(toolBar);
-					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (headClient == null) {
-						if (text != null)
-							width += TITLE_GAP;
-						width += tbsize.x;
-						height = tbsize.y;
-					}
-				}
-			}
-			int iwidth = 0;
-			int iheight = 0;
-			if (messageArea != null && messageArea.isMinimized()) {
-				Point rsize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				iwidth = Math.max(iwidth, rsize.x);
-				iheight = Math.max(iheight, rsize.y);
-			}
-			if (busyLabel != null) {
-				Point bsize = busyLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				iwidth = Math.max(iwidth, bsize.x);
-				iheight = Math.max(iheight, bsize.y);
-			}
-			if (iwidth > 0) {
-				if (text != null)
-					width += TITLE_GAP;
-				width += iwidth;
-				height = Math.max(height, iheight);
-			}
-			if (text != null) {
-				Point wsize;
-				if (wHint != SWT.DEFAULT) {
-					int twHint = wHint -width;
-					wsize = titleCache.computeSize(twHint, SWT.DEFAULT);
-					Point minwsize = titleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					// if the 'natural' width is smaller than 
-					// the hint, use the natural width
-					if (minwsize.x < wsize.x)
-						wsize = minwsize;
-				}
-				else {
-					wsize = titleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				}
-				width += wsize.x;
-				height = Math.max(wsize.y, height);
-			}
-			int secondRowHeight = 0;
-			if (headClient != null) {
-				if (tbsize != null)
-					secondRowHeight = tbsize.y;
-			}
-
-			if (messageArea != null) {
-				Point masize = messageArea
-						.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (headClient == null)
-					height = Math.max(masize.y, height);
-				else {
-					secondRowHeight = Math.max(secondRowHeight, masize.y);
-				}
-			}
-			if (secondRowHeight > 0)
-				height += secondRowHeight;
-			if (isSeparatorVisible())
-				height += SEPARATOR_HEIGHT;
-			if (height != 0)
-				height += TITLE_VMARGIN * 2;
-			if (width != 0)
-				width += TITLE_HMARGIN * 2;
-			int ihHint = hHint;
-			if (ihHint > 0 && ihHint != SWT.DEFAULT)
-				ihHint -= height;
-			return new Point(width, height);
+			return layout(composite, false, 0, 0, wHint, hHint, flushCache);
 		}
 
 		protected void layout(Composite composite, boolean flushCache) {
-			if (flushCache) {
-				toolbarCache.flush();
-			}
-			Rectangle carea = composite.getClientArea();
-			int height = 0;
+			Rectangle rect = composite.getClientArea();
+			layout(composite, true, rect.x, rect.y, rect.width, rect.height,
+					flushCache);
+		}
+
+		private Point layout(Composite composite, boolean move, int x, int y,
+				int width, int height, boolean flushCache) {
+			Point tsize = null;
+			Point msize = null;
 			Point tbsize = null;
 			Point clsize = null;
-			int twidth = carea.width - TITLE_HMARGIN * 2;
-			if ((image != null || text != null || (messageArea != null && messageArea
-					.isMinimized()))
-					&& toolBarManager != null) {
-				ToolBar toolBar = toolBarManager.getControl();
-				if (toolBar != null) {
-					toolbarCache.setControl(toolBar);
-					tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-					if (headClient == null) {
-						toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
-								- tbsize.x, TITLE_VMARGIN, tbsize.x, tbsize.y);
-						height = tbsize.y;
-					}
-				}
+
+			if (flushCache) {
+				clientCache.flush();
+				messageCache.flush();
+				toolbarCache.flush();
 			}
-
-			Rectangle clientRect = null;
-
+			if (hasToolBar()) {
+				ToolBar tb = toolBarManager.getControl();
+				toolbarCache.setControl(tb);
+				tbsize = toolbarCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			}
 			if (headClient != null) {
 				clientCache.setControl(headClient);
-				clsize = clientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				clientRect = new Rectangle(carea.width - 1 - TITLE_HMARGIN
-						- clsize.x, TITLE_VMARGIN, clsize.x, clsize.y);
-				height = clsize.y;
-				twidth -= clsize.x + TITLE_GAP;
+				int cwhint = width;
+				if (cwhint != SWT.DEFAULT)
+					cwhint -= HMARGIN * 2;
+				clsize = clientCache.computeSize(cwhint, SWT.DEFAULT);
 			}
-			if (headClient == null && tbsize != null) {
-				twidth -= tbsize.x + TITLE_GAP;
-			}
-			int tx = TITLE_HMARGIN;
-			int iwidth = 0;
-			if (image != null) {
-				Rectangle ibounds = image.getBounds();
-				iwidth = ibounds.width;
-			}
-			Point msize = null;
-			Point bsize = null;
-			int mx = 0;
-			if (messageArea != null) {
-				msize = messageArea.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				if (messageArea.isMinimized()) {
-					iwidth = Math.max(msize.x, iwidth);
-					mx = tx;
+			int totalFlexWidth = width;
+			int flexWidth = totalFlexWidth;
+			if (totalFlexWidth != SWT.DEFAULT) {
+				totalFlexWidth -= TITLE_HMARGIN * 2;
+				// complete right margin
+				if (hasToolBar() || hasMessageRegion())
+					totalFlexWidth -= SPACING;
+				// subtract tool bar
+				if (hasToolBar())
+					totalFlexWidth -= tbsize.x + SPACING;
+				flexWidth = totalFlexWidth;
+				if (hasMessageRegion()) {
+					// remove message region spacing and divide by 2
+					flexWidth -= SPACING;
+					flexWidth /= 2;
 				}
 			}
-			if (busyLabel != null) {
-				bsize = busyLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				iwidth = Math.max(bsize.x, iwidth);
-				mx = tx;
-			}
-			if (iwidth > 0) {
-				tx += iwidth + TITLE_GAP;
-				if (text != null)
-					twidth -= TITLE_GAP;
-				twidth -= iwidth;
-			}
-			Rectangle titleRect = new Rectangle(0, 0, 0, 0);
-			if (text != null) {
-				Point tsize = titleCache.computeSize(twidth, SWT.DEFAULT);
-				height = tsize.y;
-				if (headClient == null) {
-					if (tbsize != null)
-						height = Math.max(tbsize.y, height);
-				} else {
-					height = Math.max(clsize.y, height);
-				}
-				int minTextWidth = tsize.x;
-				Point realtsize = titleCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT);
-				minTextWidth = Math.min(realtsize.x, minTextWidth);
-				titleCache.setBounds(tx, TITLE_VMARGIN, minTextWidth, height);
-				titleRect = titleCache.getControl().getBounds();
-				if (minTextWidth < tsize.x && headClient != null) {
-					// fix up the head client to use the extra space
-					int hx = tx + minTextWidth + TITLE_GAP;
-					int hwidth = carea.width - TITLE_HMARGIN - hx;
-					clientRect.x = hx;
-					clientRect.width = hwidth;
-				}
-			}
-			if (headClient != null && clientRect != null)
-				clientCache.setBounds(clientRect);
+			// compute text and message sizes
+			tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
+			if (flexWidth != SWT.DEFAULT && tsize.x < flexWidth)
+				flexWidth += flexWidth - tsize.x;
 
-			if (msize != null && messageArea.isMinimized()) {
-				messageArea.setBounds(mx, titleRect.y + titleRect.height / 2
-						- msize.y / 2, msize.x, msize.y);
-			}
-			if (bsize != null) {
-				busyLabel.setBounds(mx, titleRect.y + titleRect.height / 2
-						- bsize.y / 2, bsize.x, bsize.y);
-			}
-			if (headClient != null) {
-				int secondRowSize = 0;
-				height += TITLE_GAP;
-				if (tbsize != null) {
-					toolbarCache.setBounds(carea.width - 1 - TITLE_HMARGIN
-							- tbsize.x, TITLE_VMARGIN + height, tbsize.x,
-							tbsize.y);
-					secondRowSize = tbsize.y;
+			if (hasMessageRegion()) {
+				messageCache.setControl(messageRegion.getMessageControl());
+				msize = messageCache.computeSize(flexWidth, SWT.DEFAULT);
+				int maxWidth = messageCache.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT).x;
+				if (maxWidth < flexWidth) {
+					msize.x = maxWidth;
+					// recompute title with the reclaimed width
+					int tflexWidth = totalFlexWidth - SPACING - msize.x;
+					tsize = titleRegion.computeSize(tflexWidth, SWT.DEFAULT);
 				}
-				if (msize!=null) {
-					if (tbsize==null)
-						secondRowSize = msize.y;
-					else
-						secondRowSize = Math.max(tbsize.y, msize.y);
-				}
-				height += secondRowSize;
 			}
-			if (height > 0)
-				height += TITLE_VMARGIN * 2;
-			if (isSeparatorVisible())
-				height += SEPARATOR_HEIGHT;
-			if (messageArea != null
-					&& !messageArea.isMinimized()
-					&& (messageArea.isAnimationStart() || !messageArea
-							.isInTransition()) && messageArea.isVisible()) {
-				int may = messageArea.isAnimationStart()
-						&& messageArea.getState() == MessageArea.OPENNING ? height - 1
-						: height - 1 - msize.y;
-				if (isSeparatorVisible())
-					may -= SEPARATOR_HEIGHT;
-				if (headClient != null)
-					may -= 2;
-				int mawidth = carea.width - TITLE_HMARGIN - TITLE_HMARGIN;
+			Point size = new Point(width, height);
+			if (!move) {
+				// compute sizes
+				int width1 = 2 * TITLE_HMARGIN;
+				width1 += tsize.x;
+				if (msize != null)
+					width1 += SPACING + msize.x;
 				if (tbsize != null)
-					mawidth -= tbsize.x + TITLE_GAP;
-				messageArea.setBounds(TITLE_HMARGIN, may, mawidth, msize.y);
-				messageArea.setAnimationStart(false);
+					width1 += SPACING + tbsize.x;
+				if (msize != null || tbsize != null)
+					width1 += SPACING;
+				size.x = width1;
+				if (clsize != null) {
+					int width2 = clsize.x + 2 * HMARGIN;
+					size.x = Math.max(width1, width2);
+				}
+				// height, first row
+				size.y = tsize.y;
+				if (msize != null)
+					size.y = Math.max(msize.y, size.y);
+				if (tbsize != null)
+					size.y = Math.max(tbsize.y, size.y);
+				if (size.y > 0)
+					size.y += VMARGIN * 2;
+				// add second row
+				if (clsize != null)
+					size.y += VSPACING + clsize.y + CLIENT_MARGIN;
+				// add separator
+				if (isSeparatorVisible())
+					size.y += SEPARATOR_HEIGHT;
+			} else {
+				// position controls
+				int xloc = x;
+				int yloc = y + VMARGIN;
+				int row1Height = tsize.y;
+				if (hasMessageRegion())
+					row1Height = Math.max(row1Height, msize.y);
+				if (hasToolBar())
+					row1Height = Math.max(row1Height, tbsize.y);
+				titleRegion.setBounds(xloc,
+				// yloc + row1Height / 2 - tsize.y / 2,
+						yloc, tsize.x, tsize.y);
+				xloc += tsize.x;
+
+				if (hasMessageRegion()) {
+					xloc += SPACING;
+					int tlineHeight = tsize.y > 0 ? titleRegion.getFontHeight()
+							: 0;
+
+					messageRegion
+							.getMessageControl()
+							.setBounds(
+									xloc,
+									// yloc + row1Height / 2 - msize.y / 2,
+									// yloc + row1Height -1 - msize.y,
+									tlineHeight > 0 ? (yloc + tlineHeight - 1 - messageRegion
+											.getFontHeight())
+											: (yloc + row1Height / 2 - msize.y / 2),
+									msize.x, msize.y);
+					xloc += msize.x;
+				}
+				if (toolBarManager != null) {
+					ToolBar tbar = toolBarManager.getControl();
+					tbar.setVisible(!toolBarManager.isEmpty());
+					if (tbar.isVisible())
+						tbar.setBounds(x + width - 1 - tbsize.x - HMARGIN,
+						// yloc + row1Height / 2 - tbsize.y / 2,
+						yloc + row1Height -1 - tbsize.y, tbsize.x, tbsize.y);
+				}
+				// second row
+				xloc = HMARGIN;
+				yloc += row1Height + VSPACING;
+				if (headClient != null) {
+					headClient.setBounds(xloc, yloc, width - HMARGIN * 2,
+							clsize.y);
+				}
+
 			}
+			return size;
+		}
+	}
+
+	private boolean hasToolBar() {
+		return toolBarManager != null && !toolBarManager.isEmpty();
+	}
+
+	private boolean hasMessageRegion() {
+		return messageRegion != null && !messageRegion.isEmpty();
+	}
+
+	private class MessageRegion {
+		private int messageType;
+		private Label messageLabel;
+		private Hyperlink messageHyperlink;
+		private ListenerList listeners;
+		private Color fg;
+		private int fontHeight = -1;
+
+		public MessageRegion() {
+		}
+
+		public boolean isDisposed() {
+			Control c = getMessageControl();
+			return c != null && c.isDisposed();
+		}
+
+		public boolean isEmpty() {
+			Control c = getMessageControl();
+			if (c == null)
+				return true;
+			return !c.isVisible();
+		}
+
+		public int getFontHeight() {
+			if (fontHeight == -1) {
+				Control c = getMessageControl();
+				if (c == null)
+					return 0;
+				GC gc = new GC(c.getDisplay());
+				gc.setFont(c.getFont());
+				fontHeight = gc.getFontMetrics().getHeight();
+				gc.dispose();
+				if (c instanceof Hyperlink)
+					fontHeight++;
+			}
+			return fontHeight;
+		}
+
+		public void showMessage(String newMessage, String details,
+				IMessage[] messages, int newType) {
+			Control oldControl = getMessageControl();
+			int oldType = messageType;
+			this.messageType = newType;
+			if (newMessage == null) {
+				// clearing of the message
+				if (oldControl != null && oldControl.isVisible())
+					oldControl.setVisible(false);
+				return;
+			}
+			ensureControlExists();
+			if (needHyperlink()) {
+				messageHyperlink.setText(newMessage);
+				// set the severity color
+				messageHyperlink.setToolTipText(details);
+				messageHyperlink.setHref(details);
+			} else {
+				messageLabel.setText(newMessage);
+				messageLabel.setToolTipText(details);
+			}
+			if (oldType != newType)
+				updateForeground();
+		}
+
+		public String getMessage() {
+			if (needHyperlink())
+				return messageHyperlink.getText();
+			else
+				return messageLabel.getText();
+		}
+
+		public int getMessageType() {
+			return messageType;
+		}
+
+		public String getDetailedMessage() {
+			Control c = getMessageControl();
+			if (c != null)
+				return c.getToolTipText();
+			return null;
+		}
+
+		public Control getMessageControl() {
+			if (needHyperlink() && messageHyperlink != null)
+				return messageHyperlink;
+			return messageLabel;
+		}
+
+		public Image getMessageImage() {
+			switch (messageType) {
+			case IMessageProvider.INFORMATION:
+				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
+			case IMessageProvider.WARNING:
+				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
+			case IMessageProvider.ERROR:
+				return JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
+			default:
+				return null;
+			}
+		}
+
+		public void addMessageHyperlinkListener(IHyperlinkListener listener) {
+			if (listeners == null)
+				listeners = new ListenerList();
+			listeners.add(listener);
+			ensureControlExists();
+			if (messageHyperlink != null)
+				messageHyperlink.addHyperlinkListener(listener);
+		}
+
+		private void removeMessageHyperlinkListener(IHyperlinkListener listener) {
+			listeners.remove(listener);
+			if (messageHyperlink != null)
+				messageHyperlink.removeHyperlinkListener(listener);
+			if (listeners.isEmpty())
+				listeners = null;
+		}
+
+		private void ensureControlExists() {
+			if (needHyperlink()) {
+				if (messageLabel != null)
+					messageLabel.setVisible(false);
+				if (messageHyperlink == null) {
+					messageHyperlink = new Hyperlink(FormHeading.this, SWT.WRAP);
+					messageHyperlink.setUnderlined(true);
+					Object[] llist = listeners.getListeners();
+					for (int i = 0; i < llist.length; i++)
+						messageHyperlink
+								.addHyperlinkListener((IHyperlinkListener) llist[i]);
+				} else
+					messageHyperlink.setVisible(true);
+			} else {
+				// need a label
+				if (messageHyperlink != null)
+					messageHyperlink.setVisible(false);
+				if (messageLabel == null) {
+					messageLabel = new Label(FormHeading.this, SWT.WRAP);
+				} else
+					messageLabel.setVisible(true);
+			}
+		}
+
+		private boolean needHyperlink() {
+			return messageType > 0 && listeners != null;
+		}
+
+		public void setBackground(Color bg) {
+			if (messageHyperlink != null)
+				messageHyperlink.setBackground(bg);
+			if (messageLabel != null)
+				messageLabel.setBackground(bg);
+		}
+
+		public void setForeground(Color fg) {
+			this.fg = fg;
+		}
+
+		private void updateForeground() {
+			Color theFg;
+
+			switch (messageType) {
+			case IMessageProvider.ERROR:
+				theFg = getDisplay().getSystemColor(SWT.COLOR_RED);
+				break;
+			case IMessageProvider.WARNING:
+				theFg = getDisplay().getSystemColor(SWT.COLOR_DARK_YELLOW);
+				break;
+			default:
+				theFg = fg;
+			}
+			getMessageControl().setForeground(theFg);
 		}
 	}
 
@@ -594,9 +465,25 @@ public class FormHeading extends Canvas {
 					updateGradientImage();
 			}
 		});
+		addMouseMoveListener(new MouseMoveListener() {
+			public void mouseMove(MouseEvent e) {
+				updateTitleRegionHoverState(e);
+			}
+		});
+		addMouseTrackListener(new MouseTrackListener() {
+			public void mouseEnter(MouseEvent e) {
+				updateTitleRegionHoverState(e);
+			}
+
+			public void mouseExit(MouseEvent e) {
+				titleRegion.setHoverState(TitleRegion.STATE_NORMAL);
+			}
+
+			public void mouseHover(MouseEvent e) {
+			}
+		});
 		super.setLayout(new FormHeadingLayout());
-		titleLabel = new Label(this, SWT.WRAP);
-		titleCache = new SizeCache(titleLabel);
+		titleRegion = new TitleRegion(this);
 	}
 
 	/**
@@ -619,7 +506,7 @@ public class FormHeading extends Canvas {
 	 * @return the title text
 	 */
 	public String getText() {
-		return text;
+		return titleRegion.getText();
 	}
 
 	/**
@@ -629,7 +516,7 @@ public class FormHeading extends Canvas {
 	 * @since 3.2
 	 */
 	public Image getImage() {
-		return image;
+		return titleRegion.getImage();
 	}
 
 	/**
@@ -637,10 +524,16 @@ public class FormHeading extends Canvas {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		titleLabel.setBackground(bg);
+		internalSetBackground(bg);
+	}
+
+	private void internalSetBackground(Color bg) {
+		titleRegion.setBackground(bg);
+		if (messageRegion != null)
+			messageRegion.setBackground(bg);
 		if (toolBarManager != null)
 			toolBarManager.getControl().setBackground(bg);
-		baseBg = bg;
+		putColor(COLOR_BASE_BG, bg);
 	}
 
 	/**
@@ -648,7 +541,9 @@ public class FormHeading extends Canvas {
 	 */
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		titleLabel.setForeground(fg);
+		titleRegion.setForeground(fg);
+		if (messageRegion != null)
+			messageRegion.setForeground(fg);
 	}
 
 	/**
@@ -659,23 +554,12 @@ public class FormHeading extends Canvas {
 	 *            the title text
 	 */
 	public void setText(String text) {
-		this.text = text;
-		if (toolBarManager != null) {
-			toolBarManager.getControl().setVisible(
-					image != null || text != null);
-		}
-		if (text != null) {
-			titleCache.setControl(titleLabel);
-			titleLabel.setText(text);
-		}
-		titleLabel.setVisible(text != null);
-		layout();
-		redraw();
+		titleRegion.setText(text);
 	}
 
 	public void setFont(Font font) {
 		super.setFont(font);
-		titleLabel.setFont(font);
+		titleRegion.setFont(font);
 	}
 
 	/**
@@ -686,54 +570,38 @@ public class FormHeading extends Canvas {
 	 * @since 3.2
 	 */
 	public void setImage(Image image) {
-		this.image = image;
-		if (toolBarManager != null) {
-			toolBarManager.getControl().setVisible(
-					image != null || text != null);
-		}
-		if (image != null) {
-			createBusyLabel();
-		} else if (image == null && busyLabel != null) {
-			if (!busyLabel.isBusy()) {
-				busyLabel.dispose();
-				busyLabel = null;
-			}
-		}
-		if (busyLabel!=null) busyLabel.setImage(image);
-		layout();
-	}
-
-	private void createBusyLabel() {
-		if (busyLabel == null) {
-			busyLabel = new BusyIndicator(this, SWT.NULL);
-			if (gradientInfo == null && getBackgroundImage() == null)
-				busyLabel.setBackground(getBackground());
-		}
+		titleRegion.setImage(image);
+		if (messageRegion != null)
+			titleRegion.updateImage(messageRegion.getMessageImage(),
+					messageRegion.getDetailedMessage(), true);
+		else
+			titleRegion.updateImage(null, null, true);
 	}
 
 	public void setTextBackground(Color[] gradientColors, int[] percents,
 			boolean vertical) {
-		gradientInfo = new GradientInfo();
-		gradientInfo.gradientColors = gradientColors;
-		gradientInfo.percents = percents;
-		gradientInfo.vertical = vertical;
-		titleLabel.setBackground(null);
-		super.setBackground(null);
-		if (toolBarManager != null)
-			toolBarManager.getControl().setBackground(null);
-		if (busyLabel != null)
-			busyLabel.setBackground(null);
-		updateGradientImage();
+		if (gradientColors != null) {
+			gradientInfo = new GradientInfo();
+			gradientInfo.gradientColors = gradientColors;
+			gradientInfo.percents = percents;
+			gradientInfo.vertical = vertical;
+			setBackground(null);
+			updateGradientImage();
+		} else {
+			// reset
+			gradientInfo = null;
+			if (gradientImage != null) {
+				gradientImage.dispose();
+				gradientImage = null;
+				setBackgroundImage(null);
+			}
+		}
 	}
 
 	public void setBackgroundImage(Image image) {
 		super.setBackgroundImage(image);
 		if (image != null) {
-			titleLabel.setBackground(null);
-			if (toolBarManager != null)
-				toolBarManager.getControl().setBackground(null);
-			if (busyLabel != null)
-				busyLabel.setBackground(null);
+			internalSetBackground(null);
 		}
 	}
 
@@ -763,6 +631,17 @@ public class FormHeading extends Canvas {
 	}
 
 	/**
+	 * Returns the menu manager that is used to manage tool items in the form's
+	 * title area.
+	 * 
+	 * @return form drop-down menu manager
+	 * @since 3.3
+	 */
+	public IMenuManager getMenuManager() {
+		return titleRegion.getMenuManager();
+	}
+
+	/**
 	 * Updates the local tool bar manager if used. Does nothing if local tool
 	 * bar manager has not been created yet.
 	 */
@@ -781,7 +660,7 @@ public class FormHeading extends Canvas {
 		igc.setBackground(getBackground());
 		igc.fillRectangle(0, 0, carea.width, carea.height);
 		if (getBackgroundImage() != null) {
-			if (gradientInfo!=null || isBackgroundImageTiled())
+			if (gradientInfo != null)
 				drawBackground(igc, carea.x, carea.y, carea.width, carea.height);
 			else {
 				Image bgImage = getBackgroundImage();
@@ -790,38 +669,37 @@ public class FormHeading extends Canvas {
 						ibounds.height);
 			}
 		}
+
 		if (isSeparatorVisible()) {
-			// gradient
-			if (gradientInfo != null && gradientInfo.gradientColors.length >= 2) {
-				igc.setBackground(gradientInfo.gradientColors[0]);
-				igc
-						.setForeground(gradientInfo.gradientColors[gradientInfo.gradientColors.length - 1]);
-				igc.fillGradientRectangle(0, carea.height - SEPARATOR_HEIGHT
-						+ 3, carea.width, SEPARATOR_HEIGHT - 2,
-						gradientInfo.vertical);
-			}
 			// bg separator
-			igc.setForeground(baseBg);
-			igc.drawPolyline(new int[] { 0,
-					carea.height - SEPARATOR_HEIGHT + 2, 2,
-					carea.height - SEPARATOR_HEIGHT, carea.width - 3,
-					carea.height - SEPARATOR_HEIGHT, carea.width - 1,
-					carea.height - SEPARATOR_HEIGHT + 2 });
-			// color separator
-			if (separatorColor != null)
-				igc.setForeground(separatorColor);
+			if (hasColor(IFormColors.H_BOTTOM_KEYLINE1))
+				igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE1));
+			else
+				igc.setForeground(getBackground());
+			igc.drawLine(carea.x, carea.height - 2, carea.x + carea.width - 1,
+					carea.height - 2);
+			if (hasColor(IFormColors.H_BOTTOM_KEYLINE2))
+				igc.setForeground(getColor(IFormColors.H_BOTTOM_KEYLINE2));
 			else
 				igc.setForeground(getForeground());
-			igc.drawPolyline(new int[] { 0, carea.height, 0,
-					carea.height - SEPARATOR_HEIGHT + 3, 2,
-					carea.height - SEPARATOR_HEIGHT + 1, carea.width - 3,
-					carea.height - SEPARATOR_HEIGHT + 1, carea.width - 1,
-					carea.height - SEPARATOR_HEIGHT + 3, carea.width - 1,
-					carea.height });
+			igc.drawLine(carea.x, carea.height - 1, carea.x + carea.width - 1,
+					carea.height - 1);
 		}
 		gc.drawImage(buffer, carea.x, carea.y);
 		igc.dispose();
 		buffer.dispose();
+	}
+
+	private void updateTitleRegionHoverState(MouseEvent e) {
+		Rectangle titleRect = titleRegion.getBounds();
+		titleRect.width += titleRect.x + 15;
+		titleRect.height += titleRect.y + 15;
+		titleRect.x = 0;
+		titleRect.y = 0;
+		if (titleRect.contains(e.x, e.y))
+			titleRegion.setHoverState(TitleRegion.STATE_HOVER_LIGHT);
+		else
+			titleRegion.setHoverState(TitleRegion.STATE_NORMAL);
 	}
 
 	private void updateGradientImage() {
@@ -873,100 +751,26 @@ public class FormHeading extends Canvas {
 				}
 			}
 			if (gradientInfo.vertical && pos < height) {
-				gc.setBackground(baseBg);
+				gc.setBackground(getColor(COLOR_BASE_BG));
 				gc.fillRectangle(0, pos, width, height - pos);
 			}
 			if (!gradientInfo.vertical && pos < width) {
-				gc.setBackground(baseBg);
+				gc.setBackground(getColor(COLOR_BASE_BG));
 				gc.fillRectangle(pos, 0, width - pos, height);
 			}
 			gc.setForeground(oldForeground);
 		}
 	}
 
-	/**
-	 * Always returns true
-	 * 
-	 * @return Returns true
-	 */
-	public boolean isBackgroundImageTiled() {
-		return (flags & TILED) !=0;
-	}
-
-	/**
-	 *
-	 */
-	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
-		if (backgroundImageTiled)
-			flags |= TILED;
-		else
-			flags &= ~TILED;
-	}
-
-	/**
-	 *@return SWT.LEFT
-	 */
-	public int getBackgroundImageAlignment() {
-		return SWT.LEFT;
-	}
-
-	/**
-	 * No-op.
-	 * @depracated background image alignment is always 0,0.
-	 * @since 3.1
-	 */
-	public void setBackgroundImageAlignment(int backgroundImageAlignment) {
-	}
-
-	/**
-	 * Background image is always clipped.
-	 * @deprecated not used
-	 * @return true
-	 */
-	public boolean isBackgroundImageClipped() {
-		return true;
-	}
-
-	/**
-	 * Background image is always clipped.
-	 * @deprecated not used
-	 */
-	public void setBackgroundImageClipped(boolean backgroundImageClipped) {
-	}
-
-	/**
-	 * TODO add javadoc experimental - do not use yet
-	 * 
-	 * @return <code>true</code> if the receiver is a visible separator,
-	 *         <code>false</code> otherwise
-	 */
 	public boolean isSeparatorVisible() {
-		return (flags & SEPARATOR)!=0;
+		return (flags & SEPARATOR) != 0;
 	}
 
-	/**
-	 * experimental - do not use yet TODO add javadoc
-	 */
 	public void setSeparatorVisible(boolean addSeparator) {
 		if (addSeparator)
 			flags |= SEPARATOR;
 		else
 			flags &= ~SEPARATOR;
-	}
-
-	/**
-	 * experimental - do not use yet TODO add javadoc
-	 */
-
-	public Color getSeparatorColor() {
-		return separatorColor;
-	}
-
-	/**
-	 * experimental - do not use yet TODO add javadoc
-	 */
-	public void setSeparatorColor(Color separatorColor) {
-		this.separatorColor = separatorColor;
 	}
 
 	/**
@@ -977,153 +781,54 @@ public class FormHeading extends Canvas {
 	 * @since 3.2
 	 */
 	public void setMessage(String message) {
-		this.setMessage(message, IMessageProvider.NONE);
+		this.setMessage(message, null, null, IMessageProvider.NONE);
 	}
 
-	/**
-	 * Sets the message for this form with an indication of what type of message
-	 * it is.
-	 * <p>
-	 * The valid message types are one of <code>NONE</code>,
-	 * <code>INFORMATION</code>,<code>WARNING</code>, or
-	 * <code>ERROR</code>.
-	 * </p>
-	 * <p>
-	 * 
-	 * @param newMessage
-	 *            the message, or <code>null</code> to clear the message
-	 * @param newType
-	 *            the message type
-	 * @since 3.2
-	 */
-
-	public void setMessage(String newMessage, int newType) {
-		Image newImage = null;
-		if (newMessage != null) {
-			switch (newType) {
-			case IMessageProvider.NONE:
-				break;
-			case IMessageProvider.INFORMATION:
-				newImage = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-				break;
-			case IMessageProvider.WARNING:
-				newImage = JFaceResources
-						.getImage(Dialog.DLG_IMG_MESSAGE_WARNING);
-				break;
-			case IMessageProvider.ERROR:
-				newImage = JFaceResources
-						.getImage(Dialog.DLG_IMG_MESSAGE_ERROR);
-				break;
-			}
-		}
-		showMessage(newMessage, newImage);
+	public void setMessage(String newMessage, String details,
+			IMessage[] messages, int newType) {
+		if (isDisposed())
+			return;
+		showMessage(newMessage, details, messages, newType);
 	}
 
-	private void showMessage(String newMessage, Image newImage) {
-		if (newMessage == null) {
-			if (messageArea != null)
-				setMessageAreaVisible(false);
-		} else {
-			if (messageArea==null)
-				createMessageArea();
-			messageArea.setText(newMessage);
-			messageArea.setImage(newImage);
-			setMessageAreaVisible(true);
-		}
-	}
-	
-	private void createMessageArea() {
-		messageArea = new MessageArea(this, SWT.NULL);
-		messageArea.setBackground(baseBg);
-		messageArea
-				.setForeground(separatorColor != null ? separatorColor
-						: getForeground());
-		messageArea.setState(MessageArea.CLOSED);
+	public void addMessageHyperlinkListener(IHyperlinkListener listener) {
+		ensureMessageRegionExists();
+		messageRegion.addMessageHyperlinkListener(listener);
 	}
 
-	private void setMessageAreaVisible(boolean visible) {
-		if (messageArea.isMinimized()) {
-			if (!visible)
-				messageArea.setState(MessageArea.CLOSED);
-			messageArea.setMinimized(false);
-		}
-		// check if we need to do anything
-		switch (messageArea.getState()) {
-		case MessageArea.OPENNING:
-		case MessageArea.OPEN:
-			if (visible)
+	public void removeMessageHyperlinkListener(IHyperlinkListener listener) {
+		if (messageRegion != null)
+			messageRegion.removeMessageHyperlinkListener(listener);
+	}
+
+	public String getMessage() {
+		return messageRegion != null ? messageRegion.getMessage() : null;
+	}
+
+	public int getMessageType() {
+		return messageRegion != null ? messageRegion.getMessageType() : 0;
+	}
+
+	private void ensureMessageRegionExists() {
+		// ensure message region exists
+		if (messageRegion == null)
+			messageRegion = new MessageRegion();
+	}
+
+	private void showMessage(String newMessage, String details,
+			IMessage[] messages, int newType) {
+		if (messageRegion == null) {
+			// check the trivial case
+			if (newMessage == null)
 				return;
-			break;
-		case MessageArea.CLOSING:
-		case MessageArea.CLOSED:
-			if (!visible)
-				return;
-			break;
-		}
-		// we do
-		messageArea.moveAbove(null);
-		messageArea.setAnimationStart(true);
-		messageArea.setState(visible ? MessageArea.OPENNING
-				: MessageArea.CLOSING);
-		layout(true);
-		Rectangle startBounds = messageArea.getBounds();
-		final int endY = visible ? startBounds.y - startBounds.height
-				: startBounds.y + startBounds.height;
-
-		Runnable runnable = new Runnable() {
-			public void run() {
-				final boolean[] result = new boolean[1];
-				/*
-				 * getDisplay().syncExec(new Runnable() { public void run() { if
-				 * (headClient!=null) headClient.setRedraw(false); } });
-				 */
-				for (;;) {
-					getDisplay().syncExec(new Runnable() {
-						public void run() {
-							Point loc = messageArea.getLocation();
-							if (messageArea.getState() == MessageArea.OPENNING) {
-								// opening
-								loc.y--;
-								if (loc.y > endY)
-									messageArea.setLocation(loc);
-								else {
-									result[0] = true;
-									messageArea.setState(MessageArea.OPEN);
-									reflow();
-								}
-							} else {
-								// closing
-								loc.y++;
-								if (loc.y < endY)
-									messageArea.setLocation(loc);
-								else {
-									result[0] = true;
-									messageArea.setState(MessageArea.CLOSED);
-									reflow();
-								}
-							}
-						}
-					});
-					if (result[0]) {
-						/*
-						 * getDisplay().syncExec(new Runnable() { public void
-						 * run() { if (headClient!=null)
-						 * headClient.setRedraw(true); } });
-						 */
-						break;
-					}
-					Thread.yield();
-					try {
-						Thread.sleep(5);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-		};
-		Thread t = new Thread(runnable);
-		t.start();
+		} else if (messageRegion.isDisposed())
+			return;
+		ensureMessageRegionExists();
+		messageRegion.showMessage(newMessage, details, messages, newType);
+		titleRegion.updateImage(messageRegion.getMessageImage(),
+				details != null ? details : newMessage, false);
+		layout();
+		redraw();
 	}
 
 	/**
@@ -1133,7 +838,7 @@ public class FormHeading extends Canvas {
 	 */
 
 	public boolean isBusy() {
-		return busyLabel != null && busyLabel.isBusy();
+		return titleRegion.isBusy();
 	}
 
 	/**
@@ -1145,12 +850,7 @@ public class FormHeading extends Canvas {
 	 */
 
 	public void setBusy(boolean busy) {
-		if (busy)
-			createBusyLabel();
-		if (busy == busyLabel.isBusy())
-			return;
-		busyLabel.setBusy(busy);
-		reflow();
+		titleRegion.setBusy(busy);
 	}
 
 	public Control getHeadClient() {
@@ -1158,15 +858,34 @@ public class FormHeading extends Canvas {
 	}
 
 	public void setHeadClient(Control headClient) {
-		Assert.isTrue(headClient.getParent() == this);
+		if (headClient != null)
+			Assert.isTrue(headClient.getParent() == this);
 		this.headClient = headClient;
-		if (messageArea==null)
-			createMessageArea();
 		layout();
-		reflow();
 	}
-	private void reflow() {
-		if (getParent().getParent() instanceof ScrolledForm)
-			((ScrolledForm)getParent().getParent()).reflow(true);
+
+	public void putColor(String key, Color color) {
+		if (color == null)
+			colors.remove(key);
+		else
+			colors.put(key, color);
+	}
+
+	public Color getColor(String key) {
+		return (Color) colors.get(key);
+	}
+
+	public boolean hasColor(String key) {
+		return colors.containsKey(key);
+	}
+
+	public void addDragSupport(int operations, Transfer[] transferTypes,
+			DragSourceListener listener) {
+		titleRegion.addDragSupport(operations, transferTypes, listener);
+	}
+	
+	public void addDropSupport(int operations, Transfer[] transferTypes,
+			DropTargetListener listener) {
+		titleRegion.addDropSupport(operations, transferTypes, listener);
 	}
 }

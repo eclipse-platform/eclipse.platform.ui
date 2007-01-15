@@ -376,6 +376,7 @@ public class Section extends ExpandableComposite {
 		} else {
 			theight = 5;
 		}
+		gc.setAntialias(SWT.ON);
 		if ((getExpansionStyle() & TITLE_BAR) != 0) {
 			if (isExpanded() && getBackgroundImage() == null)
 				updateHeaderImage(bg, bounds, theight);

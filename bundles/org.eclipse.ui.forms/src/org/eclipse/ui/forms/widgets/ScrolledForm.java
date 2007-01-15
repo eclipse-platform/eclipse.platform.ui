@@ -9,10 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
+
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.forms.IMessage;
+import org.eclipse.ui.forms.IMessageContainerWithDetails;
+
 /**
  * ScrolledForm is a control that is capable of scrolling an instance of the
  * Form class. It should be created in a parent that will allow it to use all
@@ -23,26 +30,29 @@ import org.eclipse.swt.widgets.*;
  * parent by calling 'getBody()' on the form instance. Example:
  * 
  * <pre>
- *  FormToolkit toolkit = new FormToolkit(parent.getDisplay());
- *  ScrolledForm form = toolkit.createScrolledForm(parent);
- *  form.setText(&quot;Sample form&quot;);
- *  form.getBody().setLayout(new GridLayout());
- *  toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
+ * FormToolkit toolkit = new FormToolkit(parent.getDisplay());
+ * ScrolledForm form = toolkit.createScrolledForm(parent);
+ * form.setText(&quot;Sample form&quot;);
+ * form.getBody().setLayout(new GridLayout());
+ * toolkit.createButton(form.getBody(), &quot;Checkbox&quot;, SWT.CHECK);
  * </pre>
  * 
  * <p>
  * No layout manager has been set on the body. Clients are required to set the
  * desired layout manager explicitly.
- *<p>Although the class is not final, it is not expected to be
- * be extended. 
- *
+ * <p>
+ * Although the class is not final, it is not expected to be be extended.
+ * 
  * @since 3.0
  */
-public class ScrolledForm extends SharedScrolledComposite {
+public class ScrolledForm extends SharedScrolledComposite implements
+		IMessageContainerWithDetails {
 	private Form content;
+
 	public ScrolledForm(Composite parent) {
 		this(parent, SWT.V_SCROLL | SWT.H_SCROLL);
 	}
+
 	/**
 	 * Creates the form control as a child of the provided parent.
 	 * 
@@ -56,15 +66,18 @@ public class ScrolledForm extends SharedScrolledComposite {
 		super.setContent(content);
 		content.setMenu(getMenu());
 	}
-/**
- * Passes the menu to the body.
- * @param menu
- */
+
+	/**
+	 * Passes the menu to the body.
+	 * 
+	 * @param menu
+	 */
 	public void setMenu(Menu menu) {
 		super.setMenu(menu);
-		if (content!=null) 
+		if (content != null)
 			content.setMenu(menu);
 	}
+
 	/**
 	 * Returns the title text that will be rendered at the top of the form.
 	 * 
@@ -73,7 +86,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public String getText() {
 		return content.getText();
 	}
-	
+
 	/**
 	 * Returns the title image that will be rendered to the left of the title.
 	 * 
@@ -82,6 +95,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public Image getImage() {
 		return content.getImage();
 	}
+
 	/**
 	 * Sets the foreground color of the form. This color will also be used for
 	 * the body.
@@ -90,6 +104,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 		super.setForeground(fg);
 		content.setForeground(fg);
 	}
+
 	/**
 	 * Sets the background color of the form. This color will also be used for
 	 * the body.
@@ -98,23 +113,24 @@ public class ScrolledForm extends SharedScrolledComposite {
 		super.setBackground(bg);
 		content.setBackground(bg);
 	}
+
 	/**
 	 * The form sets the content widget. This method should not be called by
 	 * classes that instantiate this widget.
 	 */
 	public final void setContent(Control c) {
 	}
+
 	/**
 	 * Sets the text to be rendered at the top of the form above the body as a
 	 * title.
-	 * <p><strong>Note:</strong>
-	 * Mnemonics are indicated by an '&amp;' that causes the next
-	 * character to be the mnemonic. Mnemonics are not applicable
-	 * in the case of the form title but need to be taken into
-	 * acount due to the usage of the underlying widget that
-	 * renders mnemonics in the title area. The mnemonic indicator 
-	 * character '&amp;' can be escaped by doubling it in the string, 
-	 * causing a single '&amp;' to be displayed.
+	 * <p>
+	 * <strong>Note:</strong> Mnemonics are indicated by an '&amp;' that causes
+	 * the next character to be the mnemonic. Mnemonics are not applicable in
+	 * the case of the form title but need to be taken into acount due to the
+	 * usage of the underlying widget that renders mnemonics in the title area.
+	 * The mnemonic indicator character '&amp;' can be escaped by doubling it in
+	 * the string, causing a single '&amp;' to be displayed.
 	 * </p>
 	 * 
 	 * @param text
@@ -124,7 +140,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 		content.setText(text);
 		reflow(true);
 	}
-	
+
 	/**
 	 * Sets the image to be rendered to the left of the title.
 	 * 
@@ -135,15 +151,17 @@ public class ScrolledForm extends SharedScrolledComposite {
 		content.setImage(image);
 		reflow(true);
 	}
+
 	/**
-	 * Returns the optional background image of this form. The image is
-	 * rendered starting at the position 0,0 and is painted behind the title.
+	 * Returns the optional background image of this form. The image is rendered
+	 * starting at the position 0,0 and is painted behind the title.
 	 * 
 	 * @return Returns the background image.
 	 */
 	public Image getBackgroundImage() {
 		return content.getBackgroundImage();
 	}
+
 	/**
 	 * Sets the optional background image to be rendered behind the title
 	 * starting at the position 0,0.
@@ -154,6 +172,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public void setBackgroundImage(Image backgroundImage) {
 		content.setBackgroundImage(backgroundImage);
 	}
+
 	/**
 	 * Returns the tool bar manager that is used to manage tool items in the
 	 * form's title area.
@@ -163,6 +182,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public IToolBarManager getToolBarManager() {
 		return content.getToolBarManager();
 	}
+
 	/**
 	 * Updates the local tool bar manager if used. Does nothing if local tool
 	 * bar manager has not been created yet.
@@ -170,20 +190,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public void updateToolBar() {
 		content.updateToolBar();
 	}
-	/**
-	 * Recomputes the body layout and form scroll bars. The method should be
-	 * used when changes somewhere in the form body invalidate the current
-	 * layout and/or scroll bars.
-	 * 
-	 * @param flushCache
-	 *            if <samp>true </samp>, drop any cached layout information and
-	 *            compute new one.
-	 */
-	public void reflow(boolean flushCache) {
-		//content.getBody().layout();
-		//content.layout();
-		super.reflow(flushCache);
-	}
+
 	/**
 	 * Returns the container that occupies the body of the form (the form area
 	 * below the title). Use this container as a parent for the controls that
@@ -194,6 +201,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	public Composite getBody() {
 		return content.getBody();
 	}
+
 	/**
 	 * Returns the instance of the form owned by the scrolled form.
 	 * 
@@ -201,5 +209,82 @@ public class ScrolledForm extends SharedScrolledComposite {
 	 */
 	public Form getForm() {
 		return content;
+	}
+
+	/**
+	 * Sets the form's busy state. Busy form will display 'busy' animation in
+	 * the area of the title image.
+	 * 
+	 * @param busy
+	 *            the form's busy state
+	 * @see Form#setBusy(boolean)
+	 * @since 3.3
+	 */
+
+	public void setBusy(boolean busy) {
+		content.setBusy(busy);
+		reflow(true);
+	}
+
+	/**
+	 * Sets the optional head client.
+	 * 
+	 * @param headClient
+	 *            the optional child of the head
+	 * @see Form#setHeadClient(Control)
+	 * @since 3.3
+	 */
+	public void setHeadClient(Control headClient) {
+		content.setHeadClient(headClient);
+		reflow(true);
+	}
+
+	/**
+	 * Sets the form message.
+	 * 
+	 * @param newMessage
+	 *            the message text or <code>null</code> to reset.
+	 * @param detailedMessage
+	 *            the optional detailed message or <code>null</code>.
+	 * @param messages
+	 *            individual messages or <code>null</code>.
+	 * @param newType
+	 *            as defined in
+	 *            {@link org.eclipse.jface.dialogs.IMessageProvider}.
+	 * @since 3.3
+	 * @see Form#setMessage(String, String, int)
+	 */
+	public void setMessage(String newMessage, String detailedMessage,
+			IMessage[] messages, int newType) {
+		content.setMessage(newMessage, detailedMessage, messages, newType);
+		reflow(true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageContainer#setMessage(java.lang.String,
+	 *      int)
+	 */
+	public void setMessage(String newMessage, int newType) {
+		this.setMessage(newMessage, null, null, newType);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
+	 */
+	public String getMessage() {
+		return content.getMessage();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
+	 */
+	public int getMessageType() {
+		return content.getMessageType();
 	}
 }

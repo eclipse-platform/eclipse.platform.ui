@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 public class BusyIndicator extends Canvas {
-	private static final int MARGIN = 2;
+	private static final int MARGIN = 0;
 
 	private ImageData[] progressData;
 

@@ -9,24 +9,34 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.forms.examples.internal.rcp;
+
+import java.text.MessageFormat;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkSettings;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -35,6 +45,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.forms.widgets.Section;
+
 /**
  * @author dejan
  * 
@@ -42,6 +53,13 @@ import org.eclipse.ui.forms.widgets.Section;
  * Preferences - Java - Code Generation - Code and Comments
  */
 public class NewStylePage extends FormPage {
+	private static final String SHORT_TITLE = "Short Title";
+	private static final String LONG_TITLE = "This title is longer and will compete with other header regions";
+	private static final String SHORT_MESSAGE = "A short {0} message";
+	private static final String LONG_MESSAGE = "This {0} message is longer and will also compete with other header regions";
+	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
+			"error" };
+
 	/**
 	 * @param id
 	 * @param title
@@ -49,73 +67,199 @@ public class NewStylePage extends FormPage {
 	public NewStylePage(FormEditor editor) {
 		super(editor, "newStyle", "New Style");
 	}
+
 	protected void createFormContent(IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
-		FormToolkit toolkit = managedForm.getToolkit();
-		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkSettings.UNDERLINE_HOVER);
-		form.setText("New Style Form");
-		FormColors colors = toolkit.getColors();
-		colors.initializeSectionToolBarColors();
-		Color gbg = colors.getColor(FormColors.TB_GBG);
-		Color bg = colors.getBackground();
-		form.getForm().setTextBackground(new Color[]{bg, gbg}, new int [] {100}, true);
-		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
-		form.getForm().setSeparatorVisible(true);
-		ToolBarManager tbm = (ToolBarManager)form.getForm().getToolBarManager();
-		tbm.getControl().setBackground(colors.getColor(FormColors.TB_GBG));
-		
+		final FormToolkit toolkit = managedForm.getToolkit();
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+				HyperlinkSettings.UNDERLINE_HOVER);
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = 0;
-		layout.marginBottom = 5;
-		layout.marginWidth = 10;
+		layout.marginHeight = 10;
+		layout.marginWidth = 6;
+		layout.horizontalSpacing = 20;
 		form.getBody().setLayout(layout);
-		
-		Section section = toolkit.createSection(form.getBody(), ExpandableComposite.TWISTIE|ExpandableComposite.EXPANDED);
+
+		Section section = toolkit.createSection(form.getBody(),
+				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
+						| ExpandableComposite.EXPANDED);
 		Composite client = toolkit.createComposite(section);
 		section.setClient(client);
-		section.setText("Details");
+		section.setText("Header features");
+		section
+				.setDescription("Use the switches below to control basic heading parameters.");
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(gd);
-		
+		layout = new GridLayout();
+		client.setLayout(layout);
+		final Button tbutton = toolkit.createButton(client, "Add title",
+				SWT.CHECK);
+		final Button sbutton = toolkit.createButton(client, "Short title",
+				SWT.RADIO);
+		sbutton.setSelection(true);
+		sbutton.setEnabled(false);
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		sbutton.setLayoutData(gd);
+		final Button lbutton = toolkit.createButton(client, "Long title",
+				SWT.RADIO);
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		lbutton.setLayoutData(gd);
+		lbutton.setEnabled(false);
+		tbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTitle(form, tbutton.getSelection(), sbutton
+						.getSelection());
+				sbutton.setEnabled(tbutton.getSelection());
+				lbutton.setEnabled(tbutton.getSelection());
+			}
+		});
+		sbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTitle(form, tbutton.getSelection(), sbutton
+						.getSelection());
+			}
+		});
+		lbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateTitle(form, tbutton.getSelection(), sbutton
+						.getSelection());
+			}
+		});
+		final Button ibutton = toolkit.createButton(client, "Add image",
+				SWT.CHECK);
+		ibutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				updateImage(form, ibutton.getSelection());
+			}
+		});
+
+		final Button tbbutton = toolkit.createButton(client, "Add tool bar",
+				SWT.CHECK);
+		tbbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addToolBar(toolkit, form, tbbutton.getSelection());
+			}
+		});
+
+		final Button gbutton = toolkit.createButton(client,
+				"Paint background gradient", SWT.CHECK);
+		gbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addHeadingGradient(toolkit, form, gbutton.getSelection());
+			}
+		});
+
+		final Button clbutton = toolkit.createButton(client, "Add head client",
+				SWT.CHECK);
+		clbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addHeadClient(toolkit, form, clbutton.getSelection());
+			}
+		});
+
+		final Button mbutton = toolkit.createButton(client,
+				"Add drop-down menu", SWT.CHECK);
+		mbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				addMenu(toolkit, form, mbutton.getSelection());
+			}
+		});
+
+		final Button dbutton = toolkit.createButton(client, "Add drag support",
+				SWT.CHECK);
+		dbutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (dbutton.getSelection()) {
+					addDragSupport(form);
+					dbutton.setEnabled(false);
+				}
+			}
+		});
+
+		section = toolkit.createSection(form.getBody(),
+				ExpandableComposite.TITLE_BAR | ExpandableComposite.TWISTIE
+						| ExpandableComposite.EXPANDED);
+		client = toolkit.createComposite(section);
+		section.setClient(client);
+		section.setText("Messages and active state");
+		section
+				.setDescription("Use the buttons below to control messages and active state.");
+		gd = new GridData(GridData.FILL_BOTH);
+		section.setLayoutData(gd);
+
 		layout = new GridLayout();
 		layout.numColumns = 4;
 		client.setLayout(layout);
 
+		final Button shortMessage = toolkit.createButton(client,
+				"Short message", SWT.RADIO);
+		shortMessage.setSelection(true);
+		gd = new GridData();
+		gd.horizontalSpan = 4;
+		shortMessage.setLayoutData(gd);
+		final Button longMessage = toolkit.createButton(client, "Long message",
+				SWT.RADIO);
+		gd = new GridData();
+		gd.horizontalSpan = 4;
+		longMessage.setLayoutData(gd);
+
+		shortMessage.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				form.setMessage(getErrorMessage(form.getMessageType(),
+						longMessage.getSelection()), form.getMessageType());
+			}
+		});
+		longMessage.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				form.setMessage(getErrorMessage(form.getMessageType(),
+						longMessage.getSelection()), form.getMessageType());
+			}
+		});
+
 		Button error = toolkit.createButton(client, "Error", SWT.PUSH);
 		error.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				form.getForm().setMessage("Test for an error message", IMessageProvider.ERROR);				
-				
+				form.setMessage(getErrorMessage(IMessageProvider.ERROR,
+						longMessage.getSelection()), IMessageProvider.ERROR);
+
 			}
 		});
 		Button warning = toolkit.createButton(client, "Warning", SWT.PUSH);
 		warning.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				form.getForm().setMessage("Test for a warning message", IMessageProvider.WARNING);
+				form.setMessage(getErrorMessage(IMessageProvider.WARNING,
+						longMessage.getSelection()), IMessageProvider.WARNING);
 			}
-		});		
+		});
 		Button info = toolkit.createButton(client, "Info", SWT.PUSH);
 		info.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				form.getForm().setMessage("Test for an info message", IMessageProvider.INFORMATION);
+				form.setMessage(getErrorMessage(IMessageProvider.INFORMATION,
+						longMessage.getSelection()),
+						IMessageProvider.INFORMATION);
 			}
-		});		
+		});
 		Button cancel = toolkit.createButton(client, "Cancel", SWT.PUSH);
 		cancel.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				form.getForm().setMessage(null);
+				form.setMessage(null, 0);
 			}
-		});		
-		
-		final Button busy = toolkit.createButton(client, "Start Progress", SWT.PUSH);
+		});
+
+		final Button busy = toolkit.createButton(client, "Start Progress",
+				SWT.PUSH);
 		busy.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
+				// IWorkbenchSiteProgressService service =
+				// (IWorkbenchSiteProgressService)getSite().getAdapter(IWorkbenchSiteProgressService.class);
+
 				if (form.getForm().isBusy()) {
 					form.getForm().setBusy(false);
 					busy.setText("Start Progress");
-				}
-				else {
+				} else {
 					form.getForm().setBusy(true);
 					busy.setText("Stop Progress");
 				}
@@ -124,72 +268,170 @@ public class NewStylePage extends FormPage {
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		busy.setLayoutData(gd);
-		
-		Composite right = toolkit.createComposite(form.getBody());
-		right.setLayoutData(new GridData(GridData.FILL_BOTH));
-		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 10;
-		layout.marginHeight = 0;
-		right.setLayout(layout);
+	}
 
-		section = toolkit.createSection(right, ExpandableComposite.TWISTIE|ExpandableComposite.EXPANDED);
-		Composite cont = toolkit.createComposite(section);
-		FillLayout flayout = new FillLayout();
-		flayout.marginWidth = 2;
-		flayout.marginHeight = 2;
-		cont.setLayout(flayout);
-		toolkit.createText(cont, "Sample description", SWT.MULTI);
-		section.setClient(cont);
-		section.setText("Description");
-		gd = new GridData(GridData.FILL_BOTH);
-		section.setLayoutData(gd);
-		toolkit.paintBordersFor(cont);
-		
-		section = toolkit.createSection(right, ExpandableComposite.TWISTIE|ExpandableComposite.SHORT_TITLE_BAR|ExpandableComposite.EXPANDED);
-		cont = toolkit.createComposite(section);
-		flayout = new FillLayout();
-		flayout.marginWidth = 2;
-		flayout.marginHeight = 2;
-		cont.setLayout(flayout);		
-		toolkit.createText(cont, "Lorem ipsum dolor sit amet.", SWT.MULTI);
-		section.setClient(cont);
-		toolkit.paintBordersFor(cont);
-		section.setText("Discussion");
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.verticalSpan = 2;
-		section.setLayoutData(gd);
-		
-		Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
-			public void run() {
+	private void addHeadingGradient(FormToolkit toolkit, ScrolledForm form,
+			boolean add) {
+		FormColors colors = toolkit.getColors();
+		Color top = colors.getColor(IFormColors.H_GRADIENT_TOP);
+		Color bot = colors.getColor(IFormColors.H_GRADIENT_BOTTOM);
+		if (add)
+			form.getForm().setTextBackground(new Color[] { top, bot },
+					new int[] { 100 }, true);
+		else {
+			form.getForm().setTextBackground(null, null, false);
+			form.getForm().setBackground(colors.getBackground());
+		}
+		form.getForm().setHeadColor(IFormColors.H_BOTTOM_KEYLINE1,
+				add ? colors.getColor(IFormColors.H_BOTTOM_KEYLINE1) : null);
+		form.getForm().setHeadColor(IFormColors.H_BOTTOM_KEYLINE2,
+				add ? colors.getColor(IFormColors.H_BOTTOM_KEYLINE2) : null);
+		form.getForm().setHeadColor(IFormColors.H_HOVER_LIGHT,
+				add ? colors.getColor(IFormColors.H_HOVER_LIGHT) : null);
+		form.getForm().setHeadColor(IFormColors.H_HOVER_FULL,
+				add ? colors.getColor(IFormColors.H_HOVER_FULL) : null);
+		form.getForm().setHeadColor(IFormColors.TB_TOGGLE,
+				add ? colors.getColor(IFormColors.TB_TOGGLE) : null);
+		form.getForm().setHeadColor(IFormColors.TB_TOGGLE_HOVER,
+				add ? colors.getColor(IFormColors.TB_TOGGLE_HOVER) : null);
+		form.getForm().setSeparatorVisible(add);
+		form.reflow(true);
+		form.redraw();
+	}
+
+	private String getErrorMessage(int type, boolean longMessage) {
+		String name = MESSAGE_NAMES[type];
+		if (longMessage)
+			return MessageFormat.format(LONG_MESSAGE, new Object[] { name });
+		else
+			return MessageFormat.format(SHORT_MESSAGE, new Object[] { name });
+	}
+
+	private void updateTitle(ScrolledForm form, boolean addTitle,
+			boolean shortTitle) {
+		if (addTitle) {
+			String text = shortTitle ? SHORT_TITLE : LONG_TITLE;
+			form.setText(text);
+		} else {
+			form.setText(null);
+		}
+	}
+
+	private void updateImage(ScrolledForm form, boolean addImage) {
+		if (addImage)
+			form.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+					ISharedImages.IMG_DEF_VIEW));
+		else
+			form.setImage(null);
+	}
+
+	private void addToolBar(FormToolkit toolkit, ScrolledForm form, boolean add) {
+		if (add) {
+			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+				public void run() {
+				}
+			};
+			haction.setChecked(true);
+			haction.setToolTipText("Horizontal orientation");
+			haction.setImageDescriptor(ExamplesPlugin.getDefault()
+					.getImageRegistry().getDescriptor(
+							ExamplesPlugin.IMG_HORIZONTAL));
+			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+				public void run() {
+				}
+			};
+			vaction.setChecked(false);
+			vaction.setToolTipText("Vertical orientation");
+			vaction.setImageDescriptor(ExamplesPlugin.getDefault()
+					.getImageRegistry().getDescriptor(
+							ExamplesPlugin.IMG_VERTICAL));
+			ControlContribution save = new ControlContribution("save") {
+				protected Control createControl(Composite parent) {
+					Button saveButton = new Button(parent, SWT.PUSH);
+					saveButton.setText("Save");
+					return saveButton;
+				}
+			};
+			form.getToolBarManager().add(haction);
+			form.getToolBarManager().add(vaction);
+			form.getToolBarManager().add(save);
+			form.getToolBarManager().update(true);
+		} else {
+			form.getToolBarManager().removeAll();
+		}
+		form.reflow(true);
+	}
+
+	private void addMenu(FormToolkit toolkit, ScrolledForm form, boolean add) {
+		if (add) {
+			Action haction = new Action("hor", Action.AS_RADIO_BUTTON) {
+				public void run() {
+				}
+			};
+			haction.setChecked(true);
+			haction.setToolTipText("Horizontal orientation");
+			haction.setImageDescriptor(ExamplesPlugin.getDefault()
+					.getImageRegistry().getDescriptor(
+							ExamplesPlugin.IMG_HORIZONTAL));
+			Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
+				public void run() {
+				}
+			};
+			vaction.setChecked(false);
+			vaction.setToolTipText("Vertical orientation");
+			vaction.setImageDescriptor(ExamplesPlugin.getDefault()
+					.getImageRegistry().getDescriptor(
+							ExamplesPlugin.IMG_VERTICAL));
+			form.getForm().getMenuManager().add(haction);
+			form.getForm().getMenuManager().add(vaction);
+		} else {
+			form.getForm().getMenuManager().removeAll();
+		}
+		form.reflow(true);
+	}
+
+	private void addHeadClient(FormToolkit toolkit, ScrolledForm form,
+			boolean add) {
+		if (add) {
+			Composite headClient = new Composite(form.getForm().getHead(),
+					SWT.NULL);
+			GridLayout glayout = new GridLayout();
+			glayout.marginWidth = glayout.marginHeight = 0;
+			glayout.numColumns = 3;
+			headClient.setLayout(glayout);
+			Text t = new Text(headClient, toolkit.getBorderStyle());
+			t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			new Combo(headClient, SWT.NULL);
+			new Combo(headClient, SWT.NULL);
+			toolkit.paintBordersFor(headClient);
+			form.setHeadClient(headClient);
+		} else {
+			Control client = form.getForm().getHeadClient();
+			if (client != null) {
+				client.dispose();
+				form.setHeadClient(null);
 			}
-		};
-		haction.setChecked(true);
-		haction.setToolTipText("Horizontal orientation");
-		haction.setImageDescriptor(ExamplesPlugin.getDefault()
-				.getImageRegistry()
-				.getDescriptor(ExamplesPlugin.IMG_HORIZONTAL));
-		Action vaction = new Action("ver", Action.AS_RADIO_BUTTON) {
-			public void run() {
-			}
-		};
-		vaction.setChecked(false);
-		vaction.setToolTipText("Vertical orientation");
-		vaction.setImageDescriptor(ExamplesPlugin.getDefault()
-				.getImageRegistry().getDescriptor(ExamplesPlugin.IMG_VERTICAL));
-		form.getToolBarManager().add(haction);
-		form.getToolBarManager().add(vaction);
-		form.getToolBarManager().update(true);
-		form.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_DEF_VIEW));
-		Composite headClient = new Composite(form.getForm().getHead(), SWT.NULL);
-		GridLayout glayout = new GridLayout();
-		glayout.marginWidth = glayout.marginHeight = 0;
-		glayout.numColumns = 3;
-		headClient.setLayout(glayout);
-		Text t = new Text(headClient, SWT.BORDER);
-		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		new Combo(headClient, SWT.NULL);
-		new Combo(headClient, SWT.NULL);
-		form.getForm().setHeadClient(headClient);
+		}
+	}
+
+	private void addDragSupport(final ScrolledForm form) {
+		int operations = DND.DROP_MOVE | DND.DROP_COPY | DND.DROP_LINK;
+		Transfer[] transferTypes = { TextTransfer.getInstance() };
+		form.getForm().addTitleDragSupport(operations, transferTypes,
+				new DragSourceListener() {
+					public void dragFinished(DragSourceEvent event) {
+					}
+
+					public void dragSetData(DragSourceEvent event) {
+						event.data = form.getForm().getText();
+					}
+
+					public void dragStart(DragSourceEvent event) {
+						event.doit = true;
+					}
+				});
+		form.getForm().addTitleDropSupport(operations, transferTypes,
+				new DropTargetAdapter() {
+				});
 	}
 }

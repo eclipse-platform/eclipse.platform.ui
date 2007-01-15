@@ -43,6 +43,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.forms.FormColors;
 import org.eclipse.ui.forms.HyperlinkGroup;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
 
 /**
@@ -110,9 +111,9 @@ public class FormToolkit {
 				if (!c.isVisible())
 					continue;
 				/*
-				if (c.getEnabled() == false && !(c instanceof CCombo))
-					continue;
-					*/
+				 * if (c.getEnabled() == false && !(c instanceof CCombo))
+				 * continue;
+				 */
 				if (c instanceof Hyperlink)
 					continue;
 				Object flag = c.getData(KEY_DRAW_BORDER);
@@ -293,7 +294,7 @@ public class FormToolkit {
 					return;
 				Rectangle bounds = composite.getBounds();
 				GC gc = e.gc;
-				gc.setForeground(colors.getColor(FormColors.SEPARATOR));
+				gc.setForeground(colors.getColor(IFormColors.SEPARATOR));
 				if (colors.getBackground() != null)
 					gc.setBackground(colors.getBackground());
 				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height,
@@ -424,7 +425,7 @@ public class FormToolkit {
 		control.setBackground(colors.getBackground());
 		control.setForeground(colors.getForeground());
 		if (control instanceof ExpandableComposite) {
-			ExpandableComposite ec = (ExpandableComposite)control;
+			ExpandableComposite ec = (ExpandableComposite) control;
 			if (ec.toggle != null) {
 				if (trackFocus)
 					ec.toggle.addFocusListener(visibilityHandler);
@@ -444,7 +445,7 @@ public class FormToolkit {
 		if (trackKeyboard)
 			control.addKeyListener(keyboardHandler);
 	}
-	
+
 	/**
 	 * Adapts a composite to be used in a form associated with this toolkit.
 	 * 
@@ -491,18 +492,18 @@ public class FormToolkit {
 			section.toggle.setHoverDecorationColor(colors
 					.getColor(FormColors.TB_TOGGLE_HOVER));
 			section.toggle.setDecorationColor(colors
-					.getColor(FormColors.TB_TOGGLE));
+					.getColor(IFormColors.TB_TOGGLE));
 		}
 		section.setFont(boldFontHolder.getBoldFont(parent.getFont()));
 		if ((sectionStyle & Section.TITLE_BAR) != 0
 				|| (sectionStyle & Section.SHORT_TITLE_BAR) != 0) {
 			colors.initializeSectionToolBarColors();
-			section.setTitleBarBackground(colors.getColor(FormColors.TB_GBG));
+			section.setTitleBarBackground(colors.getColor(IFormColors.TB_BG));
 			section.setTitleBarBorderColor(colors
-					.getColor(FormColors.TB_BORDER));
-			section.setTitleBarGradientBackground(colors
-					.getColor(FormColors.TB_GBG));
-			section.setTitleBarForeground(colors.getColor(FormColors.TB_TOGGLE));
+					.getColor(IFormColors.TB_BORDER));
+			section
+					.setTitleBarForeground(colors
+							.getColor(IFormColors.TB_TOGGLE));
 		}
 		return section;
 	}
@@ -623,9 +624,7 @@ public class FormToolkit {
 		form.setExpandHorizontal(true);
 		form.setExpandVertical(true);
 		form.setBackground(colors.getBackground());
-		form.setForeground(colors.getColor(FormColors.TITLE));
-		colors.initializeSectionToolBarColors();
-		form.getForm().setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		form.setForeground(colors.getColor(IFormColors.TITLE));
 		form.setFont(JFaceResources.getHeaderFont());
 		return form;
 	}
@@ -643,11 +642,39 @@ public class FormToolkit {
 	public Form createForm(Composite parent) {
 		Form formContent = new Form(parent, orientation);
 		formContent.setBackground(colors.getBackground());
-		formContent.setForeground(colors.getColor(FormColors.TITLE));
-		colors.initializeSectionToolBarColors();
-		formContent.setSeparatorColor(colors.getColor(FormColors.TB_BORDER));
+		formContent.setForeground(colors.getColor(IFormColors.TITLE));
 		formContent.setFont(JFaceResources.getHeaderFont());
 		return formContent;
+	}
+
+	/**
+	 * Takes advantage of the gradients and other capabilities to decorate the
+	 * form heading using colors computed based on the current skin and
+	 * operating system.
+	 * 
+	 * @since 3.3
+	 * @param form
+	 *            the form to decorate
+	 */
+
+	public void decorateFormHeading(Form form) {
+		Color top = colors.getColor(IFormColors.H_GRADIENT_TOP);
+		Color bot = colors.getColor(IFormColors.H_GRADIENT_BOTTOM);
+		form.setTextBackground(new Color[] { top, bot }, new int[] { 100 },
+				true);
+		form.setHeadColor(IFormColors.H_BOTTOM_KEYLINE1, colors
+				.getColor(IFormColors.H_BOTTOM_KEYLINE1));
+		form.setHeadColor(IFormColors.H_BOTTOM_KEYLINE2, colors
+				.getColor(IFormColors.H_BOTTOM_KEYLINE2));
+		form.setHeadColor(IFormColors.H_HOVER_LIGHT, colors
+				.getColor(IFormColors.H_HOVER_LIGHT));
+		form.setHeadColor(IFormColors.H_HOVER_FULL, colors
+				.getColor(IFormColors.H_HOVER_FULL));
+		form.setHeadColor(IFormColors.TB_TOGGLE, colors
+				.getColor(IFormColors.TB_TOGGLE));
+		form.setHeadColor(IFormColors.TB_TOGGLE_HOVER, colors
+				.getColor(IFormColors.TB_TOGGLE_HOVER));
+		form.setSeparatorVisible(true);
 	}
 
 	/**
@@ -721,17 +748,17 @@ public class FormToolkit {
 	 * possible to force border in the following way:
 	 * 
 	 * <pre>
-	 * 
-	 *  
 	 *   
-	 *           widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
-	 *           
-	 *           or
-	 *           
-	 *           widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
-	 *          
-	 *   
-	 *  
+	 *    
+	 *     
+	 *             widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TREE_BORDER);
+	 *             
+	 *             or
+	 *             
+	 *             widget.setData(FormToolkit.KEY_DRAW_BORDER, FormToolkit.TEXT_BORDER);
+	 *            
+	 *     
+	 *    
 	 * </pre>
 	 * 
 	 * @param parent
