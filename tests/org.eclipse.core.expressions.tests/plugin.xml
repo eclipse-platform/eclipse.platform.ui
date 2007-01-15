@@ -187,6 +187,9 @@
             	<not>
             		<test property="org.eclipse.core.runtime.isBundleInstalled" args="org.eclipse.core.expressions.invalid.bundle.name"/>
             	</not>
+            	<not>
+            		<test property="org.eclipse.core.runtime.product" value="org.eclipse.core.expressions.invalid.product.name"/>
+            	</not>
             </and>
       	</enablement>
       </testParticipant>

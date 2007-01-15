@@ -10,7 +10,7 @@
               id="org.eclipse.core.expressions.bundlePropertyTester"
               type="org.eclipse.core.runtime.Platform"
               namespace="org.eclipse.core.runtime"
-              properties="isBundleInstalled"
+              properties="product,isBundleInstalled"
               class="org.eclipse.core.internal.expressions.propertytester.PlatformPropertyTester">
         </propertyTester>
      </extension>
