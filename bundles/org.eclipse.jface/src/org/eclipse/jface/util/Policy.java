@@ -74,7 +74,8 @@ public class Policy {
 	}
 
 	/**
-	 * Get the default dialog for JFace errors and warnings.
+	 * Gets the default JFace dialog for showing errors, warnings and
+	 * informations.
 	 * 
 	 * @return {@link ILogDialog}
 	 */
@@ -86,9 +87,13 @@ public class Policy {
 			 * @see org.eclipse.jface.util.ILogger#log(org.eclipse.core.runtime.IStatus)
 			 */
 			public void log(Shell parent, String title, IStatus status) {
-				int dialogConstant = MessageDialog.ERROR;
-				if (status.getSeverity() == IStatus.WARNING) {
+				int dialogConstant = MessageDialog.NONE;
+				if (status.getSeverity() == IStatus.ERROR) {
+					dialogConstant = MessageDialog.ERROR;
+				} else if (status.getSeverity() == IStatus.WARNING) {
 					dialogConstant = MessageDialog.WARNING;
+				} else if (status.getSeverity() == IStatus.INFO) {
+					dialogConstant = MessageDialog.INFORMATION;
 				}
 				MessageDialog dialog = new MessageDialog(parent, title,
 						null, // accept the default window icon

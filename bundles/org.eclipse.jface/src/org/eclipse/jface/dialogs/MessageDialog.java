@@ -328,19 +328,11 @@ public class MessageDialog extends IconAndMessageDialog {
 	 * @param message
 	 *            the message
 	 */
-    public static void openInformation(Shell parent, String title,
-            String message) {
-        MessageDialog dialog = new MessageDialog(parent, title, null, // accept
-                // the
-                // default
-                // window
-                // icon
-                message, INFORMATION,
-                new String[] { IDialogConstants.OK_LABEL }, 0);
-        // ok is the default
-        dialog.open();
-        return;
-    }
+	public static void openInformation(Shell parent, String title,
+			String message) {
+		IStatus status = new Status(IStatus.INFO, Policy.JFACE, message);
+		Policy.getLogDialog().log(parent, title, status);
+	}
 
     /**
      * Convenience method to open a simple Yes/No question dialog.

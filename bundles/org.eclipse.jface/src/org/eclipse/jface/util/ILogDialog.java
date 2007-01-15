@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * A mechanism to show errors and warnings throughout JFace.
+ * A mechanism for showing statuses throughout JFace.
  * <p>
- * Clients may provide their own implementation to change how errors are showed
- * from within JFace.
+ * Clients may provide their own implementation to change the way statuses are
+ * shown from within JFace.
  * </p>
  * 
  * @see org.eclipse.jface.util.Policy#getLogDialog()
