@@ -200,9 +200,11 @@ public class EditionHistoryPage extends LocalHistoryPage {
 			} else {
 				te = localEdition;
 			}
-			name = te.getName();
-			IFileRevision[] filtered = filterRevisions(te, revisions, Policy.subMonitorFor(monitor, 75));
-			super.update(filtered, Policy.subMonitorFor(monitor, 25));
+			if (te != null) {
+				name = te.getName();
+				IFileRevision[] filtered = filterRevisions(te, revisions, Policy.subMonitorFor(monitor, 75));
+				super.update(filtered, Policy.subMonitorFor(monitor, 25));
+			}
 		} finally {
 			if (localEdition == null && te != null)
 				internalDestroy(structureCreator, te);
