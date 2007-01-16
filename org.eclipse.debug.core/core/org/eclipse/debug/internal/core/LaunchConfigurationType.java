@@ -87,7 +87,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	private ISourcePathComputer fSourcePathComputer = null;
 	
 	/**
-	 * Cache for the migraiton delegate
+	 * Cache for the migration delegate
 	 * 
 	 * @since 3.3
 	 */
@@ -213,7 +213,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 *  Map&lt;modeset, delegate&gt;
 	 * </pre>
 	 * </p>
-	 * @return the <code>java.util.Map</code> of preferred delegates or an empty <code>java.util.Map</code> if no prefererd delegates are specified, never <code>null</code>
+	 * @return the <code>java.util.Map</code> of preferred delegates or an empty <code>java.util.Map</code> if no preferred delegates are specified, never <code>null</code>
 	 * 
 	 * @since 3.3
 	 * 
@@ -227,8 +227,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * This method is used to initialize the listing of preferred launch delegates for this type
 	 * 
 	 * <p>
-	 * Undecide if this code should live in the launch manager and have it load a listing of all perferred launch 
-	 * delegates that each config type could then query as needed when looking for their preferrred delegate. 
+	 * Undecided if this code should live in the launch manager and have it load a listing of all preferred launch 
+	 * delegates that each config type could then query as needed when looking for their preferred delegate. 
 	 * Seems like it would be alot less work...
 	 * </p>
 	 * @since 3.3
