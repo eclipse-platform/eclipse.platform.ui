@@ -135,18 +135,26 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IFile"
             name="%PropertiesPage.filePage"
             nameFilter="*.readme"
             class="org.eclipse.ui.examples.readmetool.ReadmeFilePropertyPage"
             id="org.eclipse.ui.examples.readmetool.FilePage">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+         </enabledWhen>
       </page>
       <page
-            objectClass="org.eclipse.core.resources.IFile"
             name="%PropertiesPage.filePage2"
             nameFilter="*.readme"
             class="org.eclipse.ui.examples.readmetool.ReadmeFilePropertyPage2"
             id="org.eclipse.ui.examples.readmetool.FilePage2">
+         <enabledWhen>
+            <instanceof
+                  value="org.eclipse.core.resources.IFile">
+            </instanceof>
+         </enabledWhen>
       </page>
    </extension>
    <extension

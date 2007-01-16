@@ -223,8 +223,7 @@ public class ReadmeFilePropertyPage2 extends PropertyPage {
 
             if (length < 256)
                 return 1;
-            else
-                return 2;
+            return 2;
         }
 
         return 0;
