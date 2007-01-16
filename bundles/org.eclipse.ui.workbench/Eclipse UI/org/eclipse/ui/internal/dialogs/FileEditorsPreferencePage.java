@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
+ *     						have Open With-->Other
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -40,6 +42,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;

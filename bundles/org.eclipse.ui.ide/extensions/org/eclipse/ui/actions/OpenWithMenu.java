@@ -7,10 +7,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla -	Bug 29633 [EditorMgmt] "Open" menu should
+ *     						have Open With-->Other
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,6 +23,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Event;
@@ -33,12 +36,15 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.EditorSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A menu for opening files in the workbench.
@@ -190,6 +196,43 @@ public class OpenWithMenu extends ContributionItem {
         menuItem.addListener(SWT.Selection, listener);
     }
 
+    /**
+     * Creates the Other... menu item
+     *
+     * @param menu the menu to add the item to
+     */
+    private void createOtherMenuItem(final Menu menu) {
+    	final IFile fileResource = getFileResource();
+		if (fileResource == null) {
+    		return;
+    	}
+        new MenuItem(menu, SWT.SEPARATOR);
+        final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+        menuItem.setText(IDEWorkbenchMessages.OpenWithMenu_Other);
+        Listener listener = new Listener() {
+            public void handleEvent(Event event) {
+                switch (event.type) {
+                case SWT.Selection:
+                   	EditorSelectionDialog dialog = new EditorSelectionDialog(
+							menu.getShell());
+					dialog
+							.setMessage(NLS
+									.bind(
+											IDEWorkbenchMessages.OpenWithMenu_OtherDialogDescription,
+											fileResource.getName()));
+					if (dialog.open() == Window.OK) {
+						IEditorDescriptor editor = dialog.getSelectedEditor();
+						if (editor != null) {
+							openEditor(editor);
+						}
+					}
+                    break;
+                }
+            }
+        };
+        menuItem.addListener(SWT.Selection, listener);
+    }
+    
     /* (non-Javadoc)
      * Fills the menu with perspective items.
      */
@@ -246,6 +289,9 @@ public class OpenWithMenu extends ContributionItem {
             createMenuItem(menu, descriptor, preferredEditor);
         }
         createDefaultMenuItem(menu, file);
+        
+        // add Other... menu item
+        createOtherMenuItem(menu);
     }
 	
 

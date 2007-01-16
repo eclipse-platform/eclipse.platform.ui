@@ -6,6 +6,7 @@
  * 
  * Contributors: 
  * IBM - Initial API and implementation
+ * Benjamin Muskalla - bug 29633
  **********************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -19,6 +20,9 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
+
+	public static String OpenWithMenu_Other;
+	public static String OpenWithMenu_OtherDialogDescription;
 
 	public static String QuickStartAction_errorDialogTitle;
 	public static String QuickStartAction_infoReadError;
