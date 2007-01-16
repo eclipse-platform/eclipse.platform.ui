@@ -225,7 +225,6 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 				status = e.getStatus();
 			}
 			update.setStatus(status);
-			update.done();
 		}    	
 		
 	}
