@@ -13,7 +13,8 @@ package org.eclipse.debug.core.commands;
 import org.eclipse.debug.core.IRequest;
 
 /**
- * A request to execute a command on specific elements.
+ * A request to execute a command on specific elements. A debug command request is 
+ * passed to a {@link IDebugCommandHandler} when a command is invoked.
  * <p>
  * Clients that invoke command handlers may implement this interface.
  * </p>

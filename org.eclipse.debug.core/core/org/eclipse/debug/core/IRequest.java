@@ -44,7 +44,8 @@ public interface IRequest {
      * Sets the status for this request indicating whether this request
      * succeeded, failed, or was canceled. When a request fails, the status
      * indicates why the request failed. A <code>null</code> status is considered
-     * to be successful.
+     * to be successful. Only clients fulfilling a request should call this
+     * method. Clients making a request are not intended to call this method.
      * 
      * @param status request status or <code>null</code>
      */
@@ -61,25 +62,26 @@ public interface IRequest {
     /**
      * Indicates this request is complete. Clients must call this method
      * whether the request succeeds, fails, or is cancelled to indicate that
-     * processing is complete.
+     * processing is complete. Only clients fulfilling a request should call this
+     * method. Clients making a request are not intended to call this method.
      */
     public void done();
     
     /**
      * Cancels this request. A request may be canceled by the originator of request
      * or a client fulfilling a request. Optionally a canceled status may be set on
-     * this request with more details. Callers must still call <code>done()</code> to
-     * indicate the request is complete.
+     * this request with more details. A client fulfilling a request must still call
+     * <code>done()</code> to indicate the request is complete.
      */
     public void cancel();
     
     /**
      * Returns whether this request has been canceled.
      * <p>
-     * Request processors are expected to poll a request (using <code>isCanceled</code>)
+     * Clients fulfilling a request are expected to poll a request (using <code>isCanceled</code>)
      * periodically and abort at their earliest convenience calling <code>done()</code>.
-     * A request can be canceled by the originator of the request or a processor
-     * fulfilling a request. 
+     * A request can be canceled by the originator of the request or a processor fulfilling a
+     * request. 
      * </p>
      * @return whether this request has been canceled
      */

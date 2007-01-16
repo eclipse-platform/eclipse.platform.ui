@@ -13,7 +13,9 @@ package org.eclipse.debug.core.commands;
 
 
 /**
- * A request to update the enabled state of a command.
+ * A request to update the enabled state of a command. A enabled state request
+ * is passed to a {@link IDebugCommandHandler} to update the enabled state of
+ * the handler.
  * <p>
  * Clients than invoke command handlers may implement this interface.
  * </p>
