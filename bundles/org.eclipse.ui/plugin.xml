@@ -1310,7 +1310,7 @@
             id="org.eclipse.ui.presentations.default">
       </factory>
       <factory
-            class="org.eclipse.ui.presentations.WorkbenchPresentationFactory_33"
+            class="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"
             id="org.eclipse.ui.presentations.33"
             name="%Presentation.experimental.name">
       </factory>
