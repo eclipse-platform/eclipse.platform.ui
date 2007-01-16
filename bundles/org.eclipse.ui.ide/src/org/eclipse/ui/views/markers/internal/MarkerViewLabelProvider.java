@@ -11,9 +11,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -54,16 +52,5 @@ public class MarkerViewLabelProvider extends ColumnLabelProvider {
 		return field.getImage(element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ColumnLabelProvider#getFont(java.lang.Object)
-	 */
-	public Font getFont(Object element) {
-		if (element instanceof ConcreteMarker)
-			return null;
-		return JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT);
-	}
 	
 }
