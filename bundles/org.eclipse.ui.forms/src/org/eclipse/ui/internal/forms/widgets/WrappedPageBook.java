@@ -20,8 +20,6 @@ import org.eclipse.ui.forms.widgets.ILayoutExtension;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
- * @see PageBookView
  */
 public class WrappedPageBook extends Composite {
 	class PageBookLayout extends Layout implements ILayoutExtension {

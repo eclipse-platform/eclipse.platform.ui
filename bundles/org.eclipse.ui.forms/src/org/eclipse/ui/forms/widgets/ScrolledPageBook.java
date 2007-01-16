@@ -119,7 +119,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	 *            the page key
 	 * @param page
 	 *            the page composite to register
-	 * @see #createPage
+	 * @see #createPage(Object)
 	 * @see #getContainer
 	 */
 	public void registerPage(Object key, Control page) {

@@ -27,7 +27,7 @@ public abstract class ParagraphSegment {
 	 * @param loc
 	 * @param objectTable
 	 * @param computeHeightOnly
-	 * @return
+	 * @return <code>true</code> if text wrapped to the new line, <code>false</code> otherwise.
 	 */
 	public abstract boolean advanceLocator(GC gc, int wHint, Locator loc, Hashtable objectTable, boolean computeHeightOnly);
 	/**
@@ -53,7 +53,6 @@ public abstract class ParagraphSegment {
 	 * Paints this segment.
 	 * @param gc
 	 * @param resourceTable
-	 * @param selected
 	 * @param selData
 	 */
 	public abstract void computeSelection(GC gc, Hashtable resourceTable, SelectionData selData);	
@@ -62,26 +61,27 @@ public abstract class ParagraphSegment {
 	 * bounding rectangles of this segment.
 	 * @param x
 	 * @param y
-	 * @return
+	 * @return true if inside the bounding rectangle, false otherwise.
 	 */
 	public abstract boolean contains(int x, int y);
 	/**
 	 * Tests if the source rectangle intersects with
 	 * one of the bounding rectangles of this segment.
 	 * @param rect
-	 * @return
+	 * @return true if the two rectangles intersect, false otherwise.
 	 */
 	public abstract boolean intersects(Rectangle rect);
 	/**
 	 * Returns the tool tip of this segment or <code>null</code>
 	 * if not defined.
-	 * @return
+	 * @return tooltip or <code>null</code>.
 	 */
 	public String getTooltipText() {
 		return null;
 	}
 	/**
-	 * @param fontId TODO
+	 * Clears the text metrics cache for the provided font id.
+	 * @param fontId the id of the font that the cache is kept for.
 	 * 
 	 */
 	public void clearCache(String fontId) {

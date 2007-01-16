@@ -89,7 +89,7 @@ public class FormColors {
 	 * Key for the section toggle hover color.
 	 * 
 	 * @since 3.1
-	 * @depracated use <code>IFormColors.TB_TOGGLE_HOVER</code>.
+	 * @deprecated use <code>IFormColors.TB_TOGGLE_HOVER</code>.
 	 */
 	public static final String TB_TOGGLE_HOVER = IFormColors.TB_TOGGLE_HOVER;
 

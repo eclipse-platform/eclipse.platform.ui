@@ -252,7 +252,7 @@ public class ScrolledForm extends SharedScrolledComposite implements
 	 *            as defined in
 	 *            {@link org.eclipse.jface.dialogs.IMessageProvider}.
 	 * @since 3.3
-	 * @see Form#setMessage(String, String, int)
+	 * @see Form#setMessage(String, int)
 	 */
 	public void setMessage(String newMessage, String detailedMessage,
 			IMessage[] messages, int newType) {
@@ -263,7 +263,7 @@ public class ScrolledForm extends SharedScrolledComposite implements
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.dialogs.IMessageContainer#setMessage(java.lang.String,
+	 * @see org.eclipse.ui.forms.IMessageContainer#setMessage(java.lang.String,
 	 *      int)
 	 */
 	public void setMessage(String newMessage, int newType) {

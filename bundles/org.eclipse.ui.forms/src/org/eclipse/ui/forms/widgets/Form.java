@@ -508,7 +508,7 @@ public class Form extends Composite implements IMessageContainerWithDetails {
 	 * 
 	 * @return separator color or <code>null</code> if not set.
 	 * @since 3.2
-	 * @deprecated use {@link #getHeadColor(Form.BOTTOM_KEYLINE2)}
+	 * @deprecated use <code>getHeadColor(IFormColors.H_BOTTOM_KEYLINE2)</code>
 	 */
 
 	public Color getSeparatorColor() {
@@ -522,7 +522,7 @@ public class Form extends Composite implements IMessageContainerWithDetails {
 	 *            the color to render the head separator or <code>null</code>
 	 *            to use the default color.
 	 * @since 3.2
-	 * @deprecated use {@link #setHeadColor(Form.COLOR_BOTTOM_KEYLINE2, Color)}
+	 * @deprecated use <code>setHeadColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor)</code>
 	 */
 	public void setSeparatorColor(Color separatorColor) {
 		head.putColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor);

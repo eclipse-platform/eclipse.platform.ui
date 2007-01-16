@@ -29,9 +29,6 @@ public class PixelConverter {
 		gc.dispose();
 	}
 
-	/**
-	 * @see DialogPage#convertHorizontalDLUsToPixels
-	 */
 	public int convertHorizontalDLUsToPixels(int dlus) {
 		// round to the nearest pixel
 		return (fFontMetrics.getAverageCharWidth() * dlus + HORIZONTAL_DIALOG_UNIT_PER_CHAR / 2)

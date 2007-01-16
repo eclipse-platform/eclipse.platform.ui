@@ -80,7 +80,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		private ISelection globalSelection;
 
 		/**
-		 * @param multiPageEditor
+		 * @param formEditor the editor
 		 */
 		public FormEditorSelectionProvider(FormEditor formEditor) {
 			super(formEditor);
@@ -555,7 +555,7 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 	 *            the object to select and reveal
 	 * @return the page that accepted the request or <code>null</code> if no
 	 *         page has the desired object.
-	 * @see #setActivePage
+	 * @see #setActivePage(String, Object)
 	 */
 	public IFormPage selectReveal(Object pageInput) {
 		for (int i = 0; i < pages.size(); i++) {
