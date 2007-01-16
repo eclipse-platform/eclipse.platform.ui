@@ -847,9 +847,7 @@ class ProgressInfoItem extends Composite {
 	 * 
 	 */
 	void setButtonFocus() {
-		//Don't set the focus if it already has it
-		if(!actionBar.isFocusControl())
-			actionBar.setFocus();
+		actionBar.setFocus();
 	}
 
 	/**

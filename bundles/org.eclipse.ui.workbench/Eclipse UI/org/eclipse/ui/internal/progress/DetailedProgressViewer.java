@@ -69,16 +69,26 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		control.setLayout(layout);
 		control.setBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
-		
-		control.addFocusListener(new FocusAdapter(){
-			/* (non-Javadoc)
+
+		control.addFocusListener(new FocusAdapter() {
+
+			private boolean settingFocus = false;
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.FocusAdapter#focusGained(org.eclipse.swt.events.FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
-				setFocus();
+				if (!settingFocus) {
+					//Prevent new focus events as a result this update occurring
+					settingFocus = true;
+					setFocus();
+					settingFocus = false;
+				}
 			}
 		});
-		
+
 		control.addControlListener(new ControlListener() {
 			/*
 			 * (non-Javadoc)
@@ -99,7 +109,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				updateVisibleItems();
 			}
 		});
-		
+
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
 				IWorkbenchHelpContextIds.RESPONSIVE_UI);
 
@@ -370,7 +380,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 		((ProgressInfoItem) widget).refresh();
 
-		//Update the minimum size
+		// Update the minimum size
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		size.x += IDialogConstants.HORIZONTAL_SPACING;
 		size.y += IDialogConstants.VERTICAL_SPACING;
@@ -479,7 +489,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		updateForShowingProgress();
 
 	}
-	
+
 	/**
 	 * Set the virtual items to be visible or not depending on the displayed
 	 * area.
@@ -494,7 +504,5 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		}
 	}
-	
-	
 
 }
