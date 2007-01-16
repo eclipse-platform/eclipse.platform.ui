@@ -3088,7 +3088,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			public void dragSetData(DragSourceEvent event) {
 				event.data= fSelectedText;
-				fTextDragAndDropToken= st;
+				fTextDragAndDropToken= this; // Can be any non-null object
 			}
 			
 			public void dragFinished(DragSourceEvent event) {
@@ -3158,7 +3158,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					if (!fIsTextDragAndDropEnabled)
 						return;
 	
-					if (fTextDragAndDropToken == st && event.detail == DND.DROP_MOVE) {
+					if (fTextDragAndDropToken != null && event.detail == DND.DROP_MOVE) {
 						// Move in same editor - start compound change
 						IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
 						if (target != null)
