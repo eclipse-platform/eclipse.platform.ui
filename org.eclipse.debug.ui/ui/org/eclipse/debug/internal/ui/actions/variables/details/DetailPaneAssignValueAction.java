@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -129,7 +130,7 @@ public class DetailPaneAssignValueAction extends Action{
 	 * @see org.eclipse.jface.action.IAction#getActionDefinitionId()
 	 */
 	public String getActionDefinitionId() {		
-		return "org.eclipse.ui.file.save"; //$NON-NLS-1$
+		return IWorkbenchActionDefinitionIds.SAVE;
 	}
 
 }
