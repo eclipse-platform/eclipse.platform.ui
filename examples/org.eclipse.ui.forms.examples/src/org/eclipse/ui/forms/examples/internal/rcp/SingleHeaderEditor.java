@@ -21,10 +21,12 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.SingleHeaderFormEditor;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * A form editor that has several pages but only one stable header.
@@ -47,13 +49,14 @@ public class SingleHeaderEditor extends SingleHeaderFormEditor {
 				display));
 	}
 
-	protected void createHeaderContents(Form headerForm) {
-		headerForm.setText("Shared header for all the pages");
-		getToolkit().decorateFormHeading(headerForm);
-		addToolBar(headerForm);
-		headerForm.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
+	protected void createHeaderContents(IManagedForm headerForm) {
+		ScrolledForm sform = headerForm.getForm();
+		sform.setText("Shared header for all the pages");
+		getToolkit().decorateFormHeading(sform.getForm());
+		addToolBar(sform.getForm());
+		sform.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
 				ISharedImages.IMG_OBJ_FILE));
-		headerForm.setMessage("Static text", 0);
+		sform.setMessage("Static text", 0);
 	}
 
 	/*

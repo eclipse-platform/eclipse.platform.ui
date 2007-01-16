@@ -12,7 +12,10 @@ package org.eclipse.ui.forms.editor;
 
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.Form;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * A variation of {@link FormEditor}, this editor has a stable header that does
@@ -22,7 +25,7 @@ import org.eclipse.ui.forms.widgets.Form;
  * @since 3.3
  */
 public abstract class SingleHeaderFormEditor extends FormEditor {
-	private Form headerForm;
+	private ManagedForm headerForm;
 
 	/**
 	 * The default constructor.
@@ -44,9 +47,13 @@ public abstract class SingleHeaderFormEditor extends FormEditor {
 	protected Composite createPageContainer(Composite parent) {
 		parent = super.createPageContainer(parent);
 		parent.setLayout(new FillLayout());
-		headerForm = getToolkit().createForm(parent);
+		ScrolledForm scform = getToolkit().createScrolledForm(parent);
+		headerForm = new ManagedForm(getToolkit(), scform);
+		headerForm.setContainer(this);
+		if (getEditorInput() != null)
+			headerForm.setInput(getEditorInput());
 		createHeaderContents(headerForm);
-		return headerForm.getBody();
+		return headerForm.getForm().getBody();
 	}
 
 	/**
@@ -55,7 +62,7 @@ public abstract class SingleHeaderFormEditor extends FormEditor {
 	 * @return the shared header
 	 */
 
-	public Form getHeaderForm() {
+	public IManagedForm getHeaderForm() {
 		return headerForm;
 	}
 
@@ -67,6 +74,6 @@ public abstract class SingleHeaderFormEditor extends FormEditor {
 	 *            the form that owns the shared header
 	 */
 
-	protected void createHeaderContents(Form headerForm) {
+	protected void createHeaderContents(IManagedForm headerForm) {
 	}
 }
