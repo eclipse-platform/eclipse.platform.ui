@@ -27,6 +27,8 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -74,20 +76,49 @@ public class BasicPartList extends AbstractTableInformationControl {
 
         private Font boldFont = null;
 
+		private int MAX_LENGTH = -1;
+
         public BasicStackListLabelProvider() {
             //no-op
         }
 
         public String getText(Object element) {
             IPresentablePart presentablePart = (IPresentablePart) element;
+			String name = presentablePart.getName();
+			int length = name.length();
+			int maxLength = getMaxLength();
+			if (length > maxLength) {
+				name = name.substring(0, maxLength / 2 - 1) + "..." //$NON-NLS-1$
+						+ name.substring(length - maxLength / 2 - 2, length);
+			}
             if (presentablePart.isDirty()) {
-                return DefaultTabItem.DIRTY_PREFIX + presentablePart.getName();
+                return DefaultTabItem.DIRTY_PREFIX + name;
             }
             
-            return presentablePart.getName();
+			return name;
         }
 
-        public Image getImage(Object element) {
+		/**
+		 * Return the maximum length of the dialog.
+		 * 
+		 * @return int
+		 */
+		private int getMaxLength() {
+			if (MAX_LENGTH < 0) {
+				Control control = folder.getTabFolder().getControl();
+				GC gc = new GC(control);
+				FontMetrics fontMetrics = gc.getFontMetrics();
+				gc.dispose();
+				int displayWidth = control.getDisplay().getBounds().width;
+				// Multiply average by 2 for safety and have at least 10
+				// characters.
+				MAX_LENGTH = Math.max(10, displayWidth
+						/ (fontMetrics.getAverageCharWidth() * 2));
+			}
+			return MAX_LENGTH;
+		}
+
+		public Image getImage(Object element) {
             IPresentablePart presentablePart = (IPresentablePart) element;
             return presentablePart.getTitleImage();
         }
