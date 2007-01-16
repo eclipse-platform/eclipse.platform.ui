@@ -30,6 +30,13 @@
             class="org.eclipse.ui.forms.examples.internal.rcp.SimpleFormEditor"
             id="org.eclipse.ui.forms.examples.base-editor">
       </editor>
+      <editor
+            name="%singleHeaderEditor"
+            default="true"
+            icon="icons/file_obj.gif"
+            class="org.eclipse.ui.forms.examples.internal.rcp.SingleHeaderEditor"
+            id="org.eclipse.ui.forms.examples.single-header-editor">
+      </editor>      
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -49,6 +56,12 @@
                menubarPath="org.eclipse.ui.forms.examples.menu/group"
                id="org.eclipse.ui.forms.examples.simple">
          </action>
+         <action
+               label="Single Header Editor"
+               class="org.eclipse.ui.forms.examples.internal.rcp.OpenSingleHeaderEditorAction"
+               menubarPath="org.eclipse.ui.forms.examples.menu/group"
+               id="org.eclipse.ui.forms.examples.singleHeader">
+         </action>         
          <action
                class="org.eclipse.ui.forms.examples.internal.dialogs.OpenFormDialog"
                id="org.eclipse.ui.forms.examples.openDialog"

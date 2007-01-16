@@ -409,7 +409,7 @@ public class Section extends ExpandableComposite {
 					bounds.width - marginWidth, marginHeight + 3 });
 		}
 		gc.setForeground(border);
-		if (isExpanded() || (getExpansionStyle() & TITLE_BAR) != 0) {
+		if (isExpanded()) {
 			// top left curve
 			gc.drawLine(marginWidth, marginHeight + 2, marginWidth + 2,
 					marginHeight);
@@ -428,14 +428,14 @@ public class Section extends ExpandableComposite {
 		if ((getExpansionStyle() & TITLE_BAR) != 0 && toggle != null
 				&& !isExpanded()) {
 			// left vertical edge
-			gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
+			//gc.drawLine(marginWidth, marginHeight + 2, marginWidth,
 			// marginHeight + theight - 1);
-					marginHeight + 4);
+			//		marginHeight + 4);
 			// right vertical edge
-			gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
-					bounds.width - marginWidth - 1,
+			//gc.drawLine(bounds.width - marginWidth - 1, marginHeight + 2,
+			//		bounds.width - marginWidth - 1,
 					// marginHeight + theight - 1);
-					marginHeight + 4);
+			//		marginHeight + 4);
 			// bottom edge (if closed)
 			// gc.drawLine(marginWidth, marginHeight + theight - 1, bounds.width
 			// - marginWidth - 1, marginHeight + theight - 1);
@@ -461,10 +461,10 @@ public class Section extends ExpandableComposite {
 						bounds.width - marginWidth - 2,
 						marginHeight + theight - 1 });
 			} else {
-				gc.setForeground(bg);
+				//gc.setForeground(bg);
 				// top edge
-				gc.drawLine(marginWidth + 3, marginHeight + 2, bounds.width
-						- marginWidth - 4, marginHeight + 2);
+				//gc.drawLine(marginWidth + 3, marginHeight + 2, bounds.width
+				//		- marginWidth - 4, marginHeight + 2);
 			}
 		}
 		if (buffer != null) {

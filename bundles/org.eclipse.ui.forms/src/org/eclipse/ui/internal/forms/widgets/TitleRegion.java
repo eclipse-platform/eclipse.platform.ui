@@ -32,6 +32,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
@@ -422,10 +423,21 @@ public class TitleRegion extends Canvas {
 
 	public void addDragSupport(int operations, Transfer[] transferTypes,
 			DragSourceListener listener) {
-		dragSource = new DragSource(titleLabel, operations);
-		dragSource.setTransfer(transferTypes);
-		dragSource.addDragListener(listener);
+		dragSource = addDragSupport(titleLabel, operations, transferTypes, listener);
+		addDragSupport(this, operations, transferTypes, listener);
+		if (busyLabel!=null)
+			addDragSupport(busyLabel, operations, transferTypes, listener);
+		if (menuHyperlink!=null)
+			addDragSupport(menuHyperlink, operations, transferTypes, listener);
 	}
+
+	private DragSource addDragSupport(Control control, int operations, Transfer[] transferTypes,
+			DragSourceListener listener) {
+		DragSource source = new DragSource(control, operations);
+		source.setTransfer(transferTypes);
+		source.addDragListener(listener);
+		return source;
+	}	
 
 	public void addDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {

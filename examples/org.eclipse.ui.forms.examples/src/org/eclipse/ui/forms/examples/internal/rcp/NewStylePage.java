@@ -15,6 +15,7 @@ import java.text.MessageFormat;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -40,6 +41,9 @@ import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
+import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -205,6 +209,51 @@ public class NewStylePage extends FormPage {
 		gd = new GridData();
 		gd.horizontalSpan = 4;
 		longMessage.setLayoutData(gd);
+
+		final IHyperlinkListener listener = new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				String title = e.getLabel();
+				String details = (String)e.getHref();
+				if (details==null) {
+					details = title;
+					title = null;
+				}
+				switch (form.getForm().getMessageType()) {
+				case IMessageProvider.NONE:
+				case IMessageProvider.INFORMATION:
+					if (title==null)
+						title = "Forms Information";
+					MessageDialog.openInformation(form.getShell(), title, details);
+					break;
+				case IMessageProvider.WARNING:
+					if (title==null)
+						title = "Forms Warning";
+					MessageDialog.openWarning(form.getShell(), title, details);
+					break;
+				case IMessageProvider.ERROR:
+					if (title==null)
+						title = "Forms Error";
+					MessageDialog.openError(form.getShell(), title, details);
+					break;
+				}
+			}
+		};
+
+		final Button hyperMessage = toolkit.createButton(client,
+				"Message as hyperlink", SWT.CHECK);
+		gd = new GridData();
+		gd.horizontalSpan = 4;
+		hyperMessage.setLayoutData(gd);
+		hyperMessage.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (hyperMessage.getSelection())
+					form.getForm().addMessageHyperlinkListener(listener);
+				else
+					form.getForm().removeMessageHyperlinkListener(listener);
+				form.setMessage(getErrorMessage(form.getMessageType(),
+						longMessage.getSelection()), form.getMessageType());
+			}
+		});
 
 		shortMessage.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {

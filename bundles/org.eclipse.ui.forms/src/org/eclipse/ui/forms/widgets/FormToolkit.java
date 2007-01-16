@@ -490,7 +490,7 @@ public class FormToolkit {
 		adapt(section, true, true);
 		if (section.toggle != null) {
 			section.toggle.setHoverDecorationColor(colors
-					.getColor(FormColors.TB_TOGGLE_HOVER));
+					.getColor(IFormColors.TB_TOGGLE_HOVER));
 			section.toggle.setDecorationColor(colors
 					.getColor(IFormColors.TB_TOGGLE));
 		}
