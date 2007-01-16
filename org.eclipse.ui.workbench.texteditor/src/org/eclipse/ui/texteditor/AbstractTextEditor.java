@@ -3064,8 +3064,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 				if (!fIsTextDragAndDropEnabled) {
 					event.doit= false;
-//					event.feedback= DND.FEEDBACK_NONE;
-//					event.image= null;
+					event.image= null;
 					return;
 				}
 				
