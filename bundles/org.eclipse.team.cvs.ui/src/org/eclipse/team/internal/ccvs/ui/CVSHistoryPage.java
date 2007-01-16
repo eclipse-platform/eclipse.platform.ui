@@ -204,6 +204,10 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				copyAction.update();
 			}
 		});
+		result.setTextDoubleClickStrategy(
+                new DefaultTextDoubleClickStrategy(),
+                IDocument.DEFAULT_CONTENT_TYPE);
+		result.activatePlugins();
 		return result;
 	}
 
