@@ -2174,11 +2174,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	/**
 	 * Tells whether text drag and drop is enabled.
 	 * <p>
-	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192.
+	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 	 * </p>
 	 * @since 3.3
 	 */
 	private boolean fIsTextDragAndDropEnabled;
+	/**
+	 * Helper token to decide whether drag and
+	 * drop happens inside the same editor.
+	 * <p>
+	 * <strong>Note:</strong> This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=169534
+	 * </p>
+	 * @since 3.3
+	 */
+	private Object fTextDragAndDropToken;
 
 
 	/**
@@ -3050,11 +3059,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			String fSelectedText;
 			Point fSelection;
 			public void dragStart(DragSourceEvent event) {
+				fTextDragAndDropToken= null;
 				
 				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 				if (!fIsTextDragAndDropEnabled) {
 					event.doit= false;
-					event.image= null;
+//					event.feedback= DND.FEEDBACK_NONE;
+//					event.image= null;
 					return;
 				}
 				
@@ -3078,16 +3089,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			public void dragSetData(DragSourceEvent event) {
 				event.data= fSelectedText;
+				fTextDragAndDropToken= st;
 			}
 			
 			public void dragFinished(DragSourceEvent event) {
-				if (event.detail == DND.DROP_MOVE && validateEditorInputState()) {
-					Point newSelection= st.getSelection();
-					int length= fSelection.y - fSelection.x;
-					int delta= 0;
-					if (newSelection.x < fSelection.x)
-						delta= length; 
-					st.replaceTextRange(fSelection.x + delta, length, ""); //$NON-NLS-1$
+				try {
+					if (event.detail == DND.DROP_MOVE && validateEditorInputState()) {
+						Point newSelection= st.getSelection();
+						int length= fSelection.y - fSelection.x;
+						int delta= 0;
+						if (newSelection.x < fSelection.x)
+							delta= length; 
+						st.replaceTextRange(fSelection.x + delta, length, ""); //$NON-NLS-1$
+						
+						if (fTextDragAndDropToken == null) {
+							// Move in same editor - end compound change
+							IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
+							if (target != null)
+								target.endCompoundChange();
+						}
+						
+					}
+				} finally {
+					fTextDragAndDropToken= null;
 				}
 			}
 		});
@@ -3095,6 +3119,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		// Install drag target
 		DropTargetListener dropTargetListener= new DropTargetAdapter() {
 			public void dragEnter(DropTargetEvent event) {
+				fTextDragAndDropToken= null;
 				
 				// XXX: This is only a workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=162192
 				if (!fIsTextDragAndDropEnabled) {
@@ -3130,18 +3155,29 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			public void drop(DropTargetEvent event) {
-				if (!fIsTextDragAndDropEnabled)
-					return;
-				
-				if (!validateEditorInputState()) {
-					event.detail= DND.DROP_NONE;
-					return;
+				try {
+					if (!fIsTextDragAndDropEnabled)
+						return;
+	
+					if (fTextDragAndDropToken == st && event.detail == DND.DROP_MOVE) {
+						// Move in same editor - start compound change
+						IRewriteTarget target= (IRewriteTarget)getAdapter(IRewriteTarget.class);
+						if (target != null)
+							target.beginCompoundChange();
+					}
+					
+					if (!validateEditorInputState()) {
+						event.detail= DND.DROP_NONE;
+						return;
+					}
+					
+					String text= (String)event.data;
+					Point newSelection= st.getSelection();
+					st.insert(text);
+					st.setSelectionRange(newSelection.x, text.length());
+				} finally {
+					fTextDragAndDropToken= null;
 				}
-				
-				String text= (String)event.data;
-				Point newSelection= st.getSelection();
-				st.insert(text);
-				st.setSelectionRange(newSelection.x, text.length());
 			}
 		};
 		
