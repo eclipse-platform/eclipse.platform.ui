@@ -18,7 +18,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.forms.FormColors;
+import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormText;
@@ -98,7 +98,7 @@ public class DescriptionPanel {
 		upperText.marginWidth = 5;
 		upperText.marginHeight = 5;
 		upperText.setFont("header", JFaceResources.getHeaderFont()); //$NON-NLS-1$
-		upperText.setColor("title", toolkit.getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
+		upperText.setColor("title", toolkit.getColors().getColor(IFormColors.TITLE)); //$NON-NLS-1$
 		lowerText.marginWidth = 5;
 		lowerText.marginHeight = 5;
 		lowerText.setImage(START_IMAGE, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.COMPOSITE_TASK_START));
