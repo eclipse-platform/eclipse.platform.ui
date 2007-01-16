@@ -51,7 +51,7 @@ public class OpenIntroTest extends PerformanceTestCase {
 		super.tearDown();
 		closeIntro();
 		// test extensions filter by this system property
-        System.setProperty("org.eclipse.ua.tests.property.isTesting", null); //$NON-NLS-1$ //$NON-NLS-2$
+        System.setProperty("org.eclipse.ua.tests.property.isTesting", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         ExtensionPointManager.getInst().setExtensionFilter(null);
 	}
 
