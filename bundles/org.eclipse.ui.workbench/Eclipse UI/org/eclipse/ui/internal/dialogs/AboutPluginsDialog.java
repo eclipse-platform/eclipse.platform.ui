@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -71,6 +72,19 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
 	public class BundleTableLabelProvider extends LabelProvider implements ITableLabelProvider  {
 		
+		/**
+	     * Scheduling rule for resolve jobs.
+	     */
+	    private ISchedulingRule resolveRule = new ISchedulingRule() {
+
+			public boolean contains(ISchedulingRule rule) {
+				return rule == this;
+			}
+
+			public boolean isConflicting(ISchedulingRule rule) {
+				return rule == this;
+			}};
+			
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
 		 */
@@ -104,6 +118,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 							return Status.OK_STATUS;
 						}
 					}; 
+					resolveJob.setRule(resolveRule);
 					resolveJob.setSystem(true);
 					resolveJob.schedule();
 					return WorkbenchImages
@@ -168,7 +183,7 @@ public class AboutPluginsDialog extends ProductInfoDialog {
     private String productName;
 
     private AboutBundleData[] bundleInfos;
-
+    
     /**
      * Constructor for AboutPluginsDialog.
      * 
