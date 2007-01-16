@@ -459,6 +459,9 @@ M4 = Platform-specific fourth key -->
          	  mode="debug"
          	  label="%AntLaunchShortcut.label"/>
   		 </contextualLaunch>
+        <configurationType
+              id="org.eclipse.ant.AntLaunchConfigurationType">
+        </configurationType>
       </shortcut>
       <shortcut
             label="%AntLaunchShortcutWithDialog.label"
@@ -487,6 +490,9 @@ M4 = Platform-specific fourth key -->
          	  mode="debug"
          	  label="%AntLaunchShortcutWithDialog.label"/>
   		 </contextualLaunch>
+        <configurationType
+              id="org.eclipse.ant.AntBuilderLaunchConfigurationType">
+        </configurationType>
       </shortcut>
    </extension>
 <!-- Console Extensions -->
