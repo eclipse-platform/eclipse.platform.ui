@@ -412,7 +412,6 @@
                style="pulldown"
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation"
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               hoverIcon="$nl$/icons/full/ctool16/prev_nav.gif"
                class="org.eclipse.ui.internal.editors.text.PreviousPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.previous"
                disabledIcon="$nl$/icons/full/dtool16/prev_nav.gif"
@@ -426,7 +425,6 @@
                style="pulldown"
                id="org.eclipse.ui.edit.text.gotoNextAnnotation"
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               hoverIcon="$nl$/icons/full/ctool16/next_nav.gif"
                class="org.eclipse.ui.internal.editors.text.NextPulldownActionDelegate"
                definitionId="org.eclipse.ui.navigate.next"
                disabledIcon="$nl$/icons/full/dtool16/next_nav.gif"
@@ -443,7 +441,6 @@
          <action
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               hoverIcon="$nl$/icons/full/ctool16/last_edit_pos.gif"
                class="org.eclipse.ui.internal.texteditor.GotoLastEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
                disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.gif"
