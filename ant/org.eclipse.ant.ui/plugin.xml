@@ -529,6 +529,11 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.templateContextType.buildFile">
       </contextType>
        <contextType
+            name="%target.contextType.name"
+            class="org.eclipse.ant.internal.ui.editor.templates.TargetContextType"
+            id="org.eclipse.ant.ui.templateContextType.target">
+      </contextType>
+       <contextType
             name="%task.contextType.name"
             class="org.eclipse.ant.internal.ui.editor.templates.TaskContextType"
             id="org.eclipse.ant.ui.templateContextType.task">

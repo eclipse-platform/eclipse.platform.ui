@@ -22,9 +22,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -56,6 +56,7 @@ import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateInformationControlCreator;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateProposal;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
+import org.eclipse.ant.internal.ui.editor.templates.TargetContextType;
 import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
 import org.eclipse.ant.internal.ui.model.AntDefiningTaskNode;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
@@ -74,6 +75,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -86,6 +88,8 @@ import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
+import org.eclipse.jface.text.templates.TemplateException;
+import org.eclipse.jface.text.templates.TemplateProposal;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorPart;
@@ -100,11 +104,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The completion processor for the Ant Editor.
  */
 public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor implements IContentAssistProcessor, ICompletionListener  {       
  
+	private static final class ProposalComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			return ((TemplateProposal) o2).getRelevance() - ((TemplateProposal) o1).getRelevance();
+		}
+	}
+
+	private static final Comparator fgProposalComparator= new ProposalComparator();
+	
  	private Comparator proposalComparator= new Comparator() {
 		public int compare(Object o1, Object o2) {
 		    
@@ -265,9 +279,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         String prefix = getCurrentPrefix();
         ICompletionProposal[] matchingTemplateProposals;
         if (prefix.length() == 0) {
-            matchingTemplateProposals = super.computeCompletionProposals(refViewer, documentOffset);
+            matchingTemplateProposals = determineTemplateProposalsForContext(documentOffset);
         } else {
-            ICompletionProposal[] templateProposals = super.computeCompletionProposals(refViewer, documentOffset);
+            ICompletionProposal[] templateProposals = determineTemplateProposalsForContext(documentOffset);
             List templateProposalList = new ArrayList(templateProposals.length);
             for (int i = 0; i < templateProposals.length; i++) {
                 if (templateProposals[i].getDisplayString().toLowerCase().startsWith(prefix)) {
@@ -280,6 +294,56 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		return matchingTemplateProposals;
 	}
 
+	//essentially a copy of super.computeCompletionProposals but we need to have both context types work
+	//for target (task and target) context type in a backwards compatible way
+	private ICompletionProposal[] determineTemplateProposalsForContext(int offset) {
+		ITextSelection selection= (ITextSelection) viewer.getSelectionProvider().getSelection();
+
+		// adjust offset to end of normalized selection
+		if (selection.getOffset() == offset) {
+			offset= selection.getOffset() + selection.getLength();
+		}
+
+		String prefix= extractPrefix(viewer, offset);
+		Region region= new Region(offset - prefix.length(), prefix.length());
+		TemplateContext context= createContext(viewer, region);
+		if (context == null) {
+			return new ICompletionProposal[0];
+		}
+		
+		context.setVariable("selection", selection.getText()); // name of the selection variables {line, word}_selection //$NON-NLS-1$
+
+		Template[] templates;
+		String contextTypeId = context.getContextType().getId();
+		boolean isTargetContextType = contextTypeId.equals(TargetContextType.TARGET_CONTEXT_TYPE);
+		if (isTargetContextType) {
+			Template[] tasks = AntTemplateAccess.getDefault().getTemplateStore().getTemplates(TaskContextType.TASK_CONTEXT_TYPE);
+			Template[] targets = getTemplates(contextTypeId);
+			templates = new Template[tasks.length + targets.length];
+			System.arraycopy(tasks, 0, templates, 0, tasks.length);
+			System.arraycopy(targets, 0, templates, tasks.length, targets.length);
+		} else {
+			templates = getTemplates(contextTypeId);
+		}
+
+		List matches= new ArrayList();
+		for (int i= 0; i < templates.length; i++) {
+			Template template= templates[i];
+			try {
+				context.getContextType().validate(template.getPattern());
+			} catch (TemplateException e) {
+				continue;
+			}
+			if (template.matches(prefix, contextTypeId) || (isTargetContextType && template.matches(prefix, TaskContextType.TASK_CONTEXT_TYPE))) {
+				matches.add(createProposal(template, context, (IRegion) region, getRelevance(template, prefix)));
+			}
+		}
+
+		Collections.sort(matches, fgProposalComparator);
+
+		return (ICompletionProposal[]) matches.toArray(new ICompletionProposal[matches.size()]);
+	}
+	
 	private ICompletionProposal[] mergeProposals(ICompletionProposal[] proposals1, ICompletionProposal[] proposals2) {
 
         ICompletionProposal[] combinedProposals = new ICompletionProposal[proposals1.length + proposals2.length];
@@ -1641,6 +1705,9 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	protected TemplateContextType getContextType(ITextViewer textViewer, IRegion region) {
 		 switch (determineProposalMode(textViewer.getDocument(), cursorPosition, getCurrentPrefix())) {
             case PROPOSAL_MODE_TASK_PROPOSAL:
+            	if (getEnclosingTargetName(textViewer.getDocument(), lineNumber, columnNumber) == null) {
+            		return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TargetContextType.TARGET_CONTEXT_TYPE);
+            	}
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(TaskContextType.TASK_CONTEXT_TYPE);
             case PROPOSAL_MODE_BUILDFILE:
             	return AntTemplateAccess.getDefault().getContextTypeRegistry().getContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);

@@ -71,7 +71,7 @@ ${cursor}]]></template>
 </template>
 
 <template 
-	context="org.eclipse.ant.ui.templateContextType.task" 
+	context="org.eclipse.ant.ui.templateContextType.target" 
 	description="%targetTemplate1.description" 
 	id="org.eclipse.ant.ui.templates.target1" 
 	name="target"><![CDATA[<!-- ================================= 
@@ -83,7 +83,7 @@ ${cursor}]]></template>
 ]]></template>
 
 <template 
-    context="org.eclipse.ant.ui.templateContextType.task" 
+    context="org.eclipse.ant.ui.templateContextType.target" 
     description="%targetTemplate2.description" 
     id="org.eclipse.ant.ui.templates.target2" 
     name="target"><![CDATA[<!-- - - - - - - - - - - - - - - - - - 

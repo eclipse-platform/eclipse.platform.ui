@@ -74,6 +74,7 @@ public class AntTemplateAccess {
 			// create and configure the contexts available in the template editor
 			fRegistry= new ContributionContextTypeRegistry();
 			fRegistry.addContextType(BuildFileContextType.BUILDFILE_CONTEXT_TYPE);
+			fRegistry.addContextType(TargetContextType.TARGET_CONTEXT_TYPE);
 			fRegistry.addContextType(TaskContextType.TASK_CONTEXT_TYPE);
 		}
 		return fRegistry;

@@ -501,7 +501,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
      */
     public void testTaskProposals() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("buildtest1.xml"));
-
        
         ICompletionProposal[] proposals = processor.getTaskProposals("         <", "rename", "");
         assertEquals(0, proposals.length);
@@ -524,6 +523,40 @@ public class CodeCompletionTest extends AbstractAntUITest {
         processor.dispose();
     }
     
+    public void testTargetTemplateProposals() throws BadLocationException, PartInitException {
+    	try {
+			IFile file= getIFile("buildtest1.xml");
+			AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, ANT_EDITOR_ID, true);
+			TestTextCompletionProcessor processor= new TestTextCompletionProcessor(editor);
+			int lineNumber= 7;
+	    	int columnNumber= 6;
+	    	int lineOffset= editor.getDocumentProvider().getDocument(editor.getEditorInput()).getLineOffset(lineNumber);
+	    	processor.setLineNumber(lineNumber);
+	    	processor.setColumnNumber(columnNumber);
+	    	processor.setCursorPosition(lineOffset + columnNumber);
+	    	
+	    	//complete inside a target
+	    	ICompletionProposal[] proposals= processor.determineTemplateProposals();
+	    	assertDoesNotContain("target - public target", proposals);
+	    	
+	    	//complete outside of a target
+	    	lineNumber= 8;
+	    	columnNumber= 13;
+	    	lineOffset= editor.getDocumentProvider().getDocument(editor.getEditorInput()).getLineOffset(lineNumber);
+	    	processor.setLineNumber(lineNumber);
+	    	processor.setColumnNumber(columnNumber);
+	    	processor.setCursorPosition(lineOffset + columnNumber);
+	    	
+	    	proposals= processor.determineTemplateProposals();
+	    	assertContains("target - public target", proposals);
+	    	//ensure all the tasks are still there
+	    	proposals = processor.getProposalsFromDocument(editor.getDocumentProvider().getDocument(editor.getEditorInput()), "");
+	    	assertContains("ant", proposals);
+		} finally {
+			EditorTestHelper.closeAllEditors();
+		}
+    	
+    }
     /**
      * Tests the code completion for the fail task
      * bug 73637
