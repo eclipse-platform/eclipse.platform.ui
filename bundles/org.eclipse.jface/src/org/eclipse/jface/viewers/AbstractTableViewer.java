@@ -1065,19 +1065,6 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	protected abstract Item[] doGetItems();
 
 	/**
-	 * Returns the number of columns contained in the receiver. If no columns
-	 * were created by the programmer, this value is zero, despite the fact that
-	 * visually, one column of items may be visible. This occurs when the
-	 * programmer uses the table like a list, adding items but never creating a
-	 * column.
-	 * 
-	 * @return the number of columns
-	 * 
-	 * @since 3.3
-	 */
-	protected abstract int doGetColumnCount();
-
-	/**
 	 * Returns the column at the given, zero-relative index in the receiver.
 	 * Throws an exception if the index is out of range. Columns are returned in
 	 * the order that they were created. If no TableColumns were created by the

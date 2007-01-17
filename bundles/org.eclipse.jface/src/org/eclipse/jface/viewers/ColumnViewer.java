@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation; bug 153993
  *												   fix in bug 163317
- *												   fix in bug 151295
+ *												   fix in bug 151295, bug 167323
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -544,4 +544,17 @@ public abstract class ColumnViewer extends StructuredViewer {
 	int getTabEditingStyle() {
 		return this.tabEditingStyle;
 	}
+	
+	/**
+	 * Returns the number of columns contained in the receiver. If no columns
+	 * were created by the programmer, this value is zero, despite the fact that
+	 * visually, one column of items may be visible. This occurs when the
+	 * programmer uses the column viewer like a list, adding elements but never
+	 * creating a column.
+	 * 
+	 * @return the number of columns
+	 * 
+	 * @since 3.3
+	 */
+	protected abstract int doGetColumnCount();
 }

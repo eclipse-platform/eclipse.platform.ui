@@ -8,12 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
- *                                                 refactoring (bug 153993)
+ *                                                 refactoring (bug 153993), bug 167323
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.util.Policy;
@@ -128,39 +127,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared in AbstractTreeViewer.
-	 */
-	protected void doUpdateItem(final Item item, Object element) {
-		if (!(item instanceof TreeItem)) {
-			return;
-		}
-		TreeItem treeItem = (TreeItem) item;
-		if (treeItem.isDisposed()) {
-			unmapElement(element, treeItem);
-			return;
-		}
-
-		int columnCount = getTree().getColumnCount();
-		if (columnCount == 0)// If no columns are created then fake one
-			columnCount = 1;
-
-		for (int column = 0; column < columnCount; column++) {
-			ViewerColumn columnViewer = getViewerColumn(column);
-			columnViewer.refresh(updateCell(getViewerRowFromItem(treeItem),
-					column));
-
-			// As it is possible for user code to run the event
-			// loop check here.
-			if (item.isDisposed()) {
-				unmapElement(element, item);
-				return;
-			}
-
-		}
-
-	}
-
-	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.jface.viewers.ColumnViewer#getColumnViewerOwner(int)
@@ -174,29 +140,6 @@ public class TreeViewer extends AbstractTreeViewer {
 			return getTree();
 
 		return getTree().getColumn(columnIndex);
-	}
-
-	/**
-	 * Override to handle tree paths.
-	 * 
-	 * @see org.eclipse.jface.viewers.StructuredViewer#buildLabel(org.eclipse.jface.viewers.ViewerLabel,
-	 *      java.lang.Object)
-	 */
-	protected void buildLabel(ViewerLabel updateLabel, Object elementOrPath) {
-		Object element;
-		if (elementOrPath instanceof TreePath) {
-			TreePath path = (TreePath) elementOrPath;
-			IBaseLabelProvider provider = getLabelProvider();
-			if (provider instanceof ITreePathLabelProvider) {
-				ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
-				buildLabel(updateLabel, path, pprov);
-				return;
-			}
-			element = path.getLastSegment();
-		} else {
-			element = elementOrPath;
-		}
-		super.buildLabel(updateLabel, element);
 	}
 
 	/*
@@ -411,45 +354,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		TreeItem[] newItems = new TreeItem[items.size()];
 		items.toArray(newItems);
 		getTree().setSelection(newItems);
-	}
-
-	/**
-	 * Returns <code>true</code> if the given list and array of items refer to
-	 * the same model elements. Order is unimportant.
-	 * 
-	 * @param items
-	 *            the list of items
-	 * @param current
-	 *            the array of items
-	 * @return <code>true</code> if the refer to the same elements,
-	 *         <code>false</code> otherwise
-	 * 
-	 * @since 3.1
-	 */
-	protected boolean isSameSelection(List items, Item[] current) {
-		// If they are not the same size then they are not equivalent
-		int n = items.size();
-		if (n != current.length) {
-			return false;
-		}
-
-		CustomHashtable itemSet = newHashtable(n * 2 + 1);
-		for (Iterator i = items.iterator(); i.hasNext();) {
-			Item item = (Item) i.next();
-			Object element = item.getData();
-			itemSet.put(element, element);
-		}
-
-		// Go through the items of the current collection
-		// If there is a mismatch return false
-		for (int i = 0; i < current.length; i++) {
-			if (current[i].getData() == null
-					|| !itemSet.containsKey(current[i].getData())) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	/*
@@ -998,14 +902,6 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
-	private boolean internalIsInputOrEmptyPath(final Object elementOrTreePath) {
-		if (elementOrTreePath.equals(getInput()))
-			return true;
-		if (!(elementOrTreePath instanceof TreePath))
-			return false;
-		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
-	}
-	
 	protected void disassociate(Item item) {
 		if (contentProviderIsLazy) {
 			// avoid causing a callback:
@@ -1014,4 +910,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		super.disassociate(item);
 	}
 
+	protected int doGetColumnCount() {
+		return tree.getColumnCount();
+	}
 }

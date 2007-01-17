@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bug 153993, bug 167323
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -146,8 +146,10 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param parentElementOrTreePath
 	 *            the element or tree path
 	 * @return the items for that element
+	 *
+	 * @since 3.3
 	 */
-	/* package */ Widget[] internalFindItems(Object parentElementOrTreePath) {
+	final protected Widget[] internalFindItems(Object parentElementOrTreePath) {
 		Widget[] widgets = findItems(parentElementOrTreePath);
 		if (parentElementOrTreePath instanceof TreePath) {
 			TreePath path = (TreePath) parentElementOrTreePath;
@@ -871,8 +873,75 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @param element
 	 *            the element
 	 */
-	protected abstract void doUpdateItem(Item item, Object element);
+	protected void doUpdateItem(final Item item, Object element) {
+		if (item.isDisposed()) {
+			unmapElement(element, item);
+			return;
+		}
 
+		int columnCount = doGetColumnCount();
+		if (columnCount == 0)// If no columns are created then fake one
+			columnCount = 1;
+
+		for (int column = 0; column < columnCount; column++) {
+			ViewerColumn columnViewer = getViewerColumn(column);
+			columnViewer.refresh(updateCell(getViewerRowFromItem(item),
+					column));
+
+			// As it is possible for user code to run the event
+			// loop check here.
+			if (item.isDisposed()) {
+				unmapElement(element, item);
+				return;
+			}
+
+		}
+	}
+	
+	/**
+	 * Returns <code>true</code> if the given list and array of items refer to
+	 * the same model elements. Order is unimportant.
+	 * <p>
+	 * This method is not intended to be overridden by subclasses.
+	 * </p>
+	 * 
+	 * @param items
+	 *            the list of items
+	 * @param current
+	 *            the array of items
+	 * @return <code>true</code> if the refer to the same elements,
+	 *         <code>false</code> otherwise
+	 * 
+	 * @since 3.1 in TreeViewer, moved to AbstractTreeViewer in 3.3
+	 */
+	protected boolean isSameSelection(List items, Item[] current) {
+		// If they are not the same size then they are not equivalent
+		int n = items.size();
+		if (n != current.length) {
+			return false;
+		}
+
+		CustomHashtable itemSet = newHashtable(n * 2 + 1);
+		for (Iterator i = items.iterator(); i.hasNext();) {
+			Item item = (Item) i.next();
+			Object element = item.getData();
+			itemSet.put(element, element);
+		}
+
+		// Go through the items of the current collection
+		// If there is a mismatch return false
+		for (int i = 0; i < current.length; i++) {
+			if (current[i].getData() == null
+					|| !itemSet.containsKey(current[i].getData())) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	
+	
 	/* (non-Javadoc) Method declared on StructuredViewer. */
 	protected void doUpdateItem(Widget widget, Object element, boolean fullMap) {
 		if (widget instanceof Item) {
@@ -2823,5 +2892,64 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected AbstractViewerEditor createViewerEditor() {
 		return null;
+	}
+	
+	/**
+	 * Returns the number of columns of this viewer.
+	 * <p><b>Subclasses should overwrite this method, which has a default
+	 * implementation (returning 0) for API backwards compatility reasons</b></p>
+	 *
+	 * @return the number of columns
+	 *
+	 * @since 3.3
+	 */
+	protected int doGetColumnCount() {
+		return 0;
+	}
+	
+	
+	/**
+	 * This implementation of buildLabel handles tree paths as well as elements.
+	 * 
+	 * @param updateLabel
+	 *            the ViewerLabel to collect the result in
+	 * @param elementOrPath
+	 *            the element or tree path for which a label should be built
+	 * 
+	 * @see org.eclipse.jface.viewers.StructuredViewer#buildLabel(org.eclipse.jface.viewers.ViewerLabel,
+	 *      java.lang.Object)
+	 */
+	protected void buildLabel(ViewerLabel updateLabel, Object elementOrPath) {
+		Object element;
+		if (elementOrPath instanceof TreePath) {
+			TreePath path = (TreePath) elementOrPath;
+			IBaseLabelProvider provider = getLabelProvider();
+			if (provider instanceof ITreePathLabelProvider) {
+				ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
+				buildLabel(updateLabel, path, pprov);
+				return;
+			}
+			element = path.getLastSegment();
+		} else {
+			element = elementOrPath;
+		}
+		super.buildLabel(updateLabel, element);
+	}
+	
+	/**
+	 * Returns true if the given object is either the input or an empty tree path.
+	 *
+	 * @param elementOrTreePath an element which could either be the viewer's input, or a tree path
+	 *
+	 * @return <code>true</code> if the given object is either the input or an empty tree path,
+	 * <code>false</code> otherwise.
+	 * @since 3.3
+	 */
+	final protected boolean internalIsInputOrEmptyPath(final Object elementOrTreePath) {
+		if (elementOrTreePath.equals(getInput()))
+			return true;
+		if (!(elementOrTreePath instanceof TreePath))
+			return false;
+		return ((TreePath) elementOrTreePath).getSegmentCount() == 0;
 	}
 }
