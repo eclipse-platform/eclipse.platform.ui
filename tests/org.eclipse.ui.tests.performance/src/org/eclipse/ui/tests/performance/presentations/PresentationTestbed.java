@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.tests.performance.presentations;
 
@@ -53,6 +54,12 @@ public class PresentationTestbed {
         }
         public boolean isStackMoveable() {
             return true;
+        }
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.presentations.IStackPresentationSite#getProperty(java.lang.String)
+         */
+        public String getProperty(String id) {
+        	return null;
         }
     };
     

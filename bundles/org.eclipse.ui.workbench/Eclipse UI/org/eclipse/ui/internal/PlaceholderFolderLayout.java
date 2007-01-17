@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -61,5 +62,30 @@ public class PlaceholderFolderLayout implements IPlaceholderFolderLayout {
 
         pageLayout.setFolderPart(viewId, placeholder);
         newPart.setContainer(placeholder);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPlaceholderFolderLayout#getProperty(java.lang.String)
+     */
+    public String getProperty(String id) {
+        LayoutPart folder = placeholder.getRealContainer();
+        if (folder instanceof PartStack) {
+            PartStack stack = (PartStack)folder;
+            return stack.getProperty(id);
+        }       
+        //throw not supported?
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPlaceholderFolderLayout#setProperty(java.lang.String, java.lang.String)
+     */
+    public void setProperty(String id, String value) {
+        LayoutPart folder = placeholder.getRealContainer();
+        if (folder instanceof PartStack) {
+            PartStack stack = (PartStack)folder;
+            stack.setProperty(id,value);
+        }       
+        //throw not supported?
     }
 }

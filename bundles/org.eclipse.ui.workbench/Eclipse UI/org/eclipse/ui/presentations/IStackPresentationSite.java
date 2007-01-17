@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
@@ -148,4 +149,19 @@ public interface IStackPresentationSite {
      * @since 3.1
      */
     public IPresentablePart[] getPartList();
+    
+    /**
+	 * Returns the property with the given id or <code>null</code>. Folder
+	 * properties are an extensible mechanism for perspective authors to
+	 * customize the appearance of view stacks. The list of customizable
+	 * properties is determined by the presentation factory, and set in the
+	 * perspective factory.
+	 * 
+	 * @param id
+	 *            Must not be <code>null</code>.
+	 * @return property value, or <code>null</code> if the property is not
+	 *         set.
+	 * @since 3.3
+	 */
+    public String getProperty(String id);
 }

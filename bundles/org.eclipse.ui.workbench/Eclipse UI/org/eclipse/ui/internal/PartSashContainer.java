@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Cagatay Kavukcuoglu <cagatayk@acm.org>
  *     - Fix for bug 10025 - Resizing views should not use height ratios
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -1253,7 +1254,7 @@ public abstract class PartSashContainer extends LayoutPart implements
             // if the toDrop array has 1 item propogate the stack
             // appearance
             if (toDrop.length == 1 && toDrop[0].getStack()!=null) {
-            	newPart.appearance = toDrop[0].getStack().appearance;
+                toDrop[0].getStack().copyAppearanceProperties(newPart);                
             }
             
             for (int idx = 0; idx < toDrop.length; idx++) {

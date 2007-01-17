@@ -7,13 +7,9 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
@@ -52,6 +48,14 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
 import org.eclipse.ui.presentations.StackDropResult;
 import org.eclipse.ui.presentations.StackPresentation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Implements the common behavior for stacks of Panes (ie: EditorStack and ViewStack)
  * This layout container has PartPanes as children and belongs to a PartSashContainer.
@@ -65,6 +69,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     private List children = new ArrayList(3);
     private boolean isActive = true;
     private ArrayList presentableParts = new ArrayList();
+    
+    private Map properties = new HashMap();
     
     protected int appearance = PresentationFactoryUtil.ROLE_VIEW;
     
@@ -154,6 +160,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             List parts = getPresentableParts();
             
             return (IPresentablePart[]) parts.toArray(new IPresentablePart[parts.size()]);
+        }
+
+        public String getProperty(String id) {            
+            return PartStack.this.getProperty(id);
         }
     };
 
@@ -963,6 +973,15 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             }
         }
 
+        IMemento propertiesState = memento.getChild(IWorkbenchConstants.TAG_PROPERTIES);
+        if (propertiesState != null) {
+            IMemento[] props = propertiesState.getChildren(IWorkbenchConstants.TAG_PROPERTY);
+            for (int i = 0; i < props.length; i++) {
+                properties.put(props[i].getID(), props[i].getTextData());
+            }
+        }
+                
+        
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
 
@@ -1057,6 +1076,20 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                     .createChild(IWorkbenchConstants.TAG_PRESENTATION);
             presentationState.putMemento(savedPresentationState);
         }
+        
+        if (!properties.isEmpty()) {
+            IMemento propertiesState = memento.createChild(IWorkbenchConstants.TAG_PROPERTIES);
+            Set ids = properties.keySet();
+            for (Iterator iterator = ids.iterator(); iterator.hasNext();) {   
+                String id = (String)iterator.next();
+                
+                if (properties.get(id) == null) continue;
+                
+                IMemento prop = propertiesState.createChild(IWorkbenchConstants.TAG_PROPERTY, id);
+                prop.putTextData((String)properties.get(id));
+            }
+        }
+        
 
         return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
     }
@@ -1506,5 +1539,35 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public void setPresentationState(int newState) {
     	presentationSite.setPresentationState(newState);
+    }
+
+    //
+    // Support for passing perspective layout properties to the presentation
+
+    
+    public String getProperty(String id)  {
+        return (String)properties.get(id);
+    }
+    
+    public void setProperty(String id, String value) {
+    	if (value==null) {
+    		properties.remove(id);
+    	} else {
+    		properties.put(id, value);
+    	}
+    }
+    
+    /**
+     * Copies all appearance related data from this stack to the given stack.
+     */
+    public void copyAppearanceProperties(PartStack copyTo) {
+        copyTo.appearance = this.appearance;
+        if (!properties.isEmpty()) {
+            Set ids = properties.keySet();
+            for (Iterator iterator = ids.iterator(); iterator.hasNext();) {
+                String id = (String)iterator.next();
+                copyTo.setProperty(id, (String)properties.get(id));
+            }
+        }
     }
 }

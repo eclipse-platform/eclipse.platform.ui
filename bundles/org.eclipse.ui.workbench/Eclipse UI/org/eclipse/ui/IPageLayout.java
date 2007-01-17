@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Chris Gross <schtoo@schtoo.com> 
  *     - Fix for 99155 - allow standalone view placeholders
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui;
 
@@ -521,4 +522,19 @@ public interface IPageLayout {
 	 * @since 3.2
 	 */
     public IPerspectiveDescriptor getDescriptor();
+    
+    /**
+	 * Returns the folder layout for the view or placeholder with the given
+	 * compound id in this page layout. See the {@link IPageLayout} type
+	 * documentation for more details about compound ids. Returns
+	 * <code>null</code> if the specified view or placeholder is unknown to
+	 * the layout, or the placeholder was not in a folder.
+	 * 
+	 * @param id
+	 *            the compound view id or placeholder. Must not be
+	 *            <code>null</code>.
+	 * @return the folder layout, or <code>null</code>
+	 * @since 3.3
+	 */
+    public IPlaceholderFolderLayout getFolderForView(String id);
 }

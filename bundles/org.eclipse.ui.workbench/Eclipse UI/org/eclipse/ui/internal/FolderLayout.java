@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -99,5 +100,19 @@ public class FolderLayout implements IFolderLayout {
         pageLayout.setFolderPart(viewId, folder);
         // force creation of the view layout rec
         pageLayout.getViewLayoutRec(viewId, true);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPlaceholderFolderLayout#getProperty(java.lang.String)
+     */
+    public String getProperty(String id) {
+        return folder.getProperty(id);
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPlaceholderFolderLayout#setProperty(java.lang.String, java.lang.String)
+     */
+    public void setProperty(String id, String value) {
+        folder.setProperty(id,value);
     }
 }

@@ -13,6 +13,7 @@
  *     - Fix for bug 63595 - IPageLayout.addFastView regression (3.0M8 to 3.0M9)
  *     Chris Gross <schtoo@schtoo.com> 
  *     - Fix for 99155 - allow standalone view placeholders
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -81,6 +82,8 @@ public class PageLayout implements IPageLayout {
     private Map mapIDtoPart = new HashMap(10);
 
     private Map mapIDtoViewLayoutRec = new HashMap(10);
+    
+    private Map mapFolderToFolderLayout = new HashMap(10);
 
     private ArrayList newWizardShortcuts = new ArrayList(3);
 
@@ -415,8 +418,9 @@ public class PageLayout implements IPageLayout {
     public IFolderLayout createFolder(String folderId, int relationship,
             float ratio, String refId) {
         if (checkPartInLayout(folderId)) {
-			return new FolderLayout(this, (ViewStack) getRefPart(folderId),
-                    viewFactory);
+            ViewStack folder = (ViewStack) getRefPart(folderId);
+            
+            return (IFolderLayout) mapFolderToFolderLayout.get(folder);
 		}
 
         // Create the folder.
@@ -425,7 +429,11 @@ public class PageLayout implements IPageLayout {
         addPart(folder, folderId, relationship, ratio, refId);
 
         // Create a wrapper.
-        return new FolderLayout(this, folder, viewFactory);
+        FolderLayout layout = new FolderLayout(this, folder, viewFactory);
+        
+        mapFolderToFolderLayout.put(folder,layout);
+        
+        return layout;        
     }
 
     /* (non-Javadoc)
@@ -434,8 +442,9 @@ public class PageLayout implements IPageLayout {
     public IPlaceholderFolderLayout createPlaceholderFolder(String folderId,
             int relationship, float ratio, String refId) {
         if (checkPartInLayout(folderId)) {
-			return new PlaceholderFolderLayout(this,
-                    (ContainerPlaceholder) getRefPart(folderId));
+            ContainerPlaceholder folder = (ContainerPlaceholder) getRefPart(folderId);
+            
+            return (IPlaceholderFolderLayout) mapFolderToFolderLayout.get(folder);
 		}
 
         // Create the folder.
@@ -446,7 +455,11 @@ public class PageLayout implements IPageLayout {
         addPart(folder, folderId, relationship, ratio, refId);
 
         // Create a wrapper.
-        return new PlaceholderFolderLayout(this, folder);
+        IPlaceholderFolderLayout layout = new PlaceholderFolderLayout(this, folder);
+        
+        mapFolderToFolderLayout.put(folder,layout);
+        
+        return layout;
     }
 
     /**
@@ -887,4 +900,26 @@ public class PageLayout implements IPageLayout {
 			mapIDtoViewLayoutRec.remove(id);
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IPageLayout#getFolderForView(java.lang.String)
+     */
+    public IPlaceholderFolderLayout getFolderForView(String viewId)
+    {
+        if (!mapIDtoFolder.containsKey(viewId))
+            return null;
+                
+        ViewStack folder = (ViewStack) mapIDtoFolder.get(viewId);
+        IPlaceholderFolderLayout layout = null;
+        if (!mapFolderToFolderLayout.containsKey(folder))
+        {
+            layout = new FolderLayout(this, folder, viewFactory);
+            mapFolderToFolderLayout.put(folder, layout);
+        }
+        else
+        {
+            layout = (IPlaceholderFolderLayout)mapFolderToFolderLayout.get(folder);
+        }
+        return layout;
+    }
 }

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chris Gross chris.gross@us.ibm.com Bug 107443
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -214,7 +215,13 @@ public class FastViewPane {
             return new IPresentablePart[] {getSelectedPart()};
         }
 
-        
+        /* (non-Javadoc)
+         * @see org.eclipse.ui.presentations.IStackPresentationSite#getProperty(java.lang.String)
+         */
+        public String getProperty(String id) {
+            // fast views stacks do not get arbitrary user properties.
+            return null;
+        }
     };
 
     private SystemMenuFastView fastViewAction = new SystemMenuFastView(site);
