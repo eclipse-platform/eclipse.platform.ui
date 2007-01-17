@@ -377,7 +377,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns a working copy of this launch configuration.
-	 * If the this method is called on a working copy, a nested working 
+	 * Since 3.3, if this method is called on a working copy, a nested working 
 	 * copy is created (a working copy of a working copy).
 	 * Changes to the working copy will be applied to this
 	 * launch configuration when saved, or to the parent working copy. 
