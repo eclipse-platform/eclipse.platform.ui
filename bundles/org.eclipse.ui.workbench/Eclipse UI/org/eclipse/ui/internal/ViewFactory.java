@@ -11,12 +11,14 @@
 package org.eclipse.ui.internal;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -25,6 +27,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -301,8 +304,24 @@ import org.eclipse.ui.views.IViewRegistry;
         final IViewReference viewRef = ref;
         final IViewPart view = (IViewPart) ref.getPart(false);
         if (view != null) {
-            Platform.run(new SafeRunnable() {
+            SafeRunner.run(new SafeRunnable() {
                 public void run() {
+                	if (view instanceof IWorkbenchPart3) {
+						Map properties = ((IWorkbenchPart3) view)
+								.getPartProperties();
+						if (!properties.isEmpty()) {
+							IMemento propBag = viewMemento
+									.createChild(IWorkbenchConstants.TAG_PROPERTIES);
+							Iterator i = properties.entrySet().iterator();
+							while (i.hasNext()) {
+								Map.Entry entry = (Map.Entry) i.next();
+								IMemento p = propBag.createChild(
+										IWorkbenchConstants.TAG_PROPERTY,
+										(String) entry.getKey());
+								p.putTextData((String) entry.getValue());
+							}
+						}
+					}
                     view.saveState(viewMemento
                             .createChild(IWorkbenchConstants.TAG_VIEW_STATE));
                 }
@@ -319,6 +338,7 @@ import org.eclipse.ui.views.IViewRegistry;
             });
         } else {
         	IMemento mem = null;
+        	IMemento props = null;
         	
         	// if we've created the reference once, any previous workbench
         	// state memento is there.  After once, there is no previous
@@ -326,8 +346,15 @@ import org.eclipse.ui.views.IViewRegistry;
 			if (ref instanceof ViewReference) {
 				mem = ((ViewReference) ref).getMemento();
 				if (mem!=null) {
+					props = mem.getChild(IWorkbenchConstants.TAG_PROPERTIES);
+				}
+				if (mem!=null) {
 					mem = mem.getChild(IWorkbenchConstants.TAG_VIEW_STATE);
 				}
+			}
+			if (props != null) {
+				viewMemento.createChild(IWorkbenchConstants.TAG_PROPERTIES)
+						.putMemento(props);
 			}
 			if (mem != null) {
 				IMemento child = viewMemento

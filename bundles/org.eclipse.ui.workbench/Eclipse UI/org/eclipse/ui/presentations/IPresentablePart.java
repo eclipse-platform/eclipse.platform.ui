@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.presentations;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
@@ -226,4 +227,43 @@ public interface IPresentablePart {
      */
     public Control getControl();
 
+    /**
+	 * Get a property from the part's arbitrary property set.
+	 * <p>
+	 * <b>Note:</b> this is a different set of properties than the ones covered
+	 * by the PROP_* constants.
+	 * </p>
+	 * 
+	 * @param key
+	 *            The property key to retrieve. Must not be <code>null</code>.
+	 * @return the property, or <code>null</code> if that property is not set.
+	 * @since 3.3
+	 */
+	public String getPartProperty(String key);
+	
+	/**
+	 * Add a listener for changes in the arbitrary properties set.
+	 * <p>
+	 * <b>Note:</b> this is a different set of properties than the ones covered
+	 * by the PROP_* constants.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            Must not be <code>null</code>.
+	 * @since 3.3
+	 */
+	public void addPartPropertyListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Remove a change listener from the arbitrary properties set.
+	 * <p>
+	 * <b>Note:</b> this is a different set of properties than the ones covered
+	 * by the PROP_* constants.
+	 * </p>
+	 * 
+	 * @param listener
+	 *            Must not be <code>null</code>.
+	 * @since 3.3
+	 */
+	public void removePartPropertyListener(IPropertyChangeListener listener);
 }

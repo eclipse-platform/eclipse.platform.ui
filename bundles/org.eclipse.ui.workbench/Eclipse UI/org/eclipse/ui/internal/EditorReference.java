@@ -33,6 +33,7 @@ import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -140,7 +141,16 @@ public class EditorReference extends WorkbenchPartReference implements
         String partName = memento
                 .getString(IWorkbenchConstants.TAG_PART_NAME);
 
-        // For compatibility set the part name to the title if not found
+        IMemento propBag = memento.getChild(IWorkbenchConstants.TAG_PROPERTIES);
+		if (propBag != null) {
+			IMemento[] props = propBag
+					.getChildren(IWorkbenchConstants.TAG_PROPERTY);
+			for (int i = 0; i < props.length; i++) {
+				propertyCache.put(props[i].getID(), props[i].getTextData());
+			}
+		}
+
+		// For compatibility set the part name to the title if not found
         if (partName == null) {
             partName = title;
         }
@@ -592,6 +602,9 @@ public class EditorReference extends WorkbenchPartReference implements
     					multiEditorChildren = manager.openMultiEditor(this,
     						(MultiEditor) part, (MultiEditorInput) editorInput);
     				}
+                    if (part instanceof IWorkbenchPart3) {
+                    	createPartProperties((IWorkbenchPart3)part);
+                    }
                 } finally {
                     UIStats.end(UIStats.CREATE_PART, this, editorID);
                 }

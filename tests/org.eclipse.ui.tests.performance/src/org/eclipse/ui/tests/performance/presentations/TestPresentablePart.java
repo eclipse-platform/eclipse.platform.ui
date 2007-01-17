@@ -11,8 +11,12 @@
 package org.eclipse.ui.tests.performance.presentations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -175,5 +179,30 @@ public class TestPresentablePart implements IPresentablePart {
         toRemove.dispose();
         firePropertyChange(IPresentablePart.PROP_TOOLBAR);
     }
+
+    private ListenerList partPropertyListeners = new ListenerList();
+    
+    private Map partProperties = new HashMap();
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void addPartPropertyListener(IPropertyChangeListener listener) {
+		partPropertyListeners.add(listener);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getPartProperty(java.lang.String)
+	 */
+	public String getPartProperty(String key) {
+		return (String) partProperties.get(key);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+	 */
+	public void removePartPropertyListener(IPropertyChangeListener listener) {
+		partPropertyListeners.remove(listener);
+	}
     
 }

@@ -77,6 +77,7 @@ import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -1600,6 +1601,23 @@ public class EditorManager implements IExtensionChangeHandler {
 
 				editorMem.putString(IWorkbenchConstants.TAG_PART_NAME,
 						editorRef.getPartName());
+				
+				if (editor instanceof IWorkbenchPart3) {
+					Map properties = ((IWorkbenchPart3) editor)
+							.getPartProperties();
+					if (!properties.isEmpty()) {
+						IMemento propBag = editorMem
+								.createChild(IWorkbenchConstants.TAG_PROPERTIES);
+						Iterator i = properties.entrySet().iterator();
+						while (i.hasNext()) {
+							Map.Entry entry = (Map.Entry) i.next();
+							IMemento p = propBag.createChild(
+									IWorkbenchConstants.TAG_PROPERTY,
+									(String) entry.getKey());
+							p.putTextData((String) entry.getValue());
+						}
+					}
+				}
 
 				if (editorRef.isPinned()) {
 					editorMem.putString(IWorkbenchConstants.TAG_PINNED, "true"); //$NON-NLS-1$

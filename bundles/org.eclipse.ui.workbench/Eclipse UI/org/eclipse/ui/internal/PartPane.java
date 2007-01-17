@@ -12,6 +12,8 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -50,7 +52,8 @@ import org.eclipse.ui.presentations.IPresentablePart;
  * LayoutPart and downcasting. The getPresentablePart() method only applies to PartPanes, and
  * should be removed from LayoutPart.
  */
-public abstract class PartPane extends LayoutPart implements IPropertyListener, Listener {
+public abstract class PartPane extends LayoutPart implements IPropertyListener,
+		Listener, IPropertyChangeListener {
 
     public static final String PROP_ZOOMED = "zoomed"; //$NON-NLS-1$
 
@@ -58,6 +61,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
 
     private MenuManager paneMenuManager;
     private ListenerList listeners = new ListenerList();
+    private ListenerList partListeners = new ListenerList();
 
     protected IWorkbenchPartReference partReference;
 
@@ -135,6 +139,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
 		}
 
         partReference.addPropertyListener(this);
+        partReference.addPartPropertyListener(this);
         // Create view form.	
         control = new Composite(parent, SWT.NONE);
         control.setLayout(new FillLayout());
@@ -176,6 +181,7 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
         }
         
         partReference.removePropertyListener(this);
+        partReference.removePartPropertyListener(this);
     }
 
     /**
@@ -600,8 +606,30 @@ public abstract class PartPane extends LayoutPart implements IPropertyListener, 
             ((IPropertyListener) listeners[i]).propertyChanged(this, propertyId);
         }
     }
-
+    
     public void propertyChanged(Object source, int propId) {
         firePropertyChange(propId);
+    }
+    
+    public void addPartPropertyListener(IPropertyChangeListener listener) {
+    	partListeners.add(listener);
+    }
+    
+    public void removePartPropertyListener(IPropertyChangeListener listener) {
+    	partListeners.remove(listener);
+    }
+    
+    public void firePartPropertyChange(PropertyChangeEvent event) {
+    	Object[] l = partListeners.getListeners();
+    	for (int i = 0; i < l.length; i++) {
+			((IPropertyChangeListener)l[i]).propertyChange(event);
+		}
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+     */
+    public void propertyChange(PropertyChangeEvent event) {
+    	firePartPropertyChange(event);
     }
 }

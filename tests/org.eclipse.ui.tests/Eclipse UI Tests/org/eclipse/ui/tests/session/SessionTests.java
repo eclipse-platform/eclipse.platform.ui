@@ -43,6 +43,8 @@ public class SessionTests extends TestSuite {
 				Bug95357Test.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				EditorWithStateTest.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				ArbitraryPropertiesEditorTest.class));
 	}
 
 	/**
@@ -74,5 +76,7 @@ public class SessionTests extends TestSuite {
 				Bug98800Test.class));
 		addTest(new WorkbenchSessionTest("editorSessionTests",
 				Bug108033Test.class));
+		addTest(new WorkbenchSessionTest("editorSessionTests",
+				ArbitraryPropertiesViewTest.class));
 	}
 }

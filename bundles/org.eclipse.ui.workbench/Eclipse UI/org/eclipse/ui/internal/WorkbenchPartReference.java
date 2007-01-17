@@ -11,12 +11,17 @@
 package org.eclipse.ui.internal;
 
 import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -29,6 +34,7 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -137,9 +143,13 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
      */
     private ListenerList internalPropChangeListeners = new ListenerList();
     
+    private ListenerList partChangeListeners = new ListenerList();
+    
     private String partName;
 
     private String contentDescription;
+    
+    protected Map propertyCache = new HashMap();
     
     /**
      * Used to remember which events have been queued.
@@ -161,6 +171,12 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         public void propertyChanged(Object source, int propId) {
             partPropertyChanged(source, propId);
         }
+    };
+    
+    private IPropertyChangeListener partPropertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			partPropertyChanged(event);
+		}
     };
     
     public WorkbenchPartReference() {
@@ -282,6 +298,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	        	modelManager.dirtyChanged(actualPart);
         	}
         }
+    }
+    
+    protected void partPropertyChanged(PropertyChangeEvent event) {
+    	firePartPropertyChange(event);
     }
 
     /**
@@ -571,6 +591,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
                     // object that should dispose this control, and it will remove the listener before it does so.
                     getPane().getControl().addDisposeListener(prematureDisposeListener);
                     part.addPropertyListener(propertyChangeListener);
+                    if (part instanceof IWorkbenchPart3) {
+                    	((IWorkbenchPart3)part).addPartPropertyListener(partPropertyChangeListener);
+                    }
 
                     refreshFromPart();
                     releaseReferences();
@@ -646,6 +669,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         }
         
         clearListenerList(internalPropChangeListeners);
+        clearListenerList(partChangeListeners);
         Image oldImage = image;
         ImageDescriptor oldDescriptor = imageDescriptor;
         image = null;
@@ -684,6 +708,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
             // Don't let exceptions in client code bring us down. Log them and continue.
             try {
                 part.removePropertyListener(propertyChangeListener);
+                if (part instanceof IWorkbenchPart3) {
+                	((IWorkbenchPart3)part).removePartPropertyListener(partPropertyChangeListener);
+                }
                 part.dispose();
             } catch (Exception e) {
                 WorkbenchPlugin.log(e);
@@ -712,4 +739,52 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
         return pinned;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartReference#getPartProperty(java.lang.String)
+     */
+    public String getPartProperty(String key) {
+		if (part != null) {
+			if (part instanceof IWorkbenchPart3) {
+				return ((IWorkbenchPart3) part).getPartProperty(key);
+			}
+		} else {
+			return (String)propertyCache.get(key);
+		}
+		return null;
+	}
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartReference#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+     */
+    public void addPartPropertyListener(IPropertyChangeListener listener) {
+    	if (isDisposed()) {
+    		return;
+    	}
+    	partChangeListeners.add(listener);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPartReference#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+     */
+    public void removePartPropertyListener(IPropertyChangeListener listener) {
+    	if (isDisposed()) {
+    		return;
+    	}
+    	partChangeListeners.remove(listener);
+    }
+    
+    protected void firePartPropertyChange(PropertyChangeEvent event) {
+		Object[] l = partChangeListeners.getListeners();
+		for (int i = 0; i < l.length; i++) {
+			((IPropertyChangeListener) l[i]).propertyChange(event);
+		}
+	}
+    
+    protected void createPartProperties(IWorkbenchPart3 workbenchPart) {
+		Iterator i = propertyCache.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry e = (Map.Entry) i.next();
+			workbenchPart.setPartProperty((String) e.getKey(), (String) e.getValue());
+		}
+	}
 }

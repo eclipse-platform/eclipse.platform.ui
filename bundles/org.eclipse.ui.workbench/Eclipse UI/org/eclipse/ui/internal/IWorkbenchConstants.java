@@ -120,6 +120,10 @@ public interface IWorkbenchConstants {
 
     public static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
 
+	public static final String TAG_PROPERTIES = "properties"; //$NON-NLS-1$
+	
+    public static final String TAG_PROPERTY = "property"; //$NON-NLS-1$
+
     public static final String TAG_PART_TRIMSTATE = "inTrim"; //$NON-NLS-1$
 
     public static final String TAG_RELATIVE = "relative"; //$NON-NLS-1$

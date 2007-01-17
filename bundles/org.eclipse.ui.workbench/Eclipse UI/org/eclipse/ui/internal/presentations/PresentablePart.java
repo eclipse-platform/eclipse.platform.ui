@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.presentations;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -46,6 +49,10 @@ public class PresentablePart implements IPresentablePart {
 
     // Lazily initialized. Use getPropertyListenerProxy() to access.
     private IPropertyListener lazyPropertyListenerProxy;
+    
+    private ListenerList partPropertyChangeListeners = new ListenerList();
+    
+    private IPropertyChangeListener lazyPartPropertyChangeListener;
 
     // Lazily initialized. Use getMenu() to access 
     private IPartMenu viewMenu;
@@ -75,6 +82,7 @@ public class PresentablePart implements IPresentablePart {
     public PresentablePart(PartPane part, Composite parent) {
         this.part = part;
         getPane().addPropertyListener(getPropertyListenerProxy());
+        getPane().addPartPropertyListener(getPartPropertyListenerProxy());
     }
 
     public PartPane getPane() {
@@ -92,19 +100,35 @@ public class PresentablePart implements IPresentablePart {
 
         return lazyPropertyListenerProxy;
     }
+    
+    private IPropertyChangeListener getPartPropertyListenerProxy() {
+		if (lazyPartPropertyChangeListener == null) {
+			lazyPartPropertyChangeListener = new IPropertyChangeListener() {
+				public void propertyChange(PropertyChangeEvent event) {
+					PropertyChangeEvent e = new PropertyChangeEvent(this,
+							event.getProperty(), event.getOldValue(), event.getNewValue());
+					firePartPropertyChange(e);
+				}
+			};
+		}
+		return lazyPartPropertyChangeListener;
+	}
 
     /**
-     * Detach this PresentablePart from the real part. No further methods should be invoked
-     * on this object.
-     */
+	 * Detach this PresentablePart from the real part. No further methods should
+	 * be invoked on this object.
+	 */
     public void dispose() {
         // Ensure that the property listener is detached (necessary to prevent leaks)
         getPane().removePropertyListener(getPropertyListenerProxy());
+        getPane().removePartPropertyListener(getPartPropertyListenerProxy());
 
         // Null out the various fields to ease garbage collection (optional)
         part = null;
         listeners.clear();
         listeners = null;
+        partPropertyChangeListeners.clear();
+        partPropertyChangeListeners = null;
     }
 
     public void firePropertyChange(int propertyId) {
@@ -121,6 +145,21 @@ public class PresentablePart implements IPresentablePart {
         listeners.remove(listener);
     }
 
+    protected void firePartPropertyChange(PropertyChangeEvent event) {
+		Object[] l = partPropertyChangeListeners.getListeners();
+		for (int i = 0; i < l.length; i++) {
+			((IPropertyChangeListener) l[i]).propertyChange(event);
+		}
+	}
+    
+    public void addPartPropertyListener(IPropertyChangeListener listener) {
+    	partPropertyChangeListeners.add(listener);
+    }
+    
+    public void removePartPropertyListener(IPropertyChangeListener listener) {
+    	partPropertyChangeListeners.remove(listener);
+    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ui.presentations.IPresentablePart#setBounds(org.eclipse.swt.graphics.Rectangle)
      */
@@ -350,5 +389,12 @@ public class PresentablePart implements IPresentablePart {
             part.setVisible(isVisible);
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.presentations.IPresentablePart#getPartProperty(java.lang.String)
+	 */
+	public String getPartProperty(String key) {
+		return getPartReference().getPartProperty(key);
+	}
 
 }

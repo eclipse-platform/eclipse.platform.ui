@@ -11,6 +11,7 @@
 
 package org.eclipse.ui;
 
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -93,4 +94,34 @@ public interface IWorkbenchPartReference {
      */
     public boolean isDirty();
     
+    /**
+	 * Return an arbitrary property from the reference. If the part has been
+	 * instantiated, it just delegates to the part. If not, then it looks in its
+	 * own cache of properties. If the property is not available or the part has
+	 * never been instantiated, it can return <code>null</code>.
+	 * 
+	 * @param key
+	 *            The property to return. Must not be <code>null</code>.
+	 * @return The String property, or <code>null</code>.
+	 * @since 3.3
+	 */
+    public String getPartProperty(String key);
+    
+    /**
+	 * Add a listener for changes in the arbitrary properties set.
+	 * 
+	 * @param listener
+	 *            Must not be <code>null</code>.
+	 * @since 3.3
+	 */
+    public void addPartPropertyListener(IPropertyChangeListener listener);
+    
+    /**
+	 * Remove a listener for changes in the arbitrary properties set.
+	 * 
+	 * @param listener
+	 *            Must not be <code>null</code>.
+	 * @since 3.3
+	 */
+    public void removePartPropertyListener(IPropertyChangeListener listener);
 }

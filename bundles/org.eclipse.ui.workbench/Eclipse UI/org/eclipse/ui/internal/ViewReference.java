@@ -27,6 +27,7 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.StatusUtil;
@@ -67,6 +68,14 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 
 		if (memento != null) {
 			name = memento.getString(IWorkbenchConstants.TAG_PART_NAME);
+			IMemento propBag = memento.getChild(IWorkbenchConstants.TAG_PROPERTIES);
+			if (propBag != null) {
+				IMemento[] props = propBag
+						.getChildren(IWorkbenchConstants.TAG_PROPERTY);
+				for (int i = 0; i < props.length; i++) {
+					propertyCache.put(props[i].getID(), props[i].getTextData());
+				}
+			}
 		}
 		if (name == null) {
 			name = title;
@@ -307,6 +316,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				UIStats.end(UIStats.CREATE_PART, view, label);
 			}
 
+			if (view instanceof IWorkbenchPart3) {
+				createPartProperties((IWorkbenchPart3)view);
+			}
 			// Create site
 			site = new ViewSite(this, view, factory.page, desc);
 			actionBars = new ViewActionBars(factory.page.getActionBars(), site,

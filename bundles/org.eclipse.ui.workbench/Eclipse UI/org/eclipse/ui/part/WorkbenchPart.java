@@ -10,22 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import com.ibm.icu.text.MessageFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -33,6 +38,8 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -46,7 +53,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @see org.eclipse.ui.part.EditorPart
  */
 public abstract class WorkbenchPart extends EventManager implements
-		IWorkbenchPart2, IExecutableExtension, IWorkbenchPartOrientation {
+		IWorkbenchPart3, IExecutableExtension, IWorkbenchPartOrientation {
     private String title = ""; //$NON-NLS-1$
 
     private ImageDescriptor imageDescriptor;
@@ -62,6 +69,8 @@ public abstract class WorkbenchPart extends EventManager implements
     private String partName = ""; //$NON-NLS-1$
 
     private String contentDescription = ""; //$NON-NLS-1$
+    
+    private ListenerList partChangeListeners = new ListenerList();
 
     /**
      * Creates a new workbench part.
@@ -103,6 +112,7 @@ public abstract class WorkbenchPart extends EventManager implements
         // should not be notifying anyone after the part
         // has been disposed.
         clearListeners();
+        partChangeListeners.clear();
     }
 
     /**
@@ -462,4 +472,58 @@ public abstract class WorkbenchPart extends EventManager implements
     	return Window.getDefaultOrientation();
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart3#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+     */
+    public void addPartPropertyListener(IPropertyChangeListener listener) {
+    	partChangeListeners.add(listener);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart3#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
+     */
+    public void removePartPropertyListener(IPropertyChangeListener listener) {
+    	partChangeListeners.remove(listener);
+    }
+    
+    protected void firePartPropertyChanged(String key, String oldValue, String newValue) {
+    	final PropertyChangeEvent event = new PropertyChangeEvent(this, key, oldValue, newValue);
+    	Object[] l = partChangeListeners.getListeners();
+    	for (int i = 0; i < l.length; i++) {
+			try {
+				((IPropertyChangeListener)l[i]).propertyChange(event);
+			} catch (RuntimeException e) {
+				WorkbenchPlugin.log(e);
+			}
+		}
+    }
+    
+    private Map partProperties = new HashMap();
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart3#setPartProperty(java.lang.String, java.lang.String)
+     */
+    public void setPartProperty(String key, String value) {
+    	String oldValue = (String) partProperties.get(key);
+    	if (value==null) {
+    		partProperties.remove(key);
+    	} else {
+    		partProperties.put(key, value);
+    	}
+    	firePartPropertyChanged(key, oldValue, value);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart3#getPartProperty(java.lang.String)
+     */
+    public String getPartProperty(String key) {
+    	return (String)partProperties.get(key);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IWorkbenchPart3#getPartProperties()
+     */
+    public Map getPartProperties() {
+    	return Collections.unmodifiableMap(partProperties);
+    }
 }

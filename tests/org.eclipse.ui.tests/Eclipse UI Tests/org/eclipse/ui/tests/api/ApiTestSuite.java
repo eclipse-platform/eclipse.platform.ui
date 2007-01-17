@@ -13,6 +13,7 @@ package org.eclipse.ui.tests.api;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ui.tests.api.workbenchpart.ArbitraryPropertyTest;
 import org.eclipse.ui.tests.api.workbenchpart.OverriddenTitleTest;
 import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
 import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
@@ -76,5 +77,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(XMLMementoTest.class));
         addTest(new TestSuite(TrimLayoutTest.class));
         addTest(new TestSuite(IWorkbenchPartTestableTests.class));
+        addTest(new TestSuite(ArbitraryPropertyTest.class));
     }
 }
