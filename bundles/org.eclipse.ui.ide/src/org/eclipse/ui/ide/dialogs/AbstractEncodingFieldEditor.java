@@ -284,6 +284,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 			encodingCombo.setText(getDefaultEnc());
 		}
 		encodingCombo.setEnabled(!useDefault);
+		setPresentsDefaultValue(useDefault);
 		updateValidState();
 	}
 
