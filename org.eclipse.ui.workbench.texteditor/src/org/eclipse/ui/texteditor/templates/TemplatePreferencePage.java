@@ -435,8 +435,13 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 			SourceViewer viewer= createViewer(parent);
 			viewer.setEditable(true);
 			
-			IDocument document = viewer.getDocument();
-			document.set(pattern);
+			IDocument document= viewer.getDocument();
+			if (document != null)
+				document.set(pattern);
+			else {
+				document= new Document(pattern);
+				viewer.setDocument(document);
+			}
 
 			int nLines= document.getNumberOfLines();
 			if (nLines < 5) {
