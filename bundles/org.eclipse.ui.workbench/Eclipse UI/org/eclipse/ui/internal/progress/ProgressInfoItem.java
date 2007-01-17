@@ -210,8 +210,6 @@ class ProgressInfoItem extends Composite {
 		jobImageLabel.setLayoutData(imageData);
 
 		progressLabel = new Label(this, SWT.NONE);
-		progressLabel.setFont(JFaceResources.getFontRegistry().getBold(
-				JFaceResources.DEFAULT_FONT));
 		progressLabel.setText(getMainTitle());
 
 		actionBar = new ToolBar(this, SWT.FLAT);
