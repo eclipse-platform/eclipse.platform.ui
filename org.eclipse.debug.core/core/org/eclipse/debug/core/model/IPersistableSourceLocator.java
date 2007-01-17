@@ -45,7 +45,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  * </p>
  * @see org.eclipse.debug.core.ILaunch
  * @see IStackFrame 
- * @see org.eclipse.debug.ui.IDebugModelPresentation
  * @since 2.0
  */
 public interface IPersistableSourceLocator extends ISourceLocator {

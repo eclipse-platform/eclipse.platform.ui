@@ -144,8 +144,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	public String getCategory() {
 		return fElement.getAttribute(IConfigurationElementConstants.CATEGORY);
 	}
-	
-	/**
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getDelegate()
 	 */
 	public ILaunchConfigurationDelegate getDelegate() throws CoreException {
@@ -372,7 +372,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fSourcePathComputer;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getSupportedModes()
 	 */
 	public Set getSupportedModes() {

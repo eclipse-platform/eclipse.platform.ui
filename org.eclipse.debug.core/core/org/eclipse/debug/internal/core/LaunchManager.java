@@ -424,9 +424,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 
 		/**
-		 * Notifies the given listener of the add/change/remove
+		 * Notifies listeners of the add/change/remove
 		 * 
-		 * @param listener the listener to notify
 		 * @param launch the launch that has changed
 		 * @param update the type of change
 		 */
@@ -701,7 +700,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	}	
 	
 	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch)
+	 * @see org.eclipse.debug.core.ILaunchManager#addLaunches(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void addLaunches(ILaunch[] launches) {
 		List added = new ArrayList(launches.length);
@@ -2131,8 +2130,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		fLaunchConfigurationListeners.remove(listener);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch)
+	/** 
+	 * @see org.eclipse.debug.core.ILaunchManager#removeLaunches(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void removeLaunches(ILaunch[] launches) {
 		List removed = new ArrayList(launches.length);

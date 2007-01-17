@@ -39,7 +39,6 @@ import org.eclipse.debug.core.model.IStackFrame;
  * </p>
  * @see org.eclipse.debug.core.ILaunch
  * @see org.eclipse.debug.core.model.IStackFrame 
- * @see org.eclipse.debug.ui.IDebugModelPresentation
  * @see org.eclipse.debug.core.model.IPersistableSourceLocator
  */
 public interface ISourceLocator {
