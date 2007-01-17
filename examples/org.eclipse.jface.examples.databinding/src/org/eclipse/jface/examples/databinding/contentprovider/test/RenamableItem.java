@@ -21,7 +21,7 @@ public class RenamableItem {
 	
 	public static interface Listener {
 		public void handleChanged(RenamableItem item);
-	};
+	}
 	
 	private String name;
 	private ArrayList listeners = new ArrayList();

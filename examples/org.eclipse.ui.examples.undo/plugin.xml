@@ -5,7 +5,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            name="Undo Preferences"
+            name="%Preferences.Undo"
             class="org.eclipse.ui.examples.undo.preferences.UndoPreferencePage"
             id="org.eclipse.ui.examples.undo.preferences.UndoPreferencePage">
       </page>
@@ -34,7 +34,7 @@
          <extension
          point="org.eclipse.ui.views">
       <category
-            name="Undo Examples"
+            name="%Views.Category"
             id="org.eclipse.ui.examples.undo"/>
       <view
             class="org.eclipse.ui.examples.undo.views.UndoHistoryView"

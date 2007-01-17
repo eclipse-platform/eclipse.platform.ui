@@ -11,10 +11,12 @@
 
 package org.eclipse.ui.examples.rcp.browser;
 
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.CloseWindowListener;
@@ -46,6 +48,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.part.ViewPart;
 
 
@@ -263,7 +266,10 @@ public class BrowserView extends ViewPart {
 		// Note that the address field needs to have focus for this to work, 
 		// or any control other than the browser widget, due to 
 		// <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=69919">bug 69919</a>.
-		getViewSite().getKeyBindingService().registerAction(easterEggAction);
+		IHandlerService hs = (IHandlerService) getSite().getService(
+				IHandlerService.class);
+		IHandler easterHandler = new ActionHandler(easterEggAction);
+		hs.activateHandler(easterEggAction.getActionDefinitionId(), easterHandler);
 		return browser;
 	}
 

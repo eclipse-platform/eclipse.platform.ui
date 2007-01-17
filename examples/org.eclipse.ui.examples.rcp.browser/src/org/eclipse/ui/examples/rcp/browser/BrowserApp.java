@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.rcp.browser;
 
-import org.eclipse.core.runtime.IPlatformRunnable;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -27,7 +28,7 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.0
  */
-public class BrowserApp implements IPlatformRunnable {
+public class BrowserApp implements IApplication {
 	
 	/**
 	 * Constructs a new <code>BrowserApp</code>.
@@ -36,12 +37,10 @@ public class BrowserApp implements IPlatformRunnable {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
 	 */
-	public Object run(Object args) throws Exception {
+	public Object start(IApplicationContext context) throws Exception {
 		Display display = PlatformUI.createDisplay();
 		try {
 			int code = PlatformUI.createAndRunWorkbench(display,
@@ -54,5 +53,13 @@ public class BrowserApp implements IPlatformRunnable {
 			if (display != null)
 				display.dispose();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.equinox.app.IApplication#stop()
+	 */
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 }

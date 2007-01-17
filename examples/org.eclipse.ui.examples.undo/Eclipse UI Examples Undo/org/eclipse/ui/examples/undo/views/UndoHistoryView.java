@@ -249,8 +249,7 @@ public class UndoHistoryView extends ViewPart implements
 			Object[] contexts = dialog.getResult();
 			if (contexts[0] instanceof IUndoContext)
 				return (IUndoContext) contexts[0];
-			else
-				return null;
+			return null;
 		}
 		return null;
 	}

@@ -104,7 +104,7 @@ public class AsynchronousTestSet extends ObservableSet {
 	public void recompute() {
 		if (!isStale()) {
 			setStale(true);
-			final int sleepTime = (int) (randomNumberGenerator.nextDouble() * (double) (AVERAGE_BUSY_TIME * 2));
+			final int sleepTime = (int) (randomNumberGenerator.nextDouble() * (AVERAGE_BUSY_TIME * 2));
 			Thread newThread = new Thread(new Runnable() {
 				public void run() {
 

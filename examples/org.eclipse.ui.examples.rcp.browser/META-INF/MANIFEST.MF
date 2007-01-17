@@ -9,5 +9,4 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui
-Eclipse-AutoStart: true
-Eclipse-AutoStart-comment: Use Eclipse-AutoStart instead of Eclipse-LazyStart because the browser example should run against 3.1 as well as 3.2.
+Eclipse-LazyStart: true

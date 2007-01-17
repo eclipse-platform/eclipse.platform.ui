@@ -42,6 +42,9 @@ public class MoveBoxOperation extends BoxOperation {
 	 */
 	public IStatus execute(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		if (box==null) {
+			throw new ExecutionException("box ix null");
+		}
 		box.move(target);
 		canvas.redraw();
 		return Status.OK_STATUS;
@@ -62,6 +65,9 @@ public class MoveBoxOperation extends BoxOperation {
 	 */
 	public IStatus undo(IProgressMonitor monitor, IAdaptable info)
 			throws ExecutionException {
+		if (box==null) {
+			throw new ExecutionException("box ix null");
+		}
 		box.move(origin);
 		canvas.redraw();
 		return Status.OK_STATUS;
