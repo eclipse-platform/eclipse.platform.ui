@@ -44,6 +44,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -179,14 +180,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private RGB SELECTED_INCOMING;
 	private RGB INCOMING;
 	private RGB INCOMING_FILL;
+	private RGB INCOMING_TEXT_FILL;
 	
 	private RGB SELECTED_CONFLICT;
 	private RGB CONFLICT;
 	private RGB CONFLICT_FILL;
+	private RGB CONFLICT_TEXT_FILL;
 	
 	private RGB SELECTED_OUTGOING;
 	private RGB OUTGOING;
 	private RGB OUTGOING_FILL;
+	private RGB OUTGOING_TEXT_FILL;
 	
 	private RGB RESOLVED;
 	
@@ -226,6 +230,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 	private boolean fUseSplines= true;
 	private boolean fUseSingleLine= true;
 	private boolean fUseResolveUI= true;
+	private boolean fHighlightTokenChanges = false;
 
 	private String fSymbolicFontName;
 
@@ -1151,6 +1156,122 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			Point region= new Point(0, 0);			
 			return fRight.getLineRange(fRightPos, region).y;
 		}
+
+		public Diff[] getChangeDiffs(MergeSourceViewer viewer, IRegion region) {
+			if (fDiffs != null && intersectsRegion(viewer, region)) {
+				List result = new ArrayList();
+				for (Iterator iterator = fDiffs.iterator(); iterator.hasNext();) {
+					Diff diff = (Diff) iterator.next();
+					if (diff.intersectsRegion(viewer, region)) {
+						result.add(diff);
+					}
+				}
+				return (Diff[]) result.toArray(new Diff[result.size()]);
+			}
+			return new Diff[0];
+		}
+
+		private boolean intersectsRegion(MergeSourceViewer viewer,
+				IRegion region) {
+			Position p = getPosition(viewer);
+			if (p != null)
+				return p.overlapsWith(region.getOffset(), region.getLength());
+			return false;
+		}
+
+		public StyleRange getStyleRange(MergeSourceViewer viewer, IRegion region) {
+			//Color cText = getColor(null, getTextColor());
+			Color cTextFill = getColor(null, getTextFillColor());
+			if (cTextFill == null)
+				return null;
+			Position p = getPosition(viewer);
+			int start = p.getOffset();
+			int length = p.getLength();
+			// Don't start before the region
+			if (start < region.getOffset()) {
+				length = length - (region.getOffset() - start);
+				start = region.getOffset();
+			}
+			// Don't go past the end of the region
+			int regionEnd = region.getOffset() + region.getLength();
+			if (start + length > regionEnd) {
+				length = regionEnd - start;
+			}
+			if (length < 0)
+				return null;
+			
+			return new StyleRange(start, length, null, cTextFill);
+		}
+		
+		private RGB getTextFillColor() {
+			if (isThreeWay() && !isIgnoreAncestor()) {
+				switch (fDirection) {
+				case RangeDifference.RIGHT:
+					if (fLeftIsLocal)
+						return INCOMING_TEXT_FILL;
+					return OUTGOING_TEXT_FILL;
+				case RangeDifference.ANCESTOR:
+					return CONFLICT_TEXT_FILL;
+				case RangeDifference.LEFT:
+					if (fLeftIsLocal)
+						return OUTGOING_TEXT_FILL;
+					return INCOMING_TEXT_FILL;
+				case RangeDifference.CONFLICT:
+					return CONFLICT_TEXT_FILL;
+				}
+				return null;
+			}
+			return OUTGOING_TEXT_FILL;
+		}
+
+		public boolean hasChildren() {
+			return fDiffs != null && !fDiffs.isEmpty();
+		}
+	}
+	
+	private class ChangeHighlighter implements ITextPresentationListener {
+
+		private final MergeSourceViewer viewer;
+
+		public ChangeHighlighter(MergeSourceViewer viewer) {
+			this.viewer = viewer;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.ITextPresentationListener#applyTextPresentation(org.eclipse.jface.text.TextPresentation)
+		 */
+		public void applyTextPresentation(TextPresentation textPresentation) {
+			if (!fHighlightTokenChanges)
+				return;
+			IRegion region= textPresentation.getExtent();
+			Diff[] changeDiffs = getChangeDiffs(region);
+			for (int i = 0; i < changeDiffs.length; i++) {
+				Diff diff = changeDiffs[i];
+				StyleRange range = getStyleRange(diff, region);
+				if (range != null)
+					textPresentation.mergeStyleRange(range);
+			}
+		}
+
+		private StyleRange getStyleRange(Diff diff, IRegion region) {
+			return diff.getStyleRange(viewer, region);
+		}
+
+		private Diff[] getChangeDiffs(IRegion region) {
+			if (fChangeDiffs == null)
+				return new Diff[0];
+			List intersectingDiffs = new ArrayList();
+			for (Iterator iterator = fChangeDiffs.iterator(); iterator.hasNext();) {
+				Diff diff = (Diff) iterator.next();
+				Diff[] changeDiffs = diff.getChangeDiffs(viewer, region);
+				for (int i = 0; i < changeDiffs.length; i++) {
+					Diff changeDiff = changeDiffs[i];
+					intersectingDiffs.add(changeDiff);
+				}
+			}
+			return (Diff[]) intersectingDiffs.toArray(new Diff[intersectingDiffs.size()]);
+		}
+		
 	}
 
 	//---- MergeTextViewer
@@ -1219,6 +1340,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			//fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fHighlightTokenChanges= fPreferenceStore.getBoolean(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES);
 			//fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
@@ -1336,27 +1458,36 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			SELECTED_INCOMING= new RGB(0, 0, 255);	// BLUE
 		INCOMING= interpolate(SELECTED_INCOMING, bg, 0.6);
 		INCOMING_FILL= interpolate(SELECTED_INCOMING, bg, 0.97);
+		INCOMING_TEXT_FILL= interpolate(SELECTED_INCOMING, bg, 0.85);
 
 		SELECTED_OUTGOING= registry.getRGB(OUTGOING_COLOR);
 		if (SELECTED_OUTGOING == null)
 			SELECTED_OUTGOING= new RGB(0, 0, 0);	// BLACK
 		OUTGOING= interpolate(SELECTED_OUTGOING, bg, 0.6);
 		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
+		OUTGOING_TEXT_FILL= interpolate(SELECTED_OUTGOING, bg, 0.85);
 		
 		SELECTED_CONFLICT= registry.getRGB(CONFLICTING_COLOR);
 		if (SELECTED_CONFLICT == null)
 			SELECTED_CONFLICT= new RGB(255, 0, 0);	// RED
 		CONFLICT= interpolate(SELECTED_CONFLICT, bg, 0.6);
 		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.97);
+		CONFLICT_TEXT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.85);
 	
 		RESOLVED= registry.getRGB(RESOLVED_COLOR);
 		if (RESOLVED == null)
 			RESOLVED= new RGB(0, 255, 0);	// GREEN
-				
+					
+		updatePresentation(display);
+	}
+
+	private void updatePresentation(Display display) {
+		if (display == null)
+			display= fComposite.getDisplay();
 		refreshBirdsEyeView();
 		invalidateLines();
-		
 		updateAllDiffBackgrounds(display);
+		invalidateTextPresentation();
 	}
 	
 	/**
@@ -1572,6 +1703,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_ancestor, getCompareConfiguration().getAncestorLabel(getInput()));
 			}
 		});
+		fAncestor.addTextPresentationListener(new ChangeHighlighter(fAncestor));
 		
 		fSummaryHeader= new Canvas(composite, SWT.NONE);
 		fHeaderPainter= new HeaderPainter();
@@ -1602,7 +1734,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_left, getCompareConfiguration().getLeftLabel(getInput()));
 			}
 		});
-			
+		fLeft.addTextPresentationListener(new ChangeHighlighter(fLeft));
+		
 		fRight= createPart(composite);
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.addAction(MergeSourceViewer.SAVE_ID, fRightSaveAction);
@@ -1611,6 +1744,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				e.result = NLS.bind(CompareMessages.TextMergeViewer_accessible_right, getCompareConfiguration().getRightLabel(getInput()));
 			}
 		});
+		fRight.addTextPresentationListener(new ChangeHighlighter(fRight));
 		
 		hsynchViewport(fAncestor, fLeft, fRight);
 		hsynchViewport(fLeft, fAncestor, fRight);
@@ -2974,7 +3108,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 				lDoc, lRegion, lRegion.getOffset()+lRegion.getLength(), lDoc.getLength(),
 				rDoc, rRegion, rRegion.getOffset()+rRegion.getLength(), rDoc.getLength());
 			fAllDiffs.add(diff);
-		}		
+		}
+		invalidateTextPresentation();
 	}
 	
 	private void resetPositions(IDocument doc) {
@@ -3663,6 +3798,11 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 			updateResolveStatus();
 			invalidateLines();
 	
+		} else if (key.equals(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES)) {
+			fHighlightTokenChanges= fPreferenceStore.getBoolean(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES);
+			updateResolveStatus();
+			updatePresentation(null);
+			
 //		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
 //			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 //			updateResolveStatus();
@@ -3675,6 +3815,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		} else if (key.equals(INCOMING_COLOR) || key.equals(OUTGOING_COLOR) || key.equals(CONFLICTING_COLOR) || key.equals(RESOLVED_COLOR)) {
 			updateColors(null);
 			invalidateLines();
+			invalidateTextPresentation();
 			
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			boolean b= fPreferenceStore.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
@@ -4099,6 +4240,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
 		RGB selected_fill= getBackground(null);
+		if (fHighlightTokenChanges && !selected && !(diff.fIsToken || !diff.hasChildren())) {
+			return selected_fill;
+		}
 
 		if (isThreeWay() && !isIgnoreAncestor()) {
 			switch (diff.fDirection) {
@@ -5096,9 +5240,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 		
 		if (includeControls)
 			updateControls();
-		invalidateLines();
+		
 		updateVScrollBar();
-		refreshBirdsEyeView();
+		updatePresentation(null);
 	}
 
 	private void resetDiffs() {
