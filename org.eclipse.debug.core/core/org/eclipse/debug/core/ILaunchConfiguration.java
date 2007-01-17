@@ -377,17 +377,22 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns a working copy of this launch configuration.
+	 * If the this method is called on a working copy, a nested working 
+	 * copy is created (a working copy of a working copy).
 	 * Changes to the working copy will be applied to this
-	 * launch configuration when saved. The working copy will
-	 * refer to this launch configuration as its original
-	 * launch configuration.
+	 * launch configuration when saved, or to the parent working copy. 
+	 * The working copy will refer to this launch configuration as its original
+	 * launch configuration, or the working copy it was created from.
 	 * <p>
 	 * When a working copy (B) is created from a working copy (A), the newly
 	 * created working copy (B) is initialized with the attributes from
 	 * the first working copy (A). Whenever a working copy is saved, it is written
-	 * back to the original non-working copy configuration.
+	 * back to the working copy from which it was created: in this example working 
+	 * copy B will write back to working copy A, and A will write back to the 
+	 * original launch configuration.
 	 * </p>
-	 * @return a working copy of this launch configuration
+	 * @return a working copy of this launch configuration, or a nested working copy if called
+	 * on an instance of <code>ILaunchConfigurationWorkingCopy</code>
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>An exception occurs while initializing the contents of the
@@ -399,7 +404,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns whether this launch configuration is stored
-	 * locally with the workspace. This is a handle-only method.
+	 * locally within the workspace. This is a handle-only method.
 	 * 
 	 * @return whether this launch configuration is stored
 	 *  locally with the workspace
@@ -439,7 +444,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
 	 *  framework.
 	 * @return the resulting launch
 	 * @exception CoreException if this method fails. Reasons include:<ul>
@@ -473,16 +478,16 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * source locator is used. Otherwise an appropriate source locator is
 	 * contributed to the launch  based on the values of
 	 * <code>ATTR_SOURCE_LOCATOR_ID</code> and
-	 * <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch is cancelled (via
+	 * <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch is canceled (via
 	 * the given progress monitor), the launch is removed from the launch
-	 * manager. The launch is returned whether cancelled or not. Invoking this
+	 * manager. The launch is returned whether canceled or not. Invoking this
 	 * method causes the underlying launch configuration delegate to be
 	 * instantiated (if not already).
 	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
 	 *  framework.
 	 * @param build whether the workspace should be built before the launch
 	 * @return resulting launch
@@ -519,16 +524,16 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * source locator is used. Otherwise an appropriate source locator is
 	 * contributed to the launch  based on the values of
 	 * <code>ATTR_SOURCE_LOCATOR_ID</code> and
-	 * <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch is cancelled (via
+	 * <code>ATTR_SOURCE_LOCATOR_MEMENTO</code>. If the launch is canceled (via
 	 * the given progress monitor), the launch is removed from the launch
-	 * manager. The launch is returned whether cancelled or not. Invoking this
+	 * manager. The launch is returned whether canceled or not. Invoking this
 	 * method causes the underlying launch configuration delegate to be
 	 * instantiated (if not already).
 	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
-	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  parameter is ignored. A cancelable progress monitor is provided by the Job
 	 *  framework.
 	 * @param build whether the workspace should be built before the launch
 	 * @param register whether to register the resulting launch with the launch manager

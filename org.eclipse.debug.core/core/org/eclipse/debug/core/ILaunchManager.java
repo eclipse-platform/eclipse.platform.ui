@@ -484,6 +484,7 @@ public interface ILaunchManager {
 	 * remain unchanged during the 3.3 release cycle. Please do not use this API
 	 * without consulting with the Platform/Debug team.
 	 * </p>
+	 * CONTEXTLAUNCHING
 	 */
 	public void setDefaultConfiguration(IResource resource, ILaunchConfiguration configuration) throws CoreException;
 	
@@ -501,6 +502,7 @@ public interface ILaunchManager {
 	 * remain unchanged during the 3.3 release cycle. Please do not use this API
 	 * without consulting with the Platform/Debug team.
 	 * </p>
+	 * CONTEXTLAUNCHING
 	 */
 	public ILaunchConfiguration getDefaultConfiguration(IResource resource) throws CoreException;
 }

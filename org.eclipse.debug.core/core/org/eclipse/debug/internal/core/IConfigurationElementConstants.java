@@ -82,7 +82,7 @@ public interface IConfigurationElementConstants {
 	public static final String AFTER = "after"; //$NON-NLS-1$
 	
 	/**
-	 * the path node name for a configuraiton element
+	 * the path node name for a configuration element
 	 */
 	public static final String PATH = "path"; //$NON-NLS-1$
 	
@@ -127,12 +127,17 @@ public interface IConfigurationElementConstants {
 	public static final String PERSPECTIVE = "perspective"; //$NON-NLS-1$
 	
 	/**
+	 * the preferredDelegates node name for a configuration element
+	 */
+	public static final String PREFERRED_DELEGATES = "preferredDelegates"; //$NON-NLS-1$
+	
+	/**
 	 * the modes node name for a configuration element
 	 */
 	public static final String MODES = "modes"; //$NON-NLS-1$
 	
 	/**
-	 * the modesCombination node name for a configuraiton element 
+	 * the modesCombination node name for a configuration element 
 	 */
 	public static final String MODE_COMBINATION = "modeCombination"; //$NON-NLS-1$
 	
@@ -145,6 +150,11 @@ public interface IConfigurationElementConstants {
 	 * the type node name for a configuration element
 	 */
 	public static final String TYPE = "type"; //$NON-NLS-1$
+	
+	/**
+	 * the typeid node name for a configuration element 
+	 */
+	public static final String TYPE_ID = "typeid"; //$NON-NLS-1$
 	
 	/**
 	 * the option node name for a configuration element
@@ -197,7 +207,7 @@ public interface IConfigurationElementConstants {
 	public static final String SOURCE_PATH_COMPUTER = "sourcePathComputerId"; //$NON-NLS-1$
 	
 	/**
-	 * the delegateDescription node name for a configuraiton element
+	 * the delegateDescription node name for a configuration element
 	 */
 	public static final String DELEGATE_DESCRIPTION = "delegateDescription"; //$NON-NLS-1$
 	

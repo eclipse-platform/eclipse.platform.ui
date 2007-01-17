@@ -112,10 +112,10 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	
 	/**
 	 * Returns the original launch configuration this working copy
-	 * was created from, or <code>null</code> if this is a new
+	 * was created from or <code>null</code> if this is a new
 	 * working copy created from a launch configuration type.
 	 * 
-	 * @return the original launch configuration, or <code>null</code>
+	 * @return the original launch configuration, working copy, or <code>null</code>
 	 */
 	public ILaunchConfiguration getOriginal();
 	
@@ -255,31 +255,6 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void removeModes(Set modes);
 	
 	/**
-	 * Returns a working copy of this working copy. Changes to the working copy will
-	 * be applied to this working copy when saved. The working copy will
-	 * refer to this launch configuration as its parent. Changes are only
-	 * saved to the underlying original configuration when the root working
-	 * copy is saved.
-	 * 
-	 * @return a working copy of this working copy
-	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li>An exception occurs while initializing the contents of the
-	 * working copy from this configuration's underlying storage.</li>
-	 * </ul>
-	 * @see ILaunchConfigurationWorkingCopy#getOriginal()
-	 * @see ILaunchConfigurationWorkingCopy#getParent()
-	 * @since 3.3
-	 * <p>
-	 * <strong>EXPERIMENTAL</strong>. This method has been added as
-	 * part of a work in progress. There is no guarantee that this API will
-	 * remain unchanged during the 3.3 release cycle. Please do not use this API
-	 * without consulting with the Platform/Debug team.
-	 * </p>
-	 */
-	public ILaunchConfigurationWorkingCopy getNestedWorkingCopy() throws CoreException;	
-	
-	/**
 	 * Returns the parent of this working copy or <code>null</code> if this working
 	 * copy is not a nested copy of another working copy.
 	 * 
@@ -290,6 +265,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * remain unchanged during the 3.3 release cycle. Please do not use this API
 	 * without consulting with the Platform/Debug team.
 	 * </p>
+	 * CONTEXTLAUNCHING
 	 */
 	public ILaunchConfigurationWorkingCopy getParent();
 }

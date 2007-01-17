@@ -122,19 +122,6 @@ import com.ibm.icu.text.MessageFormat;
  */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
-	
-	/**
-	 * Constants for xml node names
-	 * 
-	 * @since 3.3
-	 * 
-	 * EXPERIMENTAL
-	 */
-	protected static final String MODES = "modes"; //$NON-NLS-1$
-	protected static final String TYPEID = "typeid"; //$NON-NLS-1$
-	protected static final String ID = "id"; //$NON-NLS-1$
-	protected static final String DELEGATE = "delegate"; //$NON-NLS-1$
-	protected static final String PREFERRED_DELEGATES = "preferredDelegates"; //$NON-NLS-1$
 	protected static final String PREF_PREFERRED_DELEGATES = DebugPlugin.getUniqueIdentifier() + ".PREFERRED_DELEGATES"; //$NON-NLS-1$
 
 	/**
@@ -913,7 +900,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/**
 	 * Finds and returns all launch configurations in the given
-	 * container (and subcontainers)
+	 * container (and sub-containers)
 	 * 
 	 * @param container the container to search
 	 * @exception CoreException an exception occurs traversing
@@ -1031,7 +1018,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * some suffix that guarantees uniqueness. Passing <code>null</code> as the set of reserved names will cause this
 	 * method to return <code>generateUniqueLaunchConfigurationNameFrom(String baseName)</code>.
 	 * 
-	 * By specifying a set of reserved names, you can further constrain the name that wil be generated
+	 * By specifying a set of reserved names, you can further constrain the name that will be generated
 	 * by this method. For example you can give a base name of 'test' and a reserved set of [test(1), test(2)],
 	 * which will result in a name of 'test(3)' being returned iff a configuration with the name 'test' already exists.
 	 * 
@@ -1551,7 +1538,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * This method is used to initialize a simple listing of all preferred delegates, which is then used by each
 	 * <code>ILaunchConfigurationType</code> to find if they have preferred delegates. Once an <code>ILaunchConfigurationType</code>
 	 * has used this listing to initialize its preferred delegates ti will maintain changes to its preferred delegate, which are 
-	 * then written back to the pref sotre only when the launch manager shuts down.
+	 * then written back to the pref store only when the launch manager shuts down.
 	 * 
 	 * <p>
 	 * This cache is not synchronized with the runtime preferred delegates stored in launch configuration types.
@@ -1569,7 +1556,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			if(!EMPTY_STRING.equals(preferred)) {
 				try {
 					Element root = DebugPlugin.parseDocument(preferred);
-					NodeList nodes = root.getElementsByTagName(LaunchManager.DELEGATE);
+					NodeList nodes = root.getElementsByTagName(IConfigurationElementConstants.DELEGATE);
 					Element element = null;
 					String typeid = null;
 					Set modeset = null;
@@ -1578,12 +1565,12 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					ILaunchDelegate delegate = null;
 					for(int i = 0; i < nodes.getLength(); i++) {
 						element = (Element) nodes.item(i);
-						typeid = element.getAttribute(LaunchManager.TYPEID);
+						typeid = element.getAttribute(IConfigurationElementConstants.TYPE_ID);
 						extensions = getLaunchDelegates(typeid);
 						for(int j = 0; j < extensions.length; j++) {
-							if(element.getAttribute(LaunchManager.ID).equals(extensions[j].getId())) { 
+							if(element.getAttribute(IConfigurationElementConstants.ID).equals(extensions[j].getId())) { 
 								modesets = extensions[j].getModes();
-								String[] modes = element.getAttribute(LaunchManager.MODES).split(","); //$NON-NLS-1$
+								String[] modes = element.getAttribute(IConfigurationElementConstants.MODES).split(","); //$NON-NLS-1$
 								modeset = new HashSet(Arrays.asList(modes));
 								if(modesets.contains(modeset)) {
 									delegate = extensions[j]; 
@@ -1591,7 +1578,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 								}
 							}
 						}
-						//take tid, modeset, delegate and create entry
+						//take type id, modeset, delegate and create entry
 						if(delegate != null & !EMPTY_STRING.equals(typeid) & modeset != null) {
 							fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
 						}
@@ -1606,7 +1593,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Allows internal access to a preferred delegate for a given type and mode set
 	 * @param typeid the id of the <code>ILaunchConfigurationType</code> to find a delegate for
-	 * @param modes ther set of modes for the delegate
+	 * @param modes the set of modes for the delegate
 	 * @return the preferred delegate for the specified type id and mode set, or <code>null</code> if none
 	 * 
 	 * @since 3.3
@@ -1877,7 +1864,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			sourceContainerTypes = new HashMap();
 			for (int i = 0; i < extensions.length; i++) {
 				sourceContainerTypes.put(
-						extensions[i].getAttribute(ID),
+						extensions[i].getAttribute(IConfigurationElementConstants.ID),
 						new SourceContainerType(extensions[i]));
 			}
 			extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_SOURCE_PATH_COMPUTERS);
@@ -1885,7 +1872,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			sourcePathComputers = new HashMap();
 			for (int i = 0; i < extensions.length; i++) {
 				sourcePathComputers.put(
-						extensions[i].getAttribute(ID),
+						extensions[i].getAttribute(IConfigurationElementConstants.ID),
 						new SourcePathComputer(extensions[i]));
 			}
 		}
@@ -1906,7 +1893,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			String id = null;
 			for (int i= 0; i < infos.length; i++) {
 				configurationElement = infos[i];
-				id = configurationElement.getAttribute(ID);			
+				id = configurationElement.getAttribute(IConfigurationElementConstants.ID);			
 				if (id != null) {
 					fSourceLocators.put(id,configurationElement);
 				} else {
@@ -2062,7 +2049,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Notifies the launch manager that a launch configuration
 	 * has been deleted. The configuration is removed from the
-	 * cache of infos and from the index of configurations by
+	 * cache of info and from the index of configurations by
 	 * project, and listeners are notified.
 	 * 
 	 * @param config the launch configuration that was deleted
@@ -2277,7 +2264,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
 		try {
 			Document doc = DebugPlugin.newDocument();
-			Element root = doc.createElement(PREFERRED_DELEGATES);
+			Element root = doc.createElement(IConfigurationElementConstants.PREFERRED_DELEGATES);
 			doc.appendChild(root);
 			ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
 			Map preferred = null;
@@ -2292,16 +2279,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						modes = (Set) iter.next();
 						delegate = (ILaunchDelegate) preferred.get(modes);
 						if(delegate != null) {
-							child = doc.createElement(DELEGATE);
-							child.setAttribute(ID, delegate.getId());
-							child.setAttribute(TYPEID, types[i].getIdentifier());
+							child = doc.createElement(IConfigurationElementConstants.DELEGATE);
+							child.setAttribute(IConfigurationElementConstants.ID, delegate.getId());
+							child.setAttribute(IConfigurationElementConstants.TYPE_ID, types[i].getIdentifier());
 							for(Iterator iter2 = modes.iterator(); iter2.hasNext();) {
 								modestr += iter2.next();
 								if(iter2.hasNext()) {
 									modestr += ","; //$NON-NLS-1$
 								}
 							}
-							child.setAttribute(MODES, modestr);
+							child.setAttribute(IConfigurationElementConstants.MODES, modestr);
 							modestr = EMPTY_STRING;
 							root.appendChild(child);
 						}
@@ -2426,6 +2413,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#getDefaultConfiguration(org.eclipse.core.resources.IResource)
+	 * CONTEXTLAUNCHING
 	 */
 	public ILaunchConfiguration getDefaultConfiguration(IResource resource) throws CoreException {
 		IProject project = resource.getProject();
@@ -2447,9 +2435,10 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		return null;
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchManager#setDefaultConfiguration(org.eclipse.core.resources.IResource, org.eclipse.debug.core.ILaunchConfiguration)
+	 * CONTEXTLAUNCHING
 	 */
 	public void setDefaultConfiguration(IResource resource, ILaunchConfiguration configuration) throws CoreException {
 		IProject project = resource.getProject();
@@ -2464,32 +2453,30 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		
-		// remove previous settings, if any
+		// get preference nodes
 		org.osgi.service.prefs.Preferences projectNode = getProjectNode(resource);
-		projectNode.remove(DEFAULT_CONFIGURATION);
-		flush(projectNode);
 		org.osgi.service.prefs.Preferences instanceNode = getInstanceNode(resource);
-		instanceNode.remove(DEFAULT_CONFIGURATION);
-		flush(instanceNode);
-		
 		if (configuration != null) {
-			org.osgi.service.prefs.Preferences node = null;
-			String configurationValue = null;
 			if (configuration.isLocal()) {
 				// for local configurations, use workspace (instance) scope preferences
-				node = instanceNode;
 				if (!configuration.isWorkingCopy()) {
-					configurationValue = configuration.getMemento();
+					instanceNode.put(DEFAULT_CONFIGURATION, configuration.getMemento());
+					projectNode.remove(DEFAULT_CONFIGURATION);
 				}
+				
 			} else {
 				// for shared configurations, use project scope preferences
-				node = projectNode;
-				configurationValue = configuration.getFile().getProjectRelativePath().toPortableString();
+				projectNode.put(DEFAULT_CONFIGURATION, configuration.getFile().getProjectRelativePath().toPortableString());
+				instanceNode.remove(DEFAULT_CONFIGURATION);
 			}
-			node.put(DEFAULT_CONFIGURATION, configurationValue);
-			flush(node);
 		}
-		
+		else {
+			//remove nodes because the default has been un-set
+			projectNode.remove(DEFAULT_CONFIGURATION);
+			instanceNode.remove(DEFAULT_CONFIGURATION);
+		}
+		flush(projectNode);
+		flush(instanceNode);
 	}	
 	
 	/**
