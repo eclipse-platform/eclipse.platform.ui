@@ -88,6 +88,7 @@ public final class Messages extends NLS {
 	public static String ERROR_PARSING_NO_SERIALIZATION;
 	public static String ERROR_PARSING_INCOMPATIBLE_CHILDREN;
 	public static String ERROR_PARSING_DUPLICATE_CHILD;
+	public static String ERROR_PARSING_REQUIRED_CONFIRM;
 	public static String ERROR_COMMAND_ID_NOT_FOUND;
 	public static String ERROR_COMMAND_ERROR_STATUS;
 	public static String ERROR_COMMAND_SERVICE_UNAVAILABLE;

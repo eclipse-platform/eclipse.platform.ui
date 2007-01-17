@@ -85,6 +85,9 @@ public class Action extends AbstractExecutable {
 		if(!hasPluginId) {
 			return NLS.bind(Messages.ERROR_PARSING_NO_PLUGINID, (new Object[] {node.getNodeName()}));
 		}
+		if(isConfirm() && !isRequired()) {
+			return NLS.bind(Messages.ERROR_PARSING_REQUIRED_CONFIRM, (new Object[] {node.getNodeName()}));
+		}
 		return null;
 	}
 

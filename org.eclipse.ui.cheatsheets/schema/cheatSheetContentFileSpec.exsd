@@ -6,7 +6,10 @@
          <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheat_sheet_schema" name="Cheat Sheet Content File XML Format"/>
       </appInfo>
       <documentation>
-         The schema definition for a cheat sheet content file. A cheat sheet consists of a series of items (steps) which must be completed in order. Items can be divided into subitems and can launch commands or actions which will perform some of the steps for the user.
+         &lt;p&gt;This document describes the cheat sheet content file structure as a series of
+DTD fragments (&lt;a href=&quot;cheatSheetContentFileSpec.exsd&quot;&gt;machine readable XML schema&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;A cheat sheet consists of a series of items (steps) which must be completed in order. Items can be divided into subitems and can launch commands or actions which will perform some of the steps for the user.&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -395,6 +398,13 @@ then the item expands to something equivalent to:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="required" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  if &quot;true&quot; this item or subitem can only be completed by performing this action (it may still be skipped if skip=&quot;true&quot;). If &quot;false&quot; two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -450,6 +460,13 @@ stores the result in the cheat sheet variable &amp;quot;result&amp;quot;.&lt;/p&
     of the condition attribute of the containing &amp;lt;perform-when&amp;gt; element
     matches this string value. This attribute is ignored if the &amp;lt;command&amp;gt;
     element is not a child of&amp;nbsp; a &amp;lt;perform-when&amp;gt; element.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="required" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  if &quot;true&quot; this item or subitem can only be completed by performing this command (it may still be skipped if skip=&quot;true&quot;). If &quot;false&quot; two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.
                </documentation>
             </annotation>
          </attribute>

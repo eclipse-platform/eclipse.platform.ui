@@ -90,7 +90,7 @@ public class CoreItem extends ViewItem {
 				}
 			});
 		}
-		if (!isActionShown || executable.isConfirm()) {
+		if (!isActionShown || executable.isConfirm() || !executable.isRequired()) {
 			final ImageHyperlink completeButton = createButtonWithText(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			page.getToolkit().adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -193,7 +193,7 @@ public class CoreItem extends ViewItem {
 			});
 			holder.setStartButton(startButton);
 		}
-		if (!isActionShown || subExecutable.isConfirm()) {
+		if (!isActionShown || subExecutable.isConfirm() || !subExecutable.isRequired()) {
 			added++;
 			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, Messages.COMPLETE_TASK_TOOLTIP);
 			page.getToolkit().adapt(completeButton, true, true);

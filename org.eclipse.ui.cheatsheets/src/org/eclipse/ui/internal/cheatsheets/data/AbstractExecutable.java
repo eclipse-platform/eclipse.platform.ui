@@ -23,8 +23,9 @@ import org.w3c.dom.Node;
 public abstract class AbstractExecutable {
 	
 	private String[] params;
-	private boolean confirm;
+	private boolean confirm = false;
 	private String when;
+	private boolean required = true;
 	
 	/**
 	 * This method returns an array of parameters specified to be passed to the action class
@@ -50,6 +51,14 @@ public abstract class AbstractExecutable {
 	public boolean isConfirm() {
 		return confirm;
 	}
+	
+	/**
+	 * @return true if this step or substep can only be completed by performing
+	 * this executable.
+	 */
+	public boolean isRequired() {
+		return required;
+	}
 
 	/**
 	 * This method allows you to set the string parameters to be passed to the action class on running it 
@@ -66,6 +75,15 @@ public abstract class AbstractExecutable {
 	 */
 	public void setConfirm(boolean value) {
 		this.confirm = value;
+	}
+	
+	/**
+	 * Set whether this executable can be by passed.
+	 * @param required if true this action must be performed to complete this 
+	 * step or substep.
+	 */
+	public void setRequired(boolean required) {
+		this.required = required;		
 	}
 
 	/**

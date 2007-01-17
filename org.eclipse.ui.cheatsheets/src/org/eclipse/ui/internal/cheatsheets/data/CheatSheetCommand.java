@@ -64,6 +64,9 @@ public class CheatSheetCommand extends AbstractExecutable {
 		if(!serializationFound) {
 			return NLS.bind(Messages.ERROR_PARSING_NO_SERIALIZATION, (new Object[] {node.getNodeName()}));
 		}
+		if(isConfirm() && !isRequired()) {
+			return NLS.bind(Messages.ERROR_PARSING_REQUIRED_CONFIRM, (new Object[] {node.getNodeName()}));
+		}
 		return null;
 	}
 

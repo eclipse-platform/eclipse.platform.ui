@@ -249,5 +249,12 @@ public class InvalidCheatsheet extends TestCase {
 		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
 		StatusCheck.assertStatusContains(parser.getStatus(), "more than one");
 	}
+	
+	public void testConfirmTrueRequiredFalse() {
+		ICheatSheet model = parseTestFile("ConfirmTrueRequiredFalse.xml");
+		assertNull(model);
+		assertEquals(IStatus.ERROR, parser.getStatus().getSeverity());
+		StatusCheck.assertStatusContains(parser.getStatus(), "required = false and confirm = true");
+	}
 
 }

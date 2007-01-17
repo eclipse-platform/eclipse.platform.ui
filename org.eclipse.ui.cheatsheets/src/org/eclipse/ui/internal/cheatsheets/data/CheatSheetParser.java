@@ -226,6 +226,8 @@ public class CheatSheetParser implements IStatusContainer {
 					executable.setConfirm(attribute.getNodeValue().equals(TRUE_STRING));} 
 				else if (attributeName.equals(IParserTags.WHEN)) {
 					executable.setWhen(attribute.getNodeValue());
+				} else if (attributeName.equals(IParserTags.REQUIRED)) {
+					executable.setRequired(attribute.getNodeValue().equals(TRUE_STRING));
 				} else if (executable.hasParams() && attributeName.startsWith(IParserTags.PARAM)) {
 					try {
 						if(params == null) {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test confirm = true and required = false">
+  <intro>
+    <description>Test cheat sheet</description>
+  </intro> 
+  <item title="New Item">
+    <description>Item </description>
+    <action class="action_class" pluginId="action_plugin_id" 
+     confirm = "true" required = "false" /> 
+  </item>
+</cheatsheet>
