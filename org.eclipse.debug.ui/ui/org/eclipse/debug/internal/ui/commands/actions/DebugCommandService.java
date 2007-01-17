@@ -273,7 +273,9 @@ public class DebugCommandService implements IDebugContextListener {
 	
 	private IDebugCommandHandler getHandler(Object element, Class handlerType) {
 		IDebugCommandHandler handler = null;
-		if (element instanceof IAdaptable) {
+		if (handlerType.isInstance(element)) {
+			handler = (IDebugCommandHandler)element;
+		} else if (element instanceof IAdaptable) {
 			handler = (IDebugCommandHandler)((IAdaptable)element).getAdapter(handlerType);
 		}
 		return handler;

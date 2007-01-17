@@ -10,9 +10,13 @@
  *******************************************************************************/
 package org.eclipse.debug.core.commands;
 
+import org.eclipse.debug.core.DebugPlugin;
+
 /**
  * A step filters handler typically toggles the use of step filters
- * in a debug session.
+ * in a debug session based on the user preference setting. To determine if step filters
+ * should be enabled use the method <code>isUseStepFilters()</code> in
+ * {@link DebugPlugin}. 
  * <p>
  * Clients may implement this interface. The debug platform provides a
  * toggle step filters action that delegates to this handler interface. As well, the
@@ -21,12 +25,6 @@ package org.eclipse.debug.core.commands;
  * {@link org.eclipse.debug.core.model.IStepFilters}.
  * </p>
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public interface IStepFiltersHandler extends IDebugCommandHandler {
 

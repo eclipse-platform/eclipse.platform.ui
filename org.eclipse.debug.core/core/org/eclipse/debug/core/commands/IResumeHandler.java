@@ -11,7 +11,7 @@
 package org.eclipse.debug.core.commands;
 
 /**
- * A resume handler typically resumes execution of a suspended program.
+ * A resume handler typically resumes execution of a suspended thread or target.
  * <p>
  * Clients may implement this interface. The debug platform provides a
  * resume action that delegates to this handler interface. As well, the
@@ -20,12 +20,6 @@ package org.eclipse.debug.core.commands;
  * {@link org.eclipse.debug.core.model.ISuspendResume}.
  * </p>
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public interface IResumeHandler extends IDebugCommandHandler {
 

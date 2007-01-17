@@ -31,12 +31,6 @@ import org.eclipse.core.runtime.IStatus;
  * Clients that invoke request handlers may implemented this interface.
  * </p>
  * @since 3.3
- * <p>
- * <strong>EXPERIMENTAL</strong>. This interface has been added as
- * part of a work in progress. There is no guarantee that this API will
- * remain unchanged during the 3.3 release cycle. Please do not use this API
- * without consulting with the Platform/Debug team.
- * </p>
  */
 public interface IRequest {
 
