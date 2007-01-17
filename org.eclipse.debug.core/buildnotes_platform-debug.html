@@ -217,8 +217,8 @@ The launch framework has been enhanced to support the following:
     <code>TextConsole.setBackground(Color)</code> and <code>getBackground()</code></li>
   <li>Added property constant to indicate background color of a console has changed 
     - <code>IConsoleConstants.P_BACKGROUND_COLOR</code>.</li>
-   <li><Added preference constant <code>IDebugUIConstants.PREF_CONSOLE_FONT</code>, which is used to sepcify
-   what font should be used in the console./li>
+   <li><Added preference constant <code>IDebugUIConstants.PREF_CONSOLE_FONT</code>, which is used to specify
+   what font should be used in the console.</li>
 </ul>
 <h3>Expressions</h3>
 <ul>
@@ -236,8 +236,16 @@ The launch framework has been enhanced to support the following:
     breakpoints view.</li>
 </ul>
 
+<h2>Jan 16, 2007</h2>
+<h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170669">170669</a>: [Launching] Main Tab missing search options under main type<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170485">170485</a>: [launching] no useful help in save and launch dialog<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=170502">170502</a>: [source lookup] [launching] string variables added to the bootpath via the launch dialog do not stay there<br>
+
 <h2>Jan 9, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169701">169701</a>: IllegalArgumentException in LaunchConfigurationViewer<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169992">169992</a>: Non-externalized string in debug ui plugin.xml<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=169689">169689</a>: [launching] revert button does not revert config name text<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=168434">168434</a>: move debug commands to core plug-in<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=168618">168618</a>: step actions enabled when multiple frames selected<br>
@@ -262,7 +270,7 @@ The launch framework has been enhanced to support the following:
 
 <h2>Dec 11, 2006</h2> 
 <h3>Problem Reports Fixed</h3>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156441">156441</a>: Scalability enhancment to the flexible hierarchy's IAsynchronousContentAdapter<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156441">156441</a>: Scalability enhancement to the flexible hierarchy's IAsynchronousContentAdapter<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=75852">75852</a>: [variables] Support for custom details view widgets.<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166408">166408</a>: VM Capabilities property page shows up unexpectedly<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=160745">160745</a>: Dangerous use of getActiveShell in Debug<br>
@@ -277,8 +285,8 @@ The launch framework has been enhanced to support the following:
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=166065">166065</a>: Deadlock in DebugCommandAction/DebugCommandActionDelegate<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165829">165829</a>: [launching] the source lookup tab is the new apply button<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165175">165175</a>: [source lookup] ContainerSourceContainer assumes resource is in local file sytsem<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156516">156516</a>: Incorrect popuptext in debug icon<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165175">165175</a>: [source lookup] ContainerSourceContainer assumes resource is in local file system<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156516">156516</a>: Incorrect popup text in debug icon<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165855">165855</a>: Launch Shortcuts shows deprecated example.<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=165348">165348</a>: [source lookup] source lookup panel is not saving changes to source lookup path<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=164682">164682</a>: NPE SourceLookupPanel  add external archive<br>
@@ -333,7 +341,7 @@ The launch framework has been enhanced to support the following:
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=161896">161896</a>: Warnings in N20061022-0010<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151848">151848</a>: [launching] Write protected launch configurations fails in Launch Configuration Dialog<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153789">153789</a>: [launching] Launch configuration dialog: switching filters should not remove multiselection<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=153789">153789</a>: [launching] Launch configuration dialog: switching filters should not remove multi-selection<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=154400">154400</a>: [WorkingSets] Select Default Breakpoint Working Set dialog is confusing and can clear default setting accidentally<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=157915">157915</a>: Delete launch configurations confirmation dialog too small<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=158232">158232</a>: 'Terminate and relaunch' action is enabled for non-relaunchable configs<br>
@@ -355,7 +363,7 @@ The launch framework has been enhanced to support the following:
 <h2>Sep 12, 2006</h2>
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=155791">155791</a>: Patch to fix jface.text.Assert deprecation<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156134">156134</a>: debug.core should reexport dependencies whose API is exposed<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=156134">156134</a>: debug.core should re-export dependencies whose API is exposed<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=155690">155690</a>: Launch shortcuts: Allow 'forcePluginActivation' for expressions<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148255">148255</a>: [tests] &quot;should be access&quot; test failure<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=155055">155055</a>: [views] [actions] Terminate All changed since 3.1.2<br>
@@ -380,7 +388,7 @@ The launch framework has been enhanced to support the following:
 <h3>Problem Reports Fixed</h3>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151066">151066</a>: details sash same background color as tree<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149728">149728</a>: Detaching from process with many threads takes a long time<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=142198">142198</a>: [breakpoints] Inital state of breakpoint's 'Enable/Disable Breakpoint' ruler menu is always 'Enable Breakpoint'<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=142198">142198</a>: [breakpoints] Initial state of breakpoint's 'Enable/Disable Breakpoint' ruler menu is always 'Enable Breakpoint'<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138252">138252</a>: [console] Stream closed while debugging<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=151433">151433</a>: Firing content event on a debug target does not causing the target to be refreshed<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=148900">148900</a>: IWatchExpressionDelegate needs to be context sensitive<br>
@@ -388,7 +396,7 @@ The launch framework has been enhanced to support the following:
 
 <h2>July 18, 2006</h2>
 <h3>Problem Reports Fixed</h3>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149205">151006</a>: Expression View menu inconsistent when refering to Detail(s) Pane/Area<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149205">151006</a>: Expression View menu inconsistent when referring to Detail(s) Pane/Area<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=149205">149205</a>: AssignValueAction ignores target messages<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=135170">135170</a>: Terminate All menu option does not do anything<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=150193">150193</a>: second frame selected instead of top frame after step return<br>
@@ -426,7 +434,7 @@ The launch framework has been enhanced to support the following:
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=132616">132616</a>: [console] Console corrupts UTF-8<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=38387">38387</a>: NLS'ing of internal error messages<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=138473">138473</a>: [breakpoints] BreakpointManager sometimes fails to send a breakpoint-changed notification<br>
-<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=142476">142476</a>: TVT3.2:TCT535: Text boxes ovelap with borders<br>
+<a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=142476">142476</a>: TVT3.2:TCT535: Text boxes overlap with borders<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=89594">89594</a>: [console] typing in the JSTConsole is screwy<br>
 <a href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=137694">137694</a>: [console] scrollbar in empty console<br>
 
