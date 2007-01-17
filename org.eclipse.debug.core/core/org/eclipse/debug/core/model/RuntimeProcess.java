@@ -412,6 +412,8 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		/**
 		 * Creates a new process monitor and starts monitoring the process for
 		 * termination.
+		 * 
+		 * @param process process to monitor for termination
 		 */
 		public ProcessMonitorThread(RuntimeProcess process) {
 			super(DebugCoreMessages.ProcessMonitorJob_0); 

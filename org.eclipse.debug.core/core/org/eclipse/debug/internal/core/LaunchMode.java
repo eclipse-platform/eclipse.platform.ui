@@ -28,6 +28,7 @@ public class LaunchMode implements ILaunchMode {
 	/**
 	 * Constructs a new launch mode.
 	 * 
+	 * @param element configuration element
 	 * @exception CoreException if required attributes are missing
 	 */
 	public LaunchMode(IConfigurationElement element) throws CoreException {

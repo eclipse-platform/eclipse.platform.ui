@@ -58,6 +58,7 @@ public interface IExpressionManager {
 	 * given text. The returned expression is <b>not</b> added to
 	 * this manager.
 	 * 
+	 * @return new watch expression
 	 * @param expressionText the text for the new expression
 	 * @since 3.0
 	 */

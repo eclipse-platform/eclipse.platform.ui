@@ -43,6 +43,9 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	/**
 	 * Creates a <code>StreamsProxy</code> on the streams
 	 * of the given system process.
+	 * 
+	 * @param process system process to create a streams proxy on
+	 * @param encoding the process's encoding or <code>null</code> if default
 	 */
 	public StreamsProxy(Process process, String encoding) {
 		if (process == null) {

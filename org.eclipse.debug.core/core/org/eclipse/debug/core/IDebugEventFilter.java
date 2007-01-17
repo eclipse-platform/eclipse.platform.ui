@@ -31,7 +31,7 @@ public interface IDebugEventFilter {
 	 * all filters. That is, the events returned from the first filter are
 	 * passed through the second filter, and so on.
 	 * </p>
-	 * 
+	 * @param events set of debug events to filter
 	 * @return  the set of debug events to fire
 	 */
 	public DebugEvent[] filterDebugEvents(DebugEvent[] events);

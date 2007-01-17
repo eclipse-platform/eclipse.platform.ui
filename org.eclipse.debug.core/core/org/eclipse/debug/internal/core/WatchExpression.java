@@ -120,6 +120,8 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * Sets the result of the last expression and fires notification that
 	 * this expression's value has changed.
+	 * 
+	 * @param result result of a watch expression
 	 */
 	public void setResult(IWatchExpressionResult result) {
 		fResult= result;

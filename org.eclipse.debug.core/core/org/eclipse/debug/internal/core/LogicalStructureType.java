@@ -36,6 +36,7 @@ public class LogicalStructureType implements ILogicalStructureType {
 	/**
 	 * Constructs a new logical structure type, and verifies required attributes.
 	 * 
+	 * @param element configuration element
 	 * @exception CoreException if required attributes are missing
 	 */
 	public LogicalStructureType(IConfigurationElement element) throws CoreException {

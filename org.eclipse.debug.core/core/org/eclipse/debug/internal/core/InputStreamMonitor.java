@@ -51,6 +51,8 @@ public class InputStreamMonitor {
 	/**
 	 * Creates an input stream monitor which writes
 	 * to system in via the given output stream.
+	 * 
+	 * @param stream output stream
 	 */
 	public InputStreamMonitor(OutputStream stream) {
 		fStream= stream;
@@ -62,6 +64,8 @@ public class InputStreamMonitor {
 	 * Appends the given text to the stream, or
 	 * queues the text to be written at a later time
 	 * if the stream is blocked.
+	 * 
+	 * @param text text to append
 	 */
 	public void write(String text) {
 		synchronized(fLock) {
@@ -138,6 +142,8 @@ public class InputStreamMonitor {
     /**
      * Closes the output stream attached to the standard input stream of this
      * monitor's process.
+     * 
+     * @exception IOException if an exception occurs closing the input stream
      */
     public void closeInputStream() throws IOException {
         if (!fClosed) {

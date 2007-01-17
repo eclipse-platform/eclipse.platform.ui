@@ -117,6 +117,9 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * LaunchManager
  */
+/**
+ * 
+ */
 public class LaunchManager extends PlatformObject implements ILaunchManager, IResourceChangeListener {
 	
 	
@@ -332,14 +335,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	class LaunchManagerVisitor implements IResourceDeltaVisitor {
 	    
 	    /**
-	     * Map of files to associated (shared) launch configs in a project
+	     * Map of files to associated (shared) launch configurations in a project
 	     * that is going to be deleted.
 	     */
 	    private Map fFileToConfig = new HashMap();
 	    
 	    
 		/**
-         * Builds a cache of configs that will be deleted in the given project
+         * Builds a cache of configurations that will be deleted in the given project
+         * 
+         * @param project project that is going to be deleted
          */
         public void preDelete(IProject project) {
             List list = findLaunchConfigurations(project);
@@ -966,15 +971,21 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		
 	/**
 	 * Fires notification to (single) listeners that a launch has been
-	 * added/changed/removed..
+	 * added/changed/removed.
+	 * 
+	 * @param launch launch that has changed
+	 * @param update type of change
 	 */
 	public void fireUpdate(ILaunch launch, int update) {
 		new LaunchNotifier().notify(launch, update);
 	}
 
 	/**
-	 * Fires notification to (multi) listeners that a launch has been
+	 * Fires notification to (plural) listeners that a launch has been
 	 * added/changed/removed.
+	 * 
+	 * @param launches launches that have changed
+	 * @param update type of change
 	 */
 	public void fireUpdate(ILaunch[] launches, int update) {
 		new LaunchesNotifier().notify(launches, update);
@@ -1024,6 +1035,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * by this method. For example you can give a base name of 'test' and a reserved set of [test(1), test(2)],
 	 * which will result in a name of 'test(3)' being returned iff a configuration with the name 'test' already exists.
 	 * 
+	 * @return launch configuration name
 	 * @param basename the String that the returned name must begin with
 	 * @param reservednames a set of strings that is further used to constrain what names can be generated
 	 * @since 3.3
@@ -1199,13 +1211,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	    return fgVisitor;
 	}
 	
-	/** 
-	 * Returns an array of environment variables to be used when
-	 * launching the given configuration or <code>null</code> if unspecified.
-	 * 
-	 * @param configuration launch configuration
-	 * @throws CoreException if unable to access associated attribute or if
-	 * unable to resolve a variable in an environment variable's value
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#getEnvironment(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public String[] getEnvironment(ILaunchConfiguration configuration) throws CoreException {
 		Map configEnv = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
@@ -2365,7 +2373,8 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Returns the name of the given launch mode with accelerators removed,
 	 * or <code>null</code> if none.
 	 * 
-	 * @param id
+	 * @param id launch mode identifier
+	 * @return launch mode name with accelerators removed or <code>null</code>
 	 */
 	public String getLaunchModeName(String id) {
 		ILaunchMode launchMode = getLaunchMode(id);
@@ -2377,6 +2386,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * Returns the label with any accelerators removed.
 	 * 
+	 * @param label label to process
 	 * @return label without accelerators
 	 */
     public static String removeAccelerators(String label) {

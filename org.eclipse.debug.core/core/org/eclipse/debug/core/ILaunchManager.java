@@ -118,6 +118,7 @@ public interface ILaunchManager {
 	 * some suffix that guarantees uniqueness.
 	 * 
 	 * @param namePrefix the String that the returned name must begin with
+	 * @return launch configuration name
 	 * @since 2.0
 	 */
 	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
@@ -131,7 +132,10 @@ public interface ILaunchManager {
 	/** 
 	 * Returns an array of environment variables to be used when
 	 * launching the given configuration or <code>null</code> if unspecified.
+	 * Each entry is of the form "<code>var_name=value</code>".
 	 * 
+	 * @return an array of environment variables to use when launching the given
+	 *  configuration or <code>null</code> if unspecified
 	 * @param configuration launch configuration
 	 * @throws CoreException if unable to access associated attribute or if
 	 * unable to resolve a variable in an environment variable's value
@@ -153,6 +157,7 @@ public interface ILaunchManager {
 	 * Returns a handle to the launch configuration specified by
 	 * the given memento. The configuration may not exist.
 	 * 
+	 * @param memento launch configuration memento
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
 	 * @exception CoreException if the given memento is invalid or
@@ -383,6 +388,7 @@ public interface ILaunchManager {
 	 * Return <code>true</code> if there is a launch configuration with the specified name, 
 	 * <code>false</code> otherwise.
 	 * 
+	 * @return whether a launch configuration already exists with the given name
 	 * @param name the name of the launch configuration whose existence is being checked
 	 * @exception CoreException if unable to retrieve existing launch configuration names
 	 * @since 2.0

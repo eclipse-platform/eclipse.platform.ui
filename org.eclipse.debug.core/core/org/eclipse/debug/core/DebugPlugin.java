@@ -400,6 +400,8 @@ public class DebugPlugin extends Plugin {
 
 	/**
 	 * Returns the singleton instance of the debug plug-in.
+	 * 
+	 * @return the debug plug-in
 	 */
 	public static DebugPlugin getDefault() {
 		return fgDebugPlugin;
@@ -417,6 +419,8 @@ public class DebugPlugin extends Plugin {
 	
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
+	 * 
+	 * @return debug plug-in identifier
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_DEBUG_CORE;
@@ -532,6 +536,7 @@ public class DebugPlugin extends Plugin {
 	 * Returns the status handler registered for the given
 	 * status, or <code>null</code> if none.
 	 *
+	 * @param status status for which a status handler has been requested
 	 * @return the status handler registered for the given
 	 *  status, or <code>null</code> if none
 	 * @since 2.0
@@ -775,6 +780,7 @@ public class DebugPlugin extends Plugin {
 	 * @param workingDirectory the working directory, or <code>null</code>
 	 * @return the resulting process or <code>null</code> if the exec is
 	 *  cancelled
+	 * @exception CoreException if the exec fails
 	 * @see Runtime
 	 * 
 	 * @since 2.1
@@ -796,6 +802,7 @@ public class DebugPlugin extends Plugin {
 	 * @param envp the environment variables set in the process, or <code>null</code>
 	 * @return the resulting process or <code>null</code> if the exec is
 	 *  cancelled
+	 * @exception CoreException if the exec fails
 	 * @see Runtime
 	 * 
 	 * @since 3.0

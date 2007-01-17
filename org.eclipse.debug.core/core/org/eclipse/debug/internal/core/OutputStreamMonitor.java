@@ -74,6 +74,9 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
+	 * 
+	 * @param stream input stream to read from
+	 * @param encoding stream encoding or <code>null</code> for system default
 	 */
 	public OutputStreamMonitor(InputStream stream, String encoding) {
         fStream = new BufferedInputStream(stream, 8192);

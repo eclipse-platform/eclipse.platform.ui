@@ -92,6 +92,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
 	 * 
+	 * @param configuration launch configuration
 	 * @return whether the contents of this launch configuration are equal to the contents
 	 * of the specified launch configuration.
 	 */
@@ -333,7 +334,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * same time.
 	 * </p>
 	 * @return this configuration's launch modes
-	 * 
+	 * @exception CoreException if an exception occurs retrieving modes
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
 	 * part of a work in progress. There is no guarantee that this API will
@@ -346,9 +347,11 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns the preferred launch delegate that has been set on this configuration.
-	 * @return this configuration's preferred launch delegate for the specified mode set, or 
-	 * <code>null</code> if one is not specified
 	 * 
+	 * @param modes mode set for which a preferred delegate has been requested
+	 * @return this configuration's preferred launch delegate for the specified mode set, or  
+	 * 	<code>null</code> if one is not specified
+	 * @exception CoreException if an exception occurs retrieving preferred delegate
 	 * <p>
 	 * <strong>EXPERIMENTAL</strong>. This method has been added as
 	 * part of a work in progress. There is no guarantee that this API will

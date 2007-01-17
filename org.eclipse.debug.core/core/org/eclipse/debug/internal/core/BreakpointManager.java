@@ -471,6 +471,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * is of the type specified in the breakpoint extension associated
 	 * with the given marker type.
 	 * 
+	 * @param marker marker to create a breakpoint for
 	 * @return a breakpoint on this marker
 	 * @exception DebugException if breakpoint creation fails. Reasons for 
 	 *  failure include:
@@ -610,6 +611,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 
 	/**
 	 * A resource has changed. Traverses the delta for breakpoint changes.
+	 * 
+	 * @param event resource change event
 	 */
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta= event.getDelta();
@@ -1053,11 +1056,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		}
 
 		/**
-		 * Notifies the listeners of the adds/changes/removes
+		 * Notifies the listeners of the enabled state change
 		 * 
-		 * @param breakpoints the breakpoints that changed
-		 * @param deltas the deltas associated with the changed breakpoints
-		 * @param update the type of change
+		 * @param enabled whether the manager is enabled
 		 */
 		public void notify(boolean enabled) {
 			fManagerEnabled= enabled;

@@ -56,6 +56,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * parent working copy and the parent working copy is returned without
 	 * effecting the original launch configuration.
 	 * </p>
+	 * @return handle to saved launch configuration
 	 * @exception CoreException if an exception occurs while 
 	 *  writing this configuration to its underlying file.
 	 */

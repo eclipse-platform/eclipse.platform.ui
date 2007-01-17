@@ -171,7 +171,7 @@ public class LogicalStructureManager {
      * Returns the structure that the user has chosen from among the given
      * collection of structures or <code>null</code> if the user has chosen
      * to display none.
-     * @param structures the collection of structures available
+     * @param structureTypes the collection of structures available
      * @return the structure that the user has chosen from among the given collection
      *  or <code>null</code> if the user has chosen to display none
      */

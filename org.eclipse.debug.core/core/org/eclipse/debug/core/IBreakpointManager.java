@@ -41,7 +41,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param breakpoint the breakpoint to add
 	 *
-	 * @exception DebugException if adding fails. Reasons include:<ul>
+	 * @exception CoreException if adding fails. Reasons include:<ul>
 	 * <li>CONFIGURATION_INVALID - the required <code>MODEL_IDENTIFIER</code> attribute
 	 * 	is not set on the breakpoint marker.</li>
 	 * <li>A <code>CoreException</code> occurred while verifying the <code>MODEL_IDENTIFIER</code>
@@ -58,7 +58,7 @@ public interface IBreakpointManager {
 	 *
 	 * @param breakpoints the breakpoints to add
 	 *
-	 * @exception DebugException if adding fails. Reasons include:<ul>
+	 * @exception CoreException if adding fails. Reasons include:<ul>
 	 * <li>CONFIGURATION_INVALID - the required <code>MODEL_IDENTIFIER</code> attribute
 	 * 	is not set on a breakpoint marker.</li>
 	 * <li>A <code>CoreException</code> occurred while verifying a <code>MODEL_IDENTIFIER</code>
@@ -111,6 +111,7 @@ public interface IBreakpointManager {
 	 * Returns whether the given breakpoint is currently
 	 * registered with this breakpoint manager.
 	 *
+	 * @param breakpoint a breakpoint
 	 * @return whether the breakpoint is registered
 	 * @since 2.0
 	 */

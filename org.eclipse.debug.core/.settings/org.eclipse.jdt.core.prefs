@@ -1,4 +1,4 @@
-#Tue Jan 16 11:18:31 CST 2007
+#Wed Jan 17 08:32:37 CST 2007
 eclipse.preferences.version=1
 org.eclipse.jdt.core.builder.cleanOutputFolder=clean
 org.eclipse.jdt.core.builder.duplicateResourceTask=warning
@@ -14,7 +14,7 @@ org.eclipse.jdt.core.compiler.compliance=1.4
 org.eclipse.jdt.core.compiler.debug.lineNumber=generate
 org.eclipse.jdt.core.compiler.debug.localVariable=generate
 org.eclipse.jdt.core.compiler.debug.sourceFile=generate
-org.eclipse.jdt.core.compiler.doc.comment.support=disabled
+org.eclipse.jdt.core.compiler.doc.comment.support=enabled
 org.eclipse.jdt.core.compiler.maxProblemPerUnit=100
 org.eclipse.jdt.core.compiler.problem.assertIdentifier=warning
 org.eclipse.jdt.core.compiler.problem.deprecation=warning
@@ -29,13 +29,13 @@ org.eclipse.jdt.core.compiler.problem.forbiddenReference=ignore
 org.eclipse.jdt.core.compiler.problem.hiddenCatchBlock=warning
 org.eclipse.jdt.core.compiler.problem.incompatibleNonInheritedInterfaceMethod=warning
 org.eclipse.jdt.core.compiler.problem.indirectStaticAccess=warning
-org.eclipse.jdt.core.compiler.problem.invalidJavadoc=warning
+org.eclipse.jdt.core.compiler.problem.invalidJavadoc=error
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsDeprecatedRef=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsNotVisibleRef=enabled
 org.eclipse.jdt.core.compiler.problem.invalidJavadocTagsVisibility=public
 org.eclipse.jdt.core.compiler.problem.localVariableHiding=warning
 org.eclipse.jdt.core.compiler.problem.methodWithConstructorName=warning
-org.eclipse.jdt.core.compiler.problem.missingJavadocComments=warning
+org.eclipse.jdt.core.compiler.problem.missingJavadocComments=ignore
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsOverriding=enabled
 org.eclipse.jdt.core.compiler.problem.missingJavadocCommentsVisibility=public
 org.eclipse.jdt.core.compiler.problem.missingJavadocTags=warning

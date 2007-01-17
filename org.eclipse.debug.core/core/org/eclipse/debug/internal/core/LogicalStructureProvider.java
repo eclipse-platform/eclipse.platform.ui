@@ -45,6 +45,9 @@ public class LogicalStructureProvider {
 	/**
 	 * Return the logical structure type able to provide a logical structure for
 	 * the given value.
+	 * 
+	 * @param value value for which structure types are requested
+	 * @return logical structure types
 	 */
 	public ILogicalStructureType[] getLogicalStructures(IValue value) {
 		if (fModelIdentifier.equals(value.getModelIdentifier())) {

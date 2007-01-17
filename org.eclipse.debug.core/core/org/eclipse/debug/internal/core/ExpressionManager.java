@@ -466,7 +466,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		/**
 		 * Notifies listeners of the add/change/remove
 		 * 
-		 * @param expression the expression that has changed
+		 * @param expressions the expressions that have changed
 		 * @param update the type of change
 		 */
 		public void notify(IExpression[] expressions, int update) {

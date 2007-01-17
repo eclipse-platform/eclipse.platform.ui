@@ -28,6 +28,8 @@ public class LaunchConfigurationComparator implements Comparator {
 	
 	/**
 	 * Constructs a new resolver on the given configuration element
+	 * 
+	 * @param element configuration element
 	 */
 	public LaunchConfigurationComparator(IConfigurationElement element) {
 		fConfigurationElement = element;

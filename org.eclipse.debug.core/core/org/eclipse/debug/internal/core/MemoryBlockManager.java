@@ -80,6 +80,9 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 
 		/**
 		 * Notify listeners of added/removed memory block events
+		 * 
+		 * @param memBlocks blocks that have changed
+		 * @param update type of change
 		 */
 		public void notify(IMemoryBlock[] memBlocks, int update) {
 			if (listeners != null) {

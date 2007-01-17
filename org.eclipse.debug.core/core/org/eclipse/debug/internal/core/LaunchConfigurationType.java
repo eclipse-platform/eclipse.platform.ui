@@ -188,8 +188,8 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return (ILaunchDelegate[]) delegates.toArray(new ILaunchDelegate[delegates.size()]);
 	}
 	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setPreferredDelegate(java.util.Set, org.eclipse.debug.core.ILaunchDelegateProxy)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setPreferredDelegate(java.util.Set, org.eclipse.debug.core.ILaunchDelegate)
 	 */
 	public void setPreferredDelegate(Set modes, ILaunchDelegate delegate) {
 		if(fPreferredDelegates == null) {
