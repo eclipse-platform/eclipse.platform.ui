@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Daniel Megert daniel_megert@ch.ibm.com Bug 169696
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
 
@@ -221,6 +222,22 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 
 		return group;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.FieldEditor#setEnabled(boolean, org.eclipse.swt.widgets.Composite)
+	 * @since 3.3
+	 */
+	public void setEnabled(boolean enabled, Composite parent) {
+		super.setEnabled(enabled, parent);
+		if (container != null)
+			container.setEnabled(enabled);
+		if (defaultEncodingButton != null)
+			defaultEncodingButton.setEnabled(enabled);
+		if (otherEncodingButton != null)
+			otherEncodingButton.setEnabled(enabled);
+		if (encodingCombo != null)
+			encodingCombo.setEnabled(enabled);
 	}
 
 	/**
