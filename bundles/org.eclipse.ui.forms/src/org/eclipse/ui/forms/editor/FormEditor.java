@@ -289,6 +289,28 @@ public abstract class FormEditor extends MultiPageEditorPart implements
 		}
 		return super.isDirty();
 	}
+	
+	/**
+	 * Commits all dirty pages in the editor. This method should
+	 * be called as a first step of a 'save' operation.
+	 * @param onSave <code>true</code> if commit is performed as part
+	 * of the 'save' operation, <code>false</code> otherwise.
+	 * @since 3.3
+	 */
+
+	protected void commitPages(boolean onSave) {
+		if (pages != null) {
+			for (int i = 0; i < pages.size(); i++) {
+				Object page = (IFormPage)pages.get(i);
+				if (page instanceof IFormPage) {
+					IFormPage fpage = (IFormPage)page;
+					IManagedForm mform = fpage.getManagedForm();
+					if (mform != null && mform.isDirty())
+						mform.commit(onSave);
+				}
+			}
+		}	
+	}
 
 	/**
 	 * Adds a complete editor part to the multi-page editor.
