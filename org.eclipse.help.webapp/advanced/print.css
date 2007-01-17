@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
+#toc {
+	margin-bottom: 2em;
+}
+
 #toc_content {
 	margin-top: 1em;
 }
 
 .toc_subentry {
 	margin-left: 1.5em;
-}
-
-.section {
-	margin-top: 2em;
 }

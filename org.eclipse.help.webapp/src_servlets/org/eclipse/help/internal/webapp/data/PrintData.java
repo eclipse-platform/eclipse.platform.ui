@@ -35,16 +35,11 @@ import org.eclipse.help.internal.webapp.HelpWebappPlugin;
  */
 public class PrintData extends RequestData {
 
-	// for normalizing external links
-	private static final Pattern PATTERN = Pattern.compile("(src|href)=\"(.*?\")", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+	// where to inject the section numbers
+	private static final Pattern PATTERN_HEADING = Pattern.compile("<body.*?>[\\s]*?([\\w])", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
-	private final String HREF = request.getRequestURL().toString();
-	private final String BASE_HREF = HREF.substring(0, HREF.lastIndexOf('/'));
-	
-	// html for section headings
-	private final String SECTION_HTML_1 = "\n\n<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"><link rel=\"stylesheet\" href=\"" + BASE_HREF + "print.css\" charset=\"utf-8\" type=\"text/css\"></head><body dir=\"" + (UrlUtil.isRTL(request, response) ? "rtl" : "ltr") + "\"><div class=\"section\" id=\"section"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	private final String SECTION_HTML_2 = "\"><h1>"; //$NON-NLS-1$
-	private final String SECTION_HTML_3 = "</h1></div></body></html>\n\n"; //$NON-NLS-1$
+	// to normalize external links to new base href
+	private static final Pattern PATTERN_LINK = Pattern.compile("(src|href)=\"(.*?\")", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
 	/*
 	 * Constructs the print data for the given request.
@@ -127,29 +122,48 @@ public class PrintData extends RequestData {
 			String baseHref = "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath() + "/topic" + pathHref;   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			String content = getContent(href, locale);
 			
-			// write the section heading
-			out.write(SECTION_HTML_1);
-			out.write(sectionId != null ? sectionId : ""); //$NON-NLS-1$
-			out.write(SECTION_HTML_2);
-			out.write(sectionId != null ? sectionId : ""); //$NON-NLS-1$
-			out.write(SECTION_HTML_3);
-
-			// normalize external links
-			Matcher matcher = PATTERN.matcher(content);
-			int prev = 0;
-			while (matcher.find()) {
-				out.write(content.substring(prev, matcher.start(2)));
-				out.write(baseHref);
-				out.write(matcher.group(2));
-				prev = matcher.end();
+			// root topic doesn't have sectionId
+			if (sectionId != null) {
+				content = injectHeading(content, sectionId);
 			}
-			out.write(content.substring(prev));
+			content = normalizeHrefs(content, baseHref);
+			out.write(content);
 		}
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
 			String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
 			generateContent(subtopics[i], subsectionId, out);
 		}
+	}
+
+	/*
+	 * Injects the sectionId into the document heading.
+	 */
+	private String injectHeading(String content, String sectionId) {
+		Matcher matcher = PATTERN_HEADING.matcher(content);
+		if (matcher.find()) {
+			String heading = "<a id=\"section" + sectionId + "\">" + sectionId + ". </a>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return content.substring(0, matcher.start(1)) + heading + content.substring(matcher.start(1));
+		}
+		return content;
+	}
+	
+	/*
+	 * Normalizes all external links since we're not at the same base href as the
+	 * topics we're printing.
+	 */
+	private String normalizeHrefs(String content, String baseHref) {
+		StringBuffer buf = new StringBuffer();
+		Matcher matcher = PATTERN_LINK.matcher(content);
+		int prev = 0;
+		while (matcher.find()) {
+			buf.append(content.substring(prev, matcher.start(2)));
+			buf.append(baseHref);
+			buf.append(matcher.group(2));
+			prev = matcher.end();
+		}
+		buf.append(content.substring(prev));
+		return buf.toString();
 	}
 	
 	/*
