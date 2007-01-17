@@ -92,7 +92,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			Rectangle r= composite.getClientArea();
 			
 			int centerWidth= getCenterWidth();	
-			int width1= (int)((r.width-centerWidth)*fHSplit);
+			int width1= (int)((r.width-centerWidth)*getHorizontalSplitRatio());
 			int width2= r.width-width1-centerWidth;
 			
 			int height1= 0;
@@ -138,6 +138,21 @@ public abstract class ContentMergeViewer extends ContentViewer
 					
 			handleResizeLeftRight(0, y, width1, centerWidth, width2, height2);
 		}
+
+		private double getHorizontalSplitRatio() {
+			if (fHSplit < 0) {
+				Object input = getInput();
+				if (input instanceof ICompareInput) {
+					ICompareInput ci = (ICompareInput) input;
+					if (ci.getLeft() == null)
+						return 0.1;
+					if (ci.getRight() == null)
+						return 0.9;
+				}
+				return HSPLIT;
+			}
+			return fHSplit;
+		}
 	}
 
 	class Resizer extends MouseAdapter implements MouseMoveListener {
@@ -168,7 +183,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				
 		public void mouseDoubleClick(MouseEvent e) {
 			if ((fDirection & HORIZONTAL) != 0)
-				fHSplit= HSPLIT;
+				fHSplit= -1;
 			if ((fDirection & VERTICAL) != 0)
 				fVSplit= VSPLIT;
 			fComposite.layout(true);
@@ -236,7 +251,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private ListenerList fListenerList;
 	boolean fConfirmSave= true;
 	
-	private double fHSplit= HSPLIT;		// width ratio of left and right panes
+	private double fHSplit= -1;		// width ratio of left and right panes
 	private double fVSplit= VSPLIT;		// height ratio of ancestor and bottom panes
 	
 	private boolean fIsThreeWay;		// whether their is an ancestor
