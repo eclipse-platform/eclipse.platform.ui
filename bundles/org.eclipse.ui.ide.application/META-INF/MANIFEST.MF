@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: IDE Application
+Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide.application;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %Plugin.providerName
