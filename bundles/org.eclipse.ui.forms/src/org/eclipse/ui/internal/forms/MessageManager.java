@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,48 +9,31 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.forms;
+package org.eclipse.ui.internal.forms;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.internal.forms.Messages;
+import org.eclipse.ui.forms.IMessageContainer;
+import org.eclipse.ui.forms.IMessageManager;
 
 /**
- * Use this class to work with message containers that contain decorated fields.
- * The class provides for:
- * <ul>
- * <li>Bridging the concept of messages and field decorations</li>
- * <li>Adding multiple messages per field</li>
- * <li>Rolling up local messages to the message container</li>
- * <li>Adding multiple general messages to the message container</li>
- * </ul>
- * 
- * <p>
- * <strong>EXPERIMENTAL</strong> This class or interface has been added as part
- * of a work in progress. This API may change at any given time. Please do not
- * use this API without consulting with the Platform/UI team.
- * </p>
- * 
- * @see IMessageContainer
- * @see IMessageContainerWithDetails
- * @since 3.3
+ * @see IMessageManager
  */
 
-public class MessageManager {
+public class MessageManager implements IMessageManager {
 	private ArrayList messages = new ArrayList();
 	private Hashtable decorators = new Hashtable();
 	private IMessageContainer messageContainer;
@@ -72,22 +55,16 @@ public class MessageManager {
 			Messages.MessageManager_pWarningSummary,
 			Messages.MessageManager_pErrorSummary };
 
-	class Message implements IMessage {
+	class Message {
 		Object key;
 		String message;
 		int type;
 		String prefix;
-		Object data;
 
-		Message(Object key, String message, int type, Object data) {
+		Message(Object key, String message, int type) {
 			this.key = key;
 			this.message = message;
 			this.type = type;
-			this.data = data;
-		}
-
-		public Object getData() {
-			return data;
 		}
 
 		/*
@@ -125,7 +102,7 @@ public class MessageManager {
 
 	}
 
-	class ControlDecorator implements IMessageContainerWithDetails {
+	class ControlDecorator implements IMessageContainer {
 		private ControlDecoration decoration;
 		private ArrayList controlMessages = new ArrayList();
 		private String message;
@@ -135,6 +112,14 @@ public class MessageManager {
 		ControlDecorator(Control control) {
 			this.decoration = new ControlDecoration(control, SWT.LEFT
 					| SWT.BOTTOM);
+		}
+
+		public void dispose() {
+			decoration.dispose();
+		}
+
+		public boolean isDisposed() {
+			return decoration.getControl() == null;
 		}
 
 		String getPrefix() {
@@ -169,14 +154,14 @@ public class MessageManager {
 			target.addAll(controlMessages);
 		}
 
-		void addMessage(Object key, String text, int type, Object data) {
-			MessageManager.this.addMessage(getPrefix(), key, text, type, data,
+		void addMessage(Object key, String text, int type) {
+			MessageManager.this.addMessage(getPrefix(), key, text, type,
 					controlMessages);
 			updateMessageContainer(this, controlMessages, true);
 		}
 
 		void removeMessage(Object key) {
-			IMessage message = findMessage(key, controlMessages);
+			Message message = findMessage(key, controlMessages);
 			if (message != null) {
 				controlMessages.remove(message);
 				updateMessageContainer(this, controlMessages, true);
@@ -198,18 +183,13 @@ public class MessageManager {
 		 * @see org.eclipse.jface.dialogs.IMessageContainer#setMessage(java.lang.String,
 		 *      int)
 		 */
-		public void setMessage(String newMessage, int newType) {
+		public void setMessage(String newMessage, String details, int newType) {
 			if (this.message != null && newMessage != null
 					&& newMessage.equals(this.message) && newType == this.type)
 				return;
 			this.message = newMessage;
 			this.type = newType;
 			update();
-		}
-
-		public void setMessage(String newMessage, String details,
-				IMessage[] messages, int type) {
-			setMessage(newMessage, type);
 		}
 
 		/*
@@ -255,132 +235,95 @@ public class MessageManager {
 		this.messageContainer = messageContainer;
 	}
 
-	/**
-	 * Adds a general message that is not associated with any decorated field.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param key
-	 *            a unique message key that will be used to look the message up
-	 *            later
-	 * 
-	 * @param messageText
-	 *            the message to add
-	 * @param type
-	 *            the message type as defined in <code>IMessageProvider</code>.
-	 * @param data
-	 *            an optional object for application use or <code>null</code>.
+	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
+	 *      java.lang.String, int)
 	 */
-
-	public void addMessage(Object key, String messageText, int type, Object data) {
-		addMessage(null, key, messageText, type, data, messages);
-		updateMessageContainer();
+	public void addMessage(Object key, String messageText, int type) {
+		addMessage(null, key, messageText, type, messages);
+		update();
 	}
 
-	/**
-	 * Adds a message that should be associated with the provided control.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param key
-	 *            the unique message key
-	 * @param messageText
-	 *            the message to add
-	 * @param type
-	 *            the message type
-	 * @param data
-	 *            an optional data object for application use or
-	 *            <code>null</code>.
-	 * @param control
-	 *            the control to associate the message with
+	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
+	 *      java.lang.String, int, org.eclipse.swt.widgets.Control)
 	 */
-
 	public void addMessage(Object key, String messageText, int type,
-			Object data, Control control) {
+			Control control) {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
+
 		if (dec == null) {
 			dec = new ControlDecorator(control);
 			decorators.put(control, dec);
-			control.addDisposeListener(new DisposeListener() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-				 */
-				public void widgetDisposed(DisposeEvent e) {
-					decorators.remove(e.widget);
-					updateMessageContainer();
-				}
-			});
 		}
-		dec.addMessage(key, messageText, type, data);
-		updateMessageContainer();
+		dec.addMessage(key, messageText, type);
+		update();
 	}
 
-	/**
-	 * Removes the provided general message.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param key
-	 *            the key of the message to remove
+	 * @see org.eclipse.ui.forms.IMessageManager#removeMessage(java.lang.Object)
 	 */
-
 	public void removeMessage(Object key) {
 		Message message = findMessage(key, messages);
 		if (message != null) {
 			messages.remove(message);
-			updateMessageContainer();
+			update();
 		}
 	}
 
-	/**
-	 * Removes all the general messages. If there are local messages associated
-	 * with controls, the replacement message may show up drawing user's
-	 * attention to these local messages. Otherwise, the container will clear
-	 * the message area.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#removeMessages()
 	 */
 	public void removeMessages() {
 		messages.clear();
-		updateMessageContainer();
+		update();
 	}
 
-	/**
-	 * Removes the message associated with the provided control.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param key
-	 *            the id of the message to remove
-	 * @param control
-	 *            the control the message is associated with
+	 * @see org.eclipse.ui.forms.IMessageManager#removeMessage(java.lang.Object,
+	 *      org.eclipse.swt.widgets.Control)
 	 */
-
 	public void removeMessage(Object key, Control control) {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 		if (dec == null)
 			return;
 		dec.removeMessage(key);
-		updateMessageContainer();
+		update();
 	}
 
-	/**
-	 * Removes all the messages associated with the provided control.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param control
-	 *            the control the messages are associated with
+	 * @see org.eclipse.ui.forms.IMessageManager#removeMessages(org.eclipse.swt.widgets.Control)
 	 */
-
 	public void removeMessages(Control control) {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 		dec.removeMessages();
-		updateMessageContainer();
+		update();
 	}
 
-	/**
-	 * Removes all the local field messages and all the general container
-	 * messages.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#removeAllMessages()
 	 */
-
 	public void removeAllMessages() {
 		for (Enumeration enm = decorators.elements(); enm.hasMoreElements();) {
 			ControlDecorator control = (ControlDecorator) enm.nextElement();
 			control.removeMessages();
 		}
 		messages.clear();
-		updateMessageContainer();
+		update();
 	}
 
 	/*
@@ -388,16 +331,15 @@ public class MessageManager {
 	 */
 
 	private void addMessage(String prefix, Object key, String messageText,
-			int type, Object data, ArrayList list) {
+			int type, ArrayList list) {
 		Message message = findMessage(key, list);
 		if (message == null) {
-			message = new Message(key, messageText, type, data);
+			message = new Message(key, messageText, type);
 			message.prefix = prefix;
 			list.add(message);
 		} else {
 			message.message = messageText;
 			message.type = type;
-			message.data = data;
 		}
 	}
 
@@ -415,12 +357,11 @@ public class MessageManager {
 	}
 
 	/*
-	 * Updates the entire container by building up a merged list that contains
-	 * messages from each decorated field plus messages from the container
-	 * itself.
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.forms.IMessageManager#update()
 	 */
-
-	private void updateMessageContainer() {
+	public void update() {
 		ArrayList mergedList = new ArrayList();
 		mergedList.addAll(messages);
 		for (Enumeration enm = decorators.elements(); enm.hasMoreElements();) {
@@ -439,8 +380,9 @@ public class MessageManager {
 
 	private void updateMessageContainer(IMessageContainer container,
 			ArrayList messages, boolean showAll) {
+		pruneControlDecorators();
 		if (messages.isEmpty() || messages == null) {
-			container.setMessage(null, IMessageProvider.NONE);
+			container.setMessage(null, null, IMessageProvider.NONE);
 			return;
 		}
 		int maxType = 0;
@@ -485,11 +427,14 @@ public class MessageManager {
 				details = sw.toString();
 			}
 		}
-		if (container instanceof IMessageContainerWithDetails)
-			((IMessageContainerWithDetails) container).setMessage(messageText,
-					details, (IMessage[]) messages
-							.toArray(new IMessage[messages.size()]), maxType);
-		else
-			container.setMessage(messageText, maxType);
+		container.setMessage(messageText, details, maxType);
+	}
+
+	private void pruneControlDecorators() {
+		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
+			ControlDecorator dec = (ControlDecorator) iter.next();
+			if (dec.isDisposed())
+				iter.remove();
+		}
 	}
 }

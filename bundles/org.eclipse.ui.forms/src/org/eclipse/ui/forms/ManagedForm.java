@@ -14,6 +14,7 @@ import java.util.Vector;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.internal.forms.MessageManager;
 
 /**
  * Managed form wraps a form widget and adds life cycle methods for form parts.
@@ -45,6 +46,8 @@ public class ManagedForm implements IManagedForm {
 	private boolean ownsToolkit;
 
 	private boolean initialized;
+
+	private MessageManager messageManager;
 
 	private Vector parts = new Vector();
 
@@ -319,5 +322,11 @@ public class ManagedForm implements IManagedForm {
 	 */
 	public void setContainer(Object container) {
 		this.container = container;
+	}
+
+	public IMessageManager getMessageManager() {
+		if (messageManager == null)
+			messageManager = new MessageManager(form);
+		return messageManager;
 	}
 }

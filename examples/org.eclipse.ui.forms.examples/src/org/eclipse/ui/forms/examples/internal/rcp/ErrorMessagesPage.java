@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.MessageManager;
+import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -61,11 +61,12 @@ public class ErrorMessagesPage extends FormPage {
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();
-				String details = (String)e.getHref();
+				String details = (String) e.getHref();
 				switch (form.getForm().getMessageType()) {
 				case IMessageProvider.NONE:
 				case IMessageProvider.INFORMATION:
-					MessageDialog.openInformation(form.getShell(), title, details);
+					MessageDialog.openInformation(form.getShell(), title,
+							details);
 					break;
 				case IMessageProvider.WARNING:
 					MessageDialog.openWarning(form.getShell(), title, details);
@@ -77,7 +78,7 @@ public class ErrorMessagesPage extends FormPage {
 			}
 		});
 
-		final MessageManager mmng = new MessageManager(form);
+		final IMessageManager mmng = managedForm.getMessageManager();
 
 		TableWrapLayout layout = new TableWrapLayout();
 		form.getBody().setLayout(layout);
@@ -100,7 +101,7 @@ public class ErrorMessagesPage extends FormPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (button1.getSelection()) {
 					mmng.addMessage("saveError", "Save Error",
-							IMessageProvider.ERROR, null);
+							IMessageProvider.ERROR);
 				} else {
 					mmng.removeMessage("saveError");
 				}
@@ -112,7 +113,7 @@ public class ErrorMessagesPage extends FormPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (button2.getSelection()) {
 					mmng.addMessage("info", "Secondary info",
-							IMessageProvider.NONE, null);
+							IMessageProvider.NONE);
 				} else {
 					mmng.removeMessage("info");
 				}
@@ -142,7 +143,7 @@ public class ErrorMessagesPage extends FormPage {
 	}
 
 	private void createDecoratedTextField(String label, FormToolkit toolkit,
-			Composite parent, final MessageManager mmng) {
+			Composite parent, final IMessageManager mmng) {
 		toolkit.createLabel(parent, label);
 		final Text text = toolkit.createText(parent, "");
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -155,11 +156,11 @@ public class ErrorMessagesPage extends FormPage {
 				if (s.length() > 5 && s.length() <= 10) {
 					mmng.addMessage("textLength",
 							"Text is longer than 5 characters",
-							IMessageProvider.WARNING, null, text);
+							IMessageProvider.WARNING, text);
 				} else if (s.length() > 10) {
 					mmng.addMessage("textLength",
 							"Text is longer than 10 characters",
-							IMessageProvider.ERROR, null, text);
+							IMessageProvider.ERROR, text);
 				} else {
 					mmng.removeMessage("textLength", text);
 				}
@@ -174,7 +175,7 @@ public class ErrorMessagesPage extends FormPage {
 				if (badType) {
 					mmng.addMessage("textType",
 							"Text must only contain letters",
-							IMessageProvider.ERROR, null, text);
+							IMessageProvider.ERROR, text);
 				} else {
 					mmng.removeMessage("textType", text);
 				}

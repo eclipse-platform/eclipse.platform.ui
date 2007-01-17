@@ -26,8 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IMessage;
-import org.eclipse.ui.forms.IMessageContainerWithDetails;
+import org.eclipse.ui.forms.IMessageContainer;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
@@ -83,7 +82,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * 
  * @since 3.0
  */
-public class Form extends Composite implements IMessageContainerWithDetails {
+public class Form extends Composite implements IMessageContainer {
 	private FormHeading head;
 
 	private Composite body;
@@ -589,7 +588,7 @@ public class Form extends Composite implements IMessageContainerWithDetails {
 	 */
 
 	public void setMessage(String newMessage, int newType) {
-		setMessage(newMessage, null, null, newType);
+		setMessage(newMessage, null, newType);
 	}
 
 	/**
@@ -682,15 +681,8 @@ public class Form extends Composite implements IMessageContainerWithDetails {
 		head.addDropSupport(operations, transferTypes, listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IMessageContainerWithDetails#setMessage(java.lang.String,
-	 *      java.lang.String, org.eclipse.jface.dialogs.IMessage[], int)
-	 */
-	public void setMessage(String message, String details, IMessage[] messages,
-			int type) {
-		head.setMessage(message, details, messages, type);
+	public void setMessage(String message, String details, int type) {
+		head.setMessage(message, details, type);
 		layout();
 	}
 

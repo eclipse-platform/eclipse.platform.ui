@@ -22,7 +22,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.IManagedForm;
-import org.eclipse.ui.forms.editor.SingleHeaderFormEditor;
+import org.eclipse.ui.forms.editor.SharedHeaderFormEditor;
 import org.eclipse.ui.forms.examples.internal.ExamplesPlugin;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -31,7 +31,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 /**
  * A form editor that has several pages but only one stable header.
  */
-public class SingleHeaderEditor extends SingleHeaderFormEditor {
+public class SingleHeaderEditor extends SharedHeaderFormEditor {
 	/**
 	 * 
 	 */

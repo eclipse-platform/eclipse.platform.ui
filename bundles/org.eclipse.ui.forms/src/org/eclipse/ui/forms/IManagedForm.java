@@ -173,4 +173,13 @@ public interface IManagedForm {
 	 * @return the form container
 	 */
 	Object getContainer();
+
+	/**
+	 * Returns the message manager that will keep track of messages in this
+	 * form.
+	 * 
+	 * @return the message manager instance
+	 * @since 3.3
+	 */
+	IMessageManager getMessageManager();
 }

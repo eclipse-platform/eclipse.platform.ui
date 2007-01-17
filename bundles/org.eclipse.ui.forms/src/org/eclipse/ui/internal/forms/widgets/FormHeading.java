@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.DropTargetListener;
 import org.eclipse.swt.dnd.Transfer;
@@ -39,12 +40,10 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
@@ -63,6 +62,7 @@ public class FormHeading extends Canvas {
 
 	private static final int SEPARATOR = 1 << 1;
 	private static final int SEPARATOR_HEIGHT = 2;
+	private static final int MESSAGE_AREA_LIMIT = 50;
 
 	public static final String COLOR_BASE_BG = "baseBg"; //$NON-NLS-1$
 
@@ -154,9 +154,10 @@ public class FormHeading extends Canvas {
 				if (hasMessageRegion()) {
 					// remove message region spacing and divide by 2
 					flexWidth -= SPACING;
-					flexWidth /= 2;
+					//flexWidth /= 2;
 				}
 			}
+/*
 			// compute text and message sizes
 			tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
 			if (flexWidth != SWT.DEFAULT && tsize.x < flexWidth)
@@ -167,13 +168,44 @@ public class FormHeading extends Canvas {
 				msize = messageCache.computeSize(flexWidth, SWT.DEFAULT);
 				int maxWidth = messageCache.computeSize(SWT.DEFAULT,
 						SWT.DEFAULT).x;
-				if (maxWidth < flexWidth) {
+				if (maxWidth < msize.x) {
 					msize.x = maxWidth;
 					// recompute title with the reclaimed width
 					int tflexWidth = totalFlexWidth - SPACING - msize.x;
 					tsize = titleRegion.computeSize(tflexWidth, SWT.DEFAULT);
 				}
 			}
+*/	
+			if (!hasMessageRegion()) {
+				tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
+			}
+			else {
+				// Total flexible area in the first row is flexWidth.
+				// Try natural widths of title and 
+				Point tsizeNatural = titleRegion.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				messageCache.setControl(messageRegion.getMessageControl());
+				Point msizeNatural = messageCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				// try to fit all
+				tsize = tsizeNatural;
+				msize = msizeNatural;
+				if (flexWidth!=SWT.DEFAULT) {
+					int needed = tsizeNatural.x + msizeNatural.x;
+					if (needed>flexWidth) {
+						//too big - try to limit the message
+						int mwidth = flexWidth-tsizeNatural.x;
+						if (mwidth>=MESSAGE_AREA_LIMIT) {
+							msize.x = mwidth;
+						}
+						else {
+							// message is squeezed to the limit
+							int flex = flexWidth - MESSAGE_AREA_LIMIT;
+							tsize = titleRegion.computeSize(flex, SWT.DEFAULT);
+							msize.x = MESSAGE_AREA_LIMIT;
+						}
+					}
+				}
+			}
+		
 			Point size = new Point(width, height);
 			if (!move) {
 				// compute sizes
@@ -266,7 +298,7 @@ public class FormHeading extends Canvas {
 
 	private class MessageRegion {
 		private int messageType;
-		private Label messageLabel;
+		private CLabel messageLabel;
 		private Hyperlink messageHyperlink;
 		private ListenerList listeners;
 		private Color fg;
@@ -296,14 +328,11 @@ public class FormHeading extends Canvas {
 				gc.setFont(c.getFont());
 				fontHeight = gc.getFontMetrics().getHeight();
 				gc.dispose();
-				if (c instanceof Hyperlink)
-					fontHeight++;
 			}
-			return fontHeight;
+			return needHyperlink()?fontHeight:fontHeight+2;
 		}
 
-		public void showMessage(String newMessage, String details,
-				IMessage[] messages, int newType) {
+		public void showMessage(String newMessage, String details, int newType) {
 			Control oldControl = getMessageControl();
 			int oldType = messageType;
 			this.messageType = newType;
@@ -386,7 +415,7 @@ public class FormHeading extends Canvas {
 				if (messageLabel != null)
 					messageLabel.setVisible(false);
 				if (messageHyperlink == null) {
-					messageHyperlink = new Hyperlink(FormHeading.this, SWT.WRAP);
+					messageHyperlink = new Hyperlink(FormHeading.this, SWT.NULL);
 					messageHyperlink.setUnderlined(true);
 					Object[] llist = listeners.getListeners();
 					for (int i = 0; i < llist.length; i++)
@@ -399,7 +428,7 @@ public class FormHeading extends Canvas {
 				if (messageHyperlink != null)
 					messageHyperlink.setVisible(false);
 				if (messageLabel == null) {
-					messageLabel = new Label(FormHeading.this, SWT.WRAP);
+					messageLabel = new CLabel(FormHeading.this, SWT.NULL);
 				} else
 					messageLabel.setVisible(true);
 			}
@@ -781,14 +810,13 @@ public class FormHeading extends Canvas {
 	 * @since 3.2
 	 */
 	public void setMessage(String message) {
-		this.setMessage(message, null, null, IMessageProvider.NONE);
+		this.setMessage(message, null, IMessageProvider.NONE);
 	}
 
-	public void setMessage(String newMessage, String details,
-			IMessage[] messages, int newType) {
+	public void setMessage(String newMessage, String details, int newType) {
 		if (isDisposed())
 			return;
-		showMessage(newMessage, details, messages, newType);
+		showMessage(newMessage, details, newType);
 	}
 
 	public void addMessageHyperlinkListener(IHyperlinkListener listener) {
@@ -815,8 +843,7 @@ public class FormHeading extends Canvas {
 			messageRegion = new MessageRegion();
 	}
 
-	private void showMessage(String newMessage, String details,
-			IMessage[] messages, int newType) {
+	private void showMessage(String newMessage, String details, int newType) {
 		if (messageRegion == null) {
 			// check the trivial case
 			if (newMessage == null)
@@ -824,7 +851,7 @@ public class FormHeading extends Canvas {
 		} else if (messageRegion.isDisposed())
 			return;
 		ensureMessageRegionExists();
-		messageRegion.showMessage(newMessage, details, messages, newType);
+		messageRegion.showMessage(newMessage, details, newType);
 		titleRegion.updateImage(messageRegion.getMessageImage(),
 				details != null ? details : newMessage, false);
 		layout();
