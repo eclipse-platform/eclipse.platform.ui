@@ -241,7 +241,7 @@ public class ControlDecoration {
 					.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 			hoverShell.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent pe) {
-					pe.gc.drawString(text, hm, hm);
+					pe.gc.drawText(text, hm, hm);
 					if (!CARBON) {
 						pe.gc.drawPolygon(getPolygon(true));
 					}
