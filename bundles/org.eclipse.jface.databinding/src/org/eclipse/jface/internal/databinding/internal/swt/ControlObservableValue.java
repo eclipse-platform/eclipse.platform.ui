@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
+ *     Matt Carter - bug 170668
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -34,7 +35,7 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 		this.control = control;
 		this.attribute = attribute;
 		if (!attribute.equals(SWTProperties.ENABLED)
-				&& !attribute.equals(SWTProperties.VISIBLE)) {
+				&& !attribute.equals(SWTProperties.VISIBLE) && !attribute.equals(SWTProperties.TOOLTIP_TEXT)) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -45,18 +46,24 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 			control.setEnabled(((Boolean) value).booleanValue());
 		} else if (attribute.equals(SWTProperties.VISIBLE)) {
 			control.setVisible(((Boolean) value).booleanValue());
+		} else if (attribute.equals(SWTProperties.TOOLTIP_TEXT)) {
+			control.setToolTipText((String) value);
 		}
 		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
 
 	public Object doGetValue() {
-		boolean value = attribute.equals(SWTProperties.ENABLED) ? control
-				.getEnabled() : control.getVisible();
-		return value ? Boolean.TRUE : Boolean.FALSE;
+		if (attribute.equals(SWTProperties.ENABLED)) {
+			return control.getEnabled() ? Boolean.TRUE : Boolean.FALSE;
+		}
+		if (attribute.equals(SWTProperties.VISIBLE)) {
+			return control.getVisible() ? Boolean.TRUE : Boolean.FALSE;
+		}
+		return control.getToolTipText();
 	}
 
 	public Object getValueType() {
-		return Boolean.TYPE;
+		return attribute.equals(SWTProperties.TOOLTIP_TEXT) ? String.class : Boolean.TYPE;
 	}
 
 }

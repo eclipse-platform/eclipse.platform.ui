@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matt Carter - bug 170668
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -26,6 +27,10 @@ public interface SWTProperties {
 	 * Applies to Control
 	 */
 	public static final String VISIBLE = "visible"; //$NON-NLS-1$
+	/**
+	 * Applies to Control
+	 */
+	public static final String TOOLTIP_TEXT = "tooltip"; //$NON-NLS-1$	
 	/**
 	 * Applies to
 	 */
