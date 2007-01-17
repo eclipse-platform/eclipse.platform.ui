@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.CloseWindowListener;
+import org.eclipse.swt.browser.LocationAdapter;
 import org.eclipse.swt.browser.LocationEvent;
 import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.browser.OpenWindowListener;
@@ -67,6 +68,7 @@ public class EmbeddedBrowser {
 	private static String initialTitle = getWindowTitle();
 	private Shell shell;
 	private Browser browser;
+	private Browser externalBrowser;
 	private Composite statusBar;
 	private Label statusBarText;
 	private Label statusBarSeparator;
@@ -234,8 +236,12 @@ public class EmbeddedBrowser {
 			public void open(WindowEvent event) {
 				if (System.currentTimeMillis() - modalRequestTime <= 1000) {
 					new EmbeddedBrowser(event, shell);
-				} else {
+				}
+				else if (event.required) {
 					new EmbeddedBrowser(event, null);
+				}
+				else {
+					displayURLExternal(event);
 				}
 			}
 		});
@@ -355,6 +361,25 @@ public class EmbeddedBrowser {
 		browser.setUrl(url);
 		shell.setMinimized(false);
 		shell.forceActive();
+	}
+	private void displayURLExternal(WindowEvent e) {
+		if (externalBrowser == null) {
+			final Shell externalShell = new Shell(shell, SWT.NONE);
+			externalBrowser = new Browser(externalShell, SWT.NONE);
+			externalBrowser.addLocationListener(new LocationAdapter() {
+				public void changing(final LocationEvent e) {
+					e.doit = false;
+					try {
+						BaseHelpSystem.getHelpBrowser(true).displayURL(e.location);
+					}
+					catch (Throwable t) {
+						String msg = "Error opening external Web browser"; //$NON-NLS-1$
+						HelpUIPlugin.logError(msg, t);
+					}
+				}
+			});
+		}
+		e.browser = externalBrowser;
 	}
 	public boolean isDisposed() {
 		return shell.isDisposed();

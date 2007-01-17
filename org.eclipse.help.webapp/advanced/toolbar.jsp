@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2007 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -51,22 +51,29 @@ BODY {
 	background: <%=prefs.getViewBackground()%>;
 }
 
-.button a { 
+.button a, .buttonMenu a { 
 	display:block;
 	margin-left:2px;
 	margin-right:2px;
-	width:<%=data.isMozilla()?18:20%>px;
 	height:<%=data.isMozilla()?18:20%>px;
 	border:1px solid <%=prefs.getToolbarBackground()%>;
 	writing-mode:tb-rl;
 	vertical-align:middle;
 }
 
+.button a {
+	width:<%=data.isMozilla()?18:20%>px;
+}
+
+.buttonMenu a {
+	width:<%=data.isMozilla()?30:32%>px;
+}
+
 .buttonHidden a { 
 	display:none;
 }
 
-.button a:hover { 
+.button a:hover, .buttonMenu a:hover { 
 	border-top:1px solid ButtonHighlight; 
 	border-<%=isRTL?"right":"left"%>:1px solid ButtonHighlight; 
 	border-<%=isRTL?"left":"right"%>:1px solid ButtonShadow; 
@@ -250,6 +257,126 @@ function setWindowStatus(buttonName){
 	}
 	%>
 }
+
+<%
+if (data.hasMenu()) {
+%>
+
+function menu(button, param) {
+	var doc = parent.frames[1].document;
+	if (!doc.getElementById("menu")) {
+		var menu = doc.createElement("div");
+		menu.id = "menu";
+		menu.srcButton = button;
+		menu.onmouseout = menuExit;
+		menu.onkeydown = menuKey;
+		
+		menu.style.padding = "2px 2px 2px 2px";
+		menu.style.position = "absolute";
+		menu.style.<%=isRTL ? "left" : "right"%> = "0px";
+		menu.style.top = "0px";
+		menu.style.background = "<%=prefs.getToolbarBackground()%>";
+		menu.style.font = "<%=prefs.getToolbarFont()%>";
+		menu.style.border<%=isRTL ? "Right" : "Left"%> = "1px solid ThreeDShadow";
+		menu.style.borderBottom = "1px solid ThreeDShadow";
+
+		var entries = param.split(",");
+		for (var i=0;i<entries.length;++i) {
+			var properties = entries[i].split("=");
+			var anchor = doc.createElement("a");
+			var text = doc.createTextNode(properties[0]);
+			anchor.appendChild(text);
+			anchor.href = "javascript:parent.frames[0].closeMenu(),parent.frames[0]." + properties[1];
+			anchor.target = "_self";
+			anchor.onmouseover = itemEnter;
+			anchor.onmouseout = itemExit;
+			anchor.onfocus = itemEnter;
+			anchor.onblur = itemExit;
+			anchor.style.display = "block";
+			anchor.style.cursor = "default";
+			anchor.style.textDecoration = "none";
+			anchor.style.padding = "4px 4px 4px 4px";
+			anchor.style.background = "transparent";
+			anchor.style.color = "WindowText";
+			menu.appendChild(anchor);
+		}
+
+		doc.body.appendChild(menu);
+		menu.focus();
+	}
+
+	if (button && document.getElementById(button)) {
+		var buttonElem = document.getElementById(button);
+		buttonElem.blur();
+		buttonElem.firstChild.title = "";
+	}
+}
+
+function menuKey(e) {
+	var key;
+	if (!e) var e = parent.frames[parent.frames.length - 1].window.event;
+	if (e.keyCode) key = e.keyCode;
+	else if (e.which) key = e.which;
+    var src = e.srcElement ? e.srcElement : e.target;
+
+  	if (key == 38) { // Up arrow
+  		if (src.id != "menu" && src.previousSibling) {
+  			src.previousSibling.focus();
+  		}
+  	}
+  	else if (key == 40) { // Down arrow
+  		if (src.id == "menu") {
+  			src.firstChild.focus();
+  		}
+  		else if (src.nextSibling) {
+  			src.nextSibling.focus();
+  		}
+  	}
+  	else if (key == 27) { // Esc
+  		closeMenu();
+  	}
+  	else {
+  		return true;
+  	}
+  	return false;
+}
+
+function closeMenu() {
+    parent.frames[parent.frames.length - 1].window.status = "";
+	var menu = parent.frames[1].document.getElementById("menu");
+	menu.parentNode.removeChild(menu);
+
+	var img = document.getElementById(menu.srcButton).firstChild;
+	img.title = img.alt;
+}
+
+function itemEnter(e) {
+    this.style.background = "<%=data.isSafari() ? "DarkBlue" : "Highlight"%>";
+    this.style.color = "HighlightText";
+    parent.frames[parent.frames.length - 1].window.status = this.firstChild.nodeValue;
+    return true;
+}
+
+function itemExit(e) {
+    this.style.background = "transparent";
+    this.style.color = "WindowText";
+    parent.frames[parent.frames.length - 1].window.status = "";
+    return true;
+}
+
+function menuExit(e) {
+	if (!e) var e = parent.frames[parent.frames.length - 1].window.event;
+    var target = e.relatedTarget ? e.relatedTarget : e.toElement;
+    while (target && target != this)
+         target = target.parentNode;
+    if (target == this) return;
+    closeMenu();
+}
+
+<%
+}
+%>
+
 </script>
 
 <%
@@ -304,7 +431,7 @@ if(buttons.length > 0){
 							   id="b<%=i%>">
 							   <img src="<%=buttons[i].getOnImage()%>" 
 									alt='<%=buttons[i].getTooltip()%>' 
-									title='<%=buttons[i].getTooltip()%>' 
+									title='<%=buttons[i].getTooltip()%>'
 									border="0"
 									id="<%=buttons[i].getName()%>">
 							</a>

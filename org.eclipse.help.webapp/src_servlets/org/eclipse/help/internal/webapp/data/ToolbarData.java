@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,19 @@ public class ToolbarData extends RequestData {
 		loadButtons();
 	}
 
+	/*
+	 * Returns whether or not this toolbar has a menu button (has an arrow with drop
+	 * down menu).
+	 */
+	public boolean hasMenu() {
+		for (int i=0;i<buttons.length;++i) {
+			if ("menu".equals(buttons[i].getAction())) { //$NON-NLS-1$
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void loadButtons() {
 		String[] names = request.getParameterValues("name"); //$NON-NLS-1$
 		String[] tooltips = request.getParameterValues("tooltip"); //$NON-NLS-1$

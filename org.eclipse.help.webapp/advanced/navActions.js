@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,35 @@ function removeAllBookmarks(button){
 	}
 }
 
+function printTopic(errorMsg) {
+	var href = parent.tocViewFrame.getSelectedTopic();
+	if (href) {
+		parent.parent.parent.parent.ContentFrame.ContentViewFrame.window.print();
+	}
+	else {
+		alert(errorMsg);
+	}
+}
+
+function printToc(errorMsg) {
+	var href = parent.tocViewFrame.getSelectedTopic();
+	if (href && href != ":blank") {
+		var contentRect = getWindowBounds(parent.parent.parent.parent.ContentFrame.ContentViewFrame.window);
+		var topRect = getWindowBounds(top);
+		var w = contentRect.width;
+		var h = topRect.height;
+		var x = topRect.x + (topRect.width - w)/2;
+		var y = topRect.y;
+	
+		var href = parent.tocViewFrame.getSelectedTopic();
+		var printWindow = window.open("print.jsp?topic=" + href, "printWindow", "directories=yes,location=no,menubar=yes,resizable=yes,scrollbars=yes,status=yes,titlebar=yes,toolbar=yes,width=" + w + ",height=" + h + ",left=" + x + ",top=" + y);
+		printWindow.focus();
+	}
+	else {
+		alert(errorMsg);
+	}
+}
+
 function collapseAll(button) {
     try {
 		parent.tocViewFrame.collapseAll();
@@ -57,4 +86,26 @@ function collapseAll(button) {
 	if (isIE && button && document.getElementById(button)){
 		document.getElementById(button).blur();
 	}
+}
+
+function getWindowBounds(window) {
+	var rect = new Object();
+	if (window.screenLeft) {
+		rect.x = window.screenLeft;
+		rect.y = window.screenTop;
+	}
+	else {
+		rect.x = window.screenX;
+		rect.y = window.screenY;
+	}
+
+	if (window.innerWidth) {
+		rect.width = window.innerWidth;
+		rect.height = window.innerHeight;
+	}
+	else {
+		rect.width = window.document.body.clientWidth;
+		rect.height = window.document.body.clientHeight;
+	}
+	return rect;
 }

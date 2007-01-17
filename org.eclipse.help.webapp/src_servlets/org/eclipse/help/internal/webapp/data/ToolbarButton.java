@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * This class calls eclipse API's directly, so it should only be instantiated in
@@ -38,6 +42,9 @@ public class ToolbarButton {
 		this.state = state.equalsIgnoreCase("on")?true:false; //$NON-NLS-1$
 		if (state.startsWith("hid")) //$NON-NLS-1$
 			this.styleClass = "buttonHidden"; //$NON-NLS-1$
+		else if ("menu".equals(action)) { //$NON-NLS-1$
+			this.styleClass = "buttonMenu"; //$NON-NLS-1$
+		}
 		else
 			this.styleClass = state.equalsIgnoreCase("on")?"buttonOn":"button";   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 	}
@@ -46,10 +53,25 @@ public class ToolbarButton {
 		return isSeparator;
 	}
 
+	public boolean isMenu() {
+		return "menu".equals(action); //$NON-NLS-1$
+	}
+
 	public String getName() {
 		return name;
 	}
 
+	public String[][] getMenuData() {
+		List list = new ArrayList();
+		StringTokenizer tok = new StringTokenizer(param, ","); //$NON-NLS-1$
+		while(tok.hasMoreTokens()) {
+			String token = tok.nextToken();
+			int index = token.indexOf('=');
+			list.add(new String[] { token.substring(0, index), token.substring(index + 1) });
+		}
+		return (String[][])list.toArray(new String[list.size()][]);
+	}
+	
 	public String getTooltip() {
 		return tooltip;
 	}

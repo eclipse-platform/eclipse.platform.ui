@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,20 @@
  *******************************************************************************/
 
 // Tree code specific to the help toc
+
+/*
+ * Returns the currently selected topic's href, or null if no
+ * topic is selected.
+ */
+function getSelectedTopic() {
+	var node = getActiveAnchor();
+	if (node != null) {
+		var href = node.href;
+		return href.substring(href.indexOf("/topic/") + 6);
+	}
+	// no selection
+	return null;
+}
 
 function selectTopic(topic)
 {

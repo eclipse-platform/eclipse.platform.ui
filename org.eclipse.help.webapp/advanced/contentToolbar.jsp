@@ -83,7 +83,7 @@
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
-	<jsp:param name="image"    value="print_edit.gif"/>
+	<jsp:param name="image"    value="print_topic.gif"/>
 	<jsp:param name="action"   value="printContent"/>
 	<jsp:param name="param"    value=""/>
 	<jsp:param name="state"    value='off'/>
