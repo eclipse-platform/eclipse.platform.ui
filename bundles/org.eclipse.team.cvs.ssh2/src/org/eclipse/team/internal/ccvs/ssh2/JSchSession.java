@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -478,6 +479,17 @@ class JSchSession {
 			session.setPassword(password);
         session.setUserInfo(wrapperUI);
         session.setSocketFactory(socketFactory);
+        
+        // TODO following lines should be deleted after
+        //      improvements on the prompt for keyboard-interactive(KI) auth method.
+        //      Without following lines, in establishing SSH session to some sshd(for example,
+        //      running on dev.eclipse.org), KI will be tryed at first instead of password auth method and
+        //      the GUI for KI prompt will not allow to save given password in current implementation.
+        Hashtable config=new Hashtable();
+        config.put("PreferredAuthentications", //$NON-NLS-1$
+        		"gssapi-with-mic,publickey,password,keyboard-interactive"); //$NON-NLS-1$
+        session.setConfig(config);
+        
         // This is where the server is contacted and authentication occurs
         try {
             session.connect();
