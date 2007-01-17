@@ -238,10 +238,17 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		tviewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
 		tviewer.setContentProvider(new TableContentProvider());
 		tviewer.setComparator(new WorkbenchViewerComparator());
-		LaunchGroupExtension[] groups = new LaunchGroupExtension[] {
-				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP),
-				DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(EXT_BUILDER_GROUP)};
-		tviewer.addFilter(new MultiLaunchGroupFilter(groups));
+		ArrayList list  = new ArrayList();
+		LaunchGroupExtension ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(DEBUG_LAUNCH_GROUP);
+		if(ext != null) {
+			list.add(ext);
+		}
+		ext = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(EXT_BUILDER_GROUP);
+		if(ext != null) {
+			list.add(ext);
+		}
+		tviewer.addFilter(new MultiLaunchGroupFilter((LaunchGroupExtension[]) list.toArray(new LaunchGroupExtension[list.size()])));
+		list.clear();
 		tviewer.setInput(getLaunchConfigurationTypes());
 		fTable.setFont(parent.getFont());
 		return comp;
