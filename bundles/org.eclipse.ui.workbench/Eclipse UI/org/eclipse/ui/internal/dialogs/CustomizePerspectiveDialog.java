@@ -200,9 +200,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
         private final static int TOOLITEM = 1;
 
-        private ActionSetDisplayItem() {
-        }
-
         ActionSetDisplayItem(String id) {
             this(null, id, "", MENUITEM); //$NON-NLS-1$
         }
