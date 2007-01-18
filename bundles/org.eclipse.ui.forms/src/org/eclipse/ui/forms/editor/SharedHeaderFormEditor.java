@@ -12,6 +12,7 @@ package org.eclipse.ui.forms.editor;
 
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.forms.IFormPart;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.ManagedForm;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
