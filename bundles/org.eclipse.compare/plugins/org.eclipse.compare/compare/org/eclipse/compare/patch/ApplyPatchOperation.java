@@ -1,11 +1,14 @@
 package org.eclipse.compare.patch;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.patch.PatchWizard;
-import org.eclipse.compare.internal.patch.PatchWizardDialog;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.patch.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
@@ -51,6 +54,28 @@ public class ApplyPatchOperation implements Runnable {
 	 * An optional title for the patchWizard
 	 */
 	private String patchWizardTitle;
+	
+	/**
+	 * Return whether the given storage contains a patch.
+	 * @param storage the storage
+	 * @return whether the given storage contains a patch
+	 * @throws CoreException if an error occurs reading the contents from the storage
+	 */
+	public static boolean isPatch(IStorage storage) throws CoreException {
+		BufferedReader reader = Patcher.createReader(storage);
+		try {
+			PatchReader patchReader= new PatchReader();
+			patchReader.parse(reader);
+			return patchReader.getDiffs().length > 0;
+		} catch (IOException e) {
+			throw new CoreException(new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, e.getMessage(), e));
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) { //ignored
+			}
+		}
+	}
 	
 	/**
 	 * Creates a new ApplyPatchOperation with the supplied compare configuration, patch and target.

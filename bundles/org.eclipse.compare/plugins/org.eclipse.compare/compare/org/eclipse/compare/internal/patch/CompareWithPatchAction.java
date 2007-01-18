@@ -10,11 +10,8 @@
  *******************************************************************************/
 package org.eclipse.compare.internal.patch;
 
-import java.io.IOException;
-
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.BaseCompareAction;
-import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.internal.*;
 import org.eclipse.compare.patch.ApplyPatchOperation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -43,19 +40,10 @@ public class CompareWithPatchAction extends BaseCompareAction implements IObject
 		
 		boolean isPatch = false;
 		if (firstResource instanceof IFile) {
-			IFile file = (IFile)firstResource;
-			if (file.exists()) {
-				WorkspacePatcher patch = new WorkspacePatcher(null);
-				try {
-					patch.parse(file);
-					if (patch.getDiffs().length > 0) {
-						isPatch = true;
-					}
-				} catch (IOException e) {
-					// Ignore
-				} catch (CoreException e) {
-					// Ignore
-				}
+			try {
+				isPatch = ApplyPatchOperation.isPatch((IFile)firstResource);
+			} catch (CoreException e) {
+				CompareUIPlugin.log(e);
 			}
 		}
 		

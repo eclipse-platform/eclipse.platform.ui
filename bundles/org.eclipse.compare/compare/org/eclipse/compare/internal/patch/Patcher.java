@@ -130,7 +130,7 @@ public class Patcher {
 		}
 	}
 	
-	private static BufferedReader createReader(IStorage storage) throws CoreException {
+	public static BufferedReader createReader(IStorage storage) throws CoreException {
 		return new BufferedReader(new InputStreamReader(storage.getContents()));
 	}
 	
