@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -19,6 +20,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPart;
@@ -132,7 +134,16 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 */
 	public void partActivated(IWorkbenchPart part) {
 		fActivePart = part;
-		fTargetAdapter = getAdapter(part);
+		IResource resource = (IResource) part.getAdapter(IResource.class);
+		if (resource == null && part instanceof IEditorPart) {
+			resource = (IResource) ((IEditorPart)part).getEditorInput().getAdapter(IResource.class);
+		}
+		if (resource != null) {
+			fTargetAdapter = getAdapter(resource);
+		}
+		if (fTargetAdapter == null) {
+			fTargetAdapter = getAdapter(part);
+		}
 		update();
 	}
 	
