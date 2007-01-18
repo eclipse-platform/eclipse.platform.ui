@@ -1175,6 +1175,11 @@ public class DebugPlugin extends Plugin {
 				
 				fMode = NOTIFY_EVENTS;
 				Object[] listeners= getEventListeners();
+				if (DebugOptions.DEBUG_EVENTS) {
+					for (int i = 0; i < fEvents.length; i++) {
+						System.out.println(fEvents[i]);
+					}
+				}
 				for (int i= 0; i < listeners.length; i++) {
 					fListener = (IDebugEventSetListener)listeners[i]; 
                     SafeRunner.run(this);

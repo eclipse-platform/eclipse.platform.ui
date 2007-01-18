@@ -22,10 +22,13 @@ public class DebugOptions {
 	// debug option flags
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_COMMANDS = false;
+	public static boolean DEBUG_EVENTS = false;
 
 	public static void initDebugOptions() {
 		DEBUG = "true".equals(Platform.getDebugOption("org.eclipse.debug.core/debug"));  //$NON-NLS-1$//$NON-NLS-2$
 		DEBUG_COMMANDS = DEBUG && "true".equals( //$NON-NLS-1$
 				 Platform.getDebugOption("org.eclipse.debug.core/debug/commands")); //$NON-NLS-1$
+		DEBUG_EVENTS = DEBUG && "true".equals( //$NON-NLS-1$
+				 Platform.getDebugOption("org.eclipse.debug.core/debug/events")); //$NON-NLS-1$
 	}
 }
