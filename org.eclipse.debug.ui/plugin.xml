@@ -1129,7 +1129,7 @@
                helpContextId="remove_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.RemoveBreakpointAction"
                menubarPath="breakpointGroup"
-               enablesFor="1+"
+               enablesFor="+"
                id="org.eclipse.debug.ui.breakpointsView.toolbar.remove">
         </action>
         <action
@@ -1138,7 +1138,7 @@
                helpContextId="disable_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.DisableBreakpointsAction"
                menubarPath="breakpointGroup"
-               enablesFor="1+"
+               enablesFor="+"
                id="org.eclipse.debug.ui.actions.DisableBreakpoint">
         </action>
         <action
@@ -1147,7 +1147,7 @@
                helpContextId="enable_breakpoint_action_context"
                class="org.eclipse.debug.internal.ui.actions.breakpoints.EnableBreakpointsAction"
                menubarPath="breakpointGroup"
-               enablesFor="1+"
+               enablesFor="+"
                id="org.eclipse.debug.ui.actions.EnableBreakpoint">
         </action>
         <action
@@ -1158,7 +1158,7 @@
               menubarPath="additions"/>
         <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
-              enablesFor="1+"
+              enablesFor="+"
               icon="$nl$/icons/full/elcl16/export_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
