@@ -154,7 +154,6 @@ public class ChangeEncodingAction extends TextEditorAction {
 					fEncodingEditor.setPage(page);
 					fEncodingEditor.load();
 
-					// XXX: Cannot load defaults due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=169694 
 					if (encoding == null || encoding.equals(defaultEncoding) || encoding.length() == 0)
 						fEncodingEditor.loadDefault();
 				}
