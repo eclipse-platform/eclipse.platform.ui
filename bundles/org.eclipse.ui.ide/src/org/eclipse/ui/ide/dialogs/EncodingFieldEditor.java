@@ -11,6 +11,7 @@
 package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.ide.IDEEncoding;
 
 /**
@@ -25,6 +26,28 @@ import org.eclipse.ui.ide.IDEEncoding;
  */
 public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 
+	
+	/**
+	 * Creates a new encoding field editor with the given preference name, label
+	 * and parent.
+	 * 
+	 * @param name
+	 *            the name of the preference this field editor works on
+	 * @param labelText
+	 *            the label text of the field editor
+	 * @param groupTitle
+	 *            the title for the field editor's control. If groupTitle is 
+	 *            <code>null</code> the control will be unlabelled
+	 *            (by default a {@link Composite} instead of a {@link Group}.
+	 * @param parent
+	 *            the parent of the field editor's control
+	 * @see AbstractEncodingFieldEditor#setGroupTitle(String)
+	 * @since 3.3
+	 */
+	public EncodingFieldEditor(String name, String labelText,
+			String groupTitle, Composite parent) {
+		super(name, labelText, groupTitle, parent);
+	}
 	/**
 	 * Create a new instance of the receiver on the preference called name
 	 * with a label of labelText.

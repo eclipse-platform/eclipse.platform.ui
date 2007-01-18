@@ -29,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.WorkbenchEncoding;
@@ -72,11 +73,49 @@ public final class ResourceEncodingFieldEditor extends
 	public ResourceEncodingFieldEditor(String labelText, Composite parent,
 			IResource charsetResource) {
 		super();
+		setLabelAndResource(labelText, charsetResource);
+		createControl(parent);
+	}
+	
+	/**
+	 * Creates a new encoding field editor for setting the encoding on the given
+	 * resource.
+	 * 
+	 * @param labelText
+	 *            the label text of the field editor
+	 * @param parent
+	 *            the parent of the field editor's control
+	 * @param charsetResource
+	 *            must be an <code>IContainer</code> or an <code>IFile</code>.
+	 *  @param groupTitle
+	 *  		  the title for the field editor's control. If groupTitle is 
+	 *            <code>null</code> the control will be unlabelled
+	 *            (by default a {@link Composite} instead of a {@link Group}.
+	 * 
+	 * @see org.eclipse.core.resources.IContainer#getDefaultCharset()
+	 * @see org.eclipse.core.resources.IFile#getCharset()
+	 * @see AbstractEncodingFieldEditor#setGroupTitle(String)
+	 * @since 3.3
+	 */
+	public ResourceEncodingFieldEditor(String labelText, Composite parent,
+			IResource charsetResource,String groupTitle) {
+		super();
+		setLabelAndResource(labelText, charsetResource);
+		setGroupTitle(groupTitle);
+		createControl(parent);
+	}
+
+	/**
+     * Set the label text and the resource we are editing.
+	 * @param labelText
+	 * @param charsetResource
+     * @since 3.3
+	 */
+	private void setLabelAndResource(String labelText, IResource charsetResource) {
 		Assert.isTrue(charsetResource instanceof IContainer
 				|| charsetResource instanceof IFile);
 		setLabelText(labelText);
 		this.resource = charsetResource;
-		createControl(parent);
 	}
 
 	/*
