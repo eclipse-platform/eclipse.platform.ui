@@ -51,7 +51,7 @@ public class SecondPage extends FormPage {
 		section.setActiveToggleColor(
 			toolkit.getHyperlinkGroup().getActiveForeground());
 		section.setToggleColor(
-			toolkit.getColors().getColor(FormColors.SEPARATOR));
+			toolkit.getColors().getColor(IFormColors.SEPARATOR));
 		//section.setTitleBarForeground(section.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		//section.setTitleBarGradientBackground(section.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 

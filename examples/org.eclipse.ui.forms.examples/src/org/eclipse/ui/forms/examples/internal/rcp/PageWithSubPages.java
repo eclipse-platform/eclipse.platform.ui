@@ -51,7 +51,7 @@ public class PageWithSubPages extends FormPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.heightHint = 0;
 		tabFolder.setLayoutData(gd);
-		Color selectedColor = toolkit.getColors().getColor(FormColors.SEPARATOR);
+		Color selectedColor = toolkit.getColors().getColor(IFormColors.SEPARATOR);
 		tabFolder.setSelectionBackground(new Color[] {selectedColor, toolkit.getColors().getBackground()}, new int[] {50});
 		//tabFolder.setCursor(FormsResources.getHandCursor());
 
