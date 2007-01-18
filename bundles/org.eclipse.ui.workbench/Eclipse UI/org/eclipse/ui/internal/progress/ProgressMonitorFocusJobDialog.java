@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -49,6 +50,8 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	public ProgressMonitorFocusJobDialog(Shell parentShell) {
 		super(parentShell == null ? ProgressManagerUtil.getNonModalShell()
 				: parentShell);
+		setShellStyle(getDefaultOrientation() | SWT.BORDER | SWT.TITLE
+				| SWT.MODELESS); 
 		setCancelable(true);
 		enableDetailsButton = true;
 	}
