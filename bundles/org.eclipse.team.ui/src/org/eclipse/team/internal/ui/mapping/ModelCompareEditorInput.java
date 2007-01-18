@@ -275,4 +275,24 @@ public class ModelCompareEditorInput extends SaveableCompareEditorInput implemen
 		}
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj instanceof ModelCompareEditorInput) {
+			ModelCompareEditorInput other = (ModelCompareEditorInput) obj;
+			return other.input.equals(input) && other.participant.equals(participant);
+		}
+		return false;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return input.hashCode();
+	}
 }

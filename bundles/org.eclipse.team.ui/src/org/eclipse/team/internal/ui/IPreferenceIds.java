@@ -47,6 +47,7 @@ public interface IPreferenceIds {
 	 * Preference to enable the presence of the author field in a compare editor
 	 */
 	public static final String MAKE_FILE_WRITTABLE_IF_CONTEXT_MISSING = PREFIX + "validate_edit_with_no_context"; //$NON-NLS-1$
+	public static final String REUSE_OPEN_COMPARE_EDITOR= PREFIX + "reuse_open_compare_editors"; //$NON-NLS-1$
 	
 	/*
 	 * Preference to manage the perspective used to synchronize.

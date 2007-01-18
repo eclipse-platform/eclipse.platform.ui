@@ -230,7 +230,7 @@ public class LocalResourceTypedElement extends ResourceNode implements IAdaptabl
 		if (other instanceof LocalResourceTypedElement) {
 			LocalResourceTypedElement otherElement = (LocalResourceTypedElement) other;
 			return otherElement.getResource().equals(getResource()) 
-				&& (otherElement.getTimestamp() == getTimestamp() || (!exists && !otherElement.exists));
+				&& exists == otherElement.exists;
 		}
 		return super.equals(other);
 	}

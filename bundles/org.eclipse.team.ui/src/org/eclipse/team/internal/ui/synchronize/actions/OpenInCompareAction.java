@@ -23,7 +23,7 @@ import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.mapping.ModelCompareEditorInput;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.ui.mapping.ISynchronizationCompareInput;
@@ -152,7 +152,7 @@ public class OpenInCompareAction extends Action {
     public static void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
         if (page == null || input == null) 
             return;
-        IEditorPart editor = findReusableCompareEditor(page);
+        IEditorPart editor = findReusableCompareEditor(input, page);
         if(editor != null) {
         	IEditorInput otherInput = editor.getEditorInput();
         	if(otherInput.equals(input)) {
@@ -171,22 +171,26 @@ public class OpenInCompareAction extends Action {
 	/**
 	 * Returns an editor that can be re-used. An open compare editor that
 	 * has un-saved changes cannot be re-used.
+	 * @param input the input being opened
 	 * @param page 
 	 * @return the open editor
 	 */
-	public static IEditorPart findReusableCompareEditor(IWorkbenchPage page) {
+	public static IEditorPart findReusableCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
+		IEditorPart targetPart = null;
 		IEditorReference[] editorRefs = page.getEditorReferences();	
 		for (int i = 0; i < editorRefs.length; i++) {
 			IEditorPart part = editorRefs[i].getEditor(false);
 			if(part != null 
 					&& (part.getEditorInput() instanceof SyncInfoCompareInput || part.getEditorInput() instanceof ModelCompareEditorInput) 
 					&& part instanceof IReusableEditor) {
-				if(! part.isDirty()) {	
-					return part;	
+				if (part.getEditorInput().equals(input))
+					return part;
+				if(! part.isDirty() && isReuseOpenEditor()) {	
+					targetPart= part;	
 				}
 			}
 		}
-		return null;
+		return targetPart;
 	}
 
 	/**
@@ -243,5 +247,9 @@ public class OpenInCompareAction extends Action {
 			}
 		}
 		return null;
+	}
+	
+	private static boolean isReuseOpenEditor() {
+		return TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.REUSE_OPEN_COMPARE_EDITOR);
 	}
 }
