@@ -558,7 +558,7 @@ to
 demonstrates the use of commands, perform-when and conditional subitems.&lt;/p&gt;
 
 &lt;pre&gt; 
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?/&gt; 
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; 
 &lt;cheatsheet title=&quot;Sample Cheat Sheet&quot;&gt;
   &lt;intro&gt;
     &lt;description&gt;A cheat sheet which demonstrates the use of perform-when and conditional subitems&lt;/description&gt;

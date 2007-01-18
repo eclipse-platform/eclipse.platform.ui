@@ -2,8 +2,8 @@
 <HTML>
 <HEAD><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <title>Cheat Sheet Content File XML Format</title>
-<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-I20061214-0010-win32/eclipse/plugins/org.eclipse.sdk_3.3.0.v20061211/book.css");</style>
-<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-I20061214-0010-win32/eclipse/configuration/org.eclipse.osgi/bundles/74/1/.cp/schema.css");</style>
+<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-N20070118-0010-win32/eclipse/plugins/org.eclipse.sdk_3.3.0.N20070118-0010/book.css");</style>
+<style>@import url("file:/E:/EclipseBuilds/eclipse-SDK-N20070118-0010-win32/eclipse/configuration/org.eclipse.osgi/bundles/76/1/.cp/schema.css");</style>
 </HEAD>
 <BODY>
 <H1><CENTER>Cheat Sheet Content File XML Format</CENTER></H1>
@@ -13,7 +13,10 @@
 <p></p>
 
 <p>
-<h6 class=CaptionFigColumn id=header>Description: </h6>The schema definition for a cheat sheet content file. A cheat sheet consists of a series of items (steps) which must be completed in order. Items can be divided into subitems and can launch commands or actions which will perform some of the steps for the user.</p>
+<h6 class=CaptionFigColumn id=header>Description: </h6><p>This document describes the cheat sheet content file structure as a series of
+DTD fragments (<a href="cheatSheetContentFileSpec.exsd">machine readable XML schema</a>).</p>
+
+<p>A cheat sheet consists of a series of items (steps) which must be completed in order. Items can be divided into subitems and can launch commands or actions which will perform some of the steps for the user.</p></p>
 <p><h6 class=CaptionFigColumn id=header>Configuration Markup:</h6></p>
 <p class=code id=dtd>&lt;!ELEMENT <a name="e.cheatsheet">cheatsheet</a> (<a href="#e.intro">intro</a> , <a href="#e.item">item</a>+)&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST cheatsheet</p>
@@ -211,7 +214,7 @@ then the item expands to something equivalent to:
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.action">action</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST action</p>
-<p class=code id=dtdAttlist>class&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>pluginId&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>paramN&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class=code id=dtdAttlist>class&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>pluginId&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>paramN&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;(true | false) "true"&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 Each &lt;action&gt; element describes an action in a cheat sheet.</p>
@@ -244,10 +247,11 @@ Each &lt;action&gt; element describes an action in a cheat sheet.</p>
     of the condition attribute of the containing &lt;perform-when&gt; element
     matches this string value. This attribute is ignored if the &lt;action&gt;
     element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
+<li><b>required</b> - if "true" this item or subitem can only be completed by performing this action (it may still be skipped if skip="true"). If "false" two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.command">command</a> EMPTY&gt;</p>
 <p class=code id=dtd>&lt;!ATTLIST command</p>
-<p class=code id=dtdAttlist>serialization&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class=code id=dtdAttlist>serialization&nbsp;CDATA #REQUIRED<p class=code id=dtdAttlist>returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class=code id=dtdAttlist>when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class=code id=dtdAttlist>required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "true"&gt;</p>
 <p></p>
 <p class=ConfigMarkup id=elementDesc>
 <p>Each &lt;command&gt; element describes an command in a cheat sheet.
@@ -277,6 +281,7 @@ stores the result in the cheat sheet variable &quot;result&quot;.</p>
     of the condition attribute of the containing &lt;perform-when&gt; element
     matches this string value. This attribute is ignored if the &lt;command&gt;
     element is not a child of&nbsp; a &lt;perform-when&gt; element.</li>
+<li><b>required</b> - if "true" this item or subitem can only be completed by performing this command (it may still be skipped if skip="true"). If "false" two buttons will be created, one to perform the task and one to mark it as complete, either will complete this step or substep.</li>
 </ul>
 <br><p class=code id=dtd>&lt;!ELEMENT <a name="e.onCompletion">onCompletion</a> (#PCDATA)&gt;</p>
 <p></p>
@@ -335,7 +340,7 @@ to
 demonstrates the use of commands, perform-when and conditional subitems.</p>
 
 <pre> 
-<p class=code id=tag>&lt;?xml version=<p class=code id=cstring>&quot;1.0&quot;</p><p class=code id=tag> encoding=<p class=code id=cstring>&quot;UTF-8&quot;</p><p class=code id=tag>?/&gt;</p> 
+<p class=code id=tag>&lt;?xml version=<p class=code id=cstring>&quot;1.0&quot;</p><p class=code id=tag> encoding=<p class=code id=cstring>&quot;UTF-8&quot;</p><p class=code id=tag>?&gt;</p> 
 <p class=code id=tag>&lt;cheatsheet title=<p class=code id=cstring>&quot;Sample Cheat Sheet&quot;</p><p class=code id=tag>&gt;</p>
   <p class=code id=tag>&lt;intro&gt;</p>
     <p class=code id=tag>&lt;description&gt;</p>A cheat sheet which demonstrates the use of perform-when and conditional subitems<p class=code id=tag>&lt;/description&gt;</p>
