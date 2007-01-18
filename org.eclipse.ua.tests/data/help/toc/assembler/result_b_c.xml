@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="B">
-	<topic label="B_topic1" href="/org.eclipse.ua.tests/B_topic1.html">
-		<topic label="B_topic2" href="/org.eclipse.ua.tests/B_topic2.html"/>
-		<topic label="C_topic" href="/org.eclipse.ua.tests/C_topic.html"/>
-	</topic>
-	<topic label="B_topic3" href="/org.eclipse.ua.tests/B_topic3.html">
-		<filter name="os" value="!invalid"/>
-	</topic>
+<toc href="/org.eclipse.ua.tests/data/help/toc/assembler/b.xml" label="B">
+   <topic href="/org.eclipse.ua.tests/B_topic1.html" label="B_topic1">
+      <topic href="/org.eclipse.ua.tests/B_topic2.html" label="B_topic2"/>
+      <topic href="/org.eclipse.ua.tests/C_topic.html" label="C_topic"/>
+   </topic>
+   <topic href="/org.eclipse.ua.tests/B_topic3.html" label="B_topic3">
+      <filter name="os" value="!invalid"/>
+   </topic>
 </toc>
