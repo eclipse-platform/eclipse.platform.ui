@@ -26,8 +26,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.IMessageContainer;
+import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 /**
  * @see IMessageManager
@@ -36,7 +37,7 @@ import org.eclipse.ui.forms.IMessageManager;
 public class MessageManager implements IMessageManager {
 	private ArrayList messages = new ArrayList();
 	private Hashtable decorators = new Hashtable();
-	private IMessageContainer messageContainer;
+	private ScrolledForm scrolledForm;
 	private static FieldDecoration standardError = FieldDecorationRegistry
 			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 	private static FieldDecoration standardWarning = FieldDecorationRegistry
@@ -55,16 +56,19 @@ public class MessageManager implements IMessageManager {
 			Messages.MessageManager_pWarningSummary,
 			Messages.MessageManager_pErrorSummary };
 
-	class Message {
+	static class Message implements IMessage {
+		Control control;
+		Object data;
 		Object key;
 		String message;
 		int type;
 		String prefix;
 
-		Message(Object key, String message, int type) {
+		Message(Object key, String message, int type, Object data) {
 			this.key = key;
 			this.message = message;
 			this.type = type;
+			this.data = data;
 		}
 
 		/*
@@ -94,28 +98,42 @@ public class MessageManager implements IMessageManager {
 			return type;
 		}
 
-		String getFullMessage() {
-			if (prefix == null)
-				return message;
-			return prefix + message;
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.forms.messages.IMessage#getControl()
+		 */
+		public Control getControl() {
+			return control;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.forms.messages.IMessage#getData()
+		 */
+		public Object getData() {
+			return data;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.forms.messages.IMessage#getPrefix()
+		 */
+		public String getPrefix() {
+			return prefix;
+		}
 	}
 
-	class ControlDecorator implements IMessageContainer {
+	class ControlDecorator {
 		private ControlDecoration decoration;
 		private ArrayList controlMessages = new ArrayList();
-		private String message;
-		private int type;
 		private String prefix;
 
 		ControlDecorator(Control control) {
 			this.decoration = new ControlDecoration(control, SWT.LEFT
 					| SWT.BOTTOM);
-		}
-
-		public void dispose() {
-			decoration.dispose();
 		}
 
 		public boolean isDisposed() {
@@ -154,71 +172,41 @@ public class MessageManager implements IMessageManager {
 			target.addAll(controlMessages);
 		}
 
-		void addMessage(Object key, String text, int type) {
-			MessageManager.this.addMessage(getPrefix(), key, text, type,
-					controlMessages);
-			updateMessageContainer(this, controlMessages, true);
-		}
-
-		void removeMessage(Object key) {
-			Message message = findMessage(key, controlMessages);
-			if (message != null) {
-				controlMessages.remove(message);
-				updateMessageContainer(this, controlMessages, true);
-			}
-		}
-
-		void removeMessages() {
-			controlMessages.clear();
-			updateMessageContainer(this, controlMessages, true);
-		}
-
-		boolean isEmpty() {
-			return controlMessages.isEmpty();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.IMessageContainer#setMessage(java.lang.String,
-		 *      int)
-		 */
-		public void setMessage(String newMessage, String details, int newType) {
-			if (this.message != null && newMessage != null
-					&& newMessage.equals(this.message) && newType == this.type)
-				return;
-			this.message = newMessage;
-			this.type = newType;
+		void addMessage(Object key, String text, Object data, int type) {
+			Message message = MessageManager.this.addMessage(getPrefix(), key,
+					text, data, type, controlMessages);
+			message.control = decoration.getControl();
 			update();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessage()
-		 */
-		public String getMessage() {
-			return message;
+		boolean removeMessage(Object key) {
+			Message message = findMessage(key, controlMessages);
+			if (message != null) {
+				controlMessages.remove(message);
+				update();
+			}
+			return message != null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
-		 */
-		public int getMessageType() {
-			return type;
+		boolean removeMessages() {
+			if (controlMessages.isEmpty())
+				return false;
+			controlMessages.clear();
+			update();
+			return true;
 		}
 
 		private void update() {
-			if (message == null)
+			if (controlMessages.isEmpty())
 				decoration.hide();
 			else {
+				int type = ((IMessage) controlMessages.get(0)).getMessageType();
+				String description = createDetails(controlMessages, true);
 				if (type == IMessageProvider.ERROR)
 					decoration.setImage(standardError.getImage());
 				else if (type == IMessageProvider.WARNING)
 					decoration.setImage(standardWarning.getImage());
-				decoration.setDescriptionText(message);
+				decoration.setDescriptionText(description);
 				decoration.show();
 			}
 		}
@@ -226,13 +214,13 @@ public class MessageManager implements IMessageManager {
 
 	/**
 	 * Creates a new instance of the message manager that will work with the
-	 * provided message container.
+	 * provided form.
 	 * 
-	 * @param messageContainer
-	 *            the container to control
+	 * @param scrolledForm
+	 *            the form to control
 	 */
-	public MessageManager(IMessageContainer messageContainer) {
-		this.messageContainer = messageContainer;
+	public MessageManager(ScrolledForm scrolledForm) {
+		this.scrolledForm = scrolledForm;
 	}
 
 	/*
@@ -241,8 +229,8 @@ public class MessageManager implements IMessageManager {
 	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
 	 *      java.lang.String, int)
 	 */
-	public void addMessage(Object key, String messageText, int type) {
-		addMessage(null, key, messageText, type, messages);
+	public void addMessage(Object key, String messageText, Object data, int type) {
+		addMessage(null, key, messageText, data, type, messages);
 		update();
 	}
 
@@ -252,15 +240,15 @@ public class MessageManager implements IMessageManager {
 	 * @see org.eclipse.ui.forms.IMessageManager#addMessage(java.lang.Object,
 	 *      java.lang.String, int, org.eclipse.swt.widgets.Control)
 	 */
-	public void addMessage(Object key, String messageText, int type,
-			Control control) {
+	public void addMessage(Object key, String messageText, Object data,
+			int type, Control control) {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 
 		if (dec == null) {
 			dec = new ControlDecorator(control);
 			decorators.put(control, dec);
 		}
-		dec.addMessage(key, messageText, type);
+		dec.addMessage(key, messageText, data, type);
 		update();
 	}
 
@@ -283,8 +271,10 @@ public class MessageManager implements IMessageManager {
 	 * @see org.eclipse.ui.forms.IMessageManager#removeMessages()
 	 */
 	public void removeMessages() {
-		messages.clear();
-		update();
+		if (!messages.isEmpty()) {
+			messages.clear();
+			update();
+		}
 	}
 
 	/*
@@ -297,8 +287,8 @@ public class MessageManager implements IMessageManager {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
 		if (dec == null)
 			return;
-		dec.removeMessage(key);
-		update();
+		if (dec.removeMessage(key))
+			update();
 	}
 
 	/*
@@ -308,8 +298,11 @@ public class MessageManager implements IMessageManager {
 	 */
 	public void removeMessages(Control control) {
 		ControlDecorator dec = (ControlDecorator) decorators.get(control);
-		dec.removeMessages();
-		update();
+		if (dec != null) {
+			if (dec.removeMessages()) {
+				update();
+			}
+		}
 	}
 
 	/*
@@ -318,29 +311,37 @@ public class MessageManager implements IMessageManager {
 	 * @see org.eclipse.ui.forms.IMessageManager#removeAllMessages()
 	 */
 	public void removeAllMessages() {
+		boolean needsUpdate = false;
 		for (Enumeration enm = decorators.elements(); enm.hasMoreElements();) {
 			ControlDecorator control = (ControlDecorator) enm.nextElement();
-			control.removeMessages();
+			if (control.removeMessages())
+				needsUpdate = true;
 		}
-		messages.clear();
-		update();
+		if (!messages.isEmpty()) {
+			messages.clear();
+			needsUpdate = true;
+		}
+		if (needsUpdate)
+			update();
 	}
 
 	/*
 	 * Adds the message if it does not already exist in the provided list.
 	 */
 
-	private void addMessage(String prefix, Object key, String messageText,
-			int type, ArrayList list) {
+	private Message addMessage(String prefix, Object key, String messageText,
+			Object data, int type, ArrayList list) {
 		Message message = findMessage(key, list);
 		if (message == null) {
-			message = new Message(key, messageText, type);
+			message = new Message(key, messageText, type, data);
 			message.prefix = prefix;
 			list.add(message);
 		} else {
 			message.message = messageText;
 			message.type = type;
+			message.data = data;
 		}
+		return message;
 	}
 
 	/*
@@ -368,26 +369,47 @@ public class MessageManager implements IMessageManager {
 			ControlDecorator dec = (ControlDecorator) enm.nextElement();
 			dec.addAll(mergedList);
 		}
-		updateMessageContainer(messageContainer, mergedList, false);
+		update(mergedList);
 	}
 
-	/*
-	 * This method works with a generic message container when a list of
-	 * messages of various types need to be shown. The messages with the highest
-	 * type are picked first. If there are more than one with this type, a
-	 * multiple message is constructed; otherwise, the message is used as-is.
-	 */
-
-	private void updateMessageContainer(IMessageContainer container,
-			ArrayList messages, boolean showAll) {
+	private void update(ArrayList mergedList) {
 		pruneControlDecorators();
-		if (messages.isEmpty() || messages == null) {
-			container.setMessage(null, null, IMessageProvider.NONE);
+		if (mergedList.isEmpty() || mergedList == null) {
+			scrolledForm.setMessage(null, IMessageProvider.NONE);
 			return;
 		}
-		int maxType = 0;
-		// create a subset of messages with the highest type
+		ArrayList peers = createPeers(mergedList);
+		int maxType = ((IMessage) peers.get(0)).getMessageType();
+		String messageText;
+		IMessage[] array = (IMessage[]) peers.toArray(new IMessage[peers
+		                                       					.size()]);
+		if (peers.size() == 1 && ((Message) peers.get(0)).prefix == null) {
+			// a single message
+			IMessage message = (IMessage)peers.get(0);
+			messageText = message.getMessage();
+			scrolledForm.setMessage(messageText, maxType, array); 
+		} else {
+			// show a summary message for the message
+			// and list of errors for the details
+			if (peers.size() > 1)
+				messageText = Messages.bind(
+						MULTIPLE_MESSAGE_SUMMARY_KEYS[maxType],
+						new String[] { peers.size() + "" }); //$NON-NLS-1$
+			else
+				messageText = SINGLE_MESSAGE_SUMMARY_KEYS[maxType];
+			scrolledForm.setMessage(messageText, maxType, array);
+		}
+	}
+
+	private static String getFullMessage(IMessage message) {
+		if (message.getPrefix() == null)
+			return message.getMessage();
+		return message.getPrefix() + message.getMessage();
+	}
+
+	private ArrayList createPeers(ArrayList messages) {
 		ArrayList peers = new ArrayList();
+		int maxType = 0;
 		for (int i = 0; i < messages.size(); i++) {
 			Message message = (Message) messages.get(i);
 			if (message.type > maxType) {
@@ -397,39 +419,42 @@ public class MessageManager implements IMessageManager {
 			if (message.type == maxType)
 				peers.add(message);
 		}
-		String messageText;
-		String details = null;
-		if (peers.size() == 1 && ((Message) peers.get(0)).prefix == null) {
-			// a single message
-			messageText = ((Message) peers.get(0)).message;
-		} else {
-			StringWriter sw = new StringWriter();
-			PrintWriter out = new PrintWriter(sw);
-			// StringBuffer sw = new StringBuffer();
-			for (int i = 0; i < peers.size(); i++) {
-				if (i > 0)
-					out.println();
-				Message m = (Message) peers.get(i);
-				out.print(showAll ? m.message : m.getFullMessage());
-			}
-			out.flush();
-			if (showAll)
-				messageText = sw.toString();
-			else {
-				// show a summary message for the message
-				// and list of errors for the details
-				if (peers.size() > 1)
-					messageText = Messages.bind(
-							MULTIPLE_MESSAGE_SUMMARY_KEYS[maxType],
-							new String[] { peers.size() + "" }); //$NON-NLS-1$
-				else
-					messageText = SINGLE_MESSAGE_SUMMARY_KEYS[maxType];
-				details = sw.toString();
-			}
-		}
-		container.setMessage(messageText, details, maxType);
+		return peers;
 	}
 
+	private String createDetails(ArrayList messages, boolean excludePrefix) {
+		StringWriter sw = new StringWriter();
+		PrintWriter out = new PrintWriter(sw);
+
+		for (int i = 0; i < messages.size(); i++) {
+			if (i > 0)
+				out.println();
+			IMessage m = (IMessage) messages.get(i);
+			out.print(excludePrefix ? m.getMessage() : getFullMessage(m));
+		}
+		out.flush();
+		return sw.toString();
+	}
+
+	public static String createDetails(IMessage[] messages) {
+		if (messages == null || messages.length == 0)
+			return null;
+		StringWriter sw = new StringWriter();
+		PrintWriter out = new PrintWriter(sw);
+
+		for (int i = 0; i < messages.length; i++) {
+			if (i > 0)
+				out.println();
+			out.print(getFullMessage(messages[i]));
+		}
+		out.flush();
+		return sw.toString();
+	}
+	
+	public String createSummary(IMessage[] messages) {
+		return createDetails(messages);
+	}
+	
 	private void pruneControlDecorators() {
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();

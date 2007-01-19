@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.forms.IFormColors;
-import org.eclipse.ui.forms.IMessageContainer;
+import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.internal.forms.widgets.FormHeading;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
@@ -82,7 +82,7 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * 
  * @since 3.0
  */
-public class Form extends Composite implements IMessageContainer {
+public class Form extends Composite {
 	private FormHeading head;
 
 	private Composite body;
@@ -336,6 +336,31 @@ public class Form extends Composite implements IMessageContainer {
 	}
 
 	/**
+	 * Sets the tool bar vertical alignment relative to the header. Can be
+	 * useful when there is more free space at the second row (with the head
+	 * client).
+	 * 
+	 * @param alignment
+	 *            SWT.TOP or SWT.BOTTOM
+	 * @since 3.3
+	 */
+
+	public void setToolBarVerticalAlignment(int alignment) {
+		head.setToolBarAlignment(alignment);
+	}
+
+	/**
+	 * Returns the current tool bar alignment (if used).
+	 * 
+	 * @return SWT.TOP or SWT.BOTTOM
+	 * @since 3.3
+	 */
+
+	public int getToolBarVerticalAlignment() {
+		return head.getToolBarAlignment();
+	}
+
+	/**
 	 * Returns the menu manager that is used to manage title area drop-down menu
 	 * items.
 	 * 
@@ -521,7 +546,8 @@ public class Form extends Composite implements IMessageContainer {
 	 *            the color to render the head separator or <code>null</code>
 	 *            to use the default color.
 	 * @since 3.2
-	 * @deprecated use <code>setHeadColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor)</code>
+	 * @deprecated use
+	 *             <code>setHeadColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor)</code>
 	 */
 	public void setSeparatorColor(Color separatorColor) {
 		head.putColor(IFormColors.H_BOTTOM_KEYLINE2, separatorColor);
@@ -562,11 +588,31 @@ public class Form extends Composite implements IMessageContainer {
 	 * @param message
 	 *            the message, or <code>null</code> to clear the message
 	 * @see #setMessage(String, int)
-	 * @deprecated use {@link #setMessage(String, int)}
 	 * @since 3.2
 	 */
 	public void setMessage(String message) {
-		this.setMessage(message, 0);
+		this.setMessage(message, 0, null);
+	}
+
+	/**
+	 * Sets the message for this form with an indication of what type of message
+	 * it is.
+	 * <p>
+	 * The valid message types are one of <code>NONE</code>,
+	 * <code>INFORMATION</code>,<code>WARNING</code>, or
+	 * <code>ERROR</code> defined in IMessageProvider interface.
+	 * </p>
+	 * 
+	 * @param newMessage
+	 *            the message, or <code>null</code> to clear the message
+	 * @param newType
+	 *            the message type
+	 * @see org.eclipse.jface.dialogs.IMessageProvider
+	 * @since 3.2
+	 */
+
+	public void setMessage(String newMessage, int newType) {
+		this.setMessage(newMessage, newType, null);
 	}
 
 	/**
@@ -578,17 +624,24 @@ public class Form extends Composite implements IMessageContainer {
 	 * <code>ERROR</code> defined in IMessageProvider interface.
 	 * </p>
 	 * <p>
+	 * In addition to the summary message, this method also sets an array of
+	 * individual messages.
+	 * 
 	 * 
 	 * @param newMessage
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
 	 *            the message type
+	 * @param children
+	 *            the individual messages that contributed to the overall
+	 *            message
 	 * @see org.eclipse.jface.dialogs.IMessageProvider
-	 * @since 3.2
+	 * @since 3.3
 	 */
 
-	public void setMessage(String newMessage, int newType) {
-		setMessage(newMessage, null, newType);
+	public void setMessage(String newMessage, int newType, IMessage[] children) {
+		head.showMessage(newMessage, newType, children);
+		layout();
 	}
 
 	/**
@@ -679,11 +732,6 @@ public class Form extends Composite implements IMessageContainer {
 	public void addTitleDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {
 		head.addDropSupport(operations, transferTypes, listener);
-	}
-
-	public void setMessage(String message, String details, int type) {
-		head.setMessage(message, details, type);
-		layout();
 	}
 
 	/*

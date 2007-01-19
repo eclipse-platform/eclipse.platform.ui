@@ -58,7 +58,7 @@ import org.eclipse.ui.forms.widgets.Section;
  */
 public class NewStylePage extends FormPage {
 	private static final String SHORT_TITLE = "Short Title";
-	private static final String LONG_TITLE = "This title is longer and will compete with other header regions";
+	private static final String LONG_TITLE = "This title is somewhat longer";
 	private static final String SHORT_MESSAGE = "A short {0} message";
 	private static final String LONG_MESSAGE = "This {0} message is longer and will also compete with other header regions";
 	private static final String[] MESSAGE_NAMES = { "text", "info", "warning",
@@ -142,9 +142,23 @@ public class NewStylePage extends FormPage {
 
 		final Button tbbutton = toolkit.createButton(client, "Add tool bar",
 				SWT.CHECK);
+		
+		final Button albutton = toolkit.createButton(client, "Set tool bar allignment to SWT.BOTTOM",
+				SWT.CHECK);
+		albutton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				form.getForm().setToolBarVerticalAlignment(albutton.getSelection()?SWT.BOTTOM:SWT.TOP);
+				form.reflow(true);
+			}
+		});
+		gd = new GridData();
+		gd.horizontalIndent = 10;
+		albutton.setLayoutData(gd);
+		albutton.setEnabled(false);
 		tbbutton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				addToolBar(toolkit, form, tbbutton.getSelection());
+				albutton.setEnabled(tbbutton.getSelection());
 			}
 		});
 

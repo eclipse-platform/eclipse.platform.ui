@@ -44,10 +44,12 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.forms.IFormColors;
+import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ILayoutExtension;
 import org.eclipse.ui.forms.widgets.SizeCache;
+import org.eclipse.ui.internal.forms.MessageManager;
 
 /**
  * Form header moved out of the form class.
@@ -61,6 +63,7 @@ public class FormHeading extends Canvas {
 	private static final int CLIENT_MARGIN = 1;
 
 	private static final int SEPARATOR = 1 << 1;
+	private static final int BOTTOM_TOOLBAR = 1 << 2;
 	private static final int SEPARATOR_HEIGHT = 2;
 	private static final int MESSAGE_AREA_LIMIT = 50;
 
@@ -136,8 +139,11 @@ public class FormHeading extends Canvas {
 			if (headClient != null) {
 				clientCache.setControl(headClient);
 				int cwhint = width;
-				if (cwhint != SWT.DEFAULT)
+				if (cwhint != SWT.DEFAULT) {
 					cwhint -= HMARGIN * 2;
+					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+						cwhint -= tbsize.x + SPACING;
+				}
 				clsize = clientCache.computeSize(cwhint, SWT.DEFAULT);
 			}
 			int totalFlexWidth = width;
@@ -145,58 +151,55 @@ public class FormHeading extends Canvas {
 			if (totalFlexWidth != SWT.DEFAULT) {
 				totalFlexWidth -= TITLE_HMARGIN * 2;
 				// complete right margin
-				if (hasToolBar() || hasMessageRegion())
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP
+						|| hasMessageRegion())
 					totalFlexWidth -= SPACING;
 				// subtract tool bar
-				if (hasToolBar())
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
 					totalFlexWidth -= tbsize.x + SPACING;
 				flexWidth = totalFlexWidth;
 				if (hasMessageRegion()) {
 					// remove message region spacing and divide by 2
 					flexWidth -= SPACING;
-					//flexWidth /= 2;
+					// flexWidth /= 2;
 				}
 			}
-/*
-			// compute text and message sizes
-			tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
-			if (flexWidth != SWT.DEFAULT && tsize.x < flexWidth)
-				flexWidth += flexWidth - tsize.x;
-
-			if (hasMessageRegion()) {
-				messageCache.setControl(messageRegion.getMessageControl());
-				msize = messageCache.computeSize(flexWidth, SWT.DEFAULT);
-				int maxWidth = messageCache.computeSize(SWT.DEFAULT,
-						SWT.DEFAULT).x;
-				if (maxWidth < msize.x) {
-					msize.x = maxWidth;
-					// recompute title with the reclaimed width
-					int tflexWidth = totalFlexWidth - SPACING - msize.x;
-					tsize = titleRegion.computeSize(tflexWidth, SWT.DEFAULT);
-				}
-			}
-*/	
+			/*
+			 * // compute text and message sizes tsize =
+			 * titleRegion.computeSize(flexWidth, SWT.DEFAULT); if (flexWidth !=
+			 * SWT.DEFAULT && tsize.x < flexWidth) flexWidth += flexWidth -
+			 * tsize.x;
+			 * 
+			 * if (hasMessageRegion()) {
+			 * messageCache.setControl(messageRegion.getMessageControl()); msize =
+			 * messageCache.computeSize(flexWidth, SWT.DEFAULT); int maxWidth =
+			 * messageCache.computeSize(SWT.DEFAULT, SWT.DEFAULT).x; if
+			 * (maxWidth < msize.x) { msize.x = maxWidth; // recompute title
+			 * with the reclaimed width int tflexWidth = totalFlexWidth -
+			 * SPACING - msize.x; tsize = titleRegion.computeSize(tflexWidth,
+			 * SWT.DEFAULT); } }
+			 */
 			if (!hasMessageRegion()) {
 				tsize = titleRegion.computeSize(flexWidth, SWT.DEFAULT);
-			}
-			else {
+			} else {
 				// Total flexible area in the first row is flexWidth.
-				// Try natural widths of title and 
-				Point tsizeNatural = titleRegion.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				// Try natural widths of title and
+				Point tsizeNatural = titleRegion.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
 				messageCache.setControl(messageRegion.getMessageControl());
-				Point msizeNatural = messageCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+				Point msizeNatural = messageCache.computeSize(SWT.DEFAULT,
+						SWT.DEFAULT);
 				// try to fit all
 				tsize = tsizeNatural;
 				msize = msizeNatural;
-				if (flexWidth!=SWT.DEFAULT) {
+				if (flexWidth != SWT.DEFAULT) {
 					int needed = tsizeNatural.x + msizeNatural.x;
-					if (needed>flexWidth) {
-						//too big - try to limit the message
-						int mwidth = flexWidth-tsizeNatural.x;
-						if (mwidth>=MESSAGE_AREA_LIMIT) {
+					if (needed > flexWidth) {
+						// too big - try to limit the message
+						int mwidth = flexWidth - tsizeNatural.x;
+						if (mwidth >= MESSAGE_AREA_LIMIT) {
 							msize.x = mwidth;
-						}
-						else {
+						} else {
 							// message is squeezed to the limit
 							int flex = flexWidth - MESSAGE_AREA_LIMIT;
 							tsize = titleRegion.computeSize(flex, SWT.DEFAULT);
@@ -205,7 +208,7 @@ public class FormHeading extends Canvas {
 					}
 				}
 			}
-		
+
 			Point size = new Point(width, height);
 			if (!move) {
 				// compute sizes
@@ -213,26 +216,34 @@ public class FormHeading extends Canvas {
 				width1 += tsize.x;
 				if (msize != null)
 					width1 += SPACING + msize.x;
-				if (tbsize != null)
+				if (tbsize != null && getToolBarAlignment() == SWT.TOP)
 					width1 += SPACING + tbsize.x;
-				if (msize != null || tbsize != null)
+				if (msize != null
+						|| (tbsize != null && getToolBarAlignment() == SWT.TOP))
 					width1 += SPACING;
 				size.x = width1;
 				if (clsize != null) {
-					int width2 = clsize.x + 2 * HMARGIN;
+					int width2 = clsize.x;
+					if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+						width2 += SPACING + tbsize.x;
+					width2 += 2 * HMARGIN;
 					size.x = Math.max(width1, width2);
 				}
 				// height, first row
 				size.y = tsize.y;
 				if (msize != null)
 					size.y = Math.max(msize.y, size.y);
-				if (tbsize != null)
+				if (tbsize != null && getToolBarAlignment() == SWT.TOP)
 					size.y = Math.max(tbsize.y, size.y);
 				if (size.y > 0)
 					size.y += VMARGIN * 2;
 				// add second row
+				int height2 = 0;
+				if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM)
+					height2 = tbsize.y;
 				if (clsize != null)
-					size.y += VSPACING + clsize.y + CLIENT_MARGIN;
+					height2 = Math.max(height2, clsize.y);
+				size.y += VSPACING + height2 + CLIENT_MARGIN;
 				// add separator
 				if (isSeparatorVisible())
 					size.y += SEPARATOR_HEIGHT;
@@ -243,7 +254,7 @@ public class FormHeading extends Canvas {
 				int row1Height = tsize.y;
 				if (hasMessageRegion())
 					row1Height = Math.max(row1Height, msize.y);
-				if (hasToolBar())
+				if (hasToolBar() && getToolBarAlignment() == SWT.TOP)
 					row1Height = Math.max(row1Height, tbsize.y);
 				titleRegion.setBounds(xloc,
 				// yloc + row1Height / 2 - tsize.y / 2,
@@ -267,22 +278,29 @@ public class FormHeading extends Canvas {
 									msize.x, msize.y);
 					xloc += msize.x;
 				}
-				if (toolBarManager != null) {
+				if (toolBarManager != null)
+					toolBarManager.getControl().setVisible(
+							!toolBarManager.isEmpty());
+				if (tbsize != null && getToolBarAlignment() == SWT.TOP) {
 					ToolBar tbar = toolBarManager.getControl();
-					tbar.setVisible(!toolBarManager.isEmpty());
-					if (tbar.isVisible())
-						tbar.setBounds(x + width - 1 - tbsize.x - HMARGIN,
-						// yloc + row1Height / 2 - tbsize.y / 2,
-						yloc + row1Height -1 - tbsize.y, tbsize.x, tbsize.y);
+					tbar.setBounds(x + width - 1 - tbsize.x - HMARGIN, yloc
+							+ row1Height - 1 - tbsize.y, tbsize.x, tbsize.y);
 				}
 				// second row
 				xloc = HMARGIN;
 				yloc += row1Height + VSPACING;
-				if (headClient != null) {
-					headClient.setBounds(xloc, yloc, width - HMARGIN * 2,
-							clsize.y);
-				}
+				int tw = 0;
 
+				if (tbsize != null && getToolBarAlignment() == SWT.BOTTOM) {
+					ToolBar tbar = toolBarManager.getControl();
+					tbar.setBounds(x + width - 1 - tbsize.x - HMARGIN, yloc,
+							tbsize.x, tbsize.y);
+					tw = tbsize.x + SPACING;
+				}
+				if (headClient != null) {
+					int carea = width - HMARGIN * 2 - tw;
+					headClient.setBounds(xloc, yloc, carea, clsize.y);
+				}
 			}
 			return size;
 		}
@@ -329,10 +347,10 @@ public class FormHeading extends Canvas {
 				fontHeight = gc.getFontMetrics().getHeight();
 				gc.dispose();
 			}
-			return needHyperlink()?fontHeight:fontHeight+2;
+			return needHyperlink() ? fontHeight : fontHeight + 2;
 		}
 
-		public void showMessage(String newMessage, String details, int newType) {
+		public String showMessage(String newMessage, int newType, IMessage[] messages) {
 			Control oldControl = getMessageControl();
 			int oldType = messageType;
 			this.messageType = newType;
@@ -340,20 +358,21 @@ public class FormHeading extends Canvas {
 				// clearing of the message
 				if (oldControl != null && oldControl.isVisible())
 					oldControl.setVisible(false);
-				return;
+				return null;
 			}
 			ensureControlExists();
+			String details = MessageManager.createDetails(messages);
 			if (needHyperlink()) {
 				messageHyperlink.setText(newMessage);
-				// set the severity color
 				messageHyperlink.setToolTipText(details);
-				messageHyperlink.setHref(details);
+				messageHyperlink.setHref(messages);
 			} else {
 				messageLabel.setText(newMessage);
 				messageLabel.setToolTipText(details);
 			}
 			if (oldType != newType)
 				updateForeground();
+			return details;
 		}
 
 		public String getMessage() {
@@ -400,6 +419,8 @@ public class FormHeading extends Canvas {
 			ensureControlExists();
 			if (messageHyperlink != null)
 				messageHyperlink.addHyperlinkListener(listener);
+			if (listeners.size()==1)
+				updateForeground();
 		}
 
 		private void removeMessageHyperlinkListener(IHyperlinkListener listener) {
@@ -408,6 +429,8 @@ public class FormHeading extends Canvas {
 				messageHyperlink.removeHyperlinkListener(listener);
 			if (listeners.isEmpty())
 				listeners = null;
+			if (listeners==null)
+				updateForeground();
 		}
 
 		private void ensureControlExists() {
@@ -802,21 +825,15 @@ public class FormHeading extends Canvas {
 			flags &= ~SEPARATOR;
 	}
 
-	/**
-	 * Sets the message for this form.
-	 * 
-	 * @param message
-	 *            the message, or <code>null</code> to clear the message
-	 * @since 3.2
-	 */
-	public void setMessage(String message) {
-		this.setMessage(message, null, IMessageProvider.NONE);
+	public void setToolBarAlignment(int alignment) {
+		if (alignment == SWT.BOTTOM)
+			flags |= BOTTOM_TOOLBAR;
+		else
+			flags &= ~BOTTOM_TOOLBAR;
 	}
 
-	public void setMessage(String newMessage, String details, int newType) {
-		if (isDisposed())
-			return;
-		showMessage(newMessage, details, newType);
+	public int getToolBarAlignment() {
+		return (flags & BOTTOM_TOOLBAR) != 0 ? SWT.BOTTOM : SWT.TOP;
 	}
 
 	public void addMessageHyperlinkListener(IHyperlinkListener listener) {
@@ -843,7 +860,7 @@ public class FormHeading extends Canvas {
 			messageRegion = new MessageRegion();
 	}
 
-	private void showMessage(String newMessage, String details, int newType) {
+	public void showMessage(String newMessage, int type, IMessage[] messages) {
 		if (messageRegion == null) {
 			// check the trivial case
 			if (newMessage == null)
@@ -851,7 +868,7 @@ public class FormHeading extends Canvas {
 		} else if (messageRegion.isDisposed())
 			return;
 		ensureMessageRegionExists();
-		messageRegion.showMessage(newMessage, details, newType);
+		String details = messageRegion.showMessage(newMessage, type, messages);
 		titleRegion.updateImage(messageRegion.getMessageImage(),
 				details != null ? details : newMessage, false);
 		layout();
@@ -910,7 +927,7 @@ public class FormHeading extends Canvas {
 			DragSourceListener listener) {
 		titleRegion.addDragSupport(operations, transferTypes, listener);
 	}
-	
+
 	public void addDropSupport(int operations, Transfer[] transferTypes,
 			DropTargetListener listener) {
 		titleRegion.addDropSupport(operations, transferTypes, listener);

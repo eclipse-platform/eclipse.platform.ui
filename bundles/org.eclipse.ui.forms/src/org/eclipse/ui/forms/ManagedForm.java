@@ -324,6 +324,9 @@ public class ManagedForm implements IManagedForm {
 		this.container = container;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.forms.IManagedForm#getMessageManager()
+	 */
 	public IMessageManager getMessageManager() {
 		if (messageManager == null)
 			messageManager = new MessageManager(form);

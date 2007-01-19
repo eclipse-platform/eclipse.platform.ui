@@ -13,24 +13,41 @@ package org.eclipse.ui.forms;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.forms.widgets.Form;
 
 /**
  * This interface provides for managing messages in a form. It is responsible
  * for:
  * <ul>
- * <li>Bridging the concept of messages and field decorations</li>
+ * <li>Bridging the concept of typed messages and field decorations</li>
  * <li>Adding multiple messages per field in a form</li>
  * <li>Rolling up local messages to the form header</li>
  * <li>Adding multiple general messages to the form header</li>
  * </ul>
+ * <p>
+ * To use it in a form, do the following:
+ * <ol>
+ * <li>For each interactive control, add a listener to it to monitor user input</li>
+ * <li>Every time the input changes, validate it. If there is a problem, add a
+ * message with a unique ID to the manager. If there is already a message with
+ * the same ID in the manager, its type and message text will be updated (no
+ * duplicates). Note that you can messages with different ids to the same
+ * control to track multiple problem with the user input.</li>
+ * <li>If the problem has been cleared, remove the message using the id.</li>
+ * <li>If something happens in the form that is not related to any control, us
+ * the other <code>addMessage</code> method.</li>
+ * </ol>
+ * <p>
+ * This interface should only be referenced. It must not be implemented or
+ * extended.
+ * </p>
  * 
  * @since 3.3
  * @see IMessageProvider
- * @see IMessageContainer
+ * @see IManagedForm
  */
 
 public interface IMessageManager {
-
 	/**
 	 * Adds a general message that is not associated with any decorated field.
 	 * 
@@ -40,10 +57,12 @@ public interface IMessageManager {
 	 * 
 	 * @param messageText
 	 *            the message to add
+	 * @param data
+	 *            an object for application use (can be <code>null</code>)
 	 * @param type
 	 *            the message type as defined in <code>IMessageProvider</code>.
 	 */
-	public void addMessage(Object key, String messageText, int type);
+	void addMessage(Object key, String messageText, Object data, int type);
 
 	/**
 	 * Adds a message that should be associated with the provided control.
@@ -52,12 +71,14 @@ public interface IMessageManager {
 	 *            the unique message key
 	 * @param messageText
 	 *            the message to add
+	 * @param data
+	 *            an object for application use (can be <code>null</code>)
 	 * @param type
 	 *            the message type
 	 * @param control
 	 *            the control to associate the message with
 	 */
-	public void addMessage(Object key, String messageText, int type,
+	void addMessage(Object key, String messageText, Object data, int type,
 			Control control);
 
 	/**
@@ -66,7 +87,7 @@ public interface IMessageManager {
 	 * @param key
 	 *            the key of the message to remove
 	 */
-	public void removeMessage(Object key);
+	void removeMessage(Object key);
 
 	/**
 	 * Removes all the general messages. If there are local messages associated
@@ -74,7 +95,7 @@ public interface IMessageManager {
 	 * attention to these local messages. Otherwise, the container will clear
 	 * the message area.
 	 */
-	public void removeMessages();
+	void removeMessages();
 
 	/**
 	 * Removes the message associated with the provided control.
@@ -84,7 +105,7 @@ public interface IMessageManager {
 	 * @param control
 	 *            the control the message is associated with
 	 */
-	public void removeMessage(Object key, Control control);
+	void removeMessage(Object key, Control control);
 
 	/**
 	 * Removes all the messages associated with the provided control.
@@ -92,13 +113,13 @@ public interface IMessageManager {
 	 * @param control
 	 *            the control the messages are associated with
 	 */
-	public void removeMessages(Control control);
+	void removeMessages(Control control);
 
 	/**
 	 * Removes all the local field messages and all the general container
 	 * messages.
 	 */
-	public void removeAllMessages();
+	void removeAllMessages();
 
 	/**
 	 * Updates the message container with the messages currently in the manager.
@@ -107,5 +128,20 @@ public interface IMessageManager {
 	 * attempt to update a container that is in the process of being disposed
 	 * itself.
 	 */
-	public void update();
+	void update();
+
+	/**
+	 * When message manager is used in context of a form, and there
+	 * are hyperlink listeners for messages in the header, the hyperlink
+	 * event will carry an object of type <code>IMessage[]</code> as an
+	 * href. You can use this method to create a summary text from this
+	 * array consistent with the tool tip used by the form header.
+	 * 
+	 * @param messages
+	 *            an array of messages
+	 * @return a textual representation of the messages with one message per
+	 *         line.
+	 * @see Form#addMessageHyperlinkListener(org.eclipse.ui.forms.events.IHyperlinkListener)
+	 */
+	String createSummary(IMessage[] messages);
 }

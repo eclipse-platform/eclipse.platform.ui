@@ -12,8 +12,6 @@ package org.eclipse.ui.forms.examples.internal.rcp;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,6 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.IManagedForm;
+import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
 import org.eclipse.ui.forms.editor.FormEditor;
 import org.eclipse.ui.forms.editor.FormPage;
@@ -37,10 +36,9 @@ import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 /**
- * @author dejan
- * 
- * To change the template for this generated type comment go to Window -
- * Preferences - Java - Code Generation - Code and Comments
+ * This page shows how to use the message manager to handle
+ * errors in a form page. 
+ * @since 3.3
  */
 public class ErrorMessagesPage extends FormPage {
 	/**
@@ -51,7 +49,7 @@ public class ErrorMessagesPage extends FormPage {
 		super(editor, "messageManager", "Message Manager");
 	}
 
-	protected void createFormContent(IManagedForm managedForm) {
+	protected void createFormContent(final IManagedForm managedForm) {
 		final ScrolledForm form = managedForm.getForm();
 		FormToolkit toolkit = managedForm.getToolkit();
 		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
@@ -61,8 +59,13 @@ public class ErrorMessagesPage extends FormPage {
 		form.getForm().addMessageHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				String title = e.getLabel();
-				String details = (String) e.getHref();
-				switch (form.getForm().getMessageType()) {
+				String details = title;
+				Object href = e.getHref();
+				if (href instanceof IMessage[]) {
+					details = managedForm.getMessageManager().createSummary((IMessage[])href);
+				}
+				int type = form.getForm().getMessageType();
+				switch (type) {
 				case IMessageProvider.NONE:
 				case IMessageProvider.INFORMATION:
 					MessageDialog.openInformation(form.getShell(), title,
@@ -101,7 +104,7 @@ public class ErrorMessagesPage extends FormPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (button1.getSelection()) {
 					mmng.addMessage("saveError", "Save Error",
-							IMessageProvider.ERROR);
+							null, IMessageProvider.ERROR);
 				} else {
 					mmng.removeMessage("saveError");
 				}
@@ -113,33 +116,12 @@ public class ErrorMessagesPage extends FormPage {
 			public void widgetSelected(SelectionEvent e) {
 				if (button2.getSelection()) {
 					mmng.addMessage("info", "Secondary info",
-							IMessageProvider.NONE);
+							null, IMessageProvider.NONE);
 				} else {
 					mmng.removeMessage("info");
 				}
 			}
 		});
-		final Button button3 = toolkit.createButton(form.getBody(),
-				"Open Wizard", SWT.PUSH);
-		button3.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				Wizard w = new Wizard() {
-					public boolean performFinish() {
-						return true;
-					}
-
-					public void addPages() {
-						addPage(new ErrorMessagesWizardPage("id"));
-					}
-				};
-				WizardDialog dialog = new WizardDialog(form.getShell(), w);
-				dialog.create();
-				dialog.getShell().setSize(300, 400);
-				dialog.getShell().setText("Field Error Messages");
-				dialog.open();
-			}
-		});
-
 	}
 
 	private void createDecoratedTextField(String label, FormToolkit toolkit,
@@ -156,11 +138,11 @@ public class ErrorMessagesPage extends FormPage {
 				if (s.length() > 5 && s.length() <= 10) {
 					mmng.addMessage("textLength",
 							"Text is longer than 5 characters",
-							IMessageProvider.WARNING, text);
+							null, IMessageProvider.WARNING, text);
 				} else if (s.length() > 10) {
 					mmng.addMessage("textLength",
 							"Text is longer than 10 characters",
-							IMessageProvider.ERROR, text);
+							null, IMessageProvider.ERROR, text);
 				} else {
 					mmng.removeMessage("textLength", text);
 				}
@@ -175,7 +157,7 @@ public class ErrorMessagesPage extends FormPage {
 				if (badType) {
 					mmng.addMessage("textType",
 							"Text must only contain letters",
-							IMessageProvider.ERROR, text);
+							null, IMessageProvider.ERROR, text);
 				} else {
 					mmng.removeMessage("textType", text);
 				}

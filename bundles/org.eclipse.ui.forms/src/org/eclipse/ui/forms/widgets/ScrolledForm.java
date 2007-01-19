@@ -17,7 +17,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.ui.forms.IMessageContainer;
+import org.eclipse.ui.forms.IMessage;
 
 /**
  * ScrolledForm is a control that is capable of scrolling an instance of the
@@ -44,8 +44,7 @@ import org.eclipse.ui.forms.IMessageContainer;
  * 
  * @since 3.0
  */
-public class ScrolledForm extends SharedScrolledComposite implements
-		IMessageContainer {
+public class ScrolledForm extends SharedScrolledComposite {
 	private Form content;
 
 	public ScrolledForm(Composite parent) {
@@ -243,17 +242,17 @@ public class ScrolledForm extends SharedScrolledComposite implements
 	 * 
 	 * @param newMessage
 	 *            the message text or <code>null</code> to reset.
-	 * @param detailedMessage
-	 *            the optional detailed message or <code>null</code>.
 	 * @param newType
 	 *            as defined in
 	 *            {@link org.eclipse.jface.dialogs.IMessageProvider}.
+	 * @param messages
+	 * 			 an optional array of children that itemize individual
+	 * 			messages or <code>null</code> for a simple message.
 	 * @since 3.3
 	 * @see Form#setMessage(String, int)
 	 */
-	public void setMessage(String newMessage, String detailedMessage,
-			int newType) {
-		content.setMessage(newMessage, detailedMessage, newType);
+	public void setMessage(String newMessage, int newType, IMessage[] messages) {
+		content.setMessage(newMessage, newType, messages);
 		reflow(true);
 	}
 
@@ -264,7 +263,7 @@ public class ScrolledForm extends SharedScrolledComposite implements
 	 *      int)
 	 */
 	public void setMessage(String newMessage, int newType) {
-		this.setMessage(newMessage, null, newType);
+		this.setMessage(newMessage, newType, null);
 	}
 
 	/*
