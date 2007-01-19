@@ -26,6 +26,11 @@
         <servlet-name>toc</servlet-name>
         <servlet-class>org.eclipse.help.internal.webapp.servlet.TocServlet</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>nav</servlet-name>
+        <servlet-class>org.eclipse.help.internal.webapp.servlet.NavServlet</servlet-class>
+    </servlet>
     
     <servlet>
         <servlet-name>tocfragment</servlet-name>
@@ -67,6 +72,11 @@
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/topic/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>nav</servlet-name>
+        <url-pattern>/nav/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>

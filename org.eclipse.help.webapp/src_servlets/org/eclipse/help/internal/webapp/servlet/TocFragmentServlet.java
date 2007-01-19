@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -121,12 +121,12 @@ public class TocFragmentServlet extends HttpServlet {
 	            	} else if (requestKind == REQUEST_SHOW_CHILDREN) {
 	            		isSelected = tocData.getRootPath() == null;
 	            	}
-					serializeToc(tocData.getTocs()[toc], topicPath, isSelected);
+					serializeToc(tocData.getTocs()[toc], toc, topicPath, isSelected);
 				}
 			}
 		}
 	
-		private void serializeToc(IToc toc, ITopic[] topicPath, boolean isSelected) {
+		private void serializeToc(IToc toc, int tocIndex, ITopic[] topicPath, boolean isSelected) {
 			ITopic[] topics = tocData.getEnabledSubtopics(toc);
 			if (topics.length <= 0) {
 				// do not generate toc when there are no leaf topics
@@ -142,7 +142,13 @@ public class TocFragmentServlet extends HttpServlet {
 				buf.append('\n' + "      title=\"" + XMLGenerator.xmlEscape(toc.getLabel()) + '"'); //$NON-NLS-1$
 			}
 			buf.append('\n' + "      id=\"" + XMLGenerator.xmlEscape(toc.getHref()) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-	
+
+			String href = toc.getTopic(null).getHref();
+			if (href == null) {
+				href = "/../nav/" + tocIndex; //$NON-NLS-1$
+			}
+			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href)) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+
 			buf.append('\n' + "      image=\"toc_closed\""); //$NON-NLS-1$
 			
 			buf.append(">\n"); //$NON-NLS-1$
@@ -184,11 +190,13 @@ public class TocFragmentServlet extends HttpServlet {
 			}
 	
 			buf.append('\n' + "      id=\"" + parentPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			if (topic.getHref() != null) {
-				buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape( //$NON-NLS-1$
-						UrlUtil.getHelpURL(topic.getHref())) + '"');
+
+			String href = topic.getHref();
+			if (href == null) {
+				href = "/../nav/" + tocData.getSelectedToc() + '_' + parentPath; //$NON-NLS-1$
 			}
+			buf.append('\n' + "      href=\"" + XMLGenerator.xmlEscape( //$NON-NLS-1$
+					UrlUtil.getHelpURL(href)) + '"');
 			if (subtopics.length == 0 ) {
 				buf.append('\n' + "      is_leaf=\"true\"" ); //$NON-NLS-1$
 			}

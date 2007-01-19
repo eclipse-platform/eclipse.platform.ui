@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -316,8 +317,26 @@ public class TocData extends ActivitiesData {
 			return -1;
 
 		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
-		if (index != -1)
+		if (index != -1) {
 			topic = topic.substring(index + 6);
+		}
+		else {
+			// auto-generated nav urls, e.g. "/help/nav/0_1_5"
+			index = topic.indexOf("/nav/"); //$NON-NLS-1$
+			if (index != -1) {
+				// first number is toc index
+				String nav = topic.substring(index + 5);
+				index = nav.indexOf('_');
+				if (index != -1) {
+					try {
+						return Integer.parseInt(nav.substring(0, index));
+					}
+					catch (Exception e) {
+						// shouldn't happen
+					}
+				}
+			}
+		}
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);
@@ -351,8 +370,30 @@ public class TocData extends ActivitiesData {
 			return null;
 
 		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
-		if (index != -1)
+		if (index != -1) {
 			topic = topic.substring(index + 6);
+		}
+		else {
+			// auto-generated nav urls, e.g. "/help/nav/0_1_5"
+			index = topic.indexOf("/nav/"); //$NON-NLS-1$
+			if (index != -1) {
+				String nav = topic.substring(index + 5);
+				StringTokenizer tok = new StringTokenizer(nav, "_"); //$NON-NLS-1$
+				try {
+					// first number is toc index
+					index = Integer.parseInt(tok.nextToken());
+					ITopic current = getTocs()[index].getTopic(null);
+					while (tok.hasMoreTokens()) {
+						index = Integer.parseInt(tok.nextToken());
+						current = current.getSubtopics()[index];
+					}
+					return current;
+				}
+				catch (Exception e) {
+					// shouldn't happen
+				}
+			}
+		}
 		index = topic.indexOf('?');
 		if (index != -1)
 			topic = topic.substring(0, index);

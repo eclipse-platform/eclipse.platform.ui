@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -78,7 +79,7 @@ public class PrintData extends RequestData {
 		out.write(getTitle());
 		out.write("</h1>"); //$NON-NLS-1$
 		out.write("<h2>"); //$NON-NLS-1$
-		out.write(ServletResources.getString("PrintTocHeading", request)); //$NON-NLS-1$
+		out.write(ServletResources.getString("TocHeading", request)); //$NON-NLS-1$
 		out.write("</h2>"); //$NON-NLS-1$
 		out.write("<div id=\"toc_content\">"); //$NON-NLS-1$
 		ITopic topic = getTopic();
@@ -210,6 +211,12 @@ public class PrintData extends RequestData {
 		}
 		String topicParam = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicParam != null && topicParam.length() > 0) {
+			if (topicParam.startsWith("/../nav/")) { //$NON-NLS-1$
+				String navPath = topicParam.substring(8);
+				StringTokenizer tok = new StringTokenizer(navPath, "_"); //$NON-NLS-1$
+				int index = Integer.parseInt(tok.nextToken());
+				return HelpPlugin.getTocManager().getTocs(getLocale())[index];
+			}
 			IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
 			for (int i=0;i<tocs.length;++i) {
 				if (tocs[i].getTopic(topicParam) != null) {
@@ -226,11 +233,24 @@ public class PrintData extends RequestData {
 	private ITopic getTopic() {
 		String topicParam = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicParam != null && topicParam.length() > 0) {
-			IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
-			for (int i=0;i<tocs.length;++i) {
-				ITopic topic = tocs[i].getTopic(topicParam);
-				if (topic != null) {
-					return topic;
+			if (topicParam.startsWith("/../nav/")) { //$NON-NLS-1$
+				String navPath = topicParam.substring(8);
+				StringTokenizer tok = new StringTokenizer(navPath, "_"); //$NON-NLS-1$
+				int index = Integer.parseInt(tok.nextToken());
+				ITopic topic = HelpPlugin.getTocManager().getTocs(getLocale())[index].getTopic(null);
+				while (tok.hasMoreTokens()) {
+					index = Integer.parseInt(tok.nextToken());
+					topic = topic.getSubtopics()[index];
+				}
+				return topic;
+			}
+			else {
+				IToc[] tocs = HelpPlugin.getTocManager().getTocs(getLocale());
+				for (int i=0;i<tocs.length;++i) {
+					ITopic topic = tocs[i].getTopic(topicParam);
+					if (topic != null) {
+						return topic;
+					}
 				}
 			}
 			return null;

@@ -360,26 +360,35 @@ public class TocAssembler {
 			if (Topic.NAME.equals(node.getNodeName())) {
 				String href = node.getAttribute(Topic.ATTRIBUTE_HREF);
 				if (href != null) {
-					TocContribution contribution = getContribution(id);
-					if (contribution != null) {
-						String pluginId = contribution.getContributorId();
-						node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
-					}
-					else {
-						int index = id.indexOf('/', 1);
-						if (index != -1) {
-							String pluginId = id.substring(1, index);
-							node.setAttribute(Topic.ATTRIBUTE_HREF, HrefUtil.normalizeHref(pluginId, href));
-						}
-					}
+					node.setAttribute(Topic.ATTRIBUTE_HREF, normalize(href, id));
 				}
 				return HANDLED_CONTINUE;
 			}
 			else if (Toc.NAME.equals(node.getNodeName())) {
 				node.setAttribute(Toc.ATTRIBUTE_HREF, id);
+				String topic = node.getAttribute(Toc.ATTRIBUTE_TOPIC);
+				if (topic != null) {
+					node.setAttribute(Toc.ATTRIBUTE_TOPIC, normalize(topic, id));
+				}
 				return HANDLED_CONTINUE;
 			}
 			return UNHANDLED;
+		}
+		
+		private String normalize(String href, String id) {
+			TocContribution contribution = getContribution(id);
+			if (contribution != null) {
+				String pluginId = contribution.getContributorId();
+				return HrefUtil.normalizeHref(pluginId, href);
+			}
+			else {
+				int index = id.indexOf('/', 1);
+				if (index != -1) {
+					String pluginId = id.substring(1, index);
+					return HrefUtil.normalizeHref(pluginId, href);
+				}
+			}
+			return href;
 		}
 	}
 }
