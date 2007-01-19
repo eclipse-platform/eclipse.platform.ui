@@ -61,6 +61,10 @@ EM.CodeName {
 	text-transform: none;
 	font-family: "Courier New", Courier, monospace;
 }
+UL.NavList {
+	margin-left: 1.5em;
+	list-style-type: none;
+}
 
 body, html { border: 0px }
 
