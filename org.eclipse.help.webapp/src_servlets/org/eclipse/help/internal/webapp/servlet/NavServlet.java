@@ -58,9 +58,9 @@ public class NavServlet extends HttpServlet {
 		writer.write(XHTML_1);
 		writer.write(topic.getLabel());
 		writer.write(XHTML_2);
-		writer.write("<h1 id=\"nav-title\">" + topic.getLabel() + "</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		writer.write("<h3 id=\"nav-list-title\">" + WebappResources.getString("TocHeading", locale) + "</h3>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		writer.write("<ul id=\"nav-list\">\n"); //$NON-NLS-1$
+		writer.write("<h1 class=\"NavTitle\">" + topic.getLabel() + "</h1>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		writer.write("<h3 class=\"NavListTitle\">" + WebappResources.getString("TocHeading", locale) + "</h3>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
 			writer.write("<li><a href=\""); //$NON-NLS-1$
