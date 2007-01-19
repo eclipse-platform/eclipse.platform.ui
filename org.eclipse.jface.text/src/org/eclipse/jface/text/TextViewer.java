@@ -1677,9 +1677,7 @@ public class TextViewer extends Viewer implements
 		fTextWidget.addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
-					setDocument(null);
 					handleDispose();
-					fTextWidget= null;
 				}
 			}
 		);
@@ -1770,6 +1768,8 @@ public class TextViewer extends Viewer implements
 	 * control has been disposed.
 	 */
 	protected void handleDispose() {
+		
+		setDocument(null);
 
 		if (fPaintManager != null) {
 			fPaintManager.dispose();
@@ -1857,6 +1857,7 @@ public class TextViewer extends Viewer implements
 		fVisibleDocument= null;
 		fDocument= null;
 		fScroller= null;
+		fTextWidget= null;
 	}
 
 
