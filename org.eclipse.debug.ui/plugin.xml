@@ -2199,6 +2199,11 @@ M4 = Platform-specific fourth key
              class="org.eclipse.debug.internal.ui.views.memory.renderings.UnsignedIntegerRenderingTypeDelegate"
              name="%UnsignedIntegerName"
              id="org.eclipse.debug.ui.rendering.unsignedint"/>
+       <renderingType
+             class="org.eclipse.debug.internal.ui.views.memory.renderings.HexIntegerRenderingDelegate"
+             id="org.eclipse.debug.ui.rendering.hexint"
+             name="%HexIntegerName">
+       </renderingType>
     </extension>
     <extension
           point="org.eclipse.ui.workingSets">

@@ -494,5 +494,87 @@ public class RenderingsUtil {
         	buf[j] = new Integer(i>>(1-j)*8).byteValue();
         }
         return buf;
+	}
+
+	/**
+	 * byte array to Hex string helper
+	 * replaces the Integer.toHexString() which can't convert byte values properly
+	 * (always pads with FFFFFF)
+	 */
+	static public String convertByteArrayToHexString(byte[] byteArray)
+	{
+		StringBuffer strBuffer = new StringBuffer();
+		char charArray[];
+		
+		for (int i=0; i<byteArray.length;i ++)
+		{
+			charArray = RenderingsUtil.convertByteToCharArray(byteArray[i]);
+			strBuffer.append(charArray);			
+		}
+		
+		return strBuffer.toString();
+	}
+
+	static public char[] convertByteToCharArray(byte aByte)
+	{
+		char charArray[] = new char[2];
+		int val = aByte;
+		if (val<0) val += 256;
+		charArray[0] = Character.forDigit(val/16, 16);
+		charArray[1] = Character.forDigit(val%16, 16);
+		
+		return charArray;
+	}
+
+	/**
+	 * Convert raw memory data to byte array
+	 * @param str
+	 * @param numBytes
+	 * @param numCharsPerByte - number of characters per byte of data
+	 * @return an array of byte, converted from a hex string
+	 * @throws NumberFormatException
+	 */
+	public static byte[] convertHexStringToByteArray(String str, int numBytes, int numCharsPerByte) throws NumberFormatException
+	{
+	    if (str.length() == 0) 
+	        return null;
+		
+		StringBuffer buf = new StringBuffer(str);
+	    
+	    // pad string with zeros
+	    int requiredPadding =  numBytes * numCharsPerByte - str.length();
+	    while (requiredPadding > 0) {
+	        buf.insert(0, "0"); //$NON-NLS-1$
+	        requiredPadding--;
+	    }
+		
+		byte[] bytes = new byte[numBytes];
+		str = buf.toString();
+	
+		// set data in memory
+		for (int i=0; i<bytes.length; i++)
+		{
+			// convert string to byte
+			String oneByte = str.substring(i*2, i*2+2);
+			
+			Integer number = Integer.valueOf(oneByte, 16);
+			if (number.compareTo(Integer.valueOf(Byte.toString(Byte.MAX_VALUE))) > 0)
+			{
+				int temp = number.intValue();
+				temp = temp - 256;
+	
+				String tempStr = Integer.toString(temp);
+		
+				Byte myByte = Byte.valueOf(tempStr);
+				bytes[i] = myByte.byteValue();
+			}
+			else
+			{
+				Byte myByte = Byte.valueOf(oneByte, 16);
+				bytes[i] = myByte.byteValue();
+			}
+		}
+		
+		return bytes;
 	} 	
 }
