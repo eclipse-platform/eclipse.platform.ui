@@ -26,7 +26,8 @@ public class DetailMessages extends NLS {
 	public static String DefaultDetailPane_Cu_t_11;
 	public static String DefaultDetailPane_Error_1;
 	public static String DefaultDetailPane_Select__All_5;
-	public static String DetailPane_0;
+	public static String DetailPaneProxy_0;
+	public static String DetailPaneProxy_1;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, DetailMessages.class);

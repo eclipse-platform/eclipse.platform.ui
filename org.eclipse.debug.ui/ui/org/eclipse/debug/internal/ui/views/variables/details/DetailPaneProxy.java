@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -96,7 +95,7 @@ public class DetailPaneProxy {
 		String preferredPaneID = DetailPaneManager.getDefault().getPreferredPaneFromSelection(selection);
 		
 		// Don't change anything if the preferred pane is the current pane
-		if (fCurrentPane != null && preferredPaneID.equals(fCurrentPane.getID())){
+		if (fCurrentPane != null && preferredPaneID != null && preferredPaneID.equals(fCurrentPane.getID())){
 			fCurrentPane.display(selection);
 			return;
 		}
@@ -161,23 +160,26 @@ public class DetailPaneProxy {
 	private void setupPane(String paneID, IStructuredSelection selection) {
 		if (fCurrentPane != null) fCurrentPane.dispose();
 		if (fCurrentControl != null && !fCurrentControl.isDisposed()) fCurrentControl.dispose();
-		fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
-		if (fCurrentPane != null){
-			fCurrentPane.init(fWorkbenchPartSite);
-			fCurrentControl = fCurrentPane.createControl(fParent);
-			if (fCurrentControl != null){
-				if (fActivateListener != null) fCurrentControl.addListener(SWT.Activate,fActivateListener);
-				fParent.layout(true);
-				fCurrentPane.display(selection);
+		if (paneID != null){
+			fCurrentPane = DetailPaneManager.getDefault().getDetailPaneFromID(paneID);
+			if (fCurrentPane != null){
+				fCurrentPane.init(fWorkbenchPartSite);
+				fCurrentControl = fCurrentPane.createControl(fParent);
+				if (fCurrentControl != null){
+					if (fActivateListener != null) fCurrentControl.addListener(SWT.Activate,fActivateListener);
+					fParent.layout(true);
+					fCurrentPane.display(selection);
+				} else{
+					createErrorLabel(DetailMessages.DetailPaneProxy_0);
+					DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "The detail pane \""+ fCurrentPane.getID() + "\" did not create and return a control."))); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			} else {
+				createErrorLabel(DetailMessages.DetailPaneProxy_0);
+				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "Could not create the detail pane with ID " + paneID))); //$NON-NLS-1$
 			}
-			else{
-				createErrorLabel(DetailMessages.DetailPane_0);
-				DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "The detail pane \""+ fCurrentPane.getID() + "\" did not create and return a control.", new NullPointerException()))); //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}
-		else {
-			createErrorLabel(DetailMessages.DetailPane_0);
-			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Could not create the detail pane with ID " + paneID, new NullPointerException()))); //$NON-NLS-1$
+		} else {
+			createErrorLabel(DetailMessages.DetailPaneProxy_1);
+			DebugUIPlugin.log(new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), "No detail panes could be found to display the current selection."))); //$NON-NLS-1$
 		}
 	}
 
@@ -193,6 +195,7 @@ public class DetailPaneProxy {
 		errorLabel.setText(message);
 		errorLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
 		fCurrentControl = errorLabel;
+		fParent.layout();
 	}
 	
 }
