@@ -36,7 +36,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The ProgressMonitorFocusJobDialog is a dialog that shows progress for a
  * particular job in a modal dialog so as to give a user accustomed to a modal
- * UI a more famiiar feel.
+ * UI a more familiar feel.
  */
 class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	Job job;
