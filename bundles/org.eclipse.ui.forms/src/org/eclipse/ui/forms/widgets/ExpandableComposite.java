@@ -145,12 +145,12 @@ public class ExpandableComposite extends Canvas {
 
 	private static final Point NULL_SIZE = new Point(0, 0);
 
-	private int VSPACE = 3;
+	private static final int VSPACE = 3;
 
 	protected int VGAP = 3;
 	protected int GAP = 4;
 
-	private int SEPARATOR_HEIGHT = 2;
+	private static final int SEPARATOR_HEIGHT = 2;
 
 	private int expansionStyle = TWISTIE | FOCUS_TITLE | EXPANDED;
 
