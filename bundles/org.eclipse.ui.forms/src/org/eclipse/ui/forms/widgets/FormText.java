@@ -1366,6 +1366,13 @@ public class FormText extends Canvas {
 		} else {
 			if (segmentUnder instanceof IHyperlinkSegment) {
 				IHyperlinkSegment linkUnder = (IHyperlinkSegment) segmentUnder;
+				if (entered!=null && linkUnder!=entered) {
+					// Special case: links are so close that there are 0 pixels between.
+					// Must exit the link before entering the next one.
+					exitLink(entered, e.stateMask);
+					paintLinkHover(entered, false);
+					entered = null;
+				}
 				if (entered == null) {
 					entered = linkUnder;
 					enterLink(linkUnder, e.stateMask);
