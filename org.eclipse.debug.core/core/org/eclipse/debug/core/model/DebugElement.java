@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Implementation of common function for debug elements.
@@ -77,6 +78,10 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 		}
 		if (adapter == IProcess.class) {
 		    return getDebugTarget().getProcess();
+		}
+		//CONTEXTLAUNCHING
+		if(adapter == ILaunchConfiguration.class) {
+			return getLaunch().getLaunchConfiguration();
 		}
 		return super.getAdapter(adapter);
     }

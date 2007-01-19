@@ -17,6 +17,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -163,6 +165,14 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         }
         if (IShowInTargetList.class.equals(required)) {
             return this; 
+        }
+        //CONTEXTLAUNCHING
+        if(ILaunchConfiguration.class.equals(required)) {
+        	ILaunch launch = getProcess().getLaunch();
+        	if(launch != null) {
+        		return launch.getLaunchConfiguration();
+        	}
+        	return null;
         }
         return null;
     }

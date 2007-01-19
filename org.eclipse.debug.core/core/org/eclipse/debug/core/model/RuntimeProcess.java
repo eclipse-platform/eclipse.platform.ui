@@ -22,6 +22,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.NullStreamsProxy;
 import org.eclipse.debug.internal.core.StreamsProxy;
@@ -342,6 +343,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		if (adapter.equals(ILaunch.class)) {
 			return getLaunch();
+		}
+		//CONTEXTLAUNCHING
+		if(adapter.equals(ILaunchConfiguration.class)) {
+			return getLaunch().getLaunchConfiguration();
 		}
 		return super.getAdapter(adapter);
 	}

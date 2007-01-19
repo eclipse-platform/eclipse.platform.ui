@@ -582,6 +582,10 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 		if (adapter.equals(ILaunch.class)) {
 			return this;
 		}
+		//CONTEXTLAUNCHING
+		if(adapter.equals(ILaunchConfiguration.class)) {
+			return getLaunchConfiguration();
+		}
 		return super.getAdapter(adapter);
 	}
 	
