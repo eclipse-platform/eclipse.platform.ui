@@ -160,6 +160,8 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 		private IStructuredSelection fElements;
 		private IDebugModelPresentation fModel;
 		private boolean fFirst = true;
+		// whether a result was collected
+		private boolean fComputed = false;
 		private IProgressMonitor fMonitor;
 		
 		public DetailJob(IStructuredSelection elements, IDebugModelPresentation model) {
@@ -197,7 +199,11 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 					fModel.computeDetail(val, this);
 					synchronized (this) {
 						try {
-							wait();
+							// wait for a max of 30 seconds for result, then cancel
+							wait(30000);
+							if (!fComputed) {
+								fMonitor.setCanceled(true);
+							}
 						} catch (InterruptedException e) {
 							break;
 						}
@@ -206,11 +212,24 @@ public class DefaultDetailPane extends AbstractDetailPane implements IAdaptable,
 			}
 			return Status.OK_STATUS;
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#canceling()
+		 */
+		protected void canceling() {
+			super.canceling();
+			synchronized (this) {
+				notifyAll();
+			}
+		}
 
 		/* (non-Javadoc)
 		 * @see org.eclipse.debug.ui.IValueDetailListener#detailComputed(org.eclipse.debug.core.model.IValue, java.lang.String)
 		 */
 		public void detailComputed(IValue value, final String result) {
+			synchronized (this) {
+				fComputed = true;
+			}
 			if (!fMonitor.isCanceled()) {
 				WorkbenchJob append = new WorkbenchJob("append details") { //$NON-NLS-1$
 					public IStatus runInUIThread(IProgressMonitor monitor) {
