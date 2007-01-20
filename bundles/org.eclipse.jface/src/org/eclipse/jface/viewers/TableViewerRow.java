@@ -146,4 +146,39 @@ public class TableViewerRow extends ViewerRow {
 		return item.getParent();
 	}
 
+	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
+		if( direction == ViewerRow.ABOVE ) {
+			return getRowAbove();
+		} else if( direction == ViewerRow.BELOW ) {
+			return getRowBelow();
+		} else {
+			throw new IllegalArgumentException("Illegal value of direction argument."); //$NON-NLS-1$
+		}
+	}
+
+	
+	private ViewerRow getRowAbove() {
+		int index = item.getParent().indexOf(item) - 1;
+		
+		if( index >= 0 ) {
+			return (ViewerRow)item.getParent().getItem(index).getData(ViewerRow.ROWPART_KEY); 
+		}
+		
+		return null;
+	}
+
+	private ViewerRow getRowBelow() {
+		int index = item.getParent().indexOf(item) + 1;
+		
+		if( index < item.getParent().getItemCount() ) {
+			TableItem tmp = item.getParent().getItem(index);
+			//TODO NULL can happen in case of VIRTUAL => How do we deal with that
+			if( tmp != null ) {
+				return (ViewerRow)tmp.getData(ViewerRow.ROWPART_KEY);
+			}
+		}
+		
+		return null;
+	}
+
 }

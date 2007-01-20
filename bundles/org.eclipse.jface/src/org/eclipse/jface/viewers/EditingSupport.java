@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- *     											   fix in bug 151295
+ *     											   fix in bug 151295, bug 167325
  ******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -16,8 +16,6 @@ package org.eclipse.jface.viewers;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 
 /**
  * EditingSupport is the abstract superclass of the support for cell editing.
@@ -184,9 +182,9 @@ public abstract class EditingSupport {
 		ViewerRow newRow = null;
 
 		if (above) {
-			newRow = getRowAbove(row, viewer);
+			newRow = row.getNeighbor(ViewerRow.ABOVE, false);
 		} else {
-			newRow = getRowBelow(row, viewer);
+			newRow = row.getNeighbor(ViewerRow.BELOW,false);
 		}
 
 		if (newRow != null) {
@@ -228,7 +226,7 @@ public abstract class EditingSupport {
 							startIndex);
 				}
 			} else if ((getTabingStyle() & TABING_MOVE_TO_ROW_NEIGHBOR) == TABING_MOVE_TO_ROW_NEIGHBOR) {
-				ViewerRow rowAbove = getRowAbove(row, viewer);
+				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE,false);
 				if (rowAbove != null) {
 					rv = searchPreviousCell(rowAbove, viewer, rowAbove
 							.getColumnCount(), startIndex);
@@ -261,7 +259,7 @@ public abstract class EditingSupport {
 					rv = searchNextCell(row, viewer, -1, startIndex);
 				}
 			} else if ((getTabingStyle() & TABING_MOVE_TO_ROW_NEIGHBOR) == TABING_MOVE_TO_ROW_NEIGHBOR) {
-				ViewerRow rowBelow = getRowBelow(row, viewer);
+				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW,false);
 				if (rowBelow != null) {
 					rv = searchNextCell(rowBelow, viewer, -1, startIndex);
 				}
@@ -269,23 +267,6 @@ public abstract class EditingSupport {
 		}
 
 		return rv;
-	}
-
-	private ViewerRow getRowAbove(ViewerRow row, ColumnViewer viewer) {
-		// TODO maybe there's a better solution maybe we should provide an
-		// API in ViewerColumn
-		// to find row above/below itself?
-		Rectangle r = row.getBounds();
-		return viewer.getViewerRow(new Point(r.x, r.y - 2));
-	}
-
-	private ViewerRow getRowBelow(ViewerRow row, ColumnViewer viewer) {
-		// TODO maybe there's a better solution maybe we should provide an
-		// API in ViewerColumn
-		// to find row above/below itself?
-		Rectangle r = row.getBounds();
-		return viewer.getViewerRow(new Point(r.x,
-				r.y + r.height + 2));
 	}
 	
 	/**

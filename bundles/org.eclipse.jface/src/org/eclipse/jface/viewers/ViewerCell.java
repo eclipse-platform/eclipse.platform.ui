@@ -34,6 +34,26 @@ public class ViewerCell {
 	private ViewerRow row;
 
 	/**
+	 * Constant denoting the cell above current one (value is 1).
+	 */
+	public static int ABOVE = 1;
+
+	/**
+	 * Constant denoting the cell below current one (value is 2).
+	 */
+	public static int BELOW = 1 << 1;
+
+	/**
+	 * Constant denoting the cell to the left of the current one (value is 4).
+	 */
+	public static int LEFT = 1 << 2;
+
+	/**
+	 * Constant denoting the cell to the right of the current one (value is 8).
+	 */
+	public static int RIGHT = 1 << 3;
+
+	/**
 	 * Create a new instance of the receiver on the row.
 	 * 
 	 * @param row
@@ -176,5 +196,66 @@ public class ViewerCell {
 	 */
 	public Control getControl() {
 		return row.getControl();
+	}
+
+	/**
+	 * Returns the specified neighbor of this cell, or <code>null</code> if no
+	 * neighbor exists in the given direction. Direction constants can be
+	 * combined by bitwise OR; for example, this method will return the cell to
+	 * the upper-left of the current cell by passing {@link #ABOVE} |
+	 * {@link #LEFT}. If <code>sameLevel</code> is <code>true</code>, only
+	 * cells in sibling rows (under the same parent) will be considered.
+	 * 
+	 * @param directionMask
+	 *            the direction mask used to identify the requested neighbor
+	 *            cell
+	 * @param sameLevel
+	 *            if <code>true</code>, only consider cells from sibling rows
+	 * @return the requested neighbor cell, or <code>null</code> if not found
+	 */
+	public ViewerCell getNeighbor(int directionMask, boolean sameLevel) {
+		ViewerRow row;
+		int columnIndex;
+
+		if ((directionMask & ABOVE) == ABOVE) {
+			row = this.row.getNeighbor(ViewerRow.ABOVE, sameLevel);
+		} else if ((directionMask & BELOW) == BELOW) {
+			row = this.row.getNeighbor(ViewerRow.BELOW, sameLevel);
+		} else {
+			row = this.row;
+		}
+
+		if (row != null) {
+			if ((directionMask & LEFT) == LEFT) {
+				columnIndex = getColumnIndex() - 1;
+			} else if ((directionMask & RIGHT) == RIGHT) {
+				columnIndex = getColumnIndex() + 1;
+			} else {
+				columnIndex = getColumnIndex();
+			}
+
+			if (columnIndex >= 0 && columnIndex < row.getColumnCount()) {
+				return row.getCell(columnIndex);
+			}
+		}
+
+		return null;
+	}
+	
+	public boolean equals(Object obj) {
+		if( obj == null || !(obj instanceof ViewerCell) ) {
+			return false;
+		}
+		
+		ViewerCell cell = (ViewerCell) obj;
+		
+		return cell.getColumnIndex() == getColumnIndex() && cell.getItem() == getItem();
+	}
+	
+	/**
+	 * @return the row
+	 */
+	public ViewerRow getViewerRow() {
+		return row;
 	}
 }

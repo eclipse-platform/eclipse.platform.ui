@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 /**
@@ -58,7 +59,7 @@ public class TreeViewerRow extends ViewerRow {
 	 * @see org.eclipse.jface.viewers.ViewerRow#getColumnCount()
 	 */
 	public int getColumnCount() {
-		return item.getParent().getItemCount();
+		return item.getParent().getColumnCount();
 	}
 
 	/* (non-Javadoc)
@@ -144,4 +145,154 @@ public class TreeViewerRow extends ViewerRow {
 	public Control getControl() {
 		return item.getParent();
 	}
+
+	
+	public ViewerRow getNeighbor(int direction, boolean sameLevel) {
+		if( direction == ViewerRow.ABOVE ) {
+			return getRowAbove(sameLevel);
+		} else if( direction == ViewerRow.BELOW ) {
+			return getRowBelow(sameLevel);
+		} else {
+			throw new IllegalArgumentException("Illegal value of direction argument."); //$NON-NLS-1$
+		}
+	}
+	
+	private ViewerRow getRowBelow(boolean sameLevel) {
+		Tree tree = item.getParent();
+		
+		// This means we have top-level item
+		if( item.getParentItem() == null ) {
+			if( sameLevel || ! item.getExpanded() ) {
+				int index = tree.indexOf(item) + 1;
+				
+				if( index < tree.getItemCount() ) {
+					return (ViewerRow)tree.getItem(index).getData(ViewerRow.ROWPART_KEY);
+				}
+			} else if( item.getExpanded() && item.getItemCount() > 0 ) {
+				return (ViewerRow)item.getItem(0).getData(ViewerRow.ROWPART_KEY);
+			}
+		} else {
+			if( sameLevel || ! item.getExpanded() ) {
+				TreeItem parentItem = item.getParentItem();
+				
+				int nextIndex = parentItem.indexOf(item) + 1;
+				int totalIndex = parentItem.getItemCount();
+				
+				TreeItem itemAfter;
+				
+				// This would mean that it was the last item
+				if( nextIndex == totalIndex ) {
+					itemAfter = findNextItem( parentItem );
+				} else {
+					itemAfter = parentItem.getItem(nextIndex);
+				}
+				
+				if( itemAfter != null ) {
+					return (ViewerRow) itemAfter.getData(ViewerRow.ROWPART_KEY);
+				}
+				
+			} else if( item.getExpanded() && item.getItemCount() > 0 ) {
+				return (ViewerRow)item.getItem(0).getData(ViewerRow.ROWPART_KEY);
+			}
+		}
+
+		return null;
+	}
+	
+	private ViewerRow getRowAbove(boolean sameLevel) {
+		Tree tree = item.getParent();
+		
+		// This means we have top-level item
+		if( item.getParentItem() == null ) {
+			int index = tree.indexOf(item) - 1;
+			TreeItem nextTopItem = null;
+			
+			if( index >= 0 ) {
+				nextTopItem = tree.getItem(index);
+			}
+			
+			if( nextTopItem != null ) {
+				if( sameLevel ) {
+					return (ViewerRow)nextTopItem.getData(ViewerRow.ROWPART_KEY);
+				}
+				
+				return (ViewerRow) findLastVisibleItem(nextTopItem).getData(ViewerRow.ROWPART_KEY);
+			}
+		} else {
+			TreeItem parentItem = item.getParentItem();
+			int previousIndex = parentItem.indexOf(item) - 1;
+			
+			TreeItem itemBefore;
+			if( previousIndex >= 0 ) {
+				if( sameLevel ) {
+					itemBefore = parentItem.getItem(previousIndex);
+				} else {
+					itemBefore = findLowestLeaf(parentItem.getItem(previousIndex));
+				}
+			} else {
+				itemBefore = parentItem;
+			}
+			
+			if( itemBefore != null ) {
+				return (ViewerRow) itemBefore.getData(ViewerRow.ROWPART_KEY);
+			}
+		}
+		
+		return null;
+	}
+
+	private TreeItem findLastVisibleItem(TreeItem parentItem) {
+		TreeItem rv = parentItem;
+		
+		if( rv.getExpanded() && rv.getItemCount() > 0 ) {
+			rv = findLastVisibleItem(rv.getItem(rv.getItemCount()-1));
+		}
+		
+		return rv;
+	}
+	
+	private TreeItem findLowestLeaf(TreeItem item) {
+		TreeItem rv = item;
+		
+		if( rv.getExpanded() && rv.getItemCount() > 0 ) {
+			rv = findLowestLeaf(rv.getItem(rv.getItemCount()-1));
+		}
+		
+		return rv;
+	}
+	
+	private TreeItem findNextItem(TreeItem item) {
+		TreeItem rv = null;
+		Tree tree = item.getParent();
+		TreeItem parentItem = item.getParentItem();
+		
+		int nextIndex;
+		int totalItems;
+		
+		if( parentItem == null ) {
+			nextIndex = tree.indexOf(item) + 1;
+			totalItems = tree.getItemCount();
+		} else {
+			nextIndex = parentItem.indexOf(item) + 1;
+			totalItems = parentItem.getItemCount();
+		}
+		
+		// This is once more the last item in the tree
+		// Search on
+		if( nextIndex == totalItems ) {
+			if( item.getParentItem() != null ) {
+				rv = findNextItem(item.getParentItem());
+			}
+		} else {
+			if( parentItem == null ) {
+				rv = tree.getItem(nextIndex);
+			} else {
+				rv = parentItem.getItem(nextIndex);
+			}
+		}
+		
+		return rv;
+	}
+	
+	
 }
