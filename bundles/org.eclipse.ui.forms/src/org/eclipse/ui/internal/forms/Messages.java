@@ -36,4 +36,4 @@ public class Messages extends NLS {
 	public static String MessageManager_pMessageSummary;
 	public static String MessageManager_pWarningSummary;
 	public static String MessageManager_pErrorSummary;		
-};
+}
