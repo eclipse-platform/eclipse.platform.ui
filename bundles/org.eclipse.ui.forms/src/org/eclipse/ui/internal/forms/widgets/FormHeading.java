@@ -378,8 +378,7 @@ public class FormHeading extends Canvas {
 		public String getMessage() {
 			if (needHyperlink())
 				return messageHyperlink.getText();
-			else
-				return messageLabel.getText();
+			return messageLabel.getText();
 		}
 
 		public int getMessageType() {
