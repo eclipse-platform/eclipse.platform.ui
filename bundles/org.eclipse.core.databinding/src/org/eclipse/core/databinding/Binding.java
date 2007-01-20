@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159768
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -155,4 +156,19 @@ public abstract class Binding {
 		this.context = context;
 	}
 
+	/**
+	 * Invokes the pipeline positions from the target to the model up to and
+	 * including the provided <code>pipelinePosition</code> but no further.
+	 * 
+	 * @param pipelinePosition BindingEvent.PIPELINE_* constant
+	 */
+	public abstract void updateModelFromTarget(int pipelinePosition);
+
+	/**
+	 * Invokes the pipeline posistions from the model to the target up to and
+	 * including the provided <code>pipelinePosition</code> but no further.
+	 * 
+	 * @param pipelinePosition BindingEvent.PIPELINE_* constant
+	 */
+	public abstract void updateTargetFromModel(int pipelinePosition);
 }

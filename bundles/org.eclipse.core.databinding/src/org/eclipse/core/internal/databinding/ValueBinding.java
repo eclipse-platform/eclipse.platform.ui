@@ -7,9 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 152543
+ *     Brad Reynolds - bug 152543, 159768
  *******************************************************************************/
 package org.eclipse.core.internal.databinding;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
@@ -37,15 +40,12 @@ import org.eclipse.core.runtime.Status;
  * 
  */
 public class ValueBinding extends Binding {
-
 	private final IObservableValue target;
 
 	private final IObservableValue model;
 
-	private IValidator targetValidator;
-
 	private IValidator targetPartialValidator;
-	
+
 	private IConverter targetToModelConverter;
 
 	private IConverter modelToTargetConverter;
@@ -57,7 +57,15 @@ public class ValueBinding extends Binding {
 
 	private WritableValue validationErrorObservable;
 
-	private IValidator domainValidator;
+	private IValueChangeListener targetChangeListener;
+
+	private Map targetValidators = new HashMap();
+	private Map modelValidators = new HashMap();
+
+	private static final Integer[] VALIDATION_POSITIONS = new Integer[] {
+			new Integer(BindingEvent.PIPELINE_AFTER_GET),
+			new Integer(BindingEvent.PIPELINE_AFTER_CONVERT),
+			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
 
 	/**
 	 * @param context
@@ -75,13 +83,28 @@ public class ValueBinding extends Binding {
 				.getValidationRealm(), IStatus.class, null);
 		partialValidationErrorObservable = new WritableValue(context
 				.getValidationRealm(), IStatus.class, null);
+
+		for (int i = 0; i < VALIDATION_POSITIONS.length; i++) {
+			Integer position = VALIDATION_POSITIONS[i];
+
+			targetValidators.put(position, bindSpec
+					.getTargetValidators(position.intValue()));
+			modelValidators.put(position, bindSpec.getModelValidators(position
+					.intValue()));
+		}
+
 		if (bindSpec.isUpdateTarget()) {
 			modelToTargetConverter = bindSpec.getModelToTargetConverter();
 			if (modelToTargetConverter == null) {
 				throw new BindingException(
 						"Missing model to target converter from " + model.getValueType() + " to " + target.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			model.addValueChangeListener(modelChangeListener);
+
+			Integer policy = bindSpec.getTargetUpdatePolicy();
+
+			if (policy == null || policy.equals(BindSpec.POLICY_AUTOMATIC)) {
+				model.addValueChangeListener(modelChangeListener);
+			}
 		}
 		if (bindSpec.isUpdateModel()) {
 			targetToModelConverter = bindSpec.getTargetToModelConverter();
@@ -89,16 +112,27 @@ public class ValueBinding extends Binding {
 				throw new BindingException(
 						"Missing target to model converter from " + target.getValueType() + " to " + model.getValueType()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			targetValidator = bindSpec.getTargetValidator();
-			if (targetValidator == null) {
-				throw new BindingException("Missing validator"); //$NON-NLS-1$
-			}
 			targetPartialValidator = bindSpec.getPartialTargetValidator();
 			if (targetPartialValidator == null) {
 				throw new BindingException("Missing partial validator"); //$NON-NLS-1$
 			}
-			domainValidator = bindSpec.getDomainValidator();
-			target.addValueChangeListener(targetChangeListener);
+
+			Integer policy = bindSpec.getModelUpdatePolicy();
+			int pipelineStop = BindingEvent.PIPELINE_AFTER_CHANGE;
+
+			if (BindSpec.POLICY_EXPLICIT.equals(policy)) {
+				Integer targetValidate = bindSpec.getTargetValidatePolicy();
+
+				pipelineStop = (targetValidate == null) ? -1 : targetValidate
+						.intValue();
+			}
+
+			if (pipelineStop != -1) {
+				target
+						.addValueChangeListener(targetChangeListener = new TargetChangeListener(
+								pipelineStop));
+			}
+
 			if (target instanceof IVetoableValue) {
 				((IVetoableValue) target)
 						.addValueChangingListener(targetChangingListener);
@@ -140,7 +174,13 @@ public class ValueBinding extends Binding {
 		}
 	};
 
-	private final IValueChangeListener targetChangeListener = new IValueChangeListener() {
+	private class TargetChangeListener implements IValueChangeListener {
+		private int pipelinePosition;
+
+		TargetChangeListener(int pipelinePosition) {
+			this.pipelinePosition = pipelinePosition;
+		}
+
 		public void handleValueChange(ValueChangeEvent event) {
 			final ValueDiff diff = event.diff;
 			if (updatingTarget)
@@ -149,11 +189,11 @@ public class ValueBinding extends Binding {
 			// the value and update the source
 			model.getRealm().exec(new Runnable() {
 				public void run() {
-					doUpdateModelFromTarget(diff);
+					doUpdateModelFromTarget(diff, pipelinePosition);
 				}
 			});
 		}
-	};
+	}
 
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
@@ -163,37 +203,30 @@ public class ValueBinding extends Binding {
 			// The model has changed so we must update the target
 			model.getRealm().exec(new Runnable() {
 				public void run() {
-					doUpdateTargetFromModel(diff);
+					doUpdateTargetFromModel(diff,
+							BindingEvent.PIPELINE_AFTER_CHANGE);
 				}
 			});
 		}
 	};
 
 	/**
-	 * This also does validation.
+	 * Perform the target to model process up to and including the
+	 * <code>lastPosition</code>.
 	 * 
 	 * @param diff
-	 * 
-	 * @param changeEvent
-	 *            TODO
+	 * @param lastPosition
+	 *            BindingEvent.PIPELINE_* constant
 	 */
-	private void doUpdateModelFromTarget(ValueDiff diff) {
+	private void doUpdateModelFromTarget(ValueDiff diff, int lastPosition) {
 		Assert.isTrue(model.getRealm().isCurrent());
 		BindingEvent e = new BindingEvent(model, target, diff,
 				BindingEvent.EVENT_COPY_TO_MODEL,
 				BindingEvent.PIPELINE_AFTER_GET) {
 		};
 		e.originalValue = diff.getNewValue();
-		if (failure(errMsg(fireBindingEvent(e)))) {
-			return;
-		}
-
-		IStatus validationStatus = doValidate(e.originalValue);
-		if (!validationStatus.isOK()) {
-			return;
-		}
-		e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
-		if (failure(errMsg(fireBindingEvent(e)))) {
+		if (!performPosition(e.originalValue, BindingEvent.PIPELINE_AFTER_GET,
+				e, lastPosition)) {
 			return;
 		}
 
@@ -201,23 +234,19 @@ public class ValueBinding extends Binding {
 			updatingModel = true;
 
 			e.convertedValue = targetToModelConverter.convert(e.originalValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
-			if (failure(errMsg(fireBindingEvent(e)))) {
+			if (!performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_AFTER_CONVERT, e, lastPosition)) {
 				return;
 			}
 
-			validationStatus = doDomainValidation(e.convertedValue);
-			if (!validationStatus.isOK()) {
-				return;
-			}
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_BUSINESS_VALIDATE;
-			if (failure(errMsg(fireBindingEvent(e)))) {
+			if (!performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_BEFORE_CHANGE, e, lastPosition)) {
 				return;
 			}
 
 			model.setValue(e.convertedValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
-			fireBindingEvent(e);
+			performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_AFTER_CHANGE, e, lastPosition);
 		} catch (Exception ex) {
 			IStatus error = ValidationStatus.error(BindingMessages
 					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
@@ -229,62 +258,72 @@ public class ValueBinding extends Binding {
 	}
 
 	/**
-	 * @param convertedValue
-	 * @return String
+	 * Performs the necessary processing for the position.
+	 * 
+	 * @param value
+	 * @param position
+	 * @param e
+	 * @param lastPosition
+	 * @return <code>true</code> if should proceed to the next position
 	 */
-	private IStatus doDomainValidation(Object convertedValue) {
-		if (domainValidator == null) {
-			return Status.OK_STATUS;
+	private boolean performPosition(Object value, int position, BindingEvent e,
+			int lastPosition) {
+		Map validatorMap = null;
+
+		if (e.copyType == BindingEvent.EVENT_COPY_TO_MODEL) {
+			validatorMap = targetValidators;
+		} else if (e.copyType == BindingEvent.EVENT_COPY_TO_TARGET) {
+			validatorMap = modelValidators;
 		}
-		IStatus validationStatus = domainValidator.validate(convertedValue);
-		return errMsg(validationStatus);
-	}
 
-	private IStatus doValidate(Object value) {
-		if (targetValidator == null)
-			return Status.OK_STATUS;
-		IStatus validationStatus = targetValidator.validate(value);
-		return errMsg(validationStatus);
-	}
+		IStatus status = Status.OK_STATUS;
 
-	private IStatus errMsg(final IStatus validationStatus) {
+		if (validatorMap != null) {
+			IValidator[] validators = (IValidator[]) validatorMap
+					.get(new Integer(position));
+			if (validators != null) {
+				for (int i = 0; status.isOK() && i < validators.length; i++) {
+					status = validators[i].validate(value);
+				}
+			}
+		}
+
+		if (status.isOK()) {
+			// only notify listeners if validation passed
+			e.pipelinePosition = position;
+			status = fireBindingEvent(e);
+		}
+
+		final IStatus finalStatus = status;
+
 		Assert.isTrue(partialValidationErrorObservable.getRealm().equals(
 				validationErrorObservable.getRealm()));
 		partialValidationErrorObservable.getRealm().exec(new Runnable() {
 			public void run() {
 				partialValidationErrorObservable.setValue(Status.OK_STATUS);
-				validationErrorObservable.setValue(validationStatus);
+				validationErrorObservable.setValue(finalStatus);
 			}
 		});
-		return validationStatus;
-	}
 
-	private boolean failure(IStatus errorStatus) {
-		// FIXME: Need to fire a BindingEvent here
-		return !errorStatus.isOK();
+		return (status.isOK() && position != lastPosition);
 	}
 
 	/**
 	 * Can be called from any thread/realm.
 	 */
 	public void updateTargetFromModel() {
-		model.getRealm().exec(new Runnable() {
-			public void run() {
-				final ValueDiff valueDiff = Diffs.createValueDiff(null, model
-						.getValue());
-				target.getRealm().exec(new Runnable() {
-					public void run() {
-						doUpdateTargetFromModel(valueDiff);
-					}
-				});
-			}
-		});
+		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
 	/**
+	 * Perform the model to target process up to and including the
+	 * <code>lastPosition</code>.
+	 * 
 	 * @param diff
+	 * @param lastPosition
+	 *            BindingEvent.PIPELINE_* constant
 	 */
-	private void doUpdateTargetFromModel(ValueDiff diff) {
+	private void doUpdateTargetFromModel(ValueDiff diff, int lastPosition) {
 		Assert.isTrue(target.getRealm().isCurrent());
 		try {
 			updatingTarget = true;
@@ -293,27 +332,25 @@ public class ValueBinding extends Binding {
 					BindingEvent.PIPELINE_AFTER_GET) {
 			};
 			e.originalValue = diff.getNewValue();
-			if (failure(errMsg(fireBindingEvent(e)))) {
+			if (!performPosition(e.originalValue,
+					BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
 				return;
 			}
 
 			e.convertedValue = modelToTargetConverter.convert(e.originalValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CONVERT;
-			if (failure(errMsg(fireBindingEvent(e)))) {
+			if (!performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_AFTER_CONVERT, e, lastPosition)) {
+				return;
+			}
+
+			if (!performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_BEFORE_CHANGE, e, lastPosition)) {
 				return;
 			}
 
 			target.setValue(e.convertedValue);
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
-			if (failure(errMsg(fireBindingEvent(e)))) {
-				return;
-			}
-
-			// FIXME ValueBinding Needs Separate modelValidator to perform model
-			// to target validation.
-			doValidate(target.getValue());
-			e.pipelinePosition = BindingEvent.PIPELINE_AFTER_VALIDATE;
-			fireBindingEvent(e);
+			performPosition(e.convertedValue,
+					BindingEvent.PIPELINE_AFTER_CHANGE, e, lastPosition);
 		} catch (Exception ex) {
 			final IStatus error = ValidationStatus.error(BindingMessages
 					.getString("ValueBinding_ErrorWhileSettingValue"), //$NON-NLS-1$
@@ -340,13 +377,41 @@ public class ValueBinding extends Binding {
 	 * Can be called from any thread/realm.
 	 */
 	public void updateModelFromTarget() {
+		updateModelFromTarget(BindingEvent.PIPELINE_AFTER_CHANGE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.databinding.Binding#performTarget(int)
+	 */
+	public void updateModelFromTarget(final int pipelinePosition) {
 		target.getRealm().exec(new Runnable() {
 			public void run() {
 				final ValueDiff valueDiff = Diffs.createValueDiff(target
 						.getValue(), target.getValue());
 				model.getRealm().exec(new Runnable() {
 					public void run() {
-						doUpdateModelFromTarget(valueDiff);
+						doUpdateModelFromTarget(valueDiff, pipelinePosition);
+					}
+				});
+			}
+		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.databinding.Binding#performModelToTarget(int)
+	 */
+	public void updateTargetFromModel(final int pipelinePosition) {
+		model.getRealm().exec(new Runnable() {
+			public void run() {
+				final ValueDiff valueDiff = Diffs.createValueDiff(null, model
+						.getValue());
+				target.getRealm().exec(new Runnable() {
+					public void run() {
+						doUpdateTargetFromModel(valueDiff, pipelinePosition);
 					}
 				});
 			}

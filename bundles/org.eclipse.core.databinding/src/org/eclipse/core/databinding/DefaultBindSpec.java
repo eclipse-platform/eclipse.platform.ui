@@ -8,12 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds (bug 135316)
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.databinding.conversion.IConverter;
@@ -311,10 +312,12 @@ public class DefaultBindSpec extends BindSpec {
 	}
 
 	/**
+	 * @param pipeline
+	 *            position BindingEvent.PIPELINE_* constant
 	 * @param modelType
 	 * @return an IValidator, or null if unsuccessful
 	 */
-	protected IValidator createDomainValidator(Object modelType) {
+	protected IValidator createValidator(int pipelinePosition, Object modelType) {
 		return new IValidator() {
 			public IStatus validate(Object value) {
 				return Status.OK_STATUS;
@@ -373,9 +376,7 @@ public class DefaultBindSpec extends BindSpec {
 		} else if (model instanceof IObservableCollection) {
 			modelType = ((IObservableCollection) model).getElementType();
 		}
-		if (getTargetValidator() == null) {
-			setTargetValidator(createValidator(targetType, modelType));
-		}
+
 		if (getPartialTargetValidator() == null) {
 			setPartialTargetValidator(new IValidator() {
 				public IStatus validate(Object value) {
@@ -383,9 +384,33 @@ public class DefaultBindSpec extends BindSpec {
 				}
 			});
 		}
-		if (getDomainValidator() == null) {
-			setDomainValidator(createDomainValidator(modelType));
+
+		for (Iterator it = BindingEvent.PIPELINE_CONSTANTS.keySet().iterator(); it
+				.hasNext();) {
+			int position = ((Integer) it.next()).intValue();
+
+			if (position == BindingEvent.PIPELINE_AFTER_GET) {
+				// Assuming that the consumer wants to validate types after get
+				if (getTargetValidators(position).length == 0) {
+					addTargetValidator(position, createValidator(targetType,
+							modelType));
+				}
+				if (getModelValidators(position).length == 0) {
+					addModelValidator(position, createValidator(modelType,
+							targetType));
+				}
+			} else {
+				if (getTargetValidators(position).length == 0) {
+					addTargetValidator(position, createValidator(position,
+							modelType));
+				}
+				if (getModelValidators(position).length == 0) {
+					addModelValidator(position, createValidator(position,
+							targetType));					
+				}
+			}
 		}
+
 		if (getModelToTargetConverter() == null) {
 			setModelToTargetConverter(createConverter(modelType, targetType));
 		}

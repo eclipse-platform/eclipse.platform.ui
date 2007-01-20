@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159768
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.observable.IDiff;
@@ -145,28 +148,21 @@ public class BindingEvent {
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
-	 * value has been validated as being possible to convert to the other
-	 * updatable's data type.
+	 * original value has been converted to the other observable's data type.
 	 */
-	public static final int PIPELINE_AFTER_VALIDATE = 1;
+	public static final int PIPELINE_AFTER_CONVERT = 1;
 
 	/**
-	 * A constant indicating that this event is occuring immedately after the
-	 * original value has been converted to the other updatable's data type.
+	 * A constant indicating that this event is occurring immediately before the
+	 * converted value has been set/changed on the observable.
 	 */
-	public static final int PIPELINE_AFTER_CONVERT = 2;
-
-	/**
-	 * A constant indicating that this event is occuring immedately after the
-	 * business rule validation has occured.
-	 */
-	public static final int PIPELINE_AFTER_BUSINESS_VALIDATE = 3;
+	public static final int PIPELINE_BEFORE_CHANGE = 2;
 
 	/**
 	 * A constant indicating that this event is occuring immedately after the
 	 * converted value has been set/changed on the updatable.
 	 */
-	public static final int PIPELINE_AFTER_CHANGE = 4;
+	public static final int PIPELINE_AFTER_CHANGE = 3;
 
 	/**
 	 * A constant indicating that this event is occuring due to either a
@@ -178,24 +174,33 @@ public class BindingEvent {
 	 * A Map of Integer --> String mapping the integer constants for the
 	 * pipeline events defined in this class to their String symbols.
 	 */
-	public final Map pipelineConstants = new HashMap();
+	public static final Map PIPELINE_CONSTANTS;
+	static {
+		Map constants = new LinkedHashMap();
+		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_GET),
+				"PIPELINE_AFTER_GET"); //$NON-NLS-1$
+		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_CONVERT),
+				"PIPELINE_AFTER_CONVERT"); //$NON-NLS-1$
+		constants.put(new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE),
+				"PIPELINE_BEFORE_CHANGE"); //$NON-NLS-1$
+		constants.put(new Integer(BindingEvent.PIPELINE_AFTER_CHANGE),
+				"PIPELINE_AFTER_CHANGE"); //$NON-NLS-1$
+		PIPELINE_CONSTANTS = Collections.unmodifiableMap(constants);
+	}
 	private HashMap eventConstants = new HashMap();
 
 	/**
 	 * Creates a table of constants from this class.
 	 */
 	private void createSymbolTable() {
-		eventConstants.put(new Integer(0), "EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
-		eventConstants.put(new Integer(1), "EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
-		eventConstants.put(new Integer(2), "EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
-		eventConstants.put(new Integer(3), "EVENT_REMOVE"); //$NON-NLS-1$
-
-		pipelineConstants.put(new Integer(0), "PIPELINE_AFTER_GET"); //$NON-NLS-1$
-		pipelineConstants.put(new Integer(1), "PIPELINE_AFTER_VALIDATE"); //$NON-NLS-1$
-		pipelineConstants.put(new Integer(2), "PIPELINE_AFTER_CONVERT"); //$NON-NLS-1$
-		pipelineConstants.put(new Integer(3),
-				"PIPELINE_AFTER_BUSINESS_VALIDATE"); //$NON-NLS-1$
-		pipelineConstants.put(new Integer(4), "PIPELINE_AFTER_CHANGE"); //$NON-NLS-1$
+		eventConstants.put(new Integer(BindingEvent.EVENT_COPY_TO_TARGET),
+				"EVENT_COPY_TO_TARGET"); //$NON-NLS-1$
+		eventConstants.put(new Integer(BindingEvent.EVENT_COPY_TO_MODEL),
+				"EVENT_COPY_TO_MODEL"); //$NON-NLS-1$
+		eventConstants.put(new Integer(BindingEvent.EVENT_PARTIAL_VALIDATE),
+				"EVENT_PARTIAL_VALIDATE"); //$NON-NLS-1$
+		eventConstants.put(new Integer(BindingEvent.EVENT_REMOVE),
+				"EVENT_REMOVE"); //$NON-NLS-1$
 	}
 
 	/*
@@ -208,7 +213,7 @@ public class BindingEvent {
 		result.append(eventConstants.get(new Integer(copyType))
 				+ ": Diff(" + diff + "): "); //$NON-NLS-1$ //$NON-NLS-2$
 		result.append("("); //$NON-NLS-1$
-		result.append(pipelineConstants.get(new Integer(pipelinePosition)));
+		result.append(PIPELINE_CONSTANTS.get(new Integer(pipelinePosition)));
 		result.append(")"); //$NON-NLS-1$
 		return result.toString();
 	}

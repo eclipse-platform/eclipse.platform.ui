@@ -10,7 +10,7 @@
  *     Brad Reynolds - bugs 137877, 152543, 152540
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164653
+ *     Brad Reynolds - bug 164653, 159768
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -48,7 +48,11 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTes
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.examples.model.PersonTests;
 import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest;
+import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest_Pipeline;
+import org.eclipse.jface.tests.internal.databinding.internal.ListBindingTest_Policies;
 import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest;
+import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Pipeline;
+import org.eclipse.jface.tests.internal.databinding.internal.ValueBindingTest_Policies;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableMapTest;
 import org.eclipse.jface.tests.internal.databinding.internal.beans.JavaBeanObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.internal.observable.UnmodifiableObservableListTest;
@@ -162,7 +166,12 @@ public class BindingTestSuite extends TestSuite {
 
 		// org.eclipse.jface.tests.internal.databinding.internal
 		addTestSuite(ListBindingTest.class);
+		addTestSuite(ListBindingTest_Policies.class);
+		addTestSuite(ListBindingTest_Pipeline.class);
+		
 		addTestSuite(ValueBindingTest.class);
+		addTestSuite(ValueBindingTest_Pipeline.class);
+		addTestSuite(ValueBindingTest_Policies.class);
 		
 		//org.eclipse.jface.tests.internal.databinding.internal.beans
 		addTestSuite(JavaBeanObservableMapTest.class);

@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  ******************************************************************************/
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.DefaultBindSpec;
+import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -54,10 +55,11 @@ public class Snippet004DataBindingContextErrorLabel {
 
         DataBindingContext dbc = new DataBindingContext();
 
-        // Bind the text to the value.
-        dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
-                value,
-                new DefaultBindSpec().setDomainValidator(new FiveValidator()));
+		// Bind the text to the value.
+		dbc.bindValue(SWTObservables.observeText(text, SWT.Modify), value,
+				new DefaultBindSpec().addTargetValidator(
+						BindingEvent.PIPELINE_AFTER_CONVERT,
+						new FiveValidator()));
 
         // Bind the error label to the validation error on the dbc.
         dbc.bindValue(SWTObservables.observeText(errorLabel), dbc.getValidationStatus(), null);

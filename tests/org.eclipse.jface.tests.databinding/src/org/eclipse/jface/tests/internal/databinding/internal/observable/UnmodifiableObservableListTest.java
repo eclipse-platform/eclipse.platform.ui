@@ -22,6 +22,7 @@ import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -29,18 +30,29 @@ import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ObservableList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.widgets.Display;
 
 public class UnmodifiableObservableListTest extends TestCase {
 	ObservableList unmodifiable;
 	ObservableList mutable;
 	
 	protected void setUp() throws Exception {
+		Realm.setDefault(SWTObservables.getRealm(Display.getDefault()));
+		
 		List list = new ArrayList();
 		list.add("1");
 		list.add("2");
-		
+				
 		mutable = new MutableObservableList(list, String.class);
 		unmodifiable = (ObservableList) Observables.unmodifiableObservableList(mutable);
+	}
+	
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	protected void tearDown() throws Exception {
+		Realm.setDefault(null);
 	}
 	
 	public void testFiresChangeEvents() throws Exception {

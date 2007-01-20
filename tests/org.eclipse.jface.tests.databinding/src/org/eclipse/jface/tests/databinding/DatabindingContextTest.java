@@ -10,13 +10,14 @@
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
 import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.observable.ChangeEvent;
@@ -106,7 +107,7 @@ public class DatabindingContextTest extends TestCase {
 		};
 
 		dbc.bindValue(targetObservable, modelObservable, new DefaultBindSpec()
-				.setTargetValidator(validator));
+				.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator));
 
 		targetObservable.setValue("");
 		assertFalse(((IStatus) error.getValue()).isOK());
@@ -233,6 +234,12 @@ public class DatabindingContextTest extends TestCase {
 		}
 
 		public void updateTargetFromModel() {
+		}
+
+		public void updateTargetFromModel(int phase) {			
+		}
+
+		public void updateModelFromTarget(int phase) {			
 		}
 	}
 }

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding.scenarios;
 
@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
+import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.conversion.Converter;
@@ -299,7 +300,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
-                new DefaultBindSpec().setTargetValidator(validator));
+                new DefaultBindSpec().addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator));
 
         assertEquals("5.0", text.getText());
         assertTrue(((IStatus)getDbc().getValidationStatus().getValue()).isOK());
@@ -364,7 +365,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 
         BindSpec bindSpec = new DefaultBindSpec().setModelToTargetConverter(toCurrency)
                 .setTargetToModelConverter(toDouble)
-                .setTargetValidator(validator);
+                .addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
         getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify),
                 BeansObservables.observeValue(adventure, "price"),
                 bindSpec);

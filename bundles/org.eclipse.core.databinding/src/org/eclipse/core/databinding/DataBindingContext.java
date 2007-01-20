@@ -10,7 +10,7 @@
  *     Brad Reynolds - bug 159539
  *     Brad Reynolds - bug 140644
  *     Brad Reynolds - bug 159940
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
@@ -47,33 +47,6 @@ import org.eclipse.core.runtime.Status;
  * 
  */
 public class DataBindingContext {
-
-	/**
-	 * Policy constant specifying that update or validation should occur
-	 * automatically whenever a bound observable object generates a change
-	 * event.
-	 */
-	public static final int POLICY_AUTOMATIC = 1;
-
-	/**
-	 * Policy constant specifying that update or validation should only occur
-	 * when explicitly requested by calling {@link #updateModels() } or
-	 * {@link #updateTargets() }.
-	 */
-	public static final int POLICY_EXPLICIT = 2;
-
-	/**
-	 * Constant specifiying that validation or update events from UI observables
-	 * should be triggered early, typically on each keystroke.
-	 */
-	public static final int TIME_EARLY = 0;
-
-	/**
-	 * Constant specifiying that validation or update events from UI observables
-	 * should be triggered late, typically on focus lost.
-	 */
-	public static final int TIME_LATE = 1;
-
 	private List bindingEventListeners = new ArrayList();
 
 	private WritableList bindings;

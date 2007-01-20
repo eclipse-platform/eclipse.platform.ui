@@ -7,15 +7,21 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import junit.framework.TestCase;
 
+import org.eclipse.core.databinding.BindSpec;
+import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.conversion.IConverter;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,38 +37,14 @@ public class BindSpecTests extends TestCase {
 	 */
 	public void testDefaultConstructor() {
 		DefaultBindSpec spec = new DefaultBindSpec();
-		assertNull(spec.getDomainValidator());
 		assertNull(spec.getModelToTargetConverter());
 		assertNull(spec.getModelUpdatePolicy());
 		assertNull(spec.getTargetToModelConverter());
 		assertNull(spec.getTargetUpdatePolicy());
-		assertNull(spec.getTargetValidator());
-		assertNull(spec.getValidatePolicy());
+
 		assertTrue(spec.isUpdateModel());
 		assertTrue(spec.isUpdateTarget());
-	}
-
-	/**
-	 * Asserts that when a validator is set it will always be the sole validator
-	 * and will remove any existing validators.
-	 */
-	public void testSetValidator() {
-		DefaultBindSpec spec = new DefaultBindSpec();
-
-		IValidator v3 = new Validator();
-		spec.setTargetValidator(v3);
-		assertSame(v3, spec.getTargetValidator());
-	}
-
-	/**
-	 * Asserts that when <code>null</code> getTypeConverstionValidator() will
-	 * return <code>null</code> and getTypeConversionValidators returns an
-	 * empty array.
-	 */
-	public void testGetNullValidator() {
-		DefaultBindSpec spec = new DefaultBindSpec();
-		spec.setTargetValidator(null);
-		assertNull(spec.getTargetValidator());
+		assertNull(spec.getTargetValidatePolicy());
 	}
 
 	/**
@@ -113,6 +95,146 @@ public class BindSpecTests extends TestCase {
 		assertNull(spec.getTargetToModelConverter());
 	}
 
+	public void testAddTargetValidator() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+
+		IValidator validator = new ValidatorStub();
+		bindSpec.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+
+		IValidator[] validators = bindSpec
+				.getTargetValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertNotNull("validators are null", validators);
+		assertEquals("validator count", 1, validators.length);
+		assertEquals("after get validator", validator, validators[0]);
+	}
+
+	public void testAddTargetValidatorMultiplesOfSameType() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+
+		IValidator validator = new ValidatorStub();
+		bindSpec.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+		bindSpec.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+
+		IValidator[] validators = bindSpec
+				.getTargetValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertEquals(2, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator,
+				validator }, validators));
+	}
+
+	public void testAddTargetValidatorMultiplesOfVaryingTypes()
+			throws Exception {
+		BindSpec bindSpec = new BindSpec();
+		IValidator validator1 = new ValidatorStub();
+		bindSpec
+				.addTargetValidator(BindingEvent.PIPELINE_AFTER_GET, validator1);
+
+		IValidator validator2 = new ValidatorStub();
+		bindSpec.addTargetValidator(BindingEvent.PIPELINE_AFTER_CONVERT,
+				validator2);
+
+		IValidator[] validators = bindSpec
+				.getTargetValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertEquals(1, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator1 },
+				validators));
+
+		validators = bindSpec
+				.getTargetValidators(BindingEvent.PIPELINE_AFTER_CONVERT);
+		assertEquals(1, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator2 },
+				validators));
+	}
+
+	public void testGetTargetValidatorsNoneRegistered() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+		IValidator[] validators = bindSpec
+				.getTargetValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertNotNull("null should never be returned", validators);
+		assertEquals("empty array should be returned", 0, validators.length);
+	}
+
+	public void testAddModelValidator() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+
+		IValidator validator = new ValidatorStub();
+		bindSpec.addModelValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+
+		IValidator[] validators = bindSpec
+				.getModelValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertNotNull("validators are null", validators);
+		assertEquals("validator count", 1, validators.length);
+		assertEquals("after get validator", validator, validators[0]);
+	}
+
+	public void testAddModelValidatorMultiplesOfSameType() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+
+		IValidator validator = new ValidatorStub();
+		bindSpec.addModelValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+		bindSpec.addModelValidator(BindingEvent.PIPELINE_AFTER_GET, validator);
+
+		IValidator[] validators = bindSpec
+				.getModelValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertEquals(2, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator,
+				validator }, validators));
+	}
+
+	public void testAddModelValidatorMultiplesOfVaryingTypes() throws Exception {
+		BindSpec bindSpec = new BindSpec();
+		IValidator validator1 = new ValidatorStub();
+		bindSpec.addModelValidator(BindingEvent.PIPELINE_AFTER_GET, validator1);
+
+		IValidator validator2 = new ValidatorStub();
+		bindSpec.addModelValidator(BindingEvent.PIPELINE_AFTER_CONVERT,
+				validator2);
+
+		IValidator[] validators = bindSpec
+				.getModelValidators(BindingEvent.PIPELINE_AFTER_GET);
+		assertEquals(1, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator1 },
+				validators));
+
+		validators = bindSpec
+				.getModelValidators(BindingEvent.PIPELINE_AFTER_CONVERT);
+		assertEquals(1, validators.length);
+		assertTrue("validators", Arrays.equals(new IValidator[] { validator2 },
+				validators));
+	}
+	
+	public void testFillBindSpecDefaults() throws Exception {
+		class Spec extends BindSpec {
+			protected void fillBindSpecDefaults(IObservable target,
+					IObservable model) {
+				super.fillBindSpecDefaults(target, model);
+			}
+		}
+
+		Spec bindSpec = new Spec();
+		bindSpec.fillBindSpecDefaults(null, null);
+
+		for (Iterator it = BindingEvent.PIPELINE_CONSTANTS.keySet().iterator(); it
+				.hasNext();) {
+			Integer integer = (Integer) it.next();
+			int position = integer.intValue();
+			IValidator[] targetValidators = bindSpec
+					.getTargetValidators(position);
+
+			String display = (String) BindingEvent.PIPELINE_CONSTANTS.get(integer);
+			assertEquals("target position " + display + " should have 1 validator",
+					1, targetValidators.length);
+			assertTrue("target position " + display + " should return OK status",
+					targetValidators[0].validate(null).isOK());
+
+			IValidator[] modelValidators = bindSpec.getModelValidators(position);
+			assertEquals("model position " + display + " should have 1 validator",
+					1, modelValidators.length);
+			assertTrue("model position " + display + " should return OK status",
+					modelValidators[0].validate(null).isOK());
+		}
+	}
+
 	private class Converter implements IConverter {
 		public Object convert(Object fromObject) {
 			return null;
@@ -127,7 +249,7 @@ public class BindSpecTests extends TestCase {
 		}
 	}
 
-	private class Validator implements IValidator {
+	private class ValidatorStub implements IValidator {
 		public IStatus validate(Object value) {
 			return Status.OK_STATUS;
 		}

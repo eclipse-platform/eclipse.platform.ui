@@ -7,13 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
+ *     Brad Reynolds - bug 116920, 159768
  *******************************************************************************/
 // TODO djo: copyright
 package org.eclipse.jface.tests.databinding.scenarios;
 
 import java.lang.reflect.Method;
 
+import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DefaultBindSpec;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -45,8 +46,8 @@ public class CustomBeanBindSpec extends DefaultBindSpec {
 		return super.createConverter(fromType, toType);
 	}
 
-	public IValidator createDomainValidator(Object modelType) {
-		if (modelType instanceof CustomBeanModelType) {
+	protected IValidator createValidator(int pipelinePosition, Object modelType) {
+		if (modelType instanceof CustomBeanModelType && pipelinePosition == BindingEvent.PIPELINE_BEFORE_CHANGE) {
 			CustomBeanModelType property = (CustomBeanModelType) modelType;
 			String propertyName = property.getPropertyName();
 			String getValidatorMethodName = "get" + upperCaseFirstLetter(propertyName) + "Validator"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -69,7 +70,7 @@ public class CustomBeanBindSpec extends DefaultBindSpec {
 				return null;
 			}
 		}
-		return super.createDomainValidator(modelType);
+		return super.createValidator(pipelinePosition, modelType);
 	}
 
 	private String upperCaseFirstLetter(String name) {

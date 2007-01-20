@@ -7,13 +7,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brad Reynolds - bug 159768
  *******************************************************************************/
 package org.eclipse.core.internal.databinding;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.databinding.BindSpec;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.BindingEvent;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.IDiff;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -21,7 +27,9 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * 
@@ -33,6 +41,16 @@ public class ListBinding extends Binding {
 	private IObservableList modelList;
 
 	private final IObservableList targetList;
+
+	private Map targetValidators = new HashMap();
+	private Map modelValidators = new HashMap();
+
+	/**
+	 * Positions that validation will be performed.
+	 */
+	private static final Integer[] VALIDATION_POSITIONS = new Integer[] {
+			new Integer(BindingEvent.PIPELINE_AFTER_GET),
+			new Integer(BindingEvent.PIPELINE_BEFORE_CHANGE) };
 
 	/**
 	 * @param context
@@ -47,14 +65,45 @@ public class ListBinding extends Binding {
 		super(context);
 		this.targetList = targetList;
 		this.modelList = modelList;
+
+		for (int i = 0; i < VALIDATION_POSITIONS.length; i++) {
+			Integer positionInteger = VALIDATION_POSITIONS[i];
+
+			targetValidators.put(positionInteger, bindSpec
+					.getTargetValidators(positionInteger.intValue()));
+			modelValidators.put(positionInteger, bindSpec
+					.getModelValidators(positionInteger.intValue()));
+		}
+
 		fillBindSpecDefaults(bindSpec, targetList, modelList);
 		partialValidationErrorObservable = new WritableValue(context
 				.getValidationRealm(), null);
 		validationErrorObservable = new WritableValue(context
 				.getValidationRealm(), null);
-		// TODO validation/conversion as specified by the bindSpec
-		targetList.addListChangeListener(targetChangeListener);
-		modelList.addListChangeListener(modelChangeListener);
+
+		Integer policy = (bindSpec.getModelUpdatePolicy() != null) ? bindSpec
+				.getModelUpdatePolicy() : BindSpec.POLICY_AUTOMATIC;
+		int pipelinePosition = (BindSpec.POLICY_AUTOMATIC.equals(policy)) ? BindingEvent.PIPELINE_AFTER_CHANGE
+				: -1;
+
+		if (BindSpec.POLICY_EXPLICIT.equals(policy)
+				&& bindSpec.getTargetValidatePolicy() != null) {
+			pipelinePosition = bindSpec.getTargetValidatePolicy().intValue();
+		}
+
+		if (pipelinePosition != -1) {
+			targetList
+					.addListChangeListener(targetChangeListener = new TargetChangeListener(
+							pipelinePosition));
+		} else {
+			targetChangeListener = null;
+		}
+
+		policy = bindSpec.getTargetUpdatePolicy();
+
+		if (policy == null || policy.equals(BindSpec.POLICY_AUTOMATIC)) {
+			modelList.addListChangeListener(modelChangeListener);
+		}
 		updateTargetFromModel();
 	}
 
@@ -69,101 +118,168 @@ public class ListBinding extends Binding {
 		super.dispose();
 	}
 
-	private final IListChangeListener targetChangeListener = new IListChangeListener() {
-		public void handleListChange(ListChangeEvent event) {
-			if (updating) {
-				return;
-			}
-			// TODO validation
-			BindingEvent e = new BindingEvent(modelList, targetList, event.diff,
-					BindingEvent.EVENT_COPY_TO_MODEL,
-					BindingEvent.PIPELINE_AFTER_GET);
-			if (failure(errMsg(fireBindingEvent(e)))) {
-				return;
-			}
-			updating = true;
-			try {
-				// get setDiff from event object - might have been modified by a
-				// listener
-				ListDiff setDiff = (ListDiff) e.diff;
-				ListDiffEntry[] differences = setDiff.getDifferences();
-				for (int i = 0; i < differences.length; i++) {
-					ListDiffEntry entry = differences[i];
-					if (entry.isAddition()) {
-						modelList.add(entry.getPosition(), entry.getElement());
-					} else {
-						modelList.remove(entry.getPosition());
-					}
-				}
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
-				if (failure(errMsg(fireBindingEvent(e)))) {
-					return;
-				}
-			} finally {
-				updating = false;
-			}
+	private final IListChangeListener targetChangeListener;
+
+	private class TargetChangeListener implements IListChangeListener {
+		private final int pipelinePosition;
+
+		TargetChangeListener(int pipelinePosition) {
+			this.pipelinePosition = pipelinePosition;
 		}
-	};
+
+		public void handleListChange(ListChangeEvent event) {
+			doUpdateModelFromTarget(event.diff, pipelinePosition);
+		}
+	}
 
 	private IListChangeListener modelChangeListener = new IListChangeListener() {
 		public void handleListChange(ListChangeEvent event) {
-			if (updating) {
-				return;
-			}
-			// TODO validation
-			BindingEvent e = new BindingEvent(modelList, targetList, event.diff,
-					BindingEvent.EVENT_COPY_TO_TARGET,
-					BindingEvent.PIPELINE_AFTER_GET);
-			if (failure(errMsg(fireBindingEvent(e)))) {
-				return;
-			}
-			updating = true;
-			try {
-				// get setDiff from event object - might have been modified by a
-				// listener
-				ListDiff setDiff = (ListDiff) e.diff;
-				ListDiffEntry[] differences = setDiff.getDifferences();
-				for (int i = 0; i < differences.length; i++) {
-					ListDiffEntry entry = differences[i];
-					if (entry.isAddition()) {
-						targetList.add(entry.getPosition(), entry.getElement());
-					} else {
-						targetList.remove(entry.getPosition());
-					}
-				}
-				e.pipelinePosition = BindingEvent.PIPELINE_AFTER_CHANGE;
-				if (failure(errMsg(fireBindingEvent(e)))) {
-					return;
-				}
-			} finally {
-				updating = false;
-			}
+			doUpdateTargetFromModel(event.diff,
+					BindingEvent.PIPELINE_AFTER_CHANGE);
 		}
 	};
+
+	/**
+	 * Perform the target to model process up to and including the
+	 * <code>lastPosition</code>.
+	 * 
+	 * @param diff
+	 * @param lastPosition
+	 *            BindingEvent.PIPELINE_* constant
+	 */
+	private void doUpdateModelFromTarget(IDiff diff, int lastPosition) {
+		if (updating) {
+			return;
+		}
+
+		BindingEvent e = new BindingEvent(modelList, targetList, diff,
+				BindingEvent.EVENT_COPY_TO_MODEL,
+				BindingEvent.PIPELINE_AFTER_GET);
+
+		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
+			return;
+		}
+
+		updating = true;
+		try {
+			if (!performPosition(BindingEvent.PIPELINE_BEFORE_CHANGE, e,
+					lastPosition)) {
+				return;
+			}
+
+			// get setDiff from event object - might have been modified by a
+			// listener
+			ListDiff setDiff = (ListDiff) e.diff;
+			ListDiffEntry[] differences = setDiff.getDifferences();
+			for (int i = 0; i < differences.length; i++) {
+				ListDiffEntry entry = differences[i];
+				if (entry.isAddition()) {
+					modelList.add(entry.getPosition(), entry.getElement());
+				} else {
+					modelList.remove(entry.getPosition());
+				}
+			}
+
+			performPosition(BindingEvent.PIPELINE_AFTER_CHANGE, e, lastPosition);
+		} finally {
+			updating = false;
+		}
+	}
+
+	/**
+	 * Performs the model to target process up to and including the
+	 * <code>lastPosition</code>.
+	 * 
+	 * @param diff
+	 * @param lastPosition
+	 *            BindingEvent.PIPELINE_* constant
+	 */
+	private void doUpdateTargetFromModel(IDiff diff, int lastPosition) {
+		if (updating) {
+			return;
+		}
+		BindingEvent e = new BindingEvent(modelList, targetList, diff,
+				BindingEvent.EVENT_COPY_TO_TARGET,
+				BindingEvent.PIPELINE_AFTER_GET);
+		if (!performPosition(BindingEvent.PIPELINE_AFTER_GET, e, lastPosition)) {
+			return;
+		}
+
+		updating = true;
+		try {
+			if (!performPosition(BindingEvent.PIPELINE_BEFORE_CHANGE, e,
+					lastPosition)) {
+				return;
+			}
+
+			// get setDiff from event object - might have been modified by a
+			// listener
+			ListDiff setDiff = (ListDiff) e.diff;
+			ListDiffEntry[] differences = setDiff.getDifferences();
+			for (int i = 0; i < differences.length; i++) {
+				ListDiffEntry entry = differences[i];
+				if (entry.isAddition()) {
+					targetList.add(entry.getPosition(), entry.getElement());
+				} else {
+					targetList.remove(entry.getPosition());
+				}
+			}
+
+			performPosition(BindingEvent.PIPELINE_AFTER_CHANGE, e, lastPosition);
+		} finally {
+			updating = false;
+		}
+	}
+
+	/**
+	 * Performs the necessary processing for the position.
+	 * 
+	 * @param value
+	 * @param pipelinePosition
+	 * @param e
+	 * @param lastPosition
+	 * @return <code>true</code> if should proceed to the next position
+	 */
+	private boolean performPosition(int pipelinePosition, BindingEvent e,
+			int lastPosition) {
+		Map validatorMap = null;
+
+		if (e.copyType == BindingEvent.EVENT_COPY_TO_MODEL) {
+			validatorMap = targetValidators;
+		} else if (e.copyType == BindingEvent.EVENT_COPY_TO_TARGET) {
+			validatorMap = modelValidators;
+		}
+
+		IStatus status = Status.OK_STATUS;
+
+		if (validatorMap != null) {
+			IValidator[] validators = (IValidator[]) validatorMap
+					.get(new Integer(pipelinePosition));
+			if (validators != null) {
+				for (int i = 0; status.isOK() && i < validators.length; i++) {
+					status = validators[i].validate(e.diff);
+				}
+			}
+		}
+
+		if (status.isOK()) {
+			// Only notify listeners if validation passed.
+			e.pipelinePosition = pipelinePosition;
+			status = fireBindingEvent(e);
+		}
+
+		partialValidationErrorObservable.setValue(null);
+		validationErrorObservable.setValue(status);
+
+		return (status.isOK() && pipelinePosition != lastPosition);
+	}
 
 	private WritableValue partialValidationErrorObservable;
 
 	private WritableValue validationErrorObservable;
 
-	private IStatus errMsg(IStatus validationStatus) {
-		partialValidationErrorObservable.setValue(null);
-		validationErrorObservable.setValue(validationStatus);
-		return validationStatus;
-	}
-
-	private boolean failure(IStatus errorMessage) {
-		// FIXME: Need to fire a BindingEvent here
-		return !errorMessage.isOK();
-	}
-
 	public void updateTargetFromModel() {
-		updating = true;
-		try {
-			targetList.clear();
-			targetList.addAll(modelList);
-		} finally {
-			updating = false;
-		}
+		updateTargetFromModel(BindingEvent.PIPELINE_AFTER_CHANGE);
 	}
 
 	public IObservableValue getValidationStatus() {
@@ -175,12 +291,44 @@ public class ListBinding extends Binding {
 	}
 
 	public void updateModelFromTarget() {
-		updating = true;
-		try {
-			modelList.clear();
-			modelList.addAll(targetList);
-		} finally {
-			updating = false;
-		}
+		updateModelFromTarget(BindingEvent.PIPELINE_AFTER_CHANGE);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.databinding.Binding#performModelToTarget(int)
+	 */
+	public void updateTargetFromModel(final int phase) {
+		modelList.getRealm().exec(new Runnable() {
+			public void run() {
+				final ListDiff listDiff = Diffs.computeListDiff(targetList,
+						modelList);
+				targetList.getRealm().exec(new Runnable() {
+					public void run() {
+						doUpdateTargetFromModel(listDiff, phase);
+					}
+				});
+			}
+		});
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.databinding.Binding#performTargetToModel(int)
+	 */
+	public void updateModelFromTarget(final int phase) {
+		targetList.getRealm().exec(new Runnable() {
+			public void run() {
+				final ListDiff listDiff = Diffs.computeListDiff(modelList,
+						targetList);
+				modelList.getRealm().exec(new Runnable() {
+					public void run() {
+						doUpdateModelFromTarget(listDiff, phase);
+					}
+				});
+			}
+		});
 	}
 }
