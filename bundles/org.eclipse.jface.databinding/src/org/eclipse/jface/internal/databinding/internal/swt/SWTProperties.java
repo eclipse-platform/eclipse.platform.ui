@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
+ *     Brad Reynolds - bug 170848
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
@@ -60,5 +61,17 @@ public interface SWTProperties {
 	 * Applies to Label, CLabel.
 	 */
 	public static final String IMAGE = "image"; //$NON-NLS-1$
+	/**
+	 * Applies to Control
+	 */
+	public static final String FOREGROUND = "foreground"; //$NON-NLS-1$
+	/**
+	 * Applies to Control
+	 */
+	public static final String BACKGROUND = "background"; //$NON-NLS-1$
+	/**
+	 * Applies to Control
+	 */
+	public static final String FONT = "font"; //$NON-NLS-1$
 
 }

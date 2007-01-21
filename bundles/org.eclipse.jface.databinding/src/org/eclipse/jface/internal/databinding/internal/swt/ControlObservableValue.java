@@ -9,11 +9,17 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
  *     Matt Carter - bug 170668
+ *     Brad Reynolds - bug 170848
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.internal.swt;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.jface.internal.databinding.provisional.swt.AbstractSWTObservableValue;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 
 /**
@@ -26,6 +32,18 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 
 	private final String attribute;
 
+	private Object valueType;
+	
+	private static final Map SUPPORTED_ATTRIBUTES = new HashMap();
+	static {
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.ENABLED, Boolean.TYPE);
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.VISIBLE, Boolean.TYPE);
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.TOOLTIP_TEXT, String.class);
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.FOREGROUND, Color.class);
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.BACKGROUND, Color.class);
+		SUPPORTED_ATTRIBUTES.put(SWTProperties.FONT, Font.class);
+	}
+	
 	/**
 	 * @param control
 	 * @param attribute
@@ -34,8 +52,9 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 		super(control);
 		this.control = control;
 		this.attribute = attribute;
-		if (!attribute.equals(SWTProperties.ENABLED)
-				&& !attribute.equals(SWTProperties.VISIBLE) && !attribute.equals(SWTProperties.TOOLTIP_TEXT)) {
+		if (SUPPORTED_ATTRIBUTES.keySet().contains(attribute)) {
+			this.valueType = SUPPORTED_ATTRIBUTES.get(attribute); 
+		} else {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -48,6 +67,12 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 			control.setVisible(((Boolean) value).booleanValue());
 		} else if (attribute.equals(SWTProperties.TOOLTIP_TEXT)) {
 			control.setToolTipText((String) value);
+		} else if (attribute.equals(SWTProperties.FOREGROUND)) {
+			control.setForeground((Color) value);
+		} else if (attribute.equals(SWTProperties.BACKGROUND)) {
+			control.setBackground((Color) value);
+		} else if (attribute.equals(SWTProperties.FONT)) {
+			control.setFont((Font) value);
 		}
 		fireValueChange(Diffs.createValueDiff(oldValue, value));
 	}
@@ -59,11 +84,23 @@ public class ControlObservableValue extends AbstractSWTObservableValue {
 		if (attribute.equals(SWTProperties.VISIBLE)) {
 			return control.getVisible() ? Boolean.TRUE : Boolean.FALSE;
 		}
-		return control.getToolTipText();
+		if (attribute.equals(SWTProperties.TOOLTIP_TEXT)) {
+			return control.getToolTipText();			
+		}
+		if (attribute.equals(SWTProperties.FOREGROUND))	 {
+			return control.getForeground();
+		}
+		if (attribute.equals(SWTProperties.BACKGROUND)) {
+			return control.getBackground();
+		}
+		if (attribute.equals(SWTProperties.FONT)) {
+			return control.getFont();
+		}
+		
+		return null;
 	}
 
 	public Object getValueType() {
-		return attribute.equals(SWTProperties.TOOLTIP_TEXT) ? String.class : Boolean.TYPE;
+		return valueType;
 	}
-
 }

@@ -10,7 +10,7 @@
  *     Brad Reynolds - bugs 137877, 152543, 152540
  *     Brad Reynolds - bug 116920
  *     Brad Reynolds - bug 164247
- *     Brad Reynolds - bug 164653, 159768
+ *     Brad Reynolds - bug 164653, 159768, 170848
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
 
@@ -43,6 +43,7 @@ import org.eclipse.jface.tests.databinding.observable.value.AbstractObservableVa
 import org.eclipse.jface.tests.databinding.observable.value.AbstractVetoableValueTest;
 import org.eclipse.jface.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
+import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
 import org.eclipse.jface.tests.databinding.swt.TextObservableValueTests;
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
@@ -155,6 +156,7 @@ public class BindingTestSuite extends TestSuite {
 		// FIXME addTestSuite(ListObservableCollectionTest.class);
 		// FIXME addTestSuite(ObservableCollectionViewerTest.class);
 		// FIXME addTestSuite(TableViewerObservableCollectionTest.class);
+		addTestSuite(SWTObservablesTest.class);
 		addTestSuite(TextObservableValueTests.class);
 
 		// org.eclipse.jface.tests.databinding.views

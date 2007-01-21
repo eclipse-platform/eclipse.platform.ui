@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - bug 170668
+ *     Brad Reynolds - bug 170848
  *******************************************************************************/
 package org.eclipse.jface.databinding.swt;
 
@@ -224,6 +225,30 @@ public class SWTObservables {
 		return new TableObservableValue(table, SWTProperties.SELECTION);
 	}
 
+	/**
+	 * @param control
+	 * @return
+	 */
+	public static ISWTObservableValue observeForeground(Control control) {
+		return new ControlObservableValue(control, SWTProperties.FOREGROUND);
+	}
+
+	/**
+	 * @param control 
+	 * @return
+	 */
+	public static ISWTObservableValue observeBackground(Control control) {
+		return new ControlObservableValue(control, SWTProperties.BACKGROUND);
+	}
+
+	/**
+	 * @param control 
+	 * @return
+	 */
+	public static ISWTObservableValue observeFont(Control control) {
+		return new ControlObservableValue(control, SWTProperties.FONT);
+	}
+	
 	private static class DisplayRealm extends Realm {
 		private Display display;
 
@@ -272,5 +297,4 @@ public class SWTObservables {
 			return true;
 		}
 	}
-
 }
