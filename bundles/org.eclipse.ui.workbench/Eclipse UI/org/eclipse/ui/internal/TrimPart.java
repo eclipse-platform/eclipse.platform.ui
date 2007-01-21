@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,11 +38,10 @@ public abstract class TrimPart implements IWindowTrim {
 	protected LayoutPart part;
 	
 	// Trim State
+	protected TrimFrame tf = null;
 	protected ToolBar toolBar = null;
 	protected int curSide;
 
-	// Abstract methods for subclass's life-cycle
-	
 	/**
 	 * Add the items appropiate for the particular
 	 * subclass.
@@ -100,9 +99,12 @@ public abstract class TrimPart implements IWindowTrim {
 	 * Create the Toolbar
 	 */
 	private void createControl() {
+		tf = new TrimFrame(window.getShell());
 		int orientation = (curSide == SWT.TOP || curSide == SWT.BOTTOM) ? 
 				SWT.HORIZONTAL : SWT.VERTICAL;
-		toolBar = new ToolBar(window.getShell(), orientation);
+		toolBar = new ToolBar(tf.getComposite(), orientation);
+		
+		toolBar.setData(this);
 		
         // Construct the 'restore' button
         ToolItem restoreItem = new  ToolItem(toolBar, SWT.PUSH, 0);        
@@ -124,8 +126,11 @@ public abstract class TrimPart implements IWindowTrim {
 	}
 
 	private void dispose() {
-		if (toolBar != null)
-			toolBar.dispose();
+		if (tf != null && tf.getComposite() != null && !tf.getComposite().isDisposed())
+			tf.getComposite().dispose();
+		tf = null;
+		
+		// The toolbar is disposed when its parent is
 		toolBar = null;
 	}
 	
@@ -135,10 +140,12 @@ public abstract class TrimPart implements IWindowTrim {
 		// Re-create the toolBar
 		dispose();
 		createControl();
+        toolBar.pack();
+        tf.getComposite().pack();
 	}
 
 	public Control getControl() {
-		return toolBar;
+		return tf.getComposite();
 	}
 
 	public String getDisplayName() {
@@ -146,7 +153,7 @@ public abstract class TrimPart implements IWindowTrim {
 	}
 
 	public int getHeightHint() {
-		Point cs =  toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point cs =  tf.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		return cs.y;
 	}
 
@@ -159,7 +166,7 @@ public abstract class TrimPart implements IWindowTrim {
 	}
 
 	public int getWidthHint() {
-		return toolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		return tf.getComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 	}
 
 	public void handleClose() {
