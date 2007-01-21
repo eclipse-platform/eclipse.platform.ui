@@ -48,6 +48,7 @@ import org.eclipse.ui.internal.testing.WorkbenchPartTestable;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 
 /**
@@ -207,7 +208,8 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		final ICommandService parentCommandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
 		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService);
+				parentCommandService, IServiceScopes.PARTSITE_SCOPE,
+				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 	}
 

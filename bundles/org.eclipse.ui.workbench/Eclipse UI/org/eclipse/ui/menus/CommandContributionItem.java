@@ -22,6 +22,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -35,6 +36,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICallbackReference;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -57,10 +59,8 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.3
  */
-public final class CommandContributionItem extends ContributionItem {
-	/**
-	 * 
-	 */
+public final class CommandContributionItem extends ContributionItem implements
+		IAdaptable, ICommandCallback {
 	private LocalResourceManager localResourceManager;
 
 	private Listener menuItemListener;
@@ -79,11 +79,13 @@ public final class CommandContributionItem extends ContributionItem {
 
 	private String tooltip;
 
-	private final ImageDescriptor disabledIcon;
+	private ImageDescriptor disabledIcon;
 
-	private final ImageDescriptor hoverIcon;
+	private ImageDescriptor hoverIcon;
 
-	private final String mnemonic;
+	private String mnemonic;
+
+	private ICallbackReference callbackRef;
 
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
@@ -129,6 +131,16 @@ public final class CommandContributionItem extends ContributionItem {
 		handlerService = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
 		createCommand(commandId, parameters);
+
+		if (command != null) {
+			try {
+				callbackRef = commandService
+						.registerCallbackForCommand(command);
+			} catch (NotDefinedException e) {
+				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
+						+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
 	}
 
 	ParameterizedCommand getCommand() {
@@ -149,7 +161,7 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 
 		if (parameters == null || parameters.size() == 0) {
-			command = new ParameterizedCommand(cmd, null);
+			command = new ParameterizedCommand(cmd, null, this);
 			return;
 		}
 
@@ -173,7 +185,8 @@ public final class CommandContributionItem extends ContributionItem {
 			}
 			command = new ParameterizedCommand(cmd,
 					(Parameterization[]) parmList
-							.toArray(new Parameterization[parmList.size()]));
+							.toArray(new Parameterization[parmList.size()]),
+					this);
 		} catch (NotDefinedException e) {
 			// this shouldn't happen as we checked for !defined, but we
 			// won't take the chance
@@ -278,13 +291,8 @@ public final class CommandContributionItem extends ContributionItem {
 					item.setText(text);
 				}
 
-				if (icon != null) {
-					LocalResourceManager m = new LocalResourceManager(
-							JFaceResources.getResources());
-					item.setImage(icon == null ? null : m.createImage(icon));
-					disposeOldImages();
-					localResourceManager = m;
-				}
+				updateIcons();
+
 				if (item.isEnabled() != isEnabled()) {
 					item.setEnabled(isEnabled());
 				}
@@ -292,15 +300,7 @@ public final class CommandContributionItem extends ContributionItem {
 				ToolItem item = (ToolItem) widget;
 
 				if (icon != null) {
-					LocalResourceManager m = new LocalResourceManager(
-							JFaceResources.getResources());
-					item.setDisabledImage(disabledIcon == null ? null : m
-							.createImage(disabledIcon));
-					item.setHotImage(hoverIcon == null ? null : m
-							.createImage(hoverIcon));
-					item.setImage(icon == null ? null : m.createImage(icon));
-					disposeOldImages();
-					localResourceManager = m;
+					updateIcons();
 				} else if (label != null) {
 					item.setText(label);
 				}
@@ -331,19 +331,28 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.menus.AuthorityContributionItem#dispose()
+	private void handleWidgetDispose(Event event) {
+		if (event.widget == widget) {
+			widget.removeListener(SWT.Selection, getItemListener());
+			widget.removeListener(SWT.Dispose, getItemListener());
+			widget = null;
+			disposeOldImages();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
+		if (callbackRef != null) {
+			commandService.unregisterCallback(callbackRef);
+			callbackRef = null;
+		}
+		command = null;
 		disposeOldImages();
 		super.dispose();
 	}
 
-	/**
-	 * 
-	 */
 	private void disposeOldImages() {
 		if (localResourceManager != null) {
 			localResourceManager.dispose();
@@ -371,15 +380,6 @@ public final class CommandContributionItem extends ContributionItem {
 		return menuItemListener;
 	}
 
-	private void handleWidgetDispose(Event event) {
-		if (event.widget == widget) {
-			widget.removeListener(SWT.Selection, getItemListener());
-			widget.removeListener(SWT.Dispose, getItemListener());
-			widget = null;
-			disposeOldImages();
-		}
-	}
-
 	private void handleWidgetSelection(Event event) {
 		try {
 			handlerService.executeCommand(command, event);
@@ -398,42 +398,46 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/**
-	 * Update the icon on this command contribution item.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param desc
-	 *            The descriptor for the new icon to display.
+	 * @see org.eclipse.ui.menus.ICommandCallback#setIcon(org.eclipse.jface.resource.ImageDescriptor)
 	 */
 	public void setIcon(ImageDescriptor desc) {
 		icon = desc;
-		if (widget instanceof MenuItem) {
-			MenuItem item = (MenuItem) widget;
-			disposeOldImages();
-			if (desc != null) {
+		updateIcons();
+	}
+
+	private void updateIcons() {
+		disposeOldImages();
+		if (icon != null) {
+			if (widget instanceof MenuItem) {
+				MenuItem item = (MenuItem) widget;
 				LocalResourceManager m = new LocalResourceManager(
 						JFaceResources.getResources());
-				item.setImage(m.createImage(desc));
+				item.setImage(m.createImage(icon));
 				localResourceManager = m;
-			}
-		} else if (widget instanceof ToolItem) {
-			ToolItem item = (ToolItem) widget;
-			disposeOldImages();
-			if (desc != null) {
+			} else if (widget instanceof ToolItem) {
+				ToolItem item = (ToolItem) widget;
 				LocalResourceManager m = new LocalResourceManager(
 						JFaceResources.getResources());
-				item.setImage(m.createImage(desc));
+				item.setDisabledImage(disabledIcon == null ? null : m
+						.createImage(disabledIcon));
+				item.setHotImage(hoverIcon == null ? null : m
+						.createImage(hoverIcon));
+				item.setImage(icon == null ? null : m.createImage(icon));
 				localResourceManager = m;
 			}
+
 		}
 	}
 
-	/**
-	 * Update the label on this command contribution item.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param text
-	 *            The new label to display.
+	 * @see org.eclipse.ui.menus.ICommandCallback#setLabel(java.lang.String)
 	 */
-	public void setLabel(String text) {
+	public void setText(String text) {
 		label = text;
 		if (widget instanceof MenuItem) {
 			((MenuItem) widget).setText(text);
@@ -442,18 +446,36 @@ public final class CommandContributionItem extends ContributionItem {
 		}
 	}
 
-	/**
-	 * Update the tooltip on this command contribution item. Tooltips are
-	 * currently only valid for toolbar contributions.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param text
-	 *            The new tooltip to display.
+	 * @see org.eclipse.ui.menus.ICommandCallback#setTooltip(java.lang.String)
 	 */
 	public void setTooltip(String text) {
 		tooltip = text;
 		if (widget instanceof ToolItem) {
 			((ToolItem) widget).setToolTipText(text);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.menus.ICommandCallback#setDisabledIcon(org.eclipse.jface.resource.ImageDescriptor)
+	 */
+	public void setDisabledIcon(ImageDescriptor desc) {
+		disabledIcon = desc;
+		updateIcons();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.menus.ICommandCallback#setHoverIcon(org.eclipse.jface.resource.ImageDescriptor)
+	 */
+	public void setHoverIcon(ImageDescriptor desc) {
+		hoverIcon = desc;
+		updateIcons();
 	}
 
 	/*
@@ -466,5 +488,17 @@ public final class CommandContributionItem extends ContributionItem {
 			return command.getCommand().isEnabled();
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
+	 */
+	public Object getAdapter(Class adapter) {
+		if (adapter == ICommandCallback.class) {
+			return this;
+		}
+		return null;
 	}
 }

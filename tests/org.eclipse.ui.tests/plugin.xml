@@ -3316,5 +3316,28 @@
          </item>
       </menuContribution>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="tests.commands.CCT.cmd1"
+            name="cmd1">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="tests.commands.CCT.cmd2"
+            name="cmd2">
+         <commandParameter
+               id="protocol"
+               name="Protocol"
+               optional="false">
+         </commandParameter>
+         <commandParameter
+               id="host"
+               name="Server"
+               optional="false">
+         </commandParameter>
+      </command>
+   </extension>
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
 </plugin>            

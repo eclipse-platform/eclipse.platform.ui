@@ -132,6 +132,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * A window within the workbench.
@@ -3610,7 +3611,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		final ICommandService parentCommandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
 		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService);
+				parentCommandService, IServiceScopes.WINDOW_SCOPE,
+				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
 		final IMenuService parentMenuService = (IMenuService) serviceLocator

@@ -35,6 +35,7 @@ import org.eclipse.ui.internal.expressions.ActivePartExpression;
 import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * This implementation of <code>IPageSite</code> provides a site for a page
@@ -109,7 +110,8 @@ public class PageSite implements IPageSite, INestable {
 		final ICommandService parentCommandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
 		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService);
+				parentCommandService, IServiceScopes.PAGESITE_SCOPE, 
+				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
 	}

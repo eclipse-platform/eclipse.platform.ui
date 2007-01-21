@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.internal.commands.util.Util;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * <p>
@@ -33,7 +34,6 @@ import org.eclipse.core.internal.commands.util.Util;
  * @since 3.1
  */
 public final class ParameterizedCommand implements Comparable {
-
 	/**
 	 * The constant integer hash code value meaning the hash code has not yet
 	 * been computed.
@@ -157,7 +157,7 @@ public final class ParameterizedCommand implements Comparable {
 		if (parameter.isOptional()) {
 			parameterizations.add(null);
 		}
-		
+
 		IParameterValues values = null;
 		try {
 			values = parameter.getValues();
@@ -274,7 +274,7 @@ public final class ParameterizedCommand implements Comparable {
 				}
 			}
 		}
-		
+
 		return combinations;
 	}
 
@@ -295,6 +295,14 @@ public final class ParameterizedCommand implements Comparable {
 	 * may be <code>null</code> if the command has no parameters.
 	 */
 	private final Parameterization[] parameterizations;
+
+	/**
+	 * This adapter should return an interface appropriate for providing the
+	 * user of this command specialization with feedback.
+	 * 
+	 * @since 3.3
+	 */
+	private IAdaptable callback = null;
 
 	/**
 	 * Constructs a new instance of <code>ParameterizedCommand</code> with
@@ -320,6 +328,31 @@ public final class ParameterizedCommand implements Comparable {
 		this.command = command;
 		this.parameterizations = (parameterizations == null || parameterizations.length == 0) ? null
 				: parameterizations;
+	}
+
+	/**
+	 * Constructs a new instance of <code>ParameterizedCommand</code> with
+	 * specific values for zero or more of its parameters.
+	 * 
+	 * @param command
+	 *            The command that is parameterized; must not be
+	 *            <code>null</code>.
+	 * @param parameterizations
+	 *            An array of parameterizations binding parameters to values for
+	 *            the command. This value may be <code>null</code>. This
+	 *            argument is not copied; if you need to make changes to it
+	 *            after constructing this parameterized command, then make a
+	 *            copy yourself.
+	 * @param callback
+	 *            This object can adapt to an interface appropriate provide
+	 *            feedback through the model element.
+	 * @since 3.3
+	 */
+	public ParameterizedCommand(final Command command,
+			final Parameterization[] parameterizations,
+			final IAdaptable callback) {
+		this(command, parameterizations);
+		this.callback = callback;
 	}
 
 	/*
@@ -392,7 +425,7 @@ public final class ParameterizedCommand implements Comparable {
 			final Object applicationContext) throws ExecutionException,
 			NotHandledException {
 		return command.execute(new ExecutionEvent(command, getParameterMap(),
-				trigger, applicationContext));
+				trigger, applicationContext, getCallback()));
 	}
 
 	/**
@@ -422,7 +455,7 @@ public final class ParameterizedCommand implements Comparable {
 			final Object applicationContext) throws ExecutionException,
 			NotDefinedException, NotEnabledException, NotHandledException {
 		return command.executeWithChecks(new ExecutionEvent(command,
-				getParameterMap(), trigger, applicationContext));
+				getParameterMap(), trigger, applicationContext, getCallback()));
 	}
 
 	/**
@@ -505,7 +538,9 @@ public final class ParameterizedCommand implements Comparable {
 		return parameterMap;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
@@ -621,5 +656,17 @@ public final class ParameterizedCommand implements Comparable {
 		buffer.append(parameterizations);
 		buffer.append(')');
 		return buffer.toString();
+	}
+
+	/**
+	 * Returns a user callback object, specific to the type of user feedback the
+	 * creator of this command specialization can support.
+	 * 
+	 * @return an adaptable object. This may be <code>null</code> if the
+	 *         command is fired programmatically.
+	 * @since 3.3
+	 */
+	public IAdaptable getCallback() {
+		return callback;
 	}
 }

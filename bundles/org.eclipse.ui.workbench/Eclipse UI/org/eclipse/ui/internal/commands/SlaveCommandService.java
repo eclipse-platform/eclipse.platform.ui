@@ -13,6 +13,9 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -22,6 +25,8 @@ import org.eclipse.core.commands.ParameterType;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.commands.ICallbackReference;
 import org.eclipse.ui.commands.ICommandService;
 
 /**
@@ -38,7 +43,30 @@ public class SlaveCommandService implements ICommandService {
 
 	private Collection fExecutionListeners = new ArrayList();
 
+	/**
+	 * The collection of ICallbackReferences added through this service.
+	 * 
+	 * @since 3.3
+	 */
+	private Set fCallbackCache = new HashSet();
+
 	private ICommandService fParentService;
+
+	/**
+	 * The scoping constant added to callback registrations submitted through
+	 * this service.
+	 * 
+	 * @since 3.3
+	 */
+	private String fScopingName;
+
+	/**
+	 * The object to scope. In theory, the service locator that would find this
+	 * service.
+	 * 
+	 * @since 3.3
+	 */
+	private Object fScopingValue;
 
 	/**
 	 * Build the slave service.
@@ -46,12 +74,15 @@ public class SlaveCommandService implements ICommandService {
 	 * @param parent
 	 *            the parent service. This must not be <code>null</code>.
 	 */
-	public SlaveCommandService(ICommandService parent) {
+	public SlaveCommandService(ICommandService parent, String scopeName,
+			Object scopeValue) {
 		if (parent == null) {
 			throw new NullPointerException(
 					"The parent command service must not be null"); //$NON-NLS-1$
 		}
 		fParentService = parent;
+		fScopingName = scopeName;
+		fScopingValue = scopeValue;
 	}
 
 	/*
@@ -99,6 +130,12 @@ public class SlaveCommandService implements ICommandService {
 				removeExecutionListener((IExecutionListener) array[i]);
 			}
 			fExecutionListeners.clear();
+		}
+		if (!fCallbackCache.isEmpty()) {
+			Object[] array = fCallbackCache.toArray();
+			for (int i = 0; i < array.length; i++) {
+				unregisterCallback((ICallbackReference) array[i]);
+			}
 		}
 	}
 
@@ -215,5 +252,60 @@ public class SlaveCommandService implements ICommandService {
 	public final void setHelpContextId(final IHandler handler,
 			final String helpContextId) {
 		fParentService.setHelpContextId(handler, helpContextId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#getCallbacks(java.lang.String,
+	 *      java.util.Map)
+	 */
+	public IAdaptable[] findCallbacks(String commandId, Map filter) {
+		return fParentService.findCallbacks(commandId, filter);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand)
+	 */
+	public ICallbackReference registerCallbackForCommand(
+			ParameterizedCommand command) throws NotDefinedException {
+		if (!command.getCommand().isDefined()) {
+			throw new NotDefinedException(
+					"Cannot define a callback for undefined command " //$NON-NLS-1$
+							+ command.getCommand().getId());
+		}
+		IAdaptable callback = command.getCallback();
+		if (callback == null) {
+			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
+					+ command.getCommand().getId());
+		}
+
+		CallbackReference ref = new CallbackReference(command.getId(),
+				callback, command.getParameterMap());
+		registerCallback(ref);
+		return ref;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#registerCallback(org.eclipse.ui.commands.ICallbackReference)
+	 */
+	public void registerCallback(ICallbackReference callbackReference) {
+		fCallbackCache.add(callbackReference);
+		callbackReference.getParameters().put(fScopingName, fScopingValue);
+		fParentService.registerCallback(callbackReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#unregisterCallback(org.eclipse.ui.commands.ICallbackReference)
+	 */
+	public void unregisterCallback(ICallbackReference callbackReference) {
+		fCallbackCache.remove(callbackReference);
+		fParentService.unregisterCallback(callbackReference);
 	}
 }

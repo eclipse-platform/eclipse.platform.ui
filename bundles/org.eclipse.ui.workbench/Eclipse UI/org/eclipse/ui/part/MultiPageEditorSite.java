@@ -43,6 +43,7 @@ import org.eclipse.ui.internal.handlers.NestableHandlerService;
 import org.eclipse.ui.internal.services.INestable;
 import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.services.IServiceScopes;
 
 /**
  * Site for a nested editor within a multi-page editor. Selection is handled by
@@ -145,7 +146,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		final ICommandService parentCommandService = (ICommandService) serviceLocator
 				.getService(ICommandService.class);
 		final ICommandService commandService = new SlaveCommandService(
-				parentCommandService);
+				parentCommandService, IServiceScopes.MPESITE_SCOPE,
+				this);
 		serviceLocator.registerService(ICommandService.class, commandService);
 
 	}

@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.commands;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -22,7 +27,9 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.State;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.commands.PersistentState;
+import org.eclipse.ui.commands.ICallbackReference;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -124,6 +131,7 @@ public final class CommandService implements ICommandService {
 				}
 			}
 		}
+		commandCallbacks = null;
 	}
 
 	public final Category getCategory(final String categoryId) {
@@ -184,5 +192,111 @@ public final class CommandService implements ICommandService {
 	public final void setHelpContextId(final IHandler handler,
 			final String helpContextId) {
 		commandManager.setHelpContextId(handler, helpContextId);
+	}
+
+	/**
+	 * This is a map of commandIds to a list containing currently registered
+	 * callbacks, in the form of ICallbackReferences.
+	 */
+	private Map commandCallbacks = new HashMap();
+
+	/**
+	 * A default empty array.
+	 */
+	private static IAdaptable[] NO_ADAPTORS = new IAdaptable[0];
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#findCallbacks(java.lang.String,
+	 *      java.util.Map)
+	 */
+	public final IAdaptable[] findCallbacks(String commandId, Map filter) {
+		List parameterizedCommands = (List) commandCallbacks.get(commandId);
+		if (parameterizedCommands == null) {
+			return NO_ADAPTORS;
+		}
+		ArrayList callbacks = new ArrayList();
+		for (Iterator i = parameterizedCommands.iterator(); i.hasNext();) {
+			ICallbackReference entry = (ICallbackReference) i.next();
+			if (filter == null) {
+				callbacks.add(entry.getCallback());
+			} else {
+				Map parms = entry.getParameters();
+				boolean match = true;
+				for (Iterator j = filter.entrySet().iterator(); j.hasNext()
+						&& match;) {
+					Map.Entry parmEntry = (Map.Entry) j.next();
+					Object value = parms.get(parmEntry.getKey());
+					if (!parmEntry.getValue().equals(value)) {
+						match = false;
+					}
+				}
+				if (match) {
+					callbacks.add(entry.getCallback());
+				}
+			}
+		}
+		if (callbacks.isEmpty()) {
+			return NO_ADAPTORS;
+		}
+		return (IAdaptable[]) callbacks
+				.toArray(new IAdaptable[callbacks.size()]);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand)
+	 */
+	public final ICallbackReference registerCallbackForCommand(
+			ParameterizedCommand command) throws NotDefinedException {
+		if (!command.getCommand().isDefined()) {
+			throw new NotDefinedException(
+					"Cannot define a callback for undefined command " //$NON-NLS-1$
+							+ command.getCommand().getId());
+		}
+		IAdaptable callback = command.getCallback();
+		if (callback == null) {
+			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
+					+ command.getCommand().getId());
+		}
+
+		CallbackReference ref = new CallbackReference(command.getId(),
+				callback, command.getParameterMap());
+		registerCallback(ref);
+		return ref;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#registerCallback(org.eclipse.ui.commands.ICallbackReference)
+	 */
+	public void registerCallback(ICallbackReference callbackReference) {
+		List parameterizedCommands = (List) commandCallbacks
+				.get(callbackReference.getCommandId());
+		if (parameterizedCommands == null) {
+			parameterizedCommands = new ArrayList();
+			commandCallbacks.put(callbackReference.getCommandId(),
+					parameterizedCommands);
+		}
+		parameterizedCommands.add(callbackReference);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.commands.ICommandService#unregisterCallback(org.eclipse.ui.commands.ICallbackReference)
+	 */
+	public void unregisterCallback(ICallbackReference callbackReference) {
+		List parameterizedCommands = (List) commandCallbacks
+				.get(callbackReference.getCommandId());
+		if (parameterizedCommands != null) {
+			parameterizedCommands.remove(callbackReference);
+			if (parameterizedCommands.isEmpty()) {
+				commandCallbacks.remove(callbackReference.getCommandId());
+			}
+		}
 	}
 }

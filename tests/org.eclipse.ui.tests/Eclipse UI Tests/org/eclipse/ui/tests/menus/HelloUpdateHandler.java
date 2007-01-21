@@ -16,10 +16,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.ICommandCallback;
 
 /**
  * @since 3.3
@@ -33,12 +32,11 @@ public class HelloUpdateHandler extends AbstractHandler {
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (event.getTrigger() != null) {
-			Event trigger = (Event) event.getTrigger();
-			CommandContributionItem callback = (CommandContributionItem) trigger.widget
-					.getData();
-			if (callback != null) {
-				callback.setLabel("My New Menu Item");
+		if (event.getCallback() != null) {
+			ICommandCallback feedback = (ICommandCallback) event.getCallback()
+					.getAdapter(ICommandCallback.class);
+			if (feedback!=null) {
+				feedback.setText("My New Text Item");
 			}
 		}
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
