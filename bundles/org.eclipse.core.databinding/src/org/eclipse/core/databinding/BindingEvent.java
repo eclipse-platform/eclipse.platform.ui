@@ -165,12 +165,6 @@ public class BindingEvent {
 	public static final int PIPELINE_AFTER_CHANGE = 3;
 
 	/**
-	 * A constant indicating that this event is occuring due to either a
-	 * validation error or warning occuring.
-	 */
-	public static final int PIPELINE_VALIDATION_ERROR_OR_WARNING = 5;
-
-	/**
 	 * A Map of Integer --> String mapping the integer constants for the
 	 * pipeline events defined in this class to their String symbols.
 	 */
