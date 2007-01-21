@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.MapDiff;
 import org.eclipse.core.databinding.observable.map.ObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -147,6 +148,18 @@ public class ValidationStatusMap extends ObservableMap {
 			IObservableValue observableValue = (IObservableValue) it.next();
 			observableValue.removeChangeListener(markDirtyChangeListener);
 		}
+	}
+	
+	public synchronized void addChangeListener(IChangeListener listener) {
+		// this ensures that the next change will be seen by the new listener.
+		recompute();
+		super.addChangeListener(listener);
+	}
+	
+	public synchronized void addMapChangeListener(IMapChangeListener listener) {
+		// this ensures that the next change will be seen by the new listener.
+		recompute();
+		super.addMapChangeListener(listener);
 	}
 
 }
