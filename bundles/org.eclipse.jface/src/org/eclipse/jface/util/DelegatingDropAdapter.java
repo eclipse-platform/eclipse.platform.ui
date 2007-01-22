@@ -375,5 +375,10 @@ public class DelegatingDropAdapter implements DropTargetListener {
         }
         setCurrentListener(null, event);
         event.detail = DND.DROP_NONE;
+        
+        // -always- ensure that expand/scroll are on...otherwise
+        // if a valid drop target is a child of an invalid one
+        // you can't get there...
+        event.feedback = DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
     }
 }
