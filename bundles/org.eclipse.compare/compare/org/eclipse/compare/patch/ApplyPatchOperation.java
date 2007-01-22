@@ -4,12 +4,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.compare.internal.ComparePreferencePage;
-import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.*;
 import org.eclipse.compare.internal.patch.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
 
@@ -89,13 +89,12 @@ public class ApplyPatchOperation implements Runnable {
 	 * shown with the target selected.</li>
 	 * </ul> 
 	 * 
-	 * @param part 	an IWorkbenchPart 
+	 * @param part 	an IWorkbenchPart or <code>null</code>
 	 * @param patch		an IStorage containing a patch in unified diff format or <code>null</code>
 	 * @param target	an IResource which the patch is to be applied to or <code>null</code>
 	 * @param configuration	a CompareConfiguration supplying the labels and images for the preview patch page
 	 */
 	public ApplyPatchOperation(IWorkbenchPart part, IStorage patch, IResource target, CompareConfiguration configuration) {
-		Assert.isNotNull(part);
 		Assert.isNotNull(configuration);
 		this.part = part;
 		this.patch = patch;
@@ -130,9 +129,21 @@ public class ApplyPatchOperation implements Runnable {
 			wizard.setWindowTitle(patchWizardTitle);
 		wizard.setNeedsProgressMonitor(true);
 		
-		PatchWizardDialog dialog = new PatchWizardDialog(part.getSite().getShell(), wizard);
+		PatchWizardDialog dialog = new PatchWizardDialog(getShell(), wizard);
 		wizard.setDialog(dialog);
 		dialog.open();
+	}
+
+	/**
+	 * Return the parent shell to be used when the wizard is opened.
+	 * By default, the site of the part is used to get the shell.
+	 * Subclasses may override.
+	 * @return the parent shell to be used when the wizard is opened
+	 */
+	protected Shell getShell() {
+		if (part == null)
+			return CompareUIPlugin.getShell();
+		return part.getSite().getShell();
 	}
 	
 	/**
