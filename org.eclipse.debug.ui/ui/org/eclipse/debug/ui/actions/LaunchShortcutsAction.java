@@ -92,15 +92,6 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		setMenuCreator(this);
 		setEnabled(existsConfigTypesForMode());
 	}
-	
-	/**
-	 * Returns the launch group associated with this action.
-	 * 
-	 * @return the launch group associated with this action
-	 */
-	private ILaunchGroup getLaunchGroup() {
-		return fGroup;
-	}
 
 	/**
 	 * @see IAction#run()
@@ -113,8 +104,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
-		if (getCreatedMenu() != null) {
-			getCreatedMenu().dispose();
+		if (fCreatedMenu != null) {
+			fCreatedMenu.dispose();
 		}
 	}
 	
@@ -129,12 +120,12 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		if (getCreatedMenu() != null) {
-			 getCreatedMenu().dispose();
+		if (fCreatedMenu != null) {
+			 fCreatedMenu.dispose();
 		 }
-		setCreatedMenu(new Menu(parent));
+		fCreatedMenu = new Menu(parent);
 		initMenu();
-		return getCreatedMenu();
+		return fCreatedMenu;
 	}
 	
 	/**
@@ -176,12 +167,15 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 		return context;
 	}	
 	
+	/**
+	 * Fills the flyout menu 
+	 */
 	private void fillMenu() {
 		IEvaluationContext context = createContext();
 		// gather all shortcuts and run their filters so that we only run the
 		// filters one time for each shortcut. Running filters can be expensive.
 		// Also, only *LOADED* plug-ins get their filters run.
-		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(getLaunchGroup().getCategory());
+		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts(fGroup.getCategory());
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
 		while (iter.hasNext()) {
@@ -275,16 +269,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 * 
 	 * @return the mode of this action - run or debug
 	 */
-	private String getMode() {
-		return getLaunchGroup().getMode();
-	}
-	
-	private Menu getCreatedMenu() {
-		return fCreatedMenu;
-	}
-	
-	private void setCreatedMenu(Menu createdMenu) {
-		fCreatedMenu = createdMenu;
+	protected String getMode() {
+		return fGroup.getMode();
 	}
 	
 	/**
@@ -299,8 +285,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	/**
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window) {
-	}
+	public void init(IWorkbenchWindow window) {}
 
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
