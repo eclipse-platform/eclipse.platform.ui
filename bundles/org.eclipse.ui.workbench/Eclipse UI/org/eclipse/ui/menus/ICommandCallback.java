@@ -15,7 +15,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Allow a command or application to provide feedback to a user through updating
- * a MenuItem or ToolItem.  Initially used to update properties for UI elements
+ * a MenuItem or ToolItem. Initially used to update properties for UI elements
  * created by the CommandContributionItem.
  * <p>
  * <strong>PROVISIONAL</strong>. This class or interface has been added as part
@@ -60,11 +60,20 @@ public interface ICommandCallback {
 	public void setText(String text);
 
 	/**
-	 * Update the tooltip on this UI element.  Tooltips are
-	 * currently only valid for toolbar contributions.
+	 * Update the tooltip on this UI element. Tooltips are currently only valid
+	 * for toolbar contributions.
 	 * 
 	 * @param text
 	 *            The new tooltip to display.
 	 */
 	public void setTooltip(String text);
+
+	/**
+	 * Update the checked state on this UI element. For example, if this was a
+	 * toggle or radio button.
+	 * 
+	 * @param checked
+	 *            true to set toggle on
+	 */
+	public void setChecked(boolean checked);
 }

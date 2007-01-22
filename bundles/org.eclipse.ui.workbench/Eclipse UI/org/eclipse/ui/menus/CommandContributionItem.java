@@ -87,6 +87,8 @@ public final class CommandContributionItem extends ContributionItem implements
 
 	private ICallbackReference callbackRef;
 
+	private boolean checkedState;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -340,7 +342,9 @@ public final class CommandContributionItem extends ContributionItem implements
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
 	 */
 	public void dispose() {
@@ -443,6 +447,23 @@ public final class CommandContributionItem extends ContributionItem implements
 			((MenuItem) widget).setText(text);
 		} else if (widget instanceof ToolItem) {
 			((ToolItem) widget).setText(text);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.menus.ICommandCallback#setChecked(boolean)
+	 */
+	public void setChecked(boolean checked) {
+		if (checkedState == checked) {
+			return;
+		}
+		checkedState = checked;
+		if (widget instanceof MenuItem) {
+			((MenuItem) widget).setSelection(checkedState);
+		} else if (widget instanceof ToolItem) {
+			((ToolItem) widget).setSelection(checkedState);
 		}
 	}
 
