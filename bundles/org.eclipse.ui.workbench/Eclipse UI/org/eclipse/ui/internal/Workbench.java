@@ -377,7 +377,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private Workbench(Display display, WorkbenchAdvisor advisor) {
 		super();
-
+		StartupThreading.setWorkbench(this);
 		if (instance != null && instance.isRunning()) {
 			throw new IllegalStateException(
 					WorkbenchMessages.Workbench_CreatingWorkbenchTwice);
