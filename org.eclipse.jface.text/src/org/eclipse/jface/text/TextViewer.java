@@ -1857,7 +1857,9 @@ public class TextViewer extends Viewer implements
 		fVisibleDocument= null;
 		fDocument= null;
 		fScroller= null;
-		fTextWidget= null;
+		
+		// FIXME: commented out as workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=171201
+//		fTextWidget= null;
 	}
 
 
