@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.ui.themes.ColorUtil;
 
 /**
  * Draws a styled frame around its contained controls.
@@ -85,7 +86,7 @@ public class TrimFrame {
                 
                 Color white = e.gc.getDevice ().getSystemColor(SWT.COLOR_WHITE);
                 Color shadow = e.gc.getDevice().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-                RGB outerRGB = FormColorsblend(white.getRGB(), shadow.getRGB(), blend); 
+                RGB outerRGB = ColorUtil.blend(white.getRGB(), shadow.getRGB(), blend); 
                 Color outerColor = new Color(e.gc.getDevice(), outerRGB);
                 
                 // Draw the 'outer' bits
@@ -124,19 +125,6 @@ public class TrimFrame {
                 drawLine(e.gc, 1, 1, 1, maxY-1, flipXY); 
                 drawLine(e.gc, maxX-1, 5, maxX-1, maxY-5, flipXY);
             }
-
-            // Clone of the code found in 'org.eclise.ui.forms'
-            // in class 'FormColors'
-        	private int blend(int v1, int v2, int ratio) {
-        		int b = (ratio * v1 + (100 - ratio) * v2) / 100;
-        		return Math.min(255, b);
-        	}
-			private RGB FormColorsblend(RGB c1, RGB c2, int ratio) {
-				int r = blend(c1.red, c2.red, ratio);
-				int g = blend(c1.green, c2.green, ratio);
-				int b = blend(c1.blue, c2.blue, ratio);
-				return new RGB(r, g, b);
-			}    
         });
         
         // provide a layout that provides enough extra space to
