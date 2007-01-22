@@ -2768,6 +2768,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * Subclasses may re-implement this method using the {@link ColumnSupport},
 	 * e.g. by returning <code>new ColumnSupport(this, RulerColumnRegistry.getDefault());</code>.
 	 * <p>
+	 * <strong>Note:</strong> If you override this method to provide column support you will
+	 * also need to override {@link #createVerticalRuler()} to return a {@link CompositeRuler}.</p>
+	 * <p>
 	 * Out of the box this class does not install this support and hence this
 	 * implementation always returns <code>null</code>.</p>
 	 * <p>

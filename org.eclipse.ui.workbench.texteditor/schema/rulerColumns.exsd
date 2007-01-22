@@ -63,7 +63,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  The unique id of the column. The id should be in the namespace of the contributing plug-in.
+                  The unique id of this column.
                </documentation>
             </annotation>
          </attribute>
@@ -273,7 +273,8 @@
       <documentation>
          &lt;b&gt;This API is provisional and may change any time before the 3.3 API freeze.&lt;/b&gt;
 
-The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances. Editors that want to support the extension point should provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. Subclasses of &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; support the extension point.
+The extension point is supported by the &lt;tt&gt;org.eclipse.ui.texteditor.rulers&lt;/tt&gt; package. &lt;code&gt;RulerColumnRegistry&lt;/code&gt; gives access to all contributions, which in turn are described by &lt;code&gt;RulerColumnDescriptor&lt;/code&gt; instances.
+&lt;p&gt;Editors that want to support the extension point need to provide an adapter for &lt;code&gt;IColumnSupport&lt;/code&gt;. &lt;code&gt;AbstractTextEditor&lt;/code&gt; already adapts to &lt;code&gt;IColumnSupport&lt;/code&gt; and hence its subclasses should override &lt;code&gt;createColumnSupport()&lt;/code&gt; with the suggested implementation, rather than providing the adapter again. Subclasses of &lt;code&gt;AbstractDecoratedTextEditor&lt;/code&gt; automatically have this support installed.&lt;/p&gt;
       </documentation>
    </annotation>
 
