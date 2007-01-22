@@ -92,14 +92,14 @@ public class WorkspacePatcher extends Patcher {
 					createPath(file.getProject(), path);
 
 					List failed= new ArrayList();
-					List result= null;
 
 					int type= diff.getDiffType(isReversed());
 					switch (type) {
 						case Differencer.ADDITION :
 							// patch it and collect rejected hunks
-							result= apply(diff, file, true, failed);
-							store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+							List result= apply(diff, file, true, failed);
+							if (result != null)
+								store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 						case Differencer.DELETION :
@@ -109,7 +109,8 @@ public class WorkspacePatcher extends Patcher {
 						case Differencer.CHANGE :
 							// patch it and collect rejected hunks
 							result= apply(diff, file, false, failed);
-							store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+							if (result != null)
+								store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 							workTicks -= WORK_UNIT;
 							break;
 					}

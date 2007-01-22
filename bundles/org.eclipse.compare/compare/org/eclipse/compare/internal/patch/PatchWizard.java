@@ -133,6 +133,10 @@ public class PatchWizard extends Wizard {
 			} else {
 				// single patch
 				IResource resource = getTarget();
+				if (resource.getType() == IResource.FILE) {
+					// For a file, use the modify rule for the parent since we may need to include a reject file
+					resource = resource.getParent();
+				}
 				scheduleRule = ResourcesPlugin.getWorkspace().getRuleFactory().modifyRule(resource);
 			}
 

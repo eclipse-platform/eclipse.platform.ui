@@ -203,14 +203,14 @@ public class Patcher {
 								: createPath(container, path);
 					
 				List failed= new ArrayList();
-				List result= null;
 				
 				int type= diff.getDiffType(isReversed());
 				switch (type) {
 				case Differencer.ADDITION:
 					// patch it and collect rejected hunks
-					result= apply(diff, file, true, failed);
-					store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					List result= apply(diff, file, true, failed);
+					if (result != null)
+						store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				case Differencer.DELETION:
@@ -220,18 +220,14 @@ public class Patcher {
 				case Differencer.CHANGE:
 					// patch it and collect rejected hunks
 					result= apply(diff, file, false, failed);
-					store(createString(result), file, new SubProgressMonitor(pm, workTicks));
+					if (result != null)
+						store(createString(result), file, new SubProgressMonitor(pm, workTicks));
 					workTicks-= WORK_UNIT;
 					break;
 				}
 
 				if (fGenerateRejectFile && failed.size() > 0) {
-					IPath pp= null;
-					if (path.segmentCount() > 1) {
-						pp= path.removeLastSegments(1);
-						pp= pp.append(path.lastSegment() + REJECT_FILE_EXTENSION);
-					} else
-						pp= new Path(path.lastSegment() + REJECT_FILE_EXTENSION);
+					IPath pp = getRejectFilePath(path);
 					file= createPath(container, pp);
 					if (file != null) {
 						store(getRejected(failed), file, pm);
@@ -253,6 +249,16 @@ public class Patcher {
 					pm.worked(workTicks);
 			}
 		}
+	}
+
+	private IPath getRejectFilePath(IPath path) {
+		IPath pp= null;
+		if (path.segmentCount() > 1) {
+			pp= path.removeLastSegments(1);
+			pp= pp.append(path.lastSegment() + REJECT_FILE_EXTENSION);
+		} else
+			pp= new Path(path.lastSegment() + REJECT_FILE_EXTENSION);
+		return pp;
 	}
 	
 	/*
@@ -309,6 +315,9 @@ public class Patcher {
 		FileDiffResult result = getDiffResult(diff);
 		List lines = result.apply(file, create);
 		failedHunks.addAll(result.getFailedHunks());
+		// Return null if there were no matches
+		if (!result.hasMatches())
+			return null;
 		return lines;
 	}
 	
