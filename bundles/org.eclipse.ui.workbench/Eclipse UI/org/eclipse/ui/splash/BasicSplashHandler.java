@@ -56,6 +56,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 				updateUI(new Runnable() {
 
 					public void run() {
+						if (isDisposed())
+							return;
 						AbsolutePositionProgressMonitorPart.super.beginTask(name,
 								totalWork);
 					}
@@ -74,6 +76,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 				updateUI(new Runnable() {
 
 					public void run() {
+						if (isDisposed())
+							return;
 						AbsolutePositionProgressMonitorPart.super.done();
 					}
 				});
@@ -91,6 +95,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 				updateUI(new Runnable() {
 
 					public void run() {
+						if (isDisposed())
+							return;
 						AbsolutePositionProgressMonitorPart.super.internalWorked(work);
 					}
 				});
@@ -110,6 +116,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 				updateUI(new Runnable() {
 
 					public void run() {
+						if (isDisposed())
+							return;
 						AbsolutePositionProgressMonitorPart.super.setFont(font);
 					}
 				});
@@ -127,6 +135,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 				updateUI(new Runnable() {
 
 					public void run() {
+						if (isDisposed())
+							return;
 						AbsolutePositionProgressMonitorPart.super.updateLabel();
 					}
 				});
