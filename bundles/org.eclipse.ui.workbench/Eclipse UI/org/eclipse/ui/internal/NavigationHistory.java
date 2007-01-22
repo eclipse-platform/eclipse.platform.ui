@@ -178,7 +178,7 @@ public class NavigationHistory implements INavigationHistory {
 	                        && part.getEditorInput() != e.editorInfo.editorInput) {
 						updateEntry(e);
 					}
-	                addEntry(part, true);
+	                addEntry(part);
                 }
             }
         });
@@ -189,7 +189,7 @@ public class NavigationHistory implements INavigationHistory {
      * Method declared on INavigationHistory.
      */
     public void markLocation(IEditorPart part) {
-        addEntry(part, true);
+        addEntry(part);
     }
 
     /*
@@ -311,13 +311,13 @@ public class NavigationHistory implements INavigationHistory {
     /*
      * Adds a location to the history.
      */
-    private void addEntry(IEditorPart part, boolean markLocation) {
+    private void addEntry(IEditorPart part) {
         if (ignoreEntries > 0 || part == null) {
 			return;
 		}
 
         INavigationLocation location = null;
-        if (markLocation && part instanceof INavigationLocationProvider) {
+        if (part instanceof INavigationLocationProvider) {
 			location = ((INavigationLocationProvider) part)
                     .createNavigationLocation();
 		}
