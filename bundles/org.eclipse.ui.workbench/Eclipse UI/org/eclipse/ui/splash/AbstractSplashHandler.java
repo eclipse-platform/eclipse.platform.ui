@@ -14,6 +14,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.internal.StartupThreading;
+import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
  * Baseclass for splash implementations. Please note that methods on this class
@@ -79,5 +81,14 @@ public abstract class AbstractSplashHandler {
 	 */
 	public Shell getSplash() {
 		return shell;
+	}
+	
+	protected void updateUI(final Runnable r) throws Throwable {
+		StartupRunnable startupRunnable = new StartupRunnable() {
+
+			public void runWithException() throws Throwable {
+				r.run();
+			}};
+		StartupThreading.runWithoutExceptions(startupRunnable);
 	}
 }

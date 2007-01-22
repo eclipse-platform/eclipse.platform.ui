@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.ProgressIndicator;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -30,6 +31,8 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 
 	/**
 	 * Hacks the progress monitor to have absolute positioning for its controls.
+	 * In addition, all methods that access the controls will be wrapped in an
+	 * asynchExec().
 	 */
 	class AbsolutePositionProgressMonitorPart extends ProgressMonitorPart {
 		public AbsolutePositionProgressMonitorPart(Composite parent) {
@@ -43,6 +46,94 @@ public class BasicSplashHandler extends AbstractSplashHandler {
 
 		public Label getProgressText() {
 			return fLabel;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#beginTask(java.lang.String, int)
+		 */
+		public void beginTask(final String name, final int totalWork) {
+			try {
+				updateUI(new Runnable() {
+
+					public void run() {
+						AbsolutePositionProgressMonitorPart.super.beginTask(name,
+								totalWork);
+					}
+				});
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#done()
+		 */
+		public void done() {
+			try {
+				updateUI(new Runnable() {
+
+					public void run() {
+						AbsolutePositionProgressMonitorPart.super.done();
+					}
+				});
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#internalWorked(double)
+		 */
+		public void internalWorked(final double work) {
+			try {
+				updateUI(new Runnable() {
+
+					public void run() {
+						AbsolutePositionProgressMonitorPart.super.internalWorked(work);
+					}
+				});
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#setFont(org.eclipse.swt.graphics.Font)
+		 */
+		public void setFont(final Font font) {
+			try {
+				updateUI(new Runnable() {
+
+					public void run() {
+						AbsolutePositionProgressMonitorPart.super.setFont(font);
+					}
+				});
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.wizard.ProgressMonitorPart#updateLabel()
+		 */
+		protected void updateLabel() {
+			try {
+				updateUI(new Runnable() {
+
+					public void run() {
+						AbsolutePositionProgressMonitorPart.super.updateLabel();
+					}
+				});
+			} catch (Throwable e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
