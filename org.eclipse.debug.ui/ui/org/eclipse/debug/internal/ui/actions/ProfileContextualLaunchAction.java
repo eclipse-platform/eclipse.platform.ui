@@ -14,15 +14,16 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.ui.actions.ContextualLaunchAction;
 
 /**
- * @author DWright
- *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * Specialization of <code>ContextualLaunchAction</code> for the profile mode
+ * 
+ * @see {@link ContextualLaunchAction}
  */
 public class ProfileContextualLaunchAction extends ContextualLaunchAction {
 	
+	/**
+	 * Constructor
+	 */
 	public ProfileContextualLaunchAction() {
 		super(ILaunchManager.PROFILE_MODE);
 	}
-
 }

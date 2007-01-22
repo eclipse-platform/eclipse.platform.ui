@@ -48,7 +48,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	private IViewPart fViewPart;
 	
 	/**
-	 * Cache of the most recent seletion
+	 * Cache of the most recent selection
 	 */
 	private IStructuredSelection fSelection = StructuredSelection.EMPTY;
 	
@@ -58,7 +58,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	private boolean fInitialized = false;
 	
 	/**
-	 * It's crucial that delegate actions have a zero-arg constructor so that
+	 * It's crucial that delegate actions have a zero-argument constructor so that
 	 * they can be reflected into existence when referenced in an action set
 	 * in the plugin's plugin.xml file.
 	 */
@@ -257,7 +257,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	}
 
 	/**
-	 * Sets the initialized state of this aciton to the specified boolean value
+	 * Sets the initialized state of this action to the specified boolean value
 	 * @param initialized the value to set the initialized state to
 	 */
 	protected void setInitialized(boolean initialized) {
