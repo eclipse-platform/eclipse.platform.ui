@@ -47,7 +47,7 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique id of this provider
+                  the unique id of this updater
                </documentation>
             </annotation>
          </attribute>
