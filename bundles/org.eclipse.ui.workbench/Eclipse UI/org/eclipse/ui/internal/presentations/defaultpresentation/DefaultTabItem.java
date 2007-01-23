@@ -53,7 +53,7 @@ public class DefaultTabItem extends WidgetTabItem {
 	 * @return CTabItem
 	 */
 	private static CTabItem getTab(CTabFolder parent, int index, int flags) {
-		return new AnimatedTabItem(parent, flags, index);
+		return new CTabItem(parent, flags, index);
 	}
 
 	/*
@@ -157,13 +157,6 @@ public class DefaultTabItem extends WidgetTabItem {
 		this.busy = busy;
 		super.setBusy(busy);
 		updateFont();
-
-		AnimatedTabItem item = (AnimatedTabItem) getWidget();
-		if (busy)
-			item.startBusy();
-		else
-			item.stopBusy();
-
 	}
 
 	private void updateFont() {
