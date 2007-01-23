@@ -52,7 +52,6 @@ public class WorkManager implements IManager {
 		}
 	}
 
-	private NotifyRule notifyRule = new NotifyRule();
 	/**
 	 * Indicates that the last checkIn failed, either due to cancelation or due to the
 	 * workspace tree being locked for modifications (during resource change events).
@@ -63,7 +62,6 @@ public class WorkManager implements IManager {
 	 */
 	private boolean hasBuildChanges = false;
 	private IJobManager jobManager;
-	
 	/**
 	 * The primary workspace lock. This lock must be held by any thread
 	 * modifying the workspace tree.
@@ -74,6 +72,8 @@ public class WorkManager implements IManager {
 	 * The current depth of running nested operations.
 	 */
 	private int nestedOperations = 0;
+	
+	private NotifyRule notifyRule = new NotifyRule();
 	
 	private boolean operationCanceled = false;
 	
@@ -126,23 +126,6 @@ public class WorkManager implements IManager {
 	}
 
 	/**
-	 * Inform that an operation has finished. 
-	 */
-	public synchronized void checkOut(ISchedulingRule rule) {
-		decrementPreparedOperations();
-		rebalanceNestedOperations();
-		//reset state if this is the end of a top level operation
-		if (preparedOperations == 0)
-			operationCanceled = hasBuildChanges = false;
-		try {
-			lock.release();
-		} finally {
-			//end rule in finally in case lock.release throws an exception
-			jobManager.endRule(rule);
-		}
-	}
-
-	/**
 	 * Returns true if the check in for this thread failed, in which case the
 	 * check out and other end of operation code should not run.
 	 * <p>
@@ -160,6 +143,23 @@ public class WorkManager implements IManager {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Inform that an operation has finished. 
+	 */
+	public synchronized void checkOut(ISchedulingRule rule) {
+		decrementPreparedOperations();
+		rebalanceNestedOperations();
+		//reset state if this is the end of a top level operation
+		if (preparedOperations == 0)
+			operationCanceled = hasBuildChanges = false;
+		try {
+			lock.release();
+		} finally {
+			//end rule in finally in case lock.release throws an exception
+			jobManager.endRule(rule);
+		}
 	}
 
 	/**
@@ -188,6 +188,13 @@ public class WorkManager implements IManager {
 		return lock;
 	}
 	
+	/**
+	 * Returns the scheduling rule used during resource change notifications.
+	 */
+	public ISchedulingRule getNotifyRule() {
+		return notifyRule;
+	}
+
 	/**
 	 * This method can only be safely called from inside a workspace
 	 * operation. Should NOT be called from outside a
@@ -223,6 +230,26 @@ public class WorkManager implements IManager {
 	 */
 	boolean isBalanced() {
 		return nestedOperations == preparedOperations;
+	}
+
+	/**
+	 * Returns true if the workspace lock has already been acquired by this
+	 * thread, and false otherwise.
+	 */
+	public boolean isLockAlreadyAcquired() {
+		boolean result = false;
+		try {
+			boolean success = lock.acquire(0L);
+			if (success) {
+				//if lock depth is greater than one, then we already owned it
+				// before
+				result = lock.getDepth() > 1;
+				lock.release();
+			}
+		} catch (InterruptedException e) {
+			// ignore
+		}
+		return result;
 	}
 
 	/**
@@ -271,32 +298,5 @@ public class WorkManager implements IManager {
 
 	public void startup(IProgressMonitor monitor) {
 		// do nothing
-	}
-
-	/**
-	 * Returns true if the workspace lock has already been acquired by this
-	 * thread, and false otherwise.
-	 */
-	public boolean isLockAlreadyAcquired() {
-		boolean result = false;
-		try {
-			boolean success = lock.acquire(0L);
-			if (success) {
-				//if lock depth is greater than one, then we already owned it
-				// before
-				result = lock.getDepth() > 1;
-				lock.release();
-			}
-		} catch (InterruptedException e) {
-			// ignore
-		}
-		return result;
-	}
-
-	/**
-	 * Returns the scheduling rule used during resource change notifications.
-	 */
-	public ISchedulingRule getNotifyRule() {
-		return notifyRule;
 	}
 }
