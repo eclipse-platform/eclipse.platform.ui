@@ -84,23 +84,26 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
     public String getName();
 
     /**
-     * Sets the elements that are contained in this working set.
-     * 
-     * @param elements the elements to set in this working set
-     */
-    public void setElements(IAdaptable[] elements);
+	 * Sets the elements that are contained in this working set.
+	 * 
+	 * @param elements
+	 *            the elements to set in this working set
+	 * @since 3.3 it is now recommended that all calls to this method pass
+	 *        through the results from calling
+	 *        {@link #adaptElements(IAdaptable[])} with the desired elements.
+	 */
+	public void setElements(IAdaptable[] elements);
 
     /**
-     * Sets the working set id.
-     * This is one of the ids defined by extensions of the 
-     * org.eclipse.ui.workingSets extension point.
-     * It is used by the workbench to determine the page to use in 
-     * the working set edit wizard. The default resource edit page
-     * is used if this value is <code>null</code>.
-     * 
-     * @param id the working set id. May be <code>null</code>
-     * @since 2.1 
-     */
+	 * Sets the working set id. This is one of the ids defined by extensions of
+	 * the org.eclipse.ui.workingSets extension point. It is used by the
+	 * workbench to determine the page to use in the working set edit wizard.
+	 * The default resource edit page is used if this value is <code>null</code>.
+	 * 
+	 * @param id
+	 *            the working set id. May be <code>null</code>
+	 * @since 2.1
+	 */
     public void setId(String id);
 
     /**
@@ -201,6 +204,8 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * @return an array of transformed elements that be empty if no elements
 	 *         from the original array are suitable
 	 * @since 3.3
+	 * @see org.eclipse.ui.IWorkingSetElementAdapter
+	 * @see org.eclipse.ui.BasicWorkingSetElementAdapter
 	 */
 	public IAdaptable[] adaptElements(IAdaptable[] objects);
 }
