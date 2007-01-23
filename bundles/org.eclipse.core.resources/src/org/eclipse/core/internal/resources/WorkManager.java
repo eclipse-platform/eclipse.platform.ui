@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,11 +14,18 @@ import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.*;
 
 /**
- * Used to track operation state for each thread that is involved in an
+ * The work manager governs concurrent access to the workspace tree.  The {@link #lock}
+ * field is used to protect the workspace tree data structure from concurrent
+ * write attempts.  This is an internal lock that is generally not held while 
+ * client code is running.  Scheduling rules are used by client code to obtain
+ * exclusive write access to a portion of the workspace. 
+ * 
+ * This class also tracks operation state for each thread that is involved in an
  * operation. This includes prepared and running operation depth, auto-build
  * strategy and cancel state.
  */
@@ -56,9 +63,23 @@ public class WorkManager implements IManager {
 	 */
 	private boolean hasBuildChanges = false;
 	private IJobManager jobManager;
+	
+	/**
+	 * The primary workspace lock. This lock must be held by any thread
+	 * modifying the workspace tree.
+	 */
 	private final ILock lock;
+	
+	/**
+	 * The current depth of running nested operations.
+	 */
 	private int nestedOperations = 0;
+	
 	private boolean operationCanceled = false;
+	
+	/**
+	 * The current depth of prepared operations.
+	 */
 	private int preparedOperations = 0;
 	private Workspace workspace;
 

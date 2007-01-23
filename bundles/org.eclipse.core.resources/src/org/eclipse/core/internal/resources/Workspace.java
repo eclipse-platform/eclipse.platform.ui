@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -129,6 +129,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	private StringPoolJob stringPoolJob;
 
+	/**
+	 * The synchronizer
+	 */
 	protected Synchronizer synchronizer;
 
 	/**
@@ -136,6 +139,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected TeamHook teamHook = null;
 
+	/**
+	 * The workspace tree.  The tree is an in-memory representation
+	 * of the resources that make up the workspace.  The tree caches
+	 * the structure and state of files and directories on disk (their existence
+	 * and last modified times).  When external parties make changes to
+	 * the files on disk, this representation becomes out of sync. A local refresh
+	 * reconciles the state of the files on disk with this tree (@link {@link IResource#refreshLocal(int, IProgressMonitor)}).
+	 * The tree is also used to store metadata associated with resources in
+	 * the workspace (markers, properties, etc).
+	 * 
+	 * While the ElementTree data structure can hand both concurrent
+	 * reads and concurrent writes, write access to the tree is governed
+	 * by {@link WorkManager}.
+	 */
 	protected ElementTree tree;
 
 	/**
