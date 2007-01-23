@@ -151,7 +151,7 @@ public final class NativeKeyFormatter extends AbstractKeyFormatter {
 		final int[] sortedKeys = new int[4];
 		int index = 0;
 
-		if ("win32".equals(platform)) { //$NON-NLS-1$
+		if ("win32".equals(platform) || "wpf".equals(platform)) { //$NON-NLS-1$ //$NON-NLS-2$
 			if ((modifierKeys & lookup.getCtrl()) != 0) {
 				sortedKeys[index++] = lookup.getCtrl();
 			}
