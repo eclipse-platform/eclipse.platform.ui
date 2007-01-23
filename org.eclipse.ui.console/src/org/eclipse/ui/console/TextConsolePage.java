@@ -256,6 +256,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip);
+		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_SELECT_ALL_ACTION);
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
