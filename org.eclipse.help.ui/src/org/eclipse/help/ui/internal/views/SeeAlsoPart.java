@@ -110,8 +110,8 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 		}
 		bgImage = new Image(container.getDisplay(), 1, carea.height);
 		GC gc = new GC(bgImage);
-		gc.setBackground(colors.getColor(IFormColors.H_GRADIENT_TOP));
-		gc.setForeground(colors.getColor(IFormColors.H_GRADIENT_BOTTOM));
+		gc.setBackground(colors.getColor(IFormColors.H_GRADIENT_END));
+		gc.setForeground(colors.getColor(IFormColors.H_GRADIENT_START));
 		gc.fillGradientRectangle(0, 0,
 				1,
 				carea.height,
