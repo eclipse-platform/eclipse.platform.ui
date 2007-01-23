@@ -35,15 +35,15 @@ public interface IFormColors {
 	 */
 	String TB_PREFIX = PREFIX + "TB_"; //$NON-NLS-1$	
 	/**
-	 * Key for the form header background gradient top color.
+	 * Key for the form header background gradient ending color.
 	 */
-	String H_GRADIENT_TOP = H_PREFIX + "GRADIENT_TOP"; //$NON-NLS-1$
+	String H_GRADIENT_END = H_PREFIX + "GRADIENT_END"; //$NON-NLS-1$
 
 	/**
-	 * Key for the form header background gradient bottom color.
+	 * Key for the form header background gradient starting color.
 	 * 
 	 */
-	String H_GRADIENT_BOTTOM = H_PREFIX + "GRADIENT_BOTTOM"; //$NON-NLS-1$
+	String H_GRADIENT_START = H_PREFIX + "GRADIENT_START"; //$NON-NLS-1$
 	/**
 	 * Key for the form header bottom keyline 1 color.
 	 * 

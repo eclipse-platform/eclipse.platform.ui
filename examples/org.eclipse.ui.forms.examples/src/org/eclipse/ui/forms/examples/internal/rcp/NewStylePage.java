@@ -336,8 +336,8 @@ public class NewStylePage extends FormPage {
 	private void addHeadingGradient(FormToolkit toolkit, ScrolledForm form,
 			boolean add) {
 		FormColors colors = toolkit.getColors();
-		Color top = colors.getColor(IFormColors.H_GRADIENT_TOP);
-		Color bot = colors.getColor(IFormColors.H_GRADIENT_BOTTOM);
+		Color top = colors.getColor(IFormColors.H_GRADIENT_END);
+		Color bot = colors.getColor(IFormColors.H_GRADIENT_START);
 		if (add)
 			form.getForm().setTextBackground(new Color[] { top, bot },
 					new int[] { 100 }, true);

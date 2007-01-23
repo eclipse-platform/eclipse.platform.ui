@@ -658,8 +658,8 @@ public class FormToolkit {
 	 */
 
 	public void decorateFormHeading(Form form) {
-		Color top = colors.getColor(IFormColors.H_GRADIENT_TOP);
-		Color bot = colors.getColor(IFormColors.H_GRADIENT_BOTTOM);
+		Color top = colors.getColor(IFormColors.H_GRADIENT_END);
+		Color bot = colors.getColor(IFormColors.H_GRADIENT_START);
 		form.setTextBackground(new Color[] { top, bot }, new int[] { 100 },
 				true);
 		form.setHeadColor(IFormColors.H_BOTTOM_KEYLINE1, colors

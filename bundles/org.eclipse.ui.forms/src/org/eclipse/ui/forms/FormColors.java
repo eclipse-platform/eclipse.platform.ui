@@ -601,9 +601,9 @@ public class FormColors {
 	}
 
 	private void updateFormHeaderColors() {
-		if (colorRegistry.containsKey(IFormColors.H_GRADIENT_TOP)) {
-			disposeIfFound(IFormColors.H_GRADIENT_TOP);
-			disposeIfFound(IFormColors.H_GRADIENT_BOTTOM);
+		if (colorRegistry.containsKey(IFormColors.H_GRADIENT_END)) {
+			disposeIfFound(IFormColors.H_GRADIENT_END);
+			disposeIfFound(IFormColors.H_GRADIENT_START);
 			disposeIfFound(IFormColors.H_BOTTOM_KEYLINE1);
 			disposeIfFound(IFormColors.H_BOTTOM_KEYLINE2);
 			disposeIfFound(IFormColors.H_HOVER_LIGHT);
@@ -664,8 +664,8 @@ public class FormColors {
 			bottom = blend(titleBg, bg, 10);
 			top = bg;
 		}
-		createColor(IFormColors.H_GRADIENT_TOP, top);
-		createColor(IFormColors.H_GRADIENT_BOTTOM, bottom);
+		createColor(IFormColors.H_GRADIENT_END, top);
+		createColor(IFormColors.H_GRADIENT_START, bottom);
 	}
 
 	private void createFormHeaderKeylineColors() {
