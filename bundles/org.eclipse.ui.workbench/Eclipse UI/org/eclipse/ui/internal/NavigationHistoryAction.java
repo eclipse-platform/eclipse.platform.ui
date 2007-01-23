@@ -90,7 +90,7 @@ public class NavigationHistoryAction extends PageEventAction {
                         public void widgetSelected(SelectionEvent e) {
                             history
                                     .shiftCurrentEntry((NavigationHistoryEntry) e.widget
-                                            .getData());
+                                            .getData(), forward);
                         }
                     });
                 }

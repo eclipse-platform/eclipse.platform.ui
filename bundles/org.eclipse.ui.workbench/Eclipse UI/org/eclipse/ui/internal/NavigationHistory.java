@@ -12,8 +12,13 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
@@ -25,6 +30,7 @@ import org.eclipse.ui.INavigationLocationProvider;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Implementation of the back and forward actions.
@@ -40,6 +46,8 @@ public class NavigationHistory implements INavigationHistory {
     private int ignoreEntries;
 
     private ArrayList history = new ArrayList(CAPACITY);
+    
+    Map perTabHistoryMap = new HashMap();
 
     private ArrayList editors = new ArrayList(CAPACITY);
 
@@ -73,6 +81,13 @@ public class NavigationHistory implements INavigationHistory {
             }
 
             public void partClosed(IWorkbenchPartReference partRef) {
+            	if (isPerTabHistoryEnabled() && partRef instanceof EditorReference) {
+            		if (!((EditorReference)partRef).isDisposed()) {
+	            		Object editorTabCookie = ((EditorReference)partRef).getPane();
+	            		disposeHistoryForTab(editorTabCookie);
+	            		updateActions();
+            		}
+            	}
 				updateNavigationHistory(partRef, true);
 				
 				// if there are now no more editors to activate push the active
@@ -154,6 +169,11 @@ public class NavigationHistory implements INavigationHistory {
     private Display getDisplay() {
         return page.getWorkbenchWindow().getShell().getDisplay();
     }
+    
+    private boolean isPerTabHistoryEnabled() {
+    	IPreferenceStore store = ((Workbench)page.getWorkbenchWindow().getWorkbench()).getPreferenceStore();
+    	return store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR);
+    }
 
     /*
      * Adds an editor to the editor history without getting its location.
@@ -196,8 +216,14 @@ public class NavigationHistory implements INavigationHistory {
      * Return the backward history entries.  Return in restore order (i.e., the
      * first entry is the entry that would become active if the "Backward" action 
      * was executed).
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
     NavigationHistoryEntry[] getBackwardEntries() {
+    	if (isPerTabHistoryEnabled()) {
+    		return getEntriesForTab(false);
+    	}
         int length = activeEntry;
         NavigationHistoryEntry[] entries = new NavigationHistoryEntry[length];
         for (int i = 0; i < activeEntry; i++) {
@@ -210,8 +236,14 @@ public class NavigationHistory implements INavigationHistory {
      * Return the forward history entries.  Return in restore order (i.e., the first
      * entry is the entry that would become active if the "Forward" action was
      * executed).
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
     NavigationHistoryEntry[] getForwardEntries() {
+    	if (isPerTabHistoryEnabled()) {
+    		return getEntriesForTab(true);
+    	}
         int length = history.size() - activeEntry - 1;
         length = Math.max(0, length);
         NavigationHistoryEntry[] entries = new NavigationHistoryEntry[length];
@@ -247,6 +279,7 @@ public class NavigationHistory implements INavigationHistory {
      * Disposes this NavigationHistory and all entries.
      */
     public void dispose() {
+    	disposeHistoryForTabs();
         Iterator e = history.iterator();
         while (e.hasNext()) {
             NavigationHistoryEntry entry = (NavigationHistoryEntry) e.next();
@@ -257,8 +290,11 @@ public class NavigationHistory implements INavigationHistory {
     /**
      * Keeps a reference to the forward action to update its state
      * whenever needed.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
-    public void setForwardAction(NavigationHistoryAction action) {
+    void setForwardAction(NavigationHistoryAction action) {
         forwardAction = action;
         updateActions();
     }
@@ -266,8 +302,11 @@ public class NavigationHistory implements INavigationHistory {
     /**
      * Keeps a reference to the backward action to update its state
      * whenever needed.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
-    public void setBackwardAction(NavigationHistoryAction action) {
+    void setBackwardAction(NavigationHistoryAction action) {
         backwardAction = action;
         updateActions();
     }
@@ -316,6 +355,9 @@ public class NavigationHistory implements INavigationHistory {
 			return;
 		}
 
+        if (isPerTabHistoryEnabled()) {
+        	markLocationForTab(part);
+        }
         INavigationLocation location = null;
         if (part instanceof INavigationLocationProvider) {
 			location = ((INavigationLocationProvider) part)
@@ -359,15 +401,27 @@ public class NavigationHistory implements INavigationHistory {
 
     /*
      * Returns true if the forward action can be performed otherwise returns false.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
     /* package */boolean canForward() {
+    	if (isPerTabHistoryEnabled()) {
+    		return hasEntriesForTab(true);
+    	}
         return (0 <= activeEntry + 1) && (activeEntry + 1 < history.size());
     }
 
     /*
      * Returns true if the backward action can be performed otherwise returns false.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
     /* package */boolean canBackward() {
+    	if (isPerTabHistoryEnabled()) {
+    		return hasEntriesForTab(false);
+    	}
         return (0 <= activeEntry - 1) && (activeEntry - 1 < history.size());
     }
 
@@ -418,8 +472,15 @@ public class NavigationHistory implements INavigationHistory {
     /*
      * Perform the forward action by getting the next location and restoring
      * its context.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
-    public void forward() {
+    void forward() {
+    	if (isPerTabHistoryEnabled()) {
+    		forwardForTab();
+    		return;
+    	}
         if (canForward()) {
 			shiftEntry(true);
 		}
@@ -428,8 +489,15 @@ public class NavigationHistory implements INavigationHistory {
     /*
      * Perform the backward action by getting the previous location and restoring
      * its context.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
-    public void backward() {
+    void backward() {
+    	if (isPerTabHistoryEnabled()) {
+    		backwardForTab();
+    		return;
+    	}
         if (canBackward()) {
 			shiftEntry(false);
 		}
@@ -453,8 +521,15 @@ public class NavigationHistory implements INavigationHistory {
 
     /*
      * Shift the history to the given entry.
+     * <p>
+     * (Called by NavigationHistoryAction)
+     * </p>
      */
-    protected void shiftCurrentEntry(NavigationHistoryEntry entry) {
+    void shiftCurrentEntry(NavigationHistoryEntry entry, boolean forward) {
+    	if (isPerTabHistoryEnabled()) {
+    		gotoEntryForTab(entry, forward);
+    		return;
+    	}
         updateEntry(getEntry(activeEntry));
         activeEntry = history.indexOf(entry);
         gotoEntry(entry);
@@ -614,4 +689,236 @@ public class NavigationHistory implements INavigationHistory {
         }
         editors.remove(dup);
     }
+    
+    /*********************************************************/
+    /*** new per-tab history code                          ***/
+    /*********************************************************/
+    
+    
+    private static class PerTabHistory {
+    	LinkedList backwardEntries = new LinkedList();
+    	NavigationHistoryEntry currentEntry = null;
+    	LinkedList forwardEntries = new LinkedList();
+    }
+    
+    private void setNewCurrentEntryForTab(PerTabHistory perTabHistory, NavigationHistoryEntry entry) {
+    	if (perTabHistory.currentEntry != null) {
+    		perTabHistory.backwardEntries.addFirst(perTabHistory.currentEntry);
+    	}
+    	perTabHistory.currentEntry = entry;
+    	removeEntriesForTab(perTabHistory.forwardEntries);
+    }
+    
+    private Object getCookieForTab(IEditorPart part) {
+    	if (part != null) {
+	        IWorkbenchPartSite site = part.getSite();
+	        if (site instanceof PartSite) {
+	        	PartSite partSite = (PartSite) site;
+	        	WorkbenchPartReference ref = (WorkbenchPartReference) partSite.getPartReference();
+	        	if (!ref.isDisposed()) {
+	        		return partSite.getPane();
+	        	}
+	        }
+    	}
+    	return null;
+    }
+    
+    private void markLocationForTab(IEditorPart part) {
+    	if (part instanceof ErrorEditorPart) {
+    		updateActions();
+    		return;
+    	}
+		Object tabCookie = getCookieForTab(part);
+		if (tabCookie != null) {
+			INavigationLocation location = null;
+			if (part instanceof INavigationLocationProvider) {
+				location = ((INavigationLocationProvider) part)
+						.createNavigationLocation();
+			}
+			PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap
+					.get(tabCookie);
+			if (perTabHistory == null) {
+				perTabHistory = new PerTabHistory();
+				perTabHistoryMap.put(tabCookie, perTabHistory);
+			}
+			NavigationHistoryEntry current = perTabHistory.currentEntry;
+			if (current != null && current.editorInfo.memento != null) {
+				current.editorInfo.restoreEditor();
+				checkDuplicates(current.editorInfo);
+			}
+			NavigationHistoryEntry entry = createEntry(page, part, location);
+			if (current != null && entry.mergeInto(current)) {
+				disposeEntry(entry);
+				removeEntriesForTab(perTabHistory.forwardEntries);
+			} else {
+				setNewCurrentEntryForTab(perTabHistory, entry);
+			}
+		}
+		updateActions();
+	}
+    
+    void updateCookieForTab(Object oldCookie, Object newCookie) {
+    	if (newCookie.equals(oldCookie)) {
+    		return;
+    	}
+    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.remove(oldCookie);
+    	if (perTabHistory != null) {
+    		perTabHistoryMap.put(newCookie, perTabHistory);
+    	}
+    }
+    
+    private void gotoEntryForTab(NavigationHistoryEntry target, boolean forward) {
+    	Object editorTabCookie = getCookieForTab(page.getActiveEditor());
+    	if (editorTabCookie!=null) {
+	    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.get(editorTabCookie);
+	    	if (perTabHistory != null) {
+	    		LinkedList source = forward ? perTabHistory.forwardEntries : perTabHistory.backwardEntries;
+	    		LinkedList destination = forward ? perTabHistory.backwardEntries : perTabHistory.forwardEntries;
+				if (perTabHistory.currentEntry != null) {
+					perTabHistory.currentEntry.location.update();
+					destination.addFirst(perTabHistory.currentEntry);
+				}
+				NavigationHistoryEntry newCurrent = null;
+	    		while (!source.isEmpty() && newCurrent==null) {
+		    		NavigationHistoryEntry entry = (NavigationHistoryEntry) source
+							.removeFirst();
+		    		if (entry.equals(target)) {
+		    			newCurrent = entry;
+		    		} else {
+		    			destination.addFirst(entry);
+		    		}
+	    		}
+	    		Assert.isTrue(newCurrent != null);
+	    		perTabHistory.currentEntry = newCurrent;
+	            try {
+	                ignoreEntries++;
+	                if (newCurrent.editorInfo.memento != null) {
+	                	newCurrent.editorInfo.restoreEditor();
+	                	checkDuplicates(newCurrent.editorInfo);
+	                }
+	                newCurrent.restoreLocation();
+	                updateActions();
+	            } finally {
+	            	ignoreEntries--;
+	            }
+	    	}
+    	}
+    }
+    
+	private void forwardForTab() {
+    	Object editorTabCookie = getCookieForTab(page.getActiveEditor());
+    	if (editorTabCookie!=null) {
+	    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.get(editorTabCookie);
+	    	if (perTabHistory != null && !perTabHistory.forwardEntries.isEmpty()) {
+	    		NavigationHistoryEntry newCurrent = (NavigationHistoryEntry) perTabHistory.forwardEntries
+						.removeFirst();
+	    		if (perTabHistory.currentEntry != null) {
+	    			final INavigationLocation location = perTabHistory.currentEntry.location;
+	    			if (location!=null) {
+	    				location.update();
+	    			}
+	    			perTabHistory.backwardEntries.addFirst(perTabHistory.currentEntry);
+	    		}
+	    		perTabHistory.currentEntry = newCurrent;
+	            try {
+	                ignoreEntries++;
+	                if (newCurrent.editorInfo.memento != null) {
+	                	newCurrent.editorInfo.restoreEditor();
+	                	checkDuplicates(newCurrent.editorInfo);
+	                }
+	                newCurrent.restoreLocation();
+	                updateActions();
+	            } finally {
+	            	ignoreEntries--;
+	            }
+	    	}
+    	}
+    }
+    
+    private void backwardForTab() {
+    	Object editorTabCookie = getCookieForTab(page.getActiveEditor());
+    	if (editorTabCookie!=null) {
+	    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.get(editorTabCookie);
+	    	if (perTabHistory != null && !perTabHistory.backwardEntries.isEmpty()) {
+	    		NavigationHistoryEntry newCurrent = (NavigationHistoryEntry) perTabHistory.backwardEntries
+	    				.removeFirst();
+	    		if (perTabHistory.currentEntry != null) {
+	    			perTabHistory.currentEntry.location.update();
+	    			perTabHistory.forwardEntries.addFirst(perTabHistory.currentEntry);
+	    		}
+	    		perTabHistory.currentEntry = newCurrent;
+	            try {
+	                ignoreEntries++;
+	                if (newCurrent.editorInfo.memento != null) {
+	                	newCurrent.editorInfo.restoreEditor();
+	                	checkDuplicates(newCurrent.editorInfo);
+	                }
+	                newCurrent.restoreLocation();
+	                updateActions();
+	            } finally {
+	            	ignoreEntries--;
+	            }
+	    	}
+    	}
+    }
+    
+    private boolean hasEntriesForTab(boolean forward) {
+    	Object editorTabCookie = getCookieForTab(page.getActiveEditor());
+    	if (editorTabCookie!=null) {
+	    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.get(editorTabCookie);
+	    	if (perTabHistory != null) {
+		    	LinkedList entries = forward ? perTabHistory.forwardEntries : perTabHistory.backwardEntries;
+		    	return !entries.isEmpty();
+	    	}
+    	}
+    	return false;
+    }
+
+    /**
+     * Returns entries in restore order.
+     * @param editorTabCookie
+     * @param forward
+     * @return
+     */
+    private NavigationHistoryEntry[] getEntriesForTab(boolean forward) {
+		Object editorTabCookie = getCookieForTab(page.getActiveEditor());
+		if (editorTabCookie != null) {
+			PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap
+					.get(editorTabCookie);
+			if (perTabHistory != null) {
+				LinkedList entries = forward ? perTabHistory.forwardEntries
+						: perTabHistory.backwardEntries;
+				return (NavigationHistoryEntry[]) entries
+				.toArray(new NavigationHistoryEntry[entries.size()]);
+			}
+		}
+		return new NavigationHistoryEntry[0];
+	}
+    
+    private void disposeHistoryForTabs() {
+    	Object[] keys = perTabHistoryMap.keySet().toArray();
+    	for (int i = 0; i < keys.length; i++) {
+			disposeHistoryForTab(keys[i]);
+		}
+    }
+
+    void disposeHistoryForTab(Object editorTabCookie) {
+    	PerTabHistory perTabHistory = (PerTabHistory) perTabHistoryMap.remove(editorTabCookie);
+    	if (perTabHistory != null) {
+    		if (perTabHistory.currentEntry != null) {
+    			disposeEntry(perTabHistory.currentEntry);
+    			perTabHistory.currentEntry = null;
+    		}
+    		removeEntriesForTab(perTabHistory.backwardEntries);
+    		removeEntriesForTab(perTabHistory.forwardEntries);
+    	}
+    }
+
+	private void removeEntriesForTab(LinkedList entries) {
+		for (Iterator it = entries.iterator(); it.hasNext();) {
+			NavigationHistoryEntry entry = (NavigationHistoryEntry) it.next();
+			disposeEntry(entry);
+			it.remove();
+		}
+	}
 }

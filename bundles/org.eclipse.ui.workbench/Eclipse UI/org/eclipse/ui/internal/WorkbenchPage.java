@@ -2445,6 +2445,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         } else {
             editor.setInput(input);
         }
+        navigationHistory.markLocation(editor);
     }
 
     /**
@@ -2532,7 +2533,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		IEditorPart editor = null;
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		// Reuse an existing open editor, unless we are in "new editor tab management" mode
-		if (!store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+		if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+			editor = getEditorManager().findEditor(editorID, input, IWorkbenchPage.MATCH_ID | IWorkbenchPage.MATCH_INPUT);
+		} else {
 			editor = getEditorManager().findEditor(editorID, input, matchFlags);
 		}
         if (editor != null) {

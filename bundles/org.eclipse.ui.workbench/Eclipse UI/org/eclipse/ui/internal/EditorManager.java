@@ -607,7 +607,6 @@ public class EditorManager implements IExtensionChangeHandler {
 	 */
 	private IEditorReference findReusableEditor(EditorDescriptor desc) {
 
-		IEditorReference editors[] = page.getSortedEditors();
 		IPreferenceStore store = WorkbenchPlugin.getDefault()
 				.getPreferenceStore();
 		if (store
@@ -632,6 +631,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			return null;
 		}
 
+		IEditorReference editors[] = page.getSortedEditors();
 		if (editors.length < page.getEditorReuseThreshold()) {
 			return null;
 		}
@@ -931,6 +931,11 @@ public class EditorManager implements IExtensionChangeHandler {
 				// findReusableEditor(...) checks pinned and saves editor if
 				// necessary
 				IEditorReference ref = new EditorReference(this, input, desc);
+				IPreferenceStore store = ((Workbench)page.getWorkbenchWindow().getWorkbench()).getPreferenceStore();
+		    	if (store.getBoolean(IPreferenceConstants.EDITOR_EXPERIMENTAL_TAB_BEHAVIOUR)) {
+					NavigationHistory history = (NavigationHistory) page.getNavigationHistory();
+					history.updateCookieForTab(site.getPane(), ((EditorReference)ref).getPane());
+		    	}
 				reusableEditor.getEditorSite().getPage().closeEditor(
 						reusableEditor, false);
 				return ref;
