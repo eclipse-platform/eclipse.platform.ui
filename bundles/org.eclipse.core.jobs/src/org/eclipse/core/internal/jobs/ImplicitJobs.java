@@ -126,8 +126,11 @@ class ImplicitJobs {
 		IStatus error;
 		synchronized (this) {
 			ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
-			if (threadJob == null)
+			if (threadJob == null) {
+				if (lastJob.getRule() != null)
+					notifyWaitingThreadJobs();
 				return;
+			}
 			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
 			error = new Status(IStatus.ERROR, JobManager.PI_JOBS, 1, msg, null);
 			//end the thread job
@@ -150,8 +153,10 @@ class ImplicitJobs {
 			suspendedRules.remove(rule);
 		//if this job had a rule, then we are essentially releasing a lock
 		//note it is safe to do this even if the acquire was aborted
-		if (threadJob.acquireRule)
+		if (threadJob.acquireRule) {
 			manager.getLockManager().removeLockThread(currentThread, rule);
+			notifyWaitingThreadJobs();
+		}
 		//if the job was started, we need to notify job manager to end it
 		if (threadJob.isRunning())
 			manager.endJob(threadJob, Status.OK_STATUS, false);
@@ -183,6 +188,17 @@ class ImplicitJobs {
 			return job;
 		}
 		return new ThreadJob(manager, rule);
+	}
+
+	/**
+	 * A job has just finished that was holding a scheduling rule, and the
+	 * scheduling rule is now free.  Wake any blocked thread jobs so they can 
+	 * compete for the newly freed lock
+	 */
+	private void notifyWaitingThreadJobs() {
+		synchronized (ThreadJob.notifier) {
+			ThreadJob.notifier.notifyAll();
+		}
 	}
 
 	/**

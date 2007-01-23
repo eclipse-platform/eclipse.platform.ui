@@ -19,6 +19,12 @@ import org.eclipse.core.runtime.jobs.Job;
  * Captures the implicit job state for a given thread. 
  */
 class ThreadJob extends Job {
+	/**
+	 * The notifier is a shared object used to wake up waiting thread jobs
+	 * when another job completes that is releasing a scheduling rule.
+	 */
+	static final Object notifier = new Object();
+	
 	private final JobManager manager;
 	/**
 	 * Set to true if this thread job is running in a thread that did
@@ -150,8 +156,8 @@ class ThreadJob extends Job {
 		InternalJob blockingJob = manager.findBlockingJob(this);
 		Thread blocker = blockingJob == null ? null : blockingJob.getThread();
 		ThreadJob result = this;
-		//lock listener decided to grant immediate access
 		try {
+			//just return if lock listener decided to grant immediate access
 			if (manager.getLockManager().aboutToWait(blocker))
 				return this;
 			try {
@@ -174,12 +180,13 @@ class ThreadJob extends Job {
 						result.isBlocked = this.isBlocked;
 						return result;
 					}
+					//just return if lock listener decided to grant immediate access
 					if (manager.getLockManager().aboutToWait(blocker))
 						return this;
 					//must lock instance before calling wait
-					synchronized (this) {
+					synchronized (notifier) {
 						try {
-							wait(250);
+							notifier.wait(250);
 						} catch (InterruptedException e) {
 							//ignore
 						}
@@ -252,7 +259,6 @@ class ThreadJob extends Job {
 	public IStatus run(IProgressMonitor monitor) {
 		synchronized (this) {
 			isRunning = true;
-			notify();
 		}
 		return ASYNC_FINISH;
 	}
@@ -295,7 +301,7 @@ class ThreadJob extends Job {
 		final Thread currentThread = Thread.currentThread();
 		if (isRunning()) {
 			lockManager.addLockThread(currentThread, getRule());
-			//need to re-aquire any locks that were suspended while this thread was blocked on the rule
+			//need to re-acquire any locks that were suspended while this thread was blocked on the rule
 			lockManager.resumeSuspendedLocks(currentThread);
 		} else {
 			//tell lock manager that this thread gave up waiting
