@@ -85,7 +85,7 @@ public class BusyIndicator extends Canvas {
 			size.x = ibounds.width;
 			size.y = ibounds.height;
 		}
-		if (loader != null) {
+		if (loader != null && isBusy()) {
 			size.x = Math.max(size.x, loader.logicalScreenWidth);
 			size.y = Math.max(size.y, loader.logicalScreenHeight);
 		}
@@ -115,6 +115,7 @@ public class BusyIndicator extends Canvas {
 							loader.logicalScreenWidth,
 							loader.logicalScreenHeight);
 					final GC offScreenImageGC = new GC(offScreenImage);
+					offScreenImageGC.setAntialias(SWT.ON);
 					getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							drawBackground(offScreenImageGC, 0, 0, loader.logicalScreenWidth, loader.logicalScreenHeight);

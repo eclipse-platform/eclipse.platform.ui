@@ -380,12 +380,17 @@ public class TitleRegion extends Canvas {
 	 *            the form's busy state
 	 */
 
-	public void setBusy(boolean busy) {
+	public boolean setBusy(boolean busy) {
 		if (busy)
 			ensureBusyLabelExists();
 		if (busy == busyLabel.isBusy())
-			return;
+			return false;
 		busyLabel.setBusy(busy);
+		if (busyLabel.getImage()==null) {
+			layout();
+			return true;
+		}
+		return false;
 	}
 
 	public boolean isBusy() {

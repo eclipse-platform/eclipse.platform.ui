@@ -893,7 +893,8 @@ public class FormHeading extends Canvas {
 	 */
 
 	public void setBusy(boolean busy) {
-		titleRegion.setBusy(busy);
+		if (titleRegion.setBusy(busy))
+			layout();
 	}
 
 	public Control getHeadClient() {
