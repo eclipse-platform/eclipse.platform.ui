@@ -14,7 +14,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.internal.StartupThreading;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 
 /**
@@ -83,12 +82,30 @@ public abstract class AbstractSplashHandler {
 		return shell;
 	}
 	
+	/**
+	 * Perform some update on the splash. If called from a non-UI thread it will
+	 * be wrapped by a runnable that may be run before the workbench has been
+	 * fully realized.
+	 * 
+	 * @param r
+	 *            the update runnable
+	 * @throws Throwable
+	 */
 	protected void updateUI(final Runnable r) throws Throwable {
-		StartupRunnable startupRunnable = new StartupRunnable() {
 
-			public void runWithException() throws Throwable {
-				r.run();
-			}};
-		StartupThreading.runWithoutExceptions(startupRunnable);
+		if (Thread.currentThread() == shell.getDisplay().getThread())
+			r.run(); // run immediatley if we're on the UI thread
+		else {
+			// wrapper with a StartupRunnable to ensure that it will run before
+			// the
+			// UI is fully initialized
+			StartupRunnable startupRunnable = new StartupRunnable() {
+
+				public void runWithException() throws Throwable {
+					r.run();
+				}
+			};
+			shell.getDisplay().asyncExec(startupRunnable);
+		}
 	}
 }
