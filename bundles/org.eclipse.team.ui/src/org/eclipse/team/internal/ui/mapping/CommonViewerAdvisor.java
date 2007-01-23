@@ -492,7 +492,7 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 	}
 	
 	protected void expandToNextDiff(Object element) {
-		((TreeViewer)getViewer()).expandToLevel(element, 1);
+		((TreeViewer)getViewer()).expandToLevel(element, AbstractTreeViewer.ALL_LEVELS);
 	}
 
 }
