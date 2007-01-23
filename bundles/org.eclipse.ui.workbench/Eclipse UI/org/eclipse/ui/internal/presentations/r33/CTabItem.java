@@ -528,7 +528,7 @@ public class CTabItem extends Item {
 		if (image != null && parent.showUnselectedImage) {
 			Rectangle imageBounds = image.getBounds();
 			// only draw image if it won't overlap with close button
-			int maxImageWidth = x + width - xDraw - RIGHT_MARGIN;
+			int maxImageWidth = x + width - xDraw;
 			if (parent.showUnselectedClose && (parent.showClose || showClose)) {
 				maxImageWidth -= closeRect.width + INTERNAL_SPACING;
 			}
@@ -546,7 +546,7 @@ public class CTabItem extends Item {
 			}
 		}
 		// draw Text
-		int textWidth = x + width - xDraw - RIGHT_MARGIN;
+		int textWidth = x + width - xDraw;
 		if (parent.showUnselectedClose && (parent.showClose || showClose)) {
 			textWidth -= closeRect.width + INTERNAL_SPACING;
 		}
