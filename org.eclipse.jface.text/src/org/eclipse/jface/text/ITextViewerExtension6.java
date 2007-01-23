@@ -23,7 +23,7 @@ import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 public interface ITextViewerExtension6 {
 
 	/**
-	 * Sets this viewer's hyperlinkDetectors for the given content type.
+	 * Sets this viewer's hyperlink detectors for the given state mask.
 	 *
 	 * @param hyperlinkDetectors	the new array of hyperlink detectors, <code>null</code>
 	 * 									or an empty array to disable hyperlinking
