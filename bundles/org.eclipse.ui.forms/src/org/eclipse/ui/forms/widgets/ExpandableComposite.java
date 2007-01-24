@@ -367,8 +367,8 @@ public class ExpandableComposite extends Canvas {
 				if (expanded && client != null)
 					height += VSPACE;
 			}
-			if (hasTitleBar())
-				height += VSPACE;
+			//if (hasTitleBar())
+			//	height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
 

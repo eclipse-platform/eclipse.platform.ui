@@ -129,8 +129,8 @@ public class TitleRegion extends Canvas {
 				bsize = busyLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			if (menuManager != null) {
-				menuHyperlink.setVisible(!menuManager.isEmpty()&&titleLabel.isVisible());
-				if (menuHyperlink.isVisible())
+				menuHyperlink.setVisible(!menuManager.isEmpty()&&titleLabel.getVisible());
+				if (menuHyperlink.getVisible())
 					msize = menuHyperlink.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
 			if (flushCache)
@@ -141,7 +141,7 @@ public class TitleRegion extends Canvas {
 				twidth -= bsize.x + SPACING;
 			if (msize != null && twidth != SWT.DEFAULT)
 				twidth -= msize.x + SPACING;
-			if (titleLabel.isVisible()) {
+			if (titleLabel.getVisible()) {
 				tsize = titleCache.computeSize(twidth, SWT.DEFAULT);
 				if (twidth != SWT.DEFAULT) {
 					// correct for the case when width hint is larger
@@ -183,7 +183,7 @@ public class TitleRegion extends Canvas {
 							bsize.x, bsize.y);
 					xloc += bsize.x + SPACING;
 				}
-				if (titleLabel.isVisible()) {
+				if (titleLabel.getVisible()) {
 					int tw = width - HMARGIN * 2 - SPACING * 2;
 					if (bsize != null)
 						tw -= bsize.x + SPACING;

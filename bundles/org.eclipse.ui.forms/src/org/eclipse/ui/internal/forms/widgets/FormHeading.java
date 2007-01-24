@@ -243,9 +243,10 @@ public class FormHeading extends Canvas {
 					height2 = tbsize.y;
 				if (clsize != null)
 					height2 = Math.max(height2, clsize.y);
-				size.y += VSPACING + height2 + CLIENT_MARGIN;
+				if (height2>0)
+					size.y += VSPACING + height2 + CLIENT_MARGIN;
 				// add separator
-				if (isSeparatorVisible())
+				if (size.y>0 && isSeparatorVisible())
 					size.y += SEPARATOR_HEIGHT;
 			} else {
 				// position controls
@@ -334,7 +335,7 @@ public class FormHeading extends Canvas {
 			Control c = getMessageControl();
 			if (c == null)
 				return true;
-			return !c.isVisible();
+			return !c.getVisible();
 		}
 
 		public int getFontHeight() {
@@ -356,7 +357,7 @@ public class FormHeading extends Canvas {
 			this.messageType = newType;
 			if (newMessage == null) {
 				// clearing of the message
-				if (oldControl != null && oldControl.isVisible())
+				if (oldControl != null && oldControl.getVisible())
 					oldControl.setVisible(false);
 				return null;
 			}
