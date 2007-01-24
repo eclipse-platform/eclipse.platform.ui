@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,20 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.dialogs;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -30,6 +36,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -44,26 +51,31 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
-import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
+import org.eclipse.ui.internal.cheatsheets.data.ParserStatusUtility;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionSorter;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.eclipse.ui.internal.cheatsheets.state.DefaultStateManager;
+import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
+import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  * Dialog to allow the user to select a cheat sheet from a list.
  */
-public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
+public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends SelectionDialog
 		implements ISelectionChangedListener {
 	private static final String CHEAT_SHEET_SELECTION_HELP_ID = "org.eclipse.ui.cheatsheets.cheatSheetSelection"; //$NON-NLS-1$
 
@@ -83,7 +95,11 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	
 	private Button selectFileRadio;
 	
+	private Button selectUrlRadio;
+
 	private Text selectFileText;
+	
+	private Text selectUrlText;
 
 	private ActivityViewerFilter activityViewerFilter = new ActivityViewerFilter();
 
@@ -97,11 +113,21 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 	private final static String STORE_SELECTED_CHEATSHEET_ID = "CheatSheetCategoryBasedSelectionDialog.STORE_SELECTED_CHEATSHEET_ID"; //$NON-NLS-1$
 	
-	private final static String STORE_RADIO_SETTING = "CheatSheetCategoryBasedSelectionDialog.STORE_RADIO_SETTING"; //$NON-NLS-1$
+	private final static String STORE_RADIO_SETTING = "CheatSheetCategoryBasedSelectionDialog.STORE_RADIO_SELECTION"; //$NON-NLS-1$
 	
 	private final static String STORE_CHEATSHEET_FILENAME = "CheatSheetCategoryBasedSelectionDialog.STORE_CHEATSHEET_FILENAME"; //$NON-NLS-1$
 
+	private final static String STORE_CHEATSHEET_URL = "CheatSheetCategoryBasedSelectionDialog.STORE_CHEATSHEET_URL"; //$NON-NLS-1$
+
+	private static final int RADIO_REGISTERED = 1;
+	private static final int RADIO_FILE = 2;
+	private static final int RADIO_URL = 3;
+	
 	private Button browseFileButton;
+
+	private String title;
+
+	private IStatus status = Status.OK_STATUS;
 
 	private static class ActivityViewerFilter extends ViewerFilter {
 		private boolean hasEncounteredFilteredItem = false;
@@ -173,8 +199,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 		this.cheatsheetCategories = cheatsheetCategories;
 
-		setTitle(Messages.CHEAT_SHEET_SELECTION_DIALOG_TITLE);
-		setMessage(Messages.CHEAT_SHEET_SELECTION_DIALOG_MSG);
+		this.title = Messages.CHEAT_SHEET_SELECTION_DIALOG_TITLE;
 
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
@@ -184,10 +209,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		if (title != null) {
+			newShell.setText(title);
+		}
 		newShell.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_VIEW));
-		//TODO need to add help context id
-		// WorkbenchHelp.setHelp(newShell,
-		// IHelpContextIds.WELCOME_PAGE_SELECTION_DIALOG);
 	}
 
 	/*
@@ -273,7 +298,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			}
 		});
 		
-        // Create radio button
+        // Create radio button for select from file
 		selectFileRadio = new Button(outerContainer, SWT.RADIO);
 		selectFileRadio.setText(Messages.SELECTION_DIALOG_OPEN_FROM_FILE);
 		
@@ -295,6 +320,13 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		browseFileButton.setText(Messages.SELECTION_DIALOG_FILEPICKER_BROWSE);
 		setButtonLayoutData(browseFileButton);
 		
+		// Create radio button for select from URL
+		selectUrlRadio = new Button(outerContainer, SWT.RADIO);
+		selectUrlRadio.setText(Messages.SELECTION_DIALOG_OPEN_FROM_URL);
+		selectUrlText = new Text(outerContainer, SWT.BORDER);
+		GridData suTextData = new GridData(GridData.FILL_HORIZONTAL);
+		selectUrlText.setLayoutData(suTextData);
+		
 		restoreWidgetValues();
 		restoreFileSettings();
 
@@ -306,6 +338,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		selectFileText.addModifyListener(new FileTextListener());
 		browseFileButton.addSelectionListener(new BrowseListener());
 		selectRegisteredRadio.addSelectionListener(new RadioSelectionListener());
+		selectUrlRadio.addSelectionListener(new RadioSelectionListener());
 		checkRadioButtons();
 		return outerContainer;
 	}
@@ -360,6 +393,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 			showAllButton.setEnabled(selectRegisteredRadio.getSelection());
 		}
 		treeViewer.getTree().setEnabled(selectRegisteredRadio.getSelection());
+		selectUrlText.setEnabled(selectUrlRadio.getSelection());
 		setOkButton();
 	}
 
@@ -484,8 +518,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	private void setOkButton() {
 		if (selectRegisteredRadio.getSelection()) {
 			enableOKButton(currentSelection != null);
-		} else {
+		} else if (selectFileRadio.getSelection() ){
 			enableOKButton(selectFileText.getText().length() > 0);
+		} else {
+			enableOKButton(selectUrlText.getText().length() > 0);
 		}
 	}
 
@@ -495,8 +531,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	protected void okPressed() {
 		if (selectFileRadio.getSelection()) {
 			setResultFromFile();
-		} else {
+		} else if (selectRegisteredRadio.getSelection() ){
 			setResultFromTree();
+		} else {
+			setResultFromUrl();
 		}
 
 		// save our selection state
@@ -507,14 +545,12 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 
 	private void setResultFromTree() {
 		if (currentSelection != null) {
-			ArrayList result = new ArrayList(1);
 			ITriggerPoint triggerPoint = PlatformUI.getWorkbench()
 					.getActivitySupport().getTriggerPointManager()
 					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
 			if (WorkbenchActivityHelper.allowUseOf(triggerPoint,
 					currentSelection)) {
-				result.add(currentSelection);
-				setResult(result);
+				new OpenCheatSheetAction(currentSelection.getID()).run();
 			}
 		}
 	}
@@ -527,17 +563,58 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 		if (extensionIndex > 0) {
 		    id = id.substring(0, extensionIndex);
 		}
+		// Use the id as the name 
+		URL url = null;
+		boolean opened = false;
+		
+		try {
+		    File contentFile = new File(selectFileText.getText());
+		    url = contentFile.toURL();
+		    new OpenCheatSheetAction(id, id ,url).run();
+		    opened = true;		
+	    } catch (MalformedURLException e) {
+		    opened = false;
+	    }
+	    if (!opened) { 	
+	    	String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectFileText.getText()}));
+	    	status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null);				    
+	    	CheatSheetView view = ViewUtilities.showCheatSheetView();   
+	    	view.getCheatSheetViewer().showError(message);
+	    }
+	}
+	
+	private void setResultFromUrl() {
+		// Use the filename without extension as the id of this cheatsheet
+		IPath filePath = new Path(selectUrlText.getText());
+		String id = filePath.lastSegment();
+		int extensionIndex = id.indexOf('.');
+		if (extensionIndex > 0) {
+		    id = id.substring(0, extensionIndex);
+		}
 		// Use the id as the name
-		CheatSheetElement element = new CheatSheetElement(id);
-		element.setID(id);
-		element.setContentFile(selectFileText.getText());
-		setSelectionResult(new Object[]{element});
+		URL url = null;
+		boolean opened = false;	
+		CheatSheetView view = ViewUtilities.showCheatSheetView();
+		if (view == null) {
+			return;
+		}
+		try {
+			url = new URL(selectUrlText.getText());	
+			view.getCheatSheetViewer().setInput(id, id, url, new DefaultStateManager(), true);
+		    opened = true;
+	    } catch (MalformedURLException e) {
+		    opened = false;
+	    }
+	    if (!opened) {   	
+	    	String message = NLS.bind(Messages.ERROR_OPENING_FILE, (new Object[] {selectUrlText.getText()}));
+	    	status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, ParserStatusUtility.PARSER_ERROR, message, null); 			
+	    	view.getCheatSheetViewer().showError(message);
+	    }	
 	}
 
 	/**
-	 * Set self's widgets to the values that they held last time this page was
-	 * open
-	 * 
+	 * Set's widgets to the values that they held last time this page was
+	 * opened
 	 */
 	protected void restoreWidgetValues() {
 		String[] expandedCategoryPaths = settings
@@ -554,12 +631,22 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * Restores the state of the radio button and file name fields
 	 */
 	private void restoreFileSettings() {
-	    boolean isFileSelected = settings.getBoolean(STORE_RADIO_SETTING);
-		selectFileRadio.setSelection(isFileSelected);	
-		selectRegisteredRadio.setSelection(!isFileSelected);	
+		int radioSetting = 0;
+		try {
+		     radioSetting = settings.getInt(STORE_RADIO_SETTING);
+		}
+		catch(NumberFormatException n) {			
+		}
+		selectFileRadio.setSelection(radioSetting == RADIO_FILE);	
+		selectRegisteredRadio.setSelection(radioSetting == RADIO_REGISTERED);		
+		selectUrlRadio.setSelection(radioSetting == RADIO_URL);	
 		String fileName = settings.get(STORE_CHEATSHEET_FILENAME);
 		if (fileName != null) {
 			selectFileText.setText(fileName);	
+		}	
+		String url = settings.get(STORE_CHEATSHEET_URL);
+		if (url != null) {
+			selectUrlText.setText(url);	
 		}
 	}
 
@@ -641,8 +728,19 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
 	 * Stores the state of the radio button and file name fields
 	 */
 	private void storeFileSettings() {
-		settings.put(STORE_RADIO_SETTING, selectFileRadio.getSelection());	
-		settings.put(STORE_CHEATSHEET_FILENAME, selectFileText.getText());	
+		int radioSetting = 0;
+		if (selectRegisteredRadio.getSelection()) {
+			radioSetting = 1;
+		}
+		if (selectFileRadio.getSelection()) {
+			radioSetting = 2;
+		}
+		if (selectUrlRadio.getSelection()) {
+			radioSetting = 3;
+		}
+		settings.put(STORE_RADIO_SETTING, radioSetting);	
+		settings.put(STORE_CHEATSHEET_FILENAME, selectFileText.getText());		
+		settings.put(STORE_CHEATSHEET_URL, selectUrlText.getText());	
 	}
 	
 	/* (non-Javadoc)
@@ -657,5 +755,16 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog
             section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
         } 
         return section;
+	}
+	
+	private Label createMessageArea(Composite composite) {
+		Label label = new Label(composite, SWT.NONE);
+		label.setText(Messages.CHEAT_SHEET_SELECTION_DIALOG_MSG);
+		label.setFont(composite.getFont());
+		return label;
+	}
+
+	public IStatus getStatus() {
+		return status ;
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -193,7 +193,7 @@ public class CheatSheetView extends ViewPart {
 			} else {
 				contentMemento.putString(ICheatSheetResource.MEMENTO_ID, element.getID());
 				contentMemento.putString(ICheatSheetResource.MEMENTO_NAME, element.getLabel(null));
-				contentMemento.putString(ICheatSheetResource.MEMENTO_URL, element.getContentFile());
+				contentMemento.putString(ICheatSheetResource.MEMENTO_URL, element.getHref());
 			}
 
 			// Make sure the current cheat sheet is saved

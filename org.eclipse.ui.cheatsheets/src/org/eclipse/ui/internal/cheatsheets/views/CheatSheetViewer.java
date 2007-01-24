@@ -121,6 +121,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	private String restorePath;
 	
 	private int dialogReturnCode;
+	private boolean isRestricted;
 	
 	/**
 	 * The constructor.
@@ -579,6 +580,17 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		control.layout(true);
 	}
 	
+	private void showStartPage() {
+		setCollapseExpandButtonEnabled(false);
+		internalDispose();
+
+		howToBegin = new Label(control, SWT.WRAP);
+		howToBegin.setText(Messages.INITIAL_VIEW_DIRECTIONS);
+		howToBegin.setLayoutData(new GridData(GridData.FILL_BOTH));
+		currentPage = null;
+		control.layout(true);
+	}
+	
 	private void createErrorPage(IStatus status) {
 		setCollapseExpandButtonEnabled(false);
 		currentPage = new ErrorPage(status);
@@ -622,9 +634,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			}
 		});
 		
-		howToBegin = new Label(control, SWT.WRAP);
-		howToBegin.setText(Messages.INITIAL_VIEW_DIRECTIONS);
-		howToBegin.setLayoutData(new GridData(GridData.FILL_BOTH));
+		showStartPage();
 
 		Display display = parent.getDisplay();
 
@@ -858,7 +868,21 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		
 		control.setRedraw(false);
 		if (model instanceof CheatSheet) {	
-		    currentPage = new CheatSheetPage((CheatSheet)model, viewItemList, this);
+		    CheatSheet cheatSheetModel = (CheatSheet)model;
+
+		    if (isRestricted && cheatSheetModel.isContainsCommandOrAction()) {
+		    	boolean isOK = MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), 
+						Messages.CHEATSHEET_FROM_URL_WITH_EXEC_TITLE,
+						Messages.CHEATSHEET_FROM_URL_WITH_EXEC);
+
+				if (!isOK) {
+					control.setRedraw(true);
+					showStartPage();
+					return true;
+				} 
+		    }
+		    
+			currentPage = new CheatSheetPage(cheatSheetModel, viewItemList, this);
 		    setCollapseExpandButtonEnabled(true);
 		} else if (model instanceof CompositeCheatSheetModel) {
 			CompositeCheatSheetModel compositeCheatSheetModel = ((CompositeCheatSheetModel)model);
@@ -927,6 +951,15 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return false;
 	}
 	
+	/*
+	 * Show the collapse/expand button if we have access to the toolbar
+	 */
+	private void setCollapseExpandButtonEnabled(boolean enable) {
+		if (expandRestoreAction != null) {
+			expandRestoreAction.setEnabled(enable);
+		}
+	}
+
 	/**
 	 * Returns whether or not the currently active item requires opening a
 	 * modal dialog.
@@ -1134,7 +1167,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 
 		if (contentURL == null) {
 			try {
-				contentURL = new URL(element.getContentFile());
+				contentURL = new URL(element.getHref());
 			} catch (MalformedURLException mue) {
 			}
 		}
@@ -1184,6 +1217,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 				invalidCheatSheetId = true;
 			} else {
 				invalidCheatSheetId = false;
+				this.isRestricted = false;
 			}
 		}
 
@@ -1200,7 +1234,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * @see org.eclipse.ui.cheatsheets.ICheatSheetViewer#setInput(java.lang.String, java.lang.String, java.net.URL)
 	 */
 	public void setInput(String id, String name, URL url) {
-		setInput(id, name, url, new DefaultStateManager());
+		setInput(id, name, url, new DefaultStateManager(), false);
 	}
 	
 	public void setInputFromXml(String id, String name, String xml, String basePath) {
@@ -1210,23 +1244,26 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		CheatSheetElement element = new CheatSheetElement(name);
 		element.setID(id);
 		element.setContentXml(xml);
-		element.setContentFile(basePath);
+		element.setHref(basePath);
 
 		nullCheatSheetId = false;
 		invalidCheatSheetId = false;
+		isRestricted = false;
 		setContent(element, new NoSaveStateManager());
 	}
 
-	public void setInput(String id, String name, URL url, ICheatSheetStateManager inputStateManager) {
+	public void setInput(String id, String name, URL url, 
+			ICheatSheetStateManager inputStateManager, boolean isRestricted) {
 		if (id == null || name == null || url == null) {
 			throw new IllegalArgumentException();
 		}
 		CheatSheetElement element = new CheatSheetElement(name);
 		element.setID(id);
-		element.setContentFile(url.toString());
+		element.setHref(url.toString());
 
 		nullCheatSheetId = false;
 		invalidCheatSheetId = false;
+		this.isRestricted = isRestricted;
 		setContent(element, inputStateManager);
 	}
 	
@@ -1295,15 +1332,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		}		
 	}
 	
-	/*
-	 * Show the collapse/expand button if we have access to the toolbar
-	 */
-	private void setCollapseExpandButtonEnabled(boolean enable) {
-		if (expandRestoreAction != null) {
-			expandRestoreAction.setEnabled(enable);
-		}
-	}
-
 	public void showError(String message) {
 		internalDispose();
 		if(howToBegin != null) {

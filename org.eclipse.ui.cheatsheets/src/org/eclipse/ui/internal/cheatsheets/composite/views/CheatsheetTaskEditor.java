@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class CheatsheetTaskEditor extends TaskEditor {
 				if (id == null) { 
 					id = task.getId();
 				}
-				viewer.setInput(id, task.getName(), url, stateManager);				
+				viewer.setInput(id, task.getName(), url, stateManager, false);				
 			} catch (MalformedURLException e) {
 				String message = NLS.bind(Messages.ERROR_OPENING_FILE_IN_PARSER, (new Object[] {path}));			
 				viewer.showError(message);

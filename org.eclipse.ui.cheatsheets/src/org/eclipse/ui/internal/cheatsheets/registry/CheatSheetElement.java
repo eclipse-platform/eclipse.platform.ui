@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	private boolean composite;
 	private boolean registered = false;
 	private String contentXml;
+	private String href;
 
 	/**
 	 *	Create a new instance of this class
@@ -63,7 +64,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	}
 
 	/**
-	 *	Answer the contentFile parameter of this element
+	 *	Get the content File path of this element
 	 *
 	 *	@return java.lang.String
 	 */
@@ -114,7 +115,7 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	/**
 	 *	Set the contentFile parameter of this element
 	 *
-	 *	@param value the URL of the content file
+	 *	@param value the path of the content file
 	 */
 	public void setContentFile(String value) {
 		contentFile = value;
@@ -222,6 +223,14 @@ public class CheatSheetElement extends WorkbenchAdapter implements IAdaptable, I
 	
 	public String getContentXml() {
 		return contentXml;
+	}
+
+	public void setHref(String contentPath) {
+		this.href = contentPath;
+	}
+
+	public String getHref() {
+		return href;
 	}
 
 }

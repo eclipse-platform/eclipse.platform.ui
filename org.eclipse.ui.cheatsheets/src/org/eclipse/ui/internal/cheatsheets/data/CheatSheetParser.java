@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,6 +74,10 @@ public class CheatSheetParser implements IStatusContainer {
 	public static final int ANY = 3;
 	
 	private IStatus status;
+
+	private int commandCount;
+
+	private int actionCount;
 	
 
 	/**
@@ -214,6 +218,13 @@ public class CheatSheetParser implements IStatusContainer {
 		Assert.isNotNull(executableNode);
 
 		String[] params = null;
+
+		if (executable instanceof CheatSheetCommand) {
+			commandCount++;
+		}
+		if (executable instanceof Action) {
+			actionCount++;
+		}
 
 		NamedNodeMap attributes = executableNode.getAttributes();
 		if (attributes != null) {
@@ -857,6 +868,8 @@ public class CheatSheetParser implements IStatusContainer {
 	
 	public ICheatSheet parse(ParserInput input, int cheatSheetKind) {
 		status = Status.OK_STATUS;
+		commandCount = 0;
+		actionCount = 0;
 		if(input == null) {
 			return null;
 		}
@@ -1013,6 +1026,7 @@ public class CheatSheetParser implements IStatusContainer {
 				return null;
 			}
 			
+			cheatSheet.setContainsCommandOrAction(actionCount != 0 || commandCount != 0);
 			return cheatSheet;
 		} 
 		throw new CheatSheetParserException(Messages.ERROR_PARSING_CHEATSHEET_CONTENTS);

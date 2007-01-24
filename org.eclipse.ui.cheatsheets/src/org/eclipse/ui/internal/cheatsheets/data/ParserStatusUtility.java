@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.ui.internal.cheatsheets.Messages;
 
 public class ParserStatusUtility {
 	
-	private final static int PARSER_ERROR = 1001; // TODO is there another number that would be more meaningful
+	public final static int PARSER_ERROR = 1001; // TODO is there another number that would be more meaningful
 	
 	/**
 	 * Modify an existing IStatus to add information about a new error/warning.

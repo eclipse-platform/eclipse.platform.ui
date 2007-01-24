@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2006 IBM Corporation and others.
+ * Copyright (c) 2002, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.actions;
 
-import java.io.File;
-import java.net.MalformedURLException;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.dialogs.CheatSheetCategoryBasedSelectionDialog;
-import org.eclipse.ui.internal.cheatsheets.registry.*;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
+import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 
 /**
  * Action to programmatically open the CheatSheet selection dialog.
@@ -63,25 +59,12 @@ public class CheatSheetCategoryBasedSelectionAction extends Action {
 
 		CheatSheetCategoryBasedSelectionDialog dialog = new CheatSheetCategoryBasedSelectionDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), cheatSheets);
 
-		if(dialog.open() != Window.OK || dialog.getResult().length != 1) {
+		if(dialog.open() != Window.OK || !dialog.getStatus().isOK()) {
 			notifyResult(false);
 			return;
 		}
 		
 		notifyResult(true);
-
-		CheatSheetElement result = (CheatSheetElement)dialog.getResult()[0];
-	    
-	    if (result.isRegistered()) {
-	    	new OpenCheatSheetAction(result.getID()).run();
-		} else {
-			File contentFile = new File(result.getContentFile());
-			try {
-				new OpenCheatSheetAction(result.getID(), result.getID() ,contentFile.toURL()).run();
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		}		
 	}
 }
 

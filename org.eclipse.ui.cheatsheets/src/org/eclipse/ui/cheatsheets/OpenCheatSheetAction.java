@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,17 +12,13 @@ package org.eclipse.ui.cheatsheets;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
-import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
+import org.eclipse.ui.internal.cheatsheets.views.ViewUtilities;
 
 /**
  * Action for opening a cheat sheet. The cheat sheet can be specified 
@@ -112,22 +108,10 @@ public final class OpenCheatSheetAction extends Action {
 	 * @see IAction#run()
 	 */
 	public void run() {
-		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
-		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-		IWorkbenchPage page = window.getActivePage();
+		CheatSheetView view = ViewUtilities.showCheatSheetView();
 
-		CheatSheetView view = (CheatSheetView) page.findView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
 		if (view == null) {
-			try {
-				view = (CheatSheetView)page.showView(ICheatSheetResource.CHEAT_SHEET_VIEW_ID);
-				page.activate(view);
-			} catch (PartInitException pie) {
-				String message = Messages.LAUNCH_SHEET_ERROR;
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, pie);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
-				org.eclipse.jface.dialogs.ErrorDialog.openError(window.getShell(), Messages.CHEAT_SHEET_ERROR_OPENING, null, pie.getStatus());
-				return;
-			}
+			return;
 		}
 		// Depending on which constructor was used open the cheat sheet view from a
 		// URL, an XML string or based on the id
@@ -138,6 +122,11 @@ public final class OpenCheatSheetAction extends Action {
 		} else {
 			view.setInput(id);
 		}
+		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
+		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
+		IWorkbenchPage page = window.getActivePage();
 		page.bringToTop(view);
 	}
+	
+
 }

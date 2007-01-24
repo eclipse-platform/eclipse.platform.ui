@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Test Actions">
+   <intro>
+      <description>
+         No Action cheat sheet.
+      </description>
+   </intro>
+   <item title="Test 1" dialog="false" skip="false">
+      <description>
+         Test with no action.
+      </description>
+      <command serialization="org.eclipse.ui.console.ConsoleView" confirm="false">
+      </command>
+   </item>
+</cheatsheet>

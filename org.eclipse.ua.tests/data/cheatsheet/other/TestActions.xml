@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<cheatsheet title="Test Actions">
+
+<intro>
+	<description>
+Test Actions cheat sheet.
+	</description>
+</intro>
+
+<item
+	title="Step 1">
+	<action
+		pluginId="org.eclipse.ua.tests"
+		class="org.eclipse.ua.tests.cheatsheet.util.NoopAction"/>
+	<description>
+		Test with action.
+	</description>
+</item>
+
+</cheatsheet>

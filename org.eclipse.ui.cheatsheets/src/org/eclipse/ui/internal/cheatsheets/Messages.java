@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -49,6 +49,8 @@ public final class Messages extends NLS {
 	public static String ERROR_APPLYING_STATE_DATA;
 	public static String CHEATSHEET_STATE_RESTORE_FAIL_TITLE;
 	public static String CHEATSHEET_STATE_RESET_CONFIRM;
+	public static String CHEATSHEET_FROM_URL_WITH_EXEC;
+	public static String CHEATSHEET_FROM_URL_WITH_EXEC_TITLE;
 	public static String ERROR_APPLYING_STATE_DATA_LOG;
 	public static String INITIAL_VIEW_DIRECTIONS;
 	public static String ERROR_LOADING_CHEATSHEET_CONTENT;
@@ -114,6 +116,7 @@ public final class Messages extends NLS {
 	public static String SELECTION_DIALOG_FILEPICKER_BROWSE;
 	public static String SELECTION_DIALOG_OPEN_REGISTERED;
 	public static String SELECTION_DIALOG_OPEN_FROM_FILE;
+	public static String SELECTION_DIALOG_OPEN_FROM_URL;
 	public static String COMPOSITE_PAGE_REVIEW_TASK;
 	public static String COMPOSITE_PAGE_GOTO_TASK;
 	public static String COMPOSITE_PAGE_START_TASK;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<cheatsheet title="Test Actions">
+
+<intro>
+	<description>
+No Action cheat sheet.
+	</description>
+</intro>
+
+<item
+	title="Test 1">
+	<description>
+		Test with no action.
+	</description>
+</item>
+
+</cheatsheet>
