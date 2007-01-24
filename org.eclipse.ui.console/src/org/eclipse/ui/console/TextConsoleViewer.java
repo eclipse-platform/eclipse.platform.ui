@@ -578,7 +578,6 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
      * @see org.eclipse.jface.text.TextViewer#handleDispose()
      */
     protected void handleDispose() {
-        super.handleDispose();
         IDocument document = getDocument();
         if (document != null) {
             document.removeDocumentListener(documentListener);
@@ -597,6 +596,8 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
         ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
         colorRegistry.removeListener(propertyChangeListener);
+        
+        super.handleDispose();
     }
 
     class HyperlinkColorChangeListener implements IPropertyChangeListener {
