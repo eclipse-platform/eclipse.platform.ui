@@ -425,13 +425,21 @@ public class EditorReference extends WorkbenchPartReference implements
 
         
         // If unable to create the part, create an error part instead
+        // and pass the error to the status handling facility
         if (exception != null) {
             
             IStatus originalStatus = exception.getStatus();
             IStatus logStatus = StatusUtil.newStatus(originalStatus, 
                     NLS.bind("Unable to create editor ID {0}: {1}",  //$NON-NLS-1$
                             getId(), originalStatus.getMessage()));
-            StatusManager.getManager().handle(logStatus);
+            IStatus displayStatus = StatusUtil.newStatus(originalStatus,
+                    NLS.bind(WorkbenchMessages.EditorManager_unableToCreateEditor,
+                            originalStatus.getMessage()));
+
+			// Pass the error to the status handling facility         
+            StatusManager.getManager().handle(logStatus);       
+            StatusManager.getManager().handle(displayStatus,
+						StatusManager.SHOW);
             
             ErrorEditorPart part = new ErrorEditorPart();
             
@@ -454,8 +462,8 @@ public class EditorReference extends WorkbenchPartReference implements
             try {
 				part.init(site, input);
 			} catch (PartInitException e) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				StatusUtil.handleStatus(e, StatusManager.SHOW
+						| StatusManager.LOG);
 				return null;
 			}
 
@@ -467,8 +475,8 @@ public class EditorReference extends WorkbenchPartReference implements
 				part.createPartControl(content);
 			} catch (Exception e) {
 				content.dispose();
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				StatusUtil.handleStatus(e, StatusManager.SHOW
+						| StatusManager.LOG);
 				return null;
 			}
 

@@ -222,9 +222,12 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 		}
 
 		// If unable to create the part, create an error part instead
+		// and pass the error to the status handling facility
 		if (exception != null) {
 			IStatus partStatus = exception.getStatus();
-
+			IStatus displayStatus = StatusUtil.newStatus(partStatus, NLS.bind(
+					WorkbenchMessages.ViewFactory_initException, partStatus
+							.getMessage()));
 			IStatus logStatus = StatusUtil
 					.newStatus(
 							partStatus,
@@ -232,8 +235,11 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 									.bind(
 											"Unable to create view ID {0}: {1}", getId(), partStatus.getMessage())); //$NON-NLS-1$
 			
+			// Pass the error to the status handling facility
 			StatusManager.getManager().handle(logStatus);
-
+			StatusManager.getManager().handle(displayStatus,
+						StatusManager.SHOW);
+						
 			IViewDescriptor desc = factory.viewReg.find(getId());
 			String label = getId();
 			if (desc != null) {
@@ -250,8 +256,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 			try {
 				part.init(site);
 			} catch (PartInitException e) {
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				StatusUtil.handleStatus(e, StatusManager.SHOW
+						| StatusManager.LOG);
 				return null;
 			}
 			part.setPartName(label);
@@ -264,8 +270,8 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				part.createPartControl(content);
 			} catch (Exception e) {
 				content.dispose();
-				StatusManager.getManager().handle(
-						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+				StatusUtil.handleStatus(e, StatusManager.SHOW
+						| StatusManager.LOG);
 				return null;
 			}
 

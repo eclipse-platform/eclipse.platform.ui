@@ -159,9 +159,11 @@ public abstract class WorkbenchWizardNode implements IWizardNode,
 
         if (statuses[0] != null) {
             parentWizardPage.setErrorMessage(WorkbenchMessages.WorkbenchWizard_errorMessage);
-            IStatus errStatus = StatusUtil.newStatus(statuses[0], WorkbenchMessages.WorkbenchWizard_errorMessage); 
-            StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
-            return null;
+            StatusUtil.handleStatus(statuses[0],
+					WorkbenchMessages.WorkbenchWizard_errorTitle + ": " //$NON-NLS-1$
+							+ WorkbenchMessages.WorkbenchWizard_errorMessage,
+					StatusManager.SHOW, parentWizardPage.getShell());
+			return null;
         }
 
         IStructuredSelection currentSelection = getCurrentResourceSelection();

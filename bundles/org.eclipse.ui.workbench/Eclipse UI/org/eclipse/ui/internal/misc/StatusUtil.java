@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.statushandling.StatusManager;
@@ -207,11 +208,20 @@ public class StatusUtil {
      *
      * Utility method for handling status.
      */
+    public static void handleStatus(IStatus status, int hint, Shell shell) {
+    	StatusManager.getManager().handle(status, hint);
+	}
+    
+    /**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
     public static void handleStatus(Throwable e, int hint) {
 		StatusManager.getManager().handle(
 				newStatus(WorkbenchPlugin.PI_WORKBENCH, e), hint);
 	}
-
+    
     /**
      * This method must not be called outside the workbench.
      *
@@ -227,7 +237,28 @@ public class StatusUtil {
      *
      * Utility method for handling status.
      */
+	public static void handleStatus(String message, Throwable e, int hint,
+			Shell shell) {
+		StatusManager.getManager().handle(
+				newStatus(WorkbenchPlugin.PI_WORKBENCH, message, e), hint);
+	}
+	
+	/**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
 	public static void handleStatus(IStatus status, String message, int hint) {
+		StatusManager.getManager().handle(newStatus(status, message), hint);
+	}
+	
+	/**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+	public static void handleStatus(IStatus status, String message, int hint,
+			Shell shell) {
 		StatusManager.getManager().handle(newStatus(status, message), hint);
 	}
 
@@ -237,6 +268,15 @@ public class StatusUtil {
      * Utility method for handling status.
      */
 	public static void handleStatus(String message, int hint) {
+		handleStatus(message, null, hint);
+	}
+	
+	/**
+     * This method must not be called outside the workbench.
+     *
+     * Utility method for handling status.
+     */
+	public static void handleStatus(String message, int hint, Shell shell) {
 		handleStatus(message, null, hint);
 	}
 }

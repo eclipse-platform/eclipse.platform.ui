@@ -95,18 +95,17 @@ public class StatusManager {
 	/**
 	 * A handling hint indicating that handlers should log a problem
 	 */
-	public static final int LOG = 1;
-
-	/**
-	 * A handling hint indicating that handlers should log and show a problem to
-	 * an user
-	 */
-	public static final int SHOWANDLOG = 2;
+	public static final int LOG = 0x01;
 
 	/**
 	 * A handling hint indicating that handlers should show a problem to an user
 	 */
-	public static final int SHOW = 3;
+	public static final int SHOW = 0x02;
+	
+	/*
+	 * Will be removed in the patch for 167131
+	 */
+	public static final int SHOWANDLOG = SHOW | LOG;
 
 	private static StatusManager MANAGER;
 

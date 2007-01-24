@@ -63,7 +63,7 @@ public class DialogUtil {
 					WorkbenchPlugin.PI_WORKBENCH, message);
 		}
 
-		StatusManager.getManager().handle(errorStatus, StatusManager.SHOW);
+		StatusUtil.handleStatus(errorStatus, StatusManager.SHOW, parent);
     }
 
     /**

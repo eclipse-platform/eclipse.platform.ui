@@ -23,9 +23,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.DialogTray;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -58,6 +58,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.about.AboutBundleData;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandling.StatusManager;
 import org.osgi.framework.Bundle;
@@ -432,11 +433,8 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 
         // only report ini problems if the -debug command line argument is used
         if (infoURL == null && WorkbenchPlugin.DEBUG) {
-			String message = "Problem reading plugin info for: " //$NON-NLS-1$
-					+ bundleInfo.getName();
-			IStatus status = new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, message);
-			StatusManager.getManager().handle(status);
+        	WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
+					+ bundleInfo.getName());
 		}
 
         return infoURL != null;
@@ -461,9 +459,9 @@ public class AboutPluginsDialog extends ProductInfoDialog {
 			String message = NLS.bind(
 					WorkbenchMessages.AboutPluginsDialog_unableToOpenFile,
 					PLUGININFO, bundleInfo.getId());
-			IStatus errStatus = new Status(IStatus.ERROR,
-					WorkbenchPlugin.PI_WORKBENCH, message);
-			StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
+			StatusUtil.handleStatus(
+					WorkbenchMessages.AboutPluginsDialog_errorTitle
+							+ ": " + message, StatusManager.SHOW, getShell()); //$NON-NLS-1$
 		}
     }
 

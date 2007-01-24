@@ -54,6 +54,7 @@ import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.statushandling.StatusManager;
@@ -366,8 +367,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 					getSelectedContentType().setDefaultCharset(text);
 					setButton.setEnabled(false);
 				} catch (CoreException e1) {
-					StatusManager.getManager().handle(e1.getStatus(),
-							StatusManager.SHOW);
+					StatusUtil.handleStatus(e1.getStatus(), StatusManager.SHOW,
+							parent.getShell());
 				}
 			}
 		});
@@ -474,8 +475,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 												IContentType.FILE_NAME_SPEC);
 							}
 						} catch (CoreException ex) {
-							StatusManager.getManager().handle(ex.getStatus(),
-									StatusManager.SHOW);
+							StatusUtil.handleStatus(ex.getStatus(),
+									StatusManager.SHOW, shell);
 							WorkbenchPlugin.log(ex);
 						} finally {
 							fileAssociationViewer.setInput(selectedContentType);
@@ -518,8 +519,8 @@ public class ContentTypesPreferencePage extends PreferencePage implements
 						}
 					}
 					if (!result.isOK()) {
-						StatusManager.getManager().handle(result,
-								StatusManager.SHOW);
+						StatusUtil.handleStatus(result, StatusManager.SHOW,
+								composite.getShell());
 					}
 					fileAssociationViewer.setInput(contentType);
 				}

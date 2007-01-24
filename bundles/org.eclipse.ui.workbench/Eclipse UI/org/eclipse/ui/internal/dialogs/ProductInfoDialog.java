@@ -309,9 +309,13 @@ public abstract class ProductInfoDialog extends TrayDialog {
      * display an error message
      */
     private void openWebBrowserError(final String href, final Throwable t) {
-        String msg = NLS.bind(WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser, href);
-        IStatus status = StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, msg, t); 
-		StatusManager.getManager().handle(status, StatusManager.SHOW);
+        String title = WorkbenchMessages.ProductInfoDialog_errorTitle;
+		String msg = NLS.bind(
+				WorkbenchMessages.ProductInfoDialog_unableToOpenWebBrowser,
+				href);
+		IStatus status = WorkbenchPlugin.getStatus(t);
+		StatusUtil.handleStatus(status, title + ": " + msg, StatusManager.SHOW, //$NON-NLS-1$
+				getShell());
     }
 
     /**

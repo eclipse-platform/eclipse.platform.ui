@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -44,7 +43,6 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
@@ -387,9 +385,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 				if (msg == null) {
 					msg = WorkbenchMessages.FilteredPreferenceDialog_PreferenceSaveFailed;
 				}
-				IStatus status = StatusUtil.newStatus(
-						WorkbenchPlugin.PI_WORKBENCH, msg, e);
-				StatusManager.getManager().handle(status, StatusManager.SHOW);
+				StatusUtil
+						.handleStatus(
+								WorkbenchMessages.PreferencesExportDialog_ErrorDialogTitle
+										+ ": " + msg, e, StatusManager.SHOW, //$NON-NLS-1$
+								getShell());
 			}
 		}
 
