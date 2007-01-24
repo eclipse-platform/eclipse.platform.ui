@@ -56,6 +56,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -433,7 +434,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		fPreviousAction= new PreviousChange();
 		tbm.add(fPreviousAction);
 		tbm.add(new Separator());
-		fDerivedFilterActive= getRefactoringSettings().getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
+		final IDialogSettings settings= getRefactoringSettings();
+		if (settings != null)
+			fDerivedFilterActive= settings.getBoolean(PREVIEW_WIZARD_PAGE_HIDE_DERIVED);
 		fFilterDropDownAction= new FilterDropDownAction();
 		tbm.add(fFilterDropDownAction);
 		tbm.update(true);
