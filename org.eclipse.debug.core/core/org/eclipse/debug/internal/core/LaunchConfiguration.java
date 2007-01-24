@@ -619,8 +619,11 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
     	if (monitor == null) {
 			monitor = new NullProgressMonitor();	
+			monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
 		}
-    	monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
+    	else {
+    		monitor.setTaskName(DebugCoreMessages.LaunchConfiguration_9);
+    	}
     	IProgressMonitor subMonitor = null;
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
     	Set modes = getModes();
