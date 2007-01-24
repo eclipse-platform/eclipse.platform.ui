@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public class DefaultAnimationFeedback {
-	private static final int LINE_WIDTH = 2;
+	private static final int LINE_WIDTH = 1;
 	
 	private Display display;
 	private Shell theShell;
