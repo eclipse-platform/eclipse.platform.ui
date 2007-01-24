@@ -47,7 +47,7 @@ public class DragBorder {
 	 * @param client The client window that the border must stay within
 	 * @param toDrag The control to be placed 'inside' the border
 	 */
-	public DragBorder(Composite client, Control toDrag) {
+	public DragBorder(Composite client, Control toDrag, boolean provideFrame) {
 		clientControl = client;
 		dragControl = toDrag;
 		Point dragSize = toDrag.getSize();
@@ -67,20 +67,22 @@ public class DragBorder {
 		border.moveAbove(null);
 		dragControl.moveAbove(null);
 		
-		border.addPaintListener(new PaintListener() {
-			public void paintControl(PaintEvent e) {
-				if (isHighlight) {
-					e.gc.setForeground(hilightColor);
+		if (provideFrame) {
+			border.addPaintListener(new PaintListener() {
+				public void paintControl(PaintEvent e) {
+					if (isHighlight) {
+						e.gc.setForeground(hilightColor);
+					}
+					else {
+						e.gc.setForeground(baseColor);
+					}
+					
+					// Draw a rectangle as our 'border'
+					Rectangle bb = border.getBounds();
+					e.gc.drawRectangle(0,0,bb.width-1, bb.height-1);
 				}
-				else {
-					e.gc.setForeground(baseColor);
-				}
-				
-				// Draw a rectangle as our 'border'
-				Rectangle bb = border.getBounds();
-				e.gc.drawRectangle(0,0,bb.width-1, bb.height-1);
-			}
-		});
+			});
+		}
 	}
 	
     

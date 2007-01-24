@@ -362,7 +362,8 @@ import org.eclipse.ui.internal.layout.TrimLayout;
         	draggedTrim.getControl().setSize(initialLocation.width, initialLocation.height);
            	
            	// Create a new dragging border onto the dragged trim
-           	border = new DragBorder(windowComposite, draggedTrim.getControl());
+        	// Special check for TrimPart...should be generalized
+           	border = new DragBorder(windowComposite, draggedTrim.getControl(), !(draggedTrim instanceof TrimPart));
 
            	dockedArea = SWT.NONE;
         }
