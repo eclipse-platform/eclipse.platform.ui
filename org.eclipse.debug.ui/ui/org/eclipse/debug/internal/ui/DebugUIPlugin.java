@@ -229,6 +229,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		fgDebugUIPlugin= this;
 	}
 	
+	/**
+	 * If the debug flag is set the specified message is printed to the console
+	 * @param message
+	 */
 	public static void debug(String message) {
 		if (DEBUG) {
 			System.out.println(message);
@@ -239,6 +243,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 * Returns the singleton instance of the debug plug-in.
 	 */
 	public static DebugUIPlugin getDefault() {
+		if(fgDebugUIPlugin == null) {
+			fgDebugUIPlugin = new DebugUIPlugin();
+		}
 		return fgDebugUIPlugin;
 	}
 	
