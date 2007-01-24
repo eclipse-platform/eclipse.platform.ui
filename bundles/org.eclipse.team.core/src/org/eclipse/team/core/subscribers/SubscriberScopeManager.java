@@ -45,7 +45,7 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 	 * @param name a human readable name for the scope
 	 * @param inputMappings the input mappings
 	 * @param subscriber the subscriber
-	 * @param context a remote resource mapping conext for the subscriber
+	 * @param context a remote resource mapping context for the subscriber
 	 * @param consultModels whether models should be consulted when calculating the scope
 	 */
 	public SubscriberScopeManager(String name, ResourceMapping[] inputMappings, Subscriber subscriber, RemoteResourceMappingContext context, boolean consultModels) {
@@ -102,7 +102,7 @@ public class SubscriberScopeManager extends SynchronizationScopeManager implemen
 	}
 	
 	/*
-	 * Hookup the participants for the participating models.
+	 * Hook up the participants for the participating models.
 	 * This is done to ensure that future local and remote changes to 
 	 * resources will update the resources contained in the scope 
 	 * appropriately

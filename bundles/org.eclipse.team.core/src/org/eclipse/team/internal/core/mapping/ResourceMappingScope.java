@@ -48,6 +48,7 @@ public class ResourceMappingScope extends AbstractResourceMappingScope {
 	 * only be invoked during the scope building process.
 	 * @param mapping the mapping being added to the scope
 	 * @param traversals the traversals for that mapping
+	 * @return the added traversals
 	 */
 	public ResourceTraversal[] addMapping(ResourceMapping mapping, ResourceTraversal[] traversals) {
 		ResourceTraversal[] newTraversals = compoundTraversal.getUncoveredTraversals(traversals);

@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.tests.resources.ResourceTest;
+import org.eclipse.team.tests.core.mapping.ScopeTests;
 
 public class AllTeamTests extends ResourceTest {
 
@@ -37,6 +38,7 @@ public class AllTeamTests extends ResourceTest {
 		suite.addTest(RepositoryProviderTests.suite());
 		suite.addTest(StreamTests.suite());
 		suite.addTest(StorageMergerTests.suite());
+		suite.addTest(ScopeTests.suite());
 		return suite;
 	}
 }

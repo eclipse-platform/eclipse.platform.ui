@@ -42,7 +42,7 @@ public class ScopeBuildingTests extends TeamTest {
 						ResourceTraversal[] traversals = mapping.getTraversals(getContext(), monitor);
 						((ResourceMappingScope)getScope()).addMapping(mapping, traversals);
 						// TODO: The additional mappings and additional resources boolean will not be set
-						// TODO: This may bring in mappings from the resources modle provider
+						// TODO: This may bring in mappings from the resources model provider
 					}
 				}
 			});

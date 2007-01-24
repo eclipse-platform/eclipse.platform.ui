@@ -35,7 +35,6 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
-import org.eclipse.team.internal.ccvs.ui.sync.ToolTipMessageDialog;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;

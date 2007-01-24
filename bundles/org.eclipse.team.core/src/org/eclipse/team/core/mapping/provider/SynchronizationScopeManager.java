@@ -180,7 +180,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		workspace.run(new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
-				traversals[0] = internalRefreshScope(mappings, monitor);
+				traversals[0] = internalRefreshScope(mappings, true, monitor);
 			}
 		}, getSchedulingRule(), IResource.NONE, monitor);
 		return traversals[0];
@@ -220,57 +220,49 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 		fireMappingsChangedEvent(scope.getMappings(), scope.getTraversals());
 	}
 
-	private ResourceTraversal[] internalRefreshScope(ResourceMapping[] mappings, IProgressMonitor monitor) throws CoreException {
+	private ResourceTraversal[] internalRefreshScope(ResourceMapping[] mappings, boolean checkForContraction, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask(null, 100 * mappings.length + 100);
-		ResourceMapping[] originalMappings = scope.getMappings();
-		ResourceTraversal[] originalTraversals = scope.getTraversals();
+		ScopeChangeEvent change = new ScopeChangeEvent(scope);
 		CompoundResourceTraversal refreshTraversals = new CompoundResourceTraversal();
-		boolean expanded = false;
+		CompoundResourceTraversal removedTraversals = new CompoundResourceTraversal();
 		for (int i = 0; i < mappings.length; i++) {
 			ResourceMapping mapping = mappings[i];
+			ResourceTraversal[] previousTraversals = scope.getTraversals(mapping);
 			ResourceTraversal[] mappingTraversals = mapping.getTraversals(
 					context, Policy.subMonitorFor(monitor, 100));
 			refreshTraversals.addTraversals(mappingTraversals);
 			ResourceTraversal[] uncovered = getUncoveredTraversals(mappingTraversals);
+			if (checkForContraction && previousTraversals != null && previousTraversals.length > 0) {
+				ResourceTraversal[] removed = getUncoveredTraversals(mappingTraversals, previousTraversals);
+				removedTraversals.addTraversals(removed);
+			}
 			if (uncovered.length > 0) {
-				expanded = true;
+				change.setExpanded(true);
 				ResourceTraversal[] result = performExpandScope(mapping, mappingTraversals, uncovered, monitor);
 				refreshTraversals.addTraversals(result);
 			}
 		}
-		ResourceMapping[] currentMappings = scope.getMappings();
-		if (expanded || currentMappings.length > originalMappings.length) {
-			ResourceTraversal[] newTraversals;
-			if (expanded) {
-				CompoundResourceTraversal originals = new CompoundResourceTraversal();
-				originals.addTraversals(originalTraversals);
-				newTraversals = originals.getUncoveredTraversals(refreshTraversals);
-			} else {
-				newTraversals = new ResourceTraversal[0];
-			}
-			ResourceMapping[] newMappings;
-			if (currentMappings.length > originalMappings.length) {
-				Set originalSet = new HashSet();
-				List result = new ArrayList();
-				for (int i = 0; i < originalMappings.length; i++) {
-					ResourceMapping mapping = originalMappings[i];
-					originalSet.add(mapping);
-				}
-				for (int i = 0; i < currentMappings.length; i++) {
-					ResourceMapping mapping = currentMappings[i];
-					if (!originalSet.contains(mapping)) {
-						result.add(mapping);
-					}
-				}
-				newMappings = (ResourceMapping[]) result.toArray(new ResourceMapping[result.size()]);
-			} else {
-				newMappings = new ResourceMapping[0];
-			}
-			fireMappingsChangedEvent(newMappings, newTraversals);
+		
+		if (checkForContraction && removedTraversals.getRoots().length > 0) {
+			// The scope may have contracted. The only way to handle this is to recalculate from scratch
+			// TODO: This may not be thread safe
+			((ResourceMappingScope)scope).reset();
+			internalRefreshScope(scope.getInputMappings(), false, monitor);
+			change.setContracted(true);
 		}
 		
+		if (change.shouldFireChange())
+			fireMappingsChangedEvent(change.getChangedMappings(), change.getChangedTraversals(refreshTraversals));
 		monitor.done();
 		return refreshTraversals.asTraversals();
+	}
+
+	private ResourceTraversal[] getUncoveredTraversals(
+			ResourceTraversal[] newTraversals,
+			ResourceTraversal[] previousTraversals) {
+		CompoundResourceTraversal t = new CompoundResourceTraversal();
+		t.addTraversals(newTraversals);
+		return t.getUncoveredTraversals(previousTraversals);
 	}
 
 	private ResourceTraversal[] performExpandScope(
