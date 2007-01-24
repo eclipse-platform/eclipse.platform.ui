@@ -618,8 +618,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
     	if (monitor == null) {
-			monitor = new NullProgressMonitor();
+			monitor = new NullProgressMonitor();	
 		}
+    	monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
+    	IProgressMonitor subMonitor = null;
 		// bug 28245 - force the delegate to load in case it is interested in launch notifications
     	Set modes = getModes();
     	modes.add(mode);
@@ -694,42 +696,47 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 		
 		String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-		launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);
-		
-				
-		// perform initial pre-launch sanity checks
+		launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);	
+	// perform initial pre-launch sanity checks
 		if (delegate2 != null) {
-			if (!(delegate2.preLaunchCheck(this, mode, monitor))) {
+			subMonitor = new SubProgressMonitor(monitor, 100);
+			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_8);
+			if (!(delegate2.preLaunchCheck(this, mode, subMonitor))) {
 				// canceled
 				monitor.setCanceled(true);
 				return launch;
 			}
 		}
-		// preform pre-launch build
-		IProgressMonitor subMonitor = monitor;
+	// preform pre-launch build
 		if (build) {
 			subMonitor = new SubProgressMonitor(monitor, 100);
+			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_7);
 			if (delegate2 != null) {
 				build = delegate2.buildForLaunch(this, mode, subMonitor);
 			}
 			if (build) {
+				subMonitor = new SubProgressMonitor(monitor, 100);
+				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_6);
 				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);				
 			}
-			subMonitor = new SubProgressMonitor(monitor, 100);
 		}
-		// final validation
+	// final validation
 		if (delegate2 != null) {
+			subMonitor = new SubProgressMonitor(monitor, 100);
+			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_5);
 			if (!(delegate2.finalLaunchCheck(this, mode, subMonitor))) {
 				// canceled
 				monitor.setCanceled(true);
 				return launch;
 			}
 		}
-		
 		if (register) {
 		    getLaunchManager().addLaunch(launch);
 		}
+	//initialize the source locator
 		try {
+			subMonitor = new SubProgressMonitor(monitor, 100);
+			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_4);
 			initializeSourceLocator(launch);
 			delegate.launch(this, mode, launch, subMonitor);
 		} catch (CoreException e) {
@@ -742,6 +749,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (monitor.isCanceled()) {
 			getLaunchManager().removeLaunch(launch);
 		}
+		monitor.done();
 		return launch;
     }
 	

@@ -27,6 +27,18 @@ public class DebugCoreMessages extends NLS {
 	public static String DebugPlugin_1;
 	public static String EnvironmentVariableResolver_0;
 
+	public static String LaunchConfiguration_4;
+
+	public static String LaunchConfiguration_5;
+
+	public static String LaunchConfiguration_6;
+
+	public static String LaunchConfiguration_7;
+
+	public static String LaunchConfiguration_8;
+
+	public static String LaunchConfiguration_9;
+
 	public static String LaunchConfigurationInfo_35;
 
 	public static String LaunchConfigurationType_6;
