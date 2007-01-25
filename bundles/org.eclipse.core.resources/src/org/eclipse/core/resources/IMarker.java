@@ -225,8 +225,22 @@ public interface IMarker extends IAdaptable {
 	 * 
 	 * @see #getAttribute(String, String)
 	 * @since 3.3
+	 * @deprecated Replaced by {@link #SOURCE_ID}. This constant will
+	 * be REMOVED prior to 3.3 M5.
 	 */
 	public static final String GENERATED_BY = "generatedBy"; //$NON-NLS-1$
+
+	/**
+	 * Source id attribute.  A string attribute that can be used by tools that
+	 * generate markers to indicate the source of the marker. Use of this attribute
+	 * is optional and its format or existence is not enforced.  This attribute is intended
+	 * to improve serviceability by providing a value that product support personnel
+	 * can use to determine appropriate resolutions for problems.
+	 * 
+	 * @see #getAttribute(String, String)
+	 * @since 3.3
+	 */
+	public static final String SOURCE_ID = "sourceId"; //$NON-NLS-1$
 
 	/*====================================================================
 	 * Marker attributes values:
