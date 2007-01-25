@@ -135,18 +135,18 @@ public final class TableWrapData {
 	}
 
 	/**
-	 * The convinience constructor - allows passing the horizontal alignment
+	 * The convenience constructor - allows passing the horizontal alignment
 	 * style.
 	 * 
 	 * @param align
-	 *            horizontal alignment (LEFT, MIDDLE, RIGHT, FILL or FILL_GRAB).
+	 *            horizontal alignment (LEFT, CENTER, RIGHT, FILL or FILL_GRAB).
 	 */
 	public TableWrapData(int align) {
 		this(align, TOP, 1, 1);
 	}
 
 	/**
-	 * The convinience constructor - allows passing the alignment styles.
+	 * The convenience constructor - allows passing the alignment styles.
 	 * 
 	 * @param align
 	 *            horizontal alignment (LEFT, CENTER, RIGHT, FILL or FILL_GRAB).
@@ -158,7 +158,7 @@ public final class TableWrapData {
 	}
 
 	/**
-	 * The convinience constructor - allows passing the alignment styles, column
+	 * The convenience constructor - allows passing the alignment styles, column
 	 * and row spans.
 	 * 
 	 * @param align
