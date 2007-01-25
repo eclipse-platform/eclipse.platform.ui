@@ -307,6 +307,9 @@ public class FilteredResourcesSelectionDialog extends
 	 */
 	public Object[] getResult() {
 		Object[] result = super.getResult();
+		
+		if(result == null)
+			return null;
 
 		List resultToReturn = new ArrayList();
 
