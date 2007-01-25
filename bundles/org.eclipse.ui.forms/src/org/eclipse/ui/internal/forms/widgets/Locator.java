@@ -45,6 +45,17 @@ public class Locator implements Cloneable {
 		return getBaseline(segmentHeight, true);
 
 	}
+	public int getMiddle(int segmentHeight, boolean text) {
+		if (heights!=null && heights.size()>rowCounter) {
+			int [] rdata = (int[])heights.get(rowCounter);
+			int rheight = rdata[0];
+			int rleading = rdata[1];
+			if (text)
+				return y + rheight/2 - segmentHeight/2 - rleading;
+			return y + rheight/2 - segmentHeight/2;
+		}
+		return y;		
+	}
 	public int getBaseline(int segmentHeight, boolean text) {
 		if (heights!=null && heights.size()>rowCounter) {
 			int [] rdata = (int[])heights.get(rowCounter);

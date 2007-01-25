@@ -107,6 +107,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 		if (ncolumns == -1) {
 			// must compute
 			ncolumns = (wHint - leftMargin - rightMargin - horizontalSpacing) / (cwidth + horizontalSpacing);
+			ncolumns = Math.min(ncolumns, children.length);
 			ncolumns = Math.max(ncolumns, minNumColumns);
 			ncolumns = Math.min(ncolumns, maxNumColumns);
 		}
@@ -121,7 +122,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 		
 		for (int i = 0; i < sizes.length; i++) {
 			int childHeight = sizes[i].y;
-			if (colHeight + childHeight > perColHeight) {
+			if (i>0 && colHeight + childHeight > perColHeight) {
 				heights[ncol] = colHeight;
 				ncol++;
 				if (ncol == ncolumns || fillIn) {
@@ -185,6 +186,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			cheight += sizes[i].y;
 		}
 		int ncolumns = (carea.width - leftMargin - rightMargin - horizontalSpacing) / (cwidth + horizontalSpacing);
+		ncolumns = Math.min(ncolumns, children.length);		
 		ncolumns = Math.max(ncolumns, minNumColumns);
 		ncolumns = Math.min(ncolumns, maxNumColumns);
 		int realWidth = (carea.width - leftMargin - rightMargin + horizontalSpacing) / ncolumns - horizontalSpacing;
@@ -212,7 +214,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			int align = cd != null ? cd.horizontalAlignment : ColumnLayoutData.FILL;
 			int childWidth = align == ColumnLayoutData.FILL ? fillWidth : csize.x;
 
-			if (colHeight + csize.y > perColHeight) {
+			if (i>0 && colHeight + csize.y > perColHeight) {
 				heights[ncol] = colHeight;
 				if (fillIn || ncol == ncolumns-1) {
 					// overflow - start filling in

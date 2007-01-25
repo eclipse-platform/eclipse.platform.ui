@@ -130,9 +130,13 @@ public abstract class ObjectSegment extends ParagraphSegment {
 			loc.newLine();
 			loc.rowCounter++;
 		}
-		//TODO vertical alignment is not used
 		int ix = loc.x;
-		int iy = loc.getBaseline(objHeight, false);
+		int iy = loc.y;
+		
+		if (alignment==MIDDLE)
+			iy = loc.getMiddle(objHeight, false);
+		else if (alignment==BOTTOM)
+			iy = loc.getBaseline(objHeight, false);
 		loc.x += objWidth;
 		loc.rowHeight = Math.max(loc.rowHeight, objHeight);
 		bounds = new Rectangle(ix, iy, objWidth, objHeight);

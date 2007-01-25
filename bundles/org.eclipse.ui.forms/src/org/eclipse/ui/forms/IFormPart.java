@@ -12,8 +12,8 @@ package org.eclipse.ui.forms;
 
 /**
  * Classes that implement this interface can be added to the managed
- * form and take part in the form life cycle. The part is initialize
- * with the form and be asked to accept focus. The part can receive
+ * form and take part in the form life cycle. The part is initialized
+ * with the form and will be asked to accept focus. The part can receive
  * form input and can elect to do something according to it (for
  * example, select an object that matches the input).
  * <p>The form part has two 'out of sync' states in respect to 
@@ -29,9 +29,9 @@ package org.eclipse.ui.forms;
  * the form when one of these states change in the part. The
  * form reserves the right to handle this notification in the
  * most appropriate way for the situation (for example, if 
- * form is in a page of the multi-page editor, it may do 
+ * the form is in a page of the multi-page editor, it may do 
  * nothing for stale parts if the page is currently not showing).
- * <p>When form is disposed, each registered part is disposed 
+ * <p>When the form is disposed, each registered part is disposed 
  * as well.
  * Parts are responsible for releasing any system resources
  * they created and for removing themselves as listeners

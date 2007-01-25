@@ -136,7 +136,9 @@ import org.eclipse.ui.internal.forms.widgets.TextSegment;
  * Form text is not responsible for creating or disposing controls, it only
  * places them relative to the surrounding text. Similar to <b>img</b>,
  * vertical position of the control can be set using the <b>align</b>
- * attribute.
+ * attribute. In addition, <b>width</b> and <b>height</b> attributes can
+ * be used to force the dimensions of the control. If not used,
+ * the preferred control size will be used.
  * </ul>
  * <p>
  * None of the elements can nest. For example, you cannot have <b>b </b> inside
