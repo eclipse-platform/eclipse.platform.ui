@@ -63,6 +63,11 @@ public abstract class Page {
 				.printLapTime(
 						"Page.createInfoArea()", "Time in Page.createInfoArea() after new FormTableWrapLayout(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		layout.numColumns = 2;
+		// DG - added changes to make the check icon use less space
+		// and to compensate for the fix in section layout
+		// computation that makes it shorter for 3 pixels.
+		layout.leftMargin = 0;
+		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 3;
 		form.getBody().setLayout(layout);
 
