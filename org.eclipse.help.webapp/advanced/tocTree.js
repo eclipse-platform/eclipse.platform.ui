@@ -19,7 +19,14 @@ function getSelectedTopic() {
 	var node = getActiveAnchor();
 	if (node != null) {
 		var href = node.href;
-		return href.substring(href.indexOf("/topic/") + 6);
+		var index = href.indexOf("/topic/");
+		if (index != -1) {
+			return href.substring(index + 6);
+		}
+		index = href.indexOf("/nav/");
+		if (index != -1) {
+			return "/.." + href.substring(index);
+		}
 	}
 	// no selection
 	return null;
