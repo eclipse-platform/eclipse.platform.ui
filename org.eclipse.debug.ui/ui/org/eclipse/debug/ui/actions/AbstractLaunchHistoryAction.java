@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -183,18 +184,22 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	 */
 	protected String getToolTip(ILaunchConfiguration configuration) {
 		String launchName= configuration.getName();
-		String mode= getMode();
-		String label;
-		if (mode.equals(ILaunchManager.RUN_MODE)) {
-			label= ActionMessages.AbstractLaunchHistoryAction_1; 
-		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_2; 
-		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
-			label= ActionMessages.AbstractLaunchHistoryAction_3; 
-		} else {
-			label= ActionMessages.AbstractLaunchHistoryAction_4; 
+		String label = null;
+		//CONTEXTLAUNCHING
+		if(ContextRunner.isContextLaunchEnabled()) {
+			launchName = ContextRunner.getDefault().getContextName();
 		}
-		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName}); 
+		String mode = getMode();
+		if (mode.equals(ILaunchManager.RUN_MODE)) {
+			label = ActionMessages.AbstractLaunchHistoryAction_1; 
+		} else if (mode.equals(ILaunchManager.DEBUG_MODE)){
+			label = ActionMessages.AbstractLaunchHistoryAction_2; 
+		} else if (mode.equals(ILaunchManager.PROFILE_MODE)){
+			label = ActionMessages.AbstractLaunchHistoryAction_3; 
+		} else {
+			label = ActionMessages.AbstractLaunchHistoryAction_4; 
+		}
+		return MessageFormat.format(ActionMessages.AbstractLaunchHistoryAction_0, new String[] {label, launchName});
 	}
 	
 	/**
@@ -337,6 +342,9 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 		if (fAction == null) {
 			initialize(action);
 		} 
+		if(ContextRunner.isContextLaunchEnabled()) {
+			updateTooltip();
+		}
 	}
 	
 	/**

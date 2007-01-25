@@ -155,6 +155,15 @@
                id="org.eclipse.debug.ui.launchDelegatesKeywords">
          </keywordReference>
       </page>
+      <page
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.preferences.ContextLaunchingPreferencePage"
+            id="org.eclipse.debug.ui.contextualLaunchingPage"
+            name="%ContextualLaunchingPrefPage.name">
+         <keywordReference
+               id="org.eclipse.debug.ui.contextLaunching">
+         </keywordReference>
+      </page>
    </extension>
    <extension point="org.eclipse.ui.actionSets">
    		<actionSet
@@ -382,12 +391,12 @@
                menubarPath="org.eclipse.ui.run/runGroup">
          </action>
          <action
-               label="%RunWithConfigurationAction.label"
-               style="pulldown"
-               helpContextId="run_with_configuration_action_context"
                class="org.eclipse.debug.internal.ui.actions.RunAsAction"
+               helpContextId="run_with_configuration_action_context"
+               id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction"
+               label="%RunWithConfigurationAction.label"
                menubarPath="org.eclipse.ui.run/runGroup"
-               id="org.eclipse.debug.internal.ui.actions.RunWithConfigurationAction">
+               style="pulldown">
          </action>
          <action
                label="%RunHistoryMenuAction.label"
@@ -874,7 +883,12 @@
                id="org.eclipse.debug.ui.contextualLaunch.profile.submenu">
         </action>    
         <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
+          <and>
+          	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
+          	<not>
+          		<test property="org.eclipse.debug.ui.contextlaunch" />
+          	</not>
+          </and>
         </enablement>        
       </objectContribution>
       <objectContribution
@@ -889,7 +903,12 @@
                id="org.eclipse.debug.ui.contextualLaunch.debug.submenu">
          </action>
          <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+          <and>
+          	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+          	<not>
+          		<test property="org.eclipse.debug.ui.contextlaunch" />
+          	</not>
+          </and>
          </enablement>     
        </objectContribution>    
        <objectContribution
@@ -904,10 +923,83 @@
                id="org.eclipse.debug.ui.contextualLaunch.run.submenu">
          </action>                  
          <enablement>
-         	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+          <and>
+          	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+          	<not>
+          		<test property="org.eclipse.debug.ui.contextlaunch" />
+          	</not>
+          </and>
          </enablement>
       </objectContribution>
+       <objectContribution
+             id="org.eclipse.debug.ui.contextlaunch.debugas"
+             objectClass="org.eclipse.core.runtime.IAdaptable">
+          <action
+                class="org.eclipse.debug.internal.ui.contextlaunching.DebugContextLaunchingAction"
+                enablesFor="1"
+                icon="icons/full/etool16/debug_exc.gif"
+                id="org.eclipse.debug.ui.contextlaunch.debugas"
+                label="%ContextLaunchingDebugMenu.name"
+                menubarPath="additions"
+                tooltip="%ContextLaunchingDebugMenu.tooltip">
+          </action>
+          <enablement>
+          <and>
+            <test
+                  property="org.eclipse.debug.ui.resource"
+                  />
+          	<test
+                 property="org.eclipse.debug.ui.contextlaunch"
+                 />
+          	<test property="org.eclipse.debug.ui.launchable" value="debug"/>
+          </and>
+         </enablement>
+       </objectContribution>
+       <objectContribution
+             id="org.eclipse.debug.ui.contextlaunch.profileas"
+             objectClass="org.eclipse.core.runtime.IAdaptable">
+          <action
+                class="org.eclipse.debug.internal.ui.contextlaunching.ProfileContextLaunchingAction"
+                enablesFor="1"
+                icon="icons/full/etool16/profile_exc.gif"
+                id="org.eclipse.debug.ui.contextlaunch.profileas"
+                label="%ContextLaunchingProfileMenu.name"
+                menubarPath="additions"
+                tooltip="%ContextLaunchingProfileMenu.tooltip">
+          </action>
+          <enablement>
+          <and>
+            <test
+                  property="org.eclipse.debug.ui.resource"
+                  />
+          	<test property="org.eclipse.debug.ui.contextlaunch" />
+          	<test property="org.eclipse.debug.ui.launchable" value="profile"/>
+          </and>
+         </enablement> 
+       </objectContribution>
    <!-- console additions -->
+      <objectContribution
+            id="org.eclipse.debug.ui.contextlaunch.runas"
+            objectClass="org.eclipse.core.runtime.IAdaptable">
+         <action
+               class="org.eclipse.debug.internal.ui.contextlaunching.RunContextLaunchingAction"
+               enablesFor="1"
+               icon="icons/full/etool16/run_exc.gif"
+               id="org.eclipse.debug.ui.contextlaunch.runas"
+               label="%ContextLaunchingRunMenu.name"
+               menubarPath="additions"
+               tooltip="%ContextLaunchingRunMenu.tooltip">
+         </action>
+         <enablement>
+          <and>
+          	<test property="org.eclipse.debug.ui.contextlaunch" />
+          	<test
+                 property="org.eclipse.debug.ui.resource"
+                 />
+          	<test property="org.eclipse.debug.ui.launchable" value="run"/>
+          </and>
+         </enablement> 
+      </objectContribution>
       <viewerContribution
              targetID="org.eclipse.debug.ui.ProcessConsoleType.#ContextMenu"
              id="org.eclipse.debug.ui.processConsoleContextMenu">
@@ -1392,6 +1484,29 @@
                      type="org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering">
                </adapt>
             </or>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.debug.internal.ui.preferences.RunDebugPropertiesPage"
+            id="org.eclipse.debug.ui.properties.defaultLaunchConfigurations"
+            name="%DefaultLaunchConfigurationsPropPage.name"
+            >
+         <enabledWhen>
+            <and>
+               <adapt
+                     type="org.eclipse.core.resources.IResource">
+               </adapt>
+               <test
+                     property="org.eclipse.debug.ui.contextlaunch"
+                     />
+               <test
+                     property="org.eclipse.debug.ui.contextlaunchable"
+                     >
+               </test>
+               <test
+                     property="org.eclipse.debug.ui.resource">
+               </test>
+            </and>
          </enabledWhen>
       </page>
    </extension>
@@ -2032,7 +2147,7 @@ M4 = Platform-specific fourth key
       </propertyTester>
 	  <propertyTester
 			namespace="org.eclipse.debug.ui"
-			properties="launchable"
+			properties="launchable, resource, contextlaunch, contextlaunchable"
 			type="java.lang.Object"
 			class="org.eclipse.debug.internal.ui.actions.LaunchablePropertyTester"
 			id="org.eclipse.debug.ui.propertyTesters.launchable">		
@@ -2239,6 +2354,10 @@ M4 = Platform-specific fourth key
        <keyword
              id="org.eclipse.debug.ui.launchDelegatesKeywords"
              label="%preferenceKeywords.launchDelegates">
+       </keyword>
+       <keyword
+             id="org.eclipse.debug.ui.contextLaunching"
+             label="%preferenceKeywords.contextLaunching">
        </keyword>
     </extension>
     <extension

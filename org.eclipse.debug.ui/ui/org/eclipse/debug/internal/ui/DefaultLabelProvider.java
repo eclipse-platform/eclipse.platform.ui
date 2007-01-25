@@ -39,6 +39,7 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.core.model.IWatchpoint;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.internal.ui.views.variables.IndexedVariablePartition;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -68,6 +69,9 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 			return null;
+		}
+		if(element instanceof LaunchShortcutExtension) {
+			return ((LaunchShortcutExtension)element).getImageDescriptor().createImage();
 		}
 		return DebugPluginImages.getImage(key);
 	}
@@ -155,7 +159,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 					DebugUIPlugin.log(e);
 					return null;
 				}
-			} 
+			}
 		}
 		return null;		
 	}
@@ -206,6 +210,8 @@ public class DefaultLabelProvider implements ILabelProvider {
 						name = delegate.getContributorName();
 					}
 					label.append(name);
+				} else if(element instanceof LaunchShortcutExtension) {
+					label.append(((LaunchShortcutExtension)element).getLabel());
 				} else if (element instanceof String) {
 					label.append(element);
 				} else {

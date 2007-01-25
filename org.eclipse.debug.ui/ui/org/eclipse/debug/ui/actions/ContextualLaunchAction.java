@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
 import org.eclipse.debug.internal.ui.actions.SharedLaunchConfigAction;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchShortcutExtension;
 import org.eclipse.debug.ui.DebugUITools;
@@ -53,7 +54,7 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
  * An action delegate that builds a context menu with applicable launch shortcuts
  * for a specific launch mode.
  * <p>
- * This class can be subclassed and contributed as an object contribution pop-up
+ * This class can be sub-classed and contributed as an object contribution pop-up
  * menu extension action. When invoked, it becomes a sub-menu that dynamically
  * builds a list of applicable launch shortcuts for the current selection.
  * Each launch shortcut may have optional information to support a context menu action.
@@ -167,49 +168,13 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		}
 		action.setEnabled(false);
 	}
-
-	/**
-	 * This method is used to determine if the selected object is in fact a shared launch
-	 * configuration that can be launched
-	 * @return true if the item is a shared ocnfig , false otherwise
-	 * @since 3.3
-	 */
-	private boolean isSharedConfig(Object receiver) {
-		if(receiver instanceof IFile) {
-			IFile file = (IFile) receiver;
-			String ext = file.getFileExtension();
-			if(ext == null) {
-				return false;
-			}
-			if(ext.equals("launch")) { //$NON-NLS-1$
-				ILaunchConfiguration config = DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(file);
-				if(config != null && config.exists()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * This method return if the editor input is from a shared java launch configuration file or not
-	 * @param receiver the editor input to examine
-	 * @return true if the editor input is from a shared launch configuration file, false otherwise.
-	 */
-	private boolean isSharedConfigEditorInput(Object receiver) {
-		if(receiver instanceof IFileEditorInput) {
-			IFileEditorInput input = (IFileEditorInput) receiver;
-			return isSharedConfig(input.getFile());
-		}
-		return false;
-	}
 	
 	/**
 	 * Returns the launch manager
 	 * @return the launch manager
 	 * @since 3.3
 	 */
-	private ILaunchManager getLaunchManager() {
+	protected ILaunchManager getLaunchManager() {
 		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
@@ -240,27 +205,22 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		if (fSelection == null) {
 			return;
 		}
-		
 		IEvaluationContext context = createContext();
-		
 		//add in any selected shared configs before the rest of the items to launch as
 		//feature fix for 
+		//CONTEXTLAUNCHING
 		if(!fSelection.isEmpty()) {
 			Object obj = fSelection.getFirstElement();
-			if(isSharedConfig(obj)) {
+			if(ContextRunner.getDefault().isSharedConfig(obj) != null) {
 				prepareSharedConfigAction((IFile)obj, menu);
 				new MenuItem(menu, SWT.SEPARATOR);
 			} 
-			else if(isSharedConfigEditorInput(obj)) {
+			else if(ContextRunner.getDefault().isSharedConfigEditorInput(obj) != null) {
 				prepareSharedConfigAction(((IFileEditorInput) obj).getFile(), menu);
 				new MenuItem(menu, SWT.SEPARATOR);
 			}
 		}
-		
-		// gather all shortcuts and run their filters so that we only run the
-		// filters one time for each shortcut. Running filters can be expensive.
-		// Also, only *LOADED* plug-ins get their filters run.
-		List /* <LaunchShortcutExtension> */ allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
+		List allShortCuts = getLaunchConfigurationManager().getLaunchShortcuts();
 		Iterator iter = allShortCuts.iterator();
 		List filteredShortCuts = new ArrayList(10);
 		while (iter.hasNext()) {
@@ -269,9 +229,8 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				if (!WorkbenchActivityHelper.filterItem(ext) && isApplicable(ext, context)) {
 					filteredShortCuts.add(ext);
 				}
-			} catch (CoreException e) {
-				// not supported
-			}
+			} 
+			catch (CoreException e) {DebugUIPlugin.log(e);}
 		}
 		iter = filteredShortCuts.iterator();
 		int accelerator = 1;

@@ -349,5 +349,22 @@ public class LaunchConfigurationPresentationManager {
 		Collections.sort(names);
 		return names;
 	}
+	
+	/**
+	 * Returns the label of the mode id with all accelerators removed
+	 * @param modeid the id of the mode i.e. 'run'
+	 * @return the formatted label of the specified mode id with all accelerators removed, or <code>null</code> if no label is available
+	 * @since 3.3
+	 */
+	public String getLaunchModeLabel(String modeid) {
+		String mode = null;
+		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchMode lmode = manager.getLaunchMode(modeid);
+		if(lmode != null) {
+			return lmode.getLabel();
+		}
+		return mode;
+	}
+	
 }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.core.expressions.EvaluationContext;
+import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ISaveContext;
@@ -56,6 +58,7 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
+import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -216,7 +219,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Returns a listing of <code>IlaunchDeleagtes</code> that does not contain any delegates from disabled activities
 	 * @param delegates the raw listing of delegates to filter
-	 * @return the filtered listing of <code>ILaunchDelegate</code>s or an empty array, nevere <code>null</code>.
+	 * @return the filtered listing of <code>ILaunchDelegate</code>s or an empty array, never <code>null</code>.
 	 * @since 3.3
 	 * 
 	 * EXPERIMENTAL
@@ -311,7 +314,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @return the most recent, un-filtered launch
 	 */
 	public ILaunchConfiguration getFilteredLastLaunch(String groupId) {
-		LaunchHistory history = getLaunchHistory(groupId);if (history != null) {
+		LaunchHistory history = getLaunchHistory(groupId);
+		if (history != null) {
 			ILaunchConfiguration[] filterConfigs = filterConfigs(history.getHistory());
 			if (filterConfigs.length > 0) {
 				return filterConfigs[0];
@@ -352,7 +356,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 
 	/**
 	 * Returns the history listing as XML
-	 * @return the history loisting as XML
+	 * @return the history listing as XML
 	 * @throws CoreException
 	 * @throws ParserConfigurationException
 	 * @throws TransformerException
@@ -594,11 +598,52 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		}
 		return fLaunchShortcuts;
 	}
+
+	/**
+	 * Returns a listing of all of the <code>ILaunchConfigurationType</code>s that apply to the currently
+	 * specified <code>IResource</code>.
+	 * 
+	 * @param resource the resource context
+	 * @return a listing of applicable <code>ILaunchConfigurationType</code>s, or an empty list, never <code>null</code>
+	 * @since 3.3
+	 * EXPERIMENTAL
+	 * CONTEXTLAUNCHING
+	 */
+	public List getApplicableConfigurationTypes(IResource resource) {
+		List types = new ArrayList();
+		try {
+			List exts = getLaunchShortcuts();
+			LaunchShortcutExtension ext = null;
+			List list = new ArrayList();
+			list.add(resource);
+			IEvaluationContext context = new EvaluationContext(null, list);
+			context.addVariable("selection", list); //$NON-NLS-1$
+			HashSet set = new HashSet();
+			for(Iterator iter = exts.iterator(); iter.hasNext();) {
+				ext = (LaunchShortcutExtension) iter.next();
+				if(ext.evalEnablementExpression(context, ext.getContextualLaunchEnablementExpression())) {
+					set.addAll(ext.getAssociatedConfigurationTypes());
+				}
+			}
+			LaunchManager lm = (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfigurationType type = null;
+			for(Iterator iter = set.iterator(); iter.hasNext();) {
+				type = lm.getLaunchConfigurationType((String)iter.next());
+				if(type != null) { 
+					if(!types.contains(type) && type.isPublic() && !"org.eclipse.ui.externaltools.builder".equals(type.getCategory())) { //$NON-NLS-1$
+						types.add(type);
+					}
+				}
+			}
+		}
+		catch(CoreException ce) {DebugUIPlugin.log(ce);}
+		return types;
+	}
 	
 	/**
 	 * Returns a listing of all applicable <code>LaunchShortcutExtension</code>s for the given
 	 * launch configuration type id.
-	 * @param typeid the id of the launch configuraiton
+	 * @param typeid the id of the launch configuration
 	 * @return a listing of <code>LaunchShortcutExtension</code>s that are associated with the specified launch configuration
 	 * type id or an empty list, never <code>null</code>
 	 * 
@@ -695,6 +740,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @since 3.3
 	 * 
 	 * EXPERIMENTAL
+	 * CONTEXTLAUNCHING
 	 */
 	public LaunchShortcutExtension getLaunchShortcut(String id) {
 		loadLaunchShortcuts();
@@ -800,6 +846,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @since 3.3
 	 * 
 	 * EXPERIMENTAL
+	 * CONTEXTLAUNCHING
 	 */
 	public void setDefaultLaunchShortcut(IResource resource, LaunchShortcutExtension shortcut) throws CoreException {
 		IProject project = resource.getProject();
@@ -826,12 +873,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * 
 	 * @see {@link ILaunchManager#getDefaultConfiguration(IResource)}
 	 * @param resource the resource
-	 * @return the corresponding <code>LaunchShortcutExtension</code> for the guven <code>IResource</code>,
+	 * @return the corresponding <code>LaunchShortcutExtension</code> for the given <code>IResource</code>,
 	 * or <code>null</code> if there is not one.
 	 * 
 	 * @since 3.3
 	 * 
 	 * EXPERIMENTAL
+	 * CONTEXTLAUNCHING
 	 */
 	public LaunchShortcutExtension getDefaultLaunchShortcut(IResource resource) {
 		IProject project = resource.getProject();

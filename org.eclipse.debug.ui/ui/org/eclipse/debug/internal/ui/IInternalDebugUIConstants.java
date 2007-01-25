@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -131,7 +131,7 @@ public interface IInternalDebugUIConstants {
     public static final String IMG_ADD_SRC_DIR_WIZ = "IMG_ADD_SRC_DIRECTORY"; //$NON-NLS-1$
     public static final String IMG_EDIT_SRC_DIR_WIZ = "IMG_EDIT_SRC_DIRECTORY"; //$NON-NLS-1$
     
-    // internal preferenes
+    // internal preferences
     /**
      * XML for perspective settings - see PerspectiveManager.
      * @since 3.0
@@ -145,14 +145,14 @@ public interface IInternalDebugUIConstants {
     public static final String EMPTY_STRING = ""; //$NON-NLS-1$
     
     /**
-     * Preference for enabling/disabling launch configuration filtering based on project accessibilty status
+     * Preference for enabling/disabling launch configuration filtering based on project accessibility status
      * 
      * @since 3.2
      */
     public static final String PREF_FILTER_LAUNCH_CLOSED = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_CLOSED"; //$NON-NLS-1$
     
     /**
-     * Preference for enabling/disabling launch configuraiton filtering based on project context
+     * Preference for enabling/disabling launch configuration filtering based on project context
      * 
      * @since 3.2
      */
@@ -172,7 +172,7 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_FILTER_LAUNCH_TYPES = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_LAUNCH_TYPES"; //$NON-NLS-1$
     
     /**
-     * Preference that saves which launch configuration types have been checked on the Launch Configuraitons pref page
+     * Preference that saves which launch configuration types have been checked on the Launch Configurations pref page
      * @since 3.2
      */
     public static final String PREF_FILTER_TYPE_LIST = IDebugUIConstants.PLUGIN_ID + ".PREF_FILTER_TYPE_LIST"; //$NON-NLS-1$
@@ -202,6 +202,33 @@ public interface IInternalDebugUIConstants {
     public static final String DETAIL_PANE_FONT= "org.eclipse.debug.ui.DetailPaneFont"; //$NON-NLS-1$   
 
     /**
+     * Boolean preference indicating if contextual launch options should be visible
+     * to the user rather than the "run as" menu.
+     * 
+     * @since 3.3
+     * CONTEXTLAUNCHING
+     */ 
+    public static final String PREF_USE_CONTEXTUAL_LAUNCH= IDebugUIConstants.PLUGIN_ID + ".UseContextualLaunch"; //$NON-NLS-1$
+    
+    /**
+     * always/never/prompt preference indicating the action for the event when there is no context to launch during context launching 
+     * 
+     * @since 3.3
+     *  
+     *  CONTEXTLAUNCHING
+     */
+    public static final String PREF_ALWAYS_RUN_LAST_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".AlwaysRunLastLaunch"; //$NON-NLS-1$
+    
+    /**
+     * always/never/prompt preference indicating the action to take when an un-runnable file is the context
+     * 
+     * @since 3.3
+     * 
+     * CONTEXTLAUNCHING
+     */
+    public static final String PREF_ALWAYS_RUN_PROJECT_CONFIGURATION = IDebugUIConstants.PLUGIN_ID + ".ALwaysRunProjectConfiguration"; //$NON-NLS-1$
+    
+    /**
      * String preference controlling whether editors are saved before launching.
      * Valid values are either "always", "never", or "prompt".
      * If "always" or "never", launching will save editors (or not) automatically.
@@ -212,7 +239,7 @@ public interface IInternalDebugUIConstants {
     public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH = IDebugUIConstants.PLUGIN_ID + ".save_dirty_editors_before_launch"; //$NON-NLS-1$
     
     /**
-     * Preference specifiying that all launches should be DEBUG_MODE if breakpoints exist in the workspace
+     * Preference specifying that all launches should be DEBUG_MODE if breakpoints exist in the workspace
      * @since 3.0
      */
     public static final String PREF_RELAUNCH_IN_DEBUG_MODE = IDebugUIConstants.PLUGIN_ID + ".relaunch_in_debug_mode"; //$NON-NLS-1$
@@ -341,7 +368,7 @@ public interface IInternalDebugUIConstants {
     
     /**
      * This constant is used as a "quick-fix" for the issue of breakpoint to working set
-     * persistance when the state of a project changes.
+     * persistence when the state of a project changes.
      * 
      * @since 3.2
      */
@@ -349,7 +376,7 @@ public interface IInternalDebugUIConstants {
     
     /**
      * This constant is used as a "quick-fix" for the issue of breakpoint to working set
-     * persistance when the state of a project changes.
+     * persistence when the state of a project changes.
      * 
      * @since 3.2
      */

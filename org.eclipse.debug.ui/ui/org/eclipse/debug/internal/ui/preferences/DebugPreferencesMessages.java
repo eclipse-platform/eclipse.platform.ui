@@ -32,6 +32,14 @@ public class DebugPreferencesMessages extends NLS {
 	public static String ConsolePreferencePage_12;
 	public static String ConsolePreferencePage_13;
 
+	public static String ContextLaunchingPreferencePage_0;
+
+	public static String ContextLaunchingPreferencePage_1;
+
+	public static String ContextualLaunchPreferencePage_0;
+
+	public static String ContextualLaunchPreferencePage_1;
+
 	public static String DebugPreferencePage_1;
 	public static String DebugPreferencePage_2;
 
@@ -50,6 +58,32 @@ public class DebugPreferencesMessages extends NLS {
 	public static String DebugPreferencePage_25;
 	public static String DebugPreferencePage_26;
 	public static String DebugPreferencePage_27;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_0;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_1;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_10;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_11;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_12;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_2;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_3;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_4;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_5;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_6;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_7;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_8;
+
+	public static String DefaultLaunchConfigurationsPropertiesPage_9;
 
 	public static String LaunchDelegatesPreferencePage_0;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.debug.ui.actions;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextLaunchingToolbarAction;
+import org.eclipse.debug.internal.ui.contextlaunching.ContextRunner;
 import org.eclipse.debug.internal.ui.launchConfigurations.OrganizeFavoritesAction;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.action.IAction;
@@ -54,8 +56,15 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 		if (menu.getItemCount() > 0) {
 			addSeparator(menu);
 		}
-
-		addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
+		//CONTEXTLAUNCHING
+		if(!getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
+			if(ContextRunner.isContextLaunchEnabled()) {
+				addToMenu(menu, new ContextLaunchingToolbarAction(getLaunchGroupIdentifier()), -1);
+			}
+			else {
+				addToMenu(menu, new LaunchShortcutsAction(getLaunchGroupIdentifier()), -1);
+			}
+		}
 		addToMenu(menu, getOpenDialogAction(), -1);
 		addToMenu(menu, new OrganizeFavoritesAction(getLaunchGroupIdentifier()), -1);
 	}
@@ -67,18 +76,24 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	protected IAction getOpenDialogAction() {
 		return new OpenLaunchDialogAction(getLaunchGroupIdentifier());
 	}
-
+	
 	/**
 	 * Launch the last launch, or open the launch config dialog if none.
 	 * 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		ILaunchConfiguration configuration = getLastLaunch();
-		if (configuration == null) {
-			DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), getLaunchGroupIdentifier());
-		} else {
-			DebugUITools.launch(configuration, getMode());
+	//CONTEXTLAUNCHING
+		if(ContextRunner.isContextLaunchEnabled()) {
+			ContextRunner.getDefault().launch(getMode());
+		}
+		else {
+			ILaunchConfiguration configuration = getLastLaunch();
+			if (configuration == null) {
+				DebugUITools.openLaunchConfigurationDialogOnGroup(DebugUIPlugin.getShell(), new StructuredSelection(), getLaunchGroupIdentifier());
+			} else {
+				DebugUITools.launch(configuration, getMode());
+			}
 		}
 	}	
 }

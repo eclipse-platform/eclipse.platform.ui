@@ -26,9 +26,7 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	/**
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
@@ -50,6 +48,11 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IInternalDebugUIConstants.PREF_CONTINUE_WITH_COMPILE_ERROR, MessageDialogWithToggle.PROMPT);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_BREAKPOINTS, true);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, true);
+		
+	//contextual launching preference page
+		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_CONTEXTUAL_LAUNCH, false);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_ALWAYS_RUN_LAST_LAUNCH, MessageDialogWithToggle.PROMPT);
+		prefs.setDefault(IInternalDebugUIConstants.PREF_ALWAYS_RUN_PROJECT_CONFIGURATION, MessageDialogWithToggle.PROMPT);
 		
 		//View Management preference page
 		prefs.setDefault(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
@@ -111,10 +114,12 @@ public class DebugUIPreferenceInitializer extends AbstractPreferenceInitializer 
 		prefs.setDefault(IDebugUIConstants.PREF_DEFAULT_EBCDIC_CODE_PAGE, 
 				IDebugPreferenceConstants.DEFAULT_EBCDIC_CP);
 		
-		if (MemoryViewUtil.isLinuxGTK())
+		if (MemoryViewUtil.isLinuxGTK()) {
 			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, false);
-		else
+		}
+		else {
 			prefs.setDefault(IDebugPreferenceConstants.PREF_DYNAMIC_LOAD_MEM, true);
+		}
 		
 		prefs.setDefault(IDebugPreferenceConstants.PREF_TABLE_RENDERING_PAGE_SIZE, IDebugPreferenceConstants.DEFAULT_PAGE_SIZE);
 		prefs.setDefault(IDebugPreferenceConstants.PREF_RESET_MEMORY_BLOCK, IDebugPreferenceConstants.RESET_VISIBLE);

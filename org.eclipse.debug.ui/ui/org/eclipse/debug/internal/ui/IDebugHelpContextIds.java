@@ -86,6 +86,7 @@ public interface IDebugHelpContextIds {
 	public static final String LAUNCH_CONFIGURATION_PREFERENCE_PAGE = PREFIX + "launch_configuration_preference_page_context"; //$NON-NLS-1$
 	public static final String VIEW_MANAGEMENT_PREFERENCE_PAGE = PREFIX + "view_management_preference_page_context"; //$NON-NLS-1$
 	public static final String LAUNCH_DELEGATES_PREFERENCE_PAGE = PREFIX + "launch_delegate_preference_page_context"; //$NON-NLS-1$
+	public static final String CONTEXTUAL_LAUNCHING_PREFERENCE_PAGE = PREFIX + "contextual_launch_preference_page"; //$NON-NLS-1$
 	
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
@@ -112,10 +113,12 @@ public interface IDebugHelpContextIds {
 	public static final String SELECT_LAUNCH_MODES_DIALOG = PREFIX + "select_launch_modes_dialog"; //$NON-NLS-1$
 	public static final String SELECT_LAUNCHERS_DIALOG = PREFIX + "select_launchers_dialog"; //$NON-NLS-1$
 	public static final String SELECT_RESOURCES_TO_SAVE_DIALOG = PREFIX + "select_resources_to_save_dialog"; //$NON-NLS-1$
+	public static final String SELECT_LAUNCH_METHOD_DIALOG = PREFIX + "select_launch_method_dialog"; //$NON-NLS-1$
 	
 	// Property pages
 	public static final String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$
 	public static final String PROCESS_PAGE_RUN_AT = PREFIX + "process_page_run_at_time_widget"; //$NON-NLS-1$
+	public static final String DEFAULT_LAUNCHCONFIGURATION_PROPERTY_PAGE = PREFIX + "default_launchconfiguration_property_page"; //$NON-NLS-1$
 	
 	// Launch configuration dialog pages
 	public static final String LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB = PREFIX + "launch_configuration_dialog_common_tab"; //$NON-NLS-1$
@@ -132,9 +135,5 @@ public interface IDebugHelpContextIds {
 	
 	//Editor	
 	public static final String NO_SOURCE_EDITOR = PREFIX + "debugger_editor_no_source_common";//$NON-NLS-1$
-
-
-    
-	
 }
 

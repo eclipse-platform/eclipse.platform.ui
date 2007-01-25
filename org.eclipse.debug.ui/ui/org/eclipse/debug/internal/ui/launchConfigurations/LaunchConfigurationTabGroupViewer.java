@@ -360,7 +360,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	
 	/**
 	 * Creates some help text for the tab group launch types
-	 * @param parent thep arent composite
+	 * @param parent the parent composite
 	 * @since 3.2
 	 */
 	private void createGettingStarted(Composite parent) {
@@ -492,7 +492,14 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (tabs != null) {
 			// update the working copy from the active tab
+			boolean newwc = !getWorkingCopy().isDirty();
 			getActiveTab().performApply(getWorkingCopy());
+			if(getOriginal() instanceof ILaunchConfigurationWorkingCopy && newwc) {
+				try {
+					getWorkingCopy().doSave();
+				} 
+				catch (CoreException e) {DebugUIPlugin.log(e);}
+			}
 			updateButtons();
 			// update error ticks
 			CTabItem item = null;
@@ -948,6 +955,9 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		if (workingCopy == null) {
 			return false;
 		}
+		if(workingCopy.getParent() != null) {
+			return !workingCopy.getParent().contentsEqual(workingCopy);
+		}
 		// Working copy hasn't been saved
 		if (workingCopy.getOriginal() == null) {
 			return true;
@@ -1111,7 +1121,7 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	/**
 	 * Determines if the currently showing launch configuration has multiple launch delegates for the same mode set, but does not care
 	 * if there has been a default selected yet or not
-	 * @return true if the current launch configuraiton has multiple launch delegates, false otherwise
+	 * @return true if the current launch configuration has multiple launch delegates, false otherwise
 	 */
 	private boolean hasMultipleDelegates() {
 		ILaunchConfiguration config = getWorkingCopy();
@@ -1354,8 +1364,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 		try {
 			if(fTabGroup != null) {
 				fTabGroup.initializeFrom(fOriginal);
-				fWorkingCopy = fOriginal.getWorkingCopy();
 				fNameWidget.setText(fOriginal.getName());
+				fWorkingCopy = fOriginal.getWorkingCopy();
 				refreshStatus();
 			}
 		} 

@@ -851,7 +851,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return the shell title
 	 */
 	protected String getShellTitle() {
-		String title = DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel());
+		String title = null;
+		if(getLaunchGroup() != null) {
+			 title = DebugUIPlugin.removeAccelerators(getLaunchGroup().getLabel());
+		}
 		if (title == null) {
 			title = LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configurations_18; 
 		}
