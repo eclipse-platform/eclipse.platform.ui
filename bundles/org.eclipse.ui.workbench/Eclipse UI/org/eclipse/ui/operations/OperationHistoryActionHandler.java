@@ -495,7 +495,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 				exceptionMessage, exception);
 
 		// Log and show the problem
-    	StatusManager.getManager().handle(status, StatusManager.SHOWANDLOG);
+		WorkbenchPlugin.log(exceptionMessage, status);
+		StatusUtil.handleStatus(status, StatusManager.SHOW,
+				getWorkbenchWindow().getShell());
 	}
 
 	/*

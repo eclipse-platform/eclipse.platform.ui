@@ -102,11 +102,6 @@ public class StatusManager {
 	 */
 	public static final int SHOW = 0x02;
 	
-	/*
-	 * Will be removed in the patch for 167131
-	 */
-	public static final int SHOWANDLOG = SHOW | LOG;
-
 	private static StatusManager MANAGER;
 
 	private StatusHandlersMap statusHandlersMap;

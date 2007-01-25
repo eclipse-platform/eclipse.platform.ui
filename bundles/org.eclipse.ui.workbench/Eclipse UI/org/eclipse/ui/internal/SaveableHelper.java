@@ -28,7 +28,6 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -277,7 +276,8 @@ public class SaveableHelper {
 			String title = NLS.bind(WorkbenchMessages.EditorManager_operationFailed, opName ); 
 			Throwable targetExc = e.getTargetException();
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
-			MessageDialog.openError(shellProvider.getShell(), WorkbenchMessages.Error, title + ':' + targetExc.getMessage());
+			StatusUtil.handleStatus(title + ": " + targetExc.getMessage(), //$NON-NLS-1$
+					StatusManager.SHOW, shellProvider.getShell());
 			// Fall through to return failure
 		} catch (InterruptedException e) {
 			// The user pressed cancel. Fall through to return failure
@@ -346,9 +346,8 @@ public class SaveableHelper {
 					IStatus result = backgroundSaveRunnable[0].run(subMonitor
 							.newChild(1));
 					if (!result.isOK()) {
-						ErrorDialog.openError(shellProvider.getShell(),
-								WorkbenchMessages.Error, result.getMessage(),
-								result);
+						StatusUtil.handleStatus(result, StatusManager.SHOW,
+								shellProvider.getShell());
 						progressMonitor.setCanceled(true);
 					}
 					return;
@@ -409,8 +408,8 @@ public class SaveableHelper {
 				// we can get from the parts...
 				notifySaveAction(parts);
 			} catch (CoreException e) {
-				ErrorDialog.openError(shellProvider.getShell(),
-						WorkbenchMessages.Error, e.getMessage(), e.getStatus());
+				StatusUtil.handleStatus(e.getStatus(), StatusManager.SHOW,
+						shellProvider.getShell());
 				progressMonitor.setCanceled(true);
 			}
 		} finally {
@@ -458,7 +457,7 @@ public class SaveableHelper {
 				}
 			});
 		} catch (InvocationTargetException e) {
-			StatusUtil.handleStatus(e, StatusManager.SHOWANDLOG);
+			StatusUtil.handleStatus(e, StatusManager.SHOW | StatusManager.LOG);
 		} catch (InterruptedException e) {
 			return true;
 		}
