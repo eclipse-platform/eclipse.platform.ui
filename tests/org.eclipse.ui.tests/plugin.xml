@@ -2988,7 +2988,7 @@
             </item>
          </menu>
          <separator
-               id="MenuTest.Advanced"
+               name="MenuTest.Advanced"
                visible="true">
          </separator>
          <item
@@ -3043,7 +3043,7 @@
             </item>
          </menu>
          <separator
-               id="MenuTest.Advanced"
+               name="MenuTest.Advanced"
                visible="true">
          </separator>
          <item
@@ -3114,7 +3114,7 @@
             </item>
          </menu>
          <separator
-               id="MenuTest.Advanced"
+               name="MenuTest.Advanced"
                visible="true">
          </separator>
          <item
@@ -3297,7 +3297,7 @@
             </item>
          </menu>
          <separator
-               id="MenuTest.Separator"
+               name="MenuTest.Separator"
                visible="true">
          </separator>
          <item

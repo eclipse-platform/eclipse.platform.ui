@@ -199,7 +199,7 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createSeparatorAdditionContribution(
 			final IConfigurationElement sepAddition) {
-		Separator sep = new Separator(getId(sepAddition));
+		Separator sep = new Separator(getName(sepAddition));
 		sep.setVisible(isSeparatorVisible(sepAddition));
 		return sep;
 	}
@@ -289,6 +289,10 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 			id = element.toString();
 
 		return id;
+	}
+
+	static String getName(IConfigurationElement element) {
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	static String getLabel(IConfigurationElement element) {

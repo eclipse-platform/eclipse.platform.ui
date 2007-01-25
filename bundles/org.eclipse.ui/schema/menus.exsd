@@ -693,12 +693,18 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                   </enumeration>
                </restriction>
             </simpleType>
-         </attribute>      </complexType>
+         </attribute>
+      </complexType>
    </element>
 
    <element name="separator">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
       <complexType>
-         <attribute name="id" type="string">
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
                   The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endOf&apos; value).
