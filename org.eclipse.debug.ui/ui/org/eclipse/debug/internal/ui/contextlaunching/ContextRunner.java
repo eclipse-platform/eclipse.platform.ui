@@ -25,6 +25,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -154,8 +155,9 @@ public class ContextRunner implements ILaunchListener {
 		else {
 			String prompt = DebugUIPlugin.getDefault().getPreferenceStore().getString(IInternalDebugUIConstants.PREF_ALWAYS_RUN_LAST_LAUNCH);
 			if(MessageDialogWithToggle.PROMPT.equals(prompt)) {
+				ILaunchMode lmode = getLaunchManager().getLaunchMode(mode);
 				MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(DebugUIPlugin.getShell(), ContextMessages.ContextRunner_0,
-						ContextMessages.ContextRunner_1, ContextMessages.ContextRunner_2, 
+						MessageFormat.format(ContextMessages.ContextRunner_1, new String[] {DebugUIPlugin.removeAccelerators(lmode.getLabel().toLowerCase())}), ContextMessages.ContextRunner_2, 
 						false, null, null);
 				int ret = mdwt.getReturnCode();
 				boolean checked = mdwt.getToggleState();

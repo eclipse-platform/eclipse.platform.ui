@@ -84,7 +84,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	 */
 	public void run(IAction action) {
 	//CONTEXTLAUNCHING
-		if(ContextRunner.isContextLaunchEnabled()) {
+		if(ContextRunner.isContextLaunchEnabled() && !getLaunchGroupIdentifier().equals("org.eclipse.ui.externaltools.launchGroup")) { //$NON-NLS-1$
 			ContextRunner.getDefault().launch(getMode());
 		}
 		else {
