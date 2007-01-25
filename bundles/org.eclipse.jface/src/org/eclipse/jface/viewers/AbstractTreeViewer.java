@@ -2034,17 +2034,15 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @return whether the given element is expandable
 	 */
 	private boolean isExpandable(Item item, TreePath parentPath, Object element) {
+		Object elementOrTreePath = element;
 		if (isTreePathContentProvider()) {
-			TreePath path;
 			if (parentPath != null) {
-				path = parentPath.createChildPath(element);
+				elementOrTreePath = parentPath.createChildPath(element);
 			} else {
-				path = getTreePathFromItem(item);
+				elementOrTreePath = getTreePathFromItem(item);
 			}
-			ITreePathContentProvider cp = (ITreePathContentProvider) getContentProvider();
-			return cp != null && cp.hasChildren(path);
 		}
-		return isExpandable(element);
+		return isExpandable(elementOrTreePath);
 	}
 
 	/* (non-Javadoc) Method declared on Viewer. */
