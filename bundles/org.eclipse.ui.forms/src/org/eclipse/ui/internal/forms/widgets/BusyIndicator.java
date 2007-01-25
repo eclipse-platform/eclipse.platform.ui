@@ -118,9 +118,12 @@ public class BusyIndicator extends Canvas {
 					offScreenImageGC.setAntialias(SWT.ON);
 					getDisplay().asyncExec(new Runnable() {
 						public void run() {
-							drawBackground(offScreenImageGC, 0, 0, loader.logicalScreenWidth, loader.logicalScreenHeight);
+							if (!isDisposed())
+								drawBackground(offScreenImageGC, 0, 0, loader.logicalScreenWidth, loader.logicalScreenHeight);
 						}
 					});
+					if (isDisposed())
+						return;
 					try {
 						/*
 						 * Create the first image and draw it on the off-screen
