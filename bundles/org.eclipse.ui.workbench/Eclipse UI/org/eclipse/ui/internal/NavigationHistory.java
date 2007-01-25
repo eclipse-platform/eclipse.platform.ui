@@ -775,7 +775,9 @@ public class NavigationHistory implements INavigationHistory {
 	    		LinkedList source = forward ? perTabHistory.forwardEntries : perTabHistory.backwardEntries;
 	    		LinkedList destination = forward ? perTabHistory.backwardEntries : perTabHistory.forwardEntries;
 				if (perTabHistory.currentEntry != null) {
-					perTabHistory.currentEntry.location.update();
+					if (perTabHistory.currentEntry.location != null) {
+						perTabHistory.currentEntry.location.update();
+					}
 					destination.addFirst(perTabHistory.currentEntry);
 				}
 				NavigationHistoryEntry newCurrent = null;
