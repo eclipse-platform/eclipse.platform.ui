@@ -65,7 +65,7 @@ public class SearchPatternAuto extends TestCase {
 			if (lenght == res.length()) 
 				resources.add(res);
 			else if ((res.trim().length() % 2) == 0)
-					generateRescourcesTestCases(Character.toUpperCase((char)(startChar + 1)), (char)Character.toUpperCase((char)(endChar + 1)), lenght, res + " ");
+					generateRescourcesTestCases(Character.toUpperCase((char)(startChar + 1)), Character.toUpperCase((char)(endChar + 1)), lenght, res + " ");
 				else 
 					generateRescourcesTestCases(Character.toLowerCase((char)(startChar + 1)), Character.toLowerCase((char)(endChar + 1)), lenght, res);
 		}
