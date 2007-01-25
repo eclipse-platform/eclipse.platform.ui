@@ -29,7 +29,8 @@ import org.eclipse.core.runtime.*;
 			lcs.longestCommonSubsequence(monitor.newChild(95));
 			return lcs.getDifferences(monitor.newChild(5));
 		} finally {
-			monitor.done();
+			if (pm != null)
+				pm.done();
 		}
 	}
 	

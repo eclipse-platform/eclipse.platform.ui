@@ -78,7 +78,8 @@ public class Worker implements IRunnableWithProgress {
 			work.clear();
 		} finally {
 			isWorking = false;
-			pm.done();
+			if (monitor!= null)
+				monitor.done();
 			currentMonitor = null;
 			currentTask = null;
 		}

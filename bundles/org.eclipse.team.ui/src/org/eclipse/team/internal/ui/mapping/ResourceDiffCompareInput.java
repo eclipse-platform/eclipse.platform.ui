@@ -144,7 +144,8 @@ public class ResourceDiffCompareInput extends AbstractCompareInput implements IS
 			FileRevisionTypedElement fste = (FileRevisionTypedElement) right;
 			fste.cacheContents(sm.newChild(50));
 		}
-		sm.done();
+		if (monitor != null)
+			monitor.done();
 	}
 	
 	/**
