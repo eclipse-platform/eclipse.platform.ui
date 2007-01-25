@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
 import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * A proxy for a preference page to avoid creation of preference page just to

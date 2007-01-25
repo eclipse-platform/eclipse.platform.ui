@@ -18,7 +18,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.preferences.WorkbenchPreferenceExtensionNode;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Property page node allows us to achieve presence in the property page dialog

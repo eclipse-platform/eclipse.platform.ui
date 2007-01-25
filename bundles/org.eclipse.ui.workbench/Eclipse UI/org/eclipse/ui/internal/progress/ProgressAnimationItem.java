@@ -39,7 +39,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * The ProgressAnimationItem is the animation items that uses

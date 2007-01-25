@@ -64,7 +64,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.ibm.icu.text.Collator;
 

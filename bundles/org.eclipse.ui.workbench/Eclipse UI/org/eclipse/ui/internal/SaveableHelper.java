@@ -46,7 +46,7 @@ import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.progress.IJobRunnable;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.statushandling.StatusManager;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Helper class for prompting to save dirty views or editors.

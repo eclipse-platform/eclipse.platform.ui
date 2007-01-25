@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.statushandling;
+package org.eclipse.ui.statushandlers;
 
 import java.util.Map;
 

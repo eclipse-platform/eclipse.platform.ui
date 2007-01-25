@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.ui.statushandling.AbstractStatusHandler;
-import org.eclipse.ui.statushandling.StatusHandlingState;
+import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusHandlingState;
 
 /**
  * A proxy handler which passes all statuses to handler assigned to current

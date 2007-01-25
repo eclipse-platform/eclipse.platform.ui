@@ -69,7 +69,7 @@ import org.eclipse.ui.internal.ide.model.WorkbenchAdapterBuilder;
 import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.statushandling.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.update.core.SiteManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;

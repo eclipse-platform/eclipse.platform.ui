@@ -23,8 +23,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.internal.ide.dialogs.InternalErrorDialog;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.statushandling.StatusHandlingState;
-import org.eclipse.ui.statushandling.WorkbenchErrorHandler;
+import org.eclipse.ui.statushandlers.StatusHandlingState;
+import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 
 import com.ibm.icu.text.MessageFormat;
 

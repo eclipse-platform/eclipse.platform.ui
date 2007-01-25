@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.statushandling;
+package org.eclipse.ui.statushandlers;
 
 import java.net.URL;
 import java.util.HashMap;
@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.progress.ProgressMessages;
 import org.eclipse.ui.progress.IProgressConstants;
-import org.eclipse.ui.statushandling.StatusNotificationManager.StatusInfo;
+import org.eclipse.ui.statushandlers.StatusNotificationManager.StatusInfo;
 
 /**
  * A dialog for displaying

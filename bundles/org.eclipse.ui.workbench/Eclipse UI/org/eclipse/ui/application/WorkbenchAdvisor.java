@@ -25,9 +25,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.application.CompatibilityWorkbenchWindowAdvisor;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.statushandling.AbstractStatusHandler;
-import org.eclipse.ui.statushandling.StatusManager;
-import org.eclipse.ui.statushandling.WorkbenchErrorHandler;
+import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 
 /**
  * Public base class for configuring the workbench.
