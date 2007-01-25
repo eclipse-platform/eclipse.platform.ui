@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -98,7 +98,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * with the given name, adding this process to the given
 	 * launch.
 	 * 
-	 * @param launch the launch this process will be parented by
+	 * @param launch the parent launch of this process
 	 * @param process underlying system process
 	 * @param name the label used for this process
 	 * @param attributes map of attributes used to initialize the attributes
