@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * A variation of the expandable composite that adds optional description below
- * the title. Section is often used as a basic building block if forms because
+ * the title. Section is often used as a basic building block in forms because
  * it provides for logical grouping of information.
  * <p>
  * In case of the TITLE_BAR style, Section renders the title bar in a way

@@ -49,13 +49,18 @@ import org.eclipse.ui.internal.forms.widgets.FormsResources;
  * when expanded, or hidden when collapsed.
  * <p>
  * The widget can be instantiated as-is, or subclassed to modify some aspects of
- * it.
- * 
+ * it. *
  * <p>
  * Since 3.1, left/right arrow keys can be used to control the expansion state.
  * If several expandable composites are created in the same parent, up/down
  * arrow keys can be used to traverse between them. Expandable text accepts
  * mnemonics and mnemonic activation will toggle the expansion state.
+ * 
+ * <p>
+ * While expandable composite recognize that different styles can be used to
+ * render the title bar, and even defines the constants for these styles (<code>TITLE_BAR</code>
+ * and <code>SHORT_TITLE_BAR</code> the actual painting is done in the
+ * subclasses.
  * 
  * @see Section
  * @since 3.0
@@ -146,16 +151,37 @@ public class ExpandableComposite extends Canvas {
 	/**
 	 * Horizontal margin around the inside of the title bar area when TITLE_BAR
 	 * or SHORT_TITLE_BAR style is used. This variable is not used otherwise.
+	 * 
 	 * @since 3.3
 	 */
 	public int titleBarTextMarginWidth = 6;
 
+	/**
+	 * The toggle widget used to expand the composite.
+	 */
+	protected ToggleHyperlink toggle;
+
+	/**
+	 * The text label for the title.
+	 */
+	protected Control textLabel;
+
+	/**
+	 * @deprecated this variable was left as protected by mistake. It will be
+	 *             turned into static and hidden in the future versions. Do not
+	 *             use them and do not change its value.
+	 */
+	protected int VGAP = 3;
+	/**
+	 * @deprecated this variable was left as protected by mistake. It will be
+	 *             turned into static and hidden in the future versions. Do not
+	 *             use it and do not change its value.
+	 */
+	protected int GAP = 4;
+
 	private static final Point NULL_SIZE = new Point(0, 0);
 
 	private static final int VSPACE = 3;
-
-	protected int VGAP = 3;
-	protected int GAP = 4;
 
 	private static final int SEPARATOR_HEIGHT = 2;
 
@@ -168,10 +194,6 @@ public class ExpandableComposite extends Canvas {
 	private Control client;
 
 	private Vector listeners;
-
-	protected ToggleHyperlink toggle;
-
-	protected Control textLabel;
 
 	private Color titleBarForeground;
 
@@ -454,10 +476,11 @@ public class ExpandableComposite extends Canvas {
 	 * @param parent
 	 *            the parent
 	 * @param style
-	 *            the control style
+	 *            the control style (as expected by SWT subclass)
 	 * @param expansionStyle
 	 *            the style of the expansion widget (TREE_NODE, TWISTIE,
-	 *            CLIENT_INDENT, COMPACT, FOCUS_TITLE)
+	 *            CLIENT_INDENT, COMPACT, FOCUS_TITLE,
+	 *            LEFT_TEXT_CLIENT_ALIGNMENT, NO_TITLE)
 	 */
 	public ExpandableComposite(Composite parent, int style, int expansionStyle) {
 		super(parent, style);
@@ -789,15 +812,6 @@ public class ExpandableComposite extends Canvas {
 			listeners.remove(listener);
 	}
 
-	private void toggleState() {
-		boolean newState = !isExpanded();
-		fireExpanding(newState, true);
-		internalSetExpanded(newState);
-		fireExpanding(newState, false);
-		if (newState)
-			FormUtil.ensureVisible(this);
-	}
-
 	/**
 	 * If TITLE_BAR or SHORT_TITLE_BAR style is used, title bar decoration will
 	 * be painted behind the text in this method. The default implementation
@@ -807,20 +821,6 @@ public class ExpandableComposite extends Canvas {
 	 *            the paint event
 	 */
 	protected void onPaint(PaintEvent e) {
-	}
-
-	private void fireExpanding(boolean state, boolean before) {
-		int size = listeners.size();
-		if (size == 0)
-			return;
-		ExpansionEvent e = new ExpansionEvent(this, state);
-		for (int i = 0; i < size; i++) {
-			IExpansionListener listener = (IExpansionListener) listeners.get(i);
-			if (before)
-				listener.expansionStateChanging(e);
-			else
-				listener.expansionStateChanged(e);
-		}
 	}
 
 	/**
@@ -927,6 +927,32 @@ public class ExpandableComposite extends Canvas {
 	public Color getTitleBarForeground() {
 		return titleBarForeground;
 	}
+	
+	// end of APIs
+	
+	private void toggleState() {
+		boolean newState = !isExpanded();
+		fireExpanding(newState, true);
+		internalSetExpanded(newState);
+		fireExpanding(newState, false);
+		if (newState)
+			FormUtil.ensureVisible(this);
+	}
+	
+	
+	private void fireExpanding(boolean state, boolean before) {
+		int size = listeners.size();
+		if (size == 0)
+			return;
+		ExpansionEvent e = new ExpansionEvent(this, state);
+		for (int i = 0; i < size; i++) {
+			IExpansionListener listener = (IExpansionListener) listeners.get(i);
+			if (before)
+				listener.expansionStateChanging(e);
+			else
+				listener.expansionStateChanged(e);
+		}
+	}	
 
 	private void verticalMove(boolean down) {
 		Composite parent = getParent();
