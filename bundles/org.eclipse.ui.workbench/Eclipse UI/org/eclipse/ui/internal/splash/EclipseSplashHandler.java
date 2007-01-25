@@ -12,12 +12,10 @@ package org.eclipse.ui.internal.splash;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.branding.IProductConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
@@ -69,25 +67,16 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 		// the following code will be removed for release time
 		if (PrefUtil.getInternalPreferenceStore().getBoolean(
 				"SHOW_BUILDID_ON_STARTUP")) { //$NON-NLS-1$
-			String buildId = System.getProperty("eclipse.buildId"); //$NON-NLS-1$
-			if (buildId == null)
-				buildId = "Unknown Build"; //$NON-NLS-1$
-			// Point versionLocation = new Point(322,200); // hardcoded to be
-			// sensible with our current Europa Graphic
-			Label label = new Label(getContent(), SWT.NONE);
-			label.setForeground(getForeground());
-			label.setText(buildId);
-			GC gc = new GC(label);
-			Point stringExtent = gc.stringExtent(buildId);
-			gc.dispose();
-			label.setBounds(new Rectangle(322, 190, stringExtent.x,
-					stringExtent.y)); // hardcoded to work with the eclipse
-										// "Europa" label
-			getContent().setBackgroundMode(SWT.INHERIT_NONE); // set the state to something new so that the next call actually does work on the label background
-			getContent().setBackgroundMode(SWT.INHERIT_FORCE); // reforce the background for GTK.  
-			getContent().setBackgroundImage(getContent().getShell().getBackgroundImage());
-			while (label.getDisplay().readAndDispatch())
-				; // force painting of the label
+			final String buildId = System.getProperty("eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			getContent().addPaintListener(new PaintListener() {
+
+				public void paintControl(PaintEvent e) {
+					e.gc.setForeground(getForeground());
+					// hardcoded to be sensible with our current Europa Graphic
+					e.gc.drawText(buildId, 322, 190, true);
+					
+				}});
 		}
 	}
 
