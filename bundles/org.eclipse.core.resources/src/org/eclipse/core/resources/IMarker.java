@@ -232,10 +232,11 @@ public interface IMarker extends IAdaptable {
 
 	/**
 	 * Source id attribute.  A string attribute that can be used by tools that
-	 * generate markers to indicate the source of the marker. Use of this attribute
-	 * is optional and its format or existence is not enforced.  This attribute is intended
-	 * to improve serviceability by providing a value that product support personnel
-	 * can use to determine appropriate resolutions for problems.
+	 * generate markers to indicate the source of the marker. Use of this attribute is
+	 * optional and its format or existence is not enforced.  This attribute is
+	 * intended to improve serviceability by providing a value that product support
+	 * personnel or automated tools can use to determine appropriate help and
+	 * resolutions for markers.
 	 * 
 	 * @see #getAttribute(String, String)
 	 * @since 3.3
