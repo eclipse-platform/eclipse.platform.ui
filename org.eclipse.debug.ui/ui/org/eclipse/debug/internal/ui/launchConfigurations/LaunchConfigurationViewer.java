@@ -73,21 +73,29 @@ public class LaunchConfigurationViewer extends TreeViewer {
 				if(tree.getItemCount() > 0) {
 					int index = selectIndex(tree.getItemCount(), indices[0]);
 					if(index > -1) {
-						TreeItem pitem = tree.getItem(indices[0]);
-						o = pitem.getData();
-						if(indices[1] > -1) {
-							index = selectIndex(pitem.getItemCount(), indices[1]);
-							if(index > -1) {
-								Object d = pitem.getItem(index).getData();
-								if(d != null) {
-									o = d; 
+						TreeItem pitem = null;
+						if(indices[0] > tree.getItemCount()-1) {
+							pitem = tree.getItem(tree.getItemCount()-1);
+						}
+						else {
+							pitem = tree.getItem(indices[0]);
+						}
+						if(pitem != null) {
+							o = pitem.getData();
+							if(indices[1] > -1) {
+								index = selectIndex(pitem.getItemCount(), indices[1]);
+								if(index > -1) {
+									Object d = pitem.getItem(index).getData();
+									if(d != null) {
+										o = d; 
+									}
 								}
-							}
-							else {
-								if(pitem.getItemCount() > 0) {
-									o = pitem.getItem((indices[1]-1 > -1 ? indices[1]-1 : 0)).getData();
-									if(o == null) {
-										o = pitem.getData();
+								else {
+									if(pitem.getItemCount() > 0) {
+										o = pitem.getItem((indices[1]-1 > -1 ? indices[1]-1 : 0)).getData();
+										if(o == null) {
+											o = pitem.getData();
+										}
 									}
 								}
 							}
