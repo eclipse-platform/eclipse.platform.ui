@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.core.commands.common.NotDefinedException;
-import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * <p>
@@ -23,10 +22,9 @@ import org.eclipse.core.runtime.IAdaptable;
  * application context in which the command was executed.
  * </p>
  * <p>
- * An execution event carries four blocks of data: the parameters, the trigger,
- * the callback, and the application context. How these blocks are used is
- * application dependent. In the Eclipse workbench, the trigger is an SWT event,
- * the callback will allow the user to be updated by the handler, and the
+ * An execution event carries three blocks of data: the parameters, the trigger,
+ * and the application context. How these blocks are used is application
+ * dependent. In the Eclipse workbench, the trigger is an SWT event, and the
  * application context contains information about the selection and active part.
  * </p>
  * 
@@ -60,13 +58,6 @@ public final class ExecutionEvent {
 	 * typically an SWT event. This value may be <code>null</code>.
 	 */
 	private final Object trigger;
-
-	/**
-	 * An object to allow the handler to provide user feedback. This object is
-	 * specific to the user model element that fired this command. It can be
-	 * <code>null</code>.
-	 */
-	private IAdaptable callback;
 
 	/**
 	 * Constructs a new instance of <code>ExecutionEvent</code> with no
@@ -128,33 +119,6 @@ public final class ExecutionEvent {
 		this.parameters = parameters;
 		this.trigger = trigger;
 		this.applicationContext = applicationContext;
-	}
-
-	/**
-	 * Constructs a new instance of <code>ExecutionEvent</code>.
-	 * 
-	 * @param command
-	 *            The command being executed; may be <code>null</code>.
-	 * @param parameters
-	 *            The parameters to qualify the execution; must not be
-	 *            <code>null</code>. This must be a map of parameter ids (<code>String</code>)
-	 *            to parameter values (<code>String</code>).
-	 * @param trigger
-	 *            The object that triggered the execution; may be
-	 *            <code>null</code>.
-	 * @param applicationContext
-	 *            The state of the application at the time the execution was
-	 *            triggered; may be <code>null</code>.
-	 * @param callback
-	 *            the adaptable callback for the model element that fired this
-	 *            execution event. It may be <code>null</code>.
-	 * @since 3.3
-	 */
-	public ExecutionEvent(final Command command, final Map parameters,
-			final Object trigger, final Object applicationContext,
-			final IAdaptable callback) {
-		this(command, parameters, trigger, applicationContext);
-		this.callback = callback;
 	}
 
 	/**
@@ -274,17 +238,5 @@ public final class ExecutionEvent {
 		stringBuffer.append(applicationContext);
 		stringBuffer.append(')');
 		return stringBuffer.toString();
-	}
-
-	/**
-	 * Returns a user callback object, specific to the type of user feedback the
-	 * caller can support.
-	 * 
-	 * @return an adaptable object. This may be <code>null</code> if the
-	 *         command was fired programmatically.
-	 * @since 3.3
-	 */
-	public final IAdaptable getCallback() {
-		return callback;
 	}
 }

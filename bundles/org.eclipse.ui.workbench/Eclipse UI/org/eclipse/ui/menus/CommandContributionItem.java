@@ -61,6 +61,21 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public final class CommandContributionItem extends ContributionItem implements
 		IAdaptable, ICommandCallback {
+	/**
+	 * A push button tool item or menu item.
+	 */
+	public static final int STYLE_PUSH = SWT.PUSH;
+	
+	/**
+	 * A checked tool item or menu item. 
+	 */
+	public static final int STYLE_CHECK = SWT.CHECK;
+	
+	/**
+	 * A radio-button style menu item. 
+	 */
+	public static final int STYLE_RADIO = SWT.RADIO;
+
 	private LocalResourceManager localResourceManager;
 
 	private Listener menuItemListener;
@@ -89,6 +104,8 @@ public final class CommandContributionItem extends ContributionItem implements
 
 	private boolean checkedState;
 
+	private int style;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -116,11 +133,13 @@ public final class CommandContributionItem extends ContributionItem implements
 	 * @param tooltip
 	 *            A tooltip for this item. May be <code>null</code>. Tooltips
 	 *            are currently only valid for toolbar contributions.
+	 * @param style
+	 *            The style of this menu contribution. See the STYLE_* contants.
 	 */
 	public CommandContributionItem(String id, String commandId, Map parameters,
 			ImageDescriptor icon, ImageDescriptor disabledIcon,
 			ImageDescriptor hoverIcon, String label, String mnemonic,
-			String tooltip) {
+			String tooltip, int style) {
 		super(id);
 		this.icon = icon;
 		this.disabledIcon = disabledIcon;
@@ -128,6 +147,7 @@ public final class CommandContributionItem extends ContributionItem implements
 		this.label = label;
 		this.mnemonic = mnemonic;
 		this.tooltip = tooltip;
+		this.style = style;
 		commandService = (ICommandService) PlatformUI.getWorkbench()
 				.getService(ICommandService.class);
 		handlerService = (IHandlerService) PlatformUI.getWorkbench()
@@ -136,8 +156,8 @@ public final class CommandContributionItem extends ContributionItem implements
 
 		if (command != null) {
 			try {
-				callbackRef = commandService
-						.registerCallbackForCommand(command);
+				callbackRef = commandService.registerCallbackForCommand(
+						command, this);
 			} catch (NotDefinedException e) {
 				WorkbenchPlugin.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
 						+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,7 +183,7 @@ public final class CommandContributionItem extends ContributionItem implements
 		}
 
 		if (parameters == null || parameters.size() == 0) {
-			command = new ParameterizedCommand(cmd, null, this);
+			command = new ParameterizedCommand(cmd, null);
 			return;
 		}
 
@@ -187,8 +207,7 @@ public final class CommandContributionItem extends ContributionItem implements
 			}
 			command = new ParameterizedCommand(cmd,
 					(Parameterization[]) parmList
-							.toArray(new Parameterization[parmList.size()]),
-					this);
+							.toArray(new Parameterization[parmList.size()]));
 		} catch (NotDefinedException e) {
 			// this shouldn't happen as we checked for !defined, but we
 			// won't take the chance
@@ -213,9 +232,9 @@ public final class CommandContributionItem extends ContributionItem implements
 
 		MenuItem item = null;
 		if (index >= 0) {
-			item = new MenuItem(parent, SWT.PUSH, index);
+			item = new MenuItem(parent, style, index);
 		} else {
-			item = new MenuItem(parent, SWT.PUSH);
+			item = new MenuItem(parent, style);
 		}
 		item.setData(this);
 
@@ -242,9 +261,9 @@ public final class CommandContributionItem extends ContributionItem implements
 
 		ToolItem item = null;
 		if (index >= 0) {
-			item = new ToolItem(parent, SWT.PUSH, index);
+			item = new ToolItem(parent, style, index);
 		} else {
-			item = new ToolItem(parent, SWT.PUSH);
+			item = new ToolItem(parent, style);
 		}
 
 		item.setData(this);
@@ -294,6 +313,9 @@ public final class CommandContributionItem extends ContributionItem implements
 				}
 
 				updateIcons();
+				if (item.getSelection()!=checkedState) {
+					item.setSelection(checkedState);
+				}
 
 				if (item.isEnabled() != isEnabled()) {
 					item.setEnabled(isEnabled());
@@ -324,6 +346,10 @@ public final class CommandContributionItem extends ContributionItem implements
 					if (text != null) {
 						item.setToolTipText(text);
 					}
+				}
+				
+				if (item.getSelection()!=checkedState) {
+					item.setSelection(checkedState);
 				}
 
 				if (item.isEnabled() != isEnabled()) {

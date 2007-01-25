@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.handlers;
 
+import java.util.Map;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -18,9 +20,11 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.commands.ICallbackUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
@@ -35,7 +39,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.0
  */
-public final class HandlerProxy extends AbstractHandler {
+public final class HandlerProxy extends AbstractHandler implements ICallbackUpdater {
 
 	/**
 	 * The configuration element from which the handler can be created. This
@@ -238,5 +242,14 @@ public final class HandlerProxy extends AbstractHandler {
 		}
 
 		return handler.toString();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable, java.util.Map)
+	 */
+	public void updateCallback(IAdaptable callback, Map parameters) {
+		if (handler!=null && handler instanceof ICallbackUpdater) {
+			((ICallbackUpdater)handler).updateCallback(callback, parameters);
+		}
 	}
 }

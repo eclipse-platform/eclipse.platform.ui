@@ -53,7 +53,8 @@ public class MenuBuilder {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX20",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						null, null, "Item X20", null, null);
+						null, null, "Item X20", null, null,
+						CommandContributionItem.STYLE_PUSH);
 				additions.add(item);
 
 				MenuManager submenu = new MenuManager("Menu X21",
@@ -61,12 +62,14 @@ public class MenuBuilder {
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX22",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
-						null, null, "Item X22", null, null);
+						null, null, "Item X22", null, null,
+						CommandContributionItem.STYLE_PUSH);
 				submenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX23",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						null, null, "Item X23", null, null);
+						null, null, "Item X23", null, null,
+						CommandContributionItem.STYLE_PUSH);
 				submenu.add(item);
 
 				additions.add(submenu);
@@ -74,7 +77,8 @@ public class MenuBuilder {
 				item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX24",
 						"org.eclipse.ui.tests.menus.enabledWorld", null, null,
-						null, null, "Item X24", null, null);
+						null, null, "Item X24", null, null,
+						CommandContributionItem.STYLE_PUSH);
 				additions.add(item);
 			}
 
@@ -92,7 +96,8 @@ public class MenuBuilder {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.tests.menus.itemX25",
 						"org.eclipse.ui.tests.menus.updateWorld", null, null,
-						null, null, "Item X25", null, null);
+						null, null, "Item X25", null, null,
+						CommandContributionItem.STYLE_PUSH);
 				additions.add(item);
 				WidgetContributionItem widget = new WidgetContributionItem(
 						"org.eclipse.ui.tests.menus.itemX26") {
@@ -111,8 +116,8 @@ public class MenuBuilder {
 		};
 		menuService.addContributionFactory(viewToolbarAddition);
 	}
-    
-    public static void removeMenuContribution() {
+
+	public static void removeMenuContribution() {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return;
 		}
@@ -123,7 +128,7 @@ public class MenuBuilder {
 		menuService.removeContributionFactory(viewToolbarAddition);
 		viewMenuAddition = null;
 	}
-    
+
 	public static void addSearchMenu() {
 		IMenuService menuService = (IMenuService) PlatformUI.getWorkbench()
 				.getService(IMenuService.class);
@@ -170,7 +175,8 @@ public class MenuBuilder {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.jdt.internal.ui.search.openJavaSearchPage",
 						"org.eclipse.jdt.internal.ui.search.openJavaSearchPage",
-						null, searchIcon, null, null, null, null, null);
+						null, searchIcon, null, null, null, null, null,
+						CommandContributionItem.STYLE_PUSH);
 				menuService.registerVisibleWhen(item, activeSearchActionSet);
 				additions.add(item);
 			}
@@ -196,22 +202,26 @@ public class MenuBuilder {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.workspace",
-						null, null, null, null, null, "W", null);
+						null, null, null, null, null, "W", null,
+						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.project",
-						null, null, null, null, null, "P", null);
+						null, null, null, null, null, "P", null,
+						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.hierarchy",
-						null, null, null, null, null, "H", null);
+						null, null, null, null, null, "H", null,
+						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set",
 						"org.eclipse.jdt.ui.edit.text.java.search.read.access.in.working.set",
-						null, null, null, null, null, "S", null);
+						null, null, null, null, null, "S", null,
+						CommandContributionItem.STYLE_PUSH);
 				readMenu.add(item);
 
 				MenuManager writeMenu = new MenuManager("&Write Access",
@@ -225,22 +235,26 @@ public class MenuBuilder {
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.workspace",
-						null, null, null, null, null, "W", null);
+						null, null, null, null, null, "W", null,
+						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.project",
-						null, null, null, null, null, "P", null);
+						null, null, null, null, null, "P", null,
+						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.hierarchy",
-						null, null, null, null, null, "H", null);
+						null, null, null, null, null, "H", null,
+						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
 				item = new CommandContributionItem(
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set",
 						"org.eclipse.jdt.ui.edit.text.java.search.write.access.in.working.set",
-						null, null, null, null, null, "S", null);
+						null, null, null, null, null, "S", null,
+						CommandContributionItem.STYLE_PUSH);
 				writeMenu.add(item);
 			}
 
@@ -288,14 +302,16 @@ public class MenuBuilder {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.examples.wiki.post",
 						"org.eclipse.ui.examples.wiki.post", null, postIcon,
-						null, null, null, "P", null);
+						null, null, null, "P", null,
+						CommandContributionItem.STYLE_PUSH);
 				menuService.registerVisibleWhen(item, ifileExpression);
 				additions.add(item);
 
 				item = new CommandContributionItem(
 						"org.eclipse.ui.examples.wiki.load",
 						"org.eclipse.ui.examples.wiki.load", null, loadIcon,
-						null, null, null, "L", null);
+						null, null, null, "L", null,
+						CommandContributionItem.STYLE_PUSH);
 				menuService.registerVisibleWhen(item, ifileExpression);
 				additions.add(item);
 			}
@@ -320,8 +336,9 @@ public class MenuBuilder {
 					List additions) {
 				CommandContributionItem item = new CommandContributionItem(
 						"org.eclipse.ui.examples.menus.scramble.text",
-						"org.eclipse.ui.examples.menus.scramble.text",
-						null, scrambleIcon, null, null, null, "c", null);
+						"org.eclipse.ui.examples.menus.scramble.text", null,
+						scrambleIcon, null, null, null, "c", null,
+						CommandContributionItem.STYLE_PUSH);
 				additions.add(item);
 			}
 

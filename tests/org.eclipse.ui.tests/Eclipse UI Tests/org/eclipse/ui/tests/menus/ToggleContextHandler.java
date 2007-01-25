@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.menus;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -18,21 +19,22 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICallbackUpdater;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.contexts.IContextActivation;
+import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.menus.ICommandCallback;
 
 /**
  * @since 3.3
  * 
  */
-public class HelloUpdateHandler extends AbstractHandler implements
+public class ToggleContextHandler extends AbstractHandler implements
 		ICallbackUpdater {
-
-	private String myLabelState = null;
+	private static final String TOGGLE_ID = "toggleContext.contextId";
+	Map contextActivations = new HashMap();
 
 	/*
 	 * (non-Javadoc)
@@ -40,20 +42,35 @@ public class HelloUpdateHandler extends AbstractHandler implements
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	public Object execute(ExecutionEvent event) throws ExecutionException {
+		String contextId = event.getParameter(TOGGLE_ID);
 		if (event.getApplicationContext() instanceof IEvaluationContext) {
 			IEvaluationContext app = (IEvaluationContext) event
 					.getApplicationContext();
 			IWorkbenchWindow window = (IWorkbenchWindow) app
 					.getVariable(ISources.ACTIVE_WORKBENCH_WINDOW_NAME);
-			if (window == null) {
-				throw new ExecutionException("No active workbench window");
+			IContextService contextService = (IContextService) window
+					.getService(IContextService.class);
+			IContextActivation a = (IContextActivation) contextActivations
+					.get(contextId);
+
+			// toggle the context active or not
+			if (a == null) {
+				contextActivations.put(contextId, contextService
+						.activateContext(contextId));
+			} else {
+				contextService.deactivateContext(a);
+				contextActivations.remove(contextId);
 			}
-			MessageDialog.openInformation(window.getShell(), "Hello",
-					"Hello label update command!");
-			myLabelState = "My New Item";
-			ICommandService cs = (ICommandService) window
+
+			// now we should update any menu items/tool items that refer
+			// to toggleContext(contextId) ... this request means
+			// only update the UI that points to this specific context
+			// id ... not the other, non-interesting ones.
+			ICommandService commandService = (ICommandService) window
 					.getService(ICommandService.class);
-			cs.refreshCallbacks(event.getCommand().getId(), null);
+			Map filter = new HashMap();
+			filter.put(TOGGLE_ID, contextId);
+			commandService.refreshCallbacks(event.getCommand().getId(), filter);
 		}
 		return null;
 	}
@@ -65,13 +82,16 @@ public class HelloUpdateHandler extends AbstractHandler implements
 	 *      java.util.Map)
 	 */
 	public void updateCallback(IAdaptable callback, Map parameters) {
-		if (myLabelState == null) {
-			return;
-		}
+		// get the standard platform UI feedback object
 		ICommandCallback feedback = (ICommandCallback) callback
 				.getAdapter(ICommandCallback.class);
-		if (feedback != null) {
-			feedback.setText(myLabelState);
+		if (feedback == null) {
+			return;
 		}
+
+		// the checked state depends on if we have an activation for that
+		// context ID or not
+		String contextId = (String) parameters.get(TOGGLE_ID);
+		feedback.setChecked(contextActivations.get(contextId) != null);
 	}
 }

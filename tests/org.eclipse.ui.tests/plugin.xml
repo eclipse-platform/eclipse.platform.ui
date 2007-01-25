@@ -3082,6 +3082,18 @@
       <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
+               commandId="org.eclipse.ui.tests.menus.toggleContext"
+               icon="icons/binary_co.gif"
+               id="toggle.test.t2"
+               label="Toggle Test2"
+               mnemonic="g"
+               style="toggle">
+            <parameter
+                  name="toggleContext.contextId"
+                  value="org.eclipse.ui.menus.contexts.test2">
+            </parameter>
+         </item>
+         <item
                commandId="org.eclipse.ui.tests.menus.enabledWorld"
                icon="icons/anything.gif"
                id="MenuTest.popup.BasicCmdItem"
@@ -3195,6 +3207,11 @@
             name="Text Context X1"
             parentId="org.eclipse.ui.contexts.window">
       </context>
+      <context
+            id="org.eclipse.ui.menus.contexts.test2"
+            name="Text Context X2"
+            parentId="org.eclipse.ui.contexts.window">
+      </context>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -3215,6 +3232,18 @@
             defaultHandler="org.eclipse.ui.tests.menus.HelloUpdateHandler"
             id="org.eclipse.ui.tests.menus.updateWorld"
             name="Hello">
+      </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            defaultHandler="org.eclipse.ui.tests.menus.ToggleContextHandler"
+            id="org.eclipse.ui.tests.menus.toggleContext"
+            name="Toggle Context">
+         <commandParameter
+               id="toggleContext.contextId"
+               name="Context Id"
+               optional="false"
+               values="org.eclipse.ui.tests.menus.ContextIdValues">
+         </commandParameter>
       </command>
    </extension>
   

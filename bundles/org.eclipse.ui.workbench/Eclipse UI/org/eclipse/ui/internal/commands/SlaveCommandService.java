@@ -257,26 +257,27 @@ public class SlaveCommandService implements ICommandService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#getCallbacks(java.lang.String,
+	 * @see org.eclipse.ui.commands.ICommandService#refreshCallbacks(java.lang.String,
 	 *      java.util.Map)
 	 */
-	public IAdaptable[] findCallbacks(String commandId, Map filter) {
-		return fParentService.findCallbacks(commandId, filter);
+	public void refreshCallbacks(String commandId, Map filter) {
+		fParentService.refreshCallbacks(commandId, filter);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand)
+	 * @see org.eclipse.ui.commands.ICommandService#registerCallbackForCommand(org.eclipse.core.commands.ParameterizedCommand,
+	 *      org.eclipse.core.runtime.IAdaptable)
 	 */
 	public ICallbackReference registerCallbackForCommand(
-			ParameterizedCommand command) throws NotDefinedException {
+			ParameterizedCommand command, IAdaptable callback)
+			throws NotDefinedException {
 		if (!command.getCommand().isDefined()) {
 			throw new NotDefinedException(
 					"Cannot define a callback for undefined command " //$NON-NLS-1$
 							+ command.getCommand().getId());
 		}
-		IAdaptable callback = command.getCallback();
 		if (callback == null) {
 			throw new NotDefinedException("No callback defined for command " //$NON-NLS-1$
 					+ command.getCommand().getId());

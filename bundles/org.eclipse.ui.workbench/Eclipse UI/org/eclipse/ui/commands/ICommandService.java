@@ -277,9 +277,7 @@ public interface ICommandService extends IDisposable {
 	public void setHelpContextId(IHandler handler, String helpContextId);
 
 	/**
-	 * Register this ParameterizedCommand as providing a user callback. The
-	 * {@link ParameterizedCommand#getCallback()} must not return
-	 * <code>null</code>.
+	 * Register this ParameterizedCommand as providing a user callback.
 	 * <p>
 	 * <strong>PROVISIONAL</strong>. This class or interface has been added as
 	 * part of a work in progress. There is a guarantee neither that this API
@@ -290,6 +288,9 @@ public interface ICommandService extends IDisposable {
 	 * @param command
 	 *            The parameterized command that is already specialized. Must
 	 *            not be <code>null</code>.
+	 * @param callback
+	 *            The callback to register for this specialized command
+	 *            instance. Must not be <code>null</code>.
 	 * @return A reference for the registered callback that can be used to
 	 *         unregister it.
 	 * @throws NotDefinedException
@@ -298,7 +299,8 @@ public interface ICommandService extends IDisposable {
 	 * @since 3.3
 	 */
 	public ICallbackReference registerCallbackForCommand(
-			ParameterizedCommand command) throws NotDefinedException;
+			ParameterizedCommand command, IAdaptable callback)
+			throws NotDefinedException;
 
 	/**
 	 * Re-register a callback provided by the ICommandService. This callback
@@ -336,9 +338,10 @@ public interface ICommandService extends IDisposable {
 	public void unregisterCallback(ICallbackReference callbackReference);
 
 	/**
-	 * Return any callbacks registered against the command with the given id. If
+	 * Refresh any callbacks registered against the command with the given id.
+	 * It allows the active handler the opportunity to provide user feedback. If
 	 * the command is parameterized, some of the parameters can be specified to
-	 * help narrow down which callbacks to return.
+	 * help narrow down which callbacks to refresh.
 	 * <p>
 	 * The service locator used in registering the callback can also be used to
 	 * scope the search. For example: if you wanted all callbacks for your
@@ -348,7 +351,7 @@ public interface ICommandService extends IDisposable {
 	 * Map filter = new HashMap();
 	 * filter.put(IServiceScopes.WINDOW_SCOPE, getSite().getPage()
 	 * 		.getWorkbenchWindow());
-	 * IAdaptable[] callbacks = commandService.getCallbacks(commandId, filter);
+	 * commandService.refreshCallbacks(commandId, filter);
 	 * </pre>
 	 * 
 	 * </p>
@@ -360,14 +363,12 @@ public interface ICommandService extends IDisposable {
 	 * </p>
 	 * 
 	 * @param commandId
-	 *            The command id to search for registered callbacks.
+	 *            The command id to refresh if it has registered callbacks.
 	 * @param filter
 	 *            key-value pairs that can narrow down the callbacks to return.
 	 *            The parameters are <b>AND</b>ed together. This may be
 	 *            <code>null</code>.
-	 * @return The array of adaptable callbacks. The array may be 0 length, but
-	 *         will not be <code>null</code>.
 	 * @since 3.3
 	 */
-	public IAdaptable[] findCallbacks(String commandId, Map filter);
+	public void refreshCallbacks(String commandId, Map filter);
 }

@@ -14,7 +14,10 @@ package org.eclipse.ui.tests.commands;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -22,7 +25,10 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICallbackReference;
+import org.eclipse.ui.commands.ICallbackUpdater;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerActivation;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
@@ -50,6 +56,11 @@ public class CommandCallbackTest extends UITestCase {
 	private ICommandService commandService;
 	private Command cmd1;
 	private Command cmd2;
+	private IHandlerService handlerService;
+	private IHandlerActivation cmd1Activation;
+	private IHandlerActivation cmd2Activation;
+	private CallbackHandler cmd1Handler;
+	private CallbackHandler cmd2Handler;
 
 	/**
 	 * @param testName
@@ -69,57 +80,106 @@ public class CommandCallbackTest extends UITestCase {
 				.getService(ICommandService.class);
 		cmd1 = commandService.getCommand(CMD1_ID);
 		cmd2 = commandService.getCommand(CMD2_ID);
+		handlerService = (IHandlerService) fWorkbench
+				.getService(IHandlerService.class);
+		cmd1Handler = new CallbackHandler();
+		cmd1Activation = handlerService.activateHandler(CMD1_ID, cmd1Handler);
+		cmd2Handler = new CallbackHandler();
+		cmd2Activation = handlerService.activateHandler(CMD2_ID, cmd2Handler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+		if (cmd1Activation != null) {
+			handlerService.deactivateHandler(cmd1Activation);
+			cmd1Activation = null;
+		}
+		if (cmd2Activation != null) {
+			handlerService.deactivateHandler(cmd2Activation);
+			cmd2Activation = null;
+		}
+		super.doTearDown();
+	}
+
+	private static class CallbackHandler extends AbstractHandler implements
+			ICallbackUpdater {
+		public int callbacks = 0;
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.commands.ICallbackUpdater#updateCallback(org.eclipse.core.runtime.IAdaptable,
+		 *      java.util.Map)
+		 */
+		public void updateCallback(IAdaptable callback, Map parameters) {
+			callbacks++;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+		 */
+		public Object execute(ExecutionEvent event) throws ExecutionException {
+			return null;
+		}
 	}
 
 	public void testNoParametersNoCallbacks() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 		try {
-			commandService.registerCallbackForCommand(pc1);
+			commandService.registerCallbackForCommand(pc1, null);
 			fail("Callback should not register");
 		} catch (NotDefinedException e) {
 		}
 		try {
-			commandService.registerCallbackForCommand(pc2);
+			commandService.registerCallbackForCommand(pc2, null);
 			fail("Callback 2 should not register");
 		} catch (NotDefinedException e) {
 		}
 
-		IAdaptable[] callbacks = commandService.findCallbacks(CMD1_ID + ".1",
-				null);
-		assertEquals(0, callbacks.length);
+		commandService.refreshCallbacks(CMD1_ID + ".1", null);
+		assertEquals(0, cmd1Handler.callbacks);
 
-		callbacks = commandService.findCallbacks(CMD1_ID, null);
-		assertEquals(0, callbacks.length);
+		commandService.refreshCallbacks(CMD1_ID, null);
+		assertEquals(0, cmd1Handler.callbacks);
 	}
 
 	public void testNoParametersWithCallbacks() throws Exception {
-		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
+		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2);
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
+		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
 
 		try {
-			IAdaptable[] callbacks = commandService
-					.findCallbacks(CMD1_ID, null);
-			assertEquals(2, callbacks.length);
+			assertEquals(2, cmd1Handler.callbacks);
+			cmd1Handler.callbacks = 0;
+			commandService.refreshCallbacks(CMD1_ID, null);
+			assertEquals(2, cmd1Handler.callbacks);
 		} finally {
 			commandService.unregisterCallback(cr1);
 			commandService.unregisterCallback(cr2);
 		}
 
-		assertEquals(0, commandService.findCallbacks(CMD1_ID, null).length);
+		cmd1Handler.callbacks = 0;
+		commandService.refreshCallbacks(CMD1_ID, null);
+		assertEquals(0, cmd1Handler.callbacks);
 	}
 
 	public void testParametersWithCallbacks() throws Exception {
@@ -128,38 +188,44 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "www.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "www.eclipse.org") });
 		ParameterizedCommand pc2 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
+						new Parameterization(parmHost, "download.eclipse.org") });
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
 				new IAdaptable() {
 					public Object getAdapter(Class adapter) {
 						return null;
 					}
 				});
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2);
+		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
 		try {
 
-			assertEquals(2, commandService.findCallbacks(CMD2_ID, null).length);
+			assertEquals(2, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			Map filter = new HashMap();
 			filter.put(PROT_PARAM_ID, "http");
-			assertEquals(2,
-					commandService.findCallbacks(CMD2_ID, filter).length);
-			filter.put(HOST_PARAM_ID, "www.eclipse.org");
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(2, cmd2Handler.callbacks);
 
+			cmd2Handler.callbacks = 0;
+			filter.put(HOST_PARAM_ID, "www.eclipse.org");
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
+
 		} finally {
 			commandService.unregisterCallback(cr1);
 			commandService.unregisterCallback(cr2);
@@ -172,54 +238,59 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "www.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "www.eclipse.org") });
 		ParameterizedCommand pc2 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "download.eclipse.org") });
 		ParameterizedCommand pc3 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
+						new Parameterization(parmHost, "download.eclipse.org") });
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
 				new IAdaptable() {
 					public Object getAdapter(Class adapter) {
 						return null;
 					}
 				});
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2);
-		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3);
+		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
+		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
 		try {
 
-			assertEquals(3, commandService.findCallbacks(CMD2_ID, null).length);
+			assertEquals(3, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			Map filter = new HashMap();
 			filter.put(PROT_PARAM_ID, "http");
-			assertEquals(3,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(3, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "www.eclipse.org");
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
 
+			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
 
+			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "download.eclipse.org");
-			assertEquals(2,
-					commandService.findCallbacks(CMD2_ID, filter).length);
-
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(2, cmd2Handler.callbacks);
 		} finally {
 			commandService.unregisterCallback(cr1);
 			commandService.unregisterCallback(cr2);
@@ -233,70 +304,77 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "www.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "www.eclipse.org") });
 		ParameterizedCommand pc2 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "download.eclipse.org") });
 		ParameterizedCommand pc3 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "download.eclipse.org") });
 		ParameterizedCommand pc4 = new ParameterizedCommand(cmd2,
 				new Parameterization[] { new Parameterization(parmProt, "ftp"),
-						new Parameterization(parmHost, "www.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "www.eclipse.org") });
 		ParameterizedCommand pc5 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] { new Parameterization(parmProt, "ftp"),
-						new Parameterization(parmHost, "download.eclipse.org") },
+						new Parameterization(parmHost, "download.eclipse.org") });
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
 				new IAdaptable() {
 					public Object getAdapter(Class adapter) {
 						return null;
 					}
 				});
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
-		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2);
-		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3);
-		ICallbackReference cr4 = commandService.registerCallbackForCommand(pc4);
-		ICallbackReference cr5 = commandService.registerCallbackForCommand(pc5);
+		ICallbackReference cr2 = commandService.registerCallbackForCommand(pc2,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
+		ICallbackReference cr3 = commandService.registerCallbackForCommand(pc3,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
+		ICallbackReference cr4 = commandService.registerCallbackForCommand(pc4,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
+		ICallbackReference cr5 = commandService.registerCallbackForCommand(pc5,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
 		try {
-
-			assertEquals(5, commandService.findCallbacks(CMD2_ID, null).length);
+			assertEquals(5, cmd2Handler.callbacks);
 			Map filter = new HashMap();
+
+			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
-			assertEquals(3,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(3, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "ftp");
-			assertEquals(2,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(2, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.put(HOST_PARAM_ID, "download.eclipse.org");
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.remove(PROT_PARAM_ID);
-			assertEquals(3,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(3, cmd2Handler.callbacks);
 
 		} finally {
 			commandService.unregisterCallback(cr1);
@@ -316,64 +394,69 @@ public class CommandCallbackTest extends UITestCase {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "www.eclipse.org") },
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+						new Parameterization(parmHost, "www.eclipse.org") });
 		ParameterizedCommand pc2 = new ParameterizedCommand(
 				cmd2,
 				new Parameterization[] {
 						new Parameterization(parmProt, "http"),
-						new Parameterization(parmHost, "download.eclipse.org") },
+						new Parameterization(parmHost, "download.eclipse.org") });
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
 				new IAdaptable() {
 					public Object getAdapter(Class adapter) {
 						return null;
 					}
 				});
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
 		// should be removed when the window goes away
-		cs.registerCallbackForCommand(pc2);
+		cs.registerCallbackForCommand(pc2, new IAdaptable() {
+			public Object getAdapter(Class adapter) {
+				return null;
+			}
+		});
 		try {
+			assertEquals(2, cmd2Handler.callbacks);
+
 			Map filter = new HashMap();
+			cmd2Handler.callbacks = 0;
 			filter.put(PROT_PARAM_ID, "http");
-			assertEquals(2,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(2, cmd2Handler.callbacks);
+
+			cmd2Handler.callbacks = 0;
 			filter.put(IServiceScopes.WINDOW_SCOPE, window);
-			assertEquals(1,
-					commandService.findCallbacks(CMD2_ID, filter).length);
+			commandService.refreshCallbacks(CMD2_ID, filter);
+			assertEquals(1, cmd2Handler.callbacks);
 		} finally {
 			commandService.unregisterCallback(cr1);
 		}
 	}
 
 	public void testCallbackCleanup() throws Exception {
-		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
-		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null,
-				new IAdaptable() {
-					public Object getAdapter(Class adapter) {
-						return null;
-					}
-				});
+		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
+		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
 
 		IWorkbenchWindow window = openTestWindow();
 		ICommandService cs = (ICommandService) window
 				.getService(ICommandService.class);
 
-		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1);
+		ICallbackReference cr1 = commandService.registerCallbackForCommand(pc1,
+				new IAdaptable() {
+					public Object getAdapter(Class adapter) {
+						return null;
+					}
+				});
 		// should be removed when the window goes away
-		cs.registerCallbackForCommand(pc2);
+		cs.registerCallbackForCommand(pc2, new IAdaptable() {
+			public Object getAdapter(Class adapter) {
+				return null;
+			}
+		});
 
 		try {
-			assertEquals(2, commandService.findCallbacks(CMD1_ID, null).length);
+			assertEquals(2, cmd1Handler.callbacks);
+			cmd1Handler.callbacks = 0;
 			closeAllTestWindows();
-			assertEquals(1, commandService.findCallbacks(CMD1_ID, null).length);
+			commandService.refreshCallbacks(CMD1_ID, null);
+			assertEquals(1, cmd1Handler.callbacks);
 		} finally {
 			commandService.unregisterCallback(cr1);
 		}

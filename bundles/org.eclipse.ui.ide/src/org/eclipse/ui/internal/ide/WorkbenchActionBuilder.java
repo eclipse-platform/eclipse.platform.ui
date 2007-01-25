@@ -495,7 +495,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         newTabItem = new CommandContributionItem(
 				"org.eclipse.ui.ide.main.file.newTab", //$NON-NLS-1$
 				"org.eclipse.ui.window.openEmptyEditorTab", //$NON-NLS-1$
-				Collections.EMPTY_MAP, null, null, null, null, null, null);
+				Collections.EMPTY_MAP, null, null, null, null, null, null,
+				CommandContributionItem.STYLE_PUSH);
 		menu.add(newTabItem);
 		
         menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
