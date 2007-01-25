@@ -12,7 +12,7 @@
 
    <element name="extension">
       <complexType>
-         <sequence minOccurs="1" maxOccurs="unbounded">
+         <sequence>
             <element ref="column" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
@@ -246,22 +246,26 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;pre&gt;
-&lt;column
-      id=&quot;org.eclipse.ui.editors.columns.linenumbers&quot;
-      name=&quot;Line Numbers&quot;
-      class=&quot;org.eclipse.ui.internal.texteditor.LineNumberColumn&quot;
-      enabled=&quot;false&quot;
-      global=&quot;true&quot;
-      includeInMenu=&quot;false&quot;&gt;
-      &lt;placement
-         gravity=&quot;0.9&quot;&gt;
-         &lt;after id=&quot;org.eclipse.ui.editors.columns.annotations&quot;/&gt;
-      &lt;/placement&gt;
-      &lt;targetClass
-         class=&quot;org.eclipse.ui.texteditor.AbstractDecoratedTextEditor&quot;&gt;
-      &lt;/targetClass&gt;
-&lt;/column&gt;
+         The following is an example of a ruler column definition:
+&lt;pre&gt;
+&lt;extension
+  point=&quot;org.eclipse.ui.workbench.texteditor.rulerColumns&quot;&gt;
+  &lt;column
+    id=&quot;org.eclipse.ui.editors.columns.linenumbers&quot;
+    name=&quot;Line Numbers&quot;
+    class=&quot;org.eclipse.ui.internal.texteditor.LineNumberColumn&quot;
+    enabled=&quot;false&quot;
+    global=&quot;true&quot;
+    includeInMenu=&quot;false&quot;&gt;
+    &lt;placement
+       gravity=&quot;0.9&quot;&gt;
+       &lt;after id=&quot;org.eclipse.ui.editors.columns.annotations&quot;/&gt;
+    &lt;/placement&gt;
+    &lt;targetClass
+       class=&quot;org.eclipse.ui.texteditor.AbstractDecoratedTextEditor&quot;&gt;
+    &lt;/targetClass&gt;
+  &lt;/column&gt;
+&lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
    </annotation>
