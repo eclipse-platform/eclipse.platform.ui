@@ -335,8 +335,10 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane {
 		Viewer v= getViewer();
 		if (v != null) {
 			Control c= v.getControl();
-			if (c != null)
-				c.setFocus();
+			if (c != null) {
+				if (c.setFocus())
+					return true;
+			}
 		}
 		return super.setFocus();
 	}
