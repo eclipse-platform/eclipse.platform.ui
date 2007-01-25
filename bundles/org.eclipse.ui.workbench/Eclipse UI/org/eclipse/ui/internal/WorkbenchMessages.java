@@ -45,6 +45,9 @@ public class WorkbenchMessages extends NLS {
 	public static String BundleSigningTray_Working;
 
 
+	public static String NewWorkingSet;
+
+
 	public static String PlatformUI_NoWorkbench;
 
 	public static String Workbench_CreatingWorkbenchTwice;

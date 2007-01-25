@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Benjamin Muskalla - Bug 169023 [WorkingSets] "Add to working set"
+ *     						drop down should include a "new working set" option
  *******************************************************************************/
 package org.eclipse.ui.internal.actions;
 
@@ -30,14 +32,21 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.QuickMenuCreator;
+import org.eclipse.ui.dialogs.IWorkingSetNewWizard;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * @since 3.3
@@ -45,6 +54,38 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  */
 public class ModifyWorkingSetDelegate extends
 		AbstractWorkingSetPulldownDelegate implements IExecutableExtension, IActionDelegate2 {
+
+	public class NewWorkingSetAction extends Action {
+
+		/**
+		 * Create a new instance of this action.
+		 */
+		public NewWorkingSetAction() {
+			super(WorkbenchMessages.NewWorkingSet);
+		}
+
+		public void run() {
+			IWorkingSetManager manager = WorkbenchPlugin.getDefault()
+			.getWorkingSetManager();
+			IWorkingSetNewWizard wizard = manager.createWorkingSetNewWizard(null);
+			// the wizard can never be null since we have at least a resource
+			// working set
+			// creation page
+			WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench()
+								.getDisplay().getActiveShell(), wizard);
+		
+			dialog.create();
+			PlatformUI.getWorkbench().getHelpSystem().setHelp(dialog.getShell(),
+					IWorkbenchHelpContextIds.WORKING_SET_NEW_WIZARD);
+			if (dialog.open() == Window.OK) {
+				IWorkingSet workingSet = wizard.getSelection();
+				if(workingSet != null) {
+					manager.addWorkingSet(workingSet);
+				}
+			}			
+		}
+
+	}
 
 	private class ModifyAction extends Action {
 
@@ -163,6 +204,17 @@ public class ModifyWorkingSetDelegate extends
 				item.fill(menu, -1);
 			}
 		}
+		// create working set action only for add menu
+		if(add) {
+			IContributionItem item = null;
+			if (menu.getItemCount() > 0) {
+				item = new Separator();
+				item.fill(menu, -1);
+			}
+			
+			item = new ActionContributionItem(new NewWorkingSetAction());
+			item.fill(menu, -1);
+		}
 	}
 	/**
 	 * Return the list of items to show in the submenu.
@@ -173,9 +225,11 @@ public class ModifyWorkingSetDelegate extends
 		List menuItems = new ArrayList();
 		ISelection selection = getSelection();
 		if (!(selection instanceof IStructuredSelection)) {
-			IAction emptyAction = new Action(WorkbenchMessages.NoApplicableWorkingSets) {};
-			emptyAction.setEnabled(false);
-			menuItems.add(emptyAction);
+			if(!add) {
+				IAction emptyAction = new Action(WorkbenchMessages.NoApplicableWorkingSets) {};
+				emptyAction.setEnabled(false);
+				menuItems.add(emptyAction);
+			}
 			return menuItems;
 		}
 		
@@ -227,7 +281,7 @@ public class ModifyWorkingSetDelegate extends
 				}
 			}
 		}
-		if (menuItems.isEmpty()) {
+		if (menuItems.isEmpty() && !add) {
 			IAction emptyAction = new Action(
 					WorkbenchMessages.NoApplicableWorkingSets) {
 			};
