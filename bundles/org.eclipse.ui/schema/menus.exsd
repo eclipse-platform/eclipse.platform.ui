@@ -652,6 +652,13 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="helpContextId" type="string">
+            <annotation>
+               <documentation>
+                  a unique identifier indicating the help context for this action. If the action appears as a menu item, then pressing F1 while the menu item is highlighted will display help.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="style" use="default" value="push">
             <annotation>
                <documentation>
