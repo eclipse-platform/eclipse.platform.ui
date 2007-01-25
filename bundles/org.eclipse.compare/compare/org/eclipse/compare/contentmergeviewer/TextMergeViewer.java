@@ -4238,12 +4238,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable  {
 
 	private RGB getFillColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
-		
 		RGB selected_fill= getBackground(null);
-		if (fHighlightTokenChanges && !selected && !(diff.fIsToken || !diff.hasChildren())) {
-			return selected_fill;
-		}
-
 		if (isThreeWay() && !isIgnoreAncestor()) {
 			switch (diff.fDirection) {
 			case RangeDifference.RIGHT:
