@@ -143,6 +143,13 @@ public class ExpandableComposite extends Canvas {
 	 */
 	public int clientVerticalSpacing = 3;
 
+	/**
+	 * Horizontal margin around the inside of the title bar area when TITLE_BAR
+	 * or SHORT_TITLE_BAR style is used. This variable is not used otherwise.
+	 * @since 3.3
+	 */
+	public int titleBarTextMarginWidth = 6;
+
 	private static final Point NULL_SIZE = new Point(0, 0);
 
 	private static final int VSPACE = 3;
@@ -204,7 +211,7 @@ public class ExpandableComposite extends Canvas {
 			int tvmargin = 0;
 
 			if (hasTitleBar()) {
-				thmargin = GAP;
+				thmargin = titleBarTextMarginWidth;
 				tvmargin = VGAP;
 			}
 			int x = marginWidth + thmargin;
@@ -269,7 +276,7 @@ public class ExpandableComposite extends Canvas {
 				textClientCache.setBounds(tcx, y, tcsize.x, tcsize.y);
 			}
 			int tbarHeight = 0;
-			if (size.y>0)
+			if (size.y > 0)
 				tbarHeight = size.y;
 			if (tcsize.y > 0)
 				tbarHeight = Math.max(tbarHeight, tcsize.y);
@@ -303,7 +310,7 @@ public class ExpandableComposite extends Canvas {
 						y += dsize.y + clientVerticalSpacing;
 					} else {
 						y += clientVerticalSpacing;
-						if (getSeparatorControl()!=null)
+						if (getSeparatorControl() != null)
 							y -= VSPACE;
 					}
 					int cwidth = areaWidth;
@@ -329,13 +336,13 @@ public class ExpandableComposite extends Canvas {
 			int tvmargin = 0;
 
 			if (hasTitleBar()) {
-				thmargin = GAP;
+				thmargin = titleBarTextMarginWidth;
 				tvmargin = VGAP;
 			}
-			int innerwHint = wHint; 
+			int innerwHint = wHint;
 			if (innerwHint != SWT.DEFAULT)
-				innerwHint -= twidth + marginWidth + marginWidth
-				+ thmargin + thmargin;
+				innerwHint -= twidth + marginWidth + marginWidth + thmargin
+						+ thmargin;
 
 			int innertHint = innerwHint;
 
@@ -359,7 +366,7 @@ public class ExpandableComposite extends Canvas {
 			}
 			if (size.x > 0)
 				width = size.x;
-			if (tcsize.x>0)
+			if (tcsize.x > 0)
 				width += GAP + tcsize.x;
 			height = tcsize.y > 0 ? Math.max(tcsize.y, size.y) : size.y;
 			if (getSeparatorControl() != null) {
@@ -367,15 +374,15 @@ public class ExpandableComposite extends Canvas {
 				if (expanded && client != null)
 					height += VSPACE;
 			}
-			//if (hasTitleBar())
-			//	height += VSPACE;
+			// if (hasTitleBar())
+			// height += VSPACE;
 			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
 				int cwHint = wHint;
 
 				if (cwHint != SWT.DEFAULT) {
 					cwHint -= marginWidth + marginWidth + thmargin + thmargin;
 					if ((expansionStyle & CLIENT_INDENT) != 0)
-						if (tcsize.x>0)
+						if (tcsize.x > 0)
 							cwHint -= twidth;
 				}
 				Point dsize = null;
@@ -396,7 +403,7 @@ public class ExpandableComposite extends Canvas {
 						height += dsize.y + clientVerticalSpacing;
 				} else {
 					height += clientVerticalSpacing;
-					if (getSeparatorControl()!=null)
+					if (getSeparatorControl() != null)
 						height -= VSPACE;
 				}
 				width = Math.max(width, csize.x);
@@ -407,7 +414,7 @@ public class ExpandableComposite extends Canvas {
 				height = height - size.y + Math.max(size.y, tsize.y);
 				width += twidth;
 			}
-			
+
 			Point result = new Point(width + marginWidth + marginWidth
 					+ thmargin + thmargin, height + marginHeight + marginHeight
 					+ tvmargin + tvmargin);
@@ -415,42 +422,6 @@ public class ExpandableComposite extends Canvas {
 		}
 
 		public int computeMinimumWidth(Composite parent, boolean changed) {
-			/*
-			initCache(changed);
-
-			int width = 0;
-			Point size = NULL_SIZE;
-			if (textLabel != null)
-				size = textLabelCache.computeSize(5, SWT.DEFAULT);
-			Point tcsize = NULL_SIZE;
-			if (textClient != null) {
-				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			}
-			int thmargin = 0;
-
-			if (hasTitleBar()) {
-				thmargin = GAP;
-			}
-			if (size.x > 0)
-				width = size.x;
-			if (tcsize.x > 0)
-				width += GAP + tcsize.x;
-
-			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
-				Point dsize = null;
-				if (getDescriptionControl() != null) {
-					dsize = descriptionCache.computeSize(5, SWT.DEFAULT);
-					width = Math.max(width, dsize.x);
-				}
-				int cwidth = FormUtil.computeMinimumWidth(client, changed);
-				width = Math.max(width, cwidth);
-			}
-			if (toggle != null) {
-				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				width += tsize.x + GAP;
-			}
-			return width + marginWidth + marginWidth + thmargin + thmargin;
-			*/
 			return computeSize(parent, 0, SWT.DEFAULT, changed).x;
 		}
 
@@ -461,43 +432,6 @@ public class ExpandableComposite extends Canvas {
 		 *      boolean)
 		 */
 		public int computeMaximumWidth(Composite parent, boolean changed) {
-			/*
-
-			initCache(changed);
-
-			int width = 0;
-			Point size = NULL_SIZE;
-			if (textLabel != null)
-				size = textLabelCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			Point tcsize = NULL_SIZE;
-			int thmargin = 0;
-
-			if (hasTitleBar()) {
-				thmargin = GAP;
-			}
-			if (textClient != null) {
-				tcsize = textClientCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-			}
-			if (size.x > 0)
-				width = size.x;
-			if (tcsize.x > 0)
-				width += GAP + tcsize.x;
-			if ((expanded || (expansionStyle & COMPACT) == 0) && client != null) {
-				Point dsize = null;
-				if (getDescriptionControl() != null) {
-					dsize = descriptionCache.computeSize(SWT.DEFAULT,
-							SWT.DEFAULT);
-					width = Math.max(width, dsize.x);
-				}
-				int cwidth = FormUtil.computeMaximumWidth(client, changed);
-				width = Math.max(width, cwidth);
-			}
-			if (toggle != null) {
-				Point tsize = toggleCache.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-				width += tsize.x + GAP;
-			}
-			return width + marginWidth + marginWidth + thmargin + thmargin;
-			*/
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
 		}
 	}
@@ -528,7 +462,7 @@ public class ExpandableComposite extends Canvas {
 	public ExpandableComposite(Composite parent, int style, int expansionStyle) {
 		super(parent, style);
 		this.expansionStyle = expansionStyle;
-		if ((expansionStyle & TITLE_BAR)!=0) 
+		if ((expansionStyle & TITLE_BAR) != 0)
 			setBackgroundMode(SWT.INHERIT_DEFAULT);
 		super.setLayout(new ExpandableLayout());
 		listeners = new Vector();
@@ -558,18 +492,18 @@ public class ExpandableComposite extends Canvas {
 				public void paintControl(PaintEvent e) {
 					if (textLabel instanceof Label && !isFixedStyle())
 						textLabel.setForeground(toggle.hover ? toggle
-								.getHoverDecorationColor() : getTitleBarForeground());
+								.getHoverDecorationColor()
+								: getTitleBarForeground());
 				}
 			});
 			toggle.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					if (e.keyCode == SWT.ARROW_UP) {
 						verticalMove(false);
-						e.doit=false;
-					}
-					else if (e.keyCode == SWT.ARROW_DOWN) {
+						e.doit = false;
+					} else if (e.keyCode == SWT.ARROW_DOWN) {
 						verticalMove(true);
-						e.doit=false;
+						e.doit = false;
 					}
 				}
 			});
@@ -667,7 +601,7 @@ public class ExpandableComposite extends Canvas {
 	 */
 	public void setBackground(Color bg) {
 		super.setBackground(bg);
-		if ((getExpansionStyle() & TITLE_BAR)==0) {
+		if ((getExpansionStyle() & TITLE_BAR) == 0) {
 			if (textLabel != null)
 				textLabel.setBackground(bg);
 			if (toggle != null)
@@ -719,16 +653,17 @@ public class ExpandableComposite extends Canvas {
 		if (toggle != null)
 			toggle.setFont(font);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#setEnabled(boolean)
 	 */
-	
+
 	public void setEnabled(boolean enabled) {
-		if (textLabel!=null)
+		if (textLabel != null)
 			textLabel.setEnabled(enabled);
-		if (toggle!=null)
+		if (toggle != null)
 			toggle.setEnabled(enabled);
 		super.setEnabled(enabled);
 	}
@@ -980,7 +915,7 @@ public class ExpandableComposite extends Canvas {
 	 *            the title bar foreground
 	 */
 	public void setTitleBarForeground(Color color) {
-		titleBarForeground= color;
+		titleBarForeground = color;
 		textLabel.setForeground(color);
 	}
 

@@ -96,6 +96,8 @@ public class NewStylePage extends FormPage {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		section.setLayoutData(gd);
 		layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		client.setLayout(layout);
 		final Button tbutton = toolkit.createButton(client, "Add title",
 				SWT.CHECK);
@@ -209,6 +211,8 @@ public class NewStylePage extends FormPage {
 		section.setLayoutData(gd);
 
 		layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		layout.numColumns = 4;
 		client.setLayout(layout);
 
