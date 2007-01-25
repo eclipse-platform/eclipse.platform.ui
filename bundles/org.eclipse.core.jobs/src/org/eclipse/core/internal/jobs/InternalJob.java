@@ -107,14 +107,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * Adds an entry at the end of the list of which this item is the head.
 	 */
 	final void addLast(InternalJob entry) {
-		if (previous == null) {
-			previous = entry;
-			entry.next = this;
-			entry.previous = null;
-		} else {
-			Assert.isTrue(previous.next() == this);
-			previous.addLast(entry);
-		}
+		InternalJob last = this;
+		//find the end of the queue
+		while (last.previous != null)
+			last = last.previous;
+		//add the new entry to the end of the queue
+		last.previous = entry;
+		entry.next = last;
+		entry.previous = null;
 	}
 
 	/* (non-Javadoc)
@@ -130,7 +130,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	protected boolean cancel() {
 		return manager.cancel(this);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see Job#canceling()
 	 */
