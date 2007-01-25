@@ -41,11 +41,13 @@ import org.eclipse.ui.internal.forms.widgets.FormUtil;
  * Form can have a title if set. If not set, title area will not be left empty -
  * form body will be resized to fill the entire form. In addition, an optional
  * title image can be set and is rendered to the left of the title (since 3.2).
- * <p>Form can have a title drop down menu if the menu bar manager is not empty
+ * <p>
+ * Form can have a title drop down menu if the menu bar manager is not empty
  * (since 3.3).
- * <p>Form title can support drag and drop if drag and drop support methods
- * are invoked. When used, additional decoration is rendered behind the
- * title to reinforce the drag and drop ability (since 3.3).
+ * <p>
+ * Form title can support drag and drop if drag and drop support methods are
+ * invoked. When used, additional decoration is rendered behind the title to
+ * reinforce the drag and drop ability (since 3.3).
  * <p>
  * The form supports status messages. These messages can have various severity
  * (error, warning, info or none). If status hyperlink handler is specified, the
@@ -312,7 +314,7 @@ public class Form extends Composite {
 	 * @return the background image or <code>null</code> if not specified.
 	 */
 	public Image getBackgroundImage() {
-		return head.getBackgroundImage();
+		return head.getHeadingBackgroundImage();
 	}
 
 	/**
@@ -327,7 +329,7 @@ public class Form extends Composite {
 	 * 
 	 */
 	public void setBackgroundImage(Image backgroundImage) {
-		head.setBackgroundImage(backgroundImage);
+		head.setHeadingBackgroundImage(backgroundImage);
 	}
 
 	/**
@@ -440,10 +442,9 @@ public class Form extends Composite {
 	 * 
 	 * @return <code>true</code> if heading background image is tiled,
 	 *         <code>false</code> otherwise.
-	 * @deprecated since 3.2, always returns <code>true</code>.
 	 */
 	public boolean isBackgroundImageTiled() {
-		return true;
+		return head.isBackgroundImageTiled();
 	}
 
 	/**
@@ -453,16 +454,17 @@ public class Form extends Composite {
 	 * @param backgroundImageTiled
 	 *            set <code>true</code> to tile the image, or
 	 *            <code>false</code> to paint the background image only once
-	 * @deprecated since 3.2, the background image is always tiled.
+	 *            at 0,0
 	 */
 	public void setBackgroundImageTiled(boolean backgroundImageTiled) {
+		head.setBackgroundImageTiled(backgroundImageTiled);
 	}
 
 	/**
 	 * Returns the background image alignment.
 	 * 
 	 * @deprecated due to the underlying widget limitations, background image is
-	 *             always tiled and alignment cannot be controlled.
+	 *             either painted at 0,0 and/or tiled.
 	 * @return SWT.LEFT
 	 */
 	public int getBackgroundImageAlignment() {
@@ -563,7 +565,8 @@ public class Form extends Composite {
 	 * 
 	 * @param key
 	 *            a valid form heading color key as defined in
-	 *            {@link IFormColors}. Relevant keys all start with an H_ prefix.
+	 *            {@link IFormColors}. Relevant keys all start with an H_
+	 *            prefix.
 	 * @param color
 	 *            the color to use for the provided key
 	 * @since 3.3

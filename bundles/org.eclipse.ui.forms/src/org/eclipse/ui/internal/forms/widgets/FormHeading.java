@@ -64,10 +64,13 @@ public class FormHeading extends Canvas {
 
 	private static final int SEPARATOR = 1 << 1;
 	private static final int BOTTOM_TOOLBAR = 1 << 2;
+	private static final int BACKGROUND_IMAGE_TILED = 1 << 3;
 	private static final int SEPARATOR_HEIGHT = 2;
 	private static final int MESSAGE_AREA_LIMIT = 50;
 
 	public static final String COLOR_BASE_BG = "baseBg"; //$NON-NLS-1$
+
+	private Image backgroundImage;
 
 	private Image gradientImage;
 
@@ -243,10 +246,10 @@ public class FormHeading extends Canvas {
 					height2 = tbsize.y;
 				if (clsize != null)
 					height2 = Math.max(height2, clsize.y);
-				if (height2>0)
+				if (height2 > 0)
 					size.y += VSPACING + height2 + CLIENT_MARGIN;
 				// add separator
-				if (size.y>0 && isSeparatorVisible())
+				if (size.y > 0 && isSeparatorVisible())
 					size.y += SEPARATOR_HEIGHT;
 			} else {
 				// position controls
@@ -351,7 +354,8 @@ public class FormHeading extends Canvas {
 			return needHyperlink() ? fontHeight : fontHeight + 2;
 		}
 
-		public String showMessage(String newMessage, int newType, IMessage[] messages) {
+		public String showMessage(String newMessage, int newType,
+				IMessage[] messages) {
 			Control oldControl = getMessageControl();
 			int oldType = messageType;
 			this.messageType = newType;
@@ -419,7 +423,7 @@ public class FormHeading extends Canvas {
 			ensureControlExists();
 			if (messageHyperlink != null)
 				messageHyperlink.addHyperlinkListener(listener);
-			if (listeners.size()==1)
+			if (listeners.size() == 1)
 				updateForeground();
 		}
 
@@ -429,7 +433,7 @@ public class FormHeading extends Canvas {
 				messageHyperlink.removeHyperlinkListener(listener);
 			if (listeners.isEmpty())
 				listeners = null;
-			if (listeners==null)
+			if (listeners == null)
 				updateForeground();
 		}
 
@@ -513,7 +517,8 @@ public class FormHeading extends Canvas {
 		});
 		addListener(SWT.Resize, new Listener() {
 			public void handleEvent(Event e) {
-				if (gradientInfo != null)
+				if (gradientInfo != null
+						|| (backgroundImage != null && !isBackgroundImageTiled()))
 					updateGradientImage();
 			}
 		});
@@ -650,6 +655,32 @@ public class FormHeading extends Canvas {
 		}
 	}
 
+	public void setHeadingBackgroundImage(Image image) {
+		this.backgroundImage = image;
+		if (image != null)
+			setBackground(null);
+		if (isBackgroundImageTiled()) {
+			setBackgroundImage(image);
+		} else
+			updateGradientImage();
+	}
+
+	public Image getHeadingBackgroundImage() {
+		return backgroundImage;
+	}
+
+	public void setBackgroundImageTiled(boolean tiled) {
+		if (tiled)
+			flags |= BACKGROUND_IMAGE_TILED;
+		else
+			flags &= ~BACKGROUND_IMAGE_TILED;
+		setHeadingBackgroundImage(this.backgroundImage);
+	}
+
+	public boolean isBackgroundImageTiled() {
+		return (flags & BACKGROUND_IMAGE_TILED) != 0;
+	}
+
 	public void setBackgroundImage(Image image) {
 		super.setBackgroundImage(image);
 		if (image != null) {
@@ -756,16 +787,27 @@ public class FormHeading extends Canvas {
 
 	private void updateGradientImage() {
 		Rectangle rect = getBounds();
-		boolean vertical = gradientInfo.vertical;
-		if (gradientImage != null)
+		if (gradientImage != null) {
 			gradientImage.dispose();
-		int width = vertical ? 1 : rect.width;
-		int height = vertical ? rect.height : 1;
-		gradientImage = new Image(getDisplay(), Math.max(width, 1), Math.max(
-				height, 1));
-		GC gc = new GC(gradientImage);
-		drawTextGradient(gc, width, height);
-		gc.dispose();
+			gradientImage = null;
+		}
+		if (gradientInfo != null) {
+			boolean vertical = gradientInfo.vertical;
+			int width = vertical ? 1 : rect.width;
+			int height = vertical ? rect.height : 1;
+			gradientImage = new Image(getDisplay(), Math.max(width, 1), Math
+					.max(height, 1));
+			GC gc = new GC(gradientImage);
+			drawTextGradient(gc, width, height);
+			gc.dispose();
+		} else if (backgroundImage != null && !isBackgroundImageTiled()) {
+			gradientImage = new Image(getDisplay(), Math.max(rect.width, 1),
+					Math.max(rect.height, 1));
+			gradientImage.setBackground(getBackground());
+			GC gc = new GC(gradientImage);
+			gc.drawImage(backgroundImage, 0, 0);
+			gc.dispose();
+		}
 		setBackgroundImage(gradientImage);
 	}
 
