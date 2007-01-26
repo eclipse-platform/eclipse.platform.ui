@@ -27,7 +27,7 @@ import org.eclipse.jface.text.Region;
  *
  * @since 3.1
  */
-public class URLHyperlinkDetector implements IHyperlinkDetector {
+public class URLHyperlinkDetector extends AbstractHyperlinkDetector {
 
 
 	/**
