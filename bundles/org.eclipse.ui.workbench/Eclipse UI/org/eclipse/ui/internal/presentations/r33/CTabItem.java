@@ -16,8 +16,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -25,6 +23,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Instances of this class represent a selectable user interface object that
@@ -65,8 +65,6 @@ public class CTabItem extends Item {
 	static final int RIGHT_MARGIN = 4;
 	static final int INTERNAL_SPACING = 4;
 	static final int FLAGS = SWT.DRAW_TRANSPARENT | SWT.DRAW_MNEMONIC;
-	private static final int ALPHA_WIDTH = 7;
-	private static final int ALPHA_DEPTH = 1;
 
 	/**
 	 * Constructs a new instance of this class given its parent (which must be a
@@ -293,6 +291,9 @@ public class CTabItem extends Item {
 
 			// draw selected tab background and outline
 			shape = null;
+			int leftLength;
+			int rightLength;
+
 			if (this.parent.onBottom) {
 				int[] left = parent.simple ? CTabFolder.SIMPLE_BOTTOM_LEFT_CORNER
 						: CTabFolder.BOTTOM_LEFT_CORNER;
@@ -302,7 +303,10 @@ public class CTabItem extends Item {
 						&& parent.indexOf(this) == parent.firstIndex) {
 					left = new int[] { x, y + height };
 				}
-				shape = new int[left.length + right.length + 8];
+				leftLength = left.length;
+				rightLength = right.length;
+
+				shape = new int[leftLength + rightLength + 8];
 				int index = 0;
 				shape[index++] = x; // first point repeated here because below
 				// we reuse shape to draw outline
@@ -335,7 +339,10 @@ public class CTabItem extends Item {
 						&& parent.indexOf(this) == parent.firstIndex) {
 					left = new int[] { x, y };
 				}
-				shape = new int[left.length + right.length + 8];
+				leftLength = left.length;
+				rightLength = right.length;
+
+				shape = new int[leftLength + rightLength + 8];
 				int index = 0;
 				shape[index++] = x; // first point repeated here because below
 				// we reuse shape to draw outline
@@ -417,8 +424,12 @@ public class CTabItem extends Item {
 			gc.setForeground(CTabFolder.borderColor);
 			gc.drawPolyline(shape);
 
-			if (!tabInPaint)
+			if (parent.activationState == StackPresentation.AS_INACTIVE)
+				drawInsetSelectedShape(shape, gc, leftLength, rightLength);
+
+			if (!tabInPaint) {
 				return;
+			}
 		}
 
 		// draw Image
@@ -461,11 +472,6 @@ public class CTabItem extends Item {
 			gc.drawText(shortenedText, xDraw, textY, FLAGS);
 			gc.setFont(gcFont);
 
-			// Not currently looking at doing alphas
-			if (false)
-				drawAlpha(gc, new Rectangle(xDraw, textY, extent.x, extent.y),
-						parent.selectionBackground.getRGB());
-
 			// draw a Focus rectangle
 			if (parent.isFocusControl()) {
 				Display display = getDisplay();
@@ -484,24 +490,6 @@ public class CTabItem extends Item {
 		}
 		if (parent.showClose || showClose)
 			drawClose(gc);
-	}
-
-	private void drawAlpha(GC gc, Rectangle textArea, RGB colour) {
-		ImageData data = new ImageData(ALPHA_WIDTH, textArea.height,
-				ALPHA_DEPTH, new PaletteData(new RGB[] { colour }));
-
-		for (int column = 0; column < ALPHA_WIDTH; column++) {
-			int alpha = 255 * column / ALPHA_WIDTH;
-			for (int row = 0; row < textArea.height - 1; row++) {
-				data.setAlpha(column, row, alpha);
-			}
-		}
-
-		Image image = new Image(getDisplay(), data);
-		gc.drawImage(image, textArea.x + textArea.width - ALPHA_WIDTH,
-				textArea.y);
-		image.dispose();
-
 	}
 
 	void drawUnselected(GC gc) {
@@ -563,11 +551,6 @@ public class CTabItem extends Item {
 			gc.setForeground(parent.getForeground());
 			gc.drawText(shortenedText, xDraw, textY, FLAGS);
 			gc.setFont(gcFont);
-
-			// Not currently looking at doing alphas
-			if (false)
-				drawAlpha(gc, new Rectangle(xDraw, textY, extent.x, extent.y),
-						parent.getBackground().getRGB());
 		}
 		// draw close
 		if (parent.showUnselectedClose && (parent.showClose || showClose))
@@ -632,7 +615,7 @@ public class CTabItem extends Item {
 			}
 
 			shape[index++] = x + width; // first point repeated here because
-										// below
+			// below
 			// we reuse shape to draw outline
 			shape[index++] = y + height + 1;
 			shape[index++] = x + width;
@@ -640,9 +623,22 @@ public class CTabItem extends Item {
 
 		}
 
+		drawBorder(gc, shape);
+
+	}
+
+	/**
+	 * Drae the border of the tab
+	 * 
+	 * @param gc
+	 * @param shape
+	 */
+	private void drawBorder(GC gc, int[] shape) {
+
 		gc.setForeground(CTabFolder.borderColor);
 		gc.drawPolyline(shape);
 
+		drawInsetUnselectedShape(shape, gc);
 	}
 
 	/**
@@ -708,9 +704,69 @@ public class CTabItem extends Item {
 
 		}
 
-		gc.setForeground(CTabFolder.borderColor);
-		gc.drawPolyline(shape);
+		drawBorder(gc, shape);
 
+	}
+
+	/**
+	 * Modify the shape to inset one pixel and then draw a lighter line.
+	 * 
+	 * @param shape
+	 * @param gc
+	 */
+	private void drawInsetUnselectedShape(int[] shape, GC gc) {
+
+		for (int i = 0; i < shape.length; i = i + 2) {
+			shape[i]--;
+		}
+		gc.setForeground(PlatformUI.getWorkbench().getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
+		gc.drawPolyline(shape);
+	}
+
+	/**
+	 * Modify the shape to inset one pixel and then draw a lighter line.
+	 * 
+	 * @param shape
+	 * @param gc
+	 */
+	private void drawInsetSelectedShape(int[] shape, GC gc, int leftSize,
+			int rightSize) {
+
+		// The first and last four are straight lines so shift the y
+
+		if (parent.onBottom) {
+			shape[1] -= 1;
+			shape[3] -= 1;
+		} else {
+			shape[1] += 1;
+			shape[3] += 1;
+		}
+
+		// Shift the x's to the right
+		for (int i = 4; i < leftSize + 4; i += 2) {
+			shape[i]++;
+		}
+
+		int curveEnd = leftSize + 4 + rightSize;
+		// Shift the x's to the left
+		for (int i = 4 + leftSize; i < curveEnd; i += 2) {
+			shape[i]--;
+		}
+
+		// The first and last four are straight lines so shift the y
+
+		if (parent.onBottom) {
+			shape[curveEnd + 1] -= 1;
+			shape[curveEnd + 3] -= 1;
+		} else {
+			shape[curveEnd + 1] += 1;
+			shape[curveEnd + 3] += 1;
+		}
+
+		gc.setForeground(PlatformUI.getWorkbench().getDisplay().getSystemColor(
+				SWT.COLOR_LIST_BACKGROUND));
+		gc.drawPolyline(shape);
 	}
 
 	/**
