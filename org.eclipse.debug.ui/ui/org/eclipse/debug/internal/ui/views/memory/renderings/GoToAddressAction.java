@@ -26,8 +26,10 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
@@ -35,15 +37,15 @@ import org.eclipse.ui.PlatformUI;
 
 
 /**
- * Go To Address Action for "MemoryViewTab"
+ * Go To Address Action for table rendering
  * 
  * @since 3.0
  */
 public class GoToAddressAction extends Action
 {
-	private AbstractBaseTableRendering fRendering;
+	private IRepositionableMemoryRendering fRendering;
 	
-	public GoToAddressAction(AbstractBaseTableRendering rendering)
+	public GoToAddressAction(IRepositionableMemoryRendering rendering)
 	{		
 		super(DebugUIMessages.GoToAddressAction_title);
 		setToolTipText(DebugUIMessages.GoToAddressAction_title);
@@ -193,10 +195,10 @@ public class GoToAddressAction extends Action
 				{
 					IMemoryRendering rendering = renderingType.createRendering();
 					
-					if (rendering != null)
+					if (rendering != null && fRendering instanceof AbstractMemoryRendering)
 					{
-						rendering.init(fRendering.getMemoryRenderingContainer(), mbext);
-						fRendering.getMemoryRenderingContainer().addMemoryRendering(rendering);
+						rendering.init(((AbstractMemoryRendering)fRendering).getMemoryRenderingContainer(), mbext);
+						((AbstractMemoryRendering)fRendering).getMemoryRenderingContainer().addMemoryRendering(rendering);
 					}
 				}
 			}

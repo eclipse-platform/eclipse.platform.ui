@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.MemoryByte;
 import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
+import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
 
 /**
  * Internal base class to allow AbstractTableRendering and AbstractAsyncTableRendering
@@ -23,7 +24,7 @@ import org.eclipse.debug.ui.memory.AbstractMemoryRendering;
  *
  * @since 3.2
  */
-public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering {
+public abstract class AbstractBaseTableRendering extends AbstractMemoryRendering implements IRepositionableMemoryRendering{
 
 	public AbstractBaseTableRendering(String renderingId) {
 		super(renderingId);
