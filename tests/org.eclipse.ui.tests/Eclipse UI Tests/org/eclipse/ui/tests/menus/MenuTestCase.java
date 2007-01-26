@@ -22,6 +22,14 @@ import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
+ * Base class for tests concerning the 'org.eclipse.ui.menus'
+ * extension point. Gains access to the various services that
+ * are useful in writing the tests and defines the id of the 
+ * URI that contains a 'known' structure. If the XML describing
+ * the structure is changed then the static tables that the
+ * tests use to determine 'success' have to be verified and
+ * updated if necessary.
+ * 
  * @since 3.3
  * 
  */

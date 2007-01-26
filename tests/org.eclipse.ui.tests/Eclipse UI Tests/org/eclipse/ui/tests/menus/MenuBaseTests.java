@@ -18,6 +18,16 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 /**
+ * Performs a number of basic tests for the org.eclipse.ui.menus
+ * extension point:
+ * <ul>
+ * <li>MenuManagers can populate from declarative extensions</li>
+ * <li>'before' and 'after' insertion tags are correctly handled</li>
+ * <li>The Menu produced matches the expected structure based on the
+ * contributions</li>
+ * <li>The MenuManager's update mechanism works</li>
+ * </ul>
+ * 
  * @since 3.3
  * 
  */
