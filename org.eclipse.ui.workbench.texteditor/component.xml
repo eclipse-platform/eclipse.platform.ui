@@ -16,6 +16,8 @@
    <type name="FindReplaceAction" subclass="false"/>
    <type name="GotoAnnotationAction" subclass="false"/>
    <type name="GotoLineAction" subclass="false"/>
+   <type name="HyperlinkDetectorDescriptor" instantiate="false" subclass="false"/>
+   <type name="HyperlinkDetectorTargetDescriptor" instantiate="false" subclass="false"/>
    <type name="IncrementalFindAction" subclass="false"/>
    <type name="ITextEditorDropTargetListener" implement="false"/>
    <type name="RevertToSavedAction" subclass="false"/>

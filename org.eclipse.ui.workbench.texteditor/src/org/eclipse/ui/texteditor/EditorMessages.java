@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,11 @@ final class EditorMessages extends NLS {
 	public static String Editor_error_setinput_message;
 	public static String Editor_error_validateEdit_title;
 	public static String Editor_error_validateEdit_message;
+	public static String Editor_error_HyperlinkDetector_couldNotCreate_message;
+	public static String Editor_error_HyperlinkDetector_invalidElementName_message;
+	public static String Editor_error_HyperlinkDetector_invalidExtension_message;
+	public static String Editor_error_HyperlinkDetectorTarget_invalidElementName_message;
+	public static String Editor_error_HyperlinkDetectorTarget_invalidExtension_message;
 	public static String AbstractDocumentProvider_error_save_inuse;
 	public static String Editor_mark_status_message_mark_set;
 	public static String Editor_mark_status_message_mark_cleared;

@@ -24,7 +24,6 @@ import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetectorExtension;
 
-import org.eclipse.ui.internal.texteditor.HyperlinkDetectorDescriptor;
 
 
 /**
@@ -94,19 +93,27 @@ public final class HyperlinkDetectorRegistry {
 	}
 
 	
-	
 	private HyperlinkDetectorDescriptor[] fHyperlinkDetectorDescriptors;
 	
 	
 	/**
-	 * Returns all Java editor text hovers contributed to the workbench.
+	 * Returns all hyperlink detectors contributed to the workbench.
 	 * 
 	 * @return an array of hyperlink detector descriptors
 	 */
-	private synchronized HyperlinkDetectorDescriptor[] getHyperlinkDetectorDescriptors() {
+	public synchronized HyperlinkDetectorDescriptor[] getHyperlinkDetectorDescriptors() {
+		initHyperlinkDetectorDescriptors();
+		HyperlinkDetectorDescriptor[] result= new HyperlinkDetectorDescriptor[fHyperlinkDetectorDescriptors.length];
+		System.arraycopy(fHyperlinkDetectorDescriptors, 0, result, 0, fHyperlinkDetectorDescriptors.length);
+		return result;
+	}
+
+	/**
+	 * Initializes the hyperlink detector descriptors.
+	 */
+	private synchronized void initHyperlinkDetectorDescriptors() {
 		if (fHyperlinkDetectorDescriptors == null)
 			fHyperlinkDetectorDescriptors= HyperlinkDetectorDescriptor.getContributedHyperlinkDetectors();
-		return fHyperlinkDetectorDescriptors;
 	} 
 
 	/*
@@ -114,11 +121,12 @@ public final class HyperlinkDetectorRegistry {
 	 */
 	public IHyperlinkDetector[] createHyperlinkDetectors(String targetId, IAdaptable context) {
 		Assert.isLegal(targetId != null);
+		initHyperlinkDetectorDescriptors();
 		
 		List result= new ArrayList();
-		for (int i= 0; i < getHyperlinkDetectorDescriptors().length; i++) {
-			if (targetId.equals(getHyperlinkDetectorDescriptors()[i].getTargetId())) {
-				HyperlinkDetectorDelegate detector= new HyperlinkDetectorDelegate(getHyperlinkDetectorDescriptors()[i]);
+		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
+			if (targetId.equals(fHyperlinkDetectorDescriptors[i].getTargetId())) {
+				HyperlinkDetectorDelegate detector= new HyperlinkDetectorDelegate(fHyperlinkDetectorDescriptors[i]);
 				result.add(detector);
 				detector.setContext(context);
 			}

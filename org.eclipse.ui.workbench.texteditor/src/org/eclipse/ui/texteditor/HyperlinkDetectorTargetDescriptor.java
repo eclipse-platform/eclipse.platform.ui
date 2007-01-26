@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.texteditor;
+package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +21,19 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
+import org.eclipse.ui.internal.texteditor.NLSUtility;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 /**
  * Describes a contribution to the 'org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets'
  * extension point.
+ * <p>
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+ * </p>
  *
  * @since 3.3
  */
-public class HyperlinkDetectorTargetDescriptor {
+public final class HyperlinkDetectorTargetDescriptor {
 
 	private static final String HYPERLINK_DETECTOR_TARGETS_EXTENSION_POINT= "org.eclipse.ui.workbench.texteditor.hyperlinkDetectorTargets"; //$NON-NLS-1$
 	private static final String TARGET_ELEMENT= "target"; //$NON-NLS-1$

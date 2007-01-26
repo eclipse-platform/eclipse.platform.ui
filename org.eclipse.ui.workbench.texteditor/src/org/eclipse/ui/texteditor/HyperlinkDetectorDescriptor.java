@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.texteditor;
+package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,20 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 
+import org.eclipse.ui.internal.texteditor.NLSUtility;
+import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+
 
 /**
  * Describes a contribution to the 'org.eclipse.ui.workbench.texteditor.hyperlinkDetectors'
  * extension point.
+ * <p>
+ * <em>This API is provisional and may change any time before the 3.3 API freeze.</em>
+ * </p>
  *
  * @since 3.3
  */
-public class HyperlinkDetectorDescriptor {
+public final class HyperlinkDetectorDescriptor {
 
 	private static final String HYPERLINK_DETECTORS_EXTENSION_POINT= "org.eclipse.ui.workbench.texteditor.hyperlinkDetectors"; //$NON-NLS-1$
 	private static final String HYPERLINK_DETECTOR_ELEMENT= "hyperlinkDetector"; //$NON-NLS-1$
@@ -49,6 +55,7 @@ public class HyperlinkDetectorDescriptor {
 	private static final String ACTIVATE_PLUG_IN_ATTRIBUTE= "activate"; //$NON-NLS-1$
 
 	private IConfigurationElement fElement;
+	private HyperlinkDetectorTargetDescriptor fTarget;
 
 
 	/**
@@ -117,8 +124,10 @@ public class HyperlinkDetectorDescriptor {
 
 		String targetId= getTargetId();
 		for (int i= 0; i < targets.length; i++) {
-			if (targetId.equals(targets[i].getId()))
+			if (targetId.equals(targets[i].getId())) {
+				fTarget= targets[i];
 				return true;
+			}
 		}
 		return false;
 
@@ -142,6 +151,15 @@ public class HyperlinkDetectorDescriptor {
 	 */
 	public String getName() {
 		return fElement.getAttribute(NAME_ATTRIBUTE);
+	}
+	
+	/**
+	 * Returns the hyperlink detector's target descriptor.
+	 * 
+	 * @return the hyperlink detector's target descriptor 
+	 */
+	public HyperlinkDetectorTargetDescriptor getTarget() {
+		return fTarget;
 	}
 	
 	/**
