@@ -812,14 +812,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public static ILaunch buildAndLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
 		IProgressMonitor subMonitor = monitor;
-		String message = MessageFormat.format("{0}...", new String[]{configuration.getName()}); //$NON-NLS-1$
-		if (buildBeforeLaunch) {
-			monitor.beginTask(message, 200);
-			return configuration.launch(mode, monitor, true);	
-		} 
-		subMonitor = monitor;
-		subMonitor.beginTask(message, 100);
-		return configuration.launch(mode, subMonitor); 
+		try {
+			String message = MessageFormat.format("{0}...", new String[]{configuration.getName()}); //$NON-NLS-1$
+			if (buildBeforeLaunch) {
+				monitor.beginTask(message, 200);
+				return configuration.launch(mode, monitor, true);	
+			} 
+			subMonitor = monitor;
+			subMonitor.beginTask(message, 100);
+			return configuration.launch(mode, subMonitor);
+		}
+		finally {
+			monitor.done();
+		}
 	}
 	
 	/**

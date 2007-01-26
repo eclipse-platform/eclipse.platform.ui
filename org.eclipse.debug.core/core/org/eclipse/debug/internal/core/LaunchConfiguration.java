@@ -617,143 +617,152 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
      * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean, boolean)
      */
     public ILaunch launch(String mode, IProgressMonitor monitor, boolean build, boolean register) throws CoreException {
-    	if (monitor == null) {
-			monitor = new NullProgressMonitor();	
-			monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
-		}
-    	else {
-    		monitor.setTaskName(DebugCoreMessages.LaunchConfiguration_9);
-    	}
-    	IProgressMonitor subMonitor = null;
-		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-    	Set modes = getModes();
-    	modes.add(mode);
-    	ILaunchDelegate[] delegates = getType().getDelegates(modes);
-    	ILaunchConfigurationDelegate delegate = null;
-    	if (delegates.length == 1) {
-    		delegate = delegates[0].getDelegate();
-    	} else if (delegates.length == 0) {
-    		monitor.setCanceled(true);
-    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
-    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found, canceling launch and returning", null); //$NON-NLS-1$
-    		throw new CoreException(status);
-    	} else {
-    		ILaunchDelegate del = getPreferredDelegate(modes);
-    		if(del == null) {
-    			del = getType().getPreferredDelegate(modes);
-    		}
-    		if(del == null) {
-    			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-    			IStatus status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
-				if(status != null && status.isOK()) {
-					del = getPreferredDelegate(modes);
-					if(del == null) {
-						del = getType().getPreferredDelegate(modes);
-					}
-					if(del != null) {
-						delegate = del.getDelegate();
+    	boolean reportdone = false;
+    	try {
+	    	if (monitor == null) {
+				monitor = new NullProgressMonitor();	
+				monitor.beginTask(DebugCoreMessages.LaunchConfiguration_9, 100);
+				reportdone = true;
+			}
+	    	else {
+	    		monitor.setTaskName(DebugCoreMessages.LaunchConfiguration_9);
+	    	}
+	    	IProgressMonitor subMonitor = null;
+			// bug 28245 - force the delegate to load in case it is interested in launch notifications
+	    	Set modes = getModes();
+	    	modes.add(mode);
+	    	ILaunchDelegate[] delegates = getType().getDelegates(modes);
+	    	ILaunchConfigurationDelegate delegate = null;
+	    	if (delegates.length == 1) {
+	    		delegate = delegates[0].getDelegate();
+	    	} else if (delegates.length == 0) {
+	    		monitor.setCanceled(true);
+	    		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+	    		handler.handleStatus(delegateNotAvailable, new Object[] {this, mode});
+	    		IStatus status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "No launch delegate found, canceling launch and returning", null); //$NON-NLS-1$
+	    		throw new CoreException(status);
+	    	} else {
+	    		ILaunchDelegate del = getPreferredDelegate(modes);
+	    		if(del == null) {
+	    			del = getType().getPreferredDelegate(modes);
+	    		}
+	    		if(del == null) {
+	    			IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+	    			IStatus status = (IStatus) handler.handleStatus(duplicateDelegates, new Object[] {this, mode});
+					if(status != null && status.isOK()) {
+						del = getPreferredDelegate(modes);
+						if(del == null) {
+							del = getType().getPreferredDelegate(modes);
+						}
+						if(del != null) {
+							delegate = del.getDelegate();
+						}
+						else {
+							monitor.setCanceled(true);
+							status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
+				    		throw new CoreException(status);
+						}
 					}
 					else {
 						monitor.setCanceled(true);
 						status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
 			    		throw new CoreException(status);
 					}
-				}
-				else {
-					monitor.setCanceled(true);
-					status = new Status(IStatus.CANCEL, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Duplicate launcher detected, canceling launch and returning", null); //$NON-NLS-1$
-		    		throw new CoreException(status);
-				}
-    		}
-    		else {
-    			delegate = del.getDelegate();
-    		}
-    	}
-    	
-		ILaunchConfigurationDelegate2 delegate2 = null;
-		if (delegate instanceof ILaunchConfigurationDelegate2) {
-			delegate2 = (ILaunchConfigurationDelegate2) delegate;
-		}
-		// allow the delegate to provide a launch implementation
-		ILaunch launch = null;
-		if (delegate2 != null) {
-			launch = delegate2.getLaunch(this, mode);
-		}
-		if (launch == null) {
-			launch = new Launch(this, mode, null);
-		} else {
-			// ensure the launch mode is valid
-			if (!mode.equals(launch.getLaunchMode())) {
-				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
-						MessageFormat.format(DebugCoreMessages.LaunchConfiguration_13, new String[]{mode, launch.getLaunchMode()}), null); 
-				throw new CoreException(status);
+	    		}
+	    		else {
+	    			delegate = del.getDelegate();
+	    		}
+	    	}
+	    	
+			ILaunchConfigurationDelegate2 delegate2 = null;
+			if (delegate instanceof ILaunchConfigurationDelegate2) {
+				delegate2 = (ILaunchConfigurationDelegate2) delegate;
 			}
-		}
-		
-		boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
-		if(!captureOutput) {
-		    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
-		} else {
-		    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
-		}
-		
-		String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
-		launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);	
-	// perform initial pre-launch sanity checks
-		if (delegate2 != null) {
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_8);
-			if (!(delegate2.preLaunchCheck(this, mode, subMonitor))) {
-				// canceled
-				monitor.setCanceled(true);
-				return launch;
-			}
-		}
-	// preform pre-launch build
-		if (build) {
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_7);
+			// allow the delegate to provide a launch implementation
+			ILaunch launch = null;
 			if (delegate2 != null) {
-				build = delegate2.buildForLaunch(this, mode, subMonitor);
+				launch = delegate2.getLaunch(this, mode);
 			}
+			if (launch == null) {
+				launch = new Launch(this, mode, null);
+			} else {
+				// ensure the launch mode is valid
+				if (!mode.equals(launch.getLaunchMode())) {
+					IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
+							MessageFormat.format(DebugCoreMessages.LaunchConfiguration_13, new String[]{mode, launch.getLaunchMode()}), null); 
+					throw new CoreException(status);
+				}
+			}
+			
+			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
+			if(!captureOutput) {
+			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
+			} else {
+			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, null);
+			}
+			
+			String attribute = getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, (String)null);
+			launch.setAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING, attribute);	
+		// perform initial pre-launch sanity checks
+			if (delegate2 != null) {
+				subMonitor = new SubProgressMonitor(monitor, 100);
+				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_8);
+				if (!(delegate2.preLaunchCheck(this, mode, subMonitor))) {
+					// canceled
+					monitor.setCanceled(true);
+					return launch;
+				}
+			}
+		// preform pre-launch build
 			if (build) {
 				subMonitor = new SubProgressMonitor(monitor, 100);
-				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_6);
-				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);				
+				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_7);
+				if (delegate2 != null) {
+					build = delegate2.buildForLaunch(this, mode, subMonitor);
+				}
+				if (build) {
+					subMonitor = new SubProgressMonitor(monitor, 100);
+					subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_6);
+					ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);				
+				}
 			}
-		}
-	// final validation
-		if (delegate2 != null) {
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_5);
-			if (!(delegate2.finalLaunchCheck(this, mode, subMonitor))) {
-				// canceled
+		// final validation
+			if (delegate2 != null) {
+				subMonitor = new SubProgressMonitor(monitor, 100);
+				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_5);
+				if (!(delegate2.finalLaunchCheck(this, mode, subMonitor))) {
+					// canceled
+					monitor.setCanceled(true);
+					return launch;
+				}
+			}
+			if (register) {
+			    getLaunchManager().addLaunch(launch);
+			}
+		//initialize the source locator
+			try {
+				subMonitor = new SubProgressMonitor(monitor, 100);
+				subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_4);
+				initializeSourceLocator(launch);
+				delegate.launch(this, mode, launch, subMonitor);
+			} catch (CoreException e) {
+				// if there was an exception, and the launch is empty, remove it
+				if (!launch.hasChildren()) {
+					getLaunchManager().removeLaunch(launch);
+				}
 				monitor.setCanceled(true);
-				return launch;
+				throw e;
 			}
-		}
-		if (register) {
-		    getLaunchManager().addLaunch(launch);
-		}
-	//initialize the source locator
-		try {
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			subMonitor.setTaskName(DebugCoreMessages.LaunchConfiguration_4);
-			initializeSourceLocator(launch);
-			delegate.launch(this, mode, launch, subMonitor);
-		} catch (CoreException e) {
-			// if there was an exception, and the launch is empty, remove it
-			if (!launch.hasChildren()) {
+			if (monitor.isCanceled()) {
 				getLaunchManager().removeLaunch(launch);
 			}
-			throw e;
-		}
-		if (monitor.isCanceled()) {
-			getLaunchManager().removeLaunch(launch);
-		}
-		monitor.done();
-		return launch;
+			return launch;
+    	}
+    	finally {
+    		if(reportdone) {
+    			monitor.done();
+    		}
+    	}
     }
 	
     /* (non-Javadoc)
