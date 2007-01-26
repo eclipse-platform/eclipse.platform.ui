@@ -143,25 +143,20 @@ public interface IMessageManager {
 	void update();
 
 	/**
-	 * By default, message manager test the preceeding control and use it for a
-	 * message prefix if this control is one of the few 'label-like' widgets
-	 * (e.g. Label, CLabel etc.). This is not the precise science and in some
-	 * cases it may fail. This method can be used to turn the prefixes off.
+	 * Sets the alternative message prefix provider. The default prefix provider
+	 * is set by the manager.
 	 * 
-	 * @param value
-	 *            <code>true</code> to add control message prefixes,
-	 *            <code>false</code> otherwise.
+	 * @param provider
+	 *            the new prefix provider or <code>null</code> to turn the
+	 *            prefix generation off.
 	 */
-
-	void setComputedPrefixAdded(boolean value);
+	void setMessagePrefixProvider(IMessagePrefixProvider provider);
 
 	/**
-	 * Tests if control message prefixes are automatically prepended.
-	 * 
-	 * @return <code>true</code> if computed prefises are added,
-	 *         <code>false</code> otherwise.
+	 * @return the current prefix provider or <code>null</code> if prefixes
+	 *         are not generated.
 	 */
-	boolean isComputedPrefixAdded();
+	IMessagePrefixProvider getMessagePrefixProvider();
 
 	/**
 	 * Message manager uses SWT.LEFT|SWT.BOTTOM for the default decoration

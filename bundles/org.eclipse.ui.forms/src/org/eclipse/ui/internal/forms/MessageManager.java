@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.IMessage;
 import org.eclipse.ui.forms.IMessageManager;
+import org.eclipse.ui.forms.IMessagePrefixProvider;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
@@ -37,11 +38,12 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
  */
 
 public class MessageManager implements IMessageManager {
+	private static final DefaultPrefixProvider DEFAULT_PREFIX_PROVIDER = new DefaultPrefixProvider();
 	private ArrayList messages = new ArrayList();
 	private Hashtable decorators = new Hashtable();
 	private ScrolledForm scrolledForm;
-	private boolean computedPrefixAdded = true;
-	private int decorationPosition = SWT.LEFT|SWT.BOTTOM;
+	private IMessagePrefixProvider prefixProvider = DEFAULT_PREFIX_PROVIDER;
+	private int decorationPosition = SWT.LEFT | SWT.BOTTOM;
 	private static FieldDecoration standardError = FieldDecorationRegistry
 			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 	private static FieldDecoration standardWarning = FieldDecorationRegistry
@@ -130,42 +132,9 @@ public class MessageManager implements IMessageManager {
 		}
 	}
 
-	class ControlDecorator {
-		private ControlDecoration decoration;
-		private ArrayList controlMessages = new ArrayList();
-		private String prefix;
+	static class DefaultPrefixProvider implements IMessagePrefixProvider {
 
-		ControlDecorator(Control control) {
-			this.decoration = new ControlDecoration(control, decorationPosition);
-		}
-
-		public boolean isDisposed() {
-			return decoration.getControl() == null;
-		}
-
-		void updatePrefix() {
-			prefix = null;
-		}
-		
-		void updatePosition() {
-			Control control = decoration.getControl();
-			decoration.dispose();
-			this.decoration = new ControlDecoration(control, decorationPosition);
-			update();
-		}
-
-		String getPrefix() {
-			if (prefix == null)
-				createPrefix();
-			return prefix;
-		}
-
-		private void createPrefix() {
-			if (!isComputedPrefixAdded()) {
-				prefix = ""; //$NON-NLS-1$
-				return;
-			}
-			Control c = decoration.getControl();
+		public String getPrefix(Control c) {
 			Composite parent = c.getParent();
 			Control[] siblings = parent.getChildren();
 			for (int i = 0; i < siblings.length; i++) {
@@ -184,17 +153,57 @@ public class MessageManager implements IMessageManager {
 						}
 						if (ltext != null) {
 							if (!ltext.endsWith(":")) //$NON-NLS-1$
-								prefix = ltext + ": "; //$NON-NLS-1$
+								return ltext + ": "; //$NON-NLS-1$
 							else
-								prefix = ltext + " "; //$NON-NLS-1$
-							return;
+								return ltext + " "; //$NON-NLS-1$
 						}
 					}
 					break;
 				}
 			}
-			// make a prefix anyway
-			prefix = ""; //$NON-NLS-1$
+			return null;
+		}
+	}
+
+	class ControlDecorator {
+		private ControlDecoration decoration;
+		private ArrayList controlMessages = new ArrayList();
+		private String prefix;
+
+		ControlDecorator(Control control) {
+			this.decoration = new ControlDecoration(control, decorationPosition);
+		}
+
+		public boolean isDisposed() {
+			return decoration.getControl() == null;
+		}
+
+		void updatePrefix() {
+			prefix = null;
+		}
+
+		void updatePosition() {
+			Control control = decoration.getControl();
+			decoration.dispose();
+			this.decoration = new ControlDecoration(control, decorationPosition);
+			update();
+		}
+
+		String getPrefix() {
+			if (prefix == null)
+				createPrefix();
+			return prefix;
+		}
+
+		private void createPrefix() {
+			if (prefixProvider == null) {
+				prefix = ""; //$NON-NLS-1$
+				return;
+			}
+			prefix = prefixProvider.getPrefix(decoration.getControl());
+			if (prefix == null)
+				// make a prefix anyway
+				prefix = ""; //$NON-NLS-1$
 		}
 
 		void addAll(ArrayList target) {
@@ -226,11 +235,14 @@ public class MessageManager implements IMessageManager {
 		}
 
 		private void update() {
-			if (controlMessages.isEmpty())
+			if (controlMessages.isEmpty()) {
+				decoration.setDescriptionText(null);
 				decoration.hide();
+			}
 			else {
-				int type = getMaxType();
-				String description = createDetails(controlMessages, true);
+				ArrayList peers = createPeers(controlMessages);
+				int type = ((IMessage)peers.get(0)).getMessageType();
+				String description = createDetails(createPeers(peers), true);
 				if (type == IMessageProvider.ERROR)
 					decoration.setImage(standardError.getImage());
 				else if (type == IMessageProvider.WARNING)
@@ -238,14 +250,6 @@ public class MessageManager implements IMessageManager {
 				decoration.setDescriptionText(description);
 				decoration.show();
 			}
-		}
-
-		private int getMaxType() {
-			int type = 0;
-			for (int i = 0; i < controlMessages.size(); i++)
-				type = Math.max(type, ((IMessage) controlMessages.get(i))
-						.getMessageType());
-			return type;
 		}
 	}
 
@@ -500,12 +504,12 @@ public class MessageManager implements IMessageManager {
 		}
 	}
 
-	public boolean isComputedPrefixAdded() {
-		return computedPrefixAdded;
+	public IMessagePrefixProvider getMessagePrefixProvider() {
+		return prefixProvider;
 	}
 
-	public void setComputedPrefixAdded(boolean value) {
-		this.computedPrefixAdded = value;
+	public void setMessagePrefixProvider(IMessagePrefixProvider provider) {
+		this.prefixProvider = provider;
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();
 			dec.updatePrefix();
