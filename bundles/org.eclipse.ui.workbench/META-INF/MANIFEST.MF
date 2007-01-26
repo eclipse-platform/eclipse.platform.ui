@@ -82,7 +82,9 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.help;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.jface;bundle-version="[3.3.0,4.0.0)",
  org.eclipse.swt;bundle-version="[3.3.0,4.0.0)",
- org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)"
+ org.eclipse.core.expressions;bundle-version="[3.2.0,4.0.0)",
+ org.eclipse.jface.databinding;bundle-version="[1.1.0,2.0.0)",
+ org.eclipse.core.databinding;bundle-version="[1.0.0,2.0.0)"
 Eclipse-LazyStart: true
 Import-Package: com.ibm.icu.text,
  javax.xml.parsers,

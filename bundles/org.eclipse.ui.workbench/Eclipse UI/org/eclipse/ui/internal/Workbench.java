@@ -32,6 +32,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -60,6 +61,7 @@ import org.eclipse.jface.action.ExternalActionManager.IActiveChecker;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.BindingManagerEvent;
 import org.eclipse.jface.bindings.IBindingManagerListener;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -441,13 +443,18 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 *         {@link IWorkbench#restart IWorkbench.restart}; other values
 	 *         reserved for future use
 	 */
-	public static final int createAndRunWorkbench(Display display,
-			WorkbenchAdvisor advisor) {
-		// create the workbench instance
-		Workbench workbench = new Workbench(display, advisor);
-		// run the workbench event loop
-		int returnCode = workbench.runUI();
-		return returnCode;
+	public static final int createAndRunWorkbench(final Display display,
+			final WorkbenchAdvisor advisor) {
+		final int[] returnCode = new int[1];
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				// create the workbench instance
+				Workbench workbench = new Workbench(display, advisor);
+				// run the workbench event loop
+				returnCode[0] = workbench.runUI();
+			}
+		});
+		return returnCode[0];
 	}
 
 	/**
