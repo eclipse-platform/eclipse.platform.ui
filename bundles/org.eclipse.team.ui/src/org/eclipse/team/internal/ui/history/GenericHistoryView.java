@@ -92,19 +92,23 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		}
 	}
 	
+	/*
+	 * The navigation history for this view.
+	 * The history adds the MRU to the end so basic navigation goes backwards.
+	 */
 	class NavigationHistory {
 		List history = new ArrayList();
 		int position;
 		private boolean navigating;
-		public boolean hasNextEntry() {
-			return position < history.size() - 1;
+		public int size() {
+			return history.size();
 		}
-		public boolean hasPreviousEntry() {
-			return (position > 0 && history.size() > 1);
-		}
-		public void gotoNextEntry() {
-			if (hasNextEntry()) {
-				position++;
+		public void gotoPreviousEntry() {
+			if (position > 0) {
+				position--;
+				gotoEntry();
+			} else {
+				position = history.size() - 1;
 				gotoEntry();
 			}
 		}
@@ -120,12 +124,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		private NavigationHistoryEntry getCurrentEntry() {
 			return (NavigationHistoryEntry)history.get(position);
 		}
-		public void gotoPreviousEntry() {
-			if (hasPreviousEntry()) {
-				position--;
-				gotoEntry();
-			}
-		}
 		public void addEntry(Object object, String name, IHistoryPageSource source) {
 			if (!navigating) {
 				NavigationHistoryEntry navigationHistoryEntry = new NavigationHistoryEntry(object, name, source);
@@ -138,23 +136,10 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				}
 				position = history.size() - 1;
 			}
-			navigateBackwardAction.update();
-			navigateForwardAction.update();
+			navigateAction.update();
 		}
-		public NavigationHistoryEntry[] getNextEntries(boolean forward) {
-			List entries = new ArrayList();
-			if (forward) {
-				for (int i = position + 1; i < history.size(); i++) {
-					NavigationHistoryEntry entry = getEntry(i);
-					entries.add(entry);
-				}
-			} else {
-				for (int i = position - 1; i >= 0; i--) {
-					NavigationHistoryEntry entry = getEntry(i);
-					entries.add(entry);
-				}
-			}
-			return (NavigationHistoryEntry[]) entries.toArray(new NavigationHistoryEntry[entries.size()]);
+		public NavigationHistoryEntry[] getEntries() {
+			return (NavigationHistoryEntry[]) history.toArray(new NavigationHistoryEntry[history.size()]);
 		}
 		private NavigationHistoryEntry getEntry(int i) {
 			return (NavigationHistoryEntry)history.get(i);
@@ -163,11 +148,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			position = history.indexOf(navigationHistoryEntry);
 			gotoEntry();
 		}
-		public NavigationHistoryEntry getNextEntry() {
-			return getEntry(position + 1);
-		}
 		public NavigationHistoryEntry getPreviousEntry() {
-			return getEntry(position - 1);
+			int next = position - 1;
+			if (next < 0)
+				next = size() - 1;
+			return getEntry(next);
 		}
 	}
 	
@@ -187,7 +172,6 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 			}
 			return false;
 		}
-		
 		public int hashCode() {
 			return object.hashCode();
 		}
@@ -207,15 +191,19 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 				menuManager = new MenuManager();
 				fMenu = menuManager.createContextMenu(parent);
 				IAction[] actions = getDropDownActions();
-				for (int i = 0; i < actions.length; i++) {
+				for (int i = actions.length - 1; i >= 0 ; i--) {
 					IAction action = actions[i];
 					menuManager.add(action);
 				}
-				menuManager.update(true);
+				updateMenuState();
 			} else {
 				fMenu = menuManager.getMenu();
 			}
 			return fMenu;
+		}
+		protected void updateMenuState() {
+			if (menuManager != null)
+				menuManager.update(true);
 		}
 
 		protected abstract IAction[] getDropDownActions();
@@ -233,56 +221,64 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	}
 	
 	class NavigationHistoryAction extends Action {
-		private boolean forward;
 		private MenuCreator menuCreator;
+		private IAction[] actions;
 
-		public NavigationHistoryAction(boolean forward) {
-			this.forward = forward;
+		public NavigationHistoryAction() {
 			menuCreator = new MenuCreator() {
 				protected IAction[] getDropDownActions() {
-					NavigationHistoryEntry[] entries = getDropDownEntries();
-					List actions = new ArrayList();
-					for (int i = 0; i < entries.length; i++) {
-						NavigationHistoryEntry navigationHistoryEntry = entries[i];
-						actions.add(new NavigationHistoryEntryAction(navigationHistoryEntry));
-					}
-					return (IAction[]) actions.toArray(new IAction[actions.size()]);
+					return getActions();
 				}
 			};
 			setMenuCreator(menuCreator);
 			update();
 		}
+		private IAction[] createActions() {
+			NavigationHistoryEntry[] entries = getDropDownEntries();
+			List actions = new ArrayList();
+			for (int i = 0; i < entries.length; i++) {
+				NavigationHistoryEntry navigationHistoryEntry = entries[i];
+				actions.add(new NavigationHistoryEntryAction(navigationHistoryEntry));
+			}
+			return (IAction[]) actions.toArray(new IAction[actions.size()]);
+		}
 		protected NavigationHistoryEntry[] getDropDownEntries() {
-			return navigationHistory.getNextEntries(forward);
+			return navigationHistory.getEntries();
 		}
 		public void run() {
-			if (forward) {
-				navigationHistory.gotoNextEntry();
-			} else {
-				navigationHistory.gotoPreviousEntry();
-			}
+			navigationHistory.gotoPreviousEntry();
+			updateCheckState();
 		}
 		public void update() {
-			if (forward) {
-				setEnabled(navigationHistory.hasNextEntry());
-				if (isEnabled()) {
-					setToolTipText(NLS.bind(TeamUIMessages.GenericHistoryView_1, navigationHistory.getNextEntry().name));
-				} else {
-					setToolTipText(TeamUIMessages.GenericHistoryView_2);
-				}
+			setEnabled(navigationHistory.size() > 1);
+			if (isEnabled()) {
+				setToolTipText(NLS.bind(TeamUIMessages.GenericHistoryView_1, navigationHistory.getPreviousEntry().name));
 			} else {
-				setEnabled(navigationHistory.hasPreviousEntry());
-				if (isEnabled()) {
-					setToolTipText(NLS.bind(TeamUIMessages.GenericHistoryView_3, navigationHistory.getPreviousEntry().name));
-				} else {
-					setToolTipText(TeamUIMessages.GenericHistoryView_4);
-				}
+				setToolTipText(TeamUIMessages.GenericHistoryView_2);
 			}
+			actions = null;
 			menuCreator.rebuildMenu();
+			updateCheckState();
 		}
 		
+		private void updateCheckState() {
+			IAction[] actions = getActions();
+			for (int i = 0; i < actions.length; i++) {
+				IAction action = actions[i];
+				if (action instanceof NavigationHistoryEntryAction) {
+					NavigationHistoryEntryAction a = (NavigationHistoryEntryAction) action;
+					a.update();
+				}
+			}
+			menuCreator.updateMenuState();
+		}
 		public void dispose() {
 			menuCreator.dispose();
+		}
+		private IAction[] getActions() {
+			if (actions == null)
+				actions = createActions();
+			return actions;
 		}
 	}
 	
@@ -297,6 +293,11 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		
 		public void run() {
 			navigationHistory.gotoEntry(navigationHistoryEntry);
+			navigateAction.updateCheckState();
+		}
+		
+		public void update() {
+			setChecked(navigationHistory.getCurrentEntry() == navigationHistoryEntry);
 		}
 		
 	}
@@ -312,7 +313,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 	private Action refreshAction;
 	private Action linkWithEditorAction;
 	private Action pinAction;
-	private NavigationHistoryAction navigateForwardAction, navigateBackwardAction;
+	private NavigationHistoryAction navigateAction;
 
 	/**
 	 * The page container for the default page.
@@ -517,10 +518,8 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		linkWithEditorAction.setChecked(isLinkingEnabled());
 		linkWithEditorAction.setToolTipText(TeamUIMessages.GenericHistoryView_LinkWithTooltip);
 		
-		navigateForwardAction = new NavigationHistoryAction(true);
-		navigateBackwardAction = new NavigationHistoryAction(false);
-		Utils.initAction(navigateForwardAction, "action.navigateForwards."); //$NON-NLS-1$
-		Utils.initAction(navigateBackwardAction, "action.navigateBackwards."); //$NON-NLS-1$
+		navigateAction = new NavigationHistoryAction();
+		Utils.initAction(navigateAction, "action.previousHistory."); //$NON-NLS-1$
 		
 		//Create the local tool bar
 		IToolBarManager tbm = actionBars.getToolBarManager();
@@ -529,8 +528,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		tbm.appendToGroup(HISTORY_VIEW_GROUP, linkWithEditorAction);  //$NON-NLS-1$
 		tbm.appendToGroup(HISTORY_VIEW_GROUP, pinAction);  //$NON-NLS-1$
 		tbm.add(new Separator(NAVIGATION_GROUP)); //$NON-NLS-1$
-		tbm.appendToGroup(NAVIGATION_GROUP, navigateBackwardAction);
-		tbm.appendToGroup(NAVIGATION_GROUP, navigateForwardAction);
+		tbm.appendToGroup(NAVIGATION_GROUP, navigateAction);
 		tbm.update(false);
 	}
 
@@ -890,8 +888,7 @@ public class GenericHistoryView extends ViewPart implements IHistoryView, IPrope
 		getSite().getPage().removePartListener(partListener2);
 		//Remove the selection listener
 		getSite().getPage().removeSelectionListener(selectionListener);
-		navigateBackwardAction.dispose();
-		navigateForwardAction.dispose();
+		navigateAction.dispose();
 	}
 
 	public IHistoryPage showHistoryFor(Object object) {

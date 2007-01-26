@@ -89,10 +89,6 @@ public class TeamUIMessages extends NLS {
 
 	public static String GenericHistoryView_2;
 
-	public static String GenericHistoryView_3;
-
-	public static String GenericHistoryView_4;
-
 	public static String HistoryPageCompareEditorInput_0;
 
 	public static String ImportProjectSetMainPage_AddToWorkingSet;
