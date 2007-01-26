@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.WorkbenchEditorsAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbookEditorsAction;
-import org.eclipse.ui.internal.about.AboutAction;
+import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.internal.actions.DynamicHelpAction;
 import org.eclipse.ui.internal.actions.HelpContentsAction;
 import org.eclipse.ui.internal.actions.HelpSearchAction;
@@ -90,42 +90,62 @@ public abstract class ActionFactory {
          */
         public void dispose();
     }
+    
+    private static class WorkbenchCommandAction extends CommandAction implements
+			IWorkbenchAction {
+		/**
+		 * @param commandIdIn
+		 * @param window
+		 */
+		public WorkbenchCommandAction(String commandIdIn,
+				IWorkbenchWindow window) {
+			super(commandIdIn, window);
+		}
+	}
 
     /**
      * Workbench action: Displays the About dialog. This action maintains its
      * enablement state.
      */
     public static final ActionFactory ABOUT = new ActionFactory("about") { //$NON-NLS-1$
-       
-        /* (non-Javadoc)
-         * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
-         */
-        public IWorkbenchAction create(IWorkbenchWindow window) {
-            if (window == null) {
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
+		 */
+		public IWorkbenchAction create(IWorkbenchWindow window) {
+			if (window == null) {
 				throw new IllegalArgumentException();
 			}
-            IWorkbenchAction action = new AboutAction(window);
-            action.setId(getId());
 
-            IProduct product = Platform.getProduct();
-            String productName = null;
-            if (product != null) {
+			WorkbenchCommandAction action = new WorkbenchCommandAction(
+					"org.eclipse.ui.help.aboutAction", window); //$NON-NLS-1$
+
+			action.setId(getId());
+			IProduct product = Platform.getProduct();
+			String productName = null;
+			if (product != null) {
 				productName = product.getName();
 			}
-            if (productName == null) {
+			if (productName == null) {
 				productName = ""; //$NON-NLS-1$
 			}
 
-            action.setText(NLS.bind(WorkbenchMessages.AboutAction_text, productName )); 
-            action.setToolTipText(NLS.bind(WorkbenchMessages.AboutAction_toolTip,  productName ));
-            return action;
-        }
-    };
+			action.setText(NLS.bind(WorkbenchMessages.AboutAction_text,
+					productName));
+			action.setToolTipText(NLS.bind(
+					WorkbenchMessages.AboutAction_toolTip, productName));
+			window.getWorkbench().getHelpSystem().setHelp(action,
+					IWorkbenchHelpContextIds.ABOUT_ACTION);
+			return action;
+		}
+	};
 
     /**
-     * Workbench action (id "activateEditor"): Activate the most recently used
-     * editor. This action maintains its enablement state.
-     */
+	 * Workbench action (id "activateEditor"): Activate the most recently used
+	 * editor. This action maintains its enablement state.
+	 */
     public static final ActionFactory ACTIVATE_EDITOR = new ActionFactory(
             "activateEditor") {//$NON-NLS-1$
        

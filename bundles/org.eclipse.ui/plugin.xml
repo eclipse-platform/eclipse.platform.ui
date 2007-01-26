@@ -575,10 +575,11 @@
             categoryId="org.eclipse.ui.category.help"
             id="org.eclipse.ui.help.tipsAndTricksAction" />
       <command
-            name="%command.aboutAction.name"
-            description="%command.aboutAction.description"
             categoryId="org.eclipse.ui.category.help"
-            id="org.eclipse.ui.help.aboutAction" />
+            defaultHandler="org.eclipse.ui.internal.about.AboutHandler"
+            description="%command.aboutAction.description"
+            id="org.eclipse.ui.help.aboutAction"
+            name="%command.aboutAction.name"/>
       <command
             categoryId="org.eclipse.ui.category.file"
             defaultHandler="org.eclipse.ui.internal.handlers.WizardHandler$New"
