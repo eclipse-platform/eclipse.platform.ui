@@ -41,6 +41,7 @@ public class MessageManager implements IMessageManager {
 	private Hashtable decorators = new Hashtable();
 	private ScrolledForm scrolledForm;
 	private boolean computedPrefixAdded = true;
+	private int decorationPosition = SWT.LEFT|SWT.BOTTOM;
 	private static FieldDecoration standardError = FieldDecorationRegistry
 			.getDefault().getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
 	private static FieldDecoration standardWarning = FieldDecorationRegistry
@@ -135,8 +136,7 @@ public class MessageManager implements IMessageManager {
 		private String prefix;
 
 		ControlDecorator(Control control) {
-			this.decoration = new ControlDecoration(control, SWT.LEFT
-					| SWT.BOTTOM);
+			this.decoration = new ControlDecoration(control, decorationPosition);
 		}
 
 		public boolean isDisposed() {
@@ -145,6 +145,13 @@ public class MessageManager implements IMessageManager {
 
 		void updatePrefix() {
 			prefix = null;
+		}
+		
+		void updatePosition() {
+			Control control = decoration.getControl();
+			decoration.dispose();
+			this.decoration = new ControlDecoration(control, decorationPosition);
+			update();
 		}
 
 		String getPrefix() {
@@ -176,7 +183,10 @@ public class MessageManager implements IMessageManager {
 							ltext = ((CLabel) label).getText();
 						}
 						if (ltext != null) {
-							prefix = ltext + ": "; //$NON-NLS-1$
+							if (!ltext.endsWith(":")) //$NON-NLS-1$
+								prefix = ltext + ": "; //$NON-NLS-1$
+							else
+								prefix = ltext;
 							return;
 						}
 					}
@@ -499,6 +509,18 @@ public class MessageManager implements IMessageManager {
 		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
 			ControlDecorator dec = (ControlDecorator) iter.next();
 			dec.updatePrefix();
+		}
+	}
+
+	public int getDecorationPosition() {
+		return decorationPosition;
+	}
+
+	public void setDecorationPosition(int position) {
+		this.decorationPosition = position;
+		for (Iterator iter = decorators.values().iterator(); iter.hasNext();) {
+			ControlDecorator dec = (ControlDecorator) iter.next();
+			dec.updatePosition();
 		}
 	}
 }

@@ -12,6 +12,7 @@
 package org.eclipse.ui.forms;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.widgets.Form;
 
@@ -142,10 +143,10 @@ public interface IMessageManager {
 	void update();
 
 	/**
-	 * By default, message manager will check the immediate control before the
-	 * message control and compute an automatic prefix for control messages.
-	 * This is not a precise science and in some cases it may fail. This method
-	 * can be used to turn the prefixes off.
+	 * By default, message manager test the preceeding control and use it for a
+	 * message prefix if this control is one of the few 'label-like' widgets
+	 * (e.g. Label, CLabel etc.). This is not the precise science and in some
+	 * cases it may fail. This method can be used to turn the prefixes off.
 	 * 
 	 * @param value
 	 *            <code>true</code> to add control message prefixes,
@@ -161,6 +162,24 @@ public interface IMessageManager {
 	 *         <code>false</code> otherwise.
 	 */
 	boolean isComputedPrefixAdded();
+
+	/**
+	 * Message manager uses SWT.LEFT|SWT.BOTTOM for the default decoration
+	 * position. Use this method to change it.
+	 * 
+	 * @param position
+	 *            the decoration position
+	 * @see ControlDecoration
+	 */
+	void setDecorationPosition(int position);
+
+	/**
+	 * Returns the currently used decoration position for all control messages.
+	 * 
+	 * @return the current decoration position
+	 */
+
+	int getDecorationPosition();
 
 	/**
 	 * When message manager is used in context of a form, and there are
