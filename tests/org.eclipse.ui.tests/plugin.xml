@@ -3080,6 +3080,14 @@
       </menuContribution>
       
       <menuContribution
+            locationURI="menu:MenuTest.toolbar.DropItem">
+            <item
+                  commandId="org.eclipse.ui.tests.menus.enabledWorld"
+                  label="Dropdown Item">
+            </item>
+      </menuContribution>
+      
+      <menuContribution
             locationURI="toolbar:org.eclipse.ui.tests.api.MenuTestHarness">
          <item
                commandId="org.eclipse.ui.tests.menus.toggleContext"
@@ -3104,15 +3112,14 @@
                class="org.eclipse.ui.tests.api.workbenchpart.TextWidget"
                id="MenuTest.popup.BasicWidgetItem">
          </widget>
-         <menu
-               icon="icons/binary_co.gif"
-               id="MenuTest.popup.BasicMenuItem"
-               label="Basic Menu">
-            <item
-                  commandId="org.eclipse.ui.tests.menus.enabledWorld"
-                  label="Sub Item">
-            </item>
-         </menu>
+         <item
+               commandId="org.eclipse.ui.tests.menus.enabledWorld"
+               icon="icons/anything.gif"
+               id="MenuTest.toolbar.DropItem"
+               label="Toolbar Dropdown"
+               style="pulldown"
+               mnemonic="D">
+         </item>
          <separator
                name="MenuTest.Advanced"
                visible="true">

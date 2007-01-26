@@ -24,10 +24,17 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -75,12 +82,19 @@ public final class CommandContributionItem extends ContributionItem implements
 	 * A radio-button style menu item. 
 	 */
 	public static final int STYLE_RADIO = SWT.RADIO;
+	
+	/**
+	 * A ToolBar pulldown item. 
+	 */
+	public static final int STYLE_PULLDOWN = SWT.DROP_DOWN;
 
 	private LocalResourceManager localResourceManager;
 
 	private Listener menuItemListener;
 
 	private Widget widget;
+
+	private IMenuService menuService;
 
 	private ICommandService commandService;
 
@@ -148,8 +162,10 @@ public final class CommandContributionItem extends ContributionItem implements
 		this.mnemonic = mnemonic;
 		this.tooltip = tooltip;
 		this.style = style;
+		menuService = (IMenuService) PlatformUI.getWorkbench()
+		.getService(IMenuService.class);
 		commandService = (ICommandService) PlatformUI.getWorkbench()
-				.getService(ICommandService.class);
+		.getService(ICommandService.class);
 		handlerService = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
 		createCommand(commandId, parameters);
@@ -230,11 +246,16 @@ public final class CommandContributionItem extends ContributionItem implements
 			return;
 		}
 
+		// Menus don't support the pulldown style
+		int tmpStyle = style;
+		if (tmpStyle == STYLE_PULLDOWN)
+			tmpStyle = STYLE_PUSH;
+		
 		MenuItem item = null;
 		if (index >= 0) {
-			item = new MenuItem(parent, style, index);
+			item = new MenuItem(parent, tmpStyle, index);
 		} else {
-			item = new MenuItem(parent, style);
+			item = new MenuItem(parent, tmpStyle);
 		}
 		item.setData(this);
 
@@ -411,6 +432,10 @@ public final class CommandContributionItem extends ContributionItem implements
 	}
 
 	private void handleWidgetSelection(Event event) {
+		// Special check for ToolBar dropdowns...
+		if (openDropDownMenu(event))
+			return;
+		
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
@@ -426,6 +451,49 @@ public final class CommandContributionItem extends ContributionItem implements
 			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
 					+ getId(), e);
 		}
+	}
+
+	/**
+	 * Determines if the selection was on the dropdown affordance
+	 * and, if so, opens the drop down menu (populated using the
+	 * same id as this item...
+	 * @param event The <code>SWT.Selection</code> event to be tested
+	 * 
+	 * @return <code>true</code> iff a drop down menu was opened
+	 */
+	private boolean openDropDownMenu(Event event) {
+		Widget item = event.widget;
+		if (item != null) {
+			int style = item.getStyle();
+			if ((style & SWT.DROP_DOWN) != 0) {
+				if (event.detail == 4) { // on drop-down button
+					ToolItem ti = (ToolItem) item;
+
+					final MenuManager menuManager = new MenuManager();
+					Menu menu = menuManager.createContextMenu(ti.getParent());
+					menuManager.addMenuListener(new IMenuListener() {
+						public void menuAboutToShow(IMenuManager manager) {
+							menuService.populateContributionManager(menuManager, "menu:" + getId()); //$NON-NLS-1$
+						}
+					});
+					menu.addDisposeListener(new DisposeListener() {
+						public void widgetDisposed(DisposeEvent e) {
+							System.out.println("dispose menu"); //$NON-NLS-1$
+						}
+					});
+					// position the menu below the drop down item
+					Rectangle b = ti.getBounds();
+					Point p = ti.getParent().toDisplay(
+							new Point(b.x, b.y + b.height));
+					menu.setLocation(p.x, p.y); // waiting for SWT
+												// 0.42
+					menu.setVisible(true);
+					return true; // we don't fire the action
+				}
+			}
+		}
+		
+		return false;
 	}
 
 	/*

@@ -182,15 +182,13 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 	 */
 	private IContributionItem createMenuAdditionContribution(
 			final IConfigurationElement menuAddition) {
-		// Is this for a menu or a ToolBar ?
-		if (!getLocation().startsWith("toolbar")) //$NON-NLS-1$
-			return new MenuManager(getLabel(menuAddition), getId(menuAddition));
-
-		// Contribute to a Toolbar...
-		return new ToolBarDropDownContributionItem(getId(menuAddition),
-				getCommandId(menuAddition), getParameters(menuAddition),
-				getIconDescriptor(menuAddition), getLabel(menuAddition),
-				getTooltip(menuAddition));
+		// Is this for a menu or a ToolBar ? We can't create
+		// a menu directly under a Toolbar; we have to add an
+		// item of style 'pulldown'
+		if (getLocation().startsWith("toolbar")) //$NON-NLS-1$
+			return null;
+		
+		return new MenuManager(getLabel(menuAddition), getId(menuAddition));
 	}
 
 	/**
@@ -272,8 +270,6 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 				getIconDescriptor(itemAddition), null, null,
 				getLabel(itemAddition), null, getTooltip(itemAddition),
 				getStyle(itemAddition));
-		// return new CommandContributionItem(getId(itemAddition),
-		// itemAddition);
 	}
 
 	/*
@@ -344,6 +340,9 @@ public class MenuAdditionCacheEntry extends AbstractContributionFactory {
 		}
 		if (IWorkbenchRegistryConstants.STYLE_RADIO.equals(style)) {
 			return CommandContributionItem.STYLE_RADIO;
+		}
+		if (IWorkbenchRegistryConstants.STYLE_PULLDOWN.equals(style)) {
+			return CommandContributionItem.STYLE_PULLDOWN;
 		}
 		return CommandContributionItem.STYLE_PUSH;
 	}

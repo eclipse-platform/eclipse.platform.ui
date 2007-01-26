@@ -680,6 +680,10 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
         &lt;td valign=&quot;top&quot;&gt;- as a checked style menu item or as a toggle tool item. The initial value is specified by the &lt;samp&gt;state&lt;/samp&gt; attribute.&lt;/td&gt;
       &lt;/tr&gt;
       &lt;tr&gt;
+ &lt;td valign=&quot;top&quot; width=&quot;25&quot;&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot; nowrap&gt;&lt;b&gt;pulldown&lt;/b&gt;&lt;/td&gt;
+        &lt;td valign=&quot;top&quot;&gt;- (Toolar only) Creates a ToolItem with the &lt;code&gt;SWT.DROP_DOWN&lt;/code&gt; affordance. The URI of the menu is &quot;menu:&quot; + this item&apos;s ID.&lt;/td&gt;
+      &lt;/tr&gt;
     &lt;/table&gt;
                </documentation>
             </annotation>
@@ -690,6 +694,8 @@ Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
                   <enumeration value="radio">
                   </enumeration>
                   <enumeration value="toggle">
+                  </enumeration>
+                  <enumeration value="pulldown">
                   </enumeration>
                </restriction>
             </simpleType>
