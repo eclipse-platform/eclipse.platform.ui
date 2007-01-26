@@ -25,6 +25,11 @@ final class EditorMessages extends NLS {
 
 	public static String Editor_error_gotoLastEditPosition_title;
 	public static String Editor_error_gotoLastEditPosition_message;
+	public static String Editor_error_HyperlinkDetector_couldNotCreate_message;
+	public static String Editor_error_HyperlinkDetector_invalidElementName_message;
+	public static String Editor_error_HyperlinkDetector_invalidExtension_message;
+	public static String Editor_error_HyperlinkDetectorTarget_invalidElementName_message;
+	public static String Editor_error_HyperlinkDetectorTarget_invalidExtension_message;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, EditorMessages.class);

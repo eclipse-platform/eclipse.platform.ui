@@ -5,7 +5,9 @@
     <extension-point id="quickDiffReferenceProvider" name="%ExtPoint.referenceProvider" schema="schema/quickDiffReferenceProvider.exsd"/>
 	<extension-point id="spellingEngine" name="%SpellingEngine" schema="schema/spellingEngine.exsd"/>
     <extension-point id="rulerColumns" name="%ExtPoint.rulerColumns" schema="schema/rulerColumns.exsd"/>
-	   
+    <extension-point id="hyperlinkDetectors" name="%ExtPoint.hyperlinkDetectors" schema="schema/hyperlinkDetectors.exsd"/>
+    <extension-point id="hyperlinkDetectorTargets" name="%ExtPoint.hyperlinkDetectorTargets" schema="schema/hyperlinkDetectorTargets.exsd"/>
+
 	<extension
 	     point="org.eclipse.ui.commands">
 	  <category
