@@ -22,4 +22,4 @@ Import-Package: javax.xml.parsers,
  org.xml.sax,
  org.xml.sax.helpers
 Export-Package: org.eclipse.core.launcher,
- org.eclipse.platform.internal
+ org.eclipse.platform.internal;x-internal:=true
