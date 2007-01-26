@@ -22,6 +22,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.TocData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
@@ -223,19 +225,23 @@ public class TocFragmentServlet extends HttpServlet {
 			if (parentIsSelected && requestKind == REQUEST_SHOW_CHILDREN) {
 				// Show the children of this node
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-					serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+					if (!UAContentFilter.isFiltered(childTopics[subtopic], HelpEvaluationContext.getContext())) {
+						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
+					}
 				}
 			} else if (topicPath != null) {
 				for (int subtopic = 0; subtopic < childTopics.length; subtopic++) {
-					if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
-						ITopic[] newPath = null;
-						if (topicPath.length > 1) {
-							newPath = new ITopic[topicPath.length - 1];
-							System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
+					if (!UAContentFilter.isFiltered(childTopics[subtopic], HelpEvaluationContext.getContext())) {
+						if (topicPath[0].getLabel().equals(childTopics[subtopic].getLabel())) {
+							ITopic[] newPath = null;
+							if (topicPath.length > 1) {
+								newPath = new ITopic[topicPath.length - 1];
+								System.arraycopy(topicPath, 1, newPath, 0, topicPath.length - 1);
+							}
+					        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
+						} else {
+							serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
 						}
-				        serializeTopic(childTopics[subtopic], newPath, topicPath.length == 1, addSuffix(parentPath, subtopic));
-					} else {
-						serializeTopic(childTopics[subtopic], null, false, addSuffix(parentPath, subtopic));
 					}
 				}
 			} 
