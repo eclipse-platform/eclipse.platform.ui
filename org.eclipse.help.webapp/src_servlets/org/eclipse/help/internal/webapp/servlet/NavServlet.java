@@ -21,7 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.ITopic;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -63,16 +65,18 @@ public class NavServlet extends HttpServlet {
 		writer.write("<ul class=\"NavList\">\n"); //$NON-NLS-1$
 		ITopic[] subtopics = topic.getSubtopics();
 		for (int i=0;i<subtopics.length;++i) {
-			writer.write("<li><a href=\""); //$NON-NLS-1$
-			String href = subtopics[i].getHref();
-			if (href == null) {
-				href = path + '_' + i;
+			if (!UAContentFilter.isFiltered(subtopics[i], HelpEvaluationContext.getContext())) {
+				writer.write("<li><a href=\""); //$NON-NLS-1$
+				String href = subtopics[i].getHref();
+				if (href == null) {
+					href = path + '_' + i;
+				}
+				else {
+					href = XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href));
+				}
+				writer.write(href);
+				writer.write("\">" + subtopics[i].getLabel() + "</a></li>\n");  //$NON-NLS-1$//$NON-NLS-2$
 			}
-			else {
-				href = XMLGenerator.xmlEscape(UrlUtil.getHelpURL(href));
-			}
-			writer.write(href);
-			writer.write("\">" + subtopics[i].getLabel() + "</a></li>\n");  //$NON-NLS-1$//$NON-NLS-2$
 		}
 		writer.write("</ul>\n"); //$NON-NLS-1$
 		writer.write(XHTML_3);
